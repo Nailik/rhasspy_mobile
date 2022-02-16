@@ -1,16 +1,20 @@
-# rhasspy_mobile
+# Rhasspy mobile
 
-Rhasspy Mobile Satellite
+This will be a Rhasspy satellite on a mobile phone.
+The originial idea is from [rhasspy-mobile-app](https://github.com/razzo04/rhasspy-mobile-app).
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+For setup of server and satellite configuration check the official documentation of [Rhasspy](https://rhasspy.readthedocs.io/en/latest/tutorials/#server-with-satellites).
 
-A few resources to get you started if this is your first Flutter project:
+## Planned features
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+| Feature  | Android | iOS | Web |
+| ------------- | ------------- | ------------- | ------------- |
+| Audio Recording | :x: | :x: | :x: |
+| Silence Detection | :x: | :x: | :x: |
+| Remote HTTP(s)  | :x: | :x: | :x: |
+| Remote MQTT(SSL)  | :x: | :x: | :x: |
+| Wakeword Remote (HTTP/MQTT/UDP) | :x: | :x: | :x: |
+| Wakeword Local (Porcupine) | :x: | :x: | :x: |
+| Wakeword Indication (Sound, Visual)  | :x: | :x: | :x: |
