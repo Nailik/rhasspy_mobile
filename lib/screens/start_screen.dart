@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rhasspy_mobile/screens/settings_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({Key? key}) : super(key: key);
@@ -21,7 +22,7 @@ class _StartScreenState extends State<StartScreen> {
   /// App Navigation bar with Title and Button to settings
   AppBar navigationBar() {
     return AppBar(
-      title: const Text("Rhasspy Mobile"),
+      title: Text(AppLocalizations.of(context)!.appName),
       actions: [
         IconButton(
             onPressed: () {
@@ -48,9 +49,9 @@ class _StartScreenState extends State<StartScreen> {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const <Widget>[
+        children: <Widget>[
           Text(
-            'Start Page Content',
+              AppLocalizations.of(context)!.appName
           ),
         ],
       ),
