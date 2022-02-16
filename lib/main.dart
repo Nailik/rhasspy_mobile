@@ -4,11 +4,11 @@ import 'package:rhasspy_mobile/screens/start_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const RhasspyMobileApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class RhasspyMobileApp extends StatelessWidget {
+  const RhasspyMobileApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
