@@ -29,14 +29,16 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget? getBody() {
-    if (_selectedIndex == 0) {
-      return const StartScreen();
-    } else if (_selectedIndex == 1) {
-      return const RhasspySettingsScreen();
-    } else if (_selectedIndex == 2) {
-      return const SettingsScreen();
+    switch (_selectedIndex) {
+      case 0:
+        return const StartScreen();
+      case 1:
+        return const RhasspySettingsScreen();
+      case 2:
+        return const SettingsScreen();
+      default:
+        null;
     }
-    return null;
   }
 
   int _selectedIndex = 0;
@@ -60,7 +62,7 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ],
       currentIndex: _selectedIndex,
-      selectedItemColor: Colors.amber[800],
+      selectedItemColor: Theme.of(context).colorScheme.tertiary,
       onTap: _onItemTapped,
     );
   }

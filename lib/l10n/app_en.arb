@@ -23,5 +23,8 @@
   "audioPlaying": "Audio Playing",
   "dialogueManagement": "Dialogue Management",
   "intentHandling": "Intent Handling",
-  "checkConnection": "Check Connection"
+  "checkConnection": "Check Connection",
+  "local": "Local",
+  "remote": "Remote",
+  "disabled": "Disabled"
 }

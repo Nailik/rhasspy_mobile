@@ -1,5 +1,10 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:get/get.dart';
+import '../wake_word/wake_word_options.dart';
+
+enum WhyFarther { harder, smarter, selfStarter, tradingCharter }
 
 class RhasspySettingsScreen extends StatefulWidget {
   const RhasspySettingsScreen({Key? key}) : super(key: key);
@@ -52,10 +57,9 @@ class _RhasspySettingsScreenState extends State<RhasspySettingsScreen> {
     );
   }
 
-  bool _audioRecordingUdpOutput = true;
-  bool _passwordHidden = true;
-
   Widget mqtt() {
+    var _passwordHidden = true.obs;
+
     return ExpansionTile(
       title: Text(
         locale.mqtt,
@@ -70,22 +74,24 @@ class _RhasspySettingsScreenState extends State<RhasspySettingsScreen> {
         TextField(
           decoration: defaultDecoration(locale.userName),
         ),
-        TextFormField(
-          obscureText: _passwordHidden,
-          decoration: InputDecoration(
-            border: const UnderlineInputBorder(),
-            labelText: locale.password,
-            suffixIcon: IconButton(
-              icon: Icon(
-                _passwordHidden ? Icons.visibility_off : Icons.visibility,
-                color: theme.primaryColorDark,
+        Obx(() => TextFormField(
+              obscureText: _passwordHidden.value,
+              decoration: InputDecoration(
+                border: const UnderlineInputBorder(),
+                labelText: locale.password,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _passwordHidden.value
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                    color: theme.primaryColorDark,
+                  ),
+                  onPressed: () {
+                    _passwordHidden.value = !_passwordHidden.value;
+                  },
+                ),
               ),
-              onPressed: () {
-                _passwordHidden = !_passwordHidden;
-              },
-            ),
-          ),
-        ),
+            )),
         MaterialButton(
             child: Text(
               locale.checkConnection,
@@ -99,47 +105,81 @@ class _RhasspySettingsScreenState extends State<RhasspySettingsScreen> {
   }
 
   Widget audioRecording() {
-    return ExpansionTile(
-      title: Text(locale.audioRecording),
-      children: <Widget>[
-        SwitchListTile(
-            value: _audioRecordingUdpOutput,
-            onChanged: (value) {
-              setState(() {
-                _audioRecordingUdpOutput = value;
-              });
-            },
-            title: Text(locale.udpAudioOutput),
-            subtitle: Text(locale.udpAudioOutputDetail)),
-        TextField(
-          enabled: false,
-          decoration: defaultDecoration(locale.host),
-        ),
-        TextField(
-          enabled: _audioRecordingUdpOutput,
-          decoration: defaultDecoration(locale.port),
-        ),
-        //TODO silence detection
-      ],
-    );
+    var _audioRecordingUdpOutput = true.obs;
+    return Obx(() => ExpansionTile(
+          title: Text(locale.audioRecording),
+          children: <Widget>[
+            SwitchListTile(
+                value: _audioRecordingUdpOutput.value,
+                onChanged: (value) {
+                  _audioRecordingUdpOutput.value = value;
+                },
+                title: Text(locale.udpAudioOutput),
+                subtitle: Text(locale.udpAudioOutputDetail)),
+            TextField(
+              enabled: _audioRecordingUdpOutput.value,
+              decoration: defaultDecoration(locale.host),
+            ),
+            TextField(
+              enabled: _audioRecordingUdpOutput.value,
+              decoration: defaultDecoration(locale.port),
+            ),
+            //TODO silence detection
+          ],
+        ));
   }
 
   Widget wakeWord() {
-    return ExpansionTile(
-      title: Text(locale.wakeWord),
-      children: <Widget>[
-        Text(locale.wakeWord),
-        //TODO dropdown  (local/remote/disabled)
-        //TODO dropdown keyword file
-        //todo dropdown avaialble keywords
-        TextFormField(
-          decoration: InputDecoration(
-            border: const UnderlineInputBorder(),
-            labelText: locale.sensitivity,
-          ),
-        ),
-      ],
-    );
+    var wakeWordSetting = WakeWordOption.disabled.obs;
+    var wakeWordSensitivity = 0.55.obs;
+
+    return Obx(() => ExpansionTile(
+            title: Text(locale.wakeWord),
+            subtitle: Text(wakeWordSetting.value.asText(locale)),
+            children: <Widget>[
+              DropdownButtonFormField2<WakeWordOption>(
+                value: wakeWordSetting.value,
+                onChanged: (WakeWordOption? newValue) {
+                  if (newValue != null) {
+                    wakeWordSetting.value = newValue;
+                  }
+                },
+                items: WakeWordOption.values
+                    .map<DropdownMenuItem<WakeWordOption>>(
+                        (WakeWordOption value) {
+                  return DropdownMenuItem<WakeWordOption>(
+                    value: value,
+                    child: Text(value.asText(locale)),
+                  );
+                }).toList(),
+              ),
+              //TODO dropdown  (local/remote/disabled)
+              //TODO dropdown keyword file
+              //todo dropdown avaialble keywords
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                          "${locale.sensitivity} (${wakeWordSensitivity.value.toString()})"))),
+              SliderTheme(
+                data: SliderThemeData(
+                    inactiveTrackColor: theme.colorScheme.secondary,
+                    trackHeight: 0.1,
+                    valueIndicatorShape:
+                        const PaddleSliderValueIndicatorShape(),
+                    thumbShape: const RoundSliderThumbShape()),
+                child: Slider(
+                  value: wakeWordSensitivity.value,
+                  max: 1,
+                  divisions: 100,
+                  label: wakeWordSensitivity.toString(),
+                  onChanged: (double value) {
+                    wakeWordSensitivity.value = value;
+                  },
+                ),
+              ),
+            ]));
   }
 
   Widget speechToText() {
