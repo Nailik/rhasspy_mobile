@@ -24,7 +24,10 @@
   "dialogueManagement": "Dialogue Management",
   "intentHandling": "Intent Handling",
   "checkConnection": "Check Connection",
-  "local": "Local",
+  "localPorcupine": "Porcupine (local)",
   "remote": "Remote",
-  "disabled": "Disabled"
+  "disabled": "Disabled",
+  "remoteMQTT": "Remote Hermes MQTT",
+  "remoteHTTP": "Remote HTTP",
+  "homeAssistant": "Home Assistant"
 }

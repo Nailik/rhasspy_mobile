@@ -2,7 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
-import '../wake_word/wake_word_options.dart';
+import '../data/wake_word_options.dart';
 
 enum WhyFarther { harder, smarter, selfStarter, tradingCharter }
 
