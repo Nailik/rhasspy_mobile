@@ -1,4 +1,27 @@
 {
   "appName": "Rhasspy Mobile",
-  "settings": "Settings"
+  "home": "Home",
+  "configuration": "Configuration",
+  "settings": "Settings",
+  "siteId": "site ID",
+  "mqtt": "MQTT",
+  "host": "Host",
+  "port": "Port",
+  "userName": "Username",
+  "password": "Password",
+  "audioRecording": "Audio Recording",
+  "udpAudioOutput": "UDP Audio (Output)",
+  "udpAudioOutputDetail": "(outside ASR listening)",
+  "wakeWord": "Wake Word",
+  "sensitivity": "Sensitivity",
+  "speechToText": "Speech to Text",
+  "speechToTextURL": "Speech to Text URL",
+  "intentRecognition": "Intent Recognition",
+  "rhasspyTextToIntentURL": "Rhasspy Text-to-Intent URL",
+  "textToSpeech": "Text to Speech",
+  "rhasspyTextToSpeechURL": "Rhasspy Text-to-Speech URL",
+  "audioPlaying": "Audio Playing",
+  "dialogueManagement": "Dialogue Management",
+  "intentHandling": "Intent Handling",
+  "checkConnection": "Check Connection"
 }

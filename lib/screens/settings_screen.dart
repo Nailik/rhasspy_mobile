@@ -14,9 +14,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: navigationBar(),
-      body: content(),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const <Widget>[
+          Text(
+            'Settings Page Content',
+          ),
+        ],
+      ),
     );
   }
 
@@ -31,45 +37,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget languageDropDown() {
     return DropdownButtonHideUnderline(
         child: DropdownButton<Locale>(
-      value: Localizations.localeOf(context),
-      icon: const SizedBox(width: 15),
-      onChanged: (Locale? newLocale) {
-        setState(() {
-          Get.updateLocale(newLocale!);
-        });
-      },
-      selectedItemBuilder: (BuildContext context) {
-        return AppLocalizations.supportedLocales.map((Locale value) {
-          return Container(
-              alignment: Alignment.center,
+          value: Localizations.localeOf(context),
+          icon: const SizedBox(width: 15),
+          onChanged: (Locale? newLocale) {
+            setState(() {
+              Get.updateLocale(newLocale!);
+            });
+          },
+          selectedItemBuilder: (BuildContext context) {
+            return AppLocalizations.supportedLocales.map((Locale value) {
+              return Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    value.toLanguageTag(),
+                    style: Theme
+                        .of(context)
+                        .primaryTextTheme
+                        .titleLarge,
+                  ));
+            }).toList();
+          },
+          items: AppLocalizations.supportedLocales
+              .map<DropdownMenuItem<Locale>>((Locale value) {
+            return DropdownMenuItem<Locale>(
+              value: value,
               child: Text(
                 value.toLanguageTag(),
-                style: Theme.of(context).primaryTextTheme.titleLarge,
-              ));
-        }).toList();
-      },
-      items: AppLocalizations.supportedLocales
-          .map<DropdownMenuItem<Locale>>((Locale value) {
-        return DropdownMenuItem<Locale>(
-          value: value,
-          child: Text(
-            value.toLanguageTag(),
-          ),
-        );
-      }).toList(),
-    ));
+              ),
+            );
+          }).toList(),
+        ));
   }
 
-  Widget content() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const <Widget>[
-          Text(
-            'Settings Page Content',
-          ),
-        ],
-      ),
-    );
-  }
 }

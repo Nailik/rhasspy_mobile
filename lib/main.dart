@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rhasspy_mobile/screens/start_screen.dart';
+import 'package:rhasspy_mobile/screens/main_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
@@ -19,7 +19,7 @@ class RhasspyMobileApp extends StatelessWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
-      home: const StartScreen(),
+      home: const MainScreen(),
     );
   }
 }
