@@ -1,3 +1,5 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 enum AudioPlayingOption { local, remoteHTTP, remoteMQTT, disabled }
 
 extension TranslateAudioPlayingOptionEnum on AudioPlayingOption {

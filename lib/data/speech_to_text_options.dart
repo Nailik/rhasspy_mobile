@@ -1,3 +1,5 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 enum SpeechToTextOption { remoteHTTP, remoteMQTT, disabled }
 
 extension TranslateSpeechToTextOptionEnum on SpeechToTextOption {

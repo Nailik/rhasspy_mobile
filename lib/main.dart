@@ -18,7 +18,10 @@ class RhasspyMobileApp extends StatelessWidget {
       title: 'Rhasspy Mobile',
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
+      theme: ThemeData(
+          brightness: Brightness.dark,
+          useMaterial3: true,
+          primarySwatch: Colors.teal),
       home: const MainScreen(),
     );
   }

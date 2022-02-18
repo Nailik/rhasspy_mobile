@@ -37,7 +37,7 @@ class _MainScreenState extends State<MainScreen> {
       case 2:
         return const SettingsScreen();
       default:
-        null;
+        return null;
     }
   }
 
@@ -62,7 +62,8 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ],
       currentIndex: _selectedIndex,
-      selectedItemColor: Theme.of(context).colorScheme.tertiary,
+      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+      selectedItemColor: Theme.of(context).colorScheme.onSurfaceVariant,
       onTap: _onItemTapped,
     );
   }

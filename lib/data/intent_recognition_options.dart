@@ -1,3 +1,4 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 enum IntentRecognitionOption { remoteHTTP, remoteMQTT, disabled }
 

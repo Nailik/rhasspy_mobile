@@ -25,9 +25,11 @@
   "intentHandling": "Intent Handling",
   "checkConnection": "Check Connection",
   "localPorcupine": "Porcupine (local)",
+  "local": "Local",
   "remote": "Remote",
   "disabled": "Disabled",
   "remoteMQTT": "Remote Hermes MQTT",
   "remoteHTTP": "Remote HTTP",
-  "homeAssistant": "Home Assistant"
+  "homeAssistant": "Home Assistant",
+  "refresh": "Refresh"
 }
