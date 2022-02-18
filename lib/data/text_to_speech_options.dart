@@ -1,10 +1,20 @@
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-enum TextToSpeechOption { remoteHTTP, remoteMQTT, disabled }
+import 'option.dart';
 
-extension TranslateTextToSpeechOptionEnum on TextToSpeechOption {
-  String asText(AppLocalizations local) {
-    switch (this) {
+class TextToSpeechOptions extends Option<TextToSpeechOption> {
+  static final TextToSpeechOptions _singleton = TextToSpeechOptions._internal();
+
+  factory TextToSpeechOptions() {
+    return _singleton;
+  }
+
+  TextToSpeechOptions._internal()
+      : super(TextToSpeechOption.values, TextToSpeechOption.disabled);
+
+  @override
+  String asText(TextToSpeechOption option, AppLocalizations local) {
+    switch (option) {
       case TextToSpeechOption.remoteHTTP:
         return local.remoteHTTP;
       case TextToSpeechOption.remoteMQTT:
@@ -14,3 +24,5 @@ extension TranslateTextToSpeechOptionEnum on TextToSpeechOption {
     }
   }
 }
+
+enum TextToSpeechOption { remoteHTTP, remoteMQTT, disabled }

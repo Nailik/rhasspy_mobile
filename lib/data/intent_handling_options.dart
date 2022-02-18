@@ -1,10 +1,21 @@
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-enum IntentHandlingOption { homeAssistant, remoteHTTP, disabled }
+import 'option.dart';
 
-extension TranslateIntentHandlingEnum on IntentHandlingOption {
-  String asText(AppLocalizations local) {
-    switch (this) {
+class IntentHandlingOptions extends Option<IntentHandlingOption> {
+  static final IntentHandlingOptions _singleton =
+  IntentHandlingOptions._internal();
+
+  factory IntentHandlingOptions() {
+    return _singleton;
+  }
+
+  IntentHandlingOptions._internal()
+      : super(IntentHandlingOption.values, IntentHandlingOption.disabled);
+
+  @override
+  String asText(IntentHandlingOption option, AppLocalizations local) {
+    switch (option) {
       case IntentHandlingOption.homeAssistant:
         return local.homeAssistant;
       case IntentHandlingOption.remoteHTTP:
@@ -14,3 +25,7 @@ extension TranslateIntentHandlingEnum on IntentHandlingOption {
     }
   }
 }
+
+enum IntentHandlingOption { homeAssistant, remoteHTTP, disabled }
+
+enum HomeAssistantIntent { events, intents }

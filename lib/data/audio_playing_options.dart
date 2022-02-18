@@ -1,10 +1,19 @@
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:rhasspy_mobile/data/option.dart';
 
-enum AudioPlayingOption { local, remoteHTTP, remoteMQTT, disabled }
+class AudioPlayingOptions extends Option<AudioPlayingOption> {
+  static final AudioPlayingOptions _singleton = AudioPlayingOptions._internal();
 
-extension TranslateAudioPlayingOptionEnum on AudioPlayingOption {
-  String asText(AppLocalizations local) {
-    switch (this) {
+  factory AudioPlayingOptions() {
+    return _singleton;
+  }
+
+  AudioPlayingOptions._internal()
+      : super(AudioPlayingOption.values, AudioPlayingOption.disabled);
+
+  @override
+  String asText(AudioPlayingOption option, AppLocalizations local) {
+    switch (option) {
       case AudioPlayingOption.local:
         return local.local;
       case AudioPlayingOption.remoteHTTP:
@@ -16,3 +25,5 @@ extension TranslateAudioPlayingOptionEnum on AudioPlayingOption {
     }
   }
 }
+
+enum AudioPlayingOption { local, remoteHTTP, remoteMQTT, disabled }

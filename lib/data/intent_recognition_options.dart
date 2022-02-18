@@ -1,10 +1,21 @@
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-enum IntentRecognitionOption { remoteHTTP, remoteMQTT, disabled }
+import 'option.dart';
 
-extension TranslateIntentRecognitionOptionEnum on IntentRecognitionOption {
-  String asText(AppLocalizations local) {
-    switch (this) {
+class IntentRecognitionOptions extends Option<IntentRecognitionOption> {
+  static final IntentRecognitionOptions _singleton =
+      IntentRecognitionOptions._internal();
+
+  factory IntentRecognitionOptions() {
+    return _singleton;
+  }
+
+  IntentRecognitionOptions._internal()
+      : super(IntentRecognitionOption.values, IntentRecognitionOption.disabled);
+
+  @override
+  String asText(IntentRecognitionOption option, AppLocalizations local) {
+    switch (option) {
       case IntentRecognitionOption.remoteHTTP:
         return local.remoteHTTP;
       case IntentRecognitionOption.remoteMQTT:
@@ -14,3 +25,5 @@ extension TranslateIntentRecognitionOptionEnum on IntentRecognitionOption {
     }
   }
 }
+
+enum IntentRecognitionOption { remoteHTTP, remoteMQTT, disabled }

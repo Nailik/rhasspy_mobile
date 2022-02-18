@@ -7,6 +7,8 @@ import 'package:rhasspy_mobile/data/dialogue_management_options.dart';
 import 'package:rhasspy_mobile/data/intent_handling_options.dart';
 import 'package:rhasspy_mobile/data/intent_recognition_options.dart';
 import 'package:rhasspy_mobile/data/speech_to_text_options.dart';
+
+import '../data/option.dart';
 import '../data/text_to_speech_options.dart';
 import '../data/wake_word_options.dart';
 
@@ -22,8 +24,6 @@ class RhasspySettingsScreen extends StatefulWidget {
 class _RhasspySettingsScreenState extends State<RhasspySettingsScreen> {
   late ThemeData theme;
   late AppLocalizations locale;
-
-  final _tilePadding = const EdgeInsets.fromLTRB(8, 0, 8, 8);
 
   @override
   Widget build(BuildContext context) {
@@ -59,46 +59,37 @@ class _RhasspySettingsScreenState extends State<RhasspySettingsScreen> {
     return Container(
       padding: const EdgeInsets.all(10.0),
       child: TextField(
-        decoration: defaultDecoration(locale.siteId),
+        decoration: InputDecoration(
+            labelText: locale.siteId, border: const OutlineInputBorder()),
       ),
     );
   }
 
   Widget mqtt() {
-    var _passwordHidden = true.obs;
-
-    return ExpansionTile(
-      title: Text(
-        locale.mqtt,
-      ),
-      backgroundColor: theme.colorScheme.surfaceVariant,
-      childrenPadding: _tilePadding,
+    var connectionStatus = false.obs;
+    return expandableListItem(
+      title: locale.mqtt,
+      subtitle: () =>
+          (connectionStatus.value ? locale.connected : locale.notConnected),
       children: <Widget>[
         const Divider(),
-        TextField(
-          decoration: defaultDecoration(locale.host),
-        ),
+        TextField(decoration: defaultDecoration(locale.host)),
         const Divider(),
-        TextField(
-          decoration: defaultDecoration(locale.port),
-        ),
+        TextField(decoration: defaultDecoration(locale.port)),
         const Divider(),
-        TextField(
-          decoration: defaultDecoration(locale.userName),
-        ),
+        TextField(decoration: defaultDecoration(locale.userName)),
         const Divider(),
         ObxValue<RxBool>(
             (passwordHidden) => TextFormField(
                   obscureText: passwordHidden.value,
                   decoration: InputDecoration(
-                    border: const UnderlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     labelText: locale.password,
                     suffixIcon: IconButton(
                       icon: Icon(
                         passwordHidden.value
                             ? Icons.visibility_off
                             : Icons.visibility,
-                        color: theme.primaryColorDark,
                       ),
                       onPressed: () {
                         passwordHidden.value = !passwordHidden.value;
@@ -114,67 +105,45 @@ class _RhasspySettingsScreenState extends State<RhasspySettingsScreen> {
   }
 
   Widget audioRecording() {
-    var _audioRecordingUdpOutput = true.obs;
-    return Obx(() => ExpansionTile(
-          title: Text(locale.audioRecording),
-          backgroundColor: theme.colorScheme.surfaceVariant,
-          childrenPadding: _tilePadding,
-          children: <Widget>[
-            const Divider(),
-            SwitchListTile(
-                value: _audioRecordingUdpOutput.value,
-                onChanged: (value) {
-                  _audioRecordingUdpOutput.value = value;
-                },
-                title: Text(locale.udpAudioOutput),
-                subtitle: Text(locale.udpAudioOutputDetail)),
-            const Divider(),
-            TextField(
-              enabled: _audioRecordingUdpOutput.value,
-              decoration: defaultDecoration(locale.host),
-            ),
-            const Divider(),
-            TextField(
-              enabled: _audioRecordingUdpOutput.value,
-              decoration: defaultDecoration(locale.port),
-            ),
-            //TODO silence detection
-          ],
-        ));
+    var audioRecordingUdpOutput = false.obs;
+    return expandableListItem(
+      title: locale.audioRecording,
+      subtitle: () => audioRecordingUdpOutput.value
+          ? locale.udpAudioOutput
+          : locale.udpAudioOutputOff,
+      children: <Widget>[
+        const Divider(),
+        Obx(() => SwitchListTile(
+            value: audioRecordingUdpOutput.value,
+            onChanged: (value) {
+              audioRecordingUdpOutput.value = value;
+            },
+            title: Text(locale.udpAudioOutput),
+            subtitle: Text(locale.udpAudioOutputDetail))),
+        const Divider(),
+        TextField(
+          enabled: audioRecordingUdpOutput.value,
+          decoration: defaultDecoration(locale.host),
+        ),
+        const Divider(),
+        TextField(
+          enabled: audioRecordingUdpOutput.value,
+          decoration: defaultDecoration(locale.port),
+        ),
+        //TODO silence detection
+      ],
+    );
   }
 
   Widget wakeWord() {
     var wakeWordOption = WakeWordOption.disabled.obs;
-    return Obx(() => ExpansionTile(
-            title: Text(locale.wakeWord),
-            subtitle: Text(wakeWordOption.value.asText(locale)),
-            backgroundColor: theme.colorScheme.surfaceVariant,
-            childrenPadding: _tilePadding,
-            children: <Widget>[
-              const Divider(),
-              DropdownButtonFormField2<WakeWordOption>(
-                value: wakeWordOption.value,
-                onChanged: (WakeWordOption? newValue) {
-                  if (newValue != null) {
-                    wakeWordOption.value = newValue;
-                  }
-                },
-                items: WakeWordOption.values
-                    .map<DropdownMenuItem<WakeWordOption>>(
-                        (WakeWordOption value) {
-                  return DropdownMenuItem<WakeWordOption>(
-                    value: value,
-                    child: Text(value.asText(locale)),
-                  );
-                }).toList(),
-              ),
-              localWakeWordSettings(wakeWordOption.value)
-            ]));
+    return Obx(() => listItem(WakeWordOptions(), wakeWordOption,
+        locale.wakeWord, localWakeWordSettings(wakeWordOption.value)));
   }
 
   Widget localWakeWordSettings(WakeWordOption wakeWordOption) {
     if (wakeWordOption == WakeWordOption.localPorcupine) {
-      return Column(children: <Widget>[
+      return Column(children: [
         const Divider(),
         localWakeWordKeyword(),
         const Divider(),
@@ -186,8 +155,8 @@ class _RhasspySettingsScreenState extends State<RhasspySettingsScreen> {
   }
 
   Widget localWakeWordKeyword() {
-    var wakeWordKeywordOption = "1".obs;
-    var wakeWordKeywordOptions = ["1", "2g"];
+    var wakeWordKeywordOption = "jarvis".obs;
+    var wakeWordKeywordOptions = ["jarvis", "porcupine"];
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -221,7 +190,7 @@ class _RhasspySettingsScreenState extends State<RhasspySettingsScreen> {
 
     return Obx(() => Column(children: <Widget>[
           Padding(
-              padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
+              padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
               child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -247,117 +216,196 @@ class _RhasspySettingsScreenState extends State<RhasspySettingsScreen> {
 
   Widget speechToText() {
     var speechToTextOption = SpeechToTextOption.disabled.obs;
-    return Obx(() => ExpansionTile(
-            title: Text(locale.speechToText),
-            subtitle: Text(speechToTextOption.value.asText(locale)),
-            backgroundColor: theme.colorScheme.surfaceVariant,
-            childrenPadding: _tilePadding,
-            children: <Widget>[
-              const Divider(),
-              DropdownButtonFormField2<SpeechToTextOption>(
-                value: speechToTextOption.value,
-                onChanged: (SpeechToTextOption? newValue) {
-                  if (newValue != null) {
-                    speechToTextOption.value = newValue;
-                  }
-                },
-                items: SpeechToTextOption.values
-                    .map<DropdownMenuItem<SpeechToTextOption>>(
-                        (SpeechToTextOption value) {
-                  return DropdownMenuItem<SpeechToTextOption>(
-                    value: value,
-                    child: Text(value.asText(locale)),
-                  );
-                }).toList(),
-              ),
-              const Divider(),
-              TextFormField(
-                decoration: InputDecoration(
-                  border: const UnderlineInputBorder(),
-                  labelText: locale.speechToTextURL,
-                ),
-              )
-            ]));
+    return listItem(
+        SpeechToTextOptions(),
+        speechToTextOption,
+        locale.speechToText,
+        Obx(() => speechToTextSettings(speechToTextOption.value)));
+  }
+
+  Widget speechToTextSettings(SpeechToTextOption speechToTextOption) {
+    if (speechToTextOption == SpeechToTextOption.remoteHTTP) {
+      return Column(children: [
+        const Divider(),
+        TextFormField(decoration: defaultDecoration(locale.speechToTextURL))
+      ]);
+    } else {
+      return Container();
+    }
   }
 
   Widget intentRecognition() {
     var intentRecognitionOption = IntentRecognitionOption.disabled.obs;
-    return ExpansionTile(
-      title: Text(locale.intentRecognition),
-      backgroundColor: theme.colorScheme.surfaceVariant,
-      childrenPadding: _tilePadding,
-      children: <Widget>[
-        Text(locale.intentRecognition),
+    return listItem(
+        IntentRecognitionOptions(),
+        intentRecognitionOption,
+        locale.intentRecognition,
+        Obx(() => intentRecognitionSettings(intentRecognitionOption.value)));
+  }
+
+  Widget intentRecognitionSettings(IntentRecognitionOption speechToTextOption) {
+    if (speechToTextOption == IntentRecognitionOption.remoteHTTP) {
+      return Column(children: [
+        const Divider(),
         TextFormField(
-          decoration: InputDecoration(
-            border: const UnderlineInputBorder(),
-            labelText: locale.rhasspyTextToIntentURL,
-          ),
-        ),
-      ],
-    );
+            decoration: defaultDecoration(locale.rhasspyTextToIntentURL))
+      ]);
+    } else {
+      return Container();
+    }
   }
 
   Widget textToSpeech() {
     var textToSpeechOption = TextToSpeechOption.disabled.obs;
-    return ExpansionTile(
-      title: Text(locale.textToSpeech),
-      backgroundColor: theme.colorScheme.surfaceVariant,
-      childrenPadding: _tilePadding,
-      children: <Widget>[
-        Text(locale.textToSpeech),
+    return listItem(
+        TextToSpeechOptions(),
+        textToSpeechOption,
+        locale.textToSpeech,
+        Obx(() => textToSpeechSettings(textToSpeechOption.value)));
+  }
+
+  Widget textToSpeechSettings(TextToSpeechOption textToSpeechOption) {
+    if (textToSpeechOption == TextToSpeechOption.remoteHTTP) {
+      return Column(children: [
+        const Divider(),
         TextFormField(
-          decoration: InputDecoration(
-            border: const UnderlineInputBorder(),
-            labelText: locale.rhasspyTextToSpeechURL,
-          ),
-        ),
-      ],
-    );
+            decoration: defaultDecoration(locale.rhasspyTextToSpeechURL))
+      ]);
+    } else {
+      return Container();
+    }
   }
 
   Widget audioPlaying() {
     var audioPlayingOption = AudioPlayingOption.disabled.obs;
-    return ExpansionTile(
-      title: Text(locale.audioPlaying),
-      backgroundColor: theme.colorScheme.surfaceVariant,
-      childrenPadding: _tilePadding,
-      children: <Widget>[
-        Text(locale.audioPlaying),
-        //Todo volume
-      ],
-    );
+    return listItem(
+        AudioPlayingOptions(),
+        audioPlayingOption,
+        locale.audioPlaying,
+        Obx(() => audioPlayingSettings(audioPlayingOption.value)));
+  }
+
+  Widget audioPlayingSettings(AudioPlayingOption audioPlayingOption) {
+    if (audioPlayingOption == AudioPlayingOption.remoteHTTP) {
+      return Column(children: [
+        const Divider(),
+        TextFormField(decoration: defaultDecoration(locale.audioOutputURL))
+      ]);
+    } else {
+      return Container();
+    }
   }
 
   Widget dialogueManagement() {
     var dialogueManagementOption = DialogueManagementOption.disabled.obs;
-    return ExpansionTile(
-      title: Text(locale.dialogueManagement),
-      backgroundColor: theme.colorScheme.surfaceVariant,
-      childrenPadding: _tilePadding,
-      children: <Widget>[
-        Text(locale.dialogueManagement),
-        //Todo not sure??
-      ],
-    );
+    return listItem(DialogueManagementOptions(), dialogueManagementOption,
+        locale.dialogueManagement, null);
   }
 
   Widget intentHandling() {
     var intentHandlingOption = IntentHandlingOption.disabled.obs;
+    return listItem(
+        IntentHandlingOptions(),
+        intentHandlingOption,
+        locale.intentHandling,
+        Obx(() => intentHandlingSettings(intentHandlingOption.value)));
+  }
+
+  Widget intentHandlingSettings(IntentHandlingOption intentHandlingOption) {
+    var homeAssistantIntentOption = HomeAssistantIntent.events.obs;
+
+    if (intentHandlingOption == IntentHandlingOption.remoteHTTP) {
+      return Column(children: [
+        const Divider(),
+        TextFormField(decoration: defaultDecoration(locale.remoteURL))
+      ]);
+    } else if (intentHandlingOption == IntentHandlingOption.homeAssistant) {
+      return Column(children: [
+        const Divider(),
+        TextFormField(decoration: defaultDecoration(locale.hassURL)),
+        const Divider(thickness: 0),
+        TextFormField(decoration: defaultDecoration(locale.accessToken)),
+        const Divider(),
+        ListTile(
+            title: Text(locale.homeAssistantEvents),
+            leading: Obx(() => Radio<HomeAssistantIntent>(
+                  value: HomeAssistantIntent.events,
+                  groupValue: homeAssistantIntentOption.value,
+                  onChanged: (HomeAssistantIntent? value) {
+                    if (value != null) {
+                      homeAssistantIntentOption.value =
+                          HomeAssistantIntent.events;
+                    }
+                  },
+                ))),
+        ListTile(
+            title: Text(locale.homeAssistantIntents),
+            leading: Obx(() => Radio<HomeAssistantIntent>(
+                  value: HomeAssistantIntent.intents,
+                  groupValue: homeAssistantIntentOption.value,
+                  onChanged: (HomeAssistantIntent? value) {
+                    if (value != null) {
+                      homeAssistantIntentOption.value =
+                          HomeAssistantIntent.intents;
+                    }
+                  },
+                ))),
+      ]);
+    } else {
+      return Container();
+    }
+  }
+
+  Widget listItem<T>(
+      Option<T> option, Rx<T> optionValue, String title, Widget? children) {
+    var childWidgets = <Widget>[
+      const Divider(),
+      Obx(() => DropdownButtonFormField2<T>(
+            value: optionValue.value,
+            onChanged: (T? newValue) {
+              if (newValue != null) {
+                optionValue.value = newValue;
+              }
+            },
+            items: option.options.map<DropdownMenuItem<T>>((T value) {
+              return DropdownMenuItem<T>(
+                value: value,
+                child: Text(option.asText(value, locale)),
+              );
+            }).toList(),
+          )),
+    ];
+
+    if (children != null) {
+      childWidgets.add(children);
+    }
+
+    childWidgets.add(const SizedBox(height: 8));
+
+    return expandableListItem(
+        title: title,
+        subtitle: () => option.asText(optionValue.value, locale),
+        children: childWidgets);
+  }
+
+  Widget expandableListItem(
+      {required String title,
+      required String Function() subtitle,
+      required List<Widget> children}) {
+    Widget? subtitleWidget;
+    subtitleWidget = Obx(() => Text(subtitle()));
+
     return ExpansionTile(
-      title: Text(locale.intentHandling),
-      backgroundColor: theme.colorScheme.surfaceVariant,
-      childrenPadding: _tilePadding,
-      children: <Widget>[
-        Text(locale.intentHandling),
-        //Todo drop down home assistant/remote http/disabled
-      ],
-    );
+        title: Text(title),
+        subtitle: subtitleWidget,
+        backgroundColor: theme.colorScheme.surfaceVariant,
+        childrenPadding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+        children: children);
   }
 
   InputDecoration defaultDecoration(String labelText) {
     return InputDecoration(
-      border: const UnderlineInputBorder(),
+      border: const OutlineInputBorder(),
       labelText: labelText,
     );
   }
