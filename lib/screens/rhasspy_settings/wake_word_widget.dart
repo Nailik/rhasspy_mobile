@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 
 import '../../data/wake_word_options.dart';
 import '../rhasspy_settings_screen.dart';
-import 'helper.dart';
 
 extension WakeWordWidget on RhasspySettingsScreenState {
   Widget wakeWord() {

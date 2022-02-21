@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 
 import '../../data/intent_recognition_options.dart';
 import '../rhasspy_settings_screen.dart';
-import 'helper.dart';
 
 extension IntentHandlingWidget on RhasspySettingsScreenState {
   Widget intentRecognition() {

@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 
 import '../../data/audio_playing_options.dart';
 import '../rhasspy_settings_screen.dart';
-import 'helper.dart';
 
 extension AudioPlayingWidget on RhasspySettingsScreenState {
   Widget audioPlaying() {
