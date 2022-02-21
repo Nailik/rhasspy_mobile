@@ -5,7 +5,7 @@
   "settings": "Einstellungen",
   "siteId": "Standort-ID",
   "mqtt": "MQTT",
-  "notConnected": "Not Connected",
+  "notConnected": "Nicht Verbunden",
   "connected": "Connected",
   "on": "On",
   "off": "Off",
