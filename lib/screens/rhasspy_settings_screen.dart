@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:rhasspy_mobile/main.dart';
 import 'package:rhasspy_mobile/screens/rhasspy_settings/audio_playing_widget.dart';
 import 'package:rhasspy_mobile/screens/rhasspy_settings/audio_recording_widget.dart';
 import 'package:rhasspy_mobile/screens/rhasspy_settings/dialogue_management_widget.dart';
@@ -18,13 +19,9 @@ class RhasspySettingsScreen extends StatefulWidget {
 }
 
 class _RhasspySettingsScreenState extends State<RhasspySettingsScreen> {
-  late ThemeData theme;
-  late AppLocalizations locale;
 
   @override
   Widget build(BuildContext context) {
-    theme = Theme.of(context);
-    locale = AppLocalizations.of(context)!;
     return content();
   }
 
@@ -56,7 +53,7 @@ class _RhasspySettingsScreenState extends State<RhasspySettingsScreen> {
       padding: const EdgeInsets.all(10.0),
       child: TextField(
         decoration: InputDecoration(
-            labelText: locale.siteId, border: const OutlineInputBorder()),
+            labelText: getLocale().siteId, border: const OutlineInputBorder()),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rhasspy_mobile/main.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({Key? key}) : super(key: key);
@@ -15,10 +16,9 @@ class _StartScreenState extends State<StartScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           wakeup(),
-          Text("audio level"),
           Text("play recording"),
-          Text("recognize"),
-          Text("speak"),
+          recognize(),
+          speak(),
         ],
       ),
     );
@@ -33,5 +33,25 @@ class _StartScreenState extends State<StartScreen> {
       ),
       Text("wake Up")
     ]);
+  }
+
+  Widget recognize() {
+    return Container(
+      padding: const EdgeInsets.all(10.0),
+      child: TextField(
+        decoration: InputDecoration(
+            labelText: getLocale().siteId, border: const OutlineInputBorder()),
+      ),
+    );
+  }
+
+  Widget speak() {
+    return Container(
+      padding: const EdgeInsets.all(10.0),
+      child: TextField(
+        decoration: InputDecoration(
+            labelText: getLocale().siteId, border: const OutlineInputBorder()),
+      ),
+    );
   }
 }
