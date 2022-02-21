@@ -7,7 +7,7 @@ import '../rhasspy_settings_screen.dart';
 extension SpeechToTextWidget on RhasspySettingsScreenState {
   Widget speechToText() {
     var speechToTextOption = SpeechToTextOption.disabled.obs;
-    return listItem(SpeechToTextOptions(), speechToTextOption, locale.speechToText, Obx(() => speechToTextSettings(speechToTextOption.value)));
+    return expandableDropDownListItem(SpeechToTextOptions(), speechToTextOption, locale.speechToText, child: Obx(() => speechToTextSettings(speechToTextOption.value)));
   }
 
   Widget speechToTextSettings(SpeechToTextOption speechToTextOption) {

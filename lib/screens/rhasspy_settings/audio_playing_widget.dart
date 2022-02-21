@@ -7,7 +7,7 @@ import '../rhasspy_settings_screen.dart';
 extension AudioPlayingWidget on RhasspySettingsScreenState {
   Widget audioPlaying() {
     var audioPlayingOption = AudioPlayingOption.disabled.obs;
-    return listItem(AudioPlayingOptions(), audioPlayingOption, locale.audioPlaying, Obx(() => audioPlayingSettings(audioPlayingOption.value)));
+    return expandableDropDownListItem(AudioPlayingOptions(), audioPlayingOption, locale.audioPlaying, child: Obx(() => audioPlayingSettings(audioPlayingOption.value)));
   }
 
   Widget audioPlayingSettings(AudioPlayingOption audioPlayingOption) {

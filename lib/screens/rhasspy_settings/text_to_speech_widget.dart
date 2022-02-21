@@ -7,7 +7,7 @@ import '../rhasspy_settings_screen.dart';
 extension IntentHandlingWidget on RhasspySettingsScreenState {
   Widget textToSpeech() {
     var textToSpeechOption = TextToSpeechOption.disabled.obs;
-    return listItem(TextToSpeechOptions(), textToSpeechOption, locale.textToSpeech, Obx(() => textToSpeechSettings(textToSpeechOption.value)));
+    return expandableDropDownListItem(TextToSpeechOptions(), textToSpeechOption, locale.textToSpeech, child: Obx(() => textToSpeechSettings(textToSpeechOption.value)));
   }
 
   Widget textToSpeechSettings(TextToSpeechOption textToSpeechOption) {

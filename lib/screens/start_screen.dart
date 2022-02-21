@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:rhasspy_mobile/main.dart';
+
+import 'custom_state.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({Key? key}) : super(key: key);
@@ -9,15 +9,9 @@ class StartScreen extends StatefulWidget {
   State<StartScreen> createState() => _StartScreenState();
 }
 
-class _StartScreenState extends State<StartScreen> {
-  late AppLocalizations locale;
-  late ThemeData theme;
-
+class _StartScreenState extends CustomState<StartScreen> {
   @override
-  Widget build(BuildContext context) {
-    locale = AppLocalizations.of(context)!;
-    theme = Theme.of(context);
-
+  Widget content() {
     return LayoutBuilder(builder: (context, constraint) {
       return SingleChildScrollView(
         child: ConstrainedBox(

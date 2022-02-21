@@ -7,27 +7,19 @@ void main() {
   runApp(const RhasspyMobileApp());
 }
 
-GlobalKey<NavigatorState> materialKey = GlobalKey();
+var themeMode = ThemeMode.system.obs;
 
-ThemeData _getTheme() {
-  var themeData = ThemeData(brightness: themeBrightness.value, useMaterial3: true, primarySwatch: Colors.teal);
-
-  themeData = themeData.copyWith(
-      colorScheme: themeData.colorScheme.copyWith(surfaceVariant: themeData.brightness == Brightness.light ? themeData.colorScheme.surfaceVariant : themeData.colorScheme.surfaceVariant));
+ThemeData _getLightTheme() {
+  var themeData = ThemeData(brightness: Brightness.light, useMaterial3: true, primarySwatch: Colors.teal);
+  themeData = themeData.copyWith(colorScheme: themeData.colorScheme.copyWith(surfaceVariant: themeData.colorScheme.surfaceVariant));
   return themeData;
 }
 
-Widget customIconButton({required Icon icon, required VoidCallback onPressed}) {
-  return RawMaterialButton(
-      onPressed: () {},
-      clipBehavior: Clip.antiAlias,
-      constraints: const BoxConstraints(minWidth: 0.0, minHeight: 0.0),
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
-      fillColor: _getTheme().colorScheme.background,
-      child: IconButton(onPressed: onPressed, icon: icon, splashColor: _getTheme().colorScheme.tertiary));
+ThemeData _getDarkTheme() {
+  var themeData = ThemeData(brightness: Brightness.dark, useMaterial3: true, primarySwatch: Colors.teal);
+  themeData = themeData.copyWith(colorScheme: themeData.colorScheme.copyWith(surfaceVariant: themeData.colorScheme.surfaceVariant));
+  return themeData;
 }
-
-var themeBrightness = Brightness.dark.obs;
 
 class RhasspyMobileApp extends StatefulWidget {
   const RhasspyMobileApp({Key? key}) : super(key: key);
@@ -56,8 +48,9 @@ class _RhasspyMobileAppState extends State<RhasspyMobileApp> {
               title: 'Rhasspy Mobile',
               localizationsDelegates: AppLocalizations.localizationsDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
-              navigatorKey: materialKey,
-              theme: _getTheme(),
+              theme: _getLightTheme(),
+              darkTheme: _getDarkTheme(),
+              themeMode: themeMode.value,
               home: const MainScreen(),
             )));
   }

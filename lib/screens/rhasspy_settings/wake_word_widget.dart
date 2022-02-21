@@ -8,7 +8,7 @@ import '../rhasspy_settings_screen.dart';
 extension WakeWordWidget on RhasspySettingsScreenState {
   Widget wakeWord() {
     var wakeWordOption = WakeWordOption.disabled.obs;
-    return Obx(() => listItem(WakeWordOptions(), wakeWordOption, locale.wakeWord, localWakeWordSettings(wakeWordOption.value)));
+    return Obx(() => expandableDropDownListItem(WakeWordOptions(), wakeWordOption, locale.wakeWord, child: localWakeWordSettings(wakeWordOption.value)));
   }
 
   Widget localWakeWordSettings(WakeWordOption wakeWordOption) {

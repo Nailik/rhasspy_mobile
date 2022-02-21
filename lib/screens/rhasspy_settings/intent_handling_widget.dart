@@ -7,7 +7,7 @@ import '../rhasspy_settings_screen.dart';
 extension IntentHandlingWidget on RhasspySettingsScreenState {
   Widget intentHandling() {
     var intentHandlingOption = IntentHandlingOption.disabled.obs;
-    return listItem(IntentHandlingOptions(), intentHandlingOption, locale.intentHandling, Obx(() => intentHandlingSettings(intentHandlingOption.value)));
+    return expandableDropDownListItem(IntentHandlingOptions(), intentHandlingOption, locale.intentHandling, child: Obx(() => intentHandlingSettings(intentHandlingOption.value)));
   }
 
   Widget intentHandlingSettings(IntentHandlingOption intentHandlingOption) {

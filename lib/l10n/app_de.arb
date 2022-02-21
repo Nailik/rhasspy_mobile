@@ -46,5 +46,12 @@
   "accessToken": "Access Token",
   "homeAssistantEvents": "Send *events* to Home Assistant\n(/api/events)",
   "homeAssistantIntents": "Send *intents* to Home Assistant\n(/api/intent/handle)",
-  "refresh": "Refresh"
+  "refresh": "Refresh",
+  "darkTheme": "Dark Theme",
+  "lightTheme": "Light Theme",
+  "systemTheme": "System Theme",
+  "de": "Deutsch",
+  "en": "Englisch",
+  "theme": "Theme",
+  "language": "Language"
 }
