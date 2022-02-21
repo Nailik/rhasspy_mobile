@@ -20,8 +20,21 @@ ThemeData getTheme() {
           surfaceVariant: themeData.brightness == Brightness.light
               ? themeData.colorScheme.surfaceVariant
               : themeData.colorScheme.surfaceVariant));
-
   return themeData;
+}
+
+Widget customIconButton({required Icon icon, required VoidCallback onPressed}) {
+  return RawMaterialButton(
+      onPressed: () {},
+      clipBehavior: Clip.antiAlias,
+      constraints: const BoxConstraints(minWidth: 0.0, minHeight: 0.0),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(5))),
+      fillColor: getTheme().colorScheme.background,
+      child: IconButton(
+          onPressed: onPressed,
+          icon: icon,
+          splashColor: getTheme().colorScheme.tertiary));
 }
 
 AppLocalizations getLocale() {
@@ -38,7 +51,6 @@ class RhasspyMobileApp extends StatefulWidget {
 }
 
 class _RhasspyMobileAppState extends State<RhasspyMobileApp> {
-
   void removeFocus() {
     FocusScopeNode currentFocus = FocusScope.of(context);
     if (!currentFocus.hasPrimaryFocus) {

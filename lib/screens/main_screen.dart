@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:rhasspy_mobile/screens/rhasspy_settings_screen.dart';
 import 'package:rhasspy_mobile/screens/settings_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:rhasspy_mobile/screens/start_screen.dart';
 
 class MainScreen extends StatefulWidget {
