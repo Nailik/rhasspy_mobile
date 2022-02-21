@@ -52,6 +52,11 @@
   "systemTheme": "System Theme",
   "de": "Deutsch",
   "en": "Englisch",
-  "theme": "Theme",
-  "language": "Language"
+  "automaticSilenceDetection": "Automatic Silence Detection",
+  "backgroundWakeWordDetection": "Background WakeWord Detection",
+  "enableBackgroundWakeWordDetection": "Enable Background WakeWord Detection",
+  "backgroundWakeWordDetectionTurnOnDisplay": "Wake Up Display",
+  "wakeWordIndication": "WakeWord Indication",
+  "wakeWordSoundIndication": "Sound",
+  "wakeWordLightIndication": "Visual"
 }

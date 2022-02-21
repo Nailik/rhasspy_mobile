@@ -27,26 +27,7 @@ abstract class CustomState<T extends StatefulWidget> extends State<T> {
   }
 
   Widget expandableDropDownListItem<O>(Option<O> option, Rx<O> optionValue, String title, {Widget? child, ValueChanged<O?>? onChanged}) {
-    var childWidgets = <Widget>[
-      const Divider(),
-      Obx(() => DropdownButtonFormField2<O>(
-            value: optionValue.value,
-            onChanged: (O? newValue) {
-              if (newValue != null) {
-                optionValue.value = newValue;
-              }
-              if (onChanged != null) {
-                onChanged(newValue);
-              }
-            },
-            items: option.options.map<DropdownMenuItem<O>>((O value) {
-              return DropdownMenuItem<O>(
-                value: value,
-                child: Text(option.asText(value, locale)),
-              );
-            }).toList(),
-          )),
-    ];
+    var childWidgets = <Widget>[const Divider(), dropDownListItem(option, optionValue, onChanged: onChanged)];
 
     if (child != null) {
       childWidgets.add(child);
@@ -55,6 +36,26 @@ abstract class CustomState<T extends StatefulWidget> extends State<T> {
     childWidgets.add(const SizedBox(height: 8));
 
     return expandableListItem(title: title, subtitle: () => option.asText(optionValue.value, locale), children: childWidgets);
+  }
+
+  Widget dropDownListItem<O>(Option<O> option, Rx<O> optionValue, {ValueChanged<O?>? onChanged}) {
+    return Obx(() => DropdownButtonFormField2<O>(
+          value: optionValue.value,
+          onChanged: (O? newValue) {
+            if (newValue != null) {
+              optionValue.value = newValue;
+            }
+            if (onChanged != null) {
+              onChanged(newValue);
+            }
+          },
+          items: option.options.map<DropdownMenuItem<O>>((O value) {
+            return DropdownMenuItem<O>(
+              value: value,
+              child: Text(option.asText(value, locale)),
+            );
+          }).toList(),
+        ));
   }
 
   Widget expandableListItem({required String title, required String Function() subtitle, required List<Widget> children}) {
