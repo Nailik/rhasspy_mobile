@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:rhasspy_mobile/main.dart';
 
 class StartScreen extends StatefulWidget {
@@ -9,8 +10,14 @@ class StartScreen extends StatefulWidget {
 }
 
 class _StartScreenState extends State<StartScreen> {
+  late AppLocalizations locale;
+  late ThemeData theme;
+
   @override
   Widget build(BuildContext context) {
+    locale = AppLocalizations.of(context)!;
+    theme = Theme.of(context);
+
     return LayoutBuilder(builder: (context, constraint) {
       return SingleChildScrollView(
         child: ConstrainedBox(
@@ -28,7 +35,7 @@ class _StartScreenState extends State<StartScreen> {
     return Expanded(
       child: InkWell(
         onTap: () {},
-        splashColor: getTheme().colorScheme.tertiary,
+        splashColor: theme.colorScheme.tertiary,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
@@ -37,7 +44,7 @@ class _StartScreenState extends State<StartScreen> {
               children: [
                 Icon(Icons.mic, size: MediaQuery.of(context).size.height / 5),
                 Text(
-                  getLocale().wakeUp,
+                  locale.wakeUp,
                   textAlign: TextAlign.center,
                 )
               ]),
@@ -59,7 +66,7 @@ class _StartScreenState extends State<StartScreen> {
   Widget playRecording() {
     return ElevatedButton.icon(
         onPressed: () {},
-        label: Text(getLocale().playRecording),
+        label: Text(locale.playRecording),
         icon: const Icon(Icons.play_arrow));
   }
 
@@ -70,7 +77,7 @@ class _StartScreenState extends State<StartScreen> {
         Expanded(
             child: TextField(
                 decoration: InputDecoration(
-                    labelText: getLocale().textToRecognize,
+                    labelText: locale.textToRecognize,
                     border: const OutlineInputBorder()))),
         const VerticalDivider(),
         customIconButton(
@@ -86,7 +93,7 @@ class _StartScreenState extends State<StartScreen> {
         Expanded(
             child: TextField(
                 decoration: InputDecoration(
-                    labelText: getLocale().textToSpeak,
+                    labelText: locale.textToSpeak,
                     border: const OutlineInputBorder()))),
         const VerticalDivider(),
         customIconButton(onPressed: () {}, icon: const Icon(Icons.volume_up))

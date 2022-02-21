@@ -12,41 +12,40 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String dropdownValue = 'One';
+  late AppLocalizations locale;
+  late ThemeData theme;
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          const Text(
-            'Settings Page Content',
-          ),
-          languageDropDown(),
-          MaterialButton(
-            color: getTheme().colorScheme.background,
-              child: Text(themeBrightness.value == Brightness.light
-                  ? "Make Dark"
-                  : "Make Light"),
-              onPressed: () {
-                themeBrightness.value =
-                    (themeBrightness.value == Brightness.light)
-                        ? Brightness.dark
-                        : Brightness.light;
-                setState(() {});
-              })
-        ],
-      ),
+    locale = AppLocalizations.of(context)!;
+    theme = Theme.of(context);
+    return content();
+  }
+
+  Widget content() {
+    final List<Widget> items = <Widget>[languageDropDown(), themeDropDown()];
+
+    return ListView.separated(
+      itemCount: items.length,
+      itemBuilder: (BuildContext context, int index) {
+        return items[index];
+      },
+      separatorBuilder: (BuildContext context, int index) => const Divider(),
     );
   }
 
-  /// App Navigation bar with Title
-  AppBar navigationBar() {
-    return AppBar(
-      title: Text(AppLocalizations.of(context)!.settings),
-      actions: [languageDropDown()],
-    );
+  Widget themeDropDown() {
+    return MaterialButton(
+        color: theme.colorScheme.background,
+        child: Text(themeBrightness.value == Brightness.light
+            ? "Make Dark"
+            : "Make Light"),
+        onPressed: () {
+          themeBrightness.value = (themeBrightness.value == Brightness.light)
+              ? Brightness.dark
+              : Brightness.light;
+          setState(() {});
+        });
   }
 
   Widget languageDropDown() {
@@ -62,7 +61,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               alignment: Alignment.center,
               child: Text(
                 value.toLanguageTag(),
-          //      style: Theme.of(context).primaryTextTheme.titleLarge,
+                //      style: Theme.of(context).primaryTextTheme.titleLarge,
               ));
         }).toList();
       },
