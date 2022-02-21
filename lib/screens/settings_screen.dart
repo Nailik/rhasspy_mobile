@@ -37,13 +37,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget themeDropDown() {
     return MaterialButton(
         color: theme.colorScheme.background,
-        child: Text(themeBrightness.value == Brightness.light
-            ? "Make Dark"
-            : "Make Light"),
+        child: Text(themeBrightness.value == Brightness.light ? "Make Dark" : "Make Light"),
         onPressed: () {
-          themeBrightness.value = (themeBrightness.value == Brightness.light)
-              ? Brightness.dark
-              : Brightness.light;
+          themeBrightness.value = (themeBrightness.value == Brightness.light) ? Brightness.dark : Brightness.light;
           setState(() {});
         });
   }
@@ -65,8 +61,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ));
         }).toList();
       },
-      items: AppLocalizations.supportedLocales
-          .map<DropdownMenuItem<Locale>>((Locale value) {
+      items: AppLocalizations.supportedLocales.map<DropdownMenuItem<Locale>>((Locale value) {
         return DropdownMenuItem<Locale>(
           value: value,
           child: Text(

@@ -34,18 +34,7 @@ class RhasspySettingsScreenState extends State<RhasspySettingsScreen> {
   }
 
   Widget content() {
-    final List<Widget> items = <Widget>[
-      siteId(),
-      mqtt(),
-      audioRecording(),
-      wakeWord(),
-      speechToText(),
-      intentRecognition(),
-      textToSpeech(),
-      audioPlaying(),
-      dialogueManagement(),
-      intentHandling()
-    ];
+    final List<Widget> items = <Widget>[siteId(), mqtt(), audioRecording(), wakeWord(), speechToText(), intentRecognition(), textToSpeech(), audioPlaying(), dialogueManagement(), intentHandling()];
 
     return ListView.separated(
       itemCount: items.length,
@@ -60,8 +49,7 @@ class RhasspySettingsScreenState extends State<RhasspySettingsScreen> {
     return Container(
       padding: const EdgeInsets.all(10.0),
       child: TextField(
-        decoration: InputDecoration(
-            labelText: locale.siteId, border: const OutlineInputBorder()),
+        decoration: InputDecoration(labelText: locale.siteId, border: const OutlineInputBorder()),
       ),
     );
   }
@@ -73,8 +61,7 @@ class RhasspySettingsScreenState extends State<RhasspySettingsScreen> {
     );
   }
 
-  Widget listItem<T>(
-      Option<T> option, Rx<T> optionValue, String title, Widget? children) {
+  Widget listItem<T>(Option<T> option, Rx<T> optionValue, String title, Widget? children) {
     var childWidgets = <Widget>[
       const Divider(),
       Obx(() => DropdownButtonFormField2<T>(
@@ -99,16 +86,10 @@ class RhasspySettingsScreenState extends State<RhasspySettingsScreen> {
 
     childWidgets.add(const SizedBox(height: 8));
 
-    return expandableListItem(
-        title: title,
-        subtitle: () => option.asText(optionValue.value, locale),
-        children: childWidgets);
+    return expandableListItem(title: title, subtitle: () => option.asText(optionValue.value, locale), children: childWidgets);
   }
 
-  Widget expandableListItem(
-      {required String title,
-      required String Function() subtitle,
-      required List<Widget> children}) {
+  Widget expandableListItem({required String title, required String Function() subtitle, required List<Widget> children}) {
     Widget? subtitleWidget;
     subtitleWidget = Obx(() => Text(subtitle()));
 

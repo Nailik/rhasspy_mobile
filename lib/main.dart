@@ -10,16 +10,10 @@ void main() {
 GlobalKey<NavigatorState> materialKey = GlobalKey();
 
 ThemeData _getTheme() {
-  var themeData = ThemeData(
-      brightness: themeBrightness.value,
-      useMaterial3: true,
-      primarySwatch: Colors.teal);
+  var themeData = ThemeData(brightness: themeBrightness.value, useMaterial3: true, primarySwatch: Colors.teal);
 
   themeData = themeData.copyWith(
-      colorScheme: themeData.colorScheme.copyWith(
-          surfaceVariant: themeData.brightness == Brightness.light
-              ? themeData.colorScheme.surfaceVariant
-              : themeData.colorScheme.surfaceVariant));
+      colorScheme: themeData.colorScheme.copyWith(surfaceVariant: themeData.brightness == Brightness.light ? themeData.colorScheme.surfaceVariant : themeData.colorScheme.surfaceVariant));
   return themeData;
 }
 
@@ -28,13 +22,9 @@ Widget customIconButton({required Icon icon, required VoidCallback onPressed}) {
       onPressed: () {},
       clipBehavior: Clip.antiAlias,
       constraints: const BoxConstraints(minWidth: 0.0, minHeight: 0.0),
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(5))),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
       fillColor: _getTheme().colorScheme.background,
-      child: IconButton(
-          onPressed: onPressed,
-          icon: icon,
-          splashColor: _getTheme().colorScheme.tertiary));
+      child: IconButton(onPressed: onPressed, icon: icon, splashColor: _getTheme().colorScheme.tertiary));
 }
 
 var themeBrightness = Brightness.dark.obs;

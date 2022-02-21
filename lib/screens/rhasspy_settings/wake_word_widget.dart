@@ -27,7 +27,8 @@ extension WakeWordWidget on RhasspySettingsScreenState {
       mainAxisSize: MainAxisSize.min,
       children: [
         Expanded(
-            child: Obx(() => DropdownButtonFormField2<String>(
+            child: Obx(
+          () => DropdownButtonFormField2<String>(
             value: wakeWordKeywordOption.value,
             onChanged: (String? newValue) {
               if (newValue != null) {
