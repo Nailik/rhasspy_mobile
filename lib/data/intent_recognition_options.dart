@@ -3,15 +3,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'option.dart';
 
 class IntentRecognitionOptions extends Option<IntentRecognitionOption> {
-  static final IntentRecognitionOptions _singleton =
-      IntentRecognitionOptions._internal();
+  static final IntentRecognitionOptions _singleton = IntentRecognitionOptions._internal();
 
   factory IntentRecognitionOptions() {
     return _singleton;
   }
 
-  IntentRecognitionOptions._internal()
-      : super(IntentRecognitionOption.values, IntentRecognitionOption.disabled);
+  IntentRecognitionOptions._internal() : super(IntentRecognitionOption.values, IntentRecognitionOption.disabled);
 
   @override
   String asText(IntentRecognitionOption option, AppLocalizations local) {

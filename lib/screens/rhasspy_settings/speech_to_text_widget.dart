@@ -7,19 +7,12 @@ import '../rhasspy_settings_screen.dart';
 extension SpeechToTextWidget on RhasspySettingsScreenState {
   Widget speechToText() {
     var speechToTextOption = SpeechToTextOption.disabled.obs;
-    return listItem(
-        SpeechToTextOptions(),
-        speechToTextOption,
-        locale.speechToText,
-        Obx(() => speechToTextSettings(speechToTextOption.value)));
+    return listItem(SpeechToTextOptions(), speechToTextOption, locale.speechToText, Obx(() => speechToTextSettings(speechToTextOption.value)));
   }
 
   Widget speechToTextSettings(SpeechToTextOption speechToTextOption) {
     if (speechToTextOption == SpeechToTextOption.remoteHTTP) {
-      return Column(children: [
-        const Divider(),
-        TextFormField(decoration: defaultDecoration(locale.speechToTextURL))
-      ]);
+      return Column(children: [const Divider(), TextFormField(decoration: defaultDecoration(locale.speechToTextURL))]);
     } else {
       return Container();
     }

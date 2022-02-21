@@ -9,8 +9,7 @@ class SpeechToTextOptions extends Option<SpeechToTextOption> {
     return _singleton;
   }
 
-  SpeechToTextOptions._internal()
-      : super(SpeechToTextOption.values, SpeechToTextOption.disabled);
+  SpeechToTextOptions._internal() : super(SpeechToTextOption.values, SpeechToTextOption.disabled);
 
   @override
   String asText(SpeechToTextOption option, AppLocalizations local) {

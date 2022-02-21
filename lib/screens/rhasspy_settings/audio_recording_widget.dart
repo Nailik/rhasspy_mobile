@@ -8,9 +8,7 @@ extension AudioRecordingWidget on RhasspySettingsScreenState {
     var audioRecordingUdpOutput = false.obs;
     return expandableListItem(
       title: locale.audioRecording,
-      subtitle: () => audioRecordingUdpOutput.value
-          ? locale.udpAudioOutput
-          : locale.udpAudioOutputOff,
+      subtitle: () => audioRecordingUdpOutput.value ? locale.udpAudioOutput : locale.udpAudioOutputOff,
       children: <Widget>[
         const Divider(),
         Obx(() => SwitchListTile(

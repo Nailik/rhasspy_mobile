@@ -8,8 +8,7 @@ extension MQTTWidget on RhasspySettingsScreenState {
     var connectionStatus = false.obs;
     return expandableListItem(
       title: locale.mqtt,
-      subtitle: () =>
-          (connectionStatus.value ? locale.connected : locale.notConnected),
+      subtitle: () => (connectionStatus.value ? locale.connected : locale.notConnected),
       children: <Widget>[
         const Divider(),
         TextField(decoration: defaultDecoration(locale.host)),
@@ -26,9 +25,7 @@ extension MQTTWidget on RhasspySettingsScreenState {
                     labelText: locale.password,
                     suffixIcon: IconButton(
                       icon: Icon(
-                        passwordHidden.value
-                            ? Icons.visibility_off
-                            : Icons.visibility,
+                        passwordHidden.value ? Icons.visibility_off : Icons.visibility,
                       ),
                       onPressed: () {
                         passwordHidden.value = !passwordHidden.value;

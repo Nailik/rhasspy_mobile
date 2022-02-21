@@ -8,8 +8,7 @@ class AudioPlayingOptions extends Option<AudioPlayingOption> {
     return _singleton;
   }
 
-  AudioPlayingOptions._internal()
-      : super(AudioPlayingOption.values, AudioPlayingOption.disabled);
+  AudioPlayingOptions._internal() : super(AudioPlayingOption.values, AudioPlayingOption.disabled);
 
   @override
   String asText(AudioPlayingOption option, AppLocalizations local) {

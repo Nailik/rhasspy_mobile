@@ -9,8 +9,7 @@ class WakeWordOptions extends Option<WakeWordOption> {
     return _singleton;
   }
 
-  WakeWordOptions._internal()
-      : super(WakeWordOption.values, WakeWordOption.disabled);
+  WakeWordOptions._internal() : super(WakeWordOption.values, WakeWordOption.disabled);
 
   @override
   String asText(WakeWordOption option, AppLocalizations local) {

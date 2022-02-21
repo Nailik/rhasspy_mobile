@@ -7,21 +7,14 @@ import '../rhasspy_settings_screen.dart';
 extension IntentHandlingWidget on RhasspySettingsScreenState {
   Widget intentHandling() {
     var intentHandlingOption = IntentHandlingOption.disabled.obs;
-    return listItem(
-        IntentHandlingOptions(),
-        intentHandlingOption,
-        locale.intentHandling,
-        Obx(() => intentHandlingSettings(intentHandlingOption.value)));
+    return listItem(IntentHandlingOptions(), intentHandlingOption, locale.intentHandling, Obx(() => intentHandlingSettings(intentHandlingOption.value)));
   }
 
   Widget intentHandlingSettings(IntentHandlingOption intentHandlingOption) {
     var homeAssistantIntentOption = HomeAssistantIntent.events.obs;
 
     if (intentHandlingOption == IntentHandlingOption.remoteHTTP) {
-      return Column(children: [
-        const Divider(),
-        TextFormField(decoration: defaultDecoration(locale.remoteURL))
-      ]);
+      return Column(children: [const Divider(), TextFormField(decoration: defaultDecoration(locale.remoteURL))]);
     } else if (intentHandlingOption == IntentHandlingOption.homeAssistant) {
       return Column(children: [
         const Divider(),
@@ -36,8 +29,7 @@ extension IntentHandlingWidget on RhasspySettingsScreenState {
                   groupValue: homeAssistantIntentOption.value,
                   onChanged: (HomeAssistantIntent? value) {
                     if (value != null) {
-                      homeAssistantIntentOption.value =
-                          HomeAssistantIntent.events;
+                      homeAssistantIntentOption.value = HomeAssistantIntent.events;
                     }
                   },
                 ))),
@@ -48,8 +40,7 @@ extension IntentHandlingWidget on RhasspySettingsScreenState {
                   groupValue: homeAssistantIntentOption.value,
                   onChanged: (HomeAssistantIntent? value) {
                     if (value != null) {
-                      homeAssistantIntentOption.value =
-                          HomeAssistantIntent.intents;
+                      homeAssistantIntentOption.value = HomeAssistantIntent.intents;
                     }
                   },
                 ))),

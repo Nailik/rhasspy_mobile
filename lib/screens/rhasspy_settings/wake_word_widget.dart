@@ -8,18 +8,12 @@ import '../rhasspy_settings_screen.dart';
 extension WakeWordWidget on RhasspySettingsScreenState {
   Widget wakeWord() {
     var wakeWordOption = WakeWordOption.disabled.obs;
-    return Obx(() => listItem(WakeWordOptions(), wakeWordOption,
-        locale.wakeWord, localWakeWordSettings(wakeWordOption.value)));
+    return Obx(() => listItem(WakeWordOptions(), wakeWordOption, locale.wakeWord, localWakeWordSettings(wakeWordOption.value)));
   }
 
   Widget localWakeWordSettings(WakeWordOption wakeWordOption) {
     if (wakeWordOption == WakeWordOption.localPorcupine) {
-      return Column(children: [
-        const Divider(),
-        localWakeWordKeyword(),
-        const Divider(),
-        localWakeWordSensitivity()
-      ]);
+      return Column(children: [const Divider(), localWakeWordKeyword(), const Divider(), localWakeWordSensitivity()]);
     } else {
       return Container();
     }
@@ -33,16 +27,14 @@ extension WakeWordWidget on RhasspySettingsScreenState {
       mainAxisSize: MainAxisSize.min,
       children: [
         Expanded(
-            child: Obx(
-          () => DropdownButtonFormField2<String>(
+            child: Obx(() => DropdownButtonFormField2<String>(
             value: wakeWordKeywordOption.value,
             onChanged: (String? newValue) {
               if (newValue != null) {
                 wakeWordKeywordOption.value = newValue;
               }
             },
-            items: wakeWordKeywordOptions
-                .map<DropdownMenuItem<String>>((String value) {
+            items: wakeWordKeywordOptions.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
@@ -60,18 +52,10 @@ extension WakeWordWidget on RhasspySettingsScreenState {
     var wakeWordSensitivity = 0.55.obs;
 
     return Obx(() => Column(children: <Widget>[
-          Padding(
-              padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
-              child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                      "${locale.sensitivity} (${wakeWordSensitivity.value.toString()})"))),
+          Padding(padding: const EdgeInsets.fromLTRB(0, 16, 0, 0), child: Align(alignment: Alignment.centerLeft, child: Text("${locale.sensitivity} (${wakeWordSensitivity.value.toString()})"))),
           SliderTheme(
             data: SliderThemeData(
-                inactiveTrackColor: theme.colorScheme.secondary,
-                trackHeight: 0.1,
-                valueIndicatorShape: const PaddleSliderValueIndicatorShape(),
-                thumbShape: const RoundSliderThumbShape()),
+                inactiveTrackColor: theme.colorScheme.secondary, trackHeight: 0.1, valueIndicatorShape: const PaddleSliderValueIndicatorShape(), thumbShape: const RoundSliderThumbShape()),
             child: Slider(
               value: wakeWordSensitivity.value,
               max: 1,

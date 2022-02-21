@@ -7,20 +7,12 @@ import '../rhasspy_settings_screen.dart';
 extension IntentHandlingWidget on RhasspySettingsScreenState {
   Widget intentRecognition() {
     var intentRecognitionOption = IntentRecognitionOption.disabled.obs;
-    return listItem(
-        IntentRecognitionOptions(),
-        intentRecognitionOption,
-        locale.intentRecognition,
-        Obx(() => intentRecognitionSettings(intentRecognitionOption.value)));
+    return listItem(IntentRecognitionOptions(), intentRecognitionOption, locale.intentRecognition, Obx(() => intentRecognitionSettings(intentRecognitionOption.value)));
   }
 
   Widget intentRecognitionSettings(IntentRecognitionOption speechToTextOption) {
     if (speechToTextOption == IntentRecognitionOption.remoteHTTP) {
-      return Column(children: [
-        const Divider(),
-        TextFormField(
-            decoration: defaultDecoration(locale.rhasspyTextToIntentURL))
-      ]);
+      return Column(children: [const Divider(), TextFormField(decoration: defaultDecoration(locale.rhasspyTextToIntentURL))]);
     } else {
       return Container();
     }
