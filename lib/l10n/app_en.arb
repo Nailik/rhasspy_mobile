@@ -66,5 +66,6 @@
   "light": "Light",
   "chooseCertificate": "Choose Certificate",
   "showLog": "Show Log",
-  "log": "Log"
+  "log": "Log",
+  "httpSSL": "HTTP SSL"
 }

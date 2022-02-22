@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rhasspy_mobile/data/language_options.dart';
-import 'package:rhasspy_mobile/main.dart';
 import 'package:rhasspy_mobile/screens/custom_state.dart';
 
 import '../data/theme_options.dart';
@@ -35,7 +34,7 @@ class _SettingsScreenState extends CustomState<SettingsScreen> {
         padding: const EdgeInsets.all(8),
         child: dropDownListItem(ThemeOptions(), themeOption, onChanged: (ThemeOption? theme) {
           if (theme != null) {
-            themeMode.value = ThemeOptions.asThemeMode(theme);
+            Get.changeThemeMode(ThemeOptions.asThemeMode(theme));
           }
         }));
   }

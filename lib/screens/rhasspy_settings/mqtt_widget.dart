@@ -1,61 +1,106 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../settings/settings.dart';
 import '../rhasspy_settings_screen.dart';
 
 extension MQTTWidget on RhasspySettingsScreenState {
   Widget mqtt() {
-    var mqttSSL = false.obs;
     var connectionStatus = false.obs;
 
     var widgets = <Widget>[
       const Divider(),
-      TextField(decoration: defaultDecoration(locale.host)),
+      hostTextField(),
       const Divider(),
-      TextField(decoration: defaultDecoration(locale.port)),
+      portTextField(),
       const Divider(),
-      TextField(decoration: defaultDecoration(locale.userName)),
+      userNameTextField(),
       const Divider(),
-      ObxValue<RxBool>(
-          (passwordHidden) => TextFormField(
-                obscureText: passwordHidden.value,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  labelText: locale.password,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      passwordHidden.value ? Icons.visibility_off : Icons.visibility,
-                    ),
-                    onPressed: () {
-                      passwordHidden.value = !passwordHidden.value;
-                    },
-                  ),
-                ),
-              ),
-          true.obs),
+      passwordTextField(),
       const Divider(),
-      Obx(() => SwitchListTile(
-          title: Text(locale.enableSSL),
-          value: mqttSSL.value,
-          onChanged: (value) {
-            mqttSSL.value = value;
-          })),
+      enableSSL(),
       const Divider(),
+      sslCertificate(),
       Obx(() => Visibility(
-            visible: mqttSSL.value,
-            child: MaterialButton(
-              child: Text(locale.chooseCertificate),
-              textColor: theme.colorScheme.tertiary,
-              onPressed: () {},
-            ),
-          )),
-      Obx(() => Visibility(
-            visible: mqttSSL.value,
+            visible: mqttSSLSetting.value,
             child: const Divider(),
           )),
       ElevatedButton(child: Text(locale.checkConnection), onPressed: () {})
     ];
 
     return expandableListItem(title: locale.mqtt, subtitle: () => (connectionStatus.value ? locale.connected : locale.notConnected), children: widgets);
+  }
+
+  Widget hostTextField() {
+    final _hostController = TextEditingController(text: mqttHostSetting.value);
+    changeNotifierList.add(_hostController);
+    _hostController.addListener(() {
+      mqttHostSetting.setValue(_hostController.text);
+    });
+    return TextField(controller: _hostController, decoration: defaultDecoration(locale.host));
+  }
+
+  Widget portTextField() {
+    final _portController = TextEditingController(text: mqttPortSetting.value);
+    changeNotifierList.add(_portController);
+    _portController.addListener(() {
+      mqttPortSetting.setValue(_portController.text);
+    });
+    return TextField(controller: _portController, decoration: defaultDecoration(locale.port));
+  }
+
+  Widget userNameTextField() {
+    final _userNameController = TextEditingController(text: mqttUserNameSetting.value);
+    changeNotifierList.add(_userNameController);
+    _userNameController.addListener(() {
+      mqttUserNameSetting.setValue(_userNameController.text);
+    });
+    return TextField(controller: _userNameController, decoration: defaultDecoration(locale.userName));
+  }
+
+  Widget passwordTextField() {
+    final _passwordController = TextEditingController(text: mqttPasswordSetting.value);
+    changeNotifierList.add(_passwordController);
+    _passwordController.addListener(() {
+      mqttPasswordSetting.setValue(_passwordController.text);
+    });
+    return ObxValue<RxBool>(
+        (passwordHidden) => TextFormField(
+              controller: _passwordController,
+              obscureText: passwordHidden.value,
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                labelText: locale.password,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    passwordHidden.value ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: () {
+                    passwordHidden.value = !passwordHidden.value;
+                  },
+                ),
+              ),
+            ),
+        true.obs);
+  }
+
+  Widget enableSSL() {
+    return Obx(() => SwitchListTile(
+        title: Text(locale.enableSSL),
+        value: mqttSSLSetting.value,
+        onChanged: (value) {
+          mqttSSLSetting.setValue(value);
+        }));
+  }
+
+  Widget sslCertificate() {
+    return Obx(() => Visibility(
+          visible: mqttSSLSetting.value,
+          child: MaterialButton(
+            child: Text(locale.chooseCertificate),
+            textColor: theme.colorScheme.tertiary,
+            onPressed: () {},
+          ),
+        ));
   }
 }

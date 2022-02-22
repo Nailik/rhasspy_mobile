@@ -10,6 +10,7 @@ import 'package:rhasspy_mobile/screens/rhasspy_settings/rhasspy_base_settings.da
 import 'package:rhasspy_mobile/screens/rhasspy_settings/speech_to_text_widget.dart';
 import 'package:rhasspy_mobile/screens/rhasspy_settings/text_to_speech_widget.dart';
 import 'package:rhasspy_mobile/screens/rhasspy_settings/wake_word_widget.dart';
+import 'package:rhasspy_mobile/settings/settings.dart';
 
 class RhasspySettingsScreen extends StatefulWidget {
   const RhasspySettingsScreen({Key? key}) : super(key: key);
@@ -45,9 +46,16 @@ class RhasspySettingsScreenState extends CustomState<RhasspySettingsScreen> {
   }
 
   Widget siteId() {
+    final _controller = TextEditingController(text: siteIdSetting.value);
+    changeNotifierList.add(_controller);
+    _controller.addListener(() {
+      siteIdSetting.setValue(_controller.value.text);
+    });
+
     return Container(
       padding: const EdgeInsets.all(10.0),
       child: TextField(
+        controller: _controller,
         decoration: InputDecoration(labelText: locale.siteId, border: const OutlineInputBorder()),
       ),
     );

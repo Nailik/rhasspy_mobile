@@ -34,7 +34,7 @@ dependencies:
   intl: ^0.17.0
   get: ^4.6.1
   dropdown_button2: ^1.1.1
-  smooth_page_indicator: ^1.0.0+2
+  get_storage: ^2.0.3
 
 dev_dependencies:
   flutter_test:

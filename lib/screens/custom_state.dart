@@ -10,11 +10,21 @@ abstract class CustomState<T extends StatefulWidget> extends State<T> {
   late AppLocalizations locale;
   late ThemeData theme;
 
+  List<ChangeNotifier> changeNotifierList = [];
+
   @override
   Widget build(BuildContext context) {
     locale = AppLocalizations.of(context)!;
     theme = Theme.of(context);
     return content();
+  }
+
+  @override
+  void dispose() {
+    for (var element in changeNotifierList) {
+      element.dispose();
+    }
+    super.dispose();
   }
 
   Widget content();

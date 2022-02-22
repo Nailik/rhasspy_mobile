@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:rhasspy_mobile/screens/main_screen.dart';
 
-void main() {
+void main() async {
+  await GetStorage.init();
   runApp(const RhasspyMobileApp());
 }
 
@@ -43,15 +45,14 @@ class _RhasspyMobileAppState extends State<RhasspyMobileApp> {
         onPointerDown: (_) {
           removeFocus();
         },
-        child: Obx(() => GetMaterialApp(
+        child: GetMaterialApp(
               locale: Get.deviceLocale,
               title: 'Rhasspy Mobile',
               localizationsDelegates: AppLocalizations.localizationsDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
               theme: _getLightTheme(),
               darkTheme: _getDarkTheme(),
-              themeMode: themeMode.value,
               home: const MainScreen(),
-            )));
+            ));
   }
 }
