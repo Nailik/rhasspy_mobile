@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../rhasspy_settings_screen.dart';
+import '../custom_state.dart';
 
-extension AudioRecordingWidget on RhasspySettingsScreenState {
+extension AudioRecordingWidget on CustomState {
   Widget audioRecording() {
     var audioRecordingUdpOutput = false.obs;
     return expandableListItem(

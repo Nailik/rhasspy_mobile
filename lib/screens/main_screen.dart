@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:rhasspy_mobile/screens/rhasspy_settings_screen.dart';
 import 'package:rhasspy_mobile/screens/settings_screen.dart';
 import 'package:rhasspy_mobile/screens/start_screen.dart';
+
+import 'custom_state.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -11,20 +13,20 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends CustomState<MainScreen> {
   @override
-  Widget build(BuildContext context) {
+  Widget content() {
     return Scaffold(
       appBar: navigationBar(),
       body: getBody(),
-      bottomNavigationBar: bottomNavigation(),
+      bottomNavigationBar: Obx(() => bottomNavigation()),
     );
   }
 
   /// App Navigation bar with Title and Button to settings
   AppBar navigationBar() {
     return AppBar(
-      title: Text(AppLocalizations.of(context)!.appName),
+      title: Text(locale.appName),
     );
   }
 
@@ -43,24 +45,34 @@ class _MainScreenState extends State<MainScreen> {
 
   int _selectedIndex = 0;
 
-  BottomNavigationBar bottomNavigation() {
+  Widget bottomNavigation() {
+    List<BottomNavigationBarItem> items = <BottomNavigationBarItem>[
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.mic),
+        label: locale.home,
+      ),
+      BottomNavigationBarItem(
+        icon: const ImageIcon(
+          AssetImage('assets/rhasspy_icon.png'),
+        ),
+        label: locale.configuration,
+      ),
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.settings),
+        label: locale.settings,
+      )
+    ];
+
+    if (showLog.value) {
+      items.add(BottomNavigationBarItem(
+        icon: const Icon(Icons.reorder),
+        label: locale.log,
+      ));
+    }
+
     return BottomNavigationBar(
-      items: <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.mic),
-          label: AppLocalizations.of(context)!.home,
-        ),
-        BottomNavigationBarItem(
-          icon: const ImageIcon(
-            AssetImage('assets/rhasspy_icon.png'),
-          ),
-          label: AppLocalizations.of(context)!.configuration,
-        ),
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.settings),
-          label: AppLocalizations.of(context)!.settings,
-        ),
-      ],
+      items: items,
+      type: BottomNavigationBarType.fixed,
       currentIndex: _selectedIndex,
       backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
       selectedItemColor: Theme.of(context).colorScheme.onSurfaceVariant,

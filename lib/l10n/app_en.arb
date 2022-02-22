@@ -58,5 +58,13 @@
   "backgroundWakeWordDetectionTurnOnDisplay": "Wake Up Display",
   "wakeWordIndication": "WakeWord Indication",
   "wakeWordSoundIndication": "Sound",
-  "wakeWordLightIndication": "Visual"
+  "wakeWordLightIndication": "Visual",
+  "enableSSL": "Enable SSL",
+  "enabled": "Enabled",
+  "sound": "Sound",
+  "and": "and",
+  "light": "Light",
+  "chooseCertificate": "Choose Certificate",
+  "showLog": "Show Log",
+  "log": "Log"
 }

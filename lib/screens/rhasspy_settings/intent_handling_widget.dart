@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../data/intent_handling_options.dart';
-import '../rhasspy_settings_screen.dart';
+import '../custom_state.dart';
 
-extension IntentHandlingWidget on RhasspySettingsScreenState {
+extension IntentHandlingWidget on CustomState {
   Widget intentHandling() {
     var intentHandlingOption = IntentHandlingOption.disabled.obs;
     return expandableDropDownListItem(IntentHandlingOptions(), intentHandlingOption, locale.intentHandling, child: Obx(() => intentHandlingSettings(intentHandlingOption.value)));

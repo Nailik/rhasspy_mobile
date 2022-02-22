@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../data/speech_to_text_options.dart';
-import '../rhasspy_settings_screen.dart';
+import '../custom_state.dart';
 
-extension SpeechToTextWidget on RhasspySettingsScreenState {
+extension SpeechToTextWidget on CustomState {
   Widget speechToText() {
     var speechToTextOption = SpeechToTextOption.disabled.obs;
     return expandableDropDownListItem(SpeechToTextOptions(), speechToTextOption, locale.speechToText, child: Obx(() => speechToTextSettings(speechToTextOption.value)));

@@ -13,10 +13,12 @@ class SettingsScreen extends StatefulWidget {
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
+var showLog = true.obs;
+
 class _SettingsScreenState extends CustomState<SettingsScreen> {
   @override
   Widget content() {
-    final List<Widget> items = <Widget>[languageDropDown(), themeDropDown(), silenceDetection(), backgroundWakeWordDetection(), backgroundIndication()];
+    final List<Widget> items = <Widget>[languageDropDown(), themeDropDown(), silenceDetection(), backgroundWakeWordDetection(), backgroundIndication(), showLogWidget()];
 
     return ListView.separated(
       itemCount: items.length,
@@ -51,12 +53,12 @@ class _SettingsScreenState extends CustomState<SettingsScreen> {
 
   Widget silenceDetection() {
     var silenceDetection = false.obs;
-    return SwitchListTile(
+    return Obx(() => SwitchListTile(
         value: silenceDetection.value,
         onChanged: (value) {
           silenceDetection.value = value;
         },
-        title: Text(locale.automaticSilenceDetection));
+        title: Text(locale.automaticSilenceDetection)));
   }
 
   Widget backgroundWakeWordDetection() {
@@ -64,53 +66,91 @@ class _SettingsScreenState extends CustomState<SettingsScreen> {
     var backgroundWakeWordDetectionTurnOnDisplay = false.obs;
     return ExpansionTile(
         title: Text(locale.backgroundWakeWordDetection),
-        subtitle: Text("subtitle"),
+        subtitle: Obx(() => Text(backgroundWakeWordDetection.value ? locale.enabled : locale.disabled)),
         backgroundColor: theme.colorScheme.surfaceVariant,
         textColor: theme.colorScheme.onSurfaceVariant,
         childrenPadding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
         children: [
-          SwitchListTile(
+          Obx(() => SwitchListTile(
               title: Text(locale.enableBackgroundWakeWordDetection),
               value: backgroundWakeWordDetection.value,
               onChanged: (value) {
                 backgroundWakeWordDetection.value = value;
-              }),
-          SwitchListTile(
+              })),
+          Obx(() => SwitchListTile(
               title: Text(locale.backgroundWakeWordDetectionTurnOnDisplay),
               value: backgroundWakeWordDetectionTurnOnDisplay.value,
               onChanged: (value) {
                 backgroundWakeWordDetectionTurnOnDisplay.value = value;
-              }),
+              })),
         ]);
   }
 
+  var wakeWordSoundIndication = false.obs;
+  var wakeWordLightIndication = false.obs;
+
   Widget backgroundIndication() {
-    var wakeWordSoundIndication = false.obs;
-    var wakeWordLightIndication = false.obs;
     return ExpansionTile(
         title: Text(locale.wakeWordIndication),
-        subtitle: Text("subtitle"),
+        subtitle: Obx(() => backgroundSubtitle()),
         backgroundColor: theme.colorScheme.surfaceVariant,
         textColor: theme.colorScheme.onSurfaceVariant,
         childrenPadding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
         children: [
-          SwitchListTile(
+          Obx(() => SwitchListTile(
               title: Text(locale.wakeWordSoundIndication),
               value: wakeWordSoundIndication.value,
               onChanged: (value) {
                 wakeWordSoundIndication.value = value;
-              }),
-          SwitchListTile(
+              })),
+          Obx(() => SwitchListTile(
               title: Text(locale.wakeWordLightIndication),
               value: wakeWordLightIndication.value,
               onChanged: (value) {
                 wakeWordLightIndication.value = value;
-              }),
+              })),
+          Obx(() => SwitchListTile(
+              title: Text(locale.showLog),
+              value: showLog.value,
+              onChanged: (value) {
+                showLog.value = value;
+              })),
         ]);
+  }
+
+  Widget backgroundSubtitle() {
+    String text = "";
+
+    if (wakeWordSoundIndication.value) {
+      text += locale.sound;
+    }
+    if (wakeWordLightIndication.value) {
+      if (text.isNotEmpty) {
+        text += locale.and;
+      }
+      text += locale.light;
+    }
+    if (text.isEmpty) {
+      text = locale.disabled;
+    }
+
+    return Text(text);
+  }
+
+
+  Widget showLogWidget() {
+    return Obx(() => SwitchListTile(
+        value: showLog.value,
+        onChanged: (value) {
+          showLog.value = value;
+          setState(() {
+
+          });
+        },
+        title: Text(locale.showLog)));
   }
 }
 
-//background wake word detection (service)
-//silence detection
-//Logger
-//wakeword indikation (sound, light, display off)
+
+//ssl + certificate
+//mqtt ssl + certificate

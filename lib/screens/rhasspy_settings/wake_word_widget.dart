@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../data/wake_word_options.dart';
-import '../rhasspy_settings_screen.dart';
+import '../custom_state.dart';
 
-extension WakeWordWidget on RhasspySettingsScreenState {
+extension WakeWordWidget on CustomState {
   Widget wakeWord() {
     var wakeWordOption = WakeWordOption.disabled.obs;
     return Obx(() => expandableDropDownListItem(WakeWordOptions(), wakeWordOption, locale.wakeWord, child: localWakeWordSettings(wakeWordOption.value)));
