@@ -7,7 +7,8 @@ import '../custom_state.dart';
 extension IntentHandlingWidget on CustomState {
   Widget intentHandling() {
     var intentHandlingOption = IntentHandlingOption.disabled.obs;
-    return expandableDropDownListItem(IntentHandlingOptions(), intentHandlingOption, locale.intentHandling, child: Obx(() => intentHandlingSettings(intentHandlingOption.value)));
+    return expandableDropDownListItem(IntentHandlingOptions(), intentHandlingOption, locale.intentHandling,
+        child: Obx(() => intentHandlingSettings(intentHandlingOption.value)));
   }
 
   Widget intentHandlingSettings(IntentHandlingOption intentHandlingOption) {

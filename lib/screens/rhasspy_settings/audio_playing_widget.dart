@@ -7,7 +7,8 @@ import '../custom_state.dart';
 extension AudioPlayingWidget on CustomState {
   Widget audioPlaying() {
     var audioPlayingOption = AudioPlayingOption.disabled.obs;
-    return expandableDropDownListItem(AudioPlayingOptions(), audioPlayingOption, locale.audioPlaying, child: Obx(() => audioPlayingSettings(audioPlayingOption.value)));
+    return expandableDropDownListItem(AudioPlayingOptions(), audioPlayingOption, locale.audioPlaying,
+        child: Obx(() => audioPlayingSettings(audioPlayingOption.value)));
   }
 
   Widget audioPlayingSettings(AudioPlayingOption audioPlayingOption) {

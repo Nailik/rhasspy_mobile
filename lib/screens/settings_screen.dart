@@ -17,7 +17,14 @@ var showLog = true.obs;
 class _SettingsScreenState extends CustomState<SettingsScreen> {
   @override
   Widget content() {
-    final List<Widget> items = <Widget>[languageDropDown(), themeDropDown(), silenceDetection(), backgroundWakeWordDetection(), backgroundIndication(), showLogWidget()];
+    final List<Widget> items = <Widget>[
+      languageDropDown(),
+      themeDropDown(),
+      silenceDetection(),
+      backgroundWakeWordDetection(),
+      backgroundIndication(),
+      showLogWidget()
+    ];
 
     return ListView.separated(
       itemCount: items.length,

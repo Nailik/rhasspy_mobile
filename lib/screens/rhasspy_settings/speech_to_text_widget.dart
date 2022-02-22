@@ -7,7 +7,8 @@ import '../custom_state.dart';
 extension SpeechToTextWidget on CustomState {
   Widget speechToText() {
     var speechToTextOption = SpeechToTextOption.disabled.obs;
-    return expandableDropDownListItem(SpeechToTextOptions(), speechToTextOption, locale.speechToText, child: Obx(() => speechToTextSettings(speechToTextOption.value)));
+    return expandableDropDownListItem(SpeechToTextOptions(), speechToTextOption, locale.speechToText,
+        child: Obx(() => speechToTextSettings(speechToTextOption.value)));
   }
 
   Widget speechToTextSettings(SpeechToTextOption speechToTextOption) {

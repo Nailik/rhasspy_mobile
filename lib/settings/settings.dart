@@ -10,6 +10,10 @@ final mqttUserNameSetting = Setting("mqttUserName", "");
 final mqttPasswordSetting = Setting("mqttPassword", "");
 final mqttSSLSetting = Setting("mqttSSL", false);
 
+final udpAudioSetting = Setting("udpAudio", false);
+final udpAudioHostSetting = Setting("udpAudioHost", "");
+final udpAudioPortSetting = Setting("udpAudioPort", "");
+
 class Setting<T> extends Rx<T> {
   String id;
 

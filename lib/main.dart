@@ -46,13 +46,13 @@ class _RhasspyMobileAppState extends State<RhasspyMobileApp> {
           removeFocus();
         },
         child: GetMaterialApp(
-              locale: Get.deviceLocale,
-              title: 'Rhasspy Mobile',
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
-              supportedLocales: AppLocalizations.supportedLocales,
-              theme: _getLightTheme(),
-              darkTheme: _getDarkTheme(),
-              home: const MainScreen(),
-            ));
+          locale: Get.deviceLocale,
+          title: 'Rhasspy Mobile',
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: _getLightTheme(),
+          darkTheme: _getDarkTheme(),
+          home: const MainScreen(),
+        ));
   }
 }

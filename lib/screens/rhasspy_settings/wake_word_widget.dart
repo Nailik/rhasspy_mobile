@@ -8,7 +8,8 @@ import '../custom_state.dart';
 extension WakeWordWidget on CustomState {
   Widget wakeWord() {
     var wakeWordOption = WakeWordOption.disabled.obs;
-    return Obx(() => expandableDropDownListItem(WakeWordOptions(), wakeWordOption, locale.wakeWord, child: localWakeWordSettings(wakeWordOption.value)));
+    return Obx(
+        () => expandableDropDownListItem(WakeWordOptions(), wakeWordOption, locale.wakeWord, child: localWakeWordSettings(wakeWordOption.value)));
   }
 
   Widget localWakeWordSettings(WakeWordOption wakeWordOption) {
@@ -53,10 +54,15 @@ extension WakeWordWidget on CustomState {
     var wakeWordSensitivity = 0.55.obs;
 
     return Obx(() => Column(children: <Widget>[
-          Padding(padding: const EdgeInsets.fromLTRB(0, 16, 0, 0), child: Align(alignment: Alignment.centerLeft, child: Text("${locale.sensitivity} (${wakeWordSensitivity.value.toString()})"))),
+          Padding(
+              padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+              child: Align(alignment: Alignment.centerLeft, child: Text("${locale.sensitivity} (${wakeWordSensitivity.value.toString()})"))),
           SliderTheme(
             data: SliderThemeData(
-                inactiveTrackColor: theme.colorScheme.secondary, trackHeight: 0.1, valueIndicatorShape: const PaddleSliderValueIndicatorShape(), thumbShape: const RoundSliderThumbShape()),
+                inactiveTrackColor: theme.colorScheme.secondary,
+                trackHeight: 0.1,
+                valueIndicatorShape: const PaddleSliderValueIndicatorShape(),
+                thumbShape: const RoundSliderThumbShape()),
             child: Slider(
               value: wakeWordSensitivity.value,
               max: 1,

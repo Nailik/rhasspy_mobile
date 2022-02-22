@@ -28,69 +28,43 @@ extension MQTTWidget on RhasspySettingsScreenState {
       ElevatedButton(child: Text(locale.checkConnection), onPressed: () {})
     ];
 
-    return expandableListItem(title: locale.mqtt, subtitle: () => (connectionStatus.value ? locale.connected : locale.notConnected), children: widgets);
+    return expandableListItem(
+        title: locale.mqtt, subtitle: () => (connectionStatus.value ? locale.connected : locale.notConnected), children: widgets);
   }
 
   Widget hostTextField() {
-    final _hostController = TextEditingController(text: mqttHostSetting.value);
-    changeNotifierList.add(_hostController);
-    _hostController.addListener(() {
-      mqttHostSetting.setValue(_hostController.text);
-    });
-    return TextField(controller: _hostController, decoration: defaultDecoration(locale.host));
+    return autoSaveTextField(title: locale.host, setting: mqttHostSetting);
   }
 
   Widget portTextField() {
-    final _portController = TextEditingController(text: mqttPortSetting.value);
-    changeNotifierList.add(_portController);
-    _portController.addListener(() {
-      mqttPortSetting.setValue(_portController.text);
-    });
-    return TextField(controller: _portController, decoration: defaultDecoration(locale.port));
+    return autoSaveTextField(title: locale.port, setting: mqttPortSetting);
   }
 
   Widget userNameTextField() {
-    final _userNameController = TextEditingController(text: mqttUserNameSetting.value);
-    changeNotifierList.add(_userNameController);
-    _userNameController.addListener(() {
-      mqttUserNameSetting.setValue(_userNameController.text);
-    });
-    return TextField(controller: _userNameController, decoration: defaultDecoration(locale.userName));
+    return autoSaveTextField(title: locale.userName, setting: mqttUserNameSetting);
   }
 
   Widget passwordTextField() {
-    final _passwordController = TextEditingController(text: mqttPasswordSetting.value);
-    changeNotifierList.add(_passwordController);
-    _passwordController.addListener(() {
-      mqttPasswordSetting.setValue(_passwordController.text);
-    });
     return ObxValue<RxBool>(
-        (passwordHidden) => TextFormField(
-              controller: _passwordController,
-              obscureText: passwordHidden.value,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                labelText: locale.password,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    passwordHidden.value ? Icons.visibility_off : Icons.visibility,
-                  ),
-                  onPressed: () {
-                    passwordHidden.value = !passwordHidden.value;
-                  },
-                ),
-              ),
-            ),
-        true.obs);
+      (passwordHidden) => autoSaveTextField(
+        title: locale.userName,
+        setting: mqttPasswordSetting,
+        obscureText: passwordHidden.value,
+        suffixIcon: IconButton(
+          icon: Icon(
+            passwordHidden.value ? Icons.visibility_off : Icons.visibility,
+          ),
+          onPressed: () {
+            passwordHidden.value = !passwordHidden.value;
+          },
+        ),
+      ),
+      true.obs,
+    );
   }
 
   Widget enableSSL() {
-    return Obx(() => SwitchListTile(
-        title: Text(locale.enableSSL),
-        value: mqttSSLSetting.value,
-        onChanged: (value) {
-          mqttSSLSetting.setValue(value);
-        }));
+    return autoSaveSwitchTile(title: locale.enableSSL, setting: mqttSSLSetting);
   }
 
   Widget sslCertificate() {

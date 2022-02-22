@@ -5,6 +5,7 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
 import '../data/option.dart';
+import '../settings/settings.dart';
 
 abstract class CustomState<T extends StatefulWidget> extends State<T> {
   late AppLocalizations locale;
@@ -29,11 +30,8 @@ abstract class CustomState<T extends StatefulWidget> extends State<T> {
 
   Widget content();
 
-  InputDecoration defaultDecoration(String labelText) {
-    return InputDecoration(
-      border: const OutlineInputBorder(),
-      labelText: labelText,
-    );
+  InputDecoration defaultDecoration(String labelText, {Widget? suffixIcon}) {
+    return InputDecoration(border: const OutlineInputBorder(), labelText: labelText, suffixIcon: suffixIcon);
   }
 
   Widget expandableDropDownListItem<O>(Option<O> option, Rx<O> optionValue, String title, {Widget? child, ValueChanged<O?>? onChanged}) {
@@ -89,5 +87,32 @@ abstract class CustomState<T extends StatefulWidget> extends State<T> {
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
         fillColor: theme.colorScheme.background,
         child: IconButton(onPressed: onPressed, icon: icon, splashColor: theme.colorScheme.tertiary));
+  }
+
+  Widget autoSaveTextField(
+      {required String title, required Setting<String> setting, bool enabled = true, bool obscureText = false, Widget? suffixIcon}) {
+    final _controller = TextEditingController(text: title);
+    changeNotifierList.add(_controller);
+    _controller.addListener(() {
+      setting.setValue(_controller.text);
+    });
+    return TextField(
+          controller: _controller,
+          obscureText: obscureText,
+          decoration: defaultDecoration(locale.port, suffixIcon: suffixIcon),
+        );
+  }
+
+  Widget autoSaveSwitchTile({required String title, String? subtitle, required Setting<bool> setting}) {
+    return Obx(
+      () => SwitchListTile(
+        value: setting.value,
+        onChanged: (value) {
+          setting.setValue(value);
+        },
+        title: Text(title),
+        subtitle: subtitle != null ? Text(subtitle) : null,
+      ),
+    );
   }
 }
