@@ -5,6 +5,7 @@ import 'package:rhasspy_mobile/screens/settings_screen.dart';
 import 'package:rhasspy_mobile/screens/start_screen.dart';
 
 import 'custom_state.dart';
+import 'log_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -38,6 +39,8 @@ class _MainScreenState extends CustomState<MainScreen> {
         return const RhasspySettingsScreen();
       case 2:
         return const SettingsScreen();
+      case 3:
+        return const LogScreen();
       default:
         return null;
     }
@@ -74,8 +77,8 @@ class _MainScreenState extends CustomState<MainScreen> {
       items: items,
       type: BottomNavigationBarType.fixed,
       currentIndex: _selectedIndex,
-      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-      selectedItemColor: Theme.of(context).colorScheme.onSurfaceVariant,
+      backgroundColor: theme.colorScheme.surfaceVariant,
+      selectedItemColor: theme.colorScheme.onSurfaceVariant,
       onTap: _onItemTapped,
     );
   }

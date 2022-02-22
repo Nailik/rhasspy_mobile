@@ -137,20 +137,16 @@ class _SettingsScreenState extends CustomState<SettingsScreen> {
     return Text(text);
   }
 
-
   Widget showLogWidget() {
     return Obx(() => SwitchListTile(
         value: showLog.value,
         onChanged: (value) {
           showLog.value = value;
-          setState(() {
-
-          });
+          setState(() {});
         },
         title: Text(locale.showLog)));
   }
 }
-
 
 //ssl + certificate
 //mqtt ssl + certificate

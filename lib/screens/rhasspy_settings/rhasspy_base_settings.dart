@@ -29,6 +29,4 @@ extension HTTPSettingsWidget on CustomState {
               )),
         ]);
   }
-
-
 }
