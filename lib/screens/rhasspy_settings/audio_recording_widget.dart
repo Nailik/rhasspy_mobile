@@ -12,24 +12,18 @@ extension AudioRecordingWidget on CustomState {
       subtitle: () => audioRecordingUdpOutput.value ? locale.udpAudioOutput : locale.udpAudioOutputOff,
       children: <Widget>[
         const Divider(),
-        udpAudioSwitch(),
+
+        ///switch
+        autoSaveSwitchTile(title: locale.udpAudioOutput, subtitle: locale.udpAudioOutputDetail, setting: udpAudioSetting),
         const Divider(),
-        udpAudioHost(),
+
+        ///host
+        Obx(() => autoSaveTextField(title: locale.host, setting: udpAudioHostSetting, enabled: udpAudioSetting.value)),
         const Divider(),
-        udpAudioPort(),
+
+        ///Ports
+        Obx(() => autoSaveTextField(title: locale.port, setting: udpAudioPortSetting, enabled: udpAudioSetting.value)),
       ],
     );
-  }
-
-  Widget udpAudioSwitch() {
-    return autoSaveSwitchTile(title: locale.udpAudioOutput, subtitle: locale.udpAudioOutputDetail, setting: udpAudioSetting);
-  }
-
-  Widget udpAudioHost() {
-    return Obx(() => autoSaveTextField(title: locale.host, setting: udpAudioHostSetting, enabled: udpAudioSetting.value));
-  }
-
-  Widget udpAudioPort() {
-    return Obx(() => autoSaveTextField(title: locale.port, setting: udpAudioPortSetting, enabled: udpAudioSetting.value));
   }
 }

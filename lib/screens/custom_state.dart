@@ -92,10 +92,7 @@ abstract class CustomState<T extends StatefulWidget> extends State<T> {
   Widget autoSaveTextField(
       {required String title, required Setting<String> setting, bool enabled = true, bool obscureText = false, Widget? suffixIcon}) {
     final _controller = TextEditingController(text: setting.value);
-    _controller.selection = TextSelection(
-        baseOffset: setting.value.length,
-        extentOffset: setting.value.length
-    );
+    _controller.selection = TextSelection(baseOffset: setting.value.length, extentOffset: setting.value.length);
     changeNotifierList.add(_controller);
     _controller.addListener(() {
       setting.setValue(_controller.text);
@@ -109,15 +106,14 @@ abstract class CustomState<T extends StatefulWidget> extends State<T> {
 
   Widget autoSaveSwitchTile({required String title, String? subtitle, required Setting<bool> setting}) {
     return Obx(
-          () =>
-          SwitchListTile(
-            value: setting.value,
-            onChanged: (value) {
-              setting.setValue(value);
-            },
-            title: Text(title),
-            subtitle: subtitle != null ? Text(subtitle) : null,
-          ),
+      () => SwitchListTile(
+        value: setting.value,
+        onChanged: (value) {
+          setting.setValue(value);
+        },
+        title: Text(title),
+        subtitle: subtitle != null ? Text(subtitle) : null,
+      ),
     );
   }
 

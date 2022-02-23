@@ -10,11 +10,17 @@ extension MQTTWidget on RhasspySettingsScreenState {
 
     var widgets = <Widget>[
       const Divider(),
-      hostTextField(),
+
+      ///host
+      autoSaveTextField(title: locale.host, setting: mqttHostSetting),
       const Divider(),
-      portTextField(),
+
+      ///port
+      autoSaveTextField(title: locale.port, setting: mqttPortSetting),
       const Divider(),
-      userNameTextField(),
+
+      ///username
+      autoSaveTextField(title: locale.userName, setting: mqttUserNameSetting),
       const Divider(),
       passwordTextField(),
       const Divider(),
@@ -30,18 +36,6 @@ extension MQTTWidget on RhasspySettingsScreenState {
 
     return expandableListItem(
         title: locale.mqtt, subtitle: () => (connectionStatus.value ? locale.connected : locale.notConnected), children: widgets);
-  }
-
-  Widget hostTextField() {
-    return autoSaveTextField(title: locale.host, setting: mqttHostSetting);
-  }
-
-  Widget portTextField() {
-    return autoSaveTextField(title: locale.port, setting: mqttPortSetting);
-  }
-
-  Widget userNameTextField() {
-    return autoSaveTextField(title: locale.userName, setting: mqttUserNameSetting);
   }
 
   Widget passwordTextField() {
