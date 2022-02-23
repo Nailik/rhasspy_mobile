@@ -133,13 +133,15 @@ abstract class CustomState<T extends StatefulWidget> extends State<T> {
     return expandableListItem(title: title, subtitle: () => option.asText(setting.value, locale), children: childWidgets);
   }
 
-  Widget autoSaveDropDownListItem<O>({required Option<O> option, required Setting<O> setting}) {
-    return Obx(() =>
-        DropdownButtonFormField2<O>(
+  Widget autoSaveDropDownListItem<O>({required Option<O> option, required Setting<O> setting, VoidCallback? onChanged}) {
+    return Obx(() => DropdownButtonFormField2<O>(
           value: setting.value ?? option.initial,
           onChanged: (O? newValue) {
             if (newValue != null) {
               setting.setValue(newValue);
+              if (onChanged != null) {
+                onChanged();
+              }
             }
           },
           items: option.options.map<DropdownMenuItem<O>>((O value) {

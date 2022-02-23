@@ -11,6 +11,18 @@ import '../data/language_options.dart';
 import '../data/text_to_speech_options.dart';
 import '../data/theme_options.dart';
 
+//app settings
+
+final languageSetting = Setting("languageSetting", LanguageOption.en); //Get.device
+final themeSetting = Setting("themeSetting", ThemeOption.system);
+final automaticSilenceDetectionSetting = Setting("automaticSilenceDetectionSetting", false);
+final backgroundWakeWordDetectionSetting = Setting("backgroundWakeWordDetectionSetting", false);
+final wakeUpDisplaySetting = Setting("wakeUpDisplaySetting", false);
+final wakeWordIndicationSoundSetting = Setting("wakeWordIndicationSoundSetting", false);
+final wakeWordIndicationVisualSetting = Setting("wakeWordIndicationVisualSetting", false);
+final showLogSetting = Setting("showLogSetting", false);
+
+//rhasspy settings
 final httpSSLSetting = Setting("httpSSLSetting", false);
 final siteIdSetting = Setting("siteIdSetting", "");
 
@@ -36,6 +48,7 @@ final intentHandlingSetting = Setting("intentHandlingSetting", IntentHandlingOpt
 final intentHandlingHTTPURLSetting = Setting("intentHandlingHTTPURLSetting", "");
 final intentHandlingHassURLSetting = Setting("intentHandlingHassURLSetting", "");
 final intentHandlingHassTokenSetting = Setting("intentHandlingHassTokenSetting", "");
+final intentHandlingHassIntentSetting = Setting("intentHandlingHassIntentSetting", HomeAssistantIntent.events);
 
 final intentRecognitionSetting = Setting("intentRecognitionSetting", IntentRecognitionOption.disabled);
 final intentRecognitionHTTPURLSetting = Setting("intentRecognitionHTTPURLSetting", "");
@@ -45,9 +58,10 @@ final languageSettings = Setting("languageSetting", LanguageOption.en);
 final textToSpeechSetting = Setting("textToSpeechSetting", TextToSpeechOption.disabled);
 final textToSpeechHTTPURL = Setting("textToSpeechHTTPURL", "");
 
-final themeSetting = Setting("themeSetting", ThemeOption.system);
-
 final wakeWordSetting = Setting("wakeWordSetting", WakeWordOption.disabled);
+final wakeWordNameOptionsSetting = Setting("wakeWordNameOptionsSetting", ["jarvis", "porcupine"]);
+final wakeWordNameOptionsIndexSetting = Setting("wakeWordNameOptionsIndexSetting", 0);
+final wakeWordSensitivitySetting = Setting("wakeWordSensitivitySetting", 0.55);
 
 class Setting<T> extends Rx<T> {
   String id;
@@ -71,6 +85,8 @@ class Setting<T> extends Rx<T> {
       value = ThemeOption.values.byName(GetStorage().read<String>(id) ?? initial.name) as T;
     } else if (initial is WakeWordOption) {
       value = WakeWordOption.values.byName(GetStorage().read<String>(id) ?? initial.name) as T;
+    } else if (initial is HomeAssistantIntent) {
+      value = HomeAssistantIntent.values.byName(GetStorage().read<String>(id) ?? initial.name) as T;
     } else {
       value = GetStorage().read<T>(id) ?? initial;
     }
@@ -94,6 +110,8 @@ class Setting<T> extends Rx<T> {
     } else if (value is ThemeOption) {
       GetStorage().write(id, value.name);
     } else if (value is WakeWordOption) {
+      GetStorage().write(id, value.name);
+    } else if (value is HomeAssistantIntent) {
       GetStorage().write(id, value.name);
     } else {
       GetStorage().write(id, value);

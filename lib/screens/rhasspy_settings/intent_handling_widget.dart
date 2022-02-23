@@ -15,12 +15,10 @@ extension IntentHandlingWidget on CustomState {
   }
 
   Widget intentHandlingSettings(IntentHandlingOption intentHandlingOption) {
-    var homeAssistantIntentOption = HomeAssistantIntent.events.obs;
-
     if (intentHandlingOption == IntentHandlingOption.remoteHTTP) {
       return Column(children: [
         const Divider(),
-        autoSaveTextField(title: locale.remoteURL, setting: intentHandlingHassURLSetting),
+        autoSaveTextField(title: locale.remoteURL, setting: intentHandlingHTTPURLSetting),
       ]);
     } else if (intentHandlingOption == IntentHandlingOption.homeAssistant) {
       return Column(children: [
@@ -33,10 +31,10 @@ extension IntentHandlingWidget on CustomState {
             title: Text(locale.homeAssistantEvents),
             leading: Obx(() => Radio<HomeAssistantIntent>(
                   value: HomeAssistantIntent.events,
-                  groupValue: homeAssistantIntentOption.value,
+                  groupValue: intentHandlingHassIntentSetting.value,
                   onChanged: (HomeAssistantIntent? value) {
                     if (value != null) {
-                      homeAssistantIntentOption.value = HomeAssistantIntent.events;
+                      intentHandlingHassIntentSetting.setValue(HomeAssistantIntent.events);
                     }
                   },
                 ))),
@@ -44,10 +42,10 @@ extension IntentHandlingWidget on CustomState {
             title: Text(locale.homeAssistantIntents),
             leading: Obx(() => Radio<HomeAssistantIntent>(
                   value: HomeAssistantIntent.intents,
-                  groupValue: homeAssistantIntentOption.value,
+                  groupValue: intentHandlingHassIntentSetting.value,
                   onChanged: (HomeAssistantIntent? value) {
                     if (value != null) {
-                      homeAssistantIntentOption.value = HomeAssistantIntent.intents;
+                      intentHandlingHassIntentSetting.setValue(HomeAssistantIntent.intents);
                     }
                   },
                 ))),

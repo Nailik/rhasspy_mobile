@@ -21,22 +21,19 @@ extension WakeWordWidget on CustomState {
   }
 
   Widget localWakeWordKeyword() {
-    var wakeWordKeywordOption = "jarvis".obs;
-    var wakeWordKeywordOptions = ["jarvis", "porcupine"];
-
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Expanded(
             child: Obx(
           () => DropdownButtonFormField2<String>(
-            value: wakeWordKeywordOption.value,
+            value: wakeWordNameOptionsSetting.value[wakeWordNameOptionsIndexSetting.value],
             onChanged: (String? newValue) {
               if (newValue != null) {
-                wakeWordKeywordOption.value = newValue;
+                wakeWordNameOptionsIndexSetting.setValue(wakeWordNameOptionsSetting.value.indexOf(newValue));
               }
             },
-            items: wakeWordKeywordOptions.map<DropdownMenuItem<String>>((String value) {
+            items: wakeWordNameOptionsSetting.value.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
@@ -51,12 +48,10 @@ extension WakeWordWidget on CustomState {
   }
 
   Widget localWakeWordSensitivity() {
-    var wakeWordSensitivity = 0.55.obs;
-
     return Obx(() => Column(children: <Widget>[
           Padding(
               padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
-              child: Align(alignment: Alignment.centerLeft, child: Text("${locale.sensitivity} (${wakeWordSensitivity.value.toString()})"))),
+              child: Align(alignment: Alignment.centerLeft, child: Text("${locale.sensitivity} (${wakeWordSensitivitySetting.value.toString()})"))),
           SliderTheme(
             data: SliderThemeData(
                 inactiveTrackColor: theme.colorScheme.secondary,
@@ -64,12 +59,12 @@ extension WakeWordWidget on CustomState {
                 valueIndicatorShape: const PaddleSliderValueIndicatorShape(),
                 thumbShape: const RoundSliderThumbShape()),
             child: Slider(
-              value: wakeWordSensitivity.value,
+              value: wakeWordSensitivitySetting.value,
               max: 1,
               divisions: 100,
-              label: wakeWordSensitivity.toString(),
+              label: wakeWordSensitivitySetting.toString(),
               onChanged: (double value) {
-                wakeWordSensitivity.value = value;
+                wakeWordSensitivitySetting.setValue(value);
               },
             ),
           ),

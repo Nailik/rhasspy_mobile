@@ -4,6 +4,7 @@ import 'package:rhasspy_mobile/screens/rhasspy_settings_screen.dart';
 import 'package:rhasspy_mobile/screens/settings_screen.dart';
 import 'package:rhasspy_mobile/screens/start_screen.dart';
 
+import '../settings/settings.dart';
 import 'custom_state.dart';
 import 'log_screen.dart';
 
@@ -66,7 +67,7 @@ class _MainScreenState extends CustomState<MainScreen> {
       )
     ];
 
-    if (showLog.value) {
+    if (showLogSetting.value) {
       items.add(BottomNavigationBarItem(
         icon: const Icon(Icons.reorder),
         label: locale.log,
