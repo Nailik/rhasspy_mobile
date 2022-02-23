@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rhasspy_mobile/data/language_options.dart';
-import 'package:rhasspy_mobile/main.dart';
 import 'package:rhasspy_mobile/screens/custom_state.dart';
 
 import '../data/theme_options.dart';
+import '../settings/settings.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -18,7 +18,15 @@ var showLog = true.obs;
 class _SettingsScreenState extends CustomState<SettingsScreen> {
   @override
   Widget content() {
-    final List<Widget> items = <Widget>[languageDropDown(), themeDropDown(), silenceDetection(), backgroundWakeWordDetection(), backgroundIndication(), showLogWidget()];
+    final List<Widget> items = <Widget>[
+      languageDropDown(),
+      themeDropDown(),
+      silenceDetection(),
+      backgroundWakeWordDetection(),
+      backgroundIndication(),
+      //showLog
+      autoSaveSwitchTile(title: locale.showLog, setting: showLogSetting)
+    ];
 
     return ListView.separated(
       itemCount: items.length,
@@ -30,64 +38,43 @@ class _SettingsScreenState extends CustomState<SettingsScreen> {
   }
 
   Widget themeDropDown() {
-    var themeOption = ThemeOption.system.obs;
     return Padding(
         padding: const EdgeInsets.all(8),
-        child: dropDownListItem(ThemeOptions(), themeOption, onChanged: (ThemeOption? theme) {
-          if (theme != null) {
-            themeMode.value = ThemeOptions.asThemeMode(theme);
-          }
-        }));
+        child: autoSaveDropDownListItem(
+            option: ThemeOptions(),
+            setting: themeSetting,
+            onChanged: () {
+              Get.changeThemeMode(ThemeOptions.asThemeMode(themeSetting.value));
+            }));
   }
 
   Widget languageDropDown() {
-    var languageOption = LanguageOption.en.obs;
     return Padding(
         padding: const EdgeInsets.all(8),
-        child: dropDownListItem(LanguageOptions(), languageOption, onChanged: (LanguageOption? language) {
-          if (language != null) {
-            Get.updateLocale(LanguageOptions.asLocale(language));
-          }
-        }));
+        child: autoSaveDropDownListItem(
+            option: LanguageOptions(),
+            setting: languageSetting,
+            onChanged: () {
+              Get.updateLocale(LanguageOptions.asLocale(languageSetting.value));
+            }));
   }
 
   Widget silenceDetection() {
-    var silenceDetection = false.obs;
-    return Obx(() => SwitchListTile(
-        value: silenceDetection.value,
-        onChanged: (value) {
-          silenceDetection.value = value;
-        },
-        title: Text(locale.automaticSilenceDetection)));
+    return autoSaveSwitchTile(title: locale.automaticSilenceDetection, setting: automaticSilenceDetectionSetting);
   }
 
   Widget backgroundWakeWordDetection() {
-    var backgroundWakeWordDetection = false.obs;
-    var backgroundWakeWordDetectionTurnOnDisplay = false.obs;
     return ExpansionTile(
         title: Text(locale.backgroundWakeWordDetection),
-        subtitle: Obx(() => Text(backgroundWakeWordDetection.value ? locale.enabled : locale.disabled)),
+        subtitle: Obx(() => Text(backgroundWakeWordDetectionSetting.value ? locale.enabled : locale.disabled)),
         backgroundColor: theme.colorScheme.surfaceVariant,
         textColor: theme.colorScheme.onSurfaceVariant,
         childrenPadding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
         children: [
-          Obx(() => SwitchListTile(
-              title: Text(locale.enableBackgroundWakeWordDetection),
-              value: backgroundWakeWordDetection.value,
-              onChanged: (value) {
-                backgroundWakeWordDetection.value = value;
-              })),
-          Obx(() => SwitchListTile(
-              title: Text(locale.backgroundWakeWordDetectionTurnOnDisplay),
-              value: backgroundWakeWordDetectionTurnOnDisplay.value,
-              onChanged: (value) {
-                backgroundWakeWordDetectionTurnOnDisplay.value = value;
-              })),
+          autoSaveSwitchTile(title: locale.enableBackgroundWakeWordDetection, setting: backgroundWakeWordDetectionSetting),
+          autoSaveSwitchTile(title: locale.backgroundWakeWordDetectionTurnOnDisplay, setting: wakeUpDisplaySetting),
         ]);
   }
-
-  var wakeWordSoundIndication = false.obs;
-  var wakeWordLightIndication = false.obs;
 
   Widget backgroundIndication() {
     return ExpansionTile(
@@ -97,36 +84,20 @@ class _SettingsScreenState extends CustomState<SettingsScreen> {
         textColor: theme.colorScheme.onSurfaceVariant,
         childrenPadding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
         children: [
-          Obx(() => SwitchListTile(
-              title: Text(locale.wakeWordSoundIndication),
-              value: wakeWordSoundIndication.value,
-              onChanged: (value) {
-                wakeWordSoundIndication.value = value;
-              })),
-          Obx(() => SwitchListTile(
-              title: Text(locale.wakeWordLightIndication),
-              value: wakeWordLightIndication.value,
-              onChanged: (value) {
-                wakeWordLightIndication.value = value;
-              })),
-          Obx(() => SwitchListTile(
-              title: Text(locale.showLog),
-              value: showLog.value,
-              onChanged: (value) {
-                showLog.value = value;
-              })),
+          autoSaveSwitchTile(title: locale.wakeWordSoundIndication, setting: wakeWordIndicationSoundSetting),
+          autoSaveSwitchTile(title: locale.wakeWordLightIndication, setting: wakeWordIndicationVisualSetting),
         ]);
   }
 
   Widget backgroundSubtitle() {
     String text = "";
 
-    if (wakeWordSoundIndication.value) {
+    if (wakeWordIndicationSoundSetting.value) {
       text += locale.sound;
     }
-    if (wakeWordLightIndication.value) {
+    if (wakeWordIndicationVisualSetting.value) {
       if (text.isNotEmpty) {
-        text += locale.and;
+        text += " " + locale.and + " ";
       }
       text += locale.light;
     }
@@ -135,16 +106,6 @@ class _SettingsScreenState extends CustomState<SettingsScreen> {
     }
 
     return Text(text);
-  }
-
-  Widget showLogWidget() {
-    return Obx(() => SwitchListTile(
-        value: showLog.value,
-        onChanged: (value) {
-          showLog.value = value;
-          setState(() {});
-        },
-        title: Text(locale.showLog)));
   }
 }
 

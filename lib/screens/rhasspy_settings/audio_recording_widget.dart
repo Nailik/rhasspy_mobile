@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rhasspy_mobile/settings/settings.dart';
 
 import '../custom_state.dart';
 
@@ -11,24 +12,17 @@ extension AudioRecordingWidget on CustomState {
       subtitle: () => audioRecordingUdpOutput.value ? locale.udpAudioOutput : locale.udpAudioOutputOff,
       children: <Widget>[
         const Divider(),
-        Obx(() => SwitchListTile(
-            value: audioRecordingUdpOutput.value,
-            onChanged: (value) {
-              audioRecordingUdpOutput.value = value;
-            },
-            title: Text(locale.udpAudioOutput),
-            subtitle: Text(locale.udpAudioOutputDetail))),
+
+        ///switch
+        autoSaveSwitchTile(title: locale.udpAudioOutput, subtitle: locale.udpAudioOutputDetail, setting: udpAudioSetting),
         const Divider(),
-        Obx(() => TextField(
-              enabled: audioRecordingUdpOutput.value,
-              decoration: defaultDecoration(locale.host),
-            )),
+
+        ///host
+        Obx(() => autoSaveTextField(title: locale.host, setting: udpAudioHostSetting, enabled: udpAudioSetting.value)),
         const Divider(),
-        Obx(() => TextField(
-              enabled: audioRecordingUdpOutput.value,
-              decoration: defaultDecoration(locale.port),
-            )),
-        //TODO silence detection
+
+        ///Ports
+        Obx(() => autoSaveTextField(title: locale.port, setting: udpAudioPortSetting, enabled: udpAudioSetting.value)),
       ],
     );
   }
