@@ -24,4 +24,8 @@ class SpeechToTextOptions extends Option<SpeechToTextOption> {
   }
 }
 
-enum SpeechToTextOption { remoteHTTP, remoteMQTT, disabled }
+enum SpeechToTextOption {
+  remoteHTTP,
+  remoteMQTT,
+  disabled
+}

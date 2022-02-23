@@ -45,18 +45,26 @@ extension MQTTWidget on RhasspySettingsScreenState {
   }
 
   Widget passwordTextField() {
+    final _controller = TextEditingController(text: mqttPasswordSetting.value);
+    changeNotifierList.add(_controller);
+    _controller.addListener(() {
+      mqttPasswordSetting.setValue(_controller.text);
+    });
+
     return ObxValue<RxBool>(
-      (passwordHidden) => autoSaveTextField(
-        title: locale.userName,
-        setting: mqttPasswordSetting,
+      (passwordHidden) => TextField(
+        controller: _controller,
         obscureText: passwordHidden.value,
-        suffixIcon: IconButton(
-          icon: Icon(
-            passwordHidden.value ? Icons.visibility_off : Icons.visibility,
+        decoration: defaultDecoration(
+          locale.password,
+          suffixIcon: IconButton(
+            icon: Icon(
+              passwordHidden.value ? Icons.visibility_off : Icons.visibility,
+            ),
+            onPressed: () {
+              passwordHidden.value = !passwordHidden.value;
+            },
           ),
-          onPressed: () {
-            passwordHidden.value = !passwordHidden.value;
-          },
         ),
       ),
       true.obs,

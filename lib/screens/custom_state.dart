@@ -91,28 +91,63 @@ abstract class CustomState<T extends StatefulWidget> extends State<T> {
 
   Widget autoSaveTextField(
       {required String title, required Setting<String> setting, bool enabled = true, bool obscureText = false, Widget? suffixIcon}) {
-    final _controller = TextEditingController(text: title);
+    final _controller = TextEditingController(text: setting.value);
+    _controller.selection = TextSelection(
+        baseOffset: setting.value.length,
+        extentOffset: setting.value.length
+    );
     changeNotifierList.add(_controller);
     _controller.addListener(() {
       setting.setValue(_controller.text);
     });
     return TextField(
-          controller: _controller,
-          obscureText: obscureText,
-          decoration: defaultDecoration(locale.port, suffixIcon: suffixIcon),
-        );
+      controller: _controller,
+      obscureText: obscureText,
+      decoration: defaultDecoration(title, suffixIcon: suffixIcon),
+    );
   }
 
   Widget autoSaveSwitchTile({required String title, String? subtitle, required Setting<bool> setting}) {
     return Obx(
-      () => SwitchListTile(
-        value: setting.value,
-        onChanged: (value) {
-          setting.setValue(value);
-        },
-        title: Text(title),
-        subtitle: subtitle != null ? Text(subtitle) : null,
-      ),
+          () =>
+          SwitchListTile(
+            value: setting.value,
+            onChanged: (value) {
+              setting.setValue(value);
+            },
+            title: Text(title),
+            subtitle: subtitle != null ? Text(subtitle) : null,
+          ),
     );
+  }
+
+  Widget autoSaveExpandableDropDownListItem<O>({required String title, required Option<O> option, required Setting<O> setting, Widget? child}) {
+    var childWidgets = <Widget>[const Divider(), autoSaveDropDownListItem(option: option, setting: setting)];
+
+    if (child != null) {
+      childWidgets.add(child);
+    }
+
+    childWidgets.add(const SizedBox(height: 8));
+
+    return expandableListItem(title: title, subtitle: () => option.asText(setting.value, locale), children: childWidgets);
+  }
+
+  Widget autoSaveDropDownListItem<O>({required Option<O> option, required Setting<O> setting}) {
+    return Obx(() =>
+        DropdownButtonFormField2<O>(
+          value: setting.value ?? option.initial,
+          onChanged: (O? newValue) {
+            if (newValue != null) {
+              setting.setValue(newValue);
+            }
+          },
+          items: option.options.map<DropdownMenuItem<O>>((O value) {
+            return DropdownMenuItem<O>(
+              value: value,
+              child: Text(option.asText(value, locale)),
+            );
+          }).toList(),
+        ));
   }
 }

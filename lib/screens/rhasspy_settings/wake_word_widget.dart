@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../data/wake_word_options.dart';
+import '../../settings/settings.dart';
 import '../custom_state.dart';
 
 extension WakeWordWidget on CustomState {
   Widget wakeWord() {
-    var wakeWordOption = WakeWordOption.disabled.obs;
-    return Obx(
-        () => expandableDropDownListItem(WakeWordOptions(), wakeWordOption, locale.wakeWord, child: localWakeWordSettings(wakeWordOption.value)));
+    return autoSaveExpandableDropDownListItem(
+        title: locale.wakeWord, option: WakeWordOptions(), setting: wakeWordSetting, child: Obx(() => localWakeWordSettings(wakeWordSetting.value)));
   }
 
   Widget localWakeWordSettings(WakeWordOption wakeWordOption) {

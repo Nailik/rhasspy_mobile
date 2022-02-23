@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../data/audio_playing_options.dart';
+import '../../settings/settings.dart';
 import '../custom_state.dart';
 
 extension AudioPlayingWidget on CustomState {
   Widget audioPlaying() {
-    var audioPlayingOption = AudioPlayingOption.disabled.obs;
-    return expandableDropDownListItem(AudioPlayingOptions(), audioPlayingOption, locale.audioPlaying,
-        child: Obx(() => audioPlayingSettings(audioPlayingOption.value)));
+    return autoSaveExpandableDropDownListItem(
+        title: locale.audioPlaying,
+        option: AudioPlayingOptions(),
+        setting: audioPlayingSetting,
+        child: Obx(() => audioPlayingSettings(audioPlayingSetting.value)));
   }
 
   Widget audioPlayingSettings(AudioPlayingOption audioPlayingOption) {
     if (audioPlayingOption == AudioPlayingOption.remoteHTTP) {
-      return Column(children: [const Divider(), TextFormField(decoration: defaultDecoration(locale.audioOutputURL))]);
+      return Column(children: [const Divider(), autoSaveTextField(title: locale.audioOutputURL, setting: audioPlayingHTTPURLSetting)]);
     } else {
       return Container();
     }
