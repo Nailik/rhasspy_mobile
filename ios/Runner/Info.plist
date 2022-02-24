@@ -45,5 +45,9 @@
 	<false/>
 	<key>NSMicrophoneUsageDescription</key>
     <string>[Permission explanation]</string>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>https</string>
+    </array>
 </dict>
 </plist>

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:rhasspy_mobile/screens/rhasspy_settings_screen.dart';
-import 'package:rhasspy_mobile/screens/settings_screen.dart';
-import 'package:rhasspy_mobile/screens/start_screen.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:rhasspy_mobile/logic/permissions.dart';
+import 'package:rhasspy_mobile/logic/services.dart';
+import 'package:rhasspy_mobile/logic/settings.dart';
+import 'package:rhasspy_mobile/logic/wake_word_detection/wake_word_porcupine.dart';
+import 'package:rhasspy_mobile/ui/screens/rhasspy_settings_screen.dart';
+import 'package:rhasspy_mobile/ui/screens/settings_screen.dart';
+import 'package:rhasspy_mobile/ui/screens/start_screen.dart';
 
-import '../logic/services.dart';
-import '../settings/settings.dart';
 import 'custom_state.dart';
 import 'log_screen.dart';
 
@@ -25,6 +28,17 @@ class _MainScreenState extends CustomState<MainScreen> with SingleTickerProvider
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
+
+    ///regulate permissions
+    microphonePermissionMissing.listen((missing) {
+      if (missing) {
+        requestPermission(Permission.microphone, context, (granted) {
+          if (granted) {
+            startServices();
+          }
+        });
+      }
+    });
     super.initState();
   }
 

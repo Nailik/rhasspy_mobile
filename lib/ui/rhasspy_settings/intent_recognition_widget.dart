@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../../data/intent_recognition_options.dart';
-import '../../settings/settings.dart';
-import '../custom_state.dart';
+import 'package:rhasspy_mobile/logic/options/intent_recognition_options.dart';
+import 'package:rhasspy_mobile/logic/settings.dart';
+import 'package:rhasspy_mobile/ui/screens/custom_state.dart';
 
 extension IntentRecognitionWidget on CustomState {
   Widget intentRecognition() {

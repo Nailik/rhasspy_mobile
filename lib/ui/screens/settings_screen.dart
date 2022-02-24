@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rhasspy_mobile/data/language_options.dart';
-import 'package:rhasspy_mobile/screens/custom_state.dart';
-
-import '../data/theme_options.dart';
-import '../settings/settings.dart';
+import 'package:rhasspy_mobile/logic/options/language_options.dart';
+import 'package:rhasspy_mobile/logic/options/theme_options.dart';
+import 'package:rhasspy_mobile/logic/settings.dart';
+import 'package:rhasspy_mobile/ui/screens/custom_state.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);

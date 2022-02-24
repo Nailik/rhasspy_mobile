@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:rhasspy_mobile/screens/custom_state.dart';
-import 'package:rhasspy_mobile/screens/rhasspy_settings/audio_playing_widget.dart';
-import 'package:rhasspy_mobile/screens/rhasspy_settings/audio_recording_widget.dart';
-import 'package:rhasspy_mobile/screens/rhasspy_settings/dialogue_management_widget.dart';
-import 'package:rhasspy_mobile/screens/rhasspy_settings/intent_handling_widget.dart';
-import 'package:rhasspy_mobile/screens/rhasspy_settings/intent_recognition_widget.dart';
-import 'package:rhasspy_mobile/screens/rhasspy_settings/mqtt_widget.dart';
-import 'package:rhasspy_mobile/screens/rhasspy_settings/http_settings.dart';
-import 'package:rhasspy_mobile/screens/rhasspy_settings/speech_to_text_widget.dart';
-import 'package:rhasspy_mobile/screens/rhasspy_settings/text_to_speech_widget.dart';
-import 'package:rhasspy_mobile/screens/rhasspy_settings/wake_word_widget.dart';
-import 'package:rhasspy_mobile/settings/settings.dart';
+import 'package:rhasspy_mobile/logic/settings.dart';
+import 'package:rhasspy_mobile/ui/rhasspy_settings/audio_playing_widget.dart';
+import 'package:rhasspy_mobile/ui/rhasspy_settings/audio_recording_widget.dart';
+import 'package:rhasspy_mobile/ui/rhasspy_settings/dialogue_management_widget.dart';
+import 'package:rhasspy_mobile/ui/rhasspy_settings/http_settings.dart';
+import 'package:rhasspy_mobile/ui/rhasspy_settings/intent_handling_widget.dart';
+import 'package:rhasspy_mobile/ui/rhasspy_settings/intent_recognition_widget.dart';
+import 'package:rhasspy_mobile/ui/rhasspy_settings/mqtt_widget.dart';
+import 'package:rhasspy_mobile/ui/rhasspy_settings/speech_to_text_widget.dart';
+import 'package:rhasspy_mobile/ui/rhasspy_settings/text_to_speech_widget.dart';
+import 'package:rhasspy_mobile/ui/rhasspy_settings/wake_word_widget.dart';
+import 'package:rhasspy_mobile/ui/screens/custom_state.dart';
 
 class RhasspySettingsScreen extends StatefulWidget {
   const RhasspySettingsScreen({Key? key}) : super(key: key);

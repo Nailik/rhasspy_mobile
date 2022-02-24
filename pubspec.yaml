@@ -38,6 +38,7 @@ dependencies:
   porcupine_flutter: ^2.1.0
   url_launcher: ^6.0.20
   system_alert_window: ^1.0.1+3
+  permission_handler: ^9.2.0
 
 dev_dependencies:
   flutter_test:

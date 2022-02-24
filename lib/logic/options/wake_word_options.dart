@@ -1,6 +1,5 @@
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import 'option.dart';
+import 'package:rhasspy_mobile/logic/option.dart';
 
 class WakeWordOptions extends Option<WakeWordOption> {
   static final WakeWordOptions _singleton = WakeWordOptions._internal();

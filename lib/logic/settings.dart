@@ -1,16 +1,15 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:porcupine_flutter/porcupine.dart';
-import 'package:rhasspy_mobile/data/speech_to_text_options.dart';
-import 'package:rhasspy_mobile/data/wake_word_options.dart';
-
-import '../data/audio_playing_options.dart';
-import '../data/dialogue_management_options.dart';
-import '../data/intent_handling_options.dart';
-import '../data/intent_recognition_options.dart';
-import '../data/language_options.dart';
-import '../data/text_to_speech_options.dart';
-import '../data/theme_options.dart';
+import 'package:rhasspy_mobile/logic/options/audio_playing_options.dart';
+import 'package:rhasspy_mobile/logic/options/dialogue_management_options.dart';
+import 'package:rhasspy_mobile/logic/options/intent_handling_options.dart';
+import 'package:rhasspy_mobile/logic/options/intent_recognition_options.dart';
+import 'package:rhasspy_mobile/logic/options/language_options.dart';
+import 'package:rhasspy_mobile/logic/options/speech_to_text_options.dart';
+import 'package:rhasspy_mobile/logic/options/text_to_speech_options.dart';
+import 'package:rhasspy_mobile/logic/options/theme_options.dart';
+import 'package:rhasspy_mobile/logic/options/wake_word_options.dart';
 
 //app settings
 
@@ -64,7 +63,6 @@ final wakeWordNameOptionsSetting = Setting("wakeWordNameOptionsSetting", BuiltIn
 final wakeWordSensitivitySetting = Setting("wakeWordSensitivitySetting", 0.55);
 final wakeWordAccessTokenSetting = Setting("wakeWordAccessTokenSetting", "");
 
-
 var settingsChanged = false.obs;
 
 class Setting<T> extends Rx<T> {
@@ -99,7 +97,7 @@ class Setting<T> extends Rx<T> {
   }
 
   void setValue(T value) {
-    if(this.value != value) {
+    if (this.value != value) {
       this.value = value;
       settingsChanged.value = true;
       if (value is SpeechToTextOption) {

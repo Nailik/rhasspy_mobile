@@ -1,12 +1,16 @@
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:porcupine_flutter/porcupine.dart';
 import 'package:porcupine_flutter/porcupine_error.dart';
 import 'package:porcupine_flutter/porcupine_manager.dart';
+import 'package:rhasspy_mobile/logic/options/wake_word_options.dart';
+import 'package:rhasspy_mobile/logic/settings.dart';
 import 'package:rhasspy_mobile/logic/wake_word_detection/wake_word_service.dart';
 
-import '../../data/wake_word_options.dart';
-import '../../settings/settings.dart';
+var microphonePermissionMissing = false.obs;
 
+///
 class WakeWordDetectionServiceLocal extends WakeWordService {
   static final WakeWordDetectionServiceLocal _singleton = WakeWordDetectionServiceLocal._internal();
 
@@ -25,14 +29,22 @@ class WakeWordDetectionServiceLocal extends WakeWordService {
   ///listen if wake word settings changes
   ///listen if keyword changes
   Future<void> start() async {
-    if (wakeWordSetting.value == WakeWordOption.localPorcupine && !_isRunning) {
-      _isRunning = true;
+    if (await Permission.microphone.isGranted) {
+      microphonePermissionMissing.value = false;
+      if (wakeWordSetting.value == WakeWordOption.localPorcupine && !_isRunning) {
+        _isRunning = true;
 
-      ///setup porcupine manager
-      await setupPorcupineManager();
+        ///setup porcupine manager
+        await setupPorcupineManager();
 
-      ///start recognition
-      await startRecognition();
+        ///start recognition
+        await startRecognition();
+      }
+    } else {
+      ///could not start, missing permission
+      if (!microphonePermissionMissing.value) {
+        microphonePermissionMissing.value = true;
+      }
     }
   }
 

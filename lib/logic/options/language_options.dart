@@ -1,8 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import 'option.dart';
+import 'package:rhasspy_mobile/logic/option.dart';
 
 class LanguageOptions extends Option<LanguageOption> {
   static final LanguageOptions _singleton = LanguageOptions._internal();

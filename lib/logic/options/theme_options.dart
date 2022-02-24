@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import 'option.dart';
+import 'package:rhasspy_mobile/logic/option.dart';
 
 class ThemeOptions extends Option<ThemeOption> {
   static final ThemeOptions _singleton = ThemeOptions._internal();

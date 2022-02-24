@@ -1,6 +1,5 @@
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import 'option.dart';
+import 'package:rhasspy_mobile/logic/option.dart';
 
 class DialogueManagementOptions extends Option<DialogueManagementOption> {
   static final DialogueManagementOptions _singleton = DialogueManagementOptions._internal();

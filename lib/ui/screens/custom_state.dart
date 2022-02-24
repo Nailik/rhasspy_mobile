@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-
-import '../data/option.dart';
-import '../settings/settings.dart';
+import 'package:rhasspy_mobile/logic/option.dart';
+import 'package:rhasspy_mobile/logic/settings.dart';
 
 abstract class CustomState<T extends StatefulWidget> extends State<T> {
   late AppLocalizations locale;
@@ -117,8 +116,9 @@ abstract class CustomState<T extends StatefulWidget> extends State<T> {
     );
   }
 
-  Widget autoSaveExpandableDropDownListItem<O>({required String title, required Option<O> option, required Setting<O> setting, Widget? child}) {
-    var childWidgets = <Widget>[const Divider(), autoSaveDropDownListItem(option: option, setting: setting)];
+  Widget autoSaveExpandableDropDownListItem<O>(
+      {required String title, required Option<O> option, required Setting<O> setting, Widget? child, VoidCallback? onChanged}) {
+    var childWidgets = <Widget>[const Divider(), autoSaveDropDownListItem(option: option, setting: setting, onChanged: onChanged)];
 
     if (child != null) {
       childWidgets.add(child);

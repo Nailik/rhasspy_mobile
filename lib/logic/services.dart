@@ -1,12 +1,16 @@
+import 'package:rhasspy_mobile/logic/options/wake_word_options.dart';
 import 'package:rhasspy_mobile/logic/wake_word_detection/wake_word_porcupine.dart';
 
-import '../settings/settings.dart';
+import 'settings.dart';
 
 var reloading = false;
+
 final wakeWordService = WakeWordDetectionServiceLocal();
 
 Future<void> startServices() async {
-  await wakeWordService.start();
+  if (wakeWordSetting.value == WakeWordOption.localPorcupine) {
+    await wakeWordService.start();
+  }
 }
 
 Future<void> stopServices() async {

@@ -2,13 +2,14 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:porcupine_flutter/porcupine.dart';
+import 'package:rhasspy_mobile/logic/options/wake_word_options.dart';
+import 'package:rhasspy_mobile/logic/settings.dart';
+import 'package:rhasspy_mobile/ui/screens/custom_state.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../data/wake_word_options.dart';
-import '../../settings/settings.dart';
-import '../custom_state.dart';
-
 extension WakeWordWidget on CustomState {
+  void permissionRequest(bool result) {}
+
   Widget wakeWord() {
     return autoSaveExpandableDropDownListItem(
         title: locale.wakeWord, option: WakeWordOptions(), setting: wakeWordSetting, child: localWakeWordSettings());

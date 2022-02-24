@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:rhasspy_mobile/screens/main_screen.dart';
-import 'package:rhasspy_mobile/settings/settings.dart';
-
-import 'data/language_options.dart';
-import 'data/theme_options.dart';
-import 'logic/services.dart';
+import 'package:rhasspy_mobile/logic/options/language_options.dart';
+import 'package:rhasspy_mobile/logic/options/theme_options.dart';
+import 'package:rhasspy_mobile/logic/services.dart';
+import 'package:rhasspy_mobile/logic/settings.dart';
+import 'package:rhasspy_mobile/ui/screens/main_screen.dart';
 
 void main() async {
   await GetStorage.init();

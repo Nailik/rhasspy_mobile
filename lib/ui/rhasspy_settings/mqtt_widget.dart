@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../../settings/settings.dart';
-import '../rhasspy_settings_screen.dart';
+import 'package:rhasspy_mobile/logic/settings.dart';
+import 'package:rhasspy_mobile/ui/screens/rhasspy_settings_screen.dart';
 
 extension MQTTWidget on RhasspySettingsScreenState {
   Widget mqtt() {
