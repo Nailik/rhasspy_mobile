@@ -1,6 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:porcupine_flutter/porcupine.dart';
 
 import '../../data/wake_word_options.dart';
 import '../../settings/settings.dart';
@@ -26,17 +27,17 @@ extension WakeWordWidget on CustomState {
       children: [
         Expanded(
             child: Obx(
-          () => DropdownButtonFormField2<String>(
-            value: wakeWordNameOptionsSetting.value[wakeWordNameOptionsIndexSetting.value],
-            onChanged: (String? newValue) {
+          () => DropdownButtonFormField2<BuiltInKeyword>(
+            value: wakeWordNameOptionsSetting.value,
+            onChanged: (BuiltInKeyword? newValue) {
               if (newValue != null) {
-                wakeWordNameOptionsIndexSetting.setValue(wakeWordNameOptionsSetting.value.indexOf(newValue));
+                wakeWordNameOptionsSetting.setValue(newValue);
               }
             },
-            items: wakeWordNameOptionsSetting.value.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
+            items: BuiltInKeyword.values.map<DropdownMenuItem<BuiltInKeyword>>((BuiltInKeyword value) {
+              return DropdownMenuItem<BuiltInKeyword>(
                 value: value,
-                child: Text(value),
+                child: Text(value.toString()),
               );
             }).toList(),
           ),

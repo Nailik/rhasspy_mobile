@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:porcupine_flutter/porcupine.dart';
 import 'package:rhasspy_mobile/data/speech_to_text_options.dart';
 import 'package:rhasspy_mobile/data/wake_word_options.dart';
 
@@ -59,9 +60,12 @@ final textToSpeechSetting = Setting("textToSpeechSetting", TextToSpeechOption.di
 final textToSpeechHTTPURL = Setting("textToSpeechHTTPURL", "");
 
 final wakeWordSetting = Setting("wakeWordSetting", WakeWordOption.disabled);
-final wakeWordNameOptionsSetting = Setting("wakeWordNameOptionsSetting", ["jarvis", "porcupine"]);
-final wakeWordNameOptionsIndexSetting = Setting("wakeWordNameOptionsIndexSetting", 0);
+final wakeWordNameOptionsSetting = Setting("wakeWordNameOptionsSetting", BuiltInKeyword.PORCUPINE);
 final wakeWordSensitivitySetting = Setting("wakeWordSensitivitySetting", 0.55);
+final wakeWordAccessTokenSetting = Setting("wakeWordAccessTokenSetting", "");
+
+
+var settingsChanged = false.obs;
 
 class Setting<T> extends Rx<T> {
   String id;
@@ -87,35 +91,42 @@ class Setting<T> extends Rx<T> {
       value = WakeWordOption.values.byName(GetStorage().read<String>(id) ?? initial.name) as T;
     } else if (initial is HomeAssistantIntent) {
       value = HomeAssistantIntent.values.byName(GetStorage().read<String>(id) ?? initial.name) as T;
+    } else if (initial is BuiltInKeyword) {
+      value = BuiltInKeyword.values.byName(GetStorage().read<String>(id) ?? initial.name) as T;
     } else {
       value = GetStorage().read<T>(id) ?? initial;
     }
   }
 
   void setValue(T value) {
-    if (value is SpeechToTextOption) {
-      GetStorage().write(id, value.name);
-    } else if (value is AudioPlayingOption) {
-      GetStorage().write(id, value.name);
-    } else if (value is DialogueManagementOption) {
-      GetStorage().write(id, value.name);
-    } else if (value is IntentHandlingOption) {
-      GetStorage().write(id, value.name);
-    } else if (value is IntentRecognitionOption) {
-      GetStorage().write(id, value.name);
-    } else if (value is LanguageOption) {
-      GetStorage().write(id, value.name);
-    } else if (value is TextToSpeechOption) {
-      GetStorage().write(id, value.name);
-    } else if (value is ThemeOption) {
-      GetStorage().write(id, value.name);
-    } else if (value is WakeWordOption) {
-      GetStorage().write(id, value.name);
-    } else if (value is HomeAssistantIntent) {
-      GetStorage().write(id, value.name);
-    } else {
-      GetStorage().write(id, value);
+    if(this.value != value) {
+      this.value = value;
+      settingsChanged.value = true;
+      if (value is SpeechToTextOption) {
+        GetStorage().write(id, value.name);
+      } else if (value is AudioPlayingOption) {
+        GetStorage().write(id, value.name);
+      } else if (value is DialogueManagementOption) {
+        GetStorage().write(id, value.name);
+      } else if (value is IntentHandlingOption) {
+        GetStorage().write(id, value.name);
+      } else if (value is IntentRecognitionOption) {
+        GetStorage().write(id, value.name);
+      } else if (value is LanguageOption) {
+        GetStorage().write(id, value.name);
+      } else if (value is TextToSpeechOption) {
+        GetStorage().write(id, value.name);
+      } else if (value is ThemeOption) {
+        GetStorage().write(id, value.name);
+      } else if (value is WakeWordOption) {
+        GetStorage().write(id, value.name);
+      } else if (value is HomeAssistantIntent) {
+        GetStorage().write(id, value.name);
+      } else if (value is BuiltInKeyword) {
+        GetStorage().write(id, value.name);
+      } else {
+        GetStorage().write(id, value);
+      }
     }
-    this.value = value;
   }
 }

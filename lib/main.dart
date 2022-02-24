@@ -7,11 +7,13 @@ import 'package:rhasspy_mobile/settings/settings.dart';
 
 import 'data/language_options.dart';
 import 'data/theme_options.dart';
+import 'logic/services.dart';
 
 void main() async {
   await GetStorage.init();
   Get.updateLocale(LanguageOptions.asLocale(languageSetting.value));
   Get.changeThemeMode(ThemeOptions.asThemeMode(themeSetting.value));
+  startServices();
   runApp(const RhasspyMobileApp());
 }
 

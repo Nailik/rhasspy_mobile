@@ -4,6 +4,7 @@ import 'package:rhasspy_mobile/screens/rhasspy_settings_screen.dart';
 import 'package:rhasspy_mobile/screens/settings_screen.dart';
 import 'package:rhasspy_mobile/screens/start_screen.dart';
 
+import '../logic/services.dart';
 import '../settings/settings.dart';
 import 'custom_state.dart';
 import 'log_screen.dart';
@@ -15,20 +16,51 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends CustomState<MainScreen> {
+class _MainScreenState extends CustomState<MainScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget content() {
-    return Scaffold(
-      appBar: navigationBar(),
-      body: getBody(),
-      bottomNavigationBar: Obx(() => bottomNavigation()),
+    return Obx(
+      () => Scaffold(appBar: navigationBar(), body: getBody(), bottomNavigationBar: bottomNavigation()),
     );
   }
 
   /// App Navigation bar with Title and Button to settings
-  AppBar navigationBar() {
+  PreferredSizeWidget navigationBar() {
+    _controller.reset();
     return AppBar(
       title: Text(locale.appName),
+      actions: settingsChanged.value
+          ? [
+              IconButton(
+                icon: RotationTransition(
+                    turns: Tween(begin: 0.0, end: 1.0).animate(_controller),
+                    child: const Icon(
+                      Icons.published_with_changes,
+                    )),
+                onPressed: () {
+                  _controller.repeat();
+                  reloadServices();
+                },
+              )
+            ]
+          : [],
     );
   }
 
@@ -52,7 +84,10 @@ class _MainScreenState extends CustomState<MainScreen> {
   Widget bottomNavigation() {
     List<BottomNavigationBarItem> items = <BottomNavigationBarItem>[
       BottomNavigationBarItem(
-        icon: const Icon(Icons.mic),
+        icon: Obx(() => Icon(
+              Icons.mic,
+              color: wakeWordService.wakeWordRecognized.value ? theme.colorScheme.primary : null,
+            )),
         label: locale.home,
       ),
       BottomNavigationBarItem(

@@ -1,5 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.rhasspy.mobile.rhasspy_mobile">
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
    <application
         android:label="rhasspy_mobile"
         android:name="${applicationName}"

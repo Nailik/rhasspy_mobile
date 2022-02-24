@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
+import '../logic/services.dart';
 import 'custom_state.dart';
 
 class StartScreen extends StatefulWidget {
@@ -33,7 +35,11 @@ class _StartScreenState extends CustomState<StartScreen> {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            Icon(Icons.mic, size: MediaQuery.of(context).size.height / 5),
+            Obx(() => Icon(
+                  Icons.mic,
+                  size: MediaQuery.of(context).size.height / 5,
+                  color: wakeWordService.wakeWordRecognized.value ? theme.colorScheme.primary : null,
+                )),
             Text(
               locale.wakeUp,
               textAlign: TextAlign.center,
