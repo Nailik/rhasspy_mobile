@@ -17,6 +17,12 @@ Future<void> stopServices() async {
   await wakeWordService.stop();
 }
 
+
+///check serivces that use microphone permission
+Future<void> microphonePermissionUpdated() async {
+
+}
+
 ///to apply settings
 void reloadServices() async {
   if (!reloading) {
