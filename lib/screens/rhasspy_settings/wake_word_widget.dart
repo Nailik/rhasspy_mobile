@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:porcupine_flutter/porcupine.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/wake_word_options.dart';
 import '../../settings/settings.dart';
@@ -10,15 +11,33 @@ import '../custom_state.dart';
 extension WakeWordWidget on CustomState {
   Widget wakeWord() {
     return autoSaveExpandableDropDownListItem(
-        title: locale.wakeWord, option: WakeWordOptions(), setting: wakeWordSetting, child: Obx(() => localWakeWordSettings(wakeWordSetting.value)));
+        title: locale.wakeWord, option: WakeWordOptions(), setting: wakeWordSetting, child: localWakeWordSettings());
   }
 
-  Widget localWakeWordSettings(WakeWordOption wakeWordOption) {
-    if (wakeWordOption == WakeWordOption.localPorcupine) {
-      return Column(children: [const Divider(), localWakeWordKeyword(), const Divider(), localWakeWordSensitivity()]);
-    } else {
-      return Container();
-    }
+  Widget localWakeWordSettings() {
+    return Obx(
+      () => Visibility(
+        visible: wakeWordSetting.value == WakeWordOption.localPorcupine,
+        child: Column(
+          children: [
+            const Divider(),
+            autoSaveTextField(title: locale.porcupineAccessKey, setting: wakeWordAccessTokenSetting),
+            const Divider(),
+            MaterialButton(
+              child: Text(locale.openPicoVoiceConsole),
+              textColor: theme.colorScheme.tertiary,
+              onPressed: () {
+                launch("https://console.picovoice.ai/access_key");
+              },
+            ),
+            const Divider(),
+            localWakeWordKeyword(),
+            const Divider(),
+            localWakeWordSensitivity(),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget localWakeWordKeyword() {

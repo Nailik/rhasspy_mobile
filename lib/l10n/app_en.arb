@@ -67,5 +67,7 @@
   "chooseCertificate": "Choose Certificate",
   "showLog": "Show Log",
   "log": "Log",
-  "httpSSL": "HTTP SSL"
+  "httpSSL": "HTTP SSL",
+  "porcupineAccessKey": "AccessKey",
+  "openPicoVoiceConsole": "open PicoVoice Console (to generate AccessKey)"
 }

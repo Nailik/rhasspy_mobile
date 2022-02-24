@@ -6,7 +6,7 @@ import 'package:rhasspy_mobile/screens/rhasspy_settings/dialogue_management_widg
 import 'package:rhasspy_mobile/screens/rhasspy_settings/intent_handling_widget.dart';
 import 'package:rhasspy_mobile/screens/rhasspy_settings/intent_recognition_widget.dart';
 import 'package:rhasspy_mobile/screens/rhasspy_settings/mqtt_widget.dart';
-import 'package:rhasspy_mobile/screens/rhasspy_settings/rhasspy_base_settings.dart';
+import 'package:rhasspy_mobile/screens/rhasspy_settings/http_settings.dart';
 import 'package:rhasspy_mobile/screens/rhasspy_settings/speech_to_text_widget.dart';
 import 'package:rhasspy_mobile/screens/rhasspy_settings/text_to_speech_widget.dart';
 import 'package:rhasspy_mobile/screens/rhasspy_settings/wake_word_widget.dart';
