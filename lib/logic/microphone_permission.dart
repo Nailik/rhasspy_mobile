@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rhasspy_mobile/logic/services.dart';
@@ -14,25 +15,26 @@ requestMicrophonePermission(BuildContext context) async {
 }
 
 showInformationDialog(BuildContext context) async {
+  var locale = AppLocalizations.of(context)!;
   showDialog<String>(
     context: context,
     builder: (BuildContext buildContext) => AlertDialog(
-      title: const Text('AlertDialog Title'),
-      content: const Text('AlertDialog description'),
+      title: Text(locale.microphonePermissionDialogTitle),
+      content: Text(locale.microphonePermissionDialogMessage),
       actions: <Widget>[
         TextButton(
           onPressed: () {
-            Navigator.pop(buildContext, 'Cancel');
+            Navigator.pop(buildContext);
             microphonePermissionUpdated();
           },
-          child: const Text('Cancel'),
+          child: Text(locale.cancel),
         ),
         TextButton(
           onPressed: () {
-            Navigator.pop(buildContext, 'OK');
+            Navigator.pop(buildContext);
             requestSystemMicrophonePermission(context);
           },
-          child: const Text('OK'),
+          child: Text(locale.ok),
         ),
       ],
     ),
@@ -40,11 +42,12 @@ showInformationDialog(BuildContext context) async {
 }
 
 requestSystemMicrophonePermission(BuildContext context) async {
+  var locale = AppLocalizations.of(context)!;
   if (!await Permission.microphone.request().isGranted) {
     final snackBar = SnackBar(
-      content: const Text('Yay! A SnackBar!'),
+      content: Text(locale.microphonePermissionDenied),
       action: SnackBarAction(
-        label: 'Undo',
+        label: locale.ok,
         onPressed: () => openAppSettings(),
       ),
     );

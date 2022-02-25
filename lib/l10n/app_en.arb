@@ -69,5 +69,10 @@
   "log": "Log",
   "httpSSL": "HTTP SSL",
   "porcupineAccessKey": "AccessKey",
-  "openPicoVoiceConsole": "open PicoVoice Console (to generate AccessKey)"
+  "openPicoVoiceConsole": "open PicoVoice Console (to generate AccessKey)",
+  "microphonePermissionDialogTitle": "Microphone access",
+  "microphonePermissionDialogMessage": "To use this app you need to allow access to the microphone.",
+  "microphonePermissionDenied": "open settings to allow microphone access",
+  "cancel": "Cancel",
+  "ok": "Ok"
 }

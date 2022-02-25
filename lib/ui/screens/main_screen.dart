@@ -19,9 +19,7 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-var microphonePermissionGranted = true.obs;
-
-class _MainScreenState extends CustomState<MainScreen> with SingleTickerProviderStateMixin {
+class _MainScreenState extends CustomState<MainScreen> with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late AnimationController _controller;
 
   @override
@@ -30,7 +28,7 @@ class _MainScreenState extends CustomState<MainScreen> with SingleTickerProvider
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-
+    WidgetsBinding.instance?.addObserver(this);
     setupMicrophonePermission();
     super.initState();
   }
@@ -41,8 +39,18 @@ class _MainScreenState extends CustomState<MainScreen> with SingleTickerProvider
     requestMicrophonePermission(context);
   }
 
+  // check permissions when app is resumed
+  // this is when permissions are changed in app settings outside of app
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      resumedApp();
+    }
+  }
+
   @override
   void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
     _controller.dispose();
     super.dispose();
   }
@@ -79,16 +87,16 @@ class _MainScreenState extends CustomState<MainScreen> with SingleTickerProvider
       );
     }
 
-      if (!microphonePermissionGranted.value) {
-        actions.add(
-          IconButton(
-            icon: Icon(Icons.warning, color: theme.colorScheme.error),
-            onPressed: () {
-              requestMicrophonePermission(context);
-            },
-          ),
-        );
-      }
+    if (!microphonePermissionGranted.value) {
+      actions.add(
+        IconButton(
+          icon: Icon(Icons.warning, color: theme.colorScheme.error),
+          onPressed: () {
+            requestMicrophonePermission(context);
+          },
+        ),
+      );
+    }
 
     return actions;
   }
