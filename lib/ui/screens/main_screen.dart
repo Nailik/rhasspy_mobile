@@ -9,6 +9,7 @@ import 'package:rhasspy_mobile/ui/screens/rhasspy_settings_screen.dart';
 import 'package:rhasspy_mobile/ui/screens/settings_screen.dart';
 import 'package:rhasspy_mobile/ui/screens/start_screen.dart';
 
+import '../../logic/wake_word_detection/wake_word_porcupine.dart';
 import 'custom_state.dart';
 import 'log_screen.dart';
 
@@ -24,12 +25,14 @@ class _MainScreenState extends CustomState<MainScreen> with SingleTickerProvider
 
   @override
   void initState() {
+    WidgetsFlutterBinding.ensureInitialized();
     _controller = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
     WidgetsBinding.instance?.addObserver(this);
     setupMicrophonePermission();
+    startServices();
     super.initState();
   }
 
@@ -123,7 +126,7 @@ class _MainScreenState extends CustomState<MainScreen> with SingleTickerProvider
       BottomNavigationBarItem(
         icon: Obx(() => Icon(
               Icons.mic,
-              color: wakeWordService.wakeWordRecognized.value ? theme.colorScheme.primary : null,
+              color: WakeWordDetectionServiceLocal().wakeWordRecognized.value ? theme.colorScheme.primary : null,
             )),
         label: locale.home,
       ),

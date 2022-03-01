@@ -22,7 +22,7 @@ extension WakeWordWidget on CustomState {
         child: Column(
           children: [
             const Divider(),
-            autoSaveTextField(title: locale.porcupineAccessKey, setting: wakeWordAccessTokenSetting),
+            Obx(() => autoSaveTextField(title: locale.porcupineAccessKey, setting: wakeWordAccessTokenSetting)),
             const Divider(),
             MaterialButton(
               child: Text(locale.openPicoVoiceConsole),

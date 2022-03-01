@@ -7,17 +7,16 @@ import 'settings.dart';
 
 var reloading = false;
 
-final wakeWordService = WakeWordDetectionServiceLocal();
 var microphonePermissionGranted = true.obs;
 
-Future<void> startServices() async {
+Future<void> startServices() async { //TODO if not running
   if (wakeWordSetting.value == WakeWordOption.localPorcupine) {
-    await wakeWordService.start();
+    await WakeWordDetectionServiceLocal().start();
   }
 }
 
 Future<void> stopServices() async {
-  await wakeWordService.stop();
+  await WakeWordDetectionServiceLocal().stop();
 }
 
 

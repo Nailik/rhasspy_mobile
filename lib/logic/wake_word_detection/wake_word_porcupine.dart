@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:porcupine_flutter/porcupine.dart';
@@ -33,12 +36,7 @@ class WakeWordDetectionServiceLocal extends WakeWordService {
       microphonePermissionMissing.value = false;
       if (wakeWordSetting.value == WakeWordOption.localPorcupine && !_isRunning) {
         _isRunning = true;
-
-        ///setup porcupine manager
-        await setupPorcupineManager();
-
-        ///start recognition
-        await startRecognition();
+        onTestChannel();
       }
     } else {
       ///could not start, missing permission
@@ -49,13 +47,12 @@ class WakeWordDetectionServiceLocal extends WakeWordService {
   }
 
   Future<void> stop() async {
-    await _porcupineManager?.delete();
+    ///TODO
   }
 
-  Future<void> setupPorcupineManager() async {
+  Future<void> setupPorcupineManager(String accessKey, double sensitivity) async {
     try {
-      _porcupineManager = await PorcupineManager.fromBuiltInKeywords(wakeWordAccessTokenSetting.value, [currentKeyword], _wakeWordCallback,
-          sensitivities: [wakeWordSensitivitySetting.value]);
+      _porcupineManager = await PorcupineManager.fromBuiltInKeywords(accessKey, [currentKeyword], _wakeWordCallback, sensitivities: [sensitivity]);
     } on PorcupineException catch (err) {
       // handle porcupine init error
       if (kDebugMode) {
@@ -95,4 +92,114 @@ class WakeWordDetectionServiceLocal extends WakeWordService {
       }
     }
   }
+}
+
+Future<void> startAsBackgroundService() async {
+  final service = FlutterBackgroundService();
+  await service.configure(
+    androidConfiguration: AndroidConfiguration(
+      // auto start service
+      autoStart: true,
+      isForegroundMode: true,
+      onStart: onStart,
+    ),
+    iosConfiguration: IosConfiguration(
+      // auto start service
+      autoStart: true, onForeground: onStart, onBackground: onStart,
+    ),
+  );
+  service.start();
+
+  FlutterBackgroundService().sendData({
+    "action": "startWakeWordDetection",
+    "wakeWordAccessTokenSetting": wakeWordAccessTokenSetting.value,
+    "wakeWordSensitivitySetting": wakeWordSensitivitySetting.value
+  });
+}
+
+void onStart() async {
+  const MethodChannel _channel = MethodChannel('flutter_app_sync'); //TODO test not in background
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final service = FlutterBackgroundService();
+  service.onDataReceived.listen((event) async {
+    PorcupineManager? _porcupineManager;
+
+    if (event!["action"] == "setAsForeground") {
+      service.setForegroundMode(true);
+      return;
+    }
+
+    if (event["action"] == "setAsBackground") {
+      service.setForegroundMode(false);
+    }
+
+    if (event["action"] == "stopService") {
+      service.stopBackgroundService();
+    }
+    if (event["action"] == "startWakeWordDetection") {
+
+
+      _channel.setMethodCallHandler((MethodCall call) async {
+
+        if(call.method == "wakeword"){
+        }
+
+        return null;
+      });
+
+      _channel.invokeMethod("startwakeword", <String, dynamic>{
+        'AccessKey': event["wakeWordAccessTokenSetting"],
+      });
+
+      /*  try {
+        _porcupineManager = await PorcupineManager.fromBuiltInKeywords(event["wakeWordAccessTokenSetting"], [BuiltInKeyword.JARVIS], (int
+        keywordIndex){},
+            sensitivities: [event["wakeWordSensitivitySetting"]]);
+      } on PorcupineException catch (err) {
+        // handle porcupine init error
+        if (kDebugMode) {
+          print(err);
+        }
+      }
+      await _porcupineManager?.start();*/
+      /*
+      ///setup porcupine manager
+      await WakeWordDetectionServiceLocal().setupPorcupineManager(event["wakeWordAccessTokenSetting"], event["wakeWordSensitivitySetting"]);
+
+      ///start recognition
+      await WakeWordDetectionServiceLocal().startRecognition();
+      */
+
+      _porcupineManager.start()
+
+    }
+  });
+
+  // bring to foreground
+  service.setForegroundMode(true);
+
+  service.setNotificationInfo(
+    title: "My App Service",
+    content: "Updated at ${DateTime.now()}",
+  );
+}
+
+
+void onTestChannel() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  const MethodChannel _channel = MethodChannel('flutter_app_sync');
+  _channel.setMethodCallHandler((MethodCall call) async {
+
+    if(call.method == "wakeword"){
+    }
+
+    return null;
+  });
+
+  _channel.invokeMethod("startwakeword", <String, dynamic>{
+    'AccessKey': wakeWordAccessTokenSetting.value,
+  });
+
 }

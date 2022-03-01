@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:rhasspy_mobile/logic/services.dart';
 
+import '../../logic/wake_word_detection/wake_word_porcupine.dart';
+import '../../logic/wake_word_detection/wake_word_service.dart';
 import 'custom_state.dart';
 
 class StartScreen extends StatefulWidget {
@@ -38,7 +40,7 @@ class _StartScreenState extends CustomState<StartScreen> {
             Obx(() => Icon(
                   Icons.mic,
                   size: MediaQuery.of(context).size.height / 5,
-                  color: wakeWordService.wakeWordRecognized.value ? theme.colorScheme.primary : null,
+                  color: WakeWordDetectionServiceLocal().wakeWordRecognized.value ? theme.colorScheme.primary : null,
                 )),
             Text(
               locale.wakeUp,

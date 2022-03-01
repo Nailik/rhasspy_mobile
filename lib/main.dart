@@ -12,8 +12,12 @@ void main() async {
   await GetStorage.init();
   Get.updateLocale(LanguageOptions.asLocale(languageSetting.value));
   Get.changeThemeMode(ThemeOptions.asThemeMode(themeSetting.value));
-  startServices();
   runApp(const RhasspyMobileApp());
+}
+
+void syncPorcupine() {
+  WidgetsFlutterBinding.ensureInitialized();
+  ///from service
 }
 
 var themeMode = ThemeMode.system.obs;
