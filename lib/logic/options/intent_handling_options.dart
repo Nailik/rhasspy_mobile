@@ -1,6 +1,5 @@
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import 'option.dart';
+import 'package:rhasspy_mobile/logic/option.dart';
 
 class IntentHandlingOptions extends Option<IntentHandlingOption> {
   static final IntentHandlingOptions _singleton = IntentHandlingOptions._internal();

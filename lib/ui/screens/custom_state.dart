@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-
-import '../data/option.dart';
+import 'package:rhasspy_mobile/logic/option.dart';
+import 'package:rhasspy_mobile/logic/settings.dart';
 
 abstract class CustomState<T extends StatefulWidget> extends State<T> {
   late AppLocalizations locale;
   late ThemeData theme;
+
+  List<ChangeNotifier> changeNotifierList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -17,13 +19,18 @@ abstract class CustomState<T extends StatefulWidget> extends State<T> {
     return content();
   }
 
+  @override
+  void dispose() {
+    for (var element in changeNotifierList) {
+      element.dispose();
+    }
+    super.dispose();
+  }
+
   Widget content();
 
-  InputDecoration defaultDecoration(String labelText) {
-    return InputDecoration(
-      border: const OutlineInputBorder(),
-      labelText: labelText,
-    );
+  InputDecoration defaultDecoration(String labelText, {Widget? suffixIcon}) {
+    return InputDecoration(border: const OutlineInputBorder(), labelText: labelText, suffixIcon: suffixIcon);
   }
 
   Widget expandableDropDownListItem<O>(Option<O> option, Rx<O> optionValue, String title, {Widget? child, ValueChanged<O?>? onChanged}) {
@@ -79,5 +86,66 @@ abstract class CustomState<T extends StatefulWidget> extends State<T> {
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
         fillColor: theme.colorScheme.background,
         child: IconButton(onPressed: onPressed, icon: icon, splashColor: theme.colorScheme.tertiary));
+  }
+
+  Widget autoSaveTextField(
+      {required String title, required Setting<String> setting, bool enabled = true, bool obscureText = false, Widget? suffixIcon}) {
+    final _controller = TextEditingController(text: setting.value);
+    _controller.selection = TextSelection(baseOffset: setting.value.length, extentOffset: setting.value.length);
+    changeNotifierList.add(_controller);
+    _controller.addListener(() {
+      setting.setValue(_controller.text);
+    });
+    return TextField(
+      controller: _controller,
+      obscureText: obscureText,
+      decoration: defaultDecoration(title, suffixIcon: suffixIcon),
+    );
+  }
+
+  Widget autoSaveSwitchTile({required String title, String? subtitle, required Setting<bool> setting}) {
+    return Obx(
+      () => SwitchListTile(
+        value: setting.value,
+        onChanged: (value) {
+          setting.setValue(value);
+        },
+        title: Text(title),
+        subtitle: subtitle != null ? Text(subtitle) : null,
+      ),
+    );
+  }
+
+  Widget autoSaveExpandableDropDownListItem<O>(
+      {required String title, required Option<O> option, required Setting<O> setting, Widget? child, VoidCallback? onChanged}) {
+    var childWidgets = <Widget>[const Divider(), autoSaveDropDownListItem(option: option, setting: setting, onChanged: onChanged)];
+
+    if (child != null) {
+      childWidgets.add(child);
+    }
+
+    childWidgets.add(const SizedBox(height: 8));
+
+    return expandableListItem(title: title, subtitle: () => option.asText(setting.value, locale), children: childWidgets);
+  }
+
+  Widget autoSaveDropDownListItem<O>({required Option<O> option, required Setting<O> setting, VoidCallback? onChanged}) {
+    return Obx(() => DropdownButtonFormField2<O>(
+          value: setting.value ?? option.initial,
+          onChanged: (O? newValue) {
+            if (newValue != null) {
+              setting.setValue(newValue);
+              if (onChanged != null) {
+                onChanged();
+              }
+            }
+          },
+          items: option.options.map<DropdownMenuItem<O>>((O value) {
+            return DropdownMenuItem<O>(
+              value: value,
+              child: Text(option.asText(value, locale)),
+            );
+          }).toList(),
+        ));
   }
 }

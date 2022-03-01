@@ -1,5 +1,5 @@
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:rhasspy_mobile/data/option.dart';
+import 'package:rhasspy_mobile/logic/option.dart';
 
 class AudioPlayingOptions extends Option<AudioPlayingOption> {
   static final AudioPlayingOptions _singleton = AudioPlayingOptions._internal();
