@@ -22,7 +22,17 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.0.3"
+        kotlinCompilerExtensionVersion = "_"
+    }
+}
+
+kotlin {
+    sourceSets {
+
+        all {
+            //Warning: This class can only be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'
+            languageSettings.optIn("kotlin.RequiresOptIn")
+        }
     }
 }
 
@@ -33,6 +43,7 @@ dependencies {
     implementation(AndroidX.Activity.compose)
     implementation(AndroidX.ConstraintLayout.compose)
     implementation(AndroidX.Compose.material3)
+    implementation(AndroidX.Compose.material.icons.extended)
     implementation(AndroidX.Compose.foundation)
     implementation(AndroidX.Compose.ui)
     implementation(AndroidX.Compose.ui.tooling)

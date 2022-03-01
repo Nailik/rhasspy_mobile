@@ -3,11 +3,12 @@
     package="org.rhasspy.mobile.android">
 
     <application
-        android:supportsRtl="true"
-        android:icon="@drawable/ic_launcher">
+        android:icon="@drawable/ic_launcher"
+        android:supportsRtl="true">
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -10,6 +10,7 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
         @Suppress("GradlePluginVersion")
         classpath("com.android.tools.build:gradle:_")
+        classpath("dev.icerock.moko:resources-generator:_")
     }
 }
 
