@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     kotlin("android")
+    id("kotlin-android")
 }
 
 android {
@@ -17,11 +18,25 @@ android {
             isMinifyEnabled = false
         }
     }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.0.3"
+    }
 }
 
 dependencies {
     implementation(project(":MultiPlatformLibrary"))
-    implementation("com.google.android.material:material:1.5.0")
-    implementation("androidx.appcompat:appcompat:1.4.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
+
+    implementation(Google.android.material)
+    implementation(AndroidX.Activity.compose)
+    implementation(AndroidX.ConstraintLayout.compose)
+    implementation(AndroidX.Compose.material3)
+    implementation(AndroidX.Compose.foundation)
+    implementation(AndroidX.Compose.ui)
+    implementation(AndroidX.Compose.ui.tooling)
+    implementation(AndroidX.Compose.ui.toolingPreview)
+    implementation(AndroidX.Navigation.compose)
+
 }

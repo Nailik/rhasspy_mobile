@@ -1,3 +1,4 @@
+import de.fayard.refreshVersions.core.versionFor
 buildscript {
     repositories {
         gradlePluginPortal()
@@ -5,8 +6,10 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
-        classpath("com.android.tools.build:gradle:7.1.2")
+        //classpath dependencies cannot be loaded from buildSrc
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
+        @Suppress("GradlePluginVersion")
+        classpath("com.android.tools.build:gradle:_")
     }
 }
 
