@@ -31,7 +31,7 @@ fun HomeScreen() {
 @Composable
 fun ColumnScope.WakeUpAction() {
     FloatingActionButton(
-        onClick = {  },
+        onClick = { },
         modifier = Modifier
             .weight(1.0f)
             .fillMaxWidth()
@@ -68,7 +68,7 @@ fun BottomActions() {
 
 @Composable
 fun PlayRecording() {
-    ElevatedButton(onClick = {  }) {
+    ElevatedButton(onClick = { }) {
         Text(resource = MR.strings.playRecording)
         Icon(
             imageVector = Icons.Filled.PlayArrow,
