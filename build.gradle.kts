@@ -1,4 +1,3 @@
-import de.fayard.refreshVersions.core.versionFor
 buildscript {
     repositories {
         gradlePluginPortal()

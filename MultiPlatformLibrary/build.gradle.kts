@@ -32,7 +32,7 @@ kotlin {
         }
 
         val commonMain by getting {
-            dependencies{
+            dependencies {
                 implementation(Icerock.Mvvm.core)
                 implementation(Icerock.Mvvm.state)
                 implementation(Icerock.Mvvm.livedata)

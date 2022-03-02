@@ -40,14 +40,21 @@ dependencies {
     implementation(project(":MultiPlatformLibrary"))
 
     implementation(Google.android.material)
+
     implementation(AndroidX.Activity.compose)
     implementation(AndroidX.ConstraintLayout.compose)
+    implementation(AndroidX.Navigation.compose)
+
     implementation(AndroidX.Compose.material3)
     implementation(AndroidX.Compose.material.icons.extended)
     implementation(AndroidX.Compose.foundation)
     implementation(AndroidX.Compose.ui)
     implementation(AndroidX.Compose.ui.tooling)
     implementation(AndroidX.Compose.ui.toolingPreview)
-    implementation(AndroidX.Navigation.compose)
+
+    implementation(Icerock.Mvvm.core)
+    implementation(Icerock.Mvvm.state)
+    implementation(Icerock.Mvvm.livedata)
+    implementation(Icerock.Mvvm.livedataResources)
 
 }
