@@ -19,6 +19,7 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -47,7 +48,23 @@ class MainActivity : ComponentActivity() {
                     BottomNavigation(navController)
                 }
             ) {
-                NavHost(navController)
+                NavHost(
+                    navController = navController,
+                    startDestination = Screens.HomeScreen.name
+                ) {
+                    composable(Screens.HomeScreen.name) {
+                        HomeScreen()
+                    }
+                    composable(Screens.ConfigurationScreen.name) {
+                        ConfigurationScreen()
+                    }
+                    composable(Screens.SettingsScreen.name) {
+                        SettingsScreen()
+                    }
+                    composable(Screens.LogScreen.name) {
+                        LogScreen()
+                    }
+                }
             }
         }
     }
@@ -60,27 +77,6 @@ enum class Screens(val icon: @Composable () -> Unit, val label: @Composable () -
         { Text(MR.strings.configuration) }),
     SettingsScreen({ Icon(Icons.Filled.Settings, "Localized description") }, { Text(MR.strings.settings) }),
     LogScreen({ Icon(Icons.Filled.Code, "Localized description") }, { Text(MR.strings.log) })
-}
-
-@Composable
-private fun NavHost(navController: NavHostController) {
-    androidx.navigation.compose.NavHost(
-        navController = navController,
-        startDestination = Screens.HomeScreen.name
-    ) {
-        composable(Screens.HomeScreen.name) {
-            HomeScreen()
-        }
-        composable(Screens.ConfigurationScreen.name) {
-            ConfigurationScreen()
-        }
-        composable(Screens.SettingsScreen.name) {
-            SettingsScreen()
-        }
-        composable(Screens.LogScreen.name) {
-            LogScreen()
-        }
-    }
 }
 
 @Composable
