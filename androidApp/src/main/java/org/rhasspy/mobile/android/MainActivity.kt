@@ -14,8 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 
 class MainActivity : ComponentActivity() {
@@ -25,15 +25,22 @@ class MainActivity : ComponentActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
+        val splashWasDisplayed = savedInstanceState != null
+        if (!splashWasDisplayed) {
+            installSplashScreen()
+        }
+
         this.setContent {
             MainScreen()
         }
     }
 }
 
-enum class Screens(val icon: @Composable () -> Unit, val label: StringResource) {
-    HomeScreen({ Icon(Icons.Filled.Mic, "Localized description") }, MR.strings.home),
-    ConfigurationScreen({ Icon(painterResource(R.drawable.ic_launcher), "Localized description", Modifier.size(Dp(24f))) }, MR.strings.configuration),
-    SettingsScreen({ Icon(Icons.Filled.Settings, "Localized description") }, MR.strings.settings),
-    LogScreen({ Icon(Icons.Filled.Code, "Localized description") }, MR.strings.log)
+enum class Screens(val icon: @Composable () -> Unit, val label: @Composable () -> Unit) {
+    HomeScreen({ Icon(Icons.Filled.Mic, "Localized description") }, { Text(MR.strings.home) }),
+    ConfigurationScreen(
+        { Icon(painterResource(R.drawable.ic_launcher), "Localized description", Modifier.size(Dp(24f))) },
+        { Text(MR.strings.configuration) }),
+    SettingsScreen({ Icon(Icons.Filled.Settings, "Localized description") }, { Text(MR.strings.settings) }),
+    LogScreen({ Icon(Icons.Filled.Code, "Localized description") }, { Text(MR.strings.log) })
 }

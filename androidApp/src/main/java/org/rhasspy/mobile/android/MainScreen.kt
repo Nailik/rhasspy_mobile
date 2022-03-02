@@ -65,7 +65,8 @@ fun BottomNavigation(navController: NavHostController) {
                     }
                 },
                 icon = screen.icon,
-                label = { Text(screen.label) })
+                label = screen.label
+            )
         }
     }
 }

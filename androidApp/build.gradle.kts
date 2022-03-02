@@ -42,6 +42,7 @@ dependencies {
     implementation(Google.android.material)
 
     implementation(AndroidX.Activity.compose)
+    implementation(AndroidX.Core.splashscreen)
     implementation(AndroidX.ConstraintLayout.compose)
     implementation(AndroidX.Navigation.compose)
 

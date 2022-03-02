@@ -2,4 +2,10 @@
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar" />
 
+    <style name="AppTheme.AppSplash" parent="Theme.SplashScreen">
+        <!--<item name="windowSplashScreenBackground">@color/white</item>-->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/AppTheme</item>
+    </style>
+
 </resources>
