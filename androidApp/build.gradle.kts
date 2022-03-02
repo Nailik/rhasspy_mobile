@@ -40,6 +40,7 @@ dependencies {
     implementation(project(":MultiPlatformLibrary"))
 
     implementation(Google.android.material)
+    implementation(Google.Accompanist.insets)
 
     implementation(AndroidX.Activity.compose)
     implementation(AndroidX.Core.splashscreen)
@@ -47,6 +48,7 @@ dependencies {
     implementation(AndroidX.Navigation.compose)
 
     implementation(AndroidX.Compose.material3)
+    implementation(AndroidX.Compose.material)
     implementation(AndroidX.Compose.material.icons.extended)
     implementation(AndroidX.Compose.foundation)
     implementation(AndroidX.Compose.ui)

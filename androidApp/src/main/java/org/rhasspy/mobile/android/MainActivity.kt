@@ -3,6 +3,7 @@ package org.rhasspy.mobile.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Code
@@ -23,6 +24,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.insets.ProvideWindowInsets
 import org.rhasspy.mobile.MR
 
 class MainActivity : ComponentActivity() {
@@ -39,30 +41,35 @@ class MainActivity : ComponentActivity() {
 
         @OptIn(ExperimentalMaterial3Api::class)
         this.setContent {
-            val navController = rememberNavController()
-            Scaffold(
-                topBar = {
-                    TopAppBar()
-                },
-                bottomBar = {
-                    BottomNavigation(navController)
-                }
-            ) {
-                NavHost(
-                    navController = navController,
-                    startDestination = Screens.HomeScreen.name
-                ) {
-                    composable(Screens.HomeScreen.name) {
-                        HomeScreen()
-                    }
-                    composable(Screens.ConfigurationScreen.name) {
-                        ConfigurationScreen()
-                    }
-                    composable(Screens.SettingsScreen.name) {
-                        SettingsScreen()
-                    }
-                    composable(Screens.LogScreen.name) {
-                        LogScreen()
+            MaterialTheme {
+                ProvideWindowInsets {
+                    val navController = rememberNavController()
+                    Scaffold(
+                        topBar = {
+                            TopAppBar()
+                        },
+                        bottomBar = {
+                            BottomNavigation(navController)
+                        }
+                    ) { paddingValues ->
+                        NavHost(
+                            navController = navController,
+                            startDestination = Screens.HomeScreen.name,
+                            modifier = Modifier.padding(Dp(0f), paddingValues.calculateTopPadding(), Dp(0f), paddingValues.calculateBottomPadding())
+                        ) {
+                            composable(Screens.HomeScreen.name) {
+                                HomeScreen()
+                            }
+                            composable(Screens.ConfigurationScreen.name) {
+                                ConfigurationScreen()
+                            }
+                            composable(Screens.SettingsScreen.name) {
+                                SettingsScreen()
+                            }
+                            composable(Screens.LogScreen.name) {
+                                LogScreen()
+                            }
+                        }
                     }
                 }
             }
