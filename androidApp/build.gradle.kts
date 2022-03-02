@@ -39,6 +39,9 @@ kotlin {
 dependencies {
     implementation(project(":MultiPlatformLibrary"))
 
+    implementation(KotlinX.Coroutines.core)
+    implementation(KotlinX.Coroutines.android)
+
     implementation(Google.android.material)
     implementation(Google.Accompanist.insets)
 

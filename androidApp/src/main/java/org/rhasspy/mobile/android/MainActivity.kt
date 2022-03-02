@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -55,7 +56,12 @@ class MainActivity : ComponentActivity() {
                         NavHost(
                             navController = navController,
                             startDestination = Screens.HomeScreen.name,
-                            modifier = Modifier.padding(Dp(0f), paddingValues.calculateTopPadding(), Dp(0f), paddingValues.calculateBottomPadding())
+                            modifier = Modifier.padding(
+                                paddingValues.calculateLeftPadding(LayoutDirection.Ltr),
+                                paddingValues.calculateTopPadding(),
+                                paddingValues.calculateRightPadding(LayoutDirection.Ltr),
+                                paddingValues.calculateBottomPadding()
+                            )
                         ) {
                             composable(Screens.HomeScreen.name) {
                                 HomeScreen()
@@ -89,7 +95,7 @@ enum class Screens(val icon: @Composable () -> Unit, val label: @Composable () -
 @Composable
 fun TopAppBar() {
     MediumTopAppBar(
-        title = { Text(text = "hello2") }
+        title = { Text(MR.strings.appName) }
     )
 }
 

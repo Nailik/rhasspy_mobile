@@ -1,11 +1,15 @@
 package org.rhasspy.mobile.android
 
+import androidx.compose.material.LocalContentAlpha
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextLayoutResult
@@ -60,6 +64,21 @@ fun Text(
         maxLines,
         onTextLayout,
         style
+    )
+}
+
+@Composable
+fun Icon(
+    imageVector: ImageVector,
+    contentDescription: StringResource,
+    modifier: Modifier = Modifier,
+    tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
+) {
+    androidx.compose.material.Icon(
+        painter = rememberVectorPainter(imageVector),
+        contentDescription = translate(contentDescription),
+        modifier = modifier,
+        tint = tint
     )
 }
 
