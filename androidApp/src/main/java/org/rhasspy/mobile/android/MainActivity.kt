@@ -84,12 +84,12 @@ class MainActivity : ComponentActivity() {
 }
 
 enum class Screens(val icon: @Composable () -> Unit, val label: @Composable () -> Unit) {
-    HomeScreen({ Icon(Icons.Filled.Mic, "Localized description") }, { Text(MR.strings.home) }),
+    HomeScreen({ Icon(Icons.Filled.Mic, MR.strings.home) }, { Text(MR.strings.home) }),
     ConfigurationScreen(
-        { Icon(painterResource(R.drawable.ic_launcher), "Localized description", Modifier.size(Dp(24f))) },
+        { Icon(painterResource(R.drawable.ic_launcher), MR.strings.configuration, Modifier.size(Dp(24f))) },
         { Text(MR.strings.configuration) }),
-    SettingsScreen({ Icon(Icons.Filled.Settings, "Localized description") }, { Text(MR.strings.settings) }),
-    LogScreen({ Icon(Icons.Filled.Code, "Localized description") }, { Text(MR.strings.log) })
+    SettingsScreen({ Icon(Icons.Filled.Settings, MR.strings.settings) }, { Text(MR.strings.settings) }),
+    LogScreen({ Icon(Icons.Filled.Code, MR.strings.log) }, { Text(MR.strings.log) })
 }
 
 @Composable
