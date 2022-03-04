@@ -1,6 +1,8 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar" />
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar" >
+        <item name="windowActionBar">false</item>
+    </style>
 
     <style name="AppTheme.AppSplash" parent="Theme.SplashScreen">
         <!--<item name="windowSplashScreenBackground">@color/white</item>-->

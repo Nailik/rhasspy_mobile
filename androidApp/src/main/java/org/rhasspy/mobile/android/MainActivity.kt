@@ -3,6 +3,9 @@ package org.rhasspy.mobile.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -10,12 +13,13 @@ import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -42,39 +46,65 @@ class MainActivity : ComponentActivity() {
 
         @OptIn(ExperimentalMaterial3Api::class)
         this.setContent {
-            MaterialTheme {
-                ProvideWindowInsets {
-                    val navController = rememberNavController()
-                    Scaffold(
-                        topBar = {
-                            TopAppBar()
-                        },
-                        bottomBar = {
+            /*   val systemUiController = rememberSystemUiController()
+               val useDarkIcons = MaterialTheme.
+
+               SideEffect {
+                   systemUiController.setNavigationBarColor(
+                       darkIcons = useDarkIcons
+                   )
+               }*/
+            Content()
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun Content() {
+    MaterialTheme {
+        ProvideWindowInsets {
+
+            BoxWithConstraints(
+                modifier = Modifier.fillMaxSize()
+            ) {
+
+                var isBottomNavigationHidden by remember { mutableStateOf(false) }
+
+                isBottomNavigationHidden = this.maxHeight < 250.dp
+
+                val navController = rememberNavController()
+                Scaffold(
+                    topBar = { TopAppBar() },
+                    bottomBar = {
+                        //hide bottom navigation with keyboard and small screens
+                        if (!isBottomNavigationHidden) {
                             BottomNavigation(navController)
                         }
-                    ) { paddingValues ->
-                        NavHost(
-                            navController = navController,
-                            startDestination = Screens.HomeScreen.name,
-                            modifier = Modifier.padding(
-                                paddingValues.calculateLeftPadding(LayoutDirection.Ltr),
-                                paddingValues.calculateTopPadding(),
-                                paddingValues.calculateRightPadding(LayoutDirection.Ltr),
-                                paddingValues.calculateBottomPadding()
-                            )
-                        ) {
-                            composable(Screens.HomeScreen.name) {
-                                HomeScreen()
-                            }
-                            composable(Screens.ConfigurationScreen.name) {
-                                ConfigurationScreen()
-                            }
-                            composable(Screens.SettingsScreen.name) {
-                                SettingsScreen()
-                            }
-                            composable(Screens.LogScreen.name) {
-                                LogScreen()
-                            }
+                    }
+                ) { paddingValues ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screens.HomeScreen.name,
+                        modifier = Modifier.padding(
+                            paddingValues.calculateLeftPadding(LayoutDirection.Ltr),
+                            paddingValues.calculateTopPadding(),
+                            paddingValues.calculateRightPadding(LayoutDirection.Ltr),
+                            paddingValues.calculateBottomPadding()
+                        )
+                    ) {
+                        composable(Screens.HomeScreen.name) {
+                            HomeScreen()
+                        }
+                        composable(Screens.ConfigurationScreen.name) {
+                            ConfigurationScreen()
+                        }
+                        composable(Screens.SettingsScreen.name) {
+                            SettingsScreen()
+                        }
+                        composable(Screens.LogScreen.name) {
+                            LogScreen()
                         }
                     }
                 }
@@ -92,9 +122,10 @@ enum class Screens(val icon: @Composable () -> Unit, val label: @Composable () -
     LogScreen({ Icon(Icons.Filled.Code, MR.strings.log) }, { Text(MR.strings.log) })
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun TopAppBar() {
-    MediumTopAppBar(
+    SmallTopAppBar(
         title = { Text(MR.strings.appName) }
     )
 }

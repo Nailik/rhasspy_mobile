@@ -44,6 +44,7 @@ dependencies {
 
     implementation(Google.android.material)
     implementation(Google.Accompanist.insets)
+    implementation(Google.Accompanist.systemuicontroller)
 
     implementation(AndroidX.Activity.compose)
     implementation(AndroidX.Core.splashscreen)
