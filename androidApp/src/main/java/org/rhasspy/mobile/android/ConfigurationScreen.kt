@@ -15,6 +15,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,22 +23,21 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import org.rhasspy.mobile.*
+import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.viewModels.ConfigurationScreenViewModel
-import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 import java.math.RoundingMode
 
 @Composable
-fun ConfigurationScreen(viewModel : ConfigurationScreenViewModel = viewModel()) {
+fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = viewModel()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        SiteId()
+        SiteId(viewModel)
         Divider()
-        HttpSSL()
+        HttpSSL(viewModel)
         Divider()
         Mqtt()
         Divider()
@@ -61,35 +61,37 @@ fun ConfigurationScreen(viewModel : ConfigurationScreenViewModel = viewModel()) 
 }
 
 @Composable
-fun SiteId() {
-    var siteId by remember { mutableStateOf("") }
+fun SiteId(viewModel: ConfigurationScreenViewModel) {
+
+    val siteIdValue = viewModel.siteId.ld().observeAsState("").value
 
     TextFieldListItem(
-        value = siteId,
-        onValueChange = { siteId = it },
+        value = siteIdValue,
+        onValueChange = { viewModel.siteId.value = it },
         label = MR.strings.siteId,
         paddingValues = PaddingValues(top = 4.dp, bottom = 16.dp)
     )
 }
 
 @Composable
-fun HttpSSL() {
-    var isHttpSSL by remember { mutableStateOf(false) }
+fun HttpSSL(viewModel: ConfigurationScreenViewModel) {
+
+    val isHttpSSLValue = viewModel.isHttpSSL.ld().observeAsState(false).value
 
     ExpandableListItem(
         text = MR.strings.httpSSL,
-        secondaryText = isHttpSSL.toText()
+        secondaryText = isHttpSSLValue.toText()
     ) {
 
         SwitchListItem(
             text = MR.strings.enableSSL,
-            isChecked = isHttpSSL,
-            onCheckedChange = { isHttpSSL = it })
+            isChecked = isHttpSSLValue,
+            onCheckedChange = { viewModel.isHttpSSL.value = it })
 
         AnimatedVisibility(
             enter = expandVertically(),
             exit = shrinkVertically(),
-            visible = isHttpSSL
+            visible = isHttpSSLValue
         ) {
             OutlineButtonListItem(
                 text = MR.strings.chooseCertificate,

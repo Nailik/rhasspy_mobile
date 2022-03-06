@@ -55,6 +55,7 @@ dependencies {
     implementation(AndroidX.Compose.material)
     implementation(AndroidX.Compose.material.icons.extended)
     implementation(AndroidX.Compose.foundation)
+    implementation(AndroidX.Compose.runtime.liveData)
     implementation(AndroidX.Lifecycle.viewModelCompose)
     implementation(AndroidX.Compose.ui)
     implementation(AndroidX.Compose.ui.tooling)
