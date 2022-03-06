@@ -10,13 +10,16 @@ import androidx.compose.material3.Divider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.data.ThemeOptions
+import org.rhasspy.mobile.viewModels.HomeScreenViewModel
+import org.rhasspy.mobile.viewModels.SettingsScreenViewModel
 
 @Preview
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(viewModel : SettingsScreenViewModel = viewModel()) {
     Column(
         modifier = Modifier
             .fillMaxSize()

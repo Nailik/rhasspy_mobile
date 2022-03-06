@@ -32,6 +32,8 @@ import com.google.accompanist.insets.ExperimentalAnimatedInsets
 import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.viewModels.HomeScreenViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 var isMainActionBig = mutableStateOf(true)
 var mainActionVisible = mutableStateOf(true)
@@ -43,7 +45,7 @@ var mainActionVisible = mutableStateOf(true)
 )
 @Preview(showSystemUi = true)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(viewModel : HomeScreenViewModel = viewModel()) {
     when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
             Row(

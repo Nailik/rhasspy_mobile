@@ -21,12 +21,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import org.rhasspy.mobile.MR
+import androidx.lifecycle.viewmodel.compose.viewModel
+import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.*
+import org.rhasspy.mobile.viewModels.ConfigurationScreenViewModel
+import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 import java.math.RoundingMode
 
 @Composable
-fun ConfigurationScreen() {
+fun ConfigurationScreen(viewModel : ConfigurationScreenViewModel = viewModel()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
