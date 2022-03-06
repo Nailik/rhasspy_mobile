@@ -45,7 +45,6 @@ class MainActivity : ComponentActivity() {
             installSplashScreen()
         }
 
-        @OptIn(ExperimentalMaterial3Api::class)
         this.setContent {
             /*   val systemUiController = rememberSystemUiController()
                val useDarkIcons = MaterialTheme.

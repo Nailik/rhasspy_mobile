@@ -17,6 +17,7 @@
     <string name="audioRecording">Audio Recording</string>
     <string name="udpAudioOutput">UDP Audio (Output)</string>
     <string name="udpAudioOutputOff">UDP Audio (Off)</string>
+    <string name="udpAudioOutputOn">UDP Audio (On)</string>
     <string name="udpAudioOutputDetail">(outside ASR listening)</string>
     <string name="wakeWord">Wake Word</string>
     <string name="sensitivity">Sensitivity</string>
@@ -78,4 +79,5 @@
     <string name="ok">Ok</string>
     <string name="expandListItem">Expand list item</string>
     <string name="expandDropDown">Expand drop down</string>
+    <string name="visibility">Visibility</string>
 </resources>

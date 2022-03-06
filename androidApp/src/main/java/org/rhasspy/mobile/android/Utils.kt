@@ -5,24 +5,23 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ListItem
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Switch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -39,6 +38,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
@@ -48,6 +48,7 @@ import com.google.accompanist.insets.LocalWindowInsets
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.DataEnum
 
@@ -72,7 +73,7 @@ fun Text(
     onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = LocalTextStyle.current
 ) {
-    androidx.compose.material3.Text(
+    Text(
         translate(resource),
         modifier,
         color,
@@ -97,9 +98,9 @@ fun Icon(
     imageVector: ImageVector,
     contentDescription: StringResource,
     modifier: Modifier = Modifier,
-    tint: Color = androidx.compose.material3.LocalContentColor.current
+    tint: Color = LocalContentColor.current
 ) {
-    androidx.compose.material3.Icon(
+    Icon(
         painter = rememberVectorPainter(imageVector),
         contentDescription = translate(contentDescription),
         modifier = modifier,
@@ -112,9 +113,9 @@ fun Icon(
     painter: Painter,
     contentDescription: StringResource,
     modifier: Modifier = Modifier,
-    tint: Color = androidx.compose.material3.LocalContentColor.current
+    tint: Color = LocalContentColor.current
 ) {
-    androidx.compose.material3.Icon(
+    Icon(
         painter = painter,
         contentDescription = translate(contentDescription),
         modifier = modifier,
@@ -178,10 +179,8 @@ fun IndicatedSmallIcon(isIndicated: Boolean, rotationTarget: Float = 180f, icon:
 }
 
 @Composable
-fun <E : DataEnum> DropDownEnumListItem(initial: E, values: () -> Array<E>) {
+fun <E : DataEnum> DropDownEnumListItem(selected: E, onSelect: (item: E) -> Unit, values: () -> Array<E>) {
     var isExpanded by remember { mutableStateOf(false) }
-    var selected by remember { mutableStateOf(initial) }
-
 
     ListElement(modifier = Modifier
         .clickable { isExpanded = true },
@@ -208,20 +207,52 @@ fun <E : DataEnum> DropDownEnumListItem(initial: E, values: () -> Array<E>) {
             values().forEach {
                 DropdownMenuItem(
                     text = { Text(it.text) },
-                    onClick = { selected = it })
+                    onClick = { isExpanded = false; onSelect(it) })
             }
         }
     }
 }
 
 @Composable
-fun ExpandableListItem(text: StringResource, expandedContent: @Composable () -> Unit) {
-    var isExpanded by remember { mutableStateOf(false) }
+fun ExpandableListItem(
+    text: StringResource,
+    secondaryText: StringResource? = null,
+    expandedContent: @Composable () -> Unit
+) {
+    ExpandableListItemInternal(
+        text = text,
+        secondaryText = secondaryText?.let { { Text(secondaryText) } } ?: run { null },
+        expandedContent = expandedContent
+    )
+}
+
+@Composable
+fun ExpandableListItemString(
+    text: StringResource,
+    secondaryText: String? = null,
+    expandedContent: @Composable () -> Unit
+) {
+    ExpandableListItemInternal(
+        text = text,
+        secondaryText = secondaryText?.let { { Text(secondaryText) } } ?: run { null },
+        expandedContent = expandedContent
+    )
+}
+
+
+@Composable
+private fun ExpandableListItemInternal(
+    text: StringResource,
+    secondaryText: (@Composable () -> Unit)?,
+    expandedContent: @Composable () -> Unit
+) {
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
 
     ListElement(
         modifier = Modifier
             .clickable { isExpanded = !isExpanded },
         text = { Text(text) },
+        secondaryText = secondaryText,
         trailing = {
             IndicatedSmallIcon(isExpanded) {
                 Icon(
@@ -238,21 +269,22 @@ fun ExpandableListItem(text: StringResource, expandedContent: @Composable () -> 
         exit = shrinkVertically(),
         visible = isExpanded
     ) {
-        expandedContent()
+        Column(modifier = Modifier.padding(bottom = 8.dp)) {
+            expandedContent()
+        }
     }
 }
 
 @Composable
-fun SwitchListItem(text: StringResource) {
-    var isChecked by remember { mutableStateOf(false) }
-
+fun SwitchListItem(text: StringResource, secondaryText: StringResource? = null, isChecked: Boolean, onCheckedChange: ((Boolean) -> Unit)) {
     ListElement(modifier = Modifier
-        .clickable { isChecked = !isChecked },
+        .clickable { onCheckedChange(!isChecked) },
         text = { Text(text) },
+        secondaryText = secondaryText?.let { { Text(secondaryText) } } ?: run { null },
         trailing = {
             Switch(
                 checked = isChecked,
-                onCheckedChange = { isChecked = !isChecked })
+                onCheckedChange = { onCheckedChange(!isChecked) })
         })
 }
 
@@ -260,6 +292,7 @@ fun SwitchListItem(text: StringResource) {
 @Composable
 fun ListElement(
     modifier: Modifier = Modifier,
+    paddingValues: PaddingValues = PaddingValues(vertical = 8.dp),
     icon: @Composable (() -> Unit)? = null,
     secondaryText: @Composable (() -> Unit)? = null,
     singleLineSecondaryText: Boolean = true,
@@ -268,7 +301,7 @@ fun ListElement(
     text: @Composable () -> Unit
 ) {
     ListItem(
-        modifier = modifier.padding(vertical = 8.dp),
+        modifier = modifier.padding(paddingValues),
         icon = icon,
         secondaryText = secondaryText,
         singleLineSecondaryText = singleLineSecondaryText,
@@ -276,4 +309,81 @@ fun ListElement(
         trailing = trailing,
         text = text
     )
+}
+
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun TextFieldListItem(
+    label: StringResource,
+    value: String,
+    onValueChange: (String) -> Unit,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    paddingValues: PaddingValues = PaddingValues(vertical = 2.dp),
+) {
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+
+    ListElement(
+        modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester),
+        paddingValues = paddingValues
+    ) {
+        val coroutineScope = rememberCoroutineScope()
+
+        OutlinedTextField(
+            singleLine = true,
+            value = value,
+            onValueChange = onValueChange,
+            trailingIcon = trailingIcon,
+            visualTransformation = visualTransformation,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clearFocusOnKeyboardDismiss()
+                .onFocusEvent {
+                    if (it.isFocused) {
+                        coroutineScope.launch {
+                            bringIntoViewRequester.bringIntoView()
+                        }
+                    }
+                },
+            label = { Text(label) }
+        )
+    }
+}
+
+@Composable
+fun OutlineButtonListItem(text: StringResource, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .wrapContentSize(Alignment.Center)
+    ) {
+        OutlinedButton(onClick = onClick) {
+            Text(text)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun SliderListItem(text: StringResource, value: Float, onValueChange: (Float) -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .wrapContentSize(Alignment.Center)
+    ) {
+        Text("${translate(text)} ($value)")
+
+        Slider(
+            modifier = Modifier.padding(top = 12.dp),
+            value = value,
+            onValueChange = onValueChange
+        )
+    }
+}
+
+fun Boolean.toText(): StringResource {
+    return if (this) MR.strings.enabled else MR.strings.disabled
 }
