@@ -221,6 +221,7 @@ fun AudioRecording() {
 @Composable
 fun WakeWord() {
     var wakeWordValue by remember { mutableStateOf(WakeWordOption.Porcupine) }
+
     ExpandableListItem(
         text = MR.strings.wakeWord,
         secondaryText = wakeWordValue.text
