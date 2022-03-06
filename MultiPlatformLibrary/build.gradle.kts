@@ -2,6 +2,7 @@ plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
+    id("dev.icerock.mobile.multiplatform-resources")
 }
 
 version = "1.0"
@@ -24,13 +25,32 @@ kotlin {
 
     @Suppress("UNUSED_VARIABLE")
     sourceSets {
-        val commonMain by getting
-        val commonTest by getting {
+
+        all {
+            //Warning: This class can only be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'
+            languageSettings.optIn("kotlin.RequiresOptIn")
+        }
+
+        val commonMain by getting {
             dependencies {
-                implementation(kotlin("test"))
+                implementation(Icerock.Mvvm.core)
+                implementation(Icerock.Mvvm.state)
+                implementation(Icerock.Mvvm.livedata)
+                implementation(Icerock.Mvvm.livedataResources)
+                runtimeOnly(Icerock.permissions)
+                implementation(Icerock.Resources)
             }
         }
-        val androidMain by getting
+        val commonTest by getting {
+            dependencies {
+                implementation(Kotlin.test)
+            }
+        }
+        val androidMain by getting {
+            dependencies {
+                implementation(Icerock.Resources.resourcesCompose)
+            }
+        }
         val androidTest by getting
         val iosX64Main by getting
         val iosArm64Main by getting
@@ -60,4 +80,8 @@ android {
         minSdk = 21
         targetSdk = 32
     }
+}
+
+multiplatformResources {
+    multiplatformResourcesPackage = "org.rhasspy.mobile" // required
 }

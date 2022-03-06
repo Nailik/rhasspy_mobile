@@ -5,8 +5,11 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
-        classpath("com.android.tools.build:gradle:7.1.2")
+        //classpath dependencies cannot be loaded from buildSrc
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
+        @Suppress("GradlePluginVersion")
+        classpath("com.android.tools.build:gradle:_")
+        classpath("dev.icerock.moko:resources-generator:_")
     }
 }
 
