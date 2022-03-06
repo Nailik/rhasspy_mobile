@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.Colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Mic
@@ -63,48 +64,68 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun Content() {
-    MaterialTheme {
-        ProvideWindowInsets {
+    androidx.compose.material.MaterialTheme(
+        colors = Colors(
+            primary = MaterialTheme.colorScheme.primary,
+            primaryVariant = MaterialTheme.colorScheme.primary,
+            secondary = MaterialTheme.colorScheme.secondary,
+            secondaryVariant = MaterialTheme.colorScheme.secondary,
+            background = MaterialTheme.colorScheme.background,
+            surface = MaterialTheme.colorScheme.surface,
+            error = MaterialTheme.colorScheme.error,
+            onPrimary = MaterialTheme.colorScheme.onPrimary,
+            onSecondary = MaterialTheme.colorScheme.onSecondary,
+            onBackground = MaterialTheme.colorScheme.onBackground,
+            onSurface = MaterialTheme.colorScheme.onSurface,
+            onError = MaterialTheme.colorScheme.onError,
+            isLight = false
+        )
+    ) {
 
-            BoxWithConstraints(
-                modifier = Modifier.fillMaxSize()
-            ) {
+        MaterialTheme {
 
-                var isBottomNavigationHidden by remember { mutableStateOf(false) }
+            ProvideWindowInsets {
 
-                isBottomNavigationHidden = this.maxHeight < 250.dp
+                BoxWithConstraints(
+                    modifier = Modifier.fillMaxSize()
+                ) {
 
-                val navController = rememberNavController()
-                Scaffold(
-                    topBar = { TopAppBar() },
-                    bottomBar = {
-                        //hide bottom navigation with keyboard and small screens
-                        if (!isBottomNavigationHidden) {
-                            BottomNavigation(navController)
+                    var isBottomNavigationHidden by remember { mutableStateOf(false) }
+
+                    isBottomNavigationHidden = this.maxHeight < 250.dp
+
+                    val navController = rememberNavController()
+                    Scaffold(
+                        topBar = { TopAppBar() },
+                        bottomBar = {
+                            //hide bottom navigation with keyboard and small screens
+                            if (!isBottomNavigationHidden) {
+                                BottomNavigation(navController)
+                            }
                         }
-                    }
-                ) { paddingValues ->
-                    NavHost(
-                        navController = navController,
-                        startDestination = Screens.HomeScreen.name,
-                        modifier = Modifier.padding(
-                            paddingValues.calculateLeftPadding(LayoutDirection.Ltr),
-                            paddingValues.calculateTopPadding(),
-                            paddingValues.calculateRightPadding(LayoutDirection.Ltr),
-                            paddingValues.calculateBottomPadding()
-                        )
-                    ) {
-                        composable(Screens.HomeScreen.name) {
-                            HomeScreen()
-                        }
-                        composable(Screens.ConfigurationScreen.name) {
-                            ConfigurationScreen()
-                        }
-                        composable(Screens.SettingsScreen.name) {
-                            SettingsScreen()
-                        }
-                        composable(Screens.LogScreen.name) {
-                            LogScreen()
+                    ) { paddingValues ->
+                        NavHost(
+                            navController = navController,
+                            startDestination = Screens.HomeScreen.name,
+                            modifier = Modifier.padding(
+                                paddingValues.calculateLeftPadding(LayoutDirection.Ltr),
+                                paddingValues.calculateTopPadding(),
+                                paddingValues.calculateRightPadding(LayoutDirection.Ltr),
+                                paddingValues.calculateBottomPadding()
+                            )
+                        ) {
+                            composable(Screens.HomeScreen.name) {
+                                HomeScreen()
+                            }
+                            composable(Screens.ConfigurationScreen.name) {
+                                ConfigurationScreen()
+                            }
+                            composable(Screens.SettingsScreen.name) {
+                                SettingsScreen()
+                            }
+                            composable(Screens.LogScreen.name) {
+                                LogScreen()
+                            }
                         }
                     }
                 }
@@ -122,7 +143,6 @@ enum class Screens(val icon: @Composable () -> Unit, val label: @Composable () -
     LogScreen({ Icon(Icons.Filled.Code, MR.strings.log) }, { Text(MR.strings.log) })
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun TopAppBar() {
     SmallTopAppBar(

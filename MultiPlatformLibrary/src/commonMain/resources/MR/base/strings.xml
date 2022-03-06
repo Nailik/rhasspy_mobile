@@ -76,4 +76,6 @@
     <string name="microphonePermissionDenied">open settings to allow microphone access</string>
     <string name="cancel">Cancel</string>
     <string name="ok">Ok</string>
+    <string name="expandListItem">Expand list item</string>
+    <string name="expandDropDown">Expand drop down</string>
 </resources>
