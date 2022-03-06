@@ -384,6 +384,17 @@ fun SliderListItem(text: StringResource, value: Float, onValueChange: (Float) ->
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RadioButtonListItem(text: StringResource, isChecked: Boolean, onClick: () -> Unit) {
+    ListElement(modifier = Modifier.clickable { onClick() }) {
+        Row {
+            RadioButton(selected = isChecked, onClick = onClick)
+            Text(text, modifier = Modifier.weight(1f))
+        }
+    }
+}
+
 fun Boolean.toText(): StringResource {
     return if (this) MR.strings.enabled else MR.strings.disabled
 }

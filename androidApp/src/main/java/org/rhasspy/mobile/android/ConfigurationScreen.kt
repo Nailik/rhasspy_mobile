@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -21,7 +22,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.data.WakeWordOption
+import org.rhasspy.mobile.data.*
 import java.math.RoundingMode
 
 @Composable
@@ -263,42 +264,186 @@ fun WakeWord() {
 
 @Composable
 fun SpeechToText() {
-    ExpandableListItem(text = MR.strings.speechToText) {
+    var speechToTextValue by remember { mutableStateOf(SpeechToTextOptions.Disabled) }
+    var speechToTextHttpEndpoint by remember { mutableStateOf("") }
 
+    ExpandableListItem(
+        text = MR.strings.speechToText,
+        secondaryText = speechToTextValue.text
+    ) {
+        DropDownEnumListItem(speechToTextValue, onSelect = { speechToTextValue = it }) { SpeechToTextOptions.values() }
+
+        AnimatedVisibility(
+            enter = expandVertically(),
+            exit = shrinkVertically(),
+            visible = speechToTextValue == SpeechToTextOptions.RemoteHTTP
+        ) {
+
+            TextFieldListItem(
+                value = speechToTextHttpEndpoint,
+                onValueChange = { speechToTextHttpEndpoint = it },
+                label = MR.strings.speechToTextURL
+            )
+
+        }
     }
 }
 
 @Composable
 fun IntentRecognition() {
-    ExpandableListItem(text = MR.strings.intentRecognition) {
+    var intentRecognitionValue by remember { mutableStateOf(IntentRecognitionOptions.Disabled) }
+    var intentRecognitionEndpoint by remember { mutableStateOf("") }
 
+    ExpandableListItem(
+        text = MR.strings.intentRecognition,
+        secondaryText = intentRecognitionValue.text
+    ) {
+        DropDownEnumListItem(intentRecognitionValue, onSelect = { intentRecognitionValue = it }) { IntentRecognitionOptions.values() }
+
+        AnimatedVisibility(
+            enter = expandVertically(),
+            exit = shrinkVertically(),
+            visible = intentRecognitionValue == IntentRecognitionOptions.RemoteHTTP
+        ) {
+
+            TextFieldListItem(
+                value = intentRecognitionEndpoint,
+                onValueChange = { intentRecognitionEndpoint = it },
+                label = MR.strings.rhasspyTextToIntentURL
+            )
+
+        }
     }
 }
 
 @Composable
 fun TextToSpeech() {
-    ExpandableListItem(text = MR.strings.textToSpeech) {
+    var textToSpeechValue by remember { mutableStateOf(TextToSpeechOptions.Disabled) }
+    var textToSpeechEndpoint by remember { mutableStateOf("") }
 
+    ExpandableListItem(
+        text = MR.strings.textToSpeech,
+        secondaryText = textToSpeechValue.text
+    ) {
+        DropDownEnumListItem(textToSpeechValue, onSelect = { textToSpeechValue = it }) { TextToSpeechOptions.values() }
+
+        AnimatedVisibility(
+            enter = expandVertically(),
+            exit = shrinkVertically(),
+            visible = textToSpeechValue == TextToSpeechOptions.RemoteHTTP
+        ) {
+
+            TextFieldListItem(
+                value = textToSpeechEndpoint,
+                onValueChange = { textToSpeechEndpoint = it },
+                label = MR.strings.rhasspyTextToSpeechURL
+            )
+
+        }
     }
 }
 
 @Composable
 fun AudioPlaying() {
-    ExpandableListItem(text = MR.strings.audioRecording) {
+    var audioPlayingValue by remember { mutableStateOf(AudioPlayingOptions.Disabled) }
+    var audioPlayingEndpoint by remember { mutableStateOf("") }
 
+    ExpandableListItem(
+        text = MR.strings.audioPlaying,
+        secondaryText = audioPlayingValue.text
+    ) {
+        DropDownEnumListItem(audioPlayingValue, onSelect = { audioPlayingValue = it }) { AudioPlayingOptions.values() }
+
+        AnimatedVisibility(
+            enter = expandVertically(),
+            exit = shrinkVertically(),
+            visible = audioPlayingValue == AudioPlayingOptions.RemoteHTTP
+        ) {
+
+            TextFieldListItem(
+                value = audioPlayingEndpoint,
+                onValueChange = { audioPlayingEndpoint = it },
+                label = MR.strings.audioOutputURL
+            )
+
+        }
     }
 }
 
 @Composable
 fun DialogueManagement() {
-    ExpandableListItem(text = MR.strings.dialogueManagement) {
+    var dialogueManagementValue by remember { mutableStateOf(DialogueManagementOptions.Disabled) }
 
+    ExpandableListItem(
+        text = MR.strings.dialogueManagement,
+        secondaryText = dialogueManagementValue.text
+    ) {
+        DropDownEnumListItem(dialogueManagementValue, onSelect = { dialogueManagementValue = it }) { DialogueManagementOptions.values() }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IntentHandling() {
-    ExpandableListItem(text = MR.strings.intentHandling) {
+    var intentHandlingValue by remember { mutableStateOf(IntentHandlingOptions.Disabled) }
+    var intentHandlingEndpoint by remember { mutableStateOf("") }
+    var intentHandlingHassUrl by remember { mutableStateOf("") }
+    var intentHandlingHassAccessToken by remember { mutableStateOf("") }
+    var isIntentHandlingHassEvent by remember { mutableStateOf(false) }
 
+    ExpandableListItem(
+        text = MR.strings.intentHandling,
+        secondaryText = intentHandlingValue.text
+    ) {
+        DropDownEnumListItem(intentHandlingValue, onSelect = { intentHandlingValue = it }) { IntentHandlingOptions.values() }
+
+        AnimatedVisibility(
+            enter = expandVertically(),
+            exit = shrinkVertically(),
+            visible = intentHandlingValue == IntentHandlingOptions.RemoteHTTP
+        ) {
+
+            TextFieldListItem(
+                value = intentHandlingEndpoint,
+                onValueChange = { intentHandlingEndpoint = it },
+                label = MR.strings.remoteURL
+            )
+        }
+
+        AnimatedVisibility(
+            enter = expandVertically(),
+            exit = shrinkVertically(),
+            visible = intentHandlingValue == IntentHandlingOptions.HomeAssistant
+        ) {
+            Column {
+
+                TextFieldListItem(
+                    value = intentHandlingHassUrl,
+                    onValueChange = { intentHandlingHassUrl = it },
+                    label = MR.strings.hassURL
+                )
+
+                TextFieldListItem(
+                    value = intentHandlingHassAccessToken,
+                    onValueChange = { intentHandlingHassAccessToken = it },
+                    label = MR.strings.accessToken
+                )
+
+                RadioButtonListItem(
+                    text = MR.strings.homeAssistantEvents,
+                    isChecked = isIntentHandlingHassEvent,
+                    onClick = {
+                        isIntentHandlingHassEvent = true
+                    })
+
+
+                RadioButtonListItem(
+                    text = MR.strings.homeAssistantIntents,
+                    isChecked = !isIntentHandlingHassEvent,
+                    onClick = {
+                        isIntentHandlingHassEvent = false
+                    })
+            }
+        }
     }
 }

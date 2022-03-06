@@ -5,6 +5,6 @@ import org.rhasspy.mobile.MR
 
 enum class IntentHandlingOptions(override val text: StringResource) : DataEnum {
     HomeAssistant(MR.strings.homeAssistant),
-    RemoteMQTT(MR.strings.remoteMQTT),
+    RemoteHTTP(MR.strings.remoteHTTP),
     Disabled(MR.strings.disabled)
 }
