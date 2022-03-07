@@ -41,7 +41,7 @@ fun LanguageItem() {
 
     DropDownEnumListItem(
         selected = SettingsData.languageOption.observe(),
-        onSelect = { SettingsData.languageOption.value = it })
+        onSelect = { SettingsData.languageOption.data = it })
     { LanguageOptions.values() }
 
 }
@@ -51,7 +51,7 @@ fun ThemeItem() {
 
     DropDownEnumListItem(
         selected = SettingsData.themeOption.observe(),
-        onSelect = { SettingsData.themeOption.value = it })
+        onSelect = { SettingsData.themeOption.data = it })
     { ThemeOptions.values() }
 
 }
@@ -62,7 +62,7 @@ fun AutomaticSilenceDetectionItem() {
     SwitchListItem(
         text = MR.strings.automaticSilenceDetection,
         isChecked = SettingsData.automaticSilenceDetection.observe(),
-        onCheckedChange = { SettingsData.automaticSilenceDetection.value = !SettingsData.automaticSilenceDetection.value })
+        onCheckedChange = { SettingsData.automaticSilenceDetection.data = !SettingsData.automaticSilenceDetection.value })
 
 }
 
@@ -79,12 +79,12 @@ fun BackgroundWakeWordDetectionItem() {
             SwitchListItem(
                 text = MR.strings.enableBackgroundWakeWordDetection,
                 isChecked = isBackgroundWakeWordDetection,
-                onCheckedChange = { SettingsData.isBackgroundWakeWordDetection.value = it })
+                onCheckedChange = { SettingsData.isBackgroundWakeWordDetection.data = it })
 
             SwitchListItem(
                 text = MR.strings.backgroundWakeWordDetectionTurnOnDisplay,
                 isChecked = SettingsData.isBackgroundWakeWordDetectionTurnOnDisplay.observe(),
-                onCheckedChange = { SettingsData.isBackgroundWakeWordDetectionTurnOnDisplay.value = it })
+                onCheckedChange = { SettingsData.isBackgroundWakeWordDetectionTurnOnDisplay.data = it })
         }
     }
 }
@@ -113,12 +113,12 @@ fun WakeWordIndicationItem() {
             SwitchListItem(
                 text = MR.strings.wakeWordSoundIndication,
                 isChecked = isWakeWordSoundIndication,
-                onCheckedChange = { SettingsData.isWakeWordSoundIndication.value = it })
+                onCheckedChange = { SettingsData.isWakeWordSoundIndication.data = it })
 
             SwitchListItem(
                 text = MR.strings.wakeWordLightIndication,
                 isChecked = isWakeWordLightIndication,
-                onCheckedChange = { SettingsData.isWakeWordLightIndication.value = it })
+                onCheckedChange = { SettingsData.isWakeWordLightIndication.data = it })
         }
     }
 }
@@ -128,6 +128,6 @@ fun ShowLogItem() {
 
     SwitchListItem(MR.strings.showLog,
         isChecked = SettingsData.isShowLog.observe(),
-        onCheckedChange = { SettingsData.isShowLog.value = it })
+        onCheckedChange = { SettingsData.isShowLog.data = it })
 
 }

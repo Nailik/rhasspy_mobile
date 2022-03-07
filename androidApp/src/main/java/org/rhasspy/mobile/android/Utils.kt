@@ -54,6 +54,7 @@ import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.DataEnum
+import org.rhasspy.mobile.viewModels.GlobalData
 
 val lang = mutableStateOf(StringDesc.localeType)
 
@@ -287,7 +288,8 @@ fun SwitchListItem(text: StringResource, secondaryText: StringResource? = null, 
         trailing = {
             Switch(
                 checked = isChecked,
-                onCheckedChange = null)
+                onCheckedChange = null
+            )
         })
 }
 
@@ -403,6 +405,15 @@ fun Boolean.toText(): StringResource {
 }
 
 @Composable
-fun <T> LiveData<T>.observe():  T {
+fun <T> LiveData<T>.observe(): T {
     return this.ld().observeAsState(this.value).value
 }
+
+var <T> MutableLiveData<T>.data: T
+    get() = this.value
+    set(newValue) {
+        if (this.value != newValue) {
+            GlobalData.unsavedChanges.value = true
+            this.value = newValue
+        }
+    }
