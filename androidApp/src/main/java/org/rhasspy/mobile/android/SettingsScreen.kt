@@ -8,69 +8,68 @@ import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.data.ThemeOptions
-import org.rhasspy.mobile.viewModels.SettingsScreenViewModel
+import org.rhasspy.mobile.viewModels.SettingsData
 
 @Preview
 @Composable
-fun SettingsScreen(viewModel: SettingsScreenViewModel = viewModel()) {
+fun SettingsScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        LanguageItem(viewModel)
+        LanguageItem()
         Divider()
-        ThemeItem(viewModel)
+        ThemeItem()
         Divider()
-        AutomaticSilenceDetectionItem(viewModel)
+        AutomaticSilenceDetectionItem()
         Divider()
-        BackgroundWakeWordDetectionItem(viewModel)
+        BackgroundWakeWordDetectionItem()
         Divider()
-        WakeWordIndicationItem(viewModel)
+        WakeWordIndicationItem()
         Divider()
-        ShowLogItem(viewModel)
+        ShowLogItem()
         Divider()
     }
 }
 
 @Composable
-fun LanguageItem(viewModel: SettingsScreenViewModel) {
+fun LanguageItem() {
 
     DropDownEnumListItem(
-        selected = viewModel.languageOption.observe(),
-        onSelect = { viewModel.languageOption.value = it })
+        selected = SettingsData.languageOption.observe(),
+        onSelect = { SettingsData.languageOption.value = it })
     { LanguageOptions.values() }
 
 }
 
 @Composable
-fun ThemeItem(viewModel: SettingsScreenViewModel) {
+fun ThemeItem() {
 
     DropDownEnumListItem(
-        selected = viewModel.themeOption.observe(),
-        onSelect = { viewModel.themeOption.value = it })
+        selected = SettingsData.themeOption.observe(),
+        onSelect = { SettingsData.themeOption.value = it })
     { ThemeOptions.values() }
 
 }
 
 @Composable
-fun AutomaticSilenceDetectionItem(viewModel: SettingsScreenViewModel) {
+fun AutomaticSilenceDetectionItem() {
 
     SwitchListItem(
         text = MR.strings.automaticSilenceDetection,
-        isChecked = viewModel.automaticSilenceDetection.observe(),
-        onCheckedChange = { viewModel.automaticSilenceDetection.value = !viewModel.automaticSilenceDetection.value })
+        isChecked = SettingsData.automaticSilenceDetection.observe(),
+        onCheckedChange = { SettingsData.automaticSilenceDetection.value = !SettingsData.automaticSilenceDetection.value })
 
 }
 
 @Composable
-fun BackgroundWakeWordDetectionItem(viewModel: SettingsScreenViewModel) {
+fun BackgroundWakeWordDetectionItem() {
 
-    val isBackgroundWakeWordDetection = viewModel.isBackgroundWakeWordDetection.observe()
+    val isBackgroundWakeWordDetection = SettingsData.isBackgroundWakeWordDetection.observe()
 
     ExpandableListItem(
         text = MR.strings.backgroundWakeWordDetection,
@@ -80,21 +79,21 @@ fun BackgroundWakeWordDetectionItem(viewModel: SettingsScreenViewModel) {
             SwitchListItem(
                 text = MR.strings.enableBackgroundWakeWordDetection,
                 isChecked = isBackgroundWakeWordDetection,
-                onCheckedChange = { viewModel.isBackgroundWakeWordDetection.value = it })
+                onCheckedChange = { SettingsData.isBackgroundWakeWordDetection.value = it })
 
             SwitchListItem(
                 text = MR.strings.backgroundWakeWordDetectionTurnOnDisplay,
-                isChecked = viewModel.isBackgroundWakeWordDetectionTurnOnDisplay.observe(),
-                onCheckedChange = { viewModel.isBackgroundWakeWordDetectionTurnOnDisplay.value = it })
+                isChecked = SettingsData.isBackgroundWakeWordDetectionTurnOnDisplay.observe(),
+                onCheckedChange = { SettingsData.isBackgroundWakeWordDetectionTurnOnDisplay.value = it })
         }
     }
 }
 
 
 @Composable
-fun WakeWordIndicationItem(viewModel: SettingsScreenViewModel) {
-    val isWakeWordSoundIndication = viewModel.isWakeWordSoundIndication.observe()
-    val isWakeWordLightIndication = viewModel.isWakeWordLightIndication.observe()
+fun WakeWordIndicationItem() {
+    val isWakeWordSoundIndication = SettingsData.isWakeWordSoundIndication.observe()
+    val isWakeWordLightIndication = SettingsData.isWakeWordLightIndication.observe()
 
 
     var stateText = if (isWakeWordSoundIndication) translate(MR.strings.sound) else null
@@ -114,21 +113,21 @@ fun WakeWordIndicationItem(viewModel: SettingsScreenViewModel) {
             SwitchListItem(
                 text = MR.strings.wakeWordSoundIndication,
                 isChecked = isWakeWordSoundIndication,
-                onCheckedChange = { viewModel.isWakeWordSoundIndication.value = it })
+                onCheckedChange = { SettingsData.isWakeWordSoundIndication.value = it })
 
             SwitchListItem(
                 text = MR.strings.wakeWordLightIndication,
                 isChecked = isWakeWordLightIndication,
-                onCheckedChange = { viewModel.isWakeWordLightIndication.value = it })
+                onCheckedChange = { SettingsData.isWakeWordLightIndication.value = it })
         }
     }
 }
 
 @Composable
-fun ShowLogItem(viewModel: SettingsScreenViewModel) {
+fun ShowLogItem() {
 
     SwitchListItem(MR.strings.showLog,
-        isChecked = viewModel.isShowLog.observe(),
-        onCheckedChange = { viewModel.isShowLog.value = it })
+        isChecked = SettingsData.isShowLog.observe(),
+        onCheckedChange = { SettingsData.isShowLog.value = it })
 
 }

@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -31,6 +32,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.viewModels.MainViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -57,7 +59,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun Content() {
+fun Content(viewModel: MainViewModel = viewModel()) {
     androidx.compose.material.MaterialTheme(
         colors = Colors(
             primary = MaterialTheme.colorScheme.primary,
