@@ -62,7 +62,7 @@ fun AutomaticSilenceDetectionItem() {
     SwitchListItem(
         text = MR.strings.automaticSilenceDetection,
         isChecked = AppSettings.automaticSilenceDetection.observe(),
-        onCheckedChange = { AppSettings.automaticSilenceDetection.data = !AppSettings.automaticSilenceDetection.value })
+        onCheckedChange = { AppSettings.automaticSilenceDetection.data = !AppSettings.automaticSilenceDetection.data })
 
 }
 

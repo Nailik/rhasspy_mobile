@@ -3,9 +3,8 @@ package org.rhasspy.mobile.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Colors
 import androidx.compose.material.icons.Icons
@@ -144,11 +143,11 @@ fun TopAppBar(viewModel: MainViewModel) {
         title = { Text(MR.strings.appName) },
         actions = {
             AnimatedVisibility(
-                enter = expandVertically(),
-                exit = shrinkVertically(),
+                enter = fadeIn(animationSpec = tween(50)),
+                exit = fadeOut(animationSpec = tween(50)),
                 visible = GlobalData.unsavedChanges.observe()
             ) {
-                Row {
+                Row(modifier = Modifier.padding(end = 16.dp)) {
                     IconButton(onClick = { viewModel.resetChanges() })
                     {
                         Icon(
@@ -156,7 +155,9 @@ fun TopAppBar(viewModel: MainViewModel) {
                             contentDescription = "ewr"
                         )
                     }
-                    FloatingActionButton(onClick = { viewModel.saveAndApplyChanges() }) {
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Button(
+                        onClick = { viewModel.saveAndApplyChanges() }) {
                         Icon(
                             imageVector = Icons.Filled.PublishedWithChanges,
                             contentDescription = "ewr"
