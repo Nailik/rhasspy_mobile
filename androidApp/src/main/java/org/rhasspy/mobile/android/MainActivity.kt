@@ -3,8 +3,10 @@ package org.rhasspy.mobile.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Colors
 import androidx.compose.material.icons.Icons
@@ -29,6 +31,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.GlobalData
 import org.rhasspy.mobile.viewModels.MainViewModel
 
@@ -172,23 +175,34 @@ fun TopAppBar(viewModel: MainViewModel) {
 @Composable
 fun BottomNavigation(navController: NavHostController) {
     NavigationBar {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination
 
-        arrayOf(Screens.HomeScreen, Screens.ConfigurationScreen, Screens.SettingsScreen, Screens.LogScreen).forEach { screen ->
-            NavigationBarItem(selected = currentDestination?.hierarchy?.any { it.route == screen.name } == true,
-                onClick = {
-                    navController.navigate(screen.name) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
-                icon = screen.icon,
-                label = screen.label
-            )
+        val array = mutableListOf(Screens.HomeScreen, Screens.ConfigurationScreen, Screens.SettingsScreen)
+
+        if (AppSettings.isShowLog.value.observe()) {
+            array.add(Screens.LogScreen)
+        }
+
+        array.forEach { screen ->
+            NavigationItem(screen, navController)
         }
     }
+}
+
+@Composable
+fun RowScope.NavigationItem(screen: Screens, navController: NavHostController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    NavigationBarItem(selected = currentDestination?.hierarchy?.any { it.route == screen.name } == true,
+        onClick = {
+            navController.navigate(screen.name) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
+            }
+        },
+        icon = screen.icon,
+        label = screen.label
+    )
 }

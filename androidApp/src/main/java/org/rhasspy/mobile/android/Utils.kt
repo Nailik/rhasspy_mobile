@@ -52,8 +52,9 @@ import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.settings.Setting
 import org.rhasspy.mobile.data.DataEnum
+import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.Setting
 
 val lang = mutableStateOf(StringDesc.localeType)
 
@@ -409,12 +410,16 @@ fun <T> LiveData<T>.observe(): T {
 }
 
 @Composable
-fun <T> Setting<T>.observe(): T {
+fun <T> AppSetting<T>.observe(): T {
+    return this.value.observe()
+}
+
+@Composable
+fun <T> Setting<T>.observeCurrent(): T {
     return this.unsaved.ld().observeAsState(this.value).value
 }
 
-var <T> Setting<T>.data: T
-    get() = this.unsaved.value
-    set(newValue) {
-        this.unsaved.value = newValue
-    }
+@Composable
+fun <T> Setting<T>.observeData(): T {
+    return this.unsaved.ld().observeAsState(this.value).value
+}

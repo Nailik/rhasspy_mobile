@@ -6,7 +6,7 @@ import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import org.rhasspy.mobile.data.DataEnum
 import org.rhasspy.mobile.viewModels.GlobalData
 
-class Setting<T>(private val key: SettingsEnum, private val initial: T) {
+open class Setting<T>(private val key: SettingsEnum, private val initial: T) {
 
     init {
         GlobalData.allSettings.add(this)
@@ -26,7 +26,7 @@ class Setting<T>(private val key: SettingsEnum, private val initial: T) {
             } as T
         }
 
-    private var currentValue = value
+    val currentValue = MutableLiveData(value)
 
     //saved
     val unsaved = object : MutableLiveData<T>(value) {
@@ -36,8 +36,7 @@ class Setting<T>(private val key: SettingsEnum, private val initial: T) {
             set(newValue) {
                 if (super.value != newValue) {
                     super.value = newValue
-
-                    if (currentValue != newValue) {
+                    if (currentValue.value != newValue) {
                         //new value
                         unsavedChange.value = true
                         GlobalData.unsavedChanges.value = true
@@ -46,7 +45,6 @@ class Setting<T>(private val key: SettingsEnum, private val initial: T) {
                         unsavedChange.value = false
                         GlobalData.updateUnsavedChanges()
                     }
-
                 }
             }
     }
@@ -63,11 +61,18 @@ class Setting<T>(private val key: SettingsEnum, private val initial: T) {
             else -> throw RuntimeException()
         }
         unsavedChange.value = false
-        currentValue = unsaved.value
+        currentValue.value = unsaved.value
     }
 
     fun reset() {
         unsaved.value = value
     }
+
+
+    var data: T
+        get() = this.unsaved.value
+        set(newValue) {
+            this.unsaved.value = newValue
+        }
 
 }

@@ -1,5 +1,4 @@
 import de.fayard.refreshVersions.core.DependencyGroup
-import de.fayard.refreshVersions.core.DependencyNotationAndGroup
 
 object Russhwolf : DependencyGroup(group = "com.russhwolf") {
 
