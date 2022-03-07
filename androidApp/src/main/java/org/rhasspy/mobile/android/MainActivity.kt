@@ -7,8 +7,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -30,7 +30,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.GlobalData
 import org.rhasspy.mobile.viewModels.MainViewModel
@@ -44,6 +46,7 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
         this.setContent {
+
             /*   val systemUiController = rememberSystemUiController()
                val useDarkIcons = MaterialTheme.
 
@@ -52,6 +55,8 @@ class MainActivity : ComponentActivity() {
                        darkIcons = useDarkIcons
                    )
                }*/
+
+
             Content()
         }
     }
@@ -61,25 +66,23 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun Content(viewModel: MainViewModel = viewModel()) {
+
+    val systemUiController = rememberSystemUiController()
+
+    val themeOption = AppSettings.themeOption.observe()
+
+    val darkTheme = (isSystemInDarkTheme() && themeOption == ThemeOptions.System) || themeOption == ThemeOptions.Dark
+    val colorScheme = if (darkTheme) DarkThemeColors else LightThemeColors
+
+    systemUiController.setSystemBarsColor(colorScheme.background, darkIcons = !darkTheme)
+    systemUiController.setNavigationBarColor(colorScheme.background, darkIcons = !darkTheme)
+    systemUiController.setStatusBarColor(colorScheme.background, darkIcons = !darkTheme)
+
     androidx.compose.material.MaterialTheme(
-        colors = Colors(
-            primary = MaterialTheme.colorScheme.primary,
-            primaryVariant = MaterialTheme.colorScheme.primary,
-            secondary = MaterialTheme.colorScheme.secondary,
-            secondaryVariant = MaterialTheme.colorScheme.secondary,
-            background = MaterialTheme.colorScheme.background,
-            surface = MaterialTheme.colorScheme.surface,
-            error = MaterialTheme.colorScheme.error,
-            onPrimary = MaterialTheme.colorScheme.onPrimary,
-            onSecondary = MaterialTheme.colorScheme.onSecondary,
-            onBackground = MaterialTheme.colorScheme.onBackground,
-            onSurface = MaterialTheme.colorScheme.onSurface,
-            onError = MaterialTheme.colorScheme.onError,
-            isLight = false
-        )
+        colors = colorScheme.toColors(isLight = !darkTheme)
     ) {
 
-        MaterialTheme {
+        MaterialTheme(colorScheme = colorScheme) {
 
             ProvideWindowInsets {
 
