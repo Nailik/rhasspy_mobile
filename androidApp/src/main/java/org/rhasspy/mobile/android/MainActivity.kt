@@ -35,14 +35,10 @@ import org.rhasspy.mobile.MR
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
-
-        val splashWasDisplayed = savedInstanceState != null
-        if (!splashWasDisplayed) {
-            installSplashScreen()
-        }
 
         this.setContent {
             /*   val systemUiController = rememberSystemUiController()
