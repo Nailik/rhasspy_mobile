@@ -47,14 +47,13 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.LocalWindowInsets
 import dev.icerock.moko.mvvm.livedata.LiveData
-import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.settings.Setting
 import org.rhasspy.mobile.data.DataEnum
-import org.rhasspy.mobile.viewModels.GlobalData
 
 val lang = mutableStateOf(StringDesc.localeType)
 
@@ -409,11 +408,13 @@ fun <T> LiveData<T>.observe(): T {
     return this.ld().observeAsState(this.value).value
 }
 
-var <T> MutableLiveData<T>.data: T
-    get() = this.value
+@Composable
+fun <T> Setting<T>.observe(): T {
+    return this.unsaved.ld().observeAsState(this.value).value
+}
+
+var <T> Setting<T>.data: T
+    get() = this.unsaved.value
     set(newValue) {
-        if (this.value != newValue) {
-            GlobalData.unsavedChanges.value = true
-            this.value = newValue
-        }
+        this.unsaved.value = newValue
     }

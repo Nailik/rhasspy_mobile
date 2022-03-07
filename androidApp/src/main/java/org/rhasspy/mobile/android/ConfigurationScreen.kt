@@ -23,7 +23,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.*
-import org.rhasspy.mobile.viewModels.ConfigurationData
+import org.rhasspy.mobile.settings.ConfigurationSettings
 import java.math.RoundingMode
 
 @Composable
@@ -62,8 +62,8 @@ fun ConfigurationScreen() {
 fun SiteId() {
 
     TextFieldListItem(
-        value = ConfigurationData.siteId.observe(),
-        onValueChange = { ConfigurationData.siteId.data = it },
+        value = ConfigurationSettings.siteId.observe(),
+        onValueChange = { ConfigurationSettings.siteId.data = it },
         label = MR.strings.siteId,
         paddingValues = PaddingValues(top = 4.dp, bottom = 16.dp)
     )
@@ -72,7 +72,7 @@ fun SiteId() {
 @Composable
 fun HttpSSL() {
 
-    val isHttpSSLValue = ConfigurationData.isHttpSSL.observe()
+    val isHttpSSLValue = ConfigurationSettings.isHttpSSL.observe()
 
     ExpandableListItem(
         text = MR.strings.httpSSL,
@@ -82,7 +82,7 @@ fun HttpSSL() {
         SwitchListItem(
             text = MR.strings.enableSSL,
             isChecked = isHttpSSLValue,
-            onCheckedChange = { ConfigurationData.isHttpSSL.data = it })
+            onCheckedChange = { ConfigurationSettings.isHttpSSL.data = it })
 
         AnimatedVisibility(
             enter = expandVertically(),
@@ -106,27 +106,27 @@ fun Mqtt() {
 
         TextFieldListItem(
             label = MR.strings.host,
-            value = ConfigurationData.mqttHost.observe(),
-            onValueChange = { ConfigurationData.mqttHost.data = it },
+            value = ConfigurationSettings.mqttHost.observe(),
+            onValueChange = { ConfigurationSettings.mqttHost.data = it },
         )
 
         TextFieldListItem(
             label = MR.strings.port,
-            value = ConfigurationData.mqttPort.observe(),
-            onValueChange = { ConfigurationData.mqttPort.data = it },
+            value = ConfigurationSettings.mqttPort.observe(),
+            onValueChange = { ConfigurationSettings.mqttPort.data = it },
         )
 
         TextFieldListItem(
-            value = ConfigurationData.mqttUserName.observe(),
-            onValueChange = { ConfigurationData.mqttUserName.data = it },
+            value = ConfigurationSettings.mqttUserName.observe(),
+            onValueChange = { ConfigurationSettings.mqttUserName.data = it },
             label = MR.strings.userName
         )
 
         var isShowPassword by rememberSaveable { mutableStateOf(false) }
 
         TextFieldListItem(
-            value = ConfigurationData.mqttPassword.observe(),
-            onValueChange = { ConfigurationData.mqttPassword.data = it },
+            value = ConfigurationSettings.mqttPassword.observe(),
+            onValueChange = { ConfigurationSettings.mqttPassword.data = it },
             label = MR.strings.password,
             visualTransformation = if (isShowPassword) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
@@ -143,12 +143,12 @@ fun Mqtt() {
             },
         )
 
-        val isMqttSSL = ConfigurationData.isMqttSSL.observe()
+        val isMqttSSL = ConfigurationSettings.isMqttSSL.observe()
 
         SwitchListItem(
             text = MR.strings.enableSSL,
             isChecked = isMqttSSL,
-            onCheckedChange = { ConfigurationData.isMqttSSL.data = it })
+            onCheckedChange = { ConfigurationSettings.isMqttSSL.data = it })
 
         AnimatedVisibility(
             enter = expandVertically(),
@@ -178,7 +178,7 @@ fun Mqtt() {
 @Composable
 fun AudioRecording() {
 
-    val isUDPOutput = ConfigurationData.isUDPOutput.observe()
+    val isUDPOutput = ConfigurationSettings.isUDPOutput.observe()
 
     ExpandableListItem(
         text = MR.strings.audioRecording,
@@ -193,7 +193,7 @@ fun AudioRecording() {
             text = MR.strings.udpAudioOutput,
             secondaryText = MR.strings.udpAudioOutputDetail,
             isChecked = isUDPOutput,
-            onCheckedChange = { ConfigurationData.isUDPOutput.data = it })
+            onCheckedChange = { ConfigurationSettings.isUDPOutput.data = it })
 
         AnimatedVisibility(
             enter = expandVertically(),
@@ -204,14 +204,14 @@ fun AudioRecording() {
             Column {
                 TextFieldListItem(
                     label = MR.strings.host,
-                    value = ConfigurationData.udpOutputHost.observe(),
-                    onValueChange = { ConfigurationData.udpOutputHost.data = it },
+                    value = ConfigurationSettings.udpOutputHost.observe(),
+                    onValueChange = { ConfigurationSettings.udpOutputHost.data = it },
                 )
 
                 TextFieldListItem(
                     label = MR.strings.port,
-                    value = ConfigurationData.udpOutputPort.observe(),
-                    onValueChange = { ConfigurationData.udpOutputPort.data = it },
+                    value = ConfigurationSettings.udpOutputPort.observe(),
+                    onValueChange = { ConfigurationSettings.udpOutputPort.data = it },
                 )
             }
         }
@@ -222,7 +222,7 @@ fun AudioRecording() {
 @Composable
 fun WakeWord() {
 
-    val wakeWordValueOption = ConfigurationData.wakeWordValueOption.observe()
+    val wakeWordValueOption = ConfigurationSettings.wakeWordOption.observe()
 
     ExpandableListItem(
         text = MR.strings.wakeWord,
@@ -231,19 +231,19 @@ fun WakeWord() {
 
         DropDownEnumListItem(
             selected = wakeWordValueOption,
-            onSelect = { ConfigurationData.wakeWordValueOption.data = it })
+            onSelect = { ConfigurationSettings.wakeWordOption.data = it })
         { WakeWordOption.values() }
 
         AnimatedVisibility(
             enter = expandVertically(),
             exit = shrinkVertically(),
-            visible = ConfigurationData.wakeWordValueOption.observe() == WakeWordOption.Porcupine
+            visible = ConfigurationSettings.wakeWordOption.observe() == WakeWordOption.Porcupine
         ) {
 
             Column {
                 TextFieldListItem(
-                    value = ConfigurationData.wakeWordAccessToken.observe(),
-                    onValueChange = { ConfigurationData.wakeWordAccessToken.data = it },
+                    value = ConfigurationSettings.wakeWordAccessToken.observe(),
+                    onValueChange = { ConfigurationSettings.wakeWordAccessToken.data = it },
                     label = MR.strings.porcupineAccessKey
                 )
 
@@ -257,8 +257,8 @@ fun WakeWord() {
 
                 SliderListItem(
                     text = MR.strings.sensitivity,
-                    value = ConfigurationData.wakeWordKeyword.observe(),
-                    onValueChange = { ConfigurationData.wakeWordKeyword.data = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat() })
+                    value = ConfigurationSettings.wakeWordKeyword.observe(),
+                    onValueChange = { ConfigurationSettings.wakeWordKeyword.data = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat() })
             }
         }
     }
@@ -267,7 +267,7 @@ fun WakeWord() {
 @Composable
 fun SpeechToText() {
 
-    val speechToTextOption = ConfigurationData.speechToTextOption.observe()
+    val speechToTextOption = ConfigurationSettings.speechToTextOption.observe()
 
     ExpandableListItem(
         text = MR.strings.speechToText,
@@ -275,7 +275,7 @@ fun SpeechToText() {
     ) {
         DropDownEnumListItem(
             selected = speechToTextOption,
-            onSelect = { ConfigurationData.speechToTextOption.data = it })
+            onSelect = { ConfigurationSettings.speechToTextOption.data = it })
         { SpeechToTextOptions.values() }
 
         AnimatedVisibility(
@@ -285,8 +285,8 @@ fun SpeechToText() {
         ) {
 
             TextFieldListItem(
-                value = ConfigurationData.speechToTextHttpEndpoint.observe(),
-                onValueChange = { ConfigurationData.speechToTextHttpEndpoint.data = it },
+                value = ConfigurationSettings.speechToTextHttpEndpoint.observe(),
+                onValueChange = { ConfigurationSettings.speechToTextHttpEndpoint.data = it },
                 label = MR.strings.speechToTextURL
             )
 
@@ -297,7 +297,7 @@ fun SpeechToText() {
 @Composable
 fun IntentRecognition() {
 
-    val intentRecognitionOption = ConfigurationData.intentRecognitionOption.observe()
+    val intentRecognitionOption = ConfigurationSettings.intentRecognitionOption.observe()
 
     ExpandableListItem(
         text = MR.strings.intentRecognition,
@@ -305,7 +305,7 @@ fun IntentRecognition() {
     ) {
         DropDownEnumListItem(
             selected = intentRecognitionOption,
-            onSelect = { ConfigurationData.intentRecognitionOption.data = it })
+            onSelect = { ConfigurationSettings.intentRecognitionOption.data = it })
         { IntentRecognitionOptions.values() }
 
         AnimatedVisibility(
@@ -315,8 +315,8 @@ fun IntentRecognition() {
         ) {
 
             TextFieldListItem(
-                value = ConfigurationData.intentRecognitionEndpoint.observe(),
-                onValueChange = { ConfigurationData.intentRecognitionEndpoint.data = it },
+                value = ConfigurationSettings.intentRecognitionEndpoint.observe(),
+                onValueChange = { ConfigurationSettings.intentRecognitionEndpoint.data = it },
                 label = MR.strings.rhasspyTextToIntentURL
             )
 
@@ -327,7 +327,7 @@ fun IntentRecognition() {
 @Composable
 fun TextToSpeech() {
 
-    val textToSpeechOption = ConfigurationData.textToSpeechOption.observe()
+    val textToSpeechOption = ConfigurationSettings.textToSpeechOption.observe()
 
     ExpandableListItem(
         text = MR.strings.textToSpeech,
@@ -335,7 +335,7 @@ fun TextToSpeech() {
     ) {
         DropDownEnumListItem(
             selected = textToSpeechOption,
-            onSelect = { ConfigurationData.textToSpeechOption.data = it })
+            onSelect = { ConfigurationSettings.textToSpeechOption.data = it })
         { TextToSpeechOptions.values() }
 
         AnimatedVisibility(
@@ -345,8 +345,8 @@ fun TextToSpeech() {
         ) {
 
             TextFieldListItem(
-                value = ConfigurationData.textToSpeechEndpoint.observe(),
-                onValueChange = { ConfigurationData.textToSpeechEndpoint.data = it },
+                value = ConfigurationSettings.textToSpeechEndpoint.observe(),
+                onValueChange = { ConfigurationSettings.textToSpeechEndpoint.data = it },
                 label = MR.strings.rhasspyTextToSpeechURL
             )
 
@@ -357,7 +357,7 @@ fun TextToSpeech() {
 @Composable
 fun AudioPlaying() {
 
-    val audioPlayingOption = ConfigurationData.audioPlayingOption.observe()
+    val audioPlayingOption = ConfigurationSettings.audioPlayingOption.observe()
 
     ExpandableListItem(
         text = MR.strings.audioPlaying,
@@ -365,7 +365,7 @@ fun AudioPlaying() {
     ) {
         DropDownEnumListItem(
             selected = audioPlayingOption,
-            onSelect = { ConfigurationData.audioPlayingOption.data = it })
+            onSelect = { ConfigurationSettings.audioPlayingOption.data = it })
         { AudioPlayingOptions.values() }
 
         AnimatedVisibility(
@@ -375,8 +375,8 @@ fun AudioPlaying() {
         ) {
 
             TextFieldListItem(
-                value = ConfigurationData.audioPlayingEndpoint.observe(),
-                onValueChange = { ConfigurationData.audioPlayingEndpoint.data = it },
+                value = ConfigurationSettings.audioPlayingEndpoint.observe(),
+                onValueChange = { ConfigurationSettings.audioPlayingEndpoint.data = it },
                 label = MR.strings.audioOutputURL
             )
         }
@@ -386,7 +386,7 @@ fun AudioPlaying() {
 @Composable
 fun DialogueManagement() {
 
-    val dialogueManagementOption = ConfigurationData.dialogueManagementOption.observe()
+    val dialogueManagementOption = ConfigurationSettings.dialogueManagementOption.observe()
 
     ExpandableListItem(
         text = MR.strings.dialogueManagement,
@@ -394,7 +394,7 @@ fun DialogueManagement() {
     ) {
         DropDownEnumListItem(
             selected = dialogueManagementOption,
-            onSelect = { ConfigurationData.dialogueManagementOption.data = it })
+            onSelect = { ConfigurationSettings.dialogueManagementOption.data = it })
         { DialogueManagementOptions.values() }
     }
 }
@@ -403,7 +403,7 @@ fun DialogueManagement() {
 @Composable
 fun IntentHandling() {
 
-    val intentHandlingOption = ConfigurationData.intentHandlingOption.observe()
+    val intentHandlingOption = ConfigurationSettings.intentHandlingOption.observe()
 
     ExpandableListItem(
         text = MR.strings.intentHandling,
@@ -411,7 +411,7 @@ fun IntentHandling() {
     ) {
         DropDownEnumListItem(
             selected = intentHandlingOption,
-            onSelect = { ConfigurationData.intentHandlingOption.data = it })
+            onSelect = { ConfigurationSettings.intentHandlingOption.data = it })
         { IntentHandlingOptions.values() }
 
         AnimatedVisibility(
@@ -421,8 +421,8 @@ fun IntentHandling() {
         ) {
 
             TextFieldListItem(
-                value = ConfigurationData.intentHandlingEndpoint.observe(),
-                onValueChange = { ConfigurationData.intentHandlingEndpoint.data = it },
+                value = ConfigurationSettings.intentHandlingEndpoint.observe(),
+                onValueChange = { ConfigurationSettings.intentHandlingEndpoint.data = it },
                 label = MR.strings.remoteURL
             )
         }
@@ -435,24 +435,24 @@ fun IntentHandling() {
             Column {
 
                 TextFieldListItem(
-                    value = ConfigurationData.intentHandlingHassUrl.observe(),
-                    onValueChange = { ConfigurationData.intentHandlingHassUrl.data = it },
+                    value = ConfigurationSettings.intentHandlingHassUrl.observe(),
+                    onValueChange = { ConfigurationSettings.intentHandlingHassUrl.data = it },
                     label = MR.strings.hassURL
                 )
 
                 TextFieldListItem(
-                    value = ConfigurationData.intentHandlingHassAccessToken.observe(),
-                    onValueChange = { ConfigurationData.intentHandlingHassAccessToken.data = it },
+                    value = ConfigurationSettings.intentHandlingHassAccessToken.observe(),
+                    onValueChange = { ConfigurationSettings.intentHandlingHassAccessToken.data = it },
                     label = MR.strings.accessToken
                 )
 
-                val isIntentHandlingHassEvent = ConfigurationData.isIntentHandlingHassEvent.observe()
+                val isIntentHandlingHassEvent = ConfigurationSettings.isIntentHandlingHassEvent.observe()
 
                 RadioButtonListItem(
                     text = MR.strings.homeAssistantEvents,
                     isChecked = isIntentHandlingHassEvent,
                     onClick = {
-                        ConfigurationData.isIntentHandlingHassEvent.data = true
+                        ConfigurationSettings.isIntentHandlingHassEvent.data = true
                     })
 
 
@@ -460,7 +460,7 @@ fun IntentHandling() {
                     text = MR.strings.homeAssistantIntents,
                     isChecked = !isIntentHandlingHassEvent,
                     onClick = {
-                        ConfigurationData.isIntentHandlingHassEvent.data = false
+                        ConfigurationSettings.isIntentHandlingHassEvent.data = false
                     })
             }
         }

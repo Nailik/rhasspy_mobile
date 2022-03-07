@@ -11,7 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.data.ThemeOptions
-import org.rhasspy.mobile.viewModels.SettingsData
+import org.rhasspy.mobile.viewModels.AppSettings
 
 @Preview
 @Composable
@@ -40,8 +40,8 @@ fun SettingsScreen() {
 fun LanguageItem() {
 
     DropDownEnumListItem(
-        selected = SettingsData.languageOption.observe(),
-        onSelect = { SettingsData.languageOption.data = it })
+        selected = AppSettings.languageOption.observe(),
+        onSelect = { AppSettings.languageOption.data = it })
     { LanguageOptions.values() }
 
 }
@@ -50,8 +50,8 @@ fun LanguageItem() {
 fun ThemeItem() {
 
     DropDownEnumListItem(
-        selected = SettingsData.themeOption.observe(),
-        onSelect = { SettingsData.themeOption.data = it })
+        selected = AppSettings.themeOption.observe(),
+        onSelect = { AppSettings.themeOption.data = it })
     { ThemeOptions.values() }
 
 }
@@ -61,15 +61,15 @@ fun AutomaticSilenceDetectionItem() {
 
     SwitchListItem(
         text = MR.strings.automaticSilenceDetection,
-        isChecked = SettingsData.automaticSilenceDetection.observe(),
-        onCheckedChange = { SettingsData.automaticSilenceDetection.data = !SettingsData.automaticSilenceDetection.value })
+        isChecked = AppSettings.automaticSilenceDetection.observe(),
+        onCheckedChange = { AppSettings.automaticSilenceDetection.data = !AppSettings.automaticSilenceDetection.value })
 
 }
 
 @Composable
 fun BackgroundWakeWordDetectionItem() {
 
-    val isBackgroundWakeWordDetection = SettingsData.isBackgroundWakeWordDetection.observe()
+    val isBackgroundWakeWordDetection = AppSettings.isBackgroundWakeWordDetection.observe()
 
     ExpandableListItem(
         text = MR.strings.backgroundWakeWordDetection,
@@ -79,12 +79,12 @@ fun BackgroundWakeWordDetectionItem() {
             SwitchListItem(
                 text = MR.strings.enableBackgroundWakeWordDetection,
                 isChecked = isBackgroundWakeWordDetection,
-                onCheckedChange = { SettingsData.isBackgroundWakeWordDetection.data = it })
+                onCheckedChange = { AppSettings.isBackgroundWakeWordDetection.data = it })
 
             SwitchListItem(
                 text = MR.strings.backgroundWakeWordDetectionTurnOnDisplay,
-                isChecked = SettingsData.isBackgroundWakeWordDetectionTurnOnDisplay.observe(),
-                onCheckedChange = { SettingsData.isBackgroundWakeWordDetectionTurnOnDisplay.data = it })
+                isChecked = AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.observe(),
+                onCheckedChange = { AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data = it })
         }
     }
 }
@@ -92,8 +92,8 @@ fun BackgroundWakeWordDetectionItem() {
 
 @Composable
 fun WakeWordIndicationItem() {
-    val isWakeWordSoundIndication = SettingsData.isWakeWordSoundIndication.observe()
-    val isWakeWordLightIndication = SettingsData.isWakeWordLightIndication.observe()
+    val isWakeWordSoundIndication = AppSettings.isWakeWordSoundIndication.observe()
+    val isWakeWordLightIndication = AppSettings.isWakeWordLightIndication.observe()
 
 
     var stateText = if (isWakeWordSoundIndication) translate(MR.strings.sound) else null
@@ -113,12 +113,12 @@ fun WakeWordIndicationItem() {
             SwitchListItem(
                 text = MR.strings.wakeWordSoundIndication,
                 isChecked = isWakeWordSoundIndication,
-                onCheckedChange = { SettingsData.isWakeWordSoundIndication.data = it })
+                onCheckedChange = { AppSettings.isWakeWordSoundIndication.data = it })
 
             SwitchListItem(
                 text = MR.strings.wakeWordLightIndication,
                 isChecked = isWakeWordLightIndication,
-                onCheckedChange = { SettingsData.isWakeWordLightIndication.data = it })
+                onCheckedChange = { AppSettings.isWakeWordLightIndication.data = it })
         }
     }
 }
@@ -127,7 +127,7 @@ fun WakeWordIndicationItem() {
 fun ShowLogItem() {
 
     SwitchListItem(MR.strings.showLog,
-        isChecked = SettingsData.isShowLog.observe(),
-        onCheckedChange = { SettingsData.isShowLog.data = it })
+        isChecked = AppSettings.isShowLog.observe(),
+        onCheckedChange = { AppSettings.isShowLog.data = it })
 
 }

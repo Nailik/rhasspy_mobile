@@ -3,15 +3,13 @@ package org.rhasspy.mobile.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Colors
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -32,6 +30,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.viewModels.GlobalData
 import org.rhasspy.mobile.viewModels.MainViewModel
 
 class MainActivity : ComponentActivity() {
@@ -92,7 +91,7 @@ fun Content(viewModel: MainViewModel = viewModel()) {
 
                     val navController = rememberNavController()
                     Scaffold(
-                        topBar = { TopAppBar() },
+                        topBar = { TopAppBar(viewModel) },
                         bottomBar = {
                             //hide bottom navigation with keyboard and small screens
                             if (!isBottomNavigationHidden) {
@@ -140,9 +139,32 @@ enum class Screens(val icon: @Composable () -> Unit, val label: @Composable () -
 }
 
 @Composable
-fun TopAppBar() {
+fun TopAppBar(viewModel: MainViewModel) {
     SmallTopAppBar(
-        title = { Text(MR.strings.appName) }
+        title = { Text(MR.strings.appName) },
+        actions = {
+            AnimatedVisibility(
+                enter = expandVertically(),
+                exit = shrinkVertically(),
+                visible = GlobalData.unsavedChanges.observe()
+            ) {
+                Row {
+                    IconButton(onClick = { viewModel.resetChanges() })
+                    {
+                        Icon(
+                            imageVector = Icons.Filled.Restore,
+                            contentDescription = "ewr"
+                        )
+                    }
+                    FloatingActionButton(onClick = { viewModel.saveAndApplyChanges() }) {
+                        Icon(
+                            imageVector = Icons.Filled.PublishedWithChanges,
+                            contentDescription = "ewr"
+                        )
+                    }
+                }
+            }
+        }
     )
 }
 
