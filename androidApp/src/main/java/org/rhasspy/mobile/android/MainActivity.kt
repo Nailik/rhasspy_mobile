@@ -3,15 +3,12 @@ package org.rhasspy.mobile.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Colors
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -22,6 +19,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -31,18 +29,16 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.viewModels.GlobalData
+import org.rhasspy.mobile.viewModels.MainViewModel
 
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
-
-        val splashWasDisplayed = savedInstanceState != null
-        if (!splashWasDisplayed) {
-            installSplashScreen()
-        }
 
         this.setContent {
             /*   val systemUiController = rememberSystemUiController()
@@ -61,7 +57,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun Content() {
+fun Content(viewModel: MainViewModel = viewModel()) {
     androidx.compose.material.MaterialTheme(
         colors = Colors(
             primary = MaterialTheme.colorScheme.primary,
@@ -94,7 +90,7 @@ fun Content() {
 
                     val navController = rememberNavController()
                     Scaffold(
-                        topBar = { TopAppBar() },
+                        topBar = { TopAppBar(viewModel) },
                         bottomBar = {
                             //hide bottom navigation with keyboard and small screens
                             if (!isBottomNavigationHidden) {
@@ -142,9 +138,34 @@ enum class Screens(val icon: @Composable () -> Unit, val label: @Composable () -
 }
 
 @Composable
-fun TopAppBar() {
+fun TopAppBar(viewModel: MainViewModel) {
     SmallTopAppBar(
-        title = { Text(MR.strings.appName) }
+        title = { Text(MR.strings.appName) },
+        actions = {
+            AnimatedVisibility(
+                enter = fadeIn(animationSpec = tween(50)),
+                exit = fadeOut(animationSpec = tween(50)),
+                visible = GlobalData.unsavedChanges.observe()
+            ) {
+                Row(modifier = Modifier.padding(end = 16.dp)) {
+                    IconButton(onClick = { viewModel.resetChanges() })
+                    {
+                        Icon(
+                            imageVector = Icons.Filled.Restore,
+                            contentDescription = "ewr"
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Button(
+                        onClick = { viewModel.saveAndApplyChanges() }) {
+                        Icon(
+                            imageVector = Icons.Filled.PublishedWithChanges,
+                            contentDescription = "ewr"
+                        )
+                    }
+                }
+            }
+        }
     )
 }
 

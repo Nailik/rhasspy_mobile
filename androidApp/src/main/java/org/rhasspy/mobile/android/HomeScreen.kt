@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -96,7 +97,6 @@ fun MainActionButton(maxHeight: Dp) {
     isMainActionBig.value = maxHeight >= 96.dp + (24.dp * 2)
     mainActionVisible.value = maxHeight > 24.dp || LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-
     AnimatedVisibility(
         enter = expandIn(expandFrom = Alignment.TopEnd),
         exit = shrinkOut(shrinkTowards = Alignment.Center),
@@ -105,11 +105,13 @@ fun MainActionButton(maxHeight: Dp) {
     ) {
         MainActionFab(modifier = Modifier.fillMaxSize())
     }
+
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun MainActionFab(modifier: Modifier = Modifier) {
+
     FloatingActionButton(
         onClick = { },
         modifier = modifier
@@ -123,6 +125,7 @@ fun MainActionFab(modifier: Modifier = Modifier) {
                 .size(state.value)
         )
     }
+
 }
 
 @Composable
@@ -190,7 +193,7 @@ fun PlayRecording(modifier: Modifier = Modifier) {
 fun TextToRecognize(
     modifier: Modifier = Modifier
 ) {
-    var textToRecognize by remember { mutableStateOf("") }
+    var textToRecognize by rememberSaveable { mutableStateOf("") }
 
     TextWithAction(
         modifier = modifier,
@@ -209,7 +212,7 @@ fun TextToRecognize(
 fun TextToSpeak(
     modifier: Modifier = Modifier
 ) {
-    var textToSpeak by remember { mutableStateOf("") }
+    var textToSpeak by rememberSaveable { mutableStateOf("") }
 
     TextWithAction(
         modifier = modifier,

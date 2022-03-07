@@ -1,18 +1,17 @@
 package org.rhasspy.mobile.android
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Switch
 import androidx.compose.material3.Divider
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.data.ThemeOptions
+import org.rhasspy.mobile.viewModels.AppSettings
 
 @Preview
 @Composable
@@ -39,51 +38,53 @@ fun SettingsScreen() {
 
 @Composable
 fun LanguageItem() {
-    var languageValue by remember { mutableStateOf(LanguageOptions.English) }
 
-    DropDownEnumListItem(languageValue, onSelect = { languageValue = it }) { LanguageOptions.values() }
+    DropDownEnumListItem(
+        selected = AppSettings.languageOption.observe(),
+        onSelect = { AppSettings.languageOption.data = it })
+    { LanguageOptions.values() }
+
 }
 
 @Composable
 fun ThemeItem() {
-    var themeValue by remember { mutableStateOf(ThemeOptions.System) }
 
-    DropDownEnumListItem(themeValue, onSelect = { themeValue = it }) { ThemeOptions.values() }
+    DropDownEnumListItem(
+        selected = AppSettings.themeOption.observe(),
+        onSelect = { AppSettings.themeOption.data = it })
+    { ThemeOptions.values() }
+
 }
 
 @Composable
 fun AutomaticSilenceDetectionItem() {
-    var checked by remember { mutableStateOf(false) }
 
-    ListElement(modifier = Modifier
-        .clickable { checked = !checked },
-        text = { Text(MR.strings.automaticSilenceDetection) },
-        trailing = {
-            Switch(
-                checked = checked,
-                onCheckedChange = { checked = !checked })
-        })
+    SwitchListItem(
+        text = MR.strings.automaticSilenceDetection,
+        isChecked = AppSettings.automaticSilenceDetection.observe(),
+        onCheckedChange = { AppSettings.automaticSilenceDetection.data = !AppSettings.automaticSilenceDetection.data })
+
 }
 
 @Composable
 fun BackgroundWakeWordDetectionItem() {
-    var isEnableBackgroundWakeWordDetection by remember { mutableStateOf(false) }
-    var isBackgroundWakeWordDetectionTurnOnDisplay by remember { mutableStateOf(false) }
+
+    val isBackgroundWakeWordDetection = AppSettings.isBackgroundWakeWordDetection.observe()
 
     ExpandableListItem(
         text = MR.strings.backgroundWakeWordDetection,
-        secondaryText = isEnableBackgroundWakeWordDetection.toText()
+        secondaryText = isBackgroundWakeWordDetection.toText()
     ) {
         Column {
             SwitchListItem(
                 text = MR.strings.enableBackgroundWakeWordDetection,
-                isChecked = isEnableBackgroundWakeWordDetection,
-                onCheckedChange = { isEnableBackgroundWakeWordDetection = it })
+                isChecked = isBackgroundWakeWordDetection,
+                onCheckedChange = { AppSettings.isBackgroundWakeWordDetection.data = it })
 
             SwitchListItem(
                 text = MR.strings.backgroundWakeWordDetectionTurnOnDisplay,
-                isChecked = isBackgroundWakeWordDetectionTurnOnDisplay,
-                onCheckedChange = { isBackgroundWakeWordDetectionTurnOnDisplay = it })
+                isChecked = AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.observe(),
+                onCheckedChange = { AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data = it })
         }
     }
 }
@@ -91,8 +92,9 @@ fun BackgroundWakeWordDetectionItem() {
 
 @Composable
 fun WakeWordIndicationItem() {
-    var isWakeWordSoundIndication by remember { mutableStateOf(false) }
-    var isWakeWordLightIndication by remember { mutableStateOf(false) }
+    val isWakeWordSoundIndication = AppSettings.isWakeWordSoundIndication.observe()
+    val isWakeWordLightIndication = AppSettings.isWakeWordLightIndication.observe()
+
 
     var stateText = if (isWakeWordSoundIndication) translate(MR.strings.sound) else null
     if (isWakeWordLightIndication) {
@@ -111,21 +113,21 @@ fun WakeWordIndicationItem() {
             SwitchListItem(
                 text = MR.strings.wakeWordSoundIndication,
                 isChecked = isWakeWordSoundIndication,
-                onCheckedChange = { isWakeWordSoundIndication = it })
+                onCheckedChange = { AppSettings.isWakeWordSoundIndication.data = it })
 
             SwitchListItem(
                 text = MR.strings.wakeWordLightIndication,
                 isChecked = isWakeWordLightIndication,
-                onCheckedChange = { isWakeWordLightIndication = it })
+                onCheckedChange = { AppSettings.isWakeWordLightIndication.data = it })
         }
     }
 }
 
 @Composable
 fun ShowLogItem() {
-    var isShowLog by remember { mutableStateOf(false) }
 
     SwitchListItem(MR.strings.showLog,
-        isChecked = isShowLog,
-        onCheckedChange = { isShowLog = it })
+        isChecked = AppSettings.isShowLog.observe(),
+        onCheckedChange = { AppSettings.isShowLog.data = it })
+
 }

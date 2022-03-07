@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,11 +46,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.LocalWindowInsets
+import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.settings.Setting
 import org.rhasspy.mobile.data.DataEnum
 
 val lang = mutableStateOf(StringDesc.localeType)
@@ -179,7 +182,7 @@ fun IndicatedSmallIcon(isIndicated: Boolean, rotationTarget: Float = 180f, icon:
 }
 
 @Composable
-fun <E : DataEnum> DropDownEnumListItem(selected: E, onSelect: (item: E) -> Unit, values: () -> Array<E>) {
+fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, onSelect: (item: E) -> Unit, values: () -> Array<E>) {
     var isExpanded by remember { mutableStateOf(false) }
 
     ListElement(modifier = Modifier
@@ -284,7 +287,8 @@ fun SwitchListItem(text: StringResource, secondaryText: StringResource? = null, 
         trailing = {
             Switch(
                 checked = isChecked,
-                onCheckedChange = { onCheckedChange(!isChecked) })
+                onCheckedChange = null
+            )
         })
 }
 
@@ -398,3 +402,19 @@ fun RadioButtonListItem(text: StringResource, isChecked: Boolean, onClick: () ->
 fun Boolean.toText(): StringResource {
     return if (this) MR.strings.enabled else MR.strings.disabled
 }
+
+@Composable
+fun <T> LiveData<T>.observe(): T {
+    return this.ld().observeAsState(this.value).value
+}
+
+@Composable
+fun <T> Setting<T>.observe(): T {
+    return this.unsaved.ld().observeAsState(this.value).value
+}
+
+var <T> Setting<T>.data: T
+    get() = this.unsaved.value
+    set(newValue) {
+        this.unsaved.value = newValue
+    }

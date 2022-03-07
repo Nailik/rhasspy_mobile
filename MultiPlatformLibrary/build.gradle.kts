@@ -39,6 +39,8 @@ kotlin {
                 implementation(Icerock.Mvvm.livedataResources)
                 runtimeOnly(Icerock.permissions)
                 implementation(Icerock.Resources)
+                implementation(Russhwolf.multiplatformSettings)
+                implementation(Russhwolf.multiplatformSettingsNoArg)
             }
         }
         val commonTest by getting {
