@@ -62,9 +62,8 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.DataEnum
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.Setting
-
-val lang = mutableStateOf(StringDesc.localeType)
 
 @Composable
 fun Text(
@@ -137,7 +136,7 @@ fun Icon(
 
 @Composable
 fun translate(resource: StringResource): String {
-    lang.value
+    AppSettings.languageOption.observe()
     return StringDesc.Resource(resource).toString(LocalContext.current)
 }
 
