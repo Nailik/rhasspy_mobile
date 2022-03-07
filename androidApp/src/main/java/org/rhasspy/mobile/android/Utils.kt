@@ -182,7 +182,7 @@ fun IndicatedSmallIcon(isIndicated: Boolean, rotationTarget: Float = 180f, icon:
 }
 
 @Composable
-fun <E : DataEnum> DropDownEnumListItem(selected: E, onSelect: (item: E) -> Unit, values: () -> Array<E>) {
+fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, onSelect: (item: E) -> Unit, values: () -> Array<E>) {
     var isExpanded by remember { mutableStateOf(false) }
 
     ListElement(modifier = Modifier
