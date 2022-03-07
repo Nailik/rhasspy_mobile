@@ -12,14 +12,22 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ListItem
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Switch
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material3.*
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -52,10 +60,10 @@ import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.settings.Setting
 import org.rhasspy.mobile.data.DataEnum
-
-val lang = mutableStateOf(StringDesc.localeType)
+import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.Setting
 
 @Composable
 fun Text(
@@ -128,7 +136,7 @@ fun Icon(
 
 @Composable
 fun translate(resource: StringResource): String {
-    lang.value
+    AppSettings.languageOption.observe()
     return StringDesc.Resource(resource).toString(LocalContext.current)
 }
 
@@ -409,12 +417,30 @@ fun <T> LiveData<T>.observe(): T {
 }
 
 @Composable
-fun <T> Setting<T>.observe(): T {
+fun <T> AppSetting<T>.observe(): T {
+    return this.value.observe()
+}
+
+@Composable
+fun <T> Setting<T>.observeCurrent(): T {
     return this.unsaved.ld().observeAsState(this.value).value
 }
 
-var <T> Setting<T>.data: T
-    get() = this.unsaved.value
-    set(newValue) {
-        this.unsaved.value = newValue
-    }
+@Composable
+fun ColorScheme.toColors(isLight: Boolean): Colors {
+    return Colors(
+        primary = primary,
+        primaryVariant = onPrimaryContainer,
+        secondary = secondary,
+        secondaryVariant = onSecondaryContainer,
+        background = background,
+        surface = surface,
+        error = error,
+        onPrimary = onPrimary,
+        onSecondary = onSecondary,
+        onBackground = onBackground,
+        onSurface = onSurface,
+        onError = onError,
+        isLight = isLight
+    )
+}

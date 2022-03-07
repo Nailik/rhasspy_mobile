@@ -11,7 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.data.ThemeOptions
-import org.rhasspy.mobile.viewModels.AppSettings
+import org.rhasspy.mobile.settings.AppSettings
 
 @Preview
 @Composable
