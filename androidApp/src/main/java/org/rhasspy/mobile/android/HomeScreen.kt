@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -28,12 +29,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.insets.ExperimentalAnimatedInsets
 import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 var isMainActionBig = mutableStateOf(true)
 var mainActionVisible = mutableStateOf(true)
@@ -45,7 +46,7 @@ var mainActionVisible = mutableStateOf(true)
 )
 @Preview(showSystemUi = true)
 @Composable
-fun HomeScreen(viewModel : HomeScreenViewModel = viewModel()) {
+fun HomeScreen(viewModel: HomeScreenViewModel = viewModel()) {
     when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
             Row(
@@ -98,7 +99,6 @@ fun MainActionButton(maxHeight: Dp) {
     isMainActionBig.value = maxHeight >= 96.dp + (24.dp * 2)
     mainActionVisible.value = maxHeight > 24.dp || LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-
     AnimatedVisibility(
         enter = expandIn(expandFrom = Alignment.TopEnd),
         exit = shrinkOut(shrinkTowards = Alignment.Center),
@@ -107,11 +107,13 @@ fun MainActionButton(maxHeight: Dp) {
     ) {
         MainActionFab(modifier = Modifier.fillMaxSize())
     }
+
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun MainActionFab(modifier: Modifier = Modifier) {
+
     FloatingActionButton(
         onClick = { },
         modifier = modifier
@@ -125,6 +127,7 @@ fun MainActionFab(modifier: Modifier = Modifier) {
                 .size(state.value)
         )
     }
+
 }
 
 @Composable
@@ -192,7 +195,7 @@ fun PlayRecording(modifier: Modifier = Modifier) {
 fun TextToRecognize(
     modifier: Modifier = Modifier
 ) {
-    var textToRecognize by remember { mutableStateOf("") }
+    var textToRecognize by rememberSaveable { mutableStateOf("") }
 
     TextWithAction(
         modifier = modifier,
@@ -211,7 +214,7 @@ fun TextToRecognize(
 fun TextToSpeak(
     modifier: Modifier = Modifier
 ) {
-    var textToSpeak by remember { mutableStateOf("") }
+    var textToSpeak by rememberSaveable { mutableStateOf("") }
 
     TextWithAction(
         modifier = modifier,
