@@ -287,7 +287,7 @@ fun SwitchListItem(text: StringResource, secondaryText: StringResource? = null, 
         trailing = {
             Switch(
                 checked = isChecked,
-                onCheckedChange = { onCheckedChange(!isChecked) })
+                onCheckedChange = null)
         })
 }
 
