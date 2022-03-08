@@ -2,15 +2,27 @@ package org.rhasspy.mobile.services
 
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import org.rhasspy.mobile.data.WakeWordOption
+import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-class ForegroundService : Service() {
+object ForegroundService {
 
-    companion object {
-        val listening = MutableLiveData(false)
+    val listening = MutableLiveData(false)
+
+    fun action(action: Action, fromService: Boolean = false) {
+        if (AppSettings.isBackgroundWakeWordDetection.data && !fromService) {
+            //start service
+            NativeService.doAction(action)
+        } else {
+            when (action) {
+                Action.Start -> startServices()
+                Action.Stop -> stopServices()
+                Action.Reload -> reloadServices()
+            }
+        }
     }
 
-    override fun startServices() {
+    private fun startServices() {
         if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.Porcupine &&
             ConfigurationSettings.wakeWordAccessToken.data.isNotEmpty()
         ) {
@@ -19,9 +31,13 @@ class ForegroundService : Service() {
         ListeningService.start()
     }
 
-    override fun stopServices() {
+    private fun stopServices() {
         LocalWakeWordService.stop()
         ListeningService.stop()
     }
 
+    private fun reloadServices() {
+        stopServices()
+        startServices()
+    }
 }
