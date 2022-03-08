@@ -17,7 +17,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.VolumeUp
-import androidx.compose.material3.*
+import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -115,7 +118,7 @@ fun MainActionFab(modifier: Modifier = Modifier) {
     FloatingActionButton(
         onClick = { },
         modifier = modifier,
-        containerColor = if (ForegroundService.listening.observe()) MaterialTheme.colorScheme.errorContainer else  MaterialTheme.colorScheme
+        containerColor = if (ForegroundService.listening.observe()) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme
             .primaryContainer,
     ) {
         val state = animateDpAsState(targetValue = if (isMainActionBig.value) 96.dp else 24.dp)

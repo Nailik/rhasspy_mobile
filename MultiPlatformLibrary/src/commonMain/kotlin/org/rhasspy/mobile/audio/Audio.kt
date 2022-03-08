@@ -4,6 +4,6 @@ import dev.icerock.moko.resources.FileResource
 
 expect object Audio {
 
-     fun play(fileResource: FileResource)
+    fun play(fileResource: FileResource)
 
 }
