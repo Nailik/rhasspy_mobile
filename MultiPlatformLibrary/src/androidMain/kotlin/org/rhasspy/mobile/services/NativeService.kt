@@ -15,6 +15,7 @@ actual class NativeService : android.app.Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        isRunning = true
 
         intent?.also { i ->
             i.getStringExtra(ACTION)?.also {
@@ -22,6 +23,11 @@ actual class NativeService : android.app.Service() {
             }
         }
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        isRunning = false
     }
 
     override fun onBind(p0: Intent?): IBinder? {
@@ -41,6 +47,12 @@ actual class NativeService : android.app.Service() {
             } else {
                 Application.Instance.startService(intent)
             }
+        }
+
+        actual var isRunning: Boolean = false
+
+        actual fun stop() {
+            Application.Instance.stopService(Intent(Application.Instance, ForegroundService::class.java))
         }
     }
 
