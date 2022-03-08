@@ -6,13 +6,12 @@ import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import org.rhasspy.mobile.data.DataEnum
 import org.rhasspy.mobile.viewModels.GlobalData
 
-open class Setting<T>(private val key: SettingsEnum, private val initial: T) {
+class Setting<T>(private val key: SettingsEnum, private val initial: T) {
 
     init {
         GlobalData.allSettings.add(this)
     }
 
-    //unsaved
     val value: T
         get() {
             @Suppress("UNCHECKED_CAST")
@@ -28,7 +27,6 @@ open class Setting<T>(private val key: SettingsEnum, private val initial: T) {
 
     val currentValue = MutableLiveData(value)
 
-    //saved
     val unsaved = object : MutableLiveData<T>(value) {
         @Suppress("UNCHECKED_CAST")
         override var value: T

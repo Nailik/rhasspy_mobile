@@ -50,7 +50,9 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                implementation(AndroidX.multidex)
                 implementation(Icerock.Resources.resourcesCompose)
+                implementation(Picovoice.porcupineAndroid)
             }
         }
         val androidTest by getting

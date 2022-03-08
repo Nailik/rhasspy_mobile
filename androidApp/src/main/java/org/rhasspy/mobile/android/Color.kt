@@ -17,10 +17,10 @@ val md_theme_light_tertiary = Color(0xFF7D5260)
 val md_theme_light_onTertiary = Color(0xFFFFFFFF)
 val md_theme_light_tertiaryContainer = Color(0xFFFFD8E4)
 val md_theme_light_onTertiaryContainer = Color(0xFF31111D)
-val md_theme_light_error = Color(0xFFB3261E)
-val md_theme_light_errorContainer = Color(0xFFF9DEDC)
-val md_theme_light_onError = Color(0xFFFFFFFF)
-val md_theme_light_onErrorContainer = Color(0xFF410E0B)
+val md_theme_light_error = Color(0xFFF9DEDC)
+val md_theme_light_errorContainer = Color(0xFFB3261E)
+val md_theme_light_onError = Color(0xFF410E0B)
+val md_theme_light_onErrorContainer = Color(0xFFFFFFFF)
 val md_theme_light_background = Color(0xFFFFFBFE)
 val md_theme_light_onBackground = Color(0xFF1C1B1F)
 val md_theme_light_surface = Color(0xFFFFFBFE)
@@ -95,8 +95,8 @@ val LightThemeColors = lightColorScheme(
     inverseSurface = md_theme_light_inverseSurface,
     inversePrimary = md_theme_light_inversePrimary,
 )
-val DarkThemeColors = darkColorScheme(
 
+val DarkThemeColors = darkColorScheme(
     primary = md_theme_dark_primary,
     onPrimary = md_theme_dark_onPrimary,
     primaryContainer = md_theme_dark_primaryContainer,

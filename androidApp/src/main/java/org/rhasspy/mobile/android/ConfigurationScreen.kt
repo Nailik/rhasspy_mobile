@@ -1,5 +1,7 @@
 package org.rhasspy.mobile.android
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -18,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -247,9 +250,13 @@ fun WakeWord() {
                     label = MR.strings.porcupineAccessKey
                 )
 
+                val context = LocalContext.current
+
                 OutlineButtonListItem(
                     text = MR.strings.openPicoVoiceConsole,
-                    onClick = { })
+                    onClick = {
+                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://console.picovoice.ai/access_key")))
+                    })
 
                 //filled with correct values later
                 var wakeWordValue2 by remember { mutableStateOf(WakeWordOption.Porcupine) }

@@ -17,8 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.VolumeUp
-import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -33,6 +32,7 @@ import com.google.accompanist.insets.ExperimentalAnimatedInsets
 import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.services.ForegroundService
 
 var isMainActionBig = mutableStateOf(true)
 var mainActionVisible = mutableStateOf(true)
@@ -114,13 +114,16 @@ fun MainActionFab(modifier: Modifier = Modifier) {
 
     FloatingActionButton(
         onClick = { },
-        modifier = modifier
+        modifier = modifier,
+        containerColor = if (ForegroundService.listening.observe()) MaterialTheme.colorScheme.errorContainer else  MaterialTheme.colorScheme
+            .primaryContainer,
     ) {
         val state = animateDpAsState(targetValue = if (isMainActionBig.value) 96.dp else 24.dp)
 
         Icon(
             imageVector = Icons.Filled.Mic,
             contentDescription = MR.strings.wakeUp,
+            tint = if (ForegroundService.listening.observe()) MaterialTheme.colorScheme.onErrorContainer else LocalContentColor.current,
             modifier = Modifier
                 .size(state.value)
         )
