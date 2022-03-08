@@ -17,10 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.VolumeUp
-import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -230,50 +227,5 @@ fun TextToSpeak(
             imageVector = Icons.Filled.VolumeUp,
             contentDescription = MR.strings.textToSpeak,
         )
-    }
-}
-
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
-@Composable
-fun TextWithAction(
-    modifier: Modifier = Modifier,
-    text: String,
-    label: StringResource,
-    onValueChange: (String) -> Unit,
-    onClick: () -> Unit, icon:
-    @Composable () -> Unit
-) {
-    val bringIntoViewRequester = remember { BringIntoViewRequester() }
-    val coroutineScope = rememberCoroutineScope()
-
-    Row(
-        modifier = modifier
-            .padding(vertical = 6.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        OutlinedTextField(
-            singleLine = true,
-            value = text,
-            onValueChange = onValueChange,
-            modifier = Modifier
-                .clearFocusOnKeyboardDismiss()
-                .weight(1f)
-                .bringIntoViewRequester(bringIntoViewRequester)
-                .onFocusEvent {
-                    if (it.isFocused) {
-                        coroutineScope.launch {
-                            bringIntoViewRequester.bringIntoView()
-                        }
-                    }
-                },
-            label = { Text(resource = label) }
-        )
-        ElevatedButton(
-            modifier = Modifier.padding(horizontal = 24.dp),
-            onClick = onClick
-        ) {
-            icon()
-        }
     }
 }

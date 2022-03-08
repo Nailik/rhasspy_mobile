@@ -16,14 +16,12 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.*
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
@@ -32,6 +30,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.rotate
@@ -345,6 +344,7 @@ fun TextFieldListItem(
         OutlinedTextField(
             singleLine = true,
             value = value,
+            textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colorScheme.onBackground),
             onValueChange = onValueChange,
             trailingIcon = trailingIcon,
             visualTransformation = visualTransformation,
@@ -443,4 +443,52 @@ fun ColorScheme.toColors(isLight: Boolean): Colors {
         onError = onError,
         isLight = isLight
     )
+}
+
+
+
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
+@Composable
+fun TextWithAction(
+    modifier: Modifier = Modifier,
+    text: String,
+    label: StringResource,
+    onValueChange: (String) -> Unit,
+    onClick: () -> Unit, icon:
+    @Composable () -> Unit
+) {
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val coroutineScope = rememberCoroutineScope()
+
+    Row(
+        modifier = modifier
+            .padding(vertical = 6.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        OutlinedTextField(
+            singleLine = true,
+            value = text,
+            textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colorScheme.onBackground),
+            onValueChange = onValueChange,
+            modifier = Modifier
+                .clearFocusOnKeyboardDismiss()
+                .weight(1f)
+                .bringIntoViewRequester(bringIntoViewRequester)
+                .onFocusEvent {
+                    if (it.isFocused) {
+                        coroutineScope.launch {
+                            bringIntoViewRequester.bringIntoView()
+                        }
+                    }
+                },
+            label = { Text(resource = label) }
+        )
+        ElevatedButton(
+            modifier = Modifier.padding(horizontal = 24.dp),
+            onClick = onClick
+        ) {
+            icon()
+        }
+    }
 }
