@@ -12,8 +12,8 @@ import org.rhasspy.mobile.MR
 
 object ServiceNotification {
 
-    private const val CHANNEL_ID = "org.rhasspy.mobile.services.channel"
-    private const val GROUP_ID = "org.rhasspy.mobile.services.group"
+    private const val CHANNEL_ID = "org.rhasspy.mobile.services.channel.id"
+    private const val GROUP_ID = "org.rhasspy.mobile.services.group.id"
     const val ONGOING_NOTIFICATION_ID = 324234
 
     fun create(): Notification {
@@ -21,19 +21,14 @@ object ServiceNotification {
         createChannel()
         return NotificationCompat.Builder(Application.Instance, CHANNEL_ID)
             .setSmallIcon(MR.images.ic_launcher.drawableResId)
-            .setContentTitle("My notification")
-            .setContentText("Much longer text that cannot fit one line...")
-            .setStyle(
-                NotificationCompat.BigTextStyle()
-                    .bigText("Much longer text that cannot fit one line...")
-            )
+            .setContentTitle("Rhasspy Services Running")
             .setContentIntent(createPendingIntent())
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
             .setAutoCancel(true)
             .build()
     }
 
-    fun createGroup() {
+    private fun createGroup() {
         NotificationManagerCompat
             .from(Application.Instance).createNotificationChannelGroup(
                 NotificationChannelGroupCompat.Builder(GROUP_ID)
@@ -42,19 +37,19 @@ object ServiceNotification {
             )
     }
 
-    fun createChannel() {
+    private fun createChannel() {
         NotificationManagerCompat
             .from(Application.Instance)
             .createNotificationChannel(
                 NotificationChannelCompat.Builder(CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_HIGH)
-                    .setName("rhasspy")
-                    .setDescription("rhasspy2")
+                    .setName("Rhasspy Service Notification")
+                    .setDescription("Rhasspy Mobile runs in background for WakeWord detection and other services")
                     .setGroup(GROUP_ID)
                     .build()
             )
     }
 
-    fun createPendingIntent(): PendingIntent {
+    private fun createPendingIntent(): PendingIntent {
         val launchIntent: Intent = Application.Instance.packageManager.getLaunchIntentForPackage(Application.Instance.packageName)!!
 
         val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
