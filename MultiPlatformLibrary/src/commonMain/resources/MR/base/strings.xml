@@ -56,7 +56,7 @@
     <string name="en">English</string>
     <string name="automaticSilenceDetection">Automatic Silence Detection</string>
     <string name="backgroundWakeWordDetection">Background WakeWord Detection</string>
-    <string name="enableBackgroundWakeWordDetection">Enable Background WakeWord Detection</string>
+    <string name="enableBackground">Enable Background Services</string>
     <string name="backgroundWakeWordDetectionTurnOnDisplay">Wake Up Display</string>
     <string name="wakeWordIndication">WakeWord Indication</string>
     <string name="wakeWordSoundIndication">Sound</string>

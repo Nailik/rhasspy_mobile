@@ -7,7 +7,7 @@ enum class SettingsEnum {
 
     AutomaticSilenceDetection,
 
-    BackgroundWakeWordDetection,
+    BackgroundEnabled,
     BackgroundWakeWordDetectionTurnOnDisplay,
 
     WakeWordSoundIndication,

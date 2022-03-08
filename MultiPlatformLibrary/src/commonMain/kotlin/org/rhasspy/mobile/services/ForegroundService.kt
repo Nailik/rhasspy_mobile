@@ -10,7 +10,7 @@ object ForegroundService {
     val listening = MutableLiveData(false)
 
     fun action(action: Action, fromService: Boolean = false) {
-        if (AppSettings.isBackgroundWakeWordDetection.data && !fromService) {
+        if (AppSettings.isBackgroundEnabled.data && !fromService) {
             //start service
             NativeService.doAction(action)
         } else {
