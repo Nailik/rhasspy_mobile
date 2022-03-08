@@ -41,6 +41,7 @@ kotlin {
                 implementation(Icerock.Resources)
                 implementation(Russhwolf.multiplatformSettings)
                 implementation(Russhwolf.multiplatformSettingsNoArg)
+                implementation(Soywiz.korau)
             }
         }
         val commonTest by getting {

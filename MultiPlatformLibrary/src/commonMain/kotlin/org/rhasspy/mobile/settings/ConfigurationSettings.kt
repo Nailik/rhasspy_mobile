@@ -20,7 +20,8 @@ object ConfigurationSettings {
 
     val wakeWordOption = Setting(SettingsEnum.WakeWordOption, WakeWordOption.Porcupine)
     val wakeWordAccessToken = Setting(SettingsEnum.WakeWordAccessToken, "")
-    val wakeWordKeyword = Setting(SettingsEnum.WakeWordKeyword, 0f)
+    val wakeWordKeywordOption = Setting(SettingsEnum.WakeWordKeywordOption, WakeWordKeywordOption.JARVIS)
+    val wakeWordKeywordSensitivity = Setting(SettingsEnum.WakeWordKeywordSensitivity, 0.5f)
 
     val speechToTextOption = Setting(SettingsEnum.SpeechToTextOption, SpeechToTextOptions.Disabled)
     val speechToTextHttpEndpoint = Setting(SettingsEnum.SpeechToTextHttpEndpoint, "")

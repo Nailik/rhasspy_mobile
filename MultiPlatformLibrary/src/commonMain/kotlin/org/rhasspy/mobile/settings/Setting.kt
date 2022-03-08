@@ -67,10 +67,13 @@ class Setting<T>(private val key: SettingsEnum, private val initial: T) {
     }
 
 
-    var data: T
+    var unsavedData: T
         get() = this.unsaved.value
         set(newValue) {
             this.unsaved.value = newValue
         }
+
+    val data: T
+        get() = this.unsaved.value
 
 }

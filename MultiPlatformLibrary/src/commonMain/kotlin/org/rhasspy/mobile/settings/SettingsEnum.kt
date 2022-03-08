@@ -32,7 +32,8 @@ enum class SettingsEnum {
 
     WakeWordOption,
     WakeWordAccessToken,
-    WakeWordKeyword,
+    WakeWordKeywordOption,
+    WakeWordKeywordSensitivity,
 
     SpeechToTextOption,
     SpeechToTextHttpEndpoint,

@@ -22,4 +22,5 @@ class MainViewModel : ViewModel() {
     fun resetChanges() {
         GlobalData.resetChanges()
     }
+
 }

@@ -26,7 +26,6 @@ class AppSetting<T>(private val key: SettingsEnum, private val initial: T) {
             }
     }
 
-
     fun readValue(): T {
         @Suppress("UNCHECKED_CAST")
         return when (initial) {

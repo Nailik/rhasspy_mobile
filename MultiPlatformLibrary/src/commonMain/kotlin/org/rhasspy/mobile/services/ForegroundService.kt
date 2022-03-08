@@ -9,7 +9,9 @@ object ForegroundService {
     val listening = MutableLiveData(false)
 
     fun startServices() {
-        if (ConfigurationSettings.wakeWordOption.value == WakeWordOption.Porcupine && ConfigurationSettings.wakeWordAccessToken.value.isNotEmpty()) {
+        if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.Porcupine &&
+            ConfigurationSettings.wakeWordAccessToken.data.isNotEmpty()
+        ) {
             LocalWakeWordService.start()
         }
         ListeningService.start()

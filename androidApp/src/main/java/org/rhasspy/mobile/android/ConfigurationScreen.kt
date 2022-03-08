@@ -16,8 +16,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -66,7 +69,7 @@ fun SiteId() {
 
     TextFieldListItem(
         value = ConfigurationSettings.siteId.observeCurrent(),
-        onValueChange = { ConfigurationSettings.siteId.data = it },
+        onValueChange = { ConfigurationSettings.siteId.unsavedData = it },
         label = MR.strings.siteId,
         paddingValues = PaddingValues(top = 4.dp, bottom = 16.dp)
     )
@@ -85,7 +88,7 @@ fun HttpSSL() {
         SwitchListItem(
             text = MR.strings.enableSSL,
             isChecked = isHttpSSLValue,
-            onCheckedChange = { ConfigurationSettings.isHttpSSL.data = it })
+            onCheckedChange = { ConfigurationSettings.isHttpSSL.unsavedData = it })
 
         AnimatedVisibility(
             enter = expandVertically(),
@@ -110,18 +113,18 @@ fun Mqtt() {
         TextFieldListItem(
             label = MR.strings.host,
             value = ConfigurationSettings.mqttHost.observeCurrent(),
-            onValueChange = { ConfigurationSettings.mqttHost.data = it },
+            onValueChange = { ConfigurationSettings.mqttHost.unsavedData = it },
         )
 
         TextFieldListItem(
             label = MR.strings.port,
             value = ConfigurationSettings.mqttPort.observeCurrent(),
-            onValueChange = { ConfigurationSettings.mqttPort.data = it },
+            onValueChange = { ConfigurationSettings.mqttPort.unsavedData = it },
         )
 
         TextFieldListItem(
             value = ConfigurationSettings.mqttUserName.observeCurrent(),
-            onValueChange = { ConfigurationSettings.mqttUserName.data = it },
+            onValueChange = { ConfigurationSettings.mqttUserName.unsavedData = it },
             label = MR.strings.userName
         )
 
@@ -129,7 +132,7 @@ fun Mqtt() {
 
         TextFieldListItem(
             value = ConfigurationSettings.mqttPassword.observeCurrent(),
-            onValueChange = { ConfigurationSettings.mqttPassword.data = it },
+            onValueChange = { ConfigurationSettings.mqttPassword.unsavedData = it },
             label = MR.strings.password,
             visualTransformation = if (isShowPassword) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
@@ -151,7 +154,7 @@ fun Mqtt() {
         SwitchListItem(
             text = MR.strings.enableSSL,
             isChecked = isMqttSSL,
-            onCheckedChange = { ConfigurationSettings.isMqttSSL.data = it })
+            onCheckedChange = { ConfigurationSettings.isMqttSSL.unsavedData = it })
 
         AnimatedVisibility(
             enter = expandVertically(),
@@ -196,7 +199,7 @@ fun AudioRecording() {
             text = MR.strings.udpAudioOutput,
             secondaryText = MR.strings.udpAudioOutputDetail,
             isChecked = isUDPOutput,
-            onCheckedChange = { ConfigurationSettings.isUDPOutput.data = it })
+            onCheckedChange = { ConfigurationSettings.isUDPOutput.unsavedData = it })
 
         AnimatedVisibility(
             enter = expandVertically(),
@@ -208,13 +211,13 @@ fun AudioRecording() {
                 TextFieldListItem(
                     label = MR.strings.host,
                     value = ConfigurationSettings.udpOutputHost.observeCurrent(),
-                    onValueChange = { ConfigurationSettings.udpOutputHost.data = it },
+                    onValueChange = { ConfigurationSettings.udpOutputHost.unsavedData = it },
                 )
 
                 TextFieldListItem(
                     label = MR.strings.port,
                     value = ConfigurationSettings.udpOutputPort.observeCurrent(),
-                    onValueChange = { ConfigurationSettings.udpOutputPort.data = it },
+                    onValueChange = { ConfigurationSettings.udpOutputPort.unsavedData = it },
                 )
             }
         }
@@ -234,7 +237,7 @@ fun WakeWord() {
 
         DropDownEnumListItem(
             selected = wakeWordValueOption,
-            onSelect = { ConfigurationSettings.wakeWordOption.data = it })
+            onSelect = { ConfigurationSettings.wakeWordOption.unsavedData = it })
         { WakeWordOption.values() }
 
         AnimatedVisibility(
@@ -246,7 +249,7 @@ fun WakeWord() {
             Column {
                 TextFieldListItem(
                     value = ConfigurationSettings.wakeWordAccessToken.observeCurrent(),
-                    onValueChange = { ConfigurationSettings.wakeWordAccessToken.data = it },
+                    onValueChange = { ConfigurationSettings.wakeWordAccessToken.unsavedData = it },
                     label = MR.strings.porcupineAccessKey
                 )
 
@@ -259,13 +262,17 @@ fun WakeWord() {
                     })
 
                 //filled with correct values later
-                var wakeWordValue2 by remember { mutableStateOf(WakeWordOption.Porcupine) }
-                DropDownEnumListItem(wakeWordValue2, onSelect = { wakeWordValue2 = it }) { WakeWordOption.values() }
+                DropDownEnumListItem(
+                    selected = ConfigurationSettings.wakeWordKeywordOption.observeCurrent(),
+                    onSelect = { ConfigurationSettings.wakeWordKeywordOption.unsavedData = it })
+                { WakeWordKeywordOption.values() }
 
                 SliderListItem(
                     text = MR.strings.sensitivity,
-                    value = ConfigurationSettings.wakeWordKeyword.observeCurrent(),
-                    onValueChange = { ConfigurationSettings.wakeWordKeyword.data = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat() })
+                    value = ConfigurationSettings.wakeWordKeywordSensitivity.observeCurrent(),
+                    onValueChange = {
+                        ConfigurationSettings.wakeWordKeywordSensitivity.unsavedData = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
+                    })
             }
         }
     }
@@ -282,7 +289,7 @@ fun SpeechToText() {
     ) {
         DropDownEnumListItem(
             selected = speechToTextOption,
-            onSelect = { ConfigurationSettings.speechToTextOption.data = it })
+            onSelect = { ConfigurationSettings.speechToTextOption.unsavedData = it })
         { SpeechToTextOptions.values() }
 
         AnimatedVisibility(
@@ -293,7 +300,7 @@ fun SpeechToText() {
 
             TextFieldListItem(
                 value = ConfigurationSettings.speechToTextHttpEndpoint.observeCurrent(),
-                onValueChange = { ConfigurationSettings.speechToTextHttpEndpoint.data = it },
+                onValueChange = { ConfigurationSettings.speechToTextHttpEndpoint.unsavedData = it },
                 label = MR.strings.speechToTextURL
             )
 
@@ -312,7 +319,7 @@ fun IntentRecognition() {
     ) {
         DropDownEnumListItem(
             selected = intentRecognitionOption,
-            onSelect = { ConfigurationSettings.intentRecognitionOption.data = it })
+            onSelect = { ConfigurationSettings.intentRecognitionOption.unsavedData = it })
         { IntentRecognitionOptions.values() }
 
         AnimatedVisibility(
@@ -323,7 +330,7 @@ fun IntentRecognition() {
 
             TextFieldListItem(
                 value = ConfigurationSettings.intentRecognitionEndpoint.observeCurrent(),
-                onValueChange = { ConfigurationSettings.intentRecognitionEndpoint.data = it },
+                onValueChange = { ConfigurationSettings.intentRecognitionEndpoint.unsavedData = it },
                 label = MR.strings.rhasspyTextToIntentURL
             )
 
@@ -342,7 +349,7 @@ fun TextToSpeech() {
     ) {
         DropDownEnumListItem(
             selected = textToSpeechOption,
-            onSelect = { ConfigurationSettings.textToSpeechOption.data = it })
+            onSelect = { ConfigurationSettings.textToSpeechOption.unsavedData = it })
         { TextToSpeechOptions.values() }
 
         AnimatedVisibility(
@@ -353,7 +360,7 @@ fun TextToSpeech() {
 
             TextFieldListItem(
                 value = ConfigurationSettings.textToSpeechEndpoint.observeCurrent(),
-                onValueChange = { ConfigurationSettings.textToSpeechEndpoint.data = it },
+                onValueChange = { ConfigurationSettings.textToSpeechEndpoint.unsavedData = it },
                 label = MR.strings.rhasspyTextToSpeechURL
             )
 
@@ -372,7 +379,7 @@ fun AudioPlaying() {
     ) {
         DropDownEnumListItem(
             selected = audioPlayingOption,
-            onSelect = { ConfigurationSettings.audioPlayingOption.data = it })
+            onSelect = { ConfigurationSettings.audioPlayingOption.unsavedData = it })
         { AudioPlayingOptions.values() }
 
         AnimatedVisibility(
@@ -383,7 +390,7 @@ fun AudioPlaying() {
 
             TextFieldListItem(
                 value = ConfigurationSettings.audioPlayingEndpoint.observeCurrent(),
-                onValueChange = { ConfigurationSettings.audioPlayingEndpoint.data = it },
+                onValueChange = { ConfigurationSettings.audioPlayingEndpoint.unsavedData = it },
                 label = MR.strings.audioOutputURL
             )
         }
@@ -401,7 +408,7 @@ fun DialogueManagement() {
     ) {
         DropDownEnumListItem(
             selected = dialogueManagementOption,
-            onSelect = { ConfigurationSettings.dialogueManagementOption.data = it })
+            onSelect = { ConfigurationSettings.dialogueManagementOption.unsavedData = it })
         { DialogueManagementOptions.values() }
     }
 }
@@ -418,7 +425,7 @@ fun IntentHandling() {
     ) {
         DropDownEnumListItem(
             selected = intentHandlingOption,
-            onSelect = { ConfigurationSettings.intentHandlingOption.data = it })
+            onSelect = { ConfigurationSettings.intentHandlingOption.unsavedData = it })
         { IntentHandlingOptions.values() }
 
         AnimatedVisibility(
@@ -429,7 +436,7 @@ fun IntentHandling() {
 
             TextFieldListItem(
                 value = ConfigurationSettings.intentHandlingEndpoint.observeCurrent(),
-                onValueChange = { ConfigurationSettings.intentHandlingEndpoint.data = it },
+                onValueChange = { ConfigurationSettings.intentHandlingEndpoint.unsavedData = it },
                 label = MR.strings.remoteURL
             )
         }
@@ -443,13 +450,13 @@ fun IntentHandling() {
 
                 TextFieldListItem(
                     value = ConfigurationSettings.intentHandlingHassUrl.observeCurrent(),
-                    onValueChange = { ConfigurationSettings.intentHandlingHassUrl.data = it },
+                    onValueChange = { ConfigurationSettings.intentHandlingHassUrl.unsavedData = it },
                     label = MR.strings.hassURL
                 )
 
                 TextFieldListItem(
                     value = ConfigurationSettings.intentHandlingHassAccessToken.observeCurrent(),
-                    onValueChange = { ConfigurationSettings.intentHandlingHassAccessToken.data = it },
+                    onValueChange = { ConfigurationSettings.intentHandlingHassAccessToken.unsavedData = it },
                     label = MR.strings.accessToken
                 )
 
@@ -459,7 +466,7 @@ fun IntentHandling() {
                     text = MR.strings.homeAssistantEvents,
                     isChecked = isIntentHandlingHassEvent,
                     onClick = {
-                        ConfigurationSettings.isIntentHandlingHassEvent.data = true
+                        ConfigurationSettings.isIntentHandlingHassEvent.unsavedData = true
                     })
 
 
@@ -467,7 +474,7 @@ fun IntentHandling() {
                     text = MR.strings.homeAssistantIntents,
                     isChecked = !isIntentHandlingHassEvent,
                     onClick = {
-                        ConfigurationSettings.isIntentHandlingHassEvent.data = false
+                        ConfigurationSettings.isIntentHandlingHassEvent.unsavedData = false
                     })
             }
         }

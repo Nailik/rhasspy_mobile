@@ -17,7 +17,8 @@ actual object LocalWakeWordService {
     private fun initializePorcupineManger() {
         porcupineManager = PorcupineManager.Builder()
             .setAccessKey(ConfigurationSettings.wakeWordAccessToken.value)
-            .setKeywords(arrayOf(Porcupine.BuiltInKeyword.valueOf("JARVIS")))
+            .setKeyword(Porcupine.BuiltInKeyword.valueOf(ConfigurationSettings.wakeWordKeywordOption.data.name))
+            .setSensitivity(ConfigurationSettings.wakeWordKeywordSensitivity.data)
             .build(Application.Instance, wakeWordCallback)
     }
 
