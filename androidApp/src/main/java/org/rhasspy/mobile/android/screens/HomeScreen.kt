@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android
+package org.rhasspy.mobile.android.screens
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
@@ -8,31 +8,31 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.relocation.BringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.runtime.*
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.ExperimentalAnimatedInsets
-import dev.icerock.moko.resources.StringResource
-import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.services.ListeningService
 
 var isMainActionBig = mutableStateOf(true)
 var mainActionVisible = mutableStateOf(true)
@@ -114,13 +114,16 @@ fun MainActionFab(modifier: Modifier = Modifier) {
 
     FloatingActionButton(
         onClick = { },
-        modifier = modifier
+        modifier = modifier,
+        containerColor = if (ListeningService.status.observe()) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme
+            .primaryContainer,
     ) {
         val state = animateDpAsState(targetValue = if (isMainActionBig.value) 96.dp else 24.dp)
 
         Icon(
             imageVector = Icons.Filled.Mic,
             contentDescription = MR.strings.wakeUp,
+            tint = if (ListeningService.status.observe()) MaterialTheme.colorScheme.onErrorContainer else LocalContentColor.current,
             modifier = Modifier
                 .size(state.value)
         )
@@ -224,50 +227,5 @@ fun TextToSpeak(
             imageVector = Icons.Filled.VolumeUp,
             contentDescription = MR.strings.textToSpeak,
         )
-    }
-}
-
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
-@Composable
-fun TextWithAction(
-    modifier: Modifier = Modifier,
-    text: String,
-    label: StringResource,
-    onValueChange: (String) -> Unit,
-    onClick: () -> Unit, icon:
-    @Composable () -> Unit
-) {
-    val bringIntoViewRequester = remember { BringIntoViewRequester() }
-    val coroutineScope = rememberCoroutineScope()
-
-    Row(
-        modifier = modifier
-            .padding(vertical = 6.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        OutlinedTextField(
-            singleLine = true,
-            value = text,
-            onValueChange = onValueChange,
-            modifier = Modifier
-                .clearFocusOnKeyboardDismiss()
-                .weight(1f)
-                .bringIntoViewRequester(bringIntoViewRequester)
-                .onFocusEvent {
-                    if (it.isFocused) {
-                        coroutineScope.launch {
-                            bringIntoViewRequester.bringIntoView()
-                        }
-                    }
-                },
-            label = { Text(resource = label) }
-        )
-        ElevatedButton(
-            modifier = Modifier.padding(horizontal = 24.dp),
-            onClick = onClick
-        ) {
-            icon()
-        }
     }
 }

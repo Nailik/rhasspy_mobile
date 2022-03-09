@@ -16,7 +16,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -32,6 +31,9 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.screens.*
+import org.rhasspy.mobile.android.theme.DarkThemeColors
+import org.rhasspy.mobile.android.theme.LightThemeColors
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.GlobalData
@@ -135,12 +137,32 @@ fun Content(viewModel: MainViewModel = viewModel()) {
 }
 
 enum class Screens(val icon: @Composable () -> Unit, val label: @Composable () -> Unit) {
-    HomeScreen({ Icon(Icons.Filled.Mic, MR.strings.home) }, { Text(MR.strings.home) }),
+    HomeScreen({
+        Icon(
+            Icons.Filled.Mic,
+            MR.strings.home
+        )
+    }, { Text(MR.strings.home) }),
     ConfigurationScreen(
-        { Icon(painterResource(R.drawable.ic_launcher), MR.strings.configuration, Modifier.size(Dp(24f))) },
+        {
+            Icon(
+                painterResource(MR.images.ic_launcher.drawableResId),
+                MR.strings.configuration,
+                Modifier.size(24.dp)
+            )
+        },
         { Text(MR.strings.configuration) }),
-    SettingsScreen({ Icon(Icons.Filled.Settings, MR.strings.settings) }, { Text(MR.strings.settings) }),
-    LogScreen({ Icon(Icons.Filled.Code, MR.strings.log) }, { Text(MR.strings.log) })
+    SettingsScreen({ Icon(Icons.Filled.Settings, MR.strings.settings) }, {
+        Text(
+            MR.strings.settings
+        )
+    }),
+    LogScreen({
+        Icon(
+            Icons.Filled.Code,
+            MR.strings.log
+        )
+    }, { Text(MR.strings.log) })
 }
 
 @Composable

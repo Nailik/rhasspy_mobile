@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android
+package org.rhasspy.mobile.android.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,11 +25,11 @@ fun SettingsScreen() {
         Divider()
         ThemeItem()
         Divider()
-        AutomaticSilenceDetectionItem()
-        Divider()
         BackgroundWakeWordDetectionItem()
         Divider()
         WakeWordIndicationItem()
+        Divider()
+        AutomaticSilenceDetectionItem()
         Divider()
         ShowLogItem()
         Divider()
@@ -69,24 +69,11 @@ fun AutomaticSilenceDetectionItem() {
 @Composable
 fun BackgroundWakeWordDetectionItem() {
 
-    val isBackgroundWakeWordDetection = AppSettings.isBackgroundWakeWordDetection.observe()
+    SwitchListItem(
+        text = MR.strings.enableBackground,
+        isChecked = AppSettings.isBackgroundEnabled.observe(),
+        onCheckedChange = { AppSettings.isBackgroundEnabled.data = it })
 
-    ExpandableListItem(
-        text = MR.strings.backgroundWakeWordDetection,
-        secondaryText = isBackgroundWakeWordDetection.toText()
-    ) {
-        Column {
-            SwitchListItem(
-                text = MR.strings.enableBackgroundWakeWordDetection,
-                isChecked = isBackgroundWakeWordDetection,
-                onCheckedChange = { AppSettings.isBackgroundWakeWordDetection.data = it })
-
-            SwitchListItem(
-                text = MR.strings.backgroundWakeWordDetectionTurnOnDisplay,
-                isChecked = AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.observe(),
-                onCheckedChange = { AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data = it })
-        }
-    }
 }
 
 
@@ -108,8 +95,13 @@ fun WakeWordIndicationItem() {
         text = MR.strings.wakeWordIndication,
         secondaryText = stateText
     ) {
-
         Column {
+
+            SwitchListItem(
+                text = MR.strings.backgroundWakeWordDetectionTurnOnDisplay,
+                isChecked = AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.observe(),
+                onCheckedChange = { AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data = it })
+
             SwitchListItem(
                 text = MR.strings.wakeWordSoundIndication,
                 isChecked = isWakeWordSoundIndication,

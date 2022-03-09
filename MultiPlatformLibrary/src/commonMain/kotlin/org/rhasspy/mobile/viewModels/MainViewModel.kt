@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewModels
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import dev.icerock.moko.resources.desc.StringDesc
+import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.settings.AppSettings
 
 class MainViewModel : ViewModel() {
@@ -10,13 +11,21 @@ class MainViewModel : ViewModel() {
         AppSettings.languageOption.value.addObserver {
             StringDesc.localeType = StringDesc.LocaleType.Custom(it.code)
         }
+        AppSettings.isWakeWordLightIndication.value.addObserver {
+            if (it) {
+                NativeIndication.displayOverAppsPermission()
+            }
+        }
     }
 
     fun saveAndApplyChanges() {
         GlobalData.saveAllChanges()
+        // ForegroundService.stopServices()
+        //   ForegroundService.startServices()
     }
 
     fun resetChanges() {
         GlobalData.resetChanges()
     }
+
 }

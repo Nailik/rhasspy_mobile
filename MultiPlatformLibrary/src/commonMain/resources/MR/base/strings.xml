@@ -56,7 +56,7 @@
     <string name="en">English</string>
     <string name="automaticSilenceDetection">Automatic Silence Detection</string>
     <string name="backgroundWakeWordDetection">Background WakeWord Detection</string>
-    <string name="enableBackgroundWakeWordDetection">Enable Background WakeWord Detection</string>
+    <string name="enableBackground">Enable Background Services</string>
     <string name="backgroundWakeWordDetectionTurnOnDisplay">Wake Up Display</string>
     <string name="wakeWordIndication">WakeWord Indication</string>
     <string name="wakeWordSoundIndication">Sound</string>
@@ -80,4 +80,19 @@
     <string name="expandListItem">Expand list item</string>
     <string name="expandDropDown">Expand drop down</string>
     <string name="visibility">Visibility</string>
+
+    <string name="alexa">Alexa</string>
+    <string name="americano">Americano</string>
+    <string name="blueberry">Blueberry</string>
+    <string name="bumblebee">Bumblebee</string>
+    <string name="computer">Computer</string>
+    <string name="grapefruit">Grapefruit</string>
+    <string name="grasshopper">Grasshopper</string>
+    <string name="heyGoogle">Hey Google</string>
+    <string name="heySiri">Hey Siri</string>
+    <string name="jarvis">Jarvis</string>
+    <string name="okGoogle">Ok Google</string>
+    <string name="picovoice">Picovoice</string>
+    <string name="porcupine">Porcupine</string>
+    <string name="terminator">Terminator</string>
 </resources>

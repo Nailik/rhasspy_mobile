@@ -10,7 +10,7 @@ object AppSettings {
 
     val automaticSilenceDetection = AppSetting(SettingsEnum.AutomaticSilenceDetection, false)
 
-    val isBackgroundWakeWordDetection = AppSetting(SettingsEnum.BackgroundWakeWordDetection, false)
+    val isBackgroundEnabled = AppSetting(SettingsEnum.BackgroundEnabled, false)
     val isBackgroundWakeWordDetectionTurnOnDisplay = AppSetting(SettingsEnum.BackgroundWakeWordDetectionTurnOnDisplay, false)
 
     val isWakeWordSoundIndication = AppSetting(SettingsEnum.WakeWordSoundIndication, false)
