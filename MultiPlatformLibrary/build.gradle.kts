@@ -52,6 +52,9 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(AndroidX.multidex)
+                implementation(AndroidX.window)
+                implementation(AndroidX.Compose.ui)
+                implementation(AndroidX.Compose.material3)
                 implementation(Icerock.Resources.resourcesCompose)
                 implementation(Picovoice.porcupineAndroid)
             }
@@ -84,6 +87,12 @@ android {
     defaultConfig {
         minSdk = 21
         targetSdk = 32
+    }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "_"
     }
 }
 

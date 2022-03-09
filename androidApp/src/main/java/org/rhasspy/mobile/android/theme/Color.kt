@@ -1,9 +1,8 @@
-package org.rhasspy.mobile.android
+package org.rhasspy.mobile.android.theme
 
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
-
 
 val md_theme_light_primary = Color(0xFF6750A4)
 val md_theme_light_onPrimary = Color(0xFFFFFFFF)
@@ -61,6 +60,10 @@ val md_theme_dark_inverseSurface = Color(0xFFE6E1E5)
 val md_theme_dark_inversePrimary = Color(0xFF6750A4)
 val md_theme_dark_shadow = Color(0xFF000000)
 
+val assistant_color_one = Color(0xFF2196F3)
+val assistant_color_two = Color(0xFFF44336)
+val assistant_color_three = Color(0xFFFFEB3B)
+val assistant_color_four = Color(0xFF4CAF50)
 
 val seed = Color(0xFF456c42)
 val error = Color(0xFFba1b1b)

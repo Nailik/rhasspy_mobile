@@ -32,6 +32,8 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.theme.DarkThemeColors
+import org.rhasspy.mobile.android.theme.LightThemeColors
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.GlobalData

@@ -61,6 +61,9 @@ dependencies {
     implementation(AndroidX.Compose.ui.tooling)
     implementation(AndroidX.Compose.ui.toolingPreview)
 
+    implementation(AndroidX.multidex)
+    implementation(AndroidX.window)
+
     implementation(Icerock.Mvvm.core)
     implementation(Icerock.Mvvm.state)
     implementation(Icerock.Mvvm.livedata)

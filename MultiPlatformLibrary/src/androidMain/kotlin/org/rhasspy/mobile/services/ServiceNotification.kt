@@ -10,11 +10,13 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import org.rhasspy.mobile.MR
 
+
 object ServiceNotification {
 
     private const val CHANNEL_ID = "org.rhasspy.mobile.services.channel.id"
     private const val GROUP_ID = "org.rhasspy.mobile.services.group.id"
     const val ONGOING_NOTIFICATION_ID = 324234
+
 
     fun create(): Notification {
         createGroup()

@@ -1,5 +1,6 @@
-package org.rhasspy.mobile.services
+package org.rhasspy.mobile.services.native
 
+import org.rhasspy.mobile.services.Action
 import kotlin.native.concurrent.ThreadLocal
 
 expect class NativeService() {

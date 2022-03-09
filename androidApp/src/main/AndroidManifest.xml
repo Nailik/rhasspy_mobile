@@ -3,18 +3,21 @@
     package="org.rhasspy.mobile.android">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
 
     <application
-        android:name="org.rhasspy.mobile.services.Application"
+        android:name="org.rhasspy.mobile.android.AndroidApplication"
         android:icon="@drawable/ic_launcher"
         android:supportsRtl="true">
         <service
-            android:name="org.rhasspy.mobile.services.NativeService"
+            android:name="org.rhasspy.mobile.services.native.NativeService"
             android:foregroundServiceType="microphone" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -25,6 +28,5 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 </manifest> 

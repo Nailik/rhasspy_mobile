@@ -2,20 +2,8 @@ package org.rhasspy.mobile.services
 
 import androidx.multidex.MultiDexApplication
 
-class Application : MultiDexApplication() {
+class Application {
     companion object {
-        lateinit var Instance: Application
-            private set
+        lateinit var Instance: MultiDexApplication
     }
-
-    init {
-        Instance = this
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-
-        ForegroundService.action(Action.Start)
-    }
-
 }

@@ -1,9 +1,13 @@
-package org.rhasspy.mobile.services
+package org.rhasspy.mobile.services.native
 
 import android.content.Intent
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.IBinder
+import org.rhasspy.mobile.services.Action
+import org.rhasspy.mobile.services.Application
+import org.rhasspy.mobile.services.ForegroundService
+import org.rhasspy.mobile.services.ServiceNotification
 
 actual class NativeService : android.app.Service() {
 
@@ -39,7 +43,7 @@ actual class NativeService : android.app.Service() {
         const val ACTION = "Action"
 
         actual fun doAction(action: Action) {
-            val intent = Intent(Application.Instance, ForegroundService::class.java).apply {
+            val intent = Intent(Application.Instance, NativeService::class.java).apply {
                 putExtra(ACTION, action.name)
             }
             if (SDK_INT >= Build.VERSION_CODES.O) {
