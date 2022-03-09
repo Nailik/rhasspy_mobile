@@ -16,10 +16,14 @@ of [Rhasspy](https://rhasspy.readthedocs.io/en/latest/tutorials/#server-with-sat
 | Remote HTTP(s)  | :x: | :x: | :x: |
 | Remote MQTT(SSL)  | :x: | :x: | :x: |
 | Wakeword Remote (HTTP/MQTT/UDP) | :x: | :x: | :x: |
-| Wakeword Local (Porcupine) | :x: | :x: | :x: |
-| Wakeword Indication (Sound, Visual)  | :x: | :x: | :x: |
+| Wakeword Local (Porcupine) | :white_check_mark: | :x: | :x: |
+| Wakeword Indication (Sound, Visual)  | :white_check_mark: | :x: | :x: |
 
-# Tech information
+# Information About current status
+
+Local WakeWord, Background Service and Indications are in develop, microphone permission needs to be accepted manually for now via app settings.
+
+# About
 
 While developing i switched from Flutter to Kotlin Multiplatform Mobile for the following reason:
 
