@@ -1,5 +1,8 @@
 package org.rhasspy.mobile.services
 
+import dev.icerock.moko.mvvm.livedata.LiveData
+import dev.icerock.moko.mvvm.livedata.MutableLiveData
+import dev.icerock.moko.mvvm.livedata.map
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -9,42 +12,63 @@ import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.settings.AppSettings
 import kotlin.time.Duration.Companion.seconds
 
+/**
+ * Handles listening to speech
+ */
+object ListeningService {
 
-object ListeningService : (Boolean) -> Unit {
+    private val listening = MutableLiveData(false)
 
-    fun start() {
-        ForegroundService.listening.addObserver(this)
-    }
+    //represents listening Status for ui
+    val status: LiveData<Boolean> = listening.map { it }
 
-    fun stop() {
-        ForegroundService.listening.removeObserver(this)
-    }
+    /**
+     * should be called when wake word is detected or user wants to speak
+     * by clicking ui
+     */
+    fun wakeWordDetected() {
+        listening.value = true
+        indication()
 
-    override fun invoke(listening: Boolean) {
-        if (listening) {
-            CoroutineScope(Dispatchers.Main).launch {
-
-                if (AppSettings.isWakeWordSoundIndication.data) {
-                    NativeIndication.playAudio(MR.files.etc_wav_beep_hi)
-                }
-
-                if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data) {
-                    NativeIndication.wakeUpScreen()
-                }
-
-                if (AppSettings.isWakeWordLightIndication.data) {
-                    NativeIndication.showDisplayOverOtherApps()
-                }
-
-                //reset for now no automatically silence detection
-                delay(20.seconds)
-                ForegroundService.listening.value = false
-
-                if (AppSettings.isWakeWordLightIndication.data) {
-                    NativeIndication.closeDisplayOverOtherApps()
-                }
-            }
+        //For now after 10 seconds listening is stopped
+        CoroutineScope(Dispatchers.Main).launch {
+            //reset for now no automatically silence detection
+            delay(20.seconds)
+            stopListening()
         }
+    }
+
+    /**
+     * called when service should stop listening
+     */
+    private fun stopListening() {
+        listening.value = false
+        stopIndication()
+    }
+
+    /**
+     * starts wake word indication according to settings
+     */
+    private fun indication() {
+        if (AppSettings.isWakeWordSoundIndication.data) {
+            NativeIndication.playAudio(MR.files.etc_wav_beep_hi)
+        }
+
+        if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data) {
+            NativeIndication.wakeUpScreen()
+        }
+
+        if (AppSettings.isWakeWordLightIndication.data) {
+            NativeIndication.showIndication()
+        }
+    }
+
+    /**
+     * stops all indications
+     */
+    private fun stopIndication() {
+        NativeIndication.closeIndicationOverOtherApps()
+        NativeIndication.releaseWakeUp()
     }
 
 }

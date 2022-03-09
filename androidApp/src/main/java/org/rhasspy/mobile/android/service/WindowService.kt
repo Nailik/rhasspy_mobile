@@ -24,12 +24,23 @@ import org.rhasspy.mobile.android.theme.assistant_color_two
 import org.rhasspy.mobile.services.Application
 import org.rhasspy.mobile.services.native.NativeIndication
 
+/**
+ * Overlay Service
+ */
 object WindowService {
 
-    private var mParams: WindowManager.LayoutParams? = null
+    private lateinit var mParams: WindowManager.LayoutParams
     private val lifecycleOwner = CustomLifecycleOwner()
+    private var isStarted = false
 
-    private val composeView = ComposeView(Application.Instance).apply {
+    private val overlayWindowManager by lazy {
+        Application.Instance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    }
+
+    /**
+     * view that's displayed when a wakeword is detected
+     */
+    private val view = ComposeView(Application.Instance).apply {
         setContent {
             val infiniteTransition = rememberInfiniteTransition()
 
@@ -95,31 +106,6 @@ object WindowService {
         }
     }
 
-
-    private var wasTrue = false
-
-    fun start() {
-        NativeIndication.showVisualIndication.observeForever {
-            try {
-                if (it && !wasTrue) {
-                    wasTrue = true
-                    overlayWindowManager.addView(composeView, mParams)
-                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
-                } else if (!it) {
-                    wasTrue = false
-                    overlayWindowManager.removeView(composeView)
-                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-                }
-            } catch (e: Exception) {
-                
-            }
-        }
-    }
-
-    private val overlayWindowManager by lazy {
-        Application.Instance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-    }
-
     init {
         @Suppress("DEPRECATION")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -139,10 +125,35 @@ object WindowService {
 
         lifecycleOwner.performRestore(null)
         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
-        ViewTreeLifecycleOwner.set(composeView, lifecycleOwner)
-        ViewTreeSavedStateRegistryOwner.set(composeView, lifecycleOwner)
+        ViewTreeLifecycleOwner.set(view, lifecycleOwner)
+        ViewTreeSavedStateRegistryOwner.set(view, lifecycleOwner)
 
         val viewModelStore = ViewModelStore()
-        ViewTreeViewModelStoreOwner.set(composeView) { viewModelStore }
+        ViewTreeViewModelStoreOwner.set(view) { viewModelStore }
+    }
+
+    //stores old value to only react to changes
+    private var showVisualIndicationOldValue = false
+
+    /**
+     * start service, listen to showVisualIndication and show the overlay or remove it when necessary
+     */
+    fun start() {
+        if (!isStarted) {
+            isStarted = true
+
+            NativeIndication.showVisualIndication.observeForever {
+                if (it != showVisualIndicationOldValue) {
+                    showVisualIndicationOldValue = it
+                    if (it) {
+                        overlayWindowManager.addView(view, mParams)
+                        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                    } else {
+                        overlayWindowManager.removeView(view)
+                        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+                    }
+                }
+            }
+        }
     }
 }

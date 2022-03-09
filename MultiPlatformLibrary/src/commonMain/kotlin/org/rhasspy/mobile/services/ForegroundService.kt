@@ -1,22 +1,35 @@
 package org.rhasspy.mobile.services
 
-import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.services.native.NativeLocalWakeWordService
 import org.rhasspy.mobile.services.native.NativeService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
+/**
+ * Start point of all services
+ *
+ * handles
+ * - WakeWord Service
+ * - Listening Service
+ * - MQTT Services
+ * - HTTP Services
+ */
 object ForegroundService {
 
-    val listening = MutableLiveData(false)
-
     init {
+        //when background enabled value changes, services need to be reloaded
         AppSettings.isBackgroundEnabled.value.addObserver {
             action(Action.Reload)
         }
     }
 
+    /**
+     * Action to Start, Stop o Reload service
+     *
+     * Starts background service, if not called by service and
+     * isBackgroundEnabled is true and service is not running yet
+     */
     fun action(action: Action, fromService: Boolean = false) {
         if (fromService) {
             when (action) {
@@ -35,20 +48,28 @@ object ForegroundService {
         }
     }
 
+    /**
+     * Start services according to settings
+     */
     private fun startServices() {
         if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.Porcupine &&
             ConfigurationSettings.wakeWordAccessToken.data.isNotEmpty()
         ) {
             NativeLocalWakeWordService.start()
         }
-        ListeningService.start()
     }
 
+    /**
+     * Stop services according to settings
+     */
     private fun stopServices() {
         NativeLocalWakeWordService.stop()
-        ListeningService.stop()
     }
 
+    /**
+     * Reload services according to settings
+     * via start and stop
+     */
     private fun reloadServices() {
         stopServices()
         startServices()

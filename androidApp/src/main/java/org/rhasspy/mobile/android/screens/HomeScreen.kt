@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android
+package org.rhasspy.mobile.android.screens
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.ExperimentalAnimatedInsets
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.services.ForegroundService
+import org.rhasspy.mobile.services.ListeningService
 
 var isMainActionBig = mutableStateOf(true)
 var mainActionVisible = mutableStateOf(true)
@@ -115,7 +115,7 @@ fun MainActionFab(modifier: Modifier = Modifier) {
     FloatingActionButton(
         onClick = { },
         modifier = modifier,
-        containerColor = if (ForegroundService.listening.observe()) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme
+        containerColor = if (ListeningService.status.observe()) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme
             .primaryContainer,
     ) {
         val state = animateDpAsState(targetValue = if (isMainActionBig.value) 96.dp else 24.dp)
@@ -123,7 +123,7 @@ fun MainActionFab(modifier: Modifier = Modifier) {
         Icon(
             imageVector = Icons.Filled.Mic,
             contentDescription = MR.strings.wakeUp,
-            tint = if (ForegroundService.listening.observe()) MaterialTheme.colorScheme.onErrorContainer else LocalContentColor.current,
+            tint = if (ListeningService.status.observe()) MaterialTheme.colorScheme.onErrorContainer else LocalContentColor.current,
             modifier = Modifier
                 .size(state.value)
         )

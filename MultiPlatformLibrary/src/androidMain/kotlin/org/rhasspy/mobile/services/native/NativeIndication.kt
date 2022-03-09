@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.services.native
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.media.AudioAttributes
@@ -11,10 +12,17 @@ import androidx.lifecycle.MutableLiveData
 import dev.icerock.moko.resources.FileResource
 import org.rhasspy.mobile.services.Application
 
+/**
+ * handles indication of wake up locally
+ */
 actual object NativeIndication {
 
     val showVisualIndication = MutableLiveData(false)
+    var wakeLock: PowerManager.WakeLock? = null
 
+    /**
+     * play audio resource
+     */
     actual fun playAudio(fileResource: FileResource) {
 
         val mediaPlayer = MediaPlayer.create(
@@ -30,26 +38,34 @@ actual object NativeIndication {
         mediaPlayer.start()
     }
 
-    var wakeLock: PowerManager.WakeLock? = null
-
+    /**
+     * wake up screen as long as possible
+     */
+    @SuppressLint("WakelockTimeout")
     @Suppress("DEPRECATION")
     actual fun wakeUpScreen() {
         wakeLock =
             (Application.Instance.getSystemService(Context.POWER_SERVICE) as PowerManager).run {
                 newWakeLock(
                     PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
-                    "MyApp::MyWakelockTag"
+                    "Rhasspy::WakeWordDetected"
                 ).apply {
-                    acquire(20L)
+                    acquire()
                 }
             }
-        //release on silence detection
     }
 
-    actual fun releaseWakeUp(){
+    /**
+     * remote wake up and let screen go off
+     */
+    actual fun releaseWakeUp() {
         wakeLock?.release()
     }
 
+    /**
+     * acquire permission to draw over other apps
+     * by opening intent if necessary
+     */
     actual fun displayOverAppsPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(Application.Instance)) {
@@ -61,13 +77,17 @@ actual object NativeIndication {
         }
     }
 
-    actual fun showDisplayOverOtherApps() {
-        // and display the content on screen
-        // and display the content on screen
+    /**
+     * display indication over other apps
+     */
+    actual fun showIndication() {
         showVisualIndication.value = true
     }
 
-    actual fun closeDisplayOverOtherApps() {
+    /**
+     * close indication over other apps
+     */
+    actual fun closeIndicationOverOtherApps() {
         showVisualIndication.value = false
     }
 

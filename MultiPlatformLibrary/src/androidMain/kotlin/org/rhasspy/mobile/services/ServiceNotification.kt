@@ -10,7 +10,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import org.rhasspy.mobile.MR
 
-
+/**
+ * creates necessary notification to hold services in background
+ */
 object ServiceNotification {
 
     private const val CHANNEL_ID = "org.rhasspy.mobile.services.channel.id"
@@ -34,7 +36,7 @@ object ServiceNotification {
         NotificationManagerCompat
             .from(Application.Instance).createNotificationChannelGroup(
                 NotificationChannelGroupCompat.Builder(GROUP_ID)
-                    .setName("notfi")
+                    .setName("Rhasspy Service Notification Group")
                     .build()
             )
     }
@@ -44,7 +46,7 @@ object ServiceNotification {
             .from(Application.Instance)
             .createNotificationChannel(
                 NotificationChannelCompat.Builder(CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_HIGH)
-                    .setName("Rhasspy Service Notification")
+                    .setName("Rhasspy Service Notification Channel")
                     .setDescription("Rhasspy Mobile runs in background for WakeWord detection and other services")
                     .setGroup(GROUP_ID)
                     .build()

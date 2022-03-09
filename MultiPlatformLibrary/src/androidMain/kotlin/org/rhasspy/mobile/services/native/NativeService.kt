@@ -9,8 +9,14 @@ import org.rhasspy.mobile.services.Application
 import org.rhasspy.mobile.services.ForegroundService
 import org.rhasspy.mobile.services.ServiceNotification
 
+/**
+ * Native Service to run continuously in background
+ */
 actual class NativeService : android.app.Service() {
 
+    /**
+     * create service, show notification and start in foreground
+     */
     override fun onCreate() {
         super.onCreate()
 
@@ -18,6 +24,9 @@ actual class NativeService : android.app.Service() {
         startForeground(ServiceNotification.ONGOING_NOTIFICATION_ID, ServiceNotification.create())
     }
 
+    /**
+     * do action according to params in intent, set is running to true
+     */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         isRunning = true
 
@@ -26,12 +35,16 @@ actual class NativeService : android.app.Service() {
                 ForegroundService.action(Action.valueOf(it), true)
             }
         }
+
         return super.onStartCommand(intent, flags, startId)
     }
 
+    /**
+     * set running flag when service is destroyed
+     */
     override fun onDestroy() {
-        super.onDestroy()
         isRunning = false
+        super.onDestroy()
     }
 
     override fun onBind(p0: Intent?): IBinder? {
@@ -42,6 +55,12 @@ actual class NativeService : android.app.Service() {
 
         const val ACTION = "Action"
 
+        //stores if services is currently running
+        actual var isRunning: Boolean = false
+
+        /**
+         * When there is an action to be done by the services
+         */
         actual fun doAction(action: Action) {
             val intent = Intent(Application.Instance, NativeService::class.java).apply {
                 putExtra(ACTION, action.name)
@@ -53,8 +72,9 @@ actual class NativeService : android.app.Service() {
             }
         }
 
-        actual var isRunning: Boolean = false
-
+        /**
+         * stop background work
+         */
         actual fun stop() {
             Application.Instance.stopService(Intent(Application.Instance, ForegroundService::class.java))
         }

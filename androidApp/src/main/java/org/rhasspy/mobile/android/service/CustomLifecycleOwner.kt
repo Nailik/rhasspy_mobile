@@ -6,20 +6,16 @@ import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 
+/**
+ * Holds a lifecycle, is used for overlay window
+ */
 class CustomLifecycleOwner : LifecycleOwner, ViewModelStoreOwner, SavedStateRegistryOwner {
 
     private var mLifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
     private var mSavedStateRegistryController: SavedStateRegistryController = SavedStateRegistryController.create(this)
 
-    val isInitialized: Boolean
-        get() = true
-
     override fun getLifecycle(): Lifecycle {
         return mLifecycleRegistry
-    }
-
-    fun setCurrentState(state: Lifecycle.State) {
-        mLifecycleRegistry.currentState = state
     }
 
     fun handleLifecycleEvent(event: Lifecycle.Event) {
@@ -32,10 +28,6 @@ class CustomLifecycleOwner : LifecycleOwner, ViewModelStoreOwner, SavedStateRegi
 
     fun performRestore(savedState: Bundle?) {
         mSavedStateRegistryController.performRestore(savedState)
-    }
-
-    fun performSave(outBundle: Bundle) {
-        mSavedStateRegistryController.performSave(outBundle)
     }
 
     private val store = ViewModelStore()

@@ -12,10 +12,10 @@ actual object NativeIndication {
     actual fun displayOverAppsPermission() {
     }
 
-    actual fun showDisplayOverOtherApps() {
+    actual fun showIndication() {
     }
 
-    actual fun closeDisplayOverOtherApps() {
+    actual fun closeIndicationOverOtherApps() {
     }
 
     actual fun releaseWakeUp() {

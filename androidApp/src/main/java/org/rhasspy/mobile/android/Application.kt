@@ -15,7 +15,6 @@ class AndroidApplication : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
 
-        ForegroundService.action(Action.Start)
         WindowService.start()
     }
 

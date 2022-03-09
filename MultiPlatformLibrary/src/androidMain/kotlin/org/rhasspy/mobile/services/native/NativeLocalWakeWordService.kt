@@ -4,34 +4,49 @@ import ai.picovoice.porcupine.Porcupine
 import ai.picovoice.porcupine.PorcupineManager
 import ai.picovoice.porcupine.PorcupineManagerCallback
 import org.rhasspy.mobile.services.Application
-import org.rhasspy.mobile.services.ForegroundService
+import org.rhasspy.mobile.services.ListeningService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-actual object NativeLocalWakeWordService {
+/**
+ * Listens to WakeWord with Porcupine
+ */
+actual object NativeLocalWakeWordService : PorcupineManagerCallback {
 
-    private val wakeWordCallback = PorcupineManagerCallback {
-        //wakeword detected
-        ForegroundService.listening.value = true
-    }
-
+    //manager to stop start and reload porcupine
     private var porcupineManager: PorcupineManager? = null
 
-    private fun initializePorcupineManger() {
-        porcupineManager = PorcupineManager.Builder()
-            .setAccessKey(ConfigurationSettings.wakeWordAccessToken.value)
-            .setKeyword(Porcupine.BuiltInKeyword.valueOf(ConfigurationSettings.wakeWordKeywordOption.data.name))
-            .setSensitivity(ConfigurationSettings.wakeWordKeywordSensitivity.data)
-            .build(Application.Instance, wakeWordCallback)
-    }
-
+    /**
+     * start listening to wake words
+     * requires internet to activate porcupine the very first time
+     */
     actual fun start() {
         initializePorcupineManger()
         porcupineManager?.start()
     }
 
+    /**
+     * stops porcupine
+     */
     actual fun stop() {
-
         porcupineManager?.stop()
+    }
+
+    /**
+     * initialize porcupine with access token, internet access necessary
+     */
+    private fun initializePorcupineManger() {
+        porcupineManager = PorcupineManager.Builder()
+            .setAccessKey(ConfigurationSettings.wakeWordAccessToken.value)
+            .setKeyword(Porcupine.BuiltInKeyword.valueOf(ConfigurationSettings.wakeWordKeywordOption.data.name))
+            .setSensitivity(ConfigurationSettings.wakeWordKeywordSensitivity.data)
+            .build(Application.Instance, this)
+    }
+
+    /**
+     * invoked when a WakeWord is detected, informs listening service
+     */
+    override fun invoke(keywordIndex: Int) {
+        ListeningService.wakeWordDetected()
     }
 
 }
