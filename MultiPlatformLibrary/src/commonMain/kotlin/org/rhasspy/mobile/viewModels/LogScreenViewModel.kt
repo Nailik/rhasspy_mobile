@@ -8,7 +8,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.logger.LogElement
 
@@ -20,8 +19,6 @@ class LogScreenViewModel : ViewModel() {
     val logArr = MutableLiveData(listOf<LogElement>())
 
     init {
-        logger.i { "logger created" }
-
         //load file into list
         logArr.value = FileLogger.getLines().reversed()
 

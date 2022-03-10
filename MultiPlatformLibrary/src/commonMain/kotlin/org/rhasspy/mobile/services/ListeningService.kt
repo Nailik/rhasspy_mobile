@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.settings.AppSettings
-import org.rhasspy.mobile.viewModels.GlobalData
 import kotlin.time.Duration.Companion.seconds
 
 /**

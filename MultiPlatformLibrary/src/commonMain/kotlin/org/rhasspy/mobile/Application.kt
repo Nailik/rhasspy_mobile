@@ -20,7 +20,7 @@ abstract class Application : NativeApplication() {
     fun onCreated() {
         Logger.addLogWriter(FileLogger)
 
-        logger.i { "logger created" }
+        logger.a { "######## Application started ########" }
 
         ForegroundService
     }
