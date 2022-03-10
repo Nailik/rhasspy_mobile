@@ -1,7 +1,14 @@
 package org.rhasspy.mobile.logger
 
+import co.touchlab.kermit.Severity
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.rhasspy.mobile.Application
 import java.io.File
+
 
 actual class NativeFileWriter actual constructor(filename: String) {
 
@@ -10,19 +17,24 @@ actual class NativeFileWriter actual constructor(filename: String) {
     init {
         if (!logfile.exists()) {
             logfile.createNewFile()
+            logfile.appendText(
+                Json.encodeToString(
+                    LogElement(
+                        Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(),
+                        Severity.Verbose,
+                        "NativeFileWriter",
+                        "createdLogFile",
+                        null
+                    )
+                )
+            )
         }
     }
 
-    actual fun appendLine(line: String) {
-        logfile.appendText(System.currentTimeMillis().toString() + " " + line + "\n")
+    actual fun appendJsonElement(element: String) {
+        logfile.appendText(",\n$element")
     }
 
-    actual fun getLines(): List<String> {
-        val list = mutableListOf<String>()
-        logfile.forEachLine {
-            list.add(0, it)
-        }
-        return list
-    }
+    actual fun getFileContent() = logfile.readText()
 
 }

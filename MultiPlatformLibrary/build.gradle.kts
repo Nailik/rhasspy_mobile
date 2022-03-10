@@ -1,6 +1,7 @@
 plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
+    kotlin("plugin.serialization")
     id("com.android.library")
     id("dev.icerock.mobile.multiplatform-resources")
 }
@@ -43,6 +44,8 @@ kotlin {
                 implementation(Icerock.Resources)
                 implementation(Russhwolf.multiplatformSettings)
                 implementation(Russhwolf.multiplatformSettingsNoArg)
+                implementation(Jetbrains.Kotlinx.dateTime)
+                implementation(Jetbrains.Kotlinx.serialization)
             }
         }
         val commonTest by getting {

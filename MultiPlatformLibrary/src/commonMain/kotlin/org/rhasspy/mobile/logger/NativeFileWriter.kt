@@ -2,8 +2,8 @@ package org.rhasspy.mobile.logger
 
 expect class NativeFileWriter(filename: String) {
 
-    fun appendLine(line: String)
+    fun appendJsonElement(element: String)
 
-    fun getLines(): List<String>
+    fun getFileContent(): String
 
 }
