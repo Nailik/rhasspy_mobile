@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.settings
 
-import co.touchlab.kermit.Severity
 import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.logger.LogLevel

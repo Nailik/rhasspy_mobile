@@ -4,7 +4,6 @@ import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.map
-import dev.icerock.moko.mvvm.livedata.postValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
