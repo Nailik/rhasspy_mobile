@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.map
+import dev.icerock.moko.mvvm.livedata.postValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -35,10 +36,12 @@ object ListeningService {
         indication()
 
         //For now after 10 seconds listening is stopped
-        CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             //reset for now no automatically silence detection
             delay(5.seconds)
-            stopListening()
+            CoroutineScope(Dispatchers.Main).launch {
+                stopListening()
+            }
         }
     }
 

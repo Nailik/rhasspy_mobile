@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.logger
 
 import co.touchlab.kermit.LogWriter
+import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -12,13 +13,22 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.rhasspy.mobile.settings.AppSettings
 
 object FileLogger : LogWriter() {
+    private val logger = Logger.withTag(this::class.simpleName!!)
 
     val flow = MutableSharedFlow<LogElement>()
 
     private val nativeFileWriter = NativeFileWriter("logfile.txt")
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
+
+    init {
+        AppSettings.logLevel.value.addObserver {
+            Logger.setMinSeverity(it.severity)
+            logger.a { "changed log level to ${it.severity}" }
+        }
+    }
 
     override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
 

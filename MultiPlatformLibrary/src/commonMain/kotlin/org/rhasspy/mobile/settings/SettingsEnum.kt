@@ -14,6 +14,7 @@ enum class SettingsEnum {
     WakeWordLightIndication,
 
     ShowLog,
+    LogLevel,
 
     //Configuration Settings
     SiteId,
