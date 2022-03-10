@@ -18,9 +18,7 @@ abstract class Application : NativeApplication() {
 
     fun onCreated() {
         Logger.addLogWriter(FileLogger)
-        Logger.i { "first message" }
         ForegroundService
-        Logger.i { "second message" }
     }
 
 }

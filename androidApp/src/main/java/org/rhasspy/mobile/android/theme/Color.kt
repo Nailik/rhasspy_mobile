@@ -65,6 +65,15 @@ val assistant_color_two = Color(0xFFF44336)
 val assistant_color_three = Color(0xFFFFEB3B)
 val assistant_color_four = Color(0xFF4CAF50)
 
+
+val color_verbose = Color(0xFF00BCD4)
+val color_debug = Color(0xFF2196F3)
+val color_info = Color(0xFFCDDC39)
+val color_warn = Color(0xFFFF9800)
+val color_error = Color(0xFFF44336)
+val color_assert = Color(0xFF673AB7)
+val color_unknown = Color(0xFF000000)
+
 val seed = Color(0xFF456c42)
 val error = Color(0xFFba1b1b)
 
