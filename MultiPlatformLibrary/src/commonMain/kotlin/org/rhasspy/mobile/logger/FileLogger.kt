@@ -11,6 +11,9 @@ object FileLogger : LogWriter() {
 
         //Severity Ordinal: tag: message: throwable?
         nativeFileWriter.appendLine("${severity.ordinal}:$tag:$message:${throwable?.message}")
+    }
 
+    fun getLines(): List<String> {
+        return nativeFileWriter.getLines()
     }
 }

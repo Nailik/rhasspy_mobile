@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.services
 
+import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.map
@@ -27,6 +28,7 @@ object ListeningService {
      * by clicking ui
      */
     fun wakeWordDetected() {
+        Logger.i { "wake word detected" }
         listening.value = true
         indication()
 

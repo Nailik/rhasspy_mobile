@@ -81,7 +81,8 @@ fun Content(viewModel: MainViewModel = viewModel()) {
     systemUiController.setStatusBarColor(colorScheme.background, darkIcons = !darkTheme)
 
     androidx.compose.material.MaterialTheme(
-        colors = colorScheme.toColors(isLight = !darkTheme)
+        colors = colorScheme.toColors(isLight = !darkTheme),
+        typography = MaterialTheme.typography.toOldTypography()
     ) {
 
         MaterialTheme(colorScheme = colorScheme) {
@@ -134,6 +135,24 @@ fun Content(viewModel: MainViewModel = viewModel()) {
             }
         }
     }
+}
+
+private fun Typography.toOldTypography(): androidx.compose.material.Typography {
+    return androidx.compose.material.Typography(
+        h1 = this.displayLarge,
+        h2 = this.displayMedium,
+        h3 = this.displaySmall,
+        h4 = this.headlineLarge,
+        h5 = this.headlineMedium,
+        h6 = this.headlineSmall,
+        subtitle1 = this.titleLarge,
+        subtitle2 = this.titleSmall,
+        body1 = this.bodyLarge,
+        body2 = this.bodySmall,
+        button = this.labelLarge,
+        caption = this.labelMedium,
+        overline = this.labelSmall,
+    )
 }
 
 enum class Screens(val icon: @Composable () -> Unit, val label: @Composable () -> Unit) {

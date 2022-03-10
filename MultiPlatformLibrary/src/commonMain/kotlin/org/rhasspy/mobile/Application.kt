@@ -2,6 +2,7 @@ package org.rhasspy.mobile
 
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.logger.FileLogger
+import org.rhasspy.mobile.logger.ListLogger
 import org.rhasspy.mobile.services.ForegroundService
 
 abstract class Application : NativeApplication() {
@@ -18,6 +19,7 @@ abstract class Application : NativeApplication() {
 
     fun onCreated() {
         Logger.addLogWriter(FileLogger)
+        Logger.addLogWriter(ListLogger)
         Logger.i { "first message" }
         ForegroundService
         Logger.i { "second message" }

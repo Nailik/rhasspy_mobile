@@ -10,7 +10,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.NativeApplication
 
 /**
  * creates necessary notification to hold services in background

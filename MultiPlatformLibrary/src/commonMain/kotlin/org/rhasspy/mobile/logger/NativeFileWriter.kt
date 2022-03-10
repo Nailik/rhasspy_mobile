@@ -4,4 +4,6 @@ expect class NativeFileWriter(filename: String) {
 
     fun appendLine(line: String)
 
+    fun getLines(): List<String>
+
 }
