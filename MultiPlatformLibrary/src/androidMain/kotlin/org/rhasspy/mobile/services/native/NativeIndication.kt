@@ -10,7 +10,7 @@ import android.os.PowerManager
 import android.provider.Settings
 import androidx.lifecycle.MutableLiveData
 import dev.icerock.moko.resources.FileResource
-import org.rhasspy.mobile.services.Application
+import org.rhasspy.mobile.Application
 
 /**
  * handles indication of wake up locally

@@ -33,7 +33,7 @@ object ListeningService {
         //For now after 10 seconds listening is stopped
         CoroutineScope(Dispatchers.Main).launch {
             //reset for now no automatically silence detection
-            delay(20.seconds)
+            delay(5.seconds)
             stopListening()
         }
     }

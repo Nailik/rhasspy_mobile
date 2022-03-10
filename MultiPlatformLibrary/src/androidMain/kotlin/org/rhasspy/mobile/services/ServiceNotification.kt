@@ -8,7 +8,9 @@ import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationChannelGroupCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.NativeApplication
 
 /**
  * creates necessary notification to hold services in background
@@ -54,7 +56,8 @@ object ServiceNotification {
     }
 
     private fun createPendingIntent(): PendingIntent {
-        val launchIntent: Intent = Application.Instance.packageManager.getLaunchIntentForPackage(Application.Instance.packageName)!!
+        val launchIntent: Intent =
+            Application.Instance.packageManager.getLaunchIntentForPackage(Application.Instance.packageName)!!
 
         val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE

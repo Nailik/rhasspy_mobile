@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.service
+package org.rhasspy.mobile.android.services
 
 import android.content.Context
 import android.graphics.PixelFormat
@@ -17,11 +17,11 @@ import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
+import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.theme.assistant_color_four
 import org.rhasspy.mobile.android.theme.assistant_color_one
 import org.rhasspy.mobile.android.theme.assistant_color_three
 import org.rhasspy.mobile.android.theme.assistant_color_two
-import org.rhasspy.mobile.services.Application
 import org.rhasspy.mobile.services.native.NativeIndication
 
 /**
@@ -34,13 +34,13 @@ object WindowService {
     private var isStarted = false
 
     private val overlayWindowManager by lazy {
-        Application.Instance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        AndroidApplication.Instance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     }
 
     /**
      * view that's displayed when a wakeword is detected
      */
-    private val view = ComposeView(Application.Instance).apply {
+    private val view = ComposeView(AndroidApplication.Instance).apply {
         setContent {
             val infiniteTransition = rememberInfiniteTransition()
 

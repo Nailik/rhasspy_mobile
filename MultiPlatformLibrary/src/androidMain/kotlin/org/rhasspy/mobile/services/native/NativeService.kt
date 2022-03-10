@@ -4,8 +4,8 @@ import android.content.Intent
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.IBinder
+import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.services.Action
-import org.rhasspy.mobile.services.Application
 import org.rhasspy.mobile.services.ForegroundService
 import org.rhasspy.mobile.services.ServiceNotification
 

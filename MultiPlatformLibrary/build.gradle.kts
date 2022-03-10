@@ -33,6 +33,8 @@ kotlin {
 
         val commonMain by getting {
             dependencies {
+                implementation(kotlin("stdlib-common"))
+                implementation("co.touchlab:kermit:_")
                 implementation(Icerock.Mvvm.core)
                 implementation(Icerock.Mvvm.state)
                 implementation(Icerock.Mvvm.livedata)
@@ -41,7 +43,6 @@ kotlin {
                 implementation(Icerock.Resources)
                 implementation(Russhwolf.multiplatformSettings)
                 implementation(Russhwolf.multiplatformSettingsNoArg)
-                implementation(Soywiz.korau)
             }
         }
         val commonTest by getting {
@@ -51,6 +52,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                implementation(AndroidX.Compose.foundation)
                 implementation(AndroidX.multidex)
                 implementation(AndroidX.window)
                 implementation(AndroidX.Compose.ui)

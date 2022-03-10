@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.service
+package org.rhasspy.mobile.android.services
 
 import android.os.Bundle
 import androidx.lifecycle.*
