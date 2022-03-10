@@ -10,13 +10,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import org.rhasspy.mobile.logger.ListLogger
+import androidx.lifecycle.viewmodel.compose.viewModel
+import org.rhasspy.mobile.viewModels.LogScreenViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun LogScreen() {
+fun LogScreen(viewModel: LogScreenViewModel = viewModel()) {
 
-    val items = ListLogger.logArr.observe()
+    val items = viewModel.logArr.observe()
 
     LazyColumn(modifier = Modifier.fillMaxHeight()) {
         items(items) { item ->

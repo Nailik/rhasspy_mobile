@@ -37,7 +37,7 @@ import org.rhasspy.mobile.android.theme.LightThemeColors
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.GlobalData
-import org.rhasspy.mobile.viewModels.MainViewModel
+import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun Content(viewModel: MainViewModel = viewModel()) {
+fun Content(viewModel: HomeScreenViewModel = viewModel()) {
 
     val systemUiController = rememberSystemUiController()
 
@@ -185,7 +185,7 @@ enum class Screens(val icon: @Composable () -> Unit, val label: @Composable () -
 }
 
 @Composable
-fun TopAppBar(viewModel: MainViewModel) {
+fun TopAppBar(viewModel: HomeScreenViewModel) {
     SmallTopAppBar(
         title = { Text(MR.strings.appName) },
         actions = {

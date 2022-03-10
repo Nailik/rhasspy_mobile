@@ -2,17 +2,23 @@ package org.rhasspy.mobile.logger
 
 import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Severity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.rhasspy.mobile.settings.AppSettings
 
 object FileLogger : LogWriter() {
 
+    val flow = MutableSharedFlow<LogElement>()
+
     private val nativeFileWriter = NativeFileWriter("logfile.txt")
+    private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
 
@@ -20,10 +26,9 @@ object FileLogger : LogWriter() {
 
         nativeFileWriter.appendJsonElement(Json.encodeToString(element))
 
-        if (AppSettings.isShowLog.data) {
-            ListLogger.addLog(element)
+        coroutineScope.launch {
+            flow.emit(element)
         }
-
     }
 
     fun getLines(): List<LogElement> = Json.decodeFromString("[${nativeFileWriter.getFileContent()}]")

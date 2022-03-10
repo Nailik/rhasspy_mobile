@@ -5,7 +5,7 @@ import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.settings.AppSettings
 
-class MainViewModel : ViewModel() {
+class HomeScreenViewModel : ViewModel() {
 
     init {
         AppSettings.languageOption.value.addObserver {
