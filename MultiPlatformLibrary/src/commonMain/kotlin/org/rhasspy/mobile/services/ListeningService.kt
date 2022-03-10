@@ -11,12 +11,14 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.viewModels.GlobalData
 import kotlin.time.Duration.Companion.seconds
 
 /**
  * Handles listening to speech
  */
 object ListeningService {
+    private val logger = Logger.withTag(this::class.simpleName!!)
 
     private val listening = MutableLiveData(false)
 
@@ -28,7 +30,8 @@ object ListeningService {
      * by clicking ui
      */
     fun wakeWordDetected() {
-        Logger.i { "wake word detected" }
+        logger.d { "wakeWordDetected" }
+
         listening.value = true
         indication()
 
@@ -44,6 +47,8 @@ object ListeningService {
      * called when service should stop listening
      */
     private fun stopListening() {
+        logger.d { "stopListening" }
+
         listening.value = false
         stopIndication()
     }
@@ -52,6 +57,8 @@ object ListeningService {
      * starts wake word indication according to settings
      */
     private fun indication() {
+        logger.d { "indication" }
+
         if (AppSettings.isWakeWordSoundIndication.data) {
             NativeIndication.playAudio(MR.files.etc_wav_beep_hi)
         }
@@ -69,6 +76,8 @@ object ListeningService {
      * stops all indications
      */
     private fun stopIndication() {
+        logger.d { "stopIndication" }
+
         NativeIndication.closeIndicationOverOtherApps()
         NativeIndication.releaseWakeUp()
     }

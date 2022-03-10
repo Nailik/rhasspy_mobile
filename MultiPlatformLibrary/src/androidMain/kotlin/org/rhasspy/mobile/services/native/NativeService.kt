@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.IBinder
+import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.services.Action
 import org.rhasspy.mobile.services.ForegroundService
@@ -13,12 +14,14 @@ import org.rhasspy.mobile.services.ServiceNotification
  * Native Service to run continuously in background
  */
 actual class NativeService : android.app.Service() {
+    private val logger = Logger.withTag(this::class.simpleName!!)
 
     /**
      * create service, show notification and start in foreground
      */
     override fun onCreate() {
         super.onCreate()
+        logger.d { "onCreate" }
 
         //start service, display notification
         startForeground(ServiceNotification.ONGOING_NOTIFICATION_ID, ServiceNotification.create())
@@ -28,12 +31,17 @@ actual class NativeService : android.app.Service() {
      * do action according to params in intent, set is running to true
      */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        logger.d { "onStartCommand" }
         isRunning = true
 
         intent?.also { i ->
             i.getStringExtra(ACTION)?.also {
                 ForegroundService.action(Action.valueOf(it), true)
+            } ?: run {
+                logger.w { "no ACTION extra in intent" }
             }
+        } ?: run {
+            logger.w { "started without intent" }
         }
 
         return super.onStartCommand(intent, flags, startId)
@@ -43,6 +51,7 @@ actual class NativeService : android.app.Service() {
      * set running flag when service is destroyed
      */
     override fun onDestroy() {
+        logger.d { "onDestroy" }
         isRunning = false
         super.onDestroy()
     }
@@ -52,6 +61,7 @@ actual class NativeService : android.app.Service() {
     }
 
     actual companion object {
+        private val logger = Logger.withTag(this::class.simpleName!!)
 
         const val ACTION = "Action"
 
@@ -62,6 +72,8 @@ actual class NativeService : android.app.Service() {
          * When there is an action to be done by the services
          */
         actual fun doAction(action: Action) {
+            logger.d { "doAction $action" }
+
             val intent = Intent(Application.Instance, NativeService::class.java).apply {
                 putExtra(ACTION, action.name)
             }
@@ -76,6 +88,8 @@ actual class NativeService : android.app.Service() {
          * stop background work
          */
         actual fun stop() {
+            logger.d { "stop" }
+
             Application.Instance.stopService(Intent(Application.Instance, ForegroundService::class.java))
         }
     }
