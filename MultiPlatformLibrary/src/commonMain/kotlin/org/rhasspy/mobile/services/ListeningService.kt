@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.services
 
+import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.map
@@ -16,6 +17,7 @@ import kotlin.time.Duration.Companion.seconds
  * Handles listening to speech
  */
 object ListeningService {
+    private val logger = Logger.withTag(this::class.simpleName!!)
 
     private val listening = MutableLiveData(false)
 
@@ -27,14 +29,18 @@ object ListeningService {
      * by clicking ui
      */
     fun wakeWordDetected() {
+        logger.d { "wakeWordDetected" }
+
         listening.value = true
         indication()
 
         //For now after 10 seconds listening is stopped
-        CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             //reset for now no automatically silence detection
-            delay(20.seconds)
-            stopListening()
+            delay(5.seconds)
+            CoroutineScope(Dispatchers.Main).launch {
+                stopListening()
+            }
         }
     }
 
@@ -42,6 +48,8 @@ object ListeningService {
      * called when service should stop listening
      */
     private fun stopListening() {
+        logger.d { "stopListening" }
+
         listening.value = false
         stopIndication()
     }
@@ -50,6 +58,8 @@ object ListeningService {
      * starts wake word indication according to settings
      */
     private fun indication() {
+        logger.d { "indication" }
+
         if (AppSettings.isWakeWordSoundIndication.data) {
             NativeIndication.playAudio(MR.files.etc_wav_beep_hi)
         }
@@ -67,6 +77,8 @@ object ListeningService {
      * stops all indications
      */
     private fun stopIndication() {
+        logger.d { "stopIndication" }
+
         NativeIndication.closeIndicationOverOtherApps()
         NativeIndication.releaseWakeUp()
     }

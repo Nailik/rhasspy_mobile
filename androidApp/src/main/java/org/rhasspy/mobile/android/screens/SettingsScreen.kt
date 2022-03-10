@@ -11,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.data.ThemeOptions
+import org.rhasspy.mobile.logger.LogLevel
 import org.rhasspy.mobile.settings.AppSettings
 
 @Preview
@@ -82,11 +83,10 @@ fun WakeWordIndicationItem() {
     val isWakeWordSoundIndication = AppSettings.isWakeWordSoundIndication.observe()
     val isWakeWordLightIndication = AppSettings.isWakeWordLightIndication.observe()
 
-
-    var stateText = if (isWakeWordSoundIndication) translate(MR.strings.sound) else null
+    var stateText = if (isWakeWordSoundIndication) translate(MR.strings.sound) else ""
     if (isWakeWordLightIndication) {
-        if (!stateText.isNullOrEmpty()) {
-            stateText += " " + translate(MR.strings._and)
+        if (stateText.isNotEmpty()) {
+            stateText += " ${translate(MR.strings._and)} "
         }
         stateText += translate(MR.strings.light)
     }
@@ -117,9 +117,19 @@ fun WakeWordIndicationItem() {
 
 @Composable
 fun ShowLogItem() {
+    val logLevel = AppSettings.logLevel.observe()
 
-    SwitchListItem(MR.strings.showLog,
-        isChecked = AppSettings.isShowLog.observe(),
-        onCheckedChange = { AppSettings.isShowLog.data = it })
+    ExpandableListItem(
+        text = MR.strings.logSettings,
+        secondaryText = logLevel.text
+    ) {
+        DropDownEnumListItem(
+            selected = logLevel,
+            onSelect = { AppSettings.logLevel.data = it })
+        { LogLevel.values() }
 
+        SwitchListItem(MR.strings.showLog,
+            isChecked = AppSettings.isShowLog.observe(),
+            onCheckedChange = { AppSettings.isShowLog.data = it })
+    }
 }

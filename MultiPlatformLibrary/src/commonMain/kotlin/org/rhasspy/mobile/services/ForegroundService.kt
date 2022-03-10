@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.services
 
+import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.services.native.NativeLocalWakeWordService
 import org.rhasspy.mobile.services.native.NativeService
@@ -16,6 +17,7 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
  * - HTTP Services
  */
 object ForegroundService {
+    private val logger = Logger.withTag(this::class.simpleName!!)
 
     init {
         //when background enabled value changes, services need to be reloaded
@@ -52,6 +54,8 @@ object ForegroundService {
      * Start services according to settings
      */
     private fun startServices() {
+        logger.d { "startServices" }
+
         if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.Porcupine &&
             ConfigurationSettings.wakeWordAccessToken.data.isNotEmpty()
         ) {
@@ -63,6 +67,8 @@ object ForegroundService {
      * Stop services according to settings
      */
     private fun stopServices() {
+        logger.d { "stopServices" }
+
         NativeLocalWakeWordService.stop()
     }
 
@@ -71,6 +77,8 @@ object ForegroundService {
      * via start and stop
      */
     private fun reloadServices() {
+        logger.d { "reloadServices" }
+
         stopServices()
         startServices()
     }

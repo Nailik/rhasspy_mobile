@@ -95,4 +95,12 @@
     <string name="picovoice">Picovoice</string>
     <string name="porcupine">Porcupine</string>
     <string name="terminator">Terminator</string>
+
+    <string name="logSettings">Log Settings</string>
+    <string name="verbose">Verbose</string>
+    <string name="debug">Debug</string>
+    <string name="info">Info</string>
+    <string name="warn">Warn</string>
+    <string name="error">Error</string>
+    <string name="assert_level">Assert</string>
 </resources>

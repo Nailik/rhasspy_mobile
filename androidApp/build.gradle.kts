@@ -58,6 +58,7 @@ dependencies {
     implementation(AndroidX.Compose.runtime.liveData)
     implementation(AndroidX.Lifecycle.viewModelCompose)
     implementation(AndroidX.Compose.ui)
+    implementation(AndroidX.Compose.ui.util)
     implementation(AndroidX.Compose.ui.tooling)
     implementation(AndroidX.Compose.ui.toolingPreview)
 
@@ -68,5 +69,7 @@ dependencies {
     implementation(Icerock.Mvvm.state)
     implementation(Icerock.Mvvm.livedata)
     implementation(Icerock.Mvvm.livedataResources)
+
+    implementation("co.touchlab:kermit:_")
 
 }

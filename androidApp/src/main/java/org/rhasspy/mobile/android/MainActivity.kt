@@ -37,7 +37,7 @@ import org.rhasspy.mobile.android.theme.LightThemeColors
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.GlobalData
-import org.rhasspy.mobile.viewModels.MainViewModel
+import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun Content(viewModel: MainViewModel = viewModel()) {
+fun Content(viewModel: HomeScreenViewModel = viewModel()) {
 
     val systemUiController = rememberSystemUiController()
 
@@ -81,7 +81,8 @@ fun Content(viewModel: MainViewModel = viewModel()) {
     systemUiController.setStatusBarColor(colorScheme.background, darkIcons = !darkTheme)
 
     androidx.compose.material.MaterialTheme(
-        colors = colorScheme.toColors(isLight = !darkTheme)
+        colors = colorScheme.toColors(isLight = !darkTheme),
+        typography = MaterialTheme.typography.toOldTypography()
     ) {
 
         MaterialTheme(colorScheme = colorScheme) {
@@ -136,6 +137,24 @@ fun Content(viewModel: MainViewModel = viewModel()) {
     }
 }
 
+private fun Typography.toOldTypography(): androidx.compose.material.Typography {
+    return androidx.compose.material.Typography(
+        h1 = this.displayLarge,
+        h2 = this.displayMedium,
+        h3 = this.displaySmall,
+        h4 = this.headlineLarge,
+        h5 = this.headlineMedium,
+        h6 = this.headlineSmall,
+        subtitle1 = this.titleLarge,
+        subtitle2 = this.titleSmall,
+        body1 = this.bodyLarge,
+        body2 = this.bodySmall,
+        button = this.labelLarge,
+        caption = this.labelMedium,
+        overline = this.labelSmall,
+    )
+}
+
 enum class Screens(val icon: @Composable () -> Unit, val label: @Composable () -> Unit) {
     HomeScreen({
         Icon(
@@ -166,7 +185,7 @@ enum class Screens(val icon: @Composable () -> Unit, val label: @Composable () -
 }
 
 @Composable
-fun TopAppBar(viewModel: MainViewModel) {
+fun TopAppBar(viewModel: HomeScreenViewModel) {
     SmallTopAppBar(
         title = { Text(MR.strings.appName) },
         actions = {
