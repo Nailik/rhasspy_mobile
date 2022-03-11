@@ -37,7 +37,37 @@ actual object AudioPlayer {
                     .setEncoding(formatCode.toInt())
                     .setChannelMask(if (channels.toInt() == 1) AudioFormat.CHANNEL_OUT_MONO else AudioFormat.CHANNEL_OUT_STEREO).build(),
                 data.size,
-                AudioTrack.MODE_STREAM,
+                AudioTrack.MODE_STATIC,
+                AudioManager.AUDIO_SESSION_ID_GENERATE
+            )
+
+            audioTrack.write(data, 0, data.size)
+            audioTrack.play()
+            audioTrack.flush()
+
+        } catch (e: Exception) {
+            logger.e(e) { "Exception while playing audio data" }
+        }
+    }
+
+    actual fun playRecording(data: ByteArray) {
+
+        try {
+
+            logger.v { "play recording" }
+
+            val audioTrack = AudioTrack(
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build(),
+                AudioFormat.Builder()
+                    .setSampleRate(16000)
+                    .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                    .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+                    .build(),
+                data.size,
+                AudioTrack.MODE_STATIC,
                 AudioManager.AUDIO_SESSION_ID_GENERATE
             )
 

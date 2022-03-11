@@ -25,13 +25,35 @@ object ExternalHttpService {
         }
     }
 
-    fun speechToText() {
-/*
-/api/speech-to-text
-POST a WAV file and have Rhasspy return the text transcription
-Set Accept: application/json to receive JSON with more details
-?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
- */
+    /**
+     * /api/speech-to-text
+     * POST a WAV file and have Rhasspy return the text transcription
+     * Set Accept: application/json to receive JSON with more details
+     * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
+     */
+    suspend fun speechToText(data: ByteArray) {
+
+        logger.v { "sending speechToText \nendpoint:\n${ConfigurationSettings.speechToTextHttpEndpoint.data}\ndata:\n${data.size}" }
+
+        try {
+            val response = httpClient.post(
+                url = Url(ConfigurationSettings.speechToTextHttpEndpoint.data)
+            ) {
+                setAttributes {
+                    accept(ContentType.Application.Json)
+                }
+                setBody(data)
+            }
+
+            val text = response.bodyAsText()
+
+            logger.v { "speechToText received:\n$text" }
+
+            ServiceInterface.receivedTextFromSpeech(text)
+
+        } catch (e: Exception) {
+            logger.e(e) { "sending speechToText Exception" }
+        }
     }
 
 
@@ -115,7 +137,7 @@ Set Accept: application/json to receive JSON with more details
      */
     suspend fun playWav(data: ByteArray) {
 
-        logger.v { "sending audio \nendpoint:\n${ConfigurationSettings.audioPlayingEndpoint.data}" }
+        logger.v { "sending audio \nendpoint:\n${ConfigurationSettings.audioPlayingEndpoint.data}\ndata:\n${data.size}" }
 
         try {
             val response = httpClient.post(

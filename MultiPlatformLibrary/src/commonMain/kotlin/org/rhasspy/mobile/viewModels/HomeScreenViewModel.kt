@@ -3,13 +3,11 @@ package org.rhasspy.mobile.viewModels
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import dev.icerock.moko.resources.desc.StringDesc
-import kotlinx.coroutines.launch
-import org.rhasspy.mobile.data.TextToSpeechOptions
-import org.rhasspy.mobile.services.ExternalHttpService
+import org.rhasspy.mobile.services.RecordingService
 import org.rhasspy.mobile.services.ServiceInterface
+import org.rhasspy.mobile.services.native.AudioPlayer
 import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.settings.AppSettings
-import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class HomeScreenViewModel : ViewModel() {
     private val logger = Logger.withTag(this::class.simpleName!!)
@@ -47,12 +45,12 @@ class HomeScreenViewModel : ViewModel() {
         ServiceInterface.intentRecognition(text)
     }
 
-    fun toggleRecording(){
+    fun toggleRecording() {
         ServiceInterface.toggleRecording()
     }
 
-    fun playRecording(){
-
+    fun playRecording() {
+        AudioPlayer.playRecording(RecordingService.getLatestRecording())
     }
 
 }

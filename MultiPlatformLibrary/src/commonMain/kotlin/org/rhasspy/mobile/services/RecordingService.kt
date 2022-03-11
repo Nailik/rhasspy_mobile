@@ -4,20 +4,38 @@ import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.map
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.services.native.AudioRecorder
 import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.settings.AppSettings
+import kotlin.native.concurrent.ThreadLocal
 
 /**
  * Handles listening to speech
  */
+@ThreadLocal
 object RecordingService {
     private val logger = Logger.withTag(this::class.simpleName!!)
+    private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     private val listening = MutableLiveData(false)
 
     //represents listening Status for ui
     val status: LiveData<Boolean> = listening.map { it }
+
+    private var data = mutableListOf<Byte>()
+
+    init {
+        coroutineScope.launch {
+            AudioRecorder.output.collectIndexed { _, value ->
+                data.addAll(value.toList())
+            }
+        }
+    }
 
     /**
      * should be called when wake word is detected or user wants to speak
@@ -27,28 +45,31 @@ object RecordingService {
         logger.d { "startRecording" }
 
         listening.value = true
+        data.clear()
         indication()
+        AudioRecorder.startRecording()
     }
 
     /**
      * called when service should stop listening
      */
     fun stopRecording() {
-        logger.d { "stopListening" }
+        logger.d { "stopRecording" }
 
         listening.value = false
         stopIndication()
+        AudioRecorder.stopRecording()
     }
 
     /**
      * called when user presses button and should start or stop recording
      */
     fun toggleRecording() {
-        logger.d { "stopListening" }
+        logger.d { "toggleRecording" }
 
-        if(listening.value){
+        if (listening.value) {
             stopRecording()
-        }else{
+        } else {
             startRecording()
         }
     }
@@ -81,5 +102,7 @@ object RecordingService {
         NativeIndication.closeIndicationOverOtherApps()
         NativeIndication.releaseWakeUp()
     }
+
+    fun getLatestRecording() = data.toByteArray()
 
 }
