@@ -74,6 +74,6 @@ class Setting<T>(private val key: SettingsEnum, private val initial: T) {
         }
 
     val data: T
-        get() = this.unsaved.value
+        get() = this.currentValue.value
 
 }
