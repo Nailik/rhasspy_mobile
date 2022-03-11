@@ -6,6 +6,7 @@ import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.TextToSpeechOptions
 import org.rhasspy.mobile.services.ExternalHttpService
+import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
@@ -38,21 +39,12 @@ class HomeScreenViewModel : ViewModel() {
         GlobalData.resetChanges()
     }
 
-    fun speak(text: String) {
-        viewModelScope.launch {
-            when (ConfigurationSettings.textToSpeechOption.data) {
-                TextToSpeechOptions.RemoteHTTP -> ExternalHttpService.textToSpeech(text)
-                TextToSpeechOptions.RemoteMQTT -> TODO()
-                TextToSpeechOptions.Disabled -> TODO()
-            }
-        }
+    fun textToSpeak(text: String) {
+        ServiceInterface.textToSpeak(text)
     }
 
-
     fun intentRecognition(text: String) {
-        viewModelScope.launch {
-            ExternalHttpService.intentRecognition(text)
-        }
+        ServiceInterface.intentRecognition(text)
     }
 
     fun playRecording(){

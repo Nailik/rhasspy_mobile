@@ -39,6 +39,7 @@
     <string name="disabled">Disabled</string>
     <string name="remoteMQTT">Remote Hermes MQTT</string>
     <string name="remoteHTTP">Remote HTTP</string>
+    <string name="withRecognition">With Recognition</string>
     <string name="homeAssistant">Home Assistant</string>
     <string name="hassURL">Hass URL</string>
     <string name="wakeUp">Wake Up</string>

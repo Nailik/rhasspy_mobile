@@ -236,7 +236,7 @@ fun TextToSpeak(
         label = MR.strings.textToSpeak,
         text = textToSpeak,
         onValueChange = { textToSpeak = it },
-        onClick = { viewModel.speak(textToSpeak) }) {
+        onClick = { viewModel.textToSpeak(textToSpeak) }) {
         Icon(
             imageVector = Icons.Filled.VolumeUp,
             contentDescription = MR.strings.textToSpeak,
