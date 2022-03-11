@@ -46,6 +46,7 @@ kotlin {
                 implementation(Russhwolf.multiplatformSettingsNoArg)
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Jetbrains.Kotlinx.serialization)
+                implementation(Ktor.Client.core)
             }
         }
         val commonTest by getting {
@@ -62,6 +63,7 @@ kotlin {
                 implementation(AndroidX.Compose.material3)
                 implementation(Icerock.Resources.resourcesCompose)
                 implementation(Picovoice.porcupineAndroid)
+                implementation(Ktor.Client.cio)
             }
         }
         val androidTest by getting

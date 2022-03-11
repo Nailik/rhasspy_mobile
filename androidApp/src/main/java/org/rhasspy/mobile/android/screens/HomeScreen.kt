@@ -30,9 +30,11 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.insets.ExperimentalAnimatedInsets
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.services.ListeningService
+import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
 var isMainActionBig = mutableStateOf(true)
 var mainActionVisible = mutableStateOf(true)
@@ -44,7 +46,7 @@ var mainActionVisible = mutableStateOf(true)
 )
 @Preview(showSystemUi = true)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(viewModel: HomeScreenViewModel = viewModel()) {
     when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
             Row(
@@ -58,7 +60,8 @@ fun HomeScreen() {
                 BottomActions(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    viewModel = viewModel
                 )
             }
         }
@@ -71,7 +74,10 @@ fun HomeScreen() {
                         .weight(1f)
                         .fillMaxWidth()
                 )
-                BottomActions(modifier = Modifier.fillMaxWidth())
+                BottomActions(
+                    modifier = Modifier.fillMaxWidth(),
+                    viewModel = viewModel
+                )
             }
 
         }
@@ -132,7 +138,7 @@ fun MainActionFab(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun BottomActions(modifier: Modifier = Modifier) {
+fun BottomActions(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel) {
     Column(
         modifier = modifier
             .padding(bottom = 24.dp)
@@ -148,15 +154,15 @@ fun BottomActions(modifier: Modifier = Modifier) {
                 .padding(start = 24.dp)
         }
 
-        TopRow()
-        TextToRecognize(childModifier)
-        TextToSpeak(childModifier)
+        TopRow(viewModel)
+        TextToRecognize(childModifier, viewModel)
+        TextToSpeak(childModifier, viewModel)
     }
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun TopRow() {
+fun TopRow(viewModel: HomeScreenViewModel) {
     val state = animateDpAsState(targetValue = if (!mainActionVisible.value) 12.dp else 0.dp)
 
     Row(
@@ -174,14 +180,20 @@ fun TopRow() {
             MainActionFab()
         }
 
-        PlayRecording(modifier = Modifier.padding(horizontal = state.value))
+        PlayRecording(
+            modifier = Modifier.padding(horizontal = state.value),
+            viewModel = viewModel
+        )
     }
 }
 
 @Composable
-fun PlayRecording(modifier: Modifier = Modifier) {
+fun PlayRecording(
+    modifier: Modifier = Modifier,
+    viewModel: HomeScreenViewModel
+) {
     ElevatedButton(
-        onClick = { },
+        onClick = { viewModel.playRecording() },
         modifier = modifier
     ) {
         Text(resource = MR.strings.playRecording)
@@ -194,7 +206,8 @@ fun PlayRecording(modifier: Modifier = Modifier) {
 
 @Composable
 fun TextToRecognize(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: HomeScreenViewModel
 ) {
     var textToRecognize by rememberSaveable { mutableStateOf("") }
 
@@ -203,7 +216,7 @@ fun TextToRecognize(
         label = MR.strings.textToRecognize,
         text = textToRecognize,
         onValueChange = { textToRecognize = it },
-        onClick = {}) {
+        onClick = { viewModel.intentRecognition(textToRecognize) }) {
         Icon(
             imageVector = Icons.Filled.PlayArrow,
             contentDescription = MR.strings.textToRecognize,
@@ -213,7 +226,8 @@ fun TextToRecognize(
 
 @Composable
 fun TextToSpeak(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: HomeScreenViewModel
 ) {
     var textToSpeak by rememberSaveable { mutableStateOf("") }
 
@@ -222,7 +236,7 @@ fun TextToSpeak(
         label = MR.strings.textToSpeak,
         text = textToSpeak,
         onValueChange = { textToSpeak = it },
-        onClick = {}) {
+        onClick = { viewModel.speak(textToSpeak) }) {
         Icon(
             imageVector = Icons.Filled.VolumeUp,
             contentDescription = MR.strings.textToSpeak,
