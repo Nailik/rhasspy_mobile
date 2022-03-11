@@ -47,6 +47,10 @@ class HomeScreenViewModel : ViewModel() {
         ServiceInterface.intentRecognition(text)
     }
 
+    fun toggleRecording(){
+        ServiceInterface.toggleRecording()
+    }
+
     fun playRecording(){
 
     }

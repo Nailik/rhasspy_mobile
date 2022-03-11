@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.insets.ExperimentalAnimatedInsets
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.services.ListeningService
+import org.rhasspy.mobile.services.RecordingService
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
 var isMainActionBig = mutableStateOf(true)
@@ -55,7 +55,8 @@ fun HomeScreen(viewModel: HomeScreenViewModel = viewModel()) {
                 WakeUpAction(
                     modifier = Modifier
                         .fillMaxWidth(0.5f)
-                        .fillMaxHeight()
+                        .fillMaxHeight(),
+                    viewModel = viewModel
                 )
                 BottomActions(
                     modifier = Modifier
@@ -72,7 +73,8 @@ fun HomeScreen(viewModel: HomeScreenViewModel = viewModel()) {
                 WakeUpAction(
                     modifier = Modifier
                         .weight(1f)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    viewModel = viewModel
                 )
                 BottomActions(
                     modifier = Modifier.fillMaxWidth(),
@@ -86,19 +88,19 @@ fun HomeScreen(viewModel: HomeScreenViewModel = viewModel()) {
 }
 
 @Composable
-fun WakeUpAction(modifier: Modifier = Modifier) {
+fun WakeUpAction(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel) {
     //make smaller according to
     //val imeIsVisible = LocalWindowInsets.current.ime.isVisible
     BoxWithConstraints(
         modifier = modifier.padding(Dp(24f))
     ) {
-        MainActionButton(this.maxHeight)
+        MainActionButton(this.maxHeight, viewModel)
     }
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun MainActionButton(maxHeight: Dp) {
+fun MainActionButton(maxHeight: Dp, viewModel: HomeScreenViewModel) {
 
     isMainActionBig.value = maxHeight >= 96.dp + (24.dp * 2)
     mainActionVisible.value = maxHeight > 24.dp || LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -109,19 +111,19 @@ fun MainActionButton(maxHeight: Dp) {
         visible = mainActionVisible.value,
         modifier = Modifier.fillMaxSize()
     ) {
-        MainActionFab(modifier = Modifier.fillMaxSize())
+        MainActionFab(modifier = Modifier.fillMaxSize(), viewModel)
     }
 
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun MainActionFab(modifier: Modifier = Modifier) {
+fun MainActionFab(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel) {
 
     FloatingActionButton(
-        onClick = { },
+        onClick = { viewModel.toggleRecording() },
         modifier = modifier,
-        containerColor = if (ListeningService.status.observe()) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme
+        containerColor = if (RecordingService.status.observe()) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme
             .primaryContainer,
     ) {
         val state = animateDpAsState(targetValue = if (isMainActionBig.value) 96.dp else 24.dp)
@@ -129,7 +131,7 @@ fun MainActionFab(modifier: Modifier = Modifier) {
         Icon(
             imageVector = Icons.Filled.Mic,
             contentDescription = MR.strings.wakeUp,
-            tint = if (ListeningService.status.observe()) MaterialTheme.colorScheme.onErrorContainer else LocalContentColor.current,
+            tint = if (RecordingService.status.observe()) MaterialTheme.colorScheme.onErrorContainer else LocalContentColor.current,
             modifier = Modifier
                 .size(state.value)
         )
@@ -177,7 +179,7 @@ fun TopRow(viewModel: HomeScreenViewModel) {
             exit = shrinkOut(shrinkTowards = Alignment.BottomStart),
             visible = !mainActionVisible.value
         ) {
-            MainActionFab()
+            MainActionFab(viewModel = viewModel)
         }
 
         PlayRecording(

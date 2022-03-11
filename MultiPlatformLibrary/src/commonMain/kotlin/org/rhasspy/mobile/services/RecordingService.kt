@@ -4,19 +4,14 @@ import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.map
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.settings.AppSettings
-import kotlin.time.Duration.Companion.seconds
 
 /**
  * Handles listening to speech
  */
-object ListeningService {
+object RecordingService {
     private val logger = Logger.withTag(this::class.simpleName!!)
 
     private val listening = MutableLiveData(false)
@@ -28,30 +23,34 @@ object ListeningService {
      * should be called when wake word is detected or user wants to speak
      * by clicking ui
      */
-    fun wakeWordDetected() {
-        logger.d { "wakeWordDetected" }
+    fun startRecording() {
+        logger.d { "startRecording" }
 
         listening.value = true
         indication()
-
-        //For now after 10 seconds listening is stopped
-        CoroutineScope(Dispatchers.Default).launch {
-            //reset for now no automatically silence detection
-            delay(5.seconds)
-            CoroutineScope(Dispatchers.Main).launch {
-                stopListening()
-            }
-        }
     }
 
     /**
      * called when service should stop listening
      */
-    private fun stopListening() {
+    fun stopRecording() {
         logger.d { "stopListening" }
 
         listening.value = false
         stopIndication()
+    }
+
+    /**
+     * called when user presses button and should start or stop recording
+     */
+    fun toggleRecording() {
+        logger.d { "stopListening" }
+
+        if(listening.value){
+            stopRecording()
+        }else{
+            startRecording()
+        }
     }
 
     /**

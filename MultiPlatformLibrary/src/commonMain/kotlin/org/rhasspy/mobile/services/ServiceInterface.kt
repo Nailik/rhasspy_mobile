@@ -3,6 +3,7 @@ package org.rhasspy.mobile.services
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.AudioPlayingOptions
 import org.rhasspy.mobile.data.IntentHandlingOptions
@@ -10,6 +11,7 @@ import org.rhasspy.mobile.data.IntentRecognitionOptions
 import org.rhasspy.mobile.data.TextToSpeechOptions
 import org.rhasspy.mobile.services.native.AudioPlayer
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import kotlin.time.Duration.Companion.seconds
 
 object ServiceInterface {
     private val logger = Logger.withTag(this::class.simpleName!!)
@@ -74,6 +76,15 @@ object ServiceInterface {
             }
 
         }
+    }
+
+    fun toggleRecording() {
+        RecordingService.toggleRecording()
+    }
+
+    fun startRecording() {
+        //start recording
+        RecordingService.startRecording()
     }
 
 }

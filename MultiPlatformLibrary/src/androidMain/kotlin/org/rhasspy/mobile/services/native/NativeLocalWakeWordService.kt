@@ -5,7 +5,7 @@ import ai.picovoice.porcupine.PorcupineManager
 import ai.picovoice.porcupine.PorcupineManagerCallback
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
-import org.rhasspy.mobile.services.ListeningService
+import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 /**
@@ -60,7 +60,7 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
     override fun invoke(keywordIndex: Int) {
         logger.d { "invoke - keyword detected" }
 
-        ListeningService.wakeWordDetected()
+        ServiceInterface.startRecording()
     }
 
 }
