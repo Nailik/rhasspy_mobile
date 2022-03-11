@@ -36,17 +36,32 @@ Set Accept: application/json to receive JSON with more details
  */
     }
 
-    fun intentRecognition(text: String) {
 
-        logger.i { text }
+    /**
+     * /api/text-to-intent
+     * POST text and have Rhasspy process it as command
+     * Returns intent JSON when command has been processed
+     * ?nohass=true - stop Rhasspy from handling the intent
+     * ?entity=<entity>&value=<value> - set custom entity/value in recognized intent
+     */
+    suspend fun intentRecognition(text: String) {
 
-        /*
-        /api/text-to-intent
-POST text and have Rhasspy process it as command
-Returns intent JSON when command has been processed
-?nohass=true - stop Rhasspy from handling the intent
-?entity=<entity>&value=<value> - set custom entity/value in recognized intent
-         */
+        logger.v { "sending intentRecognition text\nendpoint:\n${ConfigurationSettings.intentRecognitionEndpoint.data}\ntext:\n$text" }
+
+        try {
+            val response = httpClient.post(
+                url = Url(ConfigurationSettings.intentRecognitionEndpoint.data)
+            ) {
+                setBody(text)
+            }
+
+            val intent = response.bodyAsText()
+
+            logger.v { "intentRecognition received:\n$intent" }
+
+        } catch (e: Exception) {
+            logger.e(e) { "sending intentRecognition Exception" }
+        }
     }
 
     /**
