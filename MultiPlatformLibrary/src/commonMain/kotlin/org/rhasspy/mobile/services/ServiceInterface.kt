@@ -116,4 +116,8 @@ object ServiceInterface {
         speechToText(RecordingService.getLatestRecording())
     }
 
+    fun registeredSilence() {
+        stopRecording()
+    }
+
 }

@@ -38,10 +38,13 @@ actual object AudioRecorder {
             while (recorder.recordingState == RECORDSTATE_RECORDING) {
                 val byteArray = ByteArray(recorder.bufferSizeInFrames)
                 recorder.read(byteArray, 0, byteArray.size)
+
                 output.emit(byteArray)
             }
         }
     }
+
+
 
     actual fun stopRecording() {
         recorder.stop()

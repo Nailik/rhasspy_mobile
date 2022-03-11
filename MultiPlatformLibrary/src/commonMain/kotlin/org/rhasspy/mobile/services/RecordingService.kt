@@ -8,11 +8,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.services.native.AudioRecorder
 import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.settings.AppSettings
 import kotlin.native.concurrent.ThreadLocal
+import kotlin.time.Duration.Companion.ZERO
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 /**
  * Handles listening to speech
@@ -29,12 +35,42 @@ object RecordingService {
 
     private var data = mutableListOf<Byte>()
 
+    private var firstSilenceDetected: Instant? = null
+
     init {
         coroutineScope.launch {
             AudioRecorder.output.collectIndexed { _, value ->
-                data.addAll(value.toList())
+                if (listening.value) {
+                    data.addAll(value.toList())
+
+                    if (AppSettings.automaticSilenceDetection.data) {
+                        if (!searchThreshold(value, 40)) {
+                            if (firstSilenceDetected == null) {
+                                firstSilenceDetected = Clock.System.now()
+                            } else if (firstSilenceDetected?.minus(Clock.System.now()) ?: ZERO < (-2).seconds) {
+                                logger.i { "diff ${firstSilenceDetected?.minus(Clock.System.now())}" }
+
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    //stop instantly
+                                    listening.value = false
+                                    ServiceInterface.registeredSilence()
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
+    }
+
+    //https://stackoverflow.com/questions/19145213/android-audio-capture-silence-detection
+    private fun searchThreshold(arr: ByteArray, thr: Short): Boolean {
+        arr.forEach {
+            if (it >= thr || it <= -thr) {
+                return true
+            }
+        }
+        return false
     }
 
     /**
@@ -43,7 +79,7 @@ object RecordingService {
      */
     fun startRecording() {
         logger.d { "startRecording" }
-
+        firstSilenceDetected = null
         listening.value = true
         data.clear()
         indication()
