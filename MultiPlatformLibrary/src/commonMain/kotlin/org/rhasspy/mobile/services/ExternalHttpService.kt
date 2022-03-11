@@ -37,11 +37,8 @@ object ExternalHttpService {
 
         try {
             val response = httpClient.post(
-                url = Url(ConfigurationSettings.speechToTextHttpEndpoint.data)
+                url = Url("${ConfigurationSettings.speechToTextHttpEndpoint.data}?noheader=true")
             ) {
-                setAttributes {
-                    accept(ContentType.Application.Json)
-                }
                 setBody(data)
             }
 

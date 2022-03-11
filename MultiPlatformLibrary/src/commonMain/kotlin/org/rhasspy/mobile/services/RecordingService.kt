@@ -62,19 +62,6 @@ object RecordingService {
     }
 
     /**
-     * called when user presses button and should start or stop recording
-     */
-    fun toggleRecording() {
-        logger.d { "toggleRecording" }
-
-        if (listening.value) {
-            stopRecording()
-        } else {
-            startRecording()
-        }
-    }
-
-    /**
      * starts wake word indication according to settings
      */
     private fun indication() {

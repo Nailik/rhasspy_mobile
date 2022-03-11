@@ -4,10 +4,7 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.data.AudioPlayingOptions
-import org.rhasspy.mobile.data.IntentHandlingOptions
-import org.rhasspy.mobile.data.IntentRecognitionOptions
-import org.rhasspy.mobile.data.TextToSpeechOptions
+import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.services.native.AudioPlayer
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -76,20 +73,47 @@ object ServiceInterface {
         }
     }
 
+    fun speechToText(data: ByteArray) {
+        logger.d { "speechToText ${data.size}" }
+
+        coroutineScope.launch {
+
+            when (ConfigurationSettings.speechToTextOption.data) {
+                SpeechToTextOptions.RemoteHTTP -> ExternalHttpService.speechToText(data)
+                SpeechToTextOptions.RemoteMQTT -> TODO()
+                SpeechToTextOptions.Disabled -> logger.d { "speechToText disabled" }
+            }
+
+        }
+    }
+
     fun receivedTextFromSpeech(text: String) {
+        logger.d { "receivedTextFromSpeech $text" }
+
         intentRecognition(text)
     }
 
     fun toggleRecording() {
-        RecordingService.toggleRecording()
+        logger.d { "toggleRecording" }
+
+        if (RecordingService.status.value) {
+            stopRecording()
+        } else {
+            startRecording()
+        }
     }
 
     fun startRecording() {
+        logger.d { "startRecording" }
+
         RecordingService.startRecording()
     }
 
     fun stopRecording() {
+        logger.d { "stopRecording" }
+
         RecordingService.stopRecording()
+        speechToText(RecordingService.getLatestRecording())
     }
 
 }
