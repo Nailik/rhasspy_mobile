@@ -4,12 +4,16 @@ import android.media.AudioAttributes
 import android.media.AudioFormat
 import android.media.AudioManager
 import android.media.AudioTrack
+import co.touchlab.kermit.Logger
 import java.nio.ByteBuffer
 
 
 actual object AudioPlayer {
+    private val logger = Logger.withTag(this::class.simpleName!!)
 
     actual fun startStream(byteArray: ByteArray): AudioStreamInterface {
+
+        logger.v { "start audio stream" }
 
         //https://stackoverflow.com/questions/13039846/what-do-the-bytes-in-a-wav-file-represent
 
@@ -43,6 +47,13 @@ actual object AudioPlayer {
 
             override fun enqueue(byteArray: ByteArray) {
                 audioTrack.write(byteArray, 0, byteArray.size)
+            }
+
+            override fun close() {
+
+                audioTrack.flush()
+
+                logger.v { "finished audio stream" }
             }
 
         }

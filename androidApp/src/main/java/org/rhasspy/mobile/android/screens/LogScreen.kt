@@ -60,7 +60,9 @@ fun LogScreen(viewModel: LogScreenViewModel = viewModel()) {
                         )
                     }
                 },
-                text = { Text(text = item.message) },
+                text = {
+                    Text(text = "${item.message}${item.throwable?.let { "\n$it" } ?: run { "" }}")
+                },
                 secondaryText = { Text(item.time) }
             )
             Divider()

@@ -10,6 +10,10 @@ actual object AudioPlayer {
 
             }
 
+            override fun close() {
+
+            }
+
         }
     }
 }

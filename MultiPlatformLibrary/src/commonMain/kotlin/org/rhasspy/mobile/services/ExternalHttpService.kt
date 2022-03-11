@@ -2,6 +2,7 @@ package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
 import io.ktor.client.*
+import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -12,11 +13,18 @@ import org.rhasspy.mobile.services.native.AudioStreamInterface
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 //https://rhasspy.readthedocs.io/en/latest/reference/#http-api
-object HttpService {
+
+/**
+ * calls external http services
+ */
+object ExternalHttpService {
     private val logger = Logger.withTag(this::class.simpleName!!)
 
     private val httpClient = HttpClient() {
         expectSuccess = true
+        install(HttpTimeout) {
+            requestTimeoutMillis = 10000
+        }
     }
 
     fun speechToText() {
@@ -52,29 +60,39 @@ Returns intent JSON when command has been processed
      */
     suspend fun textToSpeech(text: String) {
 
-        val response = httpClient.post(
-            url = Url(ConfigurationSettings.textToSpeechEndpoint.data)
-        ) {
-            setBody(text)
-        }
-        //receive the bytearray with audio data
+        logger.v { "sending text to speech\nendpoint:\n${ConfigurationSettings.textToSpeechEndpoint.data}\ntext:\n$text" }
 
-        var player: AudioStreamInterface? = null
-        val channel = response.bodyAsChannel()
-        while (!channel.isClosedForRead) {
-            channel.read(desiredSize = 128) { memory: Memory, _: Long, _: Long ->
+        try {
 
-                val data = ByteArray(memory.size32)
-                memory.copyTo(data, 0, memory.size32)
-
-                player?.also {
-                    it.enqueue(data)
-                } ?: kotlin.run {
-                    player = AudioPlayer.startStream(data)
-                }
-
-                memory.size32
+            val response = httpClient.post(
+                url = Url(ConfigurationSettings.textToSpeechEndpoint.data)
+            ) {
+                setBody(text)
             }
+
+            //receive the bytearray with audio data
+
+            var player: AudioStreamInterface? = null
+            val channel = response.bodyAsChannel()
+            while (!channel.isClosedForRead) {
+                channel.read(desiredSize = 128) { memory: Memory, _: Long, _: Long ->
+
+                    val data = ByteArray(memory.size32)
+                    memory.copyTo(data, 0, memory.size32)
+
+                    player?.also {
+                        it.enqueue(data)
+                    } ?: kotlin.run {
+                        player = AudioPlayer.startStream(data)
+                    }
+
+                    memory.size32
+                }
+            }
+            player?.close()
+
+        } catch (e: Exception) {
+            logger.e(e) { "sending text to speech Exception" }
         }
     }
 
