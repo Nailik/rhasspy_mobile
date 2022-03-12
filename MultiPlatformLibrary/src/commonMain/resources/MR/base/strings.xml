@@ -116,4 +116,10 @@
     <string name="stop">Stop</string>
     <string name="audioLevelThreshold">Audio Level Threshold</string>
     <string name="silenceDetectionTime">Silence Detection Time (ms)</string>
+
+    <string name="overlayPermissionTitle">Overlay Permission</string>
+    <string name="overlay">Overlay</string>
+    <string name="overlayPermissionInfo">Visual indication uses an Overlay to display the indication.\nClick "OK", scroll to Rhasspy and allow
+        Permission.
+    </string>
 </resources>

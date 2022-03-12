@@ -6,7 +6,6 @@ import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.services.RecordingService
 import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.services.native.AudioPlayer
-import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.settings.AppSettings
 
 class HomeScreenViewModel : ViewModel() {
@@ -15,11 +14,6 @@ class HomeScreenViewModel : ViewModel() {
     init {
         AppSettings.languageOption.value.addObserver {
             StringDesc.localeType = StringDesc.LocaleType.Custom(it.code)
-        }
-        AppSettings.isWakeWordLightIndication.value.addObserver {
-            if (it) {
-                NativeIndication.displayOverAppsPermission()
-            }
         }
     }
 

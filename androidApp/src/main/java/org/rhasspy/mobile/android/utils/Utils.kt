@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.screens
+package org.rhasspy.mobile.android.utils
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState

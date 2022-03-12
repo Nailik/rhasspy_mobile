@@ -2,11 +2,9 @@ package org.rhasspy.mobile.services.native
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.PowerManager
-import android.provider.Settings
 import androidx.lifecycle.MutableLiveData
 import dev.icerock.moko.resources.FileResource
 import org.rhasspy.mobile.Application
@@ -43,15 +41,14 @@ actual object NativeIndication {
     @SuppressLint("WakelockTimeout")
     @Suppress("DEPRECATION")
     actual fun wakeUpScreen() {
-        wakeLock =
-            (Application.Instance.getSystemService(Context.POWER_SERVICE) as PowerManager).run {
-                newWakeLock(
-                    PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
-                    "Rhasspy::WakeWordDetected"
-                ).apply {
-                    acquire()
-                }
+        wakeLock = (Application.Instance.getSystemService(Context.POWER_SERVICE) as PowerManager).run {
+            newWakeLock(
+                PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
+                "Rhasspy::WakeWordDetected"
+            ).apply {
+                acquire()
             }
+        }
     }
 
     /**
@@ -62,19 +59,6 @@ actual object NativeIndication {
             wakeLock?.release()
         } catch (e: Exception) {
 
-        }
-    }
-
-    /**
-     * acquire permission to draw over other apps
-     * by opening intent if necessary
-     */
-    actual fun displayOverAppsPermission() {
-        if (!Settings.canDrawOverlays(Application.Instance)) {
-            // send user to the device settings
-            val myIntent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-            myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            Application.Instance.startActivity(myIntent)
         }
     }
 

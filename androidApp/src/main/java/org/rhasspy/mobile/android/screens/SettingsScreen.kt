@@ -21,9 +21,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
+import org.rhasspy.mobile.android.permissions.requestOverlayPermission
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.logger.LogLevel
+import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.SettingsScreenViewModel
 
@@ -227,10 +231,23 @@ fun WakeWordIndicationItem() {
                 isChecked = isWakeWordSoundIndication,
                 onCheckedChange = { AppSettings.isWakeWordSoundIndication.data = it })
 
+
+            val requestOverlayPermission = requestOverlayPermission {
+                if (it) {
+                    AppSettings.isWakeWordLightIndication.data = true
+                }
+            }
+
             SwitchListItem(
                 text = MR.strings.wakeWordLightIndication,
                 isChecked = isWakeWordLightIndication,
-                onCheckedChange = { AppSettings.isWakeWordLightIndication.data = it })
+                onCheckedChange = {
+                    if (it && !OverlayPermission.granted.value) {
+                        requestOverlayPermission.invoke()
+                    } else {
+                        AppSettings.isWakeWordLightIndication.data = it
+                    }
+                })
         }
     }
 }

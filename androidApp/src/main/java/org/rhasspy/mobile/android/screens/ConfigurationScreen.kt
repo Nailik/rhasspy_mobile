@@ -25,6 +25,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.settings.ConfigurationSettings

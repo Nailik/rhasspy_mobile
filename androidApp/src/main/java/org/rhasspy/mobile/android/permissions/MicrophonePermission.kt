@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.screens
+package org.rhasspy.mobile.android.permissions
 
 import androidx.activity.ComponentActivity
 import androidx.compose.material.icons.Icons
@@ -13,6 +13,7 @@ import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.utils.translate
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 
 /**
@@ -96,17 +97,17 @@ private fun requestMicrophonePermissionFromSystem(
 private fun MicrophonePermissionInfoDialog(message: StringResource, onResult: (result: Boolean) -> Unit) {
     AlertDialog(
         onDismissRequest = { onResult.invoke(false) },
-        title = { Text(MR.strings.microphonePermissionDialogTitle) },
-        text = { Text(message) },
-        icon = { Icon(imageVector = Icons.Filled.Mic, contentDescription = MR.strings.microphone) },
+        title = { org.rhasspy.mobile.android.utils.Text(MR.strings.microphonePermissionDialogTitle) },
+        text = { org.rhasspy.mobile.android.utils.Text(message) },
+        icon = { org.rhasspy.mobile.android.utils.Icon(imageVector = Icons.Filled.Mic, contentDescription = MR.strings.microphone) },
         confirmButton = {
-            ElevatedButton(onClick = { onResult.invoke(true) }) {
-                Text(MR.strings.ok)
+            Button(onClick = { onResult.invoke(true) }) {
+                org.rhasspy.mobile.android.utils.Text(MR.strings.ok)
             }
         },
         dismissButton = {
             OutlinedButton(onClick = { onResult.invoke(false) }) {
-                Text(MR.strings.cancel)
+                org.rhasspy.mobile.android.utils.Text(MR.strings.cancel)
             }
         }
     )

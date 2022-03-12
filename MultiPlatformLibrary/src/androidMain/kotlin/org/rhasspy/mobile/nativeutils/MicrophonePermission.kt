@@ -37,7 +37,7 @@ actual object MicrophonePermission {
     }
 
     fun requestPermission(redirect: Boolean, onResult: (granted: Boolean) -> Unit) {
-        if (granted.value) {
+        if (status.value) {
             onResult.invoke(true)
             return
         }

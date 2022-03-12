@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Severity
 import org.rhasspy.mobile.android.theme.*
+import org.rhasspy.mobile.android.utils.StyledListItem
+import org.rhasspy.mobile.android.utils.observe
 import org.rhasspy.mobile.viewModels.LogScreenViewModel
 
 @OptIn(ExperimentalMaterialApi::class)

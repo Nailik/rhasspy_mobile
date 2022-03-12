@@ -31,11 +31,17 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.screens.*
+import org.rhasspy.mobile.android.screens.ConfigurationScreen
+import org.rhasspy.mobile.android.screens.HomeScreen
+import org.rhasspy.mobile.android.screens.LogScreen
+import org.rhasspy.mobile.android.screens.SettingsScreen
 import org.rhasspy.mobile.android.theme.DarkThemeColors
 import org.rhasspy.mobile.android.theme.LightThemeColors
+import org.rhasspy.mobile.android.utils.observe
+import org.rhasspy.mobile.android.utils.toColors
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
+import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.GlobalData
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
@@ -46,6 +52,7 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         MicrophonePermission.init(this)
+        OverlayPermission.init(this)
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
@@ -162,37 +169,37 @@ private fun Typography.toOldTypography(): androidx.compose.material.Typography {
 
 enum class Screens(val icon: @Composable () -> Unit, val label: @Composable () -> Unit) {
     HomeScreen({
-        Icon(
+        org.rhasspy.mobile.android.utils.Icon(
             Icons.Filled.Mic,
             MR.strings.home
         )
-    }, { Text(MR.strings.home) }),
+    }, { org.rhasspy.mobile.android.utils.Text(MR.strings.home) }),
     ConfigurationScreen(
         {
-            Icon(
+            org.rhasspy.mobile.android.utils.Icon(
                 painterResource(MR.images.ic_launcher.drawableResId),
                 MR.strings.configuration,
                 Modifier.size(24.dp)
             )
         },
-        { Text(MR.strings.configuration) }),
-    SettingsScreen({ Icon(Icons.Filled.Settings, MR.strings.settings) }, {
-        Text(
+        { org.rhasspy.mobile.android.utils.Text(MR.strings.configuration) }),
+    SettingsScreen({ org.rhasspy.mobile.android.utils.Icon(Icons.Filled.Settings, MR.strings.settings) }, {
+        org.rhasspy.mobile.android.utils.Text(
             MR.strings.settings
         )
     }),
     LogScreen({
-        Icon(
+        org.rhasspy.mobile.android.utils.Icon(
             Icons.Filled.Code,
             MR.strings.log
         )
-    }, { Text(MR.strings.log) })
+    }, { org.rhasspy.mobile.android.utils.Text(MR.strings.log) })
 }
 
 @Composable
 fun TopAppBar(viewModel: HomeScreenViewModel) {
     SmallTopAppBar(
-        title = { Text(MR.strings.appName) },
+        title = { org.rhasspy.mobile.android.utils.Text(MR.strings.appName) },
         actions = {
             AnimatedVisibility(
                 enter = fadeIn(animationSpec = tween(50)),

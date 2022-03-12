@@ -30,6 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.insets.ExperimentalAnimatedInsets
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
+import org.rhasspy.mobile.android.utils.TextWithAction
+import org.rhasspy.mobile.android.utils.observe
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
@@ -140,7 +143,7 @@ fun MainActionFab(modifier: Modifier = Modifier, snackbarHostState: SnackbarHost
     ) {
         val state = animateDpAsState(targetValue = if (isMainActionBig.value) 96.dp else 24.dp)
 
-        Icon(
+        org.rhasspy.mobile.android.utils.Icon(
             imageVector = if (MicrophonePermission.granted.observe()) Icons.Filled.Mic else Icons.Filled.MicOff,
             contentDescription = MR.strings.wakeUp,
             tint = if (viewModel.isRecording.observe()) MaterialTheme.colorScheme.onErrorContainer else LocalContentColor.current,
@@ -210,8 +213,8 @@ fun PlayRecording(
         onClick = { viewModel.playRecording() },
         modifier = modifier
     ) {
-        Text(resource = MR.strings.playRecording)
-        Icon(
+        org.rhasspy.mobile.android.utils.Text(resource = MR.strings.playRecording)
+        org.rhasspy.mobile.android.utils.Icon(
             imageVector = Icons.Filled.PlayArrow,
             contentDescription = MR.strings.playRecording
         )
@@ -231,7 +234,7 @@ fun TextToRecognize(
         text = textToRecognize,
         onValueChange = { textToRecognize = it },
         onClick = { viewModel.intentRecognition(textToRecognize) }) {
-        Icon(
+        org.rhasspy.mobile.android.utils.Icon(
             imageVector = Icons.Filled.PlayArrow,
             contentDescription = MR.strings.textToRecognize,
         )
@@ -251,7 +254,7 @@ fun TextToSpeak(
         text = textToSpeak,
         onValueChange = { textToSpeak = it },
         onClick = { viewModel.textToSpeak(textToSpeak) }) {
-        Icon(
+        org.rhasspy.mobile.android.utils.Icon(
             imageVector = Icons.Filled.VolumeUp,
             contentDescription = MR.strings.textToSpeak,
         )
