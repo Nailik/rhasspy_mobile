@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Colors
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.OutlinedTextField
@@ -320,9 +321,12 @@ fun ListElement(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TextFieldListItem(
+    modifier: Modifier = Modifier,
     label: StringResource,
     value: String,
-    onValueChange: (String) -> Unit,
+    readOnly: Boolean = false,
+    onValueChange: ((String) -> Unit)? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     paddingValues: PaddingValues = PaddingValues(vertical = 2.dp),
@@ -330,7 +334,7 @@ fun TextFieldListItem(
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
 
     ListElement(
-        modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester),
+        modifier = modifier.bringIntoViewRequester(bringIntoViewRequester),
         paddingValues = paddingValues
     ) {
         val coroutineScope = rememberCoroutineScope()
@@ -338,8 +342,10 @@ fun TextFieldListItem(
         OutlinedTextField(
             singleLine = true,
             value = value,
+            readOnly = readOnly,
             textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colorScheme.onBackground),
-            onValueChange = onValueChange,
+            keyboardOptions = keyboardOptions,
+            onValueChange = { onValueChange?.invoke(it) },
             trailingIcon = trailingIcon,
             visualTransformation = visualTransformation,
             modifier = Modifier

@@ -23,6 +23,8 @@ class HomeScreenViewModel : ViewModel() {
         }
     }
 
+    val isRecording = RecordingService.status
+
     fun saveAndApplyChanges() {
         logger.i { "saveAndApplyChanges" }
 

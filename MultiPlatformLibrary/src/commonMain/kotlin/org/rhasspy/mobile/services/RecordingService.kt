@@ -6,6 +6,7 @@ import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.map
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -16,9 +17,7 @@ import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.settings.AppSettings
 import kotlin.native.concurrent.ThreadLocal
 import kotlin.time.Duration.Companion.ZERO
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Handles listening to speech
@@ -37,34 +36,10 @@ object RecordingService {
 
     private var firstSilenceDetected: Instant? = null
 
-    init {
-        coroutineScope.launch {
-            AudioRecorder.output.collectIndexed { _, value ->
-                if (listening.value) {
-                    data.addAll(value.toList())
-
-                    if (AppSettings.automaticSilenceDetection.data) {
-                        if (!searchThreshold(value, 40)) {
-                            if (firstSilenceDetected == null) {
-                                firstSilenceDetected = Clock.System.now()
-                            } else if (firstSilenceDetected?.minus(Clock.System.now()) ?: ZERO < (-2).seconds) {
-                                logger.i { "diff ${firstSilenceDetected?.minus(Clock.System.now())}" }
-
-                                CoroutineScope(Dispatchers.Main).launch {
-                                    //stop instantly
-                                    listening.value = false
-                                    ServiceInterface.registeredSilence()
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    private var job: Job? = null
 
     //https://stackoverflow.com/questions/19145213/android-audio-capture-silence-detection
-    private fun searchThreshold(arr: ByteArray, thr: Short): Boolean {
+    private fun searchThreshold(arr: ByteArray, thr: Int): Boolean {
         arr.forEach {
             if (it >= thr || it <= -thr) {
                 return true
@@ -83,6 +58,32 @@ object RecordingService {
         listening.value = true
         data.clear()
         indication()
+
+        job = coroutineScope.launch {
+            AudioRecorder.output.collectIndexed { _, value ->
+                data.addAll(value.toList())
+
+                if (AppSettings.isAutomaticSilenceDetection.data) {
+                    if (!searchThreshold(value, AppSettings.automaticSilenceDetectionAudioLevel.data)) {
+                        if (firstSilenceDetected == null) {
+                            firstSilenceDetected = Clock.System.now()
+
+                        } else if (firstSilenceDetected?.minus(Clock.System.now()) ?: ZERO <
+                            (-AppSettings.automaticSilenceDetectionTime.data).milliseconds
+                        ) {
+                            logger.i { "diff ${firstSilenceDetected?.minus(Clock.System.now())}" }
+
+                            CoroutineScope(Dispatchers.Main).launch {
+                                //stop instantly
+                                listening.value = false
+                                ServiceInterface.registeredSilence()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         AudioRecorder.startRecording()
     }
 
@@ -95,6 +96,7 @@ object RecordingService {
         listening.value = false
         stopIndication()
         AudioRecorder.stopRecording()
+        job?.cancel()
     }
 
     /**

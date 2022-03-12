@@ -12,10 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,11 +26,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.*
+import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import java.math.RoundingMode
 
 @Composable
-fun ConfigurationScreen() {
+fun ConfigurationScreen(snackbarHostState: SnackbarHostState) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -47,7 +45,7 @@ fun ConfigurationScreen() {
         Divider()
         AudioRecording()
         Divider()
-        WakeWord()
+        WakeWord(snackbarHostState)
         Divider()
         SpeechToText()
         Divider()
@@ -226,7 +224,7 @@ fun AudioRecording() {
 }
 
 @Composable
-fun WakeWord() {
+fun WakeWord(snackbarHostState: SnackbarHostState) {
 
     val wakeWordValueOption = ConfigurationSettings.wakeWordOption.observeCurrent()
 
@@ -235,9 +233,21 @@ fun WakeWord() {
         secondaryText = wakeWordValueOption.text
     ) {
 
+        val requestMicrophonePermission = requestMicrophonePermission(snackbarHostState, MR.strings.microphonePermissionInfoWakeWord) {
+            if (it) {
+                ConfigurationSettings.wakeWordOption.unsavedData = WakeWordOption.Porcupine
+            }
+        }
+
         DropDownEnumListItem(
             selected = wakeWordValueOption,
-            onSelect = { ConfigurationSettings.wakeWordOption.unsavedData = it })
+            onSelect = {
+                if (it == WakeWordOption.Porcupine && !MicrophonePermission.granted.value) {
+                    requestMicrophonePermission.invoke()
+                } else {
+                    ConfigurationSettings.wakeWordOption.unsavedData = it
+                }
+            })
         { WakeWordOption.values() }
 
         AnimatedVisibility(

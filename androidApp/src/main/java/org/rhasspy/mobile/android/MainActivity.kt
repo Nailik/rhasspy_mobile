@@ -35,6 +35,7 @@ import org.rhasspy.mobile.android.screens.*
 import org.rhasspy.mobile.android.theme.DarkThemeColors
 import org.rhasspy.mobile.android.theme.LightThemeColors
 import org.rhasspy.mobile.data.ThemeOptions
+import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.GlobalData
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
@@ -44,6 +45,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+        MicrophonePermission.init(this)
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
@@ -98,8 +100,11 @@ fun Content(viewModel: HomeScreenViewModel = viewModel()) {
                     isBottomNavigationHidden = this.maxHeight < 250.dp
 
                     val navController = rememberNavController()
+                    val snackbarHostState = remember { SnackbarHostState() }
+
                     Scaffold(
                         topBar = { TopAppBar(viewModel) },
+                        snackbarHost = { SnackbarHost(snackbarHostState) },
                         bottomBar = {
                             //hide bottom navigation with keyboard and small screens
                             if (!isBottomNavigationHidden) {
@@ -118,13 +123,13 @@ fun Content(viewModel: HomeScreenViewModel = viewModel()) {
                             )
                         ) {
                             composable(Screens.HomeScreen.name) {
-                                HomeScreen()
+                                HomeScreen(snackbarHostState)
                             }
                             composable(Screens.ConfigurationScreen.name) {
-                                ConfigurationScreen()
+                                ConfigurationScreen(snackbarHostState)
                             }
                             composable(Screens.SettingsScreen.name) {
-                                SettingsScreen()
+                                SettingsScreen(snackbarHostState)
                             }
                             composable(Screens.LogScreen.name) {
                                 LogScreen()

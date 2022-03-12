@@ -9,7 +9,9 @@ object AppSettings {
     val languageOption = AppSetting(SettingsEnum.LanguageOption, LanguageOptions.English)
     val themeOption = AppSetting(SettingsEnum.ThemeOption, ThemeOptions.System)
 
-    val automaticSilenceDetection = AppSetting(SettingsEnum.AutomaticSilenceDetection, false)
+    val isAutomaticSilenceDetection = AppSetting(SettingsEnum.AutomaticSilenceDetection, false)
+    val automaticSilenceDetectionAudioLevel = AppSetting(SettingsEnum.AutomaticSilenceDetectionAudioLevel, 40)
+    val automaticSilenceDetectionTime = AppSetting(SettingsEnum.AutomaticSilenceDetectionTime, 2000)
 
     val isBackgroundEnabled = AppSetting(SettingsEnum.BackgroundEnabled, false)
     val isBackgroundWakeWordDetectionTurnOnDisplay = AppSetting(SettingsEnum.BackgroundWakeWordDetectionTurnOnDisplay, false)

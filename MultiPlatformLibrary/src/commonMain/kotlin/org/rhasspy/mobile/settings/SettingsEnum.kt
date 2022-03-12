@@ -6,6 +6,8 @@ enum class SettingsEnum {
     ThemeOption,
 
     AutomaticSilenceDetection,
+    AutomaticSilenceDetectionAudioLevel,
+    AutomaticSilenceDetectionTime,
 
     BackgroundEnabled,
     BackgroundWakeWordDetectionTurnOnDisplay,

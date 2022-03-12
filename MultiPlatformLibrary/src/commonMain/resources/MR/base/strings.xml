@@ -73,11 +73,6 @@
     <string name="httpSSL">HTTP SSL</string>
     <string name="porcupineAccessKey">AccessKey</string>
     <string name="openPicoVoiceConsole">open PicoVoice Console (to generate AccessKey)</string>
-    <string name="microphonePermissionDialogTitle">Microphone access</string>
-    <string name="microphonePermissionDialogMessage">To use this app you need to allow access to the microphone.</string>
-    <string name="microphonePermissionDenied">open settings to allow microphone access</string>
-    <string name="cancel">Cancel</string>
-    <string name="ok">Ok</string>
     <string name="expandListItem">Expand list item</string>
     <string name="expandDropDown">Expand drop down</string>
     <string name="visibility">Visibility</string>
@@ -104,4 +99,21 @@
     <string name="warn">Warn</string>
     <string name="error">Error</string>
     <string name="assert_level">Assert</string>
+
+    <string name="microphone">Microphone</string>
+    <string name="microphonePermissionDialogTitle">Microphone access</string>
+
+    <string name="microphonePermissionInfoRecord">To record audio microphone access is required.</string>
+    <string name="microphonePermissionInfoWakeWord">To use Porcupine WakeWord service microphone access is required.</string>
+    <string name="microphonePermissionInfoAudioLevel">To check audio level microphone access is required.</string>
+
+    <string name="microphonePermissionDenied">open settings to allow microphone access</string>
+    <string name="settings">Settings</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">Ok</string>
+
+    <string name="testAudioLevel">Audio Level Test</string>
+    <string name="stop">Stop</string>
+    <string name="audioLevelThreshold">Audio Level Threshold</string>
+    <string name="silenceDetectionTime">Silence Detection Time (ms)</string>
 </resources>

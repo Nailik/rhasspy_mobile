@@ -12,12 +12,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.MicOff
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.VolumeUp
-import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,13 +25,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.insets.ExperimentalAnimatedInsets
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.services.RecordingService
+import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
 var isMainActionBig = mutableStateOf(true)
@@ -44,9 +41,8 @@ var mainActionVisible = mutableStateOf(true)
     ExperimentalFoundationApi::class,
     ExperimentalAnimatedInsets::class
 )
-@Preview(showSystemUi = true)
 @Composable
-fun HomeScreen(viewModel: HomeScreenViewModel = viewModel()) {
+fun HomeScreen(snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewModel = viewModel()) {
     when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
             Row(
@@ -56,12 +52,14 @@ fun HomeScreen(viewModel: HomeScreenViewModel = viewModel()) {
                     modifier = Modifier
                         .fillMaxWidth(0.5f)
                         .fillMaxHeight(),
-                    viewModel = viewModel
+                    snackbarHostState = snackbarHostState,
+                    viewModel = viewModel,
                 )
                 BottomActions(
                     modifier = Modifier
                         .fillMaxHeight()
                         .fillMaxWidth(),
+                    snackbarHostState = snackbarHostState,
                     viewModel = viewModel
                 )
             }
@@ -74,10 +72,12 @@ fun HomeScreen(viewModel: HomeScreenViewModel = viewModel()) {
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth(),
+                    snackbarHostState = snackbarHostState,
                     viewModel = viewModel
                 )
                 BottomActions(
                     modifier = Modifier.fillMaxWidth(),
+                    snackbarHostState = snackbarHostState,
                     viewModel = viewModel
                 )
             }
@@ -88,19 +88,19 @@ fun HomeScreen(viewModel: HomeScreenViewModel = viewModel()) {
 }
 
 @Composable
-fun WakeUpAction(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel) {
+fun WakeUpAction(modifier: Modifier = Modifier, snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewModel) {
     //make smaller according to
     //val imeIsVisible = LocalWindowInsets.current.ime.isVisible
     BoxWithConstraints(
         modifier = modifier.padding(Dp(24f))
     ) {
-        MainActionButton(this.maxHeight, viewModel)
+        MainActionButton(this.maxHeight, snackbarHostState, viewModel)
     }
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun MainActionButton(maxHeight: Dp, viewModel: HomeScreenViewModel) {
+fun MainActionButton(maxHeight: Dp, snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewModel) {
 
     isMainActionBig.value = maxHeight >= 96.dp + (24.dp * 2)
     mainActionVisible.value = maxHeight > 24.dp || LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -111,27 +111,39 @@ fun MainActionButton(maxHeight: Dp, viewModel: HomeScreenViewModel) {
         visible = mainActionVisible.value,
         modifier = Modifier.fillMaxSize()
     ) {
-        MainActionFab(modifier = Modifier.fillMaxSize(), viewModel)
+        MainActionFab(modifier = Modifier.fillMaxSize(), snackbarHostState, viewModel)
     }
 
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun MainActionFab(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel) {
+fun MainActionFab(modifier: Modifier = Modifier, snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewModel) {
+
+    val requestMicrophonePermission = requestMicrophonePermission(snackbarHostState, MR.strings.microphonePermissionInfoRecord) {
+        if (it) {
+            viewModel.toggleRecording()
+        }
+    }
 
     FloatingActionButton(
-        onClick = { viewModel.toggleRecording() },
+        onClick = {
+            if (MicrophonePermission.granted.value) {
+                viewModel.toggleRecording()
+            } else {
+                requestMicrophonePermission.invoke()
+            }
+        },
         modifier = modifier,
-        containerColor = if (RecordingService.status.observe()) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme
+        containerColor = if (viewModel.isRecording.observe()) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme
             .primaryContainer,
     ) {
         val state = animateDpAsState(targetValue = if (isMainActionBig.value) 96.dp else 24.dp)
 
         Icon(
-            imageVector = Icons.Filled.Mic,
+            imageVector = if (MicrophonePermission.granted.observe()) Icons.Filled.Mic else Icons.Filled.MicOff,
             contentDescription = MR.strings.wakeUp,
-            tint = if (RecordingService.status.observe()) MaterialTheme.colorScheme.onErrorContainer else LocalContentColor.current,
+            tint = if (viewModel.isRecording.observe()) MaterialTheme.colorScheme.onErrorContainer else LocalContentColor.current,
             modifier = Modifier
                 .size(state.value)
         )
@@ -140,7 +152,7 @@ fun MainActionFab(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel)
 }
 
 @Composable
-fun BottomActions(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel) {
+fun BottomActions(modifier: Modifier = Modifier, snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewModel) {
     Column(
         modifier = modifier
             .padding(bottom = 24.dp)
@@ -156,7 +168,7 @@ fun BottomActions(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel)
                 .padding(start = 24.dp)
         }
 
-        TopRow(viewModel)
+        TopRow(snackbarHostState, viewModel)
         TextToRecognize(childModifier, viewModel)
         TextToSpeak(childModifier, viewModel)
     }
@@ -164,7 +176,7 @@ fun BottomActions(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel)
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun TopRow(viewModel: HomeScreenViewModel) {
+fun TopRow(snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewModel) {
     val state = animateDpAsState(targetValue = if (!mainActionVisible.value) 12.dp else 0.dp)
 
     Row(
@@ -179,7 +191,7 @@ fun TopRow(viewModel: HomeScreenViewModel) {
             exit = shrinkOut(shrinkTowards = Alignment.BottomStart),
             visible = !mainActionVisible.value
         ) {
-            MainActionFab(viewModel = viewModel)
+            MainActionFab(snackbarHostState = snackbarHostState, viewModel = viewModel)
         }
 
         PlayRecording(

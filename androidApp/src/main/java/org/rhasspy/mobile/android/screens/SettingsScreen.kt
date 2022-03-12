@@ -1,22 +1,36 @@
 package org.rhasspy.mobile.android.screens
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Divider
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.MicOff
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.logger.LogLevel
 import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.viewModels.SettingsScreenViewModel
 
-@Preview
+private val logger = Logger.withTag("SettingsScreen")
+
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(snackbarHostState: SnackbarHostState, viewModel: SettingsScreenViewModel = viewModel()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -26,11 +40,11 @@ fun SettingsScreen() {
         Divider()
         ThemeItem()
         Divider()
-        BackgroundWakeWordDetectionItem()
+        BackgroundService()
         Divider()
         WakeWordIndicationItem()
         Divider()
-        AutomaticSilenceDetectionItem()
+        AutomaticSilenceDetectionItem(viewModel, snackbarHostState)
         Divider()
         ShowLogItem()
         Divider()
@@ -58,17 +72,123 @@ fun ThemeItem() {
 }
 
 @Composable
-fun AutomaticSilenceDetectionItem() {
+fun AutomaticSilenceDetectionItem(viewModel: SettingsScreenViewModel, snackbarHostState: SnackbarHostState) {
 
-    SwitchListItem(
+    val isAutomaticSilenceDetection = AppSettings.isAutomaticSilenceDetection.observe()
+
+    ExpandableListItem(
         text = MR.strings.automaticSilenceDetection,
-        isChecked = AppSettings.automaticSilenceDetection.observe(),
-        onCheckedChange = { AppSettings.automaticSilenceDetection.data = !AppSettings.automaticSilenceDetection.data })
+        secondaryText = isAutomaticSilenceDetection.toText()
+    ) {
+        Column {
 
+            SwitchListItem(
+                text = MR.strings.automaticSilenceDetection,
+                isChecked = isAutomaticSilenceDetection,
+                onCheckedChange = { AppSettings.isAutomaticSilenceDetection.data = !AppSettings.isAutomaticSilenceDetection.data })
+
+            androidx.compose.animation.AnimatedVisibility(
+                enter = expandVertically(),
+                exit = shrinkVertically(),
+                visible = isAutomaticSilenceDetection
+            ) {
+
+                Column {
+
+                    TextFieldListItem(
+                        label = MR.strings.silenceDetectionTime,
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                        value = AppSettings.automaticSilenceDetectionTime.observe().toString(),
+                        onValueChange = {
+                            val integer = it.replace("-", "")
+                                .replace(",", "")
+                                .replace(".", "")
+                                .replace(" ", "")
+                                .toIntOrNull()
+
+                            logger.v { "parsed automaticSilenceDetectionTime to $integer" }
+
+                            AppSettings.automaticSilenceDetectionTime.data = integer ?: 0
+                        },
+                    )
+
+
+                    TextFieldListItem(
+                        label = MR.strings.audioLevelThreshold,
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                        value = AppSettings.automaticSilenceDetectionAudioLevel.observe().toString(),
+                        onValueChange = {
+                            val integer = it.replace("-", "")
+                                .replace(",", "")
+                                .replace(".", "")
+                                .replace(" ", "")
+                                .toIntOrNull()
+
+                            logger.v { "parsed automaticSilenceDetectionAudioLevel to $integer" }
+
+                            AppSettings.automaticSilenceDetectionAudioLevel.data = integer ?: 0
+                        },
+                    )
+
+
+                    Row(
+                        modifier = Modifier
+                            .padding(vertical = 8.dp, horizontal = 16.dp)
+                            .fillMaxWidth()
+                    ) {
+
+                        val status = viewModel.status.observe()
+                        val audioLevel = viewModel.audioLevel.observe()
+
+                        val animatedWeight = animateFloatAsState(targetValue = if (status) 1f else 0f)
+                        val animatedColor = animateColorAsState(
+                            targetValue = if (audioLevel > AppSettings.automaticSilenceDetectionAudioLevel.observe()) {
+                                MaterialTheme.colorScheme.error
+                            } else MaterialTheme.colorScheme.primary
+                        )
+
+                        if (animatedWeight.value > 0f) {
+
+                            OutlinedButton(
+                                modifier = Modifier
+                                    .weight(animatedWeight.value)
+                                    .alpha(animatedWeight.value)
+                                    .padding(end = 16.dp)
+                                    .fillMaxWidth(),
+                                border = BorderStroke(ButtonDefaults.outlinedButtonBorder.width, animatedColor.value),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = animatedColor.value),
+                                onClick = { })
+                            {
+                                Text(audioLevel.toString())
+                            }
+                        }
+
+
+                        val requestMicrophonePermission =
+                            requestMicrophonePermission(snackbarHostState, MR.strings.microphonePermissionInfoAudioLevel) {
+                                if (it) {
+                                    viewModel.toggleAudioLevelTest()
+                                }
+                            }
+
+                        Button(
+                            modifier = Modifier
+                                .weight(2f - animatedWeight.value)
+                                .wrapContentSize(),
+                            onClick = { requestMicrophonePermission.invoke() }) {
+                            Icon(if (status) Icons.Filled.MicOff else Icons.Filled.Mic, MR.strings.microphone)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(if (status) MR.strings.stop else MR.strings.testAudioLevel)
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
-fun BackgroundWakeWordDetectionItem() {
+fun BackgroundService() {
 
     SwitchListItem(
         text = MR.strings.enableBackground,

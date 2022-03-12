@@ -59,6 +59,7 @@ kotlin {
                 implementation(AndroidX.Compose.foundation)
                 implementation(AndroidX.multidex)
                 implementation(AndroidX.window)
+                implementation(AndroidX.activity)
                 implementation(AndroidX.Compose.ui)
                 implementation(AndroidX.Compose.material3)
                 implementation(Icerock.Resources.resourcesCompose)
