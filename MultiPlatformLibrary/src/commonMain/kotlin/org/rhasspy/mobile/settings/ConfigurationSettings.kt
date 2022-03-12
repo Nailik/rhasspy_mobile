@@ -18,7 +18,7 @@ object ConfigurationSettings {
     val udpOutputHost = Setting(SettingsEnum.UDPOutputHost, "")
     val udpOutputPort = Setting(SettingsEnum.UDPOutputPort, "")
 
-    val wakeWordOption = Setting(SettingsEnum.WakeWordOption, WakeWordOption.Porcupine)
+    val wakeWordOption = Setting(SettingsEnum.WakeWordOption, WakeWordOption.Disabled)
     val wakeWordAccessToken = Setting(SettingsEnum.WakeWordAccessToken, "")
     val wakeWordKeywordOption = Setting(SettingsEnum.WakeWordKeywordOption, WakeWordKeywordOption.JARVIS)
     val wakeWordKeywordSensitivity = Setting(SettingsEnum.WakeWordKeywordSensitivity, 0.5f)
