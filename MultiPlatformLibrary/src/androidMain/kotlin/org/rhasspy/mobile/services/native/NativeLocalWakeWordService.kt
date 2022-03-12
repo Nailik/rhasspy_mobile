@@ -3,9 +3,12 @@ package org.rhasspy.mobile.services.native
 import ai.picovoice.porcupine.Porcupine
 import ai.picovoice.porcupine.PorcupineManager
 import ai.picovoice.porcupine.PorcupineManagerCallback
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
-import org.rhasspy.mobile.services.ListeningService
+import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 /**
@@ -43,12 +46,20 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
     private fun initializePorcupineManger() {
         logger.d { "initializePorcupineManger" }
 
+
+        if (ActivityCompat.checkSelfPermission(Application.Instance, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            logger.e { "missing recording permission" }
+            return
+        }
+
         try {
+
             porcupineManager = PorcupineManager.Builder()
                 .setAccessKey(ConfigurationSettings.wakeWordAccessToken.value)
                 .setKeyword(Porcupine.BuiltInKeyword.valueOf(ConfigurationSettings.wakeWordKeywordOption.data.name))
                 .setSensitivity(ConfigurationSettings.wakeWordKeywordSensitivity.data)
                 .build(Application.Instance, this)
+
         } catch (e: Exception) {
             logger.e(e) { "initializePorcupineManger failed" }
         }
@@ -60,7 +71,7 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
     override fun invoke(keywordIndex: Int) {
         logger.d { "invoke - keyword detected" }
 
-        ListeningService.wakeWordDetected()
+        ServiceInterface.startRecording()
     }
 
 }

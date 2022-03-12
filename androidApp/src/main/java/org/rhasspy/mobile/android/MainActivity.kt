@@ -7,8 +7,10 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -28,37 +30,42 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import co.touchlab.kermit.Logger
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.screens.*
+import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
+import org.rhasspy.mobile.android.permissions.requestOverlayPermission
+import org.rhasspy.mobile.android.screens.ConfigurationScreen
+import org.rhasspy.mobile.android.screens.HomeScreen
+import org.rhasspy.mobile.android.screens.LogScreen
+import org.rhasspy.mobile.android.screens.SettingsScreen
 import org.rhasspy.mobile.android.theme.DarkThemeColors
 import org.rhasspy.mobile.android.theme.LightThemeColors
+import org.rhasspy.mobile.android.utils.Icon
+import org.rhasspy.mobile.android.utils.Text
+import org.rhasspy.mobile.android.utils.observe
+import org.rhasspy.mobile.android.utils.toColors
 import org.rhasspy.mobile.data.ThemeOptions
+import org.rhasspy.mobile.nativeutils.MicrophonePermission
+import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.GlobalData
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
+
+private val logger = Logger.withTag("MainActivity")
 
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+        MicrophonePermission.init(this)
+        OverlayPermission.init(this)
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
         this.setContent {
-
-            /*   val systemUiController = rememberSystemUiController()
-               val useDarkIcons = MaterialTheme.
-
-               SideEffect {
-                   systemUiController.setNavigationBarColor(
-                       darkIcons = useDarkIcons
-                   )
-               }*/
-
-
             Content()
         }
     }
@@ -98,8 +105,11 @@ fun Content(viewModel: HomeScreenViewModel = viewModel()) {
                     isBottomNavigationHidden = this.maxHeight < 250.dp
 
                     val navController = rememberNavController()
+                    val snackbarHostState = remember { SnackbarHostState() }
+
                     Scaffold(
-                        topBar = { TopAppBar(viewModel) },
+                        topBar = { TopAppBar(viewModel, snackbarHostState) },
+                        snackbarHost = { SnackbarHost(snackbarHostState) },
                         bottomBar = {
                             //hide bottom navigation with keyboard and small screens
                             if (!isBottomNavigationHidden) {
@@ -118,13 +128,13 @@ fun Content(viewModel: HomeScreenViewModel = viewModel()) {
                             )
                         ) {
                             composable(Screens.HomeScreen.name) {
-                                HomeScreen()
+                                HomeScreen(snackbarHostState)
                             }
                             composable(Screens.ConfigurationScreen.name) {
-                                ConfigurationScreen()
+                                ConfigurationScreen(snackbarHostState)
                             }
                             composable(Screens.SettingsScreen.name) {
-                                SettingsScreen()
+                                SettingsScreen(snackbarHostState)
                             }
                             composable(Screens.LogScreen.name) {
                                 LogScreen()
@@ -156,50 +166,72 @@ private fun Typography.toOldTypography(): androidx.compose.material.Typography {
 }
 
 enum class Screens(val icon: @Composable () -> Unit, val label: @Composable () -> Unit) {
-    HomeScreen({
-        Icon(
-            Icons.Filled.Mic,
-            MR.strings.home
-        )
-    }, { Text(MR.strings.home) }),
+    HomeScreen({ Icon(Icons.Filled.Mic, MR.strings.home) }, { Text(MR.strings.home) }),
     ConfigurationScreen(
-        {
-            Icon(
-                painterResource(MR.images.ic_launcher.drawableResId),
-                MR.strings.configuration,
-                Modifier.size(24.dp)
-            )
-        },
+        { Icon(painterResource(MR.images.ic_launcher.drawableResId), MR.strings.configuration, Modifier.size(24.dp)) },
         { Text(MR.strings.configuration) }),
-    SettingsScreen({ Icon(Icons.Filled.Settings, MR.strings.settings) }, {
-        Text(
-            MR.strings.settings
-        )
-    }),
-    LogScreen({
-        Icon(
-            Icons.Filled.Code,
-            MR.strings.log
-        )
-    }, { Text(MR.strings.log) })
+    SettingsScreen({ Icon(Icons.Filled.Settings, MR.strings.settings) }, { Text(MR.strings.settings) }),
+    LogScreen({ Icon(Icons.Filled.Code, MR.strings.log) }, { Text(MR.strings.log) })
 }
 
 @Composable
-fun TopAppBar(viewModel: HomeScreenViewModel) {
+fun TopAppBar(viewModel: HomeScreenViewModel, snackbarHostState: SnackbarHostState) {
     SmallTopAppBar(
+        modifier = Modifier.padding(end = 16.dp),
         title = { Text(MR.strings.appName) },
         actions = {
+
+            AnimatedVisibility(
+                enter = fadeIn(animationSpec = tween(50)),
+                exit = fadeOut(animationSpec = tween(50)),
+                visible = viewModel.isMicrophonePermissionRequestRequired.observe()
+            ) {
+                val microphonePermission = requestMicrophonePermission(snackbarHostState, MR.strings.microphonePermissionInfoWakeWord) {}
+
+                IconButton(
+                    onClick = { microphonePermission.invoke() },
+                    modifier = Modifier.background(
+                        color = MaterialTheme.colorScheme.errorContainer,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                )
+                {
+                    Icon(
+                        imageVector = Icons.Filled.MicOff,
+                        tint = MaterialTheme.colorScheme.onErrorContainer,
+                        contentDescription = MR.strings.microphone
+                    )
+                }
+            }
+
+            AnimatedVisibility(
+                enter = fadeIn(animationSpec = tween(50)),
+                exit = fadeOut(animationSpec = tween(50)),
+                visible = viewModel.isOverlayPermissionRequestRequired.observe()
+            ) {
+                val overlayPermission = requestOverlayPermission {}
+
+                IconButton(onClick = { overlayPermission.invoke() }, Modifier.background(MaterialTheme.colorScheme.errorContainer))
+                {
+                    Icon(
+                        imageVector = Icons.Filled.LayersClear,
+                        tint = MaterialTheme.colorScheme.onErrorContainer,
+                        contentDescription = MR.strings.overlay
+                    )
+                }
+            }
+
             AnimatedVisibility(
                 enter = fadeIn(animationSpec = tween(50)),
                 exit = fadeOut(animationSpec = tween(50)),
                 visible = GlobalData.unsavedChanges.observe()
             ) {
-                Row(modifier = Modifier.padding(end = 16.dp)) {
+                Row(modifier = Modifier.padding(start = 8.dp)) {
                     IconButton(onClick = { viewModel.resetChanges() })
                     {
                         Icon(
                             imageVector = Icons.Filled.Restore,
-                            contentDescription = "ewr"
+                            contentDescription = MR.strings.reset
                         )
                     }
                     Spacer(modifier = Modifier.width(16.dp))
@@ -207,7 +239,7 @@ fun TopAppBar(viewModel: HomeScreenViewModel) {
                         onClick = { viewModel.saveAndApplyChanges() }) {
                         Icon(
                             imageVector = Icons.Filled.PublishedWithChanges,
-                            contentDescription = "ewr"
+                            contentDescription = MR.strings.save
                         )
                     }
                 }

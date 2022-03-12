@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.screens
+package org.rhasspy.mobile.android.utils
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ContentAlpha

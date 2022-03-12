@@ -46,6 +46,7 @@ kotlin {
                 implementation(Russhwolf.multiplatformSettingsNoArg)
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Jetbrains.Kotlinx.serialization)
+                implementation(Ktor.Client.core)
             }
         }
         val commonTest by getting {
@@ -58,10 +59,12 @@ kotlin {
                 implementation(AndroidX.Compose.foundation)
                 implementation(AndroidX.multidex)
                 implementation(AndroidX.window)
+                implementation(AndroidX.activity)
                 implementation(AndroidX.Compose.ui)
                 implementation(AndroidX.Compose.material3)
                 implementation(Icerock.Resources.resourcesCompose)
                 implementation(Picovoice.porcupineAndroid)
+                implementation(Ktor.Client.cio)
             }
         }
         val androidTest by getting
@@ -90,7 +93,7 @@ android {
     compileSdk = 32
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
-        minSdk = 21
+        minSdk = 23
         targetSdk = 32
     }
     buildFeatures {

@@ -22,12 +22,12 @@
     <string name="wakeWord">Wake Word</string>
     <string name="sensitivity">Sensitivity</string>
     <string name="speechToText">Speech to Text</string>
-    <string name="speechToTextURL">Speech to Text URL</string>
+    <string name="speechToTextURL">Speech to Text URL (//api/speech-to-text)</string>
     <string name="intentRecognition">Intent Recognition</string>
-    <string name="rhasspyTextToIntentURL">Rhasspy Text-to-Intent URL</string>
+    <string name="rhasspyTextToIntentURL">Rhasspy Text-to-Intent URL (//api/text-to-intent)</string>
     <string name="textToSpeech">Text to Speech</string>
-    <string name="rhasspyTextToSpeechURL">Rhasspy Text-to-Speech URL</string>
-    <string name="audioOutputURL">Audio Output URL</string>
+    <string name="rhasspyTextToSpeechURL">Rhasspy Text-to-Speech URL (//api/text-to-speech)</string>
+    <string name="audioOutputURL">Audio Output URL (//api/play-wav)</string>
     <string name="audioPlaying">Audio Playing</string>
     <string name="dialogueManagement">Dialogue Management</string>
     <string name="intentHandling">Intent Handling</string>
@@ -39,6 +39,7 @@
     <string name="disabled">Disabled</string>
     <string name="remoteMQTT">Remote Hermes MQTT</string>
     <string name="remoteHTTP">Remote HTTP</string>
+    <string name="withRecognition">With Recognition</string>
     <string name="homeAssistant">Home Assistant</string>
     <string name="hassURL">Hass URL</string>
     <string name="wakeUp">Wake Up</string>

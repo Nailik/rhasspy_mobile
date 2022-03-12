@@ -23,11 +23,6 @@ expect object NativeIndication {
     fun releaseWakeUp()
 
     /**
-     * acquire permission to draw over other apps
-     */
-    fun displayOverAppsPermission()
-
-    /**
      * display indication over other apps
      */
     fun showIndication()

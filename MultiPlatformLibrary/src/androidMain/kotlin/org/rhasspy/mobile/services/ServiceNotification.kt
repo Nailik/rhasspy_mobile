@@ -28,7 +28,7 @@ object ServiceNotification {
             .setSmallIcon(MR.images.ic_launcher.drawableResId)
             .setContentTitle("Rhasspy Services Running")
             .setContentIntent(createPendingIntent())
-            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setPriority(NotificationCompat.PRIORITY_MIN)
             .setAutoCancel(true)
             .build()
     }
@@ -46,7 +46,7 @@ object ServiceNotification {
         NotificationManagerCompat
             .from(Application.Instance)
             .createNotificationChannel(
-                NotificationChannelCompat.Builder(CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_HIGH)
+                NotificationChannelCompat.Builder(CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_MIN)
                     .setName("Rhasspy Service Notification Channel")
                     .setDescription("Rhasspy Mobile runs in background for WakeWord detection and other services")
                     .setGroup(GROUP_ID)

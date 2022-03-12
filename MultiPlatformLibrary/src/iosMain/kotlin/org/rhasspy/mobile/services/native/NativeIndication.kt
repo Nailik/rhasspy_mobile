@@ -9,9 +9,6 @@ actual object NativeIndication {
     actual fun wakeUpScreen() {
     }
 
-    actual fun displayOverAppsPermission() {
-    }
-
     actual fun showIndication() {
     }
 
