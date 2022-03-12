@@ -10,15 +10,13 @@ import io.ktor.http.*
 import org.rhasspy.mobile.data.IntentHandlingOptions
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-//https://rhasspy.readthedocs.io/en/latest/reference/#http-api
-
 /**
  * calls external http services
  */
-object ExternalHttpService {
+object HttpService {
     private val logger = Logger.withTag(this::class.simpleName!!)
 
-    private val httpClient = HttpClient() {
+    private val httpClient = HttpClient {
         expectSuccess = true
         install(HttpTimeout) {
             requestTimeoutMillis = 10000
@@ -46,7 +44,7 @@ object ExternalHttpService {
 
             logger.v { "speechToText received:\n$text" }
 
-            ServiceInterface.receivedTextFromSpeech(text)
+            ServiceInterface.intentRecognition(text)
 
         } catch (e: Exception) {
             logger.e(e) { "sending speechToText Exception" }

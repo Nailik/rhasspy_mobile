@@ -15,6 +15,8 @@ enum class SettingsEnum {
     WakeWordSoundIndication,
     WakeWordLightIndication,
 
+    WakeWordEnabled,
+
     ShowLog,
     LogLevel,
 

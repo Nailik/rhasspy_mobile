@@ -76,7 +76,7 @@ object RecordingService {
                             CoroutineScope(Dispatchers.Main).launch {
                                 //stop instantly
                                 listening.value = false
-                                ServiceInterface.registeredSilence()
+                                ServiceInterface.stopRecording()
                             }
                         }
                     }

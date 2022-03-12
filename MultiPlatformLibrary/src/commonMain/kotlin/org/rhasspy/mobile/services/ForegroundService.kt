@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.WakeWordOption
+import org.rhasspy.mobile.services.api.HttpServer
 import org.rhasspy.mobile.services.native.NativeLocalWakeWordService
 import org.rhasspy.mobile.services.native.NativeService
 import org.rhasspy.mobile.settings.AppSettings
@@ -20,6 +21,7 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
  * - HTTP Services
  */
 object ForegroundService {
+
     private val logger = Logger.withTag(this::class.simpleName!!)
 
     init {
@@ -61,11 +63,8 @@ object ForegroundService {
     private fun startServices() {
         logger.d { "startServices" }
 
-        if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.Porcupine &&
-            ConfigurationSettings.wakeWordAccessToken.data.isNotEmpty()
-        ) {
-            NativeLocalWakeWordService.start()
-        }
+        startWakeWordService()
+        HttpServer.start()
     }
 
     /**
@@ -75,6 +74,7 @@ object ForegroundService {
         logger.d { "stopServices" }
 
         NativeLocalWakeWordService.stop()
+        HttpServer.stop()
     }
 
     /**
@@ -86,5 +86,21 @@ object ForegroundService {
 
         stopServices()
         startServices()
+    }
+
+    private fun startWakeWordService() {
+        if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.Porcupine &&
+            ConfigurationSettings.wakeWordAccessToken.data.isNotEmpty()
+        ) {
+            NativeLocalWakeWordService.start()
+        }
+    }
+
+    fun setListenForWake(value: Boolean) {
+        if (value) {
+            startWakeWordService()
+        } else {
+            NativeLocalWakeWordService.stop()
+        }
     }
 }

@@ -35,6 +35,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
+                implementation(kotlin("stdlib"))
                 implementation("co.touchlab:kermit:_")
                 implementation(Icerock.Mvvm.core)
                 implementation(Icerock.Mvvm.state)
@@ -47,6 +48,8 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Ktor.Client.core)
+                implementation(Ktor.Server.core)
+                implementation("io.ktor:ktor-server-cio:_")
             }
         }
         val commonTest by getting {

@@ -6,4 +6,8 @@ actual object AudioPlayer {
 
     }
 
+    actual fun playRecording(data: ByteArray) {
+
+    }
+
 }
