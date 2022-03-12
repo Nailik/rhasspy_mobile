@@ -3,6 +3,8 @@ package org.rhasspy.mobile
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.services.ForegroundService
+import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.ConfigurationSettings
 
 abstract class Application : NativeApplication() {
     private val logger = Logger.withTag(Application::class.simpleName!!)
@@ -22,6 +24,9 @@ abstract class Application : NativeApplication() {
 
         logger.a { "######## Application started ########" }
 
+        //initialize/load the settings
+        AppSettings
+        ConfigurationSettings
         ForegroundService
     }
 
