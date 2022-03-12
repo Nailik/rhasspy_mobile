@@ -11,10 +11,12 @@ of [Rhasspy](https://rhasspy.readthedocs.io/en/latest/tutorials/#server-with-sat
 
 | Feature  | Android | iOS | Web |
 | ------------- | ------------- | ------------- | ------------- |
-| Audio Recording | :x: | :x: | :x: |
-| Silence Detection | :x: | :x: | :x: |
-| Remote HTTP(s)  | :x: | :x: | :x: |
+| Audio Recording | :white_check_mark: | :x: | :x: |
+| Silence Detection | :white_check_mark: | :x: | :x: |
+| Remote HTTP(s)  | :white_check_mark: | :x: | :x: |
+| Local (incoming) HTTP(s)  | :x: | :x: | :x: |
 | Remote MQTT(SSL)  | :x: | :x: | :x: |
+| Remote (incoming) MQTT(SSL)  | :x: | :x: | :x: |
 | Wakeword Remote (HTTP/MQTT/UDP) | :x: | :x: | :x: |
 | Wakeword Local (Porcupine) | :white_check_mark: | :x: | :x: |
 | Wakeword Indication (Sound, Visual)  | :white_check_mark: | :x: | :x: |
