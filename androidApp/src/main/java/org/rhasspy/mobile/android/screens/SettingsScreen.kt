@@ -207,9 +207,9 @@ fun WakeWordIndicationItem() {
     val isWakeWordSoundIndication = AppSettings.isWakeWordSoundIndication.observe()
     val isWakeWordLightIndication = AppSettings.isWakeWordLightIndication.observe()
 
-    var stateText = if (isWakeWordSoundIndication) translate(MR.strings.sound) else null
+    var stateText = if (isWakeWordSoundIndication) translate(MR.strings.sound) else ""
     if (isWakeWordLightIndication) {
-        if (stateText?.isNotEmpty() == true) {
+        if (stateText.isNotEmpty()) {
             stateText += " ${translate(MR.strings._and)} "
         }
         stateText += translate(MR.strings.light)
@@ -217,7 +217,7 @@ fun WakeWordIndicationItem() {
 
     ExpandableListItemString(
         text = MR.strings.wakeWordIndication,
-        secondaryText = stateText
+        secondaryText = stateText.ifEmpty { null }
     ) {
         Column {
 

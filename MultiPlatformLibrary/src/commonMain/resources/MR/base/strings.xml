@@ -122,4 +122,6 @@
     <string name="overlayPermissionInfo">Visual indication uses an Overlay to display the indication.\nClick "OK", scroll to Rhasspy and allow
         Permission.
     </string>
+    <string name="save">Save</string>
+    <string name="reset">Reset</string>
 </resources>

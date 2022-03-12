@@ -46,6 +46,7 @@ var mainActionVisible = mutableStateOf(true)
 )
 @Composable
 fun HomeScreen(snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewModel = viewModel()) {
+
     when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
             Row(
