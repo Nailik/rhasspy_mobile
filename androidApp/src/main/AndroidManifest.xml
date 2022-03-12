@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="org.rhasspy.mobile.android">
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+
     <application
+        android:name="org.rhasspy.mobile.android.AndroidApplication"
+        android:icon="@drawable/ic_launcher"
         android:supportsRtl="true"
-        android:icon="@mipmap/ic_launcher"
-        android:theme="@style/AppTheme">
+        tools:ignore="Instantiatable">
+        <service
+            android:name="org.rhasspy.mobile.services.native.NativeService"
+            android:foregroundServiceType="microphone" />
+
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/AppTheme.AppSplash"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

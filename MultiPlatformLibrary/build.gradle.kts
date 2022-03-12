@@ -1,7 +1,9 @@
 plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
+    kotlin("plugin.serialization")
     id("com.android.library")
+    id("dev.icerock.mobile.multiplatform-resources")
 }
 
 version = "1.0"
@@ -24,13 +26,47 @@ kotlin {
 
     @Suppress("UNUSED_VARIABLE")
     sourceSets {
-        val commonMain by getting
-        val commonTest by getting {
+
+        all {
+            //Warning: This class can only be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'
+            languageSettings.optIn("kotlin.RequiresOptIn")
+        }
+
+        val commonMain by getting {
             dependencies {
-                implementation(kotlin("test"))
+                implementation(kotlin("stdlib-common"))
+                implementation("co.touchlab:kermit:_")
+                implementation(Icerock.Mvvm.core)
+                implementation(Icerock.Mvvm.state)
+                implementation(Icerock.Mvvm.livedata)
+                implementation(Icerock.Mvvm.livedataResources)
+                runtimeOnly(Icerock.permissions)
+                implementation(Icerock.Resources)
+                implementation(Russhwolf.multiplatformSettings)
+                implementation(Russhwolf.multiplatformSettingsNoArg)
+                implementation(Jetbrains.Kotlinx.dateTime)
+                implementation(Jetbrains.Kotlinx.serialization)
+                implementation(Ktor.Client.core)
             }
         }
-        val androidMain by getting
+        val commonTest by getting {
+            dependencies {
+                implementation(Kotlin.test)
+            }
+        }
+        val androidMain by getting {
+            dependencies {
+                implementation(AndroidX.Compose.foundation)
+                implementation(AndroidX.multidex)
+                implementation(AndroidX.window)
+                implementation(AndroidX.activity)
+                implementation(AndroidX.Compose.ui)
+                implementation(AndroidX.Compose.material3)
+                implementation(Icerock.Resources.resourcesCompose)
+                implementation(Picovoice.porcupineAndroid)
+                implementation(Ktor.Client.cio)
+            }
+        }
         val androidTest by getting
         val iosX64Main by getting
         val iosArm64Main by getting
@@ -57,7 +93,17 @@ android {
     compileSdk = 32
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
-        minSdk = 21
+        minSdk = 23
         targetSdk = 32
     }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "_"
+    }
+}
+
+multiplatformResources {
+    multiplatformResourcesPackage = "org.rhasspy.mobile" // required
 }

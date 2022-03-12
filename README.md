@@ -1,29 +1,36 @@
 # Rhasspy mobile
 
-This will be a Rhasspy satellite on a mobile phone.
-The originial idea is from [rhasspy-mobile-app](https://github.com/razzo04/rhasspy-mobile-app).
+This will be a Rhasspy satellite on a mobile phone. The original idea is from [rhasspy-mobile-app](https://github.com/razzo04/rhasspy-mobile-app).
 
 ## Getting Started
 
-For setup of server and satellite configuration check the official documentation of [Rhasspy](https://rhasspy.readthedocs.io/en/latest/tutorials/#server-with-satellites).
+For setup of server and satellite configuration check the official documentation
+of [Rhasspy](https://rhasspy.readthedocs.io/en/latest/tutorials/#server-with-satellites).
 
 ## Planned features
 
 | Feature  | Android | iOS | Web |
 | ------------- | ------------- | ------------- | ------------- |
-| Audio Recording | :x: | :x: | :x: |
-| Silence Detection | :x: | :x: | :x: |
-| Remote HTTP(s)  | :x: | :x: | :x: |
+| Audio Recording | :white_check_mark: | :x: | :x: |
+| Silence Detection | :white_check_mark: | :x: | :x: |
+| Remote HTTP(s)  | :white_check_mark: | :x: | :x: |
+| Local (incoming) HTTP(s)  | :x: | :x: | :x: |
 | Remote MQTT(SSL)  | :x: | :x: | :x: |
-| Wakeword Remote (HTTP/MQTT/UDP) | :x: | :x: | :x: |
-| Wakeword Local (Porcupine) | :x: | :x: | :x: |
-| Wakeword Indication (Sound, Visual)  | :x: | :x: | :x: |
+| Remote (incoming) MQTT(SSL)  | :x: | :x: | :x: |
+| WakeWord Remote (HTTP/MQTT/UDP) | :x: | :x: | :x: |
+| WakeWord Local (Porcupine) | :white_check_mark: | :x: | :x: |
+| WakeWord Indication (Sound, Visual)  | :white_check_mark: | :x: | :x: |
 
-# Tech information
+# Information About current status
+
+Local WakeWord, Background Service and Indications are in develop, microphone permission needs to be accepted manually for now via app settings.
+
+# About
+
 While developing i switched from Flutter to Kotlin Multiplatform Mobile for the following reason:
 
-For the wakeword detection / whole app to run in background continously a foreground service is necessary.
-Flutter and all plugins i found use an isolate for this, but therefore execution of the Porcupine Plugin is not possible anymore
-because there are several issues calling a MethodChannel from within an isolate.
-Using Porcupine Android would require to start multiple service (wakeword detection and the other, shared code like mqtt).
-On Kotlin Multiplatform one can create an "expect" Wakeword detection class and implement it "actual" native on both platforms, but simply call it from the shared code which will host the Foreground Service.
+For the WakeWord detection / whole app to run in background continuously a foreground service is necessary. Flutter and all plugins i found use an
+isolate for this, but therefore execution of the Porcupine Plugin is not possible anymore because there are several issues calling a MethodChannel
+from within an isolate. Using Porcupine Android would require to start multiple service (WakeWord detection and the other, shared code like mqtt). On
+Kotlin Multiplatform one can create an "expect" WakeWord detection class and implement it "actual" native on both platforms, but simply call it from
+the shared code which will host the Foreground Service.
