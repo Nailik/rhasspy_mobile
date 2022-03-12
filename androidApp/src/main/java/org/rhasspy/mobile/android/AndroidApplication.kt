@@ -2,7 +2,7 @@ package org.rhasspy.mobile.android
 
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.NativeApplication
-import org.rhasspy.mobile.android.services.WindowService
+import org.rhasspy.mobile.android.uiservices.WindowService
 
 class AndroidApplication : Application() {
 

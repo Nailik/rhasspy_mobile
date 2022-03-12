@@ -6,7 +6,7 @@ plugins {
     id("dev.icerock.mobile.multiplatform-resources")
 }
 
-version = "1.0"
+version = "0.1"
 
 kotlin {
     android()
@@ -95,12 +95,6 @@ android {
     defaultConfig {
         minSdk = 23
         targetSdk = 32
-    }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "_"
     }
 }
 

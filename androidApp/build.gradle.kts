@@ -11,11 +11,12 @@ android {
         minSdk = 23
         targetSdk = 32
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.1"
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
         }
     }
     buildFeatures {
@@ -23,6 +24,14 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "_"
+    }
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+            isUniversalApk = false
+        }
     }
 }
 
