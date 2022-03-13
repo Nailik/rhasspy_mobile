@@ -15,6 +15,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.services.native.AudioRecorder
 import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.toByteArray
 import kotlin.native.concurrent.ThreadLocal
 import kotlin.time.Duration.Companion.ZERO
 import kotlin.time.Duration.Companion.milliseconds
@@ -76,7 +77,7 @@ object RecordingService {
                             CoroutineScope(Dispatchers.Main).launch {
                                 //stop instantly
                                 listening.value = false
-                                ServiceInterface.registeredSilence()
+                                ServiceInterface.stopRecording()
                             }
                         }
                     }
@@ -128,6 +129,26 @@ object RecordingService {
         NativeIndication.releaseWakeUp()
     }
 
-    fun getLatestRecording() = data.toByteArray()
+    fun getLatestRecording(): ByteArray {
+        //https://stackoverflow.com/questions/13039846/what-do-the-bytes-in-a-wav-file-represent
+        val byteData = data.toByteArray()
+
+        val fileSize = (byteData.size + 44 - 8).toByteArray()
+        val dataSize = byteData.size.toByteArray()
+
+
+        val header = byteArrayOf(
+            82, 73, 70, 70,
+            fileSize[0], fileSize[1], fileSize[2], fileSize[3], //4-7 overall size
+            87, 65, 86, 69, 102, 109, 116, 32, 16, 0, 0, 0, 1, 0, 1, 0, -128, 62, 0, 0, 0, 125, 0, 0, 2, 0, 16, 0, 100, 97, 116, 97,
+            dataSize[0], dataSize[1], dataSize[2], dataSize[3] //40-43 data size of rest
+        )
+
+
+        return mutableListOf<Byte>().apply {
+            addAll(header.toList())
+            addAll(byteData.toList())
+        }.toByteArray()
+    }
 
 }

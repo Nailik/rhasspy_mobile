@@ -14,6 +14,7 @@
     <application
         android:name="org.rhasspy.mobile.android.AndroidApplication"
         android:icon="@drawable/ic_launcher"
+        android:label="Rhasspy Mobile"
         android:supportsRtl="true"
         tools:ignore="Instantiatable">
         <service

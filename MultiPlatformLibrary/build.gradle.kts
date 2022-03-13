@@ -35,6 +35,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
+                implementation(kotlin("stdlib"))
                 implementation("co.touchlab:kermit:_")
                 implementation(Icerock.Mvvm.core)
                 implementation(Icerock.Mvvm.state)
@@ -64,7 +65,9 @@ kotlin {
                 implementation(AndroidX.Compose.material3)
                 implementation(Icerock.Resources.resourcesCompose)
                 implementation(Picovoice.porcupineAndroid)
-                implementation(Ktor.Client.cio)
+                implementation(Ktor.Server.core)
+                implementation(Ktor.Server.netty)
+                implementation(Slf4j.simple)
             }
         }
         val androidTest by getting
@@ -95,6 +98,9 @@ android {
     defaultConfig {
         minSdk = 23
         targetSdk = 32
+    }
+    packagingOptions {
+        resources.pickFirsts.add("META-INF/*")
     }
 }
 

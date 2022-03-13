@@ -30,6 +30,7 @@ import org.rhasspy.mobile.logger.LogLevel
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.SettingsScreenViewModel
+import java.math.RoundingMode
 
 private val logger = Logger.withTag("SettingsScreen")
 
@@ -45,6 +46,8 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState, viewModel: SettingsScre
         ThemeItem()
         Divider()
         BackgroundService()
+        Divider()
+        Volume()
         Divider()
         WakeWordIndicationItem()
         Divider()
@@ -201,6 +204,17 @@ fun BackgroundService() {
 
 }
 
+@Composable
+fun Volume() {
+
+    SliderListItem(
+        text = MR.strings.volume,
+        value = AppSettings.volume.observe(),
+        onValueChange = {
+            AppSettings.volume.data = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
+        })
+
+}
 
 @Composable
 fun WakeWordIndicationItem() {

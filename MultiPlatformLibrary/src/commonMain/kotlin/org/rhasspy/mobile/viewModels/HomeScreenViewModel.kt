@@ -72,10 +72,14 @@ class HomeScreenViewModel : ViewModel() {
     }
 
     fun toggleRecording() {
-        ServiceInterface.toggleRecording()
+        if (RecordingService.status.value) {
+            ServiceInterface.stopRecording()
+        } else {
+            ServiceInterface.startRecording()
+        }
     }
 
     fun playRecording() {
-        AudioPlayer.playRecording(RecordingService.getLatestRecording())
+        AudioPlayer.playData(RecordingService.getLatestRecording())
     }
 }

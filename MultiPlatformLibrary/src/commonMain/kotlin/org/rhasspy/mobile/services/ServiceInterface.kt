@@ -20,7 +20,7 @@ object ServiceInterface {
         coroutineScope.launch {
 
             when (ConfigurationSettings.textToSpeechOption.data) {
-                TextToSpeechOptions.RemoteHTTP -> ExternalHttpService.textToSpeech(text)
+                TextToSpeechOptions.RemoteHTTP -> HttpService.textToSpeech(text)
                 TextToSpeechOptions.RemoteMQTT -> TODO()
                 TextToSpeechOptions.Disabled -> logger.d { "textToSpeak disabled" }
             }
@@ -35,7 +35,7 @@ object ServiceInterface {
         coroutineScope.launch {
 
             when (ConfigurationSettings.intentRecognitionOption.data) {
-                IntentRecognitionOptions.RemoteHTTP -> ExternalHttpService.intentRecognition(text)
+                IntentRecognitionOptions.RemoteHTTP -> HttpService.intentRecognition(text)
                 IntentRecognitionOptions.RemoteMQTT -> TODO()
                 IntentRecognitionOptions.Disabled -> logger.d { "intentRecognition disabled" }
             }
@@ -50,7 +50,7 @@ object ServiceInterface {
 
             when (ConfigurationSettings.audioPlayingOption.data) {
                 AudioPlayingOptions.Local -> AudioPlayer.playData(data)
-                AudioPlayingOptions.RemoteHTTP -> ExternalHttpService.playWav(data)
+                AudioPlayingOptions.RemoteHTTP -> HttpService.playWav(data)
                 AudioPlayingOptions.RemoteMQTT -> TODO()
                 AudioPlayingOptions.Disabled -> logger.d { "audioPlaying disabled" }
             }
@@ -65,7 +65,7 @@ object ServiceInterface {
 
             when (ConfigurationSettings.intentHandlingOption.data) {
                 IntentHandlingOptions.HomeAssistant -> TODO()
-                IntentHandlingOptions.RemoteHTTP -> ExternalHttpService.intentHandling(intent)
+                IntentHandlingOptions.RemoteHTTP -> HttpService.intentHandling(intent)
                 IntentHandlingOptions.Disabled -> logger.d { "intentHandling disabled" }
                 IntentHandlingOptions.WithRecognition -> logger.e { "intentHandling with recognition was not used" }
             }
@@ -79,27 +79,11 @@ object ServiceInterface {
         coroutineScope.launch {
 
             when (ConfigurationSettings.speechToTextOption.data) {
-                SpeechToTextOptions.RemoteHTTP -> ExternalHttpService.speechToText(data)
+                SpeechToTextOptions.RemoteHTTP -> HttpService.speechToText(data)
                 SpeechToTextOptions.RemoteMQTT -> TODO()
                 SpeechToTextOptions.Disabled -> logger.d { "speechToText disabled" }
             }
 
-        }
-    }
-
-    fun receivedTextFromSpeech(text: String) {
-        logger.d { "receivedTextFromSpeech $text" }
-
-        intentRecognition(text)
-    }
-
-    fun toggleRecording() {
-        logger.d { "toggleRecording" }
-
-        if (RecordingService.status.value) {
-            stopRecording()
-        } else {
-            startRecording()
         }
     }
 
@@ -114,10 +98,6 @@ object ServiceInterface {
 
         RecordingService.stopRecording()
         speechToText(RecordingService.getLatestRecording())
-    }
-
-    fun registeredSilence() {
-        stopRecording()
     }
 
 }
