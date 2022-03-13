@@ -16,10 +16,9 @@ import org.rhasspy.mobile.settings.AppSettings
 import kotlin.native.concurrent.ThreadLocal
 
 //https://rhasspy.readthedocs.io/en/latest/reference/#http-api
-private val logger = Logger.withTag(HttpServer::class.simpleName!!)
-
 @ThreadLocal
 object HttpServer {
+    private val logger = Logger.withTag(this::class.simpleName!!)
 
     private var server: NativeServer? = null
 
@@ -150,7 +149,9 @@ object HttpServer {
     private fun startRecording() = HttpCallWrapper("/api/start-recording", POST) {
         logger.v { "post /api/start-recording" }
 
-        ServiceInterface.startRecording()
+        CoroutineScope(Dispatchers.Main).launch {
+            ServiceInterface.startRecording()
+        }
     }
 
     /**
@@ -163,7 +164,9 @@ object HttpServer {
     private fun stopRecording() = HttpCallWrapper("/api/stop-recording", POST) {
         logger.v { "post /api/stop-recording" }
 
-        ServiceInterface.stopRecording()
+        CoroutineScope(Dispatchers.Main).launch {
+            ServiceInterface.stopRecording()
+        }
     }
 
 }
