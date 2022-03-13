@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.map
+import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -128,6 +129,28 @@ object RecordingService {
         NativeIndication.releaseWakeUp()
     }
 
-    fun getLatestRecording() = data.toByteArray()
+    fun getLatestRecording(): ByteArray {
+        //https://stackoverflow.com/questions/13039846/what-do-the-bytes-in-a-wav-file-represent
+        val byteData = data.toByteArray()
+
+        val fileSize = (byteData.size + 44 - 8).toByteArray()
+        val dataSize = byteData.size.toByteArray()
+
+
+        val header = byteArrayOf(82, 73, 70, 70,
+            fileSize[0], fileSize[1], fileSize[2], fileSize[3], //4-7 overall size
+            87, 65, 86, 69, 102, 109, 116, 32, 16, 0, 0, 0, 1, 0, 1, 0, -128, 62, 0, 0, 0, 125, 0, 0, 2, 0, 16, 0, 100,97, 116, 97,
+            dataSize[0], dataSize[1], dataSize[2],dataSize[3]) //40-43 data size of rest
+
+
+        return mutableListOf<Byte>().apply {
+            addAll(header.toList())
+            addAll(byteData.toList())
+        }.toByteArray()
+    }
 
 }
+
+//https://stackoverflow.com/questions/67179257/how-can-i-convert-an-int-to-a-bytearray-and-then-convert-it-back-to-an-int-with
+fun Number.toByteArray(size: Int = 4): ByteArray =
+    ByteArray(size) { i -> (this.toLong() shr (i * 8)).toByte() }

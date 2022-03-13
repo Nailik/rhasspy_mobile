@@ -84,7 +84,7 @@ object HttpServer {
     private fun playRecordingPost() = HttpCallWrapper("/api/play-recording", POST) {
         logger.v { "post /api/play-recording" }
 
-        AudioPlayer.playRecording(RecordingService.getLatestRecording())
+        AudioPlayer.playData(RecordingService.getLatestRecording())
     }
 
 

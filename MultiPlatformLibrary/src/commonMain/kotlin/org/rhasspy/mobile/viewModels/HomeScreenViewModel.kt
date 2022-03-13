@@ -80,6 +80,6 @@ class HomeScreenViewModel : ViewModel() {
     }
 
     fun playRecording() {
-        AudioPlayer.playRecording(RecordingService.getLatestRecording())
+        AudioPlayer.playData(RecordingService.getLatestRecording())
     }
 }
