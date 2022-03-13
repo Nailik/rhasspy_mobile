@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.services.native
 
-import org.rhasspy.mobile.services.api.HttpCallWrapper
+import org.rhasspy.mobile.services.httpApi.HttpCallWrapper
 
 expect class NativeServer {
 

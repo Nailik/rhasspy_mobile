@@ -68,6 +68,7 @@ kotlin {
                 implementation(Ktor.Server.core)
                 implementation(Ktor.Server.netty)
                 implementation(Slf4j.simple)
+                implementation(Eclipse.Phao.mqttClient)
             }
         }
         val androidTest by getting
