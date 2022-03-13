@@ -5,6 +5,7 @@ import android.media.AudioFormat
 import android.media.AudioManager
 import android.media.AudioTrack
 import co.touchlab.kermit.Logger
+import org.rhasspy.mobile.settings.AppSettings
 import java.nio.ByteBuffer
 
 
@@ -40,6 +41,8 @@ actual object AudioPlayer {
                 AudioTrack.MODE_STATIC,
                 AudioManager.AUDIO_SESSION_ID_GENERATE
             )
+
+            audioTrack.setVolume(AppSettings.volume.data)
 
             audioTrack.write(data, 0, data.size)
             audioTrack.play()
