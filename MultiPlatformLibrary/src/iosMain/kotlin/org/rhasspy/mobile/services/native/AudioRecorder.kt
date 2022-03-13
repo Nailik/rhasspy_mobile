@@ -7,9 +7,11 @@ actual object AudioRecorder {
     actual val output = MutableSharedFlow<ByteArray>()
 
     actual fun startRecording() {
+        TODO("Not yet implemented")
     }
 
     actual fun stopRecording() {
+        TODO("Not yet implemented")
     }
 
 }

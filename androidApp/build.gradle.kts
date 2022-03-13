@@ -37,6 +37,9 @@ android {
             isUniversalApk = false
         }
     }
+    packagingOptions {
+        resources.pickFirsts.add("META-INF/*")
+    }
 }
 
 kotlin {

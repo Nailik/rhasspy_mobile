@@ -48,8 +48,6 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Ktor.Client.core)
-                implementation(Ktor.Server.core)
-                implementation("io.ktor:ktor-server-cio:_")
             }
         }
         val commonTest by getting {
@@ -67,7 +65,9 @@ kotlin {
                 implementation(AndroidX.Compose.material3)
                 implementation(Icerock.Resources.resourcesCompose)
                 implementation(Picovoice.porcupineAndroid)
-                implementation(Ktor.Client.cio)
+                implementation(Ktor.Server.core)
+                implementation(Ktor.Server.netty)
+                implementation(Slf4j.simple)
             }
         }
         val androidTest by getting
@@ -98,6 +98,9 @@ android {
     defaultConfig {
         minSdk = 23
         targetSdk = 32
+    }
+    packagingOptions {
+        resources.pickFirsts.add("META-INF/*")
     }
 }
 

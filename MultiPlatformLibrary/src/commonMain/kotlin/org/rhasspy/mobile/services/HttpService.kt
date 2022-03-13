@@ -2,10 +2,8 @@ package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
 import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.plugins.*
+import io.ktor.client.features.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import org.rhasspy.mobile.data.IntentHandlingOptions
 import org.rhasspy.mobile.settings.ConfigurationSettings
@@ -34,17 +32,15 @@ object HttpService {
         logger.v { "sending speechToText \nendpoint:\n${ConfigurationSettings.speechToTextHttpEndpoint.data}\ndata:\n${data.size}" }
 
         try {
-            val response = httpClient.post(
+            val response = httpClient.post<String>(
                 url = Url("${ConfigurationSettings.speechToTextHttpEndpoint.data}?noheader=true")
             ) {
-                setBody(data)
+                body = data
             }
 
-            val text = response.bodyAsText()
+            logger.v { "speechToText received:\n$response" }
 
-            logger.v { "speechToText received:\n$text" }
-
-            ServiceInterface.intentRecognition(text)
+            ServiceInterface.intentRecognition(response)
 
         } catch (e: Exception) {
             logger.e(e) { "sending speechToText Exception" }
@@ -69,7 +65,7 @@ object HttpService {
 
             logger.v { "intent will be handled directly $handleDirectly" }
 
-            val response = httpClient.post(
+            val response = httpClient.post<String>(
                 url = Url(
                     "${ConfigurationSettings.intentRecognitionEndpoint.data}${
                         if (!handleDirectly) {
@@ -78,15 +74,13 @@ object HttpService {
                     }"
                 )
             ) {
-                setBody(text)
+                body = text
             }
 
-            val intent = response.bodyAsText()
-
-            logger.v { "intentRecognition received:\n$intent" }
+            logger.v { "intentRecognition received:\n$response" }
 
             if (!handleDirectly) {
-                ServiceInterface.intentHandling(intent)
+                ServiceInterface.intentHandling(response)
             }
 
         } catch (e: Exception) {
@@ -109,15 +103,15 @@ object HttpService {
 
         try {
 
-            val response = httpClient.post(
+            val response = httpClient.post<ByteArray>(
                 url = Url(ConfigurationSettings.textToSpeechEndpoint.data)
             ) {
-                setBody(text)
+                body = text
             }
 
             logger.v { "textToSpeech received Data" }
 
-            ServiceInterface.playAudio(response.body())
+            ServiceInterface.playAudio(response)
 
         } catch (e: Exception) {
             logger.e(e) { "sending text to speech Exception" }
@@ -135,16 +129,16 @@ object HttpService {
         logger.v { "sending audio \nendpoint:\n${ConfigurationSettings.audioPlayingEndpoint.data}\ndata:\n${data.size}" }
 
         try {
-            val response = httpClient.post(
+            val response = httpClient.post<String>(
                 url = Url(ConfigurationSettings.audioPlayingEndpoint.data)
             ) {
                 setAttributes {
                     contentType(ContentType("audio", "wav"))
                 }
-                setBody(data)
+                body = data
             }
 
-            logger.v { "sending audio received:\n${response.bodyAsText()}" }
+            logger.v { "sending audio received:\n${response}" }
 
         } catch (e: Exception) {
             logger.e(e) { "sending audio Exception" }
@@ -174,13 +168,13 @@ object HttpService {
 
         try {
 
-            val response = httpClient.post(
+            val response = httpClient.post<String>(
                 url = Url(ConfigurationSettings.intentHandlingEndpoint.data)
             ) {
-                setBody(intent)
+                body = intent
             }
 
-            logger.v { "sending intent received:\n${response.bodyAsText()}" }
+            logger.v { "sending intent received:\n${response}" }
 
         } catch (e: Exception) {
             logger.e(e) { "sending text to speech Exception" }
