@@ -8,6 +8,7 @@ import android.os.PowerManager
 import androidx.lifecycle.MutableLiveData
 import dev.icerock.moko.resources.FileResource
 import org.rhasspy.mobile.Application
+import org.rhasspy.mobile.settings.AppSettings
 
 /**
  * handles indication of wake up locally
@@ -32,6 +33,9 @@ actual object NativeIndication {
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build()
         )
+
+        mediaPlayer.setVolume(AppSettings.volume.data, AppSettings.volume.data)
+
         mediaPlayer.start()
     }
 
