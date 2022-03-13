@@ -1,12 +1,18 @@
 package org.rhasspy.mobile.services.api
 
 import co.touchlab.kermit.Logger
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.rhasspy.mobile.services.ForegroundService
+import org.rhasspy.mobile.services.RecordingService
+import org.rhasspy.mobile.services.ServiceInterface
+import org.rhasspy.mobile.services.native.AudioPlayer
+import org.rhasspy.mobile.settings.AppSettings
 import kotlin.native.concurrent.ThreadLocal
 
 //https://rhasspy.readthedocs.io/en/latest/reference/#http-api
@@ -79,11 +85,16 @@ private fun Routing.playRecording() {
     this.post("/api/play-recording") {
         logger.v { "post /api/play-recording" }
 
+        AudioPlayer.playRecording(RecordingService.getLatestRecording())
     }
 
     this.get("/api/play-recording") {
         logger.v { "get /api/play-recording" }
 
+        call.respondBytes(
+            bytes = RecordingService.getLatestRecording(),
+            contentType = ContentType("audio", "wav")
+        )
     }
 }
 
@@ -98,6 +109,11 @@ private fun Routing.playWav() {
     this.post("/api/play-wav") {
         logger.v { "post /api/play-wav" }
 
+        if (call.request.contentType() == ContentType("audio", "wav")) {
+            ServiceInterface.playAudio(call.receive())
+        } else {
+            logger.w { "invalid content type ${call.request.contentType()}" }
+        }
     }
 }
 
@@ -111,6 +127,13 @@ private fun Routing.setVolume() {
     this.post("/api/set-volume") {
         logger.v { "post /api/set-volume" }
 
+        val volume = call.receive<Double>()
+
+        if (volume > 0 && volume < 1) {
+            AppSettings.volume.data = volume
+        } else {
+            logger.w { "invalid volume $volume" }
+        }
     }
 }
 
@@ -122,6 +145,7 @@ private fun Routing.startRecording() {
     this.post("/api/start-recording") {
         logger.v { "post /api/start-recording" }
 
+        ServiceInterface.startRecording()
     }
 }
 
@@ -136,5 +160,6 @@ private fun Routing.stopRecording() {
     this.post("/api/stop-recording") {
         logger.v { "post /api/stop-recording" }
 
+        ServiceInterface.stopRecording()
     }
 }

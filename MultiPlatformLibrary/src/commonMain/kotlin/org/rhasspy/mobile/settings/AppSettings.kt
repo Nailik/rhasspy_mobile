@@ -19,6 +19,8 @@ object AppSettings {
     val isWakeWordSoundIndication = AppSetting(SettingsEnum.WakeWordSoundIndication, false)
     val isWakeWordLightIndication = AppSetting(SettingsEnum.WakeWordLightIndication, false)
 
+    val volume = AppSetting(SettingsEnum.Volume, 0.5)
+
     val isShowLog = AppSetting(SettingsEnum.ShowLog, false)
     val logLevel = AppSetting(SettingsEnum.LogLevel, LogLevel.Debug)
 
