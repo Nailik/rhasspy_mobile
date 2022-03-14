@@ -1,8 +1,7 @@
 package org.rhasspy.mobile.services.mqtt.native
 
-import org.eclipse.paho.client.mqttv3.MqttException
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException
-import org.eclipse.paho.client.mqttv3.MqttSecurityException
+import co.touchlab.kermit.Logger
+import org.eclipse.paho.client.mqttv3.*
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence
 import org.rhasspy.mobile.services.mqtt.*
@@ -10,36 +9,43 @@ import org.eclipse.paho.client.mqttv3.MqttClient as PahoMqttClient
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions as PahoConnectOptions
 import org.eclipse.paho.client.mqttv3.MqttMessage as PahoMqttMessage
 
-@ExperimentalStdlibApi
+
 actual class MqttClient actual constructor(
-    actual val brokerUrl: String,
-    actual val clientId: String,
-    persistenceType: Int
+    brokerUrl: String,
+    clientId: String,
+    persistenceType: MqttPersistence,
+    onDelivered: (token: Int) -> Unit,
+    onMessageReceived: (topic: String, message: MqttMessage) -> Unit,
+    onDisconnect: (error: Throwable) -> Unit
 ) {
+    private val logger = Logger.withTag(this::class.simpleName!!)
+
     private var client = when (persistenceType) {
         MqttPersistence.MEMORY -> PahoMqttClient(brokerUrl, clientId, MemoryPersistence())
         MqttPersistence.FILE -> PahoMqttClient(brokerUrl, clientId, MqttDefaultFilePersistence())
         else -> PahoMqttClient(brokerUrl, clientId)
     }
-    actual var deliveryCompleteHandler: (Int) -> Unit = {}
-    actual var connectionLostHandler: (String) -> Unit = {}
-    actual var messageArrivedHandler: (String, MqttMessage) -> Unit = { _, _ -> }
-    private val callback = MqttCallback(deliveryCompleteHandler, connectionLostHandler, messageArrivedHandler)
+
+    private val callback = object : MqttCallback {
+        override fun deliveryComplete(token: IMqttDeliveryToken) {
+            onDelivered(token.messageId)
+        }
+
+        override fun messageArrived(topic: String, message: PahoMqttMessage) {
+            onMessageReceived(topic, message.toMqttMessage())
+        }
+
+        override fun connectionLost(error: Throwable) {
+            onDisconnect(error)
+        }
+    }
+
     actual val isConnected: Boolean
         get() = client.isConnected
 
-    @Suppress("unused", "RedundantSuspendModifier")
-    /**
-     * Publishes a message to the MQTT Broker.
-     * @param topic The MQTT topic to use.
-     * @param msg The MQTT message which includes the payload.
-     * @param timeout Timeout for publishing in milliseconds.
-     * @return Will return a [error][MqttError] if a problem has occurred. If a [error][MqttError] is returned then one
-     * of the following [status objects][MqttStatus] (via [MqttError.statusCode]) is included:
-     * - [Persistence failed][MqttStatus.MSG_PERSISTENCE_FAILED]
-     * - [Message delivery failed][MqttStatus.MSG_DELIVERY_FAILED]
-     */
-    actual suspend fun publish(topic: String, msg: MqttMessage, timeout: Long): MqttError? = try {
+
+    actual fun publish(topic: String, msg: MqttMessage, timeout: Long): MqttError? = try {
+        logger.v { "publish" }
         client.publish(topic, PahoMqttMessage(msg.payload.toByteArray()))
         null
     } catch (mqttPersistenceEx: MqttPersistenceException) {
@@ -56,7 +62,8 @@ actual class MqttClient actual constructor(
      * @return Will return a [error][MqttError] if a problem has occurred. If a [error][MqttError] is returned then the
      * [subscribe failed][MqttStatus.SUBSCRIBE_FAILED] status (via [MqttError.statusCode]) is used.
      */
-    actual suspend fun subscribe(topic: String, qos: MqttQos): MqttError? = try {
+    actual fun subscribe(topic: String, qos: MqttQos): MqttError? = try {
+        logger.v { "subscribe" }
         client.subscribe(topic, qos.value)
         null
     } catch (ex: MqttException) {
@@ -70,7 +77,8 @@ actual class MqttClient actual constructor(
      * @return Will return a error if a problem has occurred. If a [error][MqttError] is returned then the
      * [unsubscribe failed][MqttStatus.UNSUBSCRIBE_FAILED] status (via [MqttError.statusCode]) is used.
      */
-    actual suspend fun unsubscribe(vararg topics: String): MqttError? = try {
+    actual fun unsubscribe(vararg topics: String): MqttError? = try {
+        logger.v { "unsubscribe" }
         client.unsubscribe(topics)
         null
     } catch (ex: MqttException) {
@@ -90,15 +98,11 @@ actual class MqttClient actual constructor(
      * - [Identifier rejected][MqttStatus.IDENTIFIER_REJECTED]
      * - [Unacceptable protocol][MqttStatus.UNACCEPTABLE_PROTOCOL]
      */
-    actual suspend fun connect(connOptions: MqttConnectionOptions): MqttError? {
+    actual fun connect(connOptions: MqttConnectionOptions): MqttError? {
+        logger.v { "connect" }
         var result: MqttError? = null
         if (!isConnected) {
-           /* client = when (persistenceType) {
-                MqttPersistence.MEMORY -> PahoMqttClient(brokerUrl, clientId, MemoryPersistence())
-                MqttPersistence.FILE -> PahoMqttClient(brokerUrl, clientId, MqttDefaultFilePersistence())
-                else -> PahoMqttClient(brokerUrl, clientId)
-            }*/
-            connectToBroker(createPahoConnectOptions(connOptions))
+            connectToBroker(connOptions.toPhaoConnectOptions())
         } else {
             result = MqttError("Cannot connect to MQTT Broker.", MqttStatus.ALREADY_CONNECTED)
         }
@@ -107,6 +111,7 @@ actual class MqttClient actual constructor(
 
     /** Makes a attempt to establish a connection to the MQTT broker. */
     private fun connectToBroker(connOptions: PahoConnectOptions): MqttError? {
+        logger.v { "connectToBroker" }
         var result: MqttError? = null
         var status = MqttStatus.SUCCESS
         try {
@@ -127,13 +132,13 @@ actual class MqttClient actual constructor(
         return result
     }
 
-    @Suppress("unused", "RedundantSuspendModifier")
     /**
      * Disconnects from the MQTT Broker.
      * @return Will return a [error][MqttError] if a problem has occurred. If a [error][MqttError] is returned then the
      * [message persistence failed][MqttStatus.MSG_PERSISTENCE_FAILED] status (via [MqttError.statusCode]) is used.
      */
-    actual suspend fun disconnect(): MqttError? {
+    actual fun disconnect(): MqttError? {
+        logger.v { "disconnect" }
         var result: MqttError? = null
         if (client.isConnected) {
             try {
@@ -146,11 +151,23 @@ actual class MqttClient actual constructor(
         return result
     }
 
-    private fun createPahoConnectOptions(connOptions: MqttConnectionOptions) = PahoConnectOptions().apply {
-        isCleanSession = connOptions.cleanSession
-        keepAliveInterval = connOptions.keepAliveInterval
-        userName = if (connOptions.username.isEmpty()) null else connOptions.username
-        password = if (connOptions.password.isEmpty()) null else connOptions.password.toCharArray()
-        connectionTimeout = connOptions.connectionTimeout
+    private fun MqttConnectionOptions.toPhaoConnectOptions(): PahoConnectOptions {
+        return PahoConnectOptions().apply {
+            isCleanSession = cleanSession
+            keepAliveInterval = keepAliveInterval
+            userName = userName.ifEmpty { null }
+            password = if (passWord.isEmpty()) null else passWord.toCharArray()
+            connectionTimeout = connectionTimeout
+        }
+    }
+
+    private fun PahoMqttMessage.toMqttMessage(): MqttMessage {
+        return MqttMessage(
+            msgId = id,
+            qos = MqttQos.createMqttQos(qos),
+            payload = payload.decodeToString(),
+            retained = isRetained,
+            duplicate = isDuplicate
+        )
     }
 }
