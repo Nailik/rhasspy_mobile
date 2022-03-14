@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
+import dev.icerock.moko.mvvm.livedata.MutableLiveData
+import dev.icerock.moko.mvvm.livedata.readOnly
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +24,9 @@ object MqttService {
 
     private var client: MqttClient? = null
 
+    private val connected = MutableLiveData(false)
+    val isConnected = connected.readOnly()
+
     private const val toggleOn = "hermes/hotword/toggleOn"
     private const val toggleOff = "hermes/hotword/toggleOff"
     private const val startSession = "hermes/dialogueManager/startSession"
@@ -42,28 +47,60 @@ object MqttService {
         )
 
         coroutineScope.launch {
+            logger.d { "connect" }
             client?.connect(
                 MqttConnectionOptions(
-                    userName = ConfigurationSettings.mqttUserName.data,
-                    passWord = ConfigurationSettings.mqttPassword.data
+                    connUsername = ConfigurationSettings.mqttUserName.data,
+                    connPassword = ConfigurationSettings.mqttPassword.data
                 )
-            )
+            )?.also {
+                logger.e { "connect \n${it.statusCode.name} ${it.msg}" }
+            }
+
 
             client?.apply {
-                subscribe(toggleOn)
-                subscribe(toggleOff)
+                CoroutineScope(Dispatchers.Main).launch {
+                    connected.value = isConnected
+                }
 
-                subscribe(startSession)
-                subscribe(endSession)
+                if (isConnected) {
+                    logger.d { "successfully connected" }
 
-                subscribe(playBytes)
+                    subscribe(toggleOn)?.also {
+                        logger.e { "subscribe $toggleOn \n${it.statusCode.name} ${it.msg}" }
+                    }
+
+                    subscribe(toggleOff)?.also {
+                        logger.e { "subscribe $toggleOff \n${it.statusCode.name} ${it.msg}" }
+                    }
+
+                    subscribe(startSession)?.also {
+                        logger.e { "subscribe $startSession \n${it.statusCode.name} ${it.msg}" }
+                    }
+                    subscribe(endSession)?.also {
+                        logger.e { "subscribe $endSession \n${it.statusCode.name} ${it.msg}" }
+                    }
+
+                    subscribe(playBytes)?.also {
+                        logger.e { "subscribe $playBytes \n${it.statusCode.name} ${it.msg}" }
+                    }
+                } else {
+                    logger.e { "client not connected after attempt" }
+                }
             }
         }
     }
 
     fun stop() {
         logger.d { "stop" }
-        client?.disconnect()
+        client?.apply {
+            if (isConnected) {
+                disconnect()?.also {
+                    logger.e { "disconnect \n${it.statusCode.name} ${it.msg}" }
+                }
+            }
+            connected.value = isConnected
+        }
         client = null
     }
 
@@ -94,6 +131,13 @@ object MqttService {
 
     private fun onDisconnect(error: Throwable) {
         logger.e(error) { "onDisconnect" }
+
+        client?.apply {
+            if (!isConnected) {
+                client = null
+            }
+            connected.value = isConnected
+        }
     }
 
     private fun checkSiteId(jsonObject: JsonObject): Boolean {

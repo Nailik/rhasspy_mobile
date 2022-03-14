@@ -125,10 +125,12 @@ actual class MqttClient actual constructor(
                 3 -> MqttStatus.SERVER_UNAVAILABLE
                 2 -> MqttStatus.IDENTIFIER_REJECTED
                 1 -> MqttStatus.UNACCEPTABLE_PROTOCOL
-                else -> throw mqttEx
+                else -> MqttStatus.UNKNOWN
             }
         }
-        if (status != MqttStatus.SUCCESS) result = MqttError("Cannot connect to MQTT Broker.", status)
+        if (status != MqttStatus.SUCCESS) {
+            result = MqttError("Cannot connect to MQTT Broker.", status)
+        }
         return result
     }
 
@@ -155,8 +157,8 @@ actual class MqttClient actual constructor(
         return PahoConnectOptions().apply {
             isCleanSession = cleanSession
             keepAliveInterval = keepAliveInterval
-            userName = userName.ifEmpty { null }
-            password = if (passWord.isEmpty()) null else passWord.toCharArray()
+            userName = connUsername.ifEmpty { null }
+            password = connPassword.toCharArray()
             connectionTimeout = connectionTimeout
         }
     }

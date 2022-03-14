@@ -13,6 +13,6 @@ data class MqttConnectionOptions(
     val retryInterval: Int = 0,
     /** Keep alive interval in seconds. */
     val keepAliveInterval: Int = 60,
-    val userName: String = "",
-    val passWord: String = ""
+    val connUsername: String = "",
+    val connPassword: String = ""
 )
