@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.rhasspy.mobile.services.mqtt.MqttConnectionOptions
 import org.rhasspy.mobile.services.mqtt.MqttMessage
@@ -30,7 +31,11 @@ object MqttService {
     private const val startSession = "hermes/dialogueManager/startSession"
     private const val endSession = "hermes/dialogueManager/endSession"
     private const val setVolume = "rhasspy/audioServer/setVolume"
-    private var playBytes = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playBytes"
+    private var playBytes = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playBytes/#"
+
+    private const val say = "hermes/tts/say"
+    private const val intentRecognition = "hermes/nlu/query"
+    private const val remotePlay = "hermes/audioServer/default/playBytes/0"
 
     fun start() {
         logger.d { "start" }
@@ -167,6 +172,117 @@ object MqttService {
 
     private fun checkSiteId(jsonObject: JsonObject): Boolean {
         return jsonObject["siteId"]?.jsonPrimitive?.content == ConfigurationSettings.siteId.data
+    }
+
+    /**
+     * hermes/tts/say (JSON)
+     * Generate spoken audio for a sentence using the configured text to speech system
+     * Automatically sends playBytes
+     * playBytes.requestId = say.id
+     * text: string - sentence to speak (required)
+     * lang: string? = null - override language for TTS system
+     * id: string? = null - unique ID for request (copied to sayFinished)
+     * volume: float? = null - volume level to speak with (0 = off, 1 = full volume)
+     * siteId: string = "default" - Hermes site ID
+     * sessionId: string? = null - current session ID
+     * Response(s)
+     * hermes/tts/sayFinished (JSON)
+     */
+    suspend fun textToSpeak(text: String) {
+        client?.publish(
+            say, MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("text", JsonPrimitive(text))
+                })
+            )
+        )?.also {
+            logger.e { "textToSpeak $text \n${it.statusCode.name} ${it.msg}" }
+        }
+    }
+
+    /**
+     * hermes/nlu/query (JSON)
+     * Request an intent to be recognized from text
+     * input: string - text to recognize intent from (required)
+     * intentFilter: [string]? = null - valid intent names (null means all)
+     * id: string? = null - unique id for request (copied to response messages)
+     * siteId: string = "default" - Hermes site ID
+     * sessionId: string? = null - current session ID
+     * asrConfidence: float? = null - confidence from ASR system for input text
+     * Response(s)
+     * hermes/intent/<intentName>
+     * hermes/nlu/intentNotRecognized
+     */
+    suspend fun intentRecognition(text: String) {
+        client?.publish(
+            intentRecognition, MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("input", JsonPrimitive(text))
+                })
+            )
+        )?.also {
+            logger.e { "intentRecognition $text \n${it.statusCode.name} ${it.msg}" }
+        }
+    }
+
+
+    /**
+     * hermes/audioServer/<siteId>/playBytes/<requestId> (JSON)
+     * Play WAV data
+     * wav_bytes: bytes - WAV data to play (message payload)
+     * requestId: string - unique ID for request (part of topic)
+     * siteId: string - Hermes site ID (part of topic)
+     * Response(s)
+     * hermes/audioServer/<siteId>/playFinished (JSON)
+     */
+    suspend fun playWav(data: ByteArray) {
+        client?.publish(
+            remotePlay, MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("wav_bytes", buildJsonObject {
+                        put("data", buildJsonArray {
+                            data.forEach {
+                                add(it)
+                            }
+                        })
+                    })
+                })
+            )
+        )?.also {
+            logger.e { "playWav ${data.size} \n${it.statusCode.name} ${it.msg}" }
+        }
+    }
+
+    /**
+     * 1. tell ASR to transcripe
+     * hermes/asr/startListening (JSON)
+     * Tell ASR system to start recording/transcribing
+     * siteId: string = "default" - Hermes site ID
+     * sessionId: string? = null - current session ID
+     * stopOnSilence: bool = true - detect silence and automatically end voice command (Rhasspy only)
+     * sendAudioCaptured: bool = false - send audioCaptured after stop listening (Rhasspy only)
+     * wakewordId: string? = null - id of wake word that triggered session (Rhasspy only)
+     *
+     * 2. send WAV data in chunks (size to test)
+     *
+     * hermes/audioServer/<siteId>/<sessionId>/audioSessionFrame (binary)
+     * Chunk of WAV audio data for session
+     * wav_bytes: bytes - WAV data to play (message payload)
+     * siteId: string - Hermes site ID (part of topic)
+     * sessionId: string - session ID (part of topic)
+     *
+     * 3. when finished tell ASR system to stop
+     *
+     * hermes/asr/stopListening (JSON)
+     * Tell ASR system to stop recording
+     * Emits textCaptured if silence has was not detected earlier
+     * siteId: string = "default" - Hermes site ID
+     * sessionId: string = "" - current session ID
+     *
+     *
+     */
+    suspend fun speechToText(data: ByteArray) {
+
     }
 }
 

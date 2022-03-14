@@ -5,7 +5,6 @@ import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.services.ForegroundService
 import org.rhasspy.mobile.services.RecordingService
 import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.services.http.HttpMethodWrapper.GET
@@ -113,7 +112,8 @@ object HttpServer {
         if (requestContentType() == ContentType("audio", "wav")) {
             ServiceInterface.playAudio(receive())
         } else {
-            logger.w { "invalid content type ${requestContentType()}" }
+            logger.w { "invalid content type ${requestContentType()} but trying" }
+            ServiceInterface.playAudio(receive())
         }
     }
 

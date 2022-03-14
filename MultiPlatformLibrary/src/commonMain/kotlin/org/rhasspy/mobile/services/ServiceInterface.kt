@@ -28,7 +28,7 @@ object ServiceInterface {
 
             when (ConfigurationSettings.textToSpeechOption.data) {
                 TextToSpeechOptions.RemoteHTTP -> HttpService.textToSpeech(text)
-                TextToSpeechOptions.RemoteMQTT -> TODO()
+                TextToSpeechOptions.RemoteMQTT -> MqttService.textToSpeak(text)
                 TextToSpeechOptions.Disabled -> logger.d { "textToSpeak disabled" }
             }
 
@@ -43,7 +43,7 @@ object ServiceInterface {
 
             when (ConfigurationSettings.intentRecognitionOption.data) {
                 IntentRecognitionOptions.RemoteHTTP -> HttpService.intentRecognition(text)
-                IntentRecognitionOptions.RemoteMQTT -> TODO()
+                IntentRecognitionOptions.RemoteMQTT -> MqttService.intentRecognition(text)
                 IntentRecognitionOptions.Disabled -> logger.d { "intentRecognition disabled" }
             }
 
@@ -58,7 +58,7 @@ object ServiceInterface {
             when (ConfigurationSettings.audioPlayingOption.data) {
                 AudioPlayingOptions.Local -> AudioPlayer.playData(data)
                 AudioPlayingOptions.RemoteHTTP -> HttpService.playWav(data)
-                AudioPlayingOptions.RemoteMQTT -> TODO()
+                AudioPlayingOptions.RemoteMQTT -> MqttService.playWav(data)
                 AudioPlayingOptions.Disabled -> logger.d { "audioPlaying disabled" }
             }
 
@@ -87,7 +87,7 @@ object ServiceInterface {
 
             when (ConfigurationSettings.speechToTextOption.data) {
                 SpeechToTextOptions.RemoteHTTP -> HttpService.speechToText(data)
-                SpeechToTextOptions.RemoteMQTT -> TODO()
+                SpeechToTextOptions.RemoteMQTT -> MqttService.speechToText(data)
                 SpeechToTextOptions.Disabled -> logger.d { "speechToText disabled" }
             }
 
