@@ -3,6 +3,7 @@ package org.rhasspy.mobile.services
 import co.touchlab.kermit.Logger
 import io.ktor.client.*
 import io.ktor.client.features.*
+import io.ktor.client.features.websocket.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import org.rhasspy.mobile.data.IntentHandlingOptions
@@ -16,6 +17,7 @@ object HttpService {
 
     private val httpClient = HttpClient {
         expectSuccess = true
+        install(WebSockets)
         install(HttpTimeout) {
             requestTimeoutMillis = 10000
         }

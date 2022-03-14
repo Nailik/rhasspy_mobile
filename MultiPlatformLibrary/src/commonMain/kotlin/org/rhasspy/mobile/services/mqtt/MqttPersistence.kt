@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.services.mqtt.native
+package org.rhasspy.mobile.services.mqtt
 
 /** Type of persistence to use for MQTT. */
 object MqttPersistence {

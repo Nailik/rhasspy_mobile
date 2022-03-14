@@ -48,6 +48,7 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Ktor.Client.core)
+                implementation(Ktor.Client.websockets)
             }
         }
         val commonTest by getting {
@@ -65,10 +66,12 @@ kotlin {
                 implementation(AndroidX.Compose.material3)
                 implementation(Icerock.Resources.resourcesCompose)
                 implementation(Picovoice.porcupineAndroid)
+                implementation(Ktor.Client.cio)
                 implementation(Ktor.Server.core)
                 implementation(Ktor.Server.netty)
                 implementation(Slf4j.simple)
-                implementation(Eclipse.Phao.mqttClient)
+                implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
+                //implementation(Eclipse.Phao.mqttClient)
             }
         }
         val androidTest by getting

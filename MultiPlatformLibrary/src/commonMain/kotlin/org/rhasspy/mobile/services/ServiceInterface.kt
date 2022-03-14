@@ -5,6 +5,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.*
+import org.rhasspy.mobile.services.mqtt.MqttConnectionOptions
+import org.rhasspy.mobile.services.mqtt.MqttPersistence
+import org.rhasspy.mobile.services.mqtt.native.MqttClient
 import org.rhasspy.mobile.services.native.AudioPlayer
 import org.rhasspy.mobile.settings.ConfigurationSettings
 

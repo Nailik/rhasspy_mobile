@@ -11,12 +11,16 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions as PahoConnectOptions
 import org.eclipse.paho.client.mqttv3.MqttMessage as PahoMqttMessage
 
 @ExperimentalStdlibApi
-actual class MqttClient(
-    @Suppress("MemberVisibilityCanBePrivate") actual val brokerUrl: String,
-    @Suppress("MemberVisibilityCanBePrivate") actual val clientId: String = "Default",
-    @Suppress("MemberVisibilityCanBePrivate") val persistenceType: Int = MqttPersistence.NONE
+actual class MqttClient actual constructor(
+    actual val brokerUrl: String,
+    actual val clientId: String,
+    persistenceType: Int
 ) {
-    private var client = PahoMqttClient("tcp://test.com", "")
+    private var client = when (persistenceType) {
+        MqttPersistence.MEMORY -> PahoMqttClient(brokerUrl, clientId, MemoryPersistence())
+        MqttPersistence.FILE -> PahoMqttClient(brokerUrl, clientId, MqttDefaultFilePersistence())
+        else -> PahoMqttClient(brokerUrl, clientId)
+    }
     actual var deliveryCompleteHandler: (Int) -> Unit = {}
     actual var connectionLostHandler: (String) -> Unit = {}
     actual var messageArrivedHandler: (String, MqttMessage) -> Unit = { _, _ -> }
@@ -89,11 +93,11 @@ actual class MqttClient(
     actual suspend fun connect(connOptions: MqttConnectionOptions): MqttError? {
         var result: MqttError? = null
         if (!isConnected) {
-            client = when (persistenceType) {
+           /* client = when (persistenceType) {
                 MqttPersistence.MEMORY -> PahoMqttClient(brokerUrl, clientId, MemoryPersistence())
                 MqttPersistence.FILE -> PahoMqttClient(brokerUrl, clientId, MqttDefaultFilePersistence())
                 else -> PahoMqttClient(brokerUrl, clientId)
-            }
+            }*/
             connectToBroker(createPahoConnectOptions(connOptions))
         } else {
             result = MqttError("Cannot connect to MQTT Broker.", MqttStatus.ALREADY_CONNECTED)

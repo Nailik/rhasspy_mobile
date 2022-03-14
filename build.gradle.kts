@@ -16,6 +16,9 @@ buildscript {
 allprojects {
     repositories {
         google()
+        maven {
+            setUrl("https://repo.eclipse.org/content/repositories/paho-releases/")
+        }
         mavenCentral()
     }
 }

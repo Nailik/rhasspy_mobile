@@ -1,13 +1,14 @@
 package org.rhasspy.mobile.services.mqtt.native
 
-import org.rhasspy.mobile.services.mqtt.MqttConnectionOptions
-import org.rhasspy.mobile.services.mqtt.MqttError
-import org.rhasspy.mobile.services.mqtt.MqttMessage
-import org.rhasspy.mobile.services.mqtt.MqttQos
+import org.rhasspy.mobile.services.mqtt.*
 
 //source https://gitlab.com/napperley/kmqtt-client
 /** Represents a MQTT client which can connect to the MQTT Broker. */
-expect class MqttClient {
+expect class MqttClient(
+     brokerUrl: String,
+     clientId: String = "Default",
+     persistenceType: Int = MqttPersistence.NONE
+) {
     /**
      * The MQTT Broker address which is comprised of a protocol, IPv4 address/FQDN, and port. Here is a example:
      * `tcp://192.168.1.1:1883`
