@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.services.native.AudioPlayer
+import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 object ServiceInterface {
@@ -106,7 +107,13 @@ object ServiceInterface {
         speechToText(RecordingService.getLatestRecording())
     }
 
+    fun setVolume(volume: Float) {
+        AppSettings.volume.data = volume
+    }
+
     fun setListenForWake(action: Boolean) {
+        logger.d { "setListenForWake $action" }
+
         listenForWakeEnabled.value = action
     }
 

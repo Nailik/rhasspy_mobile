@@ -10,6 +10,8 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.floatOrNull
+import kotlinx.serialization.json.jsonPrimitive
 import org.rhasspy.mobile.services.mqtt.MqttConnectionOptions
 import org.rhasspy.mobile.services.mqtt.MqttMessage
 import org.rhasspy.mobile.services.mqtt.MqttPersistence
@@ -31,6 +33,7 @@ object MqttService {
     private const val toggleOff = "hermes/hotword/toggleOff"
     private const val startSession = "hermes/dialogueManager/startSession"
     private const val endSession = "hermes/dialogueManager/endSession"
+    private const val setVolume = "rhasspy/audioServer/setVolume"
     private var playBytes = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playBytes"
 
     fun start() {
@@ -84,6 +87,10 @@ object MqttService {
                     subscribe(playBytes)?.also {
                         logger.e { "subscribe $playBytes \n${it.statusCode.name} ${it.msg}" }
                     }
+
+                    subscribe(setVolume)?.also {
+                        logger.e { "subscribe $setVolume \n${it.statusCode.name} ${it.msg}" }
+                    }
                 } else {
                     logger.e { "client not connected after attempt" }
                 }
@@ -113,19 +120,36 @@ object MqttService {
     }
 
     private fun onMessageReceived(topic: String, message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload)
+        logger.v { "onMessageReceived $topic ${message.payload}" }
+        try {
+            val jsonObject = Json.decodeFromString<JsonObject>(message.payload)
 
-        if (checkSiteId(jsonObject)) {
+            if (checkSiteId(jsonObject)) {
 
-            when (topic) {
-                toggleOn -> ServiceInterface.setListenForWake(true)
-                toggleOff -> ServiceInterface.setListenForWake(false)
-                startSession -> ServiceInterface.startRecording()
-                endSession -> ServiceInterface.stopRecording()
-                playBytes -> ServiceInterface.playAudio(jsonObject["wav_bytes"].toString().toByteArray())
+                CoroutineScope(Dispatchers.Main).launch {
+                    when (topic) {
+                        toggleOn -> ServiceInterface.setListenForWake(true)
+                        toggleOff -> ServiceInterface.setListenForWake(false)
+                        startSession -> ServiceInterface.startRecording()
+                        endSession -> ServiceInterface.stopRecording()
+                        setVolume -> jsonObject["volume"]?.jsonPrimitive?.floatOrNull?.also {
+                            ServiceInterface.setVolume(it)
+                        } ?: kotlin.run {
+                            logger.e { "setVolume invalid value ${jsonObject["volume"]}" }
+                        }
+                        playBytes -> jsonObject["wav_bytes"]?.jsonPrimitive?.content?.toByteArray()?.also {
+                            ServiceInterface.playAudio(it)
+                        } ?: kotlin.run {
+                            logger.e { "playBytes invalid value" }
+                        }
+                    }
+                }
+
+            } else {
+                logger.d("received message on $topic but for different siteId ${jsonObject["siteId"].toString()}")
             }
-        } else {
-            logger.d("received message on $topic but for different siteId ${jsonObject["siteId"].toString()}")
+        } catch (e: Exception) {
+            logger.e(e) { "onMessageReceived error" }
         }
     }
 
@@ -141,7 +165,7 @@ object MqttService {
     }
 
     private fun checkSiteId(jsonObject: JsonObject): Boolean {
-        return jsonObject["siteId"].toString() == ConfigurationSettings.siteId.data
+        return jsonObject["siteId"]?.jsonPrimitive?.content == ConfigurationSettings.siteId.data
     }
 }
 
