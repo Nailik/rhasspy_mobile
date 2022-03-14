@@ -68,7 +68,7 @@ object HttpServer {
         logger.v { "received $action" }
 
         action?.also {
-            ForegroundService.setListenForWake(action)
+            ServiceInterface.setListenForWake(action)
         } ?: kotlin.run {
             logger.w { "invalid body" }
         }

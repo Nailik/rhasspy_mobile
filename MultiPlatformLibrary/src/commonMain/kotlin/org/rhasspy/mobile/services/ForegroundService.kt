@@ -31,6 +31,14 @@ object ForegroundService {
                 action(Action.Reload)
             }
         }
+
+        ServiceInterface.isListenForWakeEnabled.addObserver {
+            if (it) {
+                startWakeWordService()
+            } else {
+                NativeLocalWakeWordService.stop()
+            }
+        }
     }
 
     /**
@@ -73,6 +81,7 @@ object ForegroundService {
 
         startWakeWordService()
         HttpServer.start()
+        MqttService.start()
     }
 
     /**
@@ -83,6 +92,7 @@ object ForegroundService {
 
         NativeLocalWakeWordService.stop()
         HttpServer.stop()
+        MqttService.stop()
     }
 
     /**
@@ -101,14 +111,6 @@ object ForegroundService {
             ConfigurationSettings.wakeWordAccessToken.data.isNotEmpty()
         ) {
             NativeLocalWakeWordService.start()
-        }
-    }
-
-    fun setListenForWake(value: Boolean) {
-        if (value) {
-            startWakeWordService()
-        } else {
-            NativeLocalWakeWordService.stop()
         }
     }
 }

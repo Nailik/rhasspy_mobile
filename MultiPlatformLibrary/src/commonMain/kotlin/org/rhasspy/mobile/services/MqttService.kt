@@ -1,6 +1,13 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
+import io.ktor.utils.io.core.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
 import org.rhasspy.mobile.services.mqtt.MqttConnectionOptions
 import org.rhasspy.mobile.services.mqtt.MqttMessage
 import org.rhasspy.mobile.services.mqtt.MqttPersistence
@@ -11,8 +18,9 @@ import kotlin.native.concurrent.ThreadLocal
 @ThreadLocal
 object MqttService {
     private val logger = Logger.withTag(this::class.simpleName!!)
+    private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
-    var client: MqttClient? = null
+    private var client: MqttClient? = null
 
     private const val toggleOn = "hermes/hotword/toggleOn"
     private const val toggleOff = "hermes/hotword/toggleOff"
@@ -20,7 +28,7 @@ object MqttService {
     private const val endSession = "hermes/dialogueManager/endSession"
     private var playBytes = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playBytes"
 
-    suspend fun start() {
+    fun start() {
         logger.d { "start" }
         playBytes = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playBytes"
 
@@ -33,22 +41,23 @@ object MqttService {
             onDisconnect = { error -> onDisconnect(error) },
         )
 
-        client?.connect(
-            MqttConnectionOptions(
-                userName = ConfigurationSettings.mqttUserName.data,
-                passWord = ConfigurationSettings.mqttPassword.data
+        coroutineScope.launch {
+            client?.connect(
+                MqttConnectionOptions(
+                    userName = ConfigurationSettings.mqttUserName.data,
+                    passWord = ConfigurationSettings.mqttPassword.data
+                )
             )
-        )
 
-        client?.apply {
-            subscribe(toggleOn)
-            subscribe(toggleOff)
+            client?.apply {
+                subscribe(toggleOn)
+                subscribe(toggleOff)
 
-            subscribe(startSession)
-            subscribe(endSession)
+                subscribe(startSession)
+                subscribe(endSession)
 
-            subscribe(playBytes)
-
+                subscribe(playBytes)
+            }
         }
     }
 
@@ -63,25 +72,33 @@ object MqttService {
     }
 
     private fun onDelivered(token: Int) {
-        logger.d { "onDelivered" }
-
+        logger.d { "onDelivered $token" }
     }
 
     private fun onMessageReceived(topic: String, message: MqttMessage) {
-       when(topic){
-           toggleOn ->
-               toggleOff ->
-           startSession ->
-           endSession ->
-           playBytes ->
-       }
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload)
 
+        if (checkSiteId(jsonObject)) {
+
+            when (topic) {
+                toggleOn -> ServiceInterface.setListenForWake(true)
+                toggleOff -> ServiceInterface.setListenForWake(false)
+                startSession -> ServiceInterface.startRecording()
+                endSession -> ServiceInterface.stopRecording()
+                playBytes -> ServiceInterface.playAudio(jsonObject["wav_bytes"].toString().toByteArray())
+            }
+        } else {
+            logger.d("received message on $topic but for different siteId ${jsonObject["siteId"].toString()}")
+        }
     }
 
     private fun onDisconnect(error: Throwable) {
         logger.e(error) { "onDisconnect" }
     }
 
+    private fun checkSiteId(jsonObject: JsonObject): Boolean {
+        return jsonObject["siteId"].toString() == ConfigurationSettings.siteId.data
+    }
 }
 
 //wakeword

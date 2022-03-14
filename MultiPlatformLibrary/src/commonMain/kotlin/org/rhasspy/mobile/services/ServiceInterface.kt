@@ -16,8 +16,8 @@ object ServiceInterface {
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     //toggle on off from mqtt or http service
-    private val wakeWordEnabled = MutableLiveData(true)
-    public val isWakeWordEnabled = wakeWordEnabled.readOnly()
+    private val listenForWakeEnabled = MutableLiveData(true)
+    val isListenForWakeEnabled = listenForWakeEnabled.readOnly()
 
     fun textToSpeak(text: String) {
 
@@ -104,6 +104,10 @@ object ServiceInterface {
 
         RecordingService.stopRecording()
         speechToText(RecordingService.getLatestRecording())
+    }
+
+    fun setListenForWake(action: Boolean) {
+        listenForWakeEnabled.value = action
     }
 
 }
