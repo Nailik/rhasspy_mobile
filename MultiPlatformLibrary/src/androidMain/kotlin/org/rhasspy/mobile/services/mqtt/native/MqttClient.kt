@@ -63,7 +63,7 @@ actual class MqttClient actual constructor(
      * [subscribe failed][MqttStatus.SUBSCRIBE_FAILED] status (via [MqttError.statusCode]) is used.
      */
     actual suspend fun subscribe(topic: String, qos: MqttQos): MqttError? = try {
-        logger.v { "subscribe" }
+        logger.v { "subscribe $topic" }
         client.subscribe(topic, qos.value)
         null
     } catch (ex: MqttException) {

@@ -3,15 +3,11 @@ package org.rhasspy.mobile.services
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.readOnly
-import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.floatOrNull
-import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.*
 import org.rhasspy.mobile.services.mqtt.MqttConnectionOptions
 import org.rhasspy.mobile.services.mqtt.MqttMessage
 import org.rhasspy.mobile.services.mqtt.MqttPersistence
@@ -120,31 +116,36 @@ object MqttService {
     }
 
     private fun onMessageReceived(topic: String, message: MqttMessage) {
-        logger.v { "onMessageReceived $topic ${message.payload}" }
+        //subSequence so we don't print super long wave data
+        logger.v { "onMessageReceived $topic ${message.payload.subSequence(1, 100)}" }
         try {
             val jsonObject = Json.decodeFromString<JsonObject>(message.payload)
 
-            if (checkSiteId(jsonObject)) {
+            if (checkSiteId(jsonObject) || topic == playBytes) {
 
                 CoroutineScope(Dispatchers.Main).launch {
-                    when (topic) {
-                        toggleOn -> ServiceInterface.setListenForWake(true)
-                        toggleOff -> ServiceInterface.setListenForWake(false)
-                        startSession -> ServiceInterface.startRecording()
-                        endSession -> ServiceInterface.stopRecording()
-                        setVolume -> jsonObject["volume"]?.jsonPrimitive?.floatOrNull?.also {
-                            ServiceInterface.setVolume(it)
-                        } ?: kotlin.run {
-                            logger.e { "setVolume invalid value ${jsonObject["volume"]}" }
+                    try { //coroutine catch
+                        when (topic) {
+                            toggleOn -> ServiceInterface.setListenForWake(true)
+                            toggleOff -> ServiceInterface.setListenForWake(false)
+                            startSession -> ServiceInterface.startRecording()
+                            endSession -> ServiceInterface.stopRecording()
+                            setVolume -> jsonObject["volume"]?.jsonPrimitive?.floatOrNull?.also {
+                                ServiceInterface.setVolume(it)
+                            } ?: run {
+                                logger.e { "setVolume invalid value ${jsonObject["volume"]}" }
+                            }
+                            playBytes -> jsonObject["wav_bytes"]?.jsonObject?.get("data")?.also { data ->
+                                ServiceInterface.playAudio(data.jsonArray.map { it.toString().toUInt().toByte() }
+                                    .toByteArray())
+                            } ?: run {
+                                logger.e { "playBytes invalid value" }
+                            }
                         }
-                        playBytes -> jsonObject["wav_bytes"]?.jsonPrimitive?.content?.toByteArray()?.also {
-                            ServiceInterface.playAudio(it)
-                        } ?: kotlin.run {
-                            logger.e { "playBytes invalid value" }
-                        }
+                    } catch (e: Exception) {
+                        logger.e(e) { "onMessageReceived error" }
                     }
                 }
-
             } else {
                 logger.d("received message on $topic but for different siteId ${jsonObject["siteId"].toString()}")
             }
