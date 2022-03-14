@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
+import org.rhasspy.mobile.services.mqtt.MqttConnectionOptions
 import org.rhasspy.mobile.services.mqtt.MqttMessage
 import org.rhasspy.mobile.services.mqtt.MqttPersistence
 import org.rhasspy.mobile.services.mqtt.native.MqttClient
@@ -13,8 +14,16 @@ object MqttService {
 
     var client: MqttClient? = null
 
-    fun start() {
+    private const val toggleOn = "hermes/hotword/toggleOn"
+    private const val toggleOff = "hermes/hotword/toggleOff"
+    private const val startSession = "hermes/dialogueManager/startSession"
+    private const val endSession = "hermes/dialogueManager/endSession"
+    private var playBytes = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playBytes"
+
+    suspend fun start() {
         logger.d { "start" }
+        playBytes = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playBytes"
+
         client = MqttClient(
             brokerUrl = "tcp://${ConfigurationSettings.mqttHost.data}:${ConfigurationSettings.mqttPort.data}",
             clientId = ConfigurationSettings.siteId.data,
@@ -23,6 +32,24 @@ object MqttService {
             onMessageReceived = { topic, message -> onMessageReceived(topic, message) },
             onDisconnect = { error -> onDisconnect(error) },
         )
+
+        client?.connect(
+            MqttConnectionOptions(
+                userName = ConfigurationSettings.mqttUserName.data,
+                passWord = ConfigurationSettings.mqttPassword.data
+            )
+        )
+
+        client?.apply {
+            subscribe(toggleOn)
+            subscribe(toggleOff)
+
+            subscribe(startSession)
+            subscribe(endSession)
+
+            subscribe(playBytes)
+
+        }
     }
 
     fun stop() {
@@ -31,7 +58,7 @@ object MqttService {
         client = null
     }
 
-    fun publish(){
+    fun publish() {
 
     }
 
@@ -41,13 +68,18 @@ object MqttService {
     }
 
     private fun onMessageReceived(topic: String, message: MqttMessage) {
-        logger.d { "onMessageReceived" }
+       when(topic){
+           toggleOn ->
+               toggleOff ->
+           startSession ->
+           endSession ->
+           playBytes ->
+       }
 
     }
 
     private fun onDisconnect(error: Throwable) {
-        logger.d { "onDisconnect" }
-
+        logger.e(error) { "onDisconnect" }
     }
 
 }
@@ -85,9 +117,6 @@ WAV chunk from microphone for a session
 /*
 hermes/dialogueManager/startSession
 Start a new session
-hermes/dialogueManager/continueSession
-Continue an existing session
-
 silence detected
 hermes/dialogueManager/endSession
 End an existing session

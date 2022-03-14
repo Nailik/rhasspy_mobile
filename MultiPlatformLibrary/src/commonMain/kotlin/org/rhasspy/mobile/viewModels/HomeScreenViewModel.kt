@@ -3,7 +3,7 @@ package org.rhasspy.mobile.viewModels
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MediatorLiveData
-import dev.icerock.moko.mvvm.livedata.map
+import dev.icerock.moko.mvvm.livedata.readOnly
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.data.WakeWordOption
@@ -23,8 +23,8 @@ class HomeScreenViewModel : ViewModel() {
     private val isCurrentOverlayPermissionRequestRequired = MediatorLiveData(false)
     private val isCurrentMicrophonePermissionRequestRequired = MediatorLiveData(false)
 
-    val isMicrophonePermissionRequestRequired: LiveData<Boolean> = isCurrentMicrophonePermissionRequestRequired.map { it }
-    val isOverlayPermissionRequestRequired: LiveData<Boolean> = isCurrentOverlayPermissionRequestRequired.map { it }
+    val isMicrophonePermissionRequestRequired: LiveData<Boolean> = isCurrentMicrophonePermissionRequestRequired.readOnly()
+    val isOverlayPermissionRequestRequired: LiveData<Boolean> = isCurrentOverlayPermissionRequestRequired.readOnly()
 
     init {
         AppSettings.languageOption.value.addObserver {

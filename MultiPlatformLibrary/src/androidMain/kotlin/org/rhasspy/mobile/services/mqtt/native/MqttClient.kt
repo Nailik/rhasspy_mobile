@@ -44,7 +44,7 @@ actual class MqttClient actual constructor(
         get() = client.isConnected
 
 
-    actual fun publish(topic: String, msg: MqttMessage, timeout: Long): MqttError? = try {
+    actual suspend fun publish(topic: String, msg: MqttMessage, timeout: Long): MqttError? = try {
         logger.v { "publish" }
         client.publish(topic, PahoMqttMessage(msg.payload.toByteArray()))
         null
@@ -62,7 +62,7 @@ actual class MqttClient actual constructor(
      * @return Will return a [error][MqttError] if a problem has occurred. If a [error][MqttError] is returned then the
      * [subscribe failed][MqttStatus.SUBSCRIBE_FAILED] status (via [MqttError.statusCode]) is used.
      */
-    actual fun subscribe(topic: String, qos: MqttQos): MqttError? = try {
+    actual suspend fun subscribe(topic: String, qos: MqttQos): MqttError? = try {
         logger.v { "subscribe" }
         client.subscribe(topic, qos.value)
         null
@@ -77,7 +77,7 @@ actual class MqttClient actual constructor(
      * @return Will return a error if a problem has occurred. If a [error][MqttError] is returned then the
      * [unsubscribe failed][MqttStatus.UNSUBSCRIBE_FAILED] status (via [MqttError.statusCode]) is used.
      */
-    actual fun unsubscribe(vararg topics: String): MqttError? = try {
+    actual suspend fun unsubscribe(vararg topics: String): MqttError? = try {
         logger.v { "unsubscribe" }
         client.unsubscribe(topics)
         null
@@ -98,7 +98,7 @@ actual class MqttClient actual constructor(
      * - [Identifier rejected][MqttStatus.IDENTIFIER_REJECTED]
      * - [Unacceptable protocol][MqttStatus.UNACCEPTABLE_PROTOCOL]
      */
-    actual fun connect(connOptions: MqttConnectionOptions): MqttError? {
+    actual suspend fun connect(connOptions: MqttConnectionOptions): MqttError? {
         logger.v { "connect" }
         var result: MqttError? = null
         if (!isConnected) {

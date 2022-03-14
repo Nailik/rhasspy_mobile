@@ -3,7 +3,7 @@ package org.rhasspy.mobile.services
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.map
+import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -31,7 +31,7 @@ object RecordingService {
     private val listening = MutableLiveData(false)
 
     //represents listening Status for ui
-    val status: LiveData<Boolean> = listening.map { it }
+    val status: LiveData<Boolean> = listening.readOnly()
 
     private var data = mutableListOf<Byte>()
 

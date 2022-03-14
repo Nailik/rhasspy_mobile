@@ -1,11 +1,12 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
+import dev.icerock.moko.mvvm.livedata.MutableLiveData
+import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.*
-import org.rhasspy.mobile.services.mqtt.native.MqttClient
 import org.rhasspy.mobile.services.native.AudioPlayer
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -13,6 +14,10 @@ object ServiceInterface {
     private val logger = Logger.withTag(this::class.simpleName!!)
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
+
+    //toggle on off from mqtt or http service
+    private val wakeWordEnabled = MutableLiveData(true)
+    public val isWakeWordEnabled = wakeWordEnabled.readOnly()
 
     fun textToSpeak(text: String) {
 

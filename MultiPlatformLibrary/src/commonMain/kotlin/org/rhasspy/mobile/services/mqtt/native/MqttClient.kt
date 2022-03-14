@@ -35,7 +35,7 @@ expect class MqttClient(
      *
      * Handles the deliveryComplete event. First argument is the delivery token.
      */
-    fun publish(topic: String, msg: MqttMessage, timeout: Long = 2000L): MqttError?
+    suspend fun publish(topic: String, msg: MqttMessage, timeout: Long = 2000L): MqttError?
 
     /**
      * Subscribes to a topic.
@@ -43,21 +43,21 @@ expect class MqttClient(
      * @param qos The MQTT quality of service to use.
      * @return Will return a [error][MqttError] if a problem has occurred.
      */
-    fun subscribe(topic: String, qos: MqttQos = MqttQos.AT_MOST_ONCE): MqttError?
+    suspend fun subscribe(topic: String, qos: MqttQos = MqttQos.AT_MOST_ONCE): MqttError?
 
     /**
      * Will unsubscribe from one or more topics.
      * @param topics One or more topics to unsubscribe from. Can include topic filter(s).
      * @return Will return a error if a problem has occurred.
      */
-    fun unsubscribe(vararg topics: String): MqttError?
+    suspend fun unsubscribe(vararg topics: String): MqttError?
 
     /**
      * Connects to the MQTT Broker.
      * @param connOptions The connection options to use.
      * @return Will return a [error][MqttError] if a problem has occurred.
      */
-    fun connect(connOptions: MqttConnectionOptions = MqttConnectionOptions()): MqttError?
+    suspend fun connect(connOptions: MqttConnectionOptions = MqttConnectionOptions()): MqttError?
 
     /**
      * Disconnects from the MQTT Broker.
