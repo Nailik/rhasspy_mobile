@@ -7,7 +7,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import org.rhasspy.mobile.services.httpApi.HttpCallWrapper
+import org.rhasspy.mobile.services.http.HttpCallWrapper
 
 actual class NativeServer(private val applicationEngine: ApplicationEngine) {
 

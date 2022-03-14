@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.services.httpApi
+package org.rhasspy.mobile.services.http
 
 enum class HttpMethodWrapper {
     GET, POST, PUT

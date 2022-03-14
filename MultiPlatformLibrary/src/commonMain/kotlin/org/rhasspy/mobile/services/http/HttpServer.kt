@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.services.httpApi
+package org.rhasspy.mobile.services.http
 
 import co.touchlab.kermit.Logger
 import io.ktor.http.*
@@ -8,8 +8,8 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.services.ForegroundService
 import org.rhasspy.mobile.services.RecordingService
 import org.rhasspy.mobile.services.ServiceInterface
-import org.rhasspy.mobile.services.httpApi.HttpMethodWrapper.GET
-import org.rhasspy.mobile.services.httpApi.HttpMethodWrapper.POST
+import org.rhasspy.mobile.services.http.HttpMethodWrapper.GET
+import org.rhasspy.mobile.services.http.HttpMethodWrapper.POST
 import org.rhasspy.mobile.services.native.AudioPlayer
 import org.rhasspy.mobile.services.native.NativeServer
 import org.rhasspy.mobile.settings.AppSettings
