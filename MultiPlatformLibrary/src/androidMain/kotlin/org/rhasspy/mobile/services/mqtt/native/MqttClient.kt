@@ -1,7 +1,10 @@
 package org.rhasspy.mobile.services.mqtt.native
 
 import co.touchlab.kermit.Logger
-import org.eclipse.paho.client.mqttv3.*
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
+import org.eclipse.paho.client.mqttv3.MqttException
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException
+import org.eclipse.paho.client.mqttv3.MqttSecurityException
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence
 import org.rhasspy.mobile.services.mqtt.*
@@ -26,7 +29,7 @@ actual class MqttClient actual constructor(
         else -> PahoMqttClient(brokerUrl, clientId)
     }
 
-    private val callback = object : MqttCallback {
+    private val callback = object : org.eclipse.paho.client.mqttv3.MqttCallback {
         override fun deliveryComplete(token: IMqttDeliveryToken) {
             onDelivered(token.messageId)
         }

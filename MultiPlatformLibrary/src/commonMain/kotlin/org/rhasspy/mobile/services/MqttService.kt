@@ -1,19 +1,21 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
+import com.benasher44.uuid.Uuid
+import com.benasher44.uuid.uuid4
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.readOnly
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.rhasspy.mobile.services.mqtt.MqttConnectionOptions
 import org.rhasspy.mobile.services.mqtt.MqttMessage
 import org.rhasspy.mobile.services.mqtt.MqttPersistence
+import org.rhasspy.mobile.services.mqtt.MqttResultCallback
 import org.rhasspy.mobile.services.mqtt.native.MqttClient
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import kotlin.math.min
 import kotlin.native.concurrent.ThreadLocal
 
 @ThreadLocal
@@ -36,6 +38,10 @@ object MqttService {
     private const val say = "hermes/tts/say"
     private const val intentRecognition = "hermes/nlu/query"
     private const val remotePlay = "hermes/audioServer/default/playBytes/0"
+
+    private const val sayFinished = "hermes/tts/sayFinished"
+
+    private val callbacks = mutableListOf<MqttResultCallback>()
 
     fun start() {
         logger.d { "start" }
@@ -92,6 +98,11 @@ object MqttService {
                     subscribe(setVolume)?.also {
                         logger.e { "subscribe $setVolume \n${it.statusCode.name} ${it.msg}" }
                     }
+
+                    subscribe(sayFinished)?.also {
+                        logger.e { "subscribe $sayFinished \n${it.statusCode.name} ${it.msg}" }
+                    }
+
                 } else {
                     logger.e { "client not connected after attempt" }
                 }
@@ -112,17 +123,13 @@ object MqttService {
         client = null
     }
 
-    fun publish() {
-
-    }
-
     private fun onDelivered(token: Int) {
         logger.d { "onDelivered $token" }
     }
 
     private fun onMessageReceived(topic: String, message: MqttMessage) {
         //subSequence so we don't print super long wave data
-        logger.v { "onMessageReceived $topic ${message.payload.subSequence(1, 100)}" }
+        logger.v { "onMessageReceived $topic ${message.payload.subSequence(1, min(message.payload.length, 100))}" }
         try {
             val jsonObject = Json.decodeFromString<JsonObject>(message.payload)
 
@@ -140,24 +147,44 @@ object MqttService {
                             } ?: run {
                                 logger.e { "setVolume invalid value ${jsonObject["volume"]}" }
                             }
+                        }
+                    } catch (e: Exception) {
+                        logger.e(e) { "onMessageReceived error" }
+                    }
+                }
+
+            } else {
+
+                CoroutineScope(Dispatchers.Default).launch {
+                    //check the other topics that don't require site id
+                    try { //coroutine catch
+                        when (topic) {
                             playBytes -> jsonObject["wav_bytes"]?.jsonObject?.get("data")?.also { data ->
                                 ServiceInterface.playAudio(data.jsonArray.map { it.toString().toUInt().toByte() }
                                     .toByteArray())
                             } ?: run {
                                 logger.e { "playBytes invalid value" }
                             }
+                            sayFinished -> {
+                                val uuid = Json.decodeFromString<JsonObject>(message.payload)["id"]!!.jsonPrimitive.content
+                                callbacks.firstOrNull { it.resultTopic == topic && it.uuid.toString() == uuid }?.apply {
+                                    callbacks.remove(this)
+                                    callback.invoke(message)
+                                }
+                            }
+                            else -> logger.d("received message on $topic but for different siteId ${jsonObject["siteId"].toString()}")
                         }
                     } catch (e: Exception) {
                         logger.e(e) { "onMessageReceived error" }
                     }
                 }
-            } else {
-                logger.d("received message on $topic but for different siteId ${jsonObject["siteId"].toString()}")
+
             }
         } catch (e: Exception) {
             logger.e(e) { "onMessageReceived error" }
         }
     }
+
 
     private fun onDisconnect(error: Throwable) {
         logger.e(error) { "onDisconnect" }
@@ -188,16 +215,23 @@ object MqttService {
      * Response(s)
      * hermes/tts/sayFinished (JSON)
      */
-    suspend fun textToSpeak(text: String) {
+
+    suspend fun textToSpeak(text: String): MqttMessage? {
+        val uuid = uuid4()
+
         client?.publish(
             say, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
-                    put("text", JsonPrimitive(text))
+                    put("text", text)
+                    put("id", uuid.toString())
                 })
             )
         )?.also {
             logger.e { "textToSpeak $text \n${it.statusCode.name} ${it.msg}" }
         }
+
+
+        return mqttResult(uuid, sayFinished)
     }
 
     /**
@@ -283,6 +317,34 @@ object MqttService {
      */
     suspend fun speechToText(data: ByteArray) {
 
+    }
+
+
+
+    /**
+     * used to retrieve mqtt result on specific topic with specific id
+     */
+    private suspend fun mqttResult(uuid: Uuid, resultTopic: String): MqttMessage? {
+        var result: MqttMessage? = null
+
+        val job = Job()
+
+        val callback = MqttResultCallback(uuid, resultTopic) {
+            result = it
+            job.complete()
+        }
+
+        callbacks.add(callback)
+
+        return try {
+            withTimeout(5000) {
+                job.join()
+                result
+            }
+        } catch (e: Exception) {
+            callbacks.remove(callback)
+            null
+        }
     }
 }
 

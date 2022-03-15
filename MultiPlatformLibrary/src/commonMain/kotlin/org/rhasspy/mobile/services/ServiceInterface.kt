@@ -33,10 +33,17 @@ object ServiceInterface {
         }
     }
 
-    fun wakeWordDetected(){
-        startRecording()
-    }
-
+    /**
+     * Text to Speak requested
+     *
+     * HTTP:
+     * - calls service to generate audio data
+     * - plays audio data afterwards
+     *
+     * MQTT:
+     * - calls default site to speak text
+     * - the remote default site has to output it on there audio output
+     */
     fun textToSpeak(text: String) {
 
         logger.d { "textToSpeak $text" }
@@ -44,14 +51,31 @@ object ServiceInterface {
         coroutineScope.launch {
 
             when (ConfigurationSettings.textToSpeechOption.data) {
-                TextToSpeechOptions.RemoteHTTP -> HttpService.textToSpeech(text)
-                TextToSpeechOptions.RemoteMQTT -> MqttService.textToSpeak(text)
+                TextToSpeechOptions.RemoteHTTP -> HttpService.textToSpeech(text)?.also {
+                    playAudio(it)
+                }
+                TextToSpeechOptions.RemoteMQTT -> MqttService.textToSpeak(text)?.also {
+                    logger.d { "textToSpeak RemoteMQTT" }
+                } ?: run{
+                    logger.e { "timeout" }
+                }
                 TextToSpeechOptions.Disabled -> logger.d { "textToSpeak disabled" }
             }
-
         }
     }
 
+    /**
+     * Intent Recognition requested
+     *
+     * HTTP:
+     * - calls service to recognize intent from text
+     * - if IntentHandlingOptions.WithRecognition is set the remote site will also automatically handle the intent
+     * - else [intentHandling] will be called with received data
+     *
+     * MQTT:
+     * - calls default site to speak text
+     * - the remote default site has to output it on there audio output
+     */
     fun intentRecognition(text: String) {
 
         logger.d { "intentRecognition $text" }
@@ -59,15 +83,22 @@ object ServiceInterface {
         coroutineScope.launch {
 
             when (ConfigurationSettings.intentRecognitionOption.data) {
-                IntentRecognitionOptions.RemoteHTTP -> HttpService.intentRecognition(text)
+                IntentRecognitionOptions.RemoteHTTP -> {
+                    val handleDirectly = ConfigurationSettings.intentHandlingOption.data == IntentHandlingOptions.WithRecognition
+                    HttpService.intentRecognition(text, handleDirectly)?.also {
+                        if (!handleDirectly) {
+                            intentHandling(it)
+                        }
+                    }
+                }
                 IntentRecognitionOptions.RemoteMQTT -> MqttService.intentRecognition(text)
                 IntentRecognitionOptions.Disabled -> logger.d { "intentRecognition disabled" }
             }
-
         }
     }
 
     fun playAudio(data: ByteArray) {
+
         logger.d { "playAudio ${data.size}" }
 
         coroutineScope.launch {
@@ -109,6 +140,11 @@ object ServiceInterface {
             }
 
         }
+    }
+
+
+    fun wakeWordDetected() {
+        startRecording()
     }
 
     fun startRecording() {

@@ -6,7 +6,6 @@ import io.ktor.client.features.*
 import io.ktor.client.features.websocket.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import org.rhasspy.mobile.data.IntentHandlingOptions
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 /**
@@ -29,11 +28,11 @@ object HttpService {
      * Set Accept: application/json to receive JSON with more details
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
-    suspend fun speechToText(data: ByteArray) {
+    suspend fun speechToText(data: ByteArray): String? {
 
         logger.v { "sending speechToText \nendpoint:\n${ConfigurationSettings.speechToTextHttpEndpoint.data}\ndata:\n${data.size}" }
 
-        try {
+        return try {
             val response = httpClient.post<String>(
                 url = Url("${ConfigurationSettings.speechToTextHttpEndpoint.data}?noheader=true")
             ) {
@@ -42,10 +41,11 @@ object HttpService {
 
             logger.v { "speechToText received:\n$response" }
 
-            ServiceInterface.intentRecognition(response)
+            response
 
         } catch (e: Exception) {
             logger.e(e) { "sending speechToText Exception" }
+            null
         }
     }
 
@@ -57,14 +57,11 @@ object HttpService {
      * ?nohass=true - stop Rhasspy from handling the intent
      * ?entity=<entity>&value=<value> - set custom entity/value in recognized intent
      */
-    suspend fun intentRecognition(text: String) {
+    suspend fun intentRecognition(text: String, handleDirectly: Boolean): String? {
 
         logger.v { "sending intentRecognition text\nendpoint:\n${ConfigurationSettings.intentRecognitionEndpoint.data}\ntext:\n$text" }
 
-        try {
-            //check handled directly while recognition
-            val handleDirectly = ConfigurationSettings.intentHandlingOption.data == IntentHandlingOptions.WithRecognition
-
+        return try {
             logger.v { "intent will be handled directly $handleDirectly" }
 
             val response = httpClient.post<String>(
@@ -81,12 +78,10 @@ object HttpService {
 
             logger.v { "intentRecognition received:\n$response" }
 
-            if (!handleDirectly) {
-                ServiceInterface.intentHandling(response)
-            }
-
+            response
         } catch (e: Exception) {
             logger.e(e) { "sending intentRecognition Exception" }
+            null
         }
     }
 
@@ -99,11 +94,11 @@ object HttpService {
      * ?volume=<volume> - volume level to speak at (0 = off, 1 = full volume)
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun textToSpeech(text: String) {
+    suspend fun textToSpeech(text: String): ByteArray? {
 
         logger.v { "sending text to speech\nendpoint:\n${ConfigurationSettings.textToSpeechEndpoint.data}\ntext:\n$text" }
 
-        try {
+        return try {
 
             val response = httpClient.post<ByteArray>(
                 url = Url(ConfigurationSettings.textToSpeechEndpoint.data)
@@ -113,10 +108,10 @@ object HttpService {
 
             logger.v { "textToSpeech received Data" }
 
-            ServiceInterface.playAudio(response)
-
+            response
         } catch (e: Exception) {
             logger.e(e) { "sending text to speech Exception" }
+            null
         }
     }
 
