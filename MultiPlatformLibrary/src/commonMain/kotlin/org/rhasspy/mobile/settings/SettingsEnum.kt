@@ -22,6 +22,7 @@ enum class SettingsEnum {
 
     //Configuration Settings
     SiteId,
+    BaseSiteId2,
 
     HttpSSL,
 

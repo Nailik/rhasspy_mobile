@@ -55,9 +55,9 @@ object ServiceInterface {
                     playAudio(it)
                 }
                 TextToSpeechOptions.RemoteMQTT -> MqttService.textToSpeak(text)?.also {
-                    logger.d { "textToSpeak RemoteMQTT" }
-                } ?: run{
-                    logger.e { "timeout" }
+                    logger.d { "textToSpeak finished" }
+                } ?: run {
+                    logger.w { "textToSpeak timeout" }
                 }
                 TextToSpeechOptions.Disabled -> logger.d { "textToSpeak disabled" }
             }
@@ -73,8 +73,8 @@ object ServiceInterface {
      * - else [intentHandling] will be called with received data
      *
      * MQTT:
-     * - calls default site to speak text
-     * - the remote default site has to output it on there audio output
+     * - calls default site to recognize intent
+     * - then [intentHandling] will be called with received data
      */
     fun intentRecognition(text: String) {
 
@@ -91,12 +91,28 @@ object ServiceInterface {
                         }
                     }
                 }
-                IntentRecognitionOptions.RemoteMQTT -> MqttService.intentRecognition(text)
+                IntentRecognitionOptions.RemoteMQTT -> MqttService.intentRecognition(text)?.also {
+                    intentHandling(it.payload.toString())
+                } ?: run {
+                    logger.w { "intentRecognition timeout" }
+                }
                 IntentRecognitionOptions.Disabled -> logger.d { "intentRecognition disabled" }
             }
         }
     }
 
+    /**
+     * Play Audio (Wav Data)
+     *
+     * Local:
+     * - play audio with volume set
+     *
+     * HTTP:
+     * - calls service to play audio with wav data
+     *
+     * MQTT:
+     * - calls default site to play audio
+     */
     fun playAudio(data: ByteArray) {
 
         logger.d { "playAudio ${data.size}" }
@@ -106,14 +122,32 @@ object ServiceInterface {
             when (ConfigurationSettings.audioPlayingOption.data) {
                 AudioPlayingOptions.Local -> AudioPlayer.playData(data)
                 AudioPlayingOptions.RemoteHTTP -> HttpService.playWav(data)
-                AudioPlayingOptions.RemoteMQTT -> MqttService.playWav(data)
+                AudioPlayingOptions.RemoteMQTT -> MqttService.playWav(data)?.also {
+                    logger.d { "playAudio finished" }
+                } ?: run {
+                    logger.w { "playAudio timeout" }
+                }
                 AudioPlayingOptions.Disabled -> logger.d { "audioPlaying disabled" }
             }
 
         }
     }
 
-    fun intentHandling(intent: String) {
+
+    /**
+     * Play Audio (Wav Data)
+     *
+     * HomeAssistant:
+     * TODO
+     *
+     * HTTP:
+     * - calls service to handle intent
+     *
+     * WithRecognition
+     * - should only be used with HTTP text to intent
+     * - remote text to intent will also handle it
+     */
+    private fun intentHandling(intent: String) {
         logger.d { "intentRecognized $intent" }
 
         coroutineScope.launch {
@@ -121,25 +155,44 @@ object ServiceInterface {
             when (ConfigurationSettings.intentHandlingOption.data) {
                 IntentHandlingOptions.HomeAssistant -> TODO()
                 IntentHandlingOptions.RemoteHTTP -> HttpService.intentHandling(intent)
-                IntentHandlingOptions.Disabled -> logger.d { "intentHandling disabled" }
                 IntentHandlingOptions.WithRecognition -> logger.e { "intentHandling with recognition was not used" }
+                IntentHandlingOptions.Disabled -> logger.d { "intentHandling disabled" }
             }
 
         }
     }
 
+    /**
+     * Speech to Text (Wav Data)
+     *
+     * HTTP:
+     * - calls service to translate speech to text, then handles the intent if dialogue manager is set to local
+     *
+     * RemoteMQTT
+     * - sends
+     */
     fun speechToText(data: ByteArray) {
         logger.d { "speechToText ${data.size}" }
 
         coroutineScope.launch {
 
             when (ConfigurationSettings.speechToTextOption.data) {
-                SpeechToTextOptions.RemoteHTTP -> HttpService.speechToText(data)
-                SpeechToTextOptions.RemoteMQTT -> MqttService.speechToText(data)
+                SpeechToTextOptions.RemoteHTTP -> HttpService.speechToText(data)?.also {
+                    if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+                        intentRecognition(it)
+                    }
+                }
+                SpeechToTextOptions.RemoteMQTT -> MqttService.speechToText(data)?.also {
+                    logger.d { "speechToText ${it.payload}" }
+                } ?: run {
+                    logger.w { "speechToText timeout" }
+                }
                 SpeechToTextOptions.Disabled -> logger.d { "speechToText disabled" }
             }
 
         }
+
+
     }
 
 

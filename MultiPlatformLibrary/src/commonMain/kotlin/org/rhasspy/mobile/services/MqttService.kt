@@ -44,6 +44,13 @@ object MqttService {
     private const val intentNotRecognized = "hermes/nlu/intentNotRecognized"
     private var playFinished = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playFinished"
 
+    private const val asrStartListening = "hermes/asr/startListening"
+    private const val asrStopListening = "hermes/asr/stopListening"
+    private var asrAudioSessionFrame = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/#/audioSessionFrame"
+    private const val asrTextCaptured = " hermes/asr/textCaptured"
+    private const val asrError = "hermes/error/asr"
+
+
     private val callbacks = mutableListOf<MqttResultCallback>()
 
     fun start() {
@@ -51,6 +58,7 @@ object MqttService {
         playBytes = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playBytes"
         playFinished = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playFinished"
         remotePlay = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playBytes/0"
+        asrAudioSessionFrame = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/#/audioSessionFrame"
 
         client = MqttClient(
             brokerUrl = "tcp://${ConfigurationSettings.mqttHost.data}:${ConfigurationSettings.mqttPort.data}",
@@ -81,31 +89,20 @@ object MqttService {
                 if (isConnected) {
                     logger.d { "successfully connected" }
 
-                    subscribe(toggleOn)?.also {
-                        logger.e { "subscribe $toggleOn \n${it.statusCode.name} ${it.msg}" }
-                    }
-
-                    subscribe(toggleOff)?.also {
-                        logger.e { "subscribe $toggleOff \n${it.statusCode.name} ${it.msg}" }
-                    }
-
-                    subscribe(startSession)?.also {
-                        logger.e { "subscribe $startSession \n${it.statusCode.name} ${it.msg}" }
-                    }
-                    subscribe(endSession)?.also {
-                        logger.e { "subscribe $endSession \n${it.statusCode.name} ${it.msg}" }
-                    }
-
-                    subscribe(playBytes)?.also {
-                        logger.e { "subscribe $playBytes \n${it.statusCode.name} ${it.msg}" }
-                    }
-
-                    subscribe(setVolume)?.also {
-                        logger.e { "subscribe $setVolume \n${it.statusCode.name} ${it.msg}" }
-                    }
-
-                    subscribe(sayFinished)?.also {
-                        logger.e { "subscribe $sayFinished \n${it.statusCode.name} ${it.msg}" }
+                    arrayOf(
+                        toggleOn,
+                        toggleOff,
+                        startSession,
+                        endSession,
+                        playBytes,
+                        setVolume,
+                        sayFinished,
+                        asrStartListening,
+                        asrStopListening
+                    ).forEach { topic ->
+                        subscribe(topic)?.also {
+                            logger.e { "subscribe $topic \n${it.statusCode.name} ${it.msg}" }
+                        }
                     }
 
                 } else {
@@ -134,9 +131,9 @@ object MqttService {
 
     private fun onMessageReceived(topic: String, message: MqttMessage) {
         //subSequence so we don't print super long wave data
-        logger.v { "onMessageReceived $topic ${message.payload.subSequence(1, min(message.payload.length, 100))}" }
+        logger.v { "onMessageReceived $topic ${message.payload.toString().subSequence(1, min(message.payload.toString().length, 100))}" }
         try {
-            val jsonObject = Json.decodeFromString<JsonObject>(message.payload)
+            val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
 
             if (checkSiteId(jsonObject) || topic == playBytes) {
 
@@ -173,9 +170,14 @@ object MqttService {
                             intentRecognized,
                             intentNotRecognized,
                             sayFinished,
-                            playFinished -> {
-                                val uuid = Json.decodeFromString<JsonObject>(message.payload)["id"]!!.jsonPrimitive.content
-                                callbacks.firstOrNull { it.resultTopics.contains(topic) && it.uuid.toString() == uuid }?.apply {
+                            playFinished,
+                            asrTextCaptured -> {
+                                val uuid = Json.decodeFromString<JsonObject>(message.payload.toString())["id"]!!.jsonPrimitive.content
+                                callbacks.firstOrNull {
+                                    //startsWith for wildcards
+                                    it.resultTopics.any { t -> topic.startsWith(t.replace("#", "")) }
+                                            && it.uuid.toString() == uuid
+                                }?.apply {
                                     callbacks.remove(this)
                                     callback.invoke(message)
                                 }
@@ -231,6 +233,7 @@ object MqttService {
                 payload = Json.encodeToString(buildJsonObject {
                     put("text", text)
                     put("id", uuid.toString())
+                    put("siteId", ConfigurationSettings.baseSiteId.data)
                 })
             )
         )?.let {
@@ -262,6 +265,7 @@ object MqttService {
                 payload = Json.encodeToString(buildJsonObject {
                     put("input", JsonPrimitive(text))
                     put("id", uuid.toString())
+                    put("siteId", ConfigurationSettings.baseSiteId.data)
                 })
             )
         )?.let {
@@ -285,20 +289,7 @@ object MqttService {
     suspend fun playWav(data: ByteArray): MqttMessage? {
         val uuid = uuid4()
 
-        return client?.publish(
-            remotePlay, MqttMessage(
-                payload = Json.encodeToString(buildJsonObject {
-                    put("wav_bytes", buildJsonObject {
-                        put("data", buildJsonArray {
-                            data.forEach {
-                                add(it)
-                            }
-                        })
-                    })
-                    put("id", uuid.toString())
-                })
-            )
-        )?.let {
+        return client?.publish(remotePlay, MqttMessage(data))?.let {
             logger.e { "playWav ${data.size} \n${it.statusCode.name} ${it.msg}" }
             null
         } ?: run {
@@ -334,8 +325,66 @@ object MqttService {
      *
      *
      */
-    suspend fun speechToText(data: ByteArray) {
+    suspend fun speechToText(data: ByteArray): MqttMessage? {
+        val uuid = uuid4()
 
+        //start listening
+        client?.publish(
+            asrStartListening, MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("sessionId", uuid.toString())
+                    put("stopOnSilence", false)
+                    put("sendAudioCaptured", true)
+                    put("siteId", ConfigurationSettings.baseSiteId.data)
+                })
+            )
+        )?.also {
+            //didn't work
+            logger.e { "asrStartListening ${data.size} \n${it.statusCode.name} ${it.msg}" }
+            return null
+        }
+
+        //send wav data in 50 kilobyte chunks
+        data.toList().chunked(8236).forEach { chunk ->
+            client?.publish(
+                asrAudioSessionFrame.replace("#", uuid.toString()),
+                MqttMessage(chunk.toByteArray())
+            )?.also {
+                //didn't work
+                logger.e { "asrAudioSessionFrame ${data.size} \n${it.statusCode.name} ${it.msg}" }
+                return null
+            }
+        }
+
+        //stop listening and await result
+        client?.publish(
+            asrStopListening, MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("sessionId", uuid.toString())
+                    put("siteId", ConfigurationSettings.baseSiteId.data)
+                })
+            )
+        )?.also {
+            //didn't work
+            logger.e { "asrStopListening ${data.size} \n${it.statusCode.name} ${it.msg}" }
+            return null
+        }
+
+        //stop listening and await result
+        return client?.publish(
+            "rhasspy/asr/recordingFinished", MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("sessionId", uuid.toString())
+                    put("siteId", ConfigurationSettings.baseSiteId.data)
+                })
+            )
+        )?.let {
+            //didn't work
+            logger.e { "recordingFinished ${data.size} \n${it.statusCode.name} ${it.msg}" }
+            null
+        } ?: run {
+            mqttResult(uuid, arrayOf(asrError, asrTextCaptured))
+        }
     }
 
 

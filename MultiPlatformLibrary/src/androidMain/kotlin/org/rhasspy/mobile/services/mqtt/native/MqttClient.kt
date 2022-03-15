@@ -48,8 +48,16 @@ actual class MqttClient actual constructor(
 
 
     actual suspend fun publish(topic: String, msg: MqttMessage, timeout: Long): MqttError? = try {
-        logger.v { "publish" }
-        client.publish(topic, PahoMqttMessage(msg.payload.toByteArray()))
+        logger.v { "publish $topic ${msg.payload is ByteArray} $msg " }
+
+        val data = if (msg.payload !is ByteArray) msg.payload.toString().toByteArray() else msg.payload
+
+        client.publish(topic, PahoMqttMessage(data).apply {
+            id = msg.msgId
+            qos = msg.qos.value
+            isRetained = msg.retained
+        })
+
         null
     } catch (mqttPersistenceEx: MqttPersistenceException) {
         MqttError(mqttPersistenceEx.message ?: "Message persistence failed.", MqttStatus.MSG_PERSISTENCE_FAILED)
@@ -171,8 +179,7 @@ actual class MqttClient actual constructor(
             msgId = id,
             qos = MqttQos.createMqttQos(qos),
             payload = payload.decodeToString(),
-            retained = isRetained,
-            duplicate = isDuplicate
+            retained = isRetained
         )
     }
 }

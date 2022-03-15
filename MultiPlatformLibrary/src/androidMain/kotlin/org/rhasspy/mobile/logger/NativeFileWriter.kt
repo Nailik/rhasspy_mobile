@@ -35,11 +35,15 @@ actual class NativeFileWriter actual constructor(filename: String) {
 
         if (logfile.length() / 1024 >= 2000) {
             //create new file when logfile is 2 MB
-            val oldFile = File("${logfile.parent}/${logfile.nameWithoutExtension}_old.${logfile.extension}")
-            if (oldFile.exists()) {
-                oldFile.delete()
+            try {
+                val oldFile = File("${logfile.parent}/${logfile.nameWithoutExtension}_old.${logfile.extension}")
+                if (oldFile.exists()) {
+                    oldFile.delete()
+                }
+                logfile.copyTo(oldFile)
+            } catch (e: Exception) {
+
             }
-            logfile.copyTo(oldFile)
         }
     }
 
