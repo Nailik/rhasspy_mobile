@@ -71,7 +71,7 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
     override fun invoke(keywordIndex: Int) {
         logger.d { "invoke - keyword detected" }
 
-        ServiceInterface.startRecording()
+        ServiceInterface.wakeWordDetected()
     }
 
 }
