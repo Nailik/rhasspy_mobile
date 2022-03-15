@@ -37,15 +37,20 @@ object MqttService {
 
     private const val say = "hermes/tts/say"
     private const val intentRecognition = "hermes/nlu/query"
-    private const val remotePlay = "hermes/audioServer/default/playBytes/0"
+    private var remotePlay = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playBytes/0"
 
     private const val sayFinished = "hermes/tts/sayFinished"
+    private const val intentRecognized = "hermes/intent/#"
+    private const val intentNotRecognized = "hermes/nlu/intentNotRecognized"
+    private var playFinished = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playFinished"
 
     private val callbacks = mutableListOf<MqttResultCallback>()
 
     fun start() {
         logger.d { "start" }
         playBytes = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playBytes"
+        playFinished = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playFinished"
+        remotePlay = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playBytes/0"
 
         client = MqttClient(
             brokerUrl = "tcp://${ConfigurationSettings.mqttHost.data}:${ConfigurationSettings.mqttPort.data}",
@@ -165,9 +170,12 @@ object MqttService {
                             } ?: run {
                                 logger.e { "playBytes invalid value" }
                             }
-                            sayFinished -> {
+                            intentRecognized,
+                            intentNotRecognized,
+                            sayFinished,
+                            playFinished -> {
                                 val uuid = Json.decodeFromString<JsonObject>(message.payload)["id"]!!.jsonPrimitive.content
-                                callbacks.firstOrNull { it.resultTopic == topic && it.uuid.toString() == uuid }?.apply {
+                                callbacks.firstOrNull { it.resultTopics.contains(topic) && it.uuid.toString() == uuid }?.apply {
                                     callbacks.remove(this)
                                     callback.invoke(message)
                                 }
@@ -215,30 +223,29 @@ object MqttService {
      * Response(s)
      * hermes/tts/sayFinished (JSON)
      */
-
     suspend fun textToSpeak(text: String): MqttMessage? {
         val uuid = uuid4()
 
-        client?.publish(
+        return client?.publish(
             say, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("text", text)
                     put("id", uuid.toString())
                 })
             )
-        )?.also {
+        )?.let {
             logger.e { "textToSpeak $text \n${it.statusCode.name} ${it.msg}" }
+            null
+        } ?: run {
+            mqttResult(uuid, arrayOf(sayFinished))
         }
-
-
-        return mqttResult(uuid, sayFinished)
     }
 
     /**
      * hermes/nlu/query (JSON)
      * Request an intent to be recognized from text
      * input: string - text to recognize intent from (required)
-     * intentFilter: [string]? = null - valid intent names (null means all)
+     * intentFilter: string? = null - valid intent names (null means all)
      * id: string? = null - unique id for request (copied to response messages)
      * siteId: string = "default" - Hermes site ID
      * sessionId: string? = null - current session ID
@@ -247,15 +254,21 @@ object MqttService {
      * hermes/intent/<intentName>
      * hermes/nlu/intentNotRecognized
      */
-    suspend fun intentRecognition(text: String) {
-        client?.publish(
+    suspend fun intentRecognition(text: String): MqttMessage? {
+        val uuid = uuid4()
+
+        return client?.publish(
             intentRecognition, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("input", JsonPrimitive(text))
+                    put("id", uuid.toString())
                 })
             )
-        )?.also {
+        )?.let {
             logger.e { "intentRecognition $text \n${it.statusCode.name} ${it.msg}" }
+            null
+        } ?: run {
+            mqttResult(uuid, arrayOf(intentRecognized, intentNotRecognized))
         }
     }
 
@@ -269,8 +282,10 @@ object MqttService {
      * Response(s)
      * hermes/audioServer/<siteId>/playFinished (JSON)
      */
-    suspend fun playWav(data: ByteArray) {
-        client?.publish(
+    suspend fun playWav(data: ByteArray): MqttMessage? {
+        val uuid = uuid4()
+
+        return client?.publish(
             remotePlay, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("wav_bytes", buildJsonObject {
@@ -280,10 +295,14 @@ object MqttService {
                             }
                         })
                     })
+                    put("id", uuid.toString())
                 })
             )
-        )?.also {
+        )?.let {
             logger.e { "playWav ${data.size} \n${it.statusCode.name} ${it.msg}" }
+            null
+        } ?: run {
+            mqttResult(uuid, arrayOf(playFinished))
         }
     }
 
@@ -320,16 +339,15 @@ object MqttService {
     }
 
 
-
     /**
      * used to retrieve mqtt result on specific topic with specific id
      */
-    private suspend fun mqttResult(uuid: Uuid, resultTopic: String): MqttMessage? {
+    private suspend fun mqttResult(uuid: Uuid, resultTopics: Array<String>): MqttMessage? {
         var result: MqttMessage? = null
 
         val job = Job()
 
-        val callback = MqttResultCallback(uuid, resultTopic) {
+        val callback = MqttResultCallback(uuid, resultTopics) {
             result = it
             job.complete()
         }
