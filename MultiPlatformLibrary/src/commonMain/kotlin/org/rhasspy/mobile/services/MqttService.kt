@@ -18,6 +18,7 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.math.min
 import kotlin.native.concurrent.ThreadLocal
 
+//TODO send events to mqtt (wake word detected ... then use session id for transcription)
 @ThreadLocal
 object MqttService {
     private val logger = Logger.withTag(this::class.simpleName!!)
@@ -28,10 +29,16 @@ object MqttService {
     private val connected = MutableLiveData(false)
     val isConnected = connected.readOnly()
 
+
+    private const val startSession = "hermes/dialogueManager/startSession"
+    private const val continueSession = "hermes/dialogueManager/continueSession"
+    private const val endSession = "hermes/dialogueManager/endSession"
+
+    private const val sessionStarted = "hermes/dialogueManager/sessionStarted"
+    private const val sessionEnded = "hermes/dialogueManager/sessionEnded"
+
     private const val toggleOn = "hermes/hotword/toggleOn"
     private const val toggleOff = "hermes/hotword/toggleOff"
-    private const val startSession = "hermes/dialogueManager/startSession"
-    private const val endSession = "hermes/dialogueManager/endSession"
     private const val setVolume = "rhasspy/audioServer/setVolume"
     private var playBytes = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playBytes/#"
 
@@ -54,6 +61,11 @@ object MqttService {
     private val callbacks = mutableListOf<MqttResultCallback>()
 
     fun start() {
+        if (!ConfigurationSettings.isMQTTEnabled.data) {
+            logger.v { "mqtt not enabled" }
+            return
+        }
+
         logger.d { "start" }
         playBytes = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playBytes"
         playFinished = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playFinished"
@@ -90,10 +102,11 @@ object MqttService {
                     logger.d { "successfully connected" }
 
                     arrayOf(
+                        startSession,
+                        continueSession,
+                        endSession,
                         toggleOn,
                         toggleOff,
-                        startSession,
-                        endSession,
                         playBytes,
                         setVolume,
                         sayFinished,
@@ -140,15 +153,11 @@ object MqttService {
                 CoroutineScope(Dispatchers.Main).launch {
                     try { //coroutine catch
                         when (topic) {
-                            toggleOn -> ServiceInterface.setListenForWake(true)
-                            toggleOff -> ServiceInterface.setListenForWake(false)
-                            startSession -> ServiceInterface.startRecording()
-                            endSession -> ServiceInterface.stopRecording()
-                            setVolume -> jsonObject["volume"]?.jsonPrimitive?.floatOrNull?.also {
-                                ServiceInterface.setVolume(it)
-                            } ?: run {
-                                logger.e { "setVolume invalid value ${jsonObject["volume"]}" }
-                            }
+                            toggleOn -> toggleOn(jsonObject)
+                            toggleOff -> toggleOn(jsonObject)
+                            startSession -> toggleOn(jsonObject)
+                            endSession -> toggleOn(jsonObject)
+                            setVolume -> setVolume(jsonObject)
                         }
                     } catch (e: Exception) {
                         logger.e(e) { "onMessageReceived error" }
@@ -209,6 +218,112 @@ object MqttService {
 
     private fun checkSiteId(jsonObject: JsonObject): Boolean {
         return jsonObject["siteId"]?.jsonPrimitive?.content == ConfigurationSettings.siteId.data
+    }
+
+    //###################################  Input Messages
+
+    /**
+     * https://rhasspy.readthedocs.io/en/latest/reference/#dialoguemanager_startsession
+     *
+     * hermes/dialogueManager/startSession (JSON)
+     * Starts a new dialogue session (done automatically on hotword detected)
+     * siteId: string required - Hermes site ID
+     *
+     * Response(s)
+     * hermes/dialogueManager/sessionStarted
+     */
+    fun startSession(jsonObject: JsonObject) {
+        ServiceInterface.startRecording()
+    }
+
+    /**
+     * https://rhasspy.readthedocs.io/en/latest/reference/#dialoguemanager_continuesession
+     *
+     * hermes/dialogueManager/continueSession (JSON)
+     * Requests that a session be continued after an intent has been recognized
+     * sessionId: string - current session ID (required)
+     */
+    fun continueSession(jsonObject: JsonObject) {
+        //TODO
+    }
+
+    /**
+     * https://rhasspy.readthedocs.io/en/latest/reference/#dialoguemanager_endsession
+     *
+     * hermes/dialogueManager/endSession (JSON)
+     * Requests that a session be terminated nominally
+     * sessionId: string - current session ID (required)
+     */
+    suspend fun endSession(jsonObject: JsonObject) {
+        ServiceInterface.stopRecording(jsonObject["sessionId"]?.jsonPrimitive?.content)
+    }
+
+    //###################################  Output Messages
+
+    /**
+     * hermes/dialogueManager/sessionStarted (JSON)
+     * Indicates a session has started
+     * sessionId: string - current session ID
+     * siteId: string = "default" - Hermes site ID
+     *
+     * Response to [hermes/dialogueManager/startSession]
+     * Also used when session has started for other reasons
+     */
+    fun sessionStarted(uuid: Uuid) {
+        coroutineScope.launch {
+            client?.publish(
+                sessionStarted, MqttMessage(
+                    payload = Json.encodeToString(buildJsonObject {
+                        put("sessionId", uuid.toString())
+                        put("siteId", ConfigurationSettings.siteId.data)
+                    })
+                )
+            )?.also {
+                logger.e { "sessionStarted $uuid \n${it.statusCode.name} ${it.msg}" }
+            }
+        }
+    }
+
+    /**
+     * hermes/dialogueManager/sessionEnded (JSON)
+     * Indicates a session has terminated
+     *
+     * sessionId: string - current session ID
+     * siteId: string = "default" - Hermes site ID
+     *
+     * Response to hermes/dialogueManager/endSession or other reasons for a session termination
+     */
+    fun sessionEnded(uuid: Uuid) {
+        coroutineScope.launch {
+            client?.publish(
+                sessionEnded, MqttMessage(
+                    payload = Json.encodeToString(buildJsonObject {
+                        put("sessionId", uuid.toString())
+                        put("siteId", ConfigurationSettings.siteId.data)
+                    })
+                )
+            )?.also {
+                logger.e { "sessionEnded $uuid \n${it.statusCode.name} ${it.msg}" }
+            }
+        }
+    }
+
+
+    suspend fun toggleOn(jsonObject: JsonObject) {
+        ServiceInterface.setListenForWake(true)
+    }
+
+
+    suspend fun toggleOff(jsonObject: JsonObject) {
+        ServiceInterface.setListenForWake(false)
+    }
+
+    suspend fun setVolume(jsonObject: JsonObject) {
+        jsonObject["volume"]?.jsonPrimitive?.floatOrNull?.also {
+            ServiceInterface.setVolume(it)
+        } ?: run {
+            logger.e { "setVolume invalid value ${jsonObject["volume"]}" }
+        }
     }
 
     /**

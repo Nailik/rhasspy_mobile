@@ -117,61 +117,79 @@ fun Mqtt(viewModel: ConfigurationScreenViewModel) {
         secondaryText = if (viewModel.isMQTTConnected.observe()) MR.strings.connected else MR.strings.notConnected
     ) {
 
-        TextFieldListItem(
-            label = MR.strings.host,
-            value = ConfigurationSettings.mqttHost.observeCurrent(),
-            onValueChange = { ConfigurationSettings.mqttHost.unsavedData = it },
-        )
-
-        TextFieldListItem(
-            label = MR.strings.port,
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            value = ConfigurationSettings.mqttPort.observeCurrent(),
-            onValueChange = { ConfigurationSettings.mqttPort.unsavedData = it },
-        )
-
-        TextFieldListItem(
-            value = ConfigurationSettings.mqttUserName.observeCurrent(),
-            onValueChange = { ConfigurationSettings.mqttUserName.unsavedData = it },
-            label = MR.strings.userName
-        )
-
-        var isShowPassword by rememberSaveable { mutableStateOf(false) }
-
-        TextFieldListItem(
-            value = ConfigurationSettings.mqttPassword.observeCurrent(),
-            onValueChange = { ConfigurationSettings.mqttPassword.unsavedData = it },
-            label = MR.strings.password,
-            visualTransformation = if (isShowPassword) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                IconButton(onClick = { isShowPassword = !isShowPassword }) {
-                    Icon(
-                        if (isShowPassword) {
-                            Icons.Filled.Visibility
-                        } else {
-                            Icons.Filled.VisibilityOff
-                        },
-                        contentDescription = MR.strings.visibility,
-                    )
-                }
-            },
-        )
-
-        val isMqttSSL = ConfigurationSettings.isMqttSSL.observeCurrent()
+        val isMqttEnabled = ConfigurationSettings.isMQTTEnabled.observeCurrent()
 
         SwitchListItem(
-            text = MR.strings.enableSSL,
-            isChecked = isMqttSSL,
-            onCheckedChange = { ConfigurationSettings.isMqttSSL.unsavedData = it })
+            text = MR.strings.externalMQTT,
+            isChecked = isMqttEnabled,
+            onCheckedChange = { ConfigurationSettings.isMQTTEnabled.unsavedData = it })
+
 
         AnimatedVisibility(
             enter = expandVertically(),
             exit = shrinkVertically(),
-            visible = isMqttSSL
+            visible = isMqttEnabled
         ) {
-            OutlineButtonListItem(
-                text = MR.strings.chooseCertificate,
-                onClick = { })
+
+            Column {
+
+                TextFieldListItem(
+                    label = MR.strings.host,
+                    value = ConfigurationSettings.mqttHost.observeCurrent(),
+                    onValueChange = { ConfigurationSettings.mqttHost.unsavedData = it },
+                )
+
+                TextFieldListItem(
+                    label = MR.strings.port,
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    value = ConfigurationSettings.mqttPort.observeCurrent(),
+                    onValueChange = { ConfigurationSettings.mqttPort.unsavedData = it },
+                )
+
+                TextFieldListItem(
+                    value = ConfigurationSettings.mqttUserName.observeCurrent(),
+                    onValueChange = { ConfigurationSettings.mqttUserName.unsavedData = it },
+                    label = MR.strings.userName
+                )
+
+                var isShowPassword by rememberSaveable { mutableStateOf(false) }
+
+                TextFieldListItem(
+                    value = ConfigurationSettings.mqttPassword.observeCurrent(),
+                    onValueChange = { ConfigurationSettings.mqttPassword.unsavedData = it },
+                    label = MR.strings.password,
+                    visualTransformation = if (isShowPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = { isShowPassword = !isShowPassword }) {
+                            Icon(
+                                if (isShowPassword) {
+                                    Icons.Filled.Visibility
+                                } else {
+                                    Icons.Filled.VisibilityOff
+                                },
+                                contentDescription = MR.strings.visibility,
+                            )
+                        }
+                    },
+                )
+
+                val isMqttSSL = ConfigurationSettings.isMqttSSL.observeCurrent()
+
+                SwitchListItem(
+                    text = MR.strings.enableSSL,
+                    isChecked = isMqttSSL,
+                    onCheckedChange = { ConfigurationSettings.isMqttSSL.unsavedData = it })
+
+                AnimatedVisibility(
+                    enter = expandVertically(),
+                    exit = shrinkVertically(),
+                    visible = isMqttSSL
+                ) {
+                    OutlineButtonListItem(
+                        text = MR.strings.chooseCertificate,
+                        onClick = { })
+                }
+            }
         }
     }
 }

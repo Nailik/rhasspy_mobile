@@ -6,6 +6,7 @@
     <string name="settings">Settings</string>
     <string name="siteId">site ID</string>
     <string name="mqtt">MQTT</string>
+    <string name="externalMQTT">External MQTT</string>
     <string name="notConnected">Not Connected</string>
     <string name="connected">Connected</string>
     <string name="on">On</string>

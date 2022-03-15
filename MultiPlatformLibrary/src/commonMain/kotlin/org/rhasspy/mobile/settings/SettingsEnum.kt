@@ -27,6 +27,7 @@ enum class SettingsEnum {
     HttpSSL,
 
     MQTT_SSL,
+    MQTT_ENABLED,
     MQTTHost,
     MQTTPort,
     MQTTUserName,

@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
+import com.benasher44.uuid.Uuid
+import com.benasher44.uuid.uuid4
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +24,9 @@ object ServiceInterface {
 
     //toggle on off from mqtt or http service
     private val listenForWakeEnabled = MutableLiveData(true)
+
+    var sessionId: Uuid? = null
+        private set
 
     init {
         listenForWakeEnabled.addObserver {
@@ -170,6 +175,7 @@ object ServiceInterface {
      *
      * RemoteMQTT
      * - sends
+     * - todo let rhasspy determine silence
      */
     fun speechToText(data: ByteArray) {
         logger.d { "speechToText ${data.size}" }
@@ -203,16 +209,38 @@ object ServiceInterface {
     fun startRecording() {
         logger.d { "startRecording" }
 
+        sessionId = uuid4().also {
+            if (ConfigurationSettings.isMQTTEnabled.data) {
+                MqttService.sessionStarted(it)
+            }
+        }
+
         showIndication()
         RecordingService.startRecording()
     }
 
-    fun stopRecording() {
-        logger.d { "stopRecording" }
+    fun stopRecording(uuid: String? = sessionId?.toString()) {
+        uuid?.also { id ->
+            sessionId?.also {
+                if (id == it.toString()) {
+                    logger.d { "stopRecording" }
 
-        stopIndication()
-        RecordingService.stopRecording()
-        speechToText(RecordingService.getLatestRecording())
+                    stopIndication()
+                    RecordingService.stopRecording()
+                    speechToText(RecordingService.getLatestRecording())
+
+                    if (ConfigurationSettings.isMQTTEnabled.data) {
+                        MqttService.sessionEnded(it)
+                    }
+
+                    sessionId = null
+                }
+            } ?: run {
+                logger.w { "no session running" }
+            }
+        } ?: run {
+            logger.w { "sessionId missing" }
+        }
     }
 
     fun setVolume(volume: Float) {
