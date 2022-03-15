@@ -49,6 +49,7 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Ktor.Client.core)
                 implementation(Ktor.Client.websockets)
+                implementation(Benasher.uuid)
             }
         }
         val commonTest by getting {
