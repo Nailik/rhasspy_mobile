@@ -11,9 +11,7 @@ import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.services.native.AudioRecorder
-import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.toByteArray
 import kotlin.native.concurrent.ThreadLocal
@@ -58,7 +56,6 @@ object RecordingService {
         firstSilenceDetected = null
         listening.value = true
         data.clear()
-        indication()
 
         job = coroutineScope.launch {
             AudioRecorder.output.collectIndexed { _, value ->
@@ -95,38 +92,8 @@ object RecordingService {
         logger.d { "stopRecording" }
 
         listening.value = false
-        stopIndication()
         AudioRecorder.stopRecording()
         job?.cancel()
-    }
-
-    /**
-     * starts wake word indication according to settings
-     */
-    private fun indication() {
-        logger.d { "indication" }
-
-        if (AppSettings.isWakeWordSoundIndication.data) {
-            NativeIndication.playAudio(MR.files.etc_wav_beep_hi)
-        }
-
-        if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data) {
-            NativeIndication.wakeUpScreen()
-        }
-
-        if (AppSettings.isWakeWordLightIndication.data) {
-            NativeIndication.showIndication()
-        }
-    }
-
-    /**
-     * stops all indications
-     */
-    private fun stopIndication() {
-        logger.d { "stopIndication" }
-
-        NativeIndication.closeIndicationOverOtherApps()
-        NativeIndication.releaseWakeUp()
     }
 
     fun getLatestRecording(): ByteArray {

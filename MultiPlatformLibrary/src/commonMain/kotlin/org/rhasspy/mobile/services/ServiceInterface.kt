@@ -2,14 +2,18 @@ package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.*
+import org.rhasspy.mobile.services.http.HttpServer
 import org.rhasspy.mobile.services.native.AudioPlayer
+import org.rhasspy.mobile.services.native.NativeIndication
+import org.rhasspy.mobile.services.native.NativeLocalWakeWordService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.viewModels.GlobalData
 
 object ServiceInterface {
     private val logger = Logger.withTag(this::class.simpleName!!)
@@ -18,7 +22,20 @@ object ServiceInterface {
 
     //toggle on off from mqtt or http service
     private val listenForWakeEnabled = MutableLiveData(true)
-    val isListenForWakeEnabled = listenForWakeEnabled.readOnly()
+
+    init {
+        listenForWakeEnabled.addObserver {
+            if (it) {
+                startWakeWordService()
+            } else {
+                NativeLocalWakeWordService.stop()
+            }
+        }
+    }
+
+    fun wakeWordDetected(){
+        startRecording()
+    }
 
     fun textToSpeak(text: String) {
 
@@ -97,12 +114,14 @@ object ServiceInterface {
     fun startRecording() {
         logger.d { "startRecording" }
 
+        showIndication()
         RecordingService.startRecording()
     }
 
     fun stopRecording() {
         logger.d { "stopRecording" }
 
+        stopIndication()
         RecordingService.stopRecording()
         speechToText(RecordingService.getLatestRecording())
     }
@@ -115,6 +134,94 @@ object ServiceInterface {
         logger.d { "setListenForWake $action" }
 
         listenForWakeEnabled.value = action
+    }
+
+    fun showIndication() {
+        if (AppSettings.isWakeWordSoundIndication.data) {
+            NativeIndication.playAudio(MR.files.etc_wav_beep_hi)
+        }
+
+        if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data) {
+            NativeIndication.wakeUpScreen()
+        }
+
+        if (AppSettings.isWakeWordLightIndication.data) {
+            NativeIndication.showIndication()
+        }
+    }
+
+    fun stopIndication() {
+        logger.d { "stopIndication" }
+
+        NativeIndication.closeIndicationOverOtherApps()
+        NativeIndication.releaseWakeUp()
+    }
+
+
+    /**
+     * Start services according to settings
+     */
+    fun startServices() {
+        logger.d { "startServices" }
+
+        startWakeWordService()
+        HttpServer.start()
+        MqttService.start()
+    }
+
+    /**
+     * Stop services according to settings
+     */
+    fun stopServices() {
+        logger.d { "stopServices" }
+
+        NativeLocalWakeWordService.stop()
+        HttpServer.stop()
+        MqttService.stop()
+    }
+
+    /**
+     * Reload services according to settings
+     * via start and stop
+     */
+    fun reloadServices() {
+        logger.d { "reloadServices" }
+
+        stopServices()
+        startServices()
+    }
+
+    fun startWakeWordService() {
+        if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.Porcupine &&
+            ConfigurationSettings.wakeWordAccessToken.data.isNotEmpty()
+        ) {
+            NativeLocalWakeWordService.start()
+        }
+    }
+
+    fun getLatestRecording(): ByteArray {
+        return RecordingService.getLatestRecording()
+    }
+
+    fun saveChanges() {
+        GlobalData.saveAllChanges()
+        ForegroundService.action(Action.Reload)
+    }
+
+    fun resetChanges() {
+        GlobalData.resetChanges()
+    }
+
+    fun toggleRecording() {
+        if (RecordingService.status.value) {
+            stopRecording()
+        } else {
+            startRecording()
+        }
+    }
+
+    fun playRecording() {
+        AudioPlayer.playData(getLatestRecording())
     }
 
 }

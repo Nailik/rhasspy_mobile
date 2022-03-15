@@ -5,13 +5,10 @@ import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.services.RecordingService
 import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.services.http.HttpMethodWrapper.GET
 import org.rhasspy.mobile.services.http.HttpMethodWrapper.POST
-import org.rhasspy.mobile.services.native.AudioPlayer
 import org.rhasspy.mobile.services.native.NativeServer
-import org.rhasspy.mobile.settings.AppSettings
 import kotlin.native.concurrent.ThreadLocal
 
 //https://rhasspy.readthedocs.io/en/latest/reference/#http-api
@@ -82,7 +79,7 @@ object HttpServer {
     private fun playRecordingPost() = HttpCallWrapper("/api/play-recording", POST) {
         logger.v { "post /api/play-recording" }
 
-        AudioPlayer.playData(RecordingService.getLatestRecording())
+        ServiceInterface.playRecording()
     }
 
 
@@ -94,7 +91,7 @@ object HttpServer {
         logger.v { "get /api/play-recording" }
 
         respondBytes(
-            bytes = RecordingService.getLatestRecording(),
+            bytes = ServiceInterface.getLatestRecording(),
             contentType = ContentType("audio", "wav")
         )
     }
@@ -132,7 +129,7 @@ object HttpServer {
         volume?.also {
             if (volume > 0F && volume < 1F) {
                 CoroutineScope(Dispatchers.Main).launch {
-                    AppSettings.volume.data = volume
+                    ServiceInterface.setVolume(volume)
                 }
             }
             return@HttpCallWrapper

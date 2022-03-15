@@ -9,11 +9,8 @@ import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.nativeutils.OverlayPermission
-import org.rhasspy.mobile.services.Action
-import org.rhasspy.mobile.services.ForegroundService
 import org.rhasspy.mobile.services.RecordingService
 import org.rhasspy.mobile.services.ServiceInterface
-import org.rhasspy.mobile.services.native.AudioPlayer
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -27,6 +24,8 @@ class HomeScreenViewModel : ViewModel() {
     val isOverlayPermissionRequestRequired: LiveData<Boolean> = isCurrentOverlayPermissionRequestRequired.readOnly()
 
     init {
+        logger.v { "init" }
+
         AppSettings.languageOption.value.addObserver {
             StringDesc.localeType = StringDesc.LocaleType.Custom(it.code)
         }
@@ -50,36 +49,15 @@ class HomeScreenViewModel : ViewModel() {
     val isRecording = RecordingService.status
 
 
-    fun saveAndApplyChanges() {
-        logger.i { "saveAndApplyChanges" }
+    fun saveAndApplyChanges() = ServiceInterface.saveChanges()
 
-        GlobalData.saveAllChanges()
-        ForegroundService.action(Action.Reload)
-    }
+    fun resetChanges() = ServiceInterface.resetChanges()
 
-    fun resetChanges() {
-        logger.i { "resetChanges" }
+    fun textToSpeak(text: String) = ServiceInterface.textToSpeak(text)
 
-        GlobalData.resetChanges()
-    }
+    fun intentRecognition(text: String) = ServiceInterface.intentRecognition(text)
 
-    fun textToSpeak(text: String) {
-        ServiceInterface.textToSpeak(text)
-    }
+    fun toggleRecording() = ServiceInterface.toggleRecording()
 
-    fun intentRecognition(text: String) {
-        ServiceInterface.intentRecognition(text)
-    }
-
-    fun toggleRecording() {
-        if (RecordingService.status.value) {
-            ServiceInterface.stopRecording()
-        } else {
-            ServiceInterface.startRecording()
-        }
-    }
-
-    fun playRecording() {
-        AudioPlayer.playData(RecordingService.getLatestRecording())
-    }
+    fun playRecording() = ServiceInterface.playRecording()
 }
