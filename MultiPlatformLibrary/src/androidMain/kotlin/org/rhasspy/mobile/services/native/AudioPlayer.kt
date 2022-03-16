@@ -11,8 +11,12 @@ import java.nio.ByteBuffer
 
 actual object AudioPlayer {
     private val logger = Logger.withTag(this::class.simpleName!!)
+    private var isEnabled = true
 
     actual fun playData(data: ByteArray) {
+        if (!isEnabled) {
+            logger.v { "AudioPlayer NOT enabled" }
+        }
 
         try {
             logger.v { "start audio stream" }
@@ -51,6 +55,10 @@ actual object AudioPlayer {
         } catch (e: Exception) {
             logger.e(e) { "Exception while playing audio data" }
         }
+    }
+
+    actual fun setEnabled(enabled: Boolean) {
+        this.isEnabled = enabled
     }
 
 }

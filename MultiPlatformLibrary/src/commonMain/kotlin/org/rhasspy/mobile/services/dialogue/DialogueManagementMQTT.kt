@@ -1,29 +1,26 @@
 package org.rhasspy.mobile.services.dialogue
 
-import com.benasher44.uuid.uuid4
-import org.rhasspy.mobile.services.DialogueAction
 import org.rhasspy.mobile.services.MqttService
-import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.native.concurrent.ThreadLocal
 
 @ThreadLocal
 object DialogueManagementMQTT : IDialogueManagement() {
 
-    override suspend fun doAction(action: DialogueAction) {
-        when (action) {
-            DialogueAction.HotWordDetected -> {
+    override suspend fun doAction(inputAction: DialogueInputAction) {
+        when (inputAction) {
+            DialogueInputAction.HotWordDetected -> {
                 //send that wake word was toggled
                 MqttService.toggleOnWakeWord()
             }
-            DialogueAction.StartSession -> {
+            DialogueInputAction.StartSession -> {
 
             }
-            DialogueAction.SessionStarted -> TODO()
-            DialogueAction.ToggleHotWordOn -> TODO()
-            DialogueAction.ToggleHotWordOff -> TODO()
-            DialogueAction.StartListening -> TODO()
-            DialogueAction.StopListening -> TODO()
-            DialogueAction.SessionEnded -> TODO()
+            DialogueInputAction.SessionStarted -> TODO()
+            DialogueInputAction.ToggleHotWordOn -> TODO()
+            DialogueInputAction.ToggleHotWordOff -> TODO()
+            DialogueInputAction.StartListening -> TODO()
+            DialogueInputAction.StopListening -> TODO()
+            DialogueInputAction.SessionEnded -> TODO()
         }
     }
 

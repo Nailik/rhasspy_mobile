@@ -27,14 +27,14 @@ object ServiceInterface {
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     //toggle on off from mqtt or http service
-    private val listenForWakeEnabled = MutableLiveData(true)
+    private val wakeWordEnabled = MutableLiveData(true)
 
     //collect audio for mqtt service
     private var collectAudioJob: Job? = null
 
 
     init {
-        listenForWakeEnabled.addObserver {
+        wakeWordEnabled.addObserver {
             if (it) {
                 startWakeWordService()
             } else {
@@ -44,22 +44,22 @@ object ServiceInterface {
     }
 
 
-    fun onAction(action: DialogueAction) {
+    fun onAction(inputAction: DialogueInputAction) {
 
         coroutineScope.launch {
 
             when (ConfigurationSettings.dialogueManagementOption.data) {
                 DialogueManagementOptions.Local -> {
                     //do the next thing according to previous action
-                    DialogueManagementLocal.doAction(action)
+                    DialogueManagementLocal.doAction(inputAction)
                 }
                 DialogueManagementOptions.RemoteMQTT -> {
                     //listen to mqtt and then decide what to do
-                    DialogueManagementMQTT.doAction(action)
+                    DialogueManagementMQTT.doAction(inputAction)
                 }
                 DialogueManagementOptions.Disabled -> {
                     //do nothing at all
-                    logger.v { "no dialog management for action ${action.name}" }
+                    logger.v { "no dialog management for action ${inputAction.name}" }
                 }
             }
         }
@@ -67,8 +67,7 @@ object ServiceInterface {
     }
 
 
-
-    private fun wakeWordDetected() {
+    fun wakeWordDetected() {
         if (ConfigurationSettings.isMQTTEnabled.data) {
             MqttService.wakeWordDetected()
         }
@@ -315,10 +314,16 @@ object ServiceInterface {
         stopRecording()
     }
 
-    fun setWakeWordEnabled(action: Boolean) {
-        logger.d { "setListenForWake $action" }
+    fun setWakeWordEnabled(enabled: Boolean) {
+        logger.d { "setWakeWordEnabled $enabled" }
 
-        listenForWakeEnabled.value = action
+        wakeWordEnabled.value = enabled
+    }
+
+    fun setAudioOutputEnabled(enabled: Boolean) {
+        logger.d { "setAudioOutputEnabled $enabled" }
+
+        AudioPlayer.setEnabled(enabled)
     }
 
     fun showIndication() {
@@ -401,7 +406,7 @@ object ServiceInterface {
         if (RecordingService.status.value) {
             stopRecording()
         } else {
-            onAction(DialogueAction.HotWordDetected)
+            wakeWordDetected()
         }
     }
 
