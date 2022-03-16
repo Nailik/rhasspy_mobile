@@ -1,18 +1,16 @@
-package org.rhasspy.mobile.services
+package org.rhasspy.mobile.services.dialogue
 
 import co.touchlab.kermit.Logger
-import com.benasher44.uuid.Uuid
-import com.benasher44.uuid.uuid4
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.addCloseableObserver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.*
+import org.rhasspy.mobile.services.*
 import org.rhasspy.mobile.services.http.HttpServer
 import org.rhasspy.mobile.services.native.AudioPlayer
 import org.rhasspy.mobile.services.native.NativeIndication
@@ -20,7 +18,9 @@ import org.rhasspy.mobile.services.native.NativeLocalWakeWordService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.viewModels.GlobalData
+import kotlin.native.concurrent.ThreadLocal
 
+@ThreadLocal
 object ServiceInterface {
     private val logger = Logger.withTag(this::class.simpleName!!)
 
@@ -32,8 +32,6 @@ object ServiceInterface {
     //collect audio for mqtt service
     private var collectAudioJob: Job? = null
 
-    var sessionId: Uuid? = null
-        private set
 
     init {
         listenForWakeEnabled.addObserver {
@@ -44,6 +42,43 @@ object ServiceInterface {
             }
         }
     }
+
+
+    fun onAction(action: DialogueAction) {
+
+        coroutineScope.launch {
+
+            when (ConfigurationSettings.dialogueManagementOption.data) {
+                DialogueManagementOptions.Local -> {
+                    //do the next thing according to previous action
+                    DialogueManagementLocal.doAction(action)
+                }
+                DialogueManagementOptions.RemoteMQTT -> {
+                    //listen to mqtt and then decide what to do
+                    DialogueManagementMQTT.doAction(action)
+                }
+                DialogueManagementOptions.Disabled -> {
+                    //do nothing at all
+                    logger.v { "no dialog management for action ${action.name}" }
+                }
+            }
+        }
+
+    }
+
+
+
+    private fun wakeWordDetected() {
+        if (ConfigurationSettings.isMQTTEnabled.data) {
+            MqttService.wakeWordDetected()
+        }
+
+        //local -> directly start,
+        //mqtt -> wait for mqtt ?
+
+        //   startRecording()
+    }
+
 
     /**
      * Text to Speak requested
@@ -215,9 +250,9 @@ object ServiceInterface {
                         RecordingService.sharedFlow.collectIndexed { _, data ->
                             MqttService.audioSessionFrame(sessionId!!, data)
                         }
-                    }.also {
-                        it.join()
                     }
+
+                    collectAudioJob?.join()
 
                     MqttService.stopListening(sessionId!!)?.also {
                         logger.d { "speechToText ${it.payload}" }
@@ -235,24 +270,14 @@ object ServiceInterface {
     }
 
 
-    fun wakeWordDetected() {
-        startRecording()
-    }
-
+    /**
+     * shows indication and then starts recording
+     */
     fun startRecording() {
         logger.d { "startRecording" }
 
-        sessionId = uuid4().also {
-            if (ConfigurationSettings.isMQTTEnabled.data) {
-                MqttService.sessionStarted(it)
-            }
-        }
-
         showIndication()
         RecordingService.startRecording()
-
-        //needs to be started here for mqtt
-        speechToText()
     }
 
     fun stopRecording(uuid: String? = sessionId?.toString()) {
@@ -266,6 +291,9 @@ object ServiceInterface {
 
                     if (ConfigurationSettings.isMQTTEnabled.data) {
                         MqttService.sessionEnded(it)
+                        MqttService.toggleOffWakeWord()
+                    } else {
+                        setWakeWordEnabled(true) //TODO external made off
                     }
 
                     sessionId = null
@@ -282,7 +310,12 @@ object ServiceInterface {
         AppSettings.volume.data = volume
     }
 
-    fun setListenForWake(action: Boolean) {
+
+    fun textCaptured() {
+        stopRecording()
+    }
+
+    fun setWakeWordEnabled(action: Boolean) {
         logger.d { "setListenForWake $action" }
 
         listenForWakeEnabled.value = action
@@ -368,7 +401,7 @@ object ServiceInterface {
         if (RecordingService.status.value) {
             stopRecording()
         } else {
-            startRecording()
+            onAction(DialogueAction.HotWordDetected)
         }
     }
 

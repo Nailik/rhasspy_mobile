@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import org.rhasspy.mobile.logger.LogElement
+import org.rhasspy.mobile.services.dialogue.ServiceInterface
 import org.rhasspy.mobile.services.native.AudioRecorder
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.toByteArray

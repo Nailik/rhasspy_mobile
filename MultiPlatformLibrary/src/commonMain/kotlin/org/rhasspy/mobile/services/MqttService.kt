@@ -9,6 +9,7 @@ import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
+import org.rhasspy.mobile.services.dialogue.ServiceInterface
 import org.rhasspy.mobile.services.mqtt.MqttConnectionOptions
 import org.rhasspy.mobile.services.mqtt.MqttMessage
 import org.rhasspy.mobile.services.mqtt.MqttPersistence
@@ -37,6 +38,9 @@ object MqttService {
     private const val sessionStarted = "hermes/dialogueManager/sessionStarted"
     private const val sessionEnded = "hermes/dialogueManager/sessionEnded"
 
+
+    private const val wakeWordDetected = "hermes/hotword/default/detected"
+
     private const val toggleOn = "hermes/hotword/toggleOn"
     private const val toggleOff = "hermes/hotword/toggleOff"
     private const val setVolume = "rhasspy/audioServer/setVolume"
@@ -44,17 +48,17 @@ object MqttService {
 
     private const val say = "hermes/tts/say"
     private const val intentRecognition = "hermes/nlu/query"
-    private var remotePlay = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playBytes/0"
+    private var remotePlay = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playBytes/0"
 
     private const val sayFinished = "hermes/tts/sayFinished"
     private const val intentRecognized = "hermes/intent/#"
     private const val intentNotRecognized = "hermes/nlu/intentNotRecognized"
-    private var playFinished = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playFinished"
+    private var playFinished = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playFinished"
 
     private const val asrStartListening = "hermes/asr/startListening"
     private const val asrStopListening = "hermes/asr/stopListening"
-    private var asrAudioSessionFrame = "hermes/audioServer/${ConfigurationSettings.siteId.data}/audioFrame"
-    private const val asrTextCaptured = " hermes/asr/textCaptured"
+    private var asrAudioSessionFrame = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/audioFrame"
+    private const val asrTextCaptured = "hermes/asr/textCaptured"
     private const val asrError = "hermes/error/asr"
 
 
@@ -68,9 +72,9 @@ object MqttService {
 
         logger.d { "start" }
         playBytes = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playBytes"
-        playFinished = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playFinished"
-        remotePlay = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playBytes/0"
-        asrAudioSessionFrame = "hermes/audioServer/${ConfigurationSettings.siteId.data}/audioFrame"
+        playFinished = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playFinished"
+        remotePlay = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playBytes/0"
+        asrAudioSessionFrame = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/audioFrame"
 
         client = MqttClient(
             brokerUrl = "tcp://${ConfigurationSettings.mqttHost.data}:${ConfigurationSettings.mqttPort.data}",
@@ -111,7 +115,9 @@ object MqttService {
                         setVolume,
                         sayFinished,
                         asrStartListening,
-                        asrStopListening
+                        asrStopListening,
+                        asrTextCaptured,
+                        asrError
                     ).forEach { topic ->
                         subscribe(topic)?.also {
                             logger.e { "subscribe $topic \n${it.statusCode.name} ${it.msg}" }
@@ -158,6 +164,8 @@ object MqttService {
                             startSession -> toggleOn(jsonObject)
                             endSession -> toggleOn(jsonObject)
                             setVolume -> setVolume(jsonObject)
+                            asrTextCaptured -> asrTextCaptured(jsonObject)
+                            asrStopListening -> asrStopListening(jsonObject)
                         }
                     } catch (e: Exception) {
                         logger.e(e) { "onMessageReceived error" }
@@ -269,13 +277,20 @@ object MqttService {
      * Response to [hermes/dialogueManager/startSession]
      * Also used when session has started for other reasons
      */
-    fun sessionStarted(uuid: Uuid) {
+    fun sessionStarted(
+        sessionId: String,
+        siteId: String = ConfigurationSettings.siteId.data,
+        customData: String = "default",
+        lang: String? = null
+    ) {
         coroutineScope.launch {
             client?.publish(
                 sessionStarted, MqttMessage(
                     payload = Json.encodeToString(buildJsonObject {
-                        put("sessionId", uuid.toString())
-                        put("siteId", ConfigurationSettings.siteId.data)
+                        put("sessionId", sessionId)
+                        put("siteId", siteId)
+                        put("customData", customData)
+                        put("lang", lang)
                     })
                 )
             )?.also {
@@ -310,12 +325,12 @@ object MqttService {
 
 
     suspend fun toggleOn(jsonObject: JsonObject) {
-        ServiceInterface.setListenForWake(true)
+        ServiceInterface.setWakeWordEnabled(true)
     }
 
 
     suspend fun toggleOff(jsonObject: JsonObject) {
-        ServiceInterface.setListenForWake(false)
+        ServiceInterface.setWakeWordEnabled(false)
     }
 
     suspend fun setVolume(jsonObject: JsonObject) {
@@ -324,6 +339,15 @@ object MqttService {
         } ?: run {
             logger.e { "setVolume invalid value ${jsonObject["volume"]}" }
         }
+    }
+
+    suspend fun asrTextCaptured(jsonObject: JsonObject) {
+        ServiceInterface.textCaptured()
+    }
+
+
+    suspend fun asrStopListening(jsonObject: JsonObject) {
+        ServiceInterface.stopRecording()
     }
 
     /**
@@ -426,10 +450,13 @@ object MqttService {
         client?.publish(
             asrStartListening, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
+                    put("siteId", ConfigurationSettings.baseSiteId.data)
                     put("sessionId", uuid.toString())
-                    put("stopOnSilence", false)
+                    put("lang", JsonNull)
+                    put("stopOnSilence", true)
                     put("sendAudioCaptured", true)
-                    put("siteId", ConfigurationSettings.siteId.data)
+                    put("wakeWordId", "default")
+                    put("intentFilter", JsonNull)
                 })
             )
         )?.also {
@@ -500,6 +527,61 @@ object MqttService {
     }
 
 
+    fun wakeWordDetected() {
+        coroutineScope.launch {
+            client?.publish(
+                wakeWordDetected, MqttMessage(
+                    payload = Json.encodeToString(buildJsonObject {
+                        put("modelId", "default")
+                        put("modelVersion", "")
+                        put("modelType", "personal")
+                        put("currentSensitivity", ConfigurationSettings.wakeWordKeywordSensitivity.data)
+                        put("siteId", ConfigurationSettings.siteId.data)
+                        put("sessionId", JsonNull)
+                        put("sendAudioCaptured", JsonNull)
+                        put("lang", JsonNull)
+                        put("customEntities", JsonNull)
+                    })
+                )
+            )?.also {
+                logger.e { "wakeWordDetected \n${it.statusCode.name} ${it.msg}" }
+            }
+        }
+    }
+
+
+    fun toggleOffWakeWord() {
+        coroutineScope.launch {
+            client?.publish(
+                toggleOff, MqttMessage(
+                    payload = Json.encodeToString(buildJsonObject {
+                        put("siteId", ConfigurationSettings.siteId.data)
+                        put("sessionId", "dialogueSession")
+                    })
+                )
+            )?.also {
+                logger.e { "toggleOff \n${it.statusCode.name} ${it.msg}" }
+            }
+        }
+    }
+
+
+    fun toggleOnWakeWord() {
+        coroutineScope.launch {
+            client?.publish(
+                toggleOn, MqttMessage(
+                    payload = Json.encodeToString(buildJsonObject {
+                        put("siteId", ConfigurationSettings.siteId.data)
+                        put("reason", "")
+                    })
+                )
+            )?.also {
+                logger.e { "toggleOn \n${it.statusCode.name} ${it.msg}" }
+            }
+        }
+    }
+
+
     /**
      * used to retrieve mqtt result on specific topic with specific id
      */
@@ -525,6 +607,7 @@ object MqttService {
             null
         }
     }
+
 }
 
 //wakeword
