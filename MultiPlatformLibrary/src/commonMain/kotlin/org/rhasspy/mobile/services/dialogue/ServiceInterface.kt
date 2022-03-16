@@ -54,12 +54,8 @@ object ServiceInterface {
                     DialogueManagementLocal.doAction(inputAction)
                 }
                 DialogueManagementOptions.RemoteMQTT -> {
-                    //listen to mqtt and then decide what to do
+                    //only send action to MQTT broker, hope that he does tell you what to do
                     DialogueManagementMQTT.doAction(inputAction)
-                }
-                DialogueManagementOptions.Disabled -> {
-                    //do nothing at all
-                    logger.v { "no dialog management for action ${inputAction.name}" }
                 }
             }
         }

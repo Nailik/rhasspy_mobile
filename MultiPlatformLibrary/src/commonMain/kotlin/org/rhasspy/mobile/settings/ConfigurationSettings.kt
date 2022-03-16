@@ -37,7 +37,7 @@ object ConfigurationSettings {
     val audioPlayingOption = Setting(SettingsEnum.AudioPlayingOption, AudioPlayingOptions.Disabled)
     val audioPlayingEndpoint = Setting(SettingsEnum.AudioPlayingEndpoint, "")
 
-    val dialogueManagementOption = Setting(SettingsEnum.DialogueManagementOption, DialogueManagementOptions.Disabled)
+    val dialogueManagementOption = Setting(SettingsEnum.DialogueManagementOption, DialogueManagementOptions.Local)
 
     val intentHandlingOption = Setting(SettingsEnum.IntentHandlingOption, IntentHandlingOptions.Disabled)
     val intentHandlingEndpoint = Setting(SettingsEnum.IntentHandlingEndpoint, "")

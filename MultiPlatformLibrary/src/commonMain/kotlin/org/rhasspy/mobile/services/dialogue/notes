@@ -1,4 +1,8 @@
 
+
+MQTT external -> always listens to commands any Dialogue Manager
+MQTT Dialogue Manager -> no internal action
+
 ### Dialogue Manager
 
 

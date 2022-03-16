@@ -5,8 +5,7 @@ import org.rhasspy.mobile.MR
 
 enum class DialogueManagementOptions(override val text: StringResource) : DataEnum<DialogueManagementOptions> {
     Local(MR.strings.local),
-    RemoteMQTT(MR.strings.remoteMQTT),
-    Disabled(MR.strings.disabled);
+    RemoteMQTT(MR.strings.remoteMQTT);
 
     override fun findValue(value: String): DialogueManagementOptions {
         return valueOf(value)
