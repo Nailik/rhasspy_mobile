@@ -44,16 +44,16 @@ object MqttService {
 
     private const val say = "hermes/tts/say"
     private const val intentRecognition = "hermes/nlu/query"
-    private var remotePlay = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playBytes/0"
+    private var remotePlay = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playBytes/0"
 
     private const val sayFinished = "hermes/tts/sayFinished"
     private const val intentRecognized = "hermes/intent/#"
     private const val intentNotRecognized = "hermes/nlu/intentNotRecognized"
-    private var playFinished = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playFinished"
+    private var playFinished = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playFinished"
 
     private const val asrStartListening = "hermes/asr/startListening"
     private const val asrStopListening = "hermes/asr/stopListening"
-    private var asrAudioSessionFrame = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/#/audioSessionFrame"
+    private var asrAudioSessionFrame = "hermes/audioServer/${ConfigurationSettings.siteId.data}/audioFrame"
     private const val asrTextCaptured = " hermes/asr/textCaptured"
     private const val asrError = "hermes/error/asr"
 
@@ -68,9 +68,9 @@ object MqttService {
 
         logger.d { "start" }
         playBytes = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playBytes"
-        playFinished = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playFinished"
-        remotePlay = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playBytes/0"
-        asrAudioSessionFrame = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/#/audioSessionFrame"
+        playFinished = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playFinished"
+        remotePlay = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playBytes/0"
+        asrAudioSessionFrame = "hermes/audioServer/${ConfigurationSettings.siteId.data}/audioFrame"
 
         client = MqttClient(
             brokerUrl = "tcp://${ConfigurationSettings.mqttHost.data}:${ConfigurationSettings.mqttPort.data}",
@@ -348,7 +348,7 @@ object MqttService {
                 payload = Json.encodeToString(buildJsonObject {
                     put("text", text)
                     put("id", uuid.toString())
-                    put("siteId", ConfigurationSettings.baseSiteId.data)
+                    put("siteId", ConfigurationSettings.siteId.data)
                 })
             )
         )?.let {
@@ -380,7 +380,7 @@ object MqttService {
                 payload = Json.encodeToString(buildJsonObject {
                     put("input", JsonPrimitive(text))
                     put("id", uuid.toString())
-                    put("siteId", ConfigurationSettings.baseSiteId.data)
+                    put("siteId", ConfigurationSettings.siteId.data)
                 })
             )
         )?.let {
@@ -413,7 +413,6 @@ object MqttService {
     }
 
     /**
-     * 1. tell ASR to transcripe
      * hermes/asr/startListening (JSON)
      * Tell ASR system to start recording/transcribing
      * siteId: string = "default" - Hermes site ID
@@ -421,28 +420,8 @@ object MqttService {
      * stopOnSilence: bool = true - detect silence and automatically end voice command (Rhasspy only)
      * sendAudioCaptured: bool = false - send audioCaptured after stop listening (Rhasspy only)
      * wakewordId: string? = null - id of wake word that triggered session (Rhasspy only)
-     *
-     * 2. send WAV data in chunks (size to test)
-     *
-     * hermes/audioServer/<siteId>/<sessionId>/audioSessionFrame (binary)
-     * Chunk of WAV audio data for session
-     * wav_bytes: bytes - WAV data to play (message payload)
-     * siteId: string - Hermes site ID (part of topic)
-     * sessionId: string - session ID (part of topic)
-     *
-     * 3. when finished tell ASR system to stop
-     *
-     * hermes/asr/stopListening (JSON)
-     * Tell ASR system to stop recording
-     * Emits textCaptured if silence has was not detected earlier
-     * siteId: string = "default" - Hermes site ID
-     * sessionId: string = "" - current session ID
-     *
-     *
      */
-    suspend fun speechToText(data: ByteArray): MqttMessage? {
-        val uuid = uuid4()
-
+    suspend fun startListening(uuid: Uuid) {
         //start listening
         client?.publish(
             asrStartListening, MqttMessage(
@@ -450,41 +429,59 @@ object MqttService {
                     put("sessionId", uuid.toString())
                     put("stopOnSilence", false)
                     put("sendAudioCaptured", true)
-                    put("siteId", ConfigurationSettings.baseSiteId.data)
+                    put("siteId", ConfigurationSettings.siteId.data)
                 })
             )
         )?.also {
             //didn't work
-            logger.e { "asrStartListening ${data.size} \n${it.statusCode.name} ${it.msg}" }
-            return null
+            logger.e { "asrStartListening ${uuid} \n${it.statusCode.name} ${it.msg}" }
         }
+    }
 
-        //send wav data in 50 kilobyte chunks
-        data.toList().chunked(8236).forEach { chunk ->
-            client?.publish(
-                asrAudioSessionFrame.replace("#", uuid.toString()),
-                MqttMessage(chunk.toByteArray())
-            )?.also {
-                //didn't work
-                logger.e { "asrAudioSessionFrame ${data.size} \n${it.statusCode.name} ${it.msg}" }
-                return null
-            }
+    /**
+     * hermes/audioServer/<siteId>/<sessionId>/audioSessionFrame (binary)
+     * Chunk of WAV audio data for session
+     * wav_bytes: bytes - WAV data to play (message payload)
+     * siteId: string - Hermes site ID (part of topic)
+     * sessionId: string - session ID (part of topic)
+     */
+    suspend fun audioSessionFrame(uuid: Uuid, data: ByteArray) {
+        //start listening
+        client?.publish(
+            asrAudioSessionFrame.replace("#", uuid.toString()),
+            MqttMessage(data)
+        )?.also {
+            //didn't work
+            logger.e { "asrAudioSessionFrame ${data.size} \n${it.statusCode.name} ${it.msg}" }
         }
+    }
+
+    /**
+     * hermes/asr/stopListening (JSON)
+     * Tell ASR system to stop recording
+     * Emits textCaptured if silence has was not detected earlier
+     * siteId: string = "default" - Hermes site ID
+     * sessionId: string = "" - current session ID
+     */
+    suspend fun stopListening(uuid: Uuid): MqttMessage? {
 
         //stop listening and await result
-        client?.publish(
+        return client?.publish(
             asrStopListening, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("sessionId", uuid.toString())
-                    put("siteId", ConfigurationSettings.baseSiteId.data)
+                    put("siteId", ConfigurationSettings.siteId.data)
                 })
             )
-        )?.also {
+        )?.let {
             //didn't work
-            logger.e { "asrStopListening ${data.size} \n${it.statusCode.name} ${it.msg}" }
-            return null
+            logger.e { "asrStopListening $uuid \n${it.statusCode.name} ${it.msg}" }
+            null
+        } ?: run {
+            mqttResult(uuid, arrayOf(asrError, asrTextCaptured))
         }
 
+        /*
         //stop listening and await result
         return client?.publish(
             "rhasspy/asr/recordingFinished", MqttMessage(
@@ -493,13 +490,13 @@ object MqttService {
                     put("siteId", ConfigurationSettings.baseSiteId.data)
                 })
             )
-        )?.let {
+        )?. {
             //didn't work
             logger.e { "recordingFinished ${data.size} \n${it.statusCode.name} ${it.msg}" }
             null
         } ?: run {
             mqttResult(uuid, arrayOf(asrError, asrTextCaptured))
-        }
+        }*/
     }
 
 

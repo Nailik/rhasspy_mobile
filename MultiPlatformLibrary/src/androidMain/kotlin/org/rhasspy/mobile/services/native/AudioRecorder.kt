@@ -44,6 +44,7 @@ actual object AudioRecorder {
                         .setChannelMask(AudioFormat.CHANNEL_IN_MONO)
                         .build()
                 )
+                .setBufferSizeInBytes(8236)
                 .build()
         }
 

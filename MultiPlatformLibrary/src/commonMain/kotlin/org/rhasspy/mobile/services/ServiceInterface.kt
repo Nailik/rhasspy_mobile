@@ -4,8 +4,12 @@ import co.touchlab.kermit.Logger
 import com.benasher44.uuid.Uuid
 import com.benasher44.uuid.uuid4
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
+import dev.icerock.moko.mvvm.livedata.addCloseableObserver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.cancellable
+import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.*
@@ -24,6 +28,9 @@ object ServiceInterface {
 
     //toggle on off from mqtt or http service
     private val listenForWakeEnabled = MutableLiveData(true)
+
+    //collect audio for mqtt service
+    private var collectAudioJob: Job? = null
 
     var sessionId: Uuid? = null
         private set
@@ -177,21 +184,47 @@ object ServiceInterface {
      * - sends
      * - todo let rhasspy determine silence
      */
-    fun speechToText(data: ByteArray) {
-        logger.d { "speechToText ${data.size}" }
+    private fun speechToText() {
+        logger.d { "speechToText Started" }
 
         coroutineScope.launch {
 
             when (ConfigurationSettings.speechToTextOption.data) {
-                SpeechToTextOptions.RemoteHTTP -> HttpService.speechToText(data)?.also {
-                    if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
-                        intentRecognition(it)
+                //wait for finish -> then publish all
+                SpeechToTextOptions.RemoteHTTP -> {
+                    RecordingService.status.addCloseableObserver {
+                        if (it) {
+
+                            coroutineScope.launch {
+                                HttpService.speechToText(getLatestRecording())?.also { data ->
+                                    if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+                                        intentRecognition(data)
+                                    }
+                                }
+                            }
+
+                        }
                     }
                 }
-                SpeechToTextOptions.RemoteMQTT -> MqttService.speechToText(data)?.also {
-                    logger.d { "speechToText ${it.payload}" }
-                } ?: run {
-                    logger.w { "speechToText timeout" }
+                //publish in junks
+                SpeechToTextOptions.RemoteMQTT -> {
+
+                    MqttService.startListening(sessionId!!)
+
+                    collectAudioJob = coroutineScope.launch {
+                        RecordingService.sharedFlow.collectIndexed { _, data ->
+                            MqttService.audioSessionFrame(sessionId!!, data)
+                        }
+                    }.also {
+                        it.join()
+                    }
+
+                    MqttService.stopListening(sessionId!!)?.also {
+                        logger.d { "speechToText ${it.payload}" }
+                    } ?: run {
+                        logger.w { "speechToText timeout" }
+                    }
+
                 }
                 SpeechToTextOptions.Disabled -> logger.d { "speechToText disabled" }
             }
@@ -217,6 +250,9 @@ object ServiceInterface {
 
         showIndication()
         RecordingService.startRecording()
+
+        //needs to be started here for mqtt
+        speechToText()
     }
 
     fun stopRecording(uuid: String? = sessionId?.toString()) {
@@ -227,7 +263,6 @@ object ServiceInterface {
 
                     stopIndication()
                     RecordingService.stopRecording()
-                    speechToText(RecordingService.getLatestRecording())
 
                     if (ConfigurationSettings.isMQTTEnabled.data) {
                         MqttService.sessionEnded(it)

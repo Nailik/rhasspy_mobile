@@ -7,10 +7,14 @@ import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import org.rhasspy.mobile.logger.LogElement
 import org.rhasspy.mobile.services.native.AudioRecorder
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.toByteArray
@@ -30,6 +34,9 @@ object RecordingService {
 
     //represents listening Status for ui
     val status: LiveData<Boolean> = listening.readOnly()
+
+    private val flow = MutableSharedFlow<ByteArray>()
+    val sharedFlow: Flow<ByteArray> get() = flow.takeWhile { listening.value }
 
     private var data = mutableListOf<Byte>()
 
@@ -60,6 +67,7 @@ object RecordingService {
         job = coroutineScope.launch {
             AudioRecorder.output.collectIndexed { _, value ->
                 data.addAll(value.toList())
+                flow.emit(value)
 
                 if (AppSettings.isAutomaticSilenceDetection.data) {
                     if (!searchThreshold(value, AppSettings.automaticSilenceDetectionAudioLevel.data)) {
