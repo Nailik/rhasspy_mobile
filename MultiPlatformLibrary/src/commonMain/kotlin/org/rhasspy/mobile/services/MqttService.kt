@@ -2,18 +2,16 @@ package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
 import com.benasher44.uuid.Uuid
-import com.benasher44.uuid.uuid4
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.floatOrNull
+import kotlinx.serialization.json.jsonPrimitive
 import org.rhasspy.mobile.services.dialogue.ServiceInterface
-import org.rhasspy.mobile.services.mqtt.MqttConnectionOptions
-import org.rhasspy.mobile.services.mqtt.MqttMessage
-import org.rhasspy.mobile.services.mqtt.MqttPersistence
-import org.rhasspy.mobile.services.mqtt.MqttResultCallback
+import org.rhasspy.mobile.services.mqtt.*
 import org.rhasspy.mobile.services.mqtt.native.MqttClient
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.math.min
@@ -29,41 +27,19 @@ object MqttService {
 
     private val connected = MutableLiveData(false)
     val isConnected = connected.readOnly()
-
-
-    private const val startSession = "hermes/dialogueManager/startSession"
-    private const val continueSession = "hermes/dialogueManager/continueSession"
-    private const val endSession = "hermes/dialogueManager/endSession"
-
-    private const val sessionStarted = "hermes/dialogueManager/sessionStarted"
-    private const val sessionEnded = "hermes/dialogueManager/sessionEnded"
-
-
-    private const val wakeWordDetected = "hermes/hotword/default/detected"
-
-    private const val toggleOn = "hermes/hotword/toggleOn"
-    private const val toggleOff = "hermes/hotword/toggleOff"
-    private const val setVolume = "rhasspy/audioServer/setVolume"
-    private var playBytes = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playBytes/#"
-
-    private const val say = "hermes/tts/say"
-    private const val intentRecognition = "hermes/nlu/query"
-    private var remotePlay = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playBytes/0"
-
-    private const val sayFinished = "hermes/tts/sayFinished"
-    private const val intentRecognized = "hermes/intent/#"
-    private const val intentNotRecognized = "hermes/nlu/intentNotRecognized"
-    private var playFinished = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playFinished"
-
-    private const val asrStartListening = "hermes/asr/startListening"
-    private const val asrStopListening = "hermes/asr/stopListening"
-    private var asrAudioSessionFrame = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/audioFrame"
-    private const val asrTextCaptured = "hermes/asr/textCaptured"
-    private const val asrError = "hermes/error/asr"
-
-
     private val callbacks = mutableListOf<MqttResultCallback>()
 
+
+    /**
+     * start client externaly, only starts if mqtt is enabled
+     *
+     * creates new client
+     * connects client to server
+     *
+     * subscribes to topics necessary if connection was successful
+     *
+     * sets connected value
+     */
     fun start() {
         if (!ConfigurationSettings.isMQTTEnabled.data) {
             logger.v { "mqtt not enabled" }
@@ -71,66 +47,29 @@ object MqttService {
         }
 
         logger.d { "start" }
-        playBytes = "hermes/audioServer/${ConfigurationSettings.siteId.data}/playBytes"
-        playFinished = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playFinished"
-        remotePlay = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/playBytes/0"
-        asrAudioSessionFrame = "hermes/audioServer/${ConfigurationSettings.baseSiteId.data}/audioFrame"
 
-        client = MqttClient(
-            brokerUrl = "tcp://${ConfigurationSettings.mqttHost.data}:${ConfigurationSettings.mqttPort.data}",
-            clientId = ConfigurationSettings.siteId.data,
-            persistenceType = MqttPersistence.MEMORY,
-            onDelivered = { token -> onDelivered(token) },
-            onMessageReceived = { topic, message -> onMessageReceived(topic, message) },
-            onDisconnect = { error -> onDisconnect(error) },
-        )
+        //setup client
+        createClient()
 
         coroutineScope.launch {
-            logger.d { "connect" }
-            client?.connect(
-                MqttConnectionOptions(
-                    connUsername = ConfigurationSettings.mqttUserName.data,
-                    connPassword = ConfigurationSettings.mqttPassword.data
-                )
-            )?.also {
-                logger.e { "connect \n${it.statusCode.name} ${it.msg}" }
+            //connect client
+            if (connectClient()) {
+                subscribeTopics()
+            } else {
+                logger.e { "client not connected after attempt" }
             }
 
-
-            client?.apply {
-                CoroutineScope(Dispatchers.Main).launch {
-                    connected.value = isConnected
-                }
-
-                if (isConnected) {
-                    logger.d { "successfully connected" }
-
-                    arrayOf(
-                        startSession,
-                        continueSession,
-                        endSession,
-                        toggleOn,
-                        toggleOff,
-                        playBytes,
-                        setVolume,
-                        sayFinished,
-                        asrStartListening,
-                        asrStopListening,
-                        asrTextCaptured,
-                        asrError
-                    ).forEach { topic ->
-                        subscribe(topic)?.also {
-                            logger.e { "subscribe $topic \n${it.statusCode.name} ${it.msg}" }
-                        }
-                    }
-
-                } else {
-                    logger.e { "client not connected after attempt" }
-                }
+            CoroutineScope(Dispatchers.Main).launch {
+                connected.value = client?.isConnected == true
             }
         }
     }
 
+    /**
+     * stops client
+     *
+     * disconnects, resets connected value and deletes client object
+     */
     fun stop() {
         logger.d { "stop" }
         client?.apply {
@@ -144,13 +83,503 @@ object MqttService {
         client = null
     }
 
-    private fun onDelivered(token: Int) {
-        logger.d { "onDelivered $token" }
+    /**
+     * creates new client according to settings
+     */
+    private fun createClient() {
+        logger.v { "createClient" }
+
+        client = MqttClient(
+            brokerUrl = "tcp://${ConfigurationSettings.mqttHost.data}:${ConfigurationSettings.mqttPort.data}",
+            clientId = ConfigurationSettings.siteId.data,
+            persistenceType = MqttPersistence.MEMORY,
+            onDelivered = { },
+            onMessageReceived = { topic, message -> onMessageReceived(topic, message) },
+            onDisconnect = { error -> onDisconnect(error) },
+        )
     }
+
+    /**
+     * connects client to server and returns if client is now connected
+     */
+    private suspend fun connectClient(): Boolean {
+        logger.v { "connectClient" }
+        //connect to client
+        client?.connect(
+            MqttConnectionOptions(
+                connUsername = ConfigurationSettings.mqttUserName.data,
+                connPassword = ConfigurationSettings.mqttPassword.data
+            )
+        )?.also {
+            logger.e { "connect \n${it.statusCode.name} ${it.msg}" }
+        }
+        return client?.isConnected == true
+    }
+
+    /**
+     * Subscribes to topics that are necessary
+     */
+    private suspend fun subscribeTopics() {
+        logger.v { "subscribeTopics" }
+
+        MQTTTopicsSubscription.values().forEach { topic ->
+            client?.subscribe(topic.topic)?.also {
+                logger.e { "subscribe $topic \n${it.statusCode.name} ${it.msg}" }
+            }
+        }
+    }
+
 
     private fun onMessageReceived(topic: String, message: MqttMessage) {
         //subSequence so we don't print super long wave data
         logger.v { "onMessageReceived $topic ${message.payload.toString().subSequence(1, min(message.payload.toString().length, 100))}" }
+
+        try {
+
+            when (MQTTTopicsSubscription.valueOf(topic)) {
+                MQTTTopicsSubscription.StartSession -> startSession(message)
+                MQTTTopicsSubscription.EndSession -> endSession(message)
+                MQTTTopicsSubscription.HotWordToggleOn -> hotWordToggleOn(message)
+                MQTTTopicsSubscription.HotWordToggleOff -> hotWordToggleOff(message)
+                MQTTTopicsSubscription.AsrStartListening -> asrStartListening(message)
+                MQTTTopicsSubscription.AsrStopListening -> asrStopListening(message)
+                MQTTTopicsSubscription.AsrTextCaptured -> asrTextCaptured(message)
+                MQTTTopicsSubscription.AsrError -> asrError(message)
+                MQTTTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(message)
+                MQTTTopicsSubscription.IntentNotRecognized -> intentNotRecognized(message)
+                MQTTTopicsSubscription.IntentHandlingToggleOn -> intentHandlingToggleOn(message)
+                MQTTTopicsSubscription.IntentHandlingToggleOff -> intentHandlingToggleOff(message)
+                MQTTTopicsSubscription.SayFinished -> sayFinished(message)
+                MQTTTopicsSubscription.AudioOutputToggleOff -> audioOutputToggleOff(message)
+                MQTTTopicsSubscription.AudioOutputToggleOn -> audioOutputToggleOn(message)
+                MQTTTopicsSubscription.SetVolume -> setVolume(message)
+            }
+
+        } catch (e: Exception) {
+            logger.e(e) { "onMessageReceived error" }
+        }
+    }
+
+    //###################################  Input Messages
+
+    /**
+     * https://rhasspy.readthedocs.io/en/latest/reference/#dialoguemanager_startsession
+     *
+     * hermes/dialogueManager/startSession (JSON)
+     * Starts a new dialogue session (done automatically on hotword detected)
+     * siteId: string required - Hermes site ID
+     *
+     * Response(s)
+     * hermes/dialogueManager/sessionStarted
+     */
+    private fun startSession(message: MqttMessage) {
+        ServiceInterface.startRecording()
+    }
+
+    /**
+     * https://rhasspy.readthedocs.io/en/latest/reference/#dialoguemanager_endsession
+     *
+     * hermes/dialogueManager/endSession (JSON)
+     * Requests that a session be terminated nominally
+     * sessionId: string - current session ID (required)
+     */
+    private fun endSession(message: MqttMessage) {
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        ServiceInterface.stopRecording(jsonObject["sessionId"]?.jsonPrimitive?.content)
+    }
+
+
+    private fun hotWordToggleOn(message: MqttMessage) {
+
+    }
+
+    private fun hotWordToggleOff(message: MqttMessage) {
+
+    }
+
+    private fun asrStartListening(message: MqttMessage) {
+
+    }
+
+    private fun asrStopListening(message: MqttMessage) {
+        ServiceInterface.stopRecording()
+    }
+
+    private fun asrTextCaptured(message: MqttMessage) {
+        ServiceInterface.textCaptured()
+    }
+
+    private fun asrError(message: MqttMessage) {
+
+    }
+
+    private fun intentRecognitionResult(message: MqttMessage) {
+
+    }
+
+    private fun intentNotRecognized(message: MqttMessage) {
+
+    }
+
+    private fun intentHandlingToggleOn(message: MqttMessage) {
+
+    }
+
+    private fun intentHandlingToggleOff(message: MqttMessage) {
+
+    }
+
+    private fun sayFinished(message: MqttMessage) {
+
+    }
+
+    private fun audioOutputToggleOff(message: MqttMessage) {
+
+    }
+
+    private fun audioOutputToggleOn(message: MqttMessage) {
+
+    }
+
+    private fun setVolume(message: MqttMessage) {
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        jsonObject["volume"]?.jsonPrimitive?.floatOrNull?.also {
+            ServiceInterface.setVolume(it)
+        } ?: run {
+            logger.e { "setVolume invalid value ${jsonObject["volume"]}" }
+        }
+    }
+
+
+    private fun onDisconnect(error: Throwable) {
+        logger.e(error) { "onDisconnect" }
+
+        client?.apply {
+            if (!isConnected) {
+                client = null
+            }
+            connected.value = isConnected
+        }
+    }
+
+    private fun checkSiteId(jsonObject: JsonObject): Boolean {
+        return jsonObject["siteId"]?.jsonPrimitive?.content == ConfigurationSettings.siteId.data
+    }
+
+    //###################################  Output Messages
+
+    /**
+     * hermes/dialogueManager/sessionStarted (JSON)
+     * Indicates a session has started
+     * sessionId: string - current session ID
+     * siteId: string = "default" - Hermes site ID
+     *
+     * Response to [hermes/dialogueManager/startSession]
+     * Also used when session has started for other reasons
+     */
+    suspend fun sessionStarted(
+        sessionId: String,
+        siteId: String = ConfigurationSettings.siteId.data,
+        customData: String = "default",
+        lang: String? = null
+    ) {
+        /* coroutineScope.launch {
+             client?.publish(
+                 sessionStarted, MqttMessage(
+                     payload = Json.encodeToString(buildJsonObject {
+                         put("sessionId", sessionId)
+                         put("siteId", siteId)
+                         put("customData", customData)
+                         put("lang", lang)
+                     })
+                 )
+             )?.also {
+                 logger.e { "sessionStarted $uuid \n${it.statusCode.name} ${it.msg}" }
+             }
+         }
+
+         */
+    }
+
+    /**
+     * hermes/dialogueManager/sessionEnded (JSON)
+     * Indicates a session has terminated
+     *
+     * sessionId: string - current session ID
+     * siteId: string = "default" - Hermes site ID
+     *
+     * Response to hermes/dialogueManager/endSession or other reasons for a session termination
+     */
+    suspend fun sessionEnded(uuid: Uuid) {
+        /*     coroutineScope.launch {
+                 client?.publish(
+                     sessionEnded, MqttMessage(
+                         payload = Json.encodeToString(buildJsonObject {
+                             put("sessionId", uuid.toString())
+                             put("siteId", ConfigurationSettings.siteId.data)
+                         })
+                     )
+                 )?.also {
+                     logger.e { "sessionEnded $uuid \n${it.statusCode.name} ${it.msg}" }
+                 }
+             }
+
+         */
+    }
+
+    suspend fun sessionNotIntentRecognized() {
+
+    }
+
+
+    /**
+     * hermes/audioServer/<siteId>/<sessionId>/audioSessionFrame (binary)
+     * Chunk of WAV audio data for session
+     * wav_bytes: bytes - WAV data to play (message payload)
+     * siteId: string - Hermes site ID (part of topic)
+     * sessionId: string - session ID (part of topic)
+     */
+    suspend fun asrAudioSessionFrame() {
+        /*
+        //start listening
+        client?.publish(
+            asrAudioSessionFrame.replace("#", uuid.toString()),
+            MqttMessage(data)
+        )?.also {
+            //didn't work
+            logger.e { "asrAudioSessionFrame ${data.size} \n${it.statusCode.name} ${it.msg}" }
+        }
+*/
+    }
+
+    /**
+     * hermes/asr/startListening (JSON)
+     * Tell ASR system to start recording/transcribing
+     * siteId: string = "default" - Hermes site ID
+     * sessionId: string? = null - current session ID
+     * stopOnSilence: bool = true - detect silence and automatically end voice command (Rhasspy only)
+     * sendAudioCaptured: bool = false - send audioCaptured after stop listening (Rhasspy only)
+     * wakewordId: string? = null - id of wake word that triggered session (Rhasspy only)
+     */
+    private fun asrStartListeningOutput(message: MqttMessage) {
+        /*
+        //start listening
+        client?.publish(
+            asrStartListening, MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("siteId", ConfigurationSettings.baseSiteId.data)
+                    put("sessionId", uuid.toString())
+                    put("lang", JsonNull)
+                    put("stopOnSilence", true)
+                    put("sendAudioCaptured", true)
+                    put("wakeWordId", "default")
+                    put("intentFilter", JsonNull)
+                })
+            )
+        )?.also {
+            //didn't work
+            logger.e { "asrStartListening ${uuid} \n${it.statusCode.name} ${it.msg}" }
+        }
+         */
+    }
+
+    /**
+     * hermes/asr/stopListening (JSON)
+     * Tell ASR system to stop recording
+     * Emits textCaptured if silence has was not detected earlier
+     * siteId: string = "default" - Hermes site ID
+     * sessionId: string = "" - current session ID
+     */
+    private fun asrStopListeningOutput(message: MqttMessage) {
+/*
+        //stop listening and await result
+        return client?.publish(
+            asrStopListening, MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("sessionId", uuid.toString())
+                    put("siteId", ConfigurationSettings.siteId.data)
+                })
+            )
+        )?.let {
+            //didn't work
+            logger.e { "asrStopListening $uuid \n${it.statusCode.name} ${it.msg}" }
+            null
+        } ?: run {
+            mqttResult(uuid, arrayOf(asrError, asrTextCaptured))
+        }
+
+        /*
+        //stop listening and await result
+        return client?.publish(
+            "rhasspy/asr/recordingFinished", MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("sessionId", uuid.toString())
+                    put("siteId", ConfigurationSettings.baseSiteId.data)
+                })
+            )
+        )?. {
+            //didn't work
+            logger.e { "recordingFinished ${data.size} \n${it.statusCode.name} ${it.msg}" }
+            null
+        } ?: run {
+            mqttResult(uuid, arrayOf(asrError, asrTextCaptured))
+        }*/
+        */
+
+    }
+
+    suspend fun wakeWordDetected() {
+        /*  coroutineScope.launch {
+              client?.publish(
+                  wakeWordDetected, MqttMessage(
+                      payload = Json.encodeToString(buildJsonObject {
+                          put("modelId", "default")
+                          put("modelVersion", "")
+                          put("modelType", "personal")
+                          put("currentSensitivity", ConfigurationSettings.wakeWordKeywordSensitivity.data)
+                          put("siteId", ConfigurationSettings.siteId.data)
+                          put("sessionId", JsonNull)
+                          put("sendAudioCaptured", JsonNull)
+                          put("lang", JsonNull)
+                          put("customEntities", JsonNull)
+                      })
+                  )
+              )?.also {
+                  logger.e { "wakeWordDetected \n${it.statusCode.name} ${it.msg}" }
+              }
+          }
+
+         */
+    }
+
+    suspend fun audioCaptured() {
+
+    }
+
+    suspend fun intentRecognition() {
+/*
+        val uuid = uuid4()
+
+        return client?.publish(
+            intentRecognition, MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("input", JsonPrimitive(text))
+                    put("id", uuid.toString())
+                    put("siteId", ConfigurationSettings.siteId.data)
+                })
+            )
+        )?.let {
+            logger.e { "intentRecognition $text \n${it.statusCode.name} ${it.msg}" }
+            null
+        } ?: run {
+            mqttResult(uuid, arrayOf(intentRecognized, intentNotRecognized))
+        }
+
+ */
+    }
+
+    /**
+     * hermes/tts/say (JSON)
+     * Generate spoken audio for a sentence using the configured text to speech system
+     * Automatically sends playBytes
+     * playBytes.requestId = say.id
+     * text: string - sentence to speak (required)
+     * lang: string? = null - override language for TTS system
+     * id: string? = null - unique ID for request (copied to sayFinished)
+     * volume: float? = null - volume level to speak with (0 = off, 1 = full volume)
+     * siteId: string = "default" - Hermes site ID
+     * sessionId: string? = null - current session ID
+     * Response(s)
+     * hermes/tts/sayFinished (JSON)
+     */
+    suspend fun say(text: String) {
+        /* val uuid = uuid4()
+
+         return client?.publish(
+             say, MqttMessage(
+                 payload = Json.encodeToString(buildJsonObject {
+                     put("text", text)
+                     put("id", uuid.toString())
+                     put("siteId", ConfigurationSettings.siteId.data)
+                 })
+             )
+         )?.let {
+             logger.e { "textToSpeak $text \n${it.statusCode.name} ${it.msg}" }
+             null
+         } ?: run {
+             mqttResult(uuid, arrayOf(sayFinished))
+         }
+
+         */
+    }
+
+    /**
+     * hermes/audioServer/<siteId>/playBytes/<requestId> (JSON)
+     * Play WAV data
+     * wav_bytes: bytes - WAV data to play (message payload)
+     * requestId: string - unique ID for request (part of topic)
+     * siteId: string - Hermes site ID (part of topic)
+     * Response(s)
+     * hermes/audioServer/<siteId>/playFinished (JSON)
+     */
+    suspend fun audioOutputPlayBytes(data: ByteArray) {
+        /*val uuid = uuid4()
+
+        return client?.publish(remotePlay, MqttMessage(data))?.let {
+            logger.e { "playWav ${data.size} \n${it.statusCode.name} ${it.msg}" }
+            null
+        } ?: run {
+            mqttResult(uuid, arrayOf(playFinished))
+        }
+
+         */
+    }
+
+
+    suspend fun audioOutputPlayFinished(data: ByteArray) {
+        /* val uuid = uuid4()
+
+         return client?.publish(remotePlay, MqttMessage(data))?.let {
+             logger.e { "playWav ${data.size} \n${it.statusCode.name} ${it.msg}" }
+             null
+         } ?: run {
+             mqttResult(uuid, arrayOf(playFinished))
+         }
+
+         */
+    }
+
+
+    /**
+     * used to retrieve mqtt result on specific topic with specific id
+     */
+    private suspend fun mqttResult(uuid: Uuid, resultTopics: Array<String>): MqttMessage? {
+        var result: MqttMessage? = null
+
+        val job = Job()
+
+        val callback = MqttResultCallback(uuid, resultTopics) {
+            result = it
+            job.complete()
+        }
+
+        callbacks.add(callback)
+
+        return try {
+            withTimeout(5000) {
+                job.join()
+                result
+            }
+        } catch (e: Exception) {
+            callbacks.remove(callback)
+            null
+        }
+    }
+}
+
+
+/*
+
         try {
             val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
 
@@ -207,469 +636,4 @@ object MqttService {
                 }
 
             }
-        } catch (e: Exception) {
-            logger.e(e) { "onMessageReceived error" }
-        }
-    }
-
-
-    private fun onDisconnect(error: Throwable) {
-        logger.e(error) { "onDisconnect" }
-
-        client?.apply {
-            if (!isConnected) {
-                client = null
-            }
-            connected.value = isConnected
-        }
-    }
-
-    private fun checkSiteId(jsonObject: JsonObject): Boolean {
-        return jsonObject["siteId"]?.jsonPrimitive?.content == ConfigurationSettings.siteId.data
-    }
-
-    //###################################  Input Messages
-
-    /**
-     * https://rhasspy.readthedocs.io/en/latest/reference/#dialoguemanager_startsession
-     *
-     * hermes/dialogueManager/startSession (JSON)
-     * Starts a new dialogue session (done automatically on hotword detected)
-     * siteId: string required - Hermes site ID
-     *
-     * Response(s)
-     * hermes/dialogueManager/sessionStarted
-     */
-    fun startSession(jsonObject: JsonObject) {
-        ServiceInterface.startRecording()
-    }
-
-    /**
-     * https://rhasspy.readthedocs.io/en/latest/reference/#dialoguemanager_continuesession
-     *
-     * hermes/dialogueManager/continueSession (JSON)
-     * Requests that a session be continued after an intent has been recognized
-     * sessionId: string - current session ID (required)
-     */
-    fun continueSession(jsonObject: JsonObject) {
-        //TODO
-    }
-
-    /**
-     * https://rhasspy.readthedocs.io/en/latest/reference/#dialoguemanager_endsession
-     *
-     * hermes/dialogueManager/endSession (JSON)
-     * Requests that a session be terminated nominally
-     * sessionId: string - current session ID (required)
-     */
-    suspend fun endSession(jsonObject: JsonObject) {
-        ServiceInterface.stopRecording(jsonObject["sessionId"]?.jsonPrimitive?.content)
-    }
-
-    //###################################  Output Messages
-
-    /**
-     * hermes/dialogueManager/sessionStarted (JSON)
-     * Indicates a session has started
-     * sessionId: string - current session ID
-     * siteId: string = "default" - Hermes site ID
-     *
-     * Response to [hermes/dialogueManager/startSession]
-     * Also used when session has started for other reasons
-     */
-    fun sessionStarted(
-        sessionId: String,
-        siteId: String = ConfigurationSettings.siteId.data,
-        customData: String = "default",
-        lang: String? = null
-    ) {
-        coroutineScope.launch {
-            client?.publish(
-                sessionStarted, MqttMessage(
-                    payload = Json.encodeToString(buildJsonObject {
-                        put("sessionId", sessionId)
-                        put("siteId", siteId)
-                        put("customData", customData)
-                        put("lang", lang)
-                    })
-                )
-            )?.also {
-                logger.e { "sessionStarted $uuid \n${it.statusCode.name} ${it.msg}" }
-            }
-        }
-    }
-
-    /**
-     * hermes/dialogueManager/sessionEnded (JSON)
-     * Indicates a session has terminated
-     *
-     * sessionId: string - current session ID
-     * siteId: string = "default" - Hermes site ID
-     *
-     * Response to hermes/dialogueManager/endSession or other reasons for a session termination
-     */
-    fun sessionEnded(uuid: Uuid) {
-        coroutineScope.launch {
-            client?.publish(
-                sessionEnded, MqttMessage(
-                    payload = Json.encodeToString(buildJsonObject {
-                        put("sessionId", uuid.toString())
-                        put("siteId", ConfigurationSettings.siteId.data)
-                    })
-                )
-            )?.also {
-                logger.e { "sessionEnded $uuid \n${it.statusCode.name} ${it.msg}" }
-            }
-        }
-    }
-
-
-    suspend fun toggleOn(jsonObject: JsonObject) {
-        ServiceInterface.setWakeWordEnabled(true)
-    }
-
-
-    suspend fun toggleOff(jsonObject: JsonObject) {
-        ServiceInterface.setWakeWordEnabled(false)
-    }
-
-    suspend fun setVolume(jsonObject: JsonObject) {
-        jsonObject["volume"]?.jsonPrimitive?.floatOrNull?.also {
-            ServiceInterface.setVolume(it)
-        } ?: run {
-            logger.e { "setVolume invalid value ${jsonObject["volume"]}" }
-        }
-    }
-
-    suspend fun asrTextCaptured(jsonObject: JsonObject) {
-        ServiceInterface.textCaptured()
-    }
-
-
-    suspend fun asrStopListening(jsonObject: JsonObject) {
-        ServiceInterface.stopRecording()
-    }
-
-    /**
-     * hermes/tts/say (JSON)
-     * Generate spoken audio for a sentence using the configured text to speech system
-     * Automatically sends playBytes
-     * playBytes.requestId = say.id
-     * text: string - sentence to speak (required)
-     * lang: string? = null - override language for TTS system
-     * id: string? = null - unique ID for request (copied to sayFinished)
-     * volume: float? = null - volume level to speak with (0 = off, 1 = full volume)
-     * siteId: string = "default" - Hermes site ID
-     * sessionId: string? = null - current session ID
-     * Response(s)
-     * hermes/tts/sayFinished (JSON)
-     */
-    suspend fun textToSpeak(text: String): MqttMessage? {
-        val uuid = uuid4()
-
-        return client?.publish(
-            say, MqttMessage(
-                payload = Json.encodeToString(buildJsonObject {
-                    put("text", text)
-                    put("id", uuid.toString())
-                    put("siteId", ConfigurationSettings.siteId.data)
-                })
-            )
-        )?.let {
-            logger.e { "textToSpeak $text \n${it.statusCode.name} ${it.msg}" }
-            null
-        } ?: run {
-            mqttResult(uuid, arrayOf(sayFinished))
-        }
-    }
-
-    /**
-     * hermes/nlu/query (JSON)
-     * Request an intent to be recognized from text
-     * input: string - text to recognize intent from (required)
-     * intentFilter: string? = null - valid intent names (null means all)
-     * id: string? = null - unique id for request (copied to response messages)
-     * siteId: string = "default" - Hermes site ID
-     * sessionId: string? = null - current session ID
-     * asrConfidence: float? = null - confidence from ASR system for input text
-     * Response(s)
-     * hermes/intent/<intentName>
-     * hermes/nlu/intentNotRecognized
-     */
-    suspend fun intentRecognition(text: String): MqttMessage? {
-        val uuid = uuid4()
-
-        return client?.publish(
-            intentRecognition, MqttMessage(
-                payload = Json.encodeToString(buildJsonObject {
-                    put("input", JsonPrimitive(text))
-                    put("id", uuid.toString())
-                    put("siteId", ConfigurationSettings.siteId.data)
-                })
-            )
-        )?.let {
-            logger.e { "intentRecognition $text \n${it.statusCode.name} ${it.msg}" }
-            null
-        } ?: run {
-            mqttResult(uuid, arrayOf(intentRecognized, intentNotRecognized))
-        }
-    }
-
-
-    /**
-     * hermes/audioServer/<siteId>/playBytes/<requestId> (JSON)
-     * Play WAV data
-     * wav_bytes: bytes - WAV data to play (message payload)
-     * requestId: string - unique ID for request (part of topic)
-     * siteId: string - Hermes site ID (part of topic)
-     * Response(s)
-     * hermes/audioServer/<siteId>/playFinished (JSON)
-     */
-    suspend fun playWav(data: ByteArray): MqttMessage? {
-        val uuid = uuid4()
-
-        return client?.publish(remotePlay, MqttMessage(data))?.let {
-            logger.e { "playWav ${data.size} \n${it.statusCode.name} ${it.msg}" }
-            null
-        } ?: run {
-            mqttResult(uuid, arrayOf(playFinished))
-        }
-    }
-
-    /**
-     * hermes/asr/startListening (JSON)
-     * Tell ASR system to start recording/transcribing
-     * siteId: string = "default" - Hermes site ID
-     * sessionId: string? = null - current session ID
-     * stopOnSilence: bool = true - detect silence and automatically end voice command (Rhasspy only)
-     * sendAudioCaptured: bool = false - send audioCaptured after stop listening (Rhasspy only)
-     * wakewordId: string? = null - id of wake word that triggered session (Rhasspy only)
-     */
-    suspend fun startListening(uuid: Uuid) {
-        //start listening
-        client?.publish(
-            asrStartListening, MqttMessage(
-                payload = Json.encodeToString(buildJsonObject {
-                    put("siteId", ConfigurationSettings.baseSiteId.data)
-                    put("sessionId", uuid.toString())
-                    put("lang", JsonNull)
-                    put("stopOnSilence", true)
-                    put("sendAudioCaptured", true)
-                    put("wakeWordId", "default")
-                    put("intentFilter", JsonNull)
-                })
-            )
-        )?.also {
-            //didn't work
-            logger.e { "asrStartListening ${uuid} \n${it.statusCode.name} ${it.msg}" }
-        }
-    }
-
-    /**
-     * hermes/audioServer/<siteId>/<sessionId>/audioSessionFrame (binary)
-     * Chunk of WAV audio data for session
-     * wav_bytes: bytes - WAV data to play (message payload)
-     * siteId: string - Hermes site ID (part of topic)
-     * sessionId: string - session ID (part of topic)
-     */
-    suspend fun audioSessionFrame(uuid: Uuid, data: ByteArray) {
-        //start listening
-        client?.publish(
-            asrAudioSessionFrame.replace("#", uuid.toString()),
-            MqttMessage(data)
-        )?.also {
-            //didn't work
-            logger.e { "asrAudioSessionFrame ${data.size} \n${it.statusCode.name} ${it.msg}" }
-        }
-    }
-
-    /**
-     * hermes/asr/stopListening (JSON)
-     * Tell ASR system to stop recording
-     * Emits textCaptured if silence has was not detected earlier
-     * siteId: string = "default" - Hermes site ID
-     * sessionId: string = "" - current session ID
-     */
-    suspend fun stopListening(uuid: Uuid): MqttMessage? {
-
-        //stop listening and await result
-        return client?.publish(
-            asrStopListening, MqttMessage(
-                payload = Json.encodeToString(buildJsonObject {
-                    put("sessionId", uuid.toString())
-                    put("siteId", ConfigurationSettings.siteId.data)
-                })
-            )
-        )?.let {
-            //didn't work
-            logger.e { "asrStopListening $uuid \n${it.statusCode.name} ${it.msg}" }
-            null
-        } ?: run {
-            mqttResult(uuid, arrayOf(asrError, asrTextCaptured))
-        }
-
-        /*
-        //stop listening and await result
-        return client?.publish(
-            "rhasspy/asr/recordingFinished", MqttMessage(
-                payload = Json.encodeToString(buildJsonObject {
-                    put("sessionId", uuid.toString())
-                    put("siteId", ConfigurationSettings.baseSiteId.data)
-                })
-            )
-        )?. {
-            //didn't work
-            logger.e { "recordingFinished ${data.size} \n${it.statusCode.name} ${it.msg}" }
-            null
-        } ?: run {
-            mqttResult(uuid, arrayOf(asrError, asrTextCaptured))
-        }*/
-    }
-
-
-    fun wakeWordDetected() {
-        coroutineScope.launch {
-            client?.publish(
-                wakeWordDetected, MqttMessage(
-                    payload = Json.encodeToString(buildJsonObject {
-                        put("modelId", "default")
-                        put("modelVersion", "")
-                        put("modelType", "personal")
-                        put("currentSensitivity", ConfigurationSettings.wakeWordKeywordSensitivity.data)
-                        put("siteId", ConfigurationSettings.siteId.data)
-                        put("sessionId", JsonNull)
-                        put("sendAudioCaptured", JsonNull)
-                        put("lang", JsonNull)
-                        put("customEntities", JsonNull)
-                    })
-                )
-            )?.also {
-                logger.e { "wakeWordDetected \n${it.statusCode.name} ${it.msg}" }
-            }
-        }
-    }
-
-
-    fun toggleOffWakeWord() {
-        coroutineScope.launch {
-            client?.publish(
-                toggleOff, MqttMessage(
-                    payload = Json.encodeToString(buildJsonObject {
-                        put("siteId", ConfigurationSettings.siteId.data)
-                        put("sessionId", "dialogueSession")
-                    })
-                )
-            )?.also {
-                logger.e { "toggleOff \n${it.statusCode.name} ${it.msg}" }
-            }
-        }
-    }
-
-
-    fun toggleOnWakeWord() {
-        coroutineScope.launch {
-            client?.publish(
-                toggleOn, MqttMessage(
-                    payload = Json.encodeToString(buildJsonObject {
-                        put("siteId", ConfigurationSettings.siteId.data)
-                        put("reason", "")
-                    })
-                )
-            )?.also {
-                logger.e { "toggleOn \n${it.statusCode.name} ${it.msg}" }
-            }
-        }
-    }
-
-
-    /**
-     * used to retrieve mqtt result on specific topic with specific id
-     */
-    private suspend fun mqttResult(uuid: Uuid, resultTopics: Array<String>): MqttMessage? {
-        var result: MqttMessage? = null
-
-        val job = Job()
-
-        val callback = MqttResultCallback(uuid, resultTopics) {
-            result = it
-            job.complete()
-        }
-
-        callbacks.add(callback)
-
-        return try {
-            withTimeout(5000) {
-                job.join()
-                result
-            }
-        } catch (e: Exception) {
-            callbacks.remove(callback)
-            null
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
-
-//wakeword
-//hermes/hotword/<wakewordId>/detected und site id
-//ignoring when hermes/hotword/toggleOff
-
-//toggle wakeword (like httpservice)
-//hermes/hotword/toggleOff
-//hermes/hotword/toggleOn
-
-
-//speech to text
-/*
-what is needed? what is a session?
-
-hermes/audioServer/<siteId>/audioFrame
-WAV chunk from microphone for a site
-hermes/audioServer/<siteId>/<sessionId>/audioSessionFrame
-WAV chunk from microphone for a session
- */
-
-
-//audio output
-//hermes/audioServer/<siteId>/playBytes/<requestId>
-//WAV audio to play through speakers
-//
-//hermes/audioServer/<siteId>/playFinished
-//Audio has finished playing
-
-
-//dialogue management
-//after wake word found
-/*
-hermes/dialogueManager/startSession
-Start a new session
-silence detected
-hermes/dialogueManager/endSession
-End an existing session
- */
-
-
-/*
-hermes/dialogueManager/sessionStarted
-New session has started
-
-silence detected
-hermes/dialogueManager/sessionEnded
-Existing session has terminated
  */

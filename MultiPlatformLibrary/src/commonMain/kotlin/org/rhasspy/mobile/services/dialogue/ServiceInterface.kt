@@ -50,6 +50,14 @@ object ServiceInterface {
 
         coroutineScope.launch {
 
+
+
+            //when local dialog management is enabled do the next thing
+
+            //when mqtt is enabled send the mqtt events
+
+            //when mqtt dialogue management receive session started an sessionEnded
+
             when (ConfigurationSettings.dialogueManagementOption.data) {
                 DialogueManagementOptions.Local -> {
                     //do the next thing according to previous action

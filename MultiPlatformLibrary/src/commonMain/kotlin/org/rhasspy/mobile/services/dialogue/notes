@@ -16,8 +16,8 @@ mqtt dialogue manager -> input messages for dialogue manager are actually handle
 hermes/dialogueManager/startSession
 Start a new session
 
-hermes/dialogueManager/continueSession
-Continue an existing session
+//hermes/dialogueManager/continueSession
+//Continue an existing session
 
 hermes/dialogueManager/endSession
 End an existing session
@@ -29,8 +29,8 @@ End an existing session
 hermes/dialogueManager/sessionStarted
 New session has started
 
-hermes/dialogueManager/sessionQueued
-New session has be enqueued
+//hermes/dialogueManager/sessionQueued
+//New session has be enqueued
 
 hermes/dialogueManager/sessionEnded
 Existing session has terminated
@@ -48,8 +48,8 @@ Voice command was not recognized in existing session
 
 # Input Messages
 
-rhasspy/audioServer/getDevices
-Requests available input devices
+//rhasspy/audioServer/getDevices
+//Requests available input devices
 
 
 
@@ -58,8 +58,8 @@ Requests available input devices
 hermes/audioServer/<siteId>/audioFrame
 WAV chunk from microphone
 
-rhasspy/audioServer/devices
-Description of available audio input devices
+//rhasspy/audioServer/devices
+//Description of available audio input devices
 
 
 
@@ -77,8 +77,8 @@ Enables wake word detection
 hermes/hotword/toggleOff
 Disables wake word detection
 
-rhasspy/hotword/getHotwords
-Request available hotwords
+//rhasspy/hotword/getHotwords
+//Request available hotwords
 
 
 
@@ -87,11 +87,11 @@ Request available hotwords
 hermes/wake/hotword/<wakewordId>/detected
 Wake word successfully detected
 
-rhasspy/hotword/hotwords
-Description of available hotwords
+//rhasspy/hotword/hotwords
+//Description of available hotwords
 
-hermes/error/hotword
-Wake word system error
+//hermes/error/hotword
+//Wake word system error
 
 
 
@@ -106,14 +106,14 @@ Wake word system error
 hermes/audioServer/<siteId>/audioFrame
 WAV chunk from microphone for a site
 
-hermes/audioServer/<siteId>/<sessionId>/audioSessionFrame
-WAV chunk from microphone for a session
+//hermes/audioServer/<siteId>/<sessionId>/audioSessionFrame
+//WAV chunk from microphone for a session
 
-hermes/asr/toggleOn
-Enable ASR system
+//hermes/asr/toggleOn
+//Enable ASR system
 
-hermes/asr/toggleOff
-Disable ASR system
+//hermes/asr/toggleOff
+//Disable ASR system
 
 hermes/asr/startListening
 Start recording a voice command
@@ -121,11 +121,11 @@ Start recording a voice command
 hermes/asr/stopListening
 Stop recording a voice command
 
-rhasspy/asr/<siteId>/train
-Re-train ASR system
+//rhasspy/asr/<siteId>/train
+//Re-train ASR system
 
-rhasspy/g2p/pronounce
-Get phonetic pronunciations for words
+//rhasspy/g2p/pronounce
+//Get phonetic pronunciations for words
 
 
 
@@ -137,15 +137,15 @@ Successful voice command transcription
 hermes/error/asr
 Error during transcription/training
 
-rhasspy/asr/<siteId>/trainSuccess
-ASR training succeeded
+//rhasspy/asr/<siteId>/trainSuccess
+//ASR training succeeded
 
 rhasspy/asr/<siteId>/<sessionId>/audioCaptured
 Audio recorded from voice command
 Sent when sendAudioCaptured = true in startListening
 
-rhasspy/g2p/phonemes
-Phonetic pronunciations of words
+//rhasspy/g2p/phonemes
+//Phonetic pronunciations of words
 
 
 
@@ -160,8 +160,8 @@ Phonetic pronunciations of words
 hermes/nlu/query
 Recognize intent from text
 
-rhasspy/nlu/<siteId>/train
-Retrain NLU system
+//rhasspy/nlu/<siteId>/train
+//Retrain NLU system
 
 
 
@@ -173,11 +173,11 @@ Intent successfully recognized
 hermes/nlu/intentNotRecognized
 Intent was not recognized
 
-hermes/error/nlu
-Error during recognition/training
+//hermes/error/nlu
+//Error during recognition/training
 
-rhasspy/nlu/<siteId>/trainSuccess
-NLU training succeeded
+//rhasspy/nlu/<siteId>/trainSuccess
+//NLU training succeeded
 
 
 
@@ -189,8 +189,8 @@ NLU training succeeded
 
 # Input Messages
 
-hermes/intent/<intentName>
-Intent successfully recognized
+//hermes/intent/<intentName>
+//Intent successfully recognized
 
 hermes/handle/toggleOn
 Enable intent handling
@@ -218,8 +218,8 @@ Speak a sentence
 hermes/tts/say
 Speak a sentence
 
-rhasspy/tts/getVoices
-Request available voices
+//rhasspy/tts/getVoices
+//Request available voices
 
 
 
@@ -228,8 +228,8 @@ Request available voices
 hermes/tts/sayFinished
 Finished generating audio (actually spoken with playBytes)
 
-rhasspy/tts/voices
-Description of available voices
+//rhasspy/tts/voices
+//Description of available voices
 
 
 
@@ -250,8 +250,8 @@ Disable audio output
 hermes/audioServer/toggleOn
 Enable audio output
 
-rhasspy/audioServer/getDevices
-Request audio output devices
+//rhasspy/audioServer/getDevices
+//Request audio output devices
 
 
 
@@ -260,5 +260,8 @@ Request audio output devices
 hermes/audioServer/<siteId>/playFinished
 Audio has finished playing
 
-rhasspy/audioServer/devices
-Details of audio output devices
+//rhasspy/audioServer/devices
+//Details of audio output devices
+
+rhasspy/audioServer/setVolume
+Set the volume at one or more sites
