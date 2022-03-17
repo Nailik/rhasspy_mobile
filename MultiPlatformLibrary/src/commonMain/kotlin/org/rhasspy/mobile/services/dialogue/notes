@@ -1,11 +1,15 @@
 
 
-MQTT external -> always listens to commands any Dialogue Manager
-MQTT Dialogue Manager -> no internal action
+MQTT external -> publishes everything, also every audio frame (settings for this?) inside audio output (either udp or continously mqtt)
+
+wakeword detection mqtt -> audio frame published all the time (also on udp?)
+
+mqtt dialogue manager -> input messages for dialogue manager are actually handled
+
+
+
 
 ### Dialogue Manager
-
-
 
 # Input Messages
 

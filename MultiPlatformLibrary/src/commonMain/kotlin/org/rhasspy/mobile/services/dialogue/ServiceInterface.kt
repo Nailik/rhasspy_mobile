@@ -11,12 +11,14 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.services.*
+import org.rhasspy.mobile.services.RecordingService.addWavHeader
 import org.rhasspy.mobile.services.http.HttpServer
 import org.rhasspy.mobile.services.native.AudioPlayer
 import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.services.native.NativeLocalWakeWordService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.toByteArray
 import org.rhasspy.mobile.viewModels.GlobalData
 import kotlin.native.concurrent.ThreadLocal
 
@@ -242,8 +244,8 @@ object ServiceInterface {
                     MqttService.startListening(sessionId!!)
 
                     collectAudioJob = coroutineScope.launch {
-                        RecordingService.sharedFlow.collectIndexed { _, data ->
-                            MqttService.audioSessionFrame(sessionId!!, data)
+                        RecordingService.sharedFlow.collectIndexed { _, byteData ->
+                            MqttService.audioSessionFrame(sessionId!!, byteData.addWavHeader())
                         }
                     }
 
