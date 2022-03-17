@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
+import org.rhasspy.mobile.services.dialogue.DialogueAction
 import org.rhasspy.mobile.services.dialogue.ServiceInterface
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -71,7 +72,7 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
     override fun invoke(keywordIndex: Int) {
         logger.d { "invoke - keyword detected" }
 
-        ServiceInterface.wakeWordDetected()
+        ServiceInterface.onAction(DialogueAction.HotWordDetected)
     }
 
 }

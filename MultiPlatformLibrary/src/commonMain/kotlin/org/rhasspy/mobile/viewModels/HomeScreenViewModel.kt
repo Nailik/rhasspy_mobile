@@ -48,16 +48,17 @@ class HomeScreenViewModel : ViewModel() {
 
     val isRecording = RecordingService.status
 
+    fun toggleSession() = ServiceInterface.toggleSession()
 
-    fun saveAndApplyChanges() = ServiceInterface.saveChanges()
-
-    fun resetChanges() = ServiceInterface.resetChanges()
-
-    fun textToSpeak(text: String) = ServiceInterface.textToSpeak(text)
+    fun playRecording() = ServiceInterface.playRecording()
 
     fun intentRecognition(text: String) = ServiceInterface.intentRecognition(text)
 
-    fun toggleRecording() = ServiceInterface.toggleRecording()
+    fun speakText(text: String) = ServiceInterface.speakText(text)
 
-    fun playRecording() = ServiceInterface.playRecording()
+    fun saveAndApplyChanges() = ServiceInterface.saveAndApplyChanges()
+
+    fun resetChanges() = ServiceInterface.resetChanges()
+
+
 }

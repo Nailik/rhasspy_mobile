@@ -24,7 +24,7 @@ object ForegroundService {
         //when background enabled value changes, services need to be reloaded
         AppSettings.isBackgroundEnabled.value.addObserver {
             CoroutineScope(Dispatchers.Default).launch {
-                action(Action.Reload)
+                action(ServiceAction.Reload)
             }
         }
     }
@@ -35,14 +35,14 @@ object ForegroundService {
      * Starts background service, if not called by service and
      * isBackgroundEnabled is true and service is not running yet
      */
-    fun action(action: Action, fromService: Boolean = false) {
-        logger.v { "action $action fromService $fromService" }
+    fun action(serviceAction: ServiceAction, fromService: Boolean = false) {
+        logger.v { "action $serviceAction fromService $fromService" }
 
         if (fromService) {
-            when (action) {
-                Action.Start -> ServiceInterface.startServices()
-                Action.Stop -> ServiceInterface.stopServices()
-                Action.Reload -> ServiceInterface.reloadServices()
+            when (serviceAction) {
+                ServiceAction.Start -> ServiceInterface.serviceAction()
+                ServiceAction.Stop -> ServiceInterface.stopServices()
+                ServiceAction.Reload -> ServiceInterface.reloadServices()
             }
         } else {
             if (!AppSettings.isBackgroundEnabled.data) {
@@ -51,14 +51,14 @@ object ForegroundService {
                     NativeService.stop()
                 }
 
-                when (action) {
-                    Action.Start -> ServiceInterface.startServices()
-                    Action.Stop -> ServiceInterface.stopServices()
-                    Action.Reload -> ServiceInterface.reloadServices()
+                when (serviceAction) {
+                    ServiceAction.Start -> ServiceInterface.serviceAction()
+                    ServiceAction.Stop -> ServiceInterface.stopServices()
+                    ServiceAction.Reload -> ServiceInterface.reloadServices()
                 }
             } else {
                 //start or update service
-                NativeService.doAction(action)
+                NativeService.doAction(serviceAction)
             }
         }
     }

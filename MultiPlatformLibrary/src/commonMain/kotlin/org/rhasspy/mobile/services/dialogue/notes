@@ -265,3 +265,54 @@ Audio has finished playing
 
 rhasspy/audioServer/setVolume
 Set the volume at one or more sites
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+wakeWordDetected
+
+
+
+startSession -> showIndication
+endSession -> stopIndication
+
+textToSpeak
+intentRecognition
+
+playAudio
+intentHandling
+
+speechToText
+
+startRecording
+stopRecording
+
+
+textCaptured
+
+setWakeWordEnabled On/Off
+setAudioOutputEnabled On/Off
+setIntentHandling On/Off
+
+setVolume
+
+
+
+startServices
+stopServices
+reloadServices
+startWakeWordService ...
+getLatestRecording
+saveChanges
+resetChanges
+playRecording

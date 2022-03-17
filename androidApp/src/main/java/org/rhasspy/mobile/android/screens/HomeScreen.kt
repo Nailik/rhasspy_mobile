@@ -126,14 +126,14 @@ fun MainActionFab(modifier: Modifier = Modifier, snackbarHostState: SnackbarHost
 
     val requestMicrophonePermission = requestMicrophonePermission(snackbarHostState, MR.strings.microphonePermissionInfoRecord) {
         if (it) {
-            viewModel.toggleRecording()
+            viewModel.toggleSession()
         }
     }
 
     FloatingActionButton(
         onClick = {
             if (MicrophonePermission.granted.value) {
-                viewModel.toggleRecording()
+                viewModel.toggleSession()
             } else {
                 requestMicrophonePermission.invoke()
             }
@@ -254,7 +254,7 @@ fun TextToSpeak(
         label = MR.strings.textToSpeak,
         text = textToSpeak,
         onValueChange = { textToSpeak = it },
-        onClick = { viewModel.textToSpeak(textToSpeak) }) {
+        onClick = { viewModel.speakText(textToSpeak) }) {
         org.rhasspy.mobile.android.utils.Icon(
             imageVector = Icons.Filled.VolumeUp,
             contentDescription = MR.strings.textToSpeak,
