@@ -1,8 +1,6 @@
 package org.rhasspy.mobile.services.dialogue
 
 import co.touchlab.kermit.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.services.ForegroundService
@@ -16,14 +14,9 @@ import org.rhasspy.mobile.services.native.NativeLocalWakeWordService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.viewModels.GlobalData
-import kotlin.native.concurrent.ThreadLocal
 
-@ThreadLocal
 object ServiceInterface {
     private val logger = Logger.withTag(this::class.simpleName!!)
-
-    private val coroutineScope = CoroutineScope(Dispatchers.Default)
-
 
     /**
      * Start services according to settings
@@ -87,11 +80,21 @@ object ServiceInterface {
         }
     }
 
+    //################## Actions called from Other Services
+
     /**
      * returns latest recording as wav file
      */
     fun getLatestRecording(): ByteArray {
         return RecordingService.getLatestRecording()
+    }
+
+    fun wakeWordDetected() {
+        DialogueManagement.wakeWordDetected()
+    }
+
+    fun finishedPlayingAudio() {
+        DialogueManagement.playFinished()
     }
 
     //################## Actions called from UI

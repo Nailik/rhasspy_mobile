@@ -305,14 +305,3 @@ setAudioOutputEnabled On/Off
 setIntentHandling On/Off
 
 setVolume
-
-
-
-startServices
-stopServices
-reloadServices
-startWakeWordService ...
-getLatestRecording
-saveChanges
-resetChanges
-playRecording

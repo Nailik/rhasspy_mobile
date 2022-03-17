@@ -23,8 +23,6 @@ object DialogueManagement {
     private val wakeWordEnabled = MutableLiveData(true)
 
 
-    private var collectAudioJob: Job? = null
-
     /**
      * not null if there is currently a session
      */
@@ -33,6 +31,11 @@ object DialogueManagement {
 
 
     fun startSession() {
+
+        when(ConfigurationSettings.dialogueManagementOption.data){
+            DialogueManagementOptions.Local -> TODO()
+            DialogueManagementOptions.RemoteMQTT -> TODO()
+        }
 
         ServiceInterface.coroutineScope.launch {
 
@@ -57,6 +60,8 @@ object DialogueManagement {
         }
 
     }
+
+    fun sessionStarted()
 
     fun endSession(sessionId: String) {
 
@@ -302,6 +307,15 @@ object DialogueManagement {
             }
          */
     }
+
+    fun wakeWordDetected(){
+
+    }
+
+    fun playFinished(){
+
+    }
+
 
     fun setAudioOutputEnabled(enabled: Boolean) {
         ServiceInterface.logger.d { "setAudioOutputEnabled $enabled" }

@@ -5,6 +5,7 @@ import android.media.AudioFormat
 import android.media.AudioManager
 import android.media.AudioTrack
 import co.touchlab.kermit.Logger
+import org.rhasspy.mobile.services.dialogue.ServiceInterface
 import org.rhasspy.mobile.settings.AppSettings
 import java.nio.ByteBuffer
 
@@ -31,6 +32,8 @@ actual object AudioPlayer {
             val channels = ByteBuffer.wrap(data.copyOfRange(22, 24).reversedArray()).short
             //Sample rate as a 4 byte (32 bit) integer.
             val sampleRate = ByteBuffer.wrap(data.copyOfRange(24, 28).reversedArray()).int
+            //41-44 The number of bytes of the data section below this
+            val audioDataSize = ByteBuffer.wrap(data.copyOfRange(40, 43).reversedArray()).int / 2 //(pcm)
 
             val audioTrack = AudioTrack(
                 AudioAttributes.Builder()
@@ -46,9 +49,19 @@ actual object AudioPlayer {
                 AudioManager.AUDIO_SESSION_ID_GENERATE
             )
 
+            audioTrack.notificationMarkerPosition = audioDataSize
+            audioTrack.setPlaybackPositionUpdateListener(object : AudioTrack.OnPlaybackPositionUpdateListener {
+
+                override fun onMarkerReached(p0: AudioTrack?) {
+                    ServiceInterface.finishedPlayingAudio()
+                }
+
+                override fun onPeriodicNotification(p0: AudioTrack?) {}
+            })
+
             audioTrack.setVolume(AppSettings.volume.data)
 
-            audioTrack.write(data, 0, data.size)
+            audioTrack.write(data, 40, audioDataSize)
             audioTrack.play()
             audioTrack.flush()
 
