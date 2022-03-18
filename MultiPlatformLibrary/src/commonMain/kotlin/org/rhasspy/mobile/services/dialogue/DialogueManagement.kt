@@ -8,9 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.*
-import org.rhasspy.mobile.services.HttpService
-import org.rhasspy.mobile.services.MqttService
-import org.rhasspy.mobile.services.RecordingService
+import org.rhasspy.mobile.services.*
 import org.rhasspy.mobile.services.native.AudioPlayer
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
@@ -123,7 +121,9 @@ object DialogueManagement {
      */
     fun audioFrame(byteArray: ByteArray) {
         //send to udp if udp streaming
-        //TODO
+        if (AppSettings.isAudioOutputEnabled.data) {
+            UdpService.streamAudio(byteArray)
+        }
 
         //send to mqtt if mqtt listen for WakeWord or mqtt text to speech
         if (ConfigurationSettings.wakeWordOption.value == WakeWordOption.MQTT ||
@@ -302,7 +302,7 @@ object DialogueManagement {
         if (AppSettings.isIntentHandlingEnabled.data) {
             coroutineScope.launch {
                 when (ConfigurationSettings.intentHandlingOption.data) {
-                    IntentHandlingOptions.HomeAssistant -> TODO()
+                    IntentHandlingOptions.HomeAssistant -> HomeAssistantService.sendIntent(intent)
                     IntentHandlingOptions.RemoteHTTP -> HttpService.intentHandling(intent)
                     IntentHandlingOptions.WithRecognition -> logger.v { "intentHandling with recognition was used" }
                     IntentHandlingOptions.Disabled -> logger.d { "intentHandling disabled" }
