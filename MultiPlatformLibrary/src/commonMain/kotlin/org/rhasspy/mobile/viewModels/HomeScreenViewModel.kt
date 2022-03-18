@@ -10,7 +10,6 @@ import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.nativeutils.OverlayPermission
-import org.rhasspy.mobile.services.dialogue.DialogueManagement
 import org.rhasspy.mobile.services.dialogue.ServiceInterface
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
@@ -47,7 +46,7 @@ class HomeScreenViewModel : ViewModel() {
         }
     }
 
-    val isRecording = DialogueManagement.sessionId.map { it != null }
+    val isRecording = ServiceInterface.sessionId.map { it != null }
 
     fun toggleSession() = ServiceInterface.toggleSession()
 

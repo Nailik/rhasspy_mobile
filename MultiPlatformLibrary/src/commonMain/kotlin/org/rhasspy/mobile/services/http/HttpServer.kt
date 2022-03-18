@@ -5,7 +5,6 @@ import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.services.dialogue.DialogueManagement
 import org.rhasspy.mobile.services.dialogue.ServiceInterface
 import org.rhasspy.mobile.services.http.HttpMethodWrapper.GET
 import org.rhasspy.mobile.services.http.HttpMethodWrapper.POST
@@ -65,7 +64,7 @@ object HttpServer {
         logger.v { "received $action" }
 
         action?.also {
-            DialogueManagement.hotWordToggle(action)
+            ServiceInterface.hotWordToggle(action)
         } ?: kotlin.run {
             logger.w { "invalid body" }
         }
@@ -92,7 +91,7 @@ object HttpServer {
         logger.v { "get /api/play-recording" }
 
         respondBytes(
-            bytes = ServiceInterface.getLatestRecording(),
+            bytes = ServiceInterface.getPreviousRecording(),
             contentType = ContentType("audio", "wav")
         )
     }
@@ -143,18 +142,20 @@ object HttpServer {
     /**
      * /api/start-recording
      * POST to have Rhasspy start recording a voice command
+     * actually starts a session
      */
     private fun startRecording() = HttpCallWrapper("/api/start-recording", POST) {
         logger.v { "post /api/start-recording" }
 
-        CoroutineScope(Dispatchers.Main).launch {
-            ServiceInterface.startRecording()
-        }
+        ServiceInterface.startListening()
     }
 
     /**
      * /api/stop-recording
      * POST to have Rhasspy stop recording and process recorded data as a voice command
+     * (if dialogue management was set to local)
+     *
+     * Not Yet:
      * Returns intent JSON when command has been processed
      * ?nohass=true - stop Rhasspy from handling the intent
      * ?entity=<entity>&value=<value> - set custom entity/value in recognized intent
@@ -162,9 +163,7 @@ object HttpServer {
     private fun stopRecording() = HttpCallWrapper("/api/stop-recording", POST) {
         logger.v { "post /api/stop-recording" }
 
-        CoroutineScope(Dispatchers.Main).launch {
-            ServiceInterface.stopRecording()
-        }
+        ServiceInterface.stopListening()
     }
 
 }
