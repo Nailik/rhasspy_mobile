@@ -15,6 +15,7 @@ object ConfigurationSettings {
     val mqttPort = Setting(SettingsEnum.MQTTPort, "")
     val mqttUserName = Setting(SettingsEnum.MQTTUserName, "")
     val mqttPassword = Setting(SettingsEnum.MQTTPassword, "")
+    val isMQTTSilenceDetectionEnabled = Setting(SettingsEnum.MQTTSilenceDetectionEnabled, false)
 
     val isUDPOutput = Setting(SettingsEnum.UDPOutput, false)
     val udpOutputHost = Setting(SettingsEnum.UDPOutputHost, "")

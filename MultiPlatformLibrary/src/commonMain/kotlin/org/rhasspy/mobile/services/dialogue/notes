@@ -45,7 +45,7 @@ Voice command was not recognized in existing session
 ### Audio Input
 
 
-s# Input Messages
+# Input Messages
 
 //rhasspy/audioServer/getDevices
 //Requests available input devices
@@ -224,8 +224,8 @@ Speak a sentence
 
 # Output Messages
 
-hermes/tts/sayFinished
-Finished generating audio (actually spoken with playBytes)
+//hermes/tts/sayFinished
+//Finished generating audio (actually spoken with playBytes)
 
 //rhasspy/tts/voices
 //Description of available voices

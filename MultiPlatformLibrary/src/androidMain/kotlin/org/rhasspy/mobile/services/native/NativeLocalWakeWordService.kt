@@ -55,7 +55,7 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
         try {
 
             porcupineManager = PorcupineManager.Builder()
-                .setAccessKey(ConfigurationSettings.wakeWordAccessToken.value)
+                .setAccessKey(ConfigurationSettings.wakeWordAccessToken.data)
                 .setKeyword(Porcupine.BuiltInKeyword.valueOf(ConfigurationSettings.wakeWordKeywordOption.data.name))
                 .setSensitivity(ConfigurationSettings.wakeWordKeywordSensitivity.data)
                 .build(Application.Instance, this)
@@ -71,7 +71,7 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
     override fun invoke(keywordIndex: Int) {
         logger.d { "invoke - keyword detected" }
 
-        ServiceInterface.wakeWordDetected()
+        ServiceInterface.hotWordDetected()
     }
 
 }

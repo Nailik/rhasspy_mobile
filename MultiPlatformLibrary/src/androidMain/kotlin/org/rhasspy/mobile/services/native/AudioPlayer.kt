@@ -53,7 +53,7 @@ actual object AudioPlayer {
             audioTrack.setPlaybackPositionUpdateListener(object : AudioTrack.OnPlaybackPositionUpdateListener {
 
                 override fun onMarkerReached(p0: AudioTrack?) {
-                    ServiceInterface.finishedPlayingAudio()
+                    ServiceInterface.playFinished()
                 }
 
                 override fun onPeriodicNotification(p0: AudioTrack?) {}
@@ -68,10 +68,6 @@ actual object AudioPlayer {
         } catch (e: Exception) {
             logger.e(e) { "Exception while playing audio data" }
         }
-    }
-
-    actual fun setEnabled(enabled: Boolean) {
-        this.isEnabled = enabled
     }
 
 }

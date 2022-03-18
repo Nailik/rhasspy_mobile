@@ -18,8 +18,9 @@ enum class MQTTTopicsSubscription(val topic: String) {
     IntentNotRecognized("hermes/nlu/intentNotRecognized"),
     IntentHandlingToggleOn("hermes/handle/toggleOn"),
     IntentHandlingToggleOff("hermes/handle/toggleOff"),
-    SayFinished("hermes/tts/sayFinished"),
+    PlayBytes("hermes/audioServer/<siteId>/playBytes/+"),
     AudioOutputToggleOff("hermes/audioServer/toggleOff"),
     AudioOutputToggleOn("hermes/audioServer/toggleOn"),
     SetVolume("rhasspy/audioServer/setVolume")
+
 }

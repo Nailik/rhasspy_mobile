@@ -7,14 +7,15 @@ enum class MQTTTopicsPublish(val topic: String) {
 
     SessionStarted("hermes/dialogueManager/sessionStarted"),
     SessionEnded("hermes/dialogueManager/sessionEnded"),
-    SessionNotIntentRecognized("hermes/dialogueManager/intentNotRecognized"),
+    IntentNotRecognizedInSession("hermes/dialogueManager/intentNotRecognized"),
     AsrStartListening( "hermes/asr/startListening"),
     AsrStopListening("hermes/asr/stopListening"),
     AsrAudioSessionFrame("hermes/audioServer/<siteId>/audioFrame"),
-    WakeWordDetected("hermes/hotword/default/detected"),
+    HotWordDetected("hermes/hotword/default/detected"),
+    HotWordError("hermes/error/hotword"),
     AudioCaptured("hermes/asr/<siteId>/<sessionId>/audioCaptured"),
     IntentRecognition("hermes/nlu/query"),
     Say("hermes/tts/say"),
-    AudioOutputPlayBytes("hermes/audioServer/<siteId>/playBytes/#"),
+    AudioOutputPlayBytes("hermes/audioServer/<siteId>/playBytes/<requestId>"),
     AudioOutputPlayFinished("hermes/audioServer/<siteId>/playFinished");
 }
