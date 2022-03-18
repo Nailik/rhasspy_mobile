@@ -6,6 +6,7 @@ import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.services.ForegroundService
 import org.rhasspy.mobile.services.MqttService
 import org.rhasspy.mobile.services.RecordingService
+import org.rhasspy.mobile.services.RecordingService.addWavHeader
 import org.rhasspy.mobile.services.ServiceAction
 import org.rhasspy.mobile.services.http.HttpServer
 import org.rhasspy.mobile.services.native.AudioPlayer
@@ -95,6 +96,14 @@ object ServiceInterface {
 
     fun finishedPlayingAudio() {
         DialogueManagement.playFinished()
+    }
+
+    fun silenceDetected() {
+
+    }
+
+    fun audioFrame(byteArray: ByteArray) {
+        DialogueManagement.audioFrame(byteArray.addWavHeader())
     }
 
     //################## Actions called from UI

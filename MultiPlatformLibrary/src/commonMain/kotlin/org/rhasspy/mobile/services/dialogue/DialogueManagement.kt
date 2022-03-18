@@ -1,71 +1,136 @@
 package org.rhasspy.mobile.services.dialogue
 
 import co.touchlab.kermit.Logger
-import com.benasher44.uuid.Uuid
+import com.benasher44.uuid.uuid4
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.addCloseableObserver
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collectIndexed
+import dev.icerock.moko.mvvm.livedata.readOnly
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.services.HttpService
 import org.rhasspy.mobile.services.MqttService
 import org.rhasspy.mobile.services.RecordingService
-import org.rhasspy.mobile.services.RecordingService.addWavHeader
 import org.rhasspy.mobile.services.native.AudioPlayer
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import kotlin.native.concurrent.ThreadLocal
 
+@ThreadLocal
 object DialogueManagement {
     private val logger = Logger.withTag(this::class.simpleName!!)
+    private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     //toggle on off from mqtt or http service
     private val wakeWordEnabled = MutableLiveData(true)
-
+    private var intentRecognized = false
 
     /**
      * not null if there is currently a session
      */
-    var sessionId: Uuid? = null
-        private set
+    private var currentSessionId: MutableLiveData<String?> = MutableLiveData(null)
 
+    var sessionId = currentSessionId.readOnly()
 
+    /**
+     * hermes/dialogueManager/startSession
+     * Starts a new dialogue session (done automatically on hotword detected)
+     * only handeled when DialogueManagement is local
+     *
+     * Response(s)
+     * hermes/dialogueManager/sessionStarted
+     */
     fun startSession() {
+        intentRecognized = false
 
-        when(ConfigurationSettings.dialogueManagementOption.data){
-            DialogueManagementOptions.Local -> TODO()
-            DialogueManagementOptions.RemoteMQTT -> TODO()
+        if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+            coroutineScope.launch {
+                val sessionUuid = uuid4()
+                //send response
+                MqttService.sessionStarted(sessionUuid.toString())
+                //start the session
+                sessionStarted(sessionUuid.toString())
+            }
+        }
+    }
+
+    /**
+     * hermes/dialogueManager/endSession
+     * Requests that a session be terminated nominally
+     */
+    fun endSession(sessionId: String) {
+        if (sessionId != this.currentSessionId.value) {
+            logger.e { "trying to end session with invalid id" }
+            return
         }
 
-        ServiceInterface.coroutineScope.launch {
-
-
-            //when local dialog management is enabled do the next thing
-
-
-            //when mqtt is enabled send the mqtt events
-
-            //when mqtt dialogue management receive session started an sessionEnded
-
-            when (ConfigurationSettings.dialogueManagementOption.data) {
-                DialogueManagementOptions.Local -> {
-                    //do the next thing according to previous action
-                    DialogueManagementLocal.doAction(inputAction)
-                }
-                DialogueManagementOptions.RemoteMQTT -> {
-                    //only send action to MQTT broker, hope that he does tell you what to do
-                    DialogueManagementMQTT.doAction(inputAction)
+        if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+            coroutineScope.launch {
+                currentSessionId.value?.also {
+                    //send response
+                    MqttService.sessionEnded(it)
+                    //start the session
+                    sessionEnded(it)
                 }
             }
         }
-
     }
 
-    fun sessionStarted()
+    /**
+     * hermes/dialogueManager/sessionStarted
+     * Indicates a session has started
+     *
+     * Response to [hermes/dialogueManager/startSession]
+     *
+     * internal dialogue manager will start recording now
+     */
+    fun sessionStarted(sessionId: String) {
+        currentSessionId.value = sessionId
 
-    fun endSession(sessionId: String) {
-
+        if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+            startListening()
+        }
     }
+
+    /**
+     * hermes/dialogueManager/sessionEnded
+     * Indicates a session has terminated
+     *
+     * Response to hermes/dialogueManager/endSession or other reasons for a session termination
+     *
+     * sessionId will be reset
+     * and internal dialogue manager will make sure that recording is stopped
+     */
+    suspend fun sessionEnded(sessionId: String) {
+        currentSessionId.value = null
+
+        if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+            sopListening()
+        }
+        if (!intentRecognized) {
+            MqttService.sessionIntentNotRecognized()
+        }
+    }
+
+    /**
+     * hermes/audioServer/<siteId>/audioFrame
+     * WAV chunk from microphone
+     */
+    fun audioFrame(byteArray: ByteArray) {
+        //send to udp if udp streaming
+
+        //send to mqtt if it is enabled and
+        //mqtt listen for WakeWord or mqtt text to speech
+        if (ConfigurationSettings.isMQTTEnabled.value &&
+            (ConfigurationSettings.wakeWordOption.value == WakeWordOption.MQTT ||
+                    ConfigurationSettings.textToSpeechOption.value == TextToSpeechOptions.RemoteMQTT)
+        ) {
+            MqttService.audioFrame(byteArray)
+
+        }
+    }
+
 
     /**
      * Text to Speak requested
@@ -260,14 +325,14 @@ object DialogueManagement {
     /**
      * shows indication and then starts recording
      */
-    fun startRecording() {
+    fun startListening() {
         ServiceInterface.logger.d { "startRecording" }
 
         ServiceInterface.showIndication()
         RecordingService.startRecording()
     }
 
-    fun stopRecording(uuid: String? = sessionId?.toString()) {
+    fun sopListening() {
         uuid?.also { id ->
             sessionId?.also {
                 if (id == it.toString()) {
@@ -308,11 +373,11 @@ object DialogueManagement {
          */
     }
 
-    fun wakeWordDetected(){
+    fun wakeWordDetected() {
 
     }
 
-    fun playFinished(){
+    fun playFinished() {
 
     }
 

@@ -267,6 +267,7 @@ object MqttService {
     }
 
     //###################################  Output Messages
+    //when MQTT is not enabled client will be null and nothing will be published
 
     /**
      * hermes/dialogueManager/sessionStarted (JSON)
@@ -310,7 +311,7 @@ object MqttService {
      *
      * Response to hermes/dialogueManager/endSession or other reasons for a session termination
      */
-    suspend fun sessionEnded(uuid: Uuid) {
+    suspend fun sessionEnded(sessionId: String) {
         /*     coroutineScope.launch {
                  client?.publish(
                      sessionEnded, MqttMessage(
@@ -327,10 +328,14 @@ object MqttService {
          */
     }
 
-    suspend fun sessionNotIntentRecognized() {
+    suspend fun sessionIntentNotRecognized() {
 
     }
 
+
+    fun audioFrame(byteArray: ByteArray){
+
+    }
 
     /**
      * hermes/audioServer/<siteId>/<sessionId>/audioSessionFrame (binary)

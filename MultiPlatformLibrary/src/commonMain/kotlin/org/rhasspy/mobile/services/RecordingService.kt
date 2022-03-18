@@ -35,8 +35,8 @@ object RecordingService {
     //represents listening Status for ui
     val status: LiveData<Boolean> = listening.readOnly()
 
-    private val flow = MutableSharedFlow<ByteArray>()
-    val sharedFlow: Flow<ByteArray> get() = flow.takeWhile { listening.value }
+   // private val flow = MutableSharedFlow<ByteArray>()
+ //   val sharedFlow: Flow<ByteArray> get() = flow.takeWhile { listening.value }
 
     private var data = mutableListOf<Byte>()
 
@@ -67,7 +67,7 @@ object RecordingService {
         job = coroutineScope.launch {
             AudioRecorder.output.collectIndexed { _, value ->
                 data.addAll(value.toList())
-                flow.emit(value)
+                ServiceInterface.audioFrame(value)
 
                 if (AppSettings.isAutomaticSilenceDetection.data) {
                     if (!searchThreshold(value, AppSettings.automaticSilenceDetectionAudioLevel.data)) {
@@ -78,12 +78,7 @@ object RecordingService {
                             (-AppSettings.automaticSilenceDetectionTime.data).milliseconds
                         ) {
                             logger.i { "diff ${firstSilenceDetected?.minus(Clock.System.now())}" }
-
-                            CoroutineScope(Dispatchers.Main).launch {
-                                //stop instantly
-                                listening.value = false
-                                ServiceInterface.stopRecording()
-                            }
+                            ServiceInterface.silenceDetected()
                         }
                     }
                 }
