@@ -5,6 +5,7 @@ import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.rhasspy.mobile.services.dialogue.DialogueManagement
 import org.rhasspy.mobile.services.dialogue.ServiceInterface
 import org.rhasspy.mobile.services.http.HttpMethodWrapper.GET
 import org.rhasspy.mobile.services.http.HttpMethodWrapper.POST
@@ -64,7 +65,7 @@ object HttpServer {
         logger.v { "received $action" }
 
         action?.also {
-            ServiceInterface.setWakeWordEnabled(action)
+            DialogueManagement.hotWordToggle(action)
         } ?: kotlin.run {
             logger.w { "invalid body" }
         }

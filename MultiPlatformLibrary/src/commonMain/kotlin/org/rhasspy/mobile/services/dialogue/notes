@@ -45,8 +45,7 @@ Voice command was not recognized in existing session
 ### Audio Input
 
 
-
-# Input Messages
+s# Input Messages
 
 //rhasspy/audioServer/getDevices
 //Requests available input devices
@@ -90,8 +89,8 @@ Wake word successfully detected
 //rhasspy/hotword/hotwords
 //Description of available hotwords
 
-//hermes/error/hotword
-//Wake word system error
+hermes/error/hotword
+Wake word system error
 
 
 
@@ -140,9 +139,9 @@ Error during transcription/training
 //rhasspy/asr/<siteId>/trainSuccess
 //ASR training succeeded
 
-rhasspy/asr/<siteId>/<sessionId>/audioCaptured
-Audio recorded from voice command
-Sent when sendAudioCaptured = true in startListening
+//rhasspy/asr/<siteId>/<sessionId>/audioCaptured
+//Audio recorded from voice command
+//Sent when sendAudioCaptured = true in startListening
 
 //rhasspy/g2p/phonemes
 //Phonetic pronunciations of words
@@ -202,8 +201,8 @@ Disable intent handling
 
 # Output Messages
 
-hermes/tts/say
-Speak a sentence
+//hermes/tts/say
+//Speak a sentence
 
 
 

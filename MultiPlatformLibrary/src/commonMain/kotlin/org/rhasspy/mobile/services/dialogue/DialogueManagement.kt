@@ -3,7 +3,6 @@ package org.rhasspy.mobile.services.dialogue
 import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.addCloseableObserver
 import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,8 +22,10 @@ object DialogueManagement {
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     //toggle on off from mqtt or http service
-    private val wakeWordEnabled = MutableLiveData(true)
-    private var intentRecognized = false
+    private var isIntentRecognized = false
+
+    private var previousRecording = listOf<Byte>()
+    private var currentRecording = mutableListOf<Byte>()
 
     /**
      * not null if there is currently a session
@@ -42,8 +43,6 @@ object DialogueManagement {
      * hermes/dialogueManager/sessionStarted
      */
     fun startSession() {
-        intentRecognized = false
-
         if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
             coroutineScope.launch {
                 val sessionUuid = uuid4()
@@ -59,11 +58,14 @@ object DialogueManagement {
      * hermes/dialogueManager/endSession
      * Requests that a session be terminated nominally
      */
-    fun endSession(sessionId: String) {
+    fun endSession(sessionId: String?) {
         if (sessionId != this.currentSessionId.value) {
             logger.e { "trying to end session with invalid id" }
             return
         }
+
+        //stop listening just in case it's still running
+        stopListening()
 
         if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
             coroutineScope.launch {
@@ -83,12 +85,14 @@ object DialogueManagement {
      *
      * Response to [hermes/dialogueManager/startSession]
      *
-     * internal dialogue manager will start recording now
+     * internal dialogue manager will disable hotWord and start recording now
      */
     fun sessionStarted(sessionId: String) {
+        isIntentRecognized = false
         currentSessionId.value = sessionId
 
         if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+            hotWordToggle(false)
             startListening()
         }
     }
@@ -106,9 +110,9 @@ object DialogueManagement {
         currentSessionId.value = null
 
         if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
-            sopListening()
+            stopListening()
         }
-        if (!intentRecognized) {
+        if (!isIntentRecognized) {
             MqttService.sessionIntentNotRecognized()
         }
     }
@@ -119,89 +123,258 @@ object DialogueManagement {
      */
     fun audioFrame(byteArray: ByteArray) {
         //send to udp if udp streaming
+        //TODO
 
-        //send to mqtt if it is enabled and
-        //mqtt listen for WakeWord or mqtt text to speech
-        if (ConfigurationSettings.isMQTTEnabled.value &&
-            (ConfigurationSettings.wakeWordOption.value == WakeWordOption.MQTT ||
-                    ConfigurationSettings.textToSpeechOption.value == TextToSpeechOptions.RemoteMQTT)
+        //send to mqtt if mqtt listen for WakeWord or mqtt text to speech
+        if (ConfigurationSettings.wakeWordOption.value == WakeWordOption.MQTT ||
+            ConfigurationSettings.speechToTextOption.value == SpeechToTextOptions.RemoteMQTT
         ) {
             MqttService.audioFrame(byteArray)
-
         }
+
+        //if there is a current session record this audio to save if for intent recognition
     }
 
-
     /**
-     * Text to Speak requested
+     * hermes/hotword/toggleOn
+     * Enables wake word detection
      *
-     * HTTP:
-     * - calls service to generate audio data
-     * - plays audio data afterwards
-     *
-     * MQTT:
-     * - calls default site to speak text
-     * - the remote default site has to output it on there audio output
+     * hermes/hotword/toggleOff
+     * Disables wake word detection
      */
-    fun textToSpeak(text: String) {
+    fun hotWordToggle(onOff: Boolean) {
+        AppSettings.isHotWordEnabled.data = onOff
+    }
 
-        ServiceInterface.logger.d { "textToSpeak $text" }
+    /**
+     * hermes/wake/hotword/<wakewordId>/detected
+     * Indicates a hotword was successfully detected
+     *
+     * if local dialogue management it will start a session
+     */
+    fun hotWordDetected() {
+        if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+            startSession()
+        }
+        MqttService.hotWordDetected()
+    }
 
-        ServiceInterface.coroutineScope.launch {
+    /**
+     * hermes/error/hotword
+     * Sent when an error occurs in the hotword system
+     *
+     * used when there is an error in the porcupine system
+     */
+    fun hotWordError(description: String) {
+        MqttService.hotWordError(description)
+    }
 
-            when (ConfigurationSettings.textToSpeechOption.data) {
-                TextToSpeechOptions.RemoteHTTP -> HttpService.textToSpeech(text)?.also {
-                    playAudio(it)
-                }
-                TextToSpeechOptions.RemoteMQTT -> MqttService.textToSpeak(text)?.also {
-                    ServiceInterface.logger.d { "textToSpeak finished" }
-                } ?: run {
-                    ServiceInterface.logger.w { "textToSpeak timeout" }
-                }
-                TextToSpeechOptions.Disabled -> ServiceInterface.logger.d { "textToSpeak disabled" }
-            }
+    /**
+     * hermes/asr/startListening
+     * Tell ASR system to start recording/transcribing
+     *
+     * used to start recording
+     * resets current recording
+     */
+    fun startListening() {
+        ServiceInterface.indication(true)
+        currentRecording.clear()
+        RecordingService.startRecording()
+    }
+
+
+    /**
+     * hermes/asr/stopListening
+     * Tell ASR system to stop recording
+     *
+     * Emits textCaptured if silence was not detected earlier
+     *
+     * used to stop recording
+     * if local dialogue management it will also enable hotWord again
+     * it will also try to convert speech to text
+     *
+     * saves currentRecording to previous
+     */
+    fun stopListening() {
+        ServiceInterface.indication(false)
+        RecordingService.stopRecording()
+        //independent copy of current recording
+        previousRecording = mutableListOf<Byte>().apply { addAll(currentRecording) }
+
+        if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+            hotWordToggle(true)
+            speechToText()
         }
     }
 
     /**
-     * Intent Recognition requested
+     * hermes/asr/textCaptured
+     * Successful transcription, sent either when silence is detected or on stopListening
+     *
+     * listening will be stopped
+     * if local dialogue management it will try to recognize intent from text
+     */
+    fun asrTextCaptured(text: String) {
+        stopListening()
+
+        if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+            recognizeIntent(text)
+        }
+    }
+
+    /**
+     * hermes/error/asr
+     * Sent when an error occurs in the ASR system
+     *
+     * listening will be stopped
+     * if local dialogue management it will end the session
+     */
+    fun asrError(text: String) {
+        if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+            //also stops listening
+            endSession(currentSessionId.value)
+        } else {
+            stopListening()
+        }
+    }
+
+    /**
+     * hermes/nlu/query
+     * Request an intent to be recognized from text
+     *
+     * Response(s)
+     * hermes/intent/<intentName>
+     * hermes/nlu/intentNotRecognized
      *
      * HTTP:
      * - calls service to recognize intent from text
      * - if IntentHandlingOptions.WithRecognition is set the remote site will also automatically handle the intent
-     * - else [intentHandling] will be called with received data
+     * - later [intentRecognized] of [intentNotRecognized] will be called with received data
      *
      * MQTT:
      * - calls default site to recognize intent
-     * - then [intentHandling] will be called with received data
+     * - later eventually [intentHandling] will be called with received data
      */
-    fun intentRecognition(text: String) {
-
-        ServiceInterface.logger.d { "intentRecognition $text" }
-
-        ServiceInterface.coroutineScope.launch {
-
+    fun recognizeIntent(text: String) {
+        coroutineScope.launch {
             when (ConfigurationSettings.intentRecognitionOption.data) {
                 IntentRecognitionOptions.RemoteHTTP -> {
                     val handleDirectly = ConfigurationSettings.intentHandlingOption.data == IntentHandlingOptions.WithRecognition
-                    HttpService.intentRecognition(text, handleDirectly)?.also {
-                        if (!handleDirectly) {
-                            intentHandling(it)
+                    val intent = HttpService.intentRecognition(text, handleDirectly)
+
+                    if (!handleDirectly && ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+                        intent?.also {
+                            intentRecognized(it)
+                        } ?: run {
+                            intentNotRecognized()
                         }
                     }
                 }
-                IntentRecognitionOptions.RemoteMQTT -> MqttService.intentRecognition(text)?.also {
-                    intentHandling(it.payload.toString())
-                } ?: run {
-                    ServiceInterface.logger.w { "intentRecognition timeout" }
-                }
-                IntentRecognitionOptions.Disabled -> ServiceInterface.logger.d { "intentRecognition disabled" }
+                IntentRecognitionOptions.RemoteMQTT -> MqttService.intentRecognition(text)
+                IntentRecognitionOptions.Disabled -> logger.d { "intentRecognition disabled" }
             }
         }
     }
 
     /**
-     * Play Audio (Wav Data)
+     * hermes/intent/<intentName>
+     * Sent when an intent was successfully recognized
+     *
+     * Response to hermes/nlu/query
+     *
+     * Only does something if intent handling is enabled
+     *
+     * HomeAssistant:
+     * TODO
+     *
+     * HTTP:
+     * - calls service to handle intent
+     *
+     * WithRecognition
+     * - should only be used with HTTP text to intent
+     * - remote text to intent will also handle it
+     *
+     * if local dialogue management it will end the session
+     */
+    fun intentRecognized(intent: String) {
+        isIntentRecognized = true
+
+        if (AppSettings.isIntentHandlingEnabled.data) {
+            coroutineScope.launch {
+                when (ConfigurationSettings.intentHandlingOption.data) {
+                    IntentHandlingOptions.HomeAssistant -> TODO()
+                    IntentHandlingOptions.RemoteHTTP -> HttpService.intentHandling(intent)
+                    IntentHandlingOptions.WithRecognition -> logger.v { "intentHandling with recognition was used" }
+                    IntentHandlingOptions.Disabled -> logger.d { "intentHandling disabled" }
+                }
+            }
+        }
+
+        if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+            endSession(currentSessionId.value)
+        }
+    }
+
+    /**
+     * hermes/nlu/intentNotRecognized
+     * Sent when intent recognition fails
+     *
+     * Response to hermes/nlu/query
+     *
+     * if local dialogue management it will end the session
+     */
+    fun intentNotRecognized() {
+        isIntentRecognized = false
+        if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+            endSession(currentSessionId.value)
+        }
+    }
+
+
+    /**
+     * hermes/hanlde/toggleOn
+     * Enables intent handling
+     *
+     * hermes/hanlde/toggleOff
+     * Disables intent handling
+     */
+    fun intentHandlingToggle(onOff: Boolean) {
+        AppSettings.isIntentHandlingEnabled.data = onOff
+    }
+
+    /**
+     * hermes/tts/say
+     * Does NOT Generate spoken audio for a sentence using the configured text to speech system
+     * uses configured Text to speed system to generate audio and then plays it
+     *
+     * Response(s)
+     * hermes/tts/sayFinished (JSON)
+     * is called when generating audio is finished
+     */
+    fun say(text: String) {
+        coroutineScope.launch {
+
+            when (ConfigurationSettings.textToSpeechOption.data) {
+                TextToSpeechOptions.RemoteHTTP -> {
+                    HttpService.textToSpeech(text)?.also {
+                        playAudio(it)
+                    }
+                }
+                TextToSpeechOptions.RemoteMQTT -> MqttService.say(text)
+                TextToSpeechOptions.Disabled -> logger.d { "textToSpeech disabled" }
+            }
+        }
+    }
+
+
+    /**
+     * hermes/audioServer/<siteId>/playBytes/<requestId>
+     * Play WAV data
+     *
+     * Response(s)
+     * hermes/audioServer/<siteId>/playFinished (JSON)
+     *
+     * - if audio output is enabled
      *
      * Local:
      * - play audio with volume set
@@ -214,182 +387,66 @@ object DialogueManagement {
      */
     fun playAudio(data: ByteArray) {
 
-        ServiceInterface.logger.d { "playAudio ${data.size}" }
-
-        ServiceInterface.coroutineScope.launch {
-
-            when (ConfigurationSettings.audioPlayingOption.data) {
-                AudioPlayingOptions.Local -> AudioPlayer.playData(data)
-                AudioPlayingOptions.RemoteHTTP -> HttpService.playWav(data)
-                AudioPlayingOptions.RemoteMQTT -> MqttService.playWav(data)?.also {
-                    ServiceInterface.logger.d { "playAudio finished" }
-                } ?: run {
-                    ServiceInterface.logger.w { "playAudio timeout" }
+        if (AppSettings.isAudioOutputEnabled.data) {
+            coroutineScope.launch {
+                when (ConfigurationSettings.audioPlayingOption.data) {
+                    AudioPlayingOptions.Local -> AudioPlayer.playData(data)
+                    AudioPlayingOptions.RemoteHTTP -> HttpService.playWav(data)
+                    AudioPlayingOptions.RemoteMQTT -> MqttService.playBytes(data)
+                    AudioPlayingOptions.Disabled -> logger.d { "audioPlaying disabled" }
                 }
-                AudioPlayingOptions.Disabled -> ServiceInterface.logger.d { "audioPlaying disabled" }
             }
-
         }
+
     }
 
+    /**
+     * hermes/audioServer/toggleOff
+     * Disable audio output
+     *
+     * hermes/audioServer/toggleOn
+     * Enable audio output
+     */
+    fun audioServerToggle(onOff: Boolean) {
+        AppSettings.isAudioOutputEnabled.data = onOff
+    }
 
     /**
-     * Play Audio (Wav Data)
-     *
-     * HomeAssistant:
-     * TODO
-     *
-     * HTTP:
-     * - calls service to handle intent
-     *
-     * WithRecognition
-     * - should only be used with HTTP text to intent
-     * - remote text to intent will also handle it
+     * hermes/audioServer/<siteId>/playFinished
+     * Audio has finished playing
      */
-    private fun intentHandling(intent: String) {
-        ServiceInterface.logger.d { "intentRecognized $intent" }
+    fun playFinished() {
+        MqttService.playFinished()
+    }
 
-        ServiceInterface.coroutineScope.launch {
-
-            when (ConfigurationSettings.intentHandlingOption.data) {
-                IntentHandlingOptions.HomeAssistant -> TODO()
-                IntentHandlingOptions.RemoteHTTP -> HttpService.intentHandling(intent)
-                IntentHandlingOptions.WithRecognition -> ServiceInterface.logger.e { "intentHandling with recognition was not used" }
-                IntentHandlingOptions.Disabled -> ServiceInterface.logger.d { "intentHandling disabled" }
-            }
-
-        }
+    /**
+     * rhasspy/audioServer/setVolume
+     * Set the volume at one or more sites
+     */
+    fun setVolume(volume: Float) {
+        AppSettings.volume.data = volume
     }
 
     /**
      * Speech to Text (Wav Data)
+     * used to translate last spoken
      *
      * HTTP:
      * - calls service to translate speech to text, then handles the intent if dialogue manager is set to local
      *
      * RemoteMQTT
-     * - sends
-     * - todo let rhasspy determine silence
+     * - audio was already send to mqtt while recording in [audioFrame]
      */
     private fun speechToText() {
-        ServiceInterface.logger.d { "speechToText Started" }
-
-        ServiceInterface.coroutineScope.launch {
+        coroutineScope.launch {
 
             when (ConfigurationSettings.speechToTextOption.data) {
                 //wait for finish -> then publish all
-                SpeechToTextOptions.RemoteHTTP -> {
-                    RecordingService.status.addCloseableObserver {
-                        if (it) {
-
-                            ServiceInterface.coroutineScope.launch {
-                                HttpService.speechToText(ServiceInterface.getLatestRecording())?.also { data ->
-                                    if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
-                                        intentRecognition(data)
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-                }
-                //publish in junks
-                SpeechToTextOptions.RemoteMQTT -> {
-
-                    MqttService.startListening(sessionId!!)
-
-                    ServiceInterface.collectAudioJob = ServiceInterface.coroutineScope.launch {
-                        RecordingService.sharedFlow.collectIndexed { _, byteData ->
-                            MqttService.audioSessionFrame(sessionId!!, byteData.addWavHeader())
-                        }
-                    }
-
-                    ServiceInterface.collectAudioJob?.join()
-
-                    MqttService.stopListening(sessionId!!)?.also {
-                        ServiceInterface.logger.d { "speechToText ${it.payload}" }
-                    } ?: run {
-                        ServiceInterface.logger.w { "speechToText timeout" }
-                    }
-
-                }
-                SpeechToTextOptions.Disabled -> ServiceInterface.logger.d { "speechToText disabled" }
+                SpeechToTextOptions.RemoteHTTP -> HttpService.speechToText(ServiceInterface.getLatestRecording())
+                SpeechToTextOptions.RemoteMQTT -> logger.d { "speechToText already send to mqtt" }
+                SpeechToTextOptions.Disabled -> logger.d { "speechToText disabled" }
             }
-
         }
-
-
-    }
-
-
-    /**
-     * shows indication and then starts recording
-     */
-    fun startListening() {
-        ServiceInterface.logger.d { "startRecording" }
-
-        ServiceInterface.showIndication()
-        RecordingService.startRecording()
-    }
-
-    fun sopListening() {
-        uuid?.also { id ->
-            sessionId?.also {
-                if (id == it.toString()) {
-                    ServiceInterface.logger.d { "stopRecording" }
-
-                    ServiceInterface.stopIndication()
-                    RecordingService.stopRecording()
-
-                    if (ConfigurationSettings.isMQTTEnabled.data) {
-                        MqttService.sessionEnded(it)
-                        MqttService.toggleOffWakeWord()
-                    } else {
-                        ServiceInterface.setWakeWordEnabled(true) //TODO external made off
-                    }
-
-                    sessionId = null
-                }
-            } ?: run {
-                ServiceInterface.logger.w { "no session running" }
-            }
-        } ?: run {
-            ServiceInterface.logger.w { "sessionId missing" }
-        }
-    }
-
-
-    fun setWakeWordEnabled(enabled: Boolean) {
-        ServiceInterface.logger.d { "setWakeWordEnabled $enabled" }
-
-        wakeWordEnabled.value = enabled
-        /*
-
-            if (it) {
-                startWakeWordService()
-            } else {
-                NativeLocalWakeWordService.stop()
-            }
-         */
-    }
-
-    fun wakeWordDetected() {
-
-    }
-
-    fun playFinished() {
-
-    }
-
-
-    fun setAudioOutputEnabled(enabled: Boolean) {
-        ServiceInterface.logger.d { "setAudioOutputEnabled $enabled" }
-
-        AudioPlayer.setEnabled(enabled)
-    }
-
-    fun setVolume(volume: Float) {
-        AppSettings.volume.data = volume
     }
 
 }

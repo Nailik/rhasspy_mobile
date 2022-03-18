@@ -6,6 +6,11 @@ import io.ktor.client.features.*
 import io.ktor.client.features.websocket.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 /**
@@ -56,6 +61,8 @@ object HttpService {
      * Returns intent JSON when command has been processed
      * ?nohass=true - stop Rhasspy from handling the intent
      * ?entity=<entity>&value=<value> - set custom entity/value in recognized intent
+     *
+     * returns null if the intent is not found
      */
     suspend fun intentRecognition(text: String, handleDirectly: Boolean): String? {
 
@@ -78,7 +85,15 @@ object HttpService {
 
             logger.v { "intentRecognition received:\n$response" }
 
-            response
+            //return only intent
+            //no intent:
+            return if (Json.decodeFromString<JsonObject>(response)["intent"]?.jsonObject?.get("name")?.jsonPrimitive.toString().isNotEmpty()) {
+                //there was an intent found, return json
+                response
+            } else {
+                //there was no intent found, return null
+                null
+            }
         } catch (e: Exception) {
             logger.e(e) { "sending intentRecognition Exception" }
             null

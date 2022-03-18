@@ -19,6 +19,10 @@ object AppSettings {
     val isWakeWordSoundIndication = AppSetting(SettingsEnum.WakeWordSoundIndication, false)
     val isWakeWordLightIndication = AppSetting(SettingsEnum.WakeWordLightIndication, false)
 
+    val isHotWordEnabled = AppSetting(SettingsEnum.HotWordEnabled, true)
+    val isAudioOutputEnabled = AppSetting(SettingsEnum.AudioOutputEnabled, true)
+    val isIntentHandlingEnabled = AppSetting(SettingsEnum.IntentHandlingEnabled, true)
+
     val volume = AppSetting(SettingsEnum.Volume, 0.5F)
 
     val isShowLog = AppSetting(SettingsEnum.ShowLog, false)

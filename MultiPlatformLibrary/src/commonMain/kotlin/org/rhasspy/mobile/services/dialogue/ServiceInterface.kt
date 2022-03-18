@@ -112,8 +112,8 @@ object ServiceInterface {
      * starts or stops a session, depends if it is currently running
      */
     fun toggleSession() {
-        DialogueManagement.sessionId?.also {
-            DialogueManagement.endSession(it.toString())
+        DialogueManagement.sessionId.value?.also {
+            DialogueManagement.endSession(it)
         } ?: run {
             DialogueManagement.startSession()
         }
@@ -124,20 +124,6 @@ object ServiceInterface {
      */
     fun playRecording() {
         AudioPlayer.playData(getLatestRecording())
-    }
-
-    /**
-     * recognizes and handles eventually (according to settings)
-     */
-    fun intentRecognition(text: String) {
-        DialogueManagement.intentRecognition(text)
-    }
-
-    /**
-     * speak some text on the audio output that's selected
-     */
-    fun speakText(text: String) {
-        DialogueManagement.textToSpeak(text)
     }
 
     /**

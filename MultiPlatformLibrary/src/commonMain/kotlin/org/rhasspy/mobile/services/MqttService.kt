@@ -461,7 +461,7 @@ object MqttService {
 
     }
 
-    suspend fun intentRecognition() {
+    suspend fun intentRecognition(text: String) {
 /*
         val uuid = uuid4()
 
@@ -498,6 +498,9 @@ object MqttService {
      * hermes/tts/sayFinished (JSON)
      */
     suspend fun say(text: String) {
+        //set volume to 0 so it's only send here??
+        //play bytes request id
+        //maybe set this as site id to play on??
         /* val uuid = uuid4()
 
          return client?.publish(
@@ -554,6 +557,14 @@ object MqttService {
          */
     }
 
+    fun playBytes(data: ByteArray){
+
+    }
+
+
+    fun playFinished(){
+
+    }
 
     /**
      * used to retrieve mqtt result on specific topic with specific id
@@ -579,6 +590,16 @@ object MqttService {
             callbacks.remove(callback)
             null
         }
+    }
+
+    fun hotWordDetected() {
+
+
+    }
+
+    fun hotWordError(description: String) {
+
+
     }
 }
 
