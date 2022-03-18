@@ -147,12 +147,13 @@ object HttpServer {
     private fun startRecording() = HttpCallWrapper("/api/start-recording", POST) {
         logger.v { "post /api/start-recording" }
 
-        ServiceInterface.startListening()
+        ServiceInterface.startSession()
     }
 
     /**
      * /api/stop-recording
      * POST to have Rhasspy stop recording and process recorded data as a voice command
+     * handled just like silence was detected
      * (if dialogue management was set to local)
      *
      * Not Yet:

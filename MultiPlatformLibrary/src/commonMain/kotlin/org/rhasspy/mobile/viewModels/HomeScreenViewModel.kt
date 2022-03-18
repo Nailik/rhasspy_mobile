@@ -52,9 +52,9 @@ class HomeScreenViewModel : ViewModel() {
 
     fun playRecording() = ServiceInterface.playRecording()
 
-    fun intentRecognition(text: String) = ServiceInterface.intentRecognition(text)
+    fun intentRecognition(text: String) = ServiceInterface.recognizeIntent(text)
 
-    fun speakText(text: String) = ServiceInterface.speakText(text)
+    fun speakText(text: String) = ServiceInterface.say(text)
 
     fun saveAndApplyChanges() = ServiceInterface.saveAndApplyChanges()
 

@@ -139,6 +139,9 @@ object ServiceInterface {
         }
 
         //if there is a current session record this audio to save if for intent recognition
+        if(currentSessionId.value != null) {
+            currentRecording.addAll(byteArray.toList())
+        }
     }
 
     /**
@@ -183,7 +186,7 @@ object ServiceInterface {
      * resets current recording
      */
     fun startListening() {
-        ServiceInterface.indication(true)
+        indication(true)
         currentRecording.clear()
         RecordingService.startRecording()
     }
