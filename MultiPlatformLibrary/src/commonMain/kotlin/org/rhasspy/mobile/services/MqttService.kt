@@ -6,10 +6,8 @@ import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.floatOrNull
-import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.*
 import org.rhasspy.mobile.services.dialogue.ServiceInterface
 import org.rhasspy.mobile.services.mqtt.*
 import org.rhasspy.mobile.services.mqtt.native.MqttClient
@@ -139,6 +137,7 @@ object MqttService {
             when (MQTTTopicsSubscription.valueOf(topic)) {
                 MQTTTopicsSubscription.StartSession -> startSession(message)
                 MQTTTopicsSubscription.EndSession -> endSession(message)
+                MQTTTopicsSubscription.SessionStarted -> sessionStarted(message)
                 MQTTTopicsSubscription.HotWordToggleOn -> hotWordToggleOn(message)
                 MQTTTopicsSubscription.HotWordToggleOff -> hotWordToggleOff(message)
                 MQTTTopicsSubscription.AsrStartListening -> asrStartListening(message)
@@ -160,6 +159,12 @@ object MqttService {
         }
     }
 
+    private fun JsonObject.isThisSiteId(): Boolean {
+        val siteId = this["siteId"]?.jsonPrimitive?.content
+        logger.v { "siteId is $siteId" }
+        return siteId == ConfigurationSettings.siteId.data
+    }
+
     //###################################  Input Messages
 
     /**
@@ -167,13 +172,21 @@ object MqttService {
      *
      * hermes/dialogueManager/startSession (JSON)
      * Starts a new dialogue session (done automatically on hotword detected)
-     * siteId: string required - Hermes site ID
+     *
+     * siteId: string = "default" - Hermes site ID
      *
      * Response(s)
      * hermes/dialogueManager/sessionStarted
+     * hermes/dialogueManager/sessionQueued
      */
     private fun startSession(message: MqttMessage) {
-        ServiceInterface.startRecording()
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+
+        if (jsonObject.isThisSiteId()) {
+            ServiceInterface.startSession()
+        } else {
+            logger.d { "received startSession but for other siteId" }
+        }
     }
 
     /**
@@ -185,7 +198,86 @@ object MqttService {
      */
     private fun endSession(message: MqttMessage) {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
-        ServiceInterface.stopRecording(jsonObject["sessionId"]?.jsonPrimitive?.content)
+
+        if (jsonObject.isThisSiteId()) {
+            ServiceInterface.endSession(jsonObject["sessionId"]?.jsonPrimitive?.content)
+        } else {
+            logger.d { "received endSession but for other siteId" }
+        }
+    }
+
+    /**
+     * hermes/dialogueManager/sessionStarted (JSON)
+     * Indicates a session has started
+     * sessionId: string - current session ID
+     * siteId: string = "default" - Hermes site ID
+     *
+     * Response to [hermes/dialogueManager/startSession]
+     * Also used when session has started for other reasons
+     *
+     * used to save the sessionId and check for it when recording etc
+     */
+    private fun sessionStarted(message: MqttMessage) {
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+
+        if (jsonObject.isThisSiteId()) {
+            jsonObject["sessionId"]?.jsonPrimitive?.content?.also {
+                ServiceInterface.sessionStarted(it)
+            } ?: run {
+                logger.d { "received sessionStarted with empty session Id" }
+            }
+        } else {
+            logger.d { "received endSession but for other siteId" }
+        }
+    }
+
+    /**
+     * hermes/dialogueManager/sessionStarted (JSON)
+     * Indicates a session has started
+     * sessionId: string - current session ID
+     * siteId: string = "default" - Hermes site ID
+     *
+     * Response to [hermes/dialogueManager/startSession]
+     * Also used when session has started for other reasons
+     */
+    suspend fun sessionStarted(sessionId: String) {
+        coroutineScope.launch {
+            client?.publish(
+                MQTTTopicsPublish.SessionStarted.topic, MqttMessage(
+                    payload = Json.encodeToString(buildJsonObject {
+                        put("sessionId", sessionId)
+                        put("siteId", ConfigurationSettings.siteId.value)
+                    })
+                )
+            )?.also {
+                logger.e { "unable to publish sessionStarted $sessionId \n${it.statusCode.name} ${it.msg}" }
+            }
+        }
+    }
+
+
+    /**
+     * hermes/dialogueManager/sessionEnded (JSON)
+     * Indicates a session has terminated
+     *
+     * sessionId: string - current session ID
+     * siteId: string = "default" - Hermes site ID
+     *
+     * Response to hermes/dialogueManager/endSession or other reasons for a session termination
+     */
+    suspend fun sessionEnded(sessionId: String) {
+        coroutineScope.launch {
+            client?.publish(
+                MQTTTopicsPublish.SessionEnded.topic, MqttMessage(
+                    payload = Json.encodeToString(buildJsonObject {
+                        put("sessionId", sessionId)
+                        put("siteId", ConfigurationSettings.siteId.data)
+                    })
+                )
+            )?.also {
+                logger.e { "unable to publish sessionEnded $sessionId \n${it.statusCode.name} ${it.msg}" }
+            }
+        }
     }
 
 
@@ -262,78 +354,15 @@ object MqttService {
         }
     }
 
-    private fun checkSiteId(jsonObject: JsonObject): Boolean {
-        return jsonObject["siteId"]?.jsonPrimitive?.content == ConfigurationSettings.siteId.data
-    }
-
     //###################################  Output Messages
     //when MQTT is not enabled client will be null and nothing will be published
-
-    /**
-     * hermes/dialogueManager/sessionStarted (JSON)
-     * Indicates a session has started
-     * sessionId: string - current session ID
-     * siteId: string = "default" - Hermes site ID
-     *
-     * Response to [hermes/dialogueManager/startSession]
-     * Also used when session has started for other reasons
-     */
-    suspend fun sessionStarted(
-        sessionId: String,
-        siteId: String = ConfigurationSettings.siteId.data,
-        customData: String = "default",
-        lang: String? = null
-    ) {
-        /* coroutineScope.launch {
-             client?.publish(
-                 sessionStarted, MqttMessage(
-                     payload = Json.encodeToString(buildJsonObject {
-                         put("sessionId", sessionId)
-                         put("siteId", siteId)
-                         put("customData", customData)
-                         put("lang", lang)
-                     })
-                 )
-             )?.also {
-                 logger.e { "sessionStarted $uuid \n${it.statusCode.name} ${it.msg}" }
-             }
-         }
-
-         */
-    }
-
-    /**
-     * hermes/dialogueManager/sessionEnded (JSON)
-     * Indicates a session has terminated
-     *
-     * sessionId: string - current session ID
-     * siteId: string = "default" - Hermes site ID
-     *
-     * Response to hermes/dialogueManager/endSession or other reasons for a session termination
-     */
-    suspend fun sessionEnded(sessionId: String) {
-        /*     coroutineScope.launch {
-                 client?.publish(
-                     sessionEnded, MqttMessage(
-                         payload = Json.encodeToString(buildJsonObject {
-                             put("sessionId", uuid.toString())
-                             put("siteId", ConfigurationSettings.siteId.data)
-                         })
-                     )
-                 )?.also {
-                     logger.e { "sessionEnded $uuid \n${it.statusCode.name} ${it.msg}" }
-                 }
-             }
-
-         */
-    }
 
     suspend fun sessionIntentNotRecognized() {
 
     }
 
 
-    fun audioFrame(byteArray: ByteArray){
+    fun audioFrame(byteArray: ByteArray) {
 
     }
 
@@ -557,12 +586,12 @@ object MqttService {
          */
     }
 
-    fun playBytes(data: ByteArray){
+    fun playBytes(data: ByteArray) {
 
     }
 
 
-    fun playFinished(){
+    fun playFinished() {
 
     }
 

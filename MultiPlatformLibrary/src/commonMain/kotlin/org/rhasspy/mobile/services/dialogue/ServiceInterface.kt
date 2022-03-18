@@ -47,6 +47,10 @@ object ServiceInterface {
      * hermes/dialogueManager/sessionStarted
      */
     fun startSession() {
+        if (currentSessionId.value != null) {
+            logger.e { "received startSession but there is another current session running" }
+        }
+
         if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
             coroutineScope.launch {
                 val sessionUuid = uuid4()
@@ -92,6 +96,10 @@ object ServiceInterface {
      * internal dialogue manager will disable hotWord and start recording now
      */
     fun sessionStarted(sessionId: String) {
+        if (currentSessionId.value != null && sessionId != currentSessionId.value) {
+            logger.e { "received sessionStarted but there is another current session running" }
+        }
+
         isIntentRecognized = false
         currentSessionId.value = sessionId
 
@@ -139,7 +147,7 @@ object ServiceInterface {
         }
 
         //if there is a current session record this audio to save if for intent recognition
-        if(currentSessionId.value != null) {
+        if (currentSessionId.value != null) {
             currentRecording.addAll(byteArray.toList())
         }
     }
