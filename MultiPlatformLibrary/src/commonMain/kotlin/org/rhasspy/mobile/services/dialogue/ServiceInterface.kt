@@ -52,13 +52,13 @@ object ServiceInterface {
         }
 
         if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+            val sessionUuid = uuid4()
             coroutineScope.launch {
-                val sessionUuid = uuid4()
                 //send response
                 MqttService.sessionStarted(sessionUuid.toString())
-                //start the session
-                sessionStarted(sessionUuid.toString())
             }
+            //start the session
+            sessionStarted(sessionUuid.toString())
         }
     }
 
@@ -85,9 +85,9 @@ object ServiceInterface {
                 coroutineScope.launch {
                     //send response
                     MqttService.sessionEnded(id)
-                    //start the session
-                    sessionEnded()
                 }
+                //start the session
+                sessionEnded()
             }
 
         }
@@ -144,7 +144,7 @@ object ServiceInterface {
 
         //send to mqtt if mqtt listen for WakeWord or mqtt text to speech
         if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.MQTT ||
-            ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT
+            (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT && currentSessionId.value != null)
         ) {
             MqttService.audioFrame(byteArray.addWavHeader())
         }
@@ -199,12 +199,17 @@ object ServiceInterface {
      * when mqtt speech to text is set, it's necessary to tell the asr system to start listening
      */
     fun startListening() {
-        indication(true)
-        currentRecording.clear()
-        RecordingService.startRecording()
+        //only start listening if not currently recording
+        //this can loop because it calls the mqtt service to start transcribing but also receives this message
+        //TODO maybe do not receive this message
+        if(!RecordingService.status.value) {
+            indication(true)
+            currentRecording.clear()
+            RecordingService.startRecording()
 
-        if (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
-            MqttService.startListening()
+            if (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
+                MqttService.startListening(currentSessionId.value)
+            }
         }
     }
 
@@ -255,6 +260,7 @@ object ServiceInterface {
             stopListening(sendToMqtt = false)
 
             if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+                stopListening(sessionId)
                 text?.also {
                     recognizeIntent(it)
                 }
@@ -305,10 +311,12 @@ object ServiceInterface {
                     val intent = HttpService.intentRecognition(text, handleDirectly)
 
                     if (!handleDirectly && ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
-                        intent?.also {
-                            intentRecognized(intent = it)
-                        } ?: run {
-                            intentNotRecognized()
+                        CoroutineScope(Dispatchers.Main).launch {
+                            intent?.also {
+                                intentRecognized(intent = it)
+                            } ?: run {
+                                intentNotRecognized()
+                            }
                         }
                     }
                 }
@@ -505,8 +513,13 @@ object ServiceInterface {
                 startLocalWakeWordService()
                 HttpServer.start()
                 MqttService.start()
+                if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.MQTT) {
+                    //necessary to continuously stream audio
+                    RecordingService.startRecording()
+                }
             }
             ServiceAction.Stop -> {
+                RecordingService.stopRecording()
                 NativeLocalWakeWordService.stop()
                 HttpServer.stop()
                 MqttService.stop()

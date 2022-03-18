@@ -144,35 +144,41 @@ object MqttService {
         //subSequence so we don't print super long wave data
         logger.v { "onMessageReceived $topic ${message.payload.toString().subSequence(1, min(message.payload.toString().length, 100))}" }
 
-        try {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
 
-            when (MQTTTopicsSubscription.valueOf(topic)) {
-                MQTTTopicsSubscription.StartSession -> startSession(message)
-                MQTTTopicsSubscription.EndSession -> endSession(message)
-                MQTTTopicsSubscription.SessionStarted -> sessionStarted(message)
-                MQTTTopicsSubscription.HotWordToggleOn -> hotWordToggleOn(message)
-                MQTTTopicsSubscription.HotWordToggleOff -> hotWordToggleOff(message)
-                MQTTTopicsSubscription.AsrStartListening -> startListening(message)
-                MQTTTopicsSubscription.AsrStopListening -> stopListening(message)
-                MQTTTopicsSubscription.AsrTextCaptured -> asrTextCaptured(message)
-                MQTTTopicsSubscription.AsrError -> asrError(message)
-                MQTTTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(message)
-                MQTTTopicsSubscription.IntentNotRecognized -> intentNotRecognized(message)
-                MQTTTopicsSubscription.IntentHandlingToggleOn -> intentHandlingToggleOn(message)
-                MQTTTopicsSubscription.IntentHandlingToggleOff -> intentHandlingToggleOff(message)
-                MQTTTopicsSubscription.AudioOutputToggleOff -> audioOutputToggleOff(message)
-                MQTTTopicsSubscription.AudioOutputToggleOn -> audioOutputToggleOn(message)
-                MQTTTopicsSubscription.SetVolume -> setVolume(message)
-                else -> {
-                    if (topic == MQTTTopicsSubscription.PlayBytes.topic.replace("<siteId>", ConfigurationSettings.siteId.data)) {
-                        playBytes(message)
+                when (MQTTTopicsSubscription.fromTopic(topic)) {
+                    MQTTTopicsSubscription.StartSession -> startSession(message)
+                    MQTTTopicsSubscription.EndSession -> endSession(message)
+                    MQTTTopicsSubscription.SessionStarted -> sessionStarted(message)
+                    MQTTTopicsSubscription.HotWordToggleOn -> hotWordToggleOn(message)
+                    MQTTTopicsSubscription.HotWordToggleOff -> hotWordToggleOff(message)
+                    MQTTTopicsSubscription.AsrStartListening -> startListening(message)
+                    MQTTTopicsSubscription.AsrStopListening -> stopListening(message)
+                    MQTTTopicsSubscription.AsrTextCaptured -> asrTextCaptured(message)
+                    MQTTTopicsSubscription.AsrError -> asrError(message)
+                    MQTTTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(message)
+                    MQTTTopicsSubscription.IntentNotRecognized -> intentNotRecognized(message)
+                    MQTTTopicsSubscription.IntentHandlingToggleOn -> intentHandlingToggleOn(message)
+                    MQTTTopicsSubscription.IntentHandlingToggleOff -> intentHandlingToggleOff(message)
+                    MQTTTopicsSubscription.AudioOutputToggleOff -> audioOutputToggleOff(message)
+                    MQTTTopicsSubscription.AudioOutputToggleOn -> audioOutputToggleOn(message)
+                    MQTTTopicsSubscription.SetVolume -> setVolume(message)
+                    else -> {
+                        if (topic.startsWith(
+                                MQTTTopicsSubscription.PlayBytes.topic
+                                    .replace("<siteId>", ConfigurationSettings.siteId.data)
+                                    .replace("+", "")
+                            )
+                        ) {
+                            playBytes(message)
+                        }
                     }
                 }
+
+            } catch (e: Exception) {
+                logger.e(e) { "onMessageReceived error" }
             }
-
-
-        } catch (e: Exception) {
-            logger.e(e) { "onMessageReceived error" }
         }
     }
 
@@ -432,16 +438,18 @@ object MqttService {
      * hermes/asr/startListening (JSON)
      * Tell ASR system to start recording/transcribing
      * siteId: string = "default" - Hermes site ID
+     * sessionId: string? = null - current session ID
      *
      * stopOnSilence: bool = true - detect silence and automatically end voice command (Rhasspy only)
      */
-    fun startListening() {
+    fun startListening(sessionId: String?) {
         coroutineScope.launch {
             client?.publish(
                 MQTTTopicsPublish.AsrStartListening.topic,
                 MqttMessage(
                     payload = Json.encodeToString(buildJsonObject {
                         put("siteId", ConfigurationSettings.siteId.data)
+                        put("sessionId", sessionId)
                         put("stopOnSilence", ConfigurationSettings.isMQTTSilenceDetectionEnabled.data)
                     })
                 )

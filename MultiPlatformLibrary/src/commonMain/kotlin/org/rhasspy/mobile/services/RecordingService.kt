@@ -7,16 +7,15 @@ import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectIndexed
-import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.services.dialogue.ServiceInterface
 import org.rhasspy.mobile.services.native.AudioRecorder
 import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.toByteArray
 import kotlin.native.concurrent.ThreadLocal
 import kotlin.time.Duration.Companion.ZERO
@@ -35,8 +34,8 @@ object RecordingService {
     //represents listening Status for ui
     val status: LiveData<Boolean> = listening.readOnly()
 
-   // private val flow = MutableSharedFlow<ByteArray>()
- //   val sharedFlow: Flow<ByteArray> get() = flow.takeWhile { listening.value }
+    // private val flow = MutableSharedFlow<ByteArray>()
+    //   val sharedFlow: Flow<ByteArray> get() = flow.takeWhile { listening.value }
 
     private var data = mutableListOf<Byte>()
 
@@ -69,7 +68,7 @@ object RecordingService {
                 data.addAll(value.toList())
                 ServiceInterface.audioFrame(value)
 
-                if (AppSettings.isAutomaticSilenceDetection.data) {
+                if (AppSettings.isAutomaticSilenceDetection.data && ConfigurationSettings.wakeWordOption.data != WakeWordOption.MQTT) {
                     if (!searchThreshold(value, AppSettings.automaticSilenceDetectionAudioLevel.data)) {
                         if (firstSilenceDetected == null) {
                             firstSilenceDetected = Clock.System.now()

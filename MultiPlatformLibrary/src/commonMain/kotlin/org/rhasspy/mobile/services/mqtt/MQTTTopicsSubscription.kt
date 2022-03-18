@@ -10,7 +10,7 @@ enum class MQTTTopicsSubscription(val topic: String) {
     SessionStarted("hermes/dialogueManager/sessionStarted"),
     HotWordToggleOn("hermes/hotword/toggleOn"),
     HotWordToggleOff("hermes/hotword/toggleOff"),
-    AsrStartListening( "hermes/asr/startListening"),
+    AsrStartListening("hermes/asr/startListening"),
     AsrStopListening("hermes/asr/stopListening"),
     AsrTextCaptured("hermes/asr/textCaptured"),
     AsrError("hermes/error/asr"),
@@ -21,6 +21,12 @@ enum class MQTTTopicsSubscription(val topic: String) {
     PlayBytes("hermes/audioServer/<siteId>/playBytes/+"),
     AudioOutputToggleOff("hermes/audioServer/toggleOff"),
     AudioOutputToggleOn("hermes/audioServer/toggleOn"),
-    SetVolume("rhasspy/audioServer/setVolume")
+    SetVolume("rhasspy/audioServer/setVolume");
+
+    companion object {
+        fun fromTopic(topic: String): MQTTTopicsSubscription? {
+            return MQTTTopicsSubscription.values().firstOrNull { it.topic == topic }
+        }
+    }
 
 }
