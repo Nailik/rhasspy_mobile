@@ -114,10 +114,8 @@ object ServiceInterface {
 
             if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
                 hotWordToggle(false)
-                startListening()
+                startListening(sessionId)
             }
-        } else if(fromMQTT && ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT){
-            //when speech to text is used
         }
     }
 
@@ -192,9 +190,9 @@ object ServiceInterface {
     fun hotWordDetected() {
         if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
             startSession()
+        } else {
+            MqttService.hotWordDetected()
         }
-
-        MqttService.hotWordDetected()
     }
 
     /**
@@ -216,19 +214,21 @@ object ServiceInterface {
      *
      * when mqtt speech to text is set, it's necessary to tell the asr system to start listening
      */
-    fun startListening(fromMQTT: Boolean = false) {
-        if (!fromMQTT || ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.RemoteMQTT) {
+    fun startListening(sessionId: String?, fromMQTT: Boolean = false) {
+        if (sessionId == currentSessionId.value) {
+            if (!fromMQTT || ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.RemoteMQTT) {
 
-            //only start listening if not currently recording
-            currentRecording.clear()
-            startRecording()
-            indication(true)
+                //only start listening if not currently recording
+                currentRecording.clear()
+                startRecording()
+                indication(true)
 
-            if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local &&
-                ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT
-            ) {
-                //tell asr system to start listening and transcribe text
-                MqttService.startListening(currentSessionId.value)
+                if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local &&
+                    ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT
+                ) {
+                    //tell asr system to start listening and transcribe text
+                    MqttService.startListening(currentSessionId.value)
+                }
             }
         }
     }
@@ -248,42 +248,28 @@ object ServiceInterface {
      * sendToMqtt is used to not set stopListening to MQTT asr system, when the asr response called this function
      */
     fun stopListening(sessionId: String? = currentSessionId.value, fromMQTT: Boolean = false) {
-        logger.d {
-            "stop listening from mqtt $fromMQTT dialogue ${
-                ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions
-                    .RemoteMQTT
-            } speecht to text ${ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT} mqtt silence ${ConfigurationSettings.isMQTTSilenceDetectionEnabled.data}"
-        }
 
         if (sessionId == currentSessionId.value) {
             //execute when:
             //- not from mqtt
             //- from mqtt and dialogue is managed by mqtt
-            //- from mqtt and speech to text is mqtt and silence detection is done by mqtt
-            if (!fromMQTT || ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.RemoteMQTT ||
-                (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT && ConfigurationSettings.isMQTTSilenceDetectionEnabled.data)
-            ) {
+            //- from mqtt and speech to text is mqtt
+            if (!fromMQTT || ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.RemoteMQTT ) {
                 indication(false)
 
-                if (RecordingService.status.value) {
-                    if (ConfigurationSettings.wakeWordOption.data != WakeWordOption.MQTT) {
-                        //only stop recording if its not necessary for mqtt wakeWord
-                        RecordingService.stopRecording()
-                    }
-                    //independent copy of current recording
-                    previousRecording = mutableListOf<Byte>().apply { addAll(currentRecording) }
-
-                    if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
-                        hotWordToggle(true)
-                        speechToText()
-                    }
-
-                    MqttService.stopListening(sessionId)
+                if (ConfigurationSettings.wakeWordOption.data != WakeWordOption.MQTT) {
+                    //only stop recording if its not necessary for mqtt wakeWord
+                    RecordingService.stopRecording()
                 }
-            }
-        } else {
-            if(fromMQTT && ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
-                MqttService.continueSession(sessionId)
+                //independent copy of current recording
+                previousRecording = mutableListOf<Byte>().apply { addAll(currentRecording) }
+
+                if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+                    hotWordToggle(true)
+                    speechToText()
+                }
+
+                MqttService.stopListening(sessionId)
             }
         }
     }
@@ -296,7 +282,8 @@ object ServiceInterface {
      * if local dialogue management it will try to recognize intent from text
      */
     fun asrTextCaptured(sessionId: String?, text: String?) {
-        if (sessionId == currentSessionId.value) {
+        //with mqtt the session id is wrong
+        if (sessionId == currentSessionId.value || ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
 
             if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
                 stopListening(sessionId)
@@ -348,12 +335,10 @@ object ServiceInterface {
                     val intent = HttpService.intentRecognition(text, handleDirectly)
 
                     if (!handleDirectly && ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            intent?.also {
-                                intentRecognized(intent = it)
-                            } ?: run {
-                                intentNotRecognized()
-                            }
+                        intent?.also {
+                            intentRecognized(intent = it)
+                        } ?: run {
+                            intentNotRecognized()
                         }
                     }
                 }
@@ -622,9 +607,7 @@ object ServiceInterface {
     }
 
     fun silenceDetected() {
-        CoroutineScope(Dispatchers.Main).launch {
-            stopListening()
-        }
+        stopListening()
     }
 
     /**

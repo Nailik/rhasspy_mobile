@@ -30,6 +30,7 @@ object MqttService {
     val isConnected = connected.readOnly()
 
     private val sendIds = mutableListOf<Int>()
+    private const val id = 98489482
 
     /**
      * start client externaly, only starts if mqtt is enabled
@@ -143,12 +144,11 @@ object MqttService {
 
     private fun onMessageReceived(topic: String, message: MqttMessage) {
         //subSequence so we don't print super long wave data
-        logger.v { "onMessageReceived $topic ${message.payload.toString().subSequence(1, min(message.payload.toString().length, 300))}" }
+        logger.v { "onMessageReceived ${message.msgId} $topic ${message.payload.toString().subSequence(1, min(message.payload.toString().length, 300))}" }
 
-        if (sendIds.contains(message.msgId)) {
+        if (message.msgId == id) {
             //ignore all messages that i have send
             logger.v { "message ignored, was same id as send by myself" }
-            sendIds.remove(message.msgId)
             return
         }
 
@@ -191,12 +191,9 @@ object MqttService {
     private fun publishMessage(topic: String, message: MqttMessage) {
 
         coroutineScope.launch {
-            val uuid = uuid4().variant
-            message.msgId = uuid
-            sendIds.add(uuid)
+            message.msgId = id
 
             client?.publish(topic, message)?.also {
-                sendIds.remove(uuid)
                 logger.e { "unable to publish topic \n${it.statusCode.name} ${it.msg}" }
             }
         }
@@ -468,7 +465,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
 
         if (jsonObject.isThisSiteId()) {
-            ServiceInterface.startListening(true)
+            ServiceInterface.startListening(jsonObject["sessionId"]?.jsonPrimitive?.content, true)
         } else {
             logger.d { "received startListening but for other siteId" }
         }

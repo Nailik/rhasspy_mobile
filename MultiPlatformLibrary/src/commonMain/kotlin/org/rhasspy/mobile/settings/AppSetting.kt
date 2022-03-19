@@ -3,8 +3,14 @@ package org.rhasspy.mobile.settings
 import com.russhwolf.settings.get
 import com.russhwolf.settings.set
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.DataEnum
 import org.rhasspy.mobile.viewModels.GlobalData
+
+
+private val viewScope = CoroutineScope(Dispatchers.Main)
 
 class AppSetting<T>(private val key: SettingsEnum, private val initial: T) {
 
@@ -42,7 +48,9 @@ class AppSetting<T>(private val key: SettingsEnum, private val initial: T) {
     var data: T
         get() = this.value.value
         set(newValue) {
-            this.value.value = newValue
+            viewScope.launch {
+                value.value = newValue
+            }
         }
 
 }

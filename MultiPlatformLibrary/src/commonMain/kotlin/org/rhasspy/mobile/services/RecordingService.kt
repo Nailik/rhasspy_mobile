@@ -28,6 +28,7 @@ import kotlin.time.Duration.Companion.milliseconds
 object RecordingService {
     private val logger = Logger.withTag(this::class.simpleName!!)
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
+    private val viewScope = CoroutineScope(Dispatchers.Main)
 
     private val listening = MutableLiveData(false)
 
@@ -65,7 +66,11 @@ object RecordingService {
 
         logger.d { "startRecording" }
         firstSilenceDetected = null
-        listening.value = true
+
+        viewScope.launch {
+            listening.value = true
+        }
+
         data.clear()
 
         job = coroutineScope.launch {
@@ -98,7 +103,10 @@ object RecordingService {
     fun stopRecording() {
         logger.d { "stopRecording" }
 
-        listening.value = false
+        viewScope.launch {
+            listening.value = false
+        }
+
         AudioRecorder.stopRecording()
         job?.cancel()
     }
