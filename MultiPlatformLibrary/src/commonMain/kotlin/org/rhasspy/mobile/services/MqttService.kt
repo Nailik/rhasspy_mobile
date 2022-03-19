@@ -151,6 +151,7 @@ object MqttService {
                     MQTTTopicsSubscription.StartSession -> startSession(message)
                     MQTTTopicsSubscription.EndSession -> endSession(message)
                     MQTTTopicsSubscription.SessionStarted -> sessionStarted(message)
+                    MQTTTopicsSubscription.SessionEnded -> sessionEnded(message)
                     MQTTTopicsSubscription.HotWordToggleOn -> hotWordToggleOn(message)
                     MQTTTopicsSubscription.HotWordToggleOff -> hotWordToggleOff(message)
                     MQTTTopicsSubscription.AsrStartListening -> startListening(message)
@@ -287,6 +288,29 @@ object MqttService {
      *
      * Response to hermes/dialogueManager/endSession or other reasons for a session termination
      */
+    private fun sessionEnded(message: MqttMessage) {
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+
+        if (jsonObject.isThisSiteId()) {
+            jsonObject["sessionId"]?.jsonPrimitive?.content?.also {
+                ServiceInterface.sessionEnded(it)
+            } ?: run {
+                logger.d { "received sessionStarted with empty session Id" }
+            }
+        } else {
+            logger.d { "received endSession but for other siteId" }
+        }
+    }
+
+    /**
+     * hermes/dialogueManager/sessionEnded (JSON)
+     * Indicates a session has terminated
+     *
+     * sessionId: string - current session ID
+     * siteId: string = "default" - Hermes site ID
+     *
+     * Response to hermes/dialogueManager/endSession or other reasons for a session termination
+     */
     suspend fun sessionEnded(sessionId: String) {
         coroutineScope.launch {
             client?.publish(
@@ -335,7 +359,7 @@ object MqttService {
                 MQTTTopicsPublish.AsrAudioSessionFrame.topic.replace("<siteId>", ConfigurationSettings.siteId.data),
                 MqttMessage(byteArray)
             )?.also {
-                logger.e { "unable to publish audioFrame \n${it.statusCode.name} ${it.msg}" }
+                logger.e { "unable to publish audioFrame ${byteArray.size} \n${it.statusCode.name} ${it.msg}" }
             }
         }
     }

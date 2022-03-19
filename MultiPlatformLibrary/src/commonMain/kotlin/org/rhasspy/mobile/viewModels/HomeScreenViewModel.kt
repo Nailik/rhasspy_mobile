@@ -46,7 +46,7 @@ class HomeScreenViewModel : ViewModel() {
         }
     }
 
-    val isRecording = ServiceInterface.sessionId.map { it != null }
+    val isRecording = ServiceInterface.isIndicationVisible
 
     fun toggleSession() = ServiceInterface.toggleSession()
 

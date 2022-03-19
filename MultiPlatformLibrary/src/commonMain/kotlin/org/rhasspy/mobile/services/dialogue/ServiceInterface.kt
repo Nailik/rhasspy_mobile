@@ -2,6 +2,7 @@ package org.rhasspy.mobile.services.dialogue
 
 import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
+import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CoroutineScope
@@ -11,6 +12,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.services.*
 import org.rhasspy.mobile.services.RecordingService.addWavHeader
+import org.rhasspy.mobile.services.RecordingService.startRecording
 import org.rhasspy.mobile.services.http.HttpServer
 import org.rhasspy.mobile.services.native.AudioPlayer
 import org.rhasspy.mobile.services.native.NativeIndication
@@ -30,6 +32,10 @@ object ServiceInterface {
 
     private var previousRecording = listOf<Byte>()
     private var currentRecording = mutableListOf<Byte>()
+
+
+    private val indicationVisible = MutableLiveData(false)
+    val isIndicationVisible: LiveData<Boolean> = indicationVisible.readOnly()
 
     /**
      * not null if there is currently a session
@@ -87,7 +93,7 @@ object ServiceInterface {
                     MqttService.sessionEnded(id)
                 }
                 //start the session
-                sessionEnded()
+                sessionEnded(id)
             }
 
         }
@@ -102,7 +108,7 @@ object ServiceInterface {
      * internal dialogue manager will disable hotWord and start recording now
      */
     fun sessionStarted(sessionId: String) {
-        if (currentSessionId.value != null && sessionId != currentSessionId.value) {
+        if (currentSessionId.value != null) {
             logger.e { "received sessionStarted but there is another current session running" }
         }
 
@@ -124,12 +130,15 @@ object ServiceInterface {
      * sessionId will be reset
      * and internal dialogue manager will make sure that recording is stopped
      */
-    private fun sessionEnded() {
+    fun sessionEnded(sessionId: String?) {
+        if (sessionId != this.currentSessionId.value) {
+            logger.e { "trying to end session with invalid id" }
+            return
+        }
+
         currentSessionId.value = null
 
-        if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
-            stopListening()
-        }
+        stopListening()
     }
 
     /**
@@ -143,7 +152,7 @@ object ServiceInterface {
         }
 
         //send to mqtt if mqtt listen for WakeWord or mqtt text to speech
-        if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.MQTT ||
+        if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.MQTT && currentSessionId.value == null ||
             (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT && currentSessionId.value != null)
         ) {
             MqttService.audioFrame(byteArray.addWavHeader())
@@ -164,6 +173,12 @@ object ServiceInterface {
      */
     fun hotWordToggle(onOff: Boolean) {
         AppSettings.isHotWordEnabled.data = onOff
+
+        if (onOff) {
+            startHotWord()
+        } else {
+            stopHotWord()
+        }
     }
 
     /**
@@ -201,15 +216,16 @@ object ServiceInterface {
     fun startListening() {
         //only start listening if not currently recording
         //this can loop because it calls the mqtt service to start transcribing but also receives this message
-        //TODO maybe do not receive this message
-        if(!RecordingService.status.value) {
-            indication(true)
+        indication(true)
+        if (!RecordingService.status.value) {
             currentRecording.clear()
-            RecordingService.startRecording()
+            startRecording()
 
             if (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
                 MqttService.startListening(currentSessionId.value)
             }
+        } else {
+            logger.e { "already listening" }
         }
     }
 
@@ -232,17 +248,19 @@ object ServiceInterface {
             indication(false)
 
             if (RecordingService.status.value) {
-                RecordingService.stopRecording()
+                if(ConfigurationSettings.wakeWordOption.data != WakeWordOption.MQTT) {
+                    //only stop recording if its not necessary for mqtt wakeWord
+                    RecordingService.stopRecording()
+                }
                 //independent copy of current recording
                 previousRecording = mutableListOf<Byte>().apply { addAll(currentRecording) }
 
                 if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
                     hotWordToggle(true)
                     speechToText()
-                }
-
-                if (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT && sendToMqtt) {
-                    MqttService.stopListening()
+                    if (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT && sendToMqtt) {
+                        MqttService.stopListening()
+                    }
                 }
             }
         }
@@ -510,17 +528,12 @@ object ServiceInterface {
 
         when (serviceAction) {
             ServiceAction.Start -> {
-                startLocalWakeWordService()
+                startHotWord()
                 HttpServer.start()
                 MqttService.start()
-                if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.MQTT) {
-                    //necessary to continuously stream audio
-                    RecordingService.startRecording()
-                }
             }
             ServiceAction.Stop -> {
-                RecordingService.stopRecording()
-                NativeLocalWakeWordService.stop()
+                stopHotWord()
                 HttpServer.stop()
                 MqttService.stop()
             }
@@ -537,21 +550,25 @@ object ServiceInterface {
     private fun indication(show: Boolean) {
         logger.d { "toggle indication show: $show" }
 
-        if (show) {
-            if (AppSettings.isWakeWordSoundIndication.data) {
-                NativeIndication.playAudio(MR.files.etc_wav_beep_hi)
-            }
+        if(indicationVisible.value != show) {
+            if (show) {
+                indicationVisible.value = true
+                if (AppSettings.isWakeWordSoundIndication.data) {
+                    NativeIndication.playAudio(MR.files.etc_wav_beep_hi)
+                }
 
-            if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data) {
-                NativeIndication.wakeUpScreen()
-            }
+                if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data) {
+                    NativeIndication.wakeUpScreen()
+                }
 
-            if (AppSettings.isWakeWordLightIndication.data) {
-                NativeIndication.showIndication()
+                if (AppSettings.isWakeWordLightIndication.data) {
+                    NativeIndication.showIndication()
+                }
+            } else {
+                indicationVisible.value = false
+                NativeIndication.closeIndicationOverOtherApps()
+                NativeIndication.releaseWakeUp()
             }
-        } else {
-            NativeIndication.closeIndicationOverOtherApps()
-            NativeIndication.releaseWakeUp()
         }
     }
 
@@ -559,15 +576,29 @@ object ServiceInterface {
     /**
      * starts the local wakeword Service
      */
-    private fun startLocalWakeWordService() {
-        if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.Porcupine) {
-            if (ConfigurationSettings.wakeWordAccessToken.data.isNotEmpty()) {
-                NativeLocalWakeWordService.start()
-            } else {
-                val description = "couldn't start local wake word service, access Token Empty"
-                hotWordError(description)
-                logger.e { description }
+    private fun startHotWord() {
+        when (ConfigurationSettings.wakeWordOption.data) {
+            WakeWordOption.Porcupine -> {
+                if (ConfigurationSettings.wakeWordAccessToken.data.isNotEmpty()) {
+                    NativeLocalWakeWordService.start()
+                } else {
+                    val description = "couldn't start local wake word service, access Token Empty"
+                    hotWordError(description)
+                    logger.e { description }
+                }
             }
+            //necessary to continuously stream audio
+            WakeWordOption.MQTT -> startRecording()
+            WakeWordOption.Disabled -> {}
+        }
+    }
+
+    private fun stopHotWord() {
+        when (ConfigurationSettings.wakeWordOption.data) {
+            WakeWordOption.Porcupine -> NativeLocalWakeWordService.stop()
+            //nothing to do, audio frames wont be sent to broker
+            WakeWordOption.MQTT -> {}
+            WakeWordOption.Disabled -> {}
         }
     }
 

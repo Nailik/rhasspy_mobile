@@ -114,10 +114,11 @@ object RecordingService {
             audioDataSize[0], audioDataSize[1], audioDataSize[2], audioDataSize[3] //40-43 data size of rest
         )
 
-        return mutableListOf<Byte>().apply {
-            addAll(header.toList())
-            addAll(this.toList())
-        }.toByteArray()
+        val result = mutableListOf<Byte>()
+        result.addAll(header.toList())
+        result.addAll(this.toList())
+
+        return result.toByteArray()
     }
 
 }
