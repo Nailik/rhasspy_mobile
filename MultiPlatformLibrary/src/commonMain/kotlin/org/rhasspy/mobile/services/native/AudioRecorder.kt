@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 
 expect object AudioRecorder {
 
-    val output: MutableSharedFlow<ByteArray>
+    val output: MutableSharedFlow<List<Byte>>
 
     fun startRecording()
 

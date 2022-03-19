@@ -2,7 +2,6 @@ package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
-import com.benasher44.uuid.variant
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CoroutineScope
@@ -144,7 +143,11 @@ object MqttService {
 
     private fun onMessageReceived(topic: String, message: MqttMessage) {
         //subSequence so we don't print super long wave data
-        logger.v { "onMessageReceived ${message.msgId} $topic ${message.payload.toString().subSequence(1, min(message.payload.toString().length, 300))}" }
+        logger.v {
+            "onMessageReceived ${message.msgId} $topic ${
+                message.payload.toString().subSequence(1, min(message.payload.toString().length, 300))
+            }"
+        }
 
         if (message.msgId == id) {
             //ignore all messages that i have send
@@ -324,7 +327,7 @@ object MqttService {
      *
      * Response to hermes/dialogueManager/endSession or other reasons for a session termination
      */
-    fun sessionEnded(sessionId: String) {
+    fun sessionEnded(sessionId: String?) {
         publishMessage(
             MQTTTopicsPublish.SessionEnded.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
@@ -356,7 +359,7 @@ object MqttService {
      * sessionId: string - current session ID
      * siteId: string = "default" - Hermes site ID
      */
-    fun intentNotRecognized(sessionId: String) {
+    fun intentNotRecognized(sessionId: String?) {
         publishMessage(
             MQTTTopicsPublish.IntentNotRecognizedInSession.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
@@ -373,10 +376,10 @@ object MqttService {
      * wav_bytes: bytes - WAV data to play (message payload)
      * siteId: string - Hermes site ID (part of topic)
      */
-    fun audioFrame(byteArray: ByteArray) {
+    fun audioFrame(byteArray: List<Byte>) {
         publishMessage(
             MQTTTopicsPublish.AsrAudioFrame.topic.replace("<siteId>", ConfigurationSettings.siteId.data),
-            MqttMessage(byteArray)
+            MqttMessage(byteArray.toByteArray())
         )
     }
 
@@ -427,6 +430,7 @@ object MqttService {
                 payload = Json.encodeToString(buildJsonObject {
                     put("currentSensitivity", ConfigurationSettings.wakeWordKeywordSensitivity.data)
                     put("siteId", ConfigurationSettings.siteId.data)
+                    put("sendAudioCaptured", true)
                     //necessary
                     put(
                         "modelId",
@@ -487,6 +491,7 @@ object MqttService {
                     put("siteId", ConfigurationSettings.siteId.data)
                     put("sessionId", sessionId)
                     put("stopOnSilence", ConfigurationSettings.isMQTTSilenceDetectionEnabled.data)
+                    put("sendAudioCaptured", true)
                 })
             )
         )
@@ -728,12 +733,12 @@ object MqttService {
      * Response(s)
      * hermes/audioServer/<siteId>/playFinished (JSON)
      */
-    fun playBytes(data: ByteArray) {
+    fun playBytes(data: List<Byte>) {
         publishMessage(
             MQTTTopicsPublish.AudioOutputPlayBytes.topic
                 .replace("<siteId>", ConfigurationSettings.siteId.data)
                 .replace("<requestId>", uuid4().toString()),
-            MqttMessage(data)
+            MqttMessage(data.toByteArray())
         )
     }
 

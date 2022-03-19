@@ -91,7 +91,7 @@ object HttpServer {
         logger.v { "get /api/play-recording" }
 
         respondBytes(
-            bytes = ServiceInterface.getPreviousRecording(),
+            bytes = ServiceInterface.getPreviousRecording().toByteArray(),
             contentType = ContentType("audio", "wav")
         )
     }

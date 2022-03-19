@@ -33,7 +33,7 @@ object HttpService {
      * Set Accept: application/json to receive JSON with more details
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
-    suspend fun speechToText(data: ByteArray): String? {
+    suspend fun speechToText(data: List<Byte>): String? {
 
         logger.v { "sending speechToText \nendpoint:\n${ConfigurationSettings.speechToTextHttpEndpoint.data}\ndata:\n${data.size}" }
 
@@ -41,7 +41,7 @@ object HttpService {
             val response = httpClient.post<String>(
                 url = Url("${ConfigurationSettings.speechToTextHttpEndpoint.data}?noheader=true")
             ) {
-                body = data
+                body = data.toByteArray()
             }
 
             logger.v { "speechToText received:\n$response" }
@@ -109,13 +109,13 @@ object HttpService {
      * ?volume=<volume> - volume level to speak at (0 = off, 1 = full volume)
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun textToSpeech(text: String): ByteArray? {
+    suspend fun textToSpeech(text: String): List<Byte>? {
 
         logger.v { "sending text to speech\nendpoint:\n${ConfigurationSettings.textToSpeechEndpoint.data}\ntext:\n$text" }
 
         return try {
 
-            val response = httpClient.post<ByteArray>(
+            val response = httpClient.post<List<Byte>>(
                 url = Url(ConfigurationSettings.textToSpeechEndpoint.data)
             ) {
                 body = text
@@ -136,7 +136,7 @@ object HttpService {
      * Make sure to set Content-Type to audio/wav
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun playWav(data: ByteArray) {
+    suspend fun playWav(data: List<Byte>) {
 
         logger.v { "sending audio \nendpoint:\n${ConfigurationSettings.audioPlayingEndpoint.data}\ndata:\n${data.size}" }
 
@@ -147,7 +147,7 @@ object HttpService {
                 setAttributes {
                     contentType(ContentType("audio", "wav"))
                 }
-                body = data
+                body = data.toByteArray()
             }
 
             logger.v { "sending audio received:\n${response}" }

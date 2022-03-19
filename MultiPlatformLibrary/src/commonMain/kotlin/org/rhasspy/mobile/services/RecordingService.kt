@@ -45,8 +45,8 @@ object RecordingService {
     private var job: Job? = null
 
     //https://stackoverflow.com/questions/19145213/android-audio-capture-silence-detection
-    private fun searchThreshold(arr: ByteArray, thr: Int): Boolean {
-        arr.forEach {
+    private fun searchThreshold(byteData: List<Byte>, thr: Int): Boolean {
+        byteData.forEach {
             if (it >= thr || it <= -thr) {
                 return true
             }
@@ -59,7 +59,7 @@ object RecordingService {
      * by clicking ui
      */
     fun startRecording() {
-        if(listening.value){
+        if (listening.value) {
             logger.d { "alreadyRecording" }
             return
         }
@@ -75,11 +75,13 @@ object RecordingService {
 
         job = coroutineScope.launch {
             AudioRecorder.output.collectIndexed { _, value ->
-                data.addAll(value.toList())
-                ServiceInterface.audioFrame(value)
+
+                val byteData = value.toList()
+                data.addAll(byteData)
+                ServiceInterface.audioFrame(byteData)
 
                 if (AppSettings.isAutomaticSilenceDetection.data && ConfigurationSettings.wakeWordOption.data != WakeWordOption.MQTT) {
-                    if (!searchThreshold(value, AppSettings.automaticSilenceDetectionAudioLevel.data)) {
+                    if (!searchThreshold(byteData, AppSettings.automaticSilenceDetectionAudioLevel.data)) {
                         if (firstSilenceDetected == null) {
                             firstSilenceDetected = Clock.System.now()
 
@@ -111,11 +113,7 @@ object RecordingService {
         job?.cancel()
     }
 
-    fun getLatestRecording(): ByteArray {
-        return data.toByteArray().addWavHeader()
-    }
-
-    fun ByteArray.addWavHeader(): ByteArray {
+    fun List<Byte>.addWavHeader(): List<Byte> {
         //https://stackoverflow.com/questions/13039846/what-do-the-bytes-in-a-wav-file-represent
         val dataSize = (this.size + 44 - 8).toByteArray()
         val audioDataSize = this.size.toByteArray()
@@ -126,12 +124,8 @@ object RecordingService {
             87, 65, 86, 69, 102, 109, 116, 32, 16, 0, 0, 0, 1, 0, 1, 0, -128, 62, 0, 0, 0, 125, 0, 0, 2, 0, 16, 0, 100, 97, 116, 97,
             audioDataSize[0], audioDataSize[1], audioDataSize[2], audioDataSize[3] //40-43 data size of rest
         )
-
-        val result = mutableListOf<Byte>()
-        result.addAll(header.toList())
-        result.addAll(this.toList())
-
-        return result.toByteArray()
+        this.toMutableList().addAll(0, header.toList())
+        return this
     }
 
 }
