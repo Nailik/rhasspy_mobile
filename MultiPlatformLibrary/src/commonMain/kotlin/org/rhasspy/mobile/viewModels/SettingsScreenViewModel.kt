@@ -39,7 +39,7 @@ class SettingsScreenViewModel : ViewModel() {
         currentAudioLevel.value = 0
         currentStatus.value = true
 
-        job = viewModelScope.launch {
+        job = CoroutineScope(Dispatchers.Default).launch {
             AudioRecorder.output.collectIndexed { _, value ->
                 var max: Byte = 0
                 value.forEach {
@@ -47,7 +47,7 @@ class SettingsScreenViewModel : ViewModel() {
                         max = it
                     }
                 }
-                CoroutineScope(Dispatchers.Main).launch {
+                viewModelScope.launch {
                     currentAudioLevel.value = max
                 }
             }

@@ -27,7 +27,6 @@ object MqttService {
 
     private val connected = MutableLiveData(false)
     val isConnected = connected.readOnly()
-    private val callbacks = mutableListOf<MqttResultCallback>()
 
 
     /**
@@ -246,7 +245,7 @@ object MqttService {
 
         if (jsonObject.isThisSiteId()) {
             jsonObject["sessionId"]?.jsonPrimitive?.content?.also {
-                ServiceInterface.sessionStarted(it)
+                ServiceInterface.sessionStarted(it, true)
             } ?: run {
                 logger.d { "received sessionStarted with empty session Id" }
             }
@@ -293,7 +292,7 @@ object MqttService {
 
         if (jsonObject.isThisSiteId()) {
             jsonObject["sessionId"]?.jsonPrimitive?.content?.also {
-                ServiceInterface.sessionEnded(it)
+                ServiceInterface.sessionEnded(it, true)
             } ?: run {
                 logger.d { "received sessionStarted with empty session Id" }
             }
@@ -452,7 +451,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
 
         if (jsonObject.isThisSiteId()) {
-            ServiceInterface.startListening()
+            ServiceInterface.startListening(true)
         } else {
             logger.d { "received startListening but for other siteId" }
         }
@@ -494,7 +493,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
 
         if (jsonObject.isThisSiteId()) {
-            ServiceInterface.stopListening(jsonObject["sessionId"]?.jsonPrimitive?.content)
+            ServiceInterface.stopListening(jsonObject["sessionId"]?.jsonPrimitive?.content, true)
         } else {
             logger.d { "received stopListening but for other siteId" }
         }
