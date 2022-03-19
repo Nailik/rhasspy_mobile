@@ -22,6 +22,7 @@ import kotlin.native.concurrent.ThreadLocal
 object MqttService {
     private val logger = Logger.withTag(this::class.simpleName!!)
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
+    private val mainScope = CoroutineScope(Dispatchers.Main)
 
     private var client: MqttClient? = null
 
@@ -144,7 +145,7 @@ object MqttService {
     private fun onMessageReceived(topic: String, message: MqttMessage) {
         //subSequence so we don't print super long wave data
         logger.v {
-            "onMessageReceived ${message.msgId} $topic ${
+            "onMessageReceived id ${message.msgId} $topic ${
                 message.payload.toString().subSequence(1, min(message.payload.toString().length, 300))
             }"
         }
@@ -383,6 +384,15 @@ object MqttService {
         )
     }
 
+    fun audioSessionFrame(sessionId: String?, byteArray: List<Byte>) {
+        publishMessage(
+            MQTTTopicsPublish.AsrAudioSessionFrame.topic
+                .replace("<siteId>", ConfigurationSettings.siteId.data)
+                .replace("<sessionId>", sessionId ?: ""),
+            MqttMessage(byteArray.toByteArray())
+        )
+    }
+
     /**
      * hermes/hotword/toggleOn (JSON)
      * Enables hotword detection
@@ -469,7 +479,9 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
 
         if (jsonObject.isThisSiteId()) {
-            ServiceInterface.startListening(jsonObject["sessionId"]?.jsonPrimitive?.content, true)
+            mainScope.launch {
+                ServiceInterface.startListening(jsonObject["sessionId"]?.jsonPrimitive?.content, true)
+            }
         } else {
             logger.d { "received startListening but for other siteId" }
         }
@@ -490,7 +502,7 @@ object MqttService {
                 payload = Json.encodeToString(buildJsonObject {
                     put("siteId", ConfigurationSettings.siteId.data)
                     put("sessionId", sessionId)
-                    put("stopOnSilence", ConfigurationSettings.isMQTTSilenceDetectionEnabled.data)
+                    put("stopOnSilence", true)
                     put("sendAudioCaptured", true)
                 })
             )

@@ -2,8 +2,8 @@ package org.rhasspy.mobile.services.dialogue
 
 import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
-import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
+import dev.icerock.moko.mvvm.livedata.postValue
 import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,16 +32,19 @@ object ServiceInterface {
     private var previousRecording = listOf<Byte>()
     private var currentRecording = mutableListOf<Byte>()
 
-
-    private val indicationVisible = MutableLiveData(false)
-    val isIndicationVisible: LiveData<Boolean> = indicationVisible.readOnly()
+    private var liveSessionRunning: MutableLiveData<Boolean> = MutableLiveData(false)
+    var sessionRunning = liveSessionRunning.readOnly()
 
     /**
      * not null if there is currently a session
      */
-    private var currentSessionId: MutableLiveData<String?> = MutableLiveData(null)
-
-    var sessionId = currentSessionId.readOnly()
+    private var currentSessionId: String? = null
+        set(value) {
+            if (field != value) {
+                field = value
+                liveSessionRunning.postValue(value != null)
+            }
+        }
 
     /**
      * hermes/dialogueManager/startSession
@@ -55,11 +58,10 @@ object ServiceInterface {
         logger.d { "startSession" }
 
         if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
-            val sessionUuid = uuid4()
+            val sessionUuid = uuid4().toString()
             //send response
-            MqttService.sessionStarted(sessionUuid.toString())
-            //start the session
-            sessionStarted(sessionUuid.toString())
+            MqttService.sessionStarted(sessionUuid)
+            sessionStarted(sessionUuid)
         }
     }
 
@@ -70,7 +72,7 @@ object ServiceInterface {
     fun endSession(sessionId: String?) {
         logger.d { "endSession $sessionId" }
 
-        if (sessionId != this.sessionId.value) {
+        if (sessionId != currentSessionId) {
             logger.e { "endSession with invalid id" }
             return
         }
@@ -92,18 +94,31 @@ object ServiceInterface {
     fun sessionStarted(sessionId: String, fromMQTT: Boolean = false) {
         logger.d { "sessionStarted $sessionId mqtt $fromMQTT" }
 
+        if (currentSessionId != null &&
+            !(fromMQTT && ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.RemoteMQTT)
+        ) {
+            logger.e { "sessionStarted with invalid id" }
+            return
+        }
+
         //allow internal call or when dialog option is mqtt
         if (!fromMQTT || ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.RemoteMQTT) {
 
             //reset intent recognized
             isIntentRecognized = false
+
+
             //set session id
-            currentSessionId.value = sessionId
+            currentSessionId = sessionId
 
             //when there is local dialogue management we need to stop hotWord and start listening for speech
             if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
                 hotWordToggle(false)
+
+                //  if(ConfigurationSettings.speechToTextOption.data != SpeechToTextOptions.RemoteMQTT) {
+                //when mqtt is used for speech to text it will automatically call startListening with a new sessionId
                 startListening(sessionId)
+                //    }
             }
         }
     }
@@ -120,7 +135,7 @@ object ServiceInterface {
     fun sessionEnded(sessionId: String?, fromMQTT: Boolean = false) {
         logger.d { "sessionEnded $sessionId mqtt $fromMQTT" }
 
-        if (sessionId != this.sessionId.value) {
+        if (sessionId != currentSessionId) {
             logger.e { "sessionEnded with invalid id" }
             return
         }
@@ -129,7 +144,7 @@ object ServiceInterface {
         if (!fromMQTT || ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.RemoteMQTT) {
 
             //reset session id
-            currentSessionId.value = null
+            currentSessionId = null
             //send session ended
 
             if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
@@ -159,14 +174,14 @@ object ServiceInterface {
         }
 
         //send to mqtt if mqtt listen for WakeWord and no active session or mqtt speech to text and active session
-        if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.MQTT && sessionId.value == null ||
-            (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT && sessionId.value != null)
+        if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.MQTT && currentSessionId == null ||
+            (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT && currentSessionId != null)
         ) {
             MqttService.audioFrame(dataWithHeader)
         }
 
         //if there is a current session record this audio to save if for intent recognition
-        if (currentSessionId.value != null) {
+        if (currentSessionId != null) {
             currentRecording.addAll(byteData)
         }
     }
@@ -232,8 +247,13 @@ object ServiceInterface {
      */
     fun startListening(sessionId: String?, fromMQTT: Boolean = false) {
         logger.d { "startListening $sessionId mqtt $fromMQTT" }
-
-        if (sessionId != this.sessionId.value) {
+/*
+        if(fromMQTT && ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT){
+            //remote speech to text will override the sessionId
+            this.currentSessionId = sessionId
+        }
+*/
+        if (sessionId != currentSessionId) {
             logger.e { "startListening with invalid id" }
             return
         }
@@ -247,9 +267,11 @@ object ServiceInterface {
             //show indication so user knows recording has startd
             indication(true)
 
-            if (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
+            //only necessary when local dialog management
+            if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local &&
+                ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
                 //tell asr system to start listening and transcribe text when mqtt is used for speech to text
-                MqttService.startListening(currentSessionId.value)
+            //    MqttService.startListening(currentSessionId)
             }
         }
     }
@@ -268,11 +290,11 @@ object ServiceInterface {
      * saves currentRecording to previous
      * sendToMqtt is used to not set stopListening to MQTT asr system, when the asr response called this function
      */
-    fun stopListening(sessionId: String? = currentSessionId.value, fromMQTT: Boolean = false) {
+    fun stopListening(sessionId: String? = currentSessionId, fromMQTT: Boolean = false) {
 
         logger.d { "stopListening $sessionId mqtt $fromMQTT" }
 
-        if (sessionId != this.sessionId.value) {
+        if (sessionId != currentSessionId) {
             logger.e { "stopListening with invalid id" }
             return
         }
@@ -314,7 +336,7 @@ object ServiceInterface {
 
         logger.d { "asrTextCaptured $sessionId text $text" }
 
-        if (sessionId != this.sessionId.value) {
+        if (sessionId != currentSessionId) {
             logger.e { "asrTextCaptured with invalid id" }
             return
         }
@@ -342,7 +364,7 @@ object ServiceInterface {
 
         logger.d { "asrError $sessionId" }
 
-        if (sessionId != this.sessionId.value) {
+        if (sessionId != currentSessionId) {
             logger.e { "asrError with invalid id" }
             return
         }
@@ -350,7 +372,7 @@ object ServiceInterface {
         if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
             //stop listening and end the session after asr error
             stopListening()
-            endSession(currentSessionId.value)
+            endSession(currentSessionId)
         }
     }
 
@@ -392,7 +414,7 @@ object ServiceInterface {
                     }
                 }
                 //send intent to mqtt service
-                IntentRecognitionOptions.RemoteMQTT -> MqttService.intentQuery(sessionId.value, text)
+                IntentRecognitionOptions.RemoteMQTT -> MqttService.intentQuery(currentSessionId, text)
                 IntentRecognitionOptions.Disabled -> logger.d { "intentRecognition disabled" }
             }
         }
@@ -418,11 +440,11 @@ object ServiceInterface {
      *
      * if local dialogue management it will end the session
      */
-    fun intentRecognized(sessionId: String? = currentSessionId.value, intent: String) {
+    fun intentRecognized(sessionId: String? = currentSessionId, intent: String) {
 
         logger.d { "intentRecognized $sessionId intent $intent" }
 
-        if (sessionId != this.sessionId.value) {
+        if (sessionId != currentSessionId) {
             logger.e { "intentRecognized with invalid id" }
             return
         }
@@ -455,11 +477,11 @@ object ServiceInterface {
      *
      * if local dialogue management it will end the session
      */
-    fun intentNotRecognized(sessionId: String? = currentSessionId.value) {
+    fun intentNotRecognized(sessionId: String? = currentSessionId) {
 
         logger.d { "intentNotRecognized $sessionId" }
 
-        if (sessionId != this.sessionId.value) {
+        if (sessionId != currentSessionId) {
             logger.e { "intentNotRecognized with invalid id" }
             return
         }
@@ -507,7 +529,7 @@ object ServiceInterface {
                     }
                 }
                 //TODO implement say finished to play generated audio
-                TextToSpeechOptions.RemoteMQTT -> MqttService.say(currentSessionId.value, text)
+                TextToSpeechOptions.RemoteMQTT -> MqttService.say(currentSessionId, text)
                 TextToSpeechOptions.Disabled -> logger.d { "textToSpeech disabled" }
             }
         }
@@ -640,25 +662,21 @@ object ServiceInterface {
     private fun indication(show: Boolean) {
         logger.d { "toggle indication show: $show" }
 
-        if (indicationVisible.value != show) {
-            if (show) {
-                indicationVisible.value = true
-                if (AppSettings.isWakeWordSoundIndication.data) {
-                    NativeIndication.playAudio(MR.files.etc_wav_beep_hi)
-                }
-
-                if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data) {
-                    NativeIndication.wakeUpScreen()
-                }
-
-                if (AppSettings.isWakeWordLightIndication.data) {
-                    NativeIndication.showIndication()
-                }
-            } else {
-                indicationVisible.value = false
-                NativeIndication.closeIndicationOverOtherApps()
-                NativeIndication.releaseWakeUp()
+        if (show) {
+            if (AppSettings.isWakeWordSoundIndication.data) {
+                NativeIndication.playAudio(MR.files.etc_wav_beep_hi)
             }
+
+            if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data) {
+                NativeIndication.wakeUpScreen()
+            }
+
+            if (AppSettings.isWakeWordLightIndication.data) {
+                NativeIndication.showIndication()
+            }
+        } else {
+            NativeIndication.closeIndicationOverOtherApps()
+            NativeIndication.releaseWakeUp()
         }
     }
 
@@ -694,7 +712,7 @@ object ServiceInterface {
         //make sure it is stopped
         NativeLocalWakeWordService.stop()
         //stop recorder if not used
-        if (sessionId.value == null) {
+        if (currentSessionId == null) {
             //if no running session then it's not necessary to record
             RecordingService.stopRecording()
         }
@@ -710,7 +728,7 @@ object ServiceInterface {
      */
     fun toggleSession() {
         logger.d { "toggleSession" }
-        sessionId.value?.also {
+        currentSessionId?.also {
             stopListening()
         } ?: run {
             hotWordDetected()
