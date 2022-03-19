@@ -283,7 +283,7 @@ fun WakeWord(snackbarHostState: SnackbarHostState) {
                 OutlineButtonListItem(
                     text = MR.strings.openPicoVoiceConsole,
                     onClick = {
-                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://console.picovoice.ai/access_key")))
+                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://console.picovoice.ai")))
                     })
 
                 //filled with correct values later

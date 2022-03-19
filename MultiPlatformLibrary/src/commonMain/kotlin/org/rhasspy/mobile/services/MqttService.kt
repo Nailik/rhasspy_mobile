@@ -141,7 +141,7 @@ object MqttService {
 
     private fun onMessageReceived(topic: String, message: MqttMessage) {
         //subSequence so we don't print super long wave data
-        logger.v { "onMessageReceived $topic ${message.payload.toString().subSequence(1, min(message.payload.toString().length, 100))}" }
+        logger.v { "onMessageReceived $topic ${message.payload.toString().subSequence(1, min(message.payload.toString().length, 300))}" }
 
         CoroutineScope(Dispatchers.Main).launch {
             try {
@@ -355,7 +355,7 @@ object MqttService {
     fun audioFrame(byteArray: ByteArray) {
         coroutineScope.launch {
             client?.publish(
-                MQTTTopicsPublish.AsrAudioSessionFrame.topic.replace("<siteId>", ConfigurationSettings.siteId.data),
+                MQTTTopicsPublish.AsrAudioFrame.topic.replace("<siteId>", ConfigurationSettings.siteId.data),
                 MqttMessage(byteArray)
             )?.also {
                 logger.e { "unable to publish audioFrame ${byteArray.size} \n${it.statusCode.name} ${it.msg}" }
@@ -411,6 +411,8 @@ object MqttService {
                     payload = Json.encodeToString(buildJsonObject {
                         put("currentSensitivity", ConfigurationSettings.wakeWordKeywordSensitivity.data)
                         put("siteId", ConfigurationSettings.siteId.data)
+                        //necessary
+                        put("modelId", "/usr/lib/rhasspy/.venv/lib/python3.7/site-packages/pvporcupine/resources/keyword_files/linux/jarvis_linux.ppn")
                     })
                 )
             )?.also {

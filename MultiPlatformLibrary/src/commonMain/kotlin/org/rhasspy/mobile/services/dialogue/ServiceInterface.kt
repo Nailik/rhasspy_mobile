@@ -221,18 +221,15 @@ object ServiceInterface {
         if (!fromMQTT || ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.RemoteMQTT) {
 
             //only start listening if not currently recording
-            //this can loop because it calls the mqtt service to start transcribing but also receives this message
+            currentRecording.clear()
+            startRecording()
             indication(true)
-            if (!RecordingService.status.value) {
-                currentRecording.clear()
-                startRecording()
 
-                if (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
-                    //tell asr system to start listening and transcribe text
-                    MqttService.startListening(currentSessionId.value)
-                }
-            } else {
-                logger.e { "already listening" }
+            if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local &&
+                ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT
+            ) {
+                //tell asr system to start listening and transcribe text
+                MqttService.startListening(currentSessionId.value)
             }
         }
     }
@@ -268,13 +265,14 @@ object ServiceInterface {
                     if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
                         hotWordToggle(true)
                         speechToText()
-
-                        MqttService.stopListening()
                     }
+
+                    MqttService.stopListening()
                 }
             }
 
         }
+        //TODO silence detected from remote mqtt speech to text
     }
 
     /**
@@ -520,7 +518,11 @@ object ServiceInterface {
 
             when (ConfigurationSettings.speechToTextOption.data) {
                 //wait for finish -> then publish all
-                SpeechToTextOptions.RemoteHTTP -> HttpService.speechToText(getPreviousRecording())
+                SpeechToTextOptions.RemoteHTTP -> HttpService.speechToText(getPreviousRecording())?.also {
+                    if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+                        recognizeIntent(it)
+                    }
+                }
                 SpeechToTextOptions.RemoteMQTT -> logger.d { "speechToText already send to mqtt" }
                 SpeechToTextOptions.Disabled -> logger.d { "speechToText disabled" }
             }
@@ -602,26 +604,36 @@ object ServiceInterface {
     }
 
     private fun stopHotWord() {
-        when (ConfigurationSettings.wakeWordOption.data) {
-            WakeWordOption.Porcupine -> NativeLocalWakeWordService.stop()
-            //nothing to do, audio frames wont be sent to broker
-            WakeWordOption.MQTT -> {}
-            WakeWordOption.Disabled -> {}
-        }
+        //make sure it is stopped
+        NativeLocalWakeWordService.stop()
     }
 
     fun silenceDetected() {
-        stopListening()
+        CoroutineScope(Dispatchers.Main).launch {
+            stopListening()
+        }
     }
 
     /**
      * starts or stops a session, depends if it is currently running
      */
     fun toggleSession() {
-        sessionId.value?.also {
-            endSession(it)
-        } ?: run {
-            startSession()
+
+        when (ConfigurationSettings.dialogueManagementOption.data) {
+            DialogueManagementOptions.Local -> {
+                sessionId.value?.also {
+                    stopListening(it)
+                } ?: run {
+                    startSession()
+                }
+            }
+            DialogueManagementOptions.RemoteMQTT -> {
+                sessionId.value?.also {
+                    stopListening()
+                } ?: run {
+                    hotWordDetected()
+                }
+            }
         }
     }
 

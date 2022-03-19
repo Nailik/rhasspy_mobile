@@ -58,6 +58,11 @@ object RecordingService {
      * by clicking ui
      */
     fun startRecording() {
+        if(listening.value){
+            logger.d { "alreadyRecording" }
+            return
+        }
+
         logger.d { "startRecording" }
         firstSilenceDetected = null
         listening.value = true

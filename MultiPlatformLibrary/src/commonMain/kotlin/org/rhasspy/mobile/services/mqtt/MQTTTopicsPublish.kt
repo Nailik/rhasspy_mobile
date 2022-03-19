@@ -10,7 +10,7 @@ enum class MQTTTopicsPublish(val topic: String) {
     IntentNotRecognizedInSession("hermes/dialogueManager/intentNotRecognized"),
     AsrStartListening( "hermes/asr/startListening"),
     AsrStopListening("hermes/asr/stopListening"),
-    AsrAudioSessionFrame("hermes/audioServer/<siteId>/audioFrame"),
+    AsrAudioFrame("hermes/audioServer/<siteId>/audioFrame"),
     HotWordDetected("hermes/hotword/default/detected"),
     HotWordError("hermes/error/hotword"),
     AudioCaptured("hermes/asr/<siteId>/<sessionId>/audioCaptured"),
