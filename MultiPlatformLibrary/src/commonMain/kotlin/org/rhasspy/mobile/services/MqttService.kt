@@ -2,6 +2,7 @@ package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
+import com.benasher44.uuid.variant
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CoroutineScope
@@ -28,6 +29,7 @@ object MqttService {
     private val connected = MutableLiveData(false)
     val isConnected = connected.readOnly()
 
+    private val sendIds = mutableListOf<Int>()
 
     /**
      * start client externaly, only starts if mqtt is enabled
@@ -143,43 +145,62 @@ object MqttService {
         //subSequence so we don't print super long wave data
         logger.v { "onMessageReceived $topic ${message.payload.toString().subSequence(1, min(message.payload.toString().length, 300))}" }
 
-        CoroutineScope(Dispatchers.Main).launch {
-            try {
+        if (sendIds.contains(message.msgId)) {
+            //ignore all messages that i have send
+            logger.v { "message ignored, was same id as send by myself" }
+            sendIds.remove(message.msgId)
+            return
+        }
 
-                when (MQTTTopicsSubscription.fromTopic(topic)) {
-                    MQTTTopicsSubscription.StartSession -> startSession(message)
-                    MQTTTopicsSubscription.EndSession -> endSession(message)
-                    MQTTTopicsSubscription.SessionStarted -> sessionStarted(message)
-                    MQTTTopicsSubscription.SessionEnded -> sessionEnded(message)
-                    MQTTTopicsSubscription.HotWordToggleOn -> hotWordToggleOn(message)
-                    MQTTTopicsSubscription.HotWordToggleOff -> hotWordToggleOff(message)
-                    MQTTTopicsSubscription.AsrStartListening -> startListening(message)
-                    MQTTTopicsSubscription.AsrStopListening -> stopListening(message)
-                    MQTTTopicsSubscription.AsrTextCaptured -> asrTextCaptured(message)
-                    MQTTTopicsSubscription.AsrError -> asrError(message)
-                    MQTTTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(message)
-                    MQTTTopicsSubscription.IntentNotRecognized -> intentNotRecognized(message)
-                    MQTTTopicsSubscription.IntentHandlingToggleOn -> intentHandlingToggleOn(message)
-                    MQTTTopicsSubscription.IntentHandlingToggleOff -> intentHandlingToggleOff(message)
-                    MQTTTopicsSubscription.AudioOutputToggleOff -> audioOutputToggleOff(message)
-                    MQTTTopicsSubscription.AudioOutputToggleOn -> audioOutputToggleOn(message)
-                    MQTTTopicsSubscription.SetVolume -> setVolume(message)
-                    else -> {
-                        if (topic.startsWith(
-                                MQTTTopicsSubscription.PlayBytes.topic
-                                    .replace("<siteId>", ConfigurationSettings.siteId.data)
-                                    .replace("+", "")
-                            )
-                        ) {
-                            playBytes(message)
-                        }
+        try {
+            when (MQTTTopicsSubscription.fromTopic(topic)) {
+                MQTTTopicsSubscription.StartSession -> startSession(message)
+                MQTTTopicsSubscription.EndSession -> endSession(message)
+                MQTTTopicsSubscription.SessionStarted -> sessionStarted(message)
+                MQTTTopicsSubscription.SessionEnded -> sessionEnded(message)
+                MQTTTopicsSubscription.HotWordToggleOn -> hotWordToggleOn(message)
+                MQTTTopicsSubscription.HotWordToggleOff -> hotWordToggleOff(message)
+                MQTTTopicsSubscription.AsrStartListening -> startListening(message)
+                MQTTTopicsSubscription.AsrStopListening -> stopListening(message)
+                MQTTTopicsSubscription.AsrTextCaptured -> asrTextCaptured(message)
+                MQTTTopicsSubscription.AsrError -> asrError(message)
+                MQTTTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(message)
+                MQTTTopicsSubscription.IntentNotRecognized -> intentNotRecognized(message)
+                MQTTTopicsSubscription.IntentHandlingToggleOn -> intentHandlingToggleOn(message)
+                MQTTTopicsSubscription.IntentHandlingToggleOff -> intentHandlingToggleOff(message)
+                MQTTTopicsSubscription.AudioOutputToggleOff -> audioOutputToggleOff(message)
+                MQTTTopicsSubscription.AudioOutputToggleOn -> audioOutputToggleOn(message)
+                MQTTTopicsSubscription.SetVolume -> setVolume(message)
+                else -> {
+                    if (topic.startsWith(
+                            MQTTTopicsSubscription.PlayBytes.topic
+                                .replace("<siteId>", ConfigurationSettings.siteId.data)
+                                .replace("+", "")
+                        )
+                    ) {
+                        playBytes(message)
                     }
                 }
+            }
 
-            } catch (e: Exception) {
-                logger.e(e) { "onMessageReceived error" }
+        } catch (e: Exception) {
+            logger.e(e) { "onMessageReceived error" }
+        }
+    }
+
+    private fun publishMessage(topic: String, message: MqttMessage) {
+
+        coroutineScope.launch {
+            val uuid = uuid4().variant
+            message.msgId = uuid
+            sendIds.add(uuid)
+
+            client?.publish(topic, message)?.also {
+                sendIds.remove(uuid)
+                logger.e { "unable to publish topic \n${it.statusCode.name} ${it.msg}" }
             }
         }
+
     }
 
     private fun JsonObject.isThisSiteId(): Boolean {
@@ -263,19 +284,15 @@ object MqttService {
      * Response to [hermes/dialogueManager/startSession]
      * Also used when session has started for other reasons
      */
-    suspend fun sessionStarted(sessionId: String) {
-        coroutineScope.launch {
-            client?.publish(
-                MQTTTopicsPublish.SessionStarted.topic, MqttMessage(
-                    payload = Json.encodeToString(buildJsonObject {
-                        put("sessionId", sessionId)
-                        put("siteId", ConfigurationSettings.siteId.value)
-                    })
-                )
-            )?.also {
-                logger.e { "unable to publish sessionStarted $sessionId \n${it.statusCode.name} ${it.msg}" }
-            }
-        }
+    fun sessionStarted(sessionId: String) {
+        publishMessage(
+            MQTTTopicsPublish.SessionStarted.topic, MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("sessionId", sessionId)
+                    put("siteId", ConfigurationSettings.siteId.value)
+                })
+            )
+        )
     }
 
     /**
@@ -310,19 +327,30 @@ object MqttService {
      *
      * Response to hermes/dialogueManager/endSession or other reasons for a session termination
      */
-    suspend fun sessionEnded(sessionId: String) {
-        coroutineScope.launch {
-            client?.publish(
-                MQTTTopicsPublish.SessionEnded.topic, MqttMessage(
-                    payload = Json.encodeToString(buildJsonObject {
-                        put("sessionId", sessionId)
-                        put("siteId", ConfigurationSettings.siteId.data)
-                    })
-                )
-            )?.also {
-                logger.e { "unable to publish sessionEnded $sessionId \n${it.statusCode.name} ${it.msg}" }
-            }
-        }
+    fun sessionEnded(sessionId: String) {
+        publishMessage(
+            MQTTTopicsPublish.SessionEnded.topic, MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("sessionId", sessionId)
+                    put("siteId", ConfigurationSettings.siteId.data)
+                })
+            )
+        )
+    }
+
+    /**
+     * hermes/dialogueManager/continueSession (JSON)
+     * Requests that a session be continued after an intent has been recognized
+     * sessionId: string - current session ID (required)
+     */
+    fun continueSession(sessionId: String?) {
+        publishMessage(
+            MQTTTopicsPublish.ContinueSession.topic, MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("sessionId", sessionId)
+                })
+            )
+        )
     }
 
     /**
@@ -332,18 +360,14 @@ object MqttService {
      * siteId: string = "default" - Hermes site ID
      */
     fun intentNotRecognized(sessionId: String) {
-        coroutineScope.launch {
-            client?.publish(
-                MQTTTopicsPublish.IntentNotRecognizedInSession.topic, MqttMessage(
-                    payload = Json.encodeToString(buildJsonObject {
-                        put("sessionId", sessionId)
-                        put("siteId", ConfigurationSettings.siteId.data)
-                    })
-                )
-            )?.also {
-                logger.e { "unable to publish intentNotRecognized $sessionId \n${it.statusCode.name} ${it.msg}" }
-            }
-        }
+        publishMessage(
+            MQTTTopicsPublish.IntentNotRecognizedInSession.topic, MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("sessionId", sessionId)
+                    put("siteId", ConfigurationSettings.siteId.data)
+                })
+            )
+        )
     }
 
 
@@ -353,14 +377,10 @@ object MqttService {
      * siteId: string - Hermes site ID (part of topic)
      */
     fun audioFrame(byteArray: ByteArray) {
-        coroutineScope.launch {
-            client?.publish(
-                MQTTTopicsPublish.AsrAudioFrame.topic.replace("<siteId>", ConfigurationSettings.siteId.data),
-                MqttMessage(byteArray)
-            )?.also {
-                logger.e { "unable to publish audioFrame ${byteArray.size} \n${it.statusCode.name} ${it.msg}" }
-            }
-        }
+        publishMessage(
+            MQTTTopicsPublish.AsrAudioFrame.topic.replace("<siteId>", ConfigurationSettings.siteId.data),
+            MqttMessage(byteArray)
+        )
     }
 
     /**
@@ -404,21 +424,20 @@ object MqttService {
      * siteId: string = "default" - Hermes site ID
      */
     fun hotWordDetected() {
-        coroutineScope.launch {
-            client?.publish(
-                MQTTTopicsPublish.HotWordDetected.topic.replace("<wakewordId>", "default"),
-                MqttMessage(
-                    payload = Json.encodeToString(buildJsonObject {
-                        put("currentSensitivity", ConfigurationSettings.wakeWordKeywordSensitivity.data)
-                        put("siteId", ConfigurationSettings.siteId.data)
-                        //necessary
-                        put("modelId", "/usr/lib/rhasspy/.venv/lib/python3.7/site-packages/pvporcupine/resources/keyword_files/linux/jarvis_linux.ppn")
-                    })
-                )
-            )?.also {
-                logger.e { "unable to publish hotWordDetected \n${it.statusCode.name} ${it.msg}" }
-            }
-        }
+        publishMessage(
+            MQTTTopicsPublish.HotWordDetected.topic.replace("<wakewordId>", "default"),
+            MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("currentSensitivity", ConfigurationSettings.wakeWordKeywordSensitivity.data)
+                    put("siteId", ConfigurationSettings.siteId.data)
+                    //necessary
+                    put(
+                        "modelId",
+                        "/usr/lib/rhasspy/.venv/lib/python3.7/site-packages/pvporcupine/resources/keyword_files/linux/jarvis_linux.ppn"
+                    )
+                })
+            )
+        )
     }
 
     /**
@@ -429,19 +448,15 @@ object MqttService {
      * siteId: string = "default" - Hermes site ID
      */
     fun hotWordError(description: String) {
-        coroutineScope.launch {
-            client?.publish(
-                MQTTTopicsPublish.HotWordError.topic,
-                MqttMessage(
-                    payload = Json.encodeToString(buildJsonObject {
-                        put("error", description)
-                        put("siteId", ConfigurationSettings.siteId.data)
-                    })
-                )
-            )?.also {
-                logger.e { "unable to publish hotWordError \n${it.statusCode.name} ${it.msg}" }
-            }
-        }
+        publishMessage(
+            MQTTTopicsPublish.HotWordError.topic,
+            MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("error", description)
+                    put("siteId", ConfigurationSettings.siteId.data)
+                })
+            )
+        )
     }
 
     /**
@@ -468,20 +483,16 @@ object MqttService {
      * stopOnSilence: bool = true - detect silence and automatically end voice command (Rhasspy only)
      */
     fun startListening(sessionId: String?) {
-        coroutineScope.launch {
-            client?.publish(
-                MQTTTopicsPublish.AsrStartListening.topic,
-                MqttMessage(
-                    payload = Json.encodeToString(buildJsonObject {
-                        put("siteId", ConfigurationSettings.siteId.data)
-                        put("sessionId", sessionId)
-                        put("stopOnSilence", ConfigurationSettings.isMQTTSilenceDetectionEnabled.data)
-                    })
-                )
-            )?.also {
-                logger.e { "unable to publish startListening \n${it.statusCode.name} ${it.msg}" }
-            }
-        }
+        publishMessage(
+            MQTTTopicsPublish.AsrStartListening.topic,
+            MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("siteId", ConfigurationSettings.siteId.data)
+                    put("sessionId", sessionId)
+                    put("stopOnSilence", ConfigurationSettings.isMQTTSilenceDetectionEnabled.data)
+                })
+            )
+        )
     }
 
     /**
@@ -508,20 +519,16 @@ object MqttService {
      * siteId: string = "default" - Hermes site ID
      * sessionId: string = "" - current session ID
      */
-    fun stopListening() {
-        coroutineScope.launch {
-            client?.publish(
-                MQTTTopicsPublish.AsrStopListening.topic,
-                MqttMessage(
-                    payload = Json.encodeToString(buildJsonObject {
-                        put("siteId", ConfigurationSettings.siteId.data)
-                        put("stopOnSilence", ConfigurationSettings.isMQTTSilenceDetectionEnabled.data)
-                    })
-                )
-            )?.also {
-                logger.e { "unable to publish stopListening \n${it.statusCode.name} ${it.msg}" }
-            }
-        }
+    fun stopListening(sessionId: String?) {
+        publishMessage(
+            MQTTTopicsPublish.AsrStopListening.topic,
+            MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("siteId", ConfigurationSettings.siteId.data)
+                    put("sessionId", sessionId)
+                })
+            )
+        )
     }
 
     /**
@@ -575,20 +582,16 @@ object MqttService {
      * hermes/nlu/intentNotRecognized
      */
     fun intentQuery(sessionId: String?, text: String) {
-        coroutineScope.launch {
-            client?.publish(
-                MQTTTopicsPublish.SessionStarted.topic, MqttMessage(
-                    payload = Json.encodeToString(buildJsonObject {
-                        put("input", JsonPrimitive(text))
-                        put("siteId", ConfigurationSettings.siteId.data)
-                        put("sessionId", sessionId)
-                        put("siteId", ConfigurationSettings.siteId.value)
-                    })
-                )
-            )?.also {
-                logger.e { "unable to publish intentQuery $sessionId \n${it.statusCode.name} ${it.msg}" }
-            }
-        }
+        publishMessage(
+            MQTTTopicsPublish.SessionStarted.topic, MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("input", JsonPrimitive(text))
+                    put("siteId", ConfigurationSettings.siteId.data)
+                    put("sessionId", sessionId)
+                    put("siteId", ConfigurationSettings.siteId.value)
+                })
+            )
+        )
     }
 
     /**
@@ -679,20 +682,16 @@ object MqttService {
      * Response(s)
      * hermes/tts/sayFinished (JSON)
      */
-    suspend fun say(sessionId: String?, text: String) {
-        coroutineScope.launch {
-            client?.publish(
-                MQTTTopicsPublish.SessionStarted.topic, MqttMessage(
-                    payload = Json.encodeToString(buildJsonObject {
-                        put("text", JsonPrimitive(text))
-                        put("siteId", ConfigurationSettings.siteId.data)
-                        put("sessionId", sessionId)
-                    })
-                )
-            )?.also {
-                logger.e { "unable to publish intentQuery $sessionId \n${it.statusCode.name} ${it.msg}" }
-            }
-        }
+    fun say(sessionId: String?, text: String) {
+        publishMessage(
+            MQTTTopicsPublish.SessionStarted.topic, MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("text", JsonPrimitive(text))
+                    put("siteId", ConfigurationSettings.siteId.data)
+                    put("sessionId", sessionId)
+                })
+            )
+        )
     }
 
 
@@ -733,16 +732,12 @@ object MqttService {
      * hermes/audioServer/<siteId>/playFinished (JSON)
      */
     fun playBytes(data: ByteArray) {
-        coroutineScope.launch {
-            client?.publish(
-                MQTTTopicsPublish.AudioOutputPlayBytes.topic
-                    .replace("<siteId>", ConfigurationSettings.siteId.data)
-                    .replace("<requestId>", uuid4().toString()),
-                MqttMessage(data)
-            )?.also {
-                logger.e { "unable to publish playBytes \n${it.statusCode.name} ${it.msg}" }
-            }
-        }
+        publishMessage(
+            MQTTTopicsPublish.AudioOutputPlayBytes.topic
+                .replace("<siteId>", ConfigurationSettings.siteId.data)
+                .replace("<requestId>", uuid4().toString()),
+            MqttMessage(data)
+        )
     }
 
     /**
@@ -782,15 +777,11 @@ object MqttService {
      * siteId: string - Hermes site ID (part of topic)
      */
     fun playFinished() {
-        coroutineScope.launch {
-            client?.publish(
-                MQTTTopicsPublish.AudioOutputPlayFinished.topic
-                    .replace("<siteId>", ConfigurationSettings.siteId.data),
-                MqttMessage("")
-            )?.also {
-                logger.e { "unable to publish playFinished \n${it.statusCode.name} ${it.msg}" }
-            }
-        }
+        publishMessage(
+            MQTTTopicsPublish.AudioOutputPlayFinished.topic
+                .replace("<siteId>", ConfigurationSettings.siteId.data),
+            MqttMessage("")
+        )
     }
 
     /**

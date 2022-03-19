@@ -59,10 +59,8 @@ object ServiceInterface {
 
         if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
             val sessionUuid = uuid4()
-            coroutineScope.launch {
-                //send response
-                MqttService.sessionStarted(sessionUuid.toString())
-            }
+            //send response
+            MqttService.sessionStarted(sessionUuid.toString())
             //start the session
             sessionStarted(sessionUuid.toString())
         }
@@ -88,10 +86,8 @@ object ServiceInterface {
             }
 
             if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
-                coroutineScope.launch {
-                    //send response
-                    MqttService.sessionEnded(id)
-                }
+                //send response
+                MqttService.sessionEnded(id)
                 //start the session
                 sessionEnded(id)
             }
@@ -120,6 +116,8 @@ object ServiceInterface {
                 hotWordToggle(false)
                 startListening()
             }
+        } else if(fromMQTT && ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT){
+            //when speech to text is used
         }
     }
 
@@ -195,6 +193,7 @@ object ServiceInterface {
         if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
             startSession()
         }
+
         MqttService.hotWordDetected()
     }
 
@@ -249,9 +248,21 @@ object ServiceInterface {
      * sendToMqtt is used to not set stopListening to MQTT asr system, when the asr response called this function
      */
     fun stopListening(sessionId: String? = currentSessionId.value, fromMQTT: Boolean = false) {
-        if (!fromMQTT || ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.RemoteMQTT) {
+        logger.d {
+            "stop listening from mqtt $fromMQTT dialogue ${
+                ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions
+                    .RemoteMQTT
+            } speecht to text ${ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT} mqtt silence ${ConfigurationSettings.isMQTTSilenceDetectionEnabled.data}"
+        }
 
-            if (sessionId == currentSessionId.value) {
+        if (sessionId == currentSessionId.value) {
+            //execute when:
+            //- not from mqtt
+            //- from mqtt and dialogue is managed by mqtt
+            //- from mqtt and speech to text is mqtt and silence detection is done by mqtt
+            if (!fromMQTT || ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.RemoteMQTT ||
+                (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT && ConfigurationSettings.isMQTTSilenceDetectionEnabled.data)
+            ) {
                 indication(false)
 
                 if (RecordingService.status.value) {
@@ -267,12 +278,14 @@ object ServiceInterface {
                         speechToText()
                     }
 
-                    MqttService.stopListening()
+                    MqttService.stopListening(sessionId)
                 }
             }
-
+        } else {
+            if(fromMQTT && ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+                MqttService.continueSession(sessionId)
+            }
         }
-        //TODO silence detected from remote mqtt speech to text
     }
 
     /**
