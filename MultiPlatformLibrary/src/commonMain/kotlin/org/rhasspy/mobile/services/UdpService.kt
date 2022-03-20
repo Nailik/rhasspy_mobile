@@ -6,6 +6,7 @@ import io.ktor.util.network.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.channels.SendChannel
 import org.rhasspy.mobile.services.native.SocketService
+import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.native.concurrent.ThreadLocal
 
@@ -44,7 +45,9 @@ object UdpService {
 
     suspend fun streamAudio(byteData: List<Byte>) {
         val data = byteData.toByteArray()
-        //logger.v { "streamAudio ${data.size}" }
+        if (AppSettings.isLogAudioFrames.data) {
+            logger.v { "streamAudio ${data.size}" }
+        }
 
         networkAddress?.also {
             sendChannel?.send(Datagram(ByteReadPacket(data), it))

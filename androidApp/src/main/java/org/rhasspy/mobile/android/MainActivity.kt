@@ -108,7 +108,7 @@ fun Content(viewModel: HomeScreenViewModel = viewModel()) {
                     val snackbarHostState = remember { SnackbarHostState() }
 
                     Scaffold(
-                        topBar = { TopAppBar(viewModel, snackbarHostState) },
+                        topBar = { TopAppBar(viewModel, snackbarHostState, navController) },
                         snackbarHost = { SnackbarHost(snackbarHostState) },
                         bottomBar = {
                             //hide bottom navigation with keyboard and small screens
@@ -175,77 +175,112 @@ enum class Screens(val icon: @Composable () -> Unit, val label: @Composable () -
 }
 
 @Composable
-fun TopAppBar(viewModel: HomeScreenViewModel, snackbarHostState: SnackbarHostState) {
+fun TopAppBar(viewModel: HomeScreenViewModel, snackbarHostState: SnackbarHostState, navController: NavHostController) {
     SmallTopAppBar(
         modifier = Modifier.padding(end = 16.dp),
         title = { Text(MR.strings.appName) },
         actions = {
 
-            AnimatedVisibility(
-                enter = fadeIn(animationSpec = tween(50)),
-                exit = fadeOut(animationSpec = tween(50)),
-                visible = viewModel.isMicrophonePermissionRequestRequired.observe()
-            ) {
-                val microphonePermission = requestMicrophonePermission(snackbarHostState, MR.strings.microphonePermissionInfoWakeWord) {}
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-                IconButton(
-                    onClick = { microphonePermission.invoke() },
-                    modifier = Modifier.background(
-                        color = MaterialTheme.colorScheme.errorContainer,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                )
-                {
-                    Icon(
-                        imageVector = Icons.Filled.MicOff,
-                        tint = MaterialTheme.colorScheme.onErrorContainer,
-                        contentDescription = MR.strings.microphone
-                    )
-                }
-            }
-
-            AnimatedVisibility(
-                enter = fadeIn(animationSpec = tween(50)),
-                exit = fadeOut(animationSpec = tween(50)),
-                visible = viewModel.isOverlayPermissionRequestRequired.observe()
-            ) {
-                val overlayPermission = requestOverlayPermission {}
-
-                IconButton(onClick = { overlayPermission.invoke() }, Modifier.background(MaterialTheme.colorScheme.errorContainer))
-                {
-                    Icon(
-                        imageVector = Icons.Filled.LayersClear,
-                        tint = MaterialTheme.colorScheme.onErrorContainer,
-                        contentDescription = MR.strings.overlay
-                    )
-                }
-            }
-
-            AnimatedVisibility(
-                enter = fadeIn(animationSpec = tween(50)),
-                exit = fadeOut(animationSpec = tween(50)),
-                visible = GlobalData.unsavedChanges.observe()
-            ) {
-                Row(modifier = Modifier.padding(start = 8.dp)) {
-                    IconButton(onClick = { viewModel.resetChanges() })
-                    {
-                        Icon(
-                            imageVector = Icons.Filled.Restore,
-                            contentDescription = MR.strings.reset
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Button(
-                        onClick = { viewModel.saveAndApplyChanges() }) {
-                        Icon(
-                            imageVector = Icons.Filled.PublishedWithChanges,
-                            contentDescription = MR.strings.save
-                        )
-                    }
-                }
+            if (navBackStackEntry?.destination?.route != Screens.LogScreen.name) {
+                MicrophonePermissionRequired(viewModel, snackbarHostState)
+                OverlayPermissionRequired(viewModel)
+                UnsavedChanges(viewModel)
+            } else {
+                //only on log screen
+                ShareLogFile(viewModel)
             }
         }
     )
+}
+
+
+@Composable
+fun MicrophonePermissionRequired(viewModel: HomeScreenViewModel, snackbarHostState: SnackbarHostState) {
+    AnimatedVisibility(
+        enter = fadeIn(animationSpec = tween(50)),
+        exit = fadeOut(animationSpec = tween(50)),
+        visible = viewModel.isMicrophonePermissionRequestRequired.observe()
+    ) {
+        val microphonePermission = requestMicrophonePermission(snackbarHostState, MR.strings.microphonePermissionInfoWakeWord) {}
+
+        IconButton(
+            onClick = { microphonePermission.invoke() },
+            modifier = Modifier.background(
+                color = MaterialTheme.colorScheme.errorContainer,
+                shape = RoundedCornerShape(8.dp)
+            )
+        )
+        {
+            Icon(
+                imageVector = Icons.Filled.MicOff,
+                tint = MaterialTheme.colorScheme.onErrorContainer,
+                contentDescription = MR.strings.microphone
+            )
+        }
+    }
+}
+
+@Composable
+fun OverlayPermissionRequired(viewModel: HomeScreenViewModel) {
+    AnimatedVisibility(
+        enter = fadeIn(animationSpec = tween(50)),
+        exit = fadeOut(animationSpec = tween(50)),
+        visible = viewModel.isOverlayPermissionRequestRequired.observe()
+    ) {
+        val overlayPermission = requestOverlayPermission {}
+
+        IconButton(onClick = { overlayPermission.invoke() }, Modifier.background(MaterialTheme.colorScheme.errorContainer))
+        {
+            Icon(
+                imageVector = Icons.Filled.LayersClear,
+                tint = MaterialTheme.colorScheme.onErrorContainer,
+                contentDescription = MR.strings.overlay
+            )
+        }
+    }
+}
+
+@Composable
+fun UnsavedChanges(viewModel: HomeScreenViewModel) {
+    AnimatedVisibility(
+        enter = fadeIn(animationSpec = tween(50)),
+        exit = fadeOut(animationSpec = tween(50)),
+        visible = GlobalData.unsavedChanges.observe()
+    ) {
+        Row(modifier = Modifier.padding(start = 8.dp)) {
+            IconButton(onClick = { viewModel.resetChanges() })
+            {
+                Icon(
+                    imageVector = Icons.Filled.Restore,
+                    contentDescription = MR.strings.reset
+                )
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Button(
+                onClick = { viewModel.saveAndApplyChanges() }) {
+                Icon(
+                    imageVector = Icons.Filled.PublishedWithChanges,
+                    contentDescription = MR.strings.save
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+fun ShareLogFile(viewModel: HomeScreenViewModel) {
+    Row(modifier = Modifier.padding(start = 8.dp)) {
+        IconButton(onClick = { viewModel.shareLogFile() })
+        {
+            Icon(
+                imageVector = Icons.Filled.Share,
+                contentDescription = MR.strings.reset
+            )
+        }
+    }
 }
 
 @Composable

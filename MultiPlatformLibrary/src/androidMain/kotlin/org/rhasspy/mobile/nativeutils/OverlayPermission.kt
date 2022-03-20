@@ -37,9 +37,9 @@ actual object OverlayPermission {
 
         onResultCallback = onResult
         // send user to the device settings
-        val myIntent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-        myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        Application.Instance.startActivity(myIntent)
+        val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        Application.Instance.startActivity(intent)
     }
 
     private fun isGranted(): Boolean {

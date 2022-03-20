@@ -72,6 +72,7 @@
     <string name="chooseCertificate">Choose Certificate</string>
     <string name="showLog">Show Log</string>
     <string name="log">Log</string>
+    <string name="audioFramesLogging">Audio Frames Logging</string>
     <string name="httpSSL">HTTP SSL</string>
     <string name="porcupineAccessKey">AccessKey</string>
     <string name="openPicoVoiceConsole">open PicoVoice Console (to generate AccessKey)</string>

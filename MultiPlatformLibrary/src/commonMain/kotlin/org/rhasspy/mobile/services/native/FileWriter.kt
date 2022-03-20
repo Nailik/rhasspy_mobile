@@ -14,4 +14,6 @@ expect class FileWriter(filename: String, maxFileSize: Long) {
 
     fun writeData(byteData: List<Byte>)
 
+    fun shareFile()
+
 }

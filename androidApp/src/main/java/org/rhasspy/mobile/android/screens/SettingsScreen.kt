@@ -307,5 +307,9 @@ fun ShowLogItem() {
         SwitchListItem(MR.strings.showLog,
             isChecked = AppSettings.isShowLog.observe(),
             onCheckedChange = { AppSettings.isShowLog.data = it })
+
+        SwitchListItem(MR.strings.audioFramesLogging,
+            isChecked = AppSettings.isLogAudioFrames.observe(),
+            onCheckedChange = { AppSettings.isLogAudioFrames.data = it })
     }
 }
