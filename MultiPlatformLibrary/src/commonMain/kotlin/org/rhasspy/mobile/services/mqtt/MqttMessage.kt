@@ -3,7 +3,7 @@ package org.rhasspy.mobile.services.mqtt
 /** Represents a MQTT message. Doesn't include the topic name. */
 data class MqttMessage(
     /** The data in the message. */
-    val payload: Any,
+    val payload: ByteArray,
     /** Unique identifier for the message. */
     var msgId: Int = 0,
     /** Quality of service. */
@@ -11,4 +11,3 @@ data class MqttMessage(
     /** If *true* then the message is kept by the MQTT Broker. */
     val retained: Boolean = false
 )
-
