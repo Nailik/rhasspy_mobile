@@ -126,5 +126,10 @@
     <string name="save">Save</string>
     <string name="reset">Reset</string>
 
+    <string name="device">Device</string>
+    <string name="deviceSettingsInformation">This settings can be changed with MQTT commands</string>
     <string name="volume">Volume</string>
+    <string name="hotWord">HotWord (WakeWord)</string>
+    <string name="audioOutput">Audio Output</string>
+    <string name="intentHandling">Intent Handling</string>
 </resources>

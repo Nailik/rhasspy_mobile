@@ -47,7 +47,7 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState, viewModel: SettingsScre
         Divider()
         BackgroundService()
         Divider()
-        Volume()
+        Device()
         Divider()
         WakeWordIndicationItem()
         Divider()
@@ -205,15 +205,40 @@ fun BackgroundService() {
 }
 
 @Composable
-fun Volume() {
+fun Device() {
 
-    SliderListItem(
-        text = MR.strings.volume,
-        value = AppSettings.volume.observe(),
-        onValueChange = {
-            AppSettings.volume.data = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
-        })
+    ExpandableListItem(
+        text = MR.strings.device,
+        secondaryText = MR.strings.deviceSettingsInformation
+    ) {
+        Column {
+            SliderListItem(
+                text = MR.strings.volume,
+                value = AppSettings.volume.observe(),
+                onValueChange = {
+                    AppSettings.volume.data = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
+                })
 
+            SwitchListItem(
+                text = MR.strings.hotWord,
+                isChecked = AppSettings.isHotWordEnabled.observe(),
+                onCheckedChange = { AppSettings.isHotWordEnabled.data = it })
+
+            SwitchListItem(
+                text = MR.strings.audioOutput,
+                isChecked = AppSettings.isAudioOutputEnabled.observe(),
+                onCheckedChange = { AppSettings.isAudioOutputEnabled.data = it })
+
+
+            SwitchListItem(
+                text = MR.strings.intentHandling,
+                isChecked = AppSettings.isIntentHandlingEnabled.observe(),
+                onCheckedChange = { AppSettings.isIntentHandlingEnabled.data = it })
+
+
+        }
+
+    }
 }
 
 @Composable
