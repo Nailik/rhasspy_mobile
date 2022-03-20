@@ -3,7 +3,8 @@ package org.rhasspy.mobile.services
 import co.touchlab.kermit.Logger
 import io.ktor.network.sockets.*
 import io.ktor.util.network.*
-import io.ktor.utils.io.*
+import io.ktor.utils.io.core.*
+import kotlinx.coroutines.channels.SendChannel
 import org.rhasspy.mobile.services.native.SocketService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.native.concurrent.ThreadLocal
@@ -12,9 +13,8 @@ import kotlin.native.concurrent.ThreadLocal
 object UdpService {
     private val logger = Logger.withTag(this::class.simpleName!!)
 
-
-    private var channel: ByteWriteChannel? = null
-    private var socket: ConnectedDatagramSocket? = null
+    private var networkAddress: NetworkAddress? = null
+    private var sendChannel: SendChannel<Datagram>? = null
 
     /**
      * makes sure the address is up to date
@@ -25,14 +25,12 @@ object UdpService {
     suspend fun start() {
         logger.v { "start" }
         try {
-            socket = SocketService.getSocketBuilder().udp().connect(
-                NetworkAddress(
-                    ConfigurationSettings.udpOutputHost.data,
-                    ConfigurationSettings.udpOutputPort.data.toInt()
-                )
-            )
-            channel = socket?.openWriteChannel(true)
+            sendChannel = SocketService.getSocketBuilder().udp().bind().outgoing
 
+            networkAddress = NetworkAddress(
+                ConfigurationSettings.udpOutputHost.data,
+                ConfigurationSettings.udpOutputPort.data.toInt()
+            )
         } catch (e: Exception) {
             logger.e(e) { "unable to initialize address with host: ${ConfigurationSettings.udpOutputHost.data} and port ${ConfigurationSettings.udpOutputPort.data}" }
         }
@@ -40,15 +38,17 @@ object UdpService {
 
     @Suppress("RedundantSuspendModifier")
     suspend fun stop() {
-        channel?.close()
-        socket?.close()
+        sendChannel?.close()
+        networkAddress = null
     }
 
     suspend fun streamAudio(byteData: List<Byte>) {
         val data = byteData.toByteArray()
-        logger.v { "streamAudio ${data.size}" }
+        //logger.v { "streamAudio ${data.size}" }
 
-        channel?.writeFully(data)
+        networkAddress?.also {
+            sendChannel?.send(Datagram(ByteReadPacket(data), it))
+        }
     }
 
 }

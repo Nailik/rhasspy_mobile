@@ -1,6 +1,9 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.services.native.NativeService
 import org.rhasspy.mobile.settings.AppSettings
 
@@ -19,7 +22,9 @@ object ForegroundService {
     init {
         //when background enabled value changes, services need to be reloaded
         AppSettings.isBackgroundEnabled.value.addObserver {
-            action(ServiceAction.Reload)
+            CoroutineScope(Dispatchers.Default).launch {
+                action(ServiceAction.Reload)
+            }
         }
     }
 
@@ -29,7 +34,7 @@ object ForegroundService {
      * Starts background service, if not called by service and
      * isBackgroundEnabled is true and service is not running yet
      */
-    fun action(serviceAction: ServiceAction, fromService: Boolean = false) {
+    suspend fun action(serviceAction: ServiceAction, fromService: Boolean = false) {
         logger.v { "action $serviceAction fromService $fromService" }
 
         if (fromService) {

@@ -183,7 +183,7 @@ object ServiceInterface {
     fun audioFrame(byteData: List<Byte>) {
         coroutineScope.launch {
             if (!currentlyPlayingRecording) {
-                logger.d { "audioFrame ${byteData.size}" }
+                //logger.d { "audioFrame ${byteData.size}" }
 
                 val dataWithHeader = byteData.addWavHeader()
 
@@ -697,35 +697,33 @@ object ServiceInterface {
     /**
      * Start services according to settings
      */
-    fun serviceAction(serviceAction: ServiceAction) {
+    suspend fun serviceAction(serviceAction: ServiceAction) {
         logger.d { "serviceAction ${serviceAction.name}" }
 
-        coroutineScope.launch {
-            when (serviceAction) {
-                ServiceAction.Start -> {
-                    UdpService.start()
-                    startHotWord()
-                    HttpServer.start()
-                    MqttService.start()
-                }
-                ServiceAction.Stop -> {
-                    //reset values
-                    isSendAudioCaptured = false
-                    currentlyPlayingRecording = false
-                    mqttSpeechToTextSessionId = null
-                    currentRecording.clear()
-                    isIntentRecognized = false
-                    currentSessionId = null
+        when (serviceAction) {
+            ServiceAction.Start -> {
+                UdpService.start()
+                startHotWord()
+                HttpServer.start()
+                MqttService.start()
+            }
+            ServiceAction.Stop -> {
+                //reset values
+                isSendAudioCaptured = false
+                currentlyPlayingRecording = false
+                mqttSpeechToTextSessionId = null
+                currentRecording.clear()
+                isIntentRecognized = false
+                currentSessionId = null
 
-                    UdpService.stop()
-                    stopHotWord()
-                    HttpServer.stop()
-                    MqttService.stop()
-                }
-                ServiceAction.Reload -> {
-                    serviceAction(ServiceAction.Stop)
-                    serviceAction(ServiceAction.Start)
-                }
+                UdpService.stop()
+                stopHotWord()
+                HttpServer.stop()
+                MqttService.stop()
+            }
+            ServiceAction.Reload -> {
+                serviceAction(ServiceAction.Stop)
+                serviceAction(ServiceAction.Start)
             }
         }
     }
@@ -831,7 +829,9 @@ object ServiceInterface {
      */
     fun saveAndApplyChanges() {
         GlobalData.saveAllChanges()
-        ForegroundService.action(ServiceAction.Reload)
+        coroutineScope.launch {
+            ForegroundService.action(ServiceAction.Reload)
+        }
     }
 
     /**

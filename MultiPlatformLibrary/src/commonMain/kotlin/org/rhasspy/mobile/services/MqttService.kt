@@ -8,6 +8,7 @@ import dev.icerock.moko.mvvm.livedata.readOnly
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -49,7 +50,7 @@ object MqttService {
      *
      * sets connected value
      */
-    fun start() {
+    suspend fun start() {
         if (!ConfigurationSettings.isMQTTEnabled.data) {
             logger.v { "mqtt not enabled" }
             return
@@ -60,17 +61,21 @@ object MqttService {
         //setup client
         createClient()
 
-        coroutineScope.launch {
+        var count = 0
+
+        isCurrentlyConnected
+
+        while (count < 10 && !isCurrentlyConnected) {
+            logger.d { "connectClient try count $count" }
             //connect client
             if (connectClient()) {
                 subscribeTopics()
             } else {
                 logger.e { "client not connected after attempt" }
             }
-
-            CoroutineScope(Dispatchers.Main).launch {
-                isCurrentlyConnected = client?.isConnected == true
-            }
+            isCurrentlyConnected = client?.isConnected == true
+            count++
+            delay(1000)
         }
     }
 
@@ -79,7 +84,7 @@ object MqttService {
      *
      * disconnects, resets connected value and deletes client object
      */
-    fun stop() {
+    suspend fun stop() {
         logger.d { "stop" }
         client?.apply {
             if (isCurrentlyConnected) {
