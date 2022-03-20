@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
@@ -49,6 +50,7 @@ import org.rhasspy.mobile.android.utils.toColors
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.nativeutils.OverlayPermission
+import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.GlobalData
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
@@ -246,7 +248,7 @@ fun OverlayPermissionRequired(viewModel: HomeScreenViewModel) {
 fun UnsavedChanges(viewModel: HomeScreenViewModel) {
     AnimatedVisibility(
         enter = fadeIn(animationSpec = tween(50)),
-        exit = fadeOut(animationSpec = tween(50)),
+        exit = fadeOut(animationSpec = tween(0)),
         visible = GlobalData.unsavedChanges.observe()
     ) {
         Row(modifier = Modifier.padding(start = 8.dp)) {
@@ -266,6 +268,26 @@ fun UnsavedChanges(viewModel: HomeScreenViewModel) {
                 )
             }
         }
+    }
+    AnimatedVisibility(
+        enter = fadeIn(animationSpec = tween(50)),
+        exit = fadeOut(animationSpec = tween(50)),
+        visible = ServiceInterface.isRestarting.observe()
+    ) {
+        val infiniteTransition = rememberInfiniteTransition()
+        val angle by infiniteTransition.animateFloat(
+            initialValue = 0F,
+            targetValue = 360F,
+            animationSpec = infiniteRepeatable(
+                animation = tween(2000, easing = LinearEasing)
+            )
+        )
+
+        Icon(
+            modifier = Modifier.rotate(angle),
+            imageVector = Icons.Filled.Autorenew,
+            contentDescription = MR.strings.reset
+        )
     }
 }
 

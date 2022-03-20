@@ -37,10 +37,21 @@ object ServiceInterface {
 
     private var liveSessionRunning: MutableLiveData<Boolean> = MutableLiveData(false)
     private var liveIsPlayingRecording: MutableLiveData<Boolean> = MutableLiveData(false)
+    private var liveIsRestarting: MutableLiveData<Boolean> = MutableLiveData(false)
 
     private var isSendAudioCaptured = false
     var sessionRunning = liveSessionRunning.readOnly()
     var isPlayingRecording = liveIsPlayingRecording.readOnly()
+    var isRestarting = liveIsRestarting.readOnly()
+
+
+    private var currentlyRestarting: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+                liveIsRestarting.postValue(value)
+            }
+        }
 
 
     private var currentlyPlayingRecording: Boolean = false
@@ -200,7 +211,7 @@ object ServiceInterface {
                         MqttService.audioFrame(dataWithHeader)
                     }
                 } else {
-                    if(AppSettings.isHotWordEnabled.data) {
+                    if (AppSettings.isHotWordEnabled.data) {
                         //current session is running
                         if (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
                             //send to mqtt for speech to text
@@ -726,8 +737,10 @@ object ServiceInterface {
                 MqttService.stop()
             }
             ServiceAction.Reload -> {
+                currentlyRestarting = true
                 serviceAction(ServiceAction.Stop)
                 serviceAction(ServiceAction.Start)
+                currentlyRestarting = false
             }
         }
     }
@@ -832,8 +845,9 @@ object ServiceInterface {
      * Saves configuration changes
      */
     fun saveAndApplyChanges() {
-        GlobalData.saveAllChanges()
         coroutineScope.launch {
+            currentlyRestarting = true
+            GlobalData.saveAllChanges()
             ForegroundService.action(ServiceAction.Reload)
         }
     }
