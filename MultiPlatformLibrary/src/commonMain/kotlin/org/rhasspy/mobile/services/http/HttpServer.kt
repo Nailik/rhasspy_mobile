@@ -34,7 +34,10 @@ object HttpServer {
                     stopRecording()
                 )
             )
-            server?.start()
+            CoroutineScope(Dispatchers.Main).launch {
+                //necessary else netty has problems when the coroutine scope is closed
+                server?.start()
+            }
         }
     }
 

@@ -3,6 +3,7 @@ package org.rhasspy.mobile.services
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
+import dev.icerock.moko.mvvm.livedata.postValue
 import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +28,6 @@ import kotlin.time.Duration.Companion.milliseconds
 object RecordingService {
     private val logger = Logger.withTag(this::class.simpleName!!)
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
-    private val viewScope = CoroutineScope(Dispatchers.Main)
 
     private val listening = MutableLiveData(false)
 
@@ -42,6 +42,15 @@ object RecordingService {
     private var firstSilenceDetected: Instant? = null
 
     private var job: Job? = null
+
+
+    private var isCurrentlyListening: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+                listening.postValue(value)
+            }
+        }
 
     //https://stackoverflow.com/questions/19145213/android-audio-capture-silence-detection
     private fun searchThreshold(byteData: List<Byte>, thr: Int): Boolean {
@@ -58,7 +67,7 @@ object RecordingService {
      * by clicking ui
      */
     fun startRecording() {
-        if (listening.value) {
+        if (isCurrentlyListening) {
             logger.d { "alreadyRecording" }
             return
         }
@@ -66,9 +75,7 @@ object RecordingService {
         logger.d { "startRecording" }
         firstSilenceDetected = null
 
-        viewScope.launch {
-            listening.value = true
-        }
+        isCurrentlyListening = true
 
         data.clear()
 
@@ -104,9 +111,7 @@ object RecordingService {
     fun stopRecording() {
         logger.d { "stopRecording" }
 
-        viewScope.launch {
-            listening.value = false
-        }
+        isCurrentlyListening = false
 
         AudioRecorder.stopRecording()
         job?.cancel()

@@ -3,6 +3,7 @@ package org.rhasspy.mobile.services
 import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
+import dev.icerock.moko.mvvm.livedata.postValue
 import dev.icerock.moko.mvvm.livedata.readOnly
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CoroutineScope
@@ -27,6 +28,14 @@ object MqttService {
 
     private val connected = MutableLiveData(false)
     val isConnected = connected.readOnly()
+
+    private var isCurrentlyConnected: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+                connected.postValue(value)
+            }
+        }
 
     private const val id = 98489482
 
@@ -60,7 +69,7 @@ object MqttService {
             }
 
             CoroutineScope(Dispatchers.Main).launch {
-                connected.value = client?.isConnected == true
+                isCurrentlyConnected = client?.isConnected == true
             }
         }
     }
@@ -73,12 +82,12 @@ object MqttService {
     fun stop() {
         logger.d { "stop" }
         client?.apply {
-            if (isConnected) {
+            if (isCurrentlyConnected) {
                 disconnect()?.also {
                     logger.e { "disconnect \n${it.statusCode.name} ${it.msg}" }
                 }
             }
-            connected.value = isConnected
+            isCurrentlyConnected = isConnected
         }
         client = null
     }
@@ -137,10 +146,10 @@ object MqttService {
         logger.e(error) { "onDisconnect" }
 
         client?.apply {
-            if (!isConnected) {
+            if (!isCurrentlyConnected) {
                 client = null
             }
-            connected.value = isConnected
+            isCurrentlyConnected = isConnected
         }
     }
 
