@@ -8,6 +8,7 @@ import android.os.PowerManager
 import androidx.lifecycle.MutableLiveData
 import dev.icerock.moko.resources.FileResource
 import org.rhasspy.mobile.Application
+import org.rhasspy.mobile.settings.AppSettings
 
 /**
  * handles indication of wake up locally
@@ -15,7 +16,7 @@ import org.rhasspy.mobile.Application
 actual object NativeIndication {
 
     val showVisualIndication = MutableLiveData(false)
-    var wakeLock: PowerManager.WakeLock? = null
+    private var wakeLock: PowerManager.WakeLock? = null
 
     /**
      * play audio resource
@@ -32,6 +33,9 @@ actual object NativeIndication {
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build()
         )
+
+        mediaPlayer.setVolume(AppSettings.volume.data, AppSettings.volume.data)
+
         mediaPlayer.start()
     }
 
@@ -66,14 +70,14 @@ actual object NativeIndication {
      * display indication over other apps
      */
     actual fun showIndication() {
-        showVisualIndication.value = true
+        showVisualIndication.postValue(true)
     }
 
     /**
      * close indication over other apps
      */
     actual fun closeIndicationOverOtherApps() {
-        showVisualIndication.value = false
+        showVisualIndication.postValue(false)
     }
 
 

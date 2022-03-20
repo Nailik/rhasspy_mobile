@@ -21,7 +21,7 @@ actual object AudioRecorder {
 
     private var recorder: AudioRecord? = null
 
-    actual val output = MutableSharedFlow<ByteArray>()
+    actual val output = MutableSharedFlow<List<Byte>>()
 
 
     actual fun startRecording() {
@@ -44,6 +44,7 @@ actual object AudioRecorder {
                         .setChannelMask(AudioFormat.CHANNEL_IN_MONO)
                         .build()
                 )
+                .setBufferSizeInBytes(8000)
                 .build()
         }
 
@@ -58,7 +59,7 @@ actual object AudioRecorder {
                     val byteArray = ByteArray(it.bufferSizeInFrames)
                     it.read(byteArray, 0, byteArray.size)
 
-                    output.emit(byteArray)
+                    output.emit(byteArray.toList())
                 }
             }
         }

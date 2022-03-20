@@ -3,7 +3,8 @@ package org.rhasspy.mobile.services
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.map
+import dev.icerock.moko.mvvm.livedata.postValue
+import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -11,10 +12,11 @@ import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.services.native.AudioRecorder
-import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.toByteArray
 import kotlin.native.concurrent.ThreadLocal
 import kotlin.time.Duration.Companion.ZERO
 import kotlin.time.Duration.Companion.milliseconds
@@ -30,7 +32,10 @@ object RecordingService {
     private val listening = MutableLiveData(false)
 
     //represents listening Status for ui
-    val status: LiveData<Boolean> = listening.map { it }
+    val status: LiveData<Boolean> = listening.readOnly()
+
+    // private val flow = MutableSharedFlow<ByteArray>()
+    //   val sharedFlow: Flow<ByteArray> get() = flow.takeWhile { listening.value }
 
     private var data = mutableListOf<Byte>()
 
@@ -38,9 +43,18 @@ object RecordingService {
 
     private var job: Job? = null
 
+
+    private var isCurrentlyListening: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+                listening.postValue(value)
+            }
+        }
+
     //https://stackoverflow.com/questions/19145213/android-audio-capture-silence-detection
-    private fun searchThreshold(arr: ByteArray, thr: Int): Boolean {
-        arr.forEach {
+    private fun searchThreshold(byteData: List<Byte>, thr: Int): Boolean {
+        byteData.forEach {
             if (it >= thr || it <= -thr) {
                 return true
             }
@@ -53,18 +67,27 @@ object RecordingService {
      * by clicking ui
      */
     fun startRecording() {
+        if (isCurrentlyListening) {
+            logger.d { "alreadyRecording" }
+            return
+        }
+
         logger.d { "startRecording" }
         firstSilenceDetected = null
-        listening.value = true
+
+        isCurrentlyListening = true
+
         data.clear()
-        indication()
 
         job = coroutineScope.launch {
             AudioRecorder.output.collectIndexed { _, value ->
-                data.addAll(value.toList())
 
-                if (AppSettings.isAutomaticSilenceDetection.data) {
-                    if (!searchThreshold(value, AppSettings.automaticSilenceDetectionAudioLevel.data)) {
+                val byteData = value.toList()
+                data.addAll(byteData)
+                ServiceInterface.audioFrame(byteData)
+
+                if (AppSettings.isAutomaticSilenceDetection.data && ConfigurationSettings.wakeWordOption.data != WakeWordOption.MQTT) {
+                    if (!searchThreshold(byteData, AppSettings.automaticSilenceDetectionAudioLevel.data)) {
                         if (firstSilenceDetected == null) {
                             firstSilenceDetected = Clock.System.now()
 
@@ -72,12 +95,7 @@ object RecordingService {
                             (-AppSettings.automaticSilenceDetectionTime.data).milliseconds
                         ) {
                             logger.i { "diff ${firstSilenceDetected?.minus(Clock.System.now())}" }
-
-                            CoroutineScope(Dispatchers.Main).launch {
-                                //stop instantly
-                                listening.value = false
-                                ServiceInterface.registeredSilence()
-                            }
+                            ServiceInterface.silenceDetected()
                         }
                     }
                 }
@@ -93,41 +111,26 @@ object RecordingService {
     fun stopRecording() {
         logger.d { "stopRecording" }
 
-        listening.value = false
-        stopIndication()
+        isCurrentlyListening = false
+
         AudioRecorder.stopRecording()
         job?.cancel()
     }
 
-    /**
-     * starts wake word indication according to settings
-     */
-    private fun indication() {
-        logger.d { "indication" }
+    fun List<Byte>.addWavHeader(): List<Byte> {
+        //https://stackoverflow.com/questions/13039846/what-do-the-bytes-in-a-wav-file-represent
+        val dataSize = (this.size + 44 - 8).toByteArray()
+        val audioDataSize = this.size.toByteArray()
 
-        if (AppSettings.isWakeWordSoundIndication.data) {
-            NativeIndication.playAudio(MR.files.etc_wav_beep_hi)
-        }
-
-        if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data) {
-            NativeIndication.wakeUpScreen()
-        }
-
-        if (AppSettings.isWakeWordLightIndication.data) {
-            NativeIndication.showIndication()
-        }
+        val header = byteArrayOf(
+            82, 73, 70, 70,
+            dataSize[0], dataSize[1], dataSize[2], dataSize[3], //4-7 overall size
+            87, 65, 86, 69, 102, 109, 116, 32, 16, 0, 0, 0, 1, 0, 1, 0, -128, 62, 0, 0, 0, 125, 0, 0, 2, 0, 16, 0, 100, 97, 116, 97,
+            audioDataSize[0], audioDataSize[1], audioDataSize[2], audioDataSize[3] //40-43 data size of rest
+        )
+        val result = this.toMutableList()
+        result.addAll(0, header.toList())
+        return result
     }
-
-    /**
-     * stops all indications
-     */
-    private fun stopIndication() {
-        logger.d { "stopIndication" }
-
-        NativeIndication.closeIndicationOverOtherApps()
-        NativeIndication.releaseWakeUp()
-    }
-
-    fun getLatestRecording() = data.toByteArray()
 
 }

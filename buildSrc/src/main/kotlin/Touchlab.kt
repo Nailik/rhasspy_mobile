@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 import de.fayard.refreshVersions.core.DependencyGroup
 
 object Touchlab : DependencyGroup(group = "co.touchlab") {

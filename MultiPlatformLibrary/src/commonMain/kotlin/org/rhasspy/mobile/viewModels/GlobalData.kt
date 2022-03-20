@@ -3,6 +3,7 @@ package org.rhasspy.mobile.viewModels
 import co.touchlab.kermit.Logger
 import com.russhwolf.settings.Settings
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
+import dev.icerock.moko.mvvm.livedata.postValue
 import org.rhasspy.mobile.settings.Setting
 
 object GlobalData {
@@ -24,14 +25,14 @@ object GlobalData {
         logger.i { "saveAllChanges" }
 
         allSettings.forEach { it.save() }
-        unsavedChanges.value = false
+        unsavedChanges.postValue(false)
     }
 
     fun resetChanges() {
         logger.i { "resetChanges" }
 
         allSettings.forEach { it.reset() }
-        unsavedChanges.value = false
+        unsavedChanges.postValue(false)
     }
 
 }

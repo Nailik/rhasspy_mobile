@@ -8,19 +8,20 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.map
+import dev.icerock.moko.mvvm.livedata.readOnly
 import org.rhasspy.mobile.Application
 
 actual object OverlayPermission {
 
     private val status = MutableLiveData(isGranted())
 
-    actual val granted: LiveData<Boolean> = status.map { it }
+    actual val granted: LiveData<Boolean> = status.readOnly()
 
     private var onResultCallback: ((Boolean) -> Unit)? = null
 
     fun init(activity: ComponentActivity) {
         activity.lifecycle.addObserver(object : LifecycleObserver {
+            @Suppress("unused")
             @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
             fun onResume() {
                 status.value = isGranted()
@@ -37,9 +38,9 @@ actual object OverlayPermission {
 
         onResultCallback = onResult
         // send user to the device settings
-        val myIntent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-        myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        Application.Instance.startActivity(myIntent)
+        val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        Application.Instance.startActivity(intent)
     }
 
     private fun isGranted(): Boolean {

@@ -15,7 +15,13 @@ enum class SettingsEnum {
     WakeWordSoundIndication,
     WakeWordLightIndication,
 
+    HotWordEnabled,
+    AudioOutputEnabled,
+    IntentHandlingEnabled,
+    Volume,
+
     ShowLog,
+    LogAudioFrames,
     LogLevel,
 
     //Configuration Settings
@@ -24,6 +30,7 @@ enum class SettingsEnum {
     HttpSSL,
 
     MQTT_SSL,
+    MQTT_ENABLED,
     MQTTHost,
     MQTTPort,
     MQTTUserName,

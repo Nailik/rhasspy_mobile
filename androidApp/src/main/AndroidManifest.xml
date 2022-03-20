@@ -10,10 +10,10 @@
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
-
     <application
         android:name="org.rhasspy.mobile.android.AndroidApplication"
         android:icon="@drawable/ic_launcher"
+        android:label="Rhasspy Mobile"
         android:supportsRtl="true"
         tools:ignore="Instantiatable">
         <service
@@ -30,5 +30,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="org.rhasspy.mobile.android.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/share_file_paths" />
+        </provider>
+
     </application>
 </manifest> 

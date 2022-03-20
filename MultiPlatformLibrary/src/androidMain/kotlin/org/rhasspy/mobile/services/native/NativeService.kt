@@ -5,9 +5,12 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.IBinder
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.Application
-import org.rhasspy.mobile.services.Action
 import org.rhasspy.mobile.services.ForegroundService
+import org.rhasspy.mobile.services.ServiceAction
 import org.rhasspy.mobile.services.ServiceNotification
 
 /**
@@ -36,7 +39,9 @@ actual class NativeService : android.app.Service() {
 
         intent?.also { i ->
             i.getStringExtra(ACTION)?.also {
-                ForegroundService.action(Action.valueOf(it), true)
+                CoroutineScope(Dispatchers.Default).launch {
+                    ForegroundService.action(ServiceAction.valueOf(it), true)
+                }
             } ?: run {
                 logger.w { "no ACTION extra in intent" }
             }
@@ -71,11 +76,11 @@ actual class NativeService : android.app.Service() {
         /**
          * When there is an action to be done by the services
          */
-        actual fun doAction(action: Action) {
-            logger.d { "doAction $action" }
+        actual fun doAction(serviceAction: ServiceAction) {
+            logger.d { "doAction $serviceAction" }
 
             val intent = Intent(Application.Instance, NativeService::class.java).apply {
-                putExtra(ACTION, action.name)
+                putExtra(ACTION, serviceAction.name)
             }
             if (SDK_INT >= Build.VERSION_CODES.O) {
                 Application.Instance.startForegroundService(intent)

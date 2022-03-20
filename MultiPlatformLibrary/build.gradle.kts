@@ -35,6 +35,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
+                implementation(kotlin("stdlib"))
                 implementation("co.touchlab:kermit:_")
                 implementation(Icerock.Mvvm.core)
                 implementation(Icerock.Mvvm.state)
@@ -47,9 +48,13 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Ktor.Client.core)
+                implementation(Ktor.Client.websockets)
+                implementation(Ktor.Network.network)
+                implementation(Benasher.uuid)
             }
         }
         val commonTest by getting {
+            dependsOn(commonMain)
             dependencies {
                 implementation(Kotlin.test)
             }
@@ -65,6 +70,12 @@ kotlin {
                 implementation(Icerock.Resources.resourcesCompose)
                 implementation(Picovoice.porcupineAndroid)
                 implementation(Ktor.Client.cio)
+                implementation(Ktor.Server.core)
+                implementation(Ktor.Server.netty)
+                implementation(Ktor.Network.network)
+                implementation(Slf4j.simple)
+                implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
+                //implementation(Eclipse.Phao.mqttClient)
             }
         }
         val androidTest by getting
@@ -95,6 +106,9 @@ android {
     defaultConfig {
         minSdk = 23
         targetSdk = 32
+    }
+    packagingOptions {
+        resources.pickFirsts.add("META-INF/*")
     }
 }
 

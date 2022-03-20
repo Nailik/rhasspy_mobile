@@ -1,0 +1,306 @@
+
+
+MQTT external -> publishes everything, also every audio frame (settings for this?) inside audio output (either udp or continously mqtt)
+
+wakeword detection mqtt -> audio frame published all the time (also on udp?)
+
+mqtt dialogue manager -> input messages for dialogue manager are actually handled
+
+
+
+
+### Dialogue Manager
+
+# Input Messages
+
+hermes/dialogueManager/startSession
+Start a new session
+
+//hermes/dialogueManager/continueSession
+//Continue an existing session
+
+hermes/dialogueManager/endSession
+End an existing session
+
+
+
+# Output Messages
+
+hermes/dialogueManager/sessionStarted
+New session has started
+
+//hermes/dialogueManager/sessionQueued
+//New session has be enqueued
+
+hermes/dialogueManager/sessionEnded
+Existing session has terminated
+
+hermes/dialogueManager/intentNotRecognized
+Voice command was not recognized in existing session
+
+
+
+
+
+### Audio Input
+
+
+# Input Messages
+
+//rhasspy/audioServer/getDevices
+//Requests available input devices
+
+
+
+# Output Messages
+
+hermes/audioServer/<siteId>/audioFrame
+WAV chunk from microphone
+
+//rhasspy/audioServer/devices
+//Description of available audio input devices
+
+
+
+
+
+### Wake Word Detection
+
+
+
+# Input Messages
+
+hermes/hotword/toggleOn
+Enables wake word detection
+
+hermes/hotword/toggleOff
+Disables wake word detection
+
+//rhasspy/hotword/getHotwords
+//Request available hotwords
+
+
+
+# Output Messages
+
+hermes/wake/hotword/<wakewordId>/detected
+Wake word successfully detected
+
+//rhasspy/hotword/hotwords
+//Description of available hotwords
+
+hermes/error/hotword
+Wake word system error
+
+
+
+
+
+### Speech to Text
+
+
+
+# Input Messages
+
+hermes/audioServer/<siteId>/audioFrame
+WAV chunk from microphone for a site
+
+//hermes/audioServer/<siteId>/<sessionId>/audioSessionFrame
+//WAV chunk from microphone for a session
+
+//hermes/asr/toggleOn
+//Enable ASR system
+
+//hermes/asr/toggleOff
+//Disable ASR system
+
+hermes/asr/startListening
+Start recording a voice command
+
+hermes/asr/stopListening
+Stop recording a voice command
+
+//rhasspy/asr/<siteId>/train
+//Re-train ASR system
+
+//rhasspy/g2p/pronounce
+//Get phonetic pronunciations for words
+
+
+
+# Output Messages
+
+hermes/asr/textCaptured
+Successful voice command transcription
+
+//hermes/error/asr
+//Error during transcription/training
+
+//rhasspy/asr/<siteId>/trainSuccess
+//ASR training succeeded
+
+rhasspy/asr/<siteId>/<sessionId>/audioCaptured
+Audio recorded from voice command
+Sent when sendAudioCaptured = true in startListening
+
+//rhasspy/g2p/phonemes
+//Phonetic pronunciations of words
+
+
+
+
+
+### Intent Recognition
+
+
+
+# Input Messages
+
+hermes/nlu/query
+Recognize intent from text
+
+//rhasspy/nlu/<siteId>/train
+//Retrain NLU system
+
+
+
+# Output Messages
+
+hermes/intent/<intentName>
+Intent successfully recognized
+
+hermes/nlu/intentNotRecognized
+Intent was not recognized
+
+//hermes/error/nlu
+//Error during recognition/training
+
+//rhasspy/nlu/<siteId>/trainSuccess
+//NLU training succeeded
+
+
+
+
+
+### Intent Handling
+
+
+
+# Input Messages
+
+//hermes/intent/<intentName>
+//Intent successfully recognized
+
+hermes/handle/toggleOn
+Enable intent handling
+
+hermes/handle/toggleOff
+Disable intent handling
+
+
+
+# Output Messages
+
+//hermes/tts/say
+//Speak a sentence
+
+
+
+
+
+### Text to Speech
+
+
+
+# Input Messages
+
+hermes/tts/say
+Speak a sentence
+
+//rhasspy/tts/getVoices
+//Request available voices
+
+
+
+# Output Messages
+
+hermes/tts/sayFinished
+Finished generating audio (actually spoken with playBytes)
+
+//rhasspy/tts/voices
+//Description of available voices
+
+
+
+
+
+### Audio Output
+
+
+
+# Input Messages
+
+hermes/audioServer/<siteId>/playBytes/<requestId>
+WAV audio to play through speakers
+
+hermes/audioServer/toggleOff
+Disable audio output
+
+hermes/audioServer/toggleOn
+Enable audio output
+
+//rhasspy/audioServer/getDevices
+//Request audio output devices
+
+
+
+# Output Messages
+
+hermes/audioServer/<siteId>/playFinished
+Audio has finished playing
+
+//rhasspy/audioServer/devices
+//Details of audio output devices
+
+rhasspy/audioServer/setVolume
+Set the volume at one or more sites
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+wakeWordDetected
+
+
+
+startSession -> showIndication
+endSession -> stopIndication
+
+textToSpeak
+intentRecognition
+
+playAudio
+intentHandling
+
+speechToText
+
+startRecording
+stopRecording
+
+
+textCaptured
+
+setWakeWordEnabled On/Off
+setAudioOutputEnabled On/Off
+setIntentHandling On/Off
+
+setVolume

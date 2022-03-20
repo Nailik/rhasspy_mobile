@@ -3,6 +3,9 @@ package org.rhasspy.mobile
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.services.ForegroundService
+import org.rhasspy.mobile.services.MqttService
+import org.rhasspy.mobile.services.RecordingService
+import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -24,9 +27,12 @@ abstract class Application : NativeApplication() {
 
         logger.a { "######## Application started ########" }
 
-        //initialize/load the settings
+        //initialize/load the settings, generate the MutableLiveData
         AppSettings
+        MqttService
+        RecordingService
         ConfigurationSettings
+        ServiceInterface
         ForegroundService
     }
 

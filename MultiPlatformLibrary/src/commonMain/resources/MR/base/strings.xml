@@ -6,6 +6,7 @@
     <string name="settings">Settings</string>
     <string name="siteId">site ID</string>
     <string name="mqtt">MQTT</string>
+    <string name="externalMQTT">External MQTT</string>
     <string name="notConnected">Not Connected</string>
     <string name="connected">Connected</string>
     <string name="on">On</string>
@@ -44,6 +45,7 @@
     <string name="hassURL">Hass URL</string>
     <string name="wakeUp">Wake Up</string>
     <string name="playRecording">Play Recording</string>
+    <string name="stopPlayRecording">Stop Playing Recording</string>
     <string name="textToRecognize">Text to recognize</string>
     <string name="textToSpeak">Text to speak</string>
     <string name="accessToken">Access Token</string>
@@ -70,6 +72,7 @@
     <string name="chooseCertificate">Choose Certificate</string>
     <string name="showLog">Show Log</string>
     <string name="log">Log</string>
+    <string name="audioFramesLogging">Audio Frames Logging</string>
     <string name="httpSSL">HTTP SSL</string>
     <string name="porcupineAccessKey">AccessKey</string>
     <string name="openPicoVoiceConsole">open PicoVoice Console (to generate AccessKey)</string>
@@ -124,4 +127,11 @@
     </string>
     <string name="save">Save</string>
     <string name="reset">Reset</string>
+
+    <string name="device">Device</string>
+    <string name="deviceSettingsInformation">This settings can be changed with MQTT commands</string>
+    <string name="volume">Volume</string>
+    <string name="hotWord">HotWord (WakeWord)</string>
+    <string name="audioOutput">Audio Output</string>
+    <string name="intentHandling">Intent Handling</string>
 </resources>

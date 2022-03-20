@@ -30,6 +30,7 @@ import org.rhasspy.mobile.logger.LogLevel
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.SettingsScreenViewModel
+import java.math.RoundingMode
 
 private val logger = Logger.withTag("SettingsScreen")
 
@@ -45,6 +46,8 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState, viewModel: SettingsScre
         ThemeItem()
         Divider()
         BackgroundService()
+        Divider()
+        Device()
         Divider()
         WakeWordIndicationItem()
         Divider()
@@ -201,6 +204,42 @@ fun BackgroundService() {
 
 }
 
+@Composable
+fun Device() {
+
+    ExpandableListItem(
+        text = MR.strings.device,
+        secondaryText = MR.strings.deviceSettingsInformation
+    ) {
+        Column {
+            SliderListItem(
+                text = MR.strings.volume,
+                value = AppSettings.volume.observe(),
+                onValueChange = {
+                    AppSettings.volume.data = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
+                })
+
+            SwitchListItem(
+                text = MR.strings.hotWord,
+                isChecked = AppSettings.isHotWordEnabled.observe(),
+                onCheckedChange = { AppSettings.isHotWordEnabled.data = it })
+
+            SwitchListItem(
+                text = MR.strings.audioOutput,
+                isChecked = AppSettings.isAudioOutputEnabled.observe(),
+                onCheckedChange = { AppSettings.isAudioOutputEnabled.data = it })
+
+
+            SwitchListItem(
+                text = MR.strings.intentHandling,
+                isChecked = AppSettings.isIntentHandlingEnabled.observe(),
+                onCheckedChange = { AppSettings.isIntentHandlingEnabled.data = it })
+
+
+        }
+
+    }
+}
 
 @Composable
 fun WakeWordIndicationItem() {
@@ -268,5 +307,9 @@ fun ShowLogItem() {
         SwitchListItem(MR.strings.showLog,
             isChecked = AppSettings.isShowLog.observe(),
             onCheckedChange = { AppSettings.isShowLog.data = it })
+
+        SwitchListItem(MR.strings.audioFramesLogging,
+            isChecked = AppSettings.isLogAudioFrames.observe(),
+            onCheckedChange = { AppSettings.isLogAudioFrames.data = it })
     }
 }

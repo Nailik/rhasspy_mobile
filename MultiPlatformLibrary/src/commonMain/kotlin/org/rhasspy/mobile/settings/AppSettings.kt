@@ -14,12 +14,18 @@ object AppSettings {
     val automaticSilenceDetectionTime = AppSetting(SettingsEnum.AutomaticSilenceDetectionTime, 2000)
 
     val isBackgroundEnabled = AppSetting(SettingsEnum.BackgroundEnabled, false)
-    val isBackgroundWakeWordDetectionTurnOnDisplay = AppSetting(SettingsEnum.BackgroundWakeWordDetectionTurnOnDisplay, false)
 
+    val isBackgroundWakeWordDetectionTurnOnDisplay = AppSetting(SettingsEnum.BackgroundWakeWordDetectionTurnOnDisplay, false)
     val isWakeWordSoundIndication = AppSetting(SettingsEnum.WakeWordSoundIndication, false)
     val isWakeWordLightIndication = AppSetting(SettingsEnum.WakeWordLightIndication, false)
 
+    val volume = AppSetting(SettingsEnum.Volume, 0.5F)
+    val isHotWordEnabled = AppSetting(SettingsEnum.HotWordEnabled, true)
+    val isAudioOutputEnabled = AppSetting(SettingsEnum.AudioOutputEnabled, true)
+    val isIntentHandlingEnabled = AppSetting(SettingsEnum.IntentHandlingEnabled, true)
+
     val isShowLog = AppSetting(SettingsEnum.ShowLog, false)
+    val isLogAudioFrames = AppSetting(SettingsEnum.LogAudioFrames, false)
     val logLevel = AppSetting(SettingsEnum.LogLevel, LogLevel.Debug)
 
 }
