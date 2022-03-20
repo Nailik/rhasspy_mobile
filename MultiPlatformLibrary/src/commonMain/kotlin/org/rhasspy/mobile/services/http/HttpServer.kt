@@ -14,7 +14,7 @@ import kotlin.native.concurrent.ThreadLocal
 //https://rhasspy.readthedocs.io/en/latest/reference/#http-api
 @ThreadLocal
 object HttpServer {
-    private val logger = Logger.withTag(this::class.simpleName!!)
+    private val logger = Logger.withTag("HttpServer")
 
     private var server: NativeServer? = null
 

@@ -7,7 +7,7 @@ import dev.icerock.moko.mvvm.livedata.postValue
 import org.rhasspy.mobile.settings.Setting
 
 object GlobalData {
-    private val logger = Logger.withTag(this::class.simpleName!!)
+    private val logger = Logger.withTag("GlobalData")
 
     val settings: Settings = Settings()
 

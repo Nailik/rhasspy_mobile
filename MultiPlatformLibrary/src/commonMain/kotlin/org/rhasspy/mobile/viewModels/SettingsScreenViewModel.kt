@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.services.native.AudioRecorder
 
 class SettingsScreenViewModel : ViewModel() {
-    private val logger = Logger.withTag(this::class.simpleName!!)
+    private val logger = Logger.withTag("SettingsScreenViewModel")
 
     private val currentAudioLevel = MutableLiveData<Byte>(0)
     val audioLevel: LiveData<Int> = currentAudioLevel.map { it.toInt() }

@@ -14,10 +14,9 @@ of [Rhasspy](https://rhasspy.readthedocs.io/en/latest/tutorials/#server-with-sat
 | Audio Recording | :white_check_mark: | :x: | :x: |
 | Silence Detection | :white_check_mark: | :x: | :x: |
 | Remote HTTP(s)  | :white_check_mark: | :x: | :x: |
-| Local (incoming) HTTP(s)  | :x: | :x: | :x: |
-| Remote MQTT(SSL)  | :x: | :x: | :x: |
-| Remote (incoming) MQTT(SSL)  | :x: | :x: | :x: |
-| WakeWord Remote (HTTP/MQTT/UDP) | :x: | :x: | :x: |
+| Local (incoming) HTTP(s)  | :white_check_mark: | :x: | :x: |
+| Remote SSL (MQTT, HTTP Server)  | :x: | :x: | :x: |
+| WakeWord Remote (MQTT/UDP) | :white_check_mark: | :x: | :x: |
 | WakeWord Local (Porcupine) | :white_check_mark: | :x: | :x: |
 | WakeWord Indication (Sound, Visual)  | :white_check_mark: | :x: | :x: |
 

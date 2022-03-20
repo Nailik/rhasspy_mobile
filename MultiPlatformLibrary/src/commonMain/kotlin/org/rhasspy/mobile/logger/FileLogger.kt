@@ -17,7 +17,7 @@ import org.rhasspy.mobile.services.native.FileWriter
 import org.rhasspy.mobile.settings.AppSettings
 
 object FileLogger : LogWriter() {
-    private val logger = Logger.withTag(this::class.simpleName!!)
+    private val logger = Logger.withTag("FileLogger")
 
     val flow = MutableSharedFlow<LogElement>()
 
@@ -52,7 +52,7 @@ object FileLogger : LogWriter() {
 
         coroutineScope.launch {
             val element = LogElement(Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(), severity, tag, message, throwable?.message)
-            fileWriter.appendText(Json.encodeToString(element))
+            fileWriter.appendText(",${Json.encodeToString(element)}")
             flow.emit(element)
         }
     }

@@ -37,3 +37,13 @@
 #-keepnames class <1>$$serializer { # -keepnames suffices; class is kept when serializer() is kept.
 #    static <1>$$serializer INSTANCE;
 #}
+
+
+# Ktor
+-keep class io.ktor.** { *; }
+-keep class kotlinx.coroutines.** { *; }
+-keep class kotlinx.atomicfu.** { *; }
+-keep class io.netty.** { *; }
+-keep class org.slf4j.** { *; }
+-keep class com.typesafe.** { *; }
+-dontwarn reactor.blockhound.integration.BlockHoundIntegration.

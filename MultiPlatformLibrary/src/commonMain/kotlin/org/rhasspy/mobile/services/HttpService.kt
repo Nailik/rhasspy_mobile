@@ -17,7 +17,7 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
  * calls external http services
  */
 object HttpService {
-    private val logger = Logger.withTag(this::class.simpleName!!)
+    private val logger = Logger.withTag("HttpService")
 
     private val httpClient = HttpClient {
         expectSuccess = true

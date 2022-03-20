@@ -11,7 +11,7 @@ import java.nio.ByteBuffer
 
 
 actual object AudioPlayer {
-    private val logger = Logger.withTag(this::class.simpleName!!)
+    private val logger = Logger.withTag("AudioPlayer")
     private var isEnabled = true
 
     actual fun playData(data: List<Byte>) {

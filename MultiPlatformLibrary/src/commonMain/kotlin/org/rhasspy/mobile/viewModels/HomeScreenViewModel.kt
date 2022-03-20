@@ -14,7 +14,7 @@ import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.settings.AppSettings
 
 class HomeScreenViewModel : ViewModel() {
-    private val logger = Logger.withTag(this::class.simpleName!!)
+    private val logger = Logger.withTag("HomeScreenViewModel")
 
     private val isCurrentOverlayPermissionRequestRequired = MediatorLiveData(false)
 

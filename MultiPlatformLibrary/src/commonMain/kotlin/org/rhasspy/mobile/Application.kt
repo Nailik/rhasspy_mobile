@@ -10,7 +10,7 @@ import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 abstract class Application : NativeApplication() {
-    private val logger = Logger.withTag(Application::class.simpleName!!)
+    private val logger = Logger.withTag("Application")
 
     companion object {
         lateinit var Instance: NativeApplication
