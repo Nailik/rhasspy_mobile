@@ -40,6 +40,7 @@ actual class MqttClient actual constructor(
 
         override fun connectionLost(error: Throwable) {
             onDisconnect(error)
+            client.setCallback(null)
         }
     }
 
@@ -153,7 +154,7 @@ actual class MqttClient actual constructor(
      * @return Will return a [error][MqttError] if a problem has occurred. If a [error][MqttError] is returned then the
      * [message persistence failed][MqttStatus.MSG_PERSISTENCE_FAILED] status (via [MqttError.statusCode]) is used.
      */
-    actual fun disconnect(): MqttError? {
+    actual suspend fun disconnect(): MqttError? {
         logger.v { "disconnect" }
         var result: MqttError? = null
         if (client.isConnected) {

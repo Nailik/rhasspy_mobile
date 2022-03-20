@@ -63,5 +63,5 @@ expect class MqttClient(
      * Disconnects from the MQTT Broker.
      * @return Will return a [error][MqttError] if a problem has occurred.
      */
-    fun disconnect(): MqttError?
+    suspend fun disconnect(): MqttError?
 }

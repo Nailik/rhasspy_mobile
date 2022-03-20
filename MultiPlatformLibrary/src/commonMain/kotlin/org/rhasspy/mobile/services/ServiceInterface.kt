@@ -181,25 +181,31 @@ object ServiceInterface {
      * WAV chunk from microphone
      */
     fun audioFrame(byteData: List<Byte>) {
-        if (!currentlyPlayingRecording) {
-            //logger.d { "audioFrame ${byteData.size}" }
+        coroutineScope.launch {
+            if (!currentlyPlayingRecording) {
+                //logger.d { "audioFrame ${byteData.size}" }
 
-            val dataWithHeader = byteData.addWavHeader()
-            //send to udp if udp streaming
-            if (ConfigurationSettings.isUDPOutput.data) {
-                UdpService.streamAudio(dataWithHeader)
-            }
+                val dataWithHeader = byteData.addWavHeader()
 
-            //send to mqtt if mqtt listen for WakeWord and no active session or mqtt speech to text and active session
-            if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.MQTT && currentSessionId == null ||
-                (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT && currentSessionId != null)
-            ) {
-                MqttService.audioFrame(dataWithHeader)
-            }
 
-            //if there is a current session record this audio to save if for intent recognition
-            if (currentSessionId != null) {
-                currentRecording.addAll(byteData)
+                if (currentSessionId == null) {
+                    //no current session running
+                    if (ConfigurationSettings.isUDPOutput.data) {
+                        //send to udp if udp streaming only outside asr listening
+                        UdpService.streamAudio(dataWithHeader)
+                    } else if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.MQTT) {
+                        //send to mqtt for wake word detection
+                        MqttService.audioFrame(dataWithHeader)
+                    }
+                } else {
+                    //current session is running
+                    if (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
+                        //send to mqtt for speech to text
+                        MqttService.audioFrame(dataWithHeader)
+                    }
+                    //add audio to current recording for intent recognition and replay
+                    currentRecording.addAll(byteData)
+                }
             }
         }
     }
@@ -691,11 +697,12 @@ object ServiceInterface {
     /**
      * Start services according to settings
      */
-    fun serviceAction(serviceAction: ServiceAction) {
+    suspend fun serviceAction(serviceAction: ServiceAction) {
         logger.d { "serviceAction ${serviceAction.name}" }
 
         when (serviceAction) {
             ServiceAction.Start -> {
+                UdpService.start()
                 startHotWord()
                 HttpServer.start()
                 MqttService.start()
@@ -709,6 +716,7 @@ object ServiceInterface {
                 isIntentRecognized = false
                 currentSessionId = null
 
+                UdpService.stop()
                 stopHotWord()
                 HttpServer.stop()
                 MqttService.stop()
@@ -821,7 +829,9 @@ object ServiceInterface {
      */
     fun saveAndApplyChanges() {
         GlobalData.saveAllChanges()
-        ForegroundService.action(ServiceAction.Reload)
+        coroutineScope.launch {
+            ForegroundService.action(ServiceAction.Reload)
+        }
     }
 
     /**

@@ -229,7 +229,8 @@ fun AudioRecording() {
 
                 TextFieldListItem(
                     label = MR.strings.port,
-                    value = ConfigurationSettings.udpOutputPort.observeCurrent(),
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    value = ConfigurationSettings.udpOutputPort.observeCurrent().toString(),
                     onValueChange = { ConfigurationSettings.udpOutputPort.unsavedData = it },
                 )
             }

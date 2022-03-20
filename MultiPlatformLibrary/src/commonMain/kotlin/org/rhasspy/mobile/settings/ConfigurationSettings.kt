@@ -5,7 +5,6 @@ import org.rhasspy.mobile.data.*
 object ConfigurationSettings {
 
     val siteId = Setting(SettingsEnum.SiteId, "mobile")
-    val baseSiteId = Setting(SettingsEnum.BaseSiteId2, "default")
 
     val isHttpSSL = Setting(SettingsEnum.HttpSSL, false)
 

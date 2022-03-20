@@ -49,6 +49,7 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Ktor.Client.core)
                 implementation(Ktor.Client.websockets)
+                implementation(Ktor.Network.network)
                 implementation(Benasher.uuid)
             }
         }
@@ -70,6 +71,7 @@ kotlin {
                 implementation(Ktor.Client.cio)
                 implementation(Ktor.Server.core)
                 implementation(Ktor.Server.netty)
+                implementation(Ktor.Network.network)
                 implementation(Slf4j.simple)
                 implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
                 //implementation(Eclipse.Phao.mqttClient)
