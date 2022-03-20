@@ -133,8 +133,8 @@ Stop recording a voice command
 hermes/asr/textCaptured
 Successful voice command transcription
 
-hermes/error/asr
-Error during transcription/training
+//hermes/error/asr
+//Error during transcription/training
 
 //rhasspy/asr/<siteId>/trainSuccess
 //ASR training succeeded

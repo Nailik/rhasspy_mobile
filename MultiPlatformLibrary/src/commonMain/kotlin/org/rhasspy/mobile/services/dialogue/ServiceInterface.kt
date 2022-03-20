@@ -647,11 +647,13 @@ object ServiceInterface {
             when (ConfigurationSettings.speechToTextOption.data) {
                 //send the recording to the http endpoint
                 SpeechToTextOptions.RemoteHTTP -> HttpService.speechToText(getPreviousRecording())?.also {
-                    //TODO send hermes/asr/textCaptured to let broker now that text was recognized from speech
+                    MqttService.asrTextCaptured(currentSessionId, it)
                     if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
                         //when dialogue management is local endpoint, try to recognize it
                         recognizeIntent(it)
                     }
+                } ?: run {
+                    MqttService.asrError(currentSessionId)
                 }
                 //when speech to text mqtt is used, then speech is send in chunks while recording
                 SpeechToTextOptions.RemoteMQTT -> logger.v { "speechToText already send to mqtt" }

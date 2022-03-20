@@ -585,6 +585,26 @@ object MqttService {
     }
 
     /**
+     * hermes/asr/textCaptured (JSON)
+     * Successful transcription, sent either when silence is detected or on stopListening
+     *
+     * text: string - transcription text
+     * siteId: string = "default" - Hermes site ID
+     * sessionId: string? = null - current session ID
+     */
+    fun asrTextCaptured(sessionId: String?, text: String) {
+        publishMessage(
+            MQTTTopicsPublish.AsrTextCaptured.topic, MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("text", JsonPrimitive(text))
+                    put("siteId", ConfigurationSettings.siteId.data)
+                    put("sessionId", sessionId)
+                })
+            )
+        )
+    }
+
+    /**
      * hermes/error/asr (JSON)
      * Sent when an error occurs in the ASR system
      *
@@ -599,6 +619,25 @@ object MqttService {
         } else {
             logger.d { "received asrError but for other siteId" }
         }
+    }
+
+
+    /**
+     * hermes/error/asr (JSON)
+     * Sent when an error occurs in the ASR system
+     *
+     * siteId: string = "default" - Hermes site ID
+     * sessionId: string? = null - current session ID
+     */
+    fun asrError(sessionId: String?) {
+        publishMessage(
+            MQTTTopicsPublish.AsrTextCaptured.topic, MqttMessage(
+                payload = Json.encodeToString(buildJsonObject {
+                    put("siteId", ConfigurationSettings.siteId.data)
+                    put("sessionId", sessionId)
+                })
+            )
+        )
     }
 
     /**
