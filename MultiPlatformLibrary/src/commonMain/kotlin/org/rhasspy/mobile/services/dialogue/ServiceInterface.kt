@@ -32,7 +32,10 @@ object ServiceInterface {
     private var previousRecording = listOf<Byte>()
     private var currentRecording = mutableListOf<Byte>()
 
+    private var mqttSpeechToTextSessionId: String? = null
+
     private var liveSessionRunning: MutableLiveData<Boolean> = MutableLiveData(false)
+    private var isSendAudioCaptured = false
     var sessionRunning = liveSessionRunning.readOnly()
 
     /**
@@ -165,7 +168,7 @@ object ServiceInterface {
      * WAV chunk from microphone
      */
     fun audioFrame(byteData: List<Byte>) {
-        logger.d { "audioFrame ${byteData.size}" }
+        //logger.d { "audioFrame ${byteData.size}" }
 
         val dataWithHeader = byteData.addWavHeader()
         //send to udp if udp streaming
@@ -212,12 +215,16 @@ object ServiceInterface {
      * Indicates a hotWord was successfully detected
      *
      * used if user clicks on record or local service detected hot word
+     * or remote mqtt service detects hotWord
      */
-    fun hotWordDetected() {
+    fun hotWordDetected(fromMQTT: Boolean = false) {
         logger.d { "hotWordDetected" }
 
-        //send to mqtt that hotWord was detected
-        MqttService.hotWordDetected()
+        if (!fromMQTT) {
+            //send to mqtt that hotWord was detected
+            MqttService.hotWordDetected()
+        }
+
         if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
             //start the session
             startSession()
@@ -245,21 +252,32 @@ object ServiceInterface {
      *
      * when mqtt speech to text is set, it's necessary to tell the asr system to start listening
      */
-    fun startListening(sessionId: String?, fromMQTT: Boolean = false) {
+    fun startListening(sessionId: String?, fromMQTT: Boolean = false, sendAudioCaptured: Boolean = false) {
         logger.d { "startListening $sessionId mqtt $fromMQTT" }
-/*
-        if(fromMQTT && ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT){
+
+        if (fromMQTT && ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
             //remote speech to text will override the sessionId
             this.currentSessionId = sessionId
         }
-*/
+
+        if (currentSessionId != sessionId &&
+            fromMQTT &&
+            ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT
+        ) {
+            //store the mqtt session id to understand the id when the text was captured
+            mqttSpeechToTextSessionId = sessionId
+        }
+
         if (sessionId != currentSessionId) {
             logger.e { "startListening with invalid id" }
             return
         }
 
         //allow internal call or when dialog option is mqtt
+        //also directly called after wake word detection
         if (!fromMQTT || ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.RemoteMQTT) {
+
+            isSendAudioCaptured = sendAudioCaptured
 
             //clear current recording and start
             currentRecording.clear()
@@ -269,9 +287,10 @@ object ServiceInterface {
 
             //only necessary when local dialog management
             if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local &&
-                ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
+                ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT
+            ) {
                 //tell asr system to start listening and transcribe text when mqtt is used for speech to text
-            //    MqttService.startListening(currentSessionId)
+                MqttService.startListening(currentSessionId)
             }
         }
     }
@@ -319,8 +338,15 @@ object ServiceInterface {
             }
 
             //when mqtt is used for speech to text, the service needs to know that no more frames are coming
-            if (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
-                MqttService.stopListening(sessionId)
+            if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local &&
+                ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT
+            ) {
+                //tell asr system to start listening and transcribe text when mqtt is used for speech to text
+                MqttService.stopListening(currentSessionId)
+            }
+
+            if (isSendAudioCaptured) {
+                MqttService.audioCaptured(sessionId, previousRecording.addWavHeader())
             }
         }
     }
@@ -336,10 +362,14 @@ object ServiceInterface {
 
         logger.d { "asrTextCaptured $sessionId text $text" }
 
-        if (sessionId != currentSessionId) {
+        //sessionId can also be mqttSpeechToTextSessionId when this is used for text to speech
+        if (sessionId == null || (sessionId != currentSessionId && sessionId != mqttSpeechToTextSessionId)) {
             logger.e { "asrTextCaptured with invalid id" }
             return
         }
+
+        //reset mqttSpeechToTextSessionId
+        mqttSpeechToTextSessionId = null
 
         //this should ever only be called with speech to text on mqtt
         if (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {

@@ -48,7 +48,12 @@ actual class MqttClient actual constructor(
 
 
     actual suspend fun publish(topic: String, msg: MqttMessage, timeout: Long): MqttError? = try {
-        logger.v { "publish $topic ${msg.payload is ByteArray} $msg " }
+        if (!topic.contains("audioFrame")) {
+            //logging every audio frame really fills up the logs
+            logger.v {
+                "publish $topic ${msg.payload is ByteArray} $msg "
+            }
+        }
 
         val data = if (msg.payload !is ByteArray) msg.payload.toString().toByteArray() else msg.payload
 

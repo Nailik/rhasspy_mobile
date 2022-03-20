@@ -139,9 +139,9 @@ Error during transcription/training
 //rhasspy/asr/<siteId>/trainSuccess
 //ASR training succeeded
 
-//rhasspy/asr/<siteId>/<sessionId>/audioCaptured
-//Audio recorded from voice command
-//Sent when sendAudioCaptured = true in startListening
+rhasspy/asr/<siteId>/<sessionId>/audioCaptured
+Audio recorded from voice command
+Sent when sendAudioCaptured = true in startListening
 
 //rhasspy/g2p/phonemes
 //Phonetic pronunciations of words

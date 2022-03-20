@@ -168,7 +168,6 @@ object MqttService {
                 MQTTTopicsSubscription.AsrStopListening -> stopListening(message)
                 MQTTTopicsSubscription.AsrTextCaptured -> asrTextCaptured(message)
                 MQTTTopicsSubscription.AsrError -> asrError(message)
-                MQTTTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(message)
                 MQTTTopicsSubscription.IntentNotRecognized -> intentNotRecognized(message)
                 MQTTTopicsSubscription.IntentHandlingToggleOn -> intentHandlingToggleOn(message)
                 MQTTTopicsSubscription.IntentHandlingToggleOff -> intentHandlingToggleOff(message)
@@ -176,13 +175,28 @@ object MqttService {
                 MQTTTopicsSubscription.AudioOutputToggleOn -> audioOutputToggleOn(message)
                 MQTTTopicsSubscription.SetVolume -> setVolume(message)
                 else -> {
-                    if (topic.startsWith(
-                            MQTTTopicsSubscription.PlayBytes.topic
-                                .replace("<siteId>", ConfigurationSettings.siteId.data)
-                                .replace("+", "")
-                        )
+                    if (MQTTTopicsSubscription.PlayBytes.topic
+                            .replace("<siteId>", ConfigurationSettings.siteId.data)
+                            .replace("/", "\\/") //escape slashes
+                            .replace("+", ".*") //replace wildcard with regex text
+                            .toRegex()
+                            .matches(topic)
                     ) {
                         playBytes(message)
+                    } else if (MQTTTopicsSubscription.HotWordDetected.topic
+                            .replace("/", "\\/") //escape slashes
+                            .replace("+", ".*") //replace wildcard with regex text
+                            .toRegex()
+                            .matches(topic)
+                    ) {
+                        hotWordDetected(message)
+                    } else if (MQTTTopicsSubscription.IntentRecognitionResult.topic
+                            .replace("/", "\\/") //escape slashes
+                            .replace("+", ".*") //replace wildcard with regex text
+                            .toRegex()
+                            .matches(topic)
+                    ) {
+                        intentRecognitionResult(message)
                     }
                 }
             }
@@ -425,6 +439,25 @@ object MqttService {
         }
     }
 
+
+    /**
+     * hermes/hotword/<wakewordId>/detected (JSON)
+     * Indicates a hotword was successfully detected
+     * wakewordId: string - wake word ID (part of topic)
+     *
+     * currentSensitivity: float = 1.0 - sensitivity of wake word detection (service specific)
+     * siteId: string = "default" - Hermes site ID
+     */
+    private fun hotWordDetected(message: MqttMessage) {
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+
+        if (jsonObject.isThisSiteId()) {
+            ServiceInterface.hotWordDetected(true)
+        } else {
+            logger.d { "received hotWordToggleOff but for other siteId" }
+        }
+    }
+
     /**
      * hermes/hotword/<wakewordId>/detected (JSON)
      * Indicates a hotword was successfully detected
@@ -440,7 +473,7 @@ object MqttService {
                 payload = Json.encodeToString(buildJsonObject {
                     put("currentSensitivity", ConfigurationSettings.wakeWordKeywordSensitivity.data)
                     put("siteId", ConfigurationSettings.siteId.data)
-                    put("sendAudioCaptured", true)
+                    //put("sendAudioCaptured", true)
                     //necessary
                     put(
                         "modelId",
@@ -474,14 +507,18 @@ object MqttService {
      * hermes/asr/startListening (JSON)
      * Tell ASR system to start recording/transcribing
      * siteId: string = "default" - Hermes site ID
+     * sendAudioCaptured: bool = false - send audioCaptured after stop listening (Rhasspy only)
+     * wakewordId: string? = null - id of wake word that triggered session (Rhasspy only)
      */
     private fun startListening(message: MqttMessage) {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
 
         if (jsonObject.isThisSiteId()) {
-            mainScope.launch {
-                ServiceInterface.startListening(jsonObject["sessionId"]?.jsonPrimitive?.content, true)
-            }
+            ServiceInterface.startListening(
+                jsonObject["sessionId"]?.jsonPrimitive?.content,
+                true,
+                jsonObject["sendAudioCaptured"]?.jsonPrimitive?.booleanOrNull == true
+            )
         } else {
             logger.d { "received startListening but for other siteId" }
         }
@@ -584,6 +621,22 @@ object MqttService {
     }
 
     /**
+     * rhasspy/asr/<siteId>/<sessionId>/audioCaptured (binary, Rhasspy only)
+     * WAV audio data captured by ASR session
+     * siteId: string - Hermes site ID (part of topic)
+     * sessionId: string - current session ID (part of topic)
+     * Only sent if sendAudioCaptured = true in startListening
+     */
+    fun audioCaptured(sessionId: String?, byteData: List<Byte>) {
+        publishMessage(
+            MQTTTopicsPublish.AudioCaptured.topic
+                .replace("<siteId>", ConfigurationSettings.siteId.data)
+                .replace("<sessionId>", sessionId ?: ""),
+            MqttMessage(byteData.toByteArray())
+        )
+    }
+
+    /**
      * hermes/nlu/query (JSON)
      * Request an intent to be recognized from text
      * input: string - text to recognize intent from (required)
@@ -597,12 +650,11 @@ object MqttService {
      */
     fun intentQuery(sessionId: String?, text: String) {
         publishMessage(
-            MQTTTopicsPublish.SessionStarted.topic, MqttMessage(
+            MQTTTopicsPublish.Query.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("input", JsonPrimitive(text))
                     put("siteId", ConfigurationSettings.siteId.data)
                     put("sessionId", sessionId)
-                    put("siteId", ConfigurationSettings.siteId.value)
                 })
             )
         )

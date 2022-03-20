@@ -70,14 +70,14 @@ actual object NativeIndication {
      * display indication over other apps
      */
     actual fun showIndication() {
-        showVisualIndication.value = true
+        showVisualIndication.postValue(true)
     }
 
     /**
      * close indication over other apps
      */
     actual fun closeIndicationOverOtherApps() {
-        showVisualIndication.value = false
+        showVisualIndication.postValue(false)
     }
 
 

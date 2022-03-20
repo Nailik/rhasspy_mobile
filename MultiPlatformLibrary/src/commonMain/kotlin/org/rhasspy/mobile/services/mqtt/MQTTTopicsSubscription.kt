@@ -11,6 +11,7 @@ enum class MQTTTopicsSubscription(val topic: String) {
     SessionEnded("hermes/dialogueManager/sessionEnded"),
     HotWordToggleOn("hermes/hotword/toggleOn"),
     HotWordToggleOff("hermes/hotword/toggleOff"),
+    HotWordDetected("hermes/hotword/+/detected"),
     AsrStartListening("hermes/asr/startListening"),
     AsrStopListening("hermes/asr/stopListening"),
     AsrTextCaptured("hermes/asr/textCaptured"),

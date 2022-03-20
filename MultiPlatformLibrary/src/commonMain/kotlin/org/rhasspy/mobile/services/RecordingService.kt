@@ -124,8 +124,9 @@ object RecordingService {
             87, 65, 86, 69, 102, 109, 116, 32, 16, 0, 0, 0, 1, 0, 1, 0, -128, 62, 0, 0, 0, 125, 0, 0, 2, 0, 16, 0, 100, 97, 116, 97,
             audioDataSize[0], audioDataSize[1], audioDataSize[2], audioDataSize[3] //40-43 data size of rest
         )
-        this.toMutableList().addAll(0, header.toList())
-        return this
+        val result = this.toMutableList()
+        result.addAll(0, header.toList())
+        return result
     }
 
 }
