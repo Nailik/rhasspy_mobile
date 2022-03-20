@@ -45,6 +45,7 @@
     <string name="hassURL">Hass URL</string>
     <string name="wakeUp">Wake Up</string>
     <string name="playRecording">Play Recording</string>
+    <string name="stopPlayRecording">Stop Playing Recording</string>
     <string name="textToRecognize">Text to recognize</string>
     <string name="textToSpeak">Text to speak</string>
     <string name="accessToken">Access Token</string>

@@ -46,6 +46,7 @@ class HomeScreenViewModel : ViewModel() {
     }
 
     val isRecording = ServiceInterface.sessionRunning
+    val isPlayingRecording = ServiceInterface.isPlayingRecording
 
     fun toggleSession() = ServiceInterface.toggleSession()
 
