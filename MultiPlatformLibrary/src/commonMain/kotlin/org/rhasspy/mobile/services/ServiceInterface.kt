@@ -13,6 +13,7 @@ import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.services.RecordingService.addWavHeader
 import org.rhasspy.mobile.services.http.HttpServer
 import org.rhasspy.mobile.services.native.AudioPlayer
+import org.rhasspy.mobile.services.native.FileWriter
 import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.services.native.NativeLocalWakeWordService
 import org.rhasspy.mobile.settings.AppSettings
@@ -28,10 +29,11 @@ object ServiceInterface {
     //toggle on off from mqtt or http service
     private var isIntentRecognized = false
 
-    private var previousRecording = listOf<Byte>()
+    // private var previousRecording = listOf<Byte>()
     private var currentRecording = mutableListOf<Byte>()
 
     private var mqttSpeechToTextSessionId: String? = null
+    private val previousRecordingFile = FileWriter("previousRecording.wav", 0)
 
     private var liveSessionRunning: MutableLiveData<Boolean> = MutableLiveData(false)
     private var isSendAudioCaptured = false
@@ -171,7 +173,7 @@ object ServiceInterface {
 
         val dataWithHeader = byteData.addWavHeader()
         //send to udp if udp streaming
-        if (AppSettings.isAudioOutputEnabled.data) {
+        if (ConfigurationSettings.isUDPOutput.data) {
             UdpService.streamAudio(dataWithHeader)
         }
 
@@ -327,8 +329,9 @@ object ServiceInterface {
             //hide the indication
             indication(false)
 
-            //independent copy of current recording
-            previousRecording = mutableListOf<Byte>().apply { addAll(currentRecording) }
+            //copy current recording to a file
+            val previousAudioData = currentRecording.addWavHeader()
+            previousRecordingFile.writeData(previousAudioData)
 
             //when local dialogue management it's necessary to turn on hotWord again and transcribe the speech to text
             if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
@@ -345,8 +348,11 @@ object ServiceInterface {
             }
 
             if (isSendAudioCaptured) {
-                MqttService.audioCaptured(sessionId, previousRecording.addWavHeader())
+                MqttService.audioCaptured(sessionId, previousAudioData)
             }
+
+            //clear current Recording
+            currentRecording.clear()
         }
     }
 
@@ -792,7 +798,7 @@ object ServiceInterface {
      * returns previouw Recording as wav data
      */
     fun getPreviousRecording(): List<Byte> {
-        return previousRecording.addWavHeader()
+        return previousRecordingFile.getFileData()
     }
 
 }

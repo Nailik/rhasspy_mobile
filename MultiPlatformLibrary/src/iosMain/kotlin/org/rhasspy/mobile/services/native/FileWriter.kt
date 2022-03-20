@@ -17,7 +17,11 @@ actual class FileWriter actual constructor(filename: String, maxFileSize: Long) 
         TODO("Not yet implemented")
     }
 
-    actual fun appendData(byteData: List<Byte>) {
+    actual fun writeData(byteData: List<Byte>) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun getFileData(): List<Byte> {
         TODO("Not yet implemented")
     }
 

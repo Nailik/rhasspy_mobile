@@ -10,6 +10,8 @@ expect class FileWriter(filename: String, maxFileSize: Long) {
 
     fun getFileContent(): String
 
-    fun appendData(byteData: List<Byte>)
+    fun getFileData(): List<Byte>
+
+    fun writeData(byteData: List<Byte>)
 
 }

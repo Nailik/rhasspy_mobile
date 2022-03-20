@@ -35,8 +35,10 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
 
     actual fun getFileContent() = file.readText()
 
-    actual fun appendData(byteData: List<Byte>) {
-        file.appendBytes(byteData.toByteArray())
+    actual fun writeData(byteData: List<Byte>) {
+        file.writeBytes(byteData.toByteArray())
     }
+
+    actual fun getFileData() = file.readBytes().toList()
 
 }
