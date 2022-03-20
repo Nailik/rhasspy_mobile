@@ -327,7 +327,7 @@ object ServiceInterface {
             //hide the indication
             indication(false)
 
-            //independent copy of current recording TODO save to file
+            //independent copy of current recording
             previousRecording = mutableListOf<Byte>().apply { addAll(currentRecording) }
 
             //when local dialogue management it's necessary to turn on hotWord again and transcribe the speech to text

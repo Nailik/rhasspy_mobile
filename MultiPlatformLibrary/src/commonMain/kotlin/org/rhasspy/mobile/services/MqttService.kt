@@ -759,7 +759,7 @@ object MqttService {
      *
      * text: string - sentence to speak (required)
      *
-     * volume: float? = null - volume level to speak with (0 = off, 1 = full volume) TODO should i mute that?
+     * volume: float? = null - volume level to speak with (0 = off, 1 = full volume)
      *
      * siteId: string = "default" - Hermes site ID
      * sessionId: string? = null - current session ID

@@ -1,45 +1,15 @@
 package org.rhasspy.mobile.services.mqtt.native
 
-import org.rhasspy.mobile.services.mqtt.MqttConnectionOptions
-import org.rhasspy.mobile.services.mqtt.MqttError
-import org.rhasspy.mobile.services.mqtt.MqttMessage
-import org.rhasspy.mobile.services.mqtt.MqttQos
+import org.rhasspy.mobile.services.mqtt.*
 
-actual class MqttClient {
-    /**
-     * The MQTT Broker address which is comprised of a protocol, IPv4 address/FQDN, and port. Here is a example:
-     * `tcp://192.168.1.1:1883`
-     */
-    actual val brokerUrl: String
-        get() = TODO("Not yet implemented")
-
-    /** Unique MQTT client identifier. */
-    actual val clientId: String
-        get() = TODO("Not yet implemented")
-
-    /** Handles the deliveryComplete event. First argument is the delivery token. */
-    @Suppress("UNUSED_PARAMETER")
-    actual var deliveryCompleteHandler: (Int) -> Unit
-        get() = TODO("Not yet implemented")
-        set(value) {}
-
-    /** Handles the connectionLost event. First argument is the cause. */
-    /** Handles the deliveryComplete event. First argument is the delivery token. */
-    @Suppress("UNUSED_PARAMETER")
-    actual var connectionLostHandler: (String) -> Unit
-        get() = TODO("Not yet implemented")
-        set(value) {}
-
-    /**
-     * Handles the messageArrived event. First argument is the topic. Second argument is the
-     * [message][MqttMessage].
-     */
-    /** Handles the deliveryComplete event. First argument is the delivery token. */
-    @Suppress("UNUSED_PARAMETER")
-    actual var messageArrivedHandler: (String, MqttMessage) -> Unit
-        get() = TODO("Not yet implemented")
-        set(value) {}
-
+actual class MqttClient actual constructor(
+    brokerUrl: String,
+    clientId: String,
+    persistenceType: MqttPersistence,
+    onDelivered: (token: Int) -> Unit,
+    onMessageReceived: (topic: String, message: MqttMessage) -> Unit,
+    onDisconnect: (error: Throwable) -> Unit
+) {
     /** If *true* then there is a connection to the MQTT Broker. */
     actual val isConnected: Boolean
         get() = TODO("Not yet implemented")
@@ -50,6 +20,8 @@ actual class MqttClient {
      * @param msg The MQTT message which includes the payload.
      * @param timeout Timeout for publishing in milliseconds.
      * @return Will return a [error][MqttError] if a problem has occurred.
+     *
+     * Handles the deliveryComplete event. First argument is the delivery token.
      */
     actual suspend fun publish(
         topic: String,
@@ -91,7 +63,8 @@ actual class MqttClient {
      * Disconnects from the MQTT Broker.
      * @return Will return a [error][MqttError] if a problem has occurred.
      */
-    actual suspend fun disconnect(): MqttError? {
+    actual fun disconnect(): MqttError? {
         TODO("Not yet implemented")
     }
+
 }
