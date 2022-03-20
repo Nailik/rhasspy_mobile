@@ -7,7 +7,6 @@ import dev.icerock.moko.mvvm.livedata.postValue
 import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.services.*
@@ -371,14 +370,13 @@ object ServiceInterface {
         //reset mqttSpeechToTextSessionId
         mqttSpeechToTextSessionId = null
 
-        //this should ever only be called with speech to text on mqtt
-        if (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
-            //TODO is stop listening calle before?
-            if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
-                //only try to recognize intent with local dialogue management
-                text?.also {
-                    recognizeIntent(it)
-                }
+        //when speech to text mqtt is used and local dialogue managment then try to recognize intent from text
+        if (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT &&
+            ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local
+        ) {
+            //only try to recognize intent with local dialogue management
+            text?.also {
+                recognizeIntent(it)
             }
         }
     }
