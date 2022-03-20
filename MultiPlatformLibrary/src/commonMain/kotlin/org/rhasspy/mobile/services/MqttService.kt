@@ -11,7 +11,6 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.rhasspy.mobile.data.AudioPlayingOptions
-import org.rhasspy.mobile.services.dialogue.ServiceInterface
 import org.rhasspy.mobile.services.mqtt.*
 import org.rhasspy.mobile.services.mqtt.native.MqttClient
 import org.rhasspy.mobile.settings.ConfigurationSettings

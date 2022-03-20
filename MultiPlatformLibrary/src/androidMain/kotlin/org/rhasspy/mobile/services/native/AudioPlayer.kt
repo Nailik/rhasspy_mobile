@@ -5,7 +5,7 @@ import android.media.AudioFormat
 import android.media.AudioManager
 import android.media.AudioTrack
 import co.touchlab.kermit.Logger
-import org.rhasspy.mobile.services.dialogue.ServiceInterface
+import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.settings.AppSettings
 import java.nio.ByteBuffer
 

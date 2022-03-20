@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.services.dialogue
+package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
@@ -10,7 +10,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.*
-import org.rhasspy.mobile.services.*
 import org.rhasspy.mobile.services.RecordingService.addWavHeader
 import org.rhasspy.mobile.services.http.HttpServer
 import org.rhasspy.mobile.services.native.AudioPlayer
@@ -257,7 +256,7 @@ object ServiceInterface {
 
         if (fromMQTT && ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
             //remote speech to text will override the sessionId
-            this.currentSessionId = sessionId
+            currentSessionId = sessionId
         }
 
         if (currentSessionId != sessionId &&

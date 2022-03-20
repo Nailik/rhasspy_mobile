@@ -6,8 +6,8 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.IBinder
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
-import org.rhasspy.mobile.services.ServiceAction
 import org.rhasspy.mobile.services.ForegroundService
+import org.rhasspy.mobile.services.ServiceAction
 import org.rhasspy.mobile.services.ServiceNotification
 
 /**

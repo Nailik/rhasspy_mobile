@@ -2,7 +2,8 @@ package org.rhasspy.mobile.services
 
 object HomeAssistantService {
 
-    fun sendIntent(intent: String){
+    @Suppress("UNUSED_PARAMETER")
+    fun sendIntent(intent: String) {
 
     }
 

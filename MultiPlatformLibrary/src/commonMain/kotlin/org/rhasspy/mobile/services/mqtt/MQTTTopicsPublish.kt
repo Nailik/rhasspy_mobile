@@ -8,7 +8,7 @@ enum class MQTTTopicsPublish(val topic: String) {
     SessionStarted("hermes/dialogueManager/sessionStarted"),
     SessionEnded("hermes/dialogueManager/sessionEnded"),
     IntentNotRecognizedInSession("hermes/dialogueManager/intentNotRecognized"),
-    AsrStartListening( "hermes/asr/startListening"),
+    AsrStartListening("hermes/asr/startListening"),
     AsrStopListening("hermes/asr/stopListening"),
     AsrTextCaptured("hermes/asr/textCaptured"),
     AsrError("hermes/error/asr"),

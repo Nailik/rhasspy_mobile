@@ -8,7 +8,7 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
-import org.rhasspy.mobile.services.dialogue.ServiceInterface
+import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 /**
