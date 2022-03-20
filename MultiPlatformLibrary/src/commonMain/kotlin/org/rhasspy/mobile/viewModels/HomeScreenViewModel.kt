@@ -7,6 +7,7 @@ import dev.icerock.moko.mvvm.livedata.readOnly
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.data.WakeWordOption
+import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.services.ServiceInterface
@@ -59,6 +60,10 @@ class HomeScreenViewModel : ViewModel() {
     fun saveAndApplyChanges() = ServiceInterface.saveAndApplyChanges()
 
     fun resetChanges() = ServiceInterface.resetChanges()
+
+    fun exportLogFile() = FileLogger.exportLogFile()
+
+    fun shareLogFile() = FileLogger.shareLogFile()
 
 
 }
