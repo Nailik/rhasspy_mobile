@@ -25,6 +25,7 @@ object AppSettings {
     val isIntentHandlingEnabled = AppSetting(SettingsEnum.IntentHandlingEnabled, true)
 
     val isShowLog = AppSetting(SettingsEnum.ShowLog, false)
+    val isLogAudioFrames = AppSetting(SettingsEnum.LogAudioFrames, false)
     val logLevel = AppSetting(SettingsEnum.LogLevel, LogLevel.Debug)
 
 }

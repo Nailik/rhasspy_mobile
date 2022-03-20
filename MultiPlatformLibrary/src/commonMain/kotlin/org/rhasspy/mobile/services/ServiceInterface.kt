@@ -183,7 +183,9 @@ object ServiceInterface {
     fun audioFrame(byteData: List<Byte>) {
         coroutineScope.launch {
             if (!currentlyPlayingRecording) {
-                //logger.d { "audioFrame ${byteData.size}" }
+                if (AppSettings.isLogAudioFrames.data) {
+                    logger.d { "audioFrame ${byteData.size}" }
+                }
 
                 val dataWithHeader = byteData.addWavHeader()
 
@@ -198,13 +200,15 @@ object ServiceInterface {
                         MqttService.audioFrame(dataWithHeader)
                     }
                 } else {
-                    //current session is running
-                    if (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
-                        //send to mqtt for speech to text
-                        MqttService.audioFrame(dataWithHeader)
+                    if(AppSettings.isHotWordEnabled.data) {
+                        //current session is running
+                        if (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
+                            //send to mqtt for speech to text
+                            MqttService.audioFrame(dataWithHeader)
+                        }
+                        //add audio to current recording for intent recognition and replay
+                        currentRecording.addAll(byteData)
                     }
-                    //add audio to current recording for intent recognition and replay
-                    currentRecording.addAll(byteData)
                 }
             }
         }
