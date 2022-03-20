@@ -27,7 +27,7 @@ class Setting<T>(private val key: SettingsEnum, private val initial: T) {
         }
 
     var data: T = value
-     private set
+        private set
 
     val unsaved = object : MutableLiveData<T>(value) {
         @Suppress("UNCHECKED_CAST")

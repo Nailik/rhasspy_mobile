@@ -4,7 +4,7 @@ expect class FileWriter(filename: String, maxFileSize: Long) {
 
     val maxFileSize: Long
 
-    fun createFile() : Boolean
+    fun createFile(): Boolean
 
     fun appendText(element: String)
 
