@@ -183,7 +183,9 @@ object ServiceInterface {
     fun audioFrame(byteData: List<Byte>) {
         coroutineScope.launch {
             if (!currentlyPlayingRecording) {
-                //logger.d { "audioFrame ${byteData.size}" }
+                if (AppSettings.isLogAudioFrames.data) {
+                    logger.d { "audioFrame ${byteData.size}" }
+                }
 
                 val dataWithHeader = byteData.addWavHeader()
 

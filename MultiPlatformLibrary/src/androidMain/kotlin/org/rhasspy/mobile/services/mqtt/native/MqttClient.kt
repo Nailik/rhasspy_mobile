@@ -8,6 +8,7 @@ import org.eclipse.paho.client.mqttv3.MqttSecurityException
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence
 import org.rhasspy.mobile.services.mqtt.*
+import org.rhasspy.mobile.settings.AppSettings
 import org.eclipse.paho.client.mqttv3.MqttClient as PahoMqttClient
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions as PahoConnectOptions
 import org.eclipse.paho.client.mqttv3.MqttMessage as PahoMqttMessage
@@ -49,7 +50,7 @@ actual class MqttClient actual constructor(
 
 
     actual suspend fun publish(topic: String, msg: MqttMessage, timeout: Long): MqttError? = try {
-        if (!topic.contains("audioFrame")) {
+        if (!topic.contains("audioFrame") || AppSettings.isLogAudioFrames.data) {
             //logging every audio frame really fills up the logs
             logger.v {
                 "publish $topic $msg"

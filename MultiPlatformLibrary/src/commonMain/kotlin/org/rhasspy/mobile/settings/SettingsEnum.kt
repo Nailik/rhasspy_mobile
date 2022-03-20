@@ -21,11 +21,11 @@ enum class SettingsEnum {
     Volume,
 
     ShowLog,
+    LogAudioFrames,
     LogLevel,
 
     //Configuration Settings
     SiteId,
-    BaseSiteId2,
 
     HttpSSL,
 
@@ -35,7 +35,6 @@ enum class SettingsEnum {
     MQTTPort,
     MQTTUserName,
     MQTTPassword,
-    MQTTSilenceDetectionEnabled,
 
     UDPOutput,
     UDPOutputHost,
