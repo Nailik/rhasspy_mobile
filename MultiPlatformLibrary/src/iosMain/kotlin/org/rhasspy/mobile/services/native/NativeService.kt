@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.services.native
 
-import org.rhasspy.mobile.services.Action
+import org.rhasspy.mobile.services.ServiceAction
 
 actual class NativeService {
 
@@ -9,7 +9,7 @@ actual class NativeService {
 
         actual var isRunning: Boolean = false
 
-        actual fun doAction(action: Action) {
+        actual fun doAction(serviceAction: ServiceAction) {
             TODO("Not yet implemented")
         }
 

@@ -8,14 +8,14 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.map
+import dev.icerock.moko.mvvm.livedata.readOnly
 import org.rhasspy.mobile.Application
 
 actual object OverlayPermission {
 
     private val status = MutableLiveData(isGranted())
 
-    actual val granted: LiveData<Boolean> = status.map { it }
+    actual val granted: LiveData<Boolean> = status.readOnly()
 
     private var onResultCallback: ((Boolean) -> Unit)? = null
 

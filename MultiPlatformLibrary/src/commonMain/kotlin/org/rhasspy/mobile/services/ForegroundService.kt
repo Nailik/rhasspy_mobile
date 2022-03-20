@@ -1,15 +1,8 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.rhasspy.mobile.data.WakeWordOption
-import org.rhasspy.mobile.services.api.HttpServer
-import org.rhasspy.mobile.services.native.NativeLocalWakeWordService
 import org.rhasspy.mobile.services.native.NativeService
 import org.rhasspy.mobile.settings.AppSettings
-import org.rhasspy.mobile.settings.ConfigurationSettings
 
 /**
  * Start point of all services
@@ -21,15 +14,12 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
  * - HTTP Services
  */
 object ForegroundService {
-
     private val logger = Logger.withTag(this::class.simpleName!!)
 
     init {
         //when background enabled value changes, services need to be reloaded
         AppSettings.isBackgroundEnabled.value.addObserver {
-            CoroutineScope(Dispatchers.Default).launch {
-                action(Action.Reload)
-            }
+            action(ServiceAction.Reload)
         }
     }
 
@@ -39,13 +29,11 @@ object ForegroundService {
      * Starts background service, if not called by service and
      * isBackgroundEnabled is true and service is not running yet
      */
-    fun action(action: Action, fromService: Boolean = false) {
+    fun action(serviceAction: ServiceAction, fromService: Boolean = false) {
+        logger.v { "action $serviceAction fromService $fromService" }
+
         if (fromService) {
-            when (action) {
-                Action.Start -> startServices()
-                Action.Stop -> stopServices()
-                Action.Reload -> reloadServices()
-            }
+            ServiceInterface.serviceAction(serviceAction)
         } else {
             if (!AppSettings.isBackgroundEnabled.data) {
                 if (NativeService.isRunning) {
@@ -53,62 +41,11 @@ object ForegroundService {
                     NativeService.stop()
                 }
 
-                when (action) {
-                    Action.Start -> startServices()
-                    Action.Stop -> stopServices()
-                    Action.Reload -> reloadServices()
-                }
+                ServiceInterface.serviceAction(serviceAction)
             } else {
                 //start or update service
-                NativeService.doAction(action)
+                NativeService.doAction(serviceAction)
             }
-        }
-    }
-
-    /**
-     * Start services according to settings
-     */
-    private fun startServices() {
-        logger.d { "startServices" }
-
-        startWakeWordService()
-        HttpServer.start()
-    }
-
-    /**
-     * Stop services according to settings
-     */
-    private fun stopServices() {
-        logger.d { "stopServices" }
-
-        NativeLocalWakeWordService.stop()
-        HttpServer.stop()
-    }
-
-    /**
-     * Reload services according to settings
-     * via start and stop
-     */
-    private fun reloadServices() {
-        logger.d { "reloadServices" }
-
-        stopServices()
-        startServices()
-    }
-
-    private fun startWakeWordService() {
-        if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.Porcupine &&
-            ConfigurationSettings.wakeWordAccessToken.data.isNotEmpty()
-        ) {
-            NativeLocalWakeWordService.start()
-        }
-    }
-
-    fun setListenForWake(value: Boolean) {
-        if (value) {
-            startWakeWordService()
-        } else {
-            NativeLocalWakeWordService.stop()
         }
     }
 }

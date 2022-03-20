@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.services.api
+package org.rhasspy.mobile.services.http
 
 import org.rhasspy.mobile.services.native.NativeCall
 

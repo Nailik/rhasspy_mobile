@@ -3,6 +3,7 @@ package org.rhasspy.mobile
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.services.ForegroundService
+import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -27,6 +28,7 @@ abstract class Application : NativeApplication() {
         //initialize/load the settings
         AppSettings
         ConfigurationSettings
+        ServiceInterface
         ForegroundService
     }
 

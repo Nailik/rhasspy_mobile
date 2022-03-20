@@ -6,6 +6,7 @@
     <string name="settings">Settings</string>
     <string name="siteId">site ID</string>
     <string name="mqtt">MQTT</string>
+    <string name="externalMQTT">External MQTT</string>
     <string name="notConnected">Not Connected</string>
     <string name="connected">Connected</string>
     <string name="on">On</string>
@@ -125,5 +126,10 @@
     <string name="save">Save</string>
     <string name="reset">Reset</string>
 
+    <string name="device">Device</string>
+    <string name="deviceSettingsInformation">This settings can be changed with MQTT commands</string>
     <string name="volume">Volume</string>
+    <string name="hotWord">HotWord (WakeWord)</string>
+    <string name="audioOutput">Audio Output</string>
+    <string name="intentHandling">Intent Handling</string>
 </resources>

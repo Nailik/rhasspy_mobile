@@ -3,7 +3,7 @@ package org.rhasspy.mobile.services
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.map
+import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.services.native.AudioRecorder
-import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.toByteArray
 import kotlin.native.concurrent.ThreadLocal
 import kotlin.time.Duration.Companion.ZERO
@@ -27,11 +27,15 @@ import kotlin.time.Duration.Companion.milliseconds
 object RecordingService {
     private val logger = Logger.withTag(this::class.simpleName!!)
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
+    private val viewScope = CoroutineScope(Dispatchers.Main)
 
     private val listening = MutableLiveData(false)
 
     //represents listening Status for ui
-    val status: LiveData<Boolean> = listening.map { it }
+    val status: LiveData<Boolean> = listening.readOnly()
+
+    // private val flow = MutableSharedFlow<ByteArray>()
+    //   val sharedFlow: Flow<ByteArray> get() = flow.takeWhile { listening.value }
 
     private var data = mutableListOf<Byte>()
 
@@ -40,8 +44,8 @@ object RecordingService {
     private var job: Job? = null
 
     //https://stackoverflow.com/questions/19145213/android-audio-capture-silence-detection
-    private fun searchThreshold(arr: ByteArray, thr: Int): Boolean {
-        arr.forEach {
+    private fun searchThreshold(byteData: List<Byte>, thr: Int): Boolean {
+        byteData.forEach {
             if (it >= thr || it <= -thr) {
                 return true
             }
@@ -54,18 +58,29 @@ object RecordingService {
      * by clicking ui
      */
     fun startRecording() {
+        if (listening.value) {
+            logger.d { "alreadyRecording" }
+            return
+        }
+
         logger.d { "startRecording" }
         firstSilenceDetected = null
-        listening.value = true
+
+        viewScope.launch {
+            listening.value = true
+        }
+
         data.clear()
-        indication()
 
         job = coroutineScope.launch {
             AudioRecorder.output.collectIndexed { _, value ->
-                data.addAll(value.toList())
 
-                if (AppSettings.isAutomaticSilenceDetection.data) {
-                    if (!searchThreshold(value, AppSettings.automaticSilenceDetectionAudioLevel.data)) {
+                val byteData = value.toList()
+                data.addAll(byteData)
+                ServiceInterface.audioFrame(byteData)
+
+                if (AppSettings.isAutomaticSilenceDetection.data && ConfigurationSettings.wakeWordOption.data != WakeWordOption.MQTT) {
+                    if (!searchThreshold(byteData, AppSettings.automaticSilenceDetectionAudioLevel.data)) {
                         if (firstSilenceDetected == null) {
                             firstSilenceDetected = Clock.System.now()
 
@@ -73,12 +88,7 @@ object RecordingService {
                             (-AppSettings.automaticSilenceDetectionTime.data).milliseconds
                         ) {
                             logger.i { "diff ${firstSilenceDetected?.minus(Clock.System.now())}" }
-
-                            CoroutineScope(Dispatchers.Main).launch {
-                                //stop instantly
-                                listening.value = false
-                                ServiceInterface.stopRecording()
-                            }
+                            ServiceInterface.silenceDetected()
                         }
                     }
                 }
@@ -94,61 +104,28 @@ object RecordingService {
     fun stopRecording() {
         logger.d { "stopRecording" }
 
-        listening.value = false
-        stopIndication()
+        viewScope.launch {
+            listening.value = false
+        }
+
         AudioRecorder.stopRecording()
         job?.cancel()
     }
 
-    /**
-     * starts wake word indication according to settings
-     */
-    private fun indication() {
-        logger.d { "indication" }
-
-        if (AppSettings.isWakeWordSoundIndication.data) {
-            NativeIndication.playAudio(MR.files.etc_wav_beep_hi)
-        }
-
-        if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data) {
-            NativeIndication.wakeUpScreen()
-        }
-
-        if (AppSettings.isWakeWordLightIndication.data) {
-            NativeIndication.showIndication()
-        }
-    }
-
-    /**
-     * stops all indications
-     */
-    private fun stopIndication() {
-        logger.d { "stopIndication" }
-
-        NativeIndication.closeIndicationOverOtherApps()
-        NativeIndication.releaseWakeUp()
-    }
-
-    fun getLatestRecording(): ByteArray {
+    fun List<Byte>.addWavHeader(): List<Byte> {
         //https://stackoverflow.com/questions/13039846/what-do-the-bytes-in-a-wav-file-represent
-        val byteData = data.toByteArray()
-
-        val fileSize = (byteData.size + 44 - 8).toByteArray()
-        val dataSize = byteData.size.toByteArray()
-
+        val dataSize = (this.size + 44 - 8).toByteArray()
+        val audioDataSize = this.size.toByteArray()
 
         val header = byteArrayOf(
             82, 73, 70, 70,
-            fileSize[0], fileSize[1], fileSize[2], fileSize[3], //4-7 overall size
+            dataSize[0], dataSize[1], dataSize[2], dataSize[3], //4-7 overall size
             87, 65, 86, 69, 102, 109, 116, 32, 16, 0, 0, 0, 1, 0, 1, 0, -128, 62, 0, 0, 0, 125, 0, 0, 2, 0, 16, 0, 100, 97, 116, 97,
-            dataSize[0], dataSize[1], dataSize[2], dataSize[3] //40-43 data size of rest
+            audioDataSize[0], audioDataSize[1], audioDataSize[2], audioDataSize[3] //40-43 data size of rest
         )
-
-
-        return mutableListOf<Byte>().apply {
-            addAll(header.toList())
-            addAll(byteData.toList())
-        }.toByteArray()
+        val result = this.toMutableList()
+        result.addAll(0, header.toList())
+        return result
     }
 
 }

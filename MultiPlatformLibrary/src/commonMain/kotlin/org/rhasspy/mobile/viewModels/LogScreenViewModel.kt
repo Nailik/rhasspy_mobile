@@ -14,11 +14,15 @@ class LogScreenViewModel : ViewModel() {
 
     init {
         //load file into list
-        logArr.value = FileLogger.getLines().reversed()
+        CoroutineScope(Dispatchers.Default).launch {
+            val lines = FileLogger.getLines().reversed()
+            viewModelScope.launch {
+                logArr.value = lines
+            }
 
-        viewModelScope.launch {
+            //collect new log
             FileLogger.flow.collectIndexed { _, value ->
-                CoroutineScope(Dispatchers.Main).launch {
+                viewModelScope.launch {
                     val list = mutableListOf<LogElement>()
                     list.addAll(logArr.value)
                     list.add(0, value)

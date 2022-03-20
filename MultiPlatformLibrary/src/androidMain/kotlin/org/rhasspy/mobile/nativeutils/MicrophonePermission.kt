@@ -12,7 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.map
+import dev.icerock.moko.mvvm.livedata.readOnly
 import org.rhasspy.mobile.Application
 
 actual object MicrophonePermission {
@@ -21,7 +21,7 @@ actual object MicrophonePermission {
 
     private var launcher: ActivityResultLauncher<String>? = null
 
-    actual val granted: LiveData<Boolean> = status.map { it }
+    actual val granted: LiveData<Boolean> = status.readOnly()
 
     private var onResultCallback: ((Boolean) -> Unit)? = null
 

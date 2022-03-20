@@ -1,18 +1,14 @@
-package org.rhasspy.mobile.services.api
+package org.rhasspy.mobile.services.http
 
 import co.touchlab.kermit.Logger
 import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.services.ForegroundService
-import org.rhasspy.mobile.services.RecordingService
 import org.rhasspy.mobile.services.ServiceInterface
-import org.rhasspy.mobile.services.api.HttpMethodWrapper.GET
-import org.rhasspy.mobile.services.api.HttpMethodWrapper.POST
-import org.rhasspy.mobile.services.native.AudioPlayer
+import org.rhasspy.mobile.services.http.HttpMethodWrapper.GET
+import org.rhasspy.mobile.services.http.HttpMethodWrapper.POST
 import org.rhasspy.mobile.services.native.NativeServer
-import org.rhasspy.mobile.settings.AppSettings
 import kotlin.native.concurrent.ThreadLocal
 
 //https://rhasspy.readthedocs.io/en/latest/reference/#http-api
@@ -68,7 +64,7 @@ object HttpServer {
         logger.v { "received $action" }
 
         action?.also {
-            ForegroundService.setListenForWake(action)
+            ServiceInterface.hotWordToggle(action)
         } ?: kotlin.run {
             logger.w { "invalid body" }
         }
@@ -83,7 +79,7 @@ object HttpServer {
     private fun playRecordingPost() = HttpCallWrapper("/api/play-recording", POST) {
         logger.v { "post /api/play-recording" }
 
-        AudioPlayer.playData(RecordingService.getLatestRecording())
+        ServiceInterface.playRecording()
     }
 
 
@@ -95,7 +91,7 @@ object HttpServer {
         logger.v { "get /api/play-recording" }
 
         respondBytes(
-            bytes = RecordingService.getLatestRecording(),
+            bytes = ServiceInterface.getPreviousRecording().toByteArray(),
             contentType = ContentType("audio", "wav")
         )
     }
@@ -113,7 +109,8 @@ object HttpServer {
         if (requestContentType() == ContentType("audio", "wav")) {
             ServiceInterface.playAudio(receive())
         } else {
-            logger.w { "invalid content type ${requestContentType()}" }
+            logger.w { "invalid content type ${requestContentType()} but trying" }
+            ServiceInterface.playAudio(receive())
         }
     }
 
@@ -132,7 +129,7 @@ object HttpServer {
         volume?.also {
             if (volume > 0F && volume < 1F) {
                 CoroutineScope(Dispatchers.Main).launch {
-                    AppSettings.volume.data = volume
+                    ServiceInterface.setVolume(volume)
                 }
             }
             return@HttpCallWrapper
@@ -145,18 +142,21 @@ object HttpServer {
     /**
      * /api/start-recording
      * POST to have Rhasspy start recording a voice command
+     * actually starts a session
      */
     private fun startRecording() = HttpCallWrapper("/api/start-recording", POST) {
         logger.v { "post /api/start-recording" }
 
-        CoroutineScope(Dispatchers.Main).launch {
-            ServiceInterface.startRecording()
-        }
+        ServiceInterface.startSession()
     }
 
     /**
      * /api/stop-recording
      * POST to have Rhasspy stop recording and process recorded data as a voice command
+     * handled just like silence was detected
+     * (if dialogue management was set to local)
+     *
+     * Not Yet:
      * Returns intent JSON when command has been processed
      * ?nohass=true - stop Rhasspy from handling the intent
      * ?entity=<entity>&value=<value> - set custom entity/value in recognized intent
@@ -164,9 +164,7 @@ object HttpServer {
     private fun stopRecording() = HttpCallWrapper("/api/stop-recording", POST) {
         logger.v { "post /api/stop-recording" }
 
-        CoroutineScope(Dispatchers.Main).launch {
-            ServiceInterface.stopRecording()
-        }
+        ServiceInterface.stopListening()
     }
 
 }

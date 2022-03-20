@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.map
+import dev.icerock.moko.mvvm.livedata.readOnly
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +20,7 @@ class SettingsScreenViewModel : ViewModel() {
     val audioLevel: LiveData<Int> = currentAudioLevel.map { it.toInt() }
 
     private val currentStatus = MutableLiveData(false)
-    val status: LiveData<Boolean> = currentStatus.map { it }
+    val status: LiveData<Boolean> = currentStatus.readOnly()
 
     private var job: Job? = null
 
@@ -38,7 +39,7 @@ class SettingsScreenViewModel : ViewModel() {
         currentAudioLevel.value = 0
         currentStatus.value = true
 
-        job = viewModelScope.launch {
+        job = CoroutineScope(Dispatchers.Default).launch {
             AudioRecorder.output.collectIndexed { _, value ->
                 var max: Byte = 0
                 value.forEach {
@@ -46,7 +47,7 @@ class SettingsScreenViewModel : ViewModel() {
                         max = it
                     }
                 }
-                CoroutineScope(Dispatchers.Main).launch {
+                viewModelScope.launch {
                     currentAudioLevel.value = max
                 }
             }
