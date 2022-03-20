@@ -17,7 +17,7 @@ import org.rhasspy.mobile.services.ServiceNotification
  * Native Service to run continuously in background
  */
 actual class NativeService : android.app.Service() {
-    private val logger = Logger.withTag(this::class.simpleName!!)
+    private val logger = Logger.withTag("NativeService")
 
     /**
      * create service, show notification and start in foreground
@@ -66,7 +66,7 @@ actual class NativeService : android.app.Service() {
     }
 
     actual companion object {
-        private val logger = Logger.withTag(this::class.simpleName!!)
+        private val logger = Logger.withTag("NativeService")
 
         const val ACTION = "Action"
 

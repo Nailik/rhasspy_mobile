@@ -6,7 +6,7 @@ plugins {
     id("dev.icerock.mobile.multiplatform-resources")
 }
 
-version = "0.1"
+version = "0.2"
 
 kotlin {
     android()

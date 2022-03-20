@@ -23,7 +23,7 @@ import kotlin.native.concurrent.ThreadLocal
 
 @ThreadLocal
 object ServiceInterface {
-    private val logger = Logger.withTag(this::class.simpleName!!)
+    private val logger = Logger.withTag("ServiceInterface")
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     //toggle on off from mqtt or http service

@@ -26,7 +26,7 @@ import kotlin.time.Duration.Companion.milliseconds
  */
 @ThreadLocal
 object RecordingService {
-    private val logger = Logger.withTag(this::class.simpleName!!)
+    private val logger = Logger.withTag("RecordingService")
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     private val listening = MutableLiveData(false)

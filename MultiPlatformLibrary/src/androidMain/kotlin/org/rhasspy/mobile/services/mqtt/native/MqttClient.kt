@@ -22,7 +22,7 @@ actual class MqttClient actual constructor(
     onMessageReceived: (topic: String, message: MqttMessage) -> Unit,
     onDisconnect: (error: Throwable) -> Unit
 ) {
-    private val logger = Logger.withTag(this::class.simpleName!!)
+    private val logger = Logger.withTag("MqttClient")
 
     private var client = when (persistenceType) {
         MqttPersistence.MEMORY -> PahoMqttClient(brokerUrl, clientId, MemoryPersistence())

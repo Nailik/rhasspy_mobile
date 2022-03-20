@@ -21,7 +21,7 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
     }
 
     actual fun appendText(element: String) {
-        file.appendText(",\n$element")
+        file.appendText("\n$element")
 
         if (maxFileSize != 0L) {
             if (file.length() / 1024 >= maxFileSize) {

@@ -22,7 +22,7 @@ import kotlin.native.concurrent.ThreadLocal
 
 @ThreadLocal
 object MqttService {
-    private val logger = Logger.withTag(this::class.simpleName!!)
+    private val logger = Logger.withTag("MqttService")
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     private var client: MqttClient? = null

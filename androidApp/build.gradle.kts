@@ -10,11 +10,11 @@ android {
         applicationId = "org.rhasspy.mobile.android"
         minSdk = 23
         targetSdk = 32
-        versionCode = 1
-        versionName = "0.1"
+        versionCode = 2
+        versionName = "0.2"
     }
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
@@ -38,13 +38,14 @@ android {
         }
     }
     packagingOptions {
-        resources.pickFirsts.add("META-INF/*")
+        //else netty finds multiple INDEX.LIST files
+        resources.pickFirsts.add("META-INF/INDEX.LIST")
+        resources.pickFirsts.add("META-INF/io.netty.versions.properties")
     }
 }
 
 kotlin {
     sourceSets {
-
         all {
             //Warning: This class can only be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'
             languageSettings.optIn("kotlin.RequiresOptIn")
