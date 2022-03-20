@@ -16,7 +16,7 @@ import org.rhasspy.mobile.settings.AppSettings
 actual object NativeIndication {
 
     val showVisualIndication = MutableLiveData(false)
-    var wakeLock: PowerManager.WakeLock? = null
+    private var wakeLock: PowerManager.WakeLock? = null
 
     /**
      * play audio resource

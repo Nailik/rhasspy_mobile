@@ -31,7 +31,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import co.touchlab.kermit.Logger
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.rhasspy.mobile.MR
@@ -54,8 +53,6 @@ import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.GlobalData
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
-
-private val logger = Logger.withTag("MainActivity")
 
 class MainActivity : ComponentActivity() {
 

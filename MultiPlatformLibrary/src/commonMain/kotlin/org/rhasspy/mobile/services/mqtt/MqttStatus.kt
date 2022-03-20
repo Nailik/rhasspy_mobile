@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.services.mqtt
 
 /** Contains all possible MQTT states. */
+@Suppress("unused")
 enum class MqttStatus {
     SUCCESS,
     UNACCEPTABLE_PROTOCOL,
