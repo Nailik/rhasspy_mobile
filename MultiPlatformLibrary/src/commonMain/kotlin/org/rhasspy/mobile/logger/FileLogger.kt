@@ -59,9 +59,6 @@ object FileLogger : LogWriter() {
 
     fun getLines(): List<LogElement> = Json.decodeFromString("[${fileWriter.getFileContent()}]")
 
-
-    fun exportLogFile() = fileWriter.exportFile()
-
     fun shareLogFile() = fileWriter.shareFile()
 
 }

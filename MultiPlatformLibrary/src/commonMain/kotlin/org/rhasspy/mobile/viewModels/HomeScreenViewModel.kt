@@ -61,8 +61,6 @@ class HomeScreenViewModel : ViewModel() {
 
     fun resetChanges() = ServiceInterface.resetChanges()
 
-    fun exportLogFile() = FileLogger.exportLogFile()
-
     fun shareLogFile() = FileLogger.shareLogFile()
 
 

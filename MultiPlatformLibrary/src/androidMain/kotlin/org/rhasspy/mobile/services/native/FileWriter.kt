@@ -54,14 +54,10 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
             .setType("text/html")
             .intent
             .setAction(Intent.ACTION_SEND) //Change if needed
-            .setDataAndType(fileUri, "application/txt")
+            .setDataAndType(fileUri, "text/*")
             .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         Application.Instance.startActivity(intent)
-    }
-
-    actual fun exportFile() {
-
     }
 
 }

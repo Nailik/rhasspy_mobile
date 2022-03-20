@@ -189,7 +189,7 @@ fun TopAppBar(viewModel: HomeScreenViewModel, snackbarHostState: SnackbarHostSta
                 UnsavedChanges(viewModel)
             } else {
                 //only on log screen
-                ShareLogFiles(viewModel)
+                ShareLogFile(viewModel)
             }
         }
     )
@@ -271,16 +271,8 @@ fun UnsavedChanges(viewModel: HomeScreenViewModel) {
 
 
 @Composable
-fun ShareLogFiles(viewModel: HomeScreenViewModel) {
+fun ShareLogFile(viewModel: HomeScreenViewModel) {
     Row(modifier = Modifier.padding(start = 8.dp)) {
-        IconButton(onClick = { viewModel.exportLogFile() })
-        {
-            Icon(
-                imageVector = Icons.Filled.FileDownload,
-                contentDescription = MR.strings.reset
-            )
-        }
-        Spacer(modifier = Modifier.width(16.dp))
         IconButton(onClick = { viewModel.shareLogFile() })
         {
             Icon(
