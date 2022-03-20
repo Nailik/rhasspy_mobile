@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.Application
 
 actual object AudioRecorder {
-    private val logger = Logger.withTag(this::class.simpleName!!)
+    private val logger = Logger.withTag("AudioRecorder")
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 

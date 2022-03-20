@@ -17,7 +17,7 @@ import org.rhasspy.mobile.settings.AppSettings
  * - HTTP Services
  */
 object ForegroundService {
-    private val logger = Logger.withTag(this::class.simpleName!!)
+    private val logger = Logger.withTag("ForegroundService")
 
     init {
         //when background enabled value changes, services need to be reloaded

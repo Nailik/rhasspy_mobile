@@ -15,7 +15,7 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
  * Listens to WakeWord with Porcupine
  */
 actual object NativeLocalWakeWordService : PorcupineManagerCallback {
-    private val logger = Logger.withTag(this::class.simpleName!!)
+    private val logger = Logger.withTag("NativeLocalWakeWordService")
 
     //manager to stop start and reload porcupine
     private var porcupineManager: PorcupineManager? = null

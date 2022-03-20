@@ -12,7 +12,7 @@ import kotlin.native.concurrent.ThreadLocal
 
 @ThreadLocal
 object UdpService {
-    private val logger = Logger.withTag(this::class.simpleName!!)
+    private val logger = Logger.withTag("UdpService")
 
     private var networkAddress: NetworkAddress? = null
     private var sendChannel: SendChannel<Datagram>? = null
