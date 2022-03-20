@@ -51,13 +51,11 @@ actual class MqttClient actual constructor(
         if (!topic.contains("audioFrame")) {
             //logging every audio frame really fills up the logs
             logger.v {
-                "publish $topic ${msg.payload is ByteArray} $msg "
+                "publish $topic $msg"
             }
         }
 
-        val data = if (msg.payload !is ByteArray) msg.payload.toString().toByteArray() else msg.payload
-
-        client.publish(topic, PahoMqttMessage(data).apply {
+        client.publish(topic, PahoMqttMessage(msg.payload).apply {
             id = msg.msgId
             qos = msg.qos.value
             isRetained = msg.retained

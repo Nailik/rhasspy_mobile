@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.readOnly
+import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,14 +22,12 @@ import kotlin.native.concurrent.ThreadLocal
 object MqttService {
     private val logger = Logger.withTag(this::class.simpleName!!)
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
-    private val mainScope = CoroutineScope(Dispatchers.Main)
 
     private var client: MqttClient? = null
 
     private val connected = MutableLiveData(false)
     val isConnected = connected.readOnly()
 
-    private val sendIds = mutableListOf<Int>()
     private const val id = 98489482
 
     /**
@@ -149,7 +148,7 @@ object MqttService {
         //subSequence so we don't print super long wave data
         logger.v {
             "onMessageReceived id ${message.msgId} $topic ${
-                message.payload.toString().subSequence(1, min(message.payload.toString().length, 300))
+                message.payload.decodeToString().subSequence(1, min(message.payload.decodeToString().length, 300))
             }"
         }
 
@@ -243,7 +242,7 @@ object MqttService {
      * hermes/dialogueManager/sessionQueued
      */
     private fun startSession(message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
             ServiceInterface.startSession()
@@ -260,7 +259,7 @@ object MqttService {
      * sessionId: string - current session ID (required)
      */
     private fun endSession(message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
             ServiceInterface.endSession(jsonObject["sessionId"]?.jsonPrimitive?.content)
@@ -281,7 +280,7 @@ object MqttService {
      * used to save the sessionId and check for it when recording etc
      */
     private fun sessionStarted(message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
             jsonObject["sessionId"]?.jsonPrimitive?.content?.also {
@@ -309,7 +308,7 @@ object MqttService {
                 payload = Json.encodeToString(buildJsonObject {
                     put("sessionId", sessionId)
                     put("siteId", ConfigurationSettings.siteId.value)
-                })
+                }).toByteArray()
             )
         )
     }
@@ -324,7 +323,7 @@ object MqttService {
      * Response to hermes/dialogueManager/endSession or other reasons for a session termination
      */
     private fun sessionEnded(message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
             jsonObject["sessionId"]?.jsonPrimitive?.content?.also {
@@ -352,7 +351,7 @@ object MqttService {
                 payload = Json.encodeToString(buildJsonObject {
                     put("sessionId", sessionId)
                     put("siteId", ConfigurationSettings.siteId.data)
-                })
+                }).toByteArray()
             )
         )
     }
@@ -369,7 +368,7 @@ object MqttService {
                 payload = Json.encodeToString(buildJsonObject {
                     put("sessionId", sessionId)
                     put("siteId", ConfigurationSettings.siteId.data)
-                })
+                }).toByteArray()
             )
         )
     }
@@ -394,7 +393,7 @@ object MqttService {
      * reason: string = "" - Reason for toggle on
      */
     private fun hotWordToggleOn(message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
             ServiceInterface.hotWordToggle(true)
@@ -410,7 +409,7 @@ object MqttService {
      * reason: string = "" - Reason for toggle off
      */
     private fun hotWordToggleOff(message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
             ServiceInterface.hotWordToggle(false)
@@ -429,7 +428,7 @@ object MqttService {
      * siteId: string = "default" - Hermes site ID
      */
     private fun hotWordDetected(message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
             ServiceInterface.hotWordDetected(true)
@@ -459,7 +458,7 @@ object MqttService {
                         "modelId",
                         "/usr/lib/rhasspy/.venv/lib/python3.7/site-packages/pvporcupine/resources/keyword_files/linux/jarvis_linux.ppn"
                     )
-                })
+                }).toByteArray()
             )
         )
     }
@@ -478,7 +477,7 @@ object MqttService {
                 payload = Json.encodeToString(buildJsonObject {
                     put("error", description)
                     put("siteId", ConfigurationSettings.siteId.data)
-                })
+                }).toByteArray()
             )
         )
     }
@@ -491,7 +490,7 @@ object MqttService {
      * wakewordId: string? = null - id of wake word that triggered session (Rhasspy only)
      */
     private fun startListening(message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
             ServiceInterface.startListening(
@@ -521,7 +520,7 @@ object MqttService {
                     put("sessionId", sessionId)
                     put("stopOnSilence", true)
                     put("sendAudioCaptured", true)
-                })
+                }).toByteArray()
             )
         )
     }
@@ -534,7 +533,7 @@ object MqttService {
      * sessionId: string = "" - current session ID
      */
     private fun stopListening(message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
             ServiceInterface.stopListening(jsonObject["sessionId"]?.jsonPrimitive?.content, true)
@@ -557,7 +556,7 @@ object MqttService {
                 payload = Json.encodeToString(buildJsonObject {
                     put("siteId", ConfigurationSettings.siteId.data)
                     put("sessionId", sessionId)
-                })
+                }).toByteArray()
             )
         )
     }
@@ -571,7 +570,7 @@ object MqttService {
      * sessionId: string? = null - current session ID
      */
     private fun asrTextCaptured(message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
             ServiceInterface.asrTextCaptured(
@@ -598,7 +597,7 @@ object MqttService {
                     put("text", JsonPrimitive(text))
                     put("siteId", ConfigurationSettings.siteId.data)
                     put("sessionId", sessionId)
-                })
+                }).toByteArray()
             )
         )
     }
@@ -611,7 +610,7 @@ object MqttService {
      * sessionId: string? = null - current session ID
      */
     private fun asrError(message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
             ServiceInterface.asrError(jsonObject["sessionId"]?.jsonPrimitive?.content)
@@ -634,7 +633,7 @@ object MqttService {
                 payload = Json.encodeToString(buildJsonObject {
                     put("siteId", ConfigurationSettings.siteId.data)
                     put("sessionId", sessionId)
-                })
+                }).toByteArray()
             )
         )
     }
@@ -674,7 +673,7 @@ object MqttService {
                     put("input", JsonPrimitive(text))
                     put("siteId", ConfigurationSettings.siteId.data)
                     put("sessionId", sessionId)
-                })
+                }).toByteArray()
             )
         )
     }
@@ -691,7 +690,7 @@ object MqttService {
      * Response to hermes/nlu/query
      */
     private fun intentRecognitionResult(message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
             val intent = jsonObject["intent"]?.jsonObject?.toString()
@@ -713,7 +712,7 @@ object MqttService {
      * siteId: string = "default" - Hermes site ID
      */
     private fun intentNotRecognized(message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
             ServiceInterface.intentNotRecognized(jsonObject["sessionId"]?.jsonPrimitive?.content)
@@ -727,7 +726,7 @@ object MqttService {
      * Enable intent handling
      */
     private fun intentHandlingToggleOn(message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
             ServiceInterface.intentHandlingToggle(true)
@@ -742,7 +741,7 @@ object MqttService {
      * Disable intent handling
      */
     private fun intentHandlingToggleOff(message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
             ServiceInterface.intentHandlingToggle(false)
@@ -774,7 +773,7 @@ object MqttService {
                     put("text", JsonPrimitive(text))
                     put("siteId", ConfigurationSettings.siteId.data)
                     put("sessionId", sessionId)
-                })
+                }).toByteArray()
             )
         )
     }
@@ -793,11 +792,7 @@ object MqttService {
     private fun playBytes(message: MqttMessage) {
         //not necessary to check SiteId for this topic, because it is in topic string
         if (ConfigurationSettings.audioPlayingOption.data != AudioPlayingOptions.RemoteMQTT) {
-            if (message.payload is ByteArray) {
-                ServiceInterface.playAudio(message.payload.toList())
-            } else {
-                logger.d { "received playBytes with invalid payload data type" }
-            }
+            ServiceInterface.playAudio(message.payload.toList())
         } else {
             logger.d { "received playBytes but audio playing is set to mqtt, ignoring this to prevent looping" }
         }
@@ -828,7 +823,7 @@ object MqttService {
      * siteId: string = "default" - Hermes site ID
      */
     private fun audioOutputToggleOff(message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
             ServiceInterface.audioServerToggle(false)
@@ -843,7 +838,7 @@ object MqttService {
      * siteId: string = "default" - Hermes site ID
      */
     private fun audioOutputToggleOn(message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
             ServiceInterface.audioServerToggle(true)
@@ -862,7 +857,7 @@ object MqttService {
         publishMessage(
             MQTTTopicsPublish.AudioOutputPlayFinished.topic
                 .replace("<siteId>", ConfigurationSettings.siteId.data),
-            MqttMessage("")
+            MqttMessage(ByteArray(0))
         )
     }
 
@@ -873,7 +868,7 @@ object MqttService {
      * siteId: string = "default" - Hermes site ID
      */
     private fun setVolume(message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
+        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
             jsonObject["volume"]?.jsonPrimitive?.floatOrNull?.also {

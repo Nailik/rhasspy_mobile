@@ -67,6 +67,7 @@ actual object AudioPlayer {
 
         } catch (e: Exception) {
             logger.e(e) { "Exception while playing audio data" }
+            ServiceInterface.playFinished()
         }
     }
 
