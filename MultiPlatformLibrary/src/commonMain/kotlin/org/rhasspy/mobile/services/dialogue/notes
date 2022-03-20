@@ -224,8 +224,8 @@ Speak a sentence
 
 # Output Messages
 
-//hermes/tts/sayFinished
-//Finished generating audio (actually spoken with playBytes)
+hermes/tts/sayFinished
+Finished generating audio (actually spoken with playBytes)
 
 //rhasspy/tts/voices
 //Description of available voices

@@ -27,7 +27,7 @@ enum class MQTTTopicsSubscription(val topic: String) {
 
     companion object {
         fun fromTopic(topic: String): MQTTTopicsSubscription? {
-            return MQTTTopicsSubscription.values().firstOrNull { it.topic == topic }
+            return values().firstOrNull { it.topic == topic }
         }
     }
 

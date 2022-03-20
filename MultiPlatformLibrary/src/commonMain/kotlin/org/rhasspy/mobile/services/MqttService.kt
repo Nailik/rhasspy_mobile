@@ -124,8 +124,12 @@ object MqttService {
     private suspend fun subscribeTopics() {
         logger.v { "subscribeTopics" }
 
+        //subscribe to topics with this site id (if contained in topic, currently only in PlayBytes)
         MQTTTopicsSubscription.values().forEach { topic ->
-            client?.subscribe(topic.topic)?.also {
+            client?.subscribe(
+                topic.topic
+                    .replace("<siteId>", ConfigurationSettings.siteId.data)
+            )?.also {
                 logger.e { "subscribe $topic \n${it.statusCode.name} ${it.msg}" }
             }
         }
@@ -175,28 +179,29 @@ object MqttService {
                 MQTTTopicsSubscription.AudioOutputToggleOn -> audioOutputToggleOn(message)
                 MQTTTopicsSubscription.SetVolume -> setVolume(message)
                 else -> {
-                    if (MQTTTopicsSubscription.PlayBytes.topic
+                    when {
+                        MQTTTopicsSubscription.PlayBytes.topic
                             .replace("<siteId>", ConfigurationSettings.siteId.data)
                             .replace("/", "\\/") //escape slashes
                             .replace("+", ".*") //replace wildcard with regex text
                             .toRegex()
-                            .matches(topic)
-                    ) {
-                        playBytes(message)
-                    } else if (MQTTTopicsSubscription.HotWordDetected.topic
+                            .matches(topic) -> {
+                            playBytes(message)
+                        }
+                        MQTTTopicsSubscription.HotWordDetected.topic
                             .replace("/", "\\/") //escape slashes
                             .replace("+", ".*") //replace wildcard with regex text
                             .toRegex()
-                            .matches(topic)
-                    ) {
-                        hotWordDetected(message)
-                    } else if (MQTTTopicsSubscription.IntentRecognitionResult.topic
+                            .matches(topic) -> {
+                            hotWordDetected(message)
+                        }
+                        MQTTTopicsSubscription.IntentRecognitionResult.topic
                             .replace("/", "\\/") //escape slashes
                             .replace("+", ".*") //replace wildcard with regex text
                             .toRegex()
-                            .matches(topic)
-                    ) {
-                        intentRecognitionResult(message)
+                            .matches(topic) -> {
+                            intentRecognitionResult(message)
+                        }
                     }
                 }
             }
@@ -354,21 +359,6 @@ object MqttService {
     }
 
     /**
-     * hermes/dialogueManager/continueSession (JSON)
-     * Requests that a session be continued after an intent has been recognized
-     * sessionId: string - current session ID (required)
-     */
-    fun continueSession(sessionId: String?) {
-        publishMessage(
-            MQTTTopicsPublish.ContinueSession.topic, MqttMessage(
-                payload = Json.encodeToString(buildJsonObject {
-                    put("sessionId", sessionId)
-                })
-            )
-        )
-    }
-
-    /**
      * hermes/dialogueManager/intentNotRecognized (JSON)
      *
      * sessionId: string - current session ID
@@ -394,15 +384,6 @@ object MqttService {
     fun audioFrame(byteArray: List<Byte>) {
         publishMessage(
             MQTTTopicsPublish.AsrAudioFrame.topic.replace("<siteId>", ConfigurationSettings.siteId.data),
-            MqttMessage(byteArray.toByteArray())
-        )
-    }
-
-    fun audioSessionFrame(sessionId: String?, byteArray: List<Byte>) {
-        publishMessage(
-            MQTTTopicsPublish.AsrAudioSessionFrame.topic
-                .replace("<siteId>", ConfigurationSettings.siteId.data)
-                .replace("<sessionId>", sessionId ?: ""),
             MqttMessage(byteArray.toByteArray())
         )
     }
@@ -750,7 +731,7 @@ object MqttService {
      */
     fun say(sessionId: String?, text: String) {
         publishMessage(
-            MQTTTopicsPublish.SessionStarted.topic, MqttMessage(
+            MQTTTopicsPublish.Say.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("text", JsonPrimitive(text))
                     put("siteId", ConfigurationSettings.siteId.data)
@@ -772,18 +753,15 @@ object MqttService {
      * hermes/audioServer/<siteId>/playFinished (JSON)
      */
     private fun playBytes(message: MqttMessage) {
-        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.toString())
-
-        if (jsonObject.isThisSiteId()) {
-            if (ConfigurationSettings.audioPlayingOption.data != AudioPlayingOptions.RemoteMQTT) {
-                jsonObject["wav_bytes"]?.jsonObject?.get("data")?.also {
-                    ServiceInterface.playAudio(Json.decodeFromString(it.toString()))
-                }
+        //not necessary to check SiteId for this topic, because it is in topic string
+        if (ConfigurationSettings.audioPlayingOption.data != AudioPlayingOptions.RemoteMQTT) {
+            if (message.payload is ByteArray) {
+                ServiceInterface.playAudio(message.payload.toList())
             } else {
-                logger.d { "received playBytes but audio playing is set to mqtt, ignoring this to prevent looping" }
+                logger.d { "received playBytes with invalid payload data type" }
             }
         } else {
-            logger.d { "received playBytes but for other siteId" }
+            logger.d { "received playBytes but audio playing is set to mqtt, ignoring this to prevent looping" }
         }
     }
 

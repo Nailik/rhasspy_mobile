@@ -7,6 +7,7 @@ import dev.icerock.moko.mvvm.livedata.postValue
 import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.services.*
@@ -556,7 +557,7 @@ object ServiceInterface {
                         playAudio(it)
                     }
                 }
-                //TODO implement say finished to play generated audio
+                //when mqtt is used, say will published and automatically playBytes will be invoked on this siteId
                 TextToSpeechOptions.RemoteMQTT -> MqttService.say(currentSessionId, text)
                 TextToSpeechOptions.Disabled -> logger.d { "textToSpeech disabled" }
             }

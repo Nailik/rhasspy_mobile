@@ -183,7 +183,7 @@ actual class MqttClient actual constructor(
         return MqttMessage(
             msgId = id,
             qos = MqttQos.createMqttQos(qos),
-            payload = payload.decodeToString(),
+            payload = payload,
             retained = isRetained
         )
     }

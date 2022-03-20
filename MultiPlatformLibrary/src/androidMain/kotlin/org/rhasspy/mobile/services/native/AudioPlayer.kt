@@ -33,7 +33,7 @@ actual object AudioPlayer {
             //Sample rate as a 4 byte (32 bit) integer.
             val sampleRate = ByteBuffer.wrap(byteArray.copyOfRange(24, 28).reversedArray()).int
             //41-44 The number of bytes of the data section below this
-            val audioDataSize = ByteBuffer.wrap(byteArray.copyOfRange(40, 43).reversedArray()).int / 2 //(pcm)
+            val audioDataSize = ByteBuffer.wrap(byteArray.copyOfRange(40, 44).reversedArray()).int / 2 //(pcm)
 
             val audioTrack = AudioTrack(
                 AudioAttributes.Builder()
