@@ -184,7 +184,7 @@ fun IndicatedSmallIcon(isIndicated: Boolean, rotationTarget: Float = 180f, icon:
 }
 
 @Composable
-fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, onSelect: (item: E) -> Unit, values: () -> Array<E>) {
+fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, enabled: Boolean = true, onSelect: (item: E) -> Unit, values: () -> Array<E>) {
     var isExpanded by remember { mutableStateOf(false) }
 
     ListElement(modifier = Modifier
@@ -212,6 +212,7 @@ fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, onSelect: (item: E) -> U
             values().forEach {
                 DropdownMenuItem(
                     text = { Text(it.text) },
+                    enabled = enabled,
                     onClick = { isExpanded = false; onSelect(it) })
             }
         }
@@ -281,13 +282,19 @@ private fun ExpandableListItemInternal(
 }
 
 @Composable
-fun SwitchListItem(text: StringResource, secondaryText: StringResource? = null, isChecked: Boolean, onCheckedChange: ((Boolean) -> Unit)) {
+fun SwitchListItem(
+    text: StringResource,
+    secondaryText: StringResource? = null,
+    enabled: Boolean = true,
+    isChecked: Boolean, onCheckedChange: ((Boolean) -> Unit)
+) {
     ListElement(modifier = Modifier
         .clickable { onCheckedChange(!isChecked) },
         text = { Text(text) },
         secondaryText = secondaryText?.let { { Text(secondaryText) } } ?: run { null },
         trailing = {
             Switch(
+                enabled = enabled,
                 checked = isChecked,
                 onCheckedChange = null
             )
@@ -326,6 +333,7 @@ fun TextFieldListItem(
     value: String,
     readOnly: Boolean = false,
     autoCorrect: Boolean = false,
+    enabled: Boolean = true,
     onValueChange: ((String) -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     trailingIcon: @Composable (() -> Unit)? = null,
@@ -344,6 +352,7 @@ fun TextFieldListItem(
             singleLine = true,
             value = value,
             readOnly = readOnly,
+            enabled = enabled,
             textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colorScheme.onBackground),
             keyboardOptions = keyboardOptions.copy(autoCorrect = autoCorrect),
             onValueChange = { onValueChange?.invoke(it) },
@@ -365,14 +374,14 @@ fun TextFieldListItem(
 }
 
 @Composable
-fun OutlineButtonListItem(text: StringResource, onClick: () -> Unit) {
+fun OutlineButtonListItem(text: StringResource, enabled: Boolean = true, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .wrapContentSize(Alignment.Center)
     ) {
-        OutlinedButton(onClick = onClick) {
+        OutlinedButton(enabled = enabled, onClick = onClick) {
             Text(text)
         }
     }
@@ -380,7 +389,7 @@ fun OutlineButtonListItem(text: StringResource, onClick: () -> Unit) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SliderListItem(text: StringResource, value: Float, onValueChange: (Float) -> Unit) {
+fun SliderListItem(text: StringResource, value: Float, enabled: Boolean = true, onValueChange: (Float) -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -391,6 +400,7 @@ fun SliderListItem(text: StringResource, value: Float, onValueChange: (Float) ->
 
         Slider(
             modifier = Modifier.padding(top = 12.dp),
+            enabled = enabled,
             value = value,
             onValueChange = onValueChange
         )
@@ -399,10 +409,10 @@ fun SliderListItem(text: StringResource, value: Float, onValueChange: (Float) ->
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RadioButtonListItem(text: StringResource, isChecked: Boolean, onClick: () -> Unit) {
+fun RadioButtonListItem(text: StringResource, isChecked: Boolean, enabled: Boolean = true, onClick: () -> Unit) {
     ListElement(modifier = Modifier.clickable { onClick() }) {
         Row {
-            RadioButton(selected = isChecked, onClick = onClick)
+            RadioButton(selected = isChecked, enabled = enabled, onClick = onClick)
             Text(text, modifier = Modifier.weight(1f))
         }
     }

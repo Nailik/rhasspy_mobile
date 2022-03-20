@@ -36,7 +36,7 @@
             android:name="androidx.core.content.FileProvider"
             android:authorities="org.rhasspy.mobile.android.provider"
             android:exported="false"
-            android:grantUriPermissions="true" >
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/share_file_paths" />

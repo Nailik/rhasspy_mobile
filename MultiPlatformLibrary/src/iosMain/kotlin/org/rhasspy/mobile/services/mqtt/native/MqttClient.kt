@@ -46,6 +46,7 @@ actual class MqttClient actual constructor(
      * @param topics One or more topics to unsubscribe from. Can include topic filter(s).
      * @return Will return a error if a problem has occurred.
      */
+    @Suppress("unused")
     actual suspend fun unsubscribe(vararg topics: String): MqttError? {
         TODO("Not yet implemented")
     }
@@ -63,7 +64,7 @@ actual class MqttClient actual constructor(
      * Disconnects from the MQTT Broker.
      * @return Will return a [error][MqttError] if a problem has occurred.
      */
-    actual fun disconnect(): MqttError? {
+    actual suspend fun disconnect(): MqttError? {
         TODO("Not yet implemented")
     }
 

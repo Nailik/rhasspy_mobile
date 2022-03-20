@@ -54,6 +54,7 @@ kotlin {
             }
         }
         val commonTest by getting {
+            dependsOn(commonMain)
             dependencies {
                 implementation(Kotlin.test)
             }

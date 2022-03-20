@@ -3,6 +3,7 @@ package org.rhasspy.mobile.settings
 import com.russhwolf.settings.get
 import com.russhwolf.settings.set
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
+import dev.icerock.moko.mvvm.livedata.postValue
 import org.rhasspy.mobile.data.DataEnum
 import org.rhasspy.mobile.viewModels.GlobalData
 
@@ -25,7 +26,8 @@ class Setting<T>(private val key: SettingsEnum, private val initial: T) {
             } as T
         }
 
-    val currentValue = MutableLiveData(value)
+    var data: T = value
+        private set
 
     val unsaved = object : MutableLiveData<T>(value) {
         @Suppress("UNCHECKED_CAST")
@@ -34,7 +36,7 @@ class Setting<T>(private val key: SettingsEnum, private val initial: T) {
             set(newValue) {
                 if (super.value != newValue) {
                     super.value = newValue
-                    if (currentValue.value != newValue) {
+                    if (data != newValue) {
                         //new value
                         unsavedChange.value = true
                         GlobalData.unsavedChanges.value = true
@@ -58,22 +60,18 @@ class Setting<T>(private val key: SettingsEnum, private val initial: T) {
             is DataEnum<*> -> GlobalData.settings[key.name] = (unsaved.value as DataEnum<*>).name
             else -> throw RuntimeException()
         }
-        unsavedChange.value = false
-        currentValue.value = unsaved.value
+        unsavedChange.postValue(false)
+        data = unsaved.value
     }
 
     fun reset() {
         unsaved.value = value
     }
 
-
     var unsavedData: T
         get() = this.unsaved.value
         set(newValue) {
             this.unsaved.value = newValue
         }
-
-    val data: T
-        get() = this.currentValue.value
 
 }

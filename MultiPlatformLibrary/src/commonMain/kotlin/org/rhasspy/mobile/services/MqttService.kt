@@ -643,7 +643,7 @@ object MqttService {
      */
     fun asrError(sessionId: String?) {
         publishMessage(
-            MQTTTopicsPublish.AsrTextCaptured.topic, MqttMessage(
+            MQTTTopicsPublish.AsrError.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("siteId", ConfigurationSettings.siteId.data)
                     put("sessionId", sessionId)

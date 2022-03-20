@@ -215,14 +215,14 @@ fun PlayRecording(
         onClick = { viewModel.playRecording() },
         modifier = modifier
     ) {
-        if(isPlaying) {
+        if (isPlaying) {
             Icon(
                 imageVector = Icons.Filled.Stop,
                 contentDescription = MR.strings.playRecording
             )
         }
         Text(resource = if (isPlaying) MR.strings.stopPlayRecording else MR.strings.playRecording)
-        if(!isPlaying) {
+        if (!isPlaying) {
             Icon(
                 imageVector = Icons.Filled.PlayArrow,
                 contentDescription = MR.strings.playRecording

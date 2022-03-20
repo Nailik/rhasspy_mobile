@@ -21,6 +21,7 @@ actual object OverlayPermission {
 
     fun init(activity: ComponentActivity) {
         activity.lifecycle.addObserver(object : LifecycleObserver {
+            @Suppress("unused")
             @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
             fun onResume() {
                 status.value = isGranted()
