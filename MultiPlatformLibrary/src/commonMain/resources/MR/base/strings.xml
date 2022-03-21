@@ -55,7 +55,7 @@
     <string name="darkTheme">Dark Theme</string>
     <string name="lightTheme">Light Theme</string>
     <string name="systemTheme">System Theme</string>
-    <string name="de">German</string>
+    <string name="de">Deutsch</string>
     <string name="en">English</string>
     <string name="automaticSilenceDetection">Automatic Silence Detection</string>
     <string name="backgroundWakeWordDetection">Background WakeWord Detection</string>
@@ -79,7 +79,6 @@
     <string name="expandListItem">Expand list item</string>
     <string name="expandDropDown">Expand drop down</string>
     <string name="visibility">Visibility</string>
-
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>
     <string name="blueberry">Blueberry</string>
@@ -94,7 +93,6 @@
     <string name="picovoice">Picovoice</string>
     <string name="porcupine">Porcupine</string>
     <string name="terminator">Terminator</string>
-
     <string name="logSettings">Log Settings</string>
     <string name="verbose">Verbose</string>
     <string name="debug">Debug</string>
@@ -102,24 +100,19 @@
     <string name="warn">Warn</string>
     <string name="error">Error</string>
     <string name="assert_level">Assert</string>
-
     <string name="microphone">Microphone</string>
     <string name="microphonePermissionDialogTitle">Microphone access</string>
-
     <string name="microphonePermissionInfoRecord">To record audio microphone access is required.</string>
     <string name="microphonePermissionInfoWakeWord">To use Porcupine WakeWord service microphone access is required.</string>
     <string name="microphonePermissionInfoAudioLevel">To check audio level microphone access is required.</string>
-
     <string name="microphonePermissionDenied">open settings to allow microphone access</string>
     <string name="settings">Settings</string>
     <string name="cancel">Cancel</string>
     <string name="ok">Ok</string>
-
     <string name="testAudioLevel">Audio Level Test</string>
     <string name="stop">Stop</string>
     <string name="audioLevelThreshold">Audio Level Threshold</string>
     <string name="silenceDetectionTime">Silence Detection Time (ms)</string>
-
     <string name="overlayPermissionTitle">Overlay Permission</string>
     <string name="overlay">Overlay</string>
     <string name="overlayPermissionInfo">Visual indication uses an Overlay to display the indication.\nClick "OK", scroll to Rhasspy and allow
@@ -127,9 +120,8 @@
     </string>
     <string name="save">Save</string>
     <string name="reset">Reset</string>
-
     <string name="device">Device</string>
-    <string name="deviceSettingsInformation">This settings can be changed with MQTT commands</string>
+    <string name="deviceSettingsInformation">This settings can be changed with MQTT commands.</string>
     <string name="volume">Volume</string>
     <string name="hotWord">HotWord (WakeWord)</string>
     <string name="audioOutput">Audio Output</string>
