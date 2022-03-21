@@ -25,6 +25,7 @@ object HttpServer {
             logger.v { "server == null" }
             server = NativeServer.getServer(
                 listOf(
+                    listenForCommand(),
                     listenForWake(),
                     playRecordingPost(),
                     playRecordingGet(),
@@ -48,6 +49,22 @@ object HttpServer {
         server?.stop()
         server = null
     }
+
+
+    /**
+     * /api/listen-for-command
+     * POST to wake Rhasspy up and start listening for a voice command
+     * Returns intent JSON when command is finished
+     * ?nohass=true - stop Rhasspy from handling the intent
+     * ?timeout=<seconds> - override default command timeout
+     * ?entity=<entity>&value=<value> - set custom entities/values in recognized intent
+     */
+    private fun listenForCommand() = HttpCallWrapper("/api/listen-for-command", POST) {
+        logger.v { "post /api/listen-for-command" }
+
+        ServiceInterface.hotWordDetected()
+    }
+
 
     /**
      * /api/listen-for-wake
@@ -148,7 +165,7 @@ object HttpServer {
     private fun startRecording() = HttpCallWrapper("/api/start-recording", POST) {
         logger.v { "post /api/start-recording" }
 
-        ServiceInterface.startSession()
+        ServiceInterface.startListening()
     }
 
     /**

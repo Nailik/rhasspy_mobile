@@ -288,7 +288,7 @@ object ServiceInterface {
      *
      * when mqtt speech to text is set, it's necessary to tell the asr system to start listening
      */
-    fun startListening(sessionId: String?, fromMQTT: Boolean = false, sendAudioCaptured: Boolean = false) {
+    fun startListening(sessionId: String? = currentSessionId, fromMQTT: Boolean = false, sendAudioCaptured: Boolean = false) {
         logger.d { "startListening $sessionId mqtt $fromMQTT" }
 
         if (fromMQTT && ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
