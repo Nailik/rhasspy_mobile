@@ -8,7 +8,6 @@ import dev.icerock.moko.mvvm.livedata.readOnly
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -61,22 +60,15 @@ object MqttService {
         //setup client
         createClient()
 
-        var count = 0
-
         isCurrentlyConnected
 
-        while (count < 10 && !isCurrentlyConnected) {
-            logger.d { "connectClient try count $count" }
-            //connect client
-            if (connectClient()) {
-                subscribeTopics()
-            } else {
-                logger.e { "client not connected after attempt" }
-            }
-            isCurrentlyConnected = client?.isConnected == true
-            count++
-            delay(1000)
+        //connect client
+        if (connectClient()) {
+            subscribeTopics()
+        } else {
+            logger.e { "client not connected after attempt" }
         }
+        isCurrentlyConnected = client?.isConnected == true
     }
 
     /**
