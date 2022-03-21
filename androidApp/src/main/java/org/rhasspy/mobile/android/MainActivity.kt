@@ -70,11 +70,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun Content(viewModel: HomeScreenViewModel = viewModel()) {
-
+fun WrapMaterialTheme(content: @Composable () -> Unit) {
     val systemUiController = rememberSystemUiController()
 
     val themeOption = AppSettings.themeOption.observe()
@@ -90,54 +87,61 @@ fun Content(viewModel: HomeScreenViewModel = viewModel()) {
         colors = colorScheme.toColors(isLight = !darkTheme),
         typography = MaterialTheme.typography.toOldTypography()
     ) {
+        MaterialTheme(colorScheme = colorScheme, content = content)
+    }
+}
 
-        MaterialTheme(colorScheme = colorScheme) {
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun Content(viewModel: HomeScreenViewModel = viewModel()) {
 
-            ProvideWindowInsets {
+    WrapMaterialTheme {
 
-                BoxWithConstraints(
-                    modifier = Modifier.fillMaxSize()
-                ) {
+        ProvideWindowInsets {
 
-                    var isBottomNavigationHidden by remember { mutableStateOf(false) }
+            BoxWithConstraints(
+                modifier = Modifier.fillMaxSize()
+            ) {
 
-                    isBottomNavigationHidden = this.maxHeight < 250.dp
+                var isBottomNavigationHidden by remember { mutableStateOf(false) }
 
-                    val navController = rememberNavController()
-                    val snackbarHostState = remember { SnackbarHostState() }
+                isBottomNavigationHidden = this.maxHeight < 250.dp
 
-                    Scaffold(
-                        topBar = { TopAppBar(viewModel, snackbarHostState, navController) },
-                        snackbarHost = { SnackbarHost(snackbarHostState) },
-                        bottomBar = {
-                            //hide bottom navigation with keyboard and small screens
-                            if (!isBottomNavigationHidden) {
-                                BottomNavigation(navController)
-                            }
+                val navController = rememberNavController()
+                val snackbarHostState = remember { SnackbarHostState() }
+
+                Scaffold(
+                    topBar = { TopAppBar(viewModel, snackbarHostState, navController) },
+                    snackbarHost = { SnackbarHost(snackbarHostState) },
+                    bottomBar = {
+                        //hide bottom navigation with keyboard and small screens
+                        if (!isBottomNavigationHidden) {
+                            BottomNavigation(navController)
                         }
-                    ) { paddingValues ->
-                        NavHost(
-                            navController = navController,
-                            startDestination = Screens.HomeScreen.name,
-                            modifier = Modifier.padding(
-                                paddingValues.calculateLeftPadding(LayoutDirection.Ltr),
-                                paddingValues.calculateTopPadding(),
-                                paddingValues.calculateRightPadding(LayoutDirection.Ltr),
-                                paddingValues.calculateBottomPadding()
-                            )
-                        ) {
-                            composable(Screens.HomeScreen.name) {
-                                HomeScreen(snackbarHostState)
-                            }
-                            composable(Screens.ConfigurationScreen.name) {
-                                ConfigurationScreen(snackbarHostState)
-                            }
-                            composable(Screens.SettingsScreen.name) {
-                                SettingsScreen(snackbarHostState)
-                            }
-                            composable(Screens.LogScreen.name) {
-                                LogScreen()
-                            }
+                    }
+                ) { paddingValues ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screens.HomeScreen.name,
+                        modifier = Modifier.padding(
+                            paddingValues.calculateLeftPadding(LayoutDirection.Ltr),
+                            paddingValues.calculateTopPadding(),
+                            paddingValues.calculateRightPadding(LayoutDirection.Ltr),
+                            paddingValues.calculateBottomPadding()
+                        )
+                    ) {
+                        composable(Screens.HomeScreen.name) {
+                            HomeScreen(snackbarHostState)
+                        }
+                        composable(Screens.ConfigurationScreen.name) {
+                            ConfigurationScreen(snackbarHostState)
+                        }
+                        composable(Screens.SettingsScreen.name) {
+                            SettingsScreen(snackbarHostState)
+                        }
+                        composable(Screens.LogScreen.name) {
+                            LogScreen()
                         }
                     }
                 }

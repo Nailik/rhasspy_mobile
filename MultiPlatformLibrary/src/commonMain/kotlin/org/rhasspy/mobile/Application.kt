@@ -6,6 +6,7 @@ import org.rhasspy.mobile.services.ForegroundService
 import org.rhasspy.mobile.services.MqttService
 import org.rhasspy.mobile.services.RecordingService
 import org.rhasspy.mobile.services.ServiceInterface
+import org.rhasspy.mobile.services.mqtt.OverlayServices
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -29,11 +30,13 @@ abstract class Application : NativeApplication() {
 
         //initialize/load the settings, generate the MutableLiveData
         AppSettings
+        OverlayServices.checkPermission()
         MqttService
         RecordingService
         ConfigurationSettings
         ServiceInterface
         ForegroundService
+        startNativeServices()
     }
 
 }

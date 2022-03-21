@@ -8,7 +8,12 @@ import android.view.WindowManager
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
@@ -16,32 +21,39 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import org.rhasspy.mobile.android.AndroidApplication
+import org.rhasspy.mobile.android.WrapMaterialTheme
+import org.rhasspy.mobile.android.screens.MainActionButton
 import org.rhasspy.mobile.android.theme.assistant_color_four
 import org.rhasspy.mobile.android.theme.assistant_color_one
 import org.rhasspy.mobile.android.theme.assistant_color_three
 import org.rhasspy.mobile.android.theme.assistant_color_two
-import org.rhasspy.mobile.services.native.NativeIndication
+import org.rhasspy.mobile.nativeutils.OverlayPermission
+import org.rhasspy.mobile.settings.AppSettings
 
-/**
- * Overlay Service
- */
-object WindowService {
+object MicrophoneOverlay {
 
     private lateinit var mParams: WindowManager.LayoutParams
     private val lifecycleOwner = CustomLifecycleOwner()
-    private var isStarted = false
 
     private val overlayWindowManager by lazy {
         AndroidApplication.Instance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     }
 
     /**
-     * view that's displayed when a wakeword is detected
+     * view that's displayed as overlay to start wake word detection
      */
+    @OptIn(ExperimentalMaterial3Api::class)
     private val view = ComposeView(AndroidApplication.Instance).apply {
         setContent {
+            WrapMaterialTheme {
+                val snackbarHostState = remember { SnackbarHostState() }
+                Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) {
+                    MainActionButton(24.dp, snackbarHostState, viewModel())
+                }
+            }
             val infiniteTransition = rememberInfiniteTransition()
 
             val time = 250
@@ -133,25 +145,23 @@ object WindowService {
     }
 
     //stores old value to only react to changes
-    private var showVisualIndicationOldValue = false
+    private var showOverlayOldValue = false
 
     /**
      * start service, listen to showVisualIndication and show the overlay or remove it when necessary
      */
     fun start() {
-        if (!isStarted) {
-            isStarted = true
-
-            NativeIndication.showVisualIndication.observeForever {
-                if (it != showVisualIndicationOldValue) {
-                    showVisualIndicationOldValue = it
-                    if (it) {
+        AppSettings.isMicrophoneOverlayEnabled.value.addObserver {
+            if (it != showOverlayOldValue) {
+                showOverlayOldValue = it
+                if (it) {
+                    if(OverlayPermission.isGranted()) {
                         overlayWindowManager.addView(view, mParams)
                         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
-                    } else {
-                        overlayWindowManager.removeView(view)
-                        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
                     }
+                } else {
+                    overlayWindowManager.removeView(view)
+                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
                 }
             }
         }

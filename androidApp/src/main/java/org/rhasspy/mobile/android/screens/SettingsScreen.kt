@@ -47,6 +47,8 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState, viewModel: SettingsScre
         Divider()
         BackgroundService()
         Divider()
+        MicrophoneOverlay()
+        Divider()
         Device()
         Divider()
         WakeWordIndicationItem()
@@ -201,6 +203,29 @@ fun BackgroundService() {
         text = MR.strings.enableBackground,
         isChecked = AppSettings.isBackgroundEnabled.observe(),
         onCheckedChange = { AppSettings.isBackgroundEnabled.data = it })
+
+}
+
+
+@Composable
+fun MicrophoneOverlay() {
+
+    val requestOverlayPermission = requestOverlayPermission {
+        if (it) {
+            AppSettings.isMicrophoneOverlayEnabled.data = true
+        }
+    }
+
+    SwitchListItem(
+        text = MR.strings.deviceSettingsInformation,
+        isChecked = AppSettings.isMicrophoneOverlayEnabled.value.observe(),
+        onCheckedChange = {
+            if (it && !OverlayPermission.granted.value) {
+                requestOverlayPermission.invoke()
+            } else {
+                AppSettings.isWakeWordLightIndication.data = it
+            }
+        })
 
 }
 

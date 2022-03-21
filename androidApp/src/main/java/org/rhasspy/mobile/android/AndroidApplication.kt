@@ -3,7 +3,8 @@ package org.rhasspy.mobile.android
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.NativeApplication
-import org.rhasspy.mobile.android.uiservices.WindowService
+import org.rhasspy.mobile.android.uiservices.IndicationOverlay
+import org.rhasspy.mobile.android.uiservices.MicrophoneOverlay
 
 class AndroidApplication : Application() {
 
@@ -19,13 +20,17 @@ class AndroidApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         onCreated()
-        WindowService.start()
         //catches all exceptions
         Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
             Logger.withTag("AndroidApplication").e(exception) {
                 "uncaught exception in Thread $thread"
             }
         }
+    }
+
+    override fun startNativeServices() {
+        IndicationOverlay.start()
+        MicrophoneOverlay.start()
     }
 
 }

@@ -43,7 +43,7 @@ actual object OverlayPermission {
         Application.Instance.startActivity(intent)
     }
 
-    private fun isGranted(): Boolean {
+    actual fun isGranted(): Boolean {
         return Settings.canDrawOverlays(Application.Instance)
     }
 

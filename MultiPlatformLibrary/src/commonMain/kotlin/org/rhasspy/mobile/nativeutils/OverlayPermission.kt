@@ -6,4 +6,6 @@ expect object OverlayPermission {
 
     val granted: LiveData<Boolean>
 
+    fun isGranted(): Boolean
+
 }
