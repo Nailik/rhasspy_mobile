@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
-import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.features.websocket.*
 import io.ktor.client.request.*
@@ -11,6 +10,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.rhasspy.mobile.services.native.HttpUtils
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 /**
@@ -19,7 +19,7 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
 object HttpService {
     private val logger = Logger.withTag("HttpService")
 
-    private val httpClient = HttpClient {
+    private val httpClient = HttpUtils.getHttpClient {
         expectSuccess = true
         install(WebSockets)
         install(HttpTimeout) {

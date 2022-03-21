@@ -5,7 +5,7 @@ import io.ktor.network.sockets.*
 import io.ktor.util.network.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.channels.SendChannel
-import org.rhasspy.mobile.services.native.SocketService
+import org.rhasspy.mobile.services.native.HttpUtils
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.native.concurrent.ThreadLocal
@@ -26,7 +26,7 @@ object UdpService {
     suspend fun start() {
         logger.v { "start" }
         try {
-            sendChannel = SocketService.getSocketBuilder().udp().bind().outgoing
+            sendChannel = HttpUtils.getSocketBuilder().udp().bind().outgoing
 
             networkAddress = NetworkAddress(
                 ConfigurationSettings.udpOutputHost.data,
