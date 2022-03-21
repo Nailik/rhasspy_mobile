@@ -311,23 +311,20 @@ object ServiceInterface {
 
         //allow internal call or when dialog option is mqtt
         //also directly called after wake word detection
-        if (!fromMQTT || ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.RemoteMQTT) {
+        isSendAudioCaptured = sendAudioCaptured
 
-            isSendAudioCaptured = sendAudioCaptured
+        //clear current recording and start
+        currentRecording.clear()
+        RecordingService.startRecording()
+        //show indication so user knows recording has startd
+        indication(true)
 
-            //clear current recording and start
-            currentRecording.clear()
-            RecordingService.startRecording()
-            //show indication so user knows recording has startd
-            indication(true)
-
-            //only necessary when local dialog management
-            if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local &&
-                ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT
-            ) {
-                //tell asr system to start listening and transcribe text when mqtt is used for speech to text
-                MqttService.startListening(currentSessionId)
-            }
+        //only necessary when local dialog management
+        if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local &&
+            ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT
+        ) {
+            //tell asr system to start listening and transcribe text when mqtt is used for speech to text
+            MqttService.startListening(currentSessionId)
         }
     }
 
@@ -355,42 +352,39 @@ object ServiceInterface {
         }
 
         //allow internal call or when dialog option is mqtt
-        if (!fromMQTT || ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.RemoteMQTT) {
+        if (ConfigurationSettings.wakeWordOption.data != WakeWordOption.MQTT) {
+            //only stop recording if its not necessary for mqtt wakeWord
+            RecordingService.stopRecording()
+        }
+        //hide the indication
+        indication(false)
 
-            if (ConfigurationSettings.wakeWordOption.data != WakeWordOption.MQTT) {
-                //only stop recording if its not necessary for mqtt wakeWord
-                RecordingService.stopRecording()
-            }
-            //hide the indication
-            indication(false)
+        //copy current recording to a file
+        if (currentRecording.isNotEmpty()) {
+            //may be empty because stop Listening is called twice
+            val previousAudioData = currentRecording.addWavHeader()
+            previousRecordingFile.writeData(previousAudioData)
 
-            //copy current recording to a file
-            if (currentRecording.isNotEmpty()) {
-                //may be empty because stop Listening is called twice
-                val previousAudioData = currentRecording.addWavHeader()
-                previousRecordingFile.writeData(previousAudioData)
-
-                if (isSendAudioCaptured) {
-                    MqttService.audioCaptured(sessionId, previousAudioData)
-                }
-
-                //clear current Recording
-                currentRecording.clear()
+            if (isSendAudioCaptured) {
+                MqttService.audioCaptured(sessionId, previousAudioData)
             }
 
-            //when local dialogue management it's necessary to turn on hotWord again and transcribe the speech to text
-            if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
-                hotWordToggle(true)
-                speechToText()
-            }
+            //clear current Recording
+            currentRecording.clear()
+        }
 
-            //when mqtt is used for speech to text, the service needs to know that no more frames are coming
-            if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local &&
-                ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT
-            ) {
-                //tell asr system to start listening and transcribe text when mqtt is used for speech to text
-                MqttService.stopListening(currentSessionId)
-            }
+        //when local dialogue management it's necessary to turn on hotWord again and transcribe the speech to text
+        if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+            hotWordToggle(true)
+            speechToText()
+        }
+
+        //when mqtt is used for speech to text, the service needs to know that no more frames are coming
+        if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local &&
+            ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT
+        ) {
+            //tell asr system to start listening and transcribe text when mqtt is used for speech to text
+            MqttService.stopListening(currentSessionId)
         }
     }
 
