@@ -131,9 +131,7 @@ object HttpServer {
 
         volume?.also {
             if (volume > 0F && volume < 1F) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    ServiceInterface.setVolume(volume)
-                }
+                ServiceInterface.setVolume(volume)
             }
             return@HttpCallWrapper
         }
