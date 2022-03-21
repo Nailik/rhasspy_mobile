@@ -114,19 +114,23 @@ fun MainActionButton(maxHeight: Dp, snackbarHostState: SnackbarHostState, viewMo
         visible = mainActionVisible.value,
         modifier = Modifier.fillMaxSize()
     ) {
-        MainActionFab(modifier = Modifier.fillMaxSize(), snackbarHostState, viewModel)
+        MainActionFab(modifier = Modifier.fillMaxSize(), snackbarHostState, mainActionVisible.value, viewModel)
     }
 
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun MainActionFab(modifier: Modifier = Modifier, snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewModel) {
+fun MainActionFab(modifier: Modifier = Modifier, snackbarHostState: SnackbarHostState?, isMainActionBig: Boolean, viewModel: HomeScreenViewModel) {
 
-    val requestMicrophonePermission = requestMicrophonePermission(snackbarHostState, MR.strings.microphonePermissionInfoRecord) {
-        if (it) {
-            viewModel.toggleSession()
+    val requestMicrophonePermission = snackbarHostState?.let {
+        requestMicrophonePermission(snackbarHostState, MR.strings.microphonePermissionInfoRecord) {
+            if (it) {
+                viewModel.toggleSession()
+            }
         }
+    } ?: run {
+        null
     }
 
     FloatingActionButton(
@@ -134,14 +138,14 @@ fun MainActionFab(modifier: Modifier = Modifier, snackbarHostState: SnackbarHost
             if (MicrophonePermission.granted.value) {
                 viewModel.toggleSession()
             } else {
-                requestMicrophonePermission.invoke()
+                requestMicrophonePermission?.invoke()
             }
         },
         modifier = modifier,
         containerColor = if (viewModel.isRecording.observe()) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme
             .primaryContainer,
     ) {
-        val state = animateDpAsState(targetValue = if (isMainActionBig.value) 96.dp else 24.dp)
+        val state = animateDpAsState(targetValue = if (isMainActionBig) 96.dp else 24.dp)
 
         Icon(
             imageVector = if (MicrophonePermission.granted.observe()) Icons.Filled.Mic else Icons.Filled.MicOff,
@@ -194,7 +198,7 @@ fun TopRow(snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewModel)
             exit = shrinkOut(shrinkTowards = Alignment.BottomStart),
             visible = !mainActionVisible.value
         ) {
-            MainActionFab(snackbarHostState = snackbarHostState, viewModel = viewModel)
+            MainActionFab(snackbarHostState = snackbarHostState, isMainActionBig = mainActionVisible.value, viewModel = viewModel)
         }
 
         PlayRecording(

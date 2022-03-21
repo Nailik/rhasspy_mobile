@@ -5,14 +5,10 @@ import android.graphics.PixelFormat
 import android.os.Build
 import android.view.Gravity
 import android.view.WindowManager
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -25,11 +21,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.WrapMaterialTheme
-import org.rhasspy.mobile.android.screens.MainActionButton
-import org.rhasspy.mobile.android.theme.assistant_color_four
-import org.rhasspy.mobile.android.theme.assistant_color_one
-import org.rhasspy.mobile.android.theme.assistant_color_three
-import org.rhasspy.mobile.android.theme.assistant_color_two
+import org.rhasspy.mobile.android.screens.MainActionFab
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.settings.AppSettings
 
@@ -49,72 +41,8 @@ object MicrophoneOverlay {
     private val view = ComposeView(AndroidApplication.Instance).apply {
         setContent {
             WrapMaterialTheme {
-                val snackbarHostState = remember { SnackbarHostState() }
-                Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) {
-                    MainActionButton(24.dp, snackbarHostState, viewModel())
-                }
+                MainActionFab(Modifier.size(96.dp), null, false, viewModel())
             }
-            val infiniteTransition = rememberInfiniteTransition()
-
-            val time = 250
-            // Creates a Color animation as a part of the [InfiniteTransition].
-            val size by infiniteTransition.animateFloat(
-                initialValue = 1f,
-                targetValue = 1.25f, // Dark Red
-                animationSpec = infiniteRepeatable(
-                    // Linearly interpolate between initialValue and targetValue every 1000ms.
-                    animation = tween(time, easing = LinearEasing),
-                    // Once [TargetValue] is reached, starts the next iteration in reverse (i.e. from
-                    // TargetValue to InitialValue). Then again from InitialValue to TargetValue. This
-                    // [RepeatMode] ensures that the animation value is *always continuous*.
-                    repeatMode = RepeatMode.Reverse
-                )
-            )
-
-            val item by infiniteTransition.animateFloat(
-                initialValue = 0f,
-                targetValue = 4f, // Dark Red
-                animationSpec = infiniteRepeatable(
-                    // Linearly interpolate between initialValue and targetValue every 1000ms.
-                    animation = tween(time * 8, easing = LinearEasing),
-                    // Once [TargetValue] is reached, starts the next iteration in reverse (i.e. from
-                    // TargetValue to InitialValue). Then again from InitialValue to TargetValue. This
-                    // [RepeatMode] ensures that the animation value is *always continuous*.
-                    repeatMode = RepeatMode.Restart
-                )
-            )
-
-            Row(
-                modifier = Modifier
-                    .height(5.dp)
-                    .fillMaxWidth()
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(if (item > 0 && item <= 1) size else 1f)
-                        .background(color = assistant_color_one)
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(if (item > 1 && item <= 2) size else 1f)
-                        .background(color = assistant_color_two)
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(if (item > 2 && item <= 3) size else 1f)
-                        .background(color = assistant_color_three)
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(if (item > 3 && item <= 4) size else 1f)
-                        .background(color = assistant_color_four)
-                )
-            }
-
         }
     }
 
@@ -153,16 +81,16 @@ object MicrophoneOverlay {
     fun start() {
         AppSettings.isMicrophoneOverlayEnabled.value.addObserver {
             if (it != showOverlayOldValue) {
-                showOverlayOldValue = it
                 if (it) {
-                    if(OverlayPermission.isGranted()) {
+                    if (OverlayPermission.isGranted()) {
                         overlayWindowManager.addView(view, mParams)
                         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
                     }
-                } else {
+                } else if (showOverlayOldValue) {
                     overlayWindowManager.removeView(view)
                     lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
                 }
+                showOverlayOldValue = it
             }
         }
     }

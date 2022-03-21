@@ -17,6 +17,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
@@ -72,16 +73,20 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun WrapMaterialTheme(content: @Composable () -> Unit) {
-    val systemUiController = rememberSystemUiController()
+
 
     val themeOption = AppSettings.themeOption.observe()
 
     val darkTheme = (isSystemInDarkTheme() && themeOption == ThemeOptions.System) || themeOption == ThemeOptions.Dark
     val colorScheme = if (darkTheme) DarkThemeColors else LightThemeColors
 
-    systemUiController.setSystemBarsColor(colorScheme.background, darkIcons = !darkTheme)
-    systemUiController.setNavigationBarColor(colorScheme.background, darkIcons = !darkTheme)
-    systemUiController.setStatusBarColor(colorScheme.background, darkIcons = !darkTheme)
+    if (LocalContext.current is ComponentActivity) {
+        //may be used inside overlay and then the context is not an activity
+        val systemUiController = rememberSystemUiController()
+        systemUiController.setSystemBarsColor(colorScheme.background, darkIcons = !darkTheme)
+        systemUiController.setNavigationBarColor(colorScheme.background, darkIcons = !darkTheme)
+        systemUiController.setStatusBarColor(colorScheme.background, darkIcons = !darkTheme)
+    }
 
     androidx.compose.material.MaterialTheme(
         colors = colorScheme.toColors(isLight = !darkTheme),

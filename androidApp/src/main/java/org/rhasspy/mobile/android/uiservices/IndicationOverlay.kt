@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import org.rhasspy.mobile.android.AndroidApplication
+import org.rhasspy.mobile.android.WrapMaterialTheme
 import org.rhasspy.mobile.android.theme.assistant_color_four
 import org.rhasspy.mobile.android.theme.assistant_color_one
 import org.rhasspy.mobile.android.theme.assistant_color_three
@@ -42,67 +43,68 @@ object IndicationOverlay {
      */
     private val view = ComposeView(AndroidApplication.Instance).apply {
         setContent {
-            val infiniteTransition = rememberInfiniteTransition()
+            WrapMaterialTheme {
+                val infiniteTransition = rememberInfiniteTransition()
 
-            val time = 250
-            // Creates a Color animation as a part of the [InfiniteTransition].
-            val size by infiniteTransition.animateFloat(
-                initialValue = 1f,
-                targetValue = 1.25f, // Dark Red
-                animationSpec = infiniteRepeatable(
-                    // Linearly interpolate between initialValue and targetValue every 1000ms.
-                    animation = tween(time, easing = LinearEasing),
-                    // Once [TargetValue] is reached, starts the next iteration in reverse (i.e. from
-                    // TargetValue to InitialValue). Then again from InitialValue to TargetValue. This
-                    // [RepeatMode] ensures that the animation value is *always continuous*.
-                    repeatMode = RepeatMode.Reverse
+                val time = 250
+                // Creates a Color animation as a part of the [InfiniteTransition].
+                val size by infiniteTransition.animateFloat(
+                    initialValue = 1f,
+                    targetValue = 1.25f, // Dark Red
+                    animationSpec = infiniteRepeatable(
+                        // Linearly interpolate between initialValue and targetValue every 1000ms.
+                        animation = tween(time, easing = LinearEasing),
+                        // Once [TargetValue] is reached, starts the next iteration in reverse (i.e. from
+                        // TargetValue to InitialValue). Then again from InitialValue to TargetValue. This
+                        // [RepeatMode] ensures that the animation value is *always continuous*.
+                        repeatMode = RepeatMode.Reverse
+                    )
                 )
-            )
 
-            val item by infiniteTransition.animateFloat(
-                initialValue = 0f,
-                targetValue = 4f, // Dark Red
-                animationSpec = infiniteRepeatable(
-                    // Linearly interpolate between initialValue and targetValue every 1000ms.
-                    animation = tween(time * 8, easing = LinearEasing),
-                    // Once [TargetValue] is reached, starts the next iteration in reverse (i.e. from
-                    // TargetValue to InitialValue). Then again from InitialValue to TargetValue. This
-                    // [RepeatMode] ensures that the animation value is *always continuous*.
-                    repeatMode = RepeatMode.Restart
+                val item by infiniteTransition.animateFloat(
+                    initialValue = 0f,
+                    targetValue = 4f, // Dark Red
+                    animationSpec = infiniteRepeatable(
+                        // Linearly interpolate between initialValue and targetValue every 1000ms.
+                        animation = tween(time * 8, easing = LinearEasing),
+                        // Once [TargetValue] is reached, starts the next iteration in reverse (i.e. from
+                        // TargetValue to InitialValue). Then again from InitialValue to TargetValue. This
+                        // [RepeatMode] ensures that the animation value is *always continuous*.
+                        repeatMode = RepeatMode.Restart
+                    )
                 )
-            )
 
-            Row(
-                modifier = Modifier
-                    .height(5.dp)
-                    .fillMaxWidth()
-            ) {
-                Box(
+                Row(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(if (item > 0 && item <= 1) size else 1f)
-                        .background(color = assistant_color_one)
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(if (item > 1 && item <= 2) size else 1f)
-                        .background(color = assistant_color_two)
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(if (item > 2 && item <= 3) size else 1f)
-                        .background(color = assistant_color_three)
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(if (item > 3 && item <= 4) size else 1f)
-                        .background(color = assistant_color_four)
-                )
+                        .height(5.dp)
+                        .fillMaxWidth()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .weight(if (item > 0 && item <= 1) size else 1f)
+                            .background(color = assistant_color_one)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .weight(if (item > 1 && item <= 2) size else 1f)
+                            .background(color = assistant_color_two)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .weight(if (item > 2 && item <= 3) size else 1f)
+                            .background(color = assistant_color_three)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .weight(if (item > 3 && item <= 4) size else 1f)
+                            .background(color = assistant_color_four)
+                    )
+                }
             }
-
         }
     }
 
@@ -142,16 +144,16 @@ object IndicationOverlay {
 
         NativeIndication.showVisualIndication.observeForever {
             if (it != showVisualIndicationOldValue) {
-                showVisualIndicationOldValue = it
                 if (it) {
                     if (OverlayPermission.isGranted()) {
                         overlayWindowManager.addView(view, mParams)
                         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
                     }
-                } else {
+                } else if (showVisualIndicationOldValue) {
                     overlayWindowManager.removeView(view)
                     lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
                 }
+                showVisualIndicationOldValue = it
             }
         }
     }
