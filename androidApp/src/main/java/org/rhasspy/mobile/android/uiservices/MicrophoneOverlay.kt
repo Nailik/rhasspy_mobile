@@ -5,12 +5,13 @@ import android.graphics.PixelFormat
 import android.os.Build
 import android.view.Gravity
 import android.view.WindowManager
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.consumeAllChanges
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -19,6 +20,7 @@ import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
+import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.WrapMaterialTheme
 import org.rhasspy.mobile.android.screens.MainActionFab
@@ -26,6 +28,7 @@ import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.settings.AppSettings
 
 object MicrophoneOverlay {
+    private val logger = Logger.withTag("MicrophoneOverlay")
 
     private lateinit var mParams: WindowManager.LayoutParams
     private val lifecycleOwner = CustomLifecycleOwner()
@@ -34,16 +37,35 @@ object MicrophoneOverlay {
         AndroidApplication.Instance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     }
 
+
     /**
      * view that's displayed as overlay to start wake word detection
      */
     @OptIn(ExperimentalMaterial3Api::class)
-    private val view = ComposeView(AndroidApplication.Instance).apply {
+    private val view: ComposeView = ComposeView(AndroidApplication.Instance).apply {
         setContent {
             WrapMaterialTheme {
-                MainActionFab(Modifier.size(96.dp), null, false, viewModel())
+
+                MainActionFab(
+                    Modifier
+                        .size(96.dp)
+
+                        .pointerInput(Unit) {
+                            detectDragGestures { change, dragAmount ->
+                                change.consumeAllChanges()
+                                onDragVertical(dragAmount)
+                            }
+                        }, null, false, viewModel()
+                )
             }
         }
+    }
+
+    private fun onDragVertical(delta: Offset) {
+        mParams.y = (mParams.y + delta.y).toInt()
+        mParams.x = (mParams.x + delta.x).toInt()
+        mParams.gravity = Gravity.NO_GRAVITY
+        overlayWindowManager.updateViewLayout(view, mParams)
     }
 
     init {
@@ -59,7 +81,7 @@ object MicrophoneOverlay {
                         or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
             ).apply {
-                gravity = Gravity.BOTTOM
+                gravity = Gravity.CENTER
             }
         }
 
@@ -79,6 +101,8 @@ object MicrophoneOverlay {
      * start service, listen to showVisualIndication and show the overlay or remove it when necessary
      */
     fun start() {
+        logger.d { "start" }
+
         AppSettings.isMicrophoneOverlayEnabled.value.addObserver {
             if (it != showOverlayOldValue) {
                 if (it) {
