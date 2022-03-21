@@ -84,7 +84,8 @@ object ServiceInterface {
     fun startSession() {
         logger.d { "startSession" }
 
-        if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+        //start session only if there is not one running at the moment
+        if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local && currentSessionId == null) {
             val sessionUuid = uuid4().toString()
             //send response
             MqttService.sessionStarted(sessionUuid)
@@ -96,7 +97,7 @@ object ServiceInterface {
      * hermes/dialogueManager/endSession
      * Requests that a session be terminated nominally
      */
-    fun endSession(sessionId: String?) {
+    fun endSession(sessionId: String? = currentSessionId) {
         logger.d { "endSession $sessionId" }
 
         if (sessionId != currentSessionId) {
@@ -200,25 +201,25 @@ object ServiceInterface {
 
                 val dataWithHeader = byteData.addWavHeader()
 
-
                 if (currentSessionId == null) {
-                    //no current session running
-                    if (ConfigurationSettings.isUDPOutput.data) {
-                        //send to udp if udp streaming only outside asr listening
-                        UdpService.streamAudio(dataWithHeader)
-                    } else if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.MQTT) {
-                        //send to mqtt for wake word detection
-                        MqttService.audioFrame(dataWithHeader)
-                    }
-                } else {
                     if (AppSettings.isHotWordEnabled.data) {
                         //current session is running
-                        if (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
-                            //send to mqtt for speech to text
+                        //no current session running
+                        if (ConfigurationSettings.isUDPOutput.data) {
+                            //send to udp if udp streaming only outside asr listening
+                            UdpService.streamAudio(dataWithHeader)
+                        } else if (ConfigurationSettings.wakeWordOption.data == WakeWordOption.MQTT) {
+                            //send to mqtt for wake word detection
                             MqttService.audioFrame(dataWithHeader)
                         }
-                        //add audio to current recording for intent recognition and replay
-                        currentRecording.addAll(byteData)
+                    }
+                } else {
+                    //add audio to current recording for intent recognition and replay
+                    currentRecording.addAll(byteData)
+
+                    if (ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
+                        //send to mqtt for speech to text
+                        MqttService.audioFrame(dataWithHeader)
                     }
                 }
             }
@@ -288,17 +289,11 @@ object ServiceInterface {
      *
      * when mqtt speech to text is set, it's necessary to tell the asr system to start listening
      */
-    fun startListening(sessionId: String?, fromMQTT: Boolean = false, sendAudioCaptured: Boolean = false) {
+    fun startListening(sessionId: String? = currentSessionId, fromMQTT: Boolean = false, sendAudioCaptured: Boolean = false) {
         logger.d { "startListening $sessionId mqtt $fromMQTT" }
 
-        if (fromMQTT && ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT) {
-            //remote speech to text will override the sessionId
-            currentSessionId = sessionId
-        }
-
         if (currentSessionId != sessionId &&
-            fromMQTT &&
-            ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT
+            fromMQTT && ConfigurationSettings.speechToTextOption.data == SpeechToTextOptions.RemoteMQTT
         ) {
             //store the mqtt session id to understand the id when the text was captured
             mqttSpeechToTextSessionId = sessionId
@@ -379,7 +374,8 @@ object ServiceInterface {
             }
 
             //when local dialogue management it's necessary to turn on hotWord again and transcribe the speech to text
-            if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+            //only if there is a running session, maybe recording was started external
+            if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local && currentSessionId != null) {
                 hotWordToggle(true)
                 speechToText()
             }
@@ -703,7 +699,10 @@ object ServiceInterface {
                 }
                 //when speech to text mqtt is used, then speech is send in chunks while recording
                 SpeechToTextOptions.RemoteMQTT -> logger.v { "speechToText already send to mqtt" }
-                SpeechToTextOptions.Disabled -> logger.d { "speechToText disabled" }
+                SpeechToTextOptions.Disabled -> if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+                    //when dialogue management is local go to intentNotRecognized because there is no speech to text happening
+                    intentNotRecognized()
+                }
             }
         }
     }

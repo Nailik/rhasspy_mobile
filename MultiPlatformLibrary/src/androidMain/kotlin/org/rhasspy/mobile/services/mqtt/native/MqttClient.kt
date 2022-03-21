@@ -131,7 +131,7 @@ actual class MqttClient actual constructor(
         var result: MqttError? = null
         var status = MqttStatus.SUCCESS
         try {
-            client.connect(connOptions)
+            client.connectWithResult(connOptions)
             client.setCallback(callback)
         } catch (securityEx: MqttSecurityException) {
             if (securityEx.reasonCode == 4) status = MqttStatus.INVALID_CREDENTIALS
@@ -143,6 +143,9 @@ actual class MqttClient actual constructor(
                 1 -> MqttStatus.UNACCEPTABLE_PROTOCOL
                 else -> MqttStatus.UNKNOWN
             }
+        } catch (e: Exception){
+            //some exception occurred
+            status = MqttStatus.UNKNOWN
         }
         if (status != MqttStatus.SUCCESS) {
             result = MqttError("Cannot connect to MQTT Broker.", status)
@@ -170,12 +173,12 @@ actual class MqttClient actual constructor(
     }
 
     private fun MqttConnectionOptions.toPhaoConnectOptions(): PahoConnectOptions {
-        return PahoConnectOptions().apply {
-            isCleanSession = cleanSession
-            keepAliveInterval = keepAliveInterval
-            userName = connUsername.ifEmpty { null }
-            password = connPassword.toCharArray()
-            connectionTimeout = connectionTimeout
+        return PahoConnectOptions().also {
+            it.isCleanSession = cleanSession
+            it.keepAliveInterval = keepAliveInterval
+            it.userName = connUsername.ifEmpty { null }
+            it.password = connPassword.toCharArray()
+            it.connectionTimeout = connectionTimeout
         }
     }
 
