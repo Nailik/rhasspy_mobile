@@ -18,7 +18,7 @@ import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import org.rhasspy.mobile.android.AndroidApplication
-import org.rhasspy.mobile.android.WrapMaterialTheme
+import org.rhasspy.mobile.android.AppTheme
 import org.rhasspy.mobile.android.theme.assistant_color_four
 import org.rhasspy.mobile.android.theme.assistant_color_one
 import org.rhasspy.mobile.android.theme.assistant_color_three
@@ -43,7 +43,7 @@ object IndicationOverlay {
      */
     private val view = ComposeView(AndroidApplication.Instance).apply {
         setContent {
-            WrapMaterialTheme {
+            AppTheme(false) {
                 val infiniteTransition = rememberInfiniteTransition()
 
                 val time = 250

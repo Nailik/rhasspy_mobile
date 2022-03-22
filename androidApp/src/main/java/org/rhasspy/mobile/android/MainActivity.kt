@@ -17,7 +17,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
@@ -72,15 +71,14 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun WrapMaterialTheme(content: @Composable () -> Unit) {
-
+fun AppTheme(systemUiTheme: Boolean, content: @Composable () -> Unit) {
 
     val themeOption = AppSettings.themeOption.observe()
 
     val darkTheme = (isSystemInDarkTheme() && themeOption == ThemeOptions.System) || themeOption == ThemeOptions.Dark
     val colorScheme = if (darkTheme) DarkThemeColors else LightThemeColors
 
-    if (LocalContext.current is ComponentActivity) {
+    if (systemUiTheme) {
         //may be used inside overlay and then the context is not an activity
         val systemUiController = rememberSystemUiController()
         systemUiController.setSystemBarsColor(colorScheme.background, darkIcons = !darkTheme)
@@ -101,7 +99,7 @@ fun WrapMaterialTheme(content: @Composable () -> Unit) {
 @Composable
 fun Content(viewModel: HomeScreenViewModel = viewModel()) {
 
-    WrapMaterialTheme {
+    AppTheme(true) {
 
         ProvideWindowInsets {
 

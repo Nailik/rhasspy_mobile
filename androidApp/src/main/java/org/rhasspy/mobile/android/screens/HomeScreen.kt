@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.android.screens
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateDpAsState
@@ -22,16 +23,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.insets.ExperimentalAnimatedInsets
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
-import org.rhasspy.mobile.android.utils.Icon
-import org.rhasspy.mobile.android.utils.Text
-import org.rhasspy.mobile.android.utils.TextWithAction
-import org.rhasspy.mobile.android.utils.observe
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
@@ -123,6 +122,19 @@ fun MainActionButton(maxHeight: Dp, snackbarHostState: SnackbarHostState, viewMo
 @Composable
 fun MainActionFab(modifier: Modifier = Modifier, snackbarHostState: SnackbarHostState?, isMainActionBig: Boolean, viewModel: HomeScreenViewModel) {
 
+
+    val iconSize = animateDpAsState(targetValue = if (isMainActionBig) 96.dp else 24.dp)
+
+    Fab(modifier = modifier, iconSize = iconSize.value, snackbarHostState, viewModel)
+
+}
+
+@Composable
+fun Fab(modifier: Modifier = Modifier, iconSize: Dp, snackbarHostState: SnackbarHostState?, viewModel: HomeScreenViewModel) {
+
+    val context = LocalContext.current
+    val toastText = translate(MR.strings.microphonePermissionDenied)
+
     val requestMicrophonePermission = snackbarHostState?.let {
         requestMicrophonePermission(snackbarHostState, MR.strings.microphonePermissionInfoRecord) {
             if (it) {
@@ -130,7 +142,8 @@ fun MainActionFab(modifier: Modifier = Modifier, snackbarHostState: SnackbarHost
             }
         }
     } ?: run {
-        null
+        //when there is no snackbarHostState it's not possible to request
+        { Toast.makeText(context, toastText, Toast.LENGTH_LONG).show() }
     }
 
     FloatingActionButton(
@@ -138,24 +151,21 @@ fun MainActionFab(modifier: Modifier = Modifier, snackbarHostState: SnackbarHost
             if (MicrophonePermission.granted.value) {
                 viewModel.toggleSession()
             } else {
-                requestMicrophonePermission?.invoke()
+                requestMicrophonePermission.invoke()
             }
         },
         modifier = modifier,
         containerColor = if (viewModel.isRecording.observe()) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme
             .primaryContainer,
     ) {
-        val state = animateDpAsState(targetValue = if (isMainActionBig) 96.dp else 24.dp)
 
         Icon(
             imageVector = if (MicrophonePermission.granted.observe()) Icons.Filled.Mic else Icons.Filled.MicOff,
             contentDescription = MR.strings.wakeUp,
             tint = if (viewModel.isRecording.observe()) MaterialTheme.colorScheme.onErrorContainer else LocalContentColor.current,
-            modifier = Modifier
-                .size(state.value)
+            modifier = Modifier.size(iconSize)
         )
     }
-
 }
 
 @Composable
