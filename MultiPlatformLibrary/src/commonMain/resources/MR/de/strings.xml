@@ -103,7 +103,8 @@
     <string name="microphone">Mikrofon</string>
     <string name="microphonePermissionDialogTitle">Zugang zum Mikrofon</string>
     <string name="microphonePermissionInfoRecord">Um Audio aufzunehmen, ist der Zugriff auf das Mikrofon erforderlich.</string>
-    <string name="microphonePermissionInfoWakeWord">Um den Porcupine WakeWord-Dienst zu nutzen, ist der Zugriff auf das Mikrofon erforderlich.</string>
+    <string name="microphonePermissionInfoWakeWord">Um den Porcupine WakeWord-Dienst zu nutzen, ist der Zugriff auf das Mikrofon erforderlich.
+    </string>
     <string name="microphonePermissionInfoAudioLevel">Um den Audiopegel zu überprüfen, ist der Zugriff auf das Mikrofon erforderlich.</string>
     <string name="microphonePermissionDenied">open settings to allow microphone access</string>
     <string name="settings">Einstellungen</string>
@@ -116,7 +117,8 @@
     <string name="overlayPermissionTitle">Overlay-Erlaubnis</string>
     <string name="overlay">Overlay</string>
     <string name="overlayPermissionInfo">Die visuelle Anzeige verwendet ein Overlay, um die Anzeige darzustellen.\nKlicken Sie auf "OK", scrollen
-    Sie zu Rhasspy und erlauben Sie die Berechtigung.</string>
+        Sie zu Rhasspy und erlauben Sie die Berechtigung.
+    </string>
     <string name="save">Speichern</string>
     <string name="reset">Zurücksetzen</string>
     <string name="device">Gerät</string>

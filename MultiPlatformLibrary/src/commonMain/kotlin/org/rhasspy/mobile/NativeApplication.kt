@@ -1,6 +1,6 @@
 package org.rhasspy.mobile
 
-expect open class NativeApplication(){
+expect open class NativeApplication() {
 
     fun startNativeServices()
 

@@ -13,9 +13,9 @@ import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.android.utils.translate
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
-import org.rhasspy.mobile.android.utils.Text
 
 /**
  * 3 parts where this is shown:

@@ -143,7 +143,7 @@ actual class MqttClient actual constructor(
                 1 -> MqttStatus.UNACCEPTABLE_PROTOCOL
                 else -> MqttStatus.UNKNOWN
             }
-        } catch (e: Exception){
+        } catch (e: Exception) {
             //some exception occurred
             status = MqttStatus.UNKNOWN
         }

@@ -1,13 +1,11 @@
 package org.rhasspy.mobile.android.uiservices
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
 import android.view.Gravity
 import android.view.WindowManager
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.Modifier
@@ -15,7 +13,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelStore
@@ -24,7 +21,6 @@ import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import co.touchlab.kermit.Logger
-import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.AppTheme
 import org.rhasspy.mobile.android.screens.Fab
