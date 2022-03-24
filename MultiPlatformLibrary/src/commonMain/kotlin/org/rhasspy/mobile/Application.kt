@@ -31,10 +31,10 @@ abstract class Application : NativeApplication() {
 
         //initialize/load the settings, generate the MutableLiveData
         AppSettings
+        ConfigurationSettings
         OverlayServices.checkPermission()
         MqttService
         RecordingService
-        ConfigurationSettings
         ServiceInterface
         ForegroundService
         startNativeServices()

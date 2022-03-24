@@ -18,7 +18,6 @@ import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.services.native.NativeLocalWakeWordService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
-import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewModels.GlobalData
 import kotlin.native.concurrent.ThreadLocal
 
