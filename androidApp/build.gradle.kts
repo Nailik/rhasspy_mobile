@@ -74,6 +74,8 @@ dependencies {
     implementation(AndroidX.Compose.foundation)
     implementation(AndroidX.Compose.runtime.liveData)
     implementation(AndroidX.Lifecycle.viewModelCompose)
+    implementation(AndroidX.Lifecycle.common)
+    implementation(AndroidX.Lifecycle.common)
     implementation(AndroidX.Compose.ui)
     implementation(AndroidX.Compose.ui.util)
     implementation(AndroidX.Compose.ui.tooling)
@@ -88,5 +90,6 @@ dependencies {
     implementation(Icerock.Mvvm.livedataResources)
 
     implementation("co.touchlab:kermit:_")
+    implementation("androidx.lifecycle:lifecycle-process:2.4.1")
 
 }

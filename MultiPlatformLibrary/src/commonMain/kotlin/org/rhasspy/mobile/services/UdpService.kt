@@ -24,7 +24,13 @@ object UdpService {
      */
     @Suppress("RedundantSuspendModifier")
     suspend fun start() {
+        if (!ConfigurationSettings.isUDPOutput.data) {
+            logger.v { "not enabled" }
+            return
+        }
+
         logger.v { "start" }
+
         try {
             sendChannel = SocketService.getSocketBuilder().udp().bind().outgoing
 

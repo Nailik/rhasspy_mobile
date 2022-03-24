@@ -10,8 +10,12 @@ enum class SettingsEnum {
     AutomaticSilenceDetectionTime,
 
     BackgroundEnabled,
-    BackgroundWakeWordDetectionTurnOnDisplay,
+    MicrophoneOverlay,
+    MicrophoneOverlayWhileApp,
+    MicrophoneOverlayPositionX,
+    MicrophoneOverlayPositionY,
 
+    BackgroundWakeWordDetectionTurnOnDisplay,
     WakeWordSoundIndication,
     WakeWordLightIndication,
 

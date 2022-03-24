@@ -10,8 +10,6 @@ import org.rhasspy.mobile.data.DataEnum
 import org.rhasspy.mobile.viewModels.GlobalData
 
 
-private val viewScope = CoroutineScope(Dispatchers.Main)
-
 class AppSetting<T>(private val key: SettingsEnum, private val initial: T) {
 
     val value = object : MutableLiveData<T>(readValue()) {
@@ -44,7 +42,6 @@ class AppSetting<T>(private val key: SettingsEnum, private val initial: T) {
         } as T
     }
 
-
     var data: T
         get() = this.value.value
         set(newValue) {
@@ -52,5 +49,9 @@ class AppSetting<T>(private val key: SettingsEnum, private val initial: T) {
                 value.value = newValue
             }
         }
+
+    companion object {
+        private val viewScope = CoroutineScope(Dispatchers.Main)
+    }
 
 }

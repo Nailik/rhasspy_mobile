@@ -14,6 +14,10 @@ object AppSettings {
     val automaticSilenceDetectionTime = AppSetting(SettingsEnum.AutomaticSilenceDetectionTime, 2000)
 
     val isBackgroundEnabled = AppSetting(SettingsEnum.BackgroundEnabled, false)
+    val isMicrophoneOverlayEnabled = AppSetting(SettingsEnum.MicrophoneOverlay, true)
+    val isMicrophoneOverlayWhileApp = AppSetting(SettingsEnum.MicrophoneOverlayWhileApp, false)
+    val isMicrophoneOverlayPositionX = AppSetting(SettingsEnum.MicrophoneOverlayPositionX, -1)
+    val isMicrophoneOverlayPositionY = AppSetting(SettingsEnum.MicrophoneOverlayPositionY, -1)
 
     val isBackgroundWakeWordDetectionTurnOnDisplay = AppSetting(SettingsEnum.BackgroundWakeWordDetectionTurnOnDisplay, false)
     val isWakeWordSoundIndication = AppSetting(SettingsEnum.WakeWordSoundIndication, false)

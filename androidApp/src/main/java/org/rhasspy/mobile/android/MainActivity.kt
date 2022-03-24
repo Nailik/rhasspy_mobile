@@ -70,74 +70,81 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun Content(viewModel: HomeScreenViewModel = viewModel()) {
-
-    val systemUiController = rememberSystemUiController()
+fun AppTheme(systemUiTheme: Boolean, content: @Composable () -> Unit) {
 
     val themeOption = AppSettings.themeOption.observe()
 
     val darkTheme = (isSystemInDarkTheme() && themeOption == ThemeOptions.System) || themeOption == ThemeOptions.Dark
     val colorScheme = if (darkTheme) DarkThemeColors else LightThemeColors
 
-    systemUiController.setSystemBarsColor(colorScheme.background, darkIcons = !darkTheme)
-    systemUiController.setNavigationBarColor(colorScheme.background, darkIcons = !darkTheme)
-    systemUiController.setStatusBarColor(colorScheme.background, darkIcons = !darkTheme)
+    if (systemUiTheme) {
+        //may be used inside overlay and then the context is not an activity
+        val systemUiController = rememberSystemUiController()
+        systemUiController.setSystemBarsColor(colorScheme.background, darkIcons = !darkTheme)
+        systemUiController.setNavigationBarColor(colorScheme.background, darkIcons = !darkTheme)
+        systemUiController.setStatusBarColor(colorScheme.background, darkIcons = !darkTheme)
+    }
 
     androidx.compose.material.MaterialTheme(
         colors = colorScheme.toColors(isLight = !darkTheme),
         typography = MaterialTheme.typography.toOldTypography()
     ) {
+        MaterialTheme(colorScheme = colorScheme, content = content)
+    }
+}
 
-        MaterialTheme(colorScheme = colorScheme) {
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun Content(viewModel: HomeScreenViewModel = viewModel()) {
 
-            ProvideWindowInsets {
+    AppTheme(true) {
 
-                BoxWithConstraints(
-                    modifier = Modifier.fillMaxSize()
-                ) {
+        ProvideWindowInsets {
 
-                    var isBottomNavigationHidden by remember { mutableStateOf(false) }
+            BoxWithConstraints(
+                modifier = Modifier.fillMaxSize()
+            ) {
 
-                    isBottomNavigationHidden = this.maxHeight < 250.dp
+                var isBottomNavigationHidden by remember { mutableStateOf(false) }
 
-                    val navController = rememberNavController()
-                    val snackbarHostState = remember { SnackbarHostState() }
+                isBottomNavigationHidden = this.maxHeight < 250.dp
 
-                    Scaffold(
-                        topBar = { TopAppBar(viewModel, snackbarHostState, navController) },
-                        snackbarHost = { SnackbarHost(snackbarHostState) },
-                        bottomBar = {
-                            //hide bottom navigation with keyboard and small screens
-                            if (!isBottomNavigationHidden) {
-                                BottomNavigation(navController)
-                            }
+                val navController = rememberNavController()
+                val snackbarHostState = remember { SnackbarHostState() }
+
+                Scaffold(
+                    topBar = { TopAppBar(viewModel, snackbarHostState, navController) },
+                    snackbarHost = { SnackbarHost(snackbarHostState) },
+                    bottomBar = {
+                        //hide bottom navigation with keyboard and small screens
+                        if (!isBottomNavigationHidden) {
+                            BottomNavigation(navController)
                         }
-                    ) { paddingValues ->
-                        NavHost(
-                            navController = navController,
-                            startDestination = Screens.HomeScreen.name,
-                            modifier = Modifier.padding(
-                                paddingValues.calculateLeftPadding(LayoutDirection.Ltr),
-                                paddingValues.calculateTopPadding(),
-                                paddingValues.calculateRightPadding(LayoutDirection.Ltr),
-                                paddingValues.calculateBottomPadding()
-                            )
-                        ) {
-                            composable(Screens.HomeScreen.name) {
-                                HomeScreen(snackbarHostState)
-                            }
-                            composable(Screens.ConfigurationScreen.name) {
-                                ConfigurationScreen(snackbarHostState)
-                            }
-                            composable(Screens.SettingsScreen.name) {
-                                SettingsScreen(snackbarHostState)
-                            }
-                            composable(Screens.LogScreen.name) {
-                                LogScreen()
-                            }
+                    }
+                ) { paddingValues ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screens.HomeScreen.name,
+                        modifier = Modifier.padding(
+                            paddingValues.calculateLeftPadding(LayoutDirection.Ltr),
+                            paddingValues.calculateTopPadding(),
+                            paddingValues.calculateRightPadding(LayoutDirection.Ltr),
+                            paddingValues.calculateBottomPadding()
+                        )
+                    ) {
+                        composable(Screens.HomeScreen.name) {
+                            HomeScreen(snackbarHostState)
+                        }
+                        composable(Screens.ConfigurationScreen.name) {
+                            ConfigurationScreen(snackbarHostState)
+                        }
+                        composable(Screens.SettingsScreen.name) {
+                            SettingsScreen(snackbarHostState)
+                        }
+                        composable(Screens.LogScreen.name) {
+                            LogScreen()
                         }
                     }
                 }

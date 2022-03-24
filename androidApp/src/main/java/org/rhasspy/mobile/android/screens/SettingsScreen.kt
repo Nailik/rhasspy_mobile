@@ -47,9 +47,11 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState, viewModel: SettingsScre
         Divider()
         BackgroundService()
         Divider()
-        Device()
+        MicrophoneOverlay()
         Divider()
         WakeWordIndicationItem()
+        Divider()
+        Device()
         Divider()
         AutomaticSilenceDetectionItem(viewModel, snackbarHostState)
         Divider()
@@ -204,6 +206,46 @@ fun BackgroundService() {
 
 }
 
+
+@Composable
+fun MicrophoneOverlay() {
+
+    val isMicrophoneOverlayEnabled = AppSettings.isMicrophoneOverlayEnabled.value.observe()
+
+    ExpandableListItem(
+        text = MR.strings.microphoneOverlay,
+        secondaryText = isMicrophoneOverlayEnabled.toText()
+    ) {
+        Column {
+
+        }
+        val requestOverlayPermission = requestOverlayPermission {
+            if (it) {
+                AppSettings.isMicrophoneOverlayEnabled.data = true
+            }
+        }
+
+        SwitchListItem(
+            text = MR.strings.showMicrophoneOverlay,
+            secondaryText = MR.strings.showMicrophoneOverlayInfo,
+            isChecked = isMicrophoneOverlayEnabled,
+            onCheckedChange = {
+                if (it && !OverlayPermission.granted.value) {
+                    requestOverlayPermission.invoke()
+                } else {
+                    AppSettings.isMicrophoneOverlayEnabled.data = it
+                }
+            })
+
+        SwitchListItem(
+            text = MR.strings.whileAppIsOpened,
+            isChecked = AppSettings.isMicrophoneOverlayWhileApp.observe(),
+            onCheckedChange = {
+                AppSettings.isMicrophoneOverlayWhileApp.data = it
+            })
+    }
+}
+
 @Composable
 fun Device() {
 
@@ -253,10 +295,13 @@ fun WakeWordIndicationItem() {
         }
         stateText += translate(MR.strings.light)
     }
+    if (stateText.isEmpty()) {
+        stateText = translate(MR.strings.disabled)
+    }
 
     ExpandableListItemString(
         text = MR.strings.wakeWordIndication,
-        secondaryText = stateText.ifEmpty { null }
+        secondaryText = stateText
     ) {
         Column {
 
