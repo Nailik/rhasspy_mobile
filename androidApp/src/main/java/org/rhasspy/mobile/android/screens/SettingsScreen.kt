@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -56,6 +57,8 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState, viewModel: SettingsScre
         AutomaticSilenceDetectionItem(viewModel, snackbarHostState)
         Divider()
         ShowLogItem()
+        Divider()
+        SaveAndRestore(viewModel)
         Divider()
     }
 }
@@ -356,5 +359,20 @@ fun ShowLogItem() {
         SwitchListItem(MR.strings.audioFramesLogging,
             isChecked = AppSettings.isLogAudioFrames.observe(),
             onCheckedChange = { AppSettings.isLogAudioFrames.data = it })
+    }
+}
+
+@Composable
+fun SaveAndRestore(viewModel: SettingsScreenViewModel = viewModel()) {
+    ExpandableListItem(
+        text = MR.strings.saveAndRestoreSettings
+    ) {
+        ListElement(modifier = Modifier
+            .clickable { viewModel.saveSettingsFile() },
+            text = { Text(MR.strings.save) })
+
+        ListElement(modifier = Modifier
+            .clickable { viewModel.restoreSettingsFromFile() },
+            text = { Text(MR.strings.restore) })
     }
 }

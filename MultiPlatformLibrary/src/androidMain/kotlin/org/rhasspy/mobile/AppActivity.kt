@@ -20,4 +20,9 @@ abstract class AppActivity : ComponentActivity() {
         resultCallback = onResult
         someActivityResultLauncher.launch(ActivityResultContracts.CreateDocument().createIntent(this, title))
     }
+
+    fun openDocument(types: Array<String>, onResult: (activityResult: ActivityResult) -> Unit) {
+        resultCallback = onResult
+        someActivityResultLauncher.launch(ActivityResultContracts.OpenDocument().createIntent(this, types))
+    }
 }

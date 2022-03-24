@@ -190,16 +190,24 @@ fun TopAppBar(viewModel: HomeScreenViewModel, snackbarHostState: SnackbarHostSta
 
             val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-            if (navBackStackEntry?.destination?.route != Screens.LogScreen.name) {
-                MicrophonePermissionRequired(viewModel, snackbarHostState)
-                OverlayPermissionRequired(viewModel)
-                UnsavedChanges(viewModel)
-            } else {
-                //only on log screen
-                ShareLogFile(viewModel)
+            when (navBackStackEntry?.destination?.route) {
+                Screens.HomeScreen.name,
+                Screens.ConfigurationScreen.name -> HomeAndConfigScreenActions(viewModel, snackbarHostState)
+                Screens.SettingsScreen.name -> {}
+                Screens.LogScreen.name -> LogScreenActions(viewModel)
             }
         }
     )
+}
+
+
+@Composable
+fun HomeAndConfigScreenActions(viewModel: HomeScreenViewModel, snackbarHostState: SnackbarHostState) {
+    Row(modifier = Modifier.padding(start = 8.dp)) {
+        MicrophonePermissionRequired(viewModel, snackbarHostState)
+        OverlayPermissionRequired(viewModel)
+        UnsavedChanges(viewModel)
+    }
 }
 
 
@@ -296,25 +304,14 @@ fun UnsavedChanges(viewModel: HomeScreenViewModel) {
     }
 }
 
-
 @Composable
-fun ShareLogFile(viewModel: HomeScreenViewModel) {
+fun LogScreenActions(viewModel: HomeScreenViewModel) {
     Row(modifier = Modifier.padding(start = 8.dp)) {
         IconButton(onClick = { viewModel.shareLogFile() })
-        {
-            Icon(
-                imageVector = Icons.Filled.Share,
-                contentDescription = MR.strings.share
-            )
-        }
+        { Icon(imageVector = Icons.Filled.Share, contentDescription = MR.strings.share) }
 
         IconButton(onClick = { viewModel.saveLogFile() })
-        {
-            Icon(
-                imageVector = Icons.Filled.Save,
-                contentDescription = MR.strings.save
-            )
-        }
+        { Icon(imageVector = Icons.Filled.Save, contentDescription = MR.strings.save) }
     }
 }
 

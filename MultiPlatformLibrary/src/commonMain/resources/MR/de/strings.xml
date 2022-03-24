@@ -134,4 +134,6 @@
         ausgeblendet wird
     </string>
     <string name="whileAppIsOpened">Sichtbar während App geöffnet ist</string>
+    <string name="restore">Laden</string>
+    <string name="saveAndRestoreSettings">Einstellungen speichern und laden</string>
 </resources>

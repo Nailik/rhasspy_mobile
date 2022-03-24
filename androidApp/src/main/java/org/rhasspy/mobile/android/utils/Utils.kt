@@ -1,10 +1,5 @@
 package org.rhasspy.mobile.android.utils
 
-import android.content.Intent
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -62,7 +57,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.DataEnum
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.AppSettings
-import org.rhasspy.mobile.settings.Setting
+import org.rhasspy.mobile.settings.ConfigurationSetting
 
 @Composable
 fun Text(
@@ -438,8 +433,8 @@ fun <T> AppSetting<T>.observe(): T {
 }
 
 @Composable
-fun <T> Setting<T>.observeCurrent(): T {
-    return this.unsaved.ld().observeAsState(this.value).value
+fun <T> ConfigurationSetting<T>.observeCurrent(): T {
+    return this.unsaved.ld().observeAsState(this.data).value
 }
 
 @Composable

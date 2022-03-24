@@ -91,14 +91,9 @@ object MicrophoneOverlay {
                         or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
             ).apply {
-                if (AppSettings.isMicrophoneOverlayPositionX.data == -1) {
-                    //no custom position
-                    gravity = Gravity.CENTER
-                } else {
                     x = AppSettings.isMicrophoneOverlayPositionX.data
                     y = AppSettings.isMicrophoneOverlayPositionY.data
                     gravity = Gravity.NO_GRAVITY
-                }
             }
         }
 
