@@ -31,4 +31,6 @@ actual open class NativeApplication : MultiDexApplication() {
         })
     }
 
+    actual open fun restart() {}
+
 }

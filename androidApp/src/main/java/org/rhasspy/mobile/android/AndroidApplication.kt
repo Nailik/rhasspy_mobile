@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.android
 
+import android.content.Intent
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -56,6 +57,12 @@ class AndroidApplication : Application() {
     override fun startNativeServices() {
         IndicationOverlay.start()
         MicrophoneOverlay.start()
+    }
+
+    override fun restart() {
+        startActivity(Intent(this, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        })
     }
 
 }

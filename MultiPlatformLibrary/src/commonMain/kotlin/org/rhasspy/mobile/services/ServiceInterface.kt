@@ -18,7 +18,7 @@ import org.rhasspy.mobile.services.native.NativeIndication
 import org.rhasspy.mobile.services.native.NativeLocalWakeWordService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
-import org.rhasspy.mobile.settings.Setting
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewModels.GlobalData
 import kotlin.native.concurrent.ThreadLocal
 
@@ -742,17 +742,6 @@ object ServiceInterface {
                 serviceAction(ServiceAction.Start)
                 currentlyRestarting = false
             }
-        }
-    }
-
-    /**
-     * stops service, loads settings from files and starts necessary services again
-     */
-    fun reloadSettingsFromData(data: List<Setting<Any>>) {
-        GlobalData.fromJsonList(data)
-        coroutineScope.launch {
-            serviceAction(ServiceAction.Stop)
-            serviceAction(ServiceAction.Start)
         }
     }
 

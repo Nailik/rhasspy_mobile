@@ -1,16 +1,18 @@
 package org.rhasspy.mobile.nativeutils
 
 import android.app.Activity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromStream
 import org.rhasspy.mobile.Application
+import org.rhasspy.mobile.services.ServiceAction
 import org.rhasspy.mobile.services.ServiceInterface
-import org.rhasspy.mobile.settings.Setting
-import org.rhasspy.mobile.viewModels.GlobalData
+import java.io.File
+
 
 actual object SettingsUtils {
 
@@ -20,9 +22,12 @@ actual object SettingsUtils {
                 it.data?.data?.also { uri ->
 
                     Application.Instance.contentResolver.openOutputStream(uri)?.also { outputStream ->
-
-                        outputStream.write(GlobalData.getAsJson().toString().encodeToByteArray())
-
+                        outputStream.write(
+                            File(
+                                Application.Instance.filesDir.parent,
+                                "shared_prefs/org.rhasspy.mobile.android_preferences.xml"
+                            ).readBytes()
+                        )
                         outputStream.flush()
                         outputStream.close()
                     }
@@ -37,11 +42,23 @@ actual object SettingsUtils {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
 
+                    CoroutineScope(Dispatchers.Default).launch {
+                        ServiceInterface.serviceAction(ServiceAction.Stop)
+                    }
+
                     Application.Instance.contentResolver.openInputStream(uri)?.also { inputStream ->
-                        val list = Json.decodeFromStream<List<Setting<Any>>>(inputStream)
+                        val outputStream = File(
+                            Application.Instance.filesDir.parent,
+                            "shared_prefs/org.rhasspy.mobile.android_preferences.xml"
+                        ).outputStream()
+                        inputStream.copyTo(outputStream)
+
+                        outputStream.flush()
+
+                        outputStream.close()
                         inputStream.close()
 
-                        ServiceInterface.reloadSettingsFromData(list)
+                        Application.Instance.restart()
                     }
                 }
             }
