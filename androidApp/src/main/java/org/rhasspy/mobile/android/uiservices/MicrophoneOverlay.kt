@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import co.touchlab.kermit.Logger
+import dev.icerock.moko.mvvm.livedata.MediatorLiveData
 import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.AppTheme
 import org.rhasspy.mobile.android.screens.Fab
@@ -98,7 +99,10 @@ object MicrophoneOverlay {
     }
 
     //stores old value to only react to changes
-    private var showOverlayOldValue = false
+    private var shouldBeShownOldValue = false
+
+
+    private val shouldBeShown = MediatorLiveData(false)
 
     /**
      * start service, listen to showVisualIndication and show the overlay or remove it when necessary
@@ -106,19 +110,36 @@ object MicrophoneOverlay {
     fun start() {
         logger.d { "start" }
 
-        AppSettings.isMicrophoneOverlayEnabled.value.addObserver {
-            if (it != showOverlayOldValue) {
+        shouldBeShown.addSource(OverlayPermission.granted) {
+            shouldBeShown.value = getShouldBeShown()
+        }
+        shouldBeShown.addSource(AppSettings.isMicrophoneOverlayEnabled.value) {
+            shouldBeShown.value = getShouldBeShown()
+        }
+        shouldBeShown.addSource(AndroidApplication.isAppInBackground) {
+            shouldBeShown.value = getShouldBeShown()
+        }
+        shouldBeShown.addSource(AppSettings.isMicrophoneOverlayWhileApp.value) {
+            shouldBeShown.value = getShouldBeShown()
+        }
+
+        shouldBeShown.addObserver {
+            if (it != shouldBeShownOldValue) {
                 if (it) {
-                    if (OverlayPermission.isGranted()) {
-                        overlayWindowManager.addView(view, mParams)
-                        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
-                    }
-                } else if (showOverlayOldValue) {
+                    overlayWindowManager.addView(view, mParams)
+                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                } else {
                     overlayWindowManager.removeView(view)
                     lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
                 }
-                showOverlayOldValue = it
+                shouldBeShownOldValue = it
             }
         }
+
+    }
+
+    private fun getShouldBeShown(): Boolean {
+        return OverlayPermission.granted.value && AppSettings.isMicrophoneOverlayEnabled.data &&
+                (AndroidApplication.isAppInBackground.value || AppSettings.isMicrophoneOverlayWhileApp.data)
     }
 }

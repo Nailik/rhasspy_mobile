@@ -13,6 +13,7 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
 abstract class Application : NativeApplication() {
     private val logger = Logger.withTag("Application")
 
+
     companion object {
         lateinit var Instance: NativeApplication
             private set
