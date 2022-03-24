@@ -295,10 +295,13 @@ fun WakeWordIndicationItem() {
         }
         stateText += translate(MR.strings.light)
     }
+    if (stateText.isEmpty()) {
+        stateText = translate(MR.strings.disabled)
+    }
 
     ExpandableListItemString(
         text = MR.strings.wakeWordIndication,
-        secondaryText = stateText.ifEmpty { null }
+        secondaryText = stateText
     ) {
         Column {
 
