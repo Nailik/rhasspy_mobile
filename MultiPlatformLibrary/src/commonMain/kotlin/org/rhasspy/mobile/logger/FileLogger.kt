@@ -61,4 +61,6 @@ object FileLogger : LogWriter() {
 
     fun shareLogFile() = fileWriter.shareFile()
 
+    fun saveLogFile() = fileWriter.saveFile("rhasspy_logfile_${Clock.System.now().toLocalDateTime(TimeZone.UTC)}.txt")
+
 }

@@ -1,9 +1,13 @@
 package org.rhasspy.mobile.services.native
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.rhasspy.mobile.Application
 import java.io.File
 
@@ -58,6 +62,20 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
             .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         Application.Instance.startActivity(intent)
+    }
+
+    actual fun saveFile(fileName: String) {
+        Application.Instance.currentActivity?.createDocument(fileName) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                it.data?.data?.also { uri ->
+                    Application.Instance.contentResolver.openOutputStream(uri)?.also { outputStream ->
+                        outputStream.write(file.readBytes())
+                        outputStream.flush()
+                        outputStream.close()
+                    }
+                }
+            }
+        }
     }
 
 }

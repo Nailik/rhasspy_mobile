@@ -13,6 +13,7 @@ import org.rhasspy.mobile.NativeApplication
 import org.rhasspy.mobile.android.uiservices.IndicationOverlay
 import org.rhasspy.mobile.android.uiservices.MicrophoneOverlay
 
+
 class AndroidApplication : Application() {
 
     init {
@@ -27,9 +28,7 @@ class AndroidApplication : Application() {
         val isAppInBackground = currentlyAppInBackground.readOnly()
     }
 
-    override fun onCreate() {
-        super.onCreate()
-        onCreated()
+    init {
         //catches all exceptions
         Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
             Logger.withTag("AndroidApplication").e(exception) {
@@ -46,10 +45,17 @@ class AndroidApplication : Application() {
                 }
             }
         })
+
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        onCreated()
     }
 
     override fun startNativeServices() {
         IndicationOverlay.start()
         MicrophoneOverlay.start()
     }
+
 }

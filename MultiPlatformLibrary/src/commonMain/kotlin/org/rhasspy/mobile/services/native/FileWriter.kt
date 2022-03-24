@@ -16,4 +16,6 @@ expect class FileWriter(filename: String, maxFileSize: Long) {
 
     fun shareFile()
 
+    fun saveFile(fileName: String)
+
 }
