@@ -126,4 +126,8 @@
     <string name="hotWord">HotWord (WakeWord)</string>
     <string name="audioOutput">Audio Output</string>
     <string name="intentHandling">Intent Handling</string>
+    <string name="microphoneOverlay">Microphone Overlay</string>
+    <string name="showMicrophoneOverlay">Show Microphone Overlay</string>
+    <string name="showMicrophoneOverlayInfo">Best to use with Background Services, else the Overlay may closes when App is hidden</string>
+    <string name="whileAppIsOpened">Visible while app is opened</string>
 </resources>

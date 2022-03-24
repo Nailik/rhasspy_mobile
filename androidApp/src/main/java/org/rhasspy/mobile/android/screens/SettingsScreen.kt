@@ -49,9 +49,9 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState, viewModel: SettingsScre
         Divider()
         MicrophoneOverlay()
         Divider()
-        Device()
-        Divider()
         WakeWordIndicationItem()
+        Divider()
+        Device()
         Divider()
         AutomaticSilenceDetectionItem(viewModel, snackbarHostState)
         Divider()
@@ -210,23 +210,40 @@ fun BackgroundService() {
 @Composable
 fun MicrophoneOverlay() {
 
-    val requestOverlayPermission = requestOverlayPermission {
-        if (it) {
-            AppSettings.isMicrophoneOverlayEnabled.data = true
+    val isMicrophoneOverlayEnabled = AppSettings.isMicrophoneOverlayEnabled.value.observe()
+
+    ExpandableListItem(
+        text = MR.strings.microphoneOverlay,
+        secondaryText = isMicrophoneOverlayEnabled.toText()
+    ) {
+        Column {
+
         }
-    }
-
-    SwitchListItem(
-        text = MR.strings.deviceSettingsInformation,
-        isChecked = AppSettings.isMicrophoneOverlayEnabled.value.observe(),
-        onCheckedChange = {
-            if (it && !OverlayPermission.granted.value) {
-                requestOverlayPermission.invoke()
-            } else {
-                AppSettings.isWakeWordLightIndication.data = it
+        val requestOverlayPermission = requestOverlayPermission {
+            if (it) {
+                AppSettings.isMicrophoneOverlayEnabled.data = true
             }
-        })
+        }
 
+        SwitchListItem(
+            text = MR.strings.showMicrophoneOverlay,
+            secondaryText = MR.strings.showMicrophoneOverlayInfo,
+            isChecked = isMicrophoneOverlayEnabled,
+            onCheckedChange = {
+                if (it && !OverlayPermission.granted.value) {
+                    requestOverlayPermission.invoke()
+                } else {
+                    AppSettings.isMicrophoneOverlayEnabled.data = it
+                }
+            })
+
+        SwitchListItem(
+            text = MR.strings.whileAppIsOpened,
+            isChecked = AppSettings.isMicrophoneOverlayWhileApp.observe(),
+            onCheckedChange = {
+                AppSettings.isMicrophoneOverlayWhileApp.data = it
+            })
+    }
 }
 
 @Composable
