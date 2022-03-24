@@ -313,7 +313,7 @@ object MqttService {
             MQTTTopicsPublish.SessionStarted.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("sessionId", sessionId)
-                    put("siteId", ConfigurationSettings.siteId.value)
+                    put("siteId", ConfigurationSettings.siteId.data)
                 }).toByteArray()
             )
         )

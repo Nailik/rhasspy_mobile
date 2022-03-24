@@ -57,7 +57,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.DataEnum
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.AppSettings
-import org.rhasspy.mobile.settings.Setting
+import org.rhasspy.mobile.settings.ConfigurationSetting
 
 @Composable
 fun Text(
@@ -433,8 +433,8 @@ fun <T> AppSetting<T>.observe(): T {
 }
 
 @Composable
-fun <T> Setting<T>.observeCurrent(): T {
-    return this.unsaved.ld().observeAsState(this.value).value
+fun <T> ConfigurationSetting<T>.observeCurrent(): T {
+    return this.unsaved.ld().observeAsState(this.data).value
 }
 
 @Composable

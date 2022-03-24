@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.android
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.*
@@ -33,6 +32,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import org.rhasspy.mobile.AppActivity
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
 import org.rhasspy.mobile.android.permissions.requestOverlayPermission
@@ -54,7 +54,8 @@ import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.GlobalData
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
-class MainActivity : ComponentActivity() {
+
+class MainActivity : AppActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -189,16 +190,24 @@ fun TopAppBar(viewModel: HomeScreenViewModel, snackbarHostState: SnackbarHostSta
 
             val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-            if (navBackStackEntry?.destination?.route != Screens.LogScreen.name) {
-                MicrophonePermissionRequired(viewModel, snackbarHostState)
-                OverlayPermissionRequired(viewModel)
-                UnsavedChanges(viewModel)
-            } else {
-                //only on log screen
-                ShareLogFile(viewModel)
+            when (navBackStackEntry?.destination?.route) {
+                Screens.HomeScreen.name,
+                Screens.ConfigurationScreen.name -> HomeAndConfigScreenActions(viewModel, snackbarHostState)
+                Screens.SettingsScreen.name -> {}
+                Screens.LogScreen.name -> LogScreenActions(viewModel)
             }
         }
     )
+}
+
+
+@Composable
+fun HomeAndConfigScreenActions(viewModel: HomeScreenViewModel, snackbarHostState: SnackbarHostState) {
+    Row(modifier = Modifier.padding(start = 8.dp)) {
+        MicrophonePermissionRequired(viewModel, snackbarHostState)
+        OverlayPermissionRequired(viewModel)
+        UnsavedChanges(viewModel)
+    }
 }
 
 
@@ -295,17 +304,14 @@ fun UnsavedChanges(viewModel: HomeScreenViewModel) {
     }
 }
 
-
 @Composable
-fun ShareLogFile(viewModel: HomeScreenViewModel) {
+fun LogScreenActions(viewModel: HomeScreenViewModel) {
     Row(modifier = Modifier.padding(start = 8.dp)) {
         IconButton(onClick = { viewModel.shareLogFile() })
-        {
-            Icon(
-                imageVector = Icons.Filled.Share,
-                contentDescription = MR.strings.reset
-            )
-        }
+        { Icon(imageVector = Icons.Filled.Share, contentDescription = MR.strings.share) }
+
+        IconButton(onClick = { viewModel.saveLogFile() })
+        { Icon(imageVector = Icons.Filled.Save, contentDescription = MR.strings.save) }
     }
 }
 

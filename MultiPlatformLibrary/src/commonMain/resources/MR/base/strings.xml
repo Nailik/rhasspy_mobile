@@ -119,6 +119,7 @@
         Permission.
     </string>
     <string name="save">Save</string>
+    <string name="share">Share</string>
     <string name="reset">Reset</string>
     <string name="device">Device</string>
     <string name="deviceSettingsInformation">This settings can be changed with MQTT commands.</string>
@@ -130,4 +131,6 @@
     <string name="showMicrophoneOverlay">Show Microphone Overlay</string>
     <string name="showMicrophoneOverlayInfo">Best to use with Background Services, else the Overlay may closes when App is hidden</string>
     <string name="whileAppIsOpened">Visible while app is opened</string>
+    <string name="restore">Restore</string>
+    <string name="saveAndRestoreSettings">Save and Restore Settings</string>
 </resources>

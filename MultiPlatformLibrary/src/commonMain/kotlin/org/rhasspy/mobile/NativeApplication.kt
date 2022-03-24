@@ -4,4 +4,6 @@ expect open class NativeApplication() {
 
     fun startNativeServices()
 
+    fun restart()
+
 }
