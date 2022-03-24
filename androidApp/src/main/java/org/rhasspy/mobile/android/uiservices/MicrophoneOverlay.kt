@@ -66,9 +66,15 @@ object MicrophoneOverlay {
     }
 
     private fun onDragVertical(delta: Offset) {
-        mParams.y = (mParams.y + delta.y).toInt()
-        mParams.x = (mParams.x + delta.x).toInt()
-        mParams.gravity = Gravity.NO_GRAVITY
+        mParams.apply {
+            //apply
+            x = (x + delta.x).toInt()
+            y = (y + delta.y).toInt()
+            gravity = Gravity.NO_GRAVITY
+            //save
+            AppSettings.isMicrophoneOverlayPositionX.data = x
+            AppSettings.isMicrophoneOverlayPositionY.data = y
+        }
         overlayWindowManager.updateViewLayout(view, mParams)
     }
 
@@ -85,7 +91,14 @@ object MicrophoneOverlay {
                         or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
             ).apply {
-                gravity = Gravity.CENTER
+                if (AppSettings.isMicrophoneOverlayPositionX.data == -1) {
+                    //no custom position
+                    gravity = Gravity.CENTER
+                } else {
+                    x = AppSettings.isMicrophoneOverlayPositionX.data
+                    y = AppSettings.isMicrophoneOverlayPositionY.data
+                    gravity = Gravity.NO_GRAVITY
+                }
             }
         }
 

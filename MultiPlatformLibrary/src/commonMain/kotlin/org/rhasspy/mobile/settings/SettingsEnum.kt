@@ -12,6 +12,8 @@ enum class SettingsEnum {
     BackgroundEnabled,
     MicrophoneOverlay,
     MicrophoneOverlayWhileApp,
+    MicrophoneOverlayPositionX,
+    MicrophoneOverlayPositionY,
 
     BackgroundWakeWordDetectionTurnOnDisplay,
     WakeWordSoundIndication,
