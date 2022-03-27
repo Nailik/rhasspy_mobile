@@ -483,7 +483,13 @@ object ServiceInterface {
                 }
                 //send intent to mqtt service
                 IntentRecognitionOptions.RemoteMQTT -> MqttService.intentQuery(currentSessionId, text)
-                IntentRecognitionOptions.Disabled -> logger.d { "intentRecognition disabled" }
+                IntentRecognitionOptions.Disabled -> {
+                    logger.d { "intentRecognition disabled" }
+                    if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+                        intentNotRecognized()
+                    }
+
+                }
             }
         }
     }
