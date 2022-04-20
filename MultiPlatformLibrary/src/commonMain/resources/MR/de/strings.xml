@@ -120,6 +120,8 @@
         Sie zu Rhasspy und erlauben Sie die Berechtigung.
     </string>
     <string name="save">Speichern</string>
+    <string name="saveText">Einstellungen in einer externen Datei speichern</string>
+    <string name="restoreText">Wiederherstellung der Einstellungen aus einer externen Datei</string>
     <string name="share">Teilen</string>
     <string name="reset">Zurücksetzen</string>
     <string name="device">Gerät</string>
@@ -136,4 +138,11 @@
     <string name="whileAppIsOpened">Sichtbar während App geöffnet ist</string>
     <string name="restore">Laden</string>
     <string name="saveAndRestoreSettings">Einstellungen speichern und laden</string>
+    <string name="saveSettings">Einstellungen Speichern</string>
+    <string name="saveSettingsText">Die exportierte Einstellungsdatei enthält sensible Daten! Lesen Sie die Datei und bearbeiten Sie sie
+        sorgfältig, vor der Weitergabe.
+    </string>
+    <string name="restoreSettings">Einstellungen Laden</string>
+    <string name="restoreSettingsText">Ihre aktuellen Einstellungen gehen beim Wiederherstellen aus der Datei verloren!</string>
+    <string name="warning">Warnung</string>
 </resources>

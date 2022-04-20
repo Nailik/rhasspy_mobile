@@ -13,11 +13,15 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
@@ -363,16 +367,79 @@ fun ShowLogItem() {
 }
 
 @Composable
-fun SaveAndRestore(viewModel: SettingsScreenViewModel = viewModel()) {
+fun SaveAndRestore(viewModel: SettingsScreenViewModel) {
     ExpandableListItem(
         text = MR.strings.saveAndRestoreSettings
     ) {
-        ListElement(modifier = Modifier
-            .clickable { viewModel.saveSettingsFile() },
-            text = { Text(MR.strings.save) })
+        val openSaveSettingsDialog = remember { mutableStateOf(false) }
+        val openRestoreSettingsDialog = remember { mutableStateOf(false) }
 
         ListElement(modifier = Modifier
-            .clickable { viewModel.restoreSettingsFromFile() },
-            text = { Text(MR.strings.restore) })
+            .clickable { openSaveSettingsDialog.value = true },
+            text = { Text(MR.strings.save) },
+            secondaryText = { Text(MR.strings.saveText) })
+
+        ListElement(modifier = Modifier
+            .clickable { openRestoreSettingsDialog.value = true },
+            text = { Text(MR.strings.restore) },
+            secondaryText = { Text(MR.strings.restoreText) })
+
+        if (openSaveSettingsDialog.value) {
+            SaveSettingsDialog {
+                openSaveSettingsDialog.value = false
+                if (it) {
+                    viewModel.saveSettingsFile()
+                }
+            }
+        }
+
+        if (openRestoreSettingsDialog.value) {
+            RestoreSettingsDialog {
+                openRestoreSettingsDialog.value = false
+                if (it) {
+                    viewModel.restoreSettingsFromFile()
+                }
+            }
+        }
     }
+}
+
+@Composable
+fun SaveSettingsDialog(onResult: (result: Boolean) -> Unit) {
+    AlertDialog(
+        onDismissRequest = { onResult.invoke(false) },
+        title = { Text(MR.strings.saveSettings) },
+        text = { Text(MR.strings.saveSettingsText, textAlign = TextAlign.Center) },
+        icon = { Icon(imageVector = Icons.Filled.Warning, contentDescription = MR.strings.warning) },
+        confirmButton = {
+            Button(onClick = { onResult.invoke(true) }) {
+                Text(MR.strings.ok)
+            }
+        },
+        dismissButton = {
+            OutlinedButton(onClick = { onResult.invoke(false) }) {
+                Text(MR.strings.cancel)
+            }
+        }
+    )
+}
+
+@Composable
+fun RestoreSettingsDialog(onResult: (result: Boolean) -> Unit) {
+    AlertDialog(
+        onDismissRequest = { onResult.invoke(false) },
+        title = { Text(MR.strings.restoreSettings) },
+        text = { Text(MR.strings.restoreSettingsText, textAlign = TextAlign.Center) },
+        icon = { Icon(imageVector = Icons.Filled.Warning, contentDescription = MR.strings.warning) },
+        confirmButton = {
+            Button(onClick = { onResult.invoke(true) }) {
+                Text(MR.strings.ok)
+            }
+        },
+        dismissButton = {
+            OutlinedButton(onClick = { onResult.invoke(false) }) {
+                Text(MR.strings.cancel)
+            }
+        }
+    )
 }
