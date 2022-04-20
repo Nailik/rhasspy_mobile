@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.services.RecordingService.addWavHeader
-import org.rhasspy.mobile.services.http.HttpServer
 import org.rhasspy.mobile.services.native.AudioPlayer
 import org.rhasspy.mobile.services.native.FileWriter
 import org.rhasspy.mobile.services.native.NativeIndication
