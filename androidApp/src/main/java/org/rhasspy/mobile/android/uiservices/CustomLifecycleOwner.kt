@@ -13,6 +13,7 @@ class CustomLifecycleOwner : LifecycleOwner, ViewModelStoreOwner, SavedStateRegi
 
     private var mLifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
     private var mSavedStateRegistryController: SavedStateRegistryController = SavedStateRegistryController.create(this)
+
     override val savedStateRegistry: SavedStateRegistry
         get() = mSavedStateRegistryController.savedStateRegistry
 

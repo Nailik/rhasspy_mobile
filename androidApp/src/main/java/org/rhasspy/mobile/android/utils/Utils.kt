@@ -502,3 +502,8 @@ fun TextWithAction(
         }
     }
 }
+
+@Composable
+fun CustomDivider(){
+    Divider(color = MaterialTheme.colorScheme.surfaceVariant)
+}
