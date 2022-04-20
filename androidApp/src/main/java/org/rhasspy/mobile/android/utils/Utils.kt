@@ -52,6 +52,7 @@ import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.DataEnum
@@ -245,7 +246,7 @@ fun ExpandableListItemString(
     )
 }
 
-
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun ExpandableListItemInternal(
     text: StringResource,
@@ -253,10 +254,20 @@ private fun ExpandableListItemInternal(
     expandedContent: @Composable () -> Unit
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val coroutineScope = rememberCoroutineScope()
 
     ListElement(
         modifier = Modifier
-            .clickable { isExpanded = !isExpanded },
+            .clickable {
+                isExpanded = !isExpanded
+                if (isExpanded) {
+                    coroutineScope.launch {
+                        delay(1000)
+                        bringIntoViewRequester.bringIntoView()
+                    }
+                }
+            },
         text = { Text(text) },
         secondaryText = secondaryText,
         trailing = {
@@ -271,11 +282,16 @@ private fun ExpandableListItemInternal(
     )
 
     AnimatedVisibility(
+        modifier = Modifier,
         enter = expandVertically(),
         exit = shrinkVertically(),
         visible = isExpanded
     ) {
-        Column(modifier = Modifier.padding(bottom = 8.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+                .bringIntoViewRequester(bringIntoViewRequester)
+        ) {
             expandedContent()
         }
     }
