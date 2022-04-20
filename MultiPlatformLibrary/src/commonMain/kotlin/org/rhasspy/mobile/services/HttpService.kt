@@ -2,8 +2,9 @@ package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
 import io.ktor.client.*
-import io.ktor.client.features.*
-import io.ktor.client.features.websocket.*
+import io.ktor.client.call.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
@@ -38,16 +39,16 @@ object HttpService {
         logger.v { "sending speechToText \nendpoint:\n${ConfigurationSettings.speechToTextHttpEndpoint.data}\ndata:\n${data.size}" }
 
         return try {
-            val response = httpClient.post<String>(
+            val request = httpClient.post(
                 url = Url("${ConfigurationSettings.speechToTextHttpEndpoint.data}?noheader=true")
             ) {
-                body = data.toByteArray()
+                setBody(data.toByteArray())
             }
 
+            val response = request.body<String>()
             logger.v { "speechToText received:\n$response" }
 
             response
-
         } catch (e: Exception) {
             logger.e(e) { "sending speechToText Exception" }
             null
@@ -71,7 +72,7 @@ object HttpService {
         return try {
             logger.v { "intent will be handled directly $handleDirectly" }
 
-            val response = httpClient.post<String>(
+            val request = httpClient.post(
                 url = Url(
                     "${ConfigurationSettings.intentRecognitionEndpoint.data}${
                         if (!handleDirectly) {
@@ -80,8 +81,10 @@ object HttpService {
                     }"
                 )
             ) {
-                body = text
+                setBody(text)
             }
+
+            val response = request.body<String>()
 
             logger.v { "intentRecognition received:\n$response" }
 
@@ -115,11 +118,13 @@ object HttpService {
 
         return try {
 
-            val response = httpClient.post<List<Byte>>(
+            val request = httpClient.post(
                 url = Url(ConfigurationSettings.textToSpeechEndpoint.data)
             ) {
-                body = text
+                setBody(text)
             }
+
+            val response = request.body<List<Byte>>()
 
             logger.v { "textToSpeech received Data" }
 
@@ -141,14 +146,16 @@ object HttpService {
         logger.v { "sending audio \nendpoint:\n${ConfigurationSettings.audioPlayingEndpoint.data}\ndata:\n${data.size}" }
 
         try {
-            val response = httpClient.post<String>(
+            val request = httpClient.post(
                 url = Url(ConfigurationSettings.audioPlayingEndpoint.data)
             ) {
                 setAttributes {
                     contentType(ContentType("audio", "wav"))
                 }
-                body = data.toByteArray()
+                setBody(data.toByteArray())
             }
+
+            val response = request.body<String>()
 
             logger.v { "sending audio received:\n${response}" }
 
@@ -180,11 +187,13 @@ object HttpService {
 
         try {
 
-            val response = httpClient.post<String>(
+            val request = httpClient.post(
                 url = Url(ConfigurationSettings.intentHandlingEndpoint.data)
             ) {
-                body = intent
+                setBody(intent)
             }
+
+            val response = request.body<String>()
 
             logger.v { "sending intent received:\n${response}" }
 
