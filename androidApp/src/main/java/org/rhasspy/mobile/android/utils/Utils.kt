@@ -504,6 +504,6 @@ fun TextWithAction(
 }
 
 @Composable
-fun CustomDivider(){
+fun CustomDivider() {
     Divider(color = MaterialTheme.colorScheme.surfaceVariant)
 }
