@@ -75,7 +75,6 @@ kotlin {
                 implementation(Ktor.Network.network)
                 implementation(Slf4j.simple)
                 implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
-                //implementation(Eclipse.Phao.mqttClient)
             }
         }
         val androidTest by getting
