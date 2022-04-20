@@ -47,13 +47,13 @@ class HomeScreenViewModel : ViewModel() {
 
     fun speakText(text: String) = ServiceInterface.say(text)
 
-    fun saveAndApplyChanges() {
-        ServiceInterface.saveAndApplyChanges()
-    }
+    fun saveAndApplyChanges() = ServiceInterface.saveAndApplyChanges()
 
     fun resetChanges() = ServiceInterface.resetChanges()
 
     fun shareLogFile() = FileLogger.shareLogFile()
+
+    fun saveLogFile() = FileLogger.saveLogFile()
 
 
 }

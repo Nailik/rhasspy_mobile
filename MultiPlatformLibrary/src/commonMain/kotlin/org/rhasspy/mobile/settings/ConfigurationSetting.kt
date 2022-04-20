@@ -7,7 +7,7 @@ import dev.icerock.moko.mvvm.livedata.postValue
 import org.rhasspy.mobile.data.DataEnum
 import org.rhasspy.mobile.viewModels.GlobalData
 
-class Setting<T>(private val key: SettingsEnum, private val initial: T) {
+class ConfigurationSetting<T>(private val key: SettingsEnum, private val initial: T) {
 
     init {
         GlobalData.allSettings.add(this)

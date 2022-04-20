@@ -4,14 +4,14 @@ import co.touchlab.kermit.Logger
 import com.russhwolf.settings.Settings
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.postValue
-import org.rhasspy.mobile.settings.Setting
+import org.rhasspy.mobile.settings.ConfigurationSetting
 
 object GlobalData {
     private val logger = Logger.withTag("GlobalData")
 
     val settings: Settings = Settings()
 
-    val allSettings = mutableListOf<Setting<*>>()
+    val allSettings = mutableListOf<ConfigurationSetting<*>>()
 
     val unsavedChanges = MutableLiveData(false)
 

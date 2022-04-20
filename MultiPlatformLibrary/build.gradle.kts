@@ -50,6 +50,10 @@ kotlin {
                 implementation(Ktor.Client.core)
                 implementation(Ktor.Client.websockets)
                 implementation(Ktor.Network.network)
+                implementation(Ktor2.Server.core)
+                implementation(Ktor2.Server.cors)
+                implementation(Ktor2.Server.dataConversion)
+                implementation(Ktor2.Server.cio)
                 implementation(Benasher.uuid)
             }
         }
@@ -75,6 +79,8 @@ kotlin {
                 implementation(Ktor.Network.network)
                 implementation(Ktor.Network.tlsCertificates)
                 implementation(Slf4j.simple)
+                implementation(Ktor2.Server.compression)
+                implementation(Ktor2.Server.callLogging)
                 implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
             }
         }

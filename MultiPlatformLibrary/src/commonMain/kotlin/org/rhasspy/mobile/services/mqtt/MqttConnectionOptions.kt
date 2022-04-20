@@ -9,7 +9,7 @@ data class MqttConnectionOptions(
     val cleanSession: Boolean = true,
     val cleanStart: Boolean = false,
     /** Connection timeout in seconds. */
-    val connectionTimeout: Int = 60,
+    val connectionTimeout: Int = 5,
     val retryInterval: Int = 0,
     /** Keep alive interval in seconds. */
     val keepAliveInterval: Int = 60,

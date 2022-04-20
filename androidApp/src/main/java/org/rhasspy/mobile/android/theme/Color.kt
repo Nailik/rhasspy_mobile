@@ -79,7 +79,6 @@ val error = Color(0xFFba1b1b)
 
 
 val LightThemeColors = lightColorScheme(
-
     primary = md_theme_light_primary,
     onPrimary = md_theme_light_onPrimary,
     primaryContainer = md_theme_light_primaryContainer,

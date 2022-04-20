@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
+import org.rhasspy.mobile.nativeutils.SettingsUtils
 import org.rhasspy.mobile.services.native.AudioRecorder
 
 class SettingsScreenViewModel : ViewModel() {
@@ -64,6 +65,10 @@ class SettingsScreenViewModel : ViewModel() {
 
         currentStatus.value = false
     }
+
+    fun saveSettingsFile() = SettingsUtils.saveSettingsFile()
+
+    fun restoreSettingsFromFile() = SettingsUtils.restoreSettingsFromFile()
 
 
 }

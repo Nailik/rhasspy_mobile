@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.android
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.*
@@ -33,6 +32,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import org.rhasspy.mobile.AppActivity
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
 import org.rhasspy.mobile.android.permissions.requestOverlayPermission
@@ -54,7 +54,8 @@ import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.GlobalData
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
-class MainActivity : ComponentActivity() {
+
+class MainActivity : AppActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -70,74 +71,81 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun Content(viewModel: HomeScreenViewModel = viewModel()) {
-
-    val systemUiController = rememberSystemUiController()
+fun AppTheme(systemUiTheme: Boolean, content: @Composable () -> Unit) {
 
     val themeOption = AppSettings.themeOption.observe()
 
     val darkTheme = (isSystemInDarkTheme() && themeOption == ThemeOptions.System) || themeOption == ThemeOptions.Dark
     val colorScheme = if (darkTheme) DarkThemeColors else LightThemeColors
 
-    systemUiController.setSystemBarsColor(colorScheme.background, darkIcons = !darkTheme)
-    systemUiController.setNavigationBarColor(colorScheme.background, darkIcons = !darkTheme)
-    systemUiController.setStatusBarColor(colorScheme.background, darkIcons = !darkTheme)
+    if (systemUiTheme) {
+        //may be used inside overlay and then the context is not an activity
+        val systemUiController = rememberSystemUiController()
+        systemUiController.setSystemBarsColor(colorScheme.background, darkIcons = !darkTheme)
+        systemUiController.setNavigationBarColor(colorScheme.background, darkIcons = !darkTheme)
+        systemUiController.setStatusBarColor(colorScheme.background, darkIcons = !darkTheme)
+    }
 
     androidx.compose.material.MaterialTheme(
         colors = colorScheme.toColors(isLight = !darkTheme),
         typography = MaterialTheme.typography.toOldTypography()
     ) {
+        MaterialTheme(colorScheme = colorScheme, content = content)
+    }
+}
 
-        MaterialTheme(colorScheme = colorScheme) {
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun Content(viewModel: HomeScreenViewModel = viewModel()) {
 
-            ProvideWindowInsets {
+    AppTheme(true) {
 
-                BoxWithConstraints(
-                    modifier = Modifier.fillMaxSize()
-                ) {
+        ProvideWindowInsets {
 
-                    var isBottomNavigationHidden by remember { mutableStateOf(false) }
+            BoxWithConstraints(
+                modifier = Modifier.fillMaxSize()
+            ) {
 
-                    isBottomNavigationHidden = this.maxHeight < 250.dp
+                var isBottomNavigationHidden by remember { mutableStateOf(false) }
 
-                    val navController = rememberNavController()
-                    val snackbarHostState = remember { SnackbarHostState() }
+                isBottomNavigationHidden = this.maxHeight < 250.dp
 
-                    Scaffold(
-                        topBar = { TopAppBar(viewModel, snackbarHostState, navController) },
-                        snackbarHost = { SnackbarHost(snackbarHostState) },
-                        bottomBar = {
-                            //hide bottom navigation with keyboard and small screens
-                            if (!isBottomNavigationHidden) {
-                                BottomNavigation(navController)
-                            }
+                val navController = rememberNavController()
+                val snackbarHostState = remember { SnackbarHostState() }
+
+                Scaffold(
+                    topBar = { TopAppBar(viewModel, snackbarHostState, navController) },
+                    snackbarHost = { SnackbarHost(snackbarHostState) },
+                    bottomBar = {
+                        //hide bottom navigation with keyboard and small screens
+                        if (!isBottomNavigationHidden) {
+                            BottomNavigation(navController)
                         }
-                    ) { paddingValues ->
-                        NavHost(
-                            navController = navController,
-                            startDestination = Screens.HomeScreen.name,
-                            modifier = Modifier.padding(
-                                paddingValues.calculateLeftPadding(LayoutDirection.Ltr),
-                                paddingValues.calculateTopPadding(),
-                                paddingValues.calculateRightPadding(LayoutDirection.Ltr),
-                                paddingValues.calculateBottomPadding()
-                            )
-                        ) {
-                            composable(Screens.HomeScreen.name) {
-                                HomeScreen(snackbarHostState)
-                            }
-                            composable(Screens.ConfigurationScreen.name) {
-                                ConfigurationScreen(snackbarHostState)
-                            }
-                            composable(Screens.SettingsScreen.name) {
-                                SettingsScreen(snackbarHostState)
-                            }
-                            composable(Screens.LogScreen.name) {
-                                LogScreen()
-                            }
+                    }
+                ) { paddingValues ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screens.HomeScreen.name,
+                        modifier = Modifier.padding(
+                            paddingValues.calculateLeftPadding(LayoutDirection.Ltr),
+                            paddingValues.calculateTopPadding(),
+                            paddingValues.calculateRightPadding(LayoutDirection.Ltr),
+                            paddingValues.calculateBottomPadding()
+                        )
+                    ) {
+                        composable(Screens.HomeScreen.name) {
+                            HomeScreen(snackbarHostState)
+                        }
+                        composable(Screens.ConfigurationScreen.name) {
+                            ConfigurationScreen(snackbarHostState)
+                        }
+                        composable(Screens.SettingsScreen.name) {
+                            SettingsScreen(snackbarHostState)
+                        }
+                        composable(Screens.LogScreen.name) {
+                            LogScreen()
                         }
                     }
                 }
@@ -182,16 +190,24 @@ fun TopAppBar(viewModel: HomeScreenViewModel, snackbarHostState: SnackbarHostSta
 
             val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-            if (navBackStackEntry?.destination?.route != Screens.LogScreen.name) {
-                MicrophonePermissionRequired(viewModel, snackbarHostState)
-                OverlayPermissionRequired(viewModel)
-                UnsavedChanges(viewModel)
-            } else {
-                //only on log screen
-                ShareLogFile(viewModel)
+            when (navBackStackEntry?.destination?.route) {
+                Screens.HomeScreen.name,
+                Screens.ConfigurationScreen.name -> HomeAndConfigScreenActions(viewModel, snackbarHostState)
+                Screens.SettingsScreen.name -> {}
+                Screens.LogScreen.name -> LogScreenActions(viewModel)
             }
         }
     )
+}
+
+
+@Composable
+fun HomeAndConfigScreenActions(viewModel: HomeScreenViewModel, snackbarHostState: SnackbarHostState) {
+    Row(modifier = Modifier.padding(start = 8.dp)) {
+        MicrophonePermissionRequired(viewModel, snackbarHostState)
+        OverlayPermissionRequired(viewModel)
+        UnsavedChanges(viewModel)
+    }
 }
 
 
@@ -230,7 +246,10 @@ fun OverlayPermissionRequired(viewModel: HomeScreenViewModel) {
     ) {
         val overlayPermission = requestOverlayPermission {}
 
-        IconButton(onClick = { overlayPermission.invoke() }, Modifier.background(MaterialTheme.colorScheme.errorContainer))
+        IconButton(
+            onClick = { overlayPermission.invoke() },
+            modifier = Modifier.background(MaterialTheme.colorScheme.errorContainer)
+        )
         {
             Icon(
                 imageVector = Icons.Filled.LayersClear,
@@ -288,17 +307,14 @@ fun UnsavedChanges(viewModel: HomeScreenViewModel) {
     }
 }
 
-
 @Composable
-fun ShareLogFile(viewModel: HomeScreenViewModel) {
+fun LogScreenActions(viewModel: HomeScreenViewModel) {
     Row(modifier = Modifier.padding(start = 8.dp)) {
         IconButton(onClick = { viewModel.shareLogFile() })
-        {
-            Icon(
-                imageVector = Icons.Filled.Share,
-                contentDescription = MR.strings.reset
-            )
-        }
+        { Icon(imageVector = Icons.Filled.Share, contentDescription = MR.strings.share) }
+
+        IconButton(onClick = { viewModel.saveLogFile() })
+        { Icon(imageVector = Icons.Filled.Save, contentDescription = MR.strings.save) }
     }
 }
 

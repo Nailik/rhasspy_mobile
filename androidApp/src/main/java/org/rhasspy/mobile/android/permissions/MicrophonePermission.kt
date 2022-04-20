@@ -13,6 +13,7 @@ import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.android.utils.translate
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 
@@ -97,17 +98,17 @@ private fun requestMicrophonePermissionFromSystem(
 private fun MicrophonePermissionInfoDialog(message: StringResource, onResult: (result: Boolean) -> Unit) {
     AlertDialog(
         onDismissRequest = { onResult.invoke(false) },
-        title = { org.rhasspy.mobile.android.utils.Text(MR.strings.microphonePermissionDialogTitle) },
-        text = { org.rhasspy.mobile.android.utils.Text(message) },
+        title = { Text(MR.strings.microphonePermissionDialogTitle) },
+        text = { Text(message) },
         icon = { org.rhasspy.mobile.android.utils.Icon(imageVector = Icons.Filled.Mic, contentDescription = MR.strings.microphone) },
         confirmButton = {
             Button(onClick = { onResult.invoke(true) }) {
-                org.rhasspy.mobile.android.utils.Text(MR.strings.ok)
+                Text(MR.strings.ok)
             }
         },
         dismissButton = {
             OutlinedButton(onClick = { onResult.invoke(false) }) {
-                org.rhasspy.mobile.android.utils.Text(MR.strings.cancel)
+                Text(MR.strings.cancel)
             }
         }
     )

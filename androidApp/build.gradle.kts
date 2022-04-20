@@ -42,6 +42,9 @@ android {
         resources.pickFirsts.add("META-INF/INDEX.LIST")
         resources.pickFirsts.add("META-INF/io.netty.versions.properties")
     }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 kotlin {
@@ -74,6 +77,8 @@ dependencies {
     implementation(AndroidX.Compose.foundation)
     implementation(AndroidX.Compose.runtime.liveData)
     implementation(AndroidX.Lifecycle.viewModelCompose)
+    implementation(AndroidX.Lifecycle.common)
+    implementation(AndroidX.Lifecycle.common)
     implementation(AndroidX.Compose.ui)
     implementation(AndroidX.Compose.ui.util)
     implementation(AndroidX.Compose.ui.tooling)
@@ -88,5 +93,6 @@ dependencies {
     implementation(Icerock.Mvvm.livedataResources)
 
     implementation("co.touchlab:kermit:_")
+    implementation(AndroidX.lifecycle.process)
 
 }
