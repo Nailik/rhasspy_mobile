@@ -13,6 +13,8 @@ import io.ktor.server.routing.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.rhasspy.mobile.services.native.installCallLogging
+import org.rhasspy.mobile.services.native.installCompression
 import kotlin.native.concurrent.ThreadLocal
 
 //https://rhasspy.readthedocs.io/en/latest/reference/#http-api
@@ -39,8 +41,12 @@ object HttpServer {
     private fun getServer(): CIOApplicationEngine {
         return embeddedServer(factory = CIO, port = 12101, watchPaths = emptyList()) {
             //install(WebSockets)
-            //install(CallLogging)
+            installCallLogging()
             install(DataConversion)
+            //Greatly reduces the amount of data that's needed to be sent to the client by
+            //gzipping outgoing content when applicable.
+            installCompression()
+
             // configures Cross-Origin Resource Sharing. CORS is needed to make calls from arbitrary
             // JavaScript clients, and helps us prevent issues down the line.
             install(CORS) {
@@ -49,11 +55,7 @@ object HttpServer {
                 methods.add(HttpMethod.Delete)
                 anyHost()
             }
-            //Greatly reduces the amount of data that's needed to be sent to the client by
-            //gzipping outgoing content when applicable.
-            //install(Compression) {
-            //    gzip()
-            //}
+
             routing {
                 listenForCommand()
                 listenForWake()
