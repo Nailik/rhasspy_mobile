@@ -50,6 +50,8 @@ kotlin {
                 implementation(Ktor.Client.core)
                 implementation(Ktor.Client.websockets)
                 implementation(Ktor.Network.network)
+                implementation("io.ktor:ktor-server:2.0.0")
+                implementation("io.ktor:ktor-server-cio:2.0.0")
                 implementation(Benasher.uuid)
             }
         }

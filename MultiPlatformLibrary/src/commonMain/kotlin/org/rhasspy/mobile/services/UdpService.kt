@@ -1,10 +1,11 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
+import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.utils.io.core.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
-import org.rhasspy.mobile.services.native.SocketService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.native.concurrent.ThreadLocal
@@ -31,7 +32,7 @@ object UdpService {
         logger.v { "start" }
 
         try {
-            sendChannel = SocketService.getSocketBuilder().udp().bind().outgoing
+            sendChannel = aSocket(SelectorManager(Dispatchers.Default)).udp().bind().outgoing
 
             socketAddress = InetSocketAddress(
                 ConfigurationSettings.udpOutputHost.data,
