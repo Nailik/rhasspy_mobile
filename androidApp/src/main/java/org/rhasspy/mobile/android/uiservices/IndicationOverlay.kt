@@ -16,7 +16,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
-import androidx.savedstate.ViewTreeSavedStateRegistryOwner
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.AppTheme
 import org.rhasspy.mobile.android.theme.assistant_color_four
@@ -128,7 +128,7 @@ object IndicationOverlay {
         lifecycleOwner.performRestore(null)
         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
         ViewTreeLifecycleOwner.set(view, lifecycleOwner)
-        ViewTreeSavedStateRegistryOwner.set(view, lifecycleOwner)
+        view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
 
         val viewModelStore = ViewModelStore()
         ViewTreeViewModelStoreOwner.set(view) { viewModelStore }

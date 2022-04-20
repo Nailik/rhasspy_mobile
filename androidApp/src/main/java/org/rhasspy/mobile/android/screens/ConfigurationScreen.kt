@@ -14,7 +14,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHostState
@@ -48,27 +47,27 @@ fun ConfigurationScreen(snackbarHostState: SnackbarHostState, viewModel: Configu
             .verticalScroll(rememberScrollState())
     ) {
         SiteId()
-        Divider()
+        CustomDivider()
         HttpSSL()
-        Divider()
+        CustomDivider()
         Mqtt(viewModel)
-        Divider()
+        CustomDivider()
         AudioRecording()
-        Divider()
+        CustomDivider()
         WakeWord(snackbarHostState)
-        Divider()
+        CustomDivider()
         SpeechToText()
-        Divider()
+        CustomDivider()
         IntentRecognition()
-        Divider()
+        CustomDivider()
         TextToSpeech()
-        Divider()
+        CustomDivider()
         AudioPlaying()
-        Divider()
+        CustomDivider()
         DialogueManagement()
-        Divider()
+        CustomDivider()
         IntentHandling()
-        Divider()
+        CustomDivider()
     }
 }
 
