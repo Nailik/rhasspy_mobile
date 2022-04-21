@@ -1,5 +1,7 @@
 package org.rhasspy.mobile.android.screens
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
@@ -20,11 +22,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.content.pm.PackageInfoCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
+import compose.icons.FontAwesomeIcons
+import compose.icons.fontawesomeicons.Brands
+import compose.icons.fontawesomeicons.brands.Github
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
 import org.rhasspy.mobile.android.permissions.requestOverlayPermission
@@ -36,6 +43,7 @@ import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.SettingsScreenViewModel
 import java.math.RoundingMode
+
 
 private val logger = Logger.withTag("SettingsScreen")
 
@@ -64,6 +72,7 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState, viewModel: SettingsScre
         CustomDivider()
         SaveAndRestore(viewModel)
         CustomDivider()
+        About()
     }
 }
 
@@ -441,5 +450,24 @@ fun RestoreSettingsDialog(onResult: (result: Boolean) -> Unit) {
                 Text(MR.strings.cancel)
             }
         }
+    )
+}
+
+@Composable
+fun About() {
+    val context = LocalContext.current
+
+    val manager = context.packageManager
+    val info = manager.getPackageInfo(context.packageName, 0)
+    val versionName = info.versionName
+    val versionCode = PackageInfoCompat.getLongVersionCode(info).toInt()
+
+    ListElement(
+        modifier = Modifier.clickable {
+            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Nailik/rhasspy_mobile")))
+        },
+        icon = { Icon(FontAwesomeIcons.Brands.Github, modifier = Modifier.size(24.dp), contentDescription = MR.strings.ok) },
+        text = { Text("${translate(MR.strings.version)} $versionName - $versionCode") },
+        secondaryText = { Text(MR.strings.aboutText) }
     )
 }

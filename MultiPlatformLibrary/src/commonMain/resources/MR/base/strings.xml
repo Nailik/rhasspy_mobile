@@ -140,4 +140,6 @@
     <string name="restoreSettings">Restore Settings</string>
     <string name="restoreSettingsText">Your current settings will be lost after restoring from file!</string>
     <string name="warning">Warning</string>
+    <string name="aboutText">Sourcecode available on GitHub</string>
+    <string name="version">Version</string>
 </resources>

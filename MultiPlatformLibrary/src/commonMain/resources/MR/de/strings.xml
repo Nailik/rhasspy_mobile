@@ -145,4 +145,6 @@
     <string name="restoreSettings">Einstellungen Laden</string>
     <string name="restoreSettingsText">Ihre aktuellen Einstellungen gehen beim Wiederherstellen aus der Datei verloren!</string>
     <string name="warning">Warnung</string>
+    <string name="aboutText">Quellcode verfügbar auf GitHub</string>
+    <string name="version">Version</string>
 </resources>
