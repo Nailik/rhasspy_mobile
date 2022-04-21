@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.android.screens
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -14,7 +13,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.MicOff
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -457,9 +458,9 @@ fun About() {
     val context = LocalContext.current
 
     val manager = context.packageManager
-        val info = manager.getPackageInfo(context.packageName, 0)
-        val versionName = info.versionName
-        val versionCode = PackageInfoCompat.getLongVersionCode(info).toInt()
+    val info = manager.getPackageInfo(context.packageName, 0)
+    val versionName = info.versionName
+    val versionCode = PackageInfoCompat.getLongVersionCode(info).toInt()
 
     ListElement(
         modifier = Modifier.clickable {
