@@ -479,6 +479,11 @@ object ServiceInterface {
                             intentNotRecognized()
                         }
                     }
+
+                    if(handleDirectly && ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local){
+                        //if intent was handled directly and local dialogue management it's time to end dialogue
+                        endSession()
+                    }
                 }
                 //send intent to mqtt service
                 IntentRecognitionOptions.RemoteMQTT -> MqttService.intentQuery(currentSessionId, text)
