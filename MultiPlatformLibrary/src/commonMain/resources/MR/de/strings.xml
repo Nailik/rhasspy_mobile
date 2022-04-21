@@ -61,8 +61,8 @@
     <string name="backgroundWakeWordDetection">Hintergrund-WakeWord-Erkennung</string>
     <string name="enableBackground">Hintergrunddienste aktivieren</string>
     <string name="backgroundWakeWordDetectionTurnOnDisplay">Display aufwecken</string>
-    <string name="wakeWordIndication">WakeWord-Anzeige</string>
-    <string name="wakeWordSoundIndication">Sound</string>
+    <string name="wakeWordIndication">WakeWord Indikation</string>
+    <string name="wakeWordSoundIndication">Ton</string>
     <string name="wakeWordLightIndication">Visual</string>
     <string name="enableSSL">SSL aktivieren</string>
     <string name="enabled">Aktiviert</string>
@@ -147,4 +147,11 @@
     <string name="warning">Warnung</string>
     <string name="aboutText">Quellcode verfügbar auf GitHub</string>
     <string name="version">Version</string>
+    <string name="sounds">Töne</string>
+    <string name="soundsText">WAV-Dateien, die abgespielt werden, wenn Rhasspy aufwacht und die Aufnahme eines Sprachbefehls beendet ist.</string>
+    <string name="wakeSound">Aufwecken</string>
+    <string name="recordedSound">Aufgezeichnet</string>
+    <string name="errorSound">Fehler</string>
+    <string name="selectFile">Datei auswählen</string>
+    <string name="defaultText">Standard</string>
 </resources>

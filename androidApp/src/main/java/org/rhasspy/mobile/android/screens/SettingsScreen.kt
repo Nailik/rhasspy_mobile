@@ -64,6 +64,8 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState, viewModel: SettingsScre
         CustomDivider()
         WakeWordIndicationItem()
         CustomDivider()
+        Sounds(viewModel)
+        CustomDivider()
         Device()
         CustomDivider()
         AutomaticSilenceDetectionItem(viewModel, snackbarHostState)
@@ -297,6 +299,82 @@ fun Device() {
         }
 
     }
+}
+
+@Composable
+fun Sounds(viewModel: SettingsScreenViewModel) {
+
+    ExpandableListItem(
+        text = MR.strings.sounds,
+        secondaryText = MR.strings.soundsText
+    ) {
+        Column {
+            SliderListItem(
+                text = MR.strings.volume,
+                value = AppSettings.soundVolume.observe(),
+                onValueChange = {
+                    AppSettings.soundVolume.data = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
+                })
+
+
+            val wakeSoundItems = AppSettings.wakeSounds.data.addSoundItems()
+
+
+            DropDownListItemWithOverline(
+                overlineText = { Text(MR.strings.wakeSound) },
+                selected = AppSettings.wakeSound.observe(),
+                onSelect = {
+                    if (it == wakeSoundItems.lastIndex) {
+                        viewModel.selectWakeSoundFile()
+                    } else {
+                        AppSettings.wakeSound.data = it
+                    }
+                },
+                values = wakeSoundItems
+            )
+
+
+            val recordedSoundItems = AppSettings.recordedSounds.data.addSoundItems()
+
+            DropDownListItemWithOverline(
+                overlineText = { Text(MR.strings.recordedSound) },
+                selected = AppSettings.recordedSound.observe(),
+                onSelect = {
+                    if (it == recordedSoundItems.lastIndex) {
+                        viewModel.selectRecordedSoundFile()
+                    } else {
+                        AppSettings.recordedSound.data = it
+                    }
+                },
+                values = recordedSoundItems
+            )
+
+
+            val errorSoundItems = AppSettings.errorSounds.data.addSoundItems()
+
+            DropDownListItemWithOverline(
+                overlineText = { Text(MR.strings.errorSound) },
+                selected = AppSettings.errorSound.observe(),
+                onSelect = {
+                    if (it == errorSoundItems.lastIndex) {
+                        viewModel.selectErrorSoundFile()
+                    } else {
+                        AppSettings.errorSound.data = it
+                    }
+                },
+                values = errorSoundItems
+            )
+        }
+
+    }
+}
+
+@Composable
+private fun Set<String>.addSoundItems(): Array<String> {
+    return this.toMutableList().apply {
+        this.addAll(0, listOf(translate(resource = MR.strings.disabled), translate(resource = MR.strings.defaultText)))
+        this.add(translate(resource = MR.strings.selectFile))
+    }.toTypedArray()
 }
 
 @Composable

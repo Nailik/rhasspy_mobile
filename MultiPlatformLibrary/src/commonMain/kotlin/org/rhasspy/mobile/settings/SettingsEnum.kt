@@ -24,6 +24,14 @@ enum class SettingsEnum {
     IntentHandlingEnabled,
     Volume,
 
+    SoundVolume,
+    WakeSound,
+    RecordedSound,
+    ErrorSound,
+    WakeSounds,
+    RecordedSounds,
+    ErrorSounds,
+
     ShowLog,
     LogAudioFrames,
     LogLevel,

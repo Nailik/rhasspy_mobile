@@ -70,5 +70,21 @@ class SettingsScreenViewModel : ViewModel() {
 
     fun restoreSettingsFromFile() = SettingsUtils.restoreSettingsFromFile()
 
+    //open file selection
+    //copy selected file to sounds
+    //add filename to list
+
+    fun selectWakeSoundFile() {
+        TODO("Not yet implemented")
+    }
+
+    fun selectRecordedSoundFile() {
+        TODO("Not yet implemented")
+    }
+
+    fun selectErrorSoundFile() {
+        TODO("Not yet implemented")
+    }
+
 
 }

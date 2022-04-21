@@ -12,6 +12,7 @@ import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.services.ServiceAction
 import org.rhasspy.mobile.services.ServiceInterface
 import java.io.File
+import java.util.zip.ZipInputStream
 
 
 actual object SettingsUtils {
@@ -41,6 +42,9 @@ actual object SettingsUtils {
         Application.Instance.currentActivity?.openDocument(arrayOf("text/xml")) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
+
+                    //TODO zip settings with sound files
+                   // ZipInputStream()
 
                     CoroutineScope(Dispatchers.Default).launch {
                         ServiceInterface.serviceAction(ServiceAction.Stop)
