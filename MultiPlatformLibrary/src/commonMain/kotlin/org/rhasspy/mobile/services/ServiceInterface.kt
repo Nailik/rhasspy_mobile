@@ -480,7 +480,7 @@ object ServiceInterface {
                         }
                     }
 
-                    if(handleDirectly && ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local){
+                    if (handleDirectly && ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
                         //if intent was handled directly and local dialogue management it's time to end dialogue
                         endSession()
                     }
