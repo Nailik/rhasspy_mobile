@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.nativeutils
 
 import android.app.Activity
+import android.provider.OpenableColumns
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -11,13 +12,14 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.services.ServiceAction
 import org.rhasspy.mobile.services.ServiceInterface
+import org.rhasspy.mobile.settings.AppSettings
 import java.io.File
-import java.util.zip.ZipInputStream
 
 
 actual object SettingsUtils {
 
     actual fun saveSettingsFile() {
+
         Application.Instance.currentActivity?.createDocument("rhasspy_settings_${Clock.System.now().toLocalDateTime(TimeZone.UTC)}.xml") {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
@@ -43,8 +45,6 @@ actual object SettingsUtils {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
 
-                    //TODO zip settings with sound files
-                   // ZipInputStream()
 
                     CoroutineScope(Dispatchers.Default).launch {
                         ServiceInterface.serviceAction(ServiceAction.Stop)
@@ -67,7 +67,53 @@ actual object SettingsUtils {
                 }
             }
         }
+    }
 
+    actual fun selectSoundFile(callback: (String) -> Unit) {
+        Application.Instance.currentActivity?.openDocument(arrayOf("audio/x-wav")) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                it.data?.data?.also { uri ->
+
+                    var fileName = ""
+
+                    Application.Instance.contentResolver.query(uri, null, null, null, null)?.also { cursor ->
+                        if (cursor.moveToFirst()) {
+                            val index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                            if (index != -1) {
+                                fileName = cursor.getString(index)
+                            } else {
+                                //didn't work
+                                return@openDocument
+                            }
+                        } else {
+                            //didn't work
+                            return@openDocument
+                        }
+                        cursor.close()
+                    }
+
+
+                    Application.Instance.contentResolver.openInputStream(uri)?.let { inputStream ->
+                        File(Application.Instance.filesDir.parent, "files/$fileName").apply {
+                            this.outputStream().apply {
+                                inputStream.copyTo(this)
+
+                                this.flush()
+
+                                this.close()
+                                inputStream.close()
+                            }
+                        }
+                        callback(fileName)
+                    } ?: kotlin.run {
+                        //didn't work
+                    }
+
+                }
+            } else {
+                //didn't work
+            }
+        }
     }
 
 }

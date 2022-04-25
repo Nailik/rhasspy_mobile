@@ -220,6 +220,47 @@ fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, enabled: Boolean = true,
 }
 
 @Composable
+fun DropDownListItemWithOverline(overlineText: @Composable () -> Unit,
+                                 selected: Int,
+                                 enabled: Boolean = true,
+                                 onSelect: (item: Int) -> Unit,
+                                 values: Array<String>) {
+    var isExpanded by remember { mutableStateOf(false) }
+
+    ListElement(modifier = Modifier
+        .clickable { isExpanded = true },
+        overlineText = overlineText,
+        text = { Text(values[selected]) },
+        trailing = {
+            IndicatedSmallIcon(isExpanded) {
+                Icon(
+                    modifier = it,
+                    imageVector = Icons.Filled.ArrowDropDown,
+                    contentDescription = MR.strings.expandDropDown,
+                )
+            }
+        })
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentSize(Alignment.TopStart)
+    ) {
+        DropdownMenu(
+            modifier = Modifier.fillMaxWidth(),
+            expanded = isExpanded,
+            onDismissRequest = { isExpanded = false }) {
+            values.forEachIndexed { index, text ->
+                DropdownMenuItem(
+                    text = { Text(text) },
+                    enabled = enabled,
+                    onClick = { isExpanded = false; onSelect(index) })
+            }
+        }
+    }
+}
+
+@Composable
 fun ExpandableListItem(
     text: StringResource,
     secondaryText: StringResource? = null,

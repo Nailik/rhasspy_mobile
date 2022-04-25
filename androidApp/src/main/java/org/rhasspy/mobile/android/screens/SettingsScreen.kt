@@ -372,7 +372,7 @@ fun Sounds(viewModel: SettingsScreenViewModel) {
 @Composable
 private fun Set<String>.addSoundItems(): Array<String> {
     return this.toMutableList().apply {
-        this.addAll(0, listOf(translate(resource = MR.strings.disabled), translate(resource = MR.strings.defaultText)))
+        this.addAll(0, listOf(translate(resource = MR.strings.defaultText), translate(resource = MR.strings.disabled)))
         this.add(translate(resource = MR.strings.selectFile))
     }.toTypedArray()
 }
