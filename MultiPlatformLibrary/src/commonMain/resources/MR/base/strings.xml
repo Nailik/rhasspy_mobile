@@ -142,4 +142,11 @@
     <string name="warning">Warning</string>
     <string name="aboutText">Sourcecode available on GitHub</string>
     <string name="version">Version</string>
+    <string name="sounds">Sounds</string>
+    <string name="soundsText">WAV files to play when Rhasspy wakes up and is finished recording a voice command.</string>
+    <string name="wakeSound">Wake</string>
+    <string name="recordedSound">Recorded</string>
+    <string name="errorSound">Error</string>
+    <string name="selectFile">select File</string>
+    <string name="defaultText">Default</string>
 </resources>

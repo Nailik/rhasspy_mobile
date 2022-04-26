@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.nativeutils.SettingsUtils
 import org.rhasspy.mobile.services.native.AudioRecorder
+import org.rhasspy.mobile.settings.AppSettings
 
 class SettingsScreenViewModel : ViewModel() {
     private val logger = Logger.withTag("SettingsScreenViewModel")
@@ -69,6 +70,30 @@ class SettingsScreenViewModel : ViewModel() {
     fun saveSettingsFile() = SettingsUtils.saveSettingsFile()
 
     fun restoreSettingsFromFile() = SettingsUtils.restoreSettingsFromFile()
+
+    fun selectWakeSoundFile() = SettingsUtils.selectSoundFile { fileName ->
+        AppSettings.wakeSounds.data = AppSettings.wakeSounds.data.toMutableList()
+            .apply {
+                this.add(fileName)
+            }.toSet()
+        AppSettings.wakeSound.data = AppSettings.wakeSounds.data.size + 2
+    }
+
+    fun selectRecordedSoundFile() = SettingsUtils.selectSoundFile { fileName ->
+        AppSettings.recordedSounds.data = AppSettings.recordedSounds.data.toMutableList()
+            .apply {
+                this.add(fileName)
+            }.toSet()
+        AppSettings.recordedSound.data = AppSettings.recordedSounds.data.size + 2
+    }
+
+    fun selectErrorSoundFile() = SettingsUtils.selectSoundFile { fileName ->
+        AppSettings.errorSounds.data = AppSettings.errorSounds.data.toMutableList()
+            .apply {
+                this.add(fileName)
+            }.toSet()
+        AppSettings.errorSound.data = AppSettings.errorSounds.data.size + 2
+    }
 
 
 }

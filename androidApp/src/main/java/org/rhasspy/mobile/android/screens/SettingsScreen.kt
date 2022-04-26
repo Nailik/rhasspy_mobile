@@ -64,6 +64,8 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState, viewModel: SettingsScre
         CustomDivider()
         WakeWordIndicationItem()
         CustomDivider()
+        Sounds(viewModel)
+        CustomDivider()
         Device()
         CustomDivider()
         AutomaticSilenceDetectionItem(viewModel, snackbarHostState)
@@ -232,33 +234,33 @@ fun MicrophoneOverlay() {
         text = MR.strings.microphoneOverlay,
         secondaryText = isMicrophoneOverlayEnabled.toText()
     ) {
-        Column {
-
-        }
         val requestOverlayPermission = requestOverlayPermission {
             if (it) {
                 AppSettings.isMicrophoneOverlayEnabled.data = true
             }
         }
 
-        SwitchListItem(
-            text = MR.strings.showMicrophoneOverlay,
-            secondaryText = MR.strings.showMicrophoneOverlayInfo,
-            isChecked = isMicrophoneOverlayEnabled,
-            onCheckedChange = {
-                if (it && !OverlayPermission.granted.value) {
-                    requestOverlayPermission.invoke()
-                } else {
-                    AppSettings.isMicrophoneOverlayEnabled.data = it
-                }
-            })
+        Column {
+            SwitchListItem(
+                text = MR.strings.showMicrophoneOverlay,
+                secondaryText = MR.strings.showMicrophoneOverlayInfo,
+                isChecked = isMicrophoneOverlayEnabled,
+                onCheckedChange = {
+                    if (it && !OverlayPermission.granted.value) {
+                        requestOverlayPermission.invoke()
+                    } else {
+                        AppSettings.isMicrophoneOverlayEnabled.data = it
+                    }
+                })
 
-        SwitchListItem(
-            text = MR.strings.whileAppIsOpened,
-            isChecked = AppSettings.isMicrophoneOverlayWhileApp.observe(),
-            onCheckedChange = {
-                AppSettings.isMicrophoneOverlayWhileApp.data = it
-            })
+            SwitchListItem(
+                text = MR.strings.whileAppIsOpened,
+                isChecked = AppSettings.isMicrophoneOverlayWhileApp.observe(),
+                onCheckedChange = {
+                    AppSettings.isMicrophoneOverlayWhileApp.data = it
+                })
+
+        }
     }
 }
 
@@ -297,6 +299,62 @@ fun Device() {
         }
 
     }
+}
+
+@Composable
+fun Sounds(viewModel: SettingsScreenViewModel) {
+
+    ExpandableListItem(
+        text = MR.strings.sounds,
+        secondaryText = MR.strings.soundsText
+    ) {
+        Column {
+            SliderListItem(
+                text = MR.strings.volume,
+                value = AppSettings.soundVolume.observe(),
+                onValueChange = {
+                    AppSettings.soundVolume.data = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
+                })
+
+            DropDownListWithFileOpen(
+                overlineText = { Text(MR.strings.wakeSound) },
+                selected = AppSettings.wakeSound.observe(),
+                values = AppSettings.wakeSounds.observe().addSoundItems(),
+                onAdd = {
+                    viewModel.selectWakeSoundFile()
+                }) {
+                AppSettings.wakeSound.data = it
+            }
+
+            DropDownListWithFileOpen(
+                overlineText = { Text(MR.strings.recordedSound) },
+                selected = AppSettings.recordedSound.observe(),
+                values = AppSettings.recordedSounds.observe().addSoundItems(),
+                onAdd = {
+                    viewModel.selectWakeSoundFile()
+                }) {
+                AppSettings.recordedSound.data = it
+            }
+
+            DropDownListWithFileOpen(
+                overlineText = { Text(MR.strings.errorSound) },
+                selected = AppSettings.errorSound.observe(),
+                values = AppSettings.errorSounds.observe().addSoundItems(),
+                onAdd = {
+                    viewModel.selectWakeSoundFile()
+                }) {
+                AppSettings.errorSound.data = it
+            }
+        }
+
+    }
+}
+
+@Composable
+private fun Set<String>.addSoundItems(): Array<String> {
+    return this.toMutableList().apply {
+        this.addAll(0, listOf(translate(resource = MR.strings.defaultText), translate(resource = MR.strings.disabled)))
+    }.toTypedArray()
 }
 
 @Composable
