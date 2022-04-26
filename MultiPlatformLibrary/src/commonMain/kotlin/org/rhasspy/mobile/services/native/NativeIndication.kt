@@ -10,7 +10,12 @@ expect object NativeIndication {
     /**
      * play audio resource
      */
-    fun playAudio(fileResource: FileResource)
+    fun playSoundFileResource(fileResource: FileResource)
+
+    /**
+     * play some sound file
+     */
+    fun playSoundFile(filename: String)
 
     /**
      * wake up screen as long as possible

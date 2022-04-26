@@ -4,7 +4,11 @@ import dev.icerock.moko.resources.FileResource
 
 actual object NativeIndication {
 
-    actual fun playAudio(fileResource: FileResource) {
+    actual fun playSoundFileResource(fileResource: FileResource) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun playSoundFile(filename: String) {
         TODO("Not yet implemented")
     }
 

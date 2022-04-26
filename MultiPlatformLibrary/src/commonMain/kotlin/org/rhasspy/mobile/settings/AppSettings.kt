@@ -28,6 +28,16 @@ object AppSettings {
     val isAudioOutputEnabled = AppSetting(SettingsEnum.AudioOutputEnabled, true)
     val isIntentHandlingEnabled = AppSetting(SettingsEnum.IntentHandlingEnabled, true)
 
+    val soundVolume = AppSetting(SettingsEnum.SoundVolume, 0.5F)
+    val wakeSound = AppSetting(SettingsEnum.WakeSound, 0)
+    val recordedSound = AppSetting(SettingsEnum.RecordedSound, 0)
+    val errorSound = AppSetting(SettingsEnum.ErrorSound, 0)
+
+    val wakeSounds = AppSetting(SettingsEnum.WakeSounds, setOf<String>())
+    val recordedSounds = AppSetting(SettingsEnum.RecordedSounds, setOf<String>())
+    val errorSounds = AppSetting(SettingsEnum.ErrorSounds, setOf<String>())
+
+
     val isShowLog = AppSetting(SettingsEnum.ShowLog, false)
     val isLogAudioFrames = AppSetting(SettingsEnum.LogAudioFrames, false)
     val logLevel = AppSetting(SettingsEnum.LogLevel, LogLevel.Debug)

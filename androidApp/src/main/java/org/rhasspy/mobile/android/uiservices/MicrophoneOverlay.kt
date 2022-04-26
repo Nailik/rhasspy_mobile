@@ -6,11 +6,11 @@ import android.os.Build
 import android.view.Gravity
 import android.view.WindowManager
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
@@ -19,7 +19,7 @@ import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.savedstate.ViewTreeSavedStateRegistryOwner
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.livedata.MediatorLiveData
 import org.rhasspy.mobile.android.AndroidApplication
@@ -51,9 +51,10 @@ object MicrophoneOverlay {
                 Fab(
                     modifier = Modifier
                         .size(96.dp)
+                        .padding(10.dp)
                         .pointerInput(Unit) {
                             detectDragGestures { change, dragAmount ->
-                                change.consumeAllChanges()
+                                change.consume()
                                 onDragVertical(dragAmount)
                             }
                         },
@@ -100,7 +101,7 @@ object MicrophoneOverlay {
         lifecycleOwner.performRestore(null)
         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
         ViewTreeLifecycleOwner.set(view, lifecycleOwner)
-        ViewTreeSavedStateRegistryOwner.set(view, lifecycleOwner)
+        view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
 
         val viewModelStore = ViewModelStore()
         ViewTreeViewModelStoreOwner.set(view) { viewModelStore }

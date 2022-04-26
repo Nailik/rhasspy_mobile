@@ -119,6 +119,8 @@
         Permission.
     </string>
     <string name="save">Save</string>
+    <string name="saveText">Save settings to an external file</string>.
+    <string name="restoreText">Restore settings from an external file</string>.
     <string name="share">Share</string>
     <string name="reset">Reset</string>
     <string name="device">Device</string>
@@ -133,4 +135,18 @@
     <string name="whileAppIsOpened">Visible while app is opened</string>
     <string name="restore">Restore</string>
     <string name="saveAndRestoreSettings">Save and Restore Settings</string>
+    <string name="saveSettings">Save Settings</string>
+    <string name="saveSettingsText">The exported Settings file contains sensitive Data!\nRead the file and edit carefully before sharing.</string>
+    <string name="restoreSettings">Restore Settings</string>
+    <string name="restoreSettingsText">Your current settings will be lost after restoring from file!</string>
+    <string name="warning">Warning</string>
+    <string name="aboutText">Sourcecode available on GitHub</string>
+    <string name="version">Version</string>
+    <string name="sounds">Sounds</string>
+    <string name="soundsText">WAV files to play when Rhasspy wakes up and is finished recording a voice command.</string>
+    <string name="wakeSound">Wake</string>
+    <string name="recordedSound">Recorded</string>
+    <string name="errorSound">Error</string>
+    <string name="selectFile">select File</string>
+    <string name="defaultText">Default</string>
 </resources>

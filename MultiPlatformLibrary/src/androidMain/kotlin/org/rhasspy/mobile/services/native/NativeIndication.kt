@@ -5,10 +5,12 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.PowerManager
+import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import dev.icerock.moko.resources.FileResource
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.settings.AppSettings
+import java.io.File
 
 /**
  * handles indication of wake up locally
@@ -18,25 +20,42 @@ actual object NativeIndication {
     val showVisualIndication = MutableLiveData(false)
     private var wakeLock: PowerManager.WakeLock? = null
 
-    /**
-     * play audio resource
-     */
-    actual fun playAudio(fileResource: FileResource) {
-
-        val mediaPlayer = MediaPlayer.create(
-            Application.Instance,
-            fileResource.rawResId
-        )
-
+    private fun playSound(mediaPlayer: MediaPlayer) {
         mediaPlayer.setAudioAttributes(
             AudioAttributes.Builder()
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build()
         )
 
-        mediaPlayer.setVolume(AppSettings.volume.data, AppSettings.volume.data)
+        mediaPlayer.setVolume(AppSettings.soundVolume.data, AppSettings.soundVolume.data)
 
         mediaPlayer.start()
+    }
+
+    /**
+     * play audio resource
+     */
+    actual fun playSoundFileResource(fileResource: FileResource) {
+        playSound(
+            MediaPlayer.create(
+                Application.Instance,
+                fileResource.rawResId
+            )
+        )
+    }
+
+    /**
+     * play some sound file
+     */
+    actual fun playSoundFile(filename: String) {
+        val soundFile = File(File(Application.Instance.filesDir.parent, "sounds").path)
+
+        playSound(
+            MediaPlayer.create(
+                Application.Instance,
+                soundFile.toUri()
+            )
+        )
     }
 
     /**
@@ -54,6 +73,7 @@ actual object NativeIndication {
             }
         }
     }
+
 
     /**
      * remote wake up and let screen go off

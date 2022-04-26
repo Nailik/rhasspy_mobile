@@ -45,11 +45,16 @@ kotlin {
                 implementation(Icerock.Resources)
                 implementation(Russhwolf.multiplatformSettings)
                 implementation(Russhwolf.multiplatformSettingsNoArg)
+                implementation(Russhwolf.multiplatformSettingsSerialization)
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Ktor.Client.core)
                 implementation(Ktor.Client.websockets)
                 implementation(Ktor.Network.network)
+                implementation(Ktor2.Server.core)
+                implementation(Ktor2.Server.cors)
+                implementation(Ktor2.Server.dataConversion)
+                implementation(Ktor2.Server.cio)
                 implementation(Benasher.uuid)
             }
         }
@@ -74,8 +79,9 @@ kotlin {
                 implementation(Ktor.Server.netty)
                 implementation(Ktor.Network.network)
                 implementation(Slf4j.simple)
+                implementation(Ktor2.Server.compression)
+                implementation(Ktor2.Server.callLogging)
                 implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
-                //implementation(Eclipse.Phao.mqttClient)
             }
         }
         val androidTest by getting

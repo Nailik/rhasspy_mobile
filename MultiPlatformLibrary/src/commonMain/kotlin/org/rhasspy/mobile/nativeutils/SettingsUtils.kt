@@ -6,4 +6,6 @@ expect object SettingsUtils {
 
     fun restoreSettingsFromFile()
 
+    fun selectSoundFile(callback: (String) -> Unit)
+
 }

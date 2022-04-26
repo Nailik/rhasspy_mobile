@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +21,7 @@ import androidx.compose.material.Switch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -214,6 +216,72 @@ fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, enabled: Boolean = true,
                     text = { Text(it.text) },
                     enabled = enabled,
                     onClick = { isExpanded = false; onSelect(it) })
+            }
+        }
+    }
+}
+
+@Composable
+fun DropDownListWithFileOpen(
+    overlineText: @Composable () -> Unit,
+    selected: Int,
+    enabled: Boolean = true,
+    values: Array<String>,
+    onAdd: () -> Unit,
+    onSelect: (item: Int) -> Unit
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+
+    ListElement(modifier = Modifier
+        .clickable { isExpanded = true },
+        overlineText = overlineText,
+        text = { Text(values[selected]) },
+        trailing = {
+            IndicatedSmallIcon(isExpanded) {
+                Icon(
+                    modifier = it,
+                    imageVector = Icons.Filled.ArrowDropDown,
+                    contentDescription = MR.strings.expandDropDown,
+                )
+            }
+        })
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentSize(Alignment.TopStart)
+    ) {
+        DropdownMenu(
+            modifier = Modifier.fillMaxWidth(),
+            expanded = isExpanded,
+            onDismissRequest = { isExpanded = false }) {
+            values.forEachIndexed { index, text ->
+                DropdownMenuItem(
+                    text = { Text(text) },
+                    enabled = enabled,
+                    onClick = {
+                        isExpanded = false
+                        onSelect.invoke(index)
+                    })
+            }
+
+            Box(modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .align(alignment = Alignment.Center),
+                    border = BorderStroke(ButtonDefaults.outlinedButtonBorder.width, MaterialTheme.colorScheme.primary),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
+                    onClick = {
+                        isExpanded = false
+                        onAdd.invoke()
+                    })
+                {
+                    Icon(imageVector = Icons.Filled.FileOpen, contentDescription = MR.strings.expandDropDown)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(MR.strings.selectFile)
+                }
+
             }
         }
     }
@@ -501,4 +569,9 @@ fun TextWithAction(
             icon()
         }
     }
+}
+
+@Composable
+fun CustomDivider() {
+    Divider(color = MaterialTheme.colorScheme.surfaceVariant)
 }

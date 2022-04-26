@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.services.RecordingService.addWavHeader
-import org.rhasspy.mobile.services.http.HttpServer
 import org.rhasspy.mobile.services.native.AudioPlayer
 import org.rhasspy.mobile.services.native.FileWriter
 import org.rhasspy.mobile.services.native.NativeIndication
@@ -356,6 +355,9 @@ object ServiceInterface {
                 //only stop recording if its not necessary for mqtt wakeWord
                 RecordingService.stopRecording()
             }
+
+            playRecordedSound()
+
             //hide the indication
             indication(false)
 
@@ -437,6 +439,8 @@ object ServiceInterface {
             return
         }
 
+        playErrorSound()
+
         if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
             //stop listening and end the session after asr error
             stopListening()
@@ -479,6 +483,11 @@ object ServiceInterface {
                         } ?: run {
                             intentNotRecognized()
                         }
+                    }
+
+                    if (handleDirectly && ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+                        //if intent was handled directly and local dialogue management it's time to end dialogue
+                        endSession()
                     }
                 }
                 //send intent to mqtt service
@@ -562,6 +571,8 @@ object ServiceInterface {
 
         //save that intent was not recognized
         isIntentRecognized = false
+
+        playErrorSound()
 
         if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
             //end the session when dialogue management is local
@@ -758,7 +769,7 @@ object ServiceInterface {
 
         if (show) {
             if (AppSettings.isWakeWordSoundIndication.data) {
-                NativeIndication.playAudio(MR.files.etc_wav_beep_hi)
+                playWakeSound()
             }
 
             if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data) {
@@ -869,6 +880,30 @@ object ServiceInterface {
      */
     fun getPreviousRecording(): List<Byte> {
         return previousRecordingFile.getFileData()
+    }
+
+    fun playWakeSound() {
+        when (AppSettings.wakeSound.data) {
+            0 -> NativeIndication.playSoundFileResource(MR.files.etc_wav_beep_hi)
+            1 -> {}
+            else -> NativeIndication.playSoundFile(AppSettings.wakeSounds.data.elementAt(AppSettings.wakeSound.data))
+        }
+    }
+
+    fun playRecordedSound() {
+        when (AppSettings.recordedSound.data) {
+            0 -> NativeIndication.playSoundFileResource(MR.files.etc_wav_beep_lo)
+            1 -> {}
+            else -> NativeIndication.playSoundFile(AppSettings.recordedSounds.data.elementAt(AppSettings.recordedSound.data))
+        }
+    }
+
+    fun playErrorSound() {
+        when (AppSettings.errorSound.data) {
+            0 -> NativeIndication.playSoundFileResource(MR.files.etc_wav_beep_error)
+            1 -> {}
+            else -> NativeIndication.playSoundFile(AppSettings.errorSounds.data.elementAt(AppSettings.errorSound.data))
+        }
     }
 
 }

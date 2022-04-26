@@ -246,7 +246,10 @@ fun OverlayPermissionRequired(viewModel: HomeScreenViewModel) {
     ) {
         val overlayPermission = requestOverlayPermission {}
 
-        IconButton(onClick = { overlayPermission.invoke() }, Modifier.background(MaterialTheme.colorScheme.errorContainer))
+        IconButton(
+            onClick = { overlayPermission.invoke() },
+            modifier = Modifier.background(MaterialTheme.colorScheme.errorContainer)
+        )
         {
             Icon(
                 imageVector = Icons.Filled.LayersClear,

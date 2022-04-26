@@ -1,5 +1,7 @@
 package org.rhasspy.mobile.android.screens
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
@@ -13,14 +15,23 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.content.pm.PackageInfoCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
+import compose.icons.FontAwesomeIcons
+import compose.icons.fontawesomeicons.Brands
+import compose.icons.fontawesomeicons.brands.Github
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
 import org.rhasspy.mobile.android.permissions.requestOverlayPermission
@@ -33,6 +44,7 @@ import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.SettingsScreenViewModel
 import java.math.RoundingMode
 
+
 private val logger = Logger.withTag("SettingsScreen")
 
 @Composable
@@ -43,23 +55,26 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState, viewModel: SettingsScre
             .verticalScroll(rememberScrollState())
     ) {
         LanguageItem()
-        Divider()
+        CustomDivider()
         ThemeItem()
-        Divider()
+        CustomDivider()
         BackgroundService()
-        Divider()
+        CustomDivider()
         MicrophoneOverlay()
-        Divider()
+        CustomDivider()
         WakeWordIndicationItem()
-        Divider()
+        CustomDivider()
+        Sounds(viewModel)
+        CustomDivider()
         Device()
-        Divider()
+        CustomDivider()
         AutomaticSilenceDetectionItem(viewModel, snackbarHostState)
-        Divider()
+        CustomDivider()
         ShowLogItem()
-        Divider()
+        CustomDivider()
         SaveAndRestore(viewModel)
-        Divider()
+        CustomDivider()
+        About()
     }
 }
 
@@ -219,33 +234,33 @@ fun MicrophoneOverlay() {
         text = MR.strings.microphoneOverlay,
         secondaryText = isMicrophoneOverlayEnabled.toText()
     ) {
-        Column {
-
-        }
         val requestOverlayPermission = requestOverlayPermission {
             if (it) {
                 AppSettings.isMicrophoneOverlayEnabled.data = true
             }
         }
 
-        SwitchListItem(
-            text = MR.strings.showMicrophoneOverlay,
-            secondaryText = MR.strings.showMicrophoneOverlayInfo,
-            isChecked = isMicrophoneOverlayEnabled,
-            onCheckedChange = {
-                if (it && !OverlayPermission.granted.value) {
-                    requestOverlayPermission.invoke()
-                } else {
-                    AppSettings.isMicrophoneOverlayEnabled.data = it
-                }
-            })
+        Column {
+            SwitchListItem(
+                text = MR.strings.showMicrophoneOverlay,
+                secondaryText = MR.strings.showMicrophoneOverlayInfo,
+                isChecked = isMicrophoneOverlayEnabled,
+                onCheckedChange = {
+                    if (it && !OverlayPermission.granted.value) {
+                        requestOverlayPermission.invoke()
+                    } else {
+                        AppSettings.isMicrophoneOverlayEnabled.data = it
+                    }
+                })
 
-        SwitchListItem(
-            text = MR.strings.whileAppIsOpened,
-            isChecked = AppSettings.isMicrophoneOverlayWhileApp.observe(),
-            onCheckedChange = {
-                AppSettings.isMicrophoneOverlayWhileApp.data = it
-            })
+            SwitchListItem(
+                text = MR.strings.whileAppIsOpened,
+                isChecked = AppSettings.isMicrophoneOverlayWhileApp.observe(),
+                onCheckedChange = {
+                    AppSettings.isMicrophoneOverlayWhileApp.data = it
+                })
+
+        }
     }
 }
 
@@ -284,6 +299,62 @@ fun Device() {
         }
 
     }
+}
+
+@Composable
+fun Sounds(viewModel: SettingsScreenViewModel) {
+
+    ExpandableListItem(
+        text = MR.strings.sounds,
+        secondaryText = MR.strings.soundsText
+    ) {
+        Column {
+            SliderListItem(
+                text = MR.strings.volume,
+                value = AppSettings.soundVolume.observe(),
+                onValueChange = {
+                    AppSettings.soundVolume.data = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
+                })
+
+            DropDownListWithFileOpen(
+                overlineText = { Text(MR.strings.wakeSound) },
+                selected = AppSettings.wakeSound.observe(),
+                values = AppSettings.wakeSounds.observe().addSoundItems(),
+                onAdd = {
+                    viewModel.selectWakeSoundFile()
+                }) {
+                AppSettings.wakeSound.data = it
+            }
+
+            DropDownListWithFileOpen(
+                overlineText = { Text(MR.strings.recordedSound) },
+                selected = AppSettings.recordedSound.observe(),
+                values = AppSettings.recordedSounds.observe().addSoundItems(),
+                onAdd = {
+                    viewModel.selectWakeSoundFile()
+                }) {
+                AppSettings.recordedSound.data = it
+            }
+
+            DropDownListWithFileOpen(
+                overlineText = { Text(MR.strings.errorSound) },
+                selected = AppSettings.errorSound.observe(),
+                values = AppSettings.errorSounds.observe().addSoundItems(),
+                onAdd = {
+                    viewModel.selectWakeSoundFile()
+                }) {
+                AppSettings.errorSound.data = it
+            }
+        }
+
+    }
+}
+
+@Composable
+private fun Set<String>.addSoundItems(): Array<String> {
+    return this.toMutableList().apply {
+        this.addAll(0, listOf(translate(resource = MR.strings.defaultText), translate(resource = MR.strings.disabled)))
+    }.toTypedArray()
 }
 
 @Composable
@@ -363,16 +434,98 @@ fun ShowLogItem() {
 }
 
 @Composable
-fun SaveAndRestore(viewModel: SettingsScreenViewModel = viewModel()) {
+fun SaveAndRestore(viewModel: SettingsScreenViewModel) {
     ExpandableListItem(
         text = MR.strings.saveAndRestoreSettings
     ) {
-        ListElement(modifier = Modifier
-            .clickable { viewModel.saveSettingsFile() },
-            text = { Text(MR.strings.save) })
+        val openSaveSettingsDialog = remember { mutableStateOf(false) }
+        val openRestoreSettingsDialog = remember { mutableStateOf(false) }
 
         ListElement(modifier = Modifier
-            .clickable { viewModel.restoreSettingsFromFile() },
-            text = { Text(MR.strings.restore) })
+            .clickable { openSaveSettingsDialog.value = true },
+            text = { Text(MR.strings.save) },
+            secondaryText = { Text(MR.strings.saveText) })
+
+        ListElement(modifier = Modifier
+            .clickable { openRestoreSettingsDialog.value = true },
+            text = { Text(MR.strings.restore) },
+            secondaryText = { Text(MR.strings.restoreText) })
+
+        if (openSaveSettingsDialog.value) {
+            SaveSettingsDialog {
+                openSaveSettingsDialog.value = false
+                if (it) {
+                    viewModel.saveSettingsFile()
+                }
+            }
+        }
+
+        if (openRestoreSettingsDialog.value) {
+            RestoreSettingsDialog {
+                openRestoreSettingsDialog.value = false
+                if (it) {
+                    viewModel.restoreSettingsFromFile()
+                }
+            }
+        }
     }
+}
+
+@Composable
+fun SaveSettingsDialog(onResult: (result: Boolean) -> Unit) {
+    AlertDialog(
+        onDismissRequest = { onResult.invoke(false) },
+        title = { Text(MR.strings.saveSettings) },
+        text = { Text(MR.strings.saveSettingsText, textAlign = TextAlign.Center) },
+        icon = { Icon(imageVector = Icons.Filled.Warning, contentDescription = MR.strings.warning) },
+        confirmButton = {
+            Button(onClick = { onResult.invoke(true) }) {
+                Text(MR.strings.ok)
+            }
+        },
+        dismissButton = {
+            OutlinedButton(onClick = { onResult.invoke(false) }) {
+                Text(MR.strings.cancel)
+            }
+        }
+    )
+}
+
+@Composable
+fun RestoreSettingsDialog(onResult: (result: Boolean) -> Unit) {
+    AlertDialog(
+        onDismissRequest = { onResult.invoke(false) },
+        title = { Text(MR.strings.restoreSettings) },
+        text = { Text(MR.strings.restoreSettingsText, textAlign = TextAlign.Center) },
+        icon = { Icon(imageVector = Icons.Filled.Warning, contentDescription = MR.strings.warning) },
+        confirmButton = {
+            Button(onClick = { onResult.invoke(true) }) {
+                Text(MR.strings.ok)
+            }
+        },
+        dismissButton = {
+            OutlinedButton(onClick = { onResult.invoke(false) }) {
+                Text(MR.strings.cancel)
+            }
+        }
+    )
+}
+
+@Composable
+fun About() {
+    val context = LocalContext.current
+
+    val manager = context.packageManager
+    val info = manager.getPackageInfo(context.packageName, 0)
+    val versionName = info.versionName
+    val versionCode = PackageInfoCompat.getLongVersionCode(info).toInt()
+
+    ListElement(
+        modifier = Modifier.clickable {
+            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Nailik/rhasspy_mobile")))
+        },
+        icon = { Icon(FontAwesomeIcons.Brands.Github, modifier = Modifier.size(24.dp), contentDescription = MR.strings.ok) },
+        text = { Text("${translate(MR.strings.version)} $versionName - $versionCode") },
+        secondaryText = { Text(MR.strings.aboutText) }
+    )
 }

@@ -2,24 +2,20 @@ Pod::Spec.new do |spec|
     spec.name                     = 'MultiPlatformLibrary'
     spec.version                  = '0.2'
     spec.homepage                 = 'Link to the Shared Module homepage'
-    spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
+    spec.source                   = { :http=> ''}
     spec.authors                  = ''
     spec.license                  = ''
     spec.summary                  = 'Some description for the Shared Module'
-
-    spec.vendored_frameworks      = "build\cocoapods\framework/MultiPlatformLibrary.framework"
-    spec.libraries                = "c++"
-    spec.module_name              = "#{spec.name}_umbrella"
-
+    spec.vendored_frameworks      = 'build/cocoapods/framework/MultiPlatformLibrary.framework'
+    spec.libraries                = 'c++'
     spec.ios.deployment_target = '14.1'
-
                 
-
+                
     spec.pod_target_xcconfig = {
         'KOTLIN_PROJECT_PATH' => ':MultiPlatformLibrary',
         'PRODUCT_MODULE_NAME' => 'MultiPlatformLibrary',
     }
-
+                
     spec.script_phases = [
         {
             :name => 'Build MultiPlatformLibrary',
@@ -32,11 +28,12 @@ Pod::Spec.new do |spec|
                 fi
                 set -ev
                 REPO_ROOT="$PODS_TARGET_SRCROOT"
-                "$REPO_ROOT/..\gradlew" -p "$REPO_ROOT" $KOTLIN_PROJECT_PATH:syncFramework \
+                "$REPO_ROOT/../gradlew" -p "$REPO_ROOT" $KOTLIN_PROJECT_PATH:syncFramework \
                     -Pkotlin.native.cocoapods.platform=$PLATFORM_NAME \
                     -Pkotlin.native.cocoapods.archs="$ARCHS" \
-                    -Pkotlin.native.cocoapods.configuration=$CONFIGURATION
+                    -Pkotlin.native.cocoapods.configuration="$CONFIGURATION"
             SCRIPT
         }
     ]
+                
 end
