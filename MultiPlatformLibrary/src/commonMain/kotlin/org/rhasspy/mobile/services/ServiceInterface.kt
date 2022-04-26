@@ -355,6 +355,9 @@ object ServiceInterface {
                 //only stop recording if its not necessary for mqtt wakeWord
                 RecordingService.stopRecording()
             }
+
+            playRecordedSound()
+
             //hide the indication
             indication(false)
 
@@ -435,6 +438,8 @@ object ServiceInterface {
             logger.e { "asrError with invalid id" }
             return
         }
+
+        playErrorSound()
 
         if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
             //stop listening and end the session after asr error
@@ -560,6 +565,8 @@ object ServiceInterface {
 
         //save that intent was not recognized
         isIntentRecognized = false
+
+        playErrorSound()
 
         if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
             //end the session when dialogue management is local
@@ -756,7 +763,7 @@ object ServiceInterface {
 
         if (show) {
             if (AppSettings.isWakeWordSoundIndication.data) {
-                NativeIndication.playAudio(MR.files.etc_wav_beep_hi)
+                playWakeSound()
             }
 
             if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data) {
@@ -867,6 +874,30 @@ object ServiceInterface {
      */
     fun getPreviousRecording(): List<Byte> {
         return previousRecordingFile.getFileData()
+    }
+
+    fun playWakeSound() {
+        when (AppSettings.wakeSound.data) {
+            0 -> NativeIndication.playSoundFileResource(MR.files.etc_wav_beep_hi)
+            1 -> {}
+            else -> NativeIndication.playSoundFile(AppSettings.wakeSounds.data.elementAt(AppSettings.wakeSound.data))
+        }
+    }
+
+    fun playRecordedSound() {
+        when (AppSettings.recordedSound.data) {
+            0 -> NativeIndication.playSoundFileResource(MR.files.etc_wav_beep_lo)
+            1 -> {}
+            else -> NativeIndication.playSoundFile(AppSettings.recordedSounds.data.elementAt(AppSettings.recordedSound.data))
+        }
+    }
+
+    fun playErrorSound() {
+        when (AppSettings.errorSound.data) {
+            0 -> NativeIndication.playSoundFileResource(MR.files.etc_wav_beep_error)
+            1 -> {}
+            else -> NativeIndication.playSoundFile(AppSettings.errorSounds.data.elementAt(AppSettings.errorSound.data))
+        }
     }
 
 }

@@ -234,33 +234,33 @@ fun MicrophoneOverlay() {
         text = MR.strings.microphoneOverlay,
         secondaryText = isMicrophoneOverlayEnabled.toText()
     ) {
-        Column {
-
-        }
         val requestOverlayPermission = requestOverlayPermission {
             if (it) {
                 AppSettings.isMicrophoneOverlayEnabled.data = true
             }
         }
 
-        SwitchListItem(
-            text = MR.strings.showMicrophoneOverlay,
-            secondaryText = MR.strings.showMicrophoneOverlayInfo,
-            isChecked = isMicrophoneOverlayEnabled,
-            onCheckedChange = {
-                if (it && !OverlayPermission.granted.value) {
-                    requestOverlayPermission.invoke()
-                } else {
-                    AppSettings.isMicrophoneOverlayEnabled.data = it
-                }
-            })
+        Column {
+            SwitchListItem(
+                text = MR.strings.showMicrophoneOverlay,
+                secondaryText = MR.strings.showMicrophoneOverlayInfo,
+                isChecked = isMicrophoneOverlayEnabled,
+                onCheckedChange = {
+                    if (it && !OverlayPermission.granted.value) {
+                        requestOverlayPermission.invoke()
+                    } else {
+                        AppSettings.isMicrophoneOverlayEnabled.data = it
+                    }
+                })
 
-        SwitchListItem(
-            text = MR.strings.whileAppIsOpened,
-            isChecked = AppSettings.isMicrophoneOverlayWhileApp.observe(),
-            onCheckedChange = {
-                AppSettings.isMicrophoneOverlayWhileApp.data = it
-            })
+            SwitchListItem(
+                text = MR.strings.whileAppIsOpened,
+                isChecked = AppSettings.isMicrophoneOverlayWhileApp.observe(),
+                onCheckedChange = {
+                    AppSettings.isMicrophoneOverlayWhileApp.data = it
+                })
+
+        }
     }
 }
 
@@ -316,54 +316,35 @@ fun Sounds(viewModel: SettingsScreenViewModel) {
                     AppSettings.soundVolume.data = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
                 })
 
-
-            val wakeSoundItems = AppSettings.wakeSounds.data.addSoundItems()
-
-
-            DropDownListItemWithOverline(
+            DropDownListWithFileOpen(
                 overlineText = { Text(MR.strings.wakeSound) },
                 selected = AppSettings.wakeSound.observe(),
-                onSelect = {
-                    if (it == wakeSoundItems.lastIndex) {
-                        viewModel.selectWakeSoundFile()
-                    } else {
-                        AppSettings.wakeSound.data = it
-                    }
-                },
-                values = wakeSoundItems
-            )
+                values = AppSettings.wakeSounds.observe().addSoundItems(),
+                onAdd = {
+                    viewModel.selectWakeSoundFile()
+                }) {
+                AppSettings.wakeSound.data = it
+            }
 
-
-            val recordedSoundItems = AppSettings.recordedSounds.data.addSoundItems()
-
-            DropDownListItemWithOverline(
+            DropDownListWithFileOpen(
                 overlineText = { Text(MR.strings.recordedSound) },
                 selected = AppSettings.recordedSound.observe(),
-                onSelect = {
-                    if (it == recordedSoundItems.lastIndex) {
-                        viewModel.selectRecordedSoundFile()
-                    } else {
-                        AppSettings.recordedSound.data = it
-                    }
-                },
-                values = recordedSoundItems
-            )
+                values = AppSettings.recordedSounds.observe().addSoundItems(),
+                onAdd = {
+                    viewModel.selectWakeSoundFile()
+                }) {
+                AppSettings.recordedSound.data = it
+            }
 
-
-            val errorSoundItems = AppSettings.errorSounds.data.addSoundItems()
-
-            DropDownListItemWithOverline(
+            DropDownListWithFileOpen(
                 overlineText = { Text(MR.strings.errorSound) },
                 selected = AppSettings.errorSound.observe(),
-                onSelect = {
-                    if (it == errorSoundItems.lastIndex) {
-                        viewModel.selectErrorSoundFile()
-                    } else {
-                        AppSettings.errorSound.data = it
-                    }
-                },
-                values = errorSoundItems
-            )
+                values = AppSettings.errorSounds.observe().addSoundItems(),
+                onAdd = {
+                    viewModel.selectWakeSoundFile()
+                }) {
+                AppSettings.errorSound.data = it
+            }
         }
 
     }
@@ -373,7 +354,6 @@ fun Sounds(viewModel: SettingsScreenViewModel) {
 private fun Set<String>.addSoundItems(): Array<String> {
     return this.toMutableList().apply {
         this.addAll(0, listOf(translate(resource = MR.strings.defaultText), translate(resource = MR.strings.disabled)))
-        this.add(translate(resource = MR.strings.selectFile))
     }.toTypedArray()
 }
 

@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +21,7 @@ import androidx.compose.material.Switch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -220,11 +222,14 @@ fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, enabled: Boolean = true,
 }
 
 @Composable
-fun DropDownListItemWithOverline(overlineText: @Composable () -> Unit,
-                                 selected: Int,
-                                 enabled: Boolean = true,
-                                 onSelect: (item: Int) -> Unit,
-                                 values: Array<String>) {
+fun DropDownListWithFileOpen(
+    overlineText: @Composable () -> Unit,
+    selected: Int,
+    enabled: Boolean = true,
+    values: Array<String>,
+    onAdd: () -> Unit,
+    onSelect: (item: Int) -> Unit
+) {
     var isExpanded by remember { mutableStateOf(false) }
 
     ListElement(modifier = Modifier
@@ -254,7 +259,29 @@ fun DropDownListItemWithOverline(overlineText: @Composable () -> Unit,
                 DropdownMenuItem(
                     text = { Text(text) },
                     enabled = enabled,
-                    onClick = { isExpanded = false; onSelect(index) })
+                    onClick = {
+                        isExpanded = false
+                        onSelect.invoke(index)
+                    })
+            }
+
+            Box(modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .align(alignment = Alignment.Center),
+                    border = BorderStroke(ButtonDefaults.outlinedButtonBorder.width, MaterialTheme.colorScheme.primary),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
+                    onClick = {
+                        isExpanded = false
+                        onAdd.invoke()
+                    })
+                {
+                    Icon(imageVector = Icons.Filled.FileOpen, contentDescription = MR.strings.expandDropDown)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(MR.strings.selectFile)
+                }
+
             }
         }
     }
