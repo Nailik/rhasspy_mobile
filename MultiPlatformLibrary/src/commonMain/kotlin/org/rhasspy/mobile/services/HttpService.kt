@@ -204,7 +204,9 @@ object HttpService {
         }
     }
 
-
+    /**
+     * send intent as Event to Home Assistant
+     */
     suspend fun hassEvent(json: String, intentName: String) {
 
         logger.v {
@@ -238,6 +240,9 @@ object HttpService {
     }
 
 
+    /**
+     * send intent as Intent to Home Assistant
+     */
     suspend fun hassIntent(intent: String) {
 
         logger.v { "sending intent as Intent to Home Assistant\nendpoint:\n${ConfigurationSettings.intentHandlingHassUrl.data}/api/intent/handle\nintent:\n$intent" }
@@ -248,7 +253,7 @@ object HttpService {
                 url = Url("${ConfigurationSettings.intentHandlingHassUrl.data}/api/intent/handle")
             ) {
                 buildHeaders {
-                    parseAuthorizationHeader("Bearer ${ConfigurationSettings.intentHandlingHassAccessToken.data}")
+                    header("Authorization", "Bearer ${ConfigurationSettings.intentHandlingHassAccessToken.data}")
                     contentType(ContentType("application", "json"))
                 }
                 setBody(intent)
