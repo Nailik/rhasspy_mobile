@@ -48,7 +48,7 @@ fun ConfigurationScreen(snackbarHostState: SnackbarHostState, viewModel: Configu
     ) {
         SiteId()
         CustomDivider()
-        HttpSSL()
+        HttpServer()
         CustomDivider()
         Mqtt(viewModel)
         CustomDivider()
@@ -85,32 +85,57 @@ fun SiteId() {
 }
 
 @Composable
-fun HttpSSL() {
+fun HttpServer() {
 
-    val isHttpSSLValue = ConfigurationSettings.isHttpSSL.observeCurrent()
+    val isHttpServerValue = ConfigurationSettings.isHttpServerEnabled.observeCurrent()
 
     ExpandableListItem(
-        text = MR.strings.httpSSL,
-        secondaryText = isHttpSSLValue.toText()
+        text = MR.strings.webserver,
+        secondaryText = isHttpServerValue.toText()
     ) {
 
         SwitchListItem(
-            text = MR.strings.enableSSL,
-            isChecked = isHttpSSLValue,
+            text = MR.strings.enableHTTPApi,
+            isChecked = isHttpServerValue,
             enabled = !ServiceInterface.isRestarting.observe(),
-            onCheckedChange = { ConfigurationSettings.isHttpSSL.unsavedData = it })
+            onCheckedChange = { ConfigurationSettings.isHttpServerEnabled.unsavedData = it })
+
+        TextFieldListItem(
+            label = MR.strings.port,
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            value = ConfigurationSettings.httpServerPort.observeCurrent().toString(),
+            enabled = !ServiceInterface.isRestarting.observe(),
+            onValueChange = { ConfigurationSettings.httpServerPort.unsavedData = it },
+        )
 
         AnimatedVisibility(
             enter = expandVertically(),
             exit = shrinkVertically(),
-            visible = isHttpSSLValue
+            visible = isHttpServerValue
         ) {
-            OutlineButtonListItem(
-                text = MR.strings.chooseCertificate,
-                enabled = !ServiceInterface.isRestarting.observe(),
-                onClick = { })
-        }
 
+            Column {
+
+                val isHttpServerSSLValue = ConfigurationSettings.isHttpServerSSL.observeCurrent()
+
+                SwitchListItem(
+                    text = MR.strings.enableSSL,
+                    isChecked = isHttpServerSSLValue,
+                    enabled = !ServiceInterface.isRestarting.observe(),
+                    onCheckedChange = { ConfigurationSettings.isHttpServerSSL.unsavedData = it })
+
+                AnimatedVisibility(
+                    enter = expandVertically(),
+                    exit = shrinkVertically(),
+                    visible = isHttpServerSSLValue
+                ) {
+                    OutlineButtonListItem(
+                        text = MR.strings.chooseCertificate,
+                        enabled = !ServiceInterface.isRestarting.observe(),
+                        onClick = { })
+                }
+            }
+        }
     }
 }
 

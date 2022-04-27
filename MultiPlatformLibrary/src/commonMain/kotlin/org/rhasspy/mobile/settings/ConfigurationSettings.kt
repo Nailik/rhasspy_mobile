@@ -6,7 +6,9 @@ object ConfigurationSettings {
 
     val siteId = ConfigurationSetting(SettingsEnum.SiteId, "mobile")
 
-    val isHttpSSL = ConfigurationSetting(SettingsEnum.HttpSSL, false)
+    val isHttpServerEnabled = ConfigurationSetting(SettingsEnum.HttpServerEnabled, true)
+    val httpServerPort = ConfigurationSetting(SettingsEnum.HttpServerPort, "12101")
+    val isHttpServerSSL = ConfigurationSetting(SettingsEnum.HttpServerSSL, false)
 
     val isMQTTEnabled = ConfigurationSetting(SettingsEnum.MQTT_ENABLED, false)
     val isMqttSSL = ConfigurationSetting(SettingsEnum.MQTT_SSL, false)
