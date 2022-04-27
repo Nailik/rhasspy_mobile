@@ -39,7 +39,9 @@ enum class SettingsEnum {
     //Configuration Settings
     SiteId,
 
-    HttpSSL,
+    HttpServerEnabled,
+    HttpServerPort,
+    HttpServerSSL,
 
     MQTT_SSL,
     MQTT_ENABLED,

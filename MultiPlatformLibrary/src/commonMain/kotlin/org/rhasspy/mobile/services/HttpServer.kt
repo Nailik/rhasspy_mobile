@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.services.native.installCallLogging
 import org.rhasspy.mobile.services.native.installCompression
+import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.native.concurrent.ThreadLocal
 
 //https://rhasspy.readthedocs.io/en/latest/reference/#http-api
@@ -27,19 +28,31 @@ object HttpServer {
     fun start() {
         logger.v { "startHttpServer" }
 
-        if (server == null) {
-            logger.v { "server == null" }
-            server = getServer()
-            CoroutineScope(Dispatchers.Main).launch {
-                //necessary else netty has problems when the coroutine scope is closed
-                server?.start()
+        if (server == null || !ConfigurationSettings.isHttpServerEnabled.data) {
+            ConfigurationSettings.httpServerPort.data.toIntOrNull()?.also { port ->
+                logger.v { "server == null" }
+                server = getServer(port)
+                CoroutineScope(Dispatchers.Main).launch {
+                    //necessary else netty has problems when the coroutine scope is closed
+                    server?.start()
+                }
+            } ?: run {
+                logger.w { "configured server port is not a valid number ${ConfigurationSettings.httpServerPort.data}" }
+            }
+        } else {
+            logger.v {
+                if (server != null) {
+                    "server already running"
+                } else {
+                    "webserver disabled"
+                }
             }
         }
     }
 
 
-    private fun getServer(): CIOApplicationEngine {
-        return embeddedServer(factory = CIO, port = 12101, watchPaths = emptyList()) {
+    private fun getServer(port: Int): CIOApplicationEngine {
+        return embeddedServer(factory = CIO, port = port, watchPaths = emptyList()) {
             //install(WebSockets)
             installCallLogging()
             install(DataConversion)

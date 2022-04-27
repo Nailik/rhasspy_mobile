@@ -149,4 +149,6 @@
     <string name="errorSound">Error</string>
     <string name="selectFile">select File</string>
     <string name="defaultText">Default</string>
+    <string name="webserver">Webserver</string>
+    <string name="enableHTTPApi">Enable HTTP Api</string>
 </resources>
