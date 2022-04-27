@@ -24,7 +24,11 @@ actual object OverlayPermission {
             override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
                 if (event == Lifecycle.Event.ON_RESUME) {
                     status.value = isGranted()
-                    onResultCallback?.invoke(status.value)
+                    //onResultCallback?.invoke(status.value)
+
+                    if(isGranted()){
+                        org.rhasspy.mobile.TestOverlay.show()
+                    }
                 }
             }
         })

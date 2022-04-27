@@ -82,6 +82,19 @@ kotlin {
                 implementation(Ktor2.Server.compression)
                 implementation(Ktor2.Server.callLogging)
                 implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
+
+                implementation(AndroidX.Compose.material3)
+                implementation(AndroidX.Compose.material)
+                implementation(AndroidX.Compose.material.icons.extended)
+                implementation(AndroidX.Compose.foundation)
+                implementation(AndroidX.Compose.runtime.liveData)
+                implementation(AndroidX.Lifecycle.viewModelCompose)
+                implementation(AndroidX.Lifecycle.common)
+                implementation(AndroidX.Lifecycle.common)
+                implementation(AndroidX.Compose.ui)
+                implementation(AndroidX.Compose.ui.util)
+                implementation(AndroidX.Compose.ui.tooling)
+                implementation(AndroidX.Compose.ui.toolingPreview)
             }
         }
         val androidTest by getting
