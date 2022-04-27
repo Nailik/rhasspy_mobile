@@ -6,7 +6,9 @@ import io.ktor.client.call.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
+import io.ktor.client.utils.*
 import io.ktor.http.*
+import io.ktor.http.auth.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -202,4 +204,67 @@ object HttpService {
         }
     }
 
+    /**
+     * send intent as Event to Home Assistant
+     */
+    suspend fun hassEvent(json: String, intentName: String) {
+
+        logger.v {
+            "sending intent as Event to Home Assistant\nendpoint:\n${ConfigurationSettings.intentHandlingHassUrl.data}/api/events/rhasspy_$intentName\nintent:\n$json"
+        }
+
+        try {
+
+            val url = "${ConfigurationSettings.intentHandlingHassUrl.data}/api/events/rhasspy_$intentName"
+
+            logger.v { "complete endpoint url" }
+
+            val request = httpClient.post(
+                url = Url(url)
+            ) {
+                buildHeaders {
+                    header("Authorization", "Bearer ${ConfigurationSettings.intentHandlingHassAccessToken.data}")
+                    contentType(ContentType("application", "json"))
+                }
+                setBody(json)
+            }
+
+            val response = request.body<String>()
+
+            logger.v { "sending intent received:\n${response}" }
+
+        } catch (e: Exception) {
+            logger.e(e) { "sending text to speech Exception" }
+        }
+
+    }
+
+
+    /**
+     * send intent as Intent to Home Assistant
+     */
+    suspend fun hassIntent(intent: String) {
+
+        logger.v { "sending intent as Intent to Home Assistant\nendpoint:\n${ConfigurationSettings.intentHandlingHassUrl.data}/api/intent/handle\nintent:\n$intent" }
+
+        try {
+
+            val request = httpClient.post(
+                url = Url("${ConfigurationSettings.intentHandlingHassUrl.data}/api/intent/handle")
+            ) {
+                buildHeaders {
+                    header("Authorization", "Bearer ${ConfigurationSettings.intentHandlingHassAccessToken.data}")
+                    contentType(ContentType("application", "json"))
+                }
+                setBody(intent)
+            }
+
+            val response = request.body<String>()
+
+            logger.v { "sending intent received:\n${response}" }
+
+        } catch (e: Exception) {
+            logger.e(e) { "sending text to speech Exception" }
+        }
+    }
 }

@@ -480,8 +480,11 @@ fun IntentHandling() {
         DropDownEnumListItem(
             selected = intentHandlingOption,
             enabled = !ServiceInterface.isRestarting.observe(),
-            onSelect = { ConfigurationSettings.intentHandlingOption.unsavedData = it })
+            onSelect = {
+                ConfigurationSettings.intentHandlingOption.unsavedData = it
+            })
         { IntentHandlingOptions.values() }
+
 
         AnimatedVisibility(
             enter = expandVertically(),
@@ -511,11 +514,25 @@ fun IntentHandling() {
                     label = MR.strings.hassURL
                 )
 
+                var isShowAccessToken by rememberSaveable { mutableStateOf(false) }
+
                 TextFieldListItem(
                     value = ConfigurationSettings.intentHandlingHassAccessToken.observeCurrent(),
-                    enabled = !ServiceInterface.isRestarting.observe(),
                     onValueChange = { ConfigurationSettings.intentHandlingHassAccessToken.unsavedData = it },
-                    label = MR.strings.accessToken
+                    label = MR.strings.accessToken,
+                    visualTransformation = if (isShowAccessToken) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = { isShowAccessToken = !isShowAccessToken }) {
+                            Icon(
+                                if (isShowAccessToken) {
+                                    Icons.Filled.Visibility
+                                } else {
+                                    Icons.Filled.VisibilityOff
+                                },
+                                contentDescription = MR.strings.visibility,
+                            )
+                        }
+                    },
                 )
 
                 val isIntentHandlingHassEvent = ConfigurationSettings.isIntentHandlingHassEvent.observeCurrent()
@@ -527,7 +544,6 @@ fun IntentHandling() {
                     onClick = {
                         ConfigurationSettings.isIntentHandlingHassEvent.unsavedData = true
                     })
-
 
                 RadioButtonListItem(
                     text = MR.strings.homeAssistantIntents,
