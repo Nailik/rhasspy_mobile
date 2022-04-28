@@ -2,6 +2,7 @@ package org.rhasspy.mobile.nativeutils
 
 import android.app.Activity
 import android.provider.OpenableColumns
+import io.netty.util.internal.StringUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,8 +48,6 @@ actual object SettingsUtils {
                         }
 
                         //all files in sounds
-                        zipOutputStream.putNextEntry(ZipEntry("sounds/"))
-
                         val soundsFolder = File(Application.Instance.filesDir, "sounds")
 
                         if (soundsFolder.exists()) {
@@ -59,8 +58,6 @@ actual object SettingsUtils {
                         }
 
                         //all files in porcupine wake words
-                        zipOutputStream.putNextEntry(ZipEntry("porcupine/"))
-
                         val porcupineFolder = File(Application.Instance.filesDir, "porcupine")
 
                         if (porcupineFolder.exists()) {
@@ -100,9 +97,12 @@ actual object SettingsUtils {
                         while (ze != null) {
 
                             if (ze.isDirectory) {
-                                File(Application.Instance.filesDir, ze.name).mkdirs()
+                                File(Application.Instance.filesDir.parent, ze.name).mkdirs()
                             } else {
-                                File(Application.Instance.filesDir, ze.name).outputStream().apply {
+                                val file = File(Application.Instance.filesDir.parent, ze.name)
+                                File(file.parent!!).mkdirs()
+                                file.createNewFile()
+                                file.outputStream().apply {
                                     zipInputStream.copyTo(this)
                                     flush()
                                     close()
