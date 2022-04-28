@@ -24,9 +24,10 @@ object ConfigurationSettings {
     val wakeWordOption = ConfigurationSetting(SettingsEnum.WakeWordOption, WakeWordOption.Disabled)
     val wakeWordPorcupineAccessToken = ConfigurationSetting(SettingsEnum.WakeWordPorcupineAccessToken, "")
     val wakeWordPorcupineKeywordOption = ConfigurationSetting(SettingsEnum.WakeWordPorcupineKeywordOption, 0)
-    val wakeWordPorcupineKeywordSensitivity = ConfigurationSetting(SettingsEnum.WakeWordPorcupineKeywordSensitivity, 0.5f)
     val wakeWordPorcupineKeywordOptions =
-        ConfigurationSetting(SettingsEnum.WakeWordPorcupineKeywordOptions, WakeWordKeywordOption.values().map { it.name }.toSet<String>())
+        ConfigurationSetting(SettingsEnum.WakeWordPorcupineKeywordOptions, WakeWordKeywordOption.values().map { it.name }.toSet())
+    val wakeWordPorcupineLanguage = ConfigurationSetting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOptions.EN)
+    val wakeWordPorcupineKeywordSensitivity = ConfigurationSetting(SettingsEnum.WakeWordPorcupineKeywordSensitivity, 0.5f)
 
     val speechToTextOption = ConfigurationSetting(SettingsEnum.SpeechToTextOption, SpeechToTextOptions.Disabled)
     val speechToTextHttpEndpoint = ConfigurationSetting(SettingsEnum.SpeechToTextHttpEndpoint, "")

@@ -83,9 +83,6 @@ actual object SettingsUtils {
 
     @OptIn(ExperimentalSerializationApi::class)
     actual fun restoreSettingsFromFile() {
-        File(Application.Instance.filesDir, "sounds").mkdirs()
-        File(Application.Instance.filesDir, "porcupine").mkdirs()
-
         Application.Instance.currentActivity?.openDocument(arrayOf("application/zip")) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
@@ -103,9 +100,9 @@ actual object SettingsUtils {
                         while (ze != null) {
 
                             if (ze.isDirectory) {
-                                File(Application.Instance.filesDir.parent, ze.name).mkdirs()
+                                File(Application.Instance.filesDir, ze.name).mkdirs()
                             } else {
-                                File(Application.Instance.filesDir.parent, ze.name).outputStream().apply {
+                                File(Application.Instance.filesDir, ze.name).outputStream().apply {
                                     zipInputStream.copyTo(this)
                                     flush()
                                     close()

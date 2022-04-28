@@ -48,7 +48,7 @@ actual object NativeIndication {
      * play some sound file
      */
     actual fun playSoundFile(filename: String) {
-        val soundFile = File(File(Application.Instance.filesDir, "sounds").path)
+        val soundFile = File(Application.Instance.filesDir, "sounds")
 
         playSound(
             MediaPlayer.create(

@@ -356,6 +356,12 @@ fun WakeWord(viewModel: ConfigurationScreenViewModel, snackbarHostState: Snackba
                     ConfigurationSettings.wakeWordPorcupineKeywordOption.unsavedData = it
                 }
 
+                DropDownEnumListItem(
+                    selected = ConfigurationSettings.wakeWordPorcupineLanguage.observeCurrent(),
+                    enabled = !ServiceInterface.isRestarting.observe(),
+                    onSelect = { ConfigurationSettings.wakeWordPorcupineLanguage.unsavedData = it })
+                { PorcupineLanguageOptions.values() }
+
                 SliderListItem(
                     text = MR.strings.sensitivity,
                     value = ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.observeCurrent(),

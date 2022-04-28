@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
+import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import java.io.File
@@ -63,6 +64,7 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
             val porcupineBuilder = PorcupineManager.Builder()
                 .setAccessKey(ConfigurationSettings.wakeWordPorcupineAccessToken.data)
                 .setSensitivity(ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.data).apply {
+                    setModelPath(copyModelFileIfNecessary())
                     buildInKeyword?.also {
                         setKeyword(it)
                     } ?: run {
@@ -93,5 +95,15 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
         } catch (e: IllegalArgumentException) {
             null
         }
+    }
+
+    private fun copyModelFileIfNecessary(): String {
+        val file = File(Application.Instance.filesDir, "porcupine/model_${ConfigurationSettings.wakeWordPorcupineLanguage.data.name.lowercase()}.pv")
+
+        if (!file.exists()) {
+            file.outputStream().write(Application.Instance.resources.openRawResource(MR.files.porcupine_params.rawResId).readBytes())
+        }
+
+        return file.absolutePath
     }
 }

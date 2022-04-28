@@ -882,7 +882,7 @@ object ServiceInterface {
         return previousRecordingFile.getFileData()
     }
 
-    fun playWakeSound() {
+    private fun playWakeSound() {
         when (AppSettings.wakeSound.data) {
             0 -> NativeIndication.playSoundFileResource(MR.files.etc_wav_beep_hi)
             1 -> {}
@@ -890,7 +890,7 @@ object ServiceInterface {
         }
     }
 
-    fun playRecordedSound() {
+    private fun playRecordedSound() {
         when (AppSettings.recordedSound.data) {
             0 -> NativeIndication.playSoundFileResource(MR.files.etc_wav_beep_lo)
             1 -> {}
@@ -898,7 +898,7 @@ object ServiceInterface {
         }
     }
 
-    fun playErrorSound() {
+    private fun playErrorSound() {
         when (AppSettings.errorSound.data) {
             0 -> NativeIndication.playSoundFileResource(MR.files.etc_wav_beep_error)
             1 -> {}
