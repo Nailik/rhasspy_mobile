@@ -2,7 +2,6 @@ package org.rhasspy.mobile.nativeutils
 
 import android.app.Activity
 import android.provider.OpenableColumns
-import io.netty.util.internal.StringUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
