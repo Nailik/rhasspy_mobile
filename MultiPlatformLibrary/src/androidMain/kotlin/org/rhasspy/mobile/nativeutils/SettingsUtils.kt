@@ -2,6 +2,7 @@ package org.rhasspy.mobile.nativeutils
 
 import android.app.Activity
 import android.provider.OpenableColumns
+import io.netty.util.internal.StringUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,7 +25,8 @@ actual object SettingsUtils {
 
 
     actual fun saveSettingsFile() {
-        File(Application.Instance.filesDir.parent, "sounds").mkdirs()
+        File(Application.Instance.filesDir, "sounds").mkdirs()
+        File(Application.Instance.filesDir, "porcupine").mkdirs()
 
         Application.Instance.currentActivity?.createDocument("rhasspy_settings_${Clock.System.now().toLocalDateTime(TimeZone.UTC)}.zip") {
             if (it.resultCode == Activity.RESULT_OK) {
@@ -46,14 +48,22 @@ actual object SettingsUtils {
                         }
 
                         //all files in sounds
-                        zipOutputStream.putNextEntry(ZipEntry("sounds/"))
-
-                        val soundsFolder = File(Application.Instance.filesDir.parent, "sounds")
+                        val soundsFolder = File(Application.Instance.filesDir, "sounds")
 
                         if (soundsFolder.exists()) {
                             soundsFolder.listFiles()?.forEach { soundFile ->
-                                zipOutputStream.putNextEntry(ZipEntry("${soundsFolder.name}/${soundFile.name}"))
+                                zipOutputStream.putNextEntry(ZipEntry("files/${soundsFolder.name}/${soundFile.name}"))
                                 zipOutputStream.write(soundFile.readBytes())
+                            }
+                        }
+
+                        //all files in porcupine wake words
+                        val porcupineFolder = File(Application.Instance.filesDir, "porcupine")
+
+                        if (porcupineFolder.exists()) {
+                            porcupineFolder.listFiles()?.forEach { porcupineFile ->
+                                zipOutputStream.putNextEntry(ZipEntry("files/${porcupineFolder.name}/${porcupineFile.name}"))
+                                zipOutputStream.write(porcupineFile.readBytes())
                             }
                         }
 
@@ -89,7 +99,10 @@ actual object SettingsUtils {
                             if (ze.isDirectory) {
                                 File(Application.Instance.filesDir.parent, ze.name).mkdirs()
                             } else {
-                                File(Application.Instance.filesDir.parent, ze.name).outputStream().apply {
+                                val file = File(Application.Instance.filesDir.parent, ze.name)
+                                File(file.parent!!).mkdirs()
+                                file.createNewFile()
+                                file.outputStream().apply {
                                     zipInputStream.copyTo(this)
                                     flush()
                                     close()
@@ -107,11 +120,60 @@ actual object SettingsUtils {
         }
     }
 
-    actual fun selectSoundFile(callback: (String) -> Unit) {
-
-        File(Application.Instance.filesDir.parent, "sounds").mkdirs()
+    actual fun selectSoundFile(callback: (String?) -> Unit) {
+        File(Application.Instance.filesDir, "sounds").mkdirs()
 
         Application.Instance.currentActivity?.openDocument(arrayOf("audio/x-wav")) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                it.data?.data?.also { uri ->
+
+                    var fileName = ""
+
+                    Application.Instance.contentResolver.query(uri, null, null, null, null)?.also { cursor ->
+                        if (cursor.moveToFirst()) {
+                            val index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                            if (index != -1) {
+                                fileName = cursor.getString(index)
+                            } else {
+                                callback(null)
+                                //didn't work
+                                return@openDocument
+                            }
+                        } else {
+                            callback(null)
+                            //didn't work
+                            return@openDocument
+                        }
+                        cursor.close()
+                    }
+
+
+                    Application.Instance.contentResolver.openInputStream(uri)?.let { inputStream ->
+                        File(Application.Instance.filesDir, "sounds/$fileName").apply {
+                            this.outputStream().apply {
+                                inputStream.copyTo(this)
+
+                                this.flush()
+
+                                this.close()
+                                inputStream.close()
+                            }
+                        }
+                        callback(fileName)
+                    } ?: run {
+                        callback(null)
+                    }
+                }
+            } else {
+                callback(null)
+            }
+        }
+    }
+
+    actual fun selectPorcupineFile(callback: (String?) -> Unit) {
+        File(Application.Instance.filesDir, "porcupine").mkdirs()
+
+        Application.Instance.currentActivity?.openDocument(arrayOf("application/octet-stream", "application/zip")) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
 
@@ -133,28 +195,63 @@ actual object SettingsUtils {
                         cursor.close()
                     }
 
-
                     Application.Instance.contentResolver.openInputStream(uri)?.let { inputStream ->
-                        File(Application.Instance.filesDir.parent, "sounds/$fileName").apply {
-                            this.outputStream().apply {
-                                inputStream.copyTo(this)
 
-                                this.flush()
+                        when {
+                            fileName.endsWith(".zip") -> {
 
-                                this.close()
+                                //check if file contains .ppn file
+                                val zipInputStream = ZipInputStream(BufferedInputStream(inputStream))
+
+                                var ze = zipInputStream.nextEntry
+
+                                while (ze != null) {
+
+                                    if (!ze.isDirectory) {
+                                        if (ze.name.endsWith(".ppn")) {
+                                            File(Application.Instance.filesDir, "porcupine/${ze.name}").outputStream().apply {
+                                                zipInputStream.copyTo(this)
+                                                flush()
+                                                close()
+                                            }
+                                            callback(ze.name)
+                                            inputStream.close()
+                                            return@openDocument
+                                        }
+                                    }
+                                    ze = zipInputStream.nextEntry
+                                }
+
                                 inputStream.close()
+
+                                callback(null)
                             }
+                            fileName.endsWith(".ppn") -> {
+                                //use this file
+                                File(Application.Instance.filesDir, "porcupine/$fileName").apply {
+                                    this.outputStream().apply {
+                                        inputStream.copyTo(this)
+
+                                        this.flush()
+
+                                        this.close()
+                                        inputStream.close()
+                                    }
+                                }
+                                callback(fileName)
+                            }
+                            else -> callback(null)
                         }
-                        callback(fileName)
-                    } ?: kotlin.run {
+
+                    } ?: run {
                         //didn't work
+                        println("err")
                     }
 
                 }
             } else {
-                //didn't work
+                callback(null)
             }
         }
     }
-
 }

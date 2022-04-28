@@ -795,7 +795,7 @@ object ServiceInterface {
         when (ConfigurationSettings.wakeWordOption.data) {
             WakeWordOption.Porcupine -> {
                 //when porcupine is used for hotWord then start local service
-                if (ConfigurationSettings.wakeWordAccessToken.data.isNotEmpty()) {
+                if (ConfigurationSettings.wakeWordPorcupineAccessToken.data.isNotEmpty()) {
                     NativeLocalWakeWordService.start()
                 } else {
                     val description = "couldn't start local wake word service, access Token Empty"
@@ -882,27 +882,27 @@ object ServiceInterface {
         return previousRecordingFile.getFileData()
     }
 
-    fun playWakeSound() {
+    private fun playWakeSound() {
         when (AppSettings.wakeSound.data) {
             0 -> NativeIndication.playSoundFileResource(MR.files.etc_wav_beep_hi)
             1 -> {}
-            else -> NativeIndication.playSoundFile(AppSettings.wakeSounds.data.elementAt(AppSettings.wakeSound.data))
+            else -> NativeIndication.playSoundFile(AppSettings.wakeSounds.data.elementAt(AppSettings.wakeSound.data - 2))
         }
     }
 
-    fun playRecordedSound() {
+    private fun playRecordedSound() {
         when (AppSettings.recordedSound.data) {
             0 -> NativeIndication.playSoundFileResource(MR.files.etc_wav_beep_lo)
             1 -> {}
-            else -> NativeIndication.playSoundFile(AppSettings.recordedSounds.data.elementAt(AppSettings.recordedSound.data))
+            else -> NativeIndication.playSoundFile(AppSettings.recordedSounds.data.elementAt(AppSettings.recordedSound.data - 2))
         }
     }
 
-    fun playErrorSound() {
+    private fun playErrorSound() {
         when (AppSettings.errorSound.data) {
             0 -> NativeIndication.playSoundFileResource(MR.files.etc_wav_beep_error)
             1 -> {}
-            else -> NativeIndication.playSoundFile(AppSettings.errorSounds.data.elementAt(AppSettings.errorSound.data))
+            else -> NativeIndication.playSoundFile(AppSettings.errorSounds.data.elementAt(AppSettings.errorSound.data - 2))
         }
     }
 

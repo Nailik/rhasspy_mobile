@@ -55,9 +55,11 @@ enum class SettingsEnum {
     UDPOutputPort,
 
     WakeWordOption,
-    WakeWordAccessToken,
-    WakeWordKeywordOption,
-    WakeWordKeywordSensitivity,
+    WakeWordPorcupineAccessToken,
+    WakeWordPorcupineKeywordOption,
+    WakeWordPorcupineKeywordOptions,
+    WakeWordPorcupineLanguage,
+    WakeWordPorcupineKeywordSensitivity,
 
     SpeechToTextOption,
     SpeechToTextHttpEndpoint,

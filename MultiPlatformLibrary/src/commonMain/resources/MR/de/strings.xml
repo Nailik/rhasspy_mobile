@@ -156,4 +156,8 @@
     <string name="defaultText">Standard</string>
     <string name="webserver">Webserver</string>
     <string name="enableHTTPApi">Aktiviere HTTP Api</string>
+    <string name="english">Englisch</string>
+    <string name="german">Deutsch</string>
+    <string name="french">Französisch</string>
+    <string name="spanish">Spanisch</string>
 </resources>

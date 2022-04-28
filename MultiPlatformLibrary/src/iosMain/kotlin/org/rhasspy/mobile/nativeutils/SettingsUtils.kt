@@ -10,7 +10,11 @@ actual object SettingsUtils {
         TODO("Not yet implemented")
     }
 
-    actual fun selectSoundFile(callback: (String) -> Unit) {
+    actual fun selectSoundFile(callback: (String?) -> Unit) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun selectPorcupineFile(callback: (String?) -> Unit) {
         TODO("Not yet implemented")
     }
 

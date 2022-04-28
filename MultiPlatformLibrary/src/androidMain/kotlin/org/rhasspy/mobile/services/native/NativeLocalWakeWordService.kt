@@ -8,8 +8,10 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
+import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import java.io.File
 
 /**
  * Listens to WakeWord with Porcupine
@@ -54,11 +56,24 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
 
         try {
 
-            porcupineManager = PorcupineManager.Builder()
-                .setAccessKey(ConfigurationSettings.wakeWordAccessToken.data)
-                .setKeyword(Porcupine.BuiltInKeyword.valueOf(ConfigurationSettings.wakeWordKeywordOption.data.name))
-                .setSensitivity(ConfigurationSettings.wakeWordKeywordSensitivity.data)
-                .build(Application.Instance, this)
+            val keywordName =
+                ConfigurationSettings.wakeWordPorcupineKeywordOptions.data.elementAt(ConfigurationSettings.wakeWordPorcupineKeywordOption.data)
+
+            val buildInKeyword = findBuiltInKeyword(keywordName)
+
+            val porcupineBuilder = PorcupineManager.Builder()
+                .setAccessKey(ConfigurationSettings.wakeWordPorcupineAccessToken.data)
+                .setSensitivity(ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.data).apply {
+                    setModelPath(copyModelFileIfNecessary())
+                    buildInKeyword?.also {
+                        setKeyword(it)
+                    } ?: run {
+                        setKeywordPath(File(Application.Instance.filesDir, "porcupine/$keywordName").absolutePath)
+                    }
+                }
+            File(Application.Instance.filesDir, "sounds").mkdirs()
+
+            porcupineManager = porcupineBuilder.build(Application.Instance, this)
 
         } catch (e: Exception) {
             logger.e(e) { "initializePorcupineManger failed" }
@@ -74,4 +89,21 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
         ServiceInterface.hotWordDetected()
     }
 
+    private fun findBuiltInKeyword(keywordName: String): Porcupine.BuiltInKeyword? {
+        return try {
+            Porcupine.BuiltInKeyword.valueOf(keywordName)
+        } catch (e: IllegalArgumentException) {
+            null
+        }
+    }
+
+    private fun copyModelFileIfNecessary(): String {
+        val file = File(Application.Instance.filesDir, "porcupine/model_${ConfigurationSettings.wakeWordPorcupineLanguage.data.name.lowercase()}.pv")
+
+        if (!file.exists()) {
+            file.outputStream().write(Application.Instance.resources.openRawResource(MR.files.porcupine_params.rawResId).readBytes())
+        }
+
+        return file.absolutePath
+    }
 }
