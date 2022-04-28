@@ -72,27 +72,33 @@ class SettingsScreenViewModel : ViewModel() {
     fun restoreSettingsFromFile() = SettingsUtils.restoreSettingsFromFile()
 
     fun selectWakeSoundFile() = SettingsUtils.selectSoundFile { fileName ->
-        AppSettings.wakeSounds.data = AppSettings.wakeSounds.data.toMutableList()
-            .apply {
-                this.add(fileName)
-            }.toSet()
-        AppSettings.wakeSound.data = AppSettings.wakeSounds.data.size + 2
+        fileName?.also {
+            AppSettings.wakeSounds.data = AppSettings.wakeSounds.data.toMutableList()
+                .apply {
+                    this.add(it)
+                }.toSet()
+            AppSettings.wakeSound.data = AppSettings.wakeSounds.data.size + 2
+        }
     }
 
     fun selectRecordedSoundFile() = SettingsUtils.selectSoundFile { fileName ->
-        AppSettings.recordedSounds.data = AppSettings.recordedSounds.data.toMutableList()
-            .apply {
-                this.add(fileName)
-            }.toSet()
-        AppSettings.recordedSound.data = AppSettings.recordedSounds.data.size + 2
+        fileName?.also {
+            AppSettings.recordedSounds.data = AppSettings.recordedSounds.data.toMutableList()
+                .apply {
+                    this.add(it)
+                }.toSet()
+            AppSettings.recordedSound.data = AppSettings.recordedSounds.data.size + 2
+        }
     }
 
     fun selectErrorSoundFile() = SettingsUtils.selectSoundFile { fileName ->
-        AppSettings.errorSounds.data = AppSettings.errorSounds.data.toMutableList()
-            .apply {
-                this.add(fileName)
-            }.toSet()
-        AppSettings.errorSound.data = AppSettings.errorSounds.data.size + 2
+        fileName?.also {
+            AppSettings.errorSounds.data = AppSettings.errorSounds.data.toMutableList()
+                .apply {
+                    this.add(it)
+                }.toSet()
+            AppSettings.errorSound.data = AppSettings.errorSounds.data.size + 2
+        }
     }
 
 

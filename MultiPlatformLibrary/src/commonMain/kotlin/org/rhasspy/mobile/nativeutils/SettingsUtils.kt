@@ -6,8 +6,8 @@ expect object SettingsUtils {
 
     fun restoreSettingsFromFile()
 
-    fun selectSoundFile(callback: (String) -> Unit)
+    fun selectSoundFile(callback: (String?) -> Unit)
 
-    fun selectPorcupineFile(callback: (String) -> Unit)
+    fun selectPorcupineFile(callback: (String?) -> Unit)
 
 }

@@ -10,12 +10,15 @@ class ConfigurationScreenViewModel : ViewModel() {
     val isMQTTConnected = MqttService.isConnected
 
     fun selectPorcupineWakeWordFile() = SettingsUtils.selectPorcupineFile { fileName ->
-        ConfigurationSettings.wakeWordPorcupineKeywordOptions.unsavedData =
-            ConfigurationSettings.wakeWordPorcupineKeywordOptions.unsavedData.toMutableList()
-                .apply {
-                    this.add(fileName)
-                }.toSet()
-        ConfigurationSettings.wakeWordPorcupineKeywordOption.unsavedData = ConfigurationSettings.wakeWordPorcupineKeywordOptions.unsavedData.size - 1
+        fileName?.also {
+            ConfigurationSettings.wakeWordPorcupineKeywordOptions.unsavedData =
+                ConfigurationSettings.wakeWordPorcupineKeywordOptions.unsavedData.toMutableList()
+                    .apply {
+                        this.add(it)
+                    }.toSet()
+            ConfigurationSettings.wakeWordPorcupineKeywordOption.unsavedData =
+                ConfigurationSettings.wakeWordPorcupineKeywordOptions.unsavedData.size - 1
+        }
     }
 
 }
