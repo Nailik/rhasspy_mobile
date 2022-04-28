@@ -160,10 +160,10 @@ actual object SettingsUtils {
                             }
                         }
                         callback(fileName)
-                    } ?: run {}
-                    callback(null)
+                    } ?: run {
+                        callback(null)
+                    }
                 }
-
             } else {
                 callback(null)
             }

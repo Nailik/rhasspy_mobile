@@ -886,7 +886,7 @@ object ServiceInterface {
         when (AppSettings.wakeSound.data) {
             0 -> NativeIndication.playSoundFileResource(MR.files.etc_wav_beep_hi)
             1 -> {}
-            else -> NativeIndication.playSoundFile(AppSettings.wakeSounds.data.elementAt(AppSettings.wakeSound.data))
+            else -> NativeIndication.playSoundFile(AppSettings.wakeSounds.data.elementAt(AppSettings.wakeSound.data - 2))
         }
     }
 
@@ -894,7 +894,7 @@ object ServiceInterface {
         when (AppSettings.recordedSound.data) {
             0 -> NativeIndication.playSoundFileResource(MR.files.etc_wav_beep_lo)
             1 -> {}
-            else -> NativeIndication.playSoundFile(AppSettings.recordedSounds.data.elementAt(AppSettings.recordedSound.data))
+            else -> NativeIndication.playSoundFile(AppSettings.recordedSounds.data.elementAt(AppSettings.recordedSound.data - 2))
         }
     }
 
@@ -902,7 +902,7 @@ object ServiceInterface {
         when (AppSettings.errorSound.data) {
             0 -> NativeIndication.playSoundFileResource(MR.files.etc_wav_beep_error)
             1 -> {}
-            else -> NativeIndication.playSoundFile(AppSettings.errorSounds.data.elementAt(AppSettings.errorSound.data))
+            else -> NativeIndication.playSoundFile(AppSettings.errorSounds.data.elementAt(AppSettings.errorSound.data - 2))
         }
     }
 
