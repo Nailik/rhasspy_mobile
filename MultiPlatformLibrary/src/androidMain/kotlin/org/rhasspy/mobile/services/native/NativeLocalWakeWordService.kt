@@ -9,6 +9,7 @@ import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.data.PorcupineLanguageOptions
 import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import java.io.File
@@ -101,7 +102,14 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
         val file = File(Application.Instance.filesDir, "porcupine/model_${ConfigurationSettings.wakeWordPorcupineLanguage.data.name.lowercase()}.pv")
 
         if (!file.exists()) {
-            file.outputStream().write(Application.Instance.resources.openRawResource(MR.files.porcupine_params.rawResId).readBytes())
+            val modelFile = when(ConfigurationSettings.wakeWordPorcupineLanguage.data){
+                PorcupineLanguageOptions.EN -> MR.files.porcupine_params
+                PorcupineLanguageOptions.DE -> MR.files.porcupine_params_de
+                PorcupineLanguageOptions.FR -> MR.files.porcupine_params_fr
+                PorcupineLanguageOptions.ES -> MR.files.porcupine_params_es
+            }
+
+            file.outputStream().write(Application.Instance.resources.openRawResource(modelFile.rawResId).readBytes())
         }
 
         return file.absolutePath
