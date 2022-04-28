@@ -54,7 +54,7 @@ fun ConfigurationScreen(snackbarHostState: SnackbarHostState, viewModel: Configu
         CustomDivider()
         AudioRecording()
         CustomDivider()
-        WakeWord(snackbarHostState)
+        WakeWord(viewModel, snackbarHostState)
         CustomDivider()
         SpeechToText()
         CustomDivider()
@@ -279,7 +279,7 @@ fun AudioRecording() {
 }
 
 @Composable
-fun WakeWord(snackbarHostState: SnackbarHostState) {
+fun WakeWord(viewModel: ConfigurationScreenViewModel, snackbarHostState: SnackbarHostState) {
 
     val wakeWordValueOption = ConfigurationSettings.wakeWordOption.observeCurrent()
 
@@ -313,13 +313,28 @@ fun WakeWord(snackbarHostState: SnackbarHostState) {
         ) {
 
             Column {
-                TextFieldListItem(
-                    value = ConfigurationSettings.wakeWordAccessToken.observeCurrent(),
-                    enabled = !ServiceInterface.isRestarting.observe(),
-                    onValueChange = { ConfigurationSettings.wakeWordAccessToken.unsavedData = it },
-                    label = MR.strings.porcupineAccessKey
-                )
 
+
+                var isShowAccessToken by rememberSaveable { mutableStateOf(false) }
+
+                TextFieldListItem(
+                    value = ConfigurationSettings.wakeWordPorcupineAccessToken.observeCurrent(),
+                    onValueChange = { ConfigurationSettings.wakeWordPorcupineAccessToken.unsavedData = it },
+                    label = MR.strings.porcupineAccessKey,
+                    visualTransformation = if (isShowAccessToken) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = { isShowAccessToken = !isShowAccessToken }) {
+                            Icon(
+                                if (isShowAccessToken) {
+                                    Icons.Filled.Visibility
+                                } else {
+                                    Icons.Filled.VisibilityOff
+                                },
+                                contentDescription = MR.strings.visibility,
+                            )
+                        }
+                    },
+                )
                 val context = LocalContext.current
 
                 OutlineButtonListItem(
@@ -330,18 +345,24 @@ fun WakeWord(snackbarHostState: SnackbarHostState) {
                     })
 
                 //filled with correct values later
-                DropDownEnumListItem(
-                    selected = ConfigurationSettings.wakeWordKeywordOption.observeCurrent(),
+                DropDownListWithFileOpen(
+                    overlineText = { Text(MR.strings.wakeWord) },
+                    selected = ConfigurationSettings.wakeWordPorcupineKeywordOption.observeCurrent(),
                     enabled = !ServiceInterface.isRestarting.observe(),
-                    onSelect = { ConfigurationSettings.wakeWordKeywordOption.unsavedData = it })
-                { WakeWordKeywordOption.values() }
+                    values = ConfigurationSettings.wakeWordPorcupineKeywordOptions.observeCurrent().toTypedArray(),
+                    onAdd = {
+                        viewModel.selectPorcupineWakeWordFile()
+                    }) {
+                    ConfigurationSettings.wakeWordPorcupineKeywordOption.unsavedData = it
+                }
 
                 SliderListItem(
                     text = MR.strings.sensitivity,
-                    value = ConfigurationSettings.wakeWordKeywordSensitivity.observeCurrent(),
+                    value = ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.observeCurrent(),
                     enabled = !ServiceInterface.isRestarting.observe(),
                     onValueChange = {
-                        ConfigurationSettings.wakeWordKeywordSensitivity.unsavedData = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
+                        ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.unsavedData =
+                            it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
                     })
             }
         }

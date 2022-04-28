@@ -8,4 +8,6 @@ expect object SettingsUtils {
 
     fun selectSoundFile(callback: (String) -> Unit)
 
+    fun selectPorcupineFile(callback: (String) -> Unit)
+
 }

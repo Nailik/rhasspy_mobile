@@ -331,7 +331,7 @@ fun Sounds(viewModel: SettingsScreenViewModel) {
                 selected = AppSettings.recordedSound.observe(),
                 values = AppSettings.recordedSounds.observe().addSoundItems(),
                 onAdd = {
-                    viewModel.selectWakeSoundFile()
+                    viewModel.selectRecordedSoundFile()
                 }) {
                 AppSettings.recordedSound.data = it
             }
@@ -341,7 +341,7 @@ fun Sounds(viewModel: SettingsScreenViewModel) {
                 selected = AppSettings.errorSound.observe(),
                 values = AppSettings.errorSounds.observe().addSoundItems(),
                 onAdd = {
-                    viewModel.selectWakeSoundFile()
+                    viewModel.selectErrorSoundFile()
                 }) {
                 AppSettings.errorSound.data = it
             }

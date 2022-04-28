@@ -795,7 +795,7 @@ object ServiceInterface {
         when (ConfigurationSettings.wakeWordOption.data) {
             WakeWordOption.Porcupine -> {
                 //when porcupine is used for hotWord then start local service
-                if (ConfigurationSettings.wakeWordAccessToken.data.isNotEmpty()) {
+                if (ConfigurationSettings.wakeWordPorcupineAccessToken.data.isNotEmpty()) {
                     NativeLocalWakeWordService.start()
                 } else {
                     val description = "couldn't start local wake word service, access Token Empty"

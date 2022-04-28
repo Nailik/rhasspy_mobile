@@ -456,7 +456,7 @@ object MqttService {
             MQTTTopicsPublish.HotWordDetected.topic.replace("<wakewordId>", "default"),
             MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
-                    put("currentSensitivity", ConfigurationSettings.wakeWordKeywordSensitivity.data)
+                    put("currentSensitivity", ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.data)
                     put("siteId", ConfigurationSettings.siteId.data)
                     //put("sendAudioCaptured", true)
                     //necessary
