@@ -38,7 +38,7 @@ object ForegroundService {
         logger.v { "action $serviceAction fromService $fromService" }
 
         if (fromService) {
-            ServiceInterface.serviceAction(serviceAction)
+            RhasspyActions.serviceAction(serviceAction)
         } else {
             if (!AppSettings.isBackgroundEnabled.data) {
                 if (NativeService.isRunning) {
@@ -46,7 +46,7 @@ object ForegroundService {
                     NativeService.stop()
                 }
 
-                ServiceInterface.serviceAction(serviceAction)
+                RhasspyActions.serviceAction(serviceAction)
             } else {
                 //start or update service
                 NativeService.doAction(serviceAction)

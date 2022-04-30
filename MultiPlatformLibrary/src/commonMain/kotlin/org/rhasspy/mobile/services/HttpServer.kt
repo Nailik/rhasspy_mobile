@@ -13,8 +13,10 @@ import io.ktor.server.routing.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.rhasspy.mobile.services.logic.StateMachine
 import org.rhasspy.mobile.services.native.installCallLogging
 import org.rhasspy.mobile.services.native.installCompression
+import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.native.concurrent.ThreadLocal
 
@@ -105,7 +107,7 @@ object HttpServer {
     private fun Routing.listenForCommand() = post("/api/listen-for-command") {
         logger.v { "post /api/listen-for-command" }
 
-        ServiceInterface.hotWordDetected()
+        StateMachine.hotWordDetected("REMOTE")
     }
 
 
@@ -127,8 +129,8 @@ object HttpServer {
         logger.v { "received $action" }
 
         action?.also {
-            ServiceInterface.hotWordToggle(action)
-        } ?: kotlin.run {
+            AppSettings.isHotWordEnabled.data = it
+        } ?: run {
             logger.w { "invalid body" }
         }
 
@@ -142,7 +144,7 @@ object HttpServer {
     private fun Routing.playRecordingPost() = post("/api/play-recording") {
         logger.v { "post /api/play-recording" }
 
-        ServiceInterface.playRecording()
+        StateMachine.playRecording()
     }
 
 
@@ -154,7 +156,7 @@ object HttpServer {
         logger.v { "get /api/play-recording" }
 
         call.respondBytes(
-            bytes = ServiceInterface.getPreviousRecording().toByteArray(),
+            bytes = RecordingService.getPreviousRecording().toByteArray(),
             contentType = ContentType("audio", "wav")
         )
     }
@@ -170,11 +172,11 @@ object HttpServer {
         logger.v { "post /api/play-wav" }
 
         if (call.request.contentType() == ContentType("audio", "wav")) {
-            ServiceInterface.playAudio(call.receive())
+            RhasspyActions.playAudio(call.receive())
         } else {
             //seems like contentType might be wrong when called from a rhasspy server
             logger.w { "invalid content type ${call.request.contentType()} but trying" }
-            ServiceInterface.playAudio(call.receive())
+            RhasspyActions.playAudio(call.receive())
         }
     }
 
@@ -192,7 +194,7 @@ object HttpServer {
 
         volume?.also {
             if (volume > 0F && volume < 1F) {
-                ServiceInterface.setVolume(volume)
+                AppSettings.volume.data = volume
             }
             return@post
         }
@@ -209,7 +211,7 @@ object HttpServer {
     private fun Routing.startRecording() = post("/api/start-recording") {
         logger.v { "post /api/start-recording" }
 
-        ServiceInterface.startListening()
+        StateMachine.startListening()
     }
 
     /**
@@ -226,7 +228,7 @@ object HttpServer {
     private fun Routing.stopRecording() = post("/api/stop-recording") {
         logger.v { "post /api/stop-recording" }
 
-        ServiceInterface.stopListening()
+        StateMachine.stopListening()
     }
 
 }

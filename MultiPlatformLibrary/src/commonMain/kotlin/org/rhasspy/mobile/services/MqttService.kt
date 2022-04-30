@@ -13,8 +13,10 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.rhasspy.mobile.data.AudioPlayingOptions
+import org.rhasspy.mobile.services.logic.StateMachine
 import org.rhasspy.mobile.services.mqtt.*
 import org.rhasspy.mobile.services.mqtt.native.MqttClient
+import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.math.min
 import kotlin.native.concurrent.ThreadLocal
@@ -251,7 +253,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            ServiceInterface.startSession()
+            StateMachine.startSession()
         } else {
             logger.d { "received startSession but for other siteId" }
         }
@@ -268,7 +270,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            ServiceInterface.endSession(jsonObject["sessionId"]?.jsonPrimitive?.content)
+            StateMachine.endSession(jsonObject["sessionId"]?.jsonPrimitive?.content)
         } else {
             logger.d { "received endSession but for other siteId" }
         }
@@ -290,7 +292,7 @@ object MqttService {
 
         if (jsonObject.isThisSiteId()) {
             jsonObject["sessionId"]?.jsonPrimitive?.content?.also {
-                ServiceInterface.sessionStarted(it, true)
+                RhasspyActions.sessionStarted(it, true)
             } ?: run {
                 logger.d { "received sessionStarted with empty session Id" }
             }
@@ -333,7 +335,7 @@ object MqttService {
 
         if (jsonObject.isThisSiteId()) {
             jsonObject["sessionId"]?.jsonPrimitive?.content?.also {
-                ServiceInterface.sessionEnded(it, true)
+                RhasspyActions.sessionEnded(it, true)
             } ?: run {
                 logger.d { "received sessionStarted with empty session Id" }
             }
@@ -402,7 +404,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            ServiceInterface.hotWordToggle(true)
+            AppSettings.isHotWordEnabled.data = true
         } else {
             logger.d { "received hotWordToggleOn but for other siteId" }
         }
@@ -418,7 +420,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            ServiceInterface.hotWordToggle(false)
+            AppSettings.isHotWordEnabled.data = false
         } else {
             logger.d { "received hotWordToggleOff but for other siteId" }
         }
@@ -437,7 +439,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            ServiceInterface.hotWordDetected(true)
+            StateMachine.hotWordDetected(true)
         } else {
             logger.d { "received hotWordToggleOff but for other siteId" }
         }
@@ -499,7 +501,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            ServiceInterface.startListening(
+            RhasspyActions.startListening(
                 jsonObject["sessionId"]?.jsonPrimitive?.content,
                 true,
                 jsonObject["sendAudioCaptured"]?.jsonPrimitive?.booleanOrNull == true
@@ -542,7 +544,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            ServiceInterface.stopListening(jsonObject["sessionId"]?.jsonPrimitive?.content, true)
+            RhasspyActions.stopListening(jsonObject["sessionId"]?.jsonPrimitive?.content, true)
         } else {
             logger.d { "received stopListening but for other siteId" }
         }
@@ -579,7 +581,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            ServiceInterface.asrTextCaptured(
+            RhasspyActions.asrTextCaptured(
                 jsonObject["sessionId"]?.jsonPrimitive?.content,
                 jsonObject["text"]?.jsonPrimitive?.content
             )
@@ -619,7 +621,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            ServiceInterface.asrError(jsonObject["sessionId"]?.jsonPrimitive?.content)
+            RhasspyActions.asrError(jsonObject["sessionId"]?.jsonPrimitive?.content)
         } else {
             logger.d { "received asrError but for other siteId" }
         }
@@ -701,7 +703,7 @@ object MqttService {
         if (jsonObject.isThisSiteId()) {
             val intent = jsonObject["intent"]?.jsonObject?.toString()
             intent?.also {
-                ServiceInterface.intentRecognized(jsonObject["sessionId"]?.jsonPrimitive?.content, it)
+                RhasspyActions.intentRecognized(jsonObject["sessionId"]?.jsonPrimitive?.content, it)
             } ?: run {
                 logger.d { "received intentRecognitionResult with empty intent" }
             }
@@ -721,7 +723,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            ServiceInterface.intentNotRecognized(jsonObject["sessionId"]?.jsonPrimitive?.content)
+            RhasspyActions.intentNotRecognized(jsonObject["sessionId"]?.jsonPrimitive?.content)
         } else {
             logger.d { "received intentNotRecognized but for other siteId" }
         }
@@ -735,7 +737,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            ServiceInterface.intentHandlingToggle(true)
+            AppSettings.isIntentHandlingEnabled.data = true
         } else {
             logger.d { "received intentHandlingToggleOn but for other siteId" }
         }
@@ -750,7 +752,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            ServiceInterface.intentHandlingToggle(false)
+            AppSettings.isIntentHandlingEnabled.data = false
         } else {
             logger.d { "received intentHandlingToggleOff but for other siteId" }
         }
@@ -798,7 +800,7 @@ object MqttService {
     private fun playBytes(message: MqttMessage) {
         //not necessary to check SiteId for this topic, because it is in topic string
         if (ConfigurationSettings.audioPlayingOption.data != AudioPlayingOptions.RemoteMQTT) {
-            ServiceInterface.playAudio(message.payload.toList())
+            RhasspyActions.playAudio(message.payload.toList())
         } else {
             logger.d { "received playBytes but audio playing is set to mqtt, ignoring this to prevent looping" }
         }
@@ -832,7 +834,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            ServiceInterface.audioServerToggle(false)
+            AppSettings.isAudioOutputEnabled.data = false
         } else {
             logger.d { "received audioOutputToggleOff but for other siteId" }
         }
@@ -847,7 +849,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            ServiceInterface.audioServerToggle(true)
+            AppSettings.isAudioOutputEnabled.data = true
         } else {
             logger.d { "received audioOutputToggleOff but for other siteId" }
         }
@@ -878,7 +880,7 @@ object MqttService {
 
         if (jsonObject.isThisSiteId()) {
             jsonObject["volume"]?.jsonPrimitive?.floatOrNull?.also {
-                ServiceInterface.setVolume(it)
+                AppSettings.volume.data = it
             } ?: run {
                 logger.e { "setVolume invalid value ${jsonObject["volume"]}" }
             }

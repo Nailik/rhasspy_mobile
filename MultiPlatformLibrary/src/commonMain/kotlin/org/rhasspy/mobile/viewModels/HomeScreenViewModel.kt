@@ -10,7 +10,8 @@ import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.nativeutils.OverlayPermission
-import org.rhasspy.mobile.services.ServiceInterface
+import org.rhasspy.mobile.services.RhasspyActions
+import org.rhasspy.mobile.services.logic.StateMachine
 import org.rhasspy.mobile.settings.AppSettings
 
 class HomeScreenViewModel : ViewModel() {
@@ -36,20 +37,20 @@ class HomeScreenViewModel : ViewModel() {
         }
     }
 
-    val isRecording = ServiceInterface.sessionRunning
-    val isPlayingRecording = ServiceInterface.isPlayingRecording
+    val isRecording = RhasspyActions.sessionRunning
+    val isPlayingRecording = RhasspyActions.isPlayingRecording
 
-    fun toggleSession() = ServiceInterface.toggleSession()
+    fun toggleSession() = RhasspyActions.toggleSession()
 
-    fun playRecording() = ServiceInterface.playRecording()
+    fun playRecording() = StateMachine.playRecording()
 
-    fun intentRecognition(text: String) = ServiceInterface.recognizeIntent(text)
+    fun intentRecognition(text: String) = RhasspyActions.recognizeIntent(text)
 
-    fun speakText(text: String) = ServiceInterface.say(text)
+    fun speakText(text: String) = RhasspyActions.say(text)
 
-    fun saveAndApplyChanges() = ServiceInterface.saveAndApplyChanges()
+    fun saveAndApplyChanges() = RhasspyActions.saveAndApplyChanges()
 
-    fun resetChanges() = ServiceInterface.resetChanges()
+    fun resetChanges() = RhasspyActions.resetChanges()
 
     fun shareLogFile() = FileLogger.shareLogFile()
 

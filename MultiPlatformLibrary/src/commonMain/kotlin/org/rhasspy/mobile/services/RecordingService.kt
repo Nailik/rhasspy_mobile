@@ -13,7 +13,10 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.rhasspy.mobile.data.WakeWordOption
+import org.rhasspy.mobile.services.logic.StateMachine
+import org.rhasspy.mobile.services.native.AudioPlayer
 import org.rhasspy.mobile.services.native.AudioRecorder
+import org.rhasspy.mobile.services.native.FileWriter
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.toByteArray
@@ -28,6 +31,7 @@ import kotlin.time.Duration.Companion.milliseconds
 object RecordingService {
     private val logger = Logger.withTag("RecordingService")
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
+    private val previousRecordingFile = FileWriter("previousRecording.wav", 0)
 
     private val listening = MutableLiveData(false)
 
@@ -62,6 +66,7 @@ object RecordingService {
         return false
     }
 
+
     /**
      * should be called when wake word is detected or user wants to speak
      * by clicking ui
@@ -84,7 +89,7 @@ object RecordingService {
 
                 val byteData = value.toList()
                 data.addAll(byteData)
-                ServiceInterface.audioFrame(byteData)
+                StateMachine.audioFrame(byteData)
 
                 if (AppSettings.isAutomaticSilenceDetection.data && ConfigurationSettings.wakeWordOption.data != WakeWordOption.MQTT) {
                     if (!searchThreshold(byteData, AppSettings.automaticSilenceDetectionAudioLevel.data)) {
@@ -95,7 +100,8 @@ object RecordingService {
                             (-AppSettings.automaticSilenceDetectionTime.data).milliseconds
                         ) {
                             logger.i { "diff ${firstSilenceDetected?.minus(Clock.System.now())}" }
-                            ServiceInterface.silenceDetected()
+                            logger.d { "silenceDetected" }
+                            StateMachine.stopListening()
                         }
                     }
                 }
@@ -131,6 +137,19 @@ object RecordingService {
         val result = this.toMutableList()
         result.addAll(0, header.toList())
         return result
+    }
+
+
+    fun savePreviousRecording(audioData: List<Byte>) {
+        //save to file
+        previousRecordingFile.writeData(audioData)
+    }
+
+    /**
+     * returns previouw Recording as wav data
+     */
+    fun getPreviousRecording(): List<Byte> {
+        return previousRecordingFile.getFileData()
     }
 
 }

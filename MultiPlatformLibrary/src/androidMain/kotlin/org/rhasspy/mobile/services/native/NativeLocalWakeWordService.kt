@@ -10,7 +10,7 @@ import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.PorcupineLanguageOptions
-import org.rhasspy.mobile.services.ServiceInterface
+import org.rhasspy.mobile.services.RhasspyActions
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import java.io.File
 
@@ -87,7 +87,7 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
     override fun invoke(keywordIndex: Int) {
         logger.d { "invoke - keyword detected" }
 
-        ServiceInterface.hotWordDetected()
+        RhasspyActions.hotWordDetected()
     }
 
     private fun findBuiltInKeyword(keywordName: String): Porcupine.BuiltInKeyword? {

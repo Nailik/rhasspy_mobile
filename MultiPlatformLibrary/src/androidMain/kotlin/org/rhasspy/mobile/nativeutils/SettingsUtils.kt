@@ -11,7 +11,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.services.ServiceAction
-import org.rhasspy.mobile.services.ServiceInterface
+import org.rhasspy.mobile.services.RhasspyActions
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
@@ -84,7 +84,7 @@ actual object SettingsUtils {
                 it.data?.data?.also { uri ->
 
                     CoroutineScope(Dispatchers.Default).launch {
-                        ServiceInterface.serviceAction(ServiceAction.Stop)
+                        RhasspyActions.serviceAction(ServiceAction.Stop)
                     }
 
                     Application.Instance.contentResolver.openInputStream(uri)?.also { inputStream ->

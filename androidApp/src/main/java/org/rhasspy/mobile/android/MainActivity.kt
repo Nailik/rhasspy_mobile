@@ -49,7 +49,7 @@ import org.rhasspy.mobile.android.utils.toColors
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.nativeutils.OverlayPermission
-import org.rhasspy.mobile.services.ServiceInterface
+import org.rhasspy.mobile.services.RhasspyActions
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.GlobalData
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
@@ -288,7 +288,7 @@ fun UnsavedChanges(viewModel: HomeScreenViewModel) {
     AnimatedVisibility(
         enter = fadeIn(animationSpec = tween(50)),
         exit = fadeOut(animationSpec = tween(50)),
-        visible = ServiceInterface.isRestarting.observe()
+        visible = RhasspyActions.isRestarting.observe()
     ) {
         val infiniteTransition = rememberInfiniteTransition()
         val angle by infiniteTransition.animateFloat(

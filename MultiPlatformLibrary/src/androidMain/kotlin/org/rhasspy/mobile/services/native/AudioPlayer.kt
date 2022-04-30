@@ -5,7 +5,7 @@ import android.media.AudioFormat
 import android.media.AudioManager
 import android.media.AudioTrack
 import co.touchlab.kermit.Logger
-import org.rhasspy.mobile.services.ServiceInterface
+import org.rhasspy.mobile.services.RhasspyActions
 import org.rhasspy.mobile.settings.AppSettings
 import java.nio.ByteBuffer
 
@@ -53,7 +53,7 @@ actual object AudioPlayer {
             audioTrack.setPlaybackPositionUpdateListener(object : AudioTrack.OnPlaybackPositionUpdateListener {
 
                 override fun onMarkerReached(p0: AudioTrack?) {
-                    ServiceInterface.playFinished()
+                    RhasspyActions.playFinished()
                 }
 
                 override fun onPeriodicNotification(p0: AudioTrack?) {}
@@ -67,7 +67,7 @@ actual object AudioPlayer {
 
         } catch (e: Exception) {
             logger.e(e) { "Exception while playing audio data" }
-            ServiceInterface.playFinished()
+            RhasspyActions.playFinished()
         }
     }
 
