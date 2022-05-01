@@ -1,22 +1,21 @@
-package org.rhasspy.mobile.services
+package org.rhasspy.mobile.services.handler
 
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.rhasspy.mobile.services.ServiceAction
+import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.services.native.NativeService
 import org.rhasspy.mobile.settings.AppSettings
 
 /**
- * Start point of all services
+ * handles foreground service actions
  *
- * handles
- * - WakeWord Service
- * - Listening Service
- * - MQTT Services
- * - HTTP Services
+ * Starts and stops them to run them in an android foreground service
+ * to be not killed when the app is in background
  */
-object ForegroundService {
+object ForegroundServiceHandler {
     private val logger = Logger.withTag("ForegroundService")
 
     init {
@@ -38,7 +37,7 @@ object ForegroundService {
         logger.v { "action $serviceAction fromService $fromService" }
 
         if (fromService) {
-            RhasspyActions.serviceAction(serviceAction)
+            ServiceInterface.serviceAction(serviceAction)
         } else {
             if (!AppSettings.isBackgroundEnabled.data) {
                 if (NativeService.isRunning) {
@@ -46,7 +45,7 @@ object ForegroundService {
                     NativeService.stop()
                 }
 
-                RhasspyActions.serviceAction(serviceAction)
+                ServiceInterface.serviceAction(serviceAction)
             } else {
                 //start or update service
                 NativeService.doAction(serviceAction)
