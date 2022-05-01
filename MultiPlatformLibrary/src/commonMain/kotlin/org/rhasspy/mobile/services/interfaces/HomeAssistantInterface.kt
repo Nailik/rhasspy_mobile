@@ -1,11 +1,15 @@
-package org.rhasspy.mobile.services
+package org.rhasspy.mobile.services.interfaces
 
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
+import org.rhasspy.mobile.services.HttpService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-object HomeAssistantService {
+/**
+ * used to send intents or events to home assistant
+ */
+object HomeAssistantInterface {
 
     /**
      * simplified conversion from intent to hass event or hass intent
