@@ -56,6 +56,8 @@ kotlin {
                 implementation(Ktor2.Server.dataConversion)
                 implementation(Ktor2.Server.cio)
                 implementation(Benasher.uuid)
+                implementation(Badoo.reaktive)
+                implementation(Badoo.coroutinesInterop)
             }
         }
         val commonTest by getting {
