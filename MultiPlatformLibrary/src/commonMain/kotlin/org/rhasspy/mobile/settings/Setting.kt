@@ -73,9 +73,4 @@ abstract class Setting<T>(private val key: SettingsEnum, private val initial: T)
                 value.value = newValue
             }
         }
-
-    /**
-     * data that's live updated to get current value readonly
-     */
-    var liveData = value.readOnly()
 }
