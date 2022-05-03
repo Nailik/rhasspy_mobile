@@ -72,7 +72,7 @@ object HotWordService {
      */
     private fun stopHotWord() {
         isRunning = false
-5
+
         logger.d { "stopHotWord" }
         //make sure it is stopped
         NativeLocalWakeWordService.stop()
