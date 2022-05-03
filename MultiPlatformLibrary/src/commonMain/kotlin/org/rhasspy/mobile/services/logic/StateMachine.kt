@@ -1,9 +1,17 @@
 package org.rhasspy.mobile.services.logic
 
 import co.touchlab.kermit.Logger
+import com.badoo.reaktive.observable.observableOf
+import com.badoo.reaktive.observable.observeOn
+import com.badoo.reaktive.observable.toObservable
+import com.badoo.reaktive.scheduler.Scheduler
+import com.badoo.reaktive.scheduler.ioScheduler
+import com.badoo.reaktive.subject.publish.PublishSubject
 import com.benasher44.uuid.uuid4
+import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.DialogueManagementOptions
 import org.rhasspy.mobile.data.SpeechToTextOptions
@@ -17,6 +25,7 @@ import org.rhasspy.mobile.services.native.AudioPlayer
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.native.concurrent.ThreadLocal
+import kotlin.properties.ObservableProperty
 
 @ThreadLocal
 object StateMachine {
@@ -32,8 +41,20 @@ object StateMachine {
 
     //information about current state
     private var state = State.Starting
+        private set(value) {
+            if(field != value){
+                field = value
+                currentStateSubject.onNext(value)
+            }
+        }
 
     /**
+     * private subject to update the data
+     */
+    private val currentStateSubject = PublishSubject<State>()
+    val currentState = currentStateSubject.observeOn(ioScheduler)
+
+        /**
      * indicates that services have started
      * resets session data and state to AwaitingHotWord
      */
