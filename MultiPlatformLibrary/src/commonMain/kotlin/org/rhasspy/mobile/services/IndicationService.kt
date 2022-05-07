@@ -1,10 +1,59 @@
-package org.rhasspy.mobile.services
+package org.rhasspy.mobile.services.indication
 
+import co.touchlab.kermit.Logger
+import com.badoo.reaktive.observable.doOnAfterNext
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.services.native.NativeIndication
+import org.rhasspy.mobile.logic.State
+import org.rhasspy.mobile.logic.StateMachine
+import org.rhasspy.mobile.nativeutils.NativeIndication
 import org.rhasspy.mobile.settings.AppSettings
 
 object IndicationService {
+    private val logger = Logger.withTag("IndicationService")
+
+    init {
+        //change things according to state of the service
+        StateMachine.currentState.doOnAfterNext {
+            logger.v { "currentState changed to $it" }
+            when (it) {
+                State.StartingSession -> {
+                    //TODO here hot word detected
+                }
+                State.StartedSession -> {
+                    //TODO or here hot word detected, sound when start session from remote?
+                    //hot word detected -> indication
+                    //light + sound?
+                }
+                State.RecordingIntent -> {
+
+                    //Indication that recording is running
+                }
+                State.RecordingStopped -> {
+                    //indictaion that recording has stopped
+                }
+                State.TranscribingIntent -> {
+                    //indication that it's thinking
+                }
+                State.TranscribingError -> {
+
+                    //error indication
+                }
+                State.RecognizingIntent -> {
+                    //indication that it's thinking
+                }
+                State.RecognizingIntentError -> {
+
+                    //error indication
+                }
+                State.IntentHandling -> {
+                    //working indication
+                }
+                else -> {
+                    //no indication
+                }
+            }
+        }
+    }
 
     private fun playWakeSound() {
         when (AppSettings.wakeSound.data) {
@@ -29,7 +78,6 @@ object IndicationService {
             else -> NativeIndication.playSoundFile(AppSettings.errorSounds.data.elementAt(AppSettings.errorSound.data - 2))
         }
     }
-
 
 
     /**
