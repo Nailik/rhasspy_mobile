@@ -1,7 +1,5 @@
-package org.rhasspy.mobile.android.screens
+package org.rhasspy.mobile.android.bottomBarScreens
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
@@ -13,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
 import androidx.compose.material.icons.filled.Warning
@@ -28,10 +27,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
-import compose.icons.FontAwesomeIcons
-import compose.icons.fontawesomeicons.Brands
-import compose.icons.fontawesomeicons.brands.Github
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
 import org.rhasspy.mobile.android.permissions.requestOverlayPermission
@@ -48,7 +45,7 @@ import java.math.RoundingMode
 private val logger = Logger.withTag("SettingsScreen")
 
 @Composable
-fun SettingsScreen(snackbarHostState: SnackbarHostState, viewModel: SettingsScreenViewModel = viewModel()) {
+fun SettingsScreen(snackbarHostState: SnackbarHostState, mainNavController: NavController, viewModel: SettingsScreenViewModel = viewModel()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -74,7 +71,7 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState, viewModel: SettingsScre
         CustomDivider()
         SaveAndRestore(viewModel)
         CustomDivider()
-        About()
+        About(mainNavController)
     }
 }
 
@@ -512,7 +509,7 @@ fun RestoreSettingsDialog(onResult: (result: Boolean) -> Unit) {
 }
 
 @Composable
-fun About() {
+fun About(mainNavController: NavController) {
     val context = LocalContext.current
 
     val manager = context.packageManager
@@ -522,9 +519,9 @@ fun About() {
 
     ListElement(
         modifier = Modifier.clickable {
-            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Nailik/rhasspy_mobile")))
+            mainNavController.navigate(MainScreens.HiddenScreen.name)
         },
-        icon = { Icon(FontAwesomeIcons.Brands.Github, modifier = Modifier.size(24.dp), contentDescription = MR.strings.ok) },
+        icon = { Icon(Icons.Filled.Info, modifier = Modifier.size(24.dp), contentDescription = MR.strings.ok) },
         text = { Text("${translate(MR.strings.version)} $versionName - $versionCode") },
         secondaryText = { Text(MR.strings.aboutText) }
     )

@@ -23,8 +23,8 @@ import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.livedata.MediatorLiveData
 import org.rhasspy.mobile.android.AndroidApplication
-import org.rhasspy.mobile.android.AppTheme
-import org.rhasspy.mobile.android.screens.Fab
+import org.rhasspy.mobile.android.bottomBarScreens.Fab
+import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.settings.AppSettings
 

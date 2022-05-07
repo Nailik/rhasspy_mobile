@@ -4,6 +4,7 @@ plugins {
     kotlin("plugin.serialization")
     id("com.android.library")
     id("dev.icerock.mobile.multiplatform-resources")
+    id("com.mikepenz.aboutlibraries.plugin")
 }
 
 version = "0.2"
@@ -56,6 +57,7 @@ kotlin {
                 implementation(Ktor2.Server.dataConversion)
                 implementation(Ktor2.Server.cio)
                 implementation(Benasher.uuid)
+                implementation("com.mikepenz:aboutlibraries-core:_")
             }
         }
         val commonTest by getting {
@@ -120,4 +122,12 @@ android {
 
 multiplatformResources {
     multiplatformResourcesPackage = "org.rhasspy.mobile" // required
+}
+
+aboutLibraries {
+    registerAndroidTasks = true
+    // Enable the duplication mode, allows to merge, or link dependencies which relate
+    duplicationMode = com.mikepenz.aboutlibraries.plugin.DuplicateMode.LINK
+    // Configure the duplication rule, to match "duplicates" with
+    duplicationRule = com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
 }

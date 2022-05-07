@@ -1,10 +1,15 @@
-package org.rhasspy.mobile.android.screens
+package org.rhasspy.mobile.android.bottomBarScreens
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,10 +21,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Severity
+import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.theme.*
 import org.rhasspy.mobile.android.utils.CustomDivider
+import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.StyledListItem
 import org.rhasspy.mobile.android.utils.observe
+import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 import org.rhasspy.mobile.viewModels.LogScreenViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -71,4 +79,15 @@ fun LogScreen(viewModel: LogScreenViewModel = viewModel()) {
         }
     }
 
+}
+
+@Composable
+fun LogScreenActions(viewModel: HomeScreenViewModel) {
+    Row(modifier = Modifier.padding(start = 8.dp)) {
+        IconButton(onClick = { viewModel.shareLogFile() })
+        { Icon(imageVector = Icons.Filled.Share, contentDescription = MR.strings.share) }
+
+        IconButton(onClick = { viewModel.saveLogFile() })
+        { Icon(imageVector = Icons.Filled.Save, contentDescription = MR.strings.save) }
+    }
 }

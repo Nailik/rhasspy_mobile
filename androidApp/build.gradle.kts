@@ -95,5 +95,7 @@ dependencies {
     implementation("co.touchlab:kermit:_")
     implementation(AndroidX.lifecycle.process)
     implementation(Devsrsouza.fontAwesome)
+    implementation(Mikepenz.aboutLibrariesCore)
+    implementation(Mikepenz.aboutLibrariesCompose)
 
 }

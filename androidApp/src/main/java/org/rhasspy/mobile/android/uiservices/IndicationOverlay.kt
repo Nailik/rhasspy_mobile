@@ -18,11 +18,7 @@ import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import org.rhasspy.mobile.android.AndroidApplication
-import org.rhasspy.mobile.android.AppTheme
-import org.rhasspy.mobile.android.theme.assistant_color_four
-import org.rhasspy.mobile.android.theme.assistant_color_one
-import org.rhasspy.mobile.android.theme.assistant_color_three
-import org.rhasspy.mobile.android.theme.assistant_color_two
+import org.rhasspy.mobile.android.theme.*
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.services.native.NativeIndication
 

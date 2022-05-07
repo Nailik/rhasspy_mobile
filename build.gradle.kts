@@ -10,6 +10,7 @@ buildscript {
         @Suppress("GradlePluginVersion")
         classpath(Android.tools.build.gradlePlugin)
         classpath("dev.icerock.moko:resources-generator:_")
+        classpath("com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:_")
     }
 }
 
