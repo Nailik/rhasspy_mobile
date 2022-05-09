@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -52,6 +53,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.LocalWindowInsets
 import dev.icerock.moko.mvvm.livedata.LiveData
+import dev.icerock.moko.resources.ImageResource
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
@@ -110,6 +112,22 @@ fun Icon(
 ) {
     Icon(
         painter = rememberVectorPainter(imageVector),
+        contentDescription = translate(contentDescription),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+
+@Composable
+fun Icon(
+    imageResource: ImageResource,
+    contentDescription: StringResource,
+    modifier: Modifier = Modifier,
+    tint: Color = LocalContentColor.current
+) {
+    Icon(
+        painter = painterResource(imageResource.drawableResId),
         contentDescription = translate(contentDescription),
         modifier = modifier,
         tint = tint
@@ -583,6 +601,6 @@ fun TextWithAction(
 }
 
 @Composable
-fun CustomDivider() {
-    Divider(color = MaterialTheme.colorScheme.surfaceVariant)
+fun CustomDivider(modifier: Modifier = Modifier) {
+    Divider(color = MaterialTheme.colorScheme.surfaceVariant, modifier = modifier)
 }

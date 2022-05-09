@@ -10,25 +10,28 @@ import org.rhasspy.mobile.android.utils.toColors
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.settings.AppSettings
 
+@Composable
+fun getIsDarkTheme(): Boolean {
+    val themeOption = AppSettings.themeOption.observe()
+    return (isSystemInDarkTheme() && themeOption == ThemeOptions.System) || themeOption == ThemeOptions.Dark
+}
 
 @Composable
 fun AppTheme(systemUiTheme: Boolean, content: @Composable () -> Unit) {
 
-    val themeOption = AppSettings.themeOption.observe()
-
-    val darkTheme = (isSystemInDarkTheme() && themeOption == ThemeOptions.System) || themeOption == ThemeOptions.Dark
-    val colorScheme = if (darkTheme) DarkThemeColors else LightThemeColors
+    val isDarkTheme = getIsDarkTheme()
+    val colorScheme = if (isDarkTheme) DarkThemeColors else LightThemeColors
 
     if (systemUiTheme) {
         //may be used inside overlay and then the context is not an activity
         val systemUiController = rememberSystemUiController()
-        systemUiController.setSystemBarsColor(colorScheme.background, darkIcons = !darkTheme)
-        systemUiController.setNavigationBarColor(colorScheme.background, darkIcons = !darkTheme)
-        systemUiController.setStatusBarColor(colorScheme.background, darkIcons = !darkTheme)
+        systemUiController.setSystemBarsColor(colorScheme.background, darkIcons = !isDarkTheme)
+        systemUiController.setNavigationBarColor(colorScheme.background, darkIcons = !isDarkTheme)
+        systemUiController.setStatusBarColor(colorScheme.background, darkIcons = !isDarkTheme)
     }
 
     androidx.compose.material.MaterialTheme(
-        colors = colorScheme.toColors(isLight = !darkTheme),
+        colors = colorScheme.toColors(isLight = !isDarkTheme),
         typography = MaterialTheme.typography.toOldTypography()
     ) {
         MaterialTheme(colorScheme = colorScheme, content = content)

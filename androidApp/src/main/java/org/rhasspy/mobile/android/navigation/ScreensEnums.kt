@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.bottomBarScreens
+package org.rhasspy.mobile.android.navigation
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons

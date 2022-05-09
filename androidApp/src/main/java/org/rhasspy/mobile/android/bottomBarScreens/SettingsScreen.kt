@@ -30,6 +30,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.navigation.MainScreens
 import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
 import org.rhasspy.mobile.android.permissions.requestOverlayPermission
 import org.rhasspy.mobile.android.utils.*
@@ -521,8 +522,8 @@ fun About(mainNavController: NavController) {
         modifier = Modifier.clickable {
             mainNavController.navigate(MainScreens.AboutScreen.name)
         },
-        icon = { Icon(Icons.Filled.Info, modifier = Modifier.size(24.dp), contentDescription = MR.strings.ok) },
-        text = { Text("${translate(MR.strings.version)} $versionName - $versionCode") },
-        secondaryText = { Text(MR.strings.aboutText) }
+        icon = { Icon(Icons.Filled.Info, modifier = Modifier.size(24.dp), contentDescription = MR.strings.info) },
+        text = { Text(MR.strings.aboutTitle) },
+        secondaryText = { Text("${translate(MR.strings.version)} $versionName - $versionCode") }
     )
 }
