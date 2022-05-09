@@ -1,9 +1,14 @@
 package org.rhasspy.mobile.android.aboutScreens
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,6 +22,7 @@ import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.android.utils.translate
 
+//git commits for changelog https://lowcarbrob.medium.com/android-pro-tip-generating-your-apps-changelog-from-git-inside-build-gradle-19a07533eec4
 @Composable
 fun AboutScreen() {
 
@@ -73,20 +79,18 @@ fun Header() {
 
 @Composable
 fun AppInformationChips() {
+    val context = LocalContext.current
+
     Row(
         modifier = Modifier
             .padding(vertical = 8.dp)
             .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        OutlinedButton(onClick = { /*TODO*/ }) {
-            Text("Datenschutz")
-        }
-        OutlinedButton(onClick = { /*TODO*/ }) {
+        DataPrivacyDialogueButton()
+        OutlinedButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Nailik/rhasspy_mobile"))) }) {
             Text("Sourcecode")
         }
-        OutlinedButton(onClick = { /*TODO*/ }) {
-            Text("Changelog")
-        }
+        ChangelogDialogueButton()
     }
 
 }

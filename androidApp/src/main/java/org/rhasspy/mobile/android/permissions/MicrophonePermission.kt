@@ -6,6 +6,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
@@ -146,6 +148,7 @@ private fun MicrophonePermissionInfoDialog(message: StringResource, onResult: (r
             OutlinedButton(onClick = { onResult.invoke(false) }) {
                 Text(MR.strings.cancel)
             }
-        }
+        },
+        modifier = Modifier.padding(16.dp).fillMaxWidth()
     )
 }

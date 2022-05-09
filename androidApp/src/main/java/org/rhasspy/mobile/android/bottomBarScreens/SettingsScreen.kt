@@ -485,7 +485,8 @@ fun SaveSettingsDialog(onResult: (result: Boolean) -> Unit) {
             OutlinedButton(onClick = { onResult.invoke(false) }) {
                 Text(MR.strings.cancel)
             }
-        }
+        },
+        modifier = Modifier.padding(16.dp).fillMaxWidth()
     )
 }
 
@@ -505,7 +506,8 @@ fun RestoreSettingsDialog(onResult: (result: Boolean) -> Unit) {
             OutlinedButton(onClick = { onResult.invoke(false) }) {
                 Text(MR.strings.cancel)
             }
-        }
+        },
+        modifier = Modifier.padding(16.dp).fillMaxWidth()
     )
 }
 
