@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
+import org.rhasspy.mobile.android.aboutScreens.AboutScreen
 import org.rhasspy.mobile.android.bottomBarScreens.MainScreens
 import org.rhasspy.mobile.android.theme.AppTheme
 
@@ -34,8 +35,8 @@ fun MainScreenNavigation() {
                     composable(MainScreens.BoomBarScreen.name) {
                         BottomBarScreensNavigation(mainNavController = navController)
                     }
-                    composable(MainScreens.HiddenScreen.name) {
-                        HiddenScreensNavigation()
+                    composable(MainScreens.AboutScreen.name) {
+                        AboutScreen()
                     }
                 }
             }

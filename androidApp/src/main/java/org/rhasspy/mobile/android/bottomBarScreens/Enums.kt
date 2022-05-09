@@ -22,12 +22,7 @@ enum class BottomBarScreens(val icon: @Composable () -> Unit, val label: @Compos
     LogScreen({ Icon(Icons.Filled.Code, MR.strings.log) }, { Text(MR.strings.log) })
 }
 
-enum class HiddenScreens {
-    AboutScreen,
-    LibrariesScreen
-}
-
 enum class MainScreens {
     BoomBarScreen,
-    HiddenScreen
+    AboutScreen
 }

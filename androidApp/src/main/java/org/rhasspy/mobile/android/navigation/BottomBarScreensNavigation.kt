@@ -25,9 +25,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.bottomBarScreens.*
 import org.rhasspy.mobile.android.permissions.MicrophonePermissionRequired
 import org.rhasspy.mobile.android.permissions.OverlayPermissionRequired
-import org.rhasspy.mobile.android.bottomBarScreens.*
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.android.utils.observe
 import org.rhasspy.mobile.services.ServiceInterface

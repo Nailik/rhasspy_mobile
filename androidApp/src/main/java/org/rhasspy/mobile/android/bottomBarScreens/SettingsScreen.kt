@@ -519,7 +519,7 @@ fun About(mainNavController: NavController) {
 
     ListElement(
         modifier = Modifier.clickable {
-            mainNavController.navigate(MainScreens.HiddenScreen.name)
+            mainNavController.navigate(MainScreens.AboutScreen.name)
         },
         icon = { Icon(Icons.Filled.Info, modifier = Modifier.size(24.dp), contentDescription = MR.strings.ok) },
         text = { Text("${translate(MR.strings.version)} $versionName - $versionCode") },
