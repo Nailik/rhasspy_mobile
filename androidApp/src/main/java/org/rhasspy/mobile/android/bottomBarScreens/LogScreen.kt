@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
@@ -30,7 +29,6 @@ import org.rhasspy.mobile.android.utils.observe
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 import org.rhasspy.mobile.viewModels.LogScreenViewModel
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LogScreen(viewModel: LogScreenViewModel = viewModel()) {
 

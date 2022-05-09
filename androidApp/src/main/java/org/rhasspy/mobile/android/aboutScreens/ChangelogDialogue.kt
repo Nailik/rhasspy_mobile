@@ -46,7 +46,9 @@ fun ChangelogDialogueButton() {
                     Text(text = "Changelog")
                 }
             },
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
             properties = DialogProperties(usePlatformDefaultWidth = false)
         )
     }

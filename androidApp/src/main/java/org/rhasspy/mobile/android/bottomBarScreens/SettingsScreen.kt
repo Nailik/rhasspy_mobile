@@ -486,7 +486,9 @@ fun SaveSettingsDialog(onResult: (result: Boolean) -> Unit) {
                 Text(MR.strings.cancel)
             }
         },
-        modifier = Modifier.padding(16.dp).fillMaxWidth()
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
     )
 }
 
@@ -507,7 +509,9 @@ fun RestoreSettingsDialog(onResult: (result: Boolean) -> Unit) {
                 Text(MR.strings.cancel)
             }
         },
-        modifier = Modifier.padding(16.dp).fillMaxWidth()
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
     )
 }
 

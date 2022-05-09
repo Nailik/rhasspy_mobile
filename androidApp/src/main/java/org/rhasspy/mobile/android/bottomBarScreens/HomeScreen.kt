@@ -3,11 +3,9 @@ package org.rhasspy.mobile.android.bottomBarScreens
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.shrinkOut
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -20,14 +18,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.accompanist.insets.ExperimentalAnimatedInsets
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
 import org.rhasspy.mobile.android.utils.*
@@ -37,11 +33,6 @@ import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 var isMainActionBig = mutableStateOf(true)
 var mainActionVisible = mutableStateOf(true)
 
-@OptIn(
-    ExperimentalComposeUiApi::class,
-    ExperimentalFoundationApi::class,
-    ExperimentalAnimatedInsets::class
-)
 @Composable
 fun HomeScreen(snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewModel = viewModel()) {
 
@@ -100,7 +91,6 @@ fun WakeUpAction(modifier: Modifier = Modifier, snackbarHostState: SnackbarHostS
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun MainActionButton(maxHeight: Dp, snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewModel) {
 
@@ -118,7 +108,6 @@ fun MainActionButton(maxHeight: Dp, snackbarHostState: SnackbarHostState, viewMo
 
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun MainActionFab(modifier: Modifier = Modifier, snackbarHostState: SnackbarHostState?, isMainActionBig: Boolean, viewModel: HomeScreenViewModel) {
 
@@ -191,7 +180,6 @@ fun BottomActions(modifier: Modifier = Modifier, snackbarHostState: SnackbarHost
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TopRow(snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewModel) {
     val state = animateDpAsState(targetValue = if (!mainActionVisible.value) 12.dp else 0.dp)

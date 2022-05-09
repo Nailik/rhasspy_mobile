@@ -15,7 +15,6 @@ import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Colors
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Switch
 import androidx.compose.material.icons.Icons
@@ -398,7 +397,6 @@ fun SwitchListItem(
         })
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ListElement(
     modifier: Modifier = Modifier,
@@ -484,7 +482,6 @@ fun OutlineButtonListItem(text: StringResource, enabled: Boolean = true, onClick
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SliderListItem(text: StringResource, value: Float, enabled: Boolean = true, onValueChange: (Float) -> Unit) {
     Box(
@@ -554,7 +551,7 @@ fun ColorScheme.toColors(isLight: Boolean): Colors {
 }
 
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TextWithAction(
     modifier: Modifier = Modifier,

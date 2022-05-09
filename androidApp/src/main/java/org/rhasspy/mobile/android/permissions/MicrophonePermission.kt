@@ -149,6 +149,8 @@ private fun MicrophonePermissionInfoDialog(message: StringResource, onResult: (r
                 Text(MR.strings.cancel)
             }
         },
-        modifier = Modifier.padding(16.dp).fillMaxWidth()
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
     )
 }
