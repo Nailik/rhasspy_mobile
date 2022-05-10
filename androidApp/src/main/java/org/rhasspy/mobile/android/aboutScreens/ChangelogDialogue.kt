@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.android.R
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -25,7 +26,8 @@ fun ChangelogDialogueButton() {
     val openDialog = rememberSaveable { mutableStateOf(false) }
 
     OutlinedButton(onClick = { openDialog.value = true }) {
-        Text("Changelog")
+
+        Text("changelog")
     }
 
     if (openDialog.value) {
@@ -43,7 +45,7 @@ fun ChangelogDialogueButton() {
                 Column(
                     modifier = Modifier.verticalScroll(scrollState),
                 ) {
-                    Text(text = "Changelog")
+                    Text(text = BuildKonfig.changelog)
                 }
             },
             modifier = Modifier
