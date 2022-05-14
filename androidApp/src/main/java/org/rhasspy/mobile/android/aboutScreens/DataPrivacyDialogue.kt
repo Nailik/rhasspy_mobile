@@ -14,10 +14,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import org.rhasspy.mobile.android.R
+import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.utils.Text
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -36,7 +36,7 @@ fun DataPrivacyDialogueButton() {
             },
             confirmButton = {
                 TextButton(onClick = { openDialog.value = false }) {
-                    Text(stringResource(id = R.string.aboutlibs_ok))
+                    Text(MR.strings.ok)
                 }
             },
             text = {
