@@ -2,18 +2,15 @@ package org.rhasspy.mobile.android.aboutScreens
 
 import android.content.Context
 import android.widget.TextView
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -31,9 +28,12 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.core.text.HtmlCompat
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
+import com.mikepenz.aboutlibraries.ui.compose.util.author
 import com.mikepenz.aboutlibraries.ui.compose.util.htmlReadyLicenseContent
 import com.mikepenz.aboutlibraries.util.withContext
 import org.rhasspy.mobile.android.R
+import org.rhasspy.mobile.android.utils.CustomDivider
+import org.rhasspy.mobile.android.utils.ListElement
 
 // used until https://github.com/mikepenz/AboutLibraries/issues/751 is merged
 
@@ -45,11 +45,7 @@ fun LibrariesContainer(
     librariesBlock: (Context) -> Libs = { context ->
         Libs.Builder().withContext(context).build()
     },
-    showAuthor: Boolean = true,
-    showVersion: Boolean = true,
-    showLicenseBadges: Boolean = true,
-    colors: LibraryColors = LibraryDefaults.libraryColors(),
-    itemContentPadding: PaddingValues = LibraryDefaults.ContentPadding,
+    header: (LazyListScope.() -> Unit)? = null,
     onLibraryClick: ((Library) -> Unit)? = null,
 ) {
     val libraries = remember { mutableStateOf<Libs?>(null) }
@@ -66,11 +62,7 @@ fun LibrariesContainer(
             modifier,
             lazyListState,
             contentPadding,
-            showAuthor,
-            showVersion,
-            showLicenseBadges,
-            colors,
-            itemContentPadding,
+            header,
             onLibraryClick
         )
     }
@@ -86,18 +78,18 @@ fun Libraries(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    showAuthor: Boolean = true,
-    showVersion: Boolean = true,
-    showLicenseBadges: Boolean = true,
-    colors: LibraryColors = LibraryDefaults.libraryColors(),
-    itemContentPadding: PaddingValues = LibraryDefaults.ContentPadding,
+    header: (LazyListScope.() -> Unit)? = null,
     onLibraryClick: ((Library) -> Unit)? = null,
 ) {
     LazyColumn(modifier, state = lazyListState, contentPadding = contentPadding) {
+        if (header != null) {
+            header()
+        }
+
         items(libraries) { library ->
             val openDialog = rememberSaveable { mutableStateOf(false) }
 
-            Library(library, showAuthor, showVersion, showLicenseBadges, colors, itemContentPadding) {
+            Library(library) {
                 if (onLibraryClick != null) {
                     onLibraryClick.invoke(library)
                 } else {
@@ -122,7 +114,7 @@ fun Libraries(
                         ) {
                             HtmlText(
                                 html = library.licenses.firstOrNull()?.htmlReadyLicenseContent.orEmpty(),
-                                color = colors.contentColor
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     },
@@ -130,6 +122,8 @@ fun Libraries(
                     properties = DialogProperties(usePlatformDefaultWidth = false),
                 )
             }
+
+            CustomDivider()
         }
     }
 }
@@ -140,5 +134,36 @@ fun HtmlText(html: String, modifier: Modifier = Modifier, color: Color) {
         modifier = modifier,
         factory = { context -> TextView(context).apply { setTextColor(color.toArgb()) } },
         update = { it.text = HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_COMPACT) }
+    )
+}
+
+
+@Composable
+internal fun Library(
+    library: Library,
+    onClick: () -> Unit,
+) {
+    ListElement(
+        modifier = Modifier
+            .clickable { onClick.invoke() },
+        text = { Text(text = library.uniqueId) },
+        secondaryText = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            ) {
+                Text(text = library.author, modifier = Modifier.padding(vertical = 8.dp))
+                library.licenses.forEach {
+                    Badge(
+                        contentColor = MaterialTheme.colorScheme.primaryContainer,
+                        containerColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ) {
+                        Text(modifier = Modifier.padding(4.dp), text = it.name)
+                    }
+                }
+            }
+        },
+        trailing = { Text(text = library.artifactVersion ?: "") }
     )
 }
