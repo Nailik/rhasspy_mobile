@@ -102,7 +102,5 @@ dependencies {
     implementation(AndroidX.lifecycle.process)
     implementation(Devsrsouza.fontAwesome)
     implementation(Mikepenz.aboutLibrariesCore)
-    implementation(Mikepenz.aboutLibrariesCompose)
-    implementation("me.onebone:toolbar-compose:_")
 
 }

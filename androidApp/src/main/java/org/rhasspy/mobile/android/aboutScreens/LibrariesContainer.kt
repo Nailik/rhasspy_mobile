@@ -21,21 +21,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.text.HtmlCompat
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
-import com.mikepenz.aboutlibraries.ui.compose.util.author
-import com.mikepenz.aboutlibraries.ui.compose.util.htmlReadyLicenseContent
+import com.mikepenz.aboutlibraries.entity.License
 import com.mikepenz.aboutlibraries.util.withContext
-import org.rhasspy.mobile.android.R
+import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.utils.CustomDivider
 import org.rhasspy.mobile.android.utils.ListElement
-
-// used until https://github.com/mikepenz/AboutLibraries/issues/751 is merged
+import org.rhasspy.mobile.android.utils.Text
 
 @Composable
 fun LibrariesContainer(
@@ -105,7 +102,7 @@ fun Libraries(
                     },
                     confirmButton = {
                         TextButton(onClick = { openDialog.value = false }) {
-                            Text(stringResource(id = R.string.aboutlibs_ok))
+                            Text(MR.strings.ok)
                         }
                     },
                     text = {
@@ -167,3 +164,9 @@ internal fun Library(
         trailing = { Text(text = library.artifactVersion ?: "") }
     )
 }
+
+val Library.author: String
+    get() = developers.takeIf { it.isNotEmpty() }?.map { it.name }?.joinToString(", ") ?: organization?.name ?: ""
+
+val License.htmlReadyLicenseContent: String?
+    get() = licenseContent?.replace("\n", "<br />")
