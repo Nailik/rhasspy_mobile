@@ -10,8 +10,8 @@ android {
         applicationId = "org.rhasspy.mobile.android"
         minSdk = 23
         targetSdk = 32
-        versionCode = 2
-        versionName = "0.2"
+        versionCode = Version.code
+        versionName = Version.name
     }
     buildTypes {
         release {
@@ -103,5 +103,6 @@ dependencies {
     implementation(Devsrsouza.fontAwesome)
     implementation(Mikepenz.aboutLibrariesCore)
     implementation(Mikepenz.aboutLibrariesCompose)
+    implementation("me.onebone:toolbar-compose:_")
 
 }
