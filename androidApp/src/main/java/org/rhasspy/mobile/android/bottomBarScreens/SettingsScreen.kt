@@ -29,6 +29,7 @@ import androidx.core.content.pm.PackageInfoCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
+import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.navigation.MainScreens
 import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
@@ -517,19 +518,12 @@ fun RestoreSettingsDialog(onResult: (result: Boolean) -> Unit) {
 
 @Composable
 fun About(mainNavController: NavController) {
-    val context = LocalContext.current
-
-    val manager = context.packageManager
-    val info = manager.getPackageInfo(context.packageName, 0)
-    val versionName = info.versionName
-    val versionCode = PackageInfoCompat.getLongVersionCode(info).toInt()
-
     ListElement(
         modifier = Modifier.clickable {
             mainNavController.navigate(MainScreens.AboutScreen.name)
         },
         icon = { Icon(Icons.Filled.Info, modifier = Modifier.size(24.dp), contentDescription = MR.strings.info) },
         text = { Text(MR.strings.aboutTitle) },
-        secondaryText = { Text("${translate(MR.strings.version)} $versionName - $versionCode") }
+        secondaryText = { Text("${translate(MR.strings.version)} ${BuildKonfig.versionName} - ${BuildKonfig.versionCode}") }
     )
 }
