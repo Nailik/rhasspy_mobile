@@ -41,11 +41,18 @@ fun ChangelogDialogueButton() {
                     Text(stringResource(id = R.string.aboutlibs_ok))
                 }
             },
+            title = {
+                Text("changes in ")
+            },
             text = {
+                val changes = BuildKonfig.changelog.split("\\\\")
+
                 Column(
                     modifier = Modifier.verticalScroll(scrollState),
                 ) {
-                    Text(text = BuildKonfig.changelog)
+                    changes.forEach {
+                        Text(text = "· ${it.replace("\n", "")}")
+                    }
                 }
             },
             modifier = Modifier
