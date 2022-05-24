@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.screens
+package org.rhasspy.mobile.android.bottomBarScreens
 
 import android.content.Intent
 import android.net.Uri
@@ -14,7 +14,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -519,7 +518,6 @@ fun DialogueManagement() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IntentHandling() {
 

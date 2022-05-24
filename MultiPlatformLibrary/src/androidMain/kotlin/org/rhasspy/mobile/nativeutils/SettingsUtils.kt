@@ -2,14 +2,12 @@ package org.rhasspy.mobile.nativeutils
 
 import android.app.Activity
 import android.provider.OpenableColumns
-import io.netty.util.internal.StringUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.serialization.ExperimentalSerializationApi
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.services.ServiceAction
 import org.rhasspy.mobile.services.ServiceInterface
@@ -78,7 +76,6 @@ actual object SettingsUtils {
         }
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
     actual fun restoreSettingsFromFile() {
         Application.Instance.currentActivity?.openDocument(arrayOf("application/zip")) {
             if (it.resultCode == Activity.RESULT_OK) {

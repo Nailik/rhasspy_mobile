@@ -8,7 +8,6 @@ import android.view.WindowManager
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
@@ -23,8 +22,8 @@ import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.livedata.MediatorLiveData
 import org.rhasspy.mobile.android.AndroidApplication
-import org.rhasspy.mobile.android.AppTheme
-import org.rhasspy.mobile.android.screens.Fab
+import org.rhasspy.mobile.android.bottomBarScreens.Fab
+import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.settings.AppSettings
 
@@ -42,7 +41,6 @@ object MicrophoneOverlay {
     /**
      * view that's displayed as overlay to start wake word detection
      */
-    @OptIn(ExperimentalMaterial3Api::class)
     private val view: ComposeView = ComposeView(AndroidApplication.Instance).apply {
         setContent {
             AppTheme(false) {

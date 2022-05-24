@@ -145,7 +145,7 @@
     <string name="restoreSettings">Einstellungen Laden</string>
     <string name="restoreSettingsText">Ihre aktuellen Einstellungen gehen beim Wiederherstellen aus der Datei verloren!</string>
     <string name="warning">Warnung</string>
-    <string name="aboutText">Quellcode verfügbar auf GitHub</string>
+    <string name="aboutTitle">Über Rhasspy Mobile</string>
     <string name="version">Version</string>
     <string name="sounds">Töne</string>
     <string name="soundsText">WAV-Dateien, die abgespielt werden, wenn Rhasspy aufwacht und die Aufnahme eines Sprachbefehls beendet ist.</string>
@@ -160,4 +160,8 @@
     <string name="german">Deutsch</string>
     <string name="french">Französisch</string>
     <string name="spanish">Spanisch</string>
+    <string name="icon">Icon</string>
+    <string name="dataPrivacy">Datenschutz</string>
+    <string name="sourceCode">Sourcecode</string>
+    <string name="changelog">Changelog</string>
 </resources>
