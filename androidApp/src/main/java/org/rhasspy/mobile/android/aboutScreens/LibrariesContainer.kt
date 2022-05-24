@@ -68,10 +68,12 @@ fun LibrariesContainer(
  * fix wrong library names
  */
 fun Library.getCorrectedName(): String {
-    if (uniqueId == "org.fusesource.jansi:jansi") {
-        return "Jansi"
+    return when {
+        uniqueId == "org.fusesource.jansi:jansi" -> "Jansi"
+        name == "androidx.customview:poolingcontainer" -> "Poolingcontainer"
+        name == "androidx.profileinstaller:profileinstaller" -> "Profileinstaller"
+        else -> name
     }
-    return name
 }
 
 /**
