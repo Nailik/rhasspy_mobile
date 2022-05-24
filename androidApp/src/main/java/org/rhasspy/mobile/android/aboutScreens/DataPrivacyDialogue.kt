@@ -7,7 +7,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +24,7 @@ fun DataPrivacyDialogueButton() {
     val openDialog = rememberSaveable { mutableStateOf(false) }
 
     OutlinedButton(onClick = { openDialog.value = true }) {
-        Text("Datenschutz")
+        Text(MR.strings.dataPrivacy)
     }
 
     if (openDialog.value) {
@@ -43,7 +42,7 @@ fun DataPrivacyDialogueButton() {
                 Column(
                     modifier = Modifier.verticalScroll(scrollState),
                 ) {
-                    Text(text = "Datenschutz")
+                    Text(MR.strings.dataPrivacy)
                 }
             },
             modifier = Modifier

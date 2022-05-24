@@ -86,7 +86,7 @@ fun AppInformationChips() {
     ) {
         DataPrivacyDialogueButton()
         OutlinedButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Nailik/rhasspy_mobile"))) }) {
-            Text("Sourcecode")
+            Text(MR.strings.sourceCode)
         }
         ChangelogDialogueButton()
     }

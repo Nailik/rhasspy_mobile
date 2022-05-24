@@ -27,7 +27,7 @@ fun ChangelogDialogueButton() {
 
     OutlinedButton(onClick = { openDialog.value = true }) {
 
-        Text("changelog")
+        Text(MR.strings.changelog)
     }
 
     if (openDialog.value) {
@@ -42,7 +42,7 @@ fun ChangelogDialogueButton() {
                 }
             },
             title = {
-                Text("changes in ")
+                Text(MR.strings.changelog)
             },
             text = {
                 val changes = BuildKonfig.changelog.split("\\\\")
@@ -50,9 +50,11 @@ fun ChangelogDialogueButton() {
                 Column(
                     modifier = Modifier.verticalScroll(scrollState),
                 ) {
-                    changes.forEach {
-                        Text(text = "· ${it.replace("\n", "")}")
-                    }
+                    changes.map { it.replace("\n", "") }
+                        .filter { it.isNotEmpty() }
+                        .forEach {
+                            Text(text = "· $it")
+                        }
                 }
             },
             modifier = Modifier

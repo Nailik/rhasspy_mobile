@@ -161,4 +161,7 @@
     <string name="french">Französisch</string>
     <string name="spanish">Spanisch</string>
     <string name="icon">Icon</string>
+    <string name="dataPrivacy">Datenschutz</string>
+    <string name="sourceCode">Sourcecode</string>
+    <string name="changelog">Changelog</string>
 </resources>
