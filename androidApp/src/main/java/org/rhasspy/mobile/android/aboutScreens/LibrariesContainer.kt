@@ -52,8 +52,7 @@ fun LibrariesContainer(
         libraries.value = librariesBlock.invoke(context)
     }
 
-    val libs = libraries.value?.libraries
-    if (libs != null) {
+    libraries.value?.libraries?.also { libs ->
         Libraries(
             libraries = libs,
             modifier,
@@ -63,6 +62,16 @@ fun LibrariesContainer(
             onLibraryClick
         )
     }
+}
+
+/**
+ * fix wrong library names
+ */
+fun Library.getCorrectedName(): String {
+    if (uniqueId == "org.fusesource.jansi:jansi") {
+        return "Jansi"
+    }
+    return name
 }
 
 /**
@@ -143,18 +152,19 @@ internal fun Library(
     ListElement(
         modifier = Modifier
             .clickable { onClick.invoke() },
-        text = { Text(text = library.uniqueId) },
+        text = { Text(text = library.getCorrectedName()) },
         secondaryText = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp)
+                    .padding(bottom = 8.dp)
             ) {
                 Text(text = library.author, modifier = Modifier.padding(vertical = 8.dp))
                 library.licenses.forEach {
                     Badge(
                         contentColor = MaterialTheme.colorScheme.primaryContainer,
-                        containerColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.padding(bottom = 8.dp)
                     ) {
                         Text(modifier = Modifier.padding(4.dp), text = it.name)
                     }
