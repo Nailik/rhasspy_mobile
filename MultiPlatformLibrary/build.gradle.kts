@@ -1,12 +1,17 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+
 plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     kotlin("plugin.serialization")
     id("com.android.library")
     id("dev.icerock.mobile.multiplatform-resources")
+    id("com.mikepenz.aboutlibraries.plugin")
+    id("com.codingfeline.buildkonfig")
 }
 
-version = "0.2"
+version = Version.name
 
 kotlin {
     android()
@@ -122,4 +127,48 @@ android {
 
 multiplatformResources {
     multiplatformResourcesPackage = "org.rhasspy.mobile" // required
+}
+
+aboutLibraries {
+    registerAndroidTasks = true
+    // Enable the duplication mode, allows to merge, or link dependencies which relate
+    duplicationMode = com.mikepenz.aboutlibraries.plugin.DuplicateMode.MERGE
+    // Configure the duplication rule, to match "duplicates" with
+    duplicationRule = com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
+}
+
+buildkonfig {
+    packageName = "org.rhasspy.mobile"
+    objectName = "BuildKonfig"
+    exposeObjectWithName = "BuildKonfig"
+
+    defaultConfigs {
+        buildConfigField(STRING, "changelog", generateChangelog())
+        buildConfigField(INT, "versionCode", Version.code.toString())
+        buildConfigField(STRING, "versionName", Version.name)
+    }
+}
+
+fun generateChangelog(): String {
+    var os = org.apache.commons.io.output.ByteArrayOutputStream()
+
+    exec {
+        standardOutput = os
+        commandLine = listOf("git")
+        args = listOf("describe", "--tags", "--abbrev=0")
+    }
+
+    val lastTag = String(os.toByteArray()).trim()
+    os.close()
+
+    os = org.apache.commons.io.output.ByteArrayOutputStream()
+    exec {
+        standardOutput = os
+        commandLine = listOf("git")
+        args = listOf("log", "$lastTag..develop", "--merges", "--first-parent", "--pretty=format:\"%b\"\\\\")
+    }
+    val changelog = String(os.toByteArray()).trim()
+    os.close()
+
+    return changelog
 }

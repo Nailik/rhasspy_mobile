@@ -8,7 +8,6 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.serialization.ExperimentalSerializationApi
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.services.ServiceAction
 import org.rhasspy.mobile.services.RhasspyActions
@@ -77,7 +76,6 @@ actual object SettingsUtils {
         }
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
     actual fun restoreSettingsFromFile() {
         Application.Instance.currentActivity?.openDocument(arrayOf("application/zip")) {
             if (it.resultCode == Activity.RESULT_OK) {
