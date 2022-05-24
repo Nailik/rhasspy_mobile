@@ -53,7 +53,6 @@ fun Header() {
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .height(300.dp)
             .padding(vertical = 16.dp)
     ) {
         Box(
