@@ -163,7 +163,7 @@ fun generateChangelog(): String {
     exec {
         standardOutput = os
         commandLine = listOf("git")
-        args = listOf("log", "$lastTag..HEAD", "--merges", "--first-parent", "--pretty=format:\"%b\"\\\\")
+        args = listOf("log", "$lastTag..develop", "--merges", "--first-parent", "--pretty=format:\"%b\"\\\\")
     }
     val changelog = String(os.toByteArray()).trim()
     os.close()
