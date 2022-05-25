@@ -13,9 +13,9 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.rhasspy.mobile.data.AudioPlayingOptions
-import org.rhasspy.mobile.services.logic.StateMachine
-import org.rhasspy.mobile.services.mqtt.*
-import org.rhasspy.mobile.services.mqtt.native.MqttClient
+import org.rhasspy.mobile.logic.StateMachine
+import org.rhasspy.mobile.mqtt.*
+import org.rhasspy.mobile.mqtt.native.MqttClient
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.math.min
@@ -199,7 +199,7 @@ object MqttService {
                             .replace("+", ".*") //replace wildcard with regex text
                             .toRegex()
                             .matches(topic) -> {
-                            hotWordDetected(message)
+                            hotWordDetected(message, topic)
                         }
                         MQTTTopicsSubscription.IntentRecognitionResult.topic
                             .replace("/", "\\/") //escape slashes
@@ -292,7 +292,7 @@ object MqttService {
 
         if (jsonObject.isThisSiteId()) {
             jsonObject["sessionId"]?.jsonPrimitive?.content?.also {
-                RhasspyActions.sessionStarted(it, true)
+                StateMachine.startedSession(it, "extern")
             } ?: run {
                 logger.d { "received sessionStarted with empty session Id" }
             }
@@ -335,7 +335,7 @@ object MqttService {
 
         if (jsonObject.isThisSiteId()) {
             jsonObject["sessionId"]?.jsonPrimitive?.content?.also {
-                RhasspyActions.sessionEnded(it, true)
+                StateMachine.sessionEnded(it)
             } ?: run {
                 logger.d { "received sessionStarted with empty session Id" }
             }
@@ -435,11 +435,13 @@ object MqttService {
      * currentSensitivity: float = 1.0 - sensitivity of wake word detection (service specific)
      * siteId: string = "default" - Hermes site ID
      */
-    private fun hotWordDetected(message: MqttMessage) {
+    private fun hotWordDetected(message: MqttMessage, topic: String) {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
+        val hotWord = topic.replace("hermes/hotword/", "").replace("/detected", "")
+
         if (jsonObject.isThisSiteId()) {
-            StateMachine.hotWordDetected(true)
+            StateMachine.hotWordDetected(hotWord)
         } else {
             logger.d { "received hotWordToggleOff but for other siteId" }
         }
@@ -501,10 +503,10 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            RhasspyActions.startListening(
+            StateMachine.startListening(
                 jsonObject["sessionId"]?.jsonPrimitive?.content,
-                true,
-                jsonObject["sendAudioCaptured"]?.jsonPrimitive?.booleanOrNull == true
+                jsonObject["sendAudioCaptured"]?.jsonPrimitive?.booleanOrNull == true,
+                true
             )
         } else {
             logger.d { "received startListening but for other siteId" }
@@ -544,7 +546,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            RhasspyActions.stopListening(jsonObject["sessionId"]?.jsonPrimitive?.content, true)
+            StateMachine.stopListening(jsonObject["sessionId"]?.jsonPrimitive?.content, true)
         } else {
             logger.d { "received stopListening but for other siteId" }
         }
@@ -581,9 +583,10 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            RhasspyActions.asrTextCaptured(
+            StateMachine.intentTranscribed(
                 jsonObject["sessionId"]?.jsonPrimitive?.content,
-                jsonObject["text"]?.jsonPrimitive?.content
+                jsonObject["text"]?.jsonPrimitive?.content,
+                true
             )
         } else {
             logger.d { "received asrTextCaptured but for other siteId" }
@@ -598,7 +601,7 @@ object MqttService {
      * siteId: string = "default" - Hermes site ID
      * sessionId: string? = null - current session ID
      */
-    fun asrTextCaptured(sessionId: String?, text: String) {
+    fun asrTextCaptured(sessionId: String?, text: String?) {
         publishMessage(
             MQTTTopicsPublish.AsrTextCaptured.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
@@ -621,7 +624,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            RhasspyActions.asrError(jsonObject["sessionId"]?.jsonPrimitive?.content)
+            StateMachine.intentTranscriptionError(jsonObject["sessionId"]?.jsonPrimitive?.content, true)
         } else {
             logger.d { "received asrError but for other siteId" }
         }
@@ -703,7 +706,7 @@ object MqttService {
         if (jsonObject.isThisSiteId()) {
             val intent = jsonObject["intent"]?.jsonObject?.toString()
             intent?.also {
-                RhasspyActions.intentRecognized(jsonObject["sessionId"]?.jsonPrimitive?.content, it)
+                StateMachine.intentRecognized(it, jsonObject["sessionId"]?.jsonPrimitive?.content)
             } ?: run {
                 logger.d { "received intentRecognitionResult with empty intent" }
             }
@@ -723,7 +726,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            RhasspyActions.intentNotRecognized(jsonObject["sessionId"]?.jsonPrimitive?.content)
+            StateMachine.intentNotRecognized(jsonObject["sessionId"]?.jsonPrimitive?.content)
         } else {
             logger.d { "received intentNotRecognized but for other siteId" }
         }
