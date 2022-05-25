@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.services.ServiceAction
 import org.rhasspy.mobile.services.ServiceInterface
-import org.rhasspy.mobile.nativeutils.NativeService
+import org.rhasspy.mobile.nativeutils.NativeServiceInterop
 import org.rhasspy.mobile.settings.AppSettings
 
 /**
@@ -40,15 +40,15 @@ object ForegroundServiceHandler {
             ServiceInterface.serviceAction(serviceAction)
         } else {
             if (!AppSettings.isBackgroundEnabled.data) {
-                if (NativeService.isRunning) {
+                if (NativeServiceInterop.isRunning) {
                     //should not be running, stop it
-                    NativeService.stop()
+                    NativeServiceInterop.stop()
                 }
 
                 ServiceInterface.serviceAction(serviceAction)
             } else {
                 //start or update service
-                NativeService.doAction(serviceAction)
+                NativeServiceInterop.doAction(serviceAction)
             }
         }
     }

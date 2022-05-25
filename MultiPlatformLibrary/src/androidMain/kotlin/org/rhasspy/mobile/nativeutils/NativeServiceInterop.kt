@@ -1,22 +1,21 @@
-package org.rhasspy.mobile.services.native
+package org.rhasspy.mobile.nativeutils
 
 import android.content.Intent
 import android.os.Build
-import android.os.Build.VERSION.SDK_INT
 import android.os.IBinder
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.Application
-import org.rhasspy.mobile.services.ForegroundService
+import org.rhasspy.mobile.handler.ForegroundServiceHandler
 import org.rhasspy.mobile.services.ServiceAction
 import org.rhasspy.mobile.services.ServiceNotification
 
 /**
  * Native Service to run continuously in background
  */
-actual class NativeService : android.app.Service() {
+actual class NativeServiceInterop : android.app.Service() {
     private val logger = Logger.withTag("NativeService")
 
     /**
@@ -40,7 +39,7 @@ actual class NativeService : android.app.Service() {
         intent?.also { i ->
             i.getStringExtra(ACTION)?.also {
                 CoroutineScope(Dispatchers.Default).launch {
-                    ForegroundService.action(ServiceAction.valueOf(it), true)
+                    ForegroundServiceHandler.action(ServiceAction.valueOf(it), true)
                 }
             } ?: run {
                 logger.w { "no ACTION extra in intent" }
@@ -79,10 +78,10 @@ actual class NativeService : android.app.Service() {
         actual fun doAction(serviceAction: ServiceAction) {
             logger.d { "doAction $serviceAction" }
 
-            val intent = Intent(Application.Instance, NativeService::class.java).apply {
+            val intent = Intent(Application.Instance, NativeServiceInterop::class.java).apply {
                 putExtra(ACTION, serviceAction.name)
             }
-            if (SDK_INT >= Build.VERSION_CODES.O) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 Application.Instance.startForegroundService(intent)
             } else {
                 Application.Instance.startService(intent)
@@ -95,7 +94,7 @@ actual class NativeService : android.app.Service() {
         actual fun stop() {
             logger.d { "stop" }
 
-            Application.Instance.stopService(Intent(Application.Instance, ForegroundService::class.java))
+            Application.Instance.stopService(Intent(Application.Instance, ForegroundServiceHandler::class.java))
         }
     }
 

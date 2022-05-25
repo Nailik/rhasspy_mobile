@@ -6,7 +6,7 @@ import kotlin.native.concurrent.ThreadLocal
 /**
  * Native Service to run continuously in background
  */
-expect class NativeService() {
+expect class NativeServiceInterop() {
 
     @ThreadLocal
     companion object {

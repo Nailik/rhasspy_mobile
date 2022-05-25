@@ -1,8 +1,8 @@
-package org.rhasspy.mobile.services.native
+package org.rhasspy.mobile.nativeutils
 
 import org.rhasspy.mobile.services.ServiceAction
 
-actual class NativeService {
+actual class NativeServiceInterop {
 
     @ThreadLocal
     actual companion object {
