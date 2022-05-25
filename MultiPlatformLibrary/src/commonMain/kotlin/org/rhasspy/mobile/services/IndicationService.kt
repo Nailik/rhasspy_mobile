@@ -1,7 +1,10 @@
-package org.rhasspy.mobile.services.indication
+package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
 import com.badoo.reaktive.observable.doOnAfterNext
+import com.badoo.reaktive.observable.observeOn
+import com.badoo.reaktive.scheduler.ioScheduler
+import com.badoo.reaktive.subject.publish.PublishSubject
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.logic.State
 import org.rhasspy.mobile.logic.StateMachine
@@ -11,46 +14,40 @@ import org.rhasspy.mobile.settings.AppSettings
 object IndicationService {
     private val logger = Logger.withTag("IndicationService")
 
+    private val currentStateSubject = PublishSubject<IndicationState>()
+    val currentState = currentStateSubject.observeOn(ioScheduler)
+
     init {
+        //start native indication service
+        NativeIndicationService
+
         //change things according to state of the service
         StateMachine.currentState.doOnAfterNext {
+
             logger.v { "currentState changed to $it" }
+            //sounds
+            if (AppSettings.isWakeWordSoundIndication.data) {
+                when (it) {
+                    State.StartingSession -> playWakeSound()
+                    State.RecordingStopped -> playRecordedSound()
+                    State.TranscribingError,
+                    State.RecognizingIntentError -> playErrorSound()
+                    else -> {}
+                }
+            }
+
+            //state
             when (it) {
-                State.StartingSession -> {
-                    //TODO here hot word detected
-                }
-                State.StartedSession -> {
-                    //TODO or here hot word detected, sound when start session from remote?
-                    //hot word detected -> indication
-                    //light + sound?
-                }
-                State.RecordingIntent -> {
-
-                    //Indication that recording is running
-                }
-                State.RecordingStopped -> {
-                    //indictaion that recording has stopped
-                }
-                State.TranscribingIntent -> {
-                    //indication that it's thinking
-                }
-                State.TranscribingError -> {
-
-                    //error indication
-                }
-                State.RecognizingIntent -> {
-                    //indication that it's thinking
-                }
-                State.RecognizingIntentError -> {
-
-                    //error indication
-                }
-                State.IntentHandling -> {
-                    //working indication
-                }
-                else -> {
-                    //no indication
-                }
+                //hot word detected
+                State.StartingSession -> currentStateSubject.onNext(IndicationState.Wakeup)
+                //Indication that recording is running
+                State.RecordingIntent -> currentStateSubject.onNext(IndicationState.Recording)
+                //indication that it's thinking
+                State.TranscribingIntent -> currentStateSubject.onNext(IndicationState.Thinking)
+                //indication that it's thinking
+                State.RecognizingIntent -> currentStateSubject.onNext(IndicationState.Thinking)
+                //no indication
+                else -> currentStateSubject.onNext(IndicationState.Idle)
             }
         }
     }
@@ -79,29 +76,5 @@ object IndicationService {
         }
     }
 
-
-    /**
-     * call the native indication and show/hide necessary indications
-     */
-    private fun indication(show: Boolean) {
-        logger.d { "toggle indication show: $show" }
-
-        if (show) {
-            if (AppSettings.isWakeWordSoundIndication.data) {
-                playWakeSound()
-            }
-
-            if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data) {
-                NativeIndication.wakeUpScreen()
-            }
-
-            if (AppSettings.isWakeWordLightIndication.data) {
-                NativeIndication.showIndication()
-            }
-        } else {
-            NativeIndication.closeIndicationOverOtherApps()
-            NativeIndication.releaseWakeUp()
-        }
-    }
 
 }
