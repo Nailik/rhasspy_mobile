@@ -12,7 +12,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.nativeutils.SettingsUtils
-import org.rhasspy.mobile.services.native.AudioRecorder
+import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.settings.AppSettings
 
 class SettingsScreenViewModel : ViewModel() {
