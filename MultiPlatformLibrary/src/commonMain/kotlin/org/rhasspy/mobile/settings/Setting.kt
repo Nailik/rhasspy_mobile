@@ -6,10 +6,8 @@ import com.russhwolf.settings.serialization.decodeValue
 import com.russhwolf.settings.serialization.encodeValue
 import com.russhwolf.settings.set
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.builtins.SetSerializer
 import kotlinx.serialization.builtins.serializer
@@ -63,14 +61,4 @@ abstract class Setting<T>(private val key: SettingsEnum, private val initial: T)
         } as T
     }
 
-    /**
-     * represents current saved data and when changed, updates data asynchronously
-     */
-    open var data: T
-        get() = this.value.value
-        set(newValue) {
-            viewScope.launch {
-                value.value = newValue
-            }
-        }
 }
