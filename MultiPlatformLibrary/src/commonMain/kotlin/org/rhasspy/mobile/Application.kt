@@ -2,11 +2,11 @@ package org.rhasspy.mobile
 
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.logger.FileLogger
-import org.rhasspy.mobile.services.ForegroundService
+import org.rhasspy.mobile.handler.ForegroundServiceHandler
 import org.rhasspy.mobile.services.MqttService
 import org.rhasspy.mobile.services.RecordingService
 import org.rhasspy.mobile.services.RhasspyActions
-import org.rhasspy.mobile.services.mqtt.OverlayServices
+import org.rhasspy.mobile.mqtt.OverlayServices
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -36,7 +36,7 @@ abstract class Application : NativeApplication() {
         MqttService
         RecordingService
         RhasspyActions
-        ForegroundService
+        ForegroundServiceHandler
         startNativeServices()
     }
 
