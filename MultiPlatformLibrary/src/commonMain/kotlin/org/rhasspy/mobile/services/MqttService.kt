@@ -585,7 +585,7 @@ object MqttService {
         if (jsonObject.isThisSiteId()) {
             StateMachine.intentTranscribed(
                 jsonObject["sessionId"]?.jsonPrimitive?.content,
-                jsonObject["text"]?.jsonPrimitive?.content,
+                jsonObject["text"]?.jsonPrimitive?.content ?: "",
                 true
             )
         } else {
