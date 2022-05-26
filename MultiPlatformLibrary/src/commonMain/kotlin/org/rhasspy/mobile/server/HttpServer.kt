@@ -5,7 +5,7 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
-import io.ktor.server.plugins.cors.*
+import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.dataconversion.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.nativeutils.installCallLogging
 import org.rhasspy.mobile.nativeutils.installCompression
-import org.rhasspy.mobile.services.RecordingService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.native.concurrent.ThreadLocal
@@ -160,7 +159,7 @@ object HttpServer {
         logger.v { "get /api/play-recording" }
 
         call.respondBytes(
-            bytes = RecordingService.getPreviousRecording().toByteArray(),
+            bytes = StateMachine.getPreviousRecording().toByteArray(),
             contentType = ContentType("audio", "wav")
         )
     }
