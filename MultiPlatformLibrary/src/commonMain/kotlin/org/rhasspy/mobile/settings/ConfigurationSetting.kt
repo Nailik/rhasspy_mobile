@@ -1,12 +1,9 @@
 package org.rhasspy.mobile.settings
 
-import com.russhwolf.settings.ExperimentalSettingsApi
-import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.postValue
 import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.launch
-import kotlinx.serialization.ExperimentalSerializationApi
 import org.rhasspy.mobile.viewModels.GlobalData
 
 /**
@@ -49,7 +46,7 @@ class ConfigurationSetting<T>(key: SettingsEnum, initial: T) : Setting<T>(key, i
     /**
      * data used to get current saved value or to set value for unsaved changes
      */
-    override var data: T
+    var data: T
         get() = this.value.value
         set(newValue) {
             viewScope.launch {
@@ -65,7 +62,6 @@ class ConfigurationSetting<T>(key: SettingsEnum, initial: T) : Setting<T>(key, i
     /**
      * saves the current unsaved value and resets unsaved changes and updates the value
      */
-    @OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
     fun save() {
         //update unsaved changes
         isUnsaved.postValue(false)
