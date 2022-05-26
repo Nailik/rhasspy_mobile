@@ -1,23 +1,45 @@
-package org.rhasspy.mobile.services.native
+package org.rhasspy.mobile.nativeutils
 
-import android.media.AudioAttributes
-import android.media.AudioFormat
-import android.media.AudioManager
-import android.media.AudioTrack
+import android.media.*
+import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
-import org.rhasspy.mobile.services.RhasspyActions
+import com.badoo.reaktive.observable.observeOn
+import com.badoo.reaktive.scheduler.ioScheduler
+import com.badoo.reaktive.subject.publish.PublishSubject
+import dev.icerock.moko.resources.FileResource
+import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.settings.AppSettings
+import java.io.File
 import java.nio.ByteBuffer
-
 
 actual object AudioPlayer {
     private val logger = Logger.withTag("AudioPlayer")
     private var isEnabled = true
 
+    private val isPlayingStateSubject = PublishSubject<Boolean>()
+    private var isPlaying: Boolean = false
+        set(value) {
+            field = value
+            isPlayingStateSubject.onNext(value)
+        }
+    actual val isPlayingState = isPlayingStateSubject.observeOn(ioScheduler)
+
+    init {
+        isPlayingStateSubject.onNext(false)
+    }
+
     actual fun playData(data: List<Byte>) {
         if (!isEnabled) {
             logger.v { "AudioPlayer NOT enabled" }
+            return
         }
+
+        if (isPlaying) {
+            logger.e { "AudioPlayer playData already playing data" }
+            return
+        }
+
+        isPlaying = true
 
         try {
             logger.v { "start audio stream" }
@@ -53,7 +75,8 @@ actual object AudioPlayer {
             audioTrack.setPlaybackPositionUpdateListener(object : AudioTrack.OnPlaybackPositionUpdateListener {
 
                 override fun onMarkerReached(p0: AudioTrack?) {
-                    RhasspyActions.playFinished()
+                    logger.v { "finished playing audio stream" }
+                    isPlaying = false
                 }
 
                 override fun onPeriodicNotification(p0: AudioTrack?) {}
@@ -67,8 +90,63 @@ actual object AudioPlayer {
 
         } catch (e: Exception) {
             logger.e(e) { "Exception while playing audio data" }
-            RhasspyActions.playFinished()
+            isPlaying = false
         }
+    }
+
+
+    private fun playSound(mediaPlayer: MediaPlayer) {
+        logger.v { "playSound" }
+
+        if (isPlaying) {
+            logger.e { "AudioPlayer playSound already playing data" }
+            return
+        }
+
+        isPlaying = true
+
+        mediaPlayer.setAudioAttributes(
+            AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build()
+        )
+
+        mediaPlayer.setVolume(AppSettings.soundVolume.data, AppSettings.soundVolume.data)
+        //on completion listener is also called when error occurs
+        mediaPlayer.setOnCompletionListener {
+            isPlaying = false
+        }
+        mediaPlayer.start()
+    }
+
+    /**
+     * play audio resource
+     */
+    actual fun playSoundFileResource(fileResource: FileResource) {
+        logger.v { "playSoundFileResource" }
+
+        playSound(
+            MediaPlayer.create(
+                Application.Instance,
+                fileResource.rawResId
+            )
+        )
+    }
+
+    /**
+     * play some sound file
+     */
+    actual fun playSoundFile(filename: String) {
+        logger.v { "playSoundFile $filename" }
+
+        val soundFile = File(Application.Instance.filesDir, "sounds/$filename")
+
+        playSound(
+            MediaPlayer.create(
+                Application.Instance,
+                soundFile.toUri()
+            )
+        )
     }
 
 }
