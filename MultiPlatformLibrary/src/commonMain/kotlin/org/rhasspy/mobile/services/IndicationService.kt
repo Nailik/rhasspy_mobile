@@ -8,6 +8,7 @@ import com.badoo.reaktive.subject.publish.PublishSubject
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.logic.State
 import org.rhasspy.mobile.logic.StateMachine
+import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.nativeutils.NativeIndication
 import org.rhasspy.mobile.settings.AppSettings
 
@@ -19,13 +20,65 @@ object IndicationService {
 
     init {
         //start native indication service
-        NativeIndicationService
+        currentState.doOnAfterNext {
+            when (it) {
+                IndicationState.Idle -> {
+                    NativeIndication.closeIndicationOverOtherApps()
+                    NativeIndication.releaseWakeUp()
+                }
+                IndicationState.Wakeup -> {
+                    if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data) {
+                        NativeIndication.wakeUpScreen()
+                    }
+
+                    if (AppSettings.isWakeWordLightIndication.data) {
+                        NativeIndication.showIndication()
+                    }
+                }
+                else -> {}
+            }
+        }
 
         //change things according to state of the service
         StateMachine.currentState.doOnAfterNext {
-
             logger.v { "currentState changed to $it" }
-            //sounds
+
+            //evaluate new state
+            val newState = when (it) {
+                //hot word detected
+                State.StartingSession -> IndicationState.Wakeup
+                //Indication that recording is running
+                State.RecordingIntent -> IndicationState.Recording
+                //indication that it's thinking
+                State.TranscribingIntent -> IndicationState.Thinking
+                //indication that it's thinking
+                State.RecognizingIntent -> IndicationState.Thinking
+                //no indication
+                else -> IndicationState.Idle
+            }
+
+            //set new state
+            currentStateSubject.onNext(newState)
+
+            //handle indication (screen wakeup and light indication)
+            when (newState) {
+                IndicationState.Idle -> {
+                    NativeIndication.closeIndicationOverOtherApps()
+                    NativeIndication.releaseWakeUp()
+                }
+                IndicationState.Wakeup -> {
+                    if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data) {
+                        NativeIndication.wakeUpScreen()
+                    }
+
+                    if (AppSettings.isWakeWordLightIndication.data) {
+                        NativeIndication.showIndication()
+                    }
+                }
+                else -> {}
+            }
+
+            //handle sound indication
             if (AppSettings.isWakeWordSoundIndication.data) {
                 when (it) {
                     State.StartingSession -> playWakeSound()
@@ -35,44 +88,30 @@ object IndicationService {
                     else -> {}
                 }
             }
-
-            //state
-            when (it) {
-                //hot word detected
-                State.StartingSession -> currentStateSubject.onNext(IndicationState.Wakeup)
-                //Indication that recording is running
-                State.RecordingIntent -> currentStateSubject.onNext(IndicationState.Recording)
-                //indication that it's thinking
-                State.TranscribingIntent -> currentStateSubject.onNext(IndicationState.Thinking)
-                //indication that it's thinking
-                State.RecognizingIntent -> currentStateSubject.onNext(IndicationState.Thinking)
-                //no indication
-                else -> currentStateSubject.onNext(IndicationState.Idle)
-            }
         }
     }
 
     private fun playWakeSound() {
         when (AppSettings.wakeSound.data) {
-            0 -> NativeIndication.playSoundFileResource(MR.files.etc_wav_beep_hi)
+            0 -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_hi)
             1 -> {}
-            else -> NativeIndication.playSoundFile(AppSettings.wakeSounds.data.elementAt(AppSettings.wakeSound.data - 2))
+            else -> AudioPlayer.playSoundFile(AppSettings.wakeSounds.data.elementAt(AppSettings.wakeSound.data - 2))
         }
     }
 
     private fun playRecordedSound() {
         when (AppSettings.recordedSound.data) {
-            0 -> NativeIndication.playSoundFileResource(MR.files.etc_wav_beep_lo)
+            0 -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_lo)
             1 -> {}
-            else -> NativeIndication.playSoundFile(AppSettings.recordedSounds.data.elementAt(AppSettings.recordedSound.data - 2))
+            else -> AudioPlayer.playSoundFile(AppSettings.recordedSounds.data.elementAt(AppSettings.recordedSound.data - 2))
         }
     }
 
     private fun playErrorSound() {
         when (AppSettings.errorSound.data) {
-            0 -> NativeIndication.playSoundFileResource(MR.files.etc_wav_beep_error)
+            0 -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_error)
             1 -> {}
-            else -> NativeIndication.playSoundFile(AppSettings.errorSounds.data.elementAt(AppSettings.errorSound.data - 2))
+            else -> AudioPlayer.playSoundFile(AppSettings.errorSounds.data.elementAt(AppSettings.errorSound.data - 2))
         }
     }
 
