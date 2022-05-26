@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.handler.ForegroundServiceHandler
+import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.server.HttpServer
 import org.rhasspy.mobile.viewModels.GlobalData
 
@@ -34,8 +35,10 @@ object ServiceInterface {
                 UdpService.start()
                 HttpServer.start()
                 MqttService.start()
+                StateMachine.started()
             }
             ServiceAction.Stop -> {
+                StateMachine.stopped()
                 UdpService.stop()
                 HttpServer.stop()
                 MqttService.stop()
