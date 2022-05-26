@@ -1,59 +1,61 @@
 package org.rhasspy.mobile.services
 
+import co.touchlab.kermit.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.services.*
+import org.rhasspy.mobile.handler.ForegroundServiceHandler
+import org.rhasspy.mobile.server.HttpServer
 import org.rhasspy.mobile.viewModels.GlobalData
 
+/**
+ * to start and stop services that require it
+ */
 object ServiceInterface {
 
+    private val logger = Logger.withTag("ServerService")
+    private val coroutineScope = CoroutineScope(Dispatchers.Default)
+
+    //call all services to activate them
+    init {
+        HotWordService
+        IndicationService
+        RecordingService
+    }
 
     /**
      * Start services according to settings
      */
     suspend fun serviceAction(serviceAction: ServiceAction) {
-        RhasspyActions.logger.d { "serviceAction ${serviceAction.name}" }
+        logger.d { "serviceAction ${serviceAction.name}" }
 
         when (serviceAction) {
             ServiceAction.Start -> {
                 UdpService.start()
-                RhasspyActions.startHotWord()
                 HttpServer.start()
                 MqttService.start()
             }
             ServiceAction.Stop -> {
-                //reset values
-                isSendAudioCaptured = false
-                currentlyPlayingRecording = false
-                mqttSpeechToTextSessionId = null
-                currentRecording.clear()
-                isIntentRecognized = false
-                currentSessionId = null
-
                 UdpService.stop()
-                RhasspyActions.stopHotWord()
                 HttpServer.stop()
                 MqttService.stop()
             }
             ServiceAction.Reload -> {
-                currentlyRestarting = true
                 serviceAction(ServiceAction.Stop)
                 serviceAction(ServiceAction.Start)
-                currentlyRestarting = false
             }
         }
     }
 
-
-
-
+    //foreground service handler starts itself
     /**
      * Saves configuration changes
      */
     fun saveAndApplyChanges() {
-        RhasspyActions.coroutineScope.launch {
-            currentlyRestarting = true
+        coroutineScope.launch {
             GlobalData.saveAllChanges()
-            ForegroundService.action(ServiceAction.Reload)
+
+            ForegroundServiceHandler.action(ServiceAction.Reload)
         }
     }
 
@@ -63,6 +65,5 @@ object ServiceInterface {
     fun resetChanges() {
         GlobalData.resetChanges()
     }
-
 
 }
