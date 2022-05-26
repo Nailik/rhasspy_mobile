@@ -1,22 +1,16 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
-import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.postValue
-import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.*
-import org.rhasspy.mobile.services.logic.StateMachine
-import org.rhasspy.mobile.services.native.AudioPlayer
-import org.rhasspy.mobile.services.native.FileWriter
-import org.rhasspy.mobile.services.native.NativeIndication
-import org.rhasspy.mobile.services.native.NativeLocalWakeWordService
+import org.rhasspy.mobile.logic.StateMachine
+import org.rhasspy.mobile.nativeutils.AudioPlayer
+import org.rhasspy.mobile.serviceInterfaces.HomeAssistantInterface
+import org.rhasspy.mobile.serviceInterfaces.HttpClientInterface
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
-import org.rhasspy.mobile.viewModels.GlobalData
 import kotlin.native.concurrent.ThreadLocal
 
 /**
@@ -45,11 +39,11 @@ object RhasspyActions {
      * HTTP:
      * - calls service to recognize intent from text
      * - if IntentHandlingOptions.WithRecognition is set the remote site will also automatically handle the intent
-     * - later [intentRecognized] or [intentNotRecognized] will be called with received data
+     * - later intentRecognized or intentNotRecognized will be called with received data
      *
      * MQTT:
      * - calls default site to recognize intent
-     * - later eventually [intentRecognized] or [intentNotRecognized] will be called with received data
+     * - later eventually intentRecognized or intentNotRecognized will be called with received data
      */
     fun recognizeIntent(text: String) {
 
@@ -60,28 +54,28 @@ object RhasspyActions {
                 IntentRecognitionOptions.RemoteHTTP -> {
                     //get intent from http endpoint
                     val handleDirectly = ConfigurationSettings.intentHandlingOption.data == IntentHandlingOptions.WithRecognition
-                    val intent = HttpService.intentRecognition(text, handleDirectly)
+                    val intent = HttpClientInterface.intentRecognition(text, handleDirectly)
 
                     if (!handleDirectly && ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
                         //if intent wasn't already handled and local dialogue management, handle it
                         intent?.also {
-                            intentRecognized(intent = it)
+                            StateMachine.intentRecognized(intent = it)
                         } ?: run {
-                            intentNotRecognized()
+                            StateMachine.intentNotRecognized()
                         }
                     }
 
                     if (handleDirectly && ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
                         //if intent was handled directly and local dialogue management it's time to end dialogue
-                        endSession()
+                        StateMachine.endSession()
                     }
                 }
                 //send intent to mqtt service
-                IntentRecognitionOptions.RemoteMQTT -> MqttService.intentQuery(currentSessionId, text)
+                IntentRecognitionOptions.RemoteMQTT -> MqttService.intentQuery(StateMachine.currentSession.sessionId, text)
                 IntentRecognitionOptions.Disabled -> {
                     logger.d { "intentRecognition disabled" }
                     if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
-                        intentNotRecognized()
+                        StateMachine.intentNotRecognized()
                     }
 
                 }
@@ -105,12 +99,12 @@ object RhasspyActions {
             when (ConfigurationSettings.textToSpeechOption.data) {
                 TextToSpeechOptions.RemoteHTTP -> {
                     //use remote text to speech to get audio data and then play it
-                    HttpService.textToSpeech(text)?.also {
+                    HttpClientInterface.textToSpeech(text)?.also {
                         playAudio(it)
                     }
                 }
                 //when mqtt is used, say will published and automatically playBytes will be invoked on this siteId
-                TextToSpeechOptions.RemoteMQTT -> MqttService.say(currentSessionId, text)
+                TextToSpeechOptions.RemoteMQTT -> MqttService.say(StateMachine.currentSession.sessionId, text)
                 TextToSpeechOptions.Disabled -> logger.d { "textToSpeech disabled" }
             }
         }
@@ -143,7 +137,7 @@ object RhasspyActions {
                 when (ConfigurationSettings.audioPlayingOption.data) {
                     //TODO audio play finished mqtt
                     AudioPlayingOptions.Local -> AudioPlayer.playData(data)
-                    AudioPlayingOptions.RemoteHTTP -> HttpService.playWav(data)
+                    AudioPlayingOptions.RemoteHTTP -> HttpClientInterface.playWav(data)
                     AudioPlayingOptions.RemoteMQTT -> MqttService.playBytes(data)
                     AudioPlayingOptions.Disabled -> logger.d { "audioPlaying disabled" }
                 }
@@ -161,7 +155,7 @@ object RhasspyActions {
      * - calls service to translate speech to text, then handles the intent if dialogue manager is set to local
      *
      * RemoteMQTT
-     * - audio was already send to mqtt while recording in [audioFrame]
+     * - audio was already send to mqtt while recording in audioFrame
      */
     fun speechToText() {
         logger.d { "speechToText" }
@@ -170,8 +164,8 @@ object RhasspyActions {
 
             when (ConfigurationSettings.speechToTextOption.data) {
                 //send the recording to the http endpoint
-                SpeechToTextOptions.RemoteHTTP -> HttpService.speechToText(RecordingService.getPreviousRecording())?.also {
-                    StateMachine.intentTranscribed(it)
+                SpeechToTextOptions.RemoteHTTP -> HttpClientInterface.speechToText(StateMachine.getPreviousRecording())?.also {
+                    StateMachine.intentTranscribed(intent = it)
                 } ?: run {
                     StateMachine.intentTranscriptionError()
                 }
@@ -181,11 +175,6 @@ object RhasspyActions {
             }
         }
     }
-
-
-
-
-
 
 
     /**
@@ -208,8 +197,8 @@ object RhasspyActions {
         if (AppSettings.isIntentHandlingEnabled.data) {
             coroutineScope.launch {
                 when (ConfigurationSettings.intentHandlingOption.data) {
-                    IntentHandlingOptions.HomeAssistant -> HomeAssistantService.sendIntent(intent)
-                    IntentHandlingOptions.RemoteHTTP -> HttpService.intentHandling(intent)
+                    IntentHandlingOptions.HomeAssistant -> HomeAssistantInterface.sendIntent(intent)
+                    IntentHandlingOptions.RemoteHTTP -> HttpClientInterface.intentHandling(intent)
                     IntentHandlingOptions.WithRecognition -> logger.v { "intentHandling with recognition was used" }
                     IntentHandlingOptions.Disabled -> logger.d { "intentHandling disabled" }
                 }
