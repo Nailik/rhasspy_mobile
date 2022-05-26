@@ -22,8 +22,7 @@ object UdpService {
      *
      * suspend is necessary else there is an network on main thread error at least on android
      */
-    @Suppress("RedundantSuspendModifier")
-    suspend fun start() {
+    fun start() {
         if (!ConfigurationSettings.isUDPOutput.data) {
             logger.v { "not enabled" }
             return
@@ -43,8 +42,7 @@ object UdpService {
         }
     }
 
-    @Suppress("RedundantSuspendModifier")
-    suspend fun stop() {
+    fun stop() {
         sendChannel?.close()
         socketAddress = null
     }
