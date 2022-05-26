@@ -6,7 +6,6 @@ import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.logic.State
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.nativeutils.NativeLocalWakeWordService
-import org.rhasspy.mobile.services.MqttService.hotWordError
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.native.concurrent.ThreadLocal
@@ -77,7 +76,7 @@ object HotWordService {
                     NativeLocalWakeWordService.start()
                 } else {
                     val description = "couldn't start local wake word service, access Token Empty"
-                    hotWordError(description)
+                    StateMachine.hotWordError(description)
                     logger.e { description }
                 }
             }
