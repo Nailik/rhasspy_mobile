@@ -25,7 +25,7 @@ import kotlin.native.concurrent.ThreadLocal
 @ThreadLocal
 object RhasspyActions {
 
-    private val logger = Logger.withTag("ServiceInterface")
+    private val logger = Logger.withTag("RhasspyActions")
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     /**
