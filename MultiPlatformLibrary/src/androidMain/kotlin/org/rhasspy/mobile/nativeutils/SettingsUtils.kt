@@ -10,7 +10,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.services.ServiceAction
-import org.rhasspy.mobile.services.RhasspyActions
+import org.rhasspy.mobile.services.ServiceInterface
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
@@ -82,7 +82,7 @@ actual object SettingsUtils {
                 it.data?.data?.also { uri ->
 
                     CoroutineScope(Dispatchers.Default).launch {
-                        RhasspyActions.serviceAction(ServiceAction.Stop)
+                        ServiceInterface.serviceAction(ServiceAction.Stop)
                     }
 
                     Application.Instance.contentResolver.openInputStream(uri)?.also { inputStream ->
