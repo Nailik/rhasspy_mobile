@@ -30,17 +30,17 @@ object HotWordService {
     init {
         AppSettings.isHotWordEnabled.observableData.doOnAfterNext {
             logger.v { "isHotWordEnabled changed to $it" }
-            evaluateHotWorAction(StateMachine.state, it)
+            evaluateHotWordAction(StateMachine.state, it)
         }
 
         //change things according to state of the service
         StateMachine.currentState.doOnAfterNext {
             logger.v { "currentState changed to $it" }
-            evaluateHotWorAction(it, AppSettings.isHotWordEnabled.data)
+            evaluateHotWordAction(it, AppSettings.isHotWordEnabled.data)
         }
     }
 
-    private fun evaluateHotWorAction(state: State, enabled: Boolean) {
+    private fun evaluateHotWordAction(state: State, enabled: Boolean) {
         logger.v { "evaluateHotWorAction state $state enabled $enabled running $isRunning" }
         when (state) {
             State.AwaitingHotWord -> {
