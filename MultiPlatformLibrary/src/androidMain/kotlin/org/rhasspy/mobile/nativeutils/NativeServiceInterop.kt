@@ -10,13 +10,13 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.handler.ForegroundServiceHandler
 import org.rhasspy.mobile.services.ServiceAction
-import org.rhasspy.mobile.services.ServiceNotification
 
 /**
  * Native Service to run continuously in background
  */
 actual class NativeServiceInterop : android.app.Service() {
     private val logger = Logger.withTag("NativeService")
+    private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     /**
      * create service, show notification and start in foreground
@@ -38,7 +38,7 @@ actual class NativeServiceInterop : android.app.Service() {
 
         intent?.also { i ->
             i.getStringExtra(ACTION)?.also {
-                CoroutineScope(Dispatchers.Default).launch {
+                coroutineScope.launch {
                     ForegroundServiceHandler.action(ServiceAction.valueOf(it), true)
                 }
             } ?: run {
