@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.services.native
+package org.rhasspy.mobile.nativeutils
 
 import android.app.Activity
 import android.content.Intent

@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.services.native
+package org.rhasspy.mobile.nativeutils
 
 import android.Manifest
 import android.content.pm.PackageManager

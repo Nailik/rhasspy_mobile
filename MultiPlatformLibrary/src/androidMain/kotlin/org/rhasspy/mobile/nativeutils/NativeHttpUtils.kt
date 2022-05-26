@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.services.native
+package org.rhasspy.mobile.nativeutils
 
 import io.ktor.server.application.*
 import io.ktor.server.plugins.callloging.*

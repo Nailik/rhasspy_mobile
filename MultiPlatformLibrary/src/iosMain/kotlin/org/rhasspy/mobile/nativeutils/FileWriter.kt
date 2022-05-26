@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.services.native
+package org.rhasspy.mobile.nativeutils
 
 actual class FileWriter actual constructor(filename: String, maxFileSize: Long) {
 

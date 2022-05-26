@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.services
+package org.rhasspy.mobile.nativeutils
 
 import android.app.Notification
 import android.app.PendingIntent
