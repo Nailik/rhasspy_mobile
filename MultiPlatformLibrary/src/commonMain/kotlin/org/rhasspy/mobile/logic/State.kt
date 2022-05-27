@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.logic
 
 enum class State {
+    Stopped,        //services halted
     Starting,      //services restarting after settings change
     AwaitingHotWord,    //waiting, maybe recording
     StartingSession,        //session is starting
@@ -14,5 +15,6 @@ enum class State {
     IntentHandling,         //intent is handled
     SessionStopped,     //session was stopped remote
     EndedSession,     //session ended completely
-    PlayingAudio    //playing some sort of audio (stream, sound or recording)
+    PlayingAudio,    //playing some sort of audio (stream, sound or recording)
+    PlayingRecording
 }
