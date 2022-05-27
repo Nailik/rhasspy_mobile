@@ -3,7 +3,6 @@ package org.rhasspy.mobile.settings
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.postValue
 import dev.icerock.moko.mvvm.livedata.readOnly
-import kotlinx.coroutines.launch
 import org.rhasspy.mobile.viewModels.GlobalData
 
 /**
@@ -24,7 +23,7 @@ class ConfigurationSetting<T>(key: SettingsEnum, initial: T) : Setting<T>(key, i
      * holds the unsaved value
      * updated unsaved changes accordingly if the new value is different or the same as the current saved value
      */
-    private val unsaved = object : MutableLiveData<T>(readValue()) {
+    val unsaved = object : MutableLiveData<T>(data.value) {
         override var value: T
             get() = super.value
             set(newValue) {
@@ -44,36 +43,20 @@ class ConfigurationSetting<T>(key: SettingsEnum, initial: T) : Setting<T>(key, i
     }
 
     /**
-     * data used to get current saved value or to set value for unsaved changes
-     */
-    var data: T
-        get() = this.value.value
-        set(newValue) {
-            viewScope.launch {
-                unsaved.value = newValue
-            }
-        }
-
-    /**
-     * data that's live updated to get current value readonly
-     */
-    var liveUnsavedData = unsaved.readOnly()
-
-    /**
      * saves the current unsaved value and resets unsaved changes and updates the value
      */
     fun save() {
         //update unsaved changes
         isUnsaved.postValue(false)
         //update saved value
-        value.postValue(unsaved.value)
+        data.value = unsaved.value
     }
 
     /**
      * reset unsaved changes to the current value
      */
     fun reset() {
-        unsaved.value = value.value
+        unsaved.value = data.value
     }
 
 }

@@ -5,51 +5,47 @@ import com.russhwolf.settings.get
 import com.russhwolf.settings.serialization.decodeValue
 import com.russhwolf.settings.serialization.encodeValue
 import com.russhwolf.settings.set
-import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.builtins.SetSerializer
 import kotlinx.serialization.builtins.serializer
 import org.rhasspy.mobile.data.DataEnum
+import org.rhasspy.mobile.observer.Observable
 import org.rhasspy.mobile.viewModels.GlobalData
 
 abstract class Setting<T>(private val key: SettingsEnum, private val initial: T) {
 
-    companion object {
-        internal val viewScope = CoroutineScope(Dispatchers.Main)
+    /**
+     * data used to get current saved value or to set value for unsaved changes
+     */
+    val data = Observable(readValue()).apply {
+        observe {
+            saveValue(it)
+        }
     }
 
     /**
-     * returns value as a mutable live data to observe it
+     * save current value
      */
     @OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
-    internal val value = object : MutableLiveData<T>(readValue()) {
-        override var value: T
-            get():T = super.value
-            set(newValue) {
-                if (value != newValue) {
-                    @Suppress("UNCHECKED_CAST")
-                    when (initial) {
-                        is String -> GlobalData.settings[key.name] = newValue as String
-                        is Int -> GlobalData.settings[key.name] = newValue as Int
-                        is Float -> GlobalData.settings[key.name] = newValue as Float
-                        is Boolean -> GlobalData.settings[key.name] = newValue as Boolean
-                        is DataEnum<*> -> GlobalData.settings[key.name] = (newValue as DataEnum<*>).name
-                        is Set<*> -> GlobalData.settings.encodeValue(SetSerializer(String.serializer()), key.name, newValue as Set<String>)
-                        else -> throw RuntimeException()
-                    }
-                    super.value = newValue
-                }
-            }
+    @Suppress("UNCHECKED_CAST")
+    private fun saveValue(newValue: T) {
+        when (initial) {
+            is String -> GlobalData.settings[key.name] = newValue as String
+            is Int -> GlobalData.settings[key.name] = newValue as Int
+            is Float -> GlobalData.settings[key.name] = newValue as Float
+            is Boolean -> GlobalData.settings[key.name] = newValue as Boolean
+            is DataEnum<*> -> GlobalData.settings[key.name] = (newValue as DataEnum<*>).name
+            is Set<*> -> GlobalData.settings.encodeValue(SetSerializer(String.serializer()), key.name, newValue as Set<String>)
+            else -> throw RuntimeException()
+        }
     }
 
     /**
      * reads current saved value
      */
     @OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
-    internal fun readValue(): T {
-        @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
+    private fun readValue(): T {
         return when (initial) {
             is String -> GlobalData.settings[key.name, initial]
             is Int -> GlobalData.settings[key.name, initial]
