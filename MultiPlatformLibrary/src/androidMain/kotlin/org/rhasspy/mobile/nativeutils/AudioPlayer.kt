@@ -3,11 +3,9 @@ package org.rhasspy.mobile.nativeutils
 import android.media.*
 import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
-import com.badoo.reaktive.observable.observeOn
-import com.badoo.reaktive.scheduler.ioScheduler
-import com.badoo.reaktive.subject.publish.PublishSubject
 import dev.icerock.moko.resources.FileResource
 import org.rhasspy.mobile.Application
+import org.rhasspy.mobile.observer.MutableObservable
 import org.rhasspy.mobile.settings.AppSettings
 import java.io.File
 import java.nio.ByteBuffer
@@ -16,30 +14,24 @@ actual object AudioPlayer {
     private val logger = Logger.withTag("AudioPlayer")
     private var isEnabled = true
 
-    private val isPlayingStateSubject = PublishSubject<Boolean>()
-    private var isPlaying: Boolean = false
-        set(value) {
-            field = value
-            isPlayingStateSubject.onNext(value)
-        }
-    actual val isPlayingState = isPlayingStateSubject.observeOn(ioScheduler)
+    private var isPlaying = MutableObservable(false)
+    actual val isPlayingState = isPlaying.readonly()
+    private var audioTrack: AudioTrack? = null
+    private var onFinished: (() -> Unit)? = null
 
-    init {
-        isPlayingStateSubject.onNext(false)
-    }
-
-    actual fun playData(data: List<Byte>) {
+    actual fun playData(data: List<Byte>, onFinished: () -> Unit) {
         if (!isEnabled) {
             logger.v { "AudioPlayer NOT enabled" }
             return
         }
 
-        if (isPlaying) {
+        if (isPlaying.value) {
             logger.e { "AudioPlayer playData already playing data" }
             return
         }
 
-        isPlaying = true
+        this.onFinished = onFinished
+        isPlaying.value = true
 
         try {
             logger.v { "start audio stream" }
@@ -57,7 +49,7 @@ actual object AudioPlayer {
             //41-44 The number of bytes of the data section below this
             val audioDataSize = ByteBuffer.wrap(byteArray.copyOfRange(40, 44).reversedArray()).int / 2 //(pcm)
 
-            val audioTrack = AudioTrack(
+            audioTrack = AudioTrack(
                 AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_MEDIA)
                     .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
@@ -69,41 +61,52 @@ actual object AudioPlayer {
                 byteArray.size,
                 AudioTrack.MODE_STATIC,
                 AudioManager.AUDIO_SESSION_ID_GENERATE
-            )
+            ).apply {
+                notificationMarkerPosition = audioDataSize
+                setPlaybackPositionUpdateListener(object : AudioTrack.OnPlaybackPositionUpdateListener {
 
-            audioTrack.notificationMarkerPosition = audioDataSize
-            audioTrack.setPlaybackPositionUpdateListener(object : AudioTrack.OnPlaybackPositionUpdateListener {
+                    override fun onMarkerReached(p0: AudioTrack?) {
+                        logger.v { "finished playing audio stream" }
+                        isPlaying.value = false
+                        onFinished()
+                    }
 
-                override fun onMarkerReached(p0: AudioTrack?) {
-                    logger.v { "finished playing audio stream" }
-                    isPlaying = false
-                }
+                    override fun onPeriodicNotification(p0: AudioTrack?) {}
+                })
 
-                override fun onPeriodicNotification(p0: AudioTrack?) {}
-            })
 
-            audioTrack.setVolume(AppSettings.volume.data)
+                setVolume(AppSettings.volume.data.value)
 
-            audioTrack.write(byteArray, 40, audioDataSize)
-            audioTrack.play()
-            audioTrack.flush()
+                write(byteArray, 40, audioDataSize)
+                play()
+                flush()
+            }
+
 
         } catch (e: Exception) {
             logger.e(e) { "Exception while playing audio data" }
-            isPlaying = false
+            isPlaying.value = false
+            onFinished()
         }
     }
 
+    actual fun stopPlayingData() {
+        if (onFinished != null && audioTrack != null && isPlaying.value) {
+            isPlaying.value = false
+            onFinished?.invoke()
+            audioTrack?.stop()
+        }
+    }
 
     private fun playSound(mediaPlayer: MediaPlayer) {
         logger.v { "playSound" }
 
-        if (isPlaying) {
+        if (isPlaying.value) {
             logger.e { "AudioPlayer playSound already playing data" }
             return
         }
 
-        isPlaying = true
+        isPlaying.value = true
 
         mediaPlayer.setAudioAttributes(
             AudioAttributes.Builder()
@@ -111,10 +114,10 @@ actual object AudioPlayer {
                 .build()
         )
 
-        mediaPlayer.setVolume(AppSettings.soundVolume.data, AppSettings.soundVolume.data)
+        mediaPlayer.setVolume(AppSettings.soundVolume.data.value, AppSettings.soundVolume.data.value)
         //on completion listener is also called when error occurs
         mediaPlayer.setOnCompletionListener {
-            isPlaying = false
+            isPlaying.value = false
         }
         mediaPlayer.start()
     }

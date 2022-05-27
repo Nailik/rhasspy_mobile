@@ -1,11 +1,11 @@
 package org.rhasspy.mobile.nativeutils
 
-import com.badoo.reaktive.observable.Observable
 import dev.icerock.moko.resources.FileResource
+import org.rhasspy.mobile.observer.Observable
 
 actual object AudioPlayer {
 
-    actual fun playData(data: List<Byte>) {
+    actual fun playData(data: List<Byte>, onFinished: () -> Unit) {
         TODO("Not yet implemented")
     }
 
