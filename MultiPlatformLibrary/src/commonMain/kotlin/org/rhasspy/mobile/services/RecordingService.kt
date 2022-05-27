@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
-import com.badoo.reaktive.observable.doOnAfterNext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -44,24 +43,25 @@ object RecordingService {
     private var isRecordingForWakeWord = false
 
     init {
-        StateMachine.currentState.doOnAfterNext {
+        StateMachine.currentState.observe {
             when (it) {
                 //start recording intent
                 State.RecordingIntent -> startRecording()
                 //stop recording intent
                 State.RecordingStopped,
-                State.PlayingAudio -> stopRecording()
+                State.PlayingAudio,
+                State.PlayingRecording -> stopRecording()
                 else -> {}
             }
         }
 
         //audio indication sounds should be ignored
-        AudioPlayer.isPlayingState.doOnAfterNext {
+        AudioPlayer.isPlayingState.observe {
             when (it) {
                 //stop recording while sounds are playing
                 true -> stopRecording()
                 //resume recording if necessary
-                false -> if (isRecordingForWakeWord || StateMachine.state == State.RecordingIntent) {
+                false -> if (isRecordingForWakeWord || StateMachine.currentState.value == State.RecordingIntent) {
                     //resume recording
                     startRecording()
                 }
@@ -93,13 +93,13 @@ object RecordingService {
                 data.addAll(byteData)
                 StateMachine.audioFrame(byteData)
 
-                if (AppSettings.isAutomaticSilenceDetection.data && ConfigurationSettings.wakeWordOption.data != WakeWordOption.MQTT) {
-                    if (byteData.isNotAboveThreshold(AppSettings.automaticSilenceDetectionAudioLevel.data)) {
+                if (AppSettings.isAutomaticSilenceDetection.data.value && ConfigurationSettings.wakeWordOption.data.value != WakeWordOption.MQTT) {
+                    if (byteData.isNotAboveThreshold(AppSettings.automaticSilenceDetectionAudioLevel.data.value)) {
                         //no data was above threshold, there is silence
                         silenceStartTime?.also {
                             logger.d { "silenceDetected" }
                             //check if silence was detected for x milliseconds
-                            if (it.minus(Clock.System.now()) < -AppSettings.automaticSilenceDetectionTime.data.milliseconds) {
+                            if (it.minus(Clock.System.now()) < -AppSettings.automaticSilenceDetectionTime.data.value.milliseconds) {
                                 StateMachine.stopListening()
                             }
                         } ?: run {
