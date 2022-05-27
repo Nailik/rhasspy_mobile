@@ -6,7 +6,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.logic.StateMachine
-import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.serviceInterfaces.HomeAssistantInterface
 import org.rhasspy.mobile.serviceInterfaces.HttpClientInterface
 import org.rhasspy.mobile.settings.AppSettings
@@ -50,13 +49,13 @@ object RhasspyActions {
         logger.d { "recognizeIntent $text" }
 
         coroutineScope.launch {
-            when (ConfigurationSettings.intentRecognitionOption.data) {
+            when (ConfigurationSettings.intentRecognitionOption.data.value) {
                 IntentRecognitionOptions.RemoteHTTP -> {
                     //get intent from http endpoint
-                    val handleDirectly = ConfigurationSettings.intentHandlingOption.data == IntentHandlingOptions.WithRecognition
+                    val handleDirectly = ConfigurationSettings.intentHandlingOption.data.value == IntentHandlingOptions.WithRecognition
                     val intent = HttpClientInterface.intentRecognition(text, handleDirectly)
 
-                    if (!handleDirectly && ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+                    if (!handleDirectly && ConfigurationSettings.dialogueManagementOption.data.value == DialogueManagementOptions.Local) {
                         //if intent wasn't already handled and local dialogue management, handle it
                         intent?.also {
                             StateMachine.intentRecognized(intent = it)
@@ -65,7 +64,7 @@ object RhasspyActions {
                         }
                     }
 
-                    if (handleDirectly && ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+                    if (handleDirectly && ConfigurationSettings.dialogueManagementOption.data.value == DialogueManagementOptions.Local) {
                         //if intent was handled directly and local dialogue management it's time to end dialogue
                         StateMachine.endSession()
                     }
@@ -74,7 +73,7 @@ object RhasspyActions {
                 IntentRecognitionOptions.RemoteMQTT -> MqttService.intentQuery(StateMachine.currentSession.sessionId, text)
                 IntentRecognitionOptions.Disabled -> {
                     logger.d { "intentRecognition disabled" }
-                    if (ConfigurationSettings.dialogueManagementOption.data == DialogueManagementOptions.Local) {
+                    if (ConfigurationSettings.dialogueManagementOption.data.value == DialogueManagementOptions.Local) {
                         StateMachine.intentNotRecognized()
                     }
 
@@ -96,7 +95,7 @@ object RhasspyActions {
         logger.d { "say $text" }
 
         coroutineScope.launch {
-            when (ConfigurationSettings.textToSpeechOption.data) {
+            when (ConfigurationSettings.textToSpeechOption.data.value) {
                 TextToSpeechOptions.RemoteHTTP -> {
                     //use remote text to speech to get audio data and then play it
                     HttpClientInterface.textToSpeech(text)?.also {
@@ -132,11 +131,10 @@ object RhasspyActions {
     fun playAudio(data: List<Byte>) {
         logger.d { "playAudio ${data.size}" }
 
-        if (AppSettings.isAudioOutputEnabled.data) {
+        if (AppSettings.isAudioOutputEnabled.data.value) {
             coroutineScope.launch {
-                when (ConfigurationSettings.audioPlayingOption.data) {
-                    //TODO audio play finished mqtt
-                    AudioPlayingOptions.Local -> AudioPlayer.playData(data)
+                when (ConfigurationSettings.audioPlayingOption.data.value) {
+                    AudioPlayingOptions.Local -> StateMachine.playAudio(data, true)
                     AudioPlayingOptions.RemoteHTTP -> HttpClientInterface.playWav(data)
                     AudioPlayingOptions.RemoteMQTT -> MqttService.playBytes(data)
                     AudioPlayingOptions.Disabled -> logger.d { "audioPlaying disabled" }
@@ -162,7 +160,7 @@ object RhasspyActions {
 
         coroutineScope.launch {
 
-            when (ConfigurationSettings.speechToTextOption.data) {
+            when (ConfigurationSettings.speechToTextOption.data.value) {
                 //send the recording to the http endpoint
                 SpeechToTextOptions.RemoteHTTP -> HttpClientInterface.speechToText(StateMachine.getPreviousRecording())?.also {
                     StateMachine.intentTranscribed(intent = it)
@@ -194,9 +192,9 @@ object RhasspyActions {
      */
     fun intentHandling(intent: String) {
 
-        if (AppSettings.isIntentHandlingEnabled.data) {
+        if (AppSettings.isIntentHandlingEnabled.data.value) {
             coroutineScope.launch {
-                when (ConfigurationSettings.intentHandlingOption.data) {
+                when (ConfigurationSettings.intentHandlingOption.data.value) {
                     IntentHandlingOptions.HomeAssistant -> HomeAssistantInterface.sendIntent(intent)
                     IntentHandlingOptions.RemoteHTTP -> HttpClientInterface.intentHandling(intent)
                     IntentHandlingOptions.WithRecognition -> logger.v { "intentHandling with recognition was used" }
