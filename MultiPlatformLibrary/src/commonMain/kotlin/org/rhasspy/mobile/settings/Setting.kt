@@ -9,7 +9,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.builtins.SetSerializer
 import kotlinx.serialization.builtins.serializer
 import org.rhasspy.mobile.data.DataEnum
-import org.rhasspy.mobile.observer.Observable
+import org.rhasspy.mobile.observer.MutableObservable
 import org.rhasspy.mobile.viewModels.GlobalData
 
 abstract class Setting<T>(private val key: SettingsEnum, private val initial: T) {
@@ -17,7 +17,7 @@ abstract class Setting<T>(private val key: SettingsEnum, private val initial: T)
     /**
      * data used to get current saved value or to set value for unsaved changes
      */
-    val data = Observable(readValue()).apply {
+    val data = MutableObservable(readValue()).apply {
         observe {
             saveValue(it)
         }
