@@ -8,10 +8,11 @@ import dev.icerock.moko.mvvm.livedata.readOnly
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.logger.FileLogger
+import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.services.RhasspyActions
-import org.rhasspy.mobile.services.logic.StateMachine
+import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.settings.AppSettings
 
 class HomeScreenViewModel : ViewModel() {
@@ -25,32 +26,31 @@ class HomeScreenViewModel : ViewModel() {
     init {
         logger.v { "init" }
 
-        AppSettings.languageOption.value.addObserver {
+        AppSettings.languageOption.data.observe {
             StringDesc.localeType = StringDesc.LocaleType.Custom(it.code)
         }
 
         isCurrentOverlayPermissionRequestRequired.addSource(OverlayPermission.granted) {
-            isCurrentOverlayPermissionRequestRequired.value = (!it && AppSettings.isWakeWordLightIndication.data)
+            isCurrentOverlayPermissionRequestRequired.value = (!it && AppSettings.isWakeWordLightIndication.data.value)
         }
-        isCurrentOverlayPermissionRequestRequired.addSource(AppSettings.isWakeWordLightIndication.value) {
+        isCurrentOverlayPermissionRequestRequired.addSource(AppSettings.isWakeWordLightIndication.data.toLiveData()) {
             isCurrentOverlayPermissionRequestRequired.value = (it && !OverlayPermission.granted.value)
         }
     }
 
-    val isRecording = RhasspyActions.sessionRunning
-    val isPlayingRecording = RhasspyActions.isPlayingRecording
+    val currentState = StateMachine.currentState
 
-    fun toggleSession() = RhasspyActions.toggleSession()
+    fun toggleSession() = StateMachine.toggleSessionManually()
 
-    fun playRecording() = StateMachine.playRecording()
+    fun togglePlayRecording() = StateMachine.togglePlayRecording()
 
     fun intentRecognition(text: String) = RhasspyActions.recognizeIntent(text)
 
     fun speakText(text: String) = RhasspyActions.say(text)
 
-    fun saveAndApplyChanges() = RhasspyActions.saveAndApplyChanges()
+    fun saveAndApplyChanges() = ServiceInterface.saveAndApplyChanges()
 
-    fun resetChanges() = RhasspyActions.resetChanges()
+    fun resetChanges() = ServiceInterface.resetChanges()
 
     fun shareLogFile() = FileLogger.shareLogFile()
 
