@@ -7,23 +7,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class Observable<T>(initialValue: T) {
+open class Observable<T>(initialValue: T) {
 
     private val viewScope = CoroutineScope(Dispatchers.Main)
+
     // List ov observers watching this value for changes
-    private val observers = mutableListOf<(T) -> Unit>()
+    protected val observers = mutableListOf<(T) -> Unit>()
 
     // The real value of this observer
     // Doesn't need a custom getter, but the setter
     // we override to allow notifying all observers
-    var value: T = initialValue
-        set(value) {
-            field = value
-            //invoke all observers
-            observers.forEach { observer ->
-                observer.invoke(value)
-            }
-        }
+    open val value: T = initialValue
 
     fun observe(observer: (T) -> Unit) {
         observers.add(observer)
