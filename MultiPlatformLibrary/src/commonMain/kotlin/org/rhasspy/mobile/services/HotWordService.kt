@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
-import com.badoo.reaktive.observable.doOnAfterNext
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.logic.State
 import org.rhasspy.mobile.logic.StateMachine
@@ -27,15 +26,15 @@ object HotWordService {
      * to start and stop recording for wake word
      */
     init {
-        AppSettings.isHotWordEnabled.observableData.doOnAfterNext {
+        AppSettings.isHotWordEnabled.data.observe {
             logger.v { "isHotWordEnabled changed to $it" }
-            evaluateHotWordAction(StateMachine.state, it)
+            evaluateHotWordAction(StateMachine.currentState.value, it)
         }
 
         //change things according to state of the service
-        StateMachine.currentState.doOnAfterNext {
+        StateMachine.currentState.observe {
             logger.v { "currentState changed to $it" }
-            evaluateHotWordAction(it, AppSettings.isHotWordEnabled.data)
+            evaluateHotWordAction(it, AppSettings.isHotWordEnabled.data.value)
         }
     }
 
@@ -69,10 +68,10 @@ object HotWordService {
         isRunning = true
         logger.d { "startHotWord" }
 
-        when (ConfigurationSettings.wakeWordOption.data) {
+        when (ConfigurationSettings.wakeWordOption.data.value) {
             WakeWordOption.Porcupine -> {
                 //when porcupine is used for hotWord then start local service
-                if (ConfigurationSettings.wakeWordPorcupineAccessToken.data.isNotEmpty()) {
+                if (ConfigurationSettings.wakeWordPorcupineAccessToken.data.value.isNotEmpty()) {
                     NativeLocalWakeWordService.start()
                 } else {
                     val description = "couldn't start local wake word service, access Token Empty"
