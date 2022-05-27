@@ -1,37 +1,34 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
-import com.badoo.reaktive.observable.doOnAfterNext
-import com.badoo.reaktive.observable.observeOn
-import com.badoo.reaktive.scheduler.ioScheduler
-import com.badoo.reaktive.subject.publish.PublishSubject
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.logic.State
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.nativeutils.NativeIndication
+import org.rhasspy.mobile.observer.MutableObservable
 import org.rhasspy.mobile.settings.AppSettings
 
 object IndicationService {
     private val logger = Logger.withTag("IndicationService")
 
-    private val currentStateSubject = PublishSubject<IndicationState>()
-    val currentState = currentStateSubject.observeOn(ioScheduler)
+    private val currentState = MutableObservable(IndicationState.Idle)
+    val readonlyState = currentState.readonly()
 
     init {
         //start native indication service
-        currentState.doOnAfterNext {
+        currentState.observe {
             when (it) {
                 IndicationState.Idle -> {
                     NativeIndication.closeIndicationOverOtherApps()
                     NativeIndication.releaseWakeUp()
                 }
                 IndicationState.Wakeup -> {
-                    if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data) {
+                    if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data.value) {
                         NativeIndication.wakeUpScreen()
                     }
 
-                    if (AppSettings.isWakeWordLightIndication.data) {
+                    if (AppSettings.isWakeWordLightIndication.data.value) {
                         NativeIndication.showIndication()
                     }
                 }
@@ -40,7 +37,7 @@ object IndicationService {
         }
 
         //change things according to state of the service
-        StateMachine.currentState.doOnAfterNext {
+        StateMachine.currentState.observe {
             logger.v { "currentState changed to $it" }
 
             //evaluate new state
@@ -58,7 +55,7 @@ object IndicationService {
             }
 
             //set new state
-            currentStateSubject.onNext(newState)
+            currentState.value = newState
 
             //handle indication (screen wakeup and light indication)
             when (newState) {
@@ -67,11 +64,11 @@ object IndicationService {
                     NativeIndication.releaseWakeUp()
                 }
                 IndicationState.Wakeup -> {
-                    if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data) {
+                    if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data.value) {
                         NativeIndication.wakeUpScreen()
                     }
 
-                    if (AppSettings.isWakeWordLightIndication.data) {
+                    if (AppSettings.isWakeWordLightIndication.data.value) {
                         NativeIndication.showIndication()
                     }
                 }
@@ -79,7 +76,7 @@ object IndicationService {
             }
 
             //handle sound indication
-            if (AppSettings.isWakeWordSoundIndication.data) {
+            if (AppSettings.isWakeWordSoundIndication.data.value) {
                 when (it) {
                     State.StartingSession -> playWakeSound()
                     State.RecordingStopped -> playRecordedSound()
@@ -92,26 +89,26 @@ object IndicationService {
     }
 
     private fun playWakeSound() {
-        when (AppSettings.wakeSound.data) {
+        when (AppSettings.wakeSound.data.value) {
             0 -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_hi)
             1 -> {}
-            else -> AudioPlayer.playSoundFile(AppSettings.wakeSounds.data.elementAt(AppSettings.wakeSound.data - 2))
+            else -> AudioPlayer.playSoundFile(AppSettings.wakeSounds.data.value.elementAt(AppSettings.wakeSound.data.value - 2))
         }
     }
 
     private fun playRecordedSound() {
-        when (AppSettings.recordedSound.data) {
+        when (AppSettings.recordedSound.data.value) {
             0 -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_lo)
             1 -> {}
-            else -> AudioPlayer.playSoundFile(AppSettings.recordedSounds.data.elementAt(AppSettings.recordedSound.data - 2))
+            else -> AudioPlayer.playSoundFile(AppSettings.recordedSounds.data.value.elementAt(AppSettings.recordedSound.data.value - 2))
         }
     }
 
     private fun playErrorSound() {
-        when (AppSettings.errorSound.data) {
+        when (AppSettings.errorSound.data.value) {
             0 -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_error)
             1 -> {}
-            else -> AudioPlayer.playSoundFile(AppSettings.errorSounds.data.elementAt(AppSettings.errorSound.data - 2))
+            else -> AudioPlayer.playSoundFile(AppSettings.errorSounds.data.value.elementAt(AppSettings.errorSound.data.value - 2))
         }
     }
 
