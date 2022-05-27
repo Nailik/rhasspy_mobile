@@ -1,12 +1,13 @@
 package org.rhasspy.mobile
 
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.handler.ForegroundServiceHandler
-import org.rhasspy.mobile.services.MqttService
-import org.rhasspy.mobile.services.RecordingService
-import org.rhasspy.mobile.services.RhasspyActions
 import org.rhasspy.mobile.mqtt.OverlayServices
+import org.rhasspy.mobile.services.*
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -33,11 +34,10 @@ abstract class Application : NativeApplication() {
         AppSettings
         ConfigurationSettings
         OverlayServices.checkPermission()
-        MqttService
-        RecordingService
-        RhasspyActions
-        ForegroundServiceHandler
         startNativeServices()
+        CoroutineScope(Dispatchers.Default).launch {
+            ServiceInterface.serviceAction(ServiceAction.Start)
+        }
     }
 
 }
