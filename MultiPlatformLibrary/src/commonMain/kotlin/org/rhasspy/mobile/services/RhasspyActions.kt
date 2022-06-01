@@ -49,13 +49,13 @@ object RhasspyActions {
         logger.d { "recognizeIntent $text" }
 
         coroutineScope.launch {
-            when (ConfigurationSettings.intentRecognitionOption.data.value) {
+            when (ConfigurationSettings.intentRecognitionOption.value) {
                 IntentRecognitionOptions.RemoteHTTP -> {
                     //get intent from http endpoint
-                    val handleDirectly = ConfigurationSettings.intentHandlingOption.data.value == IntentHandlingOptions.WithRecognition
+                    val handleDirectly = ConfigurationSettings.intentHandlingOption.value == IntentHandlingOptions.WithRecognition
                     val intent = HttpClientInterface.intentRecognition(text, handleDirectly)
 
-                    if (!handleDirectly && ConfigurationSettings.dialogueManagementOption.data.value == DialogueManagementOptions.Local) {
+                    if (!handleDirectly && ConfigurationSettings.dialogueManagementOption.value == DialogueManagementOptions.Local) {
                         //if intent wasn't already handled and local dialogue management, handle it
                         intent?.also {
                             StateMachine.intentRecognized(intent = it)
@@ -64,7 +64,7 @@ object RhasspyActions {
                         }
                     }
 
-                    if (handleDirectly && ConfigurationSettings.dialogueManagementOption.data.value == DialogueManagementOptions.Local) {
+                    if (handleDirectly && ConfigurationSettings.dialogueManagementOption.value == DialogueManagementOptions.Local) {
                         //if intent was handled directly and local dialogue management it's time to end dialogue
                         StateMachine.endSession()
                     }
@@ -73,7 +73,7 @@ object RhasspyActions {
                 IntentRecognitionOptions.RemoteMQTT -> MqttService.intentQuery(StateMachine.currentSession.sessionId, text)
                 IntentRecognitionOptions.Disabled -> {
                     logger.d { "intentRecognition disabled" }
-                    if (ConfigurationSettings.dialogueManagementOption.data.value == DialogueManagementOptions.Local) {
+                    if (ConfigurationSettings.dialogueManagementOption.value == DialogueManagementOptions.Local) {
                         StateMachine.intentNotRecognized()
                     }
 
@@ -95,7 +95,7 @@ object RhasspyActions {
         logger.d { "say $text" }
 
         coroutineScope.launch {
-            when (ConfigurationSettings.textToSpeechOption.data.value) {
+            when (ConfigurationSettings.textToSpeechOption.value) {
                 TextToSpeechOptions.RemoteHTTP -> {
                     //use remote text to speech to get audio data and then play it
                     HttpClientInterface.textToSpeech(text)?.also {
@@ -131,9 +131,9 @@ object RhasspyActions {
     fun playAudio(data: List<Byte>) {
         logger.d { "playAudio ${data.size}" }
 
-        if (AppSettings.isAudioOutputEnabled.data.value) {
+        if (AppSettings.isAudioOutputEnabled.value) {
             coroutineScope.launch {
-                when (ConfigurationSettings.audioPlayingOption.data.value) {
+                when (ConfigurationSettings.audioPlayingOption.value) {
                     AudioPlayingOptions.Local -> StateMachine.playAudio(data, true)
                     AudioPlayingOptions.RemoteHTTP -> HttpClientInterface.playWav(data)
                     AudioPlayingOptions.RemoteMQTT -> MqttService.playBytes(data)
@@ -160,7 +160,7 @@ object RhasspyActions {
 
         coroutineScope.launch {
 
-            when (ConfigurationSettings.speechToTextOption.data.value) {
+            when (ConfigurationSettings.speechToTextOption.value) {
                 //send the recording to the http endpoint
                 SpeechToTextOptions.RemoteHTTP -> HttpClientInterface.speechToText(StateMachine.getPreviousRecording())?.also {
                     StateMachine.intentTranscribed(intent = it)
@@ -192,9 +192,9 @@ object RhasspyActions {
      */
     fun intentHandling(intent: String) {
 
-        if (AppSettings.isIntentHandlingEnabled.data.value) {
+        if (AppSettings.isIntentHandlingEnabled.value) {
             coroutineScope.launch {
-                when (ConfigurationSettings.intentHandlingOption.data.value) {
+                when (ConfigurationSettings.intentHandlingOption.value) {
                     IntentHandlingOptions.HomeAssistant -> HomeAssistantInterface.sendIntent(intent)
                     IntentHandlingOptions.RemoteHTTP -> HttpClientInterface.intentHandling(intent)
                     IntentHandlingOptions.WithRecognition -> logger.v { "intentHandling with recognition was used" }

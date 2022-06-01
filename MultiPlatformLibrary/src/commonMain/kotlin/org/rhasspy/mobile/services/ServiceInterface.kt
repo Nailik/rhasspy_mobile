@@ -6,16 +6,22 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.handler.ForegroundServiceHandler
 import org.rhasspy.mobile.logic.StateMachine
+import org.rhasspy.mobile.observer.MutableObservable
 import org.rhasspy.mobile.server.HttpServer
 import org.rhasspy.mobile.viewModels.GlobalData
+import kotlin.native.concurrent.ThreadLocal
 
 /**
  * to start and stop services that require it
  */
+@ThreadLocal
 object ServiceInterface {
 
     private val logger = Logger.withTag("ServerService")
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
+
+    private var state = MutableObservable(ServiceState.Stopped)
+    val currentState = state.readOnly()
 
     //call all services to activate them
     init {
@@ -32,16 +38,20 @@ object ServiceInterface {
 
         when (serviceAction) {
             ServiceAction.Start -> {
+                state.value = ServiceState.Starting
                 UdpService.start()
                 HttpServer.start()
                 MqttService.start()
                 StateMachine.started()
+                state.value = ServiceState.Running
             }
             ServiceAction.Stop -> {
+                state.value = ServiceState.Stopping
                 StateMachine.stopped()
                 UdpService.stop()
                 HttpServer.stop()
                 MqttService.stop()
+                state.value = ServiceState.Stopped
             }
             ServiceAction.Reload -> {
                 serviceAction(ServiceAction.Stop)
@@ -56,6 +66,7 @@ object ServiceInterface {
      */
     fun saveAndApplyChanges() {
         coroutineScope.launch {
+            serviceAction(ServiceAction.Stop)
             GlobalData.saveAllChanges()
 
             ForegroundServiceHandler.action(ServiceAction.Reload)

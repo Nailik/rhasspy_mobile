@@ -2,9 +2,6 @@ package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
-import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.postValue
-import dev.icerock.moko.mvvm.livedata.readOnly
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +12,8 @@ import kotlinx.serialization.json.*
 import org.rhasspy.mobile.data.AudioPlayingOptions
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.mqtt.*
-import org.rhasspy.mobile.mqtt.native.MqttClient
+import org.rhasspy.mobile.nativeutils.MqttClient
+import org.rhasspy.mobile.observer.MutableObservable
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.math.min
@@ -28,14 +26,14 @@ object MqttService {
 
     private var client: MqttClient? = null
 
-    private val connected = MutableLiveData(false)
+    private val connected = MutableObservable(false)
     val isConnected = connected.readOnly()
 
     private var isCurrentlyConnected: Boolean = false
         set(value) {
             if (field != value) {
                 field = value
-                connected.postValue(value)
+                connected.value = value
             }
         }
 
@@ -52,7 +50,7 @@ object MqttService {
      * sets connected value
      */
     suspend fun start() {
-        if (!ConfigurationSettings.isMQTTEnabled.data) {
+        if (!ConfigurationSettings.isMQTTEnabled.value) {
             logger.v { "mqtt not enabled" }
             return
         }
@@ -99,7 +97,7 @@ object MqttService {
 
         client = MqttClient(
             brokerUrl = "tcp://${ConfigurationSettings.mqttHost.data}:${ConfigurationSettings.mqttPort.data}",
-            clientId = ConfigurationSettings.siteId.data,
+            clientId = ConfigurationSettings.siteId.value,
             persistenceType = MqttPersistence.MEMORY,
             onDelivered = { },
             onMessageReceived = { topic, message -> onMessageReceived(topic, message) },
@@ -115,8 +113,8 @@ object MqttService {
         //connect to client
         client?.connect(
             MqttConnectionOptions(
-                connUsername = ConfigurationSettings.mqttUserName.data,
-                connPassword = ConfigurationSettings.mqttPassword.data
+                connUsername = ConfigurationSettings.mqttUserName.value,
+                connPassword = ConfigurationSettings.mqttPassword.value
             )
         )?.also {
             logger.e { "connect \n${it.statusCode.name} ${it.msg}" }
@@ -134,7 +132,7 @@ object MqttService {
         MQTTTopicsSubscription.values().forEach { topic ->
             client?.subscribe(
                 topic.topic
-                    .replace("<siteId>", ConfigurationSettings.siteId.data)
+                    .replace("<siteId>", ConfigurationSettings.siteId.value)
             )?.also {
                 logger.e { "subscribe $topic \n${it.statusCode.name} ${it.msg}" }
             }
@@ -187,7 +185,7 @@ object MqttService {
                 else -> {
                     when {
                         MQTTTopicsSubscription.PlayBytes.topic
-                            .replace("<siteId>", ConfigurationSettings.siteId.data)
+                            .replace("<siteId>", ConfigurationSettings.siteId.value)
                             .replace("/", "\\/") //escape slashes
                             .replace("+", ".*") //replace wildcard with regex text
                             .toRegex()
@@ -232,7 +230,7 @@ object MqttService {
     private fun JsonObject.isThisSiteId(): Boolean {
         val siteId = this["siteId"]?.jsonPrimitive?.content
         logger.v { "siteId is $siteId" }
-        return siteId == ConfigurationSettings.siteId.data
+        return siteId == ConfigurationSettings.siteId.value
     }
 
     //###################################  Input Messages
@@ -315,7 +313,7 @@ object MqttService {
             MQTTTopicsPublish.SessionStarted.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("sessionId", sessionId)
-                    put("siteId", ConfigurationSettings.siteId.data)
+                    put("siteId", ConfigurationSettings.siteId.value)
                 }).toByteArray()
             )
         )
@@ -358,7 +356,7 @@ object MqttService {
             MQTTTopicsPublish.SessionEnded.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("sessionId", sessionId)
-                    put("siteId", ConfigurationSettings.siteId.data)
+                    put("siteId", ConfigurationSettings.siteId.value)
                 }).toByteArray()
             )
         )
@@ -375,7 +373,7 @@ object MqttService {
             MQTTTopicsPublish.IntentNotRecognizedInSession.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("sessionId", sessionId)
-                    put("siteId", ConfigurationSettings.siteId.data)
+                    put("siteId", ConfigurationSettings.siteId.value)
                 }).toByteArray()
             )
         )
@@ -389,7 +387,7 @@ object MqttService {
      */
     fun audioFrame(byteArray: List<Byte>) {
         publishMessage(
-            MQTTTopicsPublish.AsrAudioFrame.topic.replace("<siteId>", ConfigurationSettings.siteId.data),
+            MQTTTopicsPublish.AsrAudioFrame.topic.replace("<siteId>", ConfigurationSettings.siteId.value),
             MqttMessage(byteArray.toByteArray())
         )
     }
@@ -404,7 +402,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            AppSettings.isHotWordEnabled.data = true
+            AppSettings.isHotWordEnabled.value = true
         } else {
             logger.d { "received hotWordToggleOn but for other siteId" }
         }
@@ -420,7 +418,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            AppSettings.isHotWordEnabled.data = false
+            AppSettings.isHotWordEnabled.value = false
         } else {
             logger.d { "received hotWordToggleOff but for other siteId" }
         }
@@ -460,8 +458,8 @@ object MqttService {
             MQTTTopicsPublish.HotWordDetected.topic.replace("<wakewordId>", "default"),
             MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
-                    put("currentSensitivity", ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.data)
-                    put("siteId", ConfigurationSettings.siteId.data)
+                    put("currentSensitivity", ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.value)
+                    put("siteId", ConfigurationSettings.siteId.value)
                     //put("sendAudioCaptured", true)
                     //necessary
                     put(
@@ -486,7 +484,7 @@ object MqttService {
             MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("error", description)
-                    put("siteId", ConfigurationSettings.siteId.data)
+                    put("siteId", ConfigurationSettings.siteId.value)
                 }).toByteArray()
             )
         )
@@ -526,7 +524,7 @@ object MqttService {
             MQTTTopicsPublish.AsrStartListening.topic,
             MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
-                    put("siteId", ConfigurationSettings.siteId.data)
+                    put("siteId", ConfigurationSettings.siteId.value)
                     put("sessionId", sessionId)
                     put("stopOnSilence", true)
                     put("sendAudioCaptured", true)
@@ -564,7 +562,7 @@ object MqttService {
             MQTTTopicsPublish.AsrStopListening.topic,
             MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
-                    put("siteId", ConfigurationSettings.siteId.data)
+                    put("siteId", ConfigurationSettings.siteId.value)
                     put("sessionId", sessionId)
                 }).toByteArray()
             )
@@ -606,7 +604,7 @@ object MqttService {
             MQTTTopicsPublish.AsrTextCaptured.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("text", JsonPrimitive(text))
-                    put("siteId", ConfigurationSettings.siteId.data)
+                    put("siteId", ConfigurationSettings.siteId.value)
                     put("sessionId", sessionId)
                 }).toByteArray()
             )
@@ -642,7 +640,7 @@ object MqttService {
         publishMessage(
             MQTTTopicsPublish.AsrError.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
-                    put("siteId", ConfigurationSettings.siteId.data)
+                    put("siteId", ConfigurationSettings.siteId.value)
                     put("sessionId", sessionId)
                 }).toByteArray()
             )
@@ -659,7 +657,7 @@ object MqttService {
     fun audioCaptured(sessionId: String?, byteData: List<Byte>) {
         publishMessage(
             MQTTTopicsPublish.AudioCaptured.topic
-                .replace("<siteId>", ConfigurationSettings.siteId.data)
+                .replace("<siteId>", ConfigurationSettings.siteId.value)
                 .replace("<sessionId>", sessionId ?: ""),
             MqttMessage(byteData.toByteArray())
         )
@@ -682,7 +680,7 @@ object MqttService {
             MQTTTopicsPublish.Query.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("input", JsonPrimitive(text))
-                    put("siteId", ConfigurationSettings.siteId.data)
+                    put("siteId", ConfigurationSettings.siteId.value)
                     put("sessionId", sessionId)
                 }).toByteArray()
             )
@@ -740,7 +738,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            AppSettings.isIntentHandlingEnabled.data = true
+            AppSettings.isIntentHandlingEnabled.value = true
         } else {
             logger.d { "received intentHandlingToggleOn but for other siteId" }
         }
@@ -755,7 +753,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            AppSettings.isIntentHandlingEnabled.data = false
+            AppSettings.isIntentHandlingEnabled.value = false
         } else {
             logger.d { "received intentHandlingToggleOff but for other siteId" }
         }
@@ -782,7 +780,7 @@ object MqttService {
             MQTTTopicsPublish.Say.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("text", JsonPrimitive(text))
-                    put("siteId", ConfigurationSettings.siteId.data)
+                    put("siteId", ConfigurationSettings.siteId.value)
                     put("sessionId", sessionId)
                 }).toByteArray()
             )
@@ -802,7 +800,7 @@ object MqttService {
      */
     private fun playBytes(message: MqttMessage) {
         //not necessary to check SiteId for this topic, because it is in topic string
-        if (ConfigurationSettings.audioPlayingOption.data != AudioPlayingOptions.RemoteMQTT) {
+        if (ConfigurationSettings.audioPlayingOption.value != AudioPlayingOptions.RemoteMQTT) {
             RhasspyActions.playAudio(message.payload.toList())
         } else {
             logger.d { "received playBytes but audio playing is set to mqtt, ignoring this to prevent looping" }
@@ -822,7 +820,7 @@ object MqttService {
     fun playBytes(data: List<Byte>) {
         publishMessage(
             MQTTTopicsPublish.AudioOutputPlayBytes.topic
-                .replace("<siteId>", ConfigurationSettings.siteId.data)
+                .replace("<siteId>", ConfigurationSettings.siteId.value)
                 .replace("<requestId>", uuid4().toString()),
             MqttMessage(data.toByteArray())
         )
@@ -837,7 +835,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            AppSettings.isAudioOutputEnabled.data = false
+            AppSettings.isAudioOutputEnabled.value = false
         } else {
             logger.d { "received audioOutputToggleOff but for other siteId" }
         }
@@ -852,7 +850,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            AppSettings.isAudioOutputEnabled.data = true
+            AppSettings.isAudioOutputEnabled.value = true
         } else {
             logger.d { "received audioOutputToggleOff but for other siteId" }
         }
@@ -867,14 +865,14 @@ object MqttService {
     fun playFinished() {
         publishMessage(
             MQTTTopicsPublish.AudioOutputPlayFinished.topic
-                .replace("<siteId>", ConfigurationSettings.siteId.data),
+                .replace("<siteId>", ConfigurationSettings.siteId.value),
             MqttMessage(ByteArray(0))
         )
     }
 
     /**
      * rhasspy/audioServer/setVolume (JSON, Rhasspy only)
-     * Set the volume at one or more sites
+     * Set the volume at one or more sitesu
      * volume: float - volume level to set (0 = off, 1 = full volume)
      * siteId: string = "default" - Hermes site ID
      */
@@ -883,7 +881,7 @@ object MqttService {
 
         if (jsonObject.isThisSiteId()) {
             jsonObject["volume"]?.jsonPrimitive?.floatOrNull?.also {
-                AppSettings.volume.data = it
+                AppSettings.volume.value = it
             } ?: run {
                 logger.e { "setVolume invalid value ${jsonObject["volume"]}" }
             }

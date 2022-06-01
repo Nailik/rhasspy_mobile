@@ -13,7 +13,7 @@ object IndicationService {
     private val logger = Logger.withTag("IndicationService")
 
     private val currentState = MutableObservable(IndicationState.Idle)
-    val readonlyState = currentState.readonly()
+    val readonlyState = currentState.readOnly()
 
     init {
         //start native indication service
@@ -24,11 +24,11 @@ object IndicationService {
                     NativeIndication.releaseWakeUp()
                 }
                 IndicationState.Wakeup -> {
-                    if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data.value) {
+                    if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.value) {
                         NativeIndication.wakeUpScreen()
                     }
 
-                    if (AppSettings.isWakeWordLightIndication.data.value) {
+                    if (AppSettings.isWakeWordLightIndication.value) {
                         NativeIndication.showIndication()
                     }
                 }
@@ -64,11 +64,11 @@ object IndicationService {
                     NativeIndication.releaseWakeUp()
                 }
                 IndicationState.Wakeup -> {
-                    if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data.value) {
+                    if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.value) {
                         NativeIndication.wakeUpScreen()
                     }
 
-                    if (AppSettings.isWakeWordLightIndication.data.value) {
+                    if (AppSettings.isWakeWordLightIndication.value) {
                         NativeIndication.showIndication()
                     }
                 }
@@ -76,7 +76,7 @@ object IndicationService {
             }
 
             //handle sound indication
-            if (AppSettings.isWakeWordSoundIndication.data.value) {
+            if (AppSettings.isWakeWordSoundIndication.value) {
                 when (it) {
                     State.StartingSession -> playWakeSound()
                     State.RecordingStopped -> playRecordedSound()
@@ -89,26 +89,26 @@ object IndicationService {
     }
 
     private fun playWakeSound() {
-        when (AppSettings.wakeSound.data.value) {
+        when (AppSettings.wakeSound.value) {
             0 -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_hi)
             1 -> {}
-            else -> AudioPlayer.playSoundFile(AppSettings.wakeSounds.data.value.elementAt(AppSettings.wakeSound.data.value - 2))
+            else -> AudioPlayer.playSoundFile(AppSettings.wakeSounds.value.elementAt(AppSettings.wakeSound.value - 2))
         }
     }
 
     private fun playRecordedSound() {
-        when (AppSettings.recordedSound.data.value) {
+        when (AppSettings.recordedSound.value) {
             0 -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_lo)
             1 -> {}
-            else -> AudioPlayer.playSoundFile(AppSettings.recordedSounds.data.value.elementAt(AppSettings.recordedSound.data.value - 2))
+            else -> AudioPlayer.playSoundFile(AppSettings.recordedSounds.value.elementAt(AppSettings.recordedSound.value - 2))
         }
     }
 
     private fun playErrorSound() {
-        when (AppSettings.errorSound.data.value) {
+        when (AppSettings.errorSound.value) {
             0 -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_error)
             1 -> {}
-            else -> AudioPlayer.playSoundFile(AppSettings.errorSounds.data.value.elementAt(AppSettings.errorSound.data.value - 2))
+            else -> AudioPlayer.playSoundFile(AppSettings.errorSounds.value.elementAt(AppSettings.errorSound.value - 2))
         }
     }
 

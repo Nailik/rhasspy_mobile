@@ -34,7 +34,7 @@ object HotWordService {
         //change things according to state of the service
         StateMachine.currentState.observe {
             logger.v { "currentState changed to $it" }
-            evaluateHotWordAction(it, AppSettings.isHotWordEnabled.data.value)
+            evaluateHotWordAction(it, AppSettings.isHotWordEnabled.value)
         }
     }
 
@@ -68,10 +68,10 @@ object HotWordService {
         isRunning = true
         logger.d { "startHotWord" }
 
-        when (ConfigurationSettings.wakeWordOption.data.value) {
+        when (ConfigurationSettings.wakeWordOption.value) {
             WakeWordOption.Porcupine -> {
                 //when porcupine is used for hotWord then start local service
-                if (ConfigurationSettings.wakeWordPorcupineAccessToken.data.value.isNotEmpty()) {
+                if (ConfigurationSettings.wakeWordPorcupineAccessToken.value.isNotEmpty()) {
                     NativeLocalWakeWordService.start()
                 } else {
                     val description = "couldn't start local wake word service, access Token Empty"
