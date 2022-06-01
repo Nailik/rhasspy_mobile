@@ -5,7 +5,7 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
-import io.ktor.server.plugins.cors.routing.CORS
+import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.dataconversion.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -33,8 +33,8 @@ object HttpServer {
     fun start() {
         logger.v { "startHttpServer" }
 
-        if (server == null || !ConfigurationSettings.isHttpServerEnabled.data) {
-            ConfigurationSettings.httpServerPort.data.toIntOrNull()?.also { port ->
+        if (server == null || !ConfigurationSettings.isHttpServerEnabled.value) {
+            ConfigurationSettings.httpServerPort.value.toIntOrNull()?.also { port ->
                 logger.v { "server == null" }
                 server = getServer(port)
                 CoroutineScope(Dispatchers.Main).launch {
@@ -132,7 +132,7 @@ object HttpServer {
         logger.v { "received $action" }
 
         action?.also {
-            AppSettings.isHotWordEnabled.data = it
+            AppSettings.isHotWordEnabled.value = it
         } ?: run {
             logger.w { "invalid body" }
         }
@@ -195,7 +195,7 @@ object HttpServer {
 
         volume?.also {
             if (volume > 0F && volume < 1F) {
-                AppSettings.volume.data = volume
+                AppSettings.volume.value = volume
             }
             return@post
         }
