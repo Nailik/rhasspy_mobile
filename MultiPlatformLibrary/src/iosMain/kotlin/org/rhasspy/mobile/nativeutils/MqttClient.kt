@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.mqtt.native
+package org.rhasspy.mobile.nativeutils
 
 import org.rhasspy.mobile.mqtt.*
 

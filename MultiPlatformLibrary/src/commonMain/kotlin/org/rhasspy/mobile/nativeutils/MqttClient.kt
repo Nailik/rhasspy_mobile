@@ -1,8 +1,7 @@
-package org.rhasspy.mobile.mqtt.native
+package org.rhasspy.mobile.nativeutils
 
 import org.rhasspy.mobile.mqtt.*
 
-//source https://gitlab.com/napperley/kmqtt-client
 /** Represents a MQTT client which can connect to the MQTT Broker. */
 expect class MqttClient(
     /**

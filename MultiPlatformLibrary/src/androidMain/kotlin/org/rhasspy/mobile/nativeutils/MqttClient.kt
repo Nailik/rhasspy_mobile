@@ -1,18 +1,13 @@
-package org.rhasspy.mobile.mqtt.native
+package org.rhasspy.mobile.nativeutils
 
 import co.touchlab.kermit.Logger
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
-import org.eclipse.paho.client.mqttv3.MqttException
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException
-import org.eclipse.paho.client.mqttv3.MqttSecurityException
+import org.eclipse.paho.client.mqttv3.*
+import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence
 import org.rhasspy.mobile.mqtt.*
+import org.rhasspy.mobile.mqtt.MqttMessage
 import org.rhasspy.mobile.settings.AppSettings
-import org.eclipse.paho.client.mqttv3.MqttClient as PahoMqttClient
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions as PahoConnectOptions
-import org.eclipse.paho.client.mqttv3.MqttMessage as PahoMqttMessage
-
 
 actual class MqttClient actual constructor(
     brokerUrl: String,
@@ -25,9 +20,9 @@ actual class MqttClient actual constructor(
     private val logger = Logger.withTag("MqttClient")
 
     private var client = when (persistenceType) {
-        MqttPersistence.MEMORY -> PahoMqttClient(brokerUrl, clientId, MemoryPersistence())
-        MqttPersistence.FILE -> PahoMqttClient(brokerUrl, clientId, MqttDefaultFilePersistence())
-        else -> PahoMqttClient(brokerUrl, clientId)
+        MqttPersistence.MEMORY -> MqttClient(brokerUrl, clientId, MemoryPersistence())
+        MqttPersistence.FILE -> MqttClient(brokerUrl, clientId, MqttDefaultFilePersistence())
+        else -> MqttClient(brokerUrl, clientId)
     }
 
     private val callback = object : org.eclipse.paho.client.mqttv3.MqttCallback {
@@ -35,7 +30,7 @@ actual class MqttClient actual constructor(
             onDelivered(token.messageId)
         }
 
-        override fun messageArrived(topic: String, message: PahoMqttMessage) {
+        override fun messageArrived(topic: String, message: org.eclipse.paho.client.mqttv3.MqttMessage) {
             onMessageReceived(topic, message.toMqttMessage())
         }
 
@@ -50,14 +45,14 @@ actual class MqttClient actual constructor(
 
 
     actual suspend fun publish(topic: String, msg: MqttMessage, timeout: Long): MqttError? = try {
-        if (!topic.contains("audioFrame") || AppSettings.isLogAudioFrames.data) {
+        if (!topic.contains("audioFrame") || AppSettings.isLogAudioFrames.value) {
             //logging every audio frame really fills up the logs
             logger.v {
                 "publish $topic $msg"
             }
         }
 
-        client.publish(topic, PahoMqttMessage(msg.payload).apply {
+        client.publish(topic, org.eclipse.paho.client.mqttv3.MqttMessage(msg.payload).apply {
             id = msg.msgId
             qos = msg.qos.value
             isRetained = msg.retained
@@ -126,7 +121,7 @@ actual class MqttClient actual constructor(
     }
 
     /** Makes a attempt to establish a connection to the MQTT broker. */
-    private fun connectToBroker(connOptions: PahoConnectOptions): MqttError? {
+    private fun connectToBroker(connOptions: MqttConnectOptions): MqttError? {
         logger.v { "connectToBroker" }
         var result: MqttError? = null
         var status = MqttStatus.SUCCESS
@@ -172,8 +167,8 @@ actual class MqttClient actual constructor(
         return result
     }
 
-    private fun MqttConnectionOptions.toPhaoConnectOptions(): PahoConnectOptions {
-        return PahoConnectOptions().also {
+    private fun MqttConnectionOptions.toPhaoConnectOptions(): MqttConnectOptions {
+        return MqttConnectOptions().also {
             it.isCleanSession = cleanSession
             it.keepAliveInterval = keepAliveInterval
             it.userName = connUsername.ifEmpty { null }
@@ -182,7 +177,7 @@ actual class MqttClient actual constructor(
         }
     }
 
-    private fun PahoMqttMessage.toMqttMessage(): MqttMessage {
+    private fun org.eclipse.paho.client.mqttv3.MqttMessage.toMqttMessage(): MqttMessage {
         return MqttMessage(
             msgId = id,
             qos = MqttQos.createMqttQos(qos),
