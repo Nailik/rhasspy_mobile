@@ -58,13 +58,13 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
         try {
 
             val keywordName =
-                ConfigurationSettings.wakeWordPorcupineKeywordOptions.data.elementAt(ConfigurationSettings.wakeWordPorcupineKeywordOption.data)
+                ConfigurationSettings.wakeWordPorcupineKeywordOptions.value.elementAt(ConfigurationSettings.wakeWordPorcupineKeywordOption.value)
 
             val buildInKeyword = findBuiltInKeyword(keywordName)
 
             val porcupineBuilder = PorcupineManager.Builder()
-                .setAccessKey(ConfigurationSettings.wakeWordPorcupineAccessToken.data)
-                .setSensitivity(ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.data).apply {
+                .setAccessKey(ConfigurationSettings.wakeWordPorcupineAccessToken.value)
+                .setSensitivity(ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.value).apply {
                     setModelPath(copyModelFileIfNecessary())
                     buildInKeyword?.also {
                         setKeyword(it)
@@ -87,7 +87,7 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
     override fun invoke(keywordIndex: Int) {
         logger.d { "invoke - keyword detected" }
         val keywordName =
-            ConfigurationSettings.wakeWordPorcupineKeywordOptions.data.elementAt(ConfigurationSettings.wakeWordPorcupineKeywordOption.data)
+            ConfigurationSettings.wakeWordPorcupineKeywordOptions.value.elementAt(ConfigurationSettings.wakeWordPorcupineKeywordOption.value)
         StateMachine.hotWordDetected(keywordName)
     }
 
@@ -100,10 +100,10 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
     }
 
     private fun copyModelFileIfNecessary(): String {
-        val file = File(Application.Instance.filesDir, "porcupine/model_${ConfigurationSettings.wakeWordPorcupineLanguage.data.name.lowercase()}.pv")
+        val file = File(Application.Instance.filesDir, "porcupine/model_${ConfigurationSettings.wakeWordPorcupineLanguage.value.name.lowercase()}.pv")
 
         if (!file.exists()) {
-            val modelFile = when (ConfigurationSettings.wakeWordPorcupineLanguage.data) {
+            val modelFile = when (ConfigurationSettings.wakeWordPorcupineLanguage.value) {
                 PorcupineLanguageOptions.EN -> MR.files.porcupine_params
                 PorcupineLanguageOptions.DE -> MR.files.porcupine_params_de
                 PorcupineLanguageOptions.FR -> MR.files.porcupine_params_fr

@@ -15,7 +15,7 @@ actual object AudioPlayer {
     private var isEnabled = true
 
     private var isPlaying = MutableObservable(false)
-    actual val isPlayingState = isPlaying.readonly()
+    actual val isPlayingState = isPlaying.readOnly()
     private var audioTrack: AudioTrack? = null
     private var onFinished: (() -> Unit)? = null
 
@@ -75,7 +75,7 @@ actual object AudioPlayer {
                 })
 
 
-                setVolume(AppSettings.volume.data.value)
+                setVolume(AppSettings.volume.value)
 
                 write(byteArray, 40, audioDataSize)
                 play()
@@ -114,7 +114,7 @@ actual object AudioPlayer {
                 .build()
         )
 
-        mediaPlayer.setVolume(AppSettings.soundVolume.data.value, AppSettings.soundVolume.data.value)
+        mediaPlayer.setVolume(AppSettings.soundVolume.value, AppSettings.soundVolume.value)
         //on completion listener is also called when error occurs
         mediaPlayer.setOnCompletionListener {
             isPlaying.value = false
