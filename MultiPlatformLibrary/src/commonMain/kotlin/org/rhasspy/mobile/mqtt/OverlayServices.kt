@@ -12,8 +12,8 @@ object OverlayServices {
         if (!OverlayPermission.isGranted()) {
             logger.v { "reset overlay settings because permission is missing" }
             //reset services that need the permission
-            AppSettings.isMicrophoneOverlayEnabled.data = false
-            AppSettings.isWakeWordLightIndication.data = false
+            AppSettings.isMicrophoneOverlayEnabled.value = false
+            AppSettings.isWakeWordLightIndication.value = false
         }
     }
 
