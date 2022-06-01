@@ -33,7 +33,6 @@ import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
-import org.rhasspy.mobile.services.RhasspyActions
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.viewModels.ConfigurationScreenViewModel
 import java.math.RoundingMode
@@ -45,46 +44,47 @@ fun ConfigurationScreen(snackbarHostState: SnackbarHostState, viewModel: Configu
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        SiteId()
+        val isEnabled = viewModel.isChangeEnabled.observe()
+        SiteId(isEnabled)
         CustomDivider()
-        HttpServer()
+        HttpServer(isEnabled)
         CustomDivider()
-        Mqtt(viewModel)
+        Mqtt(viewModel, isEnabled)
         CustomDivider()
-        AudioRecording()
+        AudioRecording(isEnabled)
         CustomDivider()
-        WakeWord(viewModel, snackbarHostState)
+        WakeWord(viewModel, isEnabled, snackbarHostState)
         CustomDivider()
-        SpeechToText()
+        SpeechToText(isEnabled)
         CustomDivider()
-        IntentRecognition()
+        IntentRecognition(isEnabled)
         CustomDivider()
-        TextToSpeech()
+        TextToSpeech(isEnabled)
         CustomDivider()
-        AudioPlaying()
+        AudioPlaying(isEnabled)
         CustomDivider()
-        DialogueManagement()
+        DialogueManagement(isEnabled)
         CustomDivider()
-        IntentHandling()
+        IntentHandling(isEnabled)
         CustomDivider()
     }
 }
 
 
 @Composable
-fun SiteId() {
+fun SiteId(enabled: Boolean) {
 
     TextFieldListItem(
         value = ConfigurationSettings.siteId.observeCurrent(),
-        onValueChange = { ConfigurationSettings.siteId.unsavedData = it },
+        onValueChange = { ConfigurationSettings.siteId.unsaved.value = it },
         label = MR.strings.siteId,
         paddingValues = PaddingValues(top = 4.dp, bottom = 16.dp),
-        enabled = !RhasspyActions.isRestarting.observe()
+        enabled = enabled
     )
 }
 
 @Composable
-fun HttpServer() {
+fun HttpServer(enabled: Boolean) {
 
     val isHttpServerValue = ConfigurationSettings.isHttpServerEnabled.observeCurrent()
 
@@ -96,15 +96,15 @@ fun HttpServer() {
         SwitchListItem(
             text = MR.strings.enableHTTPApi,
             isChecked = isHttpServerValue,
-            enabled = !RhasspyActions.isRestarting.observe(),
-            onCheckedChange = { ConfigurationSettings.isHttpServerEnabled.unsavedData = it })
+            enabled = enabled,
+            onCheckedChange = { ConfigurationSettings.isHttpServerEnabled.unsaved.value = it })
 
         TextFieldListItem(
             label = MR.strings.port,
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             value = ConfigurationSettings.httpServerPort.observeCurrent().toString(),
-            enabled = !RhasspyActions.isRestarting.observe(),
-            onValueChange = { ConfigurationSettings.httpServerPort.unsavedData = it },
+            enabled = enabled,
+            onValueChange = { ConfigurationSettings.httpServerPort.unsaved.value = it },
         )
 
         AnimatedVisibility(
@@ -120,8 +120,8 @@ fun HttpServer() {
                 SwitchListItem(
                     text = MR.strings.enableSSL,
                     isChecked = isHttpServerSSLValue,
-                    enabled = !RhasspyActions.isRestarting.observe(),
-                    onCheckedChange = { ConfigurationSettings.isHttpServerSSL.unsavedData = it })
+                    enabled = enabled,
+                    onCheckedChange = { ConfigurationSettings.isHttpServerSSL.unsaved.value = it })
 
                 AnimatedVisibility(
                     enter = expandVertically(),
@@ -130,7 +130,7 @@ fun HttpServer() {
                 ) {
                     OutlineButtonListItem(
                         text = MR.strings.chooseCertificate,
-                        enabled = !RhasspyActions.isRestarting.observe(),
+                        enabled = enabled,
                         onClick = { })
                 }
             }
@@ -139,7 +139,7 @@ fun HttpServer() {
 }
 
 @Composable
-fun Mqtt(viewModel: ConfigurationScreenViewModel) {
+fun Mqtt(viewModel: ConfigurationScreenViewModel, enabled: Boolean) {
     ExpandableListItem(
         text = MR.strings.mqtt,
         secondaryText = if (viewModel.isMQTTConnected.observe()) MR.strings.connected else MR.strings.notConnected
@@ -150,8 +150,8 @@ fun Mqtt(viewModel: ConfigurationScreenViewModel) {
         SwitchListItem(
             text = MR.strings.externalMQTT,
             isChecked = isMqttEnabled,
-            enabled = !RhasspyActions.isRestarting.observe(),
-            onCheckedChange = { ConfigurationSettings.isMQTTEnabled.unsavedData = it })
+            enabled = enabled,
+            onCheckedChange = { ConfigurationSettings.isMQTTEnabled.unsaved.value = it })
 
 
         AnimatedVisibility(
@@ -165,22 +165,22 @@ fun Mqtt(viewModel: ConfigurationScreenViewModel) {
                 TextFieldListItem(
                     label = MR.strings.host,
                     value = ConfigurationSettings.mqttHost.observeCurrent(),
-                    enabled = !RhasspyActions.isRestarting.observe(),
-                    onValueChange = { ConfigurationSettings.mqttHost.unsavedData = it },
+                    enabled = enabled,
+                    onValueChange = { ConfigurationSettings.mqttHost.unsaved.value = it },
                 )
 
                 TextFieldListItem(
                     label = MR.strings.port,
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     value = ConfigurationSettings.mqttPort.observeCurrent(),
-                    enabled = !RhasspyActions.isRestarting.observe(),
-                    onValueChange = { ConfigurationSettings.mqttPort.unsavedData = it },
+                    enabled = enabled,
+                    onValueChange = { ConfigurationSettings.mqttPort.unsaved.value = it },
                 )
 
                 TextFieldListItem(
                     value = ConfigurationSettings.mqttUserName.observeCurrent(),
-                    enabled = !RhasspyActions.isRestarting.observe(),
-                    onValueChange = { ConfigurationSettings.mqttUserName.unsavedData = it },
+                    enabled = enabled,
+                    onValueChange = { ConfigurationSettings.mqttUserName.unsaved.value = it },
                     label = MR.strings.userName
                 )
 
@@ -188,8 +188,8 @@ fun Mqtt(viewModel: ConfigurationScreenViewModel) {
 
                 TextFieldListItem(
                     value = ConfigurationSettings.mqttPassword.observeCurrent(),
-                    enabled = !RhasspyActions.isRestarting.observe(),
-                    onValueChange = { ConfigurationSettings.mqttPassword.unsavedData = it },
+                    enabled = enabled,
+                    onValueChange = { ConfigurationSettings.mqttPassword.unsaved.value = it },
                     label = MR.strings.password,
                     visualTransformation = if (isShowPassword) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
@@ -211,8 +211,8 @@ fun Mqtt(viewModel: ConfigurationScreenViewModel) {
                 SwitchListItem(
                     text = MR.strings.enableSSL,
                     isChecked = isMqttSSL,
-                    enabled = !RhasspyActions.isRestarting.observe(),
-                    onCheckedChange = { ConfigurationSettings.isMqttSSL.unsavedData = it })
+                    enabled = enabled,
+                    onCheckedChange = { ConfigurationSettings.isMqttSSL.unsaved.value = it })
 
                 AnimatedVisibility(
                     enter = expandVertically(),
@@ -221,7 +221,7 @@ fun Mqtt(viewModel: ConfigurationScreenViewModel) {
                 ) {
                     OutlineButtonListItem(
                         text = MR.strings.chooseCertificate,
-                        enabled = !RhasspyActions.isRestarting.observe(),
+                        enabled = enabled,
                         onClick = { })
                 }
             }
@@ -230,7 +230,7 @@ fun Mqtt(viewModel: ConfigurationScreenViewModel) {
 }
 
 @Composable
-fun AudioRecording() {
+fun AudioRecording(enabled: Boolean) {
 
     val isUDPOutput = ConfigurationSettings.isUDPOutput.observeCurrent()
 
@@ -247,8 +247,8 @@ fun AudioRecording() {
             text = MR.strings.udpAudioOutput,
             secondaryText = MR.strings.udpAudioOutputDetail,
             isChecked = isUDPOutput,
-            enabled = !RhasspyActions.isRestarting.observe(),
-            onCheckedChange = { ConfigurationSettings.isUDPOutput.unsavedData = it })
+            enabled = enabled,
+            onCheckedChange = { ConfigurationSettings.isUDPOutput.unsaved.value = it })
 
         AnimatedVisibility(
             enter = expandVertically(),
@@ -260,16 +260,16 @@ fun AudioRecording() {
                 TextFieldListItem(
                     label = MR.strings.host,
                     value = ConfigurationSettings.udpOutputHost.observeCurrent(),
-                    enabled = !RhasspyActions.isRestarting.observe(),
-                    onValueChange = { ConfigurationSettings.udpOutputHost.unsavedData = it },
+                    enabled = enabled,
+                    onValueChange = { ConfigurationSettings.udpOutputHost.unsaved.value = it },
                 )
 
                 TextFieldListItem(
                     label = MR.strings.port,
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     value = ConfigurationSettings.udpOutputPort.observeCurrent().toString(),
-                    enabled = !RhasspyActions.isRestarting.observe(),
-                    onValueChange = { ConfigurationSettings.udpOutputPort.unsavedData = it },
+                    enabled = enabled,
+                    onValueChange = { ConfigurationSettings.udpOutputPort.unsaved.value = it },
                 )
             }
         }
@@ -278,7 +278,7 @@ fun AudioRecording() {
 }
 
 @Composable
-fun WakeWord(viewModel: ConfigurationScreenViewModel, snackbarHostState: SnackbarHostState) {
+fun WakeWord(viewModel: ConfigurationScreenViewModel, enabled: Boolean, snackbarHostState: SnackbarHostState) {
 
     val wakeWordValueOption = ConfigurationSettings.wakeWordOption.observeCurrent()
 
@@ -289,18 +289,18 @@ fun WakeWord(viewModel: ConfigurationScreenViewModel, snackbarHostState: Snackba
 
         val requestMicrophonePermission = requestMicrophonePermission(snackbarHostState, MR.strings.microphonePermissionInfoWakeWord) {
             if (it) {
-                ConfigurationSettings.wakeWordOption.unsavedData = WakeWordOption.Porcupine
+                ConfigurationSettings.wakeWordOption.unsaved.value = WakeWordOption.Porcupine
             }
         }
 
         DropDownEnumListItem(
             selected = wakeWordValueOption,
-            enabled = !RhasspyActions.isRestarting.observe(),
+            enabled = enabled,
             onSelect = {
                 if (it == WakeWordOption.Porcupine && !MicrophonePermission.granted.value) {
                     requestMicrophonePermission.invoke()
                 } else {
-                    ConfigurationSettings.wakeWordOption.unsavedData = it
+                    ConfigurationSettings.wakeWordOption.unsaved.value = it
                 }
             })
         { WakeWordOption.values() }
@@ -318,7 +318,7 @@ fun WakeWord(viewModel: ConfigurationScreenViewModel, snackbarHostState: Snackba
 
                 TextFieldListItem(
                     value = ConfigurationSettings.wakeWordPorcupineAccessToken.observeCurrent(),
-                    onValueChange = { ConfigurationSettings.wakeWordPorcupineAccessToken.unsavedData = it },
+                    onValueChange = { ConfigurationSettings.wakeWordPorcupineAccessToken.unsaved.value = it },
                     label = MR.strings.porcupineAccessKey,
                     visualTransformation = if (isShowAccessToken) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
@@ -338,7 +338,7 @@ fun WakeWord(viewModel: ConfigurationScreenViewModel, snackbarHostState: Snackba
 
                 OutlineButtonListItem(
                     text = MR.strings.openPicoVoiceConsole,
-                    enabled = !RhasspyActions.isRestarting.observe(),
+                    enabled = enabled,
                     onClick = {
                         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://console.picovoice.ai")))
                     })
@@ -347,26 +347,26 @@ fun WakeWord(viewModel: ConfigurationScreenViewModel, snackbarHostState: Snackba
                 DropDownListWithFileOpen(
                     overlineText = { Text(MR.strings.wakeWord) },
                     selected = ConfigurationSettings.wakeWordPorcupineKeywordOption.observeCurrent(),
-                    enabled = !RhasspyActions.isRestarting.observe(),
+                    enabled = enabled,
                     values = ConfigurationSettings.wakeWordPorcupineKeywordOptions.observeCurrent().toTypedArray(),
                     onAdd = {
                         viewModel.selectPorcupineWakeWordFile()
                     }) {
-                    ConfigurationSettings.wakeWordPorcupineKeywordOption.unsavedData = it
+                    ConfigurationSettings.wakeWordPorcupineKeywordOption.unsaved.value = it
                 }
 
                 DropDownEnumListItem(
                     selected = ConfigurationSettings.wakeWordPorcupineLanguage.observeCurrent(),
-                    enabled = !RhasspyActions.isRestarting.observe(),
-                    onSelect = { ConfigurationSettings.wakeWordPorcupineLanguage.unsavedData = it })
+                    enabled = enabled,
+                    onSelect = { ConfigurationSettings.wakeWordPorcupineLanguage.unsaved.value = it })
                 { PorcupineLanguageOptions.values() }
 
                 SliderListItem(
                     text = MR.strings.sensitivity,
                     value = ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.observeCurrent(),
-                    enabled = !RhasspyActions.isRestarting.observe(),
+                    enabled = enabled,
                     onValueChange = {
-                        ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.unsavedData =
+                        ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.unsaved.value =
                             it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
                     })
             }
@@ -375,7 +375,7 @@ fun WakeWord(viewModel: ConfigurationScreenViewModel, snackbarHostState: Snackba
 }
 
 @Composable
-fun SpeechToText() {
+fun SpeechToText(enabled: Boolean) {
 
     val speechToTextOption = ConfigurationSettings.speechToTextOption.observeCurrent()
 
@@ -385,8 +385,8 @@ fun SpeechToText() {
     ) {
         DropDownEnumListItem(
             selected = speechToTextOption,
-            enabled = !RhasspyActions.isRestarting.observe(),
-            onSelect = { ConfigurationSettings.speechToTextOption.unsavedData = it })
+            enabled = enabled,
+            onSelect = { ConfigurationSettings.speechToTextOption.unsaved.value = it })
         { SpeechToTextOptions.values() }
 
         AnimatedVisibility(
@@ -397,8 +397,8 @@ fun SpeechToText() {
 
             TextFieldListItem(
                 value = ConfigurationSettings.speechToTextHttpEndpoint.observeCurrent(),
-                enabled = !RhasspyActions.isRestarting.observe(),
-                onValueChange = { ConfigurationSettings.speechToTextHttpEndpoint.unsavedData = it },
+                enabled = enabled,
+                onValueChange = { ConfigurationSettings.speechToTextHttpEndpoint.unsaved.value = it },
                 label = MR.strings.speechToTextURL
             )
 
@@ -407,7 +407,7 @@ fun SpeechToText() {
 }
 
 @Composable
-fun IntentRecognition() {
+fun IntentRecognition(enabled: Boolean) {
 
     val intentRecognitionOption = ConfigurationSettings.intentRecognitionOption.observeCurrent()
 
@@ -417,8 +417,8 @@ fun IntentRecognition() {
     ) {
         DropDownEnumListItem(
             selected = intentRecognitionOption,
-            enabled = !RhasspyActions.isRestarting.observe(),
-            onSelect = { ConfigurationSettings.intentRecognitionOption.unsavedData = it })
+            enabled = enabled,
+            onSelect = { ConfigurationSettings.intentRecognitionOption.unsaved.value = it })
         { IntentRecognitionOptions.values() }
 
         AnimatedVisibility(
@@ -429,8 +429,8 @@ fun IntentRecognition() {
 
             TextFieldListItem(
                 value = ConfigurationSettings.intentRecognitionEndpoint.observeCurrent(),
-                enabled = !RhasspyActions.isRestarting.observe(),
-                onValueChange = { ConfigurationSettings.intentRecognitionEndpoint.unsavedData = it },
+                enabled = enabled,
+                onValueChange = { ConfigurationSettings.intentRecognitionEndpoint.unsaved.value = it },
                 label = MR.strings.rhasspyTextToIntentURL
             )
 
@@ -439,7 +439,7 @@ fun IntentRecognition() {
 }
 
 @Composable
-fun TextToSpeech() {
+fun TextToSpeech(enabled: Boolean) {
 
     val textToSpeechOption = ConfigurationSettings.textToSpeechOption.observeCurrent()
 
@@ -449,8 +449,8 @@ fun TextToSpeech() {
     ) {
         DropDownEnumListItem(
             selected = textToSpeechOption,
-            enabled = !RhasspyActions.isRestarting.observe(),
-            onSelect = { ConfigurationSettings.textToSpeechOption.unsavedData = it })
+            enabled = enabled,
+            onSelect = { ConfigurationSettings.textToSpeechOption.unsaved.value = it })
         { TextToSpeechOptions.values() }
 
         AnimatedVisibility(
@@ -461,8 +461,8 @@ fun TextToSpeech() {
 
             TextFieldListItem(
                 value = ConfigurationSettings.textToSpeechEndpoint.observeCurrent(),
-                enabled = !RhasspyActions.isRestarting.observe(),
-                onValueChange = { ConfigurationSettings.textToSpeechEndpoint.unsavedData = it },
+                enabled = enabled,
+                onValueChange = { ConfigurationSettings.textToSpeechEndpoint.unsaved.value = it },
                 label = MR.strings.rhasspyTextToSpeechURL
             )
 
@@ -471,7 +471,7 @@ fun TextToSpeech() {
 }
 
 @Composable
-fun AudioPlaying() {
+fun AudioPlaying(enabled: Boolean) {
 
     val audioPlayingOption = ConfigurationSettings.audioPlayingOption.observeCurrent()
 
@@ -481,8 +481,8 @@ fun AudioPlaying() {
     ) {
         DropDownEnumListItem(
             selected = audioPlayingOption,
-            enabled = !RhasspyActions.isRestarting.observe(),
-            onSelect = { ConfigurationSettings.audioPlayingOption.unsavedData = it })
+            enabled = enabled,
+            onSelect = { ConfigurationSettings.audioPlayingOption.unsaved.value = it })
         { AudioPlayingOptions.values() }
 
         AnimatedVisibility(
@@ -493,8 +493,8 @@ fun AudioPlaying() {
 
             TextFieldListItem(
                 value = ConfigurationSettings.audioPlayingEndpoint.observeCurrent(),
-                enabled = !RhasspyActions.isRestarting.observe(),
-                onValueChange = { ConfigurationSettings.audioPlayingEndpoint.unsavedData = it },
+                enabled = enabled,
+                onValueChange = { ConfigurationSettings.audioPlayingEndpoint.unsaved.value = it },
                 label = MR.strings.audioOutputURL
             )
         }
@@ -502,7 +502,7 @@ fun AudioPlaying() {
 }
 
 @Composable
-fun DialogueManagement() {
+fun DialogueManagement(enabled: Boolean) {
 
     val dialogueManagementOption = ConfigurationSettings.dialogueManagementOption.observeCurrent()
 
@@ -512,14 +512,14 @@ fun DialogueManagement() {
     ) {
         DropDownEnumListItem(
             selected = dialogueManagementOption,
-            enabled = !RhasspyActions.isRestarting.observe(),
-            onSelect = { ConfigurationSettings.dialogueManagementOption.unsavedData = it })
+            enabled = enabled,
+            onSelect = { ConfigurationSettings.dialogueManagementOption.unsaved.value = it })
         { DialogueManagementOptions.values() }
     }
 }
 
 @Composable
-fun IntentHandling() {
+fun IntentHandling(enabled: Boolean) {
 
     val intentHandlingOption = ConfigurationSettings.intentHandlingOption.observeCurrent()
 
@@ -529,9 +529,9 @@ fun IntentHandling() {
     ) {
         DropDownEnumListItem(
             selected = intentHandlingOption,
-            enabled = !RhasspyActions.isRestarting.observe(),
+            enabled = enabled,
             onSelect = {
-                ConfigurationSettings.intentHandlingOption.unsavedData = it
+                ConfigurationSettings.intentHandlingOption.unsaved.value = it
             })
         { IntentHandlingOptions.values() }
 
@@ -544,8 +544,8 @@ fun IntentHandling() {
 
             TextFieldListItem(
                 value = ConfigurationSettings.intentHandlingEndpoint.observeCurrent(),
-                enabled = !RhasspyActions.isRestarting.observe(),
-                onValueChange = { ConfigurationSettings.intentHandlingEndpoint.unsavedData = it },
+                enabled = enabled,
+                onValueChange = { ConfigurationSettings.intentHandlingEndpoint.unsaved.value = it },
                 label = MR.strings.remoteURL
             )
         }
@@ -559,8 +559,8 @@ fun IntentHandling() {
 
                 TextFieldListItem(
                     value = ConfigurationSettings.intentHandlingHassUrl.observeCurrent(),
-                    enabled = !RhasspyActions.isRestarting.observe(),
-                    onValueChange = { ConfigurationSettings.intentHandlingHassUrl.unsavedData = it },
+                    enabled = enabled,
+                    onValueChange = { ConfigurationSettings.intentHandlingHassUrl.unsaved.value = it },
                     label = MR.strings.hassURL
                 )
 
@@ -568,7 +568,7 @@ fun IntentHandling() {
 
                 TextFieldListItem(
                     value = ConfigurationSettings.intentHandlingHassAccessToken.observeCurrent(),
-                    onValueChange = { ConfigurationSettings.intentHandlingHassAccessToken.unsavedData = it },
+                    onValueChange = { ConfigurationSettings.intentHandlingHassAccessToken.unsaved.value = it },
                     label = MR.strings.accessToken,
                     visualTransformation = if (isShowAccessToken) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
@@ -590,17 +590,17 @@ fun IntentHandling() {
                 RadioButtonListItem(
                     text = MR.strings.homeAssistantEvents,
                     isChecked = isIntentHandlingHassEvent,
-                    enabled = !RhasspyActions.isRestarting.observe(),
+                    enabled = enabled,
                     onClick = {
-                        ConfigurationSettings.isIntentHandlingHassEvent.unsavedData = true
+                        ConfigurationSettings.isIntentHandlingHassEvent.unsaved.value = true
                     })
 
                 RadioButtonListItem(
                     text = MR.strings.homeAssistantIntents,
                     isChecked = !isIntentHandlingHassEvent,
-                    enabled = !RhasspyActions.isRestarting.observe(),
+                    enabled = enabled,
                     onClick = {
-                        ConfigurationSettings.isIntentHandlingHassEvent.unsavedData = false
+                        ConfigurationSettings.isIntentHandlingHassEvent.unsaved.value = false
                     })
             }
         }
