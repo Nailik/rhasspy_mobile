@@ -492,8 +492,8 @@ object StateMachine {
     }
 
     //only start recording, do not stop it
-    fun playRecording(){
-        if(state.value != State.PlayingRecording){
+    fun playRecording() {
+        if (state.value != State.PlayingRecording) {
             togglePlayRecording()
         }
     }

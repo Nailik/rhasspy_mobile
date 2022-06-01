@@ -4,9 +4,9 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.rhasspy.mobile.nativeutils.NativeServiceInterop
 import org.rhasspy.mobile.services.ServiceAction
 import org.rhasspy.mobile.services.ServiceInterface
-import org.rhasspy.mobile.nativeutils.NativeServiceInterop
 import org.rhasspy.mobile.settings.AppSettings
 
 /**

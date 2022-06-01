@@ -5,9 +5,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logger.FileLogger
-import org.rhasspy.mobile.handler.ForegroundServiceHandler
 import org.rhasspy.mobile.mqtt.OverlayServices
-import org.rhasspy.mobile.services.*
+import org.rhasspy.mobile.services.ServiceAction
+import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 

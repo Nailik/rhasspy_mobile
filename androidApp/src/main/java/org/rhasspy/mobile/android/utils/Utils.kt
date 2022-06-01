@@ -51,8 +51,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.LocalWindowInsets
-import dev.icerock.moko.mvvm.ResourceState
-import dev.icerock.moko.mvvm.asState
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.resources.ImageResource
 import dev.icerock.moko.resources.StringResource
