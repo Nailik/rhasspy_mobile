@@ -28,11 +28,11 @@ object HomeAssistantInterface {
         //add meta slots
         slots["_text"] = json["text"]?.jsonPrimitive
         slots["_raw_text"] = json["raw_text"]?.jsonPrimitive
-        slots["_site_id"] = JsonPrimitive(ConfigurationSettings.siteId.data)
+        slots["_site_id"] = JsonPrimitive(ConfigurationSettings.siteId.value)
 
         val intentRes = Json.encodeToString(slots)
 
-        when (ConfigurationSettings.isIntentHandlingHassEvent.data) {
+        when (ConfigurationSettings.isIntentHandlingHassEvent.value) {
             true -> HttpClientInterface.hassEvent(intentRes, intentName)
             false -> HttpClientInterface.hassIntent(intent)
         }

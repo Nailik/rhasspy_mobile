@@ -120,7 +120,7 @@ object HttpClientInterface {
         return try {
 
             val request = httpClient.post(
-                url = Url(ConfigurationSettings.textToSpeechEndpoint.data)
+                url = Url(ConfigurationSettings.textToSpeechEndpoint.value)
             ) {
                 setBody(text)
             }
@@ -148,7 +148,7 @@ object HttpClientInterface {
 
         try {
             val request = httpClient.post(
-                url = Url(ConfigurationSettings.audioPlayingEndpoint.data)
+                url = Url(ConfigurationSettings.audioPlayingEndpoint.value)
             ) {
                 setAttributes {
                     contentType(ContentType("audio", "wav"))
@@ -189,7 +189,7 @@ object HttpClientInterface {
         try {
 
             val request = httpClient.post(
-                url = Url(ConfigurationSettings.intentHandlingEndpoint.data)
+                url = Url(ConfigurationSettings.intentHandlingEndpoint.value)
             ) {
                 setBody(intent)
             }
