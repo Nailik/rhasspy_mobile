@@ -2,7 +2,6 @@ package org.rhasspy.mobile.logic
 
 enum class State {
     Stopped,        //services halted
-    Starting,      //services restarting after settings change
     AwaitingHotWord,    //waiting, maybe recording
     StartingSession,        //session is starting
     StartedSession,        //session has started
