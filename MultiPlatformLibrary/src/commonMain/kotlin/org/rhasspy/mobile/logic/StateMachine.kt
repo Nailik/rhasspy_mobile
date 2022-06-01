@@ -522,5 +522,5 @@ object StateMachine {
         return previousRecordingFile.getFileData()
     }
 
-    private inline fun isDialogueLocal(): Boolean = ConfigurationSettings.dialogueManagementOption.value == DialogueManagementOptions.Local
+    private fun isDialogueLocal(): Boolean = ConfigurationSettings.dialogueManagementOption.value == DialogueManagementOptions.Local
 }
