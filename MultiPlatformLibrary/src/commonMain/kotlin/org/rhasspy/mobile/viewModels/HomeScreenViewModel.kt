@@ -31,7 +31,7 @@ class HomeScreenViewModel : ViewModel() {
         }
 
         isCurrentOverlayPermissionRequestRequired.addSource(OverlayPermission.granted) {
-            isCurrentOverlayPermissionRequestRequired.value = (!it && AppSettings.isWakeWordLightIndication.data.value)
+            isCurrentOverlayPermissionRequestRequired.value = (!it && AppSettings.isWakeWordLightIndication.value)
         }
         isCurrentOverlayPermissionRequestRequired.addSource(AppSettings.isWakeWordLightIndication.data.toLiveData()) {
             isCurrentOverlayPermissionRequestRequired.value = (it && !OverlayPermission.granted.value)
@@ -39,6 +39,7 @@ class HomeScreenViewModel : ViewModel() {
     }
 
     val currentState = StateMachine.currentState
+    val currentServiceState = ServiceInterface.currentState
 
     fun toggleSession() = StateMachine.toggleSessionManually()
 
