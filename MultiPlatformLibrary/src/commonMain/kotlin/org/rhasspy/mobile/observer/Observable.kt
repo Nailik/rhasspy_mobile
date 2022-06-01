@@ -21,6 +21,7 @@ open class Observable<T>(initialValue: T) {
 
     fun observe(observer: (T) -> Unit) {
         observers.add(observer)
+        observer.invoke(value)
     }
 
     fun toLiveData(): LiveData<T> {
