@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.nativeutils
 
 import android.media.*
-import androidx.core.net.toUri
+import android.net.Uri
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.resources.FileResource
 import org.rhasspy.mobile.Application
@@ -147,7 +147,7 @@ actual object AudioPlayer {
         playSound(
             MediaPlayer.create(
                 Application.Instance,
-                soundFile.toUri()
+                Uri.fromFile(soundFile)
             )
         )
     }
