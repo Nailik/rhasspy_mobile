@@ -51,6 +51,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.LocalWindowInsets
+import dev.icerock.moko.mvvm.ResourceState
+import dev.icerock.moko.mvvm.asState
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.resources.ImageResource
 import dev.icerock.moko.resources.StringResource
@@ -59,6 +61,7 @@ import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.DataEnum
+import org.rhasspy.mobile.observer.Observable
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -522,14 +525,21 @@ fun <T> LiveData<T>.observe(): T {
 }
 
 @Composable
+fun <T> Observable<T>.observe(): T {
+    return this.toLiveData().ld().observeAsState(this.value).value
+}
+
+
+@Composable
 fun <T> AppSetting<T>.observe(): T {
-    return this.value.observe()
+    return this.data.toLiveData().observe()
 }
 
 @Composable
 fun <T> ConfigurationSetting<T>.observeCurrent(): T {
-    return this.unsaved.ld().observeAsState(this.data).value
+    return this.unsaved.toLiveData().observe()
 }
+
 
 @Composable
 fun ColorScheme.toColors(isLight: Boolean): Colors {
