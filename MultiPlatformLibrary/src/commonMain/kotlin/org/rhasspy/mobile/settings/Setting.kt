@@ -23,6 +23,9 @@ abstract class Setting<T>(private val key: SettingsEnum, private val initial: T)
         }
     }
 
+    open val value
+        get() = data.value
+
     /**
      * save current value
      */
