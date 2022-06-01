@@ -30,7 +30,7 @@ import org.rhasspy.mobile.android.permissions.MicrophonePermissionRequired
 import org.rhasspy.mobile.android.permissions.OverlayPermissionRequired
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.android.utils.observe
-import org.rhasspy.mobile.services.ServiceInterface
+import org.rhasspy.mobile.services.ServiceState
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.viewModels.GlobalData
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
@@ -107,7 +107,7 @@ fun BottomNavigation(navController: NavHostController) {
 
         val array = mutableListOf(BottomBarScreens.HomeScreen, BottomBarScreens.ConfigurationScreen, BottomBarScreens.SettingsScreen)
 
-        if (AppSettings.isShowLog.value.observe()) {
+        if (AppSettings.isShowLog.observe()) {
             array.add(BottomBarScreens.LogScreen)
         }
 
@@ -171,10 +171,11 @@ fun UnsavedChanges(viewModel: HomeScreenViewModel) {
             }
         }
     }
+
     AnimatedVisibility(
         enter = fadeIn(animationSpec = tween(50)),
         exit = fadeOut(animationSpec = tween(50)),
-        visible = ServiceInterface.isRestarting.observe()
+        visible = viewModel.currentServiceState.observe() != ServiceState.Running
     ) {
         val infiniteTransition = rememberInfiniteTransition()
         val angle by infiniteTransition.animateFloat(
