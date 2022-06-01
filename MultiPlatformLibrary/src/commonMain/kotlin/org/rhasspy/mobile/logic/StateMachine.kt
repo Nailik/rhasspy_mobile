@@ -33,7 +33,7 @@ object StateMachine {
 
     //information about current state
     private var state = MutableObservable(State.Stopped)
-    val currentState = state.readonly()
+    val currentState = state.readOnly()
 
     /**
      * indicates that services have started
@@ -42,7 +42,7 @@ object StateMachine {
     fun started() {
         logger.v { "started" }
 
-        if (state.value == State.Starting) {
+        if (state.value == State.Stopped) {
             currentSession = Session("", "")
             state.value = State.AwaitingHotWord
         } else {
@@ -164,13 +164,13 @@ object StateMachine {
 
                 //only necessary when local dialog management
                 if (isDialogueLocal() &&
-                    ConfigurationSettings.speechToTextOption.data.value == SpeechToTextOptions.RemoteMQTT
+                    ConfigurationSettings.speechToTextOption.value == SpeechToTextOptions.RemoteMQTT
                 ) {
                     //tell asr system to start listening and transcribe text when mqtt is used for speech to text
                     MqttService.startListening(currentSession.sessionId)
                 }
 
-            } else if (fromMQTT && ConfigurationSettings.speechToTextOption.data.value == SpeechToTextOptions.RemoteMQTT) {
+            } else if (fromMQTT && ConfigurationSettings.speechToTextOption.value == SpeechToTextOptions.RemoteMQTT) {
                 //save session id to later understand the id when the text was captured by mqtt
                 currentSession.mqttSpeechToTextSessionId = sessionId
             } else {
@@ -194,7 +194,7 @@ object StateMachine {
     fun audioFrame(byteData: List<Byte>) {
         coroutineScope.launch {
 
-            if (AppSettings.isLogAudioFrames.data.value) {
+            if (AppSettings.isLogAudioFrames.value) {
                 logger.d { "audioFrame ${byteData.size}" }
             }
 
@@ -208,21 +208,21 @@ object StateMachine {
                 //add audio to current recording for intent recognition and replay
                 currentSession.currentRecording.addAll(byteData)
 
-                if (ConfigurationSettings.speechToTextOption.data.value == SpeechToTextOptions.RemoteMQTT) {
+                if (ConfigurationSettings.speechToTextOption.value == SpeechToTextOptions.RemoteMQTT) {
                     //send to mqtt for speech to text
                     MqttService.audioFrame(dataWithHeader)
                 }
 
             } else if (state.value == State.AwaitingHotWord) {
                 //awaiting hotWord, send audio to udp or mqtt according to settings
-                if (AppSettings.isHotWordEnabled.data.value) {
+                if (AppSettings.isHotWordEnabled.value) {
                     //current session is running
                     //no current session running
-                    if (ConfigurationSettings.isUDPOutput.data.value) {
+                    if (ConfigurationSettings.isUDPOutput.value) {
                         //send to udp if udp streaming only outside asr listening
                         UdpService.streamAudio(dataWithHeader)
                     }
-                    if (ConfigurationSettings.wakeWordOption.data.value == WakeWordOption.MQTT) {
+                    if (ConfigurationSettings.wakeWordOption.value == WakeWordOption.MQTT) {
                         //send to mqtt for wake word detection
                         MqttService.audioFrame(dataWithHeader)
                     }
@@ -255,7 +255,7 @@ object StateMachine {
                 state.value = State.RecordingStopped
 
                 //allow internal call or when dialog option is mqtt
-                if (!fromMQTT || ConfigurationSettings.dialogueManagementOption.data.value == DialogueManagementOptions.RemoteMQTT) {
+                if (!fromMQTT || ConfigurationSettings.dialogueManagementOption.value == DialogueManagementOptions.RemoteMQTT) {
                     state.value = State.TranscribingIntent
 
                     //save recording to previous recording
@@ -275,7 +275,7 @@ object StateMachine {
 
                     //when mqtt is used for speech to text, the service needs to know that no more frames are coming
                     if (isDialogueLocal() &&
-                        ConfigurationSettings.speechToTextOption.data.value == SpeechToTextOptions.RemoteMQTT
+                        ConfigurationSettings.speechToTextOption.value == SpeechToTextOptions.RemoteMQTT
                     ) {
                         //tell asr system to start listening and transcribe text when mqtt is used for speech to text
                         MqttService.stopListening(currentSession.sessionId)
@@ -491,6 +491,13 @@ object StateMachine {
         }
     }
 
+    //only start recording, do not stop it
+    fun playRecording(){
+        if(state.value != State.PlayingRecording){
+            togglePlayRecording()
+        }
+    }
+
     fun togglePlayRecording() {
         if (state.value == State.AwaitingHotWord) {
             logger.d { "playRecording" }
@@ -515,5 +522,5 @@ object StateMachine {
         return previousRecordingFile.getFileData()
     }
 
-    private inline fun isDialogueLocal(): Boolean = ConfigurationSettings.dialogueManagementOption.data.value == DialogueManagementOptions.Local
+    private inline fun isDialogueLocal(): Boolean = ConfigurationSettings.dialogueManagementOption.value == DialogueManagementOptions.Local
 }
