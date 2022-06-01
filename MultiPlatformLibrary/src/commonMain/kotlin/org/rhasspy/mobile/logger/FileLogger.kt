@@ -40,7 +40,7 @@ object FileLogger : LogWriter() {
             )
         }
 
-        AppSettings.logLevel.value.addObserver {
+        AppSettings.logLevel.data.observe {
             if (Logger.config.minSeverity != it.severity) {
                 Logger.setMinSeverity(it.severity)
                 logger.a { "changed log level to ${it.severity}" }
