@@ -3,6 +3,7 @@ package org.rhasspy.mobile.settings
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.postValue
 import dev.icerock.moko.mvvm.livedata.readOnly
+import org.rhasspy.mobile.observer.MutableObservable
 import org.rhasspy.mobile.viewModels.GlobalData
 
 /**
@@ -23,7 +24,7 @@ class ConfigurationSetting<T>(key: SettingsEnum, initial: T) : Setting<T>(key, i
      * holds the unsaved value
      * updated unsaved changes accordingly if the new value is different or the same as the current saved value
      */
-    val unsaved = object : MutableLiveData<T>(data.value) {
+    val unsaved = object : MutableObservable<T>(data.value) {
         override var value: T
             get() = super.value
             set(newValue) {
