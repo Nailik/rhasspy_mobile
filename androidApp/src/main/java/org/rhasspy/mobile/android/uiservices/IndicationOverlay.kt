@@ -20,7 +20,7 @@ import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.theme.*
 import org.rhasspy.mobile.nativeutils.OverlayPermission
-import org.rhasspy.mobile.services.native.NativeIndication
+import org.rhasspy.mobile.nativeutils.NativeIndication
 
 /**
  * Overlay Service
