@@ -13,7 +13,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.rhasspy.mobile.services.native.FileWriter
+import org.rhasspy.mobile.nativeutils.FileWriter
 import org.rhasspy.mobile.settings.AppSettings
 
 object FileLogger : LogWriter() {
@@ -40,7 +40,7 @@ object FileLogger : LogWriter() {
             )
         }
 
-        AppSettings.logLevel.value.addObserver {
+        AppSettings.logLevel.data.observe {
             if (Logger.config.minSeverity != it.severity) {
                 Logger.setMinSeverity(it.severity)
                 logger.a { "changed log level to ${it.severity}" }

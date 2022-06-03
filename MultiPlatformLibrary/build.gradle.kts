@@ -60,6 +60,7 @@ kotlin {
                 implementation(Ktor2.Server.cors)
                 implementation(Ktor2.Server.dataConversion)
                 implementation(Ktor2.Server.cio)
+                implementation(Ktor2.Client.cio)
                 implementation(Benasher.uuid)
             }
         }

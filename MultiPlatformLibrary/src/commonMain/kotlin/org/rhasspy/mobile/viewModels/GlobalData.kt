@@ -11,27 +11,27 @@ object GlobalData {
 
     val settings: Settings = Settings()
 
-    val allSettings = mutableListOf<ConfigurationSetting<*>>()
+    val allConfigurationSettings = mutableListOf<ConfigurationSetting<*>>()
 
     val unsavedChanges = MutableLiveData(false)
 
     fun updateUnsavedChanges() {
         logger.i { "updateUnsavedChanges" }
 
-        unsavedChanges.value = allSettings.any { it.unsavedChange.value }
+        unsavedChanges.value = allConfigurationSettings.any { it.hasUnsavedChange.value }
     }
 
     fun saveAllChanges() {
         logger.i { "saveAllChanges" }
 
-        allSettings.forEach { it.save() }
+        allConfigurationSettings.forEach { it.save() }
         unsavedChanges.postValue(false)
     }
 
     fun resetChanges() {
         logger.i { "resetChanges" }
 
-        allSettings.forEach { it.reset() }
+        allConfigurationSettings.forEach { it.reset() }
         unsavedChanges.postValue(false)
     }
 

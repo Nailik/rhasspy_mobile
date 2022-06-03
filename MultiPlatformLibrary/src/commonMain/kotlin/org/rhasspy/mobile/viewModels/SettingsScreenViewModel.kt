@@ -11,8 +11,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
+import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.nativeutils.SettingsUtils
-import org.rhasspy.mobile.services.native.AudioRecorder
 import org.rhasspy.mobile.settings.AppSettings
 
 class SettingsScreenViewModel : ViewModel() {
@@ -73,31 +73,31 @@ class SettingsScreenViewModel : ViewModel() {
 
     fun selectWakeSoundFile() = SettingsUtils.selectSoundFile { fileName ->
         fileName?.also {
-            AppSettings.wakeSounds.data = AppSettings.wakeSounds.data.toMutableList()
+            AppSettings.wakeSounds.value = AppSettings.wakeSounds.value.toMutableList()
                 .apply {
                     this.add(it)
                 }.toSet()
-            AppSettings.wakeSound.data = AppSettings.wakeSounds.data.size + 2
+            AppSettings.wakeSound.value = AppSettings.wakeSounds.value.size + 2
         }
     }
 
     fun selectRecordedSoundFile() = SettingsUtils.selectSoundFile { fileName ->
         fileName?.also {
-            AppSettings.recordedSounds.data = AppSettings.recordedSounds.data.toMutableList()
+            AppSettings.recordedSounds.value = AppSettings.recordedSounds.value.toMutableList()
                 .apply {
                     this.add(it)
                 }.toSet()
-            AppSettings.recordedSound.data = AppSettings.recordedSounds.data.size + 2
+            AppSettings.recordedSound.value = AppSettings.recordedSounds.value.size + 2
         }
     }
 
     fun selectErrorSoundFile() = SettingsUtils.selectSoundFile { fileName ->
         fileName?.also {
-            AppSettings.errorSounds.data = AppSettings.errorSounds.data.toMutableList()
+            AppSettings.errorSounds.value = AppSettings.errorSounds.value.toMutableList()
                 .apply {
                     this.add(it)
                 }.toSet()
-            AppSettings.errorSound.data = AppSettings.errorSounds.data.size + 2
+            AppSettings.errorSound.value = AppSettings.errorSounds.value.size + 2
         }
     }
 

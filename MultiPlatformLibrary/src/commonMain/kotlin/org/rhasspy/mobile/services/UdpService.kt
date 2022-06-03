@@ -22,9 +22,8 @@ object UdpService {
      *
      * suspend is necessary else there is an network on main thread error at least on android
      */
-    @Suppress("RedundantSuspendModifier")
-    suspend fun start() {
-        if (!ConfigurationSettings.isUDPOutput.data) {
+    fun start() {
+        if (!ConfigurationSettings.isUDPOutput.value) {
             logger.v { "not enabled" }
             return
         }
@@ -35,23 +34,22 @@ object UdpService {
             sendChannel = aSocket(SelectorManager(Dispatchers.Default)).udp().bind().outgoing
 
             socketAddress = InetSocketAddress(
-                ConfigurationSettings.udpOutputHost.data,
-                ConfigurationSettings.udpOutputPort.data.toInt()
+                ConfigurationSettings.udpOutputHost.value,
+                ConfigurationSettings.udpOutputPort.value.toInt()
             )
         } catch (e: Exception) {
             logger.e(e) { "unable to initialize address with host: ${ConfigurationSettings.udpOutputHost.data} and port ${ConfigurationSettings.udpOutputPort.data}" }
         }
     }
 
-    @Suppress("RedundantSuspendModifier")
-    suspend fun stop() {
+    fun stop() {
         sendChannel?.close()
         socketAddress = null
     }
 
     suspend fun streamAudio(byteData: List<Byte>) {
         val data = byteData.toByteArray()
-        if (AppSettings.isLogAudioFrames.data) {
+        if (AppSettings.isLogAudioFrames.value) {
             logger.v { "streamAudio ${data.size}" }
         }
 

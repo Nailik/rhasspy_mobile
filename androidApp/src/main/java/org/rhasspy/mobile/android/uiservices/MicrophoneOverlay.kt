@@ -71,8 +71,8 @@ object MicrophoneOverlay {
             y = (y + delta.y).toInt()
             gravity = Gravity.NO_GRAVITY
             //save
-            AppSettings.isMicrophoneOverlayPositionX.data = x
-            AppSettings.isMicrophoneOverlayPositionY.data = y
+            AppSettings.isMicrophoneOverlayPositionX.value = x
+            AppSettings.isMicrophoneOverlayPositionY.value = y
         }
         overlayWindowManager.updateViewLayout(view, mParams)
     }
@@ -90,8 +90,8 @@ object MicrophoneOverlay {
                         or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
             ).apply {
-                x = AppSettings.isMicrophoneOverlayPositionX.data
-                y = AppSettings.isMicrophoneOverlayPositionY.data
+                x = AppSettings.isMicrophoneOverlayPositionX.value
+                y = AppSettings.isMicrophoneOverlayPositionY.value
                 gravity = Gravity.NO_GRAVITY
             }
         }
@@ -120,13 +120,13 @@ object MicrophoneOverlay {
         shouldBeShown.addSource(OverlayPermission.granted) {
             shouldBeShown.value = getShouldBeShown()
         }
-        shouldBeShown.addSource(AppSettings.isMicrophoneOverlayEnabled.value) {
+        shouldBeShown.addSource(AppSettings.isMicrophoneOverlayEnabled.data.toLiveData()) {
             shouldBeShown.value = getShouldBeShown()
         }
         shouldBeShown.addSource(AndroidApplication.isAppInBackground) {
             shouldBeShown.value = getShouldBeShown()
         }
-        shouldBeShown.addSource(AppSettings.isMicrophoneOverlayWhileApp.value) {
+        shouldBeShown.addSource(AppSettings.isMicrophoneOverlayWhileApp.data.toLiveData()) {
             shouldBeShown.value = getShouldBeShown()
         }
 
@@ -146,7 +146,7 @@ object MicrophoneOverlay {
     }
 
     private fun getShouldBeShown(): Boolean {
-        return OverlayPermission.granted.value && AppSettings.isMicrophoneOverlayEnabled.data &&
-                (AndroidApplication.isAppInBackground.value || AppSettings.isMicrophoneOverlayWhileApp.data)
+        return OverlayPermission.granted.value && AppSettings.isMicrophoneOverlayEnabled.value &&
+                (AndroidApplication.isAppInBackground.value || AppSettings.isMicrophoneOverlayWhileApp.value)
     }
 }

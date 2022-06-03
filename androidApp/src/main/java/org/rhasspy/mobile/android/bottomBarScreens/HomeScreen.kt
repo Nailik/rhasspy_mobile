@@ -27,6 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
 import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.logic.State
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
@@ -144,14 +145,15 @@ fun Fab(modifier: Modifier = Modifier, iconSize: Dp, snackbarHostState: Snackbar
             }
         },
         modifier = modifier,
-        containerColor = if (viewModel.isRecording.observe()) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme
-            .primaryContainer,
+        containerColor = if (viewModel.currentState.observe() == State.RecordingIntent) MaterialTheme.colorScheme.errorContainer else
+            MaterialTheme.colorScheme
+                .primaryContainer,
     ) {
 
         Icon(
             imageVector = if (MicrophonePermission.granted.observe()) Icons.Filled.Mic else Icons.Filled.MicOff,
             contentDescription = MR.strings.wakeUp,
-            tint = if (viewModel.isRecording.observe()) MaterialTheme.colorScheme.onErrorContainer else LocalContentColor.current,
+            tint = if (viewModel.currentState.observe() == State.RecordingIntent) MaterialTheme.colorScheme.onErrorContainer else LocalContentColor.current,
             modifier = Modifier.size(iconSize)
         )
     }
@@ -211,10 +213,10 @@ fun PlayRecording(
     modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel
 ) {
-    val isPlaying = viewModel.isPlayingRecording.observe()
+    val isPlaying = viewModel.currentState.observe() == State.PlayingRecording
 
     ElevatedButton(
-        onClick = { viewModel.playRecording() },
+        onClick = { viewModel.togglePlayRecording() },
         modifier = modifier
     ) {
         if (isPlaying) {
@@ -224,7 +226,7 @@ fun PlayRecording(
             )
         }
         Text(resource = if (isPlaying) MR.strings.stopPlayRecording else MR.strings.playRecording)
-        if (!isPlaying) {
+        if (isPlaying) {
             Icon(
                 imageVector = Icons.Filled.PlayArrow,
                 contentDescription = MR.strings.playRecording

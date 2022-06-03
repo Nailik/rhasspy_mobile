@@ -80,7 +80,7 @@ fun LanguageItem() {
 
     DropDownEnumListItem(
         selected = AppSettings.languageOption.observe(),
-        onSelect = { AppSettings.languageOption.data = it })
+        onSelect = { AppSettings.languageOption.value = it })
     { LanguageOptions.values() }
 
 }
@@ -90,7 +90,7 @@ fun ThemeItem() {
 
     DropDownEnumListItem(
         selected = AppSettings.themeOption.observe(),
-        onSelect = { AppSettings.themeOption.data = it })
+        onSelect = { AppSettings.themeOption.value = it })
     { ThemeOptions.values() }
 
 }
@@ -109,7 +109,7 @@ fun AutomaticSilenceDetectionItem(viewModel: SettingsScreenViewModel, snackbarHo
             SwitchListItem(
                 text = MR.strings.automaticSilenceDetection,
                 isChecked = isAutomaticSilenceDetection,
-                onCheckedChange = { AppSettings.isAutomaticSilenceDetection.data = !AppSettings.isAutomaticSilenceDetection.data })
+                onCheckedChange = { AppSettings.isAutomaticSilenceDetection.value = !AppSettings.isAutomaticSilenceDetection.value })
 
             androidx.compose.animation.AnimatedVisibility(
                 enter = expandVertically(),
@@ -132,7 +132,7 @@ fun AutomaticSilenceDetectionItem(viewModel: SettingsScreenViewModel, snackbarHo
 
                             logger.v { "parsed automaticSilenceDetectionTime to $integer" }
 
-                            AppSettings.automaticSilenceDetectionTime.data = integer ?: 0
+                            AppSettings.automaticSilenceDetectionTime.value = integer ?: 0
                         },
                     )
 
@@ -150,7 +150,7 @@ fun AutomaticSilenceDetectionItem(viewModel: SettingsScreenViewModel, snackbarHo
 
                             logger.v { "parsed automaticSilenceDetectionAudioLevel to $integer" }
 
-                            AppSettings.automaticSilenceDetectionAudioLevel.data = integer ?: 0
+                            AppSettings.automaticSilenceDetectionAudioLevel.value = integer ?: 0
                         },
                     )
 
@@ -217,7 +217,7 @@ fun BackgroundService() {
     SwitchListItem(
         text = MR.strings.enableBackground,
         isChecked = AppSettings.isBackgroundEnabled.observe(),
-        onCheckedChange = { AppSettings.isBackgroundEnabled.data = it })
+        onCheckedChange = { AppSettings.isBackgroundEnabled.value = it })
 
 }
 
@@ -225,7 +225,7 @@ fun BackgroundService() {
 @Composable
 fun MicrophoneOverlay() {
 
-    val isMicrophoneOverlayEnabled = AppSettings.isMicrophoneOverlayEnabled.value.observe()
+    val isMicrophoneOverlayEnabled = AppSettings.isMicrophoneOverlayEnabled.data.observe()
 
     ExpandableListItem(
         text = MR.strings.microphoneOverlay,
@@ -233,7 +233,7 @@ fun MicrophoneOverlay() {
     ) {
         val requestOverlayPermission = requestOverlayPermission {
             if (it) {
-                AppSettings.isMicrophoneOverlayEnabled.data = true
+                AppSettings.isMicrophoneOverlayEnabled.value = true
             }
         }
 
@@ -246,7 +246,7 @@ fun MicrophoneOverlay() {
                     if (it && !OverlayPermission.granted.value) {
                         requestOverlayPermission.invoke()
                     } else {
-                        AppSettings.isMicrophoneOverlayEnabled.data = it
+                        AppSettings.isMicrophoneOverlayEnabled.value = it
                     }
                 })
 
@@ -254,7 +254,7 @@ fun MicrophoneOverlay() {
                 text = MR.strings.whileAppIsOpened,
                 isChecked = AppSettings.isMicrophoneOverlayWhileApp.observe(),
                 onCheckedChange = {
-                    AppSettings.isMicrophoneOverlayWhileApp.data = it
+                    AppSettings.isMicrophoneOverlayWhileApp.value = it
                 })
 
         }
@@ -273,24 +273,24 @@ fun Device() {
                 text = MR.strings.volume,
                 value = AppSettings.volume.observe(),
                 onValueChange = {
-                    AppSettings.volume.data = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
+                    AppSettings.volume.value = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
                 })
 
             SwitchListItem(
                 text = MR.strings.hotWord,
                 isChecked = AppSettings.isHotWordEnabled.observe(),
-                onCheckedChange = { AppSettings.isHotWordEnabled.data = it })
+                onCheckedChange = { AppSettings.isHotWordEnabled.value = it })
 
             SwitchListItem(
                 text = MR.strings.audioOutput,
                 isChecked = AppSettings.isAudioOutputEnabled.observe(),
-                onCheckedChange = { AppSettings.isAudioOutputEnabled.data = it })
+                onCheckedChange = { AppSettings.isAudioOutputEnabled.value = it })
 
 
             SwitchListItem(
                 text = MR.strings.intentHandling,
                 isChecked = AppSettings.isIntentHandlingEnabled.observe(),
-                onCheckedChange = { AppSettings.isIntentHandlingEnabled.data = it })
+                onCheckedChange = { AppSettings.isIntentHandlingEnabled.value = it })
 
 
         }
@@ -310,7 +310,7 @@ fun Sounds(viewModel: SettingsScreenViewModel) {
                 text = MR.strings.volume,
                 value = AppSettings.soundVolume.observe(),
                 onValueChange = {
-                    AppSettings.soundVolume.data = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
+                    AppSettings.soundVolume.value = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
                 })
 
             DropDownListWithFileOpen(
@@ -320,7 +320,7 @@ fun Sounds(viewModel: SettingsScreenViewModel) {
                 onAdd = {
                     viewModel.selectWakeSoundFile()
                 }) {
-                AppSettings.wakeSound.data = it
+                AppSettings.wakeSound.value = it
             }
 
             DropDownListWithFileOpen(
@@ -330,7 +330,7 @@ fun Sounds(viewModel: SettingsScreenViewModel) {
                 onAdd = {
                     viewModel.selectRecordedSoundFile()
                 }) {
-                AppSettings.recordedSound.data = it
+                AppSettings.recordedSound.value = it
             }
 
             DropDownListWithFileOpen(
@@ -340,7 +340,7 @@ fun Sounds(viewModel: SettingsScreenViewModel) {
                 onAdd = {
                     viewModel.selectErrorSoundFile()
                 }) {
-                AppSettings.errorSound.data = it
+                AppSettings.errorSound.value = it
             }
         }
 
@@ -379,17 +379,17 @@ fun WakeWordIndicationItem() {
             SwitchListItem(
                 text = MR.strings.backgroundWakeWordDetectionTurnOnDisplay,
                 isChecked = AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.observe(),
-                onCheckedChange = { AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data = it })
+                onCheckedChange = { AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.value = it })
 
             SwitchListItem(
                 text = MR.strings.wakeWordSoundIndication,
                 isChecked = isWakeWordSoundIndication,
-                onCheckedChange = { AppSettings.isWakeWordSoundIndication.data = it })
+                onCheckedChange = { AppSettings.isWakeWordSoundIndication.value = it })
 
 
             val requestOverlayPermission = requestOverlayPermission {
                 if (it) {
-                    AppSettings.isWakeWordLightIndication.data = true
+                    AppSettings.isWakeWordLightIndication.value = true
                 }
             }
 
@@ -400,7 +400,7 @@ fun WakeWordIndicationItem() {
                     if (it && !OverlayPermission.granted.value) {
                         requestOverlayPermission.invoke()
                     } else {
-                        AppSettings.isWakeWordLightIndication.data = it
+                        AppSettings.isWakeWordLightIndication.value = it
                     }
                 })
         }
@@ -417,16 +417,16 @@ fun ShowLogItem() {
     ) {
         DropDownEnumListItem(
             selected = logLevel,
-            onSelect = { AppSettings.logLevel.data = it })
+            onSelect = { AppSettings.logLevel.value = it })
         { LogLevel.values() }
 
         SwitchListItem(MR.strings.showLog,
             isChecked = AppSettings.isShowLog.observe(),
-            onCheckedChange = { AppSettings.isShowLog.data = it })
+            onCheckedChange = { AppSettings.isShowLog.value = it })
 
         SwitchListItem(MR.strings.audioFramesLogging,
             isChecked = AppSettings.isLogAudioFrames.observe(),
-            onCheckedChange = { AppSettings.isLogAudioFrames.data = it })
+            onCheckedChange = { AppSettings.isLogAudioFrames.value = it })
     }
 }
 
