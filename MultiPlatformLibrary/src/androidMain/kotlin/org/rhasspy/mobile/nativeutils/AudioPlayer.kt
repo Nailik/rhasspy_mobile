@@ -74,10 +74,9 @@ actual object AudioPlayer {
                     override fun onPeriodicNotification(p0: AudioTrack?) {}
                 })
 
-
                 setVolume(AppSettings.volume.value)
 
-                write(byteArray, 40, audioDataSize)
+                write(byteArray, 0, byteArray.size)
                 play()
                 flush()
             }
