@@ -156,10 +156,7 @@ fun translate(resource: StringResource): String {
 }
 
 //https://stackoverflow.com/questions/68389802/how-to-clear-textfield-focus-when-closing-the-keyboard-and-prevent-two-back-pres
-@OptIn(ExperimentalComposeUiApi::class)
 fun Modifier.clearFocusOnKeyboardDismiss(): Modifier = composed {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val context = LocalContext.current
     var isFocused by remember { mutableStateOf(false) }
     var keyboardAppearedSinceLastFocused by remember { mutableStateOf(false) }
     if (isFocused) {
@@ -170,12 +167,6 @@ fun Modifier.clearFocusOnKeyboardDismiss(): Modifier = composed {
                 keyboardAppearedSinceLastFocused = true
             } else if (keyboardAppearedSinceLastFocused) {
                 focusManager.clearFocus()
-            }
-        }
-        //close keyboard when element is disposed
-        DisposableEffect(key1 = context) {
-            onDispose {
-                keyboardController?.hide()
             }
         }
     }
