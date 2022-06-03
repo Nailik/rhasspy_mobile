@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         tools:ignore="Instantiatable">
         <service
-            android:name="org.rhasspy.mobile.services.native.NativeService"
+            android:name="org.rhasspy.mobile.nativeutils.NativeServiceInterop"
             android:foregroundServiceType="microphone" />
 
         <activity
