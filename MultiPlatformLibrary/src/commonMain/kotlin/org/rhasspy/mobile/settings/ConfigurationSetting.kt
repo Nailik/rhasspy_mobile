@@ -30,13 +30,13 @@ class ConfigurationSetting<T>(key: SettingsEnum, initial: T) : Setting<T>(key, i
             set(newValue) {
                 if (super.value != newValue) {
                     super.value = newValue
-                    if (data != newValue) {
+                    if (data.value != newValue) {
                         //new value
-                        isUnsaved.value = true
+                        isUnsaved.postValue(true)
                         GlobalData.unsavedChanges.value = true
                     } else {
                         //set value back to saved
-                        isUnsaved.value = false
+                        isUnsaved.postValue(false)
                         GlobalData.updateUnsavedChanges()
                     }
                 }
