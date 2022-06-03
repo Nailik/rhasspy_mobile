@@ -2,6 +2,7 @@ package org.rhasspy.mobile.observer
 
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
+import dev.icerock.moko.mvvm.livedata.postValue
 import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,18 +20,19 @@ open class Observable<T>(initialValue: T) {
     // we override to allow notifying all observers
     open val value: T = initialValue
 
+    //create only one live data, else there might be loads of dead observers
+    private val liveData = MutableLiveData(initialValue).also { live ->
+        observers.add {
+            viewScope.launch {
+                live.value = it
+            }
+        }
+    }
+
     fun observe(observer: (T) -> Unit) {
         observers.add(observer)
         observer.invoke(value)
     }
 
-    fun toLiveData(): LiveData<T> {
-        val mLiveData = MutableLiveData(value)
-        observers.add {
-            viewScope.launch {
-                mLiveData.value = it
-            }
-        }
-        return mLiveData.readOnly()
-    }
+    fun toLiveData(): LiveData<T> = liveData.readOnly()
 }
