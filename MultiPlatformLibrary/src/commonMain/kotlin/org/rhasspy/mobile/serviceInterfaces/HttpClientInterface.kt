@@ -8,11 +8,13 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.utils.*
 import io.ktor.http.*
+import io.ktor.client.engine.cio.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 /**
@@ -21,11 +23,14 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
 object HttpClientInterface {
     private val logger = Logger.withTag("HttpService")
 
-    private val httpClient = HttpClient {
+    private val httpClient = HttpClient(CIO) {
         expectSuccess = true
         install(WebSockets)
         install(HttpTimeout) {
             requestTimeoutMillis = 10000
+        }
+        engine {
+            configureEngine()
         }
     }
 
@@ -37,11 +42,11 @@ object HttpClientInterface {
      */
     suspend fun speechToText(data: List<Byte>): String? {
 
-        logger.v { "sending speechToText \nendpoint:\n${ConfigurationSettings.speechToTextHttpEndpoint.data}\ndata:\n${data.size}" }
+        logger.v { "sending speechToText \nendpoint:\n${ConfigurationSettings.speechToTextHttpEndpoint.value}\ndata:\n${data.size}" }
 
         return try {
             val request = httpClient.post(
-                url = Url("${ConfigurationSettings.speechToTextHttpEndpoint.data}?noheader=true")
+                url = Url("${ConfigurationSettings.speechToTextHttpEndpoint.value}?noheader=true")
             ) {
                 setBody(data.toByteArray())
             }
@@ -68,14 +73,14 @@ object HttpClientInterface {
      */
     suspend fun intentRecognition(text: String, handleDirectly: Boolean): String? {
 
-        logger.v { "sending intentRecognition text\nendpoint:\n${ConfigurationSettings.intentRecognitionEndpoint.data}\ntext:\n$text" }
+        logger.v { "sending intentRecognition text\nendpoint:\n${ConfigurationSettings.intentRecognitionEndpoint.value}\ntext:\n$text" }
 
         return try {
             logger.v { "intent will be handled directly $handleDirectly" }
 
             val request = httpClient.post(
                 url = Url(
-                    "${ConfigurationSettings.intentRecognitionEndpoint.data}${
+                    "${ConfigurationSettings.intentRecognitionEndpoint.value}${
                         if (!handleDirectly) {
                             "?nohass=true"
                         } else ""
@@ -115,7 +120,7 @@ object HttpClientInterface {
      */
     suspend fun textToSpeech(text: String): List<Byte>? {
 
-        logger.v { "sending text to speech\nendpoint:\n${ConfigurationSettings.textToSpeechEndpoint.data}\ntext:\n$text" }
+        logger.v { "sending text to speech\nendpoint:\n${ConfigurationSettings.textToSpeechEndpoint.value}\ntext:\n$text" }
 
         return try {
 
@@ -144,7 +149,7 @@ object HttpClientInterface {
      */
     suspend fun playWav(data: List<Byte>) {
 
-        logger.v { "sending audio \nendpoint:\n${ConfigurationSettings.audioPlayingEndpoint.data}\ndata:\n${data.size}" }
+        logger.v { "sending audio \nendpoint:\n${ConfigurationSettings.audioPlayingEndpoint.value}\ndata:\n${data.size}" }
 
         try {
             val request = httpClient.post(
@@ -184,7 +189,7 @@ object HttpClientInterface {
      */
     suspend fun intentHandling(intent: String) {
 
-        logger.v { "sending intentHandling\nendpoint:\n${ConfigurationSettings.intentHandlingEndpoint.data}\nintent:\n$intent" }
+        logger.v { "sending intentHandling\nendpoint:\n${ConfigurationSettings.intentHandlingEndpoint.value}\nintent:\n$intent" }
 
         try {
 
@@ -209,12 +214,12 @@ object HttpClientInterface {
     suspend fun hassEvent(json: String, intentName: String) {
 
         logger.v {
-            "sending intent as Event to Home Assistant\nendpoint:\n${ConfigurationSettings.intentHandlingHassUrl.data}/api/events/rhasspy_$intentName\nintent:\n$json"
+            "sending intent as Event to Home Assistant\nendpoint:\n${ConfigurationSettings.intentHandlingHassUrl.value}/api/events/rhasspy_$intentName\nintent:\n$json"
         }
 
         try {
 
-            val url = "${ConfigurationSettings.intentHandlingHassUrl.data}/api/events/rhasspy_$intentName"
+            val url = "${ConfigurationSettings.intentHandlingHassUrl.value}/api/events/rhasspy_$intentName"
 
             logger.v { "complete endpoint url" }
 
@@ -222,7 +227,7 @@ object HttpClientInterface {
                 url = Url(url)
             ) {
                 buildHeaders {
-                    header("Authorization", "Bearer ${ConfigurationSettings.intentHandlingHassAccessToken.data}")
+                    header("Authorization", "Bearer ${ConfigurationSettings.intentHandlingHassAccessToken.value}")
                     contentType(ContentType("application", "json"))
                 }
                 setBody(json)
@@ -244,15 +249,15 @@ object HttpClientInterface {
      */
     suspend fun hassIntent(intent: String) {
 
-        logger.v { "sending intent as Intent to Home Assistant\nendpoint:\n${ConfigurationSettings.intentHandlingHassUrl.data}/api/intent/handle\nintent:\n$intent" }
+        logger.v { "sending intent as Intent to Home Assistant\nendpoint:\n${ConfigurationSettings.intentHandlingHassUrl.value}/api/intent/handle\nintent:\n$intent" }
 
         try {
 
             val request = httpClient.post(
-                url = Url("${ConfigurationSettings.intentHandlingHassUrl.data}/api/intent/handle")
+                url = Url("${ConfigurationSettings.intentHandlingHassUrl.value}/api/intent/handle")
             ) {
                 buildHeaders {
-                    header("Authorization", "Bearer ${ConfigurationSettings.intentHandlingHassAccessToken.data}")
+                    header("Authorization", "Bearer ${ConfigurationSettings.intentHandlingHassAccessToken.value}")
                     contentType(ContentType("application", "json"))
                 }
                 setBody(intent)
