@@ -28,6 +28,7 @@ object ServiceInterface {
         HotWordService
         IndicationService
         RecordingService
+        ForegroundServiceHandler
     }
 
     /**
