@@ -9,6 +9,7 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.logic.StateMachine
+import org.rhasspy.mobile.logic.StateMachine.manualIntentRecognition
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.services.RhasspyActions
@@ -45,7 +46,7 @@ class HomeScreenViewModel : ViewModel() {
 
     fun togglePlayRecording() = StateMachine.togglePlayRecording()
 
-    fun intentRecognition(text: String) = RhasspyActions.recognizeIntent(text)
+    fun intentRecognition(text: String) = manualIntentRecognition(text)
 
     fun speakText(text: String) = RhasspyActions.say(text)
 
@@ -56,6 +57,4 @@ class HomeScreenViewModel : ViewModel() {
     fun shareLogFile() = FileLogger.shareLogFile()
 
     fun saveLogFile() = FileLogger.saveLogFile()
-
-
 }
