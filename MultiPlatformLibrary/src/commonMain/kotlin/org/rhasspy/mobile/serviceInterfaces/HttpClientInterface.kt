@@ -130,11 +130,11 @@ object HttpClientInterface {
                 setBody(text)
             }
 
-            val response = request.body<List<Byte>>()
+            val response = request.body<ByteArray>()
 
             logger.v { "textToSpeech received Data" }
 
-            response
+            response.toList()
         } catch (e: Exception) {
             logger.e(e) { "sending text to speech Exception" }
             null
