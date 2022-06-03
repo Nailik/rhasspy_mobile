@@ -39,7 +39,7 @@ object HotWordService {
     }
 
     private fun evaluateHotWordAction(state: State, enabled: Boolean) {
-        logger.v { "evaluateHotWorAction state $state enabled $enabled running $isRunning" }
+        logger.v { "evaluateHotWordAction state $state enabled $enabled running $isRunning" }
         when (state) {
             State.AwaitingHotWord -> {
                 if (enabled) {
