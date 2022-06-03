@@ -11,4 +11,8 @@ object Ktor2 : DependencyGroup(group = "io.ktor") {
         val callLogging = module("ktor-server-call-logging")
     }
 
+    object Client : DependencyGroup(group = group) {
+        val cio = module("ktor-client-cio")
+    }
+
 }
