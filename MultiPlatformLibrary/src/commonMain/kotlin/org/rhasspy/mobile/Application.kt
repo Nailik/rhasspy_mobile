@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.mqtt.OverlayServices
+import org.rhasspy.mobile.services.MqttService
 import org.rhasspy.mobile.services.ServiceAction
 import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.settings.AppSettings
@@ -35,6 +36,11 @@ abstract class Application : NativeApplication() {
         ConfigurationSettings
         OverlayServices.checkPermission()
         startNativeServices()
+        //makes sure that the MutableObservable inside those objects are created in ui thread because they internally use livedata which cannot be
+        // created in background tread
+        ServiceInterface
+        MqttService
+
         CoroutineScope(Dispatchers.Default).launch {
             ServiceInterface.serviceAction(ServiceAction.Start)
         }
