@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.viewModels
 
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
+import dev.icerock.moko.mvvm.livedata.postValue
 import dev.icerock.moko.mvvm.livedata.readOnly
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import org.rhasspy.mobile.nativeutils.SettingsUtils
@@ -18,7 +19,7 @@ class ConfigurationScreenViewModel : ViewModel() {
 
     init {
         ServiceInterface.currentState.observe {
-            changeEnabled.value = it == ServiceState.Running
+            changeEnabled.postValue(it == ServiceState.Running)
         }
     }
 
