@@ -323,6 +323,17 @@ object StateMachine {
     }
 
     /**
+     * manually recognize an intent
+     */
+    fun manualIntentRecognition(intent: String){
+        //only if nothing is currently to be done
+        if (state.value == State.AwaitingHotWord) {
+            state.value = State.RecognizingIntent
+            RhasspyActions.recognizeIntent(intent)
+        }
+    }
+
+    /**
      * there was an error in transcription (maybe it was disabled)
      * text could not be received from speech
      * will end session
@@ -420,8 +431,6 @@ object StateMachine {
 
                 //when the dialogue management is local the session will be ended
                 if (isDialogueLocal()) {
-                    //stop recording if necessary
-                    stopListening()
                     //finish the session
                     sessionEnded()
                 }
