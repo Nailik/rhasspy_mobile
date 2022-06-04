@@ -8,6 +8,7 @@ import org.rhasspy.mobile.handler.ForegroundServiceHandler
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.observer.MutableObservable
 import org.rhasspy.mobile.server.HttpServer
+import org.rhasspy.mobile.serviceInterfaces.HttpClientInterface
 import org.rhasspy.mobile.viewModels.GlobalData
 import kotlin.native.concurrent.ThreadLocal
 
@@ -40,6 +41,7 @@ object ServiceInterface {
         when (serviceAction) {
             ServiceAction.Start -> {
                 state.value = ServiceState.Starting
+                HttpClientInterface.reloadHttpClient()
                 UdpService.start()
                 HttpServer.start()
                 MqttService.start()
