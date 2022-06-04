@@ -18,7 +18,7 @@ object GlobalData {
     fun updateUnsavedChanges() {
         logger.i { "updateUnsavedChanges" }
 
-        unsavedChanges.value = allConfigurationSettings.any { it.hasUnsavedChange.value }
+        unsavedChanges.value = allConfigurationSettings.any { it.isUnsaved }
     }
 
     fun saveAllChanges() {

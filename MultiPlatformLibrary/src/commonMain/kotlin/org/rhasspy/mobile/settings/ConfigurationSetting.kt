@@ -1,8 +1,5 @@
 package org.rhasspy.mobile.settings
 
-import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.postValue
-import dev.icerock.moko.mvvm.livedata.readOnly
 import org.rhasspy.mobile.observer.MutableObservable
 import org.rhasspy.mobile.viewModels.GlobalData
 
@@ -17,8 +14,8 @@ class ConfigurationSetting<T>(key: SettingsEnum, initial: T) : Setting<T>(key, i
     }
 
     //if there are unsaved changes in this value
-    private val isUnsaved = MutableLiveData(false)
-    val hasUnsavedChange = isUnsaved.readOnly()
+    var isUnsaved = false
+        private set
 
     /**
      * holds the unsaved value
@@ -32,11 +29,11 @@ class ConfigurationSetting<T>(key: SettingsEnum, initial: T) : Setting<T>(key, i
                     super.value = newValue
                     if (data.value != newValue) {
                         //new value
-                        isUnsaved.postValue(true)
+                        isUnsaved = true
                         GlobalData.unsavedChanges.value = true
                     } else {
                         //set value back to saved
-                        isUnsaved.postValue(false)
+                        isUnsaved = false
                         GlobalData.updateUnsavedChanges()
                     }
                 }
@@ -48,7 +45,7 @@ class ConfigurationSetting<T>(key: SettingsEnum, initial: T) : Setting<T>(key, i
      */
     fun save() {
         //update unsaved changes
-        isUnsaved.postValue(false)
+        isUnsaved = false
         //update saved value
         data.value = unsaved.value
     }
