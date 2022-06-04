@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.nativeutils
 
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect class FileWriter(filename: String, maxFileSize: Long) {
 
     val maxFileSize: Long
