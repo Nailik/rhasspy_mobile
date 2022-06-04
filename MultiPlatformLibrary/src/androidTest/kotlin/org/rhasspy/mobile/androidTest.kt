@@ -4,15 +4,15 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class DummyIosTest {
+class DummyAndroidTest {
 
     @Test
-    fun iosTest() {
+    fun androidTest() {
         assertTrue(true, "Check 'true' is true")
     }
 
     @Test
-    fun iosTestFail() {
+    fun androidTestFail() {
         assertFalse(false, "Check 'false' is false")
     }
 
