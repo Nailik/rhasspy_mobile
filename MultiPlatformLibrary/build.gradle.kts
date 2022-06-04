@@ -1,7 +1,7 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat.*
 
 plugins {
     kotlin("multiplatform")

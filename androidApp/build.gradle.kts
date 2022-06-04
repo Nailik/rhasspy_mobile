@@ -1,5 +1,5 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat.*
 
 plugins {
     id("com.android.application")
