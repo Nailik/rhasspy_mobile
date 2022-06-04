@@ -10,6 +10,8 @@ enum class SettingsEnum {
     AutomaticSilenceDetectionTime,
 
     BackgroundEnabled,
+    SSLVerificationDisabled,
+
     MicrophoneOverlay,
     MicrophoneOverlayWhileApp,
     MicrophoneOverlayPositionX,

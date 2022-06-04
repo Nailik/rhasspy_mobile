@@ -3,12 +3,12 @@ package org.rhasspy.mobile.serviceInterfaces
 import co.touchlab.kermit.Logger
 import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.utils.*
 import io.ktor.http.*
-import io.ktor.client.engine.cio.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -16,14 +16,22 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import kotlin.native.concurrent.ThreadLocal
 
 /**
  * calls external http services
  */
+@ThreadLocal
 object HttpClientInterface {
     private val logger = Logger.withTag("HttpService")
 
-    private val httpClient = HttpClient(CIO) {
+    private var httpClient = getHttpClient()
+
+    fun reloadHttpClient() {
+        httpClient = getHttpClient()
+    }
+
+    private fun getHttpClient() = HttpClient(CIO) {
         expectSuccess = true
         install(WebSockets)
         install(HttpTimeout) {

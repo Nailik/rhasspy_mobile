@@ -2,7 +2,6 @@ package org.rhasspy.mobile.observer
 
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.postValue
 import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

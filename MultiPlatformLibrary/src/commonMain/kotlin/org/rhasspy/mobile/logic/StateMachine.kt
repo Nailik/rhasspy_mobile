@@ -325,7 +325,7 @@ object StateMachine {
     /**
      * manually recognize an intent
      */
-    fun manualIntentRecognition(intent: String){
+    fun manualIntentRecognition(intent: String) {
         //only if nothing is currently to be done
         if (state.value == State.AwaitingHotWord) {
             state.value = State.RecognizingIntent

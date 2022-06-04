@@ -149,6 +149,10 @@
     <string name="errorSound">Error</string>
     <string name="selectFile">select File</string>
     <string name="defaultText">Default</string>
+    <string name="remoteHermesHTTP">Remote Hermes HTTP</string>
+    <string name="sslValidation">SSL Validation</string>
+    <string name="disableSSLValidation">Disabled SSL Certificate Validation</string>
+    <string name="disableSSLValidationInformation">Possibly necessary when using self signed Certificates</string>
     <string name="webserver">Webserver</string>
     <string name="enableHTTPApi">Enable HTTP Api</string>
     <string name="english">English</string>
