@@ -47,7 +47,9 @@ fun ConfigurationScreen(snackbarHostState: SnackbarHostState, viewModel: Configu
         val isEnabled = viewModel.isChangeEnabled.observe()
         SiteId(isEnabled)
         CustomDivider()
-        HttpServer(isEnabled)
+        Webserver(isEnabled)
+        CustomDivider()
+        RemoteHermesHTTP(isEnabled)
         CustomDivider()
         Mqtt(viewModel, isEnabled)
         CustomDivider()
@@ -84,7 +86,7 @@ fun SiteId(enabled: Boolean) {
 }
 
 @Composable
-fun HttpServer(enabled: Boolean) {
+fun Webserver(enabled: Boolean) {
 
     val isHttpServerValue = ConfigurationSettings.isHttpServerEnabled.observeCurrent()
 
@@ -137,6 +139,28 @@ fun HttpServer(enabled: Boolean) {
         }
     }
 }
+
+
+@Composable
+fun RemoteHermesHTTP(enabled: Boolean) {
+
+    val isSSLVerificationEnabled = ConfigurationSettings.isSSLVerificationEnabled.observeCurrent()
+
+    ExpandableListItemString(
+        text = MR.strings.remoteHermesHTTP,
+        secondaryText = "${translate(MR.strings.sslValidation)} ${translate(isSSLVerificationEnabled.toText())}"
+    ) {
+
+        SwitchListItem(
+            text = MR.strings.disableSSLValidation,
+            enabled = enabled,
+            secondaryText = MR.strings.disableSSLValidationInformation,
+            isChecked = !isSSLVerificationEnabled,
+            onCheckedChange = { ConfigurationSettings.isSSLVerificationEnabled.unsaved.value = !it })
+
+    }
+}
+
 
 @Composable
 fun Mqtt(viewModel: ConfigurationScreenViewModel, enabled: Boolean) {
