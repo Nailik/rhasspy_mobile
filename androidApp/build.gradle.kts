@@ -1,3 +1,6 @@
+import org.gradle.api.tasks.testing.logging.TestLogEvent.*
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat.*
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -6,6 +9,7 @@ plugins {
 
 android {
     compileSdk = 32
+
     defaultConfig {
         applicationId = "org.rhasspy.mobile.android"
         minSdk = 23
@@ -13,6 +17,7 @@ android {
         versionCode = Version.code
         versionName = Version.name
     }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -23,12 +28,15 @@ android {
             )
         }
     }
+
     buildFeatures {
         compose = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "_"
     }
+
     splits {
         abi {
             isEnable = true
@@ -37,18 +45,40 @@ android {
             isUniversalApk = false
         }
     }
+
     packagingOptions {
         //else netty finds multiple INDEX.LIST files
         resources.pickFirsts.add("META-INF/INDEX.LIST")
         resources.pickFirsts.add("META-INF/io.netty.versions.properties")
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+        testOptions.animationsDisabled = true
+    }
+}
+
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+
+tasks.withType<Test> {
+    testLogging {
+        events(STARTED, PASSED, SKIPPED, FAILED, STANDARD_OUT, STANDARD_ERROR)
+        exceptionFormat = FULL
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
     }
 }
 
@@ -62,7 +92,7 @@ kotlin {
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:_")
+    coreLibraryDesugaring(Android.tools.desugarJdkLibs)
     implementation(project(":MultiPlatformLibrary"))
 
     implementation(KotlinX.Coroutines.core)
@@ -98,7 +128,7 @@ dependencies {
     implementation(Icerock.Mvvm.livedata)
     implementation(Icerock.Mvvm.livedataResources)
 
-    implementation("co.touchlab:kermit:_")
+    implementation(Touchlab.kermit)
     implementation(AndroidX.lifecycle.process)
     implementation(Devsrsouza.fontAwesome)
     implementation(Mikepenz.aboutLibrariesCore)

@@ -1,5 +1,7 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import org.gradle.api.tasks.testing.logging.TestLogEvent.*
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat.*
 
 plugins {
     kotlin("multiplatform")
@@ -14,10 +16,12 @@ plugins {
 version = Version.name
 
 kotlin {
-    android()
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    targets {
+        android()
+        iosX64()
+        iosArm64()
+        iosSimulatorArm64()
+    }
 
     cocoapods {
         summary = "Some description for the Shared Module"
@@ -41,7 +45,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib-common"))
                 implementation(kotlin("stdlib"))
-                implementation("co.touchlab:kermit:_")
+                implementation(Touchlab.kermit)
                 implementation(Icerock.Mvvm.core)
                 implementation(Icerock.Mvvm.state)
                 implementation(Icerock.Mvvm.livedata)
@@ -72,6 +76,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                implementation(AndroidX.Fragment.ktx)
                 implementation(AndroidX.Compose.foundation)
                 implementation(AndroidX.multidex)
                 implementation(AndroidX.window)
@@ -90,7 +95,19 @@ kotlin {
                 implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
             }
         }
-        val androidTest by getting
+        val androidAndroidTestRelease by getting
+        val androidTestFixtures by getting
+        val androidTestFixturesDebug by getting
+        val androidTestFixturesRelease by getting
+        val androidTest by getting {
+            dependsOn(androidAndroidTestRelease)
+            dependsOn(androidTestFixtures)
+            dependsOn(androidTestFixturesDebug)
+            dependsOn(androidTestFixturesRelease)
+            dependencies {
+                implementation(Kotlin.Test.junit)
+            }
+        }
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
@@ -170,4 +187,21 @@ fun generateChangelog(): String {
     os.close()
 
     return changelog
+}
+
+
+tasks.withType<Test> {
+    testLogging {
+        events(STARTED, PASSED, SKIPPED, FAILED, STANDARD_OUT, STANDARD_ERROR)
+        exceptionFormat = FULL
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
+    }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
