@@ -166,27 +166,31 @@ buildkonfig {
 }
 
 fun generateChangelog(): String {
-    var os = org.apache.commons.io.output.ByteArrayOutputStream()
+    try {
+        var os = org.apache.commons.io.output.ByteArrayOutputStream()
 
-    exec {
-        standardOutput = os
-        commandLine = listOf("git")
-        args = listOf("describe", "--tags", "--abbrev=0")
+        exec {
+            standardOutput = os
+            commandLine = listOf("git")
+            args = listOf("describe", "--tags", "--abbrev=0")
+        }
+
+        val lastTag = String(os.toByteArray()).trim()
+        os.close()
+
+        os = org.apache.commons.io.output.ByteArrayOutputStream()
+        exec {
+            standardOutput = os
+            commandLine = listOf("git")
+            args = listOf("log", "$lastTag..develop", "--merges", "--first-parent", "--pretty=format:\"%b\"\\\\")
+        }
+        val changelog = String(os.toByteArray()).trim()
+        os.close()
+
+        return changelog
+    } catch (e: Exception) {
+        return ""
     }
-
-    val lastTag = String(os.toByteArray()).trim()
-    os.close()
-
-    os = org.apache.commons.io.output.ByteArrayOutputStream()
-    exec {
-        standardOutput = os
-        commandLine = listOf("git")
-        args = listOf("log", "$lastTag..develop", "--merges", "--first-parent", "--pretty=format:\"%b\"\\\\")
-    }
-    val changelog = String(os.toByteArray()).trim()
-    os.close()
-
-    return changelog
 }
 
 
