@@ -11,6 +11,7 @@ plugins {
     id("dev.icerock.mobile.multiplatform-resources")
     id("com.mikepenz.aboutlibraries.plugin")
     id("com.codingfeline.buildkonfig")
+    id("org.sonarqube") version "3.3"
 }
 
 version = Version.name
@@ -207,5 +208,13 @@ tasks.withType<Test> {
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "Nailik_rhasspy_mobile")
+        property("sonar.organization", "nailik")
+        property("sonar.host.url", "https://sonarcloud.io")
     }
 }
