@@ -40,9 +40,9 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew build sonarqube
-      - name: Sign app APK
+      - uses: r0adkll/sign-android-release@v1
+        name: Sign app APK
         # ID used to access action output
-        uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
           releaseDirectory: androidApp/release
@@ -53,8 +53,7 @@ jobs:
         env: # override default build-tools version (29.0.3) -- optional
           BUILD_TOOLS_VERSION: "30.0.2"
           # Example use of `signedReleaseFile` output -- not needed
-      - name: Sign app APK
-        uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v2
         with:
           name: Signed app bundle
           path: ${{steps.sign_app.outputs.signedReleaseFile}}
