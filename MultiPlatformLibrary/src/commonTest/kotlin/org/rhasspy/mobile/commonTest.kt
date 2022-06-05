@@ -13,7 +13,7 @@ class DummyCommonTest {
 
     @Test
     fun commonTestFail() {
-        assertTrue(false, "Check 'false' is false")
+        assertFalse(false, "Check 'false' is false")
     }
 
 }

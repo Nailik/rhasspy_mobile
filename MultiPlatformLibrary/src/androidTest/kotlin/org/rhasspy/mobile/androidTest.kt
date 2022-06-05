@@ -13,7 +13,7 @@ class DummyAndroidTest {
 
     @Test
     fun androidTestFail() {
-        assertTrue(false, "Check 'false' is false")
+        assertFalse(false, "Check 'false' is false")
     }
 
 }
