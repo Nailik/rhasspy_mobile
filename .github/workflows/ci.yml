@@ -33,7 +33,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.gradle/caches
-          ey: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
       - name: Project Build
         env:
