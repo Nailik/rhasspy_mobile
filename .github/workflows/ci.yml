@@ -7,35 +7,6 @@ on:
     branches: [ "develop" ]
 
 jobs:
-  lint:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: set up JDK 18.0.1+10
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '18.0.1+10'
-          cache: gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Android Lint Check
-        run: ./gradlew lintDebug
-  test:
-    needs: lint
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: set up JDK 18.0.1+10
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '18.0.1+10'
-          cache: gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Unit Tests
-        run: ./gradlew check
   build:
     needs: test
     runs-on: windows-latest
@@ -49,6 +20,10 @@ jobs:
           cache: gradle
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+      - name: Android Lint Check
+        run: ./gradlew lintDebug
+      - name: Unit Tests
+        run: ./gradlew check
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
         with:
