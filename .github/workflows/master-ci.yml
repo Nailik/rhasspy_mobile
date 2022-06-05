@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: [self-hosted, windows-latest]
     steps:
       - uses: actions/checkout@v3
       - name: set up JDK 18.0.1+10
@@ -41,7 +41,7 @@ jobs:
         run: ./gradlew build sonarqube
       - name: Sign app APK
         # ID used to access action output
-      - uses: r0adkll/sign-android-release@v1
+        uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
           releaseDirectory: app/build/outputs/apk/release
@@ -53,7 +53,7 @@ jobs:
           BUILD_TOOLS_VERSION: "30.0.2"
           # Example use of `signedReleaseFile` output -- not needed
       - name: Sign app APK
-      - uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v2
         with:
           name: Signed app bundle
           path: ${{steps.sign_app.outputs.signedReleaseFile}}
