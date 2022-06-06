@@ -36,7 +36,7 @@ jobs:
         if: success() || failure()    # run this step even if previous step failed
         with:
           name: Test Report          # Name of the check run which will be created
-          path: MultiPlatformLibrary/build/reports/tests/test*UnitTest/TEST-*.xml    # Path to test results
+          path: MultiPlatformLibrary/build/test-results/test*UnitTest/TEST-*.xml    # Path to test results
           reporter: jest-junit       # Format of test results
       # android UI Test
       - name: Android UI Tests
