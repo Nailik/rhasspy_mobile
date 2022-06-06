@@ -37,10 +37,23 @@ jobs:
         with:
           name: Test Report          # Name of the check run which will be created
           path: MultiPlatformLibrary/build/reports/tests/test*UnitTest/TEST-*.xml    # Path to test results
-          reporter: test-junit        # Format of test results
+          reporter: jest-junit       # Format of test results
       # android UI Test
       - name: Android UI Tests
-        run: ./gradlew androidApp:connectedAndroidTest
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: default
+          arch: x86
+          profile: Nexus 6
+          script: ./gradlew connectedCheck
+      - name: Test Report UI Tests
+        uses: dorny/test-reporter@v1
+        if: success() || failure()    # run this step even if previous step failed
+        with:
+          name: Test Report          # Name of the check run which will be created
+          path: androidApp/build/outputs/androidTest-results/connected/TEST-*.xml    # Path to test results
+          reporter: jest-junit        # Format of test results
       # ui test result upload
       - uses: actions/upload-artifact@v2
         with:
