@@ -41,6 +41,14 @@ jobs:
         with:
           name: UnitTestRelease
           path: MultiPlatformLibrary/build/reports/tests/testReleaseUnitTest
+      # android UI Test
+      - name: Android UI Tests
+        run: ./gradlew androidApp:connectedAndroidTest
+      # ui test result upload
+      - uses: actions/upload-artifact@v2
+        with:
+          name: AndoridUITest
+          path: androidApp/build/reports/androidTests/connected
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
         with:
