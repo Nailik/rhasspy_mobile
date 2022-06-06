@@ -17,9 +17,9 @@ jobs:
           distribution: 'temurin'
           java-version: '18.0.1+10'
           cache: gradle
-        # Removed chmod for windows
-      #- name: Grant execute permission for gradlew
-      #  run: chmod +x gradlew
+        # necessary for linux/macos but doesn't work on windows
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
       # android lint release
       - name: Android Lint Check
         run: ./gradlew lintRelease
