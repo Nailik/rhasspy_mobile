@@ -46,7 +46,7 @@ jobs:
           target: default
           arch: x86
           profile: Nexus 6
-          script: ./gradlew connectedCheck
+          script: ./gradlew androidApp:connectedCheck
       - name: Test Report UI Tests
         uses: dorny/test-reporter@v1
         if: success() || failure()    # run this step even if previous step failed
