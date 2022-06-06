@@ -28,8 +28,19 @@ jobs:
         with:
           name: AndroidLintRelease
           path: androidApp/build/reports/lint-results-release.html
+      #run all unit tests (debug and release)
       - name: Unit Tests
-        run: ./gradlew testReleaseUnitTest
+        run: ./gradlew test
+      # unit test result upload debug
+      - uses: actions/upload-artifact@v2
+        with:
+          name: UnitTestDebug
+          path: MultiPlatformLibrary/build/reports/tests/testDebugUnitTest
+      # unit test result upload release
+      - uses: actions/upload-artifact@v2
+        with:
+          name: UnitTestRelease
+          path: MultiPlatformLibrary/build/reports/tests/testReleaseUnitTest
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
         with:
