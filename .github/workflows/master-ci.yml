@@ -31,16 +31,13 @@ jobs:
       #run all unit tests (debug and release)
       - name: Unit Tests
         run: ./gradlew test
-      # unit test result upload debug
-      - uses: actions/upload-artifact@v2
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()    # run this step even if previous step failed
         with:
-          name: UnitTestDebug
-          path: MultiPlatformLibrary/build/reports/tests/testDebugUnitTest
-      # unit test result upload release
-      - uses: actions/upload-artifact@v2
-        with:
-          name: UnitTestRelease
-          path: MultiPlatformLibrary/build/reports/tests/testReleaseUnitTest
+          name: Test Report          # Name of the check run which will be created
+          path: MultiPlatformLibrary/build/reports/tests/test*UnitTest/TEST-*.xml    # Path to test results
+          reporter: test-junit        # Format of test results
       # android UI Test
       - name: Android UI Tests
         run: ./gradlew androidApp:connectedAndroidTest
