@@ -16,6 +16,7 @@ android {
         targetSdk = 32
         versionCode = Version.code
         versionName = Version.name
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -133,4 +134,9 @@ dependencies {
     implementation(Devsrsouza.fontAwesome)
     implementation(Mikepenz.aboutLibrariesCore)
 
+    androidTestImplementation(Kotlin.test)
+    androidTestImplementation(Kotlin.Test.junit)
+    androidTestImplementation(AndroidX.Test.Espresso.core)
+    androidTestImplementation(AndroidX.Compose.Ui.testJunit4)
+    debugImplementation(AndroidX.Compose.Ui.testManifest)
 }
