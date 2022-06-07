@@ -68,6 +68,18 @@ android {
         //used to trust self signed certificates eventually
         disable.add("TrustAllX509TrustManager")
     }
+
+    applicationVariants.all {
+        this.outputs
+            .map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
+            .forEach { output ->
+                output.outputFileName = output.outputFileName
+                    .replace("androidApp", "rhasspy_mobile_V_${Version.name}")
+                    .replace("-release-unsigned", "")
+                    .replace("-debug-unsigned", "")
+            }
+    }
+
 }
 
 
