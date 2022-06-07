@@ -221,7 +221,7 @@ sonarqube {
 
 val createVersionTxt = tasks.register("versionTxt") {
     doLast {
-        File(projectDir, "version").also {
+        File(projectDir.parent, "version").also {
             it.writeText("V_${Version.name}")
         }
     }
