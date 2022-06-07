@@ -88,18 +88,54 @@ jobs:
             ${{ steps.sign_app.signedReleaseFile0 }}
             ${{ steps.sign_app.signedReleaseFile1 }}
             ${{ steps.sign_app.signedReleaseFile2 }}
-            ${{ steps.sign_app.signedReleaseFile3 }}
-      #create a release
-      - name: Example Release
-        uses: "marvinpinto/action-automatic-releases@latest"
+      - name: Assign release version from VERSION to Env variable
+        run: |
+          VER=$(cat version)
+          echo "version=$VER" >> $GITHUB_ENV
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
+          tag_name: ${{ env.version }}
+          release_name: Release ${{ env.version }}
+          draft: false
           prerelease: true
-          title: "Release X (TEST ONLY!)"
-          files: |
-            ${{ steps.sign_app.signedReleaseFile0 }}
-            ${{ steps.sign_app.signedReleaseFile1 }}
-            ${{ steps.sign_app.signedReleaseFile2 }}
-            ${{ steps.sign_app.signedReleaseFile3 }}
-            ${{ steps.sign_app.signedReleaseFile4 }}
+      - name: Upload Release 0
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          # This pulls from the CREATE RELEASE step above, referencing it's ID to get
+          #its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet
+          #.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ${{ steps.sign_app.signedReleaseFile0 }}
+          #asset_name: my-artifact.zip
+          #asset_content_type: application/apk
+      - name: Upload Release 1
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.sign_app.signedReleaseFile1 }}
+      - name: Upload Release 2
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.sign_app.signedReleaseFile2 }}
+      - name: Upload Release 3
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.sign_app.signedReleaseFile3 }}
