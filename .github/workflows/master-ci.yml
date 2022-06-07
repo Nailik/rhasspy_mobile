@@ -103,7 +103,7 @@ jobs:
           draft: false
           prerelease: true
       - name: Upload Release 0
-        id: upload-release-asset
+        id: upload-release-asset 0
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -116,7 +116,7 @@ jobs:
           #asset_name: my-artifact.zip
           #asset_content_type: application/apk
       - name: Upload Release 1
-        id: upload-release-asset
+        id: upload-release-asset 1
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -124,7 +124,7 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.sign_app.signedReleaseFile1 }}
       - name: Upload Release 2
-        id: upload-release-asset
+        id: upload-release-asset 2
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -132,7 +132,7 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.sign_app.signedReleaseFile2 }}
       - name: Upload Release 3
-        id: upload-release-asset
+        id: upload-release-asset 3
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
