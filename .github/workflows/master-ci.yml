@@ -85,7 +85,7 @@ jobs:
         with:
           name: Signed app bundle
           path: |
-          ${{ steps.sign_app.signedReleaseFile0 }}
-          ${{ steps.sign_app.signedReleaseFile1 }}
-          ${{ steps.sign_app.signedReleaseFile2 }}
-          ${{ steps.sign_app.signedReleaseFile3 }}
+            ${{ steps.sign_app.signedReleaseFile0 }}
+            ${{ steps.sign_app.signedReleaseFile1 }}
+            ${{ steps.sign_app.signedReleaseFile2 }}
+            ${{ steps.sign_app.signedReleaseFile3 }}
