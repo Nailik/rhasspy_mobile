@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
       - name: set up JDK 18.0.1+10
@@ -67,7 +67,7 @@ jobs:
       - name: Project Build
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew build sonarqube
+        run: ./gradlew androidApp:build sonarqube
       - uses: r0adkll/sign-android-release@v1
         name: Sign app APK
         # ID used to access action output
