@@ -63,6 +63,11 @@ android {
         unitTests.isIncludeAndroidResources = true
         testOptions.animationsDisabled = true
     }
+
+    lint {
+        //used to trust self signed certificates eventually
+        disable.add("TrustAllX509TrustManager")
+    }
 }
 
 
