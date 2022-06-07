@@ -218,3 +218,13 @@ sonarqube {
         property("sonar.host.url", "https://sonarcloud.io")
     }
 }
+
+val createVersionTxt = tasks.register("versionTxt") {
+    doLast {
+        File(projectDir, "version").also {
+            it.writeText("V_${Version.name}")
+        }
+    }
+}
+
+tasks.findByPath("preBuild")!!.dependsOn(createVersionTxt)
