@@ -73,7 +73,7 @@ jobs:
         # ID used to access action output
         id: sign_app
         with:
-          releaseDirectory: androidApp/release
+          releaseDirectory: androidApp/build/outputs/apk/release
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
@@ -84,4 +84,8 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: Signed app bundle
-          path: ${{steps.sign_app.outputs.signedReleaseFiles}}
+          path: |
+          ${{ steps.sign_app.signedReleaseFile0 }}
+          ${{ steps.sign_app.signedReleaseFile1 }}
+          ${{ steps.sign_app.signedReleaseFile2 }}
+          ${{ steps.sign_app.signedReleaseFile3 }}
