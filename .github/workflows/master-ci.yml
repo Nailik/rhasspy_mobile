@@ -45,7 +45,7 @@ jobs:
         if: success() || failure()    # run this step even if previous step failed
         with:
           name: Test Report          # Name of the check run which will be created
-          path: androidApp/build/outputs/androidTest-results/connected/TEST-*.xml, MultiPlatformLibrary/build/test-results/test*UnitTest/TEST-*.xml    # Path to test results
+          path: androidApp/build/outputs/androidTest-results/connected/TEST-*.xml,MultiPlatformLibrary/build/test-results/test*UnitTest/TEST-*.xml    # Path to test results
           reporter: java-junit        # Format of test results
       # ui test result upload
       - uses: actions/upload-artifact@v2
