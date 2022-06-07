@@ -32,13 +32,8 @@ jobs:
       - name: Unit Tests
         run: ./gradlew test
       # android UI Test
-      - name: Android UI Tests
-        uses: malinskiy/action-android/emulator-run-cmd@release/0.1.2
-        with:
-          cmd: ./gradlew androidApp:connectedCheck
-          api: 25
-          tag: default
-          abi: x86
+      - name: "Run UI Tests"
+        uses: vgaidarji/android-github-actions-emulator@v1.0.1
       - name: Test Report Tests
         uses: dorny/test-reporter@v1
         if: success() || failure()    # run this step even if previous step failed
