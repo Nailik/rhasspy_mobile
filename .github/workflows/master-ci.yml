@@ -91,17 +91,3 @@ jobs:
             androidApp/build/outputs/apk/release/rhasspy_mobile_V_0.3-armeabi-v7a-signed.apk
             androidApp/build/outputs/apk/release/rhasspy_mobile_V_0.3-x86-signed.apk
             androidApp/build/outputs/apk/release/rhasspy_mobile_V_0.3-x86_64-signed.apk
-      # code version is increased before build
-      - name: Increase Code Minor Version
-        run: ./gradlew increaseCodeVersion
-      # run project build
-      - name: Commit and push changes
-        run: |
-          git config --local user.name github-actions[bot]
-          git config --local user.email github-actions[bot]@users.noreply.github.com
-          git commit -m "Automatically increased Version.code" -a
-      - name: Push changes # push the output folder to your repo
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.head_ref }}
