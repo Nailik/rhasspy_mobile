@@ -14,7 +14,7 @@ plugins {
     id("org.sonarqube") version "3.3"
 }
 
-version = Version.name
+version = Version.toString()
 
 kotlin {
     targets {
@@ -162,7 +162,7 @@ buildkonfig {
     defaultConfigs {
         buildConfigField(STRING, "changelog", generateChangelog())
         buildConfigField(INT, "versionCode", Version.code.toString())
-        buildConfigField(STRING, "versionName", Version.name)
+        buildConfigField(STRING, "versionName", Version.toString())
     }
 }
 
@@ -219,12 +219,19 @@ sonarqube {
     }
 }
 
-val createVersionTxt = tasks.register("versionTxt") {
+val createVersionTxt = tasks.register("createVersionTxt") {
     doLast {
         File(projectDir.parent, "version").also {
-            it.writeText("V_${Version.name}")
+            it.writeText("V_$Version")
         }
     }
 }
-
 tasks.findByPath("preBuild")!!.dependsOn(createVersionTxt)
+
+val increaseCodeVersion = tasks.register("increaseCodeVersion") {
+    doLast {
+        File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
+            it.writeText(it.readText().replace("code = ${Version.code}", "code = ${Version.code + 1}"))
+        }
+    }
+}

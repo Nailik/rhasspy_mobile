@@ -60,8 +60,18 @@ jobs:
           name: Test Report
           path: androidApp/build/outputs/androidTest-results/connected/TEST-*.xml,MultiPlatformLibrary/build/test-results/test*UnitTest/TEST-*.xml
           reporter: java-junit
+      # code version is increased before build
+      - name: Increase Code Version
+        run: ./gradlew increaseCodeVersion
       # run project build
       - name: Project Build
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew androidApp:build sonarqube
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "CI/CD"
+          git config --global user.email "CI@CD"
+          git add -A
+          git commit -m "Automatically increased Version.code"
+          git push

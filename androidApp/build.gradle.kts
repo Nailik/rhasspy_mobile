@@ -15,7 +15,7 @@ android {
         minSdk = 23
         targetSdk = 32
         versionCode = Version.code
-        versionName = Version.name
+        versionName = Version.toString()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -74,7 +74,7 @@ android {
             .map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
             .forEach { output ->
                 output.outputFileName = output.outputFileName
-                    .replace("androidApp", "rhasspy_mobile_V_${Version.name}")
+                    .replace("androidApp", "rhasspy_mobile_V_$Version")
                     .replace("-release-unsigned", "")
                     .replace("-debug-unsigned", "")
             }
