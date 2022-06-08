@@ -1,0 +1,93 @@
+name: Master CI
+
+on:
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set Up JDK 18.0.1+10
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '18.0.1+10'
+          cache: gradle
+      # necessary for linux/macos but doesn't work on windows
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      # cache sonar cloud
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      # cache gradle
+      - name: Cache Gradle packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+      # android lint release
+      - name: Android Lint Check
+        run: ./gradlew lintRelease
+      # android lint release upload
+      - uses: actions/upload-artifact@v3
+        with:
+          name: AndroidLintRelease
+          path: androidApp/build/reports/lint-results-release.html
+      #r un all unit tests (debug and release)
+      - name: Unit Tests
+        run: ./gradlew testRelease
+      # android UI Test
+      - name: Android UI Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: default
+          arch: x86
+          profile: Nexus 6
+          script: ./gradlew androidApp:connectedCheck
+      # better looking test report inside github
+      - name: Create Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Test Report
+          path: androidApp/build/outputs/androidTest-results/connected/TEST-*.xml,MultiPlatformLibrary/build/test-results/test*UnitTest/TEST-*.xml
+          reporter: java-junit
+      # run project build
+      - name: Project Build
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew androidApp:build sonarqube
+      # upload apks to action
+      - name: Assign release version
+        run: |
+          VER=$(cat version)
+          echo "version=$VER" >> $GITHUB_ENV
+      # sign the generated apks
+      - uses: r0adkll/sign-android-release@v1
+        name: Sign App APK
+        id: sign_app
+        with:
+          releaseDirectory: androidApp/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "30.0.2"
+      # upload apks to action
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Upload Artifact of signed apks
+          path: |
+            androidApp/build/outputs/apk/release/rhasspy_mobile_V_0.3-arm64-v8a-signed.apk
+            androidApp/build/outputs/apk/release/rhasspy_mobile_V_0.3-armeabi-v7a-signed.apk
+            androidApp/build/outputs/apk/release/rhasspy_mobile_V_0.3-x86-signed.apk
+            androidApp/build/outputs/apk/release/rhasspy_mobile_V_0.3-x86_64-signed.apk

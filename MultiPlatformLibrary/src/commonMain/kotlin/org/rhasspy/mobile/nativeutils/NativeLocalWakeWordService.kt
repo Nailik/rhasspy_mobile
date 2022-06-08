@@ -3,6 +3,7 @@ package org.rhasspy.mobile.nativeutils
 /**
  * Listens to WakeWord with Porcupine
  */
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect object NativeLocalWakeWordService {
 
     /**

@@ -3,6 +3,7 @@ package org.rhasspy.mobile.nativeutils
 /**
  * handles indication of wake up locally
  */
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect object NativeIndication {
 
     /**
