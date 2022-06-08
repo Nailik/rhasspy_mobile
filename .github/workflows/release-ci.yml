@@ -2,7 +2,7 @@ name: Release CI
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "master" ]
   pull_request:
     branches: [ "develop" ]
 
@@ -94,15 +94,15 @@ jobs:
             androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86-signed.apk
             androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86_64-signed.apk
       # upload release apk
-      - name: Create Release
-        uses: "marvinpinto/action-automatic-releases@latest"
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.0
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          automatic_release_tag: ${{ env.version }}
-          prerelease: true
-          title: Release ${{ env.version }}
-          files: |
-            androidApp/build/outputs/apk/release/rhasspy_mobile_*-arm64-v8a-signed.apk
-            androidApp/build/outputs/apk/release/rhasspy_mobile_*-armeabi-v7a-signed.apk
-            androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86-signed.apk
-            androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86_64-signed.apk
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          custom_tag: ${{ env.version }}
+      - name: Create a GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}
