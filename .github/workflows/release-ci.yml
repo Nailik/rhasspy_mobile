@@ -113,6 +113,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: androidApp/build/outputs/apk/release/rhasspy_mobile_*-arm64-v8a-signed.apk
+          asset_name: rhasspy_mobile_${{ env.version }}-arm64-v8a.apk
       # upload release apk
       - name: Upload Release apk 1
         id: upload-release-asset-1
@@ -122,6 +123,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: androidApp/build/outputs/apk/release/rhasspy_mobile_*-armeabi-v7a-signed.apk
+          asset_name: rhasspy_mobile_${{ env.version }}-armeabi-v7a.apk
       # upload release apk
       - name: Upload Release apk 2
         id: upload-release-asset-2
@@ -131,6 +133,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86-signed.apk
+          asset_name: rhasspy_mobile_${{ env.version }}-x86.apk
       # upload release apk
       - name: Upload Release apk 3
         id: upload-release-asset-3
@@ -140,3 +143,4 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86_64-signed.apk
+          asset_name: rhasspy_mobile_${{ env.version }}-x86_64-signed.apk
