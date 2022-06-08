@@ -91,6 +91,16 @@ jobs:
             androidApp/build/outputs/apk/release/rhasspy_mobile_*-armeabi-v7a-signed.apk
             androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86-signed.apk
             androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86_64-signed.apk
+      # code version is increased before build
+      - name: Increase Code Minor Version
+        run: ./gradlew increaseCodeVersion
+      # increase release version
+      - if: contains(${{ github.event.head_commit.message }}, '#patch')
+        run: ./gradlew increasePatchCodeVersion
+      - if: contains(${{ github.event.head_commit.message }}, '#minor')
+        run: ./gradlew increaseMinorCodeVersion
+      - if: contains(${{ github.event.head_commit.message }}, '#major')
+        run: ./gradlew increaseMajorCodeVersion
       # upload release apk
       - name: Create Release
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -104,7 +114,6 @@ jobs:
             androidApp/build/outputs/apk/release/rhasspy_mobile_*-armeabi-v7a-signed.apk
             androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86-signed.apk
             androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86_64-signed.apk
-
       - name: Bump version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.0
@@ -116,10 +125,6 @@ jobs:
           tag: ${{ steps.tag_version.outputs.new_tag }}
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}
-
-      # code version is increased before build
-      - name: Increase Code Minor Version
-        run: ./gradlew increaseCodeVersion
       # run project build
       - name: Commit and push changes
         run: |

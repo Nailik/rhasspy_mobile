@@ -92,9 +92,6 @@ jobs:
             androidApp/build/outputs/apk/debug/rhasspy_mobile_*-armeabi-v7a-signed.apk
             androidApp/build/outputs/apk/debug/rhasspy_mobile_*-x86-signed.apk
             androidApp/build/outputs/apk/debug/rhasspy_mobile_*-x86_64-signed.apk
-      # code version is increased before build
-      - name: Increase Code Patch Version
-        run: ./gradlew increaseCodeVersion
       # run project build
       - name: Commit and push changes
         run: |
