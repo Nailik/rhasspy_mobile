@@ -69,9 +69,8 @@ jobs:
       # run project build
       - name: Commit and push changes
         run: |
-          git remote set-url origin ${{ secrets.ssh }}
-          git config --local user.name "CI/CD"
-          git config --local user.email "CI@CD"
+          git config --local user.name github-actions[bot]
+          git config --local user.email github-actions[bot]@users.noreply.github.com
           git commit -m "Automatically increased Version.code" -a
       - name: Push changes # push the output folder to your repo
         uses: ad-m/github-push-action@master
