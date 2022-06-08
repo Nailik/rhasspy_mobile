@@ -107,7 +107,13 @@ kotlin {
             dependsOn(androidTestFixturesRelease)
             dependencies {
                 implementation(Kotlin.Test.junit)
+                implementation(Kotlin.test)
+                implementation(Kotlin.Test.junit)
+                implementation(AndroidX.Test.Espresso.core)
+                implementation(AndroidX.Compose.Ui.testJunit4)
+                implementation(AndroidX.Compose.Ui.testManifest)
             }
+
         }
         val iosX64Main by getting
         val iosArm64Main by getting
@@ -232,6 +238,16 @@ val increaseCodeVersion = tasks.register("increaseCodeVersion") {
     doLast {
         File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
             it.writeText(it.readText().replace("code = ${Version.code}", "code = ${Version.code + 1}"))
+        }
+    }
+}
+
+val increaseCodeVersion = tasks.register("increaseCodePatchVersion") {
+    doLast {
+        File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
+            it.writeText(it.readText()
+                .replace("code = ${Version.code}", "code = ${Version.code + 1}")
+                .replace("patch = ${Version.code}", "patch = ${Version.code + 1}"))
         }
     }
 }
