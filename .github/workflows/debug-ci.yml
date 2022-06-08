@@ -1,8 +1,8 @@
-name: Master CI
+name: Debug CI
 
 on:
-  pull_request:
-    branches: [ "master" ]
+  push:
+    branches: [ "develop" ]
 
 jobs:
   build:
@@ -32,17 +32,17 @@ jobs:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
-      # android lint release
+      # android lint debug
       - name: Android Lint Check
-        run: ./gradlew lintRelease
-      # android lint release upload
+        run: ./gradlew lintDebug
+      # android lint debug upload
       - uses: actions/upload-artifact@v3
         with:
           name: AndroidLintRelease
-          path: androidApp/build/reports/lint-results-release.html
-      #r un all unit tests (debug and release)
+          path: androidApp/build/reports/lint-results-debug.html
+      #r un all unit tests (debug and debug)
       - name: Unit Tests
-        run: ./gradlew testRelease
+        run: ./gradlew testDebug
       # android UI Test
       - name: Android UI Tests
         uses: reactivecircus/android-emulator-runner@v2
@@ -65,17 +65,12 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew androidApp:build sonarqube
-      # upload apks to action
-      - name: Assign release version
-        run: |
-          VER=$(cat version)
-          echo "version=$VER" >> $GITHUB_ENV
       # sign the generated apks
       - uses: r0adkll/sign-android-release@v1
         name: Sign App APK
         id: sign_app
         with:
-          releaseDirectory: androidApp/build/outputs/apk/release
+          releaseDirectory: androidApp/build/outputs/apk/debug
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
@@ -87,7 +82,7 @@ jobs:
         with:
           name: Upload Artifact of signed apks
           path: |
-            androidApp/build/outputs/apk/release/rhasspy_mobile_V_0.3-arm64-v8a-signed.apk
-            androidApp/build/outputs/apk/release/rhasspy_mobile_V_0.3-armeabi-v7a-signed.apk
-            androidApp/build/outputs/apk/release/rhasspy_mobile_V_0.3-x86-signed.apk
-            androidApp/build/outputs/apk/release/rhasspy_mobile_V_0.3-x86_64-signed.apk
+            androidApp/build/outputs/apk/debug/rhasspy_mobile_*-arm64-v8a-signed.apk
+            androidApp/build/outputs/apk/debug/rhasspy_mobile_*-armeabi-v7a-signed.apk
+            androidApp/build/outputs/apk/debug/rhasspy_mobile_*-x86-signed.apk
+            androidApp/build/outputs/apk/debug/rhasspy_mobile_*-x86_64-signed.apk

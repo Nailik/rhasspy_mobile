@@ -1,8 +1,6 @@
 name: Develop CI
 
 on:
-  push:
-    branches: [ "develop" ]
   pull_request:
     branches: [ "develop" ]
 
@@ -67,24 +65,3 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew androidApp:build sonarqube
-      # sign the generated apks
-      - uses: r0adkll/sign-android-release@v1
-        name: Sign App APK
-        id: sign_app
-        with:
-          releaseDirectory: androidApp/build/outputs/apk/debug
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-        env:
-          BUILD_TOOLS_VERSION: "30.0.2"
-      # upload apks to action
-      - uses: actions/upload-artifact@v3
-        with:
-          name: Upload Artifact of signed apks
-          path: |
-            androidApp/build/outputs/apk/release/rhasspy_mobile_*-arm64-v8a-signed.apk
-            androidApp/build/outputs/apk/release/rhasspy_mobile_*-armeabi-v7a-signed.apk
-            androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86-signed.apk
-            androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86_64-signed.apk
