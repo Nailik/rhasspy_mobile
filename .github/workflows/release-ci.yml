@@ -88,11 +88,20 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: Upload Artifact of signed apks
+          path: ${{steps.sign_app.outputs.signedReleaseFile}}
+      - uses: jungwinter/split@v1
+        id: signed_files
+        with:
+          msg: ${{ steps.sign_app.signedReleaseFiles }}
+          separator: ':'
+      # upload apks to action
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Upload Artifact of signed apks
           path: |
-            ${{ steps.sign_app.signedReleaseFile0 }}
-            ${{ steps.sign_app.signedReleaseFile1 }}
-            ${{ steps.sign_app.signedReleaseFile2 }}
-            ${{ steps.sign_app.signedReleaseFile3 }}
+            ${{ steps.signed_files._0 }}
+            ${{ steps.signed_files._1 }}
+            ${{ steps.signed_files._2 }}
       # create the release with tag
       - name: Create Release
         id: create_release
