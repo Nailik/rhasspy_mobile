@@ -88,20 +88,11 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: Upload Artifact of signed apks
-          path: ${{steps.sign_app.outputs.signedReleaseFile}}
-      - uses: jungwinter/split@v1
-        id: signed_files
-        with:
-          msg: ${{ steps.sign_app.signedReleaseFiles }}
-          separator: ':'
-      # upload apks to action
-      - uses: actions/upload-artifact@v3
-        with:
-          name: Upload Artifact of signed apks
           path: |
-            ${{ steps.signed_files._0 }}
-            ${{ steps.signed_files._1 }}
-            ${{ steps.signed_files._2 }}
+            androidApp/build/outputs/apk/release/rhasspy_mobile_*-arm64-v8a-signed.apk
+            androidApp/build/outputs/apk/release/rhasspy_mobile_*-armeabi-v7a-signed.apk
+            androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86-signed.apk
+            androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86_64-signed.apk
       # create the release with tag
       - name: Create Release
         id: create_release
@@ -121,7 +112,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.sign_app.signedReleaseFile0 }}
+          asset_path: androidApp/build/outputs/apk/release/rhasspy_mobile_*-arm64-v8a-signed.apk
       # upload release apk
       - name: Upload Release apk 1
         id: upload-release-asset-1
@@ -130,7 +121,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.sign_app.signedReleaseFile1 }}
+          asset_path: androidApp/build/outputs/apk/release/rhasspy_mobile_*-armeabi-v7a-signed.apk
       # upload release apk
       - name: Upload Release apk 2
         id: upload-release-asset-2
@@ -139,7 +130,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.sign_app.signedReleaseFile2 }}
+          asset_path: androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86-signed.apk
       # upload release apk
       - name: Upload Release apk 3
         id: upload-release-asset-3
@@ -148,4 +139,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.sign_app.signedReleaseFile3 }}
+          asset_path: androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86_64-signed.apk

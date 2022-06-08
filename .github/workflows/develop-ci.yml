@@ -1,4 +1,4 @@
-name: Release CI
+name: Develop CI
 
 on:
   push:
@@ -84,7 +84,7 @@ jobs:
         with:
           name: Upload Artifact of signed apks
           path: |
-            ${{ steps.sign_app.signedReleaseFile0 }}
-            ${{ steps.sign_app.signedReleaseFile1 }}
-            ${{ steps.sign_app.signedReleaseFile2 }}
-            ${{ steps.sign_app.signedReleaseFile3 }}
+            androidApp/build/outputs/apk/release/rhasspy_mobile_*-arm64-v8a-signed.apk
+            androidApp/build/outputs/apk/release/rhasspy_mobile_*-armeabi-v7a-signed.apk
+            androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86-signed.apk
+            androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86_64-signed.apk

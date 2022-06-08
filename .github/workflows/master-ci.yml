@@ -89,7 +89,7 @@ jobs:
         with:
           name: Upload Artifact of signed apks
           path: |
-            ${{ steps.sign_app.signedReleaseFile0 }}
-            ${{ steps.sign_app.signedReleaseFile1 }}
-            ${{ steps.sign_app.signedReleaseFile2 }}
-            ${{ steps.sign_app.signedReleaseFile3 }}
+            androidApp/build/outputs/apk/release/rhasspy_mobile_V_0.3-arm64-v8a-signed.apk
+            androidApp/build/outputs/apk/release/rhasspy_mobile_V_0.3-armeabi-v7a-signed.apk
+            androidApp/build/outputs/apk/release/rhasspy_mobile_V_0.3-x86-signed.apk
+            androidApp/build/outputs/apk/release/rhasspy_mobile_V_0.3-x86_64-signed.apk
