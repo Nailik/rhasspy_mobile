@@ -61,6 +61,7 @@ jobs:
         with:
           name: Test Report
           path: androidApp/build/outputs/androidTest-results/connected/TEST-*.xml,MultiPlatformLibrary/build/test-results/test*UnitTest/TEST-*.xml
+          reporter: java-junit
       # run project build
       - name: Project Build
         env:
