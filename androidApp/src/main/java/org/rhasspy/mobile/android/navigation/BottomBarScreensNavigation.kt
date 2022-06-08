@@ -13,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -85,7 +86,7 @@ fun BoxWithConstraintsScope.BottomBarScreensNavigation(viewModel: HomeScreenView
 fun TopAppBar(viewModel: HomeScreenViewModel, snackbarHostState: SnackbarHostState, navController: NavHostController) {
     SmallTopAppBar(
         modifier = Modifier.padding(end = 16.dp),
-        title = { Text(MR.strings.appName) },
+        title = { Text(MR.strings.appName, modifier = Modifier.testTag("appName")) },
         actions = {
 
             val navBackStackEntry by navController.currentBackStackEntryAsState()
