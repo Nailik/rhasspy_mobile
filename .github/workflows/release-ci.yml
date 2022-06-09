@@ -1,12 +1,15 @@
 name: Release CI
 
 on:
-  push:
+  pull_request:
     branches: [ "master" ]
+    types:
+      - labeled
 
 jobs:
   build:
     runs-on: macos-latest
+    if: ${{ github.event.label.name == 'automerge' }}
     steps:
       - uses: actions/checkout@v3
       - name: Set Up JDK 18.0.1+10
@@ -97,11 +100,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: Upload Artifact of signed apks
-          path: |
-            androidApp/build/outputs/apk/release/rhasspy_mobile_*-arm64-v8a-signed.apk
-            androidApp/build/outputs/apk/release/rhasspy_mobile_*-armeabi-v7a-signed.apk
-            androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86-signed.apk
-            androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86_64-signed.apk
+          path: androidApp/build/outputs/apk/release/rhasspy_mobile_*.apk
       # upload release apk
       - name: Create Release
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -110,11 +109,7 @@ jobs:
           automatic_release_tag: ${{ env.version }}
           prerelease: true
           title: Release ${{ env.version }}
-          files: |
-            androidApp/build/outputs/apk/release/rhasspy_mobile_*-arm64-v8a-signed.apk
-            androidApp/build/outputs/apk/release/rhasspy_mobile_*-armeabi-v7a-signed.apk
-            androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86-signed.apk
-            androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86_64-signed.apk
+          files: androidApp/build/outputs/apk/release/rhasspy_mobile_*.apk
       - name: Bump version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.0
@@ -137,3 +132,10 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.head_ref }}
+      # auto approve pr
+      - name: Approve Pull Request
+        uses: juliangruber/merge-pull-request-action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          method: merge
+          number: ${{ github.event.pull_request.number }}
