@@ -1,12 +1,15 @@
 name: Debug CI
 
 on:
-  push:
+  pull_request:
     branches: [ "develop" ]
+    types:
+      - labeled
 
 jobs:
   build:
     runs-on: macos-latest
+    if: ${{ github.event.label.name == 'automerge' }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -66,6 +69,12 @@ jobs:
       # code version is increased before build
       - name: Increase Code Version
         run: ./gradlew increaseCodeVersion
+      # commit new version
+      - name: Commit and push changes
+        run: |
+          git config --local user.name github-actions[bot]
+          git config --local user.email github-actions[bot]@users.noreply.github.com
+          git commit -m "Automatically increased Version.code" -a
       # run project build
       - name: Project Build
         env:
@@ -88,19 +97,17 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: Upload Artifact of signed apks
-          path: |
-            androidApp/build/outputs/apk/debug/rhasspy_mobile_*-arm64-v8a-signed.apk
-            androidApp/build/outputs/apk/debug/rhasspy_mobile_*-armeabi-v7a-signed.apk
-            androidApp/build/outputs/apk/debug/rhasspy_mobile_*-x86-signed.apk
-            androidApp/build/outputs/apk/debug/rhasspy_mobile_*-x86_64-signed.apk
+          path: androidApp/build/outputs/apk/debug/rhasspy_mobile_*.apk
       # run project build
-      - name: Commit and push changes
-        run: |
-          git config --local user.name github-actions[bot]
-          git config --local user.email github-actions[bot]@users.noreply.github.com
-          git commit -m "Automatically increased Version.code" -a
       - name: Push changes # push the output folder to your repo
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.head_ref }}
+      # auto approve pr
+      - name: Approve Pull Request
+        uses: juliangruber/merge-pull-request-action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          method: merge
+          number: 1
