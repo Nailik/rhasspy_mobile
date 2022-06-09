@@ -1,12 +1,15 @@
 name: Release CI
 
 on:
-  push:
+  pull_request:
     branches: [ "master" ]
+    types:
+      - labeled
 
 jobs:
   build:
     runs-on: macos-latest
+    if: ${{ github.event.label.name == 'automerge' }}
     steps:
       - uses: actions/checkout@v3
       - name: Set Up JDK 18.0.1+10
@@ -129,3 +132,9 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.head_ref }}
+      # auto approve pr
+      - name: Approve Pull Request
+        uses: juliangruber/approve-pull-request-action@v1.1.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          number: 1

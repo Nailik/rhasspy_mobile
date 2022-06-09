@@ -3,12 +3,13 @@ name: Debug CI
 on:
   pull_request:
     branches: [ "develop" ]
-    types: [closed]
+    types:
+      - labeled
 
 jobs:
   build:
     runs-on: macos-latest
-    if: "contains(github.event.head_commit.message, '#approved')"
+    if: ${{ github.event.label.name == 'automerge' }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -74,11 +75,6 @@ jobs:
           git config --local user.name github-actions[bot]
           git config --local user.email github-actions[bot]@users.noreply.github.com
           git commit -m "Automatically increased Version.code" -a
-      # merge into develop
-      - name: Merge me!
-        uses: ridedott/merge-me-action@v2
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # run project build
       - name: Project Build
         env:
@@ -108,3 +104,9 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.head_ref }}
+      # auto approve pr
+      - name: Approve Pull Request
+        uses: juliangruber/approve-pull-request-action@v1.1.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          number: 1
