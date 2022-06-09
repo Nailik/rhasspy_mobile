@@ -138,4 +138,4 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           method: merge
-          number: 1
+          number: ${{ github.event.pull_request.number }}
