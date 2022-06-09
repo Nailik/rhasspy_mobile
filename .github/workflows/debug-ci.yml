@@ -88,11 +88,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: Upload Artifact of signed apks
-          path: |
-            androidApp/build/outputs/apk/debug/rhasspy_mobile_*-arm64-v8a-signed.apk
-            androidApp/build/outputs/apk/debug/rhasspy_mobile_*-armeabi-v7a-signed.apk
-            androidApp/build/outputs/apk/debug/rhasspy_mobile_*-x86-signed.apk
-            androidApp/build/outputs/apk/debug/rhasspy_mobile_*-x86_64-signed.apk
+          path: androidApp/build/outputs/apk/debug/rhasspy_mobile_*.apk
       # run project build
       - name: Commit and push changes
         run: |
