@@ -69,6 +69,7 @@ jobs:
       # run project build
       - name: Project Build
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew androidApp:build sonarqube
       # sign the generated apks
