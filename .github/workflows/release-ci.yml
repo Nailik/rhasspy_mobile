@@ -60,9 +60,20 @@ jobs:
           name: Test Report
           path: androidApp/build/outputs/androidTest-results/connected/TEST-*.xml,MultiPlatformLibrary/build/test-results/test*UnitTest/TEST-*.xml
           reporter: java-junit
+      # code version is increased before build
+      - name: Increase Code Minor Version
+        run: ./gradlew increaseCodeVersion
+      # increase release version
+      - if: contains(${{ github.event.head_commit.message }}, '#patch')
+        run: ./gradlew increasePatchCodeVersion
+      - if: contains(${{ github.event.head_commit.message }}, '#minor')
+        run: ./gradlew increaseMinorCodeVersion
+      - if: contains(${{ github.event.head_commit.message }}, '#major')
+        run: ./gradlew increaseMajorCodeVersion
       # run project build
       - name: Project Build
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew androidApp:build sonarqube
       # upload apks to action
@@ -91,16 +102,6 @@ jobs:
             androidApp/build/outputs/apk/release/rhasspy_mobile_*-armeabi-v7a-signed.apk
             androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86-signed.apk
             androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86_64-signed.apk
-      # code version is increased before build
-      - name: Increase Code Minor Version
-        run: ./gradlew increaseCodeVersion
-      # increase release version
-      - if: contains(${{ github.event.head_commit.message }}, '#patch')
-        run: ./gradlew increasePatchCodeVersion
-      - if: contains(${{ github.event.head_commit.message }}, '#minor')
-        run: ./gradlew increaseMinorCodeVersion
-      - if: contains(${{ github.event.head_commit.message }}, '#major')
-        run: ./gradlew increaseMajorCodeVersion
       # upload release apk
       - name: Create Release
         uses: "marvinpinto/action-automatic-releases@latest"
