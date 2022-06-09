@@ -3,6 +3,7 @@ name: Debug CI
 on:
   pull_request:
     branches: [ "develop" ]
+    types: [closed]
 
 jobs:
   build:
