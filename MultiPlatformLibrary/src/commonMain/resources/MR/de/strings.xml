@@ -168,4 +168,7 @@
     <string name="dataPrivacy">Datenschutz</string>
     <string name="sourceCode">Sourcecode</string>
     <string name="changelog">Changelog</string>
+    <string name="remove">Entfernen</string>
+    <string name="sounds">Töne</string>
+    <string name="selectCustomSoundFile">Benutzerdefinierte Sounddatei auswählen</string>
 </resources>
