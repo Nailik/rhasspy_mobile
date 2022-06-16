@@ -167,6 +167,11 @@ actual object SettingsUtils {
         }
     }
 
+
+    actual fun removeSoundFile(fileName: String) {
+        File(Application.Instance.filesDir, "sounds/$fileName").delete()
+    }
+
     actual fun selectPorcupineFile(callback: (String?) -> Unit) {
         File(Application.Instance.filesDir, "porcupine").mkdirs()
 
