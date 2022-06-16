@@ -313,42 +313,54 @@ fun Sounds(viewModel: SettingsScreenViewModel) {
                     AppSettings.soundVolume.value = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
                 })
 
-            DropDownListWithFileOpen(
+            val allSounds = AppSettings.customSounds.observe().toTypedArray().addSoundItems()
+
+            DropDownStringList(
                 overlineText = { Text(MR.strings.wakeSound) },
                 selected = AppSettings.wakeSound.observe(),
-                values = AppSettings.wakeSounds.observe().addSoundItems(),
-                onAdd = {
-                    viewModel.selectWakeSoundFile()
-                }) {
-                AppSettings.wakeSound.value = it
+                values = allSounds,
+            ) {
+                viewModel.selectWakeSoundFile(it)
             }
 
-            DropDownListWithFileOpen(
+            DropDownStringList(
                 overlineText = { Text(MR.strings.recordedSound) },
                 selected = AppSettings.recordedSound.observe(),
-                values = AppSettings.recordedSounds.observe().addSoundItems(),
-                onAdd = {
-                    viewModel.selectRecordedSoundFile()
-                }) {
-                AppSettings.recordedSound.value = it
+                values = allSounds
+            ) {
+                viewModel.selectRecordedSoundFile(it)
             }
 
-            DropDownListWithFileOpen(
+            DropDownStringList(
                 overlineText = { Text(MR.strings.errorSound) },
                 selected = AppSettings.errorSound.observe(),
-                values = AppSettings.errorSounds.observe().addSoundItems(),
-                onAdd = {
-                    viewModel.selectErrorSoundFile()
-                }) {
-                AppSettings.errorSound.value = it
+                values = allSounds
+            ) {
+                viewModel.selectErrorSoundFile(it)
             }
+
+            CustomSoundFile(viewModel)
         }
 
     }
 }
 
 @Composable
-private fun Set<String>.addSoundItems(): Array<String> {
+private fun CustomSoundFile(viewModel: SettingsScreenViewModel) {
+    DropDownListRemovableWithFileOpen(
+        overlineText = { Text(MR.strings.sounds) },
+        title = { Text(MR.strings.selectCustomSoundFile) },
+        values = viewModel.customSoundValuesUi.observe(),
+        onAdd = {
+            viewModel.selectCustomSoundFile()
+        },
+        onRemove = {
+            viewModel.removeCustomSoundFile(it)
+        })
+}
+
+@Composable
+private fun Array<String>.addSoundItems(): Array<String> {
     return this.toMutableList().apply {
         this.addAll(0, listOf(translate(resource = MR.strings.defaultText), translate(resource = MR.strings.disabled)))
     }.toTypedArray()

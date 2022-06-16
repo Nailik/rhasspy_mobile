@@ -134,8 +134,6 @@ jobs:
           branch: ${{ github.head_ref }}
       # auto approve pr
       - name: Approve Pull Request
-        uses: juliangruber/merge-pull-request-action@v1
+        uses: hmarr/auto-approve-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          method: merge
-          number: ${{ github.event.pull_request.number }}
