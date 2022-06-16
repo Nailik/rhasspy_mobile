@@ -31,6 +31,7 @@ object IndicationService {
                 //indication that it's thinking
                 State.RecognizingIntent -> IndicationState.Thinking
                 //no indication
+                State.PlayingAudio -> IndicationState.Speaking
                 else -> IndicationState.Idle
             }
 

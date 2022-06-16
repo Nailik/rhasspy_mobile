@@ -4,5 +4,6 @@ enum class IndicationState {
     Idle,
     Wakeup,
     Recording,
-    Thinking
+    Thinking,
+    Speaking
 }
