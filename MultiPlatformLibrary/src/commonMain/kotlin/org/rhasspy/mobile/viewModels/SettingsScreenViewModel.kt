@@ -25,7 +25,8 @@ class SettingsScreenViewModel : ViewModel() {
     private val currentStatus = MutableLiveData(false)
     val status: LiveData<Boolean> = currentStatus.readOnly()
 
-    private val customSoundValues = MutableLiveData(AppSettings.customSounds.value.map { SoundFile(it, false) })
+    private val customSoundValues = MutableLiveData(AppSettings.customSounds.value.map { SoundFile(it, false) }.toTypedArray())
+    val customSoundValuesUi: LiveData<Array<SoundFile>> = customSoundValues.readOnly()
 
     private var job: Job? = null
 
@@ -103,7 +104,7 @@ class SettingsScreenViewModel : ViewModel() {
 
             customSoundValues.value = customSoundValues.value.toMutableList().apply {
                 this.add(SoundFile(it, false))
-            }
+            }.toTypedArray()
         }
     }
 
@@ -113,6 +114,7 @@ class SettingsScreenViewModel : ViewModel() {
             .apply {
                 this.removeAt(it)
             }.toSet()
+        checkCustomSoundUsage()
     }
 
     private fun soundFileIsUsed(fileName: String): Boolean =
@@ -120,7 +122,7 @@ class SettingsScreenViewModel : ViewModel() {
 
 
     private fun checkCustomSoundUsage() {
-        customSoundValues.value = AppSettings.customSounds.value.map { SoundFile(it, soundFileIsUsed(it)) }
+        customSoundValues.value = AppSettings.customSounds.value.map { SoundFile(it, soundFileIsUsed(it)) }.toTypedArray()
     }
 
 }

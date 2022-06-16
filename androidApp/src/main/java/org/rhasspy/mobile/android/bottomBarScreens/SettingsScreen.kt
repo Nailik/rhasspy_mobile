@@ -313,7 +313,7 @@ fun Sounds(viewModel: SettingsScreenViewModel) {
                     AppSettings.soundVolume.value = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
                 })
 
-            val allSounds = AppSettings.customSounds.observe().map { it.toString() }.toTypedArray().addSoundItems()
+            val allSounds = AppSettings.customSounds.observe().toTypedArray().addSoundItems()
 
             DropDownStringList(
                 overlineText = { Text(MR.strings.wakeSound) },
@@ -347,7 +347,7 @@ private fun CustomSoundFile(viewModel: SettingsScreenViewModel) {
     DropDownListRemovableWithFileOpen(
         overlineText = { Text(MR.strings.sounds) },
         title = { Text(MR.strings.selectCustomSoundFile) },
-        values = AppSettings.customSounds.observe().toTypedArray().map { Pair(it, true) }.toTypedArray(),
+        values = viewModel.customSoundValuesUi.observe(),
         onAdd = {
             viewModel.selectCustomSoundFile()
         },
