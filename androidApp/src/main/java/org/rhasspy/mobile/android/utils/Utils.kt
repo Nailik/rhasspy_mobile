@@ -19,6 +19,7 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Switch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material3.*
@@ -240,20 +241,22 @@ fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, enabled: Boolean = true,
 }
 
 @Composable
-fun DropDownListWithFileOpen(
+fun DropDownListRemovableWithFileOpen(
     overlineText: @Composable () -> Unit,
-    selected: Int,
+    selected: Int? = null,
     enabled: Boolean = true,
-    values: Array<String>,
+    values: Array<Pair<String, Boolean>>,
     onAdd: () -> Unit,
-    onSelect: (item: Int) -> Unit
+    onRemove: ((index: Int) -> Unit)? = null,
+    title: @Composable () -> Unit = { selected?.let { Text(values[it].first) } },
+    onSelect: ((index: Int) -> Unit)? = null
 ) {
     var isExpanded by remember { mutableStateOf(false) }
 
     ListElement(modifier = Modifier
         .clickable { isExpanded = true },
         overlineText = overlineText,
-        text = { Text(values[selected]) },
+        text = title,
         trailing = {
             IndicatedSmallIcon(isExpanded) {
                 Icon(
@@ -273,14 +276,20 @@ fun DropDownListWithFileOpen(
             modifier = Modifier.fillMaxWidth(),
             expanded = isExpanded,
             onDismissRequest = { isExpanded = false }) {
-            values.forEachIndexed { index, text ->
+            values.forEachIndexed { index, item ->
                 DropdownMenuItem(
-                    text = { Text(text) },
+                    text = { Text(item.first) },
                     enabled = enabled,
-                    onClick = {
-                        isExpanded = false
-                        onSelect.invoke(index)
-                    })
+                    trailingIcon = {
+                        onRemove?.let { callback ->
+                            IconButton(
+                                onClick = { callback.invoke(index) },
+                                enabled = enabled && !item.second
+                            ) {
+                                Icon(imageVector = Icons.Filled.Delete, contentDescription = MR.strings.remove)
+                            }
+                        }
+                    }, onClick = { onSelect?.invoke(index) })
             }
 
             Box(modifier = Modifier.fillMaxWidth()) {
@@ -301,6 +310,55 @@ fun DropDownListWithFileOpen(
                 }
 
             }
+        }
+    }
+}
+
+@Composable
+fun DropDownStringList(
+    overlineText: @Composable () -> Unit,
+    selected: String,
+    enabled: Boolean = true,
+    values: Array<String>,
+    onSelect: (item: String) -> Unit
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+
+    ListElement(modifier = Modifier
+        .clickable { isExpanded = true },
+        overlineText = overlineText,
+        text = { Text(selected) },
+        trailing = {
+            IndicatedSmallIcon(isExpanded) {
+                Icon(
+                    modifier = it,
+                    imageVector = Icons.Filled.ArrowDropDown,
+                    contentDescription = MR.strings.expandDropDown,
+                )
+            }
+        })
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentSize(Alignment.TopStart)
+    ) {
+        DropdownMenu(
+            modifier = Modifier.fillMaxWidth(),
+            expanded = isExpanded,
+            onDismissRequest = { isExpanded = false }) {
+            values.forEach { text ->
+
+                DropdownMenuItem(
+                    modifier = if (text == selected) Modifier.background(MaterialTheme.colorScheme.surfaceVariant) else Modifier,
+                    text = { Text(text) },
+                    enabled = enabled,
+                    onClick = {
+                        isExpanded = false
+                        onSelect.invoke(text)
+                    })
+            }
+
         }
     }
 }
