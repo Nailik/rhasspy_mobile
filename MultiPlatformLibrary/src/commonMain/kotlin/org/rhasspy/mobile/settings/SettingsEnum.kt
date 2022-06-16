@@ -33,6 +33,7 @@ enum class SettingsEnum {
     WakeSounds,
     RecordedSounds,
     ErrorSounds,
+    CustomSounds,
 
     ShowLog,
     LogAudioFrames,
