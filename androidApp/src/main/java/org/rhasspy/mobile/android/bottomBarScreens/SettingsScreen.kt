@@ -318,21 +318,24 @@ fun Sounds(viewModel: SettingsScreenViewModel) {
             DropDownStringList(
                 overlineText = { Text(MR.strings.wakeSound) },
                 selected = AppSettings.wakeSound.observe(),
-                values = allSounds,) {
+                values = allSounds,
+            ) {
                 viewModel.selectWakeSoundFile(it)
             }
 
             DropDownStringList(
                 overlineText = { Text(MR.strings.recordedSound) },
                 selected = AppSettings.recordedSound.observe(),
-                values = allSounds) {
+                values = allSounds
+            ) {
                 viewModel.selectRecordedSoundFile(it)
             }
 
             DropDownStringList(
                 overlineText = { Text(MR.strings.errorSound) },
                 selected = AppSettings.errorSound.observe(),
-                values = allSounds) {
+                values = allSounds
+            ) {
                 viewModel.selectErrorSoundFile(it)
             }
 
@@ -352,7 +355,7 @@ private fun CustomSoundFile(viewModel: SettingsScreenViewModel) {
             viewModel.selectCustomSoundFile()
         },
         onRemove = {
-             viewModel.removeCustomSoundFile(it)
+            viewModel.removeCustomSoundFile(it)
         })
 }
 

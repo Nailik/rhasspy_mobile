@@ -3,7 +3,6 @@ package org.rhasspy.mobile.settings
 import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.logger.LogLevel
-import org.rhasspy.mobile.settings.sounds.SoundFile
 import org.rhasspy.mobile.settings.sounds.SoundOptions
 
 object AppSettings {
