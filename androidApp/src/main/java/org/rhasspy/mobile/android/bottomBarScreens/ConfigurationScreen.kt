@@ -368,11 +368,11 @@ fun WakeWord(viewModel: ConfigurationScreenViewModel, enabled: Boolean, snackbar
                     })
 
                 //filled with correct values later
-                DropDownListWithFileOpen(
+                DropDownListRemovableWithFileOpen(
                     overlineText = { Text(MR.strings.wakeWord) },
                     selected = ConfigurationSettings.wakeWordPorcupineKeywordOption.observeCurrent(),
                     enabled = enabled,
-                    values = ConfigurationSettings.wakeWordPorcupineKeywordOptions.observeCurrent().toTypedArray(),
+                    values = ConfigurationSettings.wakeWordPorcupineKeywordOptions.observeCurrent().map { Pair(it, true) }.toTypedArray(),
                     onAdd = {
                         viewModel.selectPorcupineWakeWordFile()
                     }) {
