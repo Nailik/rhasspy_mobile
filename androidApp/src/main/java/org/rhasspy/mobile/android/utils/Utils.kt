@@ -62,6 +62,7 @@ import org.rhasspy.mobile.observer.Observable
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.sounds.SoundFile
 
 @Composable
 fun Text(
@@ -243,12 +244,11 @@ fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, enabled: Boolean = true,
 @Composable
 fun DropDownListRemovableWithFileOpen(
     overlineText: @Composable () -> Unit,
-    selected: Int? = null,
     enabled: Boolean = true,
-    values: Array<Pair<String, Boolean>>,
+    values: Array<SoundFile>,
     onAdd: () -> Unit,
     onRemove: ((index: Int) -> Unit)? = null,
-    title: @Composable () -> Unit = { selected?.let { Text(values[it].first) } },
+    title: @Composable () -> Unit,
     onSelect: ((index: Int) -> Unit)? = null
 ) {
     var isExpanded by remember { mutableStateOf(false) }
@@ -278,18 +278,82 @@ fun DropDownListRemovableWithFileOpen(
             onDismissRequest = { isExpanded = false }) {
             values.forEachIndexed { index, item ->
                 DropdownMenuItem(
-                    text = { Text(item.first) },
+                    text = { Text(item.fileName) },
                     enabled = enabled,
                     trailingIcon = {
                         onRemove?.let { callback ->
                             IconButton(
                                 onClick = { callback.invoke(index) },
-                                enabled = enabled && !item.second
+                                enabled = enabled && !item.used
                             ) {
                                 Icon(imageVector = Icons.Filled.Delete, contentDescription = MR.strings.remove)
                             }
                         }
                     }, onClick = { onSelect?.invoke(index) })
+            }
+
+            Box(modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .align(alignment = Alignment.Center),
+                    border = BorderStroke(ButtonDefaults.outlinedButtonBorder.width, MaterialTheme.colorScheme.primary),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
+                    onClick = {
+                        isExpanded = false
+                        onAdd.invoke()
+                    })
+                {
+                    Icon(imageVector = Icons.Filled.FileOpen, contentDescription = MR.strings.expandDropDown)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(MR.strings.selectFile)
+                }
+
+            }
+        }
+    }
+}
+
+
+@Composable
+fun DropDownListWithFileOpen(
+    overlineText: @Composable () -> Unit,
+    selected: Int,
+    enabled: Boolean = true,
+    values: Array<String>,
+    onAdd: () -> Unit,
+    onSelect: ((index: Int) -> Unit)? = null
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+
+    ListElement(modifier = Modifier
+        .clickable { isExpanded = true },
+        overlineText = overlineText,
+        text = { Text(values[selected]) },
+        trailing = {
+            IndicatedSmallIcon(isExpanded) {
+                Icon(
+                    modifier = it,
+                    imageVector = Icons.Filled.ArrowDropDown,
+                    contentDescription = MR.strings.expandDropDown,
+                )
+            }
+        })
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentSize(Alignment.TopStart)
+    ) {
+        DropdownMenu(
+            modifier = Modifier.fillMaxWidth(),
+            expanded = isExpanded,
+            onDismissRequest = { isExpanded = false }) {
+            values.forEachIndexed { index, item ->
+                DropdownMenuItem(
+                    text = { Text(item) },
+                    enabled = enabled,
+                    onClick = { onSelect?.invoke(index) })
             }
 
             Box(modifier = Modifier.fillMaxWidth()) {
