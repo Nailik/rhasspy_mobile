@@ -163,4 +163,7 @@
     <string name="dataPrivacy">Data Privacy</string>
     <string name="sourceCode">Sourcecode</string>
     <string name="changelog">Changelog</string>
+    <string name="remove">Remove</string>
+    <string name="sounds">Sounds</string>
+    <string name="selectCustomSoundFile">Select custom sound file</string>
 </resources>
