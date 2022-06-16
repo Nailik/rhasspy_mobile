@@ -16,26 +16,6 @@ object IndicationService {
     val readonlyState = currentState.readOnly()
 
     init {
-        //start native indication service
-        currentState.observe {
-            when (it) {
-                IndicationState.Idle -> {
-                    NativeIndication.closeIndicationOverOtherApps()
-                    NativeIndication.releaseWakeUp()
-                }
-                IndicationState.Wakeup -> {
-                    if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.value) {
-                        NativeIndication.wakeUpScreen()
-                    }
-
-                    if (AppSettings.isWakeWordLightIndication.value) {
-                        NativeIndication.showIndication()
-                    }
-                }
-                else -> {}
-            }
-        }
-
         //change things according to state of the service
         StateMachine.currentState.observe {
             logger.v { "currentState changed to $it" }
@@ -43,7 +23,7 @@ object IndicationService {
             //evaluate new state
             val newState = when (it) {
                 //hot word detected
-                State.StartingSession -> IndicationState.Wakeup
+                State.StartedSession -> IndicationState.Wakeup
                 //Indication that recording is running
                 State.RecordingIntent -> IndicationState.Recording
                 //indication that it's thinking
