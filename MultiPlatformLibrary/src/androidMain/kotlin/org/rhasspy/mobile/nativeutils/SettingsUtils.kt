@@ -144,6 +144,7 @@ actual object SettingsUtils {
                         cursor.close()
                     }
 
+                    fileName = renameFileWhileExists("sounds", fileName)
 
                     Application.Instance.contentResolver.openInputStream(uri)?.let { inputStream ->
                         File(Application.Instance.filesDir, "sounds/$fileName").apply {
@@ -166,7 +167,6 @@ actual object SettingsUtils {
             }
         }
     }
-
 
     actual fun removeSoundFile(fileName: String) {
         File(Application.Instance.filesDir, "sounds/$fileName").delete()
@@ -211,12 +211,14 @@ actual object SettingsUtils {
 
                                     if (!ze.isDirectory) {
                                         if (ze.name.endsWith(".ppn")) {
-                                            File(Application.Instance.filesDir, "porcupine/${ze.name}").outputStream().apply {
+                                            fileName = renameFileWhileExists("porcupine", ze.name)
+
+                                            File(Application.Instance.filesDir, "porcupine/$fileName").outputStream().apply {
                                                 zipInputStream.copyTo(this)
                                                 flush()
                                                 close()
                                             }
-                                            callback(ze.name)
+                                            callback(fileName)
                                             inputStream.close()
                                             return@openDocument
                                         }
@@ -230,6 +232,8 @@ actual object SettingsUtils {
                             }
                             fileName.endsWith(".ppn") -> {
                                 //use this file
+                                fileName = renameFileWhileExists("porcupine", fileName)
+
                                 File(Application.Instance.filesDir, "porcupine/$fileName").apply {
                                     this.outputStream().apply {
                                         inputStream.copyTo(this)
@@ -255,5 +259,20 @@ actual object SettingsUtils {
                 callback(null)
             }
         }
+    }
+
+    //rename file while it already exists
+    private fun renameFileWhileExists(folder: String, file: String): String {
+        var fileName = file
+        var index = 0
+        while (File(Application.Instance.filesDir, "$folder/$fileName").exists()) {
+            index++
+            fileName = if (fileName.contains(Regex("\\([1-9]+\\)."))) {
+                fileName.replace(Regex("\\([1-9]+\\)."), "($index).")
+            } else {
+                "${fileName.substringBeforeLast(".")}($index).${fileName.substringAfterLast(".")}"
+            }
+        }
+        return fileName
     }
 }
