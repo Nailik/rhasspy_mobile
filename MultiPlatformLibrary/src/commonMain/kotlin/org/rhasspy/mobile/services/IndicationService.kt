@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
+import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.logic.State
 import org.rhasspy.mobile.logic.StateMachine
@@ -13,6 +14,8 @@ object IndicationService {
     private val logger = Logger.withTag("IndicationService")
 
     private val currentState = MutableObservable(IndicationState.Idle)
+    private val showVisualIndication = MutableObservable(false)
+    val showVisualIndicationUi = showVisualIndication.readOnly()
     val readonlyState = currentState.readOnly()
 
     init {
@@ -41,7 +44,7 @@ object IndicationService {
             //handle indication (screen wakeup and light indication)
             when (newState) {
                 IndicationState.Idle -> {
-                    NativeIndication.closeIndicationOverOtherApps()
+                    showVisualIndication.value = false
                     NativeIndication.releaseWakeUp()
                 }
                 IndicationState.Wakeup -> {
@@ -50,7 +53,7 @@ object IndicationService {
                     }
 
                     if (AppSettings.isWakeWordLightIndication.value) {
-                        NativeIndication.showIndication()
+                        showVisualIndication.value = true
                     }
                 }
                 else -> {}
