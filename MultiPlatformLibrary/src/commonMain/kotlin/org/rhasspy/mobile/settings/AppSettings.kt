@@ -3,6 +3,8 @@ package org.rhasspy.mobile.settings
 import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.logger.LogLevel
+import org.rhasspy.mobile.settings.sounds.SoundFile
+import org.rhasspy.mobile.settings.sounds.SoundOptions
 
 object AppSettings {
 
@@ -29,14 +31,13 @@ object AppSettings {
     val isIntentHandlingEnabled = AppSetting(SettingsEnum.IntentHandlingEnabled, true)
 
     val soundVolume = AppSetting(SettingsEnum.SoundVolume, 0.5F)
-    val wakeSound = AppSetting(SettingsEnum.WakeSound, 0)
-    val recordedSound = AppSetting(SettingsEnum.RecordedSound, 0)
-    val errorSound = AppSetting(SettingsEnum.ErrorSound, 0)
 
-    val wakeSounds = AppSetting(SettingsEnum.WakeSounds, setOf<String>())
-    val recordedSounds = AppSetting(SettingsEnum.RecordedSounds, setOf<String>())
-    val errorSounds = AppSetting(SettingsEnum.ErrorSounds, setOf<String>())
+    val wakeSound = AppSetting(SettingsEnum.WakeSound, SoundOptions.Default.name)
+    val recordedSound = AppSetting(SettingsEnum.RecordedSound, SoundOptions.Default.name)
+    val errorSound = AppSetting(SettingsEnum.ErrorSound, SoundOptions.Default.name)
 
+    //saves sound as pair, first is fileName as String, second is used and indicates if this custom sound file is used
+    val customSounds = AppSetting(SettingsEnum.CustomSounds, setOf<String>())
 
     val isShowLog = AppSetting(SettingsEnum.ShowLog, false)
     val isLogAudioFrames = AppSetting(SettingsEnum.LogAudioFrames, false)
