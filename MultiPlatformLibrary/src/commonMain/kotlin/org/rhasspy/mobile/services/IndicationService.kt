@@ -8,6 +8,7 @@ import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.nativeutils.NativeIndication
 import org.rhasspy.mobile.observer.MutableObservable
 import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.sounds.SoundOptions
 
 object IndicationService {
     private val logger = Logger.withTag("IndicationService")
@@ -90,25 +91,25 @@ object IndicationService {
 
     private fun playWakeSound() {
         when (AppSettings.wakeSound.value) {
-            0 -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_hi)
-            1 -> {}
-            else -> AudioPlayer.playSoundFile(AppSettings.wakeSounds.value.elementAt(AppSettings.wakeSound.value - 2))
+            SoundOptions.Disabled.name -> {}
+            SoundOptions.Default.name -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_hi)
+            else -> AudioPlayer.playSoundFile(AppSettings.wakeSound.value)
         }
     }
 
     private fun playRecordedSound() {
         when (AppSettings.recordedSound.value) {
-            0 -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_lo)
-            1 -> {}
-            else -> AudioPlayer.playSoundFile(AppSettings.recordedSounds.value.elementAt(AppSettings.recordedSound.value - 2))
+            SoundOptions.Disabled.name -> {}
+            SoundOptions.Default.name -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_lo)
+            else -> AudioPlayer.playSoundFile(AppSettings.recordedSound.value)
         }
     }
 
     private fun playErrorSound() {
         when (AppSettings.errorSound.value) {
-            0 -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_error)
-            1 -> {}
-            else -> AudioPlayer.playSoundFile(AppSettings.errorSounds.value.elementAt(AppSettings.errorSound.value - 2))
+            SoundOptions.Disabled.name -> {}
+            SoundOptions.Default.name -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_error)
+            else -> AudioPlayer.playSoundFile(AppSettings.errorSound.value)
         }
     }
 
