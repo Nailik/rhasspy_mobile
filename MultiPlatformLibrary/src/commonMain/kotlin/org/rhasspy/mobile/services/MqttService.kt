@@ -96,7 +96,7 @@ object MqttService {
         logger.v { "createClient" }
 
         client = MqttClient(
-            brokerUrl = "tcp://${ConfigurationSettings.mqttHost.data}:${ConfigurationSettings.mqttPort.data}",
+            brokerUrl = "tcp://${ConfigurationSettings.mqttHost.value}:${ConfigurationSettings.mqttPort.value}",
             clientId = ConfigurationSettings.siteId.value,
             persistenceType = MqttPersistence.MEMORY,
             onDelivered = { },
