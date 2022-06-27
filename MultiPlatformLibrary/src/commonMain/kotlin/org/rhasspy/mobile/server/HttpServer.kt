@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.nativeutils.installCallLogging
 import org.rhasspy.mobile.nativeutils.installCompression
+import org.rhasspy.mobile.services.RhasspyActions
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.native.concurrent.ThreadLocal
@@ -83,6 +84,7 @@ object HttpServer {
                 setVolume()
                 startRecording()
                 stopRecording()
+                say()
 
                 get("/") {
                     call.respondText("working")
@@ -230,6 +232,20 @@ object HttpServer {
         logger.v { "post /api/stop-recording" }
 
         StateMachine.stopListening()
+    }
+
+    /**
+     * /api/say
+     *
+     * custom endpoint for the rhasspy app
+     * POST text to have Rhasspy use the text-to-speech endpoint to translate the text to audio
+     * Afterwards Rhasspy will use the audio endpoint to play the audio
+     * just like using say in the ui start screen but remote
+     */
+    private fun Routing.say() = post("/api/say") {
+        logger.v { "post /api/say" }
+
+        RhasspyActions.say(call.receive())
     }
 
 }
