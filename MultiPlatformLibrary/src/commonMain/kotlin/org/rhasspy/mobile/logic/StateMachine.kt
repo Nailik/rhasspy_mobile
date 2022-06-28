@@ -74,7 +74,7 @@ object StateMachine {
         if (state.value == State.AwaitingHotWord) {
             state.value = State.StartingSession
             //send to mqtt that hotWord was detected
-            MqttService.hotWordDetected()
+            MqttService.hotWordDetected(keyword)
             //call session started with a new unique id
             startedSession(uuid4().toString(), keyword)
         } else {
