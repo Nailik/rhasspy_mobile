@@ -369,7 +369,7 @@ object StateMachine {
      *
      * intent was recognized will now be handled and session will be ended
      */
-    fun intentRecognized(intent: String, sessionId: String? = currentSession.sessionId) {
+    fun intentRecognized(intentName: String, intent: String, sessionId: String? = currentSession.sessionId) {
         logger.v { "intentRecognized $intent" }
 
         if (state.value == State.RecognizingIntent) {
@@ -378,7 +378,7 @@ object StateMachine {
 
                 currentSession.isIntentRecognized = true
 
-                RhasspyActions.intentHandling(intent)
+                RhasspyActions.intentHandling(intentName, intent)
 
                 if (isDialogueLocal()) {
                     endSession()
@@ -477,7 +477,7 @@ object StateMachine {
                 logger.d { "sessionEnded sessionId $sessionId is different to current session ${currentSession.sessionId}" }
             }
         } else {
-            logger.e { "intentTranscriptionError call with invalid state ${state.value}" }
+            logger.e { "sessionEnded call with invalid state ${state.value}" }
         }
     }
 

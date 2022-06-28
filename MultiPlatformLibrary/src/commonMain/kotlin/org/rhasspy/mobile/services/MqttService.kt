@@ -700,13 +700,13 @@ object MqttService {
 
         if (jsonObject.isThisSiteId()) {
             val intent = jsonObject["intent"]?.jsonObject?.toString() ?: ""
-            val intentName = jsonObject["intent"]?.jsonObject?.get("name")?.jsonPrimitive?.content ?: ""
+            val intentName = jsonObject["intent"]?.jsonObject?.get("intentName")?.jsonPrimitive?.content ?: ""
             val sessionId = jsonObject["sessionId"]?.jsonPrimitive?.content
 
             if (intentName.isEmpty()) {
                 StateMachine.intentNotRecognized(sessionId)
             } else {
-                StateMachine.intentRecognized(intent, sessionId)
+                StateMachine.intentRecognized(intentName, intent, sessionId)
             }
 
         } else {

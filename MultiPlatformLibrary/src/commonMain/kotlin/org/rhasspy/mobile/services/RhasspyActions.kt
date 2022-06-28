@@ -68,7 +68,7 @@ object RhasspyActions {
                         if (intentName.isEmpty() || intent == null) {
                             StateMachine.intentNotRecognized()
                         } else {
-                            StateMachine.intentRecognized(intent)
+                            StateMachine.intentRecognized(intentName, intent)
                         }
                     }
 
@@ -198,12 +198,12 @@ object RhasspyActions {
      *
      * if local dialogue management it will end the session
      */
-    fun intentHandling(intent: String) {
+    fun intentHandling(intentName: String, intent: String) {
 
         if (AppSettings.isIntentHandlingEnabled.value) {
             coroutineScope.launch {
                 when (ConfigurationSettings.intentHandlingOption.value) {
-                    IntentHandlingOptions.HomeAssistant -> HomeAssistantInterface.sendIntent(intent)
+                    IntentHandlingOptions.HomeAssistant -> HomeAssistantInterface.sendIntent(intentName, intent)
                     IntentHandlingOptions.RemoteHTTP -> HttpClientInterface.intentHandling(intent)
                     IntentHandlingOptions.WithRecognition -> logger.v { "intentHandling with recognition was used" }
                     IntentHandlingOptions.Disabled -> logger.d { "intentHandling disabled" }

@@ -16,12 +16,10 @@ object HomeAssistantInterface {
     /**
      * simplified conversion from intent to hass event or hass intent
      */
-    suspend fun sendIntent(intent: String) {
+    suspend fun sendIntent(intentName: String, intent: String) {
         val slots = mutableMapOf<String, JsonPrimitive?>()
 
         val json = Json.decodeFromString<JsonObject>(intent)
-
-        val intentName = json["intent"]?.jsonObject?.get("name")?.jsonPrimitive?.content ?: ""
 
         //for slot in nlu_intent.slots:
         json["slots"]?.jsonObject?.entries?.forEach {
