@@ -453,19 +453,16 @@ object MqttService {
      * currentSensitivity: float = 1.0 - sensitivity of wake word detection (service specific)
      * siteId: string = "default" - Hermes site ID
      */
-    fun hotWordDetected() {
+    fun hotWordDetected(keyword: String) {
         publishMessage(
-            MQTTTopicsPublish.HotWordDetected.topic.replace("<wakewordId>", "default"),
+            MQTTTopicsPublish.HotWordDetected.topic.replace("<wakewordId>", keyword),
             MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("currentSensitivity", ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.value)
                     put("siteId", ConfigurationSettings.siteId.value)
                     //put("sendAudioCaptured", true)
                     //necessary
-                    put(
-                        "modelId",
-                        "/usr/lib/rhasspy/.venv/lib/python3.7/site-packages/pvporcupine/resources/keyword_files/linux/jarvis_linux.ppn"
-                    )
+                    put("modelId",keyword)
                 }).toByteArray()
             )
         )
