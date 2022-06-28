@@ -133,7 +133,7 @@ object HttpClientInterface {
         return try {
 
             val request = httpClient.post(
-                url = Url("${ConfigurationSettings.textToSpeechEndpoint.value}?siteId=${ConfigurationSettings.siteId.value}")
+                url = Url(ConfigurationSettings.textToSpeechEndpoint.value)
             ) {
                 setBody(text)
             }
