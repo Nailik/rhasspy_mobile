@@ -120,7 +120,7 @@ object HttpClientInterface {
     /**
      * api/text-to-speech
      * POST text and have Rhasspy speak it
-     *  ?voice=<voice> - override default TTS voice
+     * ?voice=<voice> - override default TTS voice
      * ?language=<language> - override default TTS language or locale
      * ?repeat=true - have Rhasspy repeat the last sentence it spoke
      * ?volume=<volume> - volume level to speak at (0 = off, 1 = full volume)
