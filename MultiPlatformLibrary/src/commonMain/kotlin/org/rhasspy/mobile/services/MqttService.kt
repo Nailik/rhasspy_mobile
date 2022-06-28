@@ -699,12 +699,16 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            val intent = jsonObject["intent"]?.jsonObject?.toString()
-            intent?.also {
-                StateMachine.intentRecognized(it, jsonObject["sessionId"]?.jsonPrimitive?.content)
-            } ?: run {
-                logger.d { "received intentRecognitionResult with empty intent" }
+            val intent = jsonObject["intent"]?.jsonObject?.toString() ?: ""
+            val intentName = jsonObject["intent"]?.jsonObject?.get("name")?.jsonPrimitive?.content ?: ""
+            val sessionId = jsonObject["sessionId"]?.jsonPrimitive?.content
+
+            if(intentName.isEmpty()){
+                StateMachine.intentNotRecognized(sessionId)
+            }else{
+                StateMachine.intentRecognized(intent, sessionId)
             }
+
         } else {
             logger.d { "received intentRecognitionResult but for other siteId" }
         }
