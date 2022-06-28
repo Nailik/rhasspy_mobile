@@ -462,7 +462,7 @@ object MqttService {
                     put("siteId", ConfigurationSettings.siteId.value)
                     //put("sendAudioCaptured", true)
                     //necessary
-                    put("modelId",keyword)
+                    put("modelId", keyword)
                 }).toByteArray()
             )
         )
@@ -703,9 +703,9 @@ object MqttService {
             val intentName = jsonObject["intent"]?.jsonObject?.get("name")?.jsonPrimitive?.content ?: ""
             val sessionId = jsonObject["sessionId"]?.jsonPrimitive?.content
 
-            if(intentName.isEmpty()){
+            if (intentName.isEmpty()) {
                 StateMachine.intentNotRecognized(sessionId)
-            }else{
+            } else {
                 StateMachine.intentRecognized(intent, sessionId)
             }
 

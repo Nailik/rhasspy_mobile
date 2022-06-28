@@ -72,7 +72,7 @@ actual object AudioPlayer {
                         onFinished()
                     }
 
-                    override fun onPeriodicNotification(p0: AudioTrack?) { }
+                    override fun onPeriodicNotification(p0: AudioTrack?) {}
                 })
 
                 setVolume(AppSettings.volume.value)
