@@ -212,7 +212,7 @@ object HttpClientInterface {
             logger.v { "sending intent received:\n${response}" }
 
         } catch (e: Exception) {
-            logger.e(e) { "sending text to speech Exception" }
+            logger.e(e) { "sending intentHandling Exception" }
         }
     }
 
@@ -246,7 +246,7 @@ object HttpClientInterface {
             logger.v { "sending intent received:\n${response}" }
 
         } catch (e: Exception) {
-            logger.e(e) { "sending text to speech Exception" }
+            logger.e(e) { "sending hassEvent Exception" }
         }
 
     }
@@ -276,7 +276,7 @@ object HttpClientInterface {
             logger.v { "sending intent received:\n${response}" }
 
         } catch (e: Exception) {
-            logger.e(e) { "sending text to speech Exception" }
+            logger.e(e) { "sending hassIntent Exception" }
         }
     }
 }
