@@ -180,7 +180,7 @@ object HttpServer {
             logger.w { "invalid content type ${call.request.contentType()}" }
         }
         //play even without header
-        StateMachine.playAudio(call.receive())
+        StateMachine.playAudio(call.receive<ByteArray>().toList())
     }
 
     /**
