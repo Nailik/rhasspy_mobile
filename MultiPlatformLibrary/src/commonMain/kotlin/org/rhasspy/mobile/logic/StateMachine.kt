@@ -521,7 +521,7 @@ object StateMachine {
 
     fun toggleSessionManually() {
         if (state.value == State.AwaitingHotWord) {
-            hotWordDetected("manual")
+            hotWordDetected("${ConfigurationSettings.siteId.value}_manual")
         } else if (state.value == State.RecordingIntent) {
             stopListening()
         }
