@@ -62,7 +62,8 @@ actual object AudioPlayer {
                 AudioTrack.MODE_STATIC,
                 AudioManager.AUDIO_SESSION_ID_GENERATE
             ).apply {
-                notificationMarkerPosition = audioDataSize
+                notificationMarkerPosition = audioDataSize / 2
+
                 setPlaybackPositionUpdateListener(object : AudioTrack.OnPlaybackPositionUpdateListener {
 
                     override fun onMarkerReached(p0: AudioTrack?) {
@@ -71,7 +72,7 @@ actual object AudioPlayer {
                         onFinished()
                     }
 
-                    override fun onPeriodicNotification(p0: AudioTrack?) {}
+                    override fun onPeriodicNotification(p0: AudioTrack?) { }
                 })
 
                 setVolume(AppSettings.volume.value)
