@@ -699,7 +699,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            val intent = jsonObject["intent"]?.jsonObject?.toString() ?: ""
+            val intent = jsonObject.toString()
             val intentName = jsonObject["intent"]?.jsonObject?.get("intentName")?.jsonPrimitive?.content ?: ""
             val sessionId = jsonObject["sessionId"]?.jsonPrimitive?.content
 
