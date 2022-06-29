@@ -48,10 +48,8 @@ object RecordingService {
                 //start recording intent
                 State.RecordingIntent -> startRecording()
                 //stop recording intent
-                State.RecordingStopped,
-                State.PlayingAudio,
-                State.PlayingRecording -> stopRecording()
-                else -> {}
+                State.AwaitingHotWord -> if(isRecordingForWakeWord) startRecording() else stopRecording()
+                else -> stopRecording()
             }
         }
 
