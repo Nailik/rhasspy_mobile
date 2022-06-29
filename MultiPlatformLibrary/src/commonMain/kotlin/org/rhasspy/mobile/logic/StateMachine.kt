@@ -128,16 +128,21 @@ object StateMachine {
      *
      * Response to [hermes/dialogueManager/startSession]
      */
-    fun startedSession(sessionId: String, keyword: String) {
+    fun startedSession(sessionId: String, keyword: String, fromMQTT: Boolean = false) {
         logger.v { "startedSession id: $sessionId keyword: $keyword" }
 
-        if (state.value == State.StartingSession) {
+        if (state.value == State.StartingSession &&
+            (ConfigurationSettings.dialogueManagementOption.value == DialogueManagementOptions.RemoteMQTT || !fromMQTT)
+        ) {
             currentSession = Session(sessionId, keyword)
             state.value = State.StartedSession
             //send to mqtt that a session has started
             MqttService.sessionStarted(sessionId)
             //start recording (listening)
             startListening()
+        } else if (state.value == State.RecordingIntent && fromMQTT && sessionId != currentSession.sessionId) {
+            logger.d { "set mqttSpeechToTextSessionId to $sessionId (startedSession)" }
+            currentSession.mqttSpeechToTextSessionId = sessionId
         } else {
             logger.e { "startedSession call with invalid state ${state.value}" }
         }
@@ -169,10 +174,6 @@ object StateMachine {
                     //tell asr system to start listening and transcribe text when mqtt is used for speech to text
                     MqttService.startListening(currentSession.sessionId)
                 }
-
-            } else if (fromMQTT && ConfigurationSettings.speechToTextOption.value == SpeechToTextOptions.RemoteMQTT) {
-                //save session id to later understand the id when the text was captured by mqtt
-                currentSession.mqttSpeechToTextSessionId = sessionId
             } else {
                 logger.e { "startListening call with invalid state ${state.value}" }
             }
@@ -304,7 +305,7 @@ object StateMachine {
         logger.v { "intentTranscribed $intent" }
 
         if (state.value == State.TranscribingIntent || state.value == State.RecordingStopped) {
-            if ((fromMQTT && currentSession.mqttSpeechToTextSessionId != null && currentSession.mqttSpeechToTextSessionId == sessionId) ||
+            if ((fromMQTT && currentSession.mqttSpeechToTextSessionId == sessionId) ||
                 sessionId == currentSession.sessionId
             ) {
 
@@ -345,7 +346,7 @@ object StateMachine {
         logger.v { "intentTranscriptionError" }
 
         if (state.value == State.TranscribingIntent || state.value == State.RecordingStopped) {
-            if ((fromMQTT && currentSession.mqttSpeechToTextSessionId != null && currentSession.mqttSpeechToTextSessionId == sessionId) ||
+            if ((fromMQTT && currentSession.mqttSpeechToTextSessionId == sessionId) ||
                 sessionId == currentSession.sessionId
             ) {
                 state.value = State.TranscribingError
@@ -369,11 +370,11 @@ object StateMachine {
      *
      * intent was recognized will now be handled and session will be ended
      */
-    fun intentRecognized(intentName: String, intent: String, sessionId: String? = currentSession.sessionId) {
+    fun intentRecognized(intentName: String, intent: String, sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
         logger.v { "intentRecognized $intent" }
 
-        if (state.value == State.RecognizingIntent) {
-            if (sessionId == currentSession.sessionId) {
+        if (sessionId == currentSession.sessionId) {
+            if (state.value == State.RecognizingIntent) {
                 state.value = State.IntentHandling
 
                 currentSession.isIntentRecognized = true
@@ -383,9 +384,23 @@ object StateMachine {
                 if (isDialogueLocal()) {
                     endSession()
                 }
+            } else {
+                logger.e { "intentRecognized call with invalid state ${state.value}" }
+            }
+        } else if (fromMQTT && currentSession.mqttSpeechToTextSessionId == sessionId && (state.value == State.RecordingIntent || state.value == State.RecognizingIntent)) {
+            //this is maybe called while "recording intent" then recording will be ended and instantly going to intent handling
+            //then there is no second call to recognize the intent
+            state.value = State.IntentHandling
+
+            currentSession.isIntentRecognized = true
+
+            RhasspyActions.intentHandling(intentName, intent)
+
+            if (isDialogueLocal()) {
+                endSession()
             }
         } else {
-            logger.e { "intentRecognized call with invalid state ${state.value}" }
+            logger.v { "intentRecognized invalid id" }
         }
     }
 

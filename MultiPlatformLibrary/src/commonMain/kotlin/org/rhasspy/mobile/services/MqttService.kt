@@ -290,7 +290,7 @@ object MqttService {
 
         if (jsonObject.isThisSiteId()) {
             jsonObject["sessionId"]?.jsonPrimitive?.content?.also {
-                StateMachine.startedSession(it, "extern")
+                StateMachine.startedSession(it, "extern", true)
             } ?: run {
                 logger.d { "received sessionStarted with empty session Id" }
             }
@@ -706,7 +706,7 @@ object MqttService {
             if (intentName.isEmpty()) {
                 StateMachine.intentNotRecognized(sessionId)
             } else {
-                StateMachine.intentRecognized(intentName, intent, sessionId)
+                StateMachine.intentRecognized(intentName, intent, sessionId, true)
             }
 
         } else {
