@@ -17,13 +17,26 @@ object HomeAssistantInterface {
      * simplified conversion from intent to hass event or hass intent
      */
     suspend fun sendIntent(intentName: String, intent: String) {
-        val slots = mutableMapOf<String, JsonPrimitive?>()
+        val slots = mutableMapOf<String, JsonElement?>()
 
         val json = Json.decodeFromString<JsonObject>(intent)
 
         //for slot in nlu_intent.slots:
-        json["slots"]?.jsonObject?.entries?.forEach {
-            slots[it.key] = it.value.jsonPrimitive
+        val jsonSlots = json["slots"]
+        if (jsonSlots is JsonArray) {
+            //converts json array of slots from mqtt
+            json["slots"]?.jsonArray?.forEach { element ->
+                val slotName = element.jsonObject["slotName"]?.jsonPrimitive?.content
+
+                if(slotName?.isNotEmpty() == true){
+                    slots[slotName] = element.jsonObject["value"]?.jsonObject?.get("value")
+                }
+            }
+        } else if (jsonSlots is JsonObject) {
+            //converts json object of slots from http
+            json["slots"]?.jsonObject?.entries?.forEach {
+                slots[it.key] = it.value.jsonPrimitive
+            }
         }
 
         //add meta slots
