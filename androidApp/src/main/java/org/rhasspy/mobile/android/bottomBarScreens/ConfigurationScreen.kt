@@ -248,6 +248,33 @@ fun Mqtt(viewModel: ConfigurationScreenViewModel, enabled: Boolean) {
                         enabled = enabled,
                         onClick = { })
                 }
+
+
+                TextFieldListItem(
+                    label = MR.strings.connectionTimeout,
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    value = ConfigurationSettings.mqttConnectionTimeout.observeCurrent().toString(),
+                    enabled = enabled,
+                    onValueChange = { ConfigurationSettings.mqttConnectionTimeout.unsaved.value = it },
+                )
+
+                TextFieldListItem(
+                    label = MR.strings.keepAliveInterval,
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    value = ConfigurationSettings.mqttKeepAliveInterval.observeCurrent().toString(),
+                    enabled = enabled,
+                    onValueChange = { ConfigurationSettings.mqttKeepAliveInterval.unsaved.value = it },
+                )
+
+                TextFieldListItem(
+                    label = MR.strings.retryInterval,
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    value = ConfigurationSettings.mqttRetryInterval.observeCurrent().toString(),
+                    enabled = enabled,
+                    onValueChange = { ConfigurationSettings.mqttRetryInterval.unsaved.value = it },
+                )
+
+
             }
         }
     }
