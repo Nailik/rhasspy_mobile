@@ -112,10 +112,7 @@ object MqttService {
         logger.v { "connectClient" }
         //connect to client
         client?.connect(
-            MqttConnectionOptions(
-                connUsername = ConfigurationSettings.mqttUserName.value,
-                connPassword = ConfigurationSettings.mqttPassword.value
-            )
+            MqttConnectionOptions.loadFromConfigurationSettings()
         )?.also {
             logger.e { "connect \n${it.statusCode.name} ${it.msg}" }
         }
