@@ -39,10 +39,10 @@ class AndroidApplication : Application() {
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(object : LifecycleEventObserver {
             override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                @Suppress("NON_EXHAUSTIVE_WHEN_STATEMENT")
                 when (event) {
                     Lifecycle.Event.ON_START -> currentlyAppInBackground.postValue(false)
                     Lifecycle.Event.ON_STOP -> currentlyAppInBackground.postValue(true)
+                    else -> {}
                 }
             }
         })
