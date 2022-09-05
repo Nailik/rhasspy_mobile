@@ -53,6 +53,35 @@ data class MqttConnectionOptions(
             )
         }
 
+        fun loadFromUnsavedConfigurationSettings(): MqttConnectionOptions {
+
+            val connectionTimeout = ConfigurationSettings.mqttConnectionTimeout.unsaved.value.toIntOrNull() ?: kotlin.run {
+                logger.w { "using default connectionTimeout 5 because ${ConfigurationSettings.mqttConnectionTimeout.unsaved.value} is not an int or null" }
+                5
+            }
+
+            val mqttKeepAliveInterval = ConfigurationSettings.mqttKeepAliveInterval.unsaved.value.toIntOrNull() ?: kotlin.run {
+                logger.w {
+                    "using default mqttKeepAliveInterval 30 because ${ConfigurationSettings.mqttKeepAliveInterval.unsaved.value} is not an int or null"
+                }
+                30
+            }
+
+            val mqttRetryInterval = ConfigurationSettings.mqttRetryInterval.unsaved.value.toIntOrNull() ?: kotlin.run {
+                logger.w { "using default mqttKeepAliveInterval 10 because ${ConfigurationSettings.mqttRetryInterval.unsaved.value} is not an int or null" }
+                10
+            }
+
+            return MqttConnectionOptions(
+                cleanSession = true,
+                cleanStart = false,
+                connUsername = ConfigurationSettings.mqttUserName.unsaved.value,
+                connPassword = ConfigurationSettings.mqttPassword.unsaved.value,
+                connectionTimeout = connectionTimeout,
+                retryInterval = mqttKeepAliveInterval,
+                keepAliveInterval = mqttRetryInterval
+            )
+        }
     }
 
 }

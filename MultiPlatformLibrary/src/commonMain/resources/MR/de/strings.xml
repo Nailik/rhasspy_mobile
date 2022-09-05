@@ -174,4 +174,5 @@
     <string name="connectionTimeout">Verbindungstimeout (s)</string>
     <string name="keepAliveInterval">KeepAlive-Intervall (s)</string>
     <string name="retryInterval">Wiederverbindungsintervall (s)</string>
+    <string name="testConnection">Verbindung Testen</string>
 </resources>
