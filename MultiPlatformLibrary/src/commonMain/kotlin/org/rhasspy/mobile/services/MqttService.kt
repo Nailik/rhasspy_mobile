@@ -110,17 +110,45 @@ object MqttService {
      */
     private suspend fun connectClient(): Boolean {
         logger.v { "connectClient" }
-        //connect to client
+        //connect to server
         client?.connect(
-            MqttConnectionOptions(
-                connUsername = ConfigurationSettings.mqttUserName.value,
-                connPassword = ConfigurationSettings.mqttPassword.value
-            )
+            MqttConnectionOptions.loadFromConfigurationSettings()
         )?.also {
             logger.e { "connect \n${it.statusCode.name} ${it.msg}" }
         }
         return client?.isConnected == true
     }
+
+
+    /**
+     * test if connection with given settings is possible and returns result
+     */
+    suspend fun testConnection(): MqttError? {
+        logger.v { "testConnection" }
+        val testClient = MqttClient(
+            brokerUrl = "tcp://${ConfigurationSettings.mqttHost.unsaved.value}:${ConfigurationSettings.mqttPort.unsaved.value}",
+            clientId = ConfigurationSettings.siteId.unsaved.value,
+            persistenceType = MqttPersistence.MEMORY,
+            onDelivered = { },
+            onMessageReceived = { topic, message -> onMessageReceived(topic, message) },
+            onDisconnect = { error -> onDisconnect(error) },
+        )
+        logger.v { "testConnection 1" }
+        //connect to server
+        var error = testClient.connect(MqttConnectionOptions.loadFromUnsavedConfigurationSettings())
+        logger.v { "testConnection 2 $error" }
+
+        if (error == null && !testClient.isConnected) {
+            error = MqttError("unkown", MqttStatus.UNKNOWN)
+        }
+        logger.v { "testConnection 3" }
+
+        testClient.disconnect()
+        logger.v { "testConnection 4 $error" }
+
+        return error
+    }
+
 
     /**
      * Subscribes to topics that are necessary

@@ -57,7 +57,7 @@ expect class MqttClient(
      * @param connOptions The connection options to use.
      * @return Will return a [error][MqttError] if a problem has occurred.
      */
-    suspend fun connect(connOptions: MqttConnectionOptions = MqttConnectionOptions()): MqttError?
+    suspend fun connect(connOptions: MqttConnectionOptions): MqttError?
 
     /**
      * Disconnects from the MQTT Broker.
