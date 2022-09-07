@@ -120,7 +120,7 @@ object HttpClientInterface {
     /**
      * api/text-to-speech
      * POST text and have Rhasspy speak it
-     *  ?voice=<voice> - override default TTS voice
+     * ?voice=<voice> - override default TTS voice
      * ?language=<language> - override default TTS language or locale
      * ?repeat=true - have Rhasspy repeat the last sentence it spoke
      * ?volume=<volume> - volume level to speak at (0 = off, 1 = full volume)
@@ -212,7 +212,7 @@ object HttpClientInterface {
             logger.v { "sending intent received:\n${response}" }
 
         } catch (e: Exception) {
-            logger.e(e) { "sending text to speech Exception" }
+            logger.e(e) { "sending intentHandling Exception" }
         }
     }
 
@@ -246,7 +246,7 @@ object HttpClientInterface {
             logger.v { "sending intent received:\n${response}" }
 
         } catch (e: Exception) {
-            logger.e(e) { "sending text to speech Exception" }
+            logger.e(e) { "sending hassEvent Exception" }
         }
 
     }
@@ -276,7 +276,7 @@ object HttpClientInterface {
             logger.v { "sending intent received:\n${response}" }
 
         } catch (e: Exception) {
-            logger.e(e) { "sending text to speech Exception" }
+            logger.e(e) { "sending hassIntent Exception" }
         }
     }
 }

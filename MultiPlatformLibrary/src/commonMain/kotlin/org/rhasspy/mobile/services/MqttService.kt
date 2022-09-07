@@ -318,7 +318,7 @@ object MqttService {
 
         if (jsonObject.isThisSiteId()) {
             jsonObject["sessionId"]?.jsonPrimitive?.content?.also {
-                StateMachine.startedSession(it, "extern")
+                StateMachine.startedSession(it, "extern", true)
             } ?: run {
                 logger.d { "received sessionStarted with empty session Id" }
             }
@@ -481,19 +481,16 @@ object MqttService {
      * currentSensitivity: float = 1.0 - sensitivity of wake word detection (service specific)
      * siteId: string = "default" - Hermes site ID
      */
-    fun hotWordDetected() {
+    fun hotWordDetected(keyword: String) {
         publishMessage(
-            MQTTTopicsPublish.HotWordDetected.topic.replace("<wakewordId>", "default"),
+            MQTTTopicsPublish.HotWordDetected.topic.replace("<wakewordId>", keyword),
             MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("currentSensitivity", ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.value)
                     put("siteId", ConfigurationSettings.siteId.value)
                     //put("sendAudioCaptured", true)
                     //necessary
-                    put(
-                        "modelId",
-                        "/usr/lib/rhasspy/.venv/lib/python3.7/site-packages/pvporcupine/resources/keyword_files/linux/jarvis_linux.ppn"
-                    )
+                    put("modelId", keyword)
                 }).toByteArray()
             )
         )
@@ -730,12 +727,16 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            val intent = jsonObject["intent"]?.jsonObject?.toString()
-            intent?.also {
-                StateMachine.intentRecognized(it, jsonObject["sessionId"]?.jsonPrimitive?.content)
-            } ?: run {
-                logger.d { "received intentRecognitionResult with empty intent" }
+            val intent = jsonObject.toString()
+            val intentName = jsonObject["intent"]?.jsonObject?.get("intentName")?.jsonPrimitive?.content ?: ""
+            val sessionId = jsonObject["sessionId"]?.jsonPrimitive?.content
+
+            if (intentName.isEmpty()) {
+                StateMachine.intentNotRecognized(sessionId)
+            } else {
+                StateMachine.intentRecognized(intentName, intent, sessionId, true)
             }
+
         } else {
             logger.d { "received intentRecognitionResult but for other siteId" }
         }
