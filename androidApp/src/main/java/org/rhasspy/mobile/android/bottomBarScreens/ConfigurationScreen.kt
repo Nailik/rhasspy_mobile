@@ -3,15 +3,15 @@ package org.rhasspy.mobile.android.bottomBarScreens
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.*
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Autorenew
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.IconButton
@@ -21,7 +21,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -51,7 +53,7 @@ fun ConfigurationScreen(snackbarHostState: SnackbarHostState, viewModel: Configu
         CustomDivider()
         RemoteHermesHTTP(isEnabled)
         CustomDivider()
-        Mqtt(viewModel, isEnabled)
+        Mqtt(viewModel, isEnabled && !viewModel.isTestingMqttConnection.observe())
         CustomDivider()
         AudioRecording(isEnabled)
         CustomDivider()
@@ -230,6 +232,43 @@ fun Mqtt(viewModel: ConfigurationScreenViewModel, enabled: Boolean) {
                     },
                 )
 
+                OutlineButtonListItem(
+                    text = {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (viewModel.isTestingMqttConnection.observe()) {
+
+                                val infiniteTransition = rememberInfiniteTransition()
+                                val angle by infiniteTransition.animateFloat(
+                                    initialValue = 0F,
+                                    targetValue = 360F,
+                                    animationSpec = infiniteRepeatable(
+                                        animation = tween(2000, easing = LinearEasing)
+                                    )
+                                )
+
+                                Icon(
+                                    modifier = Modifier.rotate(angle),
+                                    imageVector = Icons.Filled.Autorenew,
+                                    contentDescription = MR.strings.reset
+                                )
+                            }
+
+                            viewModel.testingMqttErrorUiData.observe()?.also {
+                                androidx.compose.material3.Text(text = "${translate(MR.strings.error)}: ${it.statusCode.name}")
+                            } ?: run {
+                                Text(MR.strings.testConnection)
+                            }
+                        }
+                    },
+                    enabled = ConfigurationSettings.mqttHost.unsaved.observe().isNotEmpty() &&
+                            ConfigurationSettings.mqttPassword.unsaved.observe().isNotEmpty(),
+                    onClick = {
+                        viewModel.testMqttConnection()
+                    })
+
                 val isMqttSSL = ConfigurationSettings.isMqttSSL.observeCurrent()
 
                 SwitchListItem(
@@ -248,6 +287,34 @@ fun Mqtt(viewModel: ConfigurationScreenViewModel, enabled: Boolean) {
                         enabled = enabled,
                         onClick = { })
                 }
+
+
+                TextFieldListItem(
+                    label = MR.strings.connectionTimeout,
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    value = ConfigurationSettings.mqttConnectionTimeout.observeCurrent().toString(),
+                    enabled = enabled,
+                    onValueChange = { ConfigurationSettings.mqttConnectionTimeout.unsaved.value = it },
+                )
+
+                TextFieldListItem(
+                    label = MR.strings.keepAliveInterval,
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    value = ConfigurationSettings.mqttKeepAliveInterval.observeCurrent().toString(),
+                    enabled = enabled,
+                    onValueChange = { ConfigurationSettings.mqttKeepAliveInterval.unsaved.value = it },
+                )
+
+                TextFieldListItem(
+                    label = MR.strings.retryInterval,
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    value = ConfigurationSettings.mqttRetryInterval.observeCurrent().toString(),
+                    enabled = enabled,
+                    onValueChange = { ConfigurationSettings.mqttRetryInterval.unsaved.value = it },
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
             }
         }
     }
