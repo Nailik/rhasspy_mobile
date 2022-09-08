@@ -153,6 +153,8 @@ object MqttService {
         }
         isCurrentlyConnected = client?.isConnected == true
 
+        logger.d { "connection result, connected: $isCurrentlyConnected" }
+
         return isCurrentlyConnected
     }
 
