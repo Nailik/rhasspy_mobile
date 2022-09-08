@@ -175,4 +175,7 @@
     <string name="keepAliveInterval">KeepAlive-Intervall (s)</string>
     <string name="retryInterval">Wiederverbindungsintervall (s)</string>
     <string name="testConnection">Verbindung Testen</string>
+    <string name="mqttNotConnected">MQTT nicht verbunden</string>
+    <string name="mqttConnectionError">Fehler beim Verbindungsaufbau:</string>
+    <string name="mqttConnectionLostError">Fehler bei verlorener Verbindung:</string>
 </resources>

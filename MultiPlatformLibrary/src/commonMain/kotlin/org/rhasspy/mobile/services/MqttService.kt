@@ -29,6 +29,12 @@ object MqttService {
     private val connected = MutableObservable(false)
     val isConnected = connected.readOnly()
 
+    private var connectionError = MutableObservable<MqttError?>(null)
+    private var connectionLostError = MutableObservable<Throwable?>(null)
+    val hasConnectionError = connectionError.readOnly()
+    val hasConnectionLostError = connectionLostError.readOnly()
+
+
     private var isCurrentlyConnected: Boolean = false
         set(value) {
             if (field != value) {
@@ -50,6 +56,9 @@ object MqttService {
      * sets connected value
      */
     suspend fun start() {
+        connectionError.value = null
+        connectionLostError.value = null
+
         if (!ConfigurationSettings.isMQTTEnabled.value) {
             logger.v { "mqtt not enabled" }
             return
@@ -111,7 +120,7 @@ object MqttService {
     private suspend fun connectClient(): Boolean {
         logger.v { "connectClient" }
         //connect to server
-        client?.connect(
+        connectionError.value = client?.connect(
             MqttConnectionOptions.loadFromConfigurationSettings()
         )?.also {
             logger.e { "connect \n${it.statusCode.name} ${it.msg}" }
@@ -169,6 +178,7 @@ object MqttService {
 
     private fun onDisconnect(error: Throwable) {
         logger.e(error) { "onDisconnect" }
+        connectionLostError.value = error
 
         client?.apply {
             if (!isCurrentlyConnected) {
