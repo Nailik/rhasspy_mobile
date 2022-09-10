@@ -170,4 +170,6 @@
     <string name="keepAliveInterval">KeepAlive interval (s)</string>
     <string name="retryInterval">Retry interval (s)</string>
     <string name="testConnection">Test Connection</string>
+    <string name="background">Background</string>
+    <string name="batteryOptimization">Deactivate Battery Optimization</string>
 </resources>
