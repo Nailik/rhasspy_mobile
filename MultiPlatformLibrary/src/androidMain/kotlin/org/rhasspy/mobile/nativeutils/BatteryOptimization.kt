@@ -9,7 +9,6 @@ import android.provider.Settings
 import org.rhasspy.mobile.Application
 
 actual object BatteryOptimization {
-
     actual fun openOptimizationSettings() {
         Application.Instance.startActivity(Intent().apply {
             this.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
