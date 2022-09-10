@@ -11,19 +11,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.MicOff
-import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
@@ -55,7 +52,7 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState, mainNavController: NavC
         CustomDivider()
         ThemeItem()
         CustomDivider()
-        BackgroundService()
+        BackgroundService(viewModel)
         CustomDivider()
         MicrophoneOverlay()
         CustomDivider()
@@ -212,13 +209,43 @@ fun AutomaticSilenceDetectionItem(viewModel: SettingsScreenViewModel, snackbarHo
 }
 
 @Composable
-fun BackgroundService() {
+fun BackgroundService(viewModel: SettingsScreenViewModel) {
 
-    SwitchListItem(
-        text = MR.strings.enableBackground,
-        isChecked = AppSettings.isBackgroundEnabled.observe(),
-        onCheckedChange = { AppSettings.isBackgroundEnabled.value = it })
+    val isBackgroundEnabled = AppSettings.isBackgroundEnabled.data.observe()
 
+    ExpandableListItem(
+        text = MR.strings.background,
+        secondaryText = isBackgroundEnabled.toText()
+    ) {
+        //on oFF
+        SwitchListItem(
+            text = MR.strings.enableBackground,
+            isChecked = isBackgroundEnabled,
+            onCheckedChange = {
+                AppSettings.isBackgroundEnabled.value = it
+            })
+
+        var isBatteryDisabled by rememberSaveable { mutableStateOf(false) }
+
+        ComposableLifecycle { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                isBatteryDisabled = viewModel.isBatteryOptimizationDisabled()
+            }
+        }
+
+        //background battery optimization on/off
+        ListElement(
+            modifier = Modifier.clickable { viewModel.onDisableBatteryOptimization() },
+            text = { Text(MR.strings.batteryOptimization) },
+            secondaryText = { Text(isBatteryDisabled.toText()) },
+            trailing = {
+                Icon(
+                    imageVector = Icons.Filled.BatteryAlert,
+                    contentDescription = MR.strings.batteryOptimization
+                )
+            }
+        )
+    }
 }
 
 
