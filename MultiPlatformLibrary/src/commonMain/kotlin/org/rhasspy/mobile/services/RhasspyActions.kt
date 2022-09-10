@@ -4,6 +4,11 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.serviceInterfaces.HomeAssistantInterface
@@ -57,10 +62,13 @@ object RhasspyActions {
 
                     if (!handleDirectly && ConfigurationSettings.dialogueManagementOption.value == DialogueManagementOptions.Local) {
                         //if intent wasn't already handled and local dialogue management, handle it
-                        intent?.also {
-                            StateMachine.intentRecognized(intent = it)
-                        } ?: run {
+                        val json = intent?.let { Json.decodeFromString<JsonObject>(intent) }
+                        val intentName = json?.get("intent")?.jsonObject?.get("name")?.jsonPrimitive?.content ?: ""
+
+                        if (intentName.isEmpty() || intent == null) {
                             StateMachine.intentNotRecognized()
+                        } else {
+                            StateMachine.intentRecognized(intentName, intent)
                         }
                     }
 
@@ -190,12 +198,12 @@ object RhasspyActions {
      *
      * if local dialogue management it will end the session
      */
-    fun intentHandling(intent: String) {
+    fun intentHandling(intentName: String, intent: String) {
 
         if (AppSettings.isIntentHandlingEnabled.value) {
             coroutineScope.launch {
                 when (ConfigurationSettings.intentHandlingOption.value) {
-                    IntentHandlingOptions.HomeAssistant -> HomeAssistantInterface.sendIntent(intent)
+                    IntentHandlingOptions.HomeAssistant -> HomeAssistantInterface.sendIntent(intentName, intent)
                     IntentHandlingOptions.RemoteHTTP -> HttpClientInterface.intentHandling(intent)
                     IntentHandlingOptions.WithRecognition -> logger.v { "intentHandling with recognition was used" }
                     IntentHandlingOptions.Disabled -> logger.d { "intentHandling disabled" }

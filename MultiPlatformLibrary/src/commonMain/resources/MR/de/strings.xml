@@ -168,4 +168,11 @@
     <string name="dataPrivacy">Datenschutz</string>
     <string name="sourceCode">Sourcecode</string>
     <string name="changelog">Changelog</string>
+    <string name="remove">Entfernen</string>
+    <string name="sounds">Töne</string>
+    <string name="selectCustomSoundFile">Benutzerdefinierte Sounddatei auswählen</string>
+    <string name="connectionTimeout">Verbindungstimeout (s)</string>
+    <string name="keepAliveInterval">KeepAlive-Intervall (s)</string>
+    <string name="retryInterval">Wiederverbindungsintervall (s)</string>
+    <string name="testConnection">Verbindung Testen</string>
 </resources>

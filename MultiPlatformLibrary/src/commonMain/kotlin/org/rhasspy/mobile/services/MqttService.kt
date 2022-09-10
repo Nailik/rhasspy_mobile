@@ -96,7 +96,7 @@ object MqttService {
         logger.v { "createClient" }
 
         client = MqttClient(
-            brokerUrl = "tcp://${ConfigurationSettings.mqttHost.data}:${ConfigurationSettings.mqttPort.data}",
+            brokerUrl = "tcp://${ConfigurationSettings.mqttHost.value}:${ConfigurationSettings.mqttPort.value}",
             clientId = ConfigurationSettings.siteId.value,
             persistenceType = MqttPersistence.MEMORY,
             onDelivered = { },
@@ -110,17 +110,45 @@ object MqttService {
      */
     private suspend fun connectClient(): Boolean {
         logger.v { "connectClient" }
-        //connect to client
+        //connect to server
         client?.connect(
-            MqttConnectionOptions(
-                connUsername = ConfigurationSettings.mqttUserName.value,
-                connPassword = ConfigurationSettings.mqttPassword.value
-            )
+            MqttConnectionOptions.loadFromConfigurationSettings()
         )?.also {
             logger.e { "connect \n${it.statusCode.name} ${it.msg}" }
         }
         return client?.isConnected == true
     }
+
+
+    /**
+     * test if connection with given settings is possible and returns result
+     */
+    suspend fun testConnection(): MqttError? {
+        logger.v { "testConnection" }
+        val testClient = MqttClient(
+            brokerUrl = "tcp://${ConfigurationSettings.mqttHost.unsaved.value}:${ConfigurationSettings.mqttPort.unsaved.value}",
+            clientId = ConfigurationSettings.siteId.unsaved.value,
+            persistenceType = MqttPersistence.MEMORY,
+            onDelivered = { },
+            onMessageReceived = { topic, message -> onMessageReceived(topic, message) },
+            onDisconnect = { error -> onDisconnect(error) },
+        )
+        logger.v { "testConnection 1" }
+        //connect to server
+        var error = testClient.connect(MqttConnectionOptions.loadFromUnsavedConfigurationSettings())
+        logger.v { "testConnection 2 $error" }
+
+        if (error == null && !testClient.isConnected) {
+            error = MqttError("unkown", MqttStatus.UNKNOWN)
+        }
+        logger.v { "testConnection 3" }
+
+        testClient.disconnect()
+        logger.v { "testConnection 4 $error" }
+
+        return error
+    }
+
 
     /**
      * Subscribes to topics that are necessary
@@ -290,7 +318,7 @@ object MqttService {
 
         if (jsonObject.isThisSiteId()) {
             jsonObject["sessionId"]?.jsonPrimitive?.content?.also {
-                StateMachine.startedSession(it, "extern")
+                StateMachine.startedSession(it, "extern", true)
             } ?: run {
                 logger.d { "received sessionStarted with empty session Id" }
             }
@@ -453,19 +481,16 @@ object MqttService {
      * currentSensitivity: float = 1.0 - sensitivity of wake word detection (service specific)
      * siteId: string = "default" - Hermes site ID
      */
-    fun hotWordDetected() {
+    fun hotWordDetected(keyword: String) {
         publishMessage(
-            MQTTTopicsPublish.HotWordDetected.topic.replace("<wakewordId>", "default"),
+            MQTTTopicsPublish.HotWordDetected.topic.replace("<wakewordId>", keyword),
             MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("currentSensitivity", ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.value)
                     put("siteId", ConfigurationSettings.siteId.value)
                     //put("sendAudioCaptured", true)
                     //necessary
-                    put(
-                        "modelId",
-                        "/usr/lib/rhasspy/.venv/lib/python3.7/site-packages/pvporcupine/resources/keyword_files/linux/jarvis_linux.ppn"
-                    )
+                    put("modelId", keyword)
                 }).toByteArray()
             )
         )
@@ -702,12 +727,16 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            val intent = jsonObject["intent"]?.jsonObject?.toString()
-            intent?.also {
-                StateMachine.intentRecognized(it, jsonObject["sessionId"]?.jsonPrimitive?.content)
-            } ?: run {
-                logger.d { "received intentRecognitionResult with empty intent" }
+            val intent = jsonObject.toString()
+            val intentName = jsonObject["intent"]?.jsonObject?.get("intentName")?.jsonPrimitive?.content ?: ""
+            val sessionId = jsonObject["sessionId"]?.jsonPrimitive?.content
+
+            if (intentName.isEmpty()) {
+                StateMachine.intentNotRecognized(sessionId)
+            } else {
+                StateMachine.intentRecognized(intentName, intent, sessionId, true)
             }
+
         } else {
             logger.d { "received intentRecognitionResult but for other siteId" }
         }

@@ -13,11 +13,14 @@ object ConfigurationSettings {
     val isSSLVerificationEnabled = ConfigurationSetting(SettingsEnum.SSLVerificationDisabled, false)
 
     val isMQTTEnabled = ConfigurationSetting(SettingsEnum.MQTT_ENABLED, false)
-    val isMqttSSL = ConfigurationSetting(SettingsEnum.MQTT_SSL, false)
     val mqttHost = ConfigurationSetting(SettingsEnum.MQTTHost, "")
     val mqttPort = ConfigurationSetting(SettingsEnum.MQTTPort, "")
     val mqttUserName = ConfigurationSetting(SettingsEnum.MQTTUserName, "")
     val mqttPassword = ConfigurationSetting(SettingsEnum.MQTTPassword, "")
+    val isMqttSSL = ConfigurationSetting(SettingsEnum.MQTT_SSL, false)
+    val mqttConnectionTimeout = ConfigurationSetting(SettingsEnum.MQTTConnectionTimeout, "5")
+    val mqttKeepAliveInterval = ConfigurationSetting(SettingsEnum.MQTTKeepAliveInterval, "30")
+    val mqttRetryInterval = ConfigurationSetting(SettingsEnum.MQTTRetryInterval, "10")
 
     val isUDPOutput = ConfigurationSetting(SettingsEnum.UDPOutput, false)
     val udpOutputHost = ConfigurationSetting(SettingsEnum.UDPOutputHost, "")

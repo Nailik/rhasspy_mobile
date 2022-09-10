@@ -33,6 +33,7 @@ enum class SettingsEnum {
     WakeSounds,
     RecordedSounds,
     ErrorSounds,
+    CustomSounds,
 
     ShowLog,
     LogAudioFrames,
@@ -45,12 +46,15 @@ enum class SettingsEnum {
     HttpServerPort,
     HttpServerSSL,
 
-    MQTT_SSL,
     MQTT_ENABLED,
     MQTTHost,
     MQTTPort,
     MQTTUserName,
+    MQTT_SSL,
     MQTTPassword,
+    MQTTConnectionTimeout,
+    MQTTKeepAliveInterval,
+    MQTTRetryInterval,
 
     UDPOutput,
     UDPOutputHost,

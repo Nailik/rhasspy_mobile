@@ -163,4 +163,11 @@
     <string name="dataPrivacy">Data Privacy</string>
     <string name="sourceCode">Sourcecode</string>
     <string name="changelog">Changelog</string>
+    <string name="remove">Remove</string>
+    <string name="sounds">Sounds</string>
+    <string name="selectCustomSoundFile">Select custom sound file</string>
+    <string name="connectionTimeout">Connection timeout (s)</string>
+    <string name="keepAliveInterval">KeepAlive interval (s)</string>
+    <string name="retryInterval">Retry interval (s)</string>
+    <string name="testConnection">Test Connection</string>
 </resources>
