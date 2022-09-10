@@ -4,18 +4,24 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.*
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Autorenew
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.PublishedWithChanges
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -31,8 +37,12 @@ import org.rhasspy.mobile.android.permissions.MicrophonePermissionRequired
 import org.rhasspy.mobile.android.permissions.OverlayPermissionRequired
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.android.utils.observe
+import org.rhasspy.mobile.android.utils.observeCurrent
+import org.rhasspy.mobile.android.utils.translate
+import org.rhasspy.mobile.services.MqttService
 import org.rhasspy.mobile.services.ServiceState
 import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.viewModels.GlobalData
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
@@ -139,13 +149,72 @@ fun RowScope.NavigationItem(screen: BottomBarScreens, navController: NavHostCont
 
 @Composable
 fun HomeAndConfigScreenActions(viewModel: HomeScreenViewModel, snackbarHostState: SnackbarHostState) {
-    Row(modifier = Modifier.padding(start = 8.dp)) {
+    Row(modifier = Modifier.padding(start = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         MicrophonePermissionRequired(viewModel, snackbarHostState)
         OverlayPermissionRequired(viewModel)
+        MqttConnectionStatus()
         UnsavedChanges(viewModel)
     }
 }
 
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun MqttConnectionStatus() {
+    AnimatedVisibility(
+        enter = fadeIn(animationSpec = tween(50)),
+        exit = fadeOut(animationSpec = tween(0)),
+        visible = ConfigurationSettings.isMQTTEnabled.observeCurrent() && !MqttService.isConnected.observe()
+    ) {
+
+        var openDialog by rememberSaveable { mutableStateOf(false) }
+
+        IconButton(
+            onClick = { openDialog = true },
+            modifier = Modifier.background(
+                color = MaterialTheme.colorScheme.errorContainer,
+                shape = RoundedCornerShape(8.dp)
+            )
+        )
+        {
+            org.rhasspy.mobile.android.utils.Icon(
+                imageVector = Icons.Filled.Error,
+                contentDescription = MR.strings.notConnected
+            )
+        }
+
+        if (openDialog) {
+            AlertDialog(
+                onDismissRequest = {
+                    openDialog = false
+                },
+                confirmButton = {
+                    TextButton(onClick = { openDialog = false }) {
+                        Text(MR.strings.ok)
+                    }
+                },
+                title = {
+                    Text(MR.strings.mqttNotConnected)
+                },
+                text = {
+                    MqttService.hasConnectionError.observe()?.also {
+                        val text = translate(MR.strings.mqttConnectionError)
+                        Text("$text\n${it.msg} (${it.statusCode})")
+                    }
+
+                    MqttService.hasConnectionLostError.observe()?.also {
+                        val text = translate(MR.strings.mqttConnectionLostError)
+                        Text("$text\n${it.message}")
+                    }
+                },
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                properties = DialogProperties(usePlatformDefaultWidth = false)
+            )
+        }
+    }
+}
 
 @Composable
 fun UnsavedChanges(viewModel: HomeScreenViewModel) {
