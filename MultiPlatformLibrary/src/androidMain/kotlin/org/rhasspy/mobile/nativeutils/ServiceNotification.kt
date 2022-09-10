@@ -50,6 +50,7 @@ object ServiceNotification {
                     .setName("Rhasspy Service Notification Channel")
                     .setDescription("Rhasspy Mobile runs in background for WakeWord detection and other services")
                     .setGroup(GROUP_ID)
+                    .setShowBadge(false)
                     .build()
             )
     }
