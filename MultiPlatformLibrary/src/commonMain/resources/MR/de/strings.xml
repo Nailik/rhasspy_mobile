@@ -177,4 +177,7 @@
     <string name="testConnection">Verbindung Testen</string>
     <string name="background">Hintergrund</string>
     <string name="batteryOptimization">Akku-Optimierung deaktivieren</string>
+    <string name="mqttNotConnected">MQTT nicht verbunden</string>
+    <string name="mqttConnectionError">Fehler beim Verbindungsaufbau:</string>
+    <string name="mqttConnectionLostError">Fehler bei verlorener Verbindung:</string>
 </resources>

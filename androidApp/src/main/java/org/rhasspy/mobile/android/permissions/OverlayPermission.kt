@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.LayersClear
@@ -41,7 +42,10 @@ fun OverlayPermissionRequired(viewModel: HomeScreenViewModel) {
 
         IconButton(
             onClick = { overlayPermission.invoke() },
-            modifier = Modifier.background(MaterialTheme.colorScheme.errorContainer)
+            modifier = Modifier.background(
+                color = MaterialTheme.colorScheme.errorContainer,
+                shape = RoundedCornerShape(8.dp)
+            )
         )
         {
             Icon(
