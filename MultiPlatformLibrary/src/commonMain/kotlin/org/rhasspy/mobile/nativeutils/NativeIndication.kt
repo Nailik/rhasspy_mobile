@@ -16,14 +16,4 @@ expect object NativeIndication {
      */
     fun releaseWakeUp()
 
-    /**
-     * display indication over other apps
-     */
-    fun showIndication()
-
-    /**
-     * close indication over other apps
-     */
-    fun closeIndicationOverOtherApps()
-
 }

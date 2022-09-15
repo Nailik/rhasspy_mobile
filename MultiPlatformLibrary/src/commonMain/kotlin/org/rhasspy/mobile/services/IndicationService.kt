@@ -14,29 +14,11 @@ object IndicationService {
     private val logger = Logger.withTag("IndicationService")
 
     private val currentState = MutableObservable(IndicationState.Idle)
+    private val showVisualIndication = MutableObservable(false)
+    val showVisualIndicationUi = showVisualIndication.readOnly()
     val readonlyState = currentState.readOnly()
 
     init {
-        //start native indication service
-        currentState.observe {
-            when (it) {
-                IndicationState.Idle -> {
-                    NativeIndication.closeIndicationOverOtherApps()
-                    NativeIndication.releaseWakeUp()
-                }
-                IndicationState.Wakeup -> {
-                    if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.value) {
-                        NativeIndication.wakeUpScreen()
-                    }
-
-                    if (AppSettings.isWakeWordLightIndication.value) {
-                        NativeIndication.showIndication()
-                    }
-                }
-                else -> {}
-            }
-        }
-
         //change things according to state of the service
         StateMachine.currentState.observe {
             logger.v { "currentState changed to $it" }
@@ -44,7 +26,7 @@ object IndicationService {
             //evaluate new state
             val newState = when (it) {
                 //hot word detected
-                State.StartingSession -> IndicationState.Wakeup
+                State.StartedSession -> IndicationState.Wakeup
                 //Indication that recording is running
                 State.RecordingIntent -> IndicationState.Recording
                 //indication that it's thinking
@@ -52,6 +34,7 @@ object IndicationService {
                 //indication that it's thinking
                 State.RecognizingIntent -> IndicationState.Thinking
                 //no indication
+                State.PlayingAudio -> IndicationState.Speaking
                 else -> IndicationState.Idle
             }
 
@@ -61,19 +44,21 @@ object IndicationService {
             //handle indication (screen wakeup and light indication)
             when (newState) {
                 IndicationState.Idle -> {
-                    NativeIndication.closeIndicationOverOtherApps()
+                    showVisualIndication.value = false
                     NativeIndication.releaseWakeUp()
                 }
-                IndicationState.Wakeup -> {
+                IndicationState.Wakeup,
+                IndicationState.Recording,
+                IndicationState.Thinking,
+                IndicationState.Speaking -> {
                     if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.value) {
                         NativeIndication.wakeUpScreen()
                     }
 
                     if (AppSettings.isWakeWordLightIndication.value) {
-                        NativeIndication.showIndication()
+                        showVisualIndication.value = true
                     }
                 }
-                else -> {}
             }
 
             //handle sound indication
