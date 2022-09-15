@@ -11,7 +11,6 @@ import org.rhasspy.mobile.Application
  */
 actual object NativeIndication {
 
-    val showVisualIndication = MutableLiveData(false)
     private var wakeLock: PowerManager.WakeLock? = null
 
     /**
@@ -41,20 +40,5 @@ actual object NativeIndication {
 
         }
     }
-
-    /**
-     * display indication over other apps
-     */
-    actual fun showIndication() {
-        showVisualIndication.postValue(true)
-    }
-
-    /**
-     * close indication over other apps
-     */
-    actual fun closeIndicationOverOtherApps() {
-        showVisualIndication.postValue(false)
-    }
-
 
 }
