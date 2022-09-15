@@ -12,6 +12,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.nativeutils.AudioRecorder
+import org.rhasspy.mobile.nativeutils.BatteryOptimization
 import org.rhasspy.mobile.nativeutils.SettingsUtils
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.sounds.SoundFile
@@ -125,4 +126,13 @@ class SettingsScreenViewModel : ViewModel() {
         customSoundValues.value = AppSettings.customSounds.value.map { SoundFile(it, soundFileIsUsed(it)) }.toTypedArray()
     }
 
+    fun onDisableBatteryOptimization() {
+        BatteryOptimization.openOptimizationSettings()
+    }
+    fun isBatteryOptimizationDisabled(): Boolean = BatteryOptimization.isBatteryOptimizationDisabled()
+
 }
+/**
+ *
+
+ */

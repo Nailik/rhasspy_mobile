@@ -93,8 +93,7 @@ actual class NativeServiceInterop : android.app.Service() {
          */
         actual fun stop() {
             logger.d { "stop" }
-
-            Application.Instance.stopService(Intent(Application.Instance, ForegroundServiceHandler::class.java))
+            Application.Instance.stopService(Intent(Application.Instance, NativeServiceInterop::class.java))
         }
     }
 

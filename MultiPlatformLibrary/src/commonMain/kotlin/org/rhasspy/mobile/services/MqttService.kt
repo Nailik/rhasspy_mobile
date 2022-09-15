@@ -3,9 +3,7 @@ package org.rhasspy.mobile.services
 import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
 import io.ktor.utils.io.core.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
@@ -18,6 +16,7 @@ import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.math.min
 import kotlin.native.concurrent.ThreadLocal
+import kotlin.time.Duration.Companion.seconds
 
 @ThreadLocal
 object MqttService {
@@ -28,6 +27,14 @@ object MqttService {
 
     private val connected = MutableObservable(false)
     val isConnected = connected.readOnly()
+
+    private var connectionError = MutableObservable<MqttError?>(null)
+    private var connectionLostError = MutableObservable<Throwable?>(null)
+    val hasConnectionError = connectionError.readOnly()
+    val hasConnectionLostError = connectionLostError.readOnly()
+
+    private var retryJob: Job? = null
+
 
     private var isCurrentlyConnected: Boolean = false
         set(value) {
@@ -50,6 +57,12 @@ object MqttService {
      * sets connected value
      */
     suspend fun start() {
+        retryJob?.cancel()
+        retryJob = null
+
+        connectionError.value = null
+        connectionLostError.value = null
+
         if (!ConfigurationSettings.isMQTTEnabled.value) {
             logger.v { "mqtt not enabled" }
             return
@@ -71,12 +84,29 @@ object MqttService {
         isCurrentlyConnected = client?.isConnected == true
     }
 
+    private suspend fun retryToConnect() {
+        logger.d { "retry to connect to mqtt" }
+        connectClient()
+        if (!isConnected.value && ConfigurationSettings.isMQTTEnabled.value) {
+            val seconds = (ConfigurationSettings.mqttRetryInterval.value.toLongOrNull() ?: 10).seconds
+            logger.d { "retry did not work, retry in $seconds seconds" }
+            delay(seconds)
+            retryToConnect()
+        } else {
+            retryJob?.cancel()
+            retryJob = null
+        }
+    }
+
     /**
      * stops client
      *
      * disconnects, resets connected value and deletes client object
      */
     suspend fun stop() {
+        retryJob?.cancel()
+        retryJob = null
+
         logger.d { "stop" }
         client?.apply {
             if (isCurrentlyConnected) {
@@ -109,14 +139,23 @@ object MqttService {
      * connects client to server and returns if client is now connected
      */
     private suspend fun connectClient(): Boolean {
-        logger.v { "connectClient" }
-        //connect to server
-        client?.connect(
-            MqttConnectionOptions.loadFromConfigurationSettings()
-        )?.also {
-            logger.e { "connect \n${it.statusCode.name} ${it.msg}" }
+        if (client?.isConnected != true) {
+            //only if not connected
+            logger.v { "connectClient" }
+            //connect to server
+            connectionError.value = client?.connect(
+                MqttConnectionOptions.loadFromConfigurationSettings()
+            )?.also {
+                logger.e { "connect \n${it.statusCode.name} ${it.msg}" }
+            }
+        } else {
+            logger.v { "connectClient already connected" }
         }
-        return client?.isConnected == true
+        isCurrentlyConnected = client?.isConnected == true
+
+        logger.d { "connection result, connected: $isCurrentlyConnected" }
+
+        return isCurrentlyConnected
     }
 
 
@@ -169,12 +208,14 @@ object MqttService {
 
     private fun onDisconnect(error: Throwable) {
         logger.e(error) { "onDisconnect" }
+        connectionLostError.value = error
 
-        client?.apply {
-            if (!isCurrentlyConnected) {
-                client = null
+        isCurrentlyConnected = client?.isConnected == true
+
+        if(retryJob?.isActive != true) {
+            retryJob = coroutineScope.launch {
+                retryToConnect()
             }
-            isCurrentlyConnected = isConnected
         }
     }
 
