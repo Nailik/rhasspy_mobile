@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
-import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.logic.State
 import org.rhasspy.mobile.logic.StateMachine
@@ -48,7 +47,10 @@ object IndicationService {
                     showVisualIndication.value = false
                     NativeIndication.releaseWakeUp()
                 }
-                IndicationState.Wakeup -> {
+                IndicationState.Wakeup,
+                IndicationState.Recording,
+                IndicationState.Thinking,
+                IndicationState.Speaking -> {
                     if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.value) {
                         NativeIndication.wakeUpScreen()
                     }
@@ -57,7 +59,6 @@ object IndicationService {
                         showVisualIndication.value = true
                     }
                 }
-                else -> {}
             }
 
             //handle sound indication
