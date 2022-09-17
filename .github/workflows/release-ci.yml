@@ -9,7 +9,11 @@ on:
 jobs:
   build:
     runs-on: macos-latest
-    if: ${{ github.event.label.name == 'automerge' }}
+    #has label automerge and contains one of the labels patch, major or minor
+    if: ${{ github.event.label.name == 'automerge' }} &&
+    ( contains( github.event.pull_request.labels.*.name, 'patch') ||  
+    contains( github.event.pull_request.labels.*.name, 'minor') ||
+    contains ( github.event.pull_request.labels.*.name, 'major'))
     steps:
       - uses: actions/checkout@v3
       - name: Set Up JDK 18.0.1+10
@@ -67,11 +71,11 @@ jobs:
       - name: Increase Code Minor Version
         run: ./gradlew increaseCodeVersion
       # increase release version
-      - if: contains(${{ github.event.head_commit.message }}, '#patch')
+      - if: ( contains( github.event.pull_request.labels.*.name, 'Patch')
         run: ./gradlew increasePatchCodeVersion
-      - if: contains(${{ github.event.head_commit.message }}, '#minor')
+      - if: contains( github.event.pull_request.labels.*.name, 'Minor')
         run: ./gradlew increaseMinorCodeVersion
-      - if: contains(${{ github.event.head_commit.message }}, '#major')
+      - if: contains ( github.event.pull_request.labels.*.name, 'Major')
         run: ./gradlew increaseMajorCodeVersion
       # run project build
       - name: Project Build
