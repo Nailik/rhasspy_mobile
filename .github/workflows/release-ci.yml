@@ -68,11 +68,11 @@ jobs:
       - name: Increase Code Minor Version
         run: ./gradlew increaseCodeVersion
       # increase release version
-      - if: ( contains( github.event.pull_request.labels.*.name, 'Patch')
+      - if: contains( github.event.pull_request.labels.*.name, 'patch')
         run: ./gradlew increasePatchCodeVersion
-      - if: contains( github.event.pull_request.labels.*.name, 'Minor')
+      - if: contains( github.event.pull_request.labels.*.name, 'minor')
         run: ./gradlew increaseMinorCodeVersion
-      - if: contains ( github.event.pull_request.labels.*.name, 'Major')
+      - if: contains ( github.event.pull_request.labels.*.name, 'major')
         run: ./gradlew increaseMajorCodeVersion
       # run project build
       - name: Project Build
