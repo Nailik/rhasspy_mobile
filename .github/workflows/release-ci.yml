@@ -10,11 +10,7 @@ jobs:
   build:
     runs-on: macos-latest
     #has label automerge and contains one of the labels patch, major or minor
-    if: >-
-    ${{ (github.event.label.name == 'automerge') &&
-    (contains(github.event.pull_request.labels.*.name, 'patch') ||  
-    contains(github.event.pull_request.labels.*.name, 'minor') ||
-    contains(github.event.pull_request.labels.*.name, 'major')) }}
+    if: ${{ (github.event.label.name == 'automerge') && (contains(github.event.pull_request.labels.*.name, 'patch') ||  contains(github.event.pull_request.labels.*.name, 'minor') || contains(github.event.pull_request.labels.*.name, 'major')) }}
     steps:
       - uses: actions/checkout@v3
       - name: Set Up JDK 18.0.1+10
