@@ -137,6 +137,7 @@ android {
     packagingOptions {
         resources.pickFirsts.add("META-INF/*")
     }
+    namespace = "org.rhasspy.mobile"
 }
 
 multiplatformResources {

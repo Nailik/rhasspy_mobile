@@ -68,6 +68,7 @@ android {
         //used to trust self signed certificates eventually
         disable.add("TrustAllX509TrustManager")
     }
+    namespace = "org.rhasspy.mobile.android"
 
     applicationVariants.all {
         this.outputs
