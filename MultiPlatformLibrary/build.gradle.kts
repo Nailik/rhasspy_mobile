@@ -11,7 +11,7 @@ plugins {
     id("dev.icerock.mobile.multiplatform-resources")
     id("com.mikepenz.aboutlibraries.plugin")
     id("com.codingfeline.buildkonfig")
-    id("org.sonarqube") version "3.3"
+    id("org.sonarqube") version "3.4.0.2513"
 }
 
 version = Version.toString()
@@ -59,8 +59,7 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Ktor.Client.core)
-                implementation(Ktor.Client.websockets)
-                implementation(Ktor.Network.network)
+                implementation(Ktor.plugins.network)
                 implementation(Ktor2.Server.core)
                 implementation(Ktor2.Server.cors)
                 implementation(Ktor2.Server.dataConversion)
@@ -89,7 +88,7 @@ kotlin {
                 implementation(Ktor.Client.cio)
                 implementation(Ktor.Server.core)
                 implementation(Ktor.Server.netty)
-                implementation(Ktor.Network.network)
+                implementation(Ktor.plugins.network)
                 implementation(Slf4j.simple)
                 implementation(Ktor2.Server.compression)
                 implementation(Ktor2.Server.callLogging)
@@ -129,11 +128,11 @@ kotlin {
 }
 
 android {
-    compileSdk = 32
+    compileSdk = 33
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
         minSdk = 23
-        targetSdk = 32
+        targetSdk = 33
     }
     packagingOptions {
         resources.pickFirsts.add("META-INF/*")

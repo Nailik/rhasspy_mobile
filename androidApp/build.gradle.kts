@@ -8,12 +8,12 @@ plugins {
 }
 
 android {
-    compileSdk = 32
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "org.rhasspy.mobile.android"
         minSdk = 23
-        targetSdk = 32
+        targetSdk = 33
         versionCode = Version.code
         versionName = Version.toString()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -118,7 +118,7 @@ dependencies {
 
     implementation(Google.android.material)
     implementation(Google.Accompanist.insets)
-    implementation(Google.Accompanist.systemuicontroller)
+    implementation(Google.accompanist.systemUiController)
 
     implementation(AndroidX.Activity.compose)
     implementation(AndroidX.Core.splashscreen)
