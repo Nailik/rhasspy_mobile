@@ -69,18 +69,12 @@ jobs:
       # code version is increased before build
       - name: Increase Code Version
         run: ./gradlew increaseCodeVersion
-       # commit new version
-      - name: Commit changes
-        run: |
-          git config --local user.name github-actions[bot]
-          git config --local user.email github-actions[bot]@users.noreply.github.com
-          git commit -m "Automatically increased Version.code" -a
-      #push changes
-      - name: Push changes # push the output folder to your repo
-        uses: ad-m/github-push-action@master
+      # commit and push changes
+      - name: Commit and Push changes
+        uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.head_ref }}
+          commit_message: "Automatically increased Version.code"
+          push_options: '--force'
       # run project build
       - name: Project Build
         env:
