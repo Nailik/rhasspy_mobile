@@ -1,16 +1,20 @@
 package org.rhasspy.mobile
 
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logger.FileLogger
-import org.rhasspy.mobile.services.ForegroundService
+import org.rhasspy.mobile.mqtt.OverlayServices
 import org.rhasspy.mobile.services.MqttService
-import org.rhasspy.mobile.services.RecordingService
+import org.rhasspy.mobile.services.ServiceAction
 import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 abstract class Application : NativeApplication() {
     private val logger = Logger.withTag("Application")
+
 
     companion object {
         lateinit var Instance: NativeApplication
@@ -29,11 +33,17 @@ abstract class Application : NativeApplication() {
 
         //initialize/load the settings, generate the MutableLiveData
         AppSettings
-        MqttService
-        RecordingService
         ConfigurationSettings
+        OverlayServices.checkPermission()
+        startNativeServices()
+        //makes sure that the MutableObservable inside those objects are created in ui thread because they internally use livedata which cannot be
+        // created in background tread
         ServiceInterface
-        ForegroundService
+        MqttService
+
+        CoroutineScope(Dispatchers.Default).launch {
+            ServiceInterface.serviceAction(ServiceAction.Start)
+        }
     }
 
 }

@@ -4,8 +4,8 @@ import android.content.Intent
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.readOnly
@@ -20,12 +20,12 @@ actual object OverlayPermission {
     private var onResultCallback: ((Boolean) -> Unit)? = null
 
     fun init(activity: ComponentActivity) {
-        activity.lifecycle.addObserver(object : LifecycleObserver {
-            @Suppress("unused")
-            @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-            fun onResume() {
-                status.value = isGranted()
-                onResultCallback?.invoke(status.value)
+        activity.lifecycle.addObserver(object : LifecycleEventObserver {
+            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                if (event == Lifecycle.Event.ON_RESUME) {
+                    status.value = isGranted()
+                    onResultCallback?.invoke(status.value)
+                }
             }
         })
     }
@@ -43,7 +43,7 @@ actual object OverlayPermission {
         Application.Instance.startActivity(intent)
     }
 
-    private fun isGranted(): Boolean {
+    actual fun isGranted(): Boolean {
         return Settings.canDrawOverlays(Application.Instance)
     }
 

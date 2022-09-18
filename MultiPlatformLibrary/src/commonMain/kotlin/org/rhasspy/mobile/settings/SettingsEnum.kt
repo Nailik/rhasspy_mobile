@@ -10,8 +10,14 @@ enum class SettingsEnum {
     AutomaticSilenceDetectionTime,
 
     BackgroundEnabled,
-    BackgroundWakeWordDetectionTurnOnDisplay,
+    SSLVerificationDisabled,
 
+    MicrophoneOverlay,
+    MicrophoneOverlayWhileApp,
+    MicrophoneOverlayPositionX,
+    MicrophoneOverlayPositionY,
+
+    BackgroundWakeWordDetectionTurnOnDisplay,
     WakeWordSoundIndication,
     WakeWordLightIndication,
 
@@ -20,6 +26,15 @@ enum class SettingsEnum {
     IntentHandlingEnabled,
     Volume,
 
+    SoundVolume,
+    WakeSound,
+    RecordedSound,
+    ErrorSound,
+    WakeSounds,
+    RecordedSounds,
+    ErrorSounds,
+    CustomSounds,
+
     ShowLog,
     LogAudioFrames,
     LogLevel,
@@ -27,23 +42,30 @@ enum class SettingsEnum {
     //Configuration Settings
     SiteId,
 
-    HttpSSL,
+    HttpServerEnabled,
+    HttpServerPort,
+    HttpServerSSL,
 
-    MQTT_SSL,
     MQTT_ENABLED,
     MQTTHost,
     MQTTPort,
     MQTTUserName,
+    MQTT_SSL,
     MQTTPassword,
+    MQTTConnectionTimeout,
+    MQTTKeepAliveInterval,
+    MQTTRetryInterval,
 
     UDPOutput,
     UDPOutputHost,
     UDPOutputPort,
 
     WakeWordOption,
-    WakeWordAccessToken,
-    WakeWordKeywordOption,
-    WakeWordKeywordSensitivity,
+    WakeWordPorcupineAccessToken,
+    WakeWordPorcupineKeywordOption,
+    WakeWordPorcupineKeywordOptions,
+    WakeWordPorcupineLanguage,
+    WakeWordPorcupineKeywordSensitivity,
 
     SpeechToTextOption,
     SpeechToTextHttpEndpoint,
