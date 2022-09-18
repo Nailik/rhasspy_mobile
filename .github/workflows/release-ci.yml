@@ -83,6 +83,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "Automatically increased Version.code"
+          push_options: '--force'
       # run project build
       - name: Project Build
         env:
