@@ -1,12 +1,19 @@
 package org.rhasspy.mobile
 
 import kotlin.test.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class CommonGreetingTest {
+class DummyCommonTest {
 
     @Test
-    fun testExample() {
-        assertTrue(Greeting().greeting().contains("Hello"), "Check 'Hello' is mentioned")
+    fun commonTest() {
+        assertTrue(true, "Check 'true' is true")
     }
+
+    @Test
+    fun commonTestFail() {
+        assertFalse(false, "Check 'false' is false")
+    }
+
 }

@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,18 +15,18 @@ import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Colors
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Switch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.rotate
@@ -36,6 +37,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -47,17 +50,23 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import com.google.accompanist.insets.LocalWindowInsets
 import dev.icerock.moko.mvvm.livedata.LiveData
+import dev.icerock.moko.resources.ImageResource
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.DataEnum
+import org.rhasspy.mobile.observer.Observable
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.AppSettings
-import org.rhasspy.mobile.settings.Setting
+import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.sounds.SoundFile
 
 @Composable
 fun Text(
@@ -113,6 +122,22 @@ fun Icon(
     )
 }
 
+
+@Composable
+fun Icon(
+    imageResource: ImageResource,
+    contentDescription: StringResource,
+    modifier: Modifier = Modifier,
+    tint: Color = LocalContentColor.current
+) {
+    Icon(
+        painter = painterResource(imageResource.drawableResId),
+        contentDescription = translate(contentDescription),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
 @Composable
 fun Icon(
     painter: Painter,
@@ -149,6 +174,7 @@ fun Modifier.clearFocusOnKeyboardDismiss(): Modifier = composed {
             }
         }
     }
+
     onFocusEvent {
         if (isFocused != it.isFocused) {
             isFocused = it.isFocused
@@ -215,6 +241,192 @@ fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, enabled: Boolean = true,
                     enabled = enabled,
                     onClick = { isExpanded = false; onSelect(it) })
             }
+        }
+    }
+}
+
+@Composable
+fun DropDownListRemovableWithFileOpen(
+    overlineText: @Composable () -> Unit,
+    enabled: Boolean = true,
+    values: Array<SoundFile>,
+    onAdd: () -> Unit,
+    onRemove: ((index: Int) -> Unit)? = null,
+    title: @Composable () -> Unit,
+    onSelect: ((index: Int) -> Unit)? = null
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+
+    ListElement(modifier = Modifier
+        .clickable { isExpanded = true },
+        overlineText = overlineText,
+        text = title,
+        trailing = {
+            IndicatedSmallIcon(isExpanded) {
+                Icon(
+                    modifier = it,
+                    imageVector = Icons.Filled.ArrowDropDown,
+                    contentDescription = MR.strings.expandDropDown,
+                )
+            }
+        })
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentSize(Alignment.TopStart)
+    ) {
+        DropdownMenu(
+            modifier = Modifier.fillMaxWidth(),
+            expanded = isExpanded,
+            onDismissRequest = { isExpanded = false }) {
+            values.forEachIndexed { index, item ->
+                DropdownMenuItem(
+                    text = { Text(item.fileName) },
+                    enabled = enabled,
+                    trailingIcon = {
+                        onRemove?.let { callback ->
+                            IconButton(
+                                onClick = { callback.invoke(index) },
+                                enabled = enabled && !item.used
+                            ) {
+                                Icon(imageVector = Icons.Filled.Delete, contentDescription = MR.strings.remove)
+                            }
+                        }
+                    }, onClick = { onSelect?.invoke(index) })
+            }
+
+            Box(modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .align(alignment = Alignment.Center),
+                    border = BorderStroke(ButtonDefaults.outlinedButtonBorder.width, MaterialTheme.colorScheme.primary),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
+                    onClick = {
+                        isExpanded = false
+                        onAdd.invoke()
+                    })
+                {
+                    Icon(imageVector = Icons.Filled.FileOpen, contentDescription = MR.strings.expandDropDown)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(MR.strings.selectFile)
+                }
+
+            }
+        }
+    }
+}
+
+
+@Composable
+fun DropDownListWithFileOpen(
+    overlineText: @Composable () -> Unit,
+    selected: Int,
+    enabled: Boolean = true,
+    values: Array<String>,
+    onAdd: () -> Unit,
+    onSelect: ((index: Int) -> Unit)? = null
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+
+    ListElement(modifier = Modifier
+        .clickable { isExpanded = true },
+        overlineText = overlineText,
+        text = { Text(values[selected]) },
+        trailing = {
+            IndicatedSmallIcon(isExpanded) {
+                Icon(
+                    modifier = it,
+                    imageVector = Icons.Filled.ArrowDropDown,
+                    contentDescription = MR.strings.expandDropDown,
+                )
+            }
+        })
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentSize(Alignment.TopStart)
+    ) {
+        DropdownMenu(
+            modifier = Modifier.fillMaxWidth(),
+            expanded = isExpanded,
+            onDismissRequest = { isExpanded = false }) {
+            values.forEachIndexed { index, item ->
+                DropdownMenuItem(
+                    text = { Text(item) },
+                    enabled = enabled,
+                    onClick = { onSelect?.invoke(index) })
+            }
+
+            Box(modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .align(alignment = Alignment.Center),
+                    border = BorderStroke(ButtonDefaults.outlinedButtonBorder.width, MaterialTheme.colorScheme.primary),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
+                    onClick = {
+                        isExpanded = false
+                        onAdd.invoke()
+                    })
+                {
+                    Icon(imageVector = Icons.Filled.FileOpen, contentDescription = MR.strings.expandDropDown)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(MR.strings.selectFile)
+                }
+
+            }
+        }
+    }
+}
+
+@Composable
+fun DropDownStringList(
+    overlineText: @Composable () -> Unit,
+    selected: String,
+    enabled: Boolean = true,
+    values: Array<String>,
+    onSelect: (item: String) -> Unit
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+
+    ListElement(modifier = Modifier
+        .clickable { isExpanded = true },
+        overlineText = overlineText,
+        text = { Text(selected) },
+        trailing = {
+            IndicatedSmallIcon(isExpanded) {
+                Icon(
+                    modifier = it,
+                    imageVector = Icons.Filled.ArrowDropDown,
+                    contentDescription = MR.strings.expandDropDown,
+                )
+            }
+        })
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentSize(Alignment.TopStart)
+    ) {
+        DropdownMenu(
+            modifier = Modifier.fillMaxWidth(),
+            expanded = isExpanded,
+            onDismissRequest = { isExpanded = false }) {
+            values.forEach { text ->
+
+                DropdownMenuItem(
+                    modifier = if (text == selected) Modifier.background(MaterialTheme.colorScheme.surfaceVariant) else Modifier,
+                    text = { Text(text) },
+                    enabled = enabled,
+                    onClick = {
+                        isExpanded = false
+                        onSelect.invoke(text)
+                    })
+            }
+
         }
     }
 }
@@ -301,7 +513,6 @@ fun SwitchListItem(
         })
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ListElement(
     modifier: Modifier = Modifier,
@@ -381,13 +592,22 @@ fun OutlineButtonListItem(text: StringResource, enabled: Boolean = true, onClick
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .wrapContentSize(Alignment.Center)
     ) {
-        OutlinedButton(enabled = enabled, onClick = onClick) {
-            Text(text)
-        }
+        OutlinedButton(enabled = enabled, onClick = onClick, content = { Text(text) })
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun OutlineButtonListItem(text: @Composable (() -> Unit), enabled: Boolean = true, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .wrapContentSize(Alignment.Center)
+    ) {
+        OutlinedButton(enabled = enabled, onClick = onClick, content = { text() })
+    }
+}
+
 @Composable
 fun SliderListItem(text: StringResource, value: Float, enabled: Boolean = true, onValueChange: (Float) -> Unit) {
     Box(
@@ -428,14 +648,21 @@ fun <T> LiveData<T>.observe(): T {
 }
 
 @Composable
+fun <T> Observable<T>.observe(): T {
+    return this.toLiveData().ld().observeAsState(this.value).value
+}
+
+
+@Composable
 fun <T> AppSetting<T>.observe(): T {
-    return this.value.observe()
+    return this.data.toLiveData().observe()
 }
 
 @Composable
-fun <T> Setting<T>.observeCurrent(): T {
-    return this.unsaved.ld().observeAsState(this.value).value
+fun <T> ConfigurationSetting<T>.observeCurrent(): T {
+    return this.unsaved.toLiveData().observe()
 }
+
 
 @Composable
 fun ColorScheme.toColors(isLight: Boolean): Colors {
@@ -457,7 +684,7 @@ fun ColorScheme.toColors(isLight: Boolean): Colors {
 }
 
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TextWithAction(
     modifier: Modifier = Modifier,
@@ -499,6 +726,27 @@ fun TextWithAction(
             onClick = onClick
         ) {
             icon()
+        }
+    }
+}
+
+@Composable
+fun CustomDivider(modifier: Modifier = Modifier) {
+    Divider(color = MaterialTheme.colorScheme.surfaceVariant, modifier = modifier)
+}
+
+@Composable
+fun ComposableLifecycle(
+    lifeCycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
+    onEvent: (LifecycleOwner, Lifecycle.Event) -> Unit
+) {
+    DisposableEffect(lifeCycleOwner) {
+        val observer = LifecycleEventObserver { source, event ->
+            onEvent(source, event)
+        }
+        lifeCycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifeCycleOwner.lifecycle.removeObserver(observer)
         }
     }
 }

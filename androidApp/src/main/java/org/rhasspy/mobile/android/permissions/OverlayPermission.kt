@@ -1,17 +1,28 @@
 package org.rhasspy.mobile.android.permissions
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Layers
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material.icons.filled.LayersClear
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
+import org.rhasspy.mobile.android.utils.observe
 import org.rhasspy.mobile.nativeutils.OverlayPermission
+import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
 /**
  * 3 parts where this is shown:
@@ -20,6 +31,31 @@ import org.rhasspy.mobile.nativeutils.OverlayPermission
  * local WakeWord service
  * click on check audio level button
  */
+@Composable
+fun OverlayPermissionRequired(viewModel: HomeScreenViewModel) {
+    AnimatedVisibility(
+        enter = fadeIn(animationSpec = tween(50)),
+        exit = fadeOut(animationSpec = tween(50)),
+        visible = viewModel.isOverlayPermissionRequestRequired.observe()
+    ) {
+        val overlayPermission = requestOverlayPermission {}
+
+        IconButton(
+            onClick = { overlayPermission.invoke() },
+            modifier = Modifier.background(
+                color = MaterialTheme.colorScheme.errorContainer,
+                shape = RoundedCornerShape(8.dp)
+            )
+        )
+        {
+            Icon(
+                imageVector = Icons.Filled.LayersClear,
+                tint = MaterialTheme.colorScheme.onErrorContainer,
+                contentDescription = MR.strings.overlay
+            )
+        }
+    }
+}
 
 @Composable
 fun requestOverlayPermission(
@@ -63,6 +99,9 @@ private fun OverlayPermissionInfoDialog(onResult: (result: Boolean) -> Unit) {
             OutlinedButton(onClick = { onResult.invoke(false) }) {
                 Text(MR.strings.cancel)
             }
-        }
+        },
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
     )
 }

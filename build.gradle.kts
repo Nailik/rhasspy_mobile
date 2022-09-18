@@ -8,17 +8,16 @@ buildscript {
         //classpath dependencies cannot be loaded from buildSrc
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
         @Suppress("GradlePluginVersion")
-        classpath("com.android.tools.build:gradle:_")
+        classpath(Android.tools.build.gradlePlugin)
         classpath("dev.icerock.moko:resources-generator:_")
+        classpath("com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:_")
+        classpath("com.codingfeline.buildkonfig:buildkonfig-gradle-plugin:_")
     }
 }
 
 allprojects {
     repositories {
         google()
-        maven {
-            setUrl("https://repo.eclipse.org/content/repositories/paho-releases/")
-        }
         mavenCentral()
     }
 }

@@ -1,3 +1,6 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+import org.gradle.api.tasks.testing.logging.TestLogEvent.*
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -6,13 +9,16 @@ plugins {
 
 android {
     compileSdk = 32
+
     defaultConfig {
         applicationId = "org.rhasspy.mobile.android"
         minSdk = 23
         targetSdk = 32
-        versionCode = 2
-        versionName = "0.2"
+        versionCode = Version.code
+        versionName = Version.toString()
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -23,12 +29,15 @@ android {
             )
         }
     }
+
     buildFeatures {
         compose = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "_"
     }
+
     splits {
         abi {
             isEnable = true
@@ -37,10 +46,57 @@ android {
             isUniversalApk = false
         }
     }
+
     packagingOptions {
         //else netty finds multiple INDEX.LIST files
         resources.pickFirsts.add("META-INF/INDEX.LIST")
         resources.pickFirsts.add("META-INF/io.netty.versions.properties")
+    }
+
+    compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+        testOptions.animationsDisabled = true
+    }
+
+    lint {
+        //used to trust self signed certificates eventually
+        disable.add("TrustAllX509TrustManager")
+    }
+
+    applicationVariants.all {
+        this.outputs
+            .map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
+            .forEach { output ->
+                output.outputFileName = output.outputFileName
+                    .replace("androidApp", "rhasspy_mobile_V_$Version")
+                    .replace("-release-unsigned", "")
+                    .replace("-debug-unsigned", "")
+            }
+    }
+
+}
+
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+
+tasks.withType<Test> {
+    testLogging {
+        events(STARTED, PASSED, SKIPPED, FAILED, STANDARD_OUT, STANDARD_ERROR)
+        exceptionFormat = FULL
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
     }
 }
 
@@ -54,6 +110,7 @@ kotlin {
 }
 
 dependencies {
+    coreLibraryDesugaring(Android.tools.desugarJdkLibs)
     implementation(project(":MultiPlatformLibrary"))
 
     implementation(KotlinX.Coroutines.core)
@@ -74,6 +131,8 @@ dependencies {
     implementation(AndroidX.Compose.foundation)
     implementation(AndroidX.Compose.runtime.liveData)
     implementation(AndroidX.Lifecycle.viewModelCompose)
+    implementation(AndroidX.Lifecycle.common)
+    implementation(AndroidX.Lifecycle.common)
     implementation(AndroidX.Compose.ui)
     implementation(AndroidX.Compose.ui.util)
     implementation(AndroidX.Compose.ui.tooling)
@@ -87,6 +146,14 @@ dependencies {
     implementation(Icerock.Mvvm.livedata)
     implementation(Icerock.Mvvm.livedataResources)
 
-    implementation("co.touchlab:kermit:_")
+    implementation(Touchlab.kermit)
+    implementation(AndroidX.lifecycle.process)
+    implementation(Devsrsouza.fontAwesome)
+    implementation(Mikepenz.aboutLibrariesCore)
 
+    androidTestImplementation(Kotlin.test)
+    androidTestImplementation(Kotlin.Test.junit)
+    androidTestImplementation(AndroidX.Test.Espresso.core)
+    androidTestImplementation(AndroidX.Compose.Ui.testJunit4)
+    debugImplementation(AndroidX.Compose.Ui.testManifest)
 }

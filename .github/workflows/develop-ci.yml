@@ -1,0 +1,65 @@
+name: Develop CI
+
+on:
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
+          fetch-depth: 0
+      - name: Set Up JDK 18.0.1+10
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '18.0.1+10'
+          cache: gradle
+      # necessary for linux/macos but doesn't work on windows
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      # cache sonar cloud
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      # cache gradle
+      - name: Cache Gradle packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+      # android lint debug
+      - name: Android Lint Check
+        run: ./gradlew lintDebug
+      # android lint debug upload
+      - uses: actions/upload-artifact@v3
+        with:
+          name: AndroidLintRelease
+          path: androidApp/build/reports/lint-results-debug.html
+      #r un all unit tests (debug and debug)
+      - name: Unit Tests
+        run: ./gradlew testDebug
+      # android UI Test
+      - name: Android UI Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: default
+          arch: x86
+          profile: Nexus 6
+          script: ./gradlew androidApp:connectedCheck
+      # better looking test report inside github
+      - name: Create Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Test Report
+          path: androidApp/build/outputs/androidTest-results/connected/TEST-*.xml,MultiPlatformLibrary/build/test-results/test*UnitTest/TEST-*.xml
+          reporter: java-junit
