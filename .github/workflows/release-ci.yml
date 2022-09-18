@@ -112,6 +112,10 @@ jobs:
         with:
           name: Upload Artifact of signed apks
           path: androidApp/build/outputs/apk/release/rhasspy_mobile_*.apk
+      - name: Set variables
+        run: |
+          VER=$(cat version)
+          echo "version=$VER" >> $GITHUB_ENV
       # upload release apk
       - name: Create Release
         uses: "marvinpinto/action-automatic-releases@latest"
