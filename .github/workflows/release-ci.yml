@@ -74,17 +74,25 @@ jobs:
         run: ./gradlew increaseMinorCodeVersion
       - if: contains ( github.event.pull_request.labels.*.name, 'major')
         run: ./gradlew increaseMajorCodeVersion
+      # commit new version
+      - name: Commit changes
+        run: |
+           git config --local user.name github-actions[bot]
+           git config --local user.email github-actions[bot]@users.noreply.github.com
+           git commit -m "Automatically increased Version.code" -a
+        #push changes
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.head_ref }}
+          force: true
       # run project build
       - name: Project Build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew androidApp:build sonarqube
-      # upload apks to action
-      - name: Assign release version
-        run: |
-          VER=$(cat version)
-          echo "version=$VER" >> $GITHUB_ENV
       # sign the generated apks
       - uses: r0adkll/sign-android-release@v1
         name: Sign App APK
@@ -110,30 +118,11 @@ jobs:
           automatic_release_tag: ${{ env.version }}
           prerelease: true
           title: Release ${{ env.version }}
-          files: androidApp/build/outputs/apk/release/rhasspy_mobile_*.apk
-      - name: Bump version and push tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Create a GitHub release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.tag_version.outputs.new_tag }}
-          name: Release ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.tag_version.outputs.changelog }}
-      # run project build
-      - name: Commit and push changes
-        run: |
-          git config --local user.name github-actions[bot]
-          git config --local user.email github-actions[bot]@users.noreply.github.com
-          git commit -m "Automatically increased Version.code" -a
-      - name: Push changes # push the output folder to your repo
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.head_ref }}
-          force: true
+          files: |
+            androidApp/build/outputs/apk/release/rhasspy_mobile_*-arm64-v8a-signed.apk
+            androidApp/build/outputs/apk/release/rhasspy_mobile_*-armeabi-v7a-signed.apk
+            androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86-signed.apk
+            androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86_64-signed.apk
       # auto approve pr
       - name: Approve Pull Request
         uses: juliangruber/merge-pull-request-action@v1

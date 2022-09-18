@@ -70,11 +70,18 @@ jobs:
       - name: Increase Code Version
         run: ./gradlew increaseCodeVersion
       # commit new version
-      - name: Commit and push changes
+      - name: Commit changes
         run: |
           git config --local user.name github-actions[bot]
           git config --local user.email github-actions[bot]@users.noreply.github.com
           git commit -m "Automatically increased Version.code" -a
+        #push changes
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.head_ref }}
+          force: true
       # run project build
       - name: Project Build
         env:
@@ -98,12 +105,6 @@ jobs:
         with:
           name: Upload Artifact of signed apks
           path: androidApp/build/outputs/apk/debug/rhasspy_mobile_*.apk
-      # run project build
-      - name: Push changes # push the output folder to your repo
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.head_ref }}
       # auto approve pr
       - name: Approve Pull Request
         uses: juliangruber/merge-pull-request-action@v1
