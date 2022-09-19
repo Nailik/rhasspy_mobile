@@ -82,11 +82,6 @@ android {
                     .replace("-debug-unsigned", "")
             }
     }
-
-    sourceSets["main"].apply {
-        assets.srcDir(File(buildDir, "generated/moko/androidMain/assets"))
-        res.srcDir(File(buildDir, "generated/moko/androidMain/res"))
-    }
 }
 
 
