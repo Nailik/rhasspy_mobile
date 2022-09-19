@@ -1,3 +1,4 @@
+@file:Suppress("UnstableApiUsage")
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
