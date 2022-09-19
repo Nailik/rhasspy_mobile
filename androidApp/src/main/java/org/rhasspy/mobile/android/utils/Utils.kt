@@ -53,7 +53,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import com.google.accompanist.insets.LocalWindowInsets
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.resources.ImageResource
 import dev.icerock.moko.resources.StringResource
@@ -160,11 +159,12 @@ fun translate(resource: StringResource): String {
 }
 
 //https://stackoverflow.com/questions/68389802/how-to-clear-textfield-focus-when-closing-the-keyboard-and-prevent-two-back-pres
+@OptIn(ExperimentalLayoutApi::class)
 fun Modifier.clearFocusOnKeyboardDismiss(): Modifier = composed {
     var isFocused by remember { mutableStateOf(false) }
     var keyboardAppearedSinceLastFocused by remember { mutableStateOf(false) }
     if (isFocused) {
-        val imeIsVisible = LocalWindowInsets.current.ime.isVisible
+        val imeIsVisible = WindowInsets.isImeVisible
         val focusManager = LocalFocusManager.current
         LaunchedEffect(imeIsVisible) {
             if (imeIsVisible) {
@@ -200,7 +200,7 @@ fun IndicatedSmallIcon(isIndicated: Boolean, rotationTarget: Float = 180f, icon:
     Box(
         Modifier
             .background(
-                color = NavigationBarItemDefaults.colors().indicatorColor.copy(alpha = animationProgress),
+                color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = animationProgress),
                 shape = RoundedCornerShape(16.0.dp)
             )
             .padding(horizontal = 8.dp)

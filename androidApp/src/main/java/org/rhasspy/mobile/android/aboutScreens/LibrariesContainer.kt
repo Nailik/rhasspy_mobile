@@ -146,6 +146,7 @@ fun HtmlText(html: String, modifier: Modifier = Modifier, color: Color) {
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun Library(
     library: Library,
