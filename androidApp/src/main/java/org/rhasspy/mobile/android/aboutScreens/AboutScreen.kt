@@ -66,7 +66,7 @@ fun Header() {
         Text(MR.strings.appName, style = MaterialTheme.typography.headlineLarge, modifier = Modifier.padding(8.dp))
 
         Text(
-            "${translate(MR.strings.version)} ${BuildKonfig.versionName} - ${BuildKonfig.versionCode}",
+            "${translate(MR.strings.version)} ${BuildKonfig.versionName}-${BuildKonfig.versionCode}",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(8.dp)
         )
