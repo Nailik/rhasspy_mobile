@@ -62,7 +62,7 @@ actual object AudioPlayer {
                 AudioTrack.MODE_STATIC,
                 AudioManager.AUDIO_SESSION_ID_GENERATE
             ).apply {
-                notificationMarkerPosition = audioDataSize / 2
+                notificationMarkerPosition = audioDataSize
 
                 setPlaybackPositionUpdateListener(object : AudioTrack.OnPlaybackPositionUpdateListener {
 

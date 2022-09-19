@@ -175,4 +175,7 @@
     <string name="mqttNotConnected">MQTT not connected</string>
     <string name="mqttConnectionError">Error during connection:</string>
     <string name="mqttConnectionLostError">Lost connection error:</string>
+    <string name="problemHandling">Problem Handling</string>
+    <string name="forceCancel">Force Cancel</string>
+    <string name="forceCancelInformation">Press to cancel Session</string>
 </resources>
