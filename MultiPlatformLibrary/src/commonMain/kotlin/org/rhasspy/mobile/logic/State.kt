@@ -14,6 +14,5 @@ enum class State {
     IntentHandling,         //intent is handled
     SessionStopped,     //session was stopped remote
     EndedSession,     //session ended completely
-    PlayingAudio,    //playing some sort of audio (stream, sound or recording)
     PlayingRecording
 }

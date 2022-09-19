@@ -76,7 +76,9 @@ object StateMachine {
             //send to mqtt that hotWord was detected
             MqttService.hotWordDetected(keyword)
             //call session started with a new unique id
-            startedSession(uuid4().toString(), keyword)
+            if (isDialogueLocal()) {
+                startedSession(uuid4().toString(), keyword)
+            }
         } else {
             logger.e { "hotWordDetected call with invalid state ${state.value}" }
         }
@@ -137,7 +139,9 @@ object StateMachine {
             currentSession = Session(sessionId, keyword)
             state.value = State.StartedSession
             //send to mqtt that a session has started
-            MqttService.sessionStarted(sessionId)
+            if (!fromMQTT) {
+                MqttService.sessionStarted(sessionId)
+            }
             //start recording (listening)
             startListening()
         } else if (state.value == State.RecordingIntent && fromMQTT && sessionId != currentSession.sessionId) {
@@ -158,7 +162,7 @@ object StateMachine {
     fun startListening(sessionId: String? = currentSession.sessionId, sendAudioCaptured: Boolean = false, fromMQTT: Boolean = false) {
         logger.v { "startListening id: $sessionId sendAudioCaptured: $sendAudioCaptured fromMQTT: $fromMQTT" }
 
-        if (!fromMQTT && sessionId == currentSession.sessionId) {
+        if (sessionMatches(sessionId, fromMQTT)) {
             if (state.value == State.StartedSession) {
                 //save send audio captured to session
                 currentSession.isSendAudioCaptured = sendAudioCaptured
@@ -251,7 +255,7 @@ object StateMachine {
         //stop it if state is recording
         logger.v { "stopListening id: $sessionId fromMQTT: $fromMQTT" }
 
-        if (sessionId == currentSession.sessionId) {
+        if (sessionMatches(sessionId, fromMQTT)) {
             if (state.value == State.RecordingIntent) {
                 state.value = State.RecordingStopped
 
@@ -304,11 +308,8 @@ object StateMachine {
     fun intentTranscribed(sessionId: String? = currentSession.sessionId, intent: String, fromMQTT: Boolean = false) {
         logger.v { "intentTranscribed $intent" }
 
-        if (state.value == State.TranscribingIntent || state.value == State.RecordingStopped) {
-            if ((fromMQTT && currentSession.mqttSpeechToTextSessionId == sessionId) ||
-                sessionId == currentSession.sessionId
-            ) {
-
+        if (state.value == State.RecordingIntent || state.value == State.TranscribingIntent || state.value == State.RecordingStopped) {
+            if (sessionMatches(sessionId, fromMQTT)) {
                 state.value = State.RecognizingIntent
 
                 if (isDialogueLocal()) {
@@ -346,9 +347,7 @@ object StateMachine {
         logger.v { "intentTranscriptionError" }
 
         if (state.value == State.TranscribingIntent || state.value == State.RecordingStopped) {
-            if ((fromMQTT && currentSession.mqttSpeechToTextSessionId == sessionId) ||
-                sessionId == currentSession.sessionId
-            ) {
+            if (sessionMatches(sessionId, fromMQTT)) {
                 state.value = State.TranscribingError
 
                 if (isDialogueLocal()) {
@@ -373,8 +372,8 @@ object StateMachine {
     fun intentRecognized(intentName: String, intent: String, sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
         logger.v { "intentRecognized $intent" }
 
-        if (sessionId == currentSession.sessionId) {
-            if (state.value == State.RecognizingIntent) {
+        if (sessionMatches(sessionId, fromMQTT)) {
+            if (state.value == State.RecordingIntent || state.value == State.TranscribingIntent || state.value == State.RecognizingIntent) {
                 state.value = State.IntentHandling
 
                 currentSession.isIntentRecognized = true
@@ -387,20 +386,6 @@ object StateMachine {
             } else {
                 logger.e { "intentRecognized call with invalid state ${state.value}" }
             }
-        } else if (fromMQTT && currentSession.mqttSpeechToTextSessionId == sessionId && (state.value == State.RecordingIntent || state.value == State.RecognizingIntent)) {
-            //this is maybe called while "recording intent" then recording will be ended and instantly going to intent handling
-            //then there is no second call to recognize the intent
-            state.value = State.IntentHandling
-
-            currentSession.isIntentRecognized = true
-
-            RhasspyActions.intentHandling(intentName, intent)
-
-            if (isDialogueLocal()) {
-                endSession()
-            }
-        } else {
-            logger.v { "intentRecognized invalid id" }
         }
     }
 
@@ -413,11 +398,11 @@ object StateMachine {
      *
      * Response to hermes/nlu/query
      */
-    fun intentNotRecognized(sessionId: String? = currentSession.sessionId) {
+    fun intentNotRecognized(sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
         logger.v { "intentNotRecognized" }
 
         if (state.value == State.RecognizingIntent) {
-            if (sessionId == currentSession.sessionId) {
+            if (sessionMatches(sessionId, fromMQTT)) {
                 state.value = State.RecognizingIntentError
 
                 if (isDialogueLocal()) {
@@ -437,10 +422,10 @@ object StateMachine {
      * hermes/dialogueManager/endSession
      * Requests that a session be terminated nominally
      */
-    fun endSession(sessionId: String? = currentSession.sessionId) {
+    fun endSession(sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
         logger.v { "endSession $sessionId" }
 
-        if (sessionId == currentSession.sessionId) {
+        if (sessionMatches(sessionId, fromMQTT)) {
             if (state.value != State.AwaitingHotWord) {
                 state.value = State.SessionStopped
 
@@ -467,10 +452,10 @@ object StateMachine {
      *
      * Response to hermes/dialogueManager/endSession or other reasons for a session termination
      */
-    fun sessionEnded(sessionId: String? = currentSession.sessionId) {
+    fun sessionEnded(sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
         logger.v { "sessionEnded" }
 
-        if (sessionId == currentSession.sessionId) {
+        if (sessionMatches(sessionId, fromMQTT)) {
             if (state.value == State.TranscribingError ||
                 state.value == State.IntentHandling ||
                 state.value == State.RecognizingIntentError ||
@@ -501,12 +486,8 @@ object StateMachine {
      */
     fun playAudio(data: List<Byte>, fromMQTT: Boolean = false) {
         logger.v { "playAudio" }
-        //only on idle
-        if (state.value == State.AwaitingHotWord) {
-            state.value = State.PlayingAudio
-
+        if (state.value != State.RecordingIntent) {
             AudioPlayer.playData(data) {
-                state.value = State.AwaitingHotWord
                 if (fromMQTT) {
                     //if call was from mqtt, send message when play has finished
                     MqttService.playFinished()
@@ -547,4 +528,7 @@ object StateMachine {
     }
 
     private fun isDialogueLocal(): Boolean = ConfigurationSettings.dialogueManagementOption.value == DialogueManagementOptions.Local
+
+    private fun sessionMatches(sessionId: String?, fromMQTT: Boolean): Boolean =
+        (sessionId == currentSession.sessionId || (fromMQTT && sessionId == currentSession.mqttSpeechToTextSessionId))
 }

@@ -337,7 +337,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            StateMachine.endSession(jsonObject["sessionId"]?.jsonPrimitive?.content)
+            StateMachine.endSession(jsonObject["sessionId"]?.jsonPrimitive?.content, true)
         } else {
             logger.d { "received endSession but for other siteId" }
         }
@@ -402,7 +402,7 @@ object MqttService {
 
         if (jsonObject.isThisSiteId()) {
             jsonObject["sessionId"]?.jsonPrimitive?.content?.also {
-                StateMachine.sessionEnded(it)
+                StateMachine.sessionEnded(it, true)
             } ?: run {
                 logger.d { "received sessionStarted with empty session Id" }
             }
@@ -773,7 +773,7 @@ object MqttService {
             val sessionId = jsonObject["sessionId"]?.jsonPrimitive?.content
 
             if (intentName.isEmpty()) {
-                StateMachine.intentNotRecognized(sessionId)
+                StateMachine.intentNotRecognized(sessionId, true)
             } else {
                 StateMachine.intentRecognized(intentName, intent, sessionId, true)
             }
@@ -794,7 +794,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            StateMachine.intentNotRecognized(jsonObject["sessionId"]?.jsonPrimitive?.content)
+            StateMachine.intentNotRecognized(jsonObject["sessionId"]?.jsonPrimitive?.content, true)
         } else {
             logger.d { "received intentNotRecognized but for other siteId" }
         }
