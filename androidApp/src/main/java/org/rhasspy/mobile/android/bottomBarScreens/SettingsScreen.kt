@@ -66,6 +66,8 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState, mainNavController: NavC
         CustomDivider()
         ShowLogItem()
         CustomDivider()
+        ProblemHandling()
+        CustomDivider()
         SaveAndRestore(viewModel)
         CustomDivider()
         About(mainNavController)
@@ -470,6 +472,19 @@ fun ShowLogItem() {
 }
 
 @Composable
+fun ProblemHandling() {
+    ExpandableListItem(
+        text = MR.strings.problemHandling
+    ) {
+        SwitchListItem(
+            text = MR.strings.forceCancel,
+            secondaryText = MR.strings.forceCancelInformation,
+            isChecked = AppSettings.isForceCancelEnabled.observe(),
+            onCheckedChange = { AppSettings.isForceCancelEnabled.value = it })
+    }
+}
+
+@Composable
 fun SaveAndRestore(viewModel: SettingsScreenViewModel) {
     ExpandableListItem(
         text = MR.strings.saveAndRestoreSettings
@@ -477,7 +492,8 @@ fun SaveAndRestore(viewModel: SettingsScreenViewModel) {
         val openSaveSettingsDialog = remember { mutableStateOf(false) }
         val openRestoreSettingsDialog = remember { mutableStateOf(false) }
 
-        ListElement(modifier = Modifier
+        ListElement(
+            modifier = Modifier
             .clickable { openSaveSettingsDialog.value = true },
             text = { Text(MR.strings.save) },
             secondaryText = { Text(MR.strings.saveText) })

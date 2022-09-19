@@ -518,8 +518,12 @@ object StateMachine {
     fun toggleSessionManually() {
         if (state.value == State.AwaitingHotWord) {
             hotWordDetected("${ConfigurationSettings.siteId.value}_manual")
-        } else if (state.value == State.RecordingIntent) {
-            stopListening()
+        } else {
+            if (state.value == State.RecordingIntent) {
+                stopListening()
+            } else if (AppSettings.isForceCancelEnabled.value) {
+                endSession()
+            }
         }
     }
 
