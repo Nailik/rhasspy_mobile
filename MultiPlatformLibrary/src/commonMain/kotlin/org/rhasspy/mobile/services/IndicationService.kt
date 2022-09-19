@@ -22,54 +22,72 @@ object IndicationService {
         //change things according to state of the service
         StateMachine.currentState.observe {
             logger.v { "currentState changed to $it" }
+            evaluateIndication(it, AudioPlayer.isPlayingState.value)
+        }
 
-            //evaluate new state
-            val newState = when (it) {
-                //hot word detected
-                State.StartedSession -> IndicationState.Wakeup
-                //Indication that recording is running
-                State.RecordingIntent -> IndicationState.Recording
-                //indication that it's thinking
-                State.TranscribingIntent -> IndicationState.Thinking
-                //indication that it's thinking
-                State.RecognizingIntent -> IndicationState.Thinking
-                //no indication
-                State.PlayingAudio -> IndicationState.Speaking
-                else -> IndicationState.Idle
+        AudioPlayer.isPlayingState.observe {
+            logger.v { "isPlayingState changed to $it" }
+            evaluateIndication(StateMachine.currentState.value, it)
+        }
+    }
+
+    private fun evaluateIndication(state: State, isPlayingAudio: Boolean) {
+        //evaluate new state
+        val newState = when (state) {
+            //hot word detected
+            State.StartedSession -> IndicationState.Wakeup
+            //Indication that recording is running
+            State.RecordingIntent -> IndicationState.Recording
+            //indication that it's thinking
+            State.TranscribingIntent,
+            State.RecognizingIntent -> IndicationState.Thinking
+            //intent handling might be playing audio
+            State.IntentHandling -> if (isPlayingAudio) {
+                IndicationState.Speaking
+            } else {
+                IndicationState.Thinking
             }
-
-            //set new state
-            currentState.value = newState
-
-            //handle indication (screen wakeup and light indication)
-            when (newState) {
-                IndicationState.Idle -> {
-                    showVisualIndication.value = false
-                    NativeIndication.releaseWakeUp()
-                }
-                IndicationState.Wakeup,
-                IndicationState.Recording,
-                IndicationState.Thinking,
-                IndicationState.Speaking -> {
-                    if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.value) {
-                        NativeIndication.wakeUpScreen()
-                    }
-
-                    if (AppSettings.isWakeWordLightIndication.value) {
-                        showVisualIndication.value = true
-                    }
+            //no indication
+            else -> {
+                if (isPlayingAudio) {
+                    IndicationState.Speaking
+                } else {
+                    IndicationState.Idle
                 }
             }
+        }
 
-            //handle sound indication
-            if (AppSettings.isWakeWordSoundIndication.value) {
-                when (it) {
-                    State.StartingSession -> playWakeSound()
-                    State.RecordingStopped -> playRecordedSound()
-                    State.TranscribingError,
-                    State.RecognizingIntentError -> playErrorSound()
-                    else -> {}
+        //set new state
+        currentState.value = newState
+
+        //handle indication (screen wakeup and light indication)
+        when (newState) {
+            IndicationState.Idle -> {
+                showVisualIndication.value = false
+                NativeIndication.releaseWakeUp()
+            }
+            IndicationState.Wakeup,
+            IndicationState.Recording,
+            IndicationState.Thinking,
+            IndicationState.Speaking -> {
+                if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.value) {
+                    NativeIndication.wakeUpScreen()
                 }
+
+                if (AppSettings.isWakeWordLightIndication.value) {
+                    showVisualIndication.value = true
+                }
+            }
+        }
+
+        //handle sound indication
+        if (AppSettings.isWakeWordSoundIndication.value) {
+            when (state) {
+                State.StartingSession -> playWakeSound()
+                State.RecordingStopped -> playRecordedSound()
+                State.TranscribingError,
+                State.RecognizingIntentError -> playErrorSound()
+                else -> {}
             }
         }
     }
