@@ -5,7 +5,13 @@ import android.graphics.PixelFormat
 import android.os.Build
 import android.view.Gravity
 import android.view.WindowManager
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewTreeLifecycleOwner
@@ -44,12 +50,20 @@ object IndicationOverlay {
     private val view = ComposeView(AndroidApplication.Instance).apply {
         setContent {
             AppTheme(false) {
-                when (IndicationService.readonlyState.observe()) {
-                    IndicationState.Idle -> {}
-                    IndicationState.Wakeup -> WakeupIndication()
-                    IndicationState.Recording -> RecordingIndication()
-                    IndicationState.Thinking -> ThinkingIndication()
-                    IndicationState.Speaking -> SpeakingIndication()
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(96.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+
+                    when (IndicationService.readonlyState.observe()) {
+                        IndicationState.Idle -> {}
+                        IndicationState.Wakeup -> WakeupIndication()
+                        IndicationState.Recording -> RecordingIndication()
+                        IndicationState.Thinking -> ThinkingIndication()
+                        IndicationState.Speaking -> SpeakingIndication()
+                    }
                 }
             }
         }
@@ -89,15 +103,15 @@ object IndicationOverlay {
             if (it != showVisualIndicationOldValue) {
                 if (it) {
                     if (OverlayPermission.isGranted()) {
-                        overlayWindowManager.addView(view, mParams)
                         mainScope.launch {
+                            overlayWindowManager.addView(view, mParams)
                             //has to be called from main thread
                             lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
                         }
                     }
-                } else if (showVisualIndicationOldValue) {
-                    overlayWindowManager.removeView(view)
+                } else {
                     mainScope.launch {
+                        overlayWindowManager.removeView(view)
                         //has to be called from main thread
                         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
                     }
