@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
@@ -8,12 +10,12 @@ plugins {
 }
 
 android {
-    compileSdk = 32
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "org.rhasspy.mobile.android"
         minSdk = 23
-        targetSdk = 32
+        targetSdk = 33
         versionCode = Version.code
         versionName = Version.toString()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -68,6 +70,7 @@ android {
         //used to trust self signed certificates eventually
         disable.add("TrustAllX509TrustManager")
     }
+    namespace = "org.rhasspy.mobile.android"
 
     applicationVariants.all {
         this.outputs
@@ -79,7 +82,6 @@ android {
                     .replace("-debug-unsigned", "")
             }
     }
-
 }
 
 
@@ -118,7 +120,7 @@ dependencies {
 
     implementation(Google.android.material)
     implementation(Google.Accompanist.insets)
-    implementation(Google.Accompanist.systemuicontroller)
+    implementation(Google.accompanist.systemUiController)
 
     implementation(AndroidX.Activity.compose)
     implementation(AndroidX.Core.splashscreen)

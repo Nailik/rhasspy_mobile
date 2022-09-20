@@ -92,9 +92,10 @@ fun BoxWithConstraintsScope.BottomBarScreensNavigation(viewModel: HomeScreenView
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBar(viewModel: HomeScreenViewModel, snackbarHostState: SnackbarHostState, navController: NavHostController) {
-    SmallTopAppBar(
+    TopAppBar(
         modifier = Modifier.padding(end = 16.dp),
         title = { Text(MR.strings.appName, modifier = Modifier.testTag("appName")) },
         actions = {
