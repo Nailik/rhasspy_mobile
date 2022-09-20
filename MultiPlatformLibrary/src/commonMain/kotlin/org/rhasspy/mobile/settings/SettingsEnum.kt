@@ -30,15 +30,13 @@ enum class SettingsEnum {
     WakeSound,
     RecordedSound,
     ErrorSound,
-    WakeSounds,
-    RecordedSounds,
-    ErrorSounds,
     CustomSounds,
 
     ShowLog,
     LogAudioFrames,
     LogLevel,
 
+    ForceCancel,
     //Configuration Settings
     SiteId,
 

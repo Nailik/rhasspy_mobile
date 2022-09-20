@@ -146,8 +146,8 @@ fun Fab(modifier: Modifier = Modifier, iconSize: Dp, snackbarHostState: Snackbar
         },
         modifier = modifier,
         containerColor = if (viewModel.currentState.observe() == State.RecordingIntent) MaterialTheme.colorScheme.errorContainer else
-            MaterialTheme.colorScheme
-                .primaryContainer,
+            if (viewModel.currentState.observe() == State.AwaitingHotWord) MaterialTheme.colorScheme.primaryContainer else
+                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
     ) {
 
         Icon(
