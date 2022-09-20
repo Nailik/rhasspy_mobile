@@ -25,7 +25,7 @@ import kotlin.math.abs
 fun WakeupIndication() {
     Row(
         modifier = Modifier
-            .height(6.dp)
+            .height(8.dp)
             .fillMaxWidth()
     ) {
         IndicationBar(1f, Range(0f, 1f), 1f, assistant_color_one)
@@ -70,7 +70,7 @@ fun RecordingIndication() {
 
     Row(
         modifier = Modifier
-            .height(6.dp)
+            .height(8.dp)
             .fillMaxWidth()
     ) {
         IndicationBar(item, Range(0f, 1f), size, assistant_color_one)
@@ -97,7 +97,6 @@ fun ThinkingIndication() {
             repeatMode = RepeatMode.Restart
         )
     )
-
     Box(
         modifier = Modifier
             .rotate(rotation)
@@ -130,7 +129,6 @@ fun SpeakingIndication() {
 
     Row(
         modifier = Modifier
-            .height(80.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
