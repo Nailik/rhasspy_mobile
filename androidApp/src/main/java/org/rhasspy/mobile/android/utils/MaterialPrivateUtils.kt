@@ -1,11 +1,8 @@
 package org.rhasspy.mobile.android.utils
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.AlignmentLine
@@ -34,10 +31,10 @@ fun StyledListItem(
 ) {
     val typography = androidx.compose.material3.MaterialTheme.typography
 
-    val styledText = applyTextStyle(typography.titleMedium, ContentAlpha.high, text)!!
-    val styledSecondaryText = applyTextStyle(typography.bodyMedium, ContentAlpha.medium, secondaryText)
-    val styledOverlineText = applyTextStyle(typography.labelSmall, ContentAlpha.high, overlineText)
-    val styledTrailing = applyTextStyle(typography.labelMedium, ContentAlpha.high, trailing)
+    val styledText = applyTextStyle(typography.titleMedium, text)!!
+    val styledSecondaryText = applyTextStyle(typography.bodyMedium, secondaryText)
+    val styledOverlineText = applyTextStyle(typography.labelSmall, overlineText)
+    val styledTrailing = applyTextStyle(typography.labelMedium, trailing)
 
     val semanticsModifier = modifier.semantics(mergeDescendants = true) {}
 
@@ -68,14 +65,11 @@ fun StyledListItem(
 
 private fun applyTextStyle(
     textStyle: TextStyle,
-    contentAlpha: Float,
     icon: @Composable (() -> Unit)?
 ): @Composable (() -> Unit)? {
     if (icon == null) return null
     return {
-        CompositionLocalProvider(LocalContentAlpha provides contentAlpha) {
-            ProvideTextStyle(textStyle, icon)
-        }
+        ProvideTextStyle(textStyle, icon)
     }
 }
 
