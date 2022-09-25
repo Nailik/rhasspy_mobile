@@ -14,9 +14,6 @@ import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Colors
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Switch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
@@ -536,7 +533,7 @@ fun ListElement(
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TextFieldListItem(
     modifier: Modifier = Modifier,
@@ -663,28 +660,7 @@ fun <T> ConfigurationSetting<T>.observeCurrent(): T {
     return this.unsaved.toLiveData().observe()
 }
 
-
-@Composable
-fun ColorScheme.toColors(isLight: Boolean): Colors {
-    return Colors(
-        primary = primary,
-        primaryVariant = onPrimaryContainer,
-        secondary = secondary,
-        secondaryVariant = onSecondaryContainer,
-        background = background,
-        surface = surface,
-        error = error,
-        onPrimary = onPrimary,
-        onSecondary = onSecondary,
-        onBackground = onBackground,
-        onSurface = onSurface,
-        onError = onError,
-        isLight = isLight
-    )
-}
-
-
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TextWithAction(
     modifier: Modifier = Modifier,
