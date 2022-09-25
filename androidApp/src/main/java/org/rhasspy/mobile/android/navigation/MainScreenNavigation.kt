@@ -11,36 +11,30 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.insets.ProvideWindowInsets
 import org.rhasspy.mobile.android.aboutScreens.AboutScreen
 import org.rhasspy.mobile.android.theme.AppTheme
 
 @Preview
 @Composable
 fun MainScreenNavigation() {
-
     AppTheme(true) {
+        //fixes bright flashing when navigating between screens
+        Surface(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
 
-        ProvideWindowInsets {
+            BoxWithConstraints(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                val navController = rememberNavController()
 
-            //fixes bright flashing when navigating between screens
-            Surface(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
-
-                BoxWithConstraints(
-                    modifier = Modifier.fillMaxSize()
+                NavHost(
+                    navController = navController,
+                    startDestination = MainScreens.BoomBarScreen.name,
                 ) {
-                    val navController = rememberNavController()
-
-                    NavHost(
-                        navController = navController,
-                        startDestination = MainScreens.BoomBarScreen.name,
-                    ) {
-                        composable(MainScreens.BoomBarScreen.name) {
-                            BottomBarScreensNavigation(mainNavController = navController)
-                        }
-                        composable(MainScreens.AboutScreen.name) {
-                            AboutScreen()
-                        }
+                    composable(MainScreens.BoomBarScreen.name) {
+                        BottomBarScreensNavigation(mainNavController = navController)
+                    }
+                    composable(MainScreens.AboutScreen.name) {
+                        AboutScreen()
                     }
                 }
             }

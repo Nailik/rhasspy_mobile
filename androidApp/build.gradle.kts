@@ -118,8 +118,6 @@ dependencies {
     implementation(KotlinX.Coroutines.core)
     implementation(KotlinX.Coroutines.android)
 
-    implementation(Google.android.material)
-    implementation(Google.Accompanist.insets)
     implementation(Google.accompanist.systemUiController)
 
     implementation(AndroidX.Activity.compose)
@@ -128,17 +126,14 @@ dependencies {
     implementation(AndroidX.Navigation.compose)
 
     implementation(AndroidX.Compose.material3)
-    implementation(AndroidX.Compose.material)
     implementation(AndroidX.Compose.material.icons.extended)
     implementation(AndroidX.Compose.foundation)
     implementation(AndroidX.Compose.runtime.liveData)
     implementation(AndroidX.Lifecycle.viewModelCompose)
     implementation(AndroidX.Lifecycle.common)
-    implementation(AndroidX.Lifecycle.common)
     implementation(AndroidX.Compose.ui)
     implementation(AndroidX.Compose.ui.util)
     implementation(AndroidX.Compose.ui.tooling)
-    implementation(AndroidX.Compose.ui.toolingPreview)
 
     implementation(AndroidX.multidex)
     implementation(AndroidX.window)
