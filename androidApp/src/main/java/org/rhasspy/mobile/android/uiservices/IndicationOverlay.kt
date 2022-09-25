@@ -8,6 +8,7 @@ import android.view.WindowManager
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -19,10 +20,10 @@ import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.theme.AppTheme
-import org.rhasspy.mobile.android.utils.observe
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.services.IndicationService
 import org.rhasspy.mobile.services.IndicationState
@@ -57,7 +58,7 @@ object IndicationOverlay {
                     contentAlignment = Alignment.Center
                 ) {
 
-                    when (IndicationService.readonlyState.observe()) {
+                    when (IndicationService.readonlyState.collectAsState().value) {
                         IndicationState.Idle -> {}
                         IndicationState.Wakeup -> WakeupIndication()
                         IndicationState.Recording -> RecordingIndication()
@@ -99,7 +100,7 @@ object IndicationOverlay {
      * start service, listen to showVisualIndication and show the overlay or remove it when necessary
      */
     fun start() {
-        IndicationService.showVisualIndicationUi.observe {
+        IndicationService.showVisualIndicationUi.onEach {
             if (it != showVisualIndicationOldValue) {
                 if (it) {
                     if (OverlayPermission.isGranted()) {

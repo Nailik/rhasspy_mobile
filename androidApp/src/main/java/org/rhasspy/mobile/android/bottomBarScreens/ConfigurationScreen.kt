@@ -16,11 +16,8 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -46,14 +43,14 @@ fun ConfigurationScreen(snackbarHostState: SnackbarHostState, viewModel: Configu
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        val isEnabled = viewModel.isChangeEnabled.observe()
+        val isEnabled = viewModel.isChangeEnabled.collectAsState().value
         SiteId(isEnabled)
         CustomDivider()
         Webserver(isEnabled)
         CustomDivider()
         RemoteHermesHTTP(isEnabled)
         CustomDivider()
-        Mqtt(viewModel, isEnabled && !viewModel.isTestingMqttConnection.observe())
+        Mqtt(viewModel, isEnabled && !viewModel.isTestingMqttConnection.collectAsState().value)
         CustomDivider()
         AudioRecording(isEnabled)
         CustomDivider()
@@ -79,7 +76,7 @@ fun ConfigurationScreen(snackbarHostState: SnackbarHostState, viewModel: Configu
 fun SiteId(enabled: Boolean) {
 
     TextFieldListItem(
-        value = ConfigurationSettings.siteId.observeCurrent(),
+        value = ConfigurationSettings.siteId.unsaved.collectAsState().value,
         onValueChange = { ConfigurationSettings.siteId.unsaved.value = it },
         label = MR.strings.siteId,
         paddingValues = PaddingValues(top = 4.dp, bottom = 16.dp),
@@ -90,7 +87,7 @@ fun SiteId(enabled: Boolean) {
 @Composable
 fun Webserver(enabled: Boolean) {
 
-    val isHttpServerValue = ConfigurationSettings.isHttpServerEnabled.observeCurrent()
+    val isHttpServerValue = ConfigurationSettings.isHttpServerEnabled.unsaved.collectAsState().value
 
     ExpandableListItem(
         text = MR.strings.webserver,
@@ -106,7 +103,7 @@ fun Webserver(enabled: Boolean) {
         TextFieldListItem(
             label = MR.strings.port,
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            value = ConfigurationSettings.httpServerPort.observeCurrent().toString(),
+            value = ConfigurationSettings.httpServerPort.unsaved.collectAsState().value,
             enabled = enabled,
             onValueChange = { ConfigurationSettings.httpServerPort.unsaved.value = it },
         )
@@ -119,7 +116,7 @@ fun Webserver(enabled: Boolean) {
 
             Column {
 
-                val isHttpServerSSLValue = ConfigurationSettings.isHttpServerSSL.observeCurrent()
+                val isHttpServerSSLValue = ConfigurationSettings.isHttpServerSSL.unsaved.collectAsState().value
 
                 SwitchListItem(
                     text = MR.strings.enableSSL,
@@ -146,7 +143,7 @@ fun Webserver(enabled: Boolean) {
 @Composable
 fun RemoteHermesHTTP(enabled: Boolean) {
 
-    val isSSLVerificationEnabled = ConfigurationSettings.isSSLVerificationEnabled.observeCurrent()
+    val isSSLVerificationEnabled = ConfigurationSettings.isSSLVerificationEnabled.unsaved.collectAsState().value
 
     ExpandableListItemString(
         text = MR.strings.remoteHermesHTTP,
@@ -168,10 +165,10 @@ fun RemoteHermesHTTP(enabled: Boolean) {
 fun Mqtt(viewModel: ConfigurationScreenViewModel, enabled: Boolean) {
     ExpandableListItem(
         text = MR.strings.mqtt,
-        secondaryText = if (viewModel.isMQTTConnected.observe()) MR.strings.connected else MR.strings.notConnected
+        secondaryText = if (viewModel.isMQTTConnected.collectAsState().value) MR.strings.connected else MR.strings.notConnected
     ) {
 
-        val isMqttEnabled = ConfigurationSettings.isMQTTEnabled.observeCurrent()
+        val isMqttEnabled = ConfigurationSettings.isMQTTEnabled.unsaved.collectAsState().value
 
         SwitchListItem(
             text = MR.strings.externalMQTT,
@@ -190,7 +187,7 @@ fun Mqtt(viewModel: ConfigurationScreenViewModel, enabled: Boolean) {
 
                 TextFieldListItem(
                     label = MR.strings.host,
-                    value = ConfigurationSettings.mqttHost.observeCurrent(),
+                    value = ConfigurationSettings.mqttHost.unsaved.collectAsState().value,
                     enabled = enabled,
                     onValueChange = { ConfigurationSettings.mqttHost.unsaved.value = it },
                 )
@@ -198,13 +195,13 @@ fun Mqtt(viewModel: ConfigurationScreenViewModel, enabled: Boolean) {
                 TextFieldListItem(
                     label = MR.strings.port,
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    value = ConfigurationSettings.mqttPort.observeCurrent(),
+                    value = ConfigurationSettings.mqttPort.unsaved.collectAsState().value,
                     enabled = enabled,
                     onValueChange = { ConfigurationSettings.mqttPort.unsaved.value = it },
                 )
 
                 TextFieldListItem(
-                    value = ConfigurationSettings.mqttUserName.observeCurrent(),
+                    value = ConfigurationSettings.mqttUserName.unsaved.collectAsState().value,
                     enabled = enabled,
                     onValueChange = { ConfigurationSettings.mqttUserName.unsaved.value = it },
                     label = MR.strings.userName
@@ -213,7 +210,7 @@ fun Mqtt(viewModel: ConfigurationScreenViewModel, enabled: Boolean) {
                 var isShowPassword by rememberSaveable { mutableStateOf(false) }
 
                 TextFieldListItem(
-                    value = ConfigurationSettings.mqttPassword.observeCurrent(),
+                    value = ConfigurationSettings.mqttPassword.unsaved.collectAsState().value,
                     enabled = enabled,
                     onValueChange = { ConfigurationSettings.mqttPassword.unsaved.value = it },
                     label = MR.strings.password,
@@ -238,7 +235,7 @@ fun Mqtt(viewModel: ConfigurationScreenViewModel, enabled: Boolean) {
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            if (viewModel.isTestingMqttConnection.observe()) {
+                            if (viewModel.isTestingMqttConnection.collectAsState().value) {
 
                                 val infiniteTransition = rememberInfiniteTransition()
                                 val angle by infiniteTransition.animateFloat(
@@ -256,20 +253,20 @@ fun Mqtt(viewModel: ConfigurationScreenViewModel, enabled: Boolean) {
                                 )
                             }
 
-                            viewModel.testingMqttErrorUiData.observe()?.also {
+                            viewModel.testingMqttErrorUiData.collectAsState().value?.also {
                                 androidx.compose.material3.Text(text = "${translate(MR.strings.error)}: ${it.statusCode.name}")
                             } ?: run {
                                 Text(MR.strings.testConnection)
                             }
                         }
                     },
-                    enabled = ConfigurationSettings.mqttHost.unsaved.observe().isNotEmpty() &&
-                            ConfigurationSettings.mqttPassword.unsaved.observe().isNotEmpty(),
+                    enabled = ConfigurationSettings.mqttHost.unsaved.collectAsState().value.isNotEmpty() &&
+                            ConfigurationSettings.mqttPassword.unsaved.collectAsState().value.isNotEmpty(),
                     onClick = {
                         viewModel.testMqttConnection()
                     })
 
-                val isMqttSSL = ConfigurationSettings.isMqttSSL.observeCurrent()
+                val isMqttSSL = ConfigurationSettings.isMqttSSL.unsaved.collectAsState().value
 
                 SwitchListItem(
                     text = MR.strings.enableSSL,
@@ -292,7 +289,7 @@ fun Mqtt(viewModel: ConfigurationScreenViewModel, enabled: Boolean) {
                 TextFieldListItem(
                     label = MR.strings.connectionTimeout,
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    value = ConfigurationSettings.mqttConnectionTimeout.observeCurrent().toString(),
+                    value = ConfigurationSettings.mqttConnectionTimeout.unsaved.collectAsState().value,
                     enabled = enabled,
                     onValueChange = { ConfigurationSettings.mqttConnectionTimeout.unsaved.value = it },
                 )
@@ -300,7 +297,7 @@ fun Mqtt(viewModel: ConfigurationScreenViewModel, enabled: Boolean) {
                 TextFieldListItem(
                     label = MR.strings.keepAliveInterval,
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    value = ConfigurationSettings.mqttKeepAliveInterval.observeCurrent().toString(),
+                    value = ConfigurationSettings.mqttKeepAliveInterval.unsaved.collectAsState().value,
                     enabled = enabled,
                     onValueChange = { ConfigurationSettings.mqttKeepAliveInterval.unsaved.value = it },
                 )
@@ -308,7 +305,7 @@ fun Mqtt(viewModel: ConfigurationScreenViewModel, enabled: Boolean) {
                 TextFieldListItem(
                     label = MR.strings.retryInterval,
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    value = ConfigurationSettings.mqttRetryInterval.observeCurrent().toString(),
+                    value = ConfigurationSettings.mqttRetryInterval.unsaved.collectAsState().value,
                     enabled = enabled,
                     onValueChange = { ConfigurationSettings.mqttRetryInterval.unsaved.value = it },
                 )
@@ -323,7 +320,7 @@ fun Mqtt(viewModel: ConfigurationScreenViewModel, enabled: Boolean) {
 @Composable
 fun AudioRecording(enabled: Boolean) {
 
-    val isUDPOutput = ConfigurationSettings.isUDPOutput.observeCurrent()
+    val isUDPOutput = ConfigurationSettings.isUDPOutput.unsaved.collectAsState().value
 
     ExpandableListItem(
         text = MR.strings.audioRecording,
@@ -350,7 +347,7 @@ fun AudioRecording(enabled: Boolean) {
             Column {
                 TextFieldListItem(
                     label = MR.strings.host,
-                    value = ConfigurationSettings.udpOutputHost.observeCurrent(),
+                    value = ConfigurationSettings.udpOutputHost.unsaved.collectAsState().value,
                     enabled = enabled,
                     onValueChange = { ConfigurationSettings.udpOutputHost.unsaved.value = it },
                 )
@@ -358,7 +355,7 @@ fun AudioRecording(enabled: Boolean) {
                 TextFieldListItem(
                     label = MR.strings.port,
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    value = ConfigurationSettings.udpOutputPort.observeCurrent().toString(),
+                    value = ConfigurationSettings.udpOutputPort.unsaved.collectAsState().value,
                     enabled = enabled,
                     onValueChange = { ConfigurationSettings.udpOutputPort.unsaved.value = it },
                 )
@@ -371,7 +368,7 @@ fun AudioRecording(enabled: Boolean) {
 @Composable
 fun WakeWord(viewModel: ConfigurationScreenViewModel, enabled: Boolean, snackbarHostState: SnackbarHostState) {
 
-    val wakeWordValueOption = ConfigurationSettings.wakeWordOption.observeCurrent()
+    val wakeWordValueOption = ConfigurationSettings.wakeWordOption.unsaved.collectAsState().value
 
     ExpandableListItem(
         text = MR.strings.wakeWord,
@@ -399,7 +396,7 @@ fun WakeWord(viewModel: ConfigurationScreenViewModel, enabled: Boolean, snackbar
         AnimatedVisibility(
             enter = expandVertically(),
             exit = shrinkVertically(),
-            visible = ConfigurationSettings.wakeWordOption.observeCurrent() == WakeWordOption.Porcupine
+            visible = ConfigurationSettings.wakeWordOption.unsaved.collectAsState().value == WakeWordOption.Porcupine
         ) {
 
             Column {
@@ -408,7 +405,7 @@ fun WakeWord(viewModel: ConfigurationScreenViewModel, enabled: Boolean, snackbar
                 var isShowAccessToken by rememberSaveable { mutableStateOf(false) }
 
                 TextFieldListItem(
-                    value = ConfigurationSettings.wakeWordPorcupineAccessToken.observeCurrent(),
+                    value = ConfigurationSettings.wakeWordPorcupineAccessToken.unsaved.collectAsState().value,
                     onValueChange = { ConfigurationSettings.wakeWordPorcupineAccessToken.unsaved.value = it },
                     label = MR.strings.porcupineAccessKey,
                     visualTransformation = if (isShowAccessToken) VisualTransformation.None else PasswordVisualTransformation(),
@@ -437,9 +434,9 @@ fun WakeWord(viewModel: ConfigurationScreenViewModel, enabled: Boolean, snackbar
                 //filled with correct values later
                 DropDownListWithFileOpen(
                     overlineText = { Text(MR.strings.wakeWord) },
-                    selected = ConfigurationSettings.wakeWordPorcupineKeywordOption.observeCurrent(),
+                    selected = ConfigurationSettings.wakeWordPorcupineKeywordOption.unsaved.collectAsState().value,
                     enabled = enabled,
-                    values = ConfigurationSettings.wakeWordPorcupineKeywordOptions.observeCurrent().toTypedArray(),
+                    values = ConfigurationSettings.wakeWordPorcupineKeywordOptions.unsaved.collectAsState().value.toTypedArray(),
                     onAdd = {
                         viewModel.selectPorcupineWakeWordFile()
                     }) {
@@ -447,14 +444,14 @@ fun WakeWord(viewModel: ConfigurationScreenViewModel, enabled: Boolean, snackbar
                 }
 
                 DropDownEnumListItem(
-                    selected = ConfigurationSettings.wakeWordPorcupineLanguage.observeCurrent(),
+                    selected = ConfigurationSettings.wakeWordPorcupineLanguage.unsaved.collectAsState().value,
                     enabled = enabled,
                     onSelect = { ConfigurationSettings.wakeWordPorcupineLanguage.unsaved.value = it })
                 { PorcupineLanguageOptions.values() }
 
                 SliderListItem(
                     text = MR.strings.sensitivity,
-                    value = ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.observeCurrent(),
+                    value = ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.unsaved.collectAsState().value,
                     enabled = enabled,
                     onValueChange = {
                         ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.unsaved.value =
@@ -468,7 +465,7 @@ fun WakeWord(viewModel: ConfigurationScreenViewModel, enabled: Boolean, snackbar
 @Composable
 fun SpeechToText(enabled: Boolean) {
 
-    val speechToTextOption = ConfigurationSettings.speechToTextOption.observeCurrent()
+    val speechToTextOption = ConfigurationSettings.speechToTextOption.unsaved.collectAsState().value
 
     ExpandableListItem(
         text = MR.strings.speechToText,
@@ -487,7 +484,7 @@ fun SpeechToText(enabled: Boolean) {
         ) {
 
             TextFieldListItem(
-                value = ConfigurationSettings.speechToTextHttpEndpoint.observeCurrent(),
+                value = ConfigurationSettings.speechToTextHttpEndpoint.unsaved.collectAsState().value,
                 enabled = enabled,
                 onValueChange = { ConfigurationSettings.speechToTextHttpEndpoint.unsaved.value = it },
                 label = MR.strings.speechToTextURL
@@ -500,7 +497,7 @@ fun SpeechToText(enabled: Boolean) {
 @Composable
 fun IntentRecognition(enabled: Boolean) {
 
-    val intentRecognitionOption = ConfigurationSettings.intentRecognitionOption.observeCurrent()
+    val intentRecognitionOption = ConfigurationSettings.intentRecognitionOption.unsaved.collectAsState().value
 
     ExpandableListItem(
         text = MR.strings.intentRecognition,
@@ -519,7 +516,7 @@ fun IntentRecognition(enabled: Boolean) {
         ) {
 
             TextFieldListItem(
-                value = ConfigurationSettings.intentRecognitionEndpoint.observeCurrent(),
+                value = ConfigurationSettings.intentRecognitionEndpoint.unsaved.collectAsState().value,
                 enabled = enabled,
                 onValueChange = { ConfigurationSettings.intentRecognitionEndpoint.unsaved.value = it },
                 label = MR.strings.rhasspyTextToIntentURL
@@ -532,7 +529,7 @@ fun IntentRecognition(enabled: Boolean) {
 @Composable
 fun TextToSpeech(enabled: Boolean) {
 
-    val textToSpeechOption = ConfigurationSettings.textToSpeechOption.observeCurrent()
+    val textToSpeechOption = ConfigurationSettings.textToSpeechOption.unsaved.collectAsState().value
 
     ExpandableListItem(
         text = MR.strings.textToSpeech,
@@ -551,7 +548,7 @@ fun TextToSpeech(enabled: Boolean) {
         ) {
 
             TextFieldListItem(
-                value = ConfigurationSettings.textToSpeechEndpoint.observeCurrent(),
+                value = ConfigurationSettings.textToSpeechEndpoint.unsaved.collectAsState().value,
                 enabled = enabled,
                 onValueChange = { ConfigurationSettings.textToSpeechEndpoint.unsaved.value = it },
                 label = MR.strings.rhasspyTextToSpeechURL
@@ -564,7 +561,7 @@ fun TextToSpeech(enabled: Boolean) {
 @Composable
 fun AudioPlaying(enabled: Boolean) {
 
-    val audioPlayingOption = ConfigurationSettings.audioPlayingOption.observeCurrent()
+    val audioPlayingOption = ConfigurationSettings.audioPlayingOption.unsaved.collectAsState().value
 
     ExpandableListItem(
         text = MR.strings.audioPlaying,
@@ -583,7 +580,7 @@ fun AudioPlaying(enabled: Boolean) {
         ) {
 
             TextFieldListItem(
-                value = ConfigurationSettings.audioPlayingEndpoint.observeCurrent(),
+                value = ConfigurationSettings.audioPlayingEndpoint.unsaved.collectAsState().value,
                 enabled = enabled,
                 onValueChange = { ConfigurationSettings.audioPlayingEndpoint.unsaved.value = it },
                 label = MR.strings.audioOutputURL
@@ -595,7 +592,7 @@ fun AudioPlaying(enabled: Boolean) {
 @Composable
 fun DialogueManagement(enabled: Boolean) {
 
-    val dialogueManagementOption = ConfigurationSettings.dialogueManagementOption.observeCurrent()
+    val dialogueManagementOption = ConfigurationSettings.dialogueManagementOption.unsaved.collectAsState().value
 
     ExpandableListItem(
         text = MR.strings.dialogueManagement,
@@ -612,7 +609,7 @@ fun DialogueManagement(enabled: Boolean) {
 @Composable
 fun IntentHandling(enabled: Boolean) {
 
-    val intentHandlingOption = ConfigurationSettings.intentHandlingOption.observeCurrent()
+    val intentHandlingOption = ConfigurationSettings.intentHandlingOption.unsaved.collectAsState().value
 
     ExpandableListItem(
         text = MR.strings.intentHandling,
@@ -634,7 +631,7 @@ fun IntentHandling(enabled: Boolean) {
         ) {
 
             TextFieldListItem(
-                value = ConfigurationSettings.intentHandlingEndpoint.observeCurrent(),
+                value = ConfigurationSettings.intentHandlingEndpoint.unsaved.collectAsState().value,
                 enabled = enabled,
                 onValueChange = { ConfigurationSettings.intentHandlingEndpoint.unsaved.value = it },
                 label = MR.strings.remoteURL
@@ -649,7 +646,7 @@ fun IntentHandling(enabled: Boolean) {
             Column {
 
                 TextFieldListItem(
-                    value = ConfigurationSettings.intentHandlingHassUrl.observeCurrent(),
+                    value = ConfigurationSettings.intentHandlingHassUrl.unsaved.collectAsState().value,
                     enabled = enabled,
                     onValueChange = { ConfigurationSettings.intentHandlingHassUrl.unsaved.value = it },
                     label = MR.strings.hassURL
@@ -658,7 +655,7 @@ fun IntentHandling(enabled: Boolean) {
                 var isShowAccessToken by rememberSaveable { mutableStateOf(false) }
 
                 TextFieldListItem(
-                    value = ConfigurationSettings.intentHandlingHassAccessToken.observeCurrent(),
+                    value = ConfigurationSettings.intentHandlingHassAccessToken.unsaved.collectAsState().value,
                     onValueChange = { ConfigurationSettings.intentHandlingHassAccessToken.unsaved.value = it },
                     label = MR.strings.accessToken,
                     visualTransformation = if (isShowAccessToken) VisualTransformation.None else PasswordVisualTransformation(),
@@ -676,7 +673,7 @@ fun IntentHandling(enabled: Boolean) {
                     },
                 )
 
-                val isIntentHandlingHassEvent = ConfigurationSettings.isIntentHandlingHassEvent.observeCurrent()
+                val isIntentHandlingHassEvent = ConfigurationSettings.isIntentHandlingHassEvent.unsaved.collectAsState().value
 
                 RadioButtonListItem(
                     text = MR.strings.homeAssistantEvents,

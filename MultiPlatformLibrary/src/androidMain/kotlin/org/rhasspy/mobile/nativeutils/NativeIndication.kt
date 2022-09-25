@@ -3,7 +3,7 @@ package org.rhasspy.mobile.nativeutils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.PowerManager
-import androidx.lifecycle.MutableLiveData
+import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
 
 /**
@@ -11,6 +11,7 @@ import org.rhasspy.mobile.Application
  */
 actual object NativeIndication {
 
+    private val logger = Logger.withTag("NativeIndication")
     private var wakeLock: PowerManager.WakeLock? = null
 
     /**
@@ -37,7 +38,7 @@ actual object NativeIndication {
         try {
             wakeLock?.release()
         } catch (e: Exception) {
-
+            logger.w(e) { "wakelock release exception" }
         }
     }
 

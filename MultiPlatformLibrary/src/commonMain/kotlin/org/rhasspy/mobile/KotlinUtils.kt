@@ -1,5 +1,9 @@
 package org.rhasspy.mobile
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
+
 //https://stackoverflow.com/questions/67179257/how-can-i-convert-an-int-to-a-bytearray-and-then-convert-it-back-to-an-int-with
 fun Number.toByteArray(size: Int = 4): ByteArray =
     ByteArray(size) { i -> (this.toLong() shr (i * 8)).toByte() }
@@ -24,3 +28,33 @@ fun MutableList<Byte>.addWavHeader() {
     )
     this.addAll(0, header.toList())
 }
+
+fun <T1, T2, R> combineState(
+    flow1: StateFlow<T1>,
+    flow2: StateFlow<T2>,
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
+    sharingStarted: SharingStarted = SharingStarted.Lazily,
+    transform: (T1, T2) -> R
+): StateFlow<R> = combine(flow1, flow2) { o1, o2 ->
+    transform.invoke(o1, o2)
+}.stateIn(scope, sharingStarted, transform.invoke(flow1.value, flow2.value))
+
+fun <T1, T2, T3, T4, R> combineState(
+    flow1: StateFlow<T1>,
+    flow2: StateFlow<T2>,
+    flow3: StateFlow<T3>,
+    flow4: StateFlow<T4>,
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
+    sharingStarted: SharingStarted = SharingStarted.Lazily,
+    transform: (T1, T2, T3, T4) -> R
+): StateFlow<R> = combine(flow1, flow2, flow3, flow4) { o1, o2, o3, o4 ->
+    transform.invoke(o1, o2, o3, o4)
+}.stateIn(scope, sharingStarted, transform.invoke(flow1.value, flow2.value, flow3.value, flow4.value))
+
+fun <T, R> MutableStateFlow<T>.mapReadonlyState(
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
+    sharingStarted: SharingStarted = SharingStarted.Lazily,
+    transform: (T) -> R
+): StateFlow<R> = this.map {
+    transform(it)
+}.stateIn(scope, sharingStarted, transform.invoke(this.value))

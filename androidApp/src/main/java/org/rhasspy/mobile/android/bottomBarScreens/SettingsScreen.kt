@@ -78,7 +78,7 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState, mainNavController: NavC
 fun LanguageItem() {
 
     DropDownEnumListItem(
-        selected = AppSettings.languageOption.observe(),
+        selected = AppSettings.languageOption.data.collectAsState().value,
         onSelect = { AppSettings.languageOption.value = it })
     { LanguageOptions.values() }
 
@@ -88,7 +88,7 @@ fun LanguageItem() {
 fun ThemeItem() {
 
     DropDownEnumListItem(
-        selected = AppSettings.themeOption.observe(),
+        selected = AppSettings.themeOption.data.collectAsState().value,
         onSelect = { AppSettings.themeOption.value = it })
     { ThemeOptions.values() }
 
@@ -97,7 +97,7 @@ fun ThemeItem() {
 @Composable
 fun AutomaticSilenceDetectionItem(viewModel: SettingsScreenViewModel, snackbarHostState: SnackbarHostState) {
 
-    val isAutomaticSilenceDetection = AppSettings.isAutomaticSilenceDetection.observe()
+    val isAutomaticSilenceDetection = AppSettings.isAutomaticSilenceDetection.data.collectAsState().value
 
     ExpandableListItem(
         text = MR.strings.automaticSilenceDetection,
@@ -121,7 +121,7 @@ fun AutomaticSilenceDetectionItem(viewModel: SettingsScreenViewModel, snackbarHo
                     TextFieldListItem(
                         label = MR.strings.silenceDetectionTime,
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                        value = AppSettings.automaticSilenceDetectionTime.observe().toString(),
+                        value = AppSettings.automaticSilenceDetectionTime.data.collectAsState().value.toString(),
                         onValueChange = {
                             val integer = it.replace("-", "")
                                 .replace(",", "")
@@ -139,7 +139,7 @@ fun AutomaticSilenceDetectionItem(viewModel: SettingsScreenViewModel, snackbarHo
                     TextFieldListItem(
                         label = MR.strings.audioLevelThreshold,
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                        value = AppSettings.automaticSilenceDetectionAudioLevel.observe().toString(),
+                        value = AppSettings.automaticSilenceDetectionAudioLevel.data.collectAsState().value.toString(),
                         onValueChange = {
                             val integer = it.replace("-", "")
                                 .replace(",", "")
@@ -160,12 +160,12 @@ fun AutomaticSilenceDetectionItem(viewModel: SettingsScreenViewModel, snackbarHo
                             .fillMaxWidth()
                     ) {
 
-                        val status = viewModel.status.observe()
-                        val audioLevel = viewModel.audioLevel.observe()
+                        val status = viewModel.status.collectAsState().value
+                        val audioLevel = viewModel.audioLevel.collectAsState().value
 
                         val animatedWeight = animateFloatAsState(targetValue = if (status) 1f else 0f)
                         val animatedColor = animateColorAsState(
-                            targetValue = if (audioLevel > AppSettings.automaticSilenceDetectionAudioLevel.observe()) {
+                            targetValue = if (audioLevel > AppSettings.automaticSilenceDetectionAudioLevel.data.collectAsState().value) {
                                 MaterialTheme.colorScheme.error
                             } else MaterialTheme.colorScheme.primary
                         )
@@ -213,7 +213,7 @@ fun AutomaticSilenceDetectionItem(viewModel: SettingsScreenViewModel, snackbarHo
 @Composable
 fun BackgroundService(viewModel: SettingsScreenViewModel) {
 
-    val isBackgroundEnabled = AppSettings.isBackgroundEnabled.data.observe()
+    val isBackgroundEnabled = AppSettings.isBackgroundEnabled.data.collectAsState().value
 
     ExpandableListItem(
         text = MR.strings.background,
@@ -254,7 +254,7 @@ fun BackgroundService(viewModel: SettingsScreenViewModel) {
 @Composable
 fun MicrophoneOverlay() {
 
-    val isMicrophoneOverlayEnabled = AppSettings.isMicrophoneOverlayEnabled.data.observe()
+    val isMicrophoneOverlayEnabled = AppSettings.isMicrophoneOverlayEnabled.data.collectAsState().value
 
     ExpandableListItem(
         text = MR.strings.microphoneOverlay,
@@ -281,7 +281,7 @@ fun MicrophoneOverlay() {
 
             SwitchListItem(
                 text = MR.strings.whileAppIsOpened,
-                isChecked = AppSettings.isMicrophoneOverlayWhileApp.observe(),
+                isChecked = AppSettings.isMicrophoneOverlayWhileApp.data.collectAsState().value,
                 onCheckedChange = {
                     AppSettings.isMicrophoneOverlayWhileApp.value = it
                 })
@@ -300,25 +300,25 @@ fun Device() {
         Column {
             SliderListItem(
                 text = MR.strings.volume,
-                value = AppSettings.volume.observe(),
+                value = AppSettings.volume.data.collectAsState().value,
                 onValueChange = {
                     AppSettings.volume.value = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
                 })
 
             SwitchListItem(
                 text = MR.strings.hotWord,
-                isChecked = AppSettings.isHotWordEnabled.observe(),
+                isChecked = AppSettings.isHotWordEnabled.data.collectAsState().value,
                 onCheckedChange = { AppSettings.isHotWordEnabled.value = it })
 
             SwitchListItem(
                 text = MR.strings.audioOutput,
-                isChecked = AppSettings.isAudioOutputEnabled.observe(),
+                isChecked = AppSettings.isAudioOutputEnabled.data.collectAsState().value,
                 onCheckedChange = { AppSettings.isAudioOutputEnabled.value = it })
 
 
             SwitchListItem(
                 text = MR.strings.intentHandling,
-                isChecked = AppSettings.isIntentHandlingEnabled.observe(),
+                isChecked = AppSettings.isIntentHandlingEnabled.data.collectAsState().value,
                 onCheckedChange = { AppSettings.isIntentHandlingEnabled.value = it })
 
 
@@ -337,16 +337,16 @@ fun Sounds(viewModel: SettingsScreenViewModel) {
         Column {
             SliderListItem(
                 text = MR.strings.volume,
-                value = AppSettings.soundVolume.observe(),
+                value = AppSettings.soundVolume.data.collectAsState().value,
                 onValueChange = {
                     AppSettings.soundVolume.value = it.toBigDecimal().setScale(2, RoundingMode.HALF_DOWN).toFloat()
                 })
 
-            val allSounds = AppSettings.customSounds.observe().toTypedArray().addSoundItems()
+            val allSounds = AppSettings.customSounds.data.collectAsState().value.toTypedArray().addSoundItems()
 
             DropDownStringList(
                 overlineText = { Text(MR.strings.wakeSound) },
-                selected = AppSettings.wakeSound.observe(),
+                selected = AppSettings.wakeSound.data.collectAsState().value,
                 values = allSounds,
             ) {
                 viewModel.selectWakeSoundFile(it)
@@ -354,7 +354,7 @@ fun Sounds(viewModel: SettingsScreenViewModel) {
 
             DropDownStringList(
                 overlineText = { Text(MR.strings.recordedSound) },
-                selected = AppSettings.recordedSound.observe(),
+                selected = AppSettings.recordedSound.data.collectAsState().value,
                 values = allSounds
             ) {
                 viewModel.selectRecordedSoundFile(it)
@@ -362,7 +362,7 @@ fun Sounds(viewModel: SettingsScreenViewModel) {
 
             DropDownStringList(
                 overlineText = { Text(MR.strings.errorSound) },
-                selected = AppSettings.errorSound.observe(),
+                selected = AppSettings.errorSound.data.collectAsState().value,
                 values = allSounds
             ) {
                 viewModel.selectErrorSoundFile(it)
@@ -379,7 +379,7 @@ private fun CustomSoundFile(viewModel: SettingsScreenViewModel) {
     DropDownListRemovableWithFileOpen(
         overlineText = { Text(MR.strings.sounds) },
         title = { Text(MR.strings.selectCustomSoundFile) },
-        values = viewModel.customSoundValuesUi.observe(),
+        values = viewModel.customSoundValuesUi.collectAsState().value,
         onAdd = {
             viewModel.selectCustomSoundFile()
         },
@@ -397,8 +397,8 @@ private fun Array<String>.addSoundItems(): Array<String> {
 
 @Composable
 fun WakeWordIndicationItem() {
-    val isWakeWordSoundIndication = AppSettings.isWakeWordSoundIndication.observe()
-    val isWakeWordLightIndication = AppSettings.isWakeWordLightIndication.observe()
+    val isWakeWordSoundIndication = AppSettings.isWakeWordSoundIndication.data.collectAsState().value
+    val isWakeWordLightIndication = AppSettings.isWakeWordLightIndication.data.collectAsState().value
 
     var stateText = if (isWakeWordSoundIndication) translate(MR.strings.sound) else ""
     if (isWakeWordLightIndication) {
@@ -419,7 +419,7 @@ fun WakeWordIndicationItem() {
 
             SwitchListItem(
                 text = MR.strings.backgroundWakeWordDetectionTurnOnDisplay,
-                isChecked = AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.observe(),
+                isChecked = AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.data.collectAsState().value,
                 onCheckedChange = { AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.value = it })
 
             SwitchListItem(
@@ -450,7 +450,7 @@ fun WakeWordIndicationItem() {
 
 @Composable
 fun ShowLogItem() {
-    val logLevel = AppSettings.logLevel.observe()
+    val logLevel = AppSettings.logLevel.data.collectAsState().value
 
     ExpandableListItem(
         text = MR.strings.logSettings,
@@ -462,11 +462,11 @@ fun ShowLogItem() {
         { LogLevel.values() }
 
         SwitchListItem(MR.strings.showLog,
-            isChecked = AppSettings.isShowLog.observe(),
+            isChecked = AppSettings.isShowLog.data.collectAsState().value,
             onCheckedChange = { AppSettings.isShowLog.value = it })
 
         SwitchListItem(MR.strings.audioFramesLogging,
-            isChecked = AppSettings.isLogAudioFrames.observe(),
+            isChecked = AppSettings.isLogAudioFrames.data.collectAsState().value,
             onCheckedChange = { AppSettings.isLogAudioFrames.value = it })
     }
 }
@@ -479,7 +479,7 @@ fun ProblemHandling() {
         SwitchListItem(
             text = MR.strings.forceCancel,
             secondaryText = MR.strings.forceCancelInformation,
-            isChecked = AppSettings.isForceCancelEnabled.observe(),
+            isChecked = AppSettings.isForceCancelEnabled.data.collectAsState().value,
             onCheckedChange = { AppSettings.isForceCancelEnabled.value = it })
     }
 }

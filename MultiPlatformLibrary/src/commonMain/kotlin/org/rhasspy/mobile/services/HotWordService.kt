@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.flow.onEach
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.logic.State
 import org.rhasspy.mobile.logic.StateMachine
@@ -26,13 +27,13 @@ object HotWordService {
      * to start and stop recording for wake word
      */
     init {
-        AppSettings.isHotWordEnabled.data.observe {
+        AppSettings.isHotWordEnabled.data.onEach {
             logger.v { "isHotWordEnabled changed to $it" }
             evaluateHotWordAction(StateMachine.currentState.value, it)
         }
 
         //change things according to state of the service
-        StateMachine.currentState.observe {
+        StateMachine.currentState.onEach {
             logger.v { "currentState changed to $it" }
             evaluateHotWordAction(it, AppSettings.isHotWordEnabled.value)
         }

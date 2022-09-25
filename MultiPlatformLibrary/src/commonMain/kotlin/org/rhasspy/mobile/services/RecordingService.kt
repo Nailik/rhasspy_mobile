@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -43,7 +44,7 @@ object RecordingService {
     private var isRecordingForWakeWord = false
 
     init {
-        StateMachine.currentState.observe {
+        StateMachine.currentState.onEach {
             when (it) {
                 //start recording intent
                 State.RecordingIntent -> startRecording()
@@ -54,7 +55,7 @@ object RecordingService {
         }
 
         //audio indication sounds should be ignored
-        AudioPlayer.isPlayingState.observe {
+        AudioPlayer.isPlayingState.onEach {
             when (it) {
                 //stop recording while sounds are playing
                 true -> stopRecording()

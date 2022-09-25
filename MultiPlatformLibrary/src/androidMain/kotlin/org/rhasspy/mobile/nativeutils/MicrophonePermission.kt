@@ -10,18 +10,17 @@ import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import dev.icerock.moko.mvvm.livedata.LiveData
-import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.readOnly
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.Application
 
 actual object MicrophonePermission {
 
-    private val status = MutableLiveData(isGranted())
+    private val status = MutableStateFlow(isGranted())
 
     private var launcher: ActivityResultLauncher<String>? = null
 
-    actual val granted: LiveData<Boolean> = status.readOnly()
+    actual val granted: StateFlow<Boolean> get() = status
 
     private var onResultCallback: ((Boolean) -> Unit)? = null
 

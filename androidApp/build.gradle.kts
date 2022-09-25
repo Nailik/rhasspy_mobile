@@ -143,15 +143,12 @@ dependencies {
     implementation(AndroidX.multidex)
     implementation(AndroidX.window)
 
-    implementation(Icerock.Mvvm.core)
-    implementation(Icerock.Mvvm.state)
-    implementation(Icerock.Mvvm.livedata)
-    implementation(Icerock.Mvvm.livedataResources)
-
     implementation(Touchlab.kermit)
     implementation(AndroidX.lifecycle.process)
     implementation(Devsrsouza.fontAwesome)
     implementation(Mikepenz.aboutLibrariesCore)
+    implementation(Icerock.Resources)
+    implementation(Icerock.Mvvm.core)
 
     androidTestImplementation(Kotlin.test)
     androidTestImplementation(Kotlin.Test.junit)

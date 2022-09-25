@@ -12,11 +12,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -145,15 +142,15 @@ fun Fab(modifier: Modifier = Modifier, iconSize: Dp, snackbarHostState: Snackbar
             }
         },
         modifier = modifier,
-        containerColor = if (viewModel.currentState.observe() == State.RecordingIntent) MaterialTheme.colorScheme.errorContainer else
-            if (viewModel.currentState.observe() == State.AwaitingHotWord) MaterialTheme.colorScheme.primaryContainer else
+        containerColor = if (viewModel.currentState.collectAsState().value == State.RecordingIntent) MaterialTheme.colorScheme.errorContainer else
+            if (viewModel.currentState.collectAsState().value == State.AwaitingHotWord) MaterialTheme.colorScheme.primaryContainer else
                 MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
     ) {
 
         Icon(
-            imageVector = if (MicrophonePermission.granted.observe()) Icons.Filled.Mic else Icons.Filled.MicOff,
+            imageVector = if (MicrophonePermission.granted.collectAsState().value) Icons.Filled.Mic else Icons.Filled.MicOff,
             contentDescription = MR.strings.wakeUp,
-            tint = if (viewModel.currentState.observe() == State.RecordingIntent) MaterialTheme.colorScheme.onErrorContainer else LocalContentColor.current,
+            tint = if (viewModel.currentState.collectAsState().value == State.RecordingIntent) MaterialTheme.colorScheme.onErrorContainer else LocalContentColor.current,
             modifier = Modifier.size(iconSize)
         )
     }
@@ -213,7 +210,7 @@ fun PlayRecording(
     modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel
 ) {
-    val isPlaying = viewModel.currentState.observe() == State.PlayingRecording
+    val isPlaying = viewModel.currentState.collectAsState().value == State.PlayingRecording
 
     ElevatedButton(
         onClick = { viewModel.togglePlayRecording() },

@@ -4,8 +4,9 @@ import android.media.*
 import android.net.Uri
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.resources.FileResource
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.Application
-import org.rhasspy.mobile.observer.MutableObservable
 import org.rhasspy.mobile.settings.AppSettings
 import java.io.File
 import java.nio.ByteBuffer
@@ -14,8 +15,8 @@ actual object AudioPlayer {
     private val logger = Logger.withTag("AudioPlayer")
     private var isEnabled = true
 
-    private var isPlaying = MutableObservable(false)
-    actual val isPlayingState = isPlaying.readOnly()
+    private var isPlaying = MutableStateFlow(false)
+    actual val isPlayingState: StateFlow<Boolean> get() = isPlaying
     private var audioTrack: AudioTrack? = null
     private var onFinished: (() -> Unit)? = null
 

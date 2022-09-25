@@ -6,9 +6,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import co.touchlab.kermit.Logger
-import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.postValue
-import dev.icerock.moko.mvvm.livedata.readOnly
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.NativeApplication
 import org.rhasspy.mobile.android.uiservices.IndicationOverlay
@@ -25,8 +24,8 @@ class AndroidApplication : Application() {
         lateinit var Instance: NativeApplication
             private set
 
-        private val currentlyAppInBackground = MutableLiveData(false)
-        val isAppInBackground = currentlyAppInBackground.readOnly()
+        private val currentlyAppInBackground = MutableStateFlow(false)
+        val isAppInBackground: StateFlow<Boolean> get() = currentlyAppInBackground
     }
 
     init {
@@ -40,8 +39,8 @@ class AndroidApplication : Application() {
         ProcessLifecycleOwner.get().lifecycle.addObserver(object : LifecycleEventObserver {
             override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
                 when (event) {
-                    Lifecycle.Event.ON_START -> currentlyAppInBackground.postValue(false)
-                    Lifecycle.Event.ON_STOP -> currentlyAppInBackground.postValue(true)
+                    Lifecycle.Event.ON_START -> currentlyAppInBackground.value = false
+                    Lifecycle.Event.ON_STOP -> currentlyAppInBackground.value = true
                     else -> {}
                 }
             }

@@ -3,10 +3,11 @@ package org.rhasspy.mobile.services
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.handler.ForegroundServiceHandler
 import org.rhasspy.mobile.logic.StateMachine
-import org.rhasspy.mobile.observer.MutableObservable
 import org.rhasspy.mobile.server.HttpServer
 import org.rhasspy.mobile.serviceInterfaces.HttpClientInterface
 import org.rhasspy.mobile.viewModels.GlobalData
@@ -21,8 +22,8 @@ object ServiceInterface {
     private val logger = Logger.withTag("ServerService")
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
-    private var state = MutableObservable(ServiceState.Stopped)
-    val currentState = state.readOnly()
+    private var state = MutableStateFlow(ServiceState.Stopped)
+    val currentState: StateFlow<ServiceState> get() = state
 
     //call all services to activate them
     init {

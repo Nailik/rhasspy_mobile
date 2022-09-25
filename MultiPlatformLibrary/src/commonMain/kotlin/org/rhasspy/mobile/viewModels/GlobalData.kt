@@ -2,8 +2,7 @@ package org.rhasspy.mobile.viewModels
 
 import co.touchlab.kermit.Logger
 import com.russhwolf.settings.Settings
-import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.postValue
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 object GlobalData {
@@ -13,7 +12,7 @@ object GlobalData {
 
     val allConfigurationSettings = mutableListOf<ConfigurationSetting<*>>()
 
-    val unsavedChanges = MutableLiveData(false)
+    val unsavedChanges = MutableStateFlow(false)
 
     fun updateUnsavedChanges() {
         logger.i { "updateUnsavedChanges" }
@@ -25,14 +24,14 @@ object GlobalData {
         logger.i { "saveAllChanges" }
 
         allConfigurationSettings.forEach { it.save() }
-        unsavedChanges.postValue(false)
+        unsavedChanges.value = false
     }
 
     fun resetChanges() {
         logger.i { "resetChanges" }
 
         allConfigurationSettings.forEach { it.reset() }
-        unsavedChanges.postValue(false)
+        unsavedChanges.value = false
     }
 
 }

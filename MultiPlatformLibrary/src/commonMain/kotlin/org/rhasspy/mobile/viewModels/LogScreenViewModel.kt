@@ -1,16 +1,16 @@
 package org.rhasspy.mobile.viewModels
 
-import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.logger.LogElement
 
 class LogScreenViewModel : ViewModel() {
-    val logArr = MutableLiveData(listOf<LogElement>())
+    val logArr = MutableStateFlow(listOf<LogElement>())
 
     init {
         //load file into list

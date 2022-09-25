@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.LayersClear
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -20,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
-import org.rhasspy.mobile.android.utils.observe
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
@@ -36,7 +36,7 @@ fun OverlayPermissionRequired(viewModel: HomeScreenViewModel) {
     AnimatedVisibility(
         enter = fadeIn(animationSpec = tween(50)),
         exit = fadeOut(animationSpec = tween(50)),
-        visible = viewModel.isOverlayPermissionRequestRequired.observe()
+        visible = viewModel.isOverlayPermissionRequestRequired.collectAsState().value
     ) {
         val overlayPermission = requestOverlayPermission {}
 

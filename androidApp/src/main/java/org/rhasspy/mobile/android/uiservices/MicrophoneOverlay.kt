@@ -20,10 +20,11 @@ import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import co.touchlab.kermit.Logger
-import dev.icerock.moko.mvvm.livedata.MediatorLiveData
+import kotlinx.coroutines.flow.onEach
 import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.bottomBarScreens.Fab
 import org.rhasspy.mobile.android.theme.AppTheme
+import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.settings.AppSettings
 
@@ -109,7 +110,12 @@ object MicrophoneOverlay {
     private var shouldBeShownOldValue = false
 
 
-    private val shouldBeShown = MediatorLiveData(false)
+    private val shouldBeShown = combineState(
+        OverlayPermission.granted, AppSettings.isMicrophoneOverlayEnabled.data, AndroidApplication.isAppInBackground, AppSettings
+            .isMicrophoneOverlayWhileApp.data
+    ) { _, _, _, _ ->
+        getShouldBeShown()
+    }
 
     /**
      * start service, listen to showVisualIndication and show the overlay or remove it when necessary
@@ -117,20 +123,7 @@ object MicrophoneOverlay {
     fun start() {
         logger.d { "start" }
 
-        shouldBeShown.addSource(OverlayPermission.granted) {
-            shouldBeShown.value = getShouldBeShown()
-        }
-        shouldBeShown.addSource(AppSettings.isMicrophoneOverlayEnabled.data.toLiveData()) {
-            shouldBeShown.value = getShouldBeShown()
-        }
-        shouldBeShown.addSource(AndroidApplication.isAppInBackground) {
-            shouldBeShown.value = getShouldBeShown()
-        }
-        shouldBeShown.addSource(AppSettings.isMicrophoneOverlayWhileApp.data.toLiveData()) {
-            shouldBeShown.value = getShouldBeShown()
-        }
-
-        shouldBeShown.addObserver {
+        shouldBeShown.onEach {
             if (it != shouldBeShownOldValue) {
                 if (it) {
                     overlayWindowManager.addView(view, mParams)

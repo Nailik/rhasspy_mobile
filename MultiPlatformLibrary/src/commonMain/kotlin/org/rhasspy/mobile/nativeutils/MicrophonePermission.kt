@@ -1,10 +1,10 @@
 package org.rhasspy.mobile.nativeutils
 
-import dev.icerock.moko.mvvm.livedata.LiveData
+import kotlinx.coroutines.flow.StateFlow
 
 @Suppress("NO_ACTUAL_FOR_EXPECT")
 expect object MicrophonePermission {
 
-    val granted: LiveData<Boolean>
+    val granted: StateFlow<Boolean>
 
 }

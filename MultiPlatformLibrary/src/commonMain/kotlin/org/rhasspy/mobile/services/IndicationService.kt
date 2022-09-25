@@ -1,31 +1,33 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onEach
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.logic.State
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.nativeutils.NativeIndication
-import org.rhasspy.mobile.observer.MutableObservable
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.sounds.SoundOptions
 
 object IndicationService {
     private val logger = Logger.withTag("IndicationService")
 
-    private val currentState = MutableObservable(IndicationState.Idle)
-    private val showVisualIndication = MutableObservable(false)
-    val showVisualIndicationUi = showVisualIndication.readOnly()
-    val readonlyState = currentState.readOnly()
+    private val currentState = MutableStateFlow(IndicationState.Idle)
+    private val showVisualIndication = MutableStateFlow(false)
+    val showVisualIndicationUi: StateFlow<Boolean> get() = showVisualIndication
+    val readonlyState: StateFlow<IndicationState> get() = currentState
 
     init {
         //change things according to state of the service
-        StateMachine.currentState.observe {
+        StateMachine.currentState.onEach {
             logger.v { "currentState changed to $it" }
             evaluateIndication(it, AudioPlayer.isPlayingState.value)
         }
 
-        AudioPlayer.isPlayingState.observe {
+        AudioPlayer.isPlayingState.onEach {
             logger.v { "isPlayingState changed to $it" }
             evaluateIndication(StateMachine.currentState.value, it)
         }

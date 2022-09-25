@@ -6,16 +6,15 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import dev.icerock.moko.mvvm.livedata.LiveData
-import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.readOnly
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.Application
 
 actual object OverlayPermission {
 
-    private val status = MutableLiveData(isGranted())
+    private val status = MutableStateFlow(isGranted())
 
-    actual val granted: LiveData<Boolean> = status.readOnly()
+    actual val granted: StateFlow<Boolean> get() = status
 
     private var onResultCallback: ((Boolean) -> Unit)? = null
 

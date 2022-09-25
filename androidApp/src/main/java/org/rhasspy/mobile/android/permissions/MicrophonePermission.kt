@@ -13,10 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -25,7 +22,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.utils.Text
-import org.rhasspy.mobile.android.utils.observe
 import org.rhasspy.mobile.android.utils.translate
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
@@ -42,7 +38,7 @@ fun MicrophonePermissionRequired(viewModel: HomeScreenViewModel, snackbarHostSta
     AnimatedVisibility(
         enter = fadeIn(animationSpec = tween(50)),
         exit = fadeOut(animationSpec = tween(50)),
-        visible = viewModel.isMicrophonePermissionRequestRequired.observe()
+        visible = !viewModel.isMicrophonePermissionRequestNotRequired.collectAsState().value
     ) {
         val microphonePermission = requestMicrophonePermission(snackbarHostState, MR.strings.microphonePermissionInfoWakeWord) {}
 
@@ -110,8 +106,7 @@ private fun requestMicrophonePermissionFromSystem(
     MicrophonePermission.requestPermission(false) { granted ->
         if (granted) {
             onResult.invoke(true)
-        } else if (!granted) {
-
+        } else {
             coroutineScope.launch {
 
                 val snackbarResult = snackbarHostState.showSnackbar(

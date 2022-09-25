@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.nativeutils
 
 import dev.icerock.moko.resources.FileResource
-import org.rhasspy.mobile.observer.Observable
+import kotlinx.coroutines.flow.StateFlow
 
 actual object AudioPlayer {
 
@@ -9,7 +9,7 @@ actual object AudioPlayer {
         TODO("Not yet implemented")
     }
 
-    actual val isPlayingState: Observable<Boolean>
+    actual val isPlayingState: StateFlow<Boolean>
         get() = TODO("Not yet implemented")
 
     actual fun playSoundFileResource(fileResource: FileResource) {
@@ -17,6 +17,10 @@ actual object AudioPlayer {
     }
 
     actual fun playSoundFile(filename: String) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun stopPlayingData() {
         TODO("Not yet implemented")
     }
 

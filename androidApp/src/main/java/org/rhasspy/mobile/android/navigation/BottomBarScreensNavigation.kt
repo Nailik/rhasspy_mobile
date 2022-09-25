@@ -36,8 +36,6 @@ import org.rhasspy.mobile.android.bottomBarScreens.*
 import org.rhasspy.mobile.android.permissions.MicrophonePermissionRequired
 import org.rhasspy.mobile.android.permissions.OverlayPermissionRequired
 import org.rhasspy.mobile.android.utils.Text
-import org.rhasspy.mobile.android.utils.observe
-import org.rhasspy.mobile.android.utils.observeCurrent
 import org.rhasspy.mobile.android.utils.translate
 import org.rhasspy.mobile.services.MqttService
 import org.rhasspy.mobile.services.ServiceState
@@ -119,7 +117,7 @@ fun BottomNavigation(navController: NavHostController) {
 
         val array = mutableListOf(BottomBarScreens.HomeScreen, BottomBarScreens.ConfigurationScreen, BottomBarScreens.SettingsScreen)
 
-        if (AppSettings.isShowLog.observe()) {
+        if (AppSettings.isShowLog.data.collectAsState().value) {
             array.add(BottomBarScreens.LogScreen)
         }
 
@@ -165,7 +163,7 @@ fun MqttConnectionStatus() {
     AnimatedVisibility(
         enter = fadeIn(animationSpec = tween(50)),
         exit = fadeOut(animationSpec = tween(0)),
-        visible = ConfigurationSettings.isMQTTEnabled.observeCurrent() && !MqttService.isConnected.observe()
+        visible = ConfigurationSettings.isMQTTEnabled.data.collectAsState().value && !MqttService.isConnected.collectAsState().value
     ) {
 
         var openDialog by rememberSaveable { mutableStateOf(false) }
@@ -198,12 +196,12 @@ fun MqttConnectionStatus() {
                     Text(MR.strings.mqttNotConnected)
                 },
                 text = {
-                    MqttService.hasConnectionError.observe()?.also {
+                    MqttService.hasConnectionError.collectAsState().value?.also {
                         val text = translate(MR.strings.mqttConnectionError)
                         Text("$text\n${it.msg} (${it.statusCode})")
                     }
 
-                    MqttService.hasConnectionLostError.observe()?.also {
+                    MqttService.hasConnectionLostError.collectAsState().value?.also {
                         val text = translate(MR.strings.mqttConnectionLostError)
                         Text("$text\n${it.message}")
                     }
@@ -222,7 +220,7 @@ fun UnsavedChanges(viewModel: HomeScreenViewModel) {
     AnimatedVisibility(
         enter = fadeIn(animationSpec = tween(50)),
         exit = fadeOut(animationSpec = tween(0)),
-        visible = GlobalData.unsavedChanges.observe()
+        visible = GlobalData.unsavedChanges.collectAsState().value
     ) {
         Row(modifier = Modifier.padding(start = 8.dp)) {
             IconButton(onClick = { viewModel.resetChanges() })
@@ -246,7 +244,7 @@ fun UnsavedChanges(viewModel: HomeScreenViewModel) {
     AnimatedVisibility(
         enter = fadeIn(animationSpec = tween(50)),
         exit = fadeOut(animationSpec = tween(50)),
-        visible = viewModel.currentServiceState.observe() != ServiceState.Running
+        visible = viewModel.currentServiceState.collectAsState().value != ServiceState.Running
     ) {
         val infiniteTransition = rememberInfiniteTransition()
         val angle by infiniteTransition.animateFloat(

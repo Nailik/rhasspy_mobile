@@ -4,6 +4,8 @@ import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.addWavHeader
 import org.rhasspy.mobile.data.DialogueManagementOptions
@@ -11,7 +13,6 @@ import org.rhasspy.mobile.data.SpeechToTextOptions
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.nativeutils.FileWriter
-import org.rhasspy.mobile.observer.MutableObservable
 import org.rhasspy.mobile.services.MqttService
 import org.rhasspy.mobile.services.RhasspyActions
 import org.rhasspy.mobile.services.UdpService
@@ -32,8 +33,8 @@ object StateMachine {
         private set
 
     //information about current state
-    private var state = MutableObservable(State.Stopped)
-    val currentState = state.readOnly()
+    private var state = MutableStateFlow(State.Stopped)
+    val currentState: StateFlow<State> get() = state
 
     /**
      * indicates that services have started

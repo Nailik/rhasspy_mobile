@@ -31,12 +31,12 @@ abstract class Application : NativeApplication() {
 
         logger.a { "######## Application started ########" }
 
-        //initialize/load the settings, generate the MutableLiveData
+        //initialize/load the settings, generate the MutableStateFlow
         AppSettings
         ConfigurationSettings
         OverlayServices.checkPermission()
         startNativeServices()
-        //makes sure that the MutableObservable inside those objects are created in ui thread because they internally use livedata which cannot be
+        //makes sure that the MutableStateFlow inside those objects are created in ui thread because they internally use livedata which cannot be
         // created in background tread
         ServiceInterface
         MqttService

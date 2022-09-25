@@ -1,10 +1,10 @@
 package org.rhasspy.mobile.viewModels
 
-import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.postValue
-import dev.icerock.moko.mvvm.livedata.readOnly
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.mqtt.MqttError
 import org.rhasspy.mobile.nativeutils.SettingsUtils
@@ -17,32 +17,32 @@ class ConfigurationScreenViewModel : ViewModel() {
 
     val isMQTTConnected = MqttService.isConnected
 
-    private val changeEnabled = MutableLiveData(true)
-    val isChangeEnabled = changeEnabled.readOnly()
+    private val changeEnabled = MutableStateFlow(true)
+    val isChangeEnabled: StateFlow<Boolean> get() = changeEnabled
 
-    private val testingMqttConnection = MutableLiveData(false)
-    val isTestingMqttConnection = testingMqttConnection.readOnly()
-    private val testingMqttError = MutableLiveData<MqttError?>(null)
-    val testingMqttErrorUiData = testingMqttError.readOnly()
+    private val testingMqttConnection = MutableStateFlow(false)
+    val isTestingMqttConnection: StateFlow<Boolean> get()  = testingMqttConnection
+    private val testingMqttError = MutableStateFlow<MqttError?>(null)
+    val testingMqttErrorUiData: StateFlow<MqttError?> get()  = testingMqttError
 
     init {
-        ServiceInterface.currentState.observe {
-            changeEnabled.postValue(it == ServiceState.Running)
+        ServiceInterface.currentState.onEach {
+            changeEnabled.value = it == ServiceState.Running
         }
 
-        ConfigurationSettings.mqttHost.unsaved.observe {
+        ConfigurationSettings.mqttHost.unsaved.onEach {
             testingMqttError.value = null
         }
 
-        ConfigurationSettings.mqttPort.unsaved.observe {
+        ConfigurationSettings.mqttPort.unsaved.onEach {
             testingMqttError.value = null
         }
 
-        ConfigurationSettings.mqttUserName.unsaved.observe {
+        ConfigurationSettings.mqttUserName.unsaved.onEach {
             testingMqttError.value = null
         }
 
-        ConfigurationSettings.mqttPassword.unsaved.observe {
+        ConfigurationSettings.mqttPassword.unsaved.onEach {
             testingMqttError.value = null
         }
     }
@@ -64,8 +64,8 @@ class ConfigurationScreenViewModel : ViewModel() {
             //show loading
             testingMqttConnection.value = true
             viewModelScope.launch(Dispatchers.Main) {
-                testingMqttError.postValue(MqttService.testConnection())
-                testingMqttConnection.postValue(false)
+                testingMqttError.value = MqttService.testConnection()
+                testingMqttConnection.value = false
             }
         }
         //disable editing of mqtt settings

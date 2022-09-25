@@ -4,15 +4,15 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import org.rhasspy.mobile.android.utils.observe
 import org.rhasspy.mobile.android.utils.toColors
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.settings.AppSettings
 
 @Composable
 fun getIsDarkTheme(): Boolean {
-    val themeOption = AppSettings.themeOption.observe()
+    val themeOption = AppSettings.themeOption.data.collectAsState().value
     return (isSystemInDarkTheme() && themeOption == ThemeOptions.System) || themeOption == ThemeOptions.Dark
 }
 

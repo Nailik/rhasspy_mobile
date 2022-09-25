@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
@@ -25,14 +26,13 @@ import org.rhasspy.mobile.android.theme.*
 import org.rhasspy.mobile.android.utils.CustomDivider
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.StyledListItem
-import org.rhasspy.mobile.android.utils.observe
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 import org.rhasspy.mobile.viewModels.LogScreenViewModel
 
 @Composable
 fun LogScreen(viewModel: LogScreenViewModel = viewModel()) {
 
-    val items = viewModel.logArr.observe()
+    val items = viewModel.logArr.collectAsState().value
 
     LazyColumn(modifier = Modifier.fillMaxHeight()) {
         items(items) { item ->

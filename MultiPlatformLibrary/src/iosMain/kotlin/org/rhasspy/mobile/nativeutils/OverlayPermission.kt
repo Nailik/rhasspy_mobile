@@ -1,11 +1,12 @@
 package org.rhasspy.mobile.nativeutils
 
-import dev.icerock.moko.mvvm.livedata.LiveData
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 actual object OverlayPermission {
 
-    actual val granted: LiveData<Boolean>
-        get() = LiveData(true)
+    actual val granted: StateFlow<Boolean>
+        get() = MutableStateFlow(true)
 
     actual fun isGranted(): Boolean {
         TODO("Not yet implemented")

@@ -4,6 +4,8 @@ import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
@@ -11,7 +13,6 @@ import org.rhasspy.mobile.data.AudioPlayingOptions
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.mqtt.*
 import org.rhasspy.mobile.nativeutils.MqttClient
-import org.rhasspy.mobile.observer.MutableObservable
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.math.min
@@ -25,13 +26,13 @@ object MqttService {
 
     private var client: MqttClient? = null
 
-    private val connected = MutableObservable(false)
-    val isConnected = connected.readOnly()
+    private val connected = MutableStateFlow(false)
+    val isConnected: StateFlow<Boolean> get() = connected
 
-    private var connectionError = MutableObservable<MqttError?>(null)
-    private var connectionLostError = MutableObservable<Throwable?>(null)
-    val hasConnectionError = connectionError.readOnly()
-    val hasConnectionLostError = connectionLostError.readOnly()
+    private var connectionError = MutableStateFlow<MqttError?>(null)
+    private var connectionLostError = MutableStateFlow<Throwable?>(null)
+    val hasConnectionError: StateFlow<MqttError?> get() = connectionError
+    val hasConnectionLostError: StateFlow<Throwable?> get() = connectionLostError
 
     private var retryJob: Job? = null
 

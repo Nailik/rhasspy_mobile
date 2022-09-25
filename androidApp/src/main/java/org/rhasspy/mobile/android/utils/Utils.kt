@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,7 +52,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.resources.ImageResource
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.desc.Resource
@@ -61,10 +59,7 @@ import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.DataEnum
-import org.rhasspy.mobile.observer.Observable
-import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.AppSettings
-import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.sounds.SoundFile
 
 @Composable
@@ -154,7 +149,7 @@ fun Icon(
 
 @Composable
 fun translate(resource: StringResource): String {
-    AppSettings.languageOption.observe()
+    AppSettings.languageOption.data.collectAsState()
     return StringDesc.Resource(resource).toString(LocalContext.current)
 }
 
@@ -641,28 +636,6 @@ fun RadioButtonListItem(text: StringResource, isChecked: Boolean, enabled: Boole
 fun Boolean.toText(): StringResource {
     return if (this) MR.strings.enabled else MR.strings.disabled
 }
-
-@Composable
-fun <T> LiveData<T>.observe(): T {
-    return this.ld().observeAsState(this.value).value
-}
-
-@Composable
-fun <T> Observable<T>.observe(): T {
-    return this.toLiveData().ld().observeAsState(this.value).value
-}
-
-
-@Composable
-fun <T> AppSetting<T>.observe(): T {
-    return this.data.toLiveData().observe()
-}
-
-@Composable
-fun <T> ConfigurationSetting<T>.observeCurrent(): T {
-    return this.unsaved.toLiveData().observe()
-}
-
 
 @Composable
 fun ColorScheme.toColors(isLight: Boolean): Colors {

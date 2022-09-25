@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.settings
 
-import org.rhasspy.mobile.observer.MutableObservable
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.onEach
 import org.rhasspy.mobile.viewModels.GlobalData
 
 /**
@@ -21,23 +22,18 @@ class ConfigurationSetting<T>(key: SettingsEnum, initial: T) : Setting<T>(key, i
      * holds the unsaved value
      * updated unsaved changes accordingly if the new value is different or the same as the current saved value
      */
-    val unsaved = object : MutableObservable<T>(data.value) {
-        override var value: T
-            get() = super.value
-            set(newValue) {
-                if (super.value != newValue) {
-                    super.value = newValue
-                    if (data.value != newValue) {
-                        //new value
-                        isUnsaved = true
-                        GlobalData.unsavedChanges.value = true
-                    } else {
-                        //set value back to saved
-                        isUnsaved = false
-                        GlobalData.updateUnsavedChanges()
-                    }
-                }
+    val unsaved = MutableStateFlow(data.value).apply {
+        onEach {
+            if (data.value != it) {
+                //new value
+                isUnsaved = true
+                GlobalData.unsavedChanges.value = true
+            } else {
+                //set value back to saved
+                isUnsaved = false
+                GlobalData.updateUnsavedChanges()
             }
+        }
     }
 
     /**
