@@ -20,7 +20,6 @@ import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.theme.AppTheme
@@ -100,24 +99,26 @@ object IndicationOverlay {
      * start service, listen to showVisualIndication and show the overlay or remove it when necessary
      */
     fun start() {
-        IndicationService.showVisualIndicationUi.onEach {
-            if (it != showVisualIndicationOldValue) {
-                if (it) {
-                    if (OverlayPermission.isGranted()) {
+        CoroutineScope(Dispatchers.Default).launch {
+            IndicationService.showVisualIndicationUi.collect {
+                if (it != showVisualIndicationOldValue) {
+                    if (it) {
+                        if (OverlayPermission.isGranted()) {
+                            mainScope.launch {
+                                overlayWindowManager.addView(view, mParams)
+                                //has to be called from main thread
+                                lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                            }
+                        }
+                    } else {
                         mainScope.launch {
-                            overlayWindowManager.addView(view, mParams)
+                            overlayWindowManager.removeView(view)
                             //has to be called from main thread
-                            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
                         }
                     }
-                } else {
-                    mainScope.launch {
-                        overlayWindowManager.removeView(view)
-                        //has to be called from main thread
-                        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-                    }
+                    showVisualIndicationOldValue = it
                 }
-                showVisualIndicationOldValue = it
             }
         }
     }

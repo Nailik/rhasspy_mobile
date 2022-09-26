@@ -6,7 +6,6 @@ import co.touchlab.kermit.Severity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -27,24 +26,26 @@ object FileLogger : LogWriter() {
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     init {
-        if (fileWriter.createFile()) {
-            fileWriter.appendText(
-                Json.encodeToString(
-                    LogElement(
-                        Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(),
-                        Severity.Verbose,
-                        "NativeFileWriter",
-                        "createdLogFile",
-                        null
+        CoroutineScope(Dispatchers.Default).launch {
+            if (fileWriter.createFile()) {
+                fileWriter.appendText(
+                    Json.encodeToString(
+                        LogElement(
+                            Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(),
+                            Severity.Verbose,
+                            "NativeFileWriter",
+                            "createdLogFile",
+                            null
+                        )
                     )
                 )
-            )
-        }
+            }
 
-        AppSettings.logLevel.data.onEach {
-            if (Logger.config.minSeverity != it.severity) {
-                Logger.setMinSeverity(it.severity)
-                logger.a { "changed log level to ${it.severity}" }
+            AppSettings.logLevel.data.collect {
+                if (Logger.config.minSeverity != it.severity) {
+                    Logger.setMinSeverity(it.severity)
+                    logger.a { "changed log level to ${it.severity}" }
+                }
             }
         }
     }

@@ -20,7 +20,9 @@ import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import co.touchlab.kermit.Logger
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.bottomBarScreens.Fab
 import org.rhasspy.mobile.android.theme.AppTheme
@@ -123,16 +125,18 @@ object MicrophoneOverlay {
     fun start() {
         logger.d { "start" }
 
-        shouldBeShown.onEach {
-            if (it != shouldBeShownOldValue) {
-                if (it) {
-                    overlayWindowManager.addView(view, mParams)
-                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
-                } else {
-                    overlayWindowManager.removeView(view)
-                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+        CoroutineScope(Dispatchers.Default).launch {
+            shouldBeShown.collect {
+                if (it != shouldBeShownOldValue) {
+                    if (it) {
+                        overlayWindowManager.addView(view, mParams)
+                        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                    } else {
+                        overlayWindowManager.removeView(view)
+                        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+                    }
+                    shouldBeShownOldValue = it
                 }
-                shouldBeShownOldValue = it
             }
         }
 

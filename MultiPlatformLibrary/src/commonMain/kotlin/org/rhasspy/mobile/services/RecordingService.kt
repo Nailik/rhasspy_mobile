@@ -5,7 +5,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectIndexed
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -44,25 +43,30 @@ object RecordingService {
     private var isRecordingForWakeWord = false
 
     init {
-        StateMachine.currentState.onEach {
-            when (it) {
-                //start recording intent
-                State.RecordingIntent -> startRecording()
-                //stop recording intent
-                State.AwaitingHotWord -> if(isRecordingForWakeWord) startRecording() else stopRecording()
-                else -> stopRecording()
+        val scope = CoroutineScope(Dispatchers.Default)
+        scope.launch {
+            StateMachine.currentState.collect {
+                when (it) {
+                    //start recording intent
+                    State.RecordingIntent -> startRecording()
+                    //stop recording intent
+                    State.AwaitingHotWord -> if (isRecordingForWakeWord) startRecording() else stopRecording()
+                    else -> stopRecording()
+                }
             }
         }
 
         //audio indication sounds should be ignored
-        AudioPlayer.isPlayingState.onEach {
-            when (it) {
-                //stop recording while sounds are playing
-                true -> stopRecording()
-                //resume recording if necessary
-                false -> if (isRecordingForWakeWord || StateMachine.currentState.value == State.RecordingIntent) {
-                    //resume recording
-                    startRecording()
+        scope.launch {
+            AudioPlayer.isPlayingState.collect {
+                when (it) {
+                    //stop recording while sounds are playing
+                    true -> stopRecording()
+                    //resume recording if necessary
+                    false -> if (isRecordingForWakeWord || StateMachine.currentState.value == State.RecordingIntent) {
+                        //resume recording
+                        startRecording()
+                    }
                 }
             }
         }

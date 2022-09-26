@@ -4,7 +4,6 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.mqtt.MqttError
 import org.rhasspy.mobile.nativeutils.SettingsUtils
@@ -26,24 +25,34 @@ class ConfigurationScreenViewModel : ViewModel() {
     val testingMqttErrorUiData: StateFlow<MqttError?> get()  = testingMqttError
 
     init {
-        ServiceInterface.currentState.onEach {
-            changeEnabled.value = it == ServiceState.Running
+        viewModelScope.launch {
+            ServiceInterface.currentState.collect {
+                changeEnabled.value = it == ServiceState.Running
+            }
         }
 
-        ConfigurationSettings.mqttHost.unsaved.onEach {
-            testingMqttError.value = null
+        viewModelScope.launch {
+            ConfigurationSettings.mqttHost.unsaved.collect {
+                testingMqttError.value = null
+            }
         }
 
-        ConfigurationSettings.mqttPort.unsaved.onEach {
-            testingMqttError.value = null
+        viewModelScope.launch {
+            ConfigurationSettings.mqttPort.unsaved.collect {
+                testingMqttError.value = null
+            }
         }
 
-        ConfigurationSettings.mqttUserName.unsaved.onEach {
-            testingMqttError.value = null
+        viewModelScope.launch {
+            ConfigurationSettings.mqttUserName.unsaved.collect {
+                testingMqttError.value = null
+            }
         }
 
-        ConfigurationSettings.mqttPassword.unsaved.onEach {
-            testingMqttError.value = null
+        viewModelScope.launch {
+            ConfigurationSettings.mqttPassword.unsaved.collect {
+                testingMqttError.value = null
+            }
         }
     }
 

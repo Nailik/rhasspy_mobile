@@ -5,8 +5,10 @@ import com.russhwolf.settings.get
 import com.russhwolf.settings.serialization.decodeValue
 import com.russhwolf.settings.serialization.encodeValue
 import com.russhwolf.settings.set
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.builtins.SetSerializer
 import kotlinx.serialization.builtins.serializer
@@ -15,12 +17,16 @@ import org.rhasspy.mobile.viewModels.GlobalData
 
 abstract class Setting<T>(private val key: SettingsEnum, private val initial: T) {
 
+    val scope = CoroutineScope(Dispatchers.Default)
+
     /**
      * data used to get current saved value or to set value for unsaved changes
      */
-    val data = MutableStateFlow(readValue()).apply {
-        onEach {
-            saveValue(it)
+    val data = MutableStateFlow(readValue()).also { flow ->
+        CoroutineScope(Dispatchers.Default).launch {
+            flow.collect {
+                saveValue(it)
+            }
         }
     }
 

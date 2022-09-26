@@ -4,7 +4,7 @@ import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.logic.StateMachine
@@ -31,8 +31,10 @@ class HomeScreenViewModel : ViewModel() {
     init {
         logger.v { "init" }
 
-        AppSettings.languageOption.data.onEach {
-            StringDesc.localeType = StringDesc.LocaleType.Custom(it.code)
+        viewModelScope.launch {
+            AppSettings.languageOption.data.collect {
+                StringDesc.localeType = StringDesc.LocaleType.Custom(it.code)
+            }
         }
     }
 

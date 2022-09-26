@@ -1,9 +1,11 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.logic.State
 import org.rhasspy.mobile.logic.StateMachine
@@ -21,15 +23,20 @@ object IndicationService {
     val readonlyState: StateFlow<IndicationState> get() = currentState
 
     init {
-        //change things according to state of the service
-        StateMachine.currentState.onEach {
-            logger.v { "currentState changed to $it" }
-            evaluateIndication(it, AudioPlayer.isPlayingState.value)
+        val scope = CoroutineScope(Dispatchers.Default)
+        scope.launch {
+            //change things according to state of the service
+            StateMachine.currentState.collect {
+                logger.v { "currentState changed to $it" }
+                evaluateIndication(it, AudioPlayer.isPlayingState.value)
+            }
         }
 
-        AudioPlayer.isPlayingState.onEach {
-            logger.v { "isPlayingState changed to $it" }
-            evaluateIndication(StateMachine.currentState.value, it)
+        scope.launch {
+            AudioPlayer.isPlayingState.collect {
+                logger.v { "isPlayingState changed to $it" }
+                evaluateIndication(StateMachine.currentState.value, it)
+            }
         }
     }
 
