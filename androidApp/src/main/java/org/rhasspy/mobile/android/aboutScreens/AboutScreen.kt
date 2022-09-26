@@ -1,10 +1,14 @@
 package org.rhasspy.mobile.android.aboutScreens
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -14,40 +18,44 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.theme.getIsDarkTheme
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.android.utils.translate
+import org.rhasspy.mobile.viewModels.AboutScreenViewModel
 
-//git commits for changelog https://lowcarbrob.medium.com/android-pro-tip-generating-your-apps-changelog-from-git-inside-build-gradle-19a07533eec4
+/**
+ * About Screen contains A Header with Information,
+ * and list of used dependencies
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AboutScreen() {
-    rememberSystemUiController().setStatusBarColor(MaterialTheme.colorScheme.surfaceVariant, darkIcons = !getIsDarkTheme())
+fun AboutScreen(viewModel: AboutScreenViewModel = viewModel()) {
     Surface {
         val configuration = LocalConfiguration.current
         LibrariesContainer(header = {
             if (configuration.screenHeightDp.dp > 600.dp) {
                 stickyHeader {
-                    Header()
+                    Header(viewModel)
                 }
             } else {
                 item {
-                    Header()
+                    Header(viewModel)
                 }
             }
         })
     }
 }
 
-
+/**
+ * Header with chips to open Information
+ * shows app version
+ */
 @Composable
-fun Header() {
+fun Header(viewModel: AboutScreenViewModel) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -71,23 +79,23 @@ fun Header() {
             modifier = Modifier.padding(8.dp)
         )
 
-        AppInformationChips()
+        AppInformationChips(viewModel.changelogText, viewModel::onOpenSourceCode)
     }
 }
 
+/**
+ * Chips to show data privacy, link to source code and changelog
+ */
 @Composable
-fun AppInformationChips() {
-    val context = LocalContext.current
-
+fun AppInformationChips(changelogText: String, onOpenSourceCode: () -> Unit) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        DataPrivacyDialogueButton()
-        OutlinedButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Nailik/rhasspy_mobile"))) }) {
+        DataPrivacyDialogButton()
+        OutlinedButton(onClick = onOpenSourceCode) {
             Text(MR.strings.sourceCode)
         }
-        ChangelogDialogueButton()
+        ChangelogDialogButton(changelogText)
     }
-
 }

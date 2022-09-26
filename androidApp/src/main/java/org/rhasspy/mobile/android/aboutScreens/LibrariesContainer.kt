@@ -1,39 +1,47 @@
 package org.rhasspy.mobile.android.aboutScreens
 
 import android.content.Context
-import android.widget.TextView
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Badge
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.ui.window.DialogProperties
-import androidx.core.text.HtmlCompat
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.entity.License
 import com.mikepenz.aboutlibraries.util.withContext
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.utils.CustomDivider
+import org.rhasspy.mobile.android.utils.HtmlText
 import org.rhasspy.mobile.android.utils.ListElement
 import org.rhasspy.mobile.android.utils.Text
 
+/**
+ * displays libraries list with dialog when clicked on it
+ */
 @Composable
 fun LibrariesContainer(
     modifier: Modifier = Modifier,
@@ -45,14 +53,14 @@ fun LibrariesContainer(
     header: (LazyListScope.() -> Unit)? = null,
     onLibraryClick: ((Library) -> Unit)? = null,
 ) {
-    val libraries = remember { mutableStateOf<Libs?>(null) }
+    var libraries by remember { mutableStateOf<Libs?>(null) }
 
     val context = LocalContext.current
     LaunchedEffect(libraries) {
-        libraries.value = librariesBlock.invoke(context)
+        libraries = librariesBlock.invoke(context)
     }
 
-    libraries.value?.libraries?.also { libs ->
+    libraries?.libraries?.also { libs ->
         Libraries(
             libraries = libs,
             modifier,
@@ -65,21 +73,8 @@ fun LibrariesContainer(
 }
 
 /**
- * fix wrong library names
- */
-fun Library.getCorrectedName(): String {
-    return when {
-        uniqueId == "org.fusesource.jansi:jansi" -> "Jansi"
-        name == "androidx.customview:poolingcontainer" -> "Poolingcontainer"
-        name == "androidx.profileinstaller:profileinstaller" -> "Profileinstaller"
-        else -> name
-    }
-}
-
-/**
  * Displays all provided libraries in a simple list.
  */
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun Libraries(
     libraries: List<Library>,
@@ -95,40 +90,20 @@ fun Libraries(
         }
 
         items(libraries) { library ->
-            val openDialog = rememberSaveable { mutableStateOf(false) }
+            var openDialog by rememberSaveable { mutableStateOf(false) }
 
             Library(library) {
                 if (onLibraryClick != null) {
                     onLibraryClick.invoke(library)
                 } else {
-                    openDialog.value = true
+                    openDialog = true
                 }
             }
 
-            if (openDialog.value) {
-                val scrollState = rememberScrollState()
-                AlertDialog(
-                    onDismissRequest = {
-                        openDialog.value = false
-                    },
-                    confirmButton = {
-                        TextButton(onClick = { openDialog.value = false }) {
-                            Text(MR.strings.ok)
-                        }
-                    },
-                    text = {
-                        Column(
-                            modifier = Modifier.verticalScroll(scrollState),
-                        ) {
-                            HtmlText(
-                                html = library.licenses.firstOrNull()?.htmlReadyLicenseContent.orEmpty(),
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    },
-                    modifier = Modifier.padding(16.dp),
-                    properties = DialogProperties(usePlatformDefaultWidth = false),
-                )
+            if (openDialog) {
+                LibraryDialog(library) {
+                    openDialog = false
+                }
             }
 
             CustomDivider()
@@ -136,16 +111,9 @@ fun Libraries(
     }
 }
 
-@Composable
-fun HtmlText(html: String, modifier: Modifier = Modifier, color: Color) {
-    AndroidView(
-        modifier = modifier,
-        factory = { context -> TextView(context).apply { setTextColor(color.toArgb()) } },
-        update = { it.text = HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_COMPACT) }
-    )
-}
-
-
+/**
+ * Library list element
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun Library(
@@ -155,7 +123,7 @@ internal fun Library(
     ListElement(
         modifier = Modifier
             .clickable { onClick.invoke() },
-        text = { Text(text = library.getCorrectedName()) },
+        text = { Text(text = library.correctedName) },
         secondaryText = {
             Column(
                 modifier = Modifier
@@ -178,8 +146,53 @@ internal fun Library(
     )
 }
 
+
+/**
+ * Library dialog with more information
+ */
+@Composable
+fun LibraryDialog(library: Library, onDismissRequest: () -> Unit) {
+    val scrollState = rememberScrollState()
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(MR.strings.ok)
+            }
+        },
+        text = {
+            Column(
+                modifier = Modifier.verticalScroll(scrollState),
+            ) {
+                HtmlText(
+                    html = library.licenses.firstOrNull()?.htmlReadyLicenseContent.orEmpty(),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        },
+    )
+}
+
+
+/**
+ * fix wrong library names
+ */
+val Library.correctedName: String
+    get() = when {
+        uniqueId == "org.fusesource.jansi:jansi" -> "Jansi"
+        name == "androidx.customview:poolingcontainer" -> "Poolingcontainer"
+        name == "androidx.profileinstaller:profileinstaller" -> "Profileinstaller"
+        else -> name
+    }
+
+/**
+ * get author of library
+ */
 val Library.author: String
     get() = developers.takeIf { it.isNotEmpty() }?.map { it.name }?.joinToString(", ") ?: organization?.name ?: ""
 
+/**
+ * read html license content
+ */
 val License.htmlReadyLicenseContent: String?
     get() = licenseContent?.replace("\n", "<br />")
