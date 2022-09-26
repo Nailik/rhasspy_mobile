@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.android.aboutScreens
 
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -56,25 +60,42 @@ fun AboutScreen(viewModel: AboutScreenViewModel = viewModel()) {
  */
 @Composable
 fun Header(viewModel: AboutScreenViewModel) {
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(vertical = 16.dp)
+            .padding(bottom = 16.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface, shape = CircleShape)
-                .padding(8.dp)
-        ) {
-            Icon(MR.images.ic_launcher, MR.strings.icon, modifier = Modifier.size(96.dp))
+        Box(modifier = Modifier.fillMaxWidth()) {
+
+            val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+            IconButton(onClick = { onBackPressedDispatcher?.onBackPressed() }, modifier = Modifier.align(Alignment.TopStart)) {
+                Icon(imageVector = Icons.Filled.Close, contentDescription = MR.strings.close)
+            }
+
+            Icon(
+                imageResource = MR.images.ic_launcher,
+                contentDescription = MR.strings.icon,
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .size(96.dp)
+                    .background(MaterialTheme.colorScheme.surface, shape = CircleShape)
+                    .padding(8.dp)
+                    .align(Alignment.Center)
+            )
         }
 
-        Text(MR.strings.appName, style = MaterialTheme.typography.headlineLarge, modifier = Modifier.padding(8.dp))
 
         Text(
-            "${translate(MR.strings.version)} ${BuildKonfig.versionName}-${BuildKonfig.versionCode}",
+            resource = MR.strings.appName,
+            style = MaterialTheme.typography.headlineLarge,
+            modifier = Modifier.padding(8.dp)
+        )
+
+        Text(
+            text = "${translate(MR.strings.version)} ${BuildKonfig.versionName}",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(8.dp)
         )

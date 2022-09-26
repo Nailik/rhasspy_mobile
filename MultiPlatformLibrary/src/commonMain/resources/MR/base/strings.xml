@@ -178,4 +178,5 @@
     <string name="problemHandling">Problem Handling</string>
     <string name="forceCancel">Force Cancel</string>
     <string name="forceCancelInformation">Press to cancel Session</string>
+    <string name="close">Close</string>
 </resources>

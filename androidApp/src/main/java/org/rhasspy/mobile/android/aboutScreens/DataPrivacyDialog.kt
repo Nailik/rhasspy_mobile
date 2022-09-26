@@ -41,7 +41,7 @@ fun DataPrivacyDialog(onDismissRequest: () -> Unit) {
         onDismissRequest = onDismissRequest,
         confirmButton = {
             TextButton(onClick = onDismissRequest) {
-                Text(MR.strings.ok)
+                Text(MR.strings.close)
             }
         },
         text = {

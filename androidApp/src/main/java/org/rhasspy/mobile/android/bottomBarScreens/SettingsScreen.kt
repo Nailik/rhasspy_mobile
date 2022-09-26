@@ -577,6 +577,6 @@ fun About(mainNavController: NavController) {
         },
         icon = { Icon(Icons.Filled.Info, modifier = Modifier.size(24.dp), contentDescription = MR.strings.info) },
         text = { Text(MR.strings.aboutTitle) },
-        secondaryText = { Text("${translate(MR.strings.version)} ${BuildKonfig.versionName} - ${BuildKonfig.versionCode}") }
+        secondaryText = { Text("${translate(MR.strings.version)} ${BuildKonfig.versionName}") }
     )
 }
