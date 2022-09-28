@@ -6,15 +6,38 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.BatteryAlert
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.MicOff
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.input.KeyboardType
@@ -29,7 +52,21 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.navigation.MainScreens
 import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
 import org.rhasspy.mobile.android.permissions.requestOverlayPermission
-import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.android.utils.ComposableLifecycle
+import org.rhasspy.mobile.android.utils.CustomDivider
+import org.rhasspy.mobile.android.utils.DropDownEnumListItem
+import org.rhasspy.mobile.android.utils.DropDownListRemovableWithFileOpen
+import org.rhasspy.mobile.android.utils.DropDownStringList
+import org.rhasspy.mobile.android.utils.ExpandableListItem
+import org.rhasspy.mobile.android.utils.ExpandableListItemString
+import org.rhasspy.mobile.android.utils.Icon
+import org.rhasspy.mobile.android.utils.ListElement
+import org.rhasspy.mobile.android.utils.SliderListItem
+import org.rhasspy.mobile.android.utils.SwitchListItem
+import org.rhasspy.mobile.android.utils.Text
+import org.rhasspy.mobile.android.utils.TextFieldListItem
+import org.rhasspy.mobile.android.utils.toText
+import org.rhasspy.mobile.android.utils.translate
 import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.logger.LogLevel
@@ -48,9 +85,17 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState, mainNavController: NavC
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        LanguageItem()
+        LanguageItem(
+            selected = viewModel.currentLanguage.collectAsState().value,
+            values = viewModel.languageOptions,
+            onSelect = viewModel::selectLanguage
+        )
         CustomDivider()
-        ThemeItem()
+        ThemeItem(
+            selected = viewModel.currentTheme.collectAsState().value,
+            values = viewModel.themeOptions,
+            onSelect = viewModel::selectTheme
+        )
         CustomDivider()
         BackgroundService(viewModel)
         CustomDivider()
@@ -75,23 +120,29 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState, mainNavController: NavC
 }
 
 @Composable
-fun LanguageItem() {
-
+fun LanguageItem(
+    selected: LanguageOptions,
+    values: () -> Array<LanguageOptions>,
+    onSelect: (item: LanguageOptions) -> Unit
+) {
     DropDownEnumListItem(
-        selected = AppSettings.languageOption.data.collectAsState().value,
-        onSelect = { AppSettings.languageOption.value = it })
-    { LanguageOptions.values() }
-
+        selected = selected,
+        onSelect = onSelect,
+        values = values
+    )
 }
 
 @Composable
-fun ThemeItem() {
-
+fun ThemeItem(
+    selected: ThemeOptions,
+    values: () -> Array<ThemeOptions>,
+    onSelect: (item: ThemeOptions) -> Unit
+) {
     DropDownEnumListItem(
-        selected = AppSettings.themeOption.data.collectAsState().value,
-        onSelect = { AppSettings.themeOption.value = it })
-    { ThemeOptions.values() }
-
+        selected = selected,
+        onSelect = onSelect,
+        values = values
+    )
 }
 
 @Composable

@@ -7,6 +7,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import org.rhasspy.mobile.data.LanguageOptions
+import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.nativeutils.BatteryOptimization
@@ -16,6 +18,23 @@ import org.rhasspy.mobile.settings.sounds.SoundFile
 
 class SettingsScreenViewModel : ViewModel() {
     private val logger = Logger.withTag("SettingsScreenViewModel")
+
+
+    val currentLanguage: StateFlow<LanguageOptions> get() = AppSettings.languageOption.data
+    val languageOptions = LanguageOptions::values
+
+    fun selectLanguage(languageOption: LanguageOptions) {
+        AppSettings.languageOption.value = languageOption
+    }
+
+
+    val currentTheme: StateFlow<ThemeOptions> get() = AppSettings.themeOption.data
+    val themeOptions = ThemeOptions::values
+
+    fun selectTheme(themeOption: ThemeOptions) {
+        AppSettings.themeOption.value = themeOption
+    }
+
 
     private val currentAudioLevel = MutableStateFlow<Byte>(0)
     val audioLevel: StateFlow<Int> = currentAudioLevel.mapReadonlyState { it.toInt() }
