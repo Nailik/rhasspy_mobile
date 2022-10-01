@@ -16,7 +16,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.utils.Text
 
 /**
- * Dialog to show data privacy information
+ * button to open changelog dialog
  */
 @Composable
 fun DataPrivacyDialogButton() {
@@ -33,6 +33,9 @@ fun DataPrivacyDialogButton() {
     }
 }
 
+/**
+ * Dialog to show data privacy information
+ */
 @Composable
 fun DataPrivacyDialog(onDismissRequest: () -> Unit) {
     val scrollState = rememberScrollState()

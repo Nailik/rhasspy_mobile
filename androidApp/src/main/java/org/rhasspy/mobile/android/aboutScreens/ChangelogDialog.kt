@@ -17,7 +17,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.utils.Text
 
 /**
- * Displays changelog as text in a gialog
+ * button to open changelog dialog
  */
 @Composable
 fun ChangelogDialogButton(changelogText: String) {
@@ -34,6 +34,9 @@ fun ChangelogDialogButton(changelogText: String) {
     }
 }
 
+/**
+ * Displays changelog as text in a dialog
+ */
 @Composable
 fun ChangelogDialog(changelogText: String, onDismissRequest: () -> Unit) {
     val scrollState = rememberScrollState()
