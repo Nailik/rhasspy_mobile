@@ -1,29 +1,49 @@
 package org.rhasspy.mobile.android.bottomBarScreens
 
 import android.content.res.Configuration
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.shrinkOut
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.MicOff
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.navigation.LocalSnackbarHostState
 import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
-import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.android.utils.Icon
+import org.rhasspy.mobile.android.utils.Text
+import org.rhasspy.mobile.android.utils.TextWithAction
 import org.rhasspy.mobile.logic.State
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
@@ -32,7 +52,7 @@ var isMainActionBig = mutableStateOf(true)
 var mainActionVisible = mutableStateOf(true)
 
 @Composable
-fun HomeScreen(snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewModel = viewModel()) {
+fun HomeScreen(viewModel: HomeScreenViewModel = viewModel()) {
 
     when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
@@ -43,14 +63,12 @@ fun HomeScreen(snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewMo
                     modifier = Modifier
                         .fillMaxWidth(0.5f)
                         .fillMaxHeight(),
-                    snackbarHostState = snackbarHostState,
                     viewModel = viewModel,
                 )
                 BottomActions(
                     modifier = Modifier
                         .fillMaxHeight()
                         .fillMaxWidth(),
-                    snackbarHostState = snackbarHostState,
                     viewModel = viewModel
                 )
             }
@@ -63,12 +81,10 @@ fun HomeScreen(snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewMo
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth(),
-                    snackbarHostState = snackbarHostState,
                     viewModel = viewModel
                 )
                 BottomActions(
                     modifier = Modifier.fillMaxWidth(),
-                    snackbarHostState = snackbarHostState,
                     viewModel = viewModel
                 )
             }
@@ -79,18 +95,18 @@ fun HomeScreen(snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewMo
 }
 
 @Composable
-fun WakeUpAction(modifier: Modifier = Modifier, snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewModel) {
+fun WakeUpAction(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel) {
     //make smaller according to
     //val imeIsVisible = LocalWindowInsets.current.ime.isVisible
     BoxWithConstraints(
         modifier = modifier.padding(Dp(24f))
     ) {
-        MainActionButton(this.maxHeight, snackbarHostState, viewModel)
+        MainActionButton(this.maxHeight, viewModel)
     }
 }
 
 @Composable
-fun MainActionButton(maxHeight: Dp, snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewModel) {
+fun MainActionButton(maxHeight: Dp, viewModel: HomeScreenViewModel) {
 
     isMainActionBig.value = maxHeight >= 96.dp + (24.dp * 2)
     mainActionVisible.value = maxHeight > 24.dp || LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -101,37 +117,28 @@ fun MainActionButton(maxHeight: Dp, snackbarHostState: SnackbarHostState, viewMo
         visible = mainActionVisible.value,
         modifier = Modifier.fillMaxSize()
     ) {
-        MainActionFab(modifier = Modifier.fillMaxSize(), snackbarHostState, mainActionVisible.value, viewModel)
+        MainActionFab(modifier = Modifier.fillMaxSize(), mainActionVisible.value, viewModel)
     }
 
 }
 
 @Composable
-fun MainActionFab(modifier: Modifier = Modifier, snackbarHostState: SnackbarHostState?, isMainActionBig: Boolean, viewModel: HomeScreenViewModel) {
-
-
+fun MainActionFab(modifier: Modifier = Modifier, isMainActionBig: Boolean, viewModel: HomeScreenViewModel) {
     val iconSize = animateDpAsState(targetValue = if (isMainActionBig) 96.dp else 24.dp)
 
-    Fab(modifier = modifier, iconSize = iconSize.value, snackbarHostState, viewModel)
+    Fab(modifier = modifier, iconSize = iconSize.value, viewModel)
 
 }
 
 @Composable
-fun Fab(modifier: Modifier = Modifier, iconSize: Dp, snackbarHostState: SnackbarHostState?, viewModel: HomeScreenViewModel) {
+fun Fab(modifier: Modifier = Modifier, iconSize: Dp, viewModel: HomeScreenViewModel) {
 
-    val context = LocalContext.current
-    val toastText = translate(MR.strings.microphonePermissionDenied)
-
-    val requestMicrophonePermission = snackbarHostState?.let {
-        requestMicrophonePermission(snackbarHostState, MR.strings.microphonePermissionInfoRecord) {
+    val requestMicrophonePermission =
+        requestMicrophonePermission(LocalSnackbarHostState.current, MR.strings.microphonePermissionInfoRecord) {
             if (it) {
                 viewModel.toggleSession()
             }
         }
-    } ?: run {
-        //when there is no snackbarHostState it's not possible to request
-        { Toast.makeText(context, toastText, Toast.LENGTH_LONG).show() }
-    }
 
     FloatingActionButton(
         onClick = {
@@ -157,7 +164,7 @@ fun Fab(modifier: Modifier = Modifier, iconSize: Dp, snackbarHostState: Snackbar
 }
 
 @Composable
-fun BottomActions(modifier: Modifier = Modifier, snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewModel) {
+fun BottomActions(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel) {
     Column(
         modifier = modifier
             .padding(bottom = 24.dp)
@@ -173,14 +180,14 @@ fun BottomActions(modifier: Modifier = Modifier, snackbarHostState: SnackbarHost
                 .padding(start = 24.dp)
         }
 
-        TopRow(snackbarHostState, viewModel)
+        TopRow(viewModel)
         TextToRecognize(childModifier, viewModel)
         TextToSpeak(childModifier, viewModel)
     }
 }
 
 @Composable
-fun TopRow(snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewModel) {
+fun TopRow(viewModel: HomeScreenViewModel) {
     val state = animateDpAsState(targetValue = if (!mainActionVisible.value) 12.dp else 0.dp)
 
     Row(
@@ -195,7 +202,7 @@ fun TopRow(snackbarHostState: SnackbarHostState, viewModel: HomeScreenViewModel)
             exit = shrinkOut(shrinkTowards = Alignment.BottomStart),
             visible = !mainActionVisible.value
         ) {
-            MainActionFab(snackbarHostState = snackbarHostState, isMainActionBig = mainActionVisible.value, viewModel = viewModel)
+            MainActionFab(isMainActionBig = mainActionVisible.value, viewModel = viewModel)
         }
 
         PlayRecording(

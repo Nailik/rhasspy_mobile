@@ -22,8 +22,8 @@ class HomeScreenViewModel : ViewModel() {
     val isMicrophonePermissionRequestNotRequired: StateFlow<Boolean> = MicrophonePermission.granted
 
     private val isCurrentOverlayPermissionRequestRequired: StateFlow<Boolean> =
-        combineState(OverlayPermission.granted, AppSettings.isWakeWordLightIndication.data) { a: Boolean, b: Boolean ->
-            (a && !b && AppSettings.isWakeWordLightIndication.value)
+        combineState(OverlayPermission.granted, AppSettings.isWakeWordLightIndicationEnabled.data) { a: Boolean, b: Boolean ->
+            (a && !b && AppSettings.isWakeWordLightIndicationEnabled.value)
         }
 
     val isOverlayPermissionRequestRequired: StateFlow<Boolean> get() = isCurrentOverlayPermissionRequestRequired

@@ -390,8 +390,8 @@ fun WakeWord(viewModel: ConfigurationScreenViewModel, enabled: Boolean, snackbar
                 } else {
                     ConfigurationSettings.wakeWordOption.unsaved.value = it
                 }
-            })
-        { WakeWordOption.values() }
+            },
+            values = WakeWordOption::values)
 
         AnimatedVisibility(
             enter = expandVertically(),
@@ -446,8 +446,8 @@ fun WakeWord(viewModel: ConfigurationScreenViewModel, enabled: Boolean, snackbar
                 DropDownEnumListItem(
                     selected = ConfigurationSettings.wakeWordPorcupineLanguage.unsaved.collectAsState().value,
                     enabled = enabled,
-                    onSelect = { ConfigurationSettings.wakeWordPorcupineLanguage.unsaved.value = it })
-                { PorcupineLanguageOptions.values() }
+                    onSelect = { ConfigurationSettings.wakeWordPorcupineLanguage.unsaved.value = it },
+                    values = PorcupineLanguageOptions::values)
 
                 SliderListItem(
                     text = MR.strings.sensitivity,
@@ -474,8 +474,8 @@ fun SpeechToText(enabled: Boolean) {
         DropDownEnumListItem(
             selected = speechToTextOption,
             enabled = enabled,
-            onSelect = { ConfigurationSettings.speechToTextOption.unsaved.value = it })
-        { SpeechToTextOptions.values() }
+            onSelect = { ConfigurationSettings.speechToTextOption.unsaved.value = it },
+            values = SpeechToTextOptions::values)
 
         AnimatedVisibility(
             enter = expandVertically(),
@@ -506,8 +506,8 @@ fun IntentRecognition(enabled: Boolean) {
         DropDownEnumListItem(
             selected = intentRecognitionOption,
             enabled = enabled,
-            onSelect = { ConfigurationSettings.intentRecognitionOption.unsaved.value = it })
-        { IntentRecognitionOptions.values() }
+            onSelect = { ConfigurationSettings.intentRecognitionOption.unsaved.value = it },
+            values = IntentRecognitionOptions::values)
 
         AnimatedVisibility(
             enter = expandVertically(),
@@ -538,8 +538,8 @@ fun TextToSpeech(enabled: Boolean) {
         DropDownEnumListItem(
             selected = textToSpeechOption,
             enabled = enabled,
-            onSelect = { ConfigurationSettings.textToSpeechOption.unsaved.value = it })
-        { TextToSpeechOptions.values() }
+            onSelect = { ConfigurationSettings.textToSpeechOption.unsaved.value = it },
+            values = TextToSpeechOptions::values)
 
         AnimatedVisibility(
             enter = expandVertically(),
@@ -570,8 +570,8 @@ fun AudioPlaying(enabled: Boolean) {
         DropDownEnumListItem(
             selected = audioPlayingOption,
             enabled = enabled,
-            onSelect = { ConfigurationSettings.audioPlayingOption.unsaved.value = it })
-        { AudioPlayingOptions.values() }
+            onSelect = { ConfigurationSettings.audioPlayingOption.unsaved.value = it },
+            values = AudioPlayingOptions::values)
 
         AnimatedVisibility(
             enter = expandVertically(),
@@ -601,8 +601,8 @@ fun DialogueManagement(enabled: Boolean) {
         DropDownEnumListItem(
             selected = dialogueManagementOption,
             enabled = enabled,
-            onSelect = { ConfigurationSettings.dialogueManagementOption.unsaved.value = it })
-        { DialogueManagementOptions.values() }
+            onSelect = { ConfigurationSettings.dialogueManagementOption.unsaved.value = it },
+        values = DialogueManagementOptions::values)
     }
 }
 
@@ -620,8 +620,8 @@ fun IntentHandling(enabled: Boolean) {
             enabled = enabled,
             onSelect = {
                 ConfigurationSettings.intentHandlingOption.unsaved.value = it
-            })
-        { IntentHandlingOptions.values() }
+            },
+            values = IntentHandlingOptions::values)
 
 
         AnimatedVisibility(
