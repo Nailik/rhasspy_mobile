@@ -13,7 +13,7 @@ object OverlayServices {
             logger.v { "reset overlay settings because permission is missing" }
             //reset services that need the permission
             AppSettings.isMicrophoneOverlayEnabled.value = false
-            AppSettings.isWakeWordLightIndication.value = false
+            AppSettings.isWakeWordLightIndicationEnabled.value = false
         }
     }
 

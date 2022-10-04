@@ -11,7 +11,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.LayersClear
-import androidx.compose.material3.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -67,9 +71,7 @@ fun requestOverlayPermission(
         OverlayPermissionInfoDialog { result ->
             openRequestPermissionDialog.value = false
             if (result) {
-                OverlayPermission.requestPermission {
-                    onResult.invoke(it)
-                }
+                OverlayPermission.requestPermission(onResult::invoke)
             }
         }
     }

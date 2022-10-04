@@ -37,7 +37,7 @@ import org.rhasspy.mobile.viewModels.ConfigurationScreenViewModel
 import java.math.RoundingMode
 
 @Composable
-fun ConfigurationScreen(snackbarHostState: SnackbarHostState, viewModel: ConfigurationScreenViewModel = viewModel()) {
+fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = viewModel()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -54,7 +54,7 @@ fun ConfigurationScreen(snackbarHostState: SnackbarHostState, viewModel: Configu
         CustomDivider()
         AudioRecording(isEnabled)
         CustomDivider()
-        WakeWord(viewModel, isEnabled, snackbarHostState)
+        WakeWord(viewModel, isEnabled)
         CustomDivider()
         SpeechToText(isEnabled)
         CustomDivider()
