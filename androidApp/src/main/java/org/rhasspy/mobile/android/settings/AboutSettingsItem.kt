@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.settingsScreen
+package org.rhasspy.mobile.android.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.navigation.LocalMainNavController
+import org.rhasspy.mobile.android.screens.LocalMainNavController
 import org.rhasspy.mobile.android.navigation.MainScreens
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.ListElement

@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.aboutScreen
+package org.rhasspy.mobile.android.about
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState

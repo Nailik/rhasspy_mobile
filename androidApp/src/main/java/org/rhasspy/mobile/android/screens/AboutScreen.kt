@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.aboutScreen
+package org.rhasspy.mobile.android.screens
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -26,6 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.about.ChangelogDialogButton
+import org.rhasspy.mobile.android.about.DataPrivacyDialogButton
+import org.rhasspy.mobile.android.about.LibrariesContainer
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.android.utils.translate

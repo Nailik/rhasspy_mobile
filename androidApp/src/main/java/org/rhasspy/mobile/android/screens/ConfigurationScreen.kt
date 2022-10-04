@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.bottomBarScreens
+package org.rhasspy.mobile.android.screens
 
 import android.content.Intent
 import android.net.Uri

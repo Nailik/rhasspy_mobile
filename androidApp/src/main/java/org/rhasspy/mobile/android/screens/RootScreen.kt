@@ -13,13 +13,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import org.rhasspy.mobile.android.aboutScreen.AboutScreen
+import org.rhasspy.mobile.android.screens.AboutScreen
+import org.rhasspy.mobile.android.screens.BottomBarScreensNavigation
+import org.rhasspy.mobile.android.screens.LocalMainNavController
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.android.theme.getIsDarkTheme
 
 @Preview
 @Composable
-fun MainScreenNavigation() {
+fun RootNavigation() {
     AppTheme(true) {
         rememberSystemUiController().setStatusBarColor(MaterialTheme.colorScheme.surfaceVariant, darkIcons = !getIsDarkTheme())
         //fixes bright flashing when navigating between screens

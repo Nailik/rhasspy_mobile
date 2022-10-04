@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.settingsScreen
+package org.rhasspy.mobile.android.settings
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState

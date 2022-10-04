@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.aboutScreen
+package org.rhasspy.mobile.android.about
 
 import android.content.Context
 import androidx.compose.foundation.clickable

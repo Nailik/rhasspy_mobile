@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.settingsScreen
+package org.rhasspy.mobile.android.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

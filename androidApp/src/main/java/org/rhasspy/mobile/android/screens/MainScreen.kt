@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.navigation
+package org.rhasspy.mobile.android.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
@@ -21,6 +21,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Autorenew
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.LayersClear
+import androidx.compose.material.icons.filled.MicOff
 import androidx.compose.material.icons.filled.PublishedWithChanges
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.AlertDialog
@@ -60,13 +62,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.bottomBarScreens.ConfigurationScreen
 import org.rhasspy.mobile.android.bottomBarScreens.HomeScreen
 import org.rhasspy.mobile.android.bottomBarScreens.LogScreen
 import org.rhasspy.mobile.android.bottomBarScreens.LogScreenActions
-import org.rhasspy.mobile.android.permissions.MicrophonePermissionRequired
-import org.rhasspy.mobile.android.permissions.OverlayPermissionRequired
-import org.rhasspy.mobile.android.settingsScreen.SettingsScreen
+import org.rhasspy.mobile.android.navigation.BottomBarScreens
+import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
+import org.rhasspy.mobile.android.permissions.requestOverlayPermission
+import org.rhasspy.mobile.android.settings.SettingsScreen
+import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.android.utils.translate
 import org.rhasspy.mobile.services.MqttService
@@ -194,10 +197,62 @@ fun RowScope.NavigationItem(screen: BottomBarScreens) {
 @Composable
 fun HomeAndConfigScreenActions(viewModel: HomeScreenViewModel) {
     Row(modifier = Modifier.padding(start = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        MicrophonePermissionRequired(viewModel)
-        OverlayPermissionRequired(viewModel)
+        MicrophonePermissionMissing(viewModel)
+        OverlayPermissionMissing(viewModel)
         MqttConnectionStatus()
         UnsavedChanges(viewModel)
+    }
+}
+
+@Composable
+fun MicrophonePermissionMissing(viewModel: HomeScreenViewModel) {
+    AnimatedVisibility(
+        enter = fadeIn(animationSpec = tween(50)),
+        exit = fadeOut(animationSpec = tween(50)),
+        visible = !viewModel.isMicrophonePermissionRequestNotRequired.collectAsState().value
+    ) {
+        val microphonePermission = requestMicrophonePermission(MR.strings.microphonePermissionInfoWakeWord) {}
+
+        IconButton(
+            onClick = microphonePermission::invoke,
+            modifier = Modifier.background(
+                color = MaterialTheme.colorScheme.errorContainer,
+                shape = RoundedCornerShape(8.dp)
+            )
+        )
+        {
+            Icon(
+                imageVector = Icons.Filled.MicOff,
+                tint = MaterialTheme.colorScheme.onErrorContainer,
+                contentDescription = MR.strings.microphone
+            )
+        }
+    }
+}
+
+@Composable
+fun OverlayPermissionMissing(viewModel: HomeScreenViewModel) {
+    AnimatedVisibility(
+        enter = fadeIn(animationSpec = tween(50)),
+        exit = fadeOut(animationSpec = tween(50)),
+        visible = viewModel.isOverlayPermissionRequestRequired.collectAsState().value
+    ) {
+        val overlayPermission = requestOverlayPermission {}
+
+        IconButton(
+            onClick = { overlayPermission.invoke() },
+            modifier = Modifier.background(
+                color = MaterialTheme.colorScheme.errorContainer,
+                shape = RoundedCornerShape(8.dp)
+            )
+        )
+        {
+            Icon(
+                imageVector = Icons.Filled.LayersClear,
+                tint = MaterialTheme.colorScheme.onErrorContainer,
+                contentDescription = MR.strings.overlay
+            )
+        }
     }
 }
 
@@ -221,7 +276,7 @@ fun MqttConnectionStatus() {
             )
         )
         {
-            org.rhasspy.mobile.android.utils.Icon(
+            Icon(
                 imageVector = Icons.Filled.Error,
                 contentDescription = MR.strings.notConnected
             )
@@ -270,7 +325,7 @@ fun UnsavedChanges(viewModel: HomeScreenViewModel) {
         Row(modifier = Modifier.padding(start = 8.dp)) {
             IconButton(onClick = { viewModel.resetChanges() })
             {
-                org.rhasspy.mobile.android.utils.Icon(
+                Icon(
                     imageVector = Icons.Filled.Restore,
                     contentDescription = MR.strings.reset
                 )
@@ -278,7 +333,7 @@ fun UnsavedChanges(viewModel: HomeScreenViewModel) {
             Spacer(modifier = Modifier.width(16.dp))
             Button(
                 onClick = { viewModel.saveAndApplyChanges() }) {
-                org.rhasspy.mobile.android.utils.Icon(
+                Icon(
                     imageVector = Icons.Filled.PublishedWithChanges,
                     contentDescription = MR.strings.save
                 )
@@ -300,7 +355,7 @@ fun UnsavedChanges(viewModel: HomeScreenViewModel) {
             )
         )
 
-        org.rhasspy.mobile.android.utils.Icon(
+        Icon(
             modifier = Modifier.rotate(angle),
             imageVector = Icons.Filled.Autorenew,
             contentDescription = MR.strings.reset
