@@ -200,7 +200,7 @@ object StateMachine {
     fun audioFrame(byteData: List<Byte>) {
         coroutineScope.launch {
 
-            if (AppSettings.isLogAudioFrames.value) {
+            if (AppSettings.isLogAudioFramesEnabled.value) {
                 logger.d { "audioFrame ${byteData.size}" }
             }
 

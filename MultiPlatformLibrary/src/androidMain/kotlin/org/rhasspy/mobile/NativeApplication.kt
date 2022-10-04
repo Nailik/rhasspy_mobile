@@ -2,7 +2,13 @@ package org.rhasspy.mobile
 
 import android.app.Activity
 import android.os.Bundle
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 actual open class NativeApplication : MultiDexApplication() {
 
@@ -10,6 +16,19 @@ actual open class NativeApplication : MultiDexApplication() {
         private set
 
     actual open fun startNativeServices() {}
+
+    init {
+        ProcessLifecycleOwner.get().lifecycle.addObserver(object : LifecycleEventObserver {
+            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                when (event) {
+                    Lifecycle.Event.ON_START -> currentlyAppInBackground.value = false
+                    Lifecycle.Event.ON_STOP -> currentlyAppInBackground.value = true
+                    else -> {}
+                }
+            }
+        })
+
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -32,5 +51,8 @@ actual open class NativeApplication : MultiDexApplication() {
     }
 
     actual open fun restart() {}
+    actual val currentlyAppInBackground = MutableStateFlow(false)
+    actual val isAppInBackground: StateFlow<Boolean>
+        get() = currentlyAppInBackground
 
 }

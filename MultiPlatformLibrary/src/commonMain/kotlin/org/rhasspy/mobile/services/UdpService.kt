@@ -1,9 +1,12 @@
 package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
-import io.ktor.network.selector.*
-import io.ktor.network.sockets.*
-import io.ktor.utils.io.core.*
+import io.ktor.network.selector.SelectorManager
+import io.ktor.network.sockets.Datagram
+import io.ktor.network.sockets.InetSocketAddress
+import io.ktor.network.sockets.SocketAddress
+import io.ktor.network.sockets.aSocket
+import io.ktor.utils.io.core.ByteReadPacket
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
 import org.rhasspy.mobile.settings.AppSettings
@@ -49,7 +52,7 @@ object UdpService {
 
     suspend fun streamAudio(byteData: List<Byte>) {
         val data = byteData.toByteArray()
-        if (AppSettings.isLogAudioFrames.value) {
+        if (AppSettings.isLogAudioFramesEnabled.value) {
             logger.v { "streamAudio ${data.size}" }
         }
 

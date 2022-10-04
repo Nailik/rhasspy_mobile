@@ -1,11 +1,10 @@
-package org.rhasspy.mobile.android.aboutScreens
+package org.rhasspy.mobile.android.aboutScreen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,26 +19,27 @@ import org.rhasspy.mobile.android.utils.Text
  * button to open changelog dialog
  */
 @Composable
-fun ChangelogDialogButton(changelogText: String) {
+fun DataPrivacyDialogButton() {
     var openDialog by rememberSaveable { mutableStateOf(false) }
 
     OutlinedButton(onClick = { openDialog = true }) {
-        Text(MR.strings.changelog)
+        Text(MR.strings.dataPrivacy)
     }
 
     if (openDialog) {
-        ChangelogDialog(changelogText) {
+        DataPrivacyDialog {
             openDialog = false
         }
     }
 }
 
 /**
- * Displays changelog as text in a dialog
+ * Dialog to show data privacy information
  */
 @Composable
-fun ChangelogDialog(changelogText: String, onDismissRequest: () -> Unit) {
+fun DataPrivacyDialog(onDismissRequest: () -> Unit) {
     val scrollState = rememberScrollState()
+
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
@@ -47,19 +47,11 @@ fun ChangelogDialog(changelogText: String, onDismissRequest: () -> Unit) {
                 Text(MR.strings.close)
             }
         },
-        title = {
-            Text(MR.strings.changelog)
-        },
         text = {
             Column(
                 modifier = Modifier.verticalScroll(scrollState),
             ) {
-                changelogText.split("\\\\")
-                    .map { it.replace("\n", "") }
-                    .filter { it.isNotEmpty() }
-                    .forEach {
-                        Text(text = "· $it")
-                    }
+                Text(MR.strings.dataPrivacy)
             }
         }
     )

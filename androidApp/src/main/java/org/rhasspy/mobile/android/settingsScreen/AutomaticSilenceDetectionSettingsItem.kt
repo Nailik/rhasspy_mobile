@@ -31,7 +31,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.navigation.LocalSnackbarHostState
 import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
 import org.rhasspy.mobile.android.utils.ExpandableListItem
 import org.rhasspy.mobile.android.utils.Icon
@@ -143,13 +142,12 @@ private fun Test(viewModel: SettingsScreenViewModel) {
 private fun RowScope.StartTestButton(viewModel: SettingsScreenViewModel, animatedWeight: Float) {
     val status = viewModel.status.collectAsState().value
 
-    val requestMicrophonePermission =
-        requestMicrophonePermission(LocalSnackbarHostState.current, MR.strings.microphonePermissionInfoAudioLevel) {
-            if (it) {
-                //TODO use view model to request persmission if necessary
-                viewModel.toggleAudioLevelTest()
-            }
+    val requestMicrophonePermission = requestMicrophonePermission(MR.strings.microphonePermissionInfoAudioLevel) {
+        if (it) {
+            //TODO use view model to request persmission if necessary
+            viewModel.toggleAudioLevelTest()
         }
+    }
 
     Button(
         modifier = Modifier

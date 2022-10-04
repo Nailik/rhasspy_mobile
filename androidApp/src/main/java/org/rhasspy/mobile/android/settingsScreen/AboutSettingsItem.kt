@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.navigation.LocalNavigation
+import org.rhasspy.mobile.android.navigation.LocalMainNavController
 import org.rhasspy.mobile.android.navigation.MainScreens
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.ListElement
@@ -19,7 +19,7 @@ import org.rhasspy.mobile.android.utils.translate
 
 @Composable
 fun AboutSettingsItem() {
-    val navController = LocalNavigation.current
+    val navController = LocalMainNavController.current
     ListElement(
         modifier = Modifier.clickable {
             navController.navigate(MainScreens.AboutScreen.name)

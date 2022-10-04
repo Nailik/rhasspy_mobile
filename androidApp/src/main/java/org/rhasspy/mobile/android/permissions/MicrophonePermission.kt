@@ -12,8 +12,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -21,6 +32,7 @@ import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.navigation.LocalSnackbarHostState
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.android.utils.translate
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
@@ -34,13 +46,13 @@ import org.rhasspy.mobile.viewModels.HomeScreenViewModel
  * click on check audio level button
  */
 @Composable
-fun MicrophonePermissionRequired(viewModel: HomeScreenViewModel, snackbarHostState: SnackbarHostState) {
+fun MicrophonePermissionRequired(viewModel: HomeScreenViewModel) {
     AnimatedVisibility(
         enter = fadeIn(animationSpec = tween(50)),
         exit = fadeOut(animationSpec = tween(50)),
         visible = !viewModel.isMicrophonePermissionRequestNotRequired.collectAsState().value
     ) {
-        val microphonePermission = requestMicrophonePermission(snackbarHostState, MR.strings.microphonePermissionInfoWakeWord) {}
+        val microphonePermission = requestMicrophonePermission(MR.strings.microphonePermissionInfoWakeWord) {}
 
         IconButton(
             onClick = { microphonePermission.invoke() },
@@ -61,10 +73,10 @@ fun MicrophonePermissionRequired(viewModel: HomeScreenViewModel, snackbarHostSta
 
 @Composable
 fun requestMicrophonePermission(
-    snackbarHostState: SnackbarHostState,
     informationText: StringResource,
     onResult: (granted: Boolean) -> Unit
 ): () -> Unit {
+    val snackbarHostState = LocalSnackbarHostState.current
     val openRequestPermissionDialog = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 

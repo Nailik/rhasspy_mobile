@@ -3,10 +3,20 @@ package org.rhasspy.mobile.android.bottomBarScreens
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -15,9 +25,12 @@ import androidx.compose.material.icons.filled.Autorenew
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -29,8 +42,28 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
-import org.rhasspy.mobile.android.utils.*
-import org.rhasspy.mobile.data.*
+import org.rhasspy.mobile.android.utils.CustomDivider
+import org.rhasspy.mobile.android.utils.DropDownEnumListItem
+import org.rhasspy.mobile.android.utils.DropDownListWithFileOpen
+import org.rhasspy.mobile.android.utils.ExpandableListItem
+import org.rhasspy.mobile.android.utils.ExpandableListItemString
+import org.rhasspy.mobile.android.utils.Icon
+import org.rhasspy.mobile.android.utils.OutlineButtonListItem
+import org.rhasspy.mobile.android.utils.RadioButtonListItem
+import org.rhasspy.mobile.android.utils.SliderListItem
+import org.rhasspy.mobile.android.utils.SwitchListItem
+import org.rhasspy.mobile.android.utils.Text
+import org.rhasspy.mobile.android.utils.TextFieldListItem
+import org.rhasspy.mobile.android.utils.toText
+import org.rhasspy.mobile.android.utils.translate
+import org.rhasspy.mobile.data.AudioPlayingOptions
+import org.rhasspy.mobile.data.DialogueManagementOptions
+import org.rhasspy.mobile.data.IntentHandlingOptions
+import org.rhasspy.mobile.data.IntentRecognitionOptions
+import org.rhasspy.mobile.data.PorcupineLanguageOptions
+import org.rhasspy.mobile.data.SpeechToTextOptions
+import org.rhasspy.mobile.data.TextToSpeechOptions
+import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.viewModels.ConfigurationScreenViewModel
@@ -366,7 +399,7 @@ fun AudioRecording(enabled: Boolean) {
 }
 
 @Composable
-fun WakeWord(viewModel: ConfigurationScreenViewModel, enabled: Boolean, snackbarHostState: SnackbarHostState) {
+fun WakeWord(viewModel: ConfigurationScreenViewModel, enabled: Boolean) {
 
     val wakeWordValueOption = ConfigurationSettings.wakeWordOption.unsaved.collectAsState().value
 
@@ -375,7 +408,7 @@ fun WakeWord(viewModel: ConfigurationScreenViewModel, enabled: Boolean, snackbar
         secondaryText = wakeWordValueOption.text
     ) {
 
-        val requestMicrophonePermission = requestMicrophonePermission(snackbarHostState, MR.strings.microphonePermissionInfoWakeWord) {
+        val requestMicrophonePermission = requestMicrophonePermission(MR.strings.microphonePermissionInfoWakeWord) {
             if (it) {
                 ConfigurationSettings.wakeWordOption.unsaved.value = WakeWordOption.Porcupine
             }

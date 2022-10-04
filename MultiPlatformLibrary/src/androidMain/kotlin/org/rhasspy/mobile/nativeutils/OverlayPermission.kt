@@ -29,7 +29,7 @@ actual object OverlayPermission {
         })
     }
 
-    fun requestPermission(onResult: (granted: Boolean) -> Unit) {
+    actual fun requestPermission(onResult: (granted: Boolean) -> Unit) {
         if (status.value) {
             onResult.invoke(true)
             return

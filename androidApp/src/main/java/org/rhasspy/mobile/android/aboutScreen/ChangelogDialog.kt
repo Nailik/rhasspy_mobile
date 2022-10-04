@@ -1,10 +1,11 @@
-package org.rhasspy.mobile.android.aboutScreens
+package org.rhasspy.mobile.android.aboutScreen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,27 +20,26 @@ import org.rhasspy.mobile.android.utils.Text
  * button to open changelog dialog
  */
 @Composable
-fun DataPrivacyDialogButton() {
+fun ChangelogDialogButton(changelogText: String) {
     var openDialog by rememberSaveable { mutableStateOf(false) }
 
     OutlinedButton(onClick = { openDialog = true }) {
-        Text(MR.strings.dataPrivacy)
+        Text(MR.strings.changelog)
     }
 
     if (openDialog) {
-        DataPrivacyDialog {
+        ChangelogDialog(changelogText) {
             openDialog = false
         }
     }
 }
 
 /**
- * Dialog to show data privacy information
+ * Displays changelog as text in a dialog
  */
 @Composable
-fun DataPrivacyDialog(onDismissRequest: () -> Unit) {
+fun ChangelogDialog(changelogText: String, onDismissRequest: () -> Unit) {
     val scrollState = rememberScrollState()
-
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
@@ -47,11 +47,19 @@ fun DataPrivacyDialog(onDismissRequest: () -> Unit) {
                 Text(MR.strings.close)
             }
         },
+        title = {
+            Text(MR.strings.changelog)
+        },
         text = {
             Column(
                 modifier = Modifier.verticalScroll(scrollState),
             ) {
-                Text(MR.strings.dataPrivacy)
+                changelogText.split("\\\\")
+                    .map { it.replace("\n", "") }
+                    .filter { it.isNotEmpty() }
+                    .forEach {
+                        Text(text = "· $it")
+                    }
             }
         }
     )

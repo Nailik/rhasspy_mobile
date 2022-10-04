@@ -23,6 +23,7 @@ import org.rhasspy.mobile.settings.sounds.SoundFile
 class SettingsScreenViewModel : ViewModel() {
     private val logger = Logger.withTag("SettingsScreenViewModel")
 
+    private val customSoundValues = MutableStateFlow(AppSettings.customSounds.value.map { SoundFile(it, false) }.toTypedArray())
     init {
         checkCustomSoundUsage()
     }
@@ -111,7 +112,6 @@ class SettingsScreenViewModel : ViewModel() {
     val recordedSound: StateFlow<String> get() = AppSettings.recordedSound.data
     val errorSound: StateFlow<String> get() = AppSettings.errorSound.data
 
-    private val customSoundValues = MutableStateFlow(AppSettings.customSounds.value.map { SoundFile(it, false) }.toTypedArray())
     val customSoundValuesUi: StateFlow<Array<SoundFile>> get() = customSoundValues
 
     fun selectWakeSoundFile(fileName: String) {

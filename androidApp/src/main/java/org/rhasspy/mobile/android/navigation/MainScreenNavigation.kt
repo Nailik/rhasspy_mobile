@@ -6,13 +6,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import org.rhasspy.mobile.android.aboutScreens.AboutScreen
+import org.rhasspy.mobile.android.aboutScreen.AboutScreen
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.android.theme.getIsDarkTheme
 
@@ -29,15 +30,19 @@ fun MainScreenNavigation() {
             ) {
                 val navController = rememberNavController()
 
-                NavHost(
-                    navController = navController,
-                    startDestination = MainScreens.BoomBarScreen.name,
+                CompositionLocalProvider(
+                    LocalMainNavController provides navController
                 ) {
-                    composable(MainScreens.BoomBarScreen.name) {
-                        BottomBarScreensNavigation(mainNavController = navController)
-                    }
-                    composable(MainScreens.AboutScreen.name) {
-                        AboutScreen()
+                    NavHost(
+                        navController = navController,
+                        startDestination = MainScreens.BoomBarScreen.name,
+                    ) {
+                        composable(MainScreens.BoomBarScreen.name) {
+                            BottomBarScreensNavigation()
+                        }
+                        composable(MainScreens.AboutScreen.name) {
+                            AboutScreen()
+                        }
                     }
                 }
             }

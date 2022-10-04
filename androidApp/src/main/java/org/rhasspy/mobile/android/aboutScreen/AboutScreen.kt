@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.aboutScreens
+package org.rhasspy.mobile.android.aboutScreen
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.ExperimentalFoundationApi

@@ -79,23 +79,24 @@ object IndicationService {
             IndicationState.Recording,
             IndicationState.Thinking,
             IndicationState.Speaking -> {
-                if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplay.value) {
+                if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplayEnabled.value) {
                     NativeIndication.wakeUpScreen()
                 }
 
-                if (AppSettings.isWakeWordLightIndication.value) {
+                if (AppSettings.isWakeWordLightIndicationEnabled.value) {
                     showVisualIndication.value = true
                 }
             }
         }
 
         //handle sound indication
-        if (AppSettings.isWakeWordSoundIndication.value) {
+        if (AppSettings.isWakeWordSoundIndicationEnabled.value) {
             when (state) {
                 State.StartingSession -> playWakeSound()
                 State.RecordingStopped -> playRecordedSound()
                 State.TranscribingError,
                 State.RecognizingIntentError -> playErrorSound()
+
                 else -> {}
             }
         }

@@ -1,12 +1,20 @@
 package org.rhasspy.mobile.nativeutils
 
 import co.touchlab.kermit.Logger
-import org.eclipse.paho.client.mqttv3.*
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.MqttClient
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions
+import org.eclipse.paho.client.mqttv3.MqttException
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException
+import org.eclipse.paho.client.mqttv3.MqttSecurityException
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence
-import org.rhasspy.mobile.mqtt.*
+import org.rhasspy.mobile.mqtt.MqttConnectionOptions
+import org.rhasspy.mobile.mqtt.MqttError
 import org.rhasspy.mobile.mqtt.MqttMessage
+import org.rhasspy.mobile.mqtt.MqttPersistence
+import org.rhasspy.mobile.mqtt.MqttQos
+import org.rhasspy.mobile.mqtt.MqttStatus
 import org.rhasspy.mobile.settings.AppSettings
 
 actual class MqttClient actual constructor(
@@ -45,7 +53,7 @@ actual class MqttClient actual constructor(
 
 
     actual suspend fun publish(topic: String, msg: MqttMessage, timeout: Long): MqttError? = try {
-        if (!topic.contains("audioFrame") || AppSettings.isLogAudioFrames.value) {
+        if (!topic.contains("audioFrame") || AppSettings.isLogAudioFramesEnabled.value) {
             //logging every audio frame really fills up the logs
             logger.v {
                 "publish $topic $msg"
@@ -65,7 +73,6 @@ actual class MqttClient actual constructor(
         MqttError(mqttEx.message ?: "Message delivery failed.", MqttStatus.MSG_DELIVERY_FAILED)
     }
 
-    @Suppress("unused", "RedundantSuspendModifier")
     /**
      * Subscribes to a topic.
      * @param topic The MQTT topic to use.
@@ -81,7 +88,7 @@ actual class MqttClient actual constructor(
         MqttError(ex.message ?: "Subscription failed.", MqttStatus.SUBSCRIBE_FAILED)
     }
 
-    @Suppress("unused", "RedundantSuspendModifier")
+    @Suppress("unused")
     /**
      * Will unsubscribe from one or more topics.
      * @param topics One or more topics to unsubscribe from. Can include topic filter(s).
@@ -96,7 +103,6 @@ actual class MqttClient actual constructor(
         MqttError(ex.message ?: "", MqttStatus.UNSUBSCRIBE_FAILED)
     }
 
-    @Suppress("unused", "RedundantSuspendModifier")
     /**
      * Connects to the MQTT Broker.
      * @param connOptions The connection options to use.

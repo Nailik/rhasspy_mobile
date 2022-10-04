@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.navigation.LocalSnackbarHostState
 import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
@@ -133,12 +132,11 @@ fun MainActionFab(modifier: Modifier = Modifier, isMainActionBig: Boolean, viewM
 @Composable
 fun Fab(modifier: Modifier = Modifier, iconSize: Dp, viewModel: HomeScreenViewModel) {
 
-    val requestMicrophonePermission =
-        requestMicrophonePermission(LocalSnackbarHostState.current, MR.strings.microphonePermissionInfoRecord) {
-            if (it) {
-                viewModel.toggleSession()
-            }
+    val requestMicrophonePermission = requestMicrophonePermission(MR.strings.microphonePermissionInfoRecord) {
+        if (it) {
+            viewModel.toggleSession()
         }
+    }
 
     FloatingActionButton(
         onClick = {

@@ -96,7 +96,7 @@ object RecordingService {
                 data.addAll(byteData)
                 StateMachine.audioFrame(byteData)
 
-                if (AppSettings.isAutomaticSilenceDetection.value && ConfigurationSettings.wakeWordOption.value != WakeWordOption.MQTT) {
+                if (AppSettings.isAutomaticSilenceDetectionEnabled.value && ConfigurationSettings.wakeWordOption.value != WakeWordOption.MQTT) {
                     if (byteData.isNotAboveThreshold(AppSettings.automaticSilenceDetectionAudioLevel.value)) {
                         //no data was above threshold, there is silence
                         silenceStartTime?.also {

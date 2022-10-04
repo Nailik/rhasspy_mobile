@@ -7,6 +7,8 @@ expect object OverlayPermission {
 
     val granted: StateFlow<Boolean>
 
+    fun requestPermission(onResult: (granted: Boolean) -> Unit)
+
     fun isGranted(): Boolean
 
 }
