@@ -26,7 +26,7 @@ object UdpService {
      * suspend is necessary else there is an network on main thread error at least on android
      */
     fun start() {
-        if (!ConfigurationSettings.isUDPOutput.value) {
+        if (!ConfigurationSettings.isUdpOutputEnabled.value) {
             logger.v { "not enabled" }
             return
         }

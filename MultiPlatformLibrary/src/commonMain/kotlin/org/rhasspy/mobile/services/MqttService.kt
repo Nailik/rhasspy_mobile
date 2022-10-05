@@ -2,16 +2,34 @@ package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
-import io.ktor.utils.io.core.*
-import kotlinx.coroutines.*
+import io.ktor.utils.io.core.toByteArray
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.floatOrNull
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.put
 import org.rhasspy.mobile.data.AudioPlayingOptions
 import org.rhasspy.mobile.logic.StateMachine
-import org.rhasspy.mobile.mqtt.*
+import org.rhasspy.mobile.mqtt.MQTTTopicsPublish
+import org.rhasspy.mobile.mqtt.MQTTTopicsSubscription
+import org.rhasspy.mobile.mqtt.MqttConnectionOptions
+import org.rhasspy.mobile.mqtt.MqttError
+import org.rhasspy.mobile.mqtt.MqttMessage
+import org.rhasspy.mobile.mqtt.MqttPersistence
+import org.rhasspy.mobile.mqtt.MqttStatus
 import org.rhasspy.mobile.nativeutils.MqttClient
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
@@ -64,7 +82,7 @@ object MqttService {
         connectionError.value = null
         connectionLostError.value = null
 
-        if (!ConfigurationSettings.isMQTTEnabled.value) {
+        if (!ConfigurationSettings.isMqttEnabled.value) {
             logger.v { "mqtt not enabled" }
             return
         }
@@ -88,7 +106,7 @@ object MqttService {
     private suspend fun retryToConnect() {
         logger.d { "retry to connect to mqtt" }
         connectClient()
-        if (!isConnected.value && ConfigurationSettings.isMQTTEnabled.value) {
+        if (!isConnected.value && ConfigurationSettings.isMqttEnabled.value) {
             val seconds = (ConfigurationSettings.mqttRetryInterval.value.toLongOrNull() ?: 10).seconds
             logger.d { "retry did not work, retry in $seconds seconds" }
             delay(seconds)

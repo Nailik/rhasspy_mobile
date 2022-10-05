@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.navigation
+package org.rhasspy.mobile.android.screens
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -25,4 +25,19 @@ enum class BottomBarScreens(val icon: @Composable () -> Unit, val label: @Compos
 enum class MainScreens {
     BoomBarScreen,
     AboutScreen
+}
+
+enum class ConfigurationScreens {
+    Default,
+    Webserver,
+    RemoteHermesHTTP,
+    Mqtt,
+    AudioRecording,
+    WakeWord,
+    SpeechToText,
+    IntentRecognition,
+    TextToSpeech,
+    AudioPlaying,
+    DialogueManagement,
+    IntentHandling
 }

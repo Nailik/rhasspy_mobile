@@ -16,6 +16,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.rhasspy.mobile.android.screens.AboutScreen
 import org.rhasspy.mobile.android.screens.BottomBarScreensNavigation
 import org.rhasspy.mobile.android.screens.LocalMainNavController
+import org.rhasspy.mobile.android.screens.MainScreens
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.android.theme.getIsDarkTheme
 

@@ -14,10 +14,15 @@ import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Autorenew
 import androidx.compose.material.icons.filled.Error
@@ -25,6 +30,7 @@ import androidx.compose.material.icons.filled.LayersClear
 import androidx.compose.material.icons.filled.MicOff
 import androidx.compose.material.icons.filled.PublishedWithChanges
 import androidx.compose.material.icons.filled.Restore
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,8 +44,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
@@ -57,6 +65,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -65,7 +74,6 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.bottomBarScreens.HomeScreen
 import org.rhasspy.mobile.android.bottomBarScreens.LogScreen
 import org.rhasspy.mobile.android.bottomBarScreens.LogScreenActions
-import org.rhasspy.mobile.android.navigation.BottomBarScreens
 import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
 import org.rhasspy.mobile.android.permissions.requestOverlayPermission
 import org.rhasspy.mobile.android.settings.SettingsScreen
@@ -74,7 +82,6 @@ import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.android.utils.translate
 import org.rhasspy.mobile.services.MqttService
 import org.rhasspy.mobile.services.ServiceState
-import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.viewModels.GlobalData
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
@@ -90,7 +97,20 @@ val LocalSnackbarHostState = compositionLocalOf<SnackbarHostState> {
     error("No SnackbarHostState provided")
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+val LocalBottomSheetNavController = compositionLocalOf<NavHostController> {
+    error("No SnackbarHostState provided")
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+val LocalModalBottomSheetState = compositionLocalOf<ModalBottomSheetState> {
+    error("No SnackbarHostState provided")
+}
+
+val LocalModalBottomSheetScreen = compositionLocalOf<MutableState<ConfigurationScreens>> {
+    error("No SnackbarHostState provided")
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun BoxWithConstraintsScope.BottomBarScreensNavigation(viewModel: HomeScreenViewModel = viewModel()) {
     var isBottomNavigationHidden by remember { mutableStateOf(false) }
@@ -98,43 +118,67 @@ fun BoxWithConstraintsScope.BottomBarScreensNavigation(viewModel: HomeScreenView
     isBottomNavigationHidden = this.maxHeight < 250.dp
 
     val navController = rememberNavController()
+    val localBottomSheetNavController = rememberNavController()
+
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
+    )
+
+    val sheetScreen = rememberSaveable { mutableStateOf(ConfigurationScreens.WakeWord) }
 
     CompositionLocalProvider(
         LocalNavController provides navController,
-        LocalSnackbarHostState provides snackbarHostState
+        LocalSnackbarHostState provides snackbarHostState,
+        LocalBottomSheetNavController provides localBottomSheetNavController,
+        LocalModalBottomSheetState provides sheetState,
+        LocalModalBottomSheetScreen provides sheetScreen
     ) {
-        Scaffold(
-            topBar = { TopAppBar(viewModel) },
-            snackbarHost = { SnackbarHost(snackbarHostState) },
-            bottomBar = {
-                //hide bottom navigation with keyboard and small screens
-                if (!isBottomNavigationHidden) {
-                    BottomNavigation(viewModel)
+        ModalBottomSheetLayout(
+            sheetState = sheetState,
+            sheetContent = { BottomSheet() },
+            sheetElevation = 16.dp,
+            sheetBackgroundColor = MaterialTheme.colorScheme.surface,
+            sheetContentColor = contentColorFor(MaterialTheme.colorScheme.surface),
+            sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = { TopAppBar(viewModel) },
+                snackbarHost = { SnackbarHost(snackbarHostState) },
+                bottomBar = {
+                    //hide bottom navigation with keyboard and small screens
+                    if (!isBottomNavigationHidden) {
+                        BottomNavigation(viewModel)
+                    }
                 }
-            }
-        ) { paddingValues ->
-            NavHost(
-                navController = navController,
-                startDestination = BottomBarScreens.HomeScreen.name,
-                modifier = Modifier.padding(paddingValues)
-            ) {
-                composable(BottomBarScreens.HomeScreen.name) {
-                    HomeScreen()
-                }
-                composable(BottomBarScreens.ConfigurationScreen.name) {
-                    ConfigurationScreen()
-                }
-                composable(BottomBarScreens.SettingsScreen.name) {
-                    SettingsScreen()
-                }
-                composable(BottomBarScreens.LogScreen.name) {
-                    LogScreen()
+            ) { paddingValues ->
+                NavHost(
+                    navController = navController,
+                    startDestination = BottomBarScreens.HomeScreen.name,
+                    modifier = Modifier.padding(paddingValues)
+                ) {
+                    composable(BottomBarScreens.HomeScreen.name) {
+                        HomeScreen()
+                    }
+                    composable(BottomBarScreens.ConfigurationScreen.name) {
+                        ConfigurationScreen()
+                    }
+                    composable(BottomBarScreens.SettingsScreen.name) {
+                        SettingsScreen()
+                    }
+                    composable(BottomBarScreens.LogScreen.name) {
+                        LogScreen()
+                    }
                 }
             }
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -263,7 +307,7 @@ fun MqttConnectionStatus() {
     AnimatedVisibility(
         enter = fadeIn(animationSpec = tween(50)),
         exit = fadeOut(animationSpec = tween(0)),
-        visible = ConfigurationSettings.isMQTTEnabled.data.collectAsState().value && !MqttService.isConnected.collectAsState().value
+        visible = /*ConfigurationSettings.isMqttEnabled.data.collectAsState().value && */!MqttService.isConnected.collectAsState().value
     ) {
 
         var openDialog by rememberSaveable { mutableStateOf(false) }

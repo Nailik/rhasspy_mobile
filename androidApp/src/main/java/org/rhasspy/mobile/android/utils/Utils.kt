@@ -25,8 +25,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
@@ -95,6 +98,9 @@ import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.screens.ConfigurationScreens
+import org.rhasspy.mobile.android.screens.LocalModalBottomSheetScreen
+import org.rhasspy.mobile.android.screens.LocalModalBottomSheetState
 import org.rhasspy.mobile.data.DataEnum
 import org.rhasspy.mobile.settings.sounds.SoundFile
 import org.rhasspy.mobile.viewModels.AppViewModel
@@ -489,6 +495,64 @@ fun ExpandableListItemString(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun ConfigurationListItem(
+    text: StringResource,
+    secondaryText: String? = null,
+    screen: ConfigurationScreens
+) {
+    val bottomSheet = LocalModalBottomSheetState.current
+    val bottomSheetScreen = LocalModalBottomSheetScreen.current
+    val scope = rememberCoroutineScope()
+
+    ListElement(
+        modifier = Modifier.clickable {
+            bottomSheetScreen.value = screen
+            scope.launch {
+                bottomSheet.show()
+            }
+        },
+        text = { Text(text) },
+        secondaryText = secondaryText?.let { { Text(secondaryText) } } ?: run { null }
+    )
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun ConfigurationListItem(
+    text: StringResource,
+    secondaryText: StringResource,
+    screen: ConfigurationScreens
+) {
+    val bottomSheet = LocalModalBottomSheetState.current
+    val bottomSheetScreen = LocalModalBottomSheetScreen.current
+    val scope = rememberCoroutineScope()
+
+    ListElement(
+        modifier = Modifier.clickable {
+            bottomSheetScreen.value = screen
+            scope.launch {
+                bottomSheet.show()
+            }
+        },
+        text = { Text(text) },
+        secondaryText = { Text(secondaryText) }
+    )
+}
+
+@Composable
+fun ConfigurationListContent(
+    text: StringResource,
+    expandedContent: @Composable () -> Unit
+) {
+    Column(modifier = Modifier
+        .padding(bottom = 8.dp)
+        .verticalScroll(rememberScrollState())) {
+        Text(text, style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(horizontal = 16.dp))
+        expandedContent()
+    }
+}
 
 @Composable
 private fun ExpandableListItemInternal(

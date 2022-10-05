@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.screens.LocalMainNavController
-import org.rhasspy.mobile.android.navigation.MainScreens
+import org.rhasspy.mobile.android.screens.MainScreens
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.ListElement
 import org.rhasspy.mobile.android.utils.Text

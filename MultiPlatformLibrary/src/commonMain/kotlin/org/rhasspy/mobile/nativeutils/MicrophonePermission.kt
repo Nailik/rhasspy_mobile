@@ -7,4 +7,8 @@ expect object MicrophonePermission {
 
     val granted: StateFlow<Boolean>
 
+    fun shouldShowInformationDialog(): Boolean
+
+    fun requestPermission(redirect: Boolean, onResult: (granted: Boolean) -> Unit)
+
 }

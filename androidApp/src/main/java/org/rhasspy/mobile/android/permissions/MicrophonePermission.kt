@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.android.permissions
 
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -16,7 +15,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.CoroutineScope
@@ -42,7 +40,6 @@ fun requestMicrophonePermission(
 ): () -> Unit {
     //necessary items
     val snackbarHostState = LocalSnackbarHostState.current
-    val activity = LocalContext.current as ComponentActivity
     val coroutineScope = rememberCoroutineScope()
 
     //info to show if it was denied
@@ -68,7 +65,7 @@ fun requestMicrophonePermission(
         //check if permission is not yet granted
         if (!MicrophonePermission.granted.value) {
             //check if info dialog is necessary
-            if (MicrophonePermission.shouldShowInfoDialog(activity)) {
+            if (MicrophonePermission.shouldShowInformationDialog()) {
                 openRequestPermissionDialog.value = true
             } else {
                 //request directly
@@ -80,6 +77,7 @@ fun requestMicrophonePermission(
         }
     }
 }
+
 
 
 /**
@@ -125,7 +123,7 @@ private fun requestMicrophonePermissionFromSystem(
  * show an information dialog about why the permission is required
  */
 @Composable
-private fun MicrophonePermissionInfoDialog(message: StringResource, onResult: (result: Boolean) -> Unit) {
+fun MicrophonePermissionInfoDialog(message: StringResource, onResult: (result: Boolean) -> Unit) {
     AlertDialog(
         onDismissRequest = {
             onResult.invoke(false)

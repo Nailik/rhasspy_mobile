@@ -1,10 +1,12 @@
 package org.rhasspy.mobile.nativeutils
 
 import android.annotation.SuppressLint
-import io.ktor.client.engine.cio.*
-import io.ktor.server.application.*
-import io.ktor.server.plugins.callloging.*
-import io.ktor.server.plugins.compression.*
+import io.ktor.client.engine.cio.CIOEngineConfig
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.plugins.compression.Compression
+import io.ktor.server.plugins.compression.gzip
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import java.security.cert.X509Certificate
 import javax.net.ssl.X509TrustManager
@@ -21,7 +23,7 @@ actual fun Application.installCallLogging() {
 
 actual fun CIOEngineConfig.configureEngine() {
     https {
-        if (!ConfigurationSettings.isSSLVerificationEnabled.value) {
+        if (!ConfigurationSettings.isHttpSSLVerificationEnabled.value) {
             trustManager = @SuppressLint("CustomX509TrustManager")
             object : X509TrustManager {
                 @SuppressLint("TrustAllX509TrustManager")

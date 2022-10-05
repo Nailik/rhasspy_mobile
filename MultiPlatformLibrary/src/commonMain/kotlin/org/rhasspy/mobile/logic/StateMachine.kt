@@ -224,7 +224,7 @@ object StateMachine {
                 if (AppSettings.isHotWordEnabled.value) {
                     //current session is running
                     //no current session running
-                    if (ConfigurationSettings.isUDPOutput.value) {
+                    if (ConfigurationSettings.isUdpOutputEnabled.value) {
                         //send to udp if udp streaming only outside asr listening
                         UdpService.streamAudio(dataWithHeader)
                     }
