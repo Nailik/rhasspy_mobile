@@ -10,22 +10,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.screens.LocalMainNavController
-import org.rhasspy.mobile.android.screens.MainScreens
+import org.rhasspy.mobile.android.screens.navigation.LocalMainNavController
+import org.rhasspy.mobile.android.screens.navigation.MainScreens
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.ListElement
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.android.utils.translate
 
+/**
+ * List element to open about screen
+ */
 @Composable
 fun AboutSettingsItem() {
+
     val navController = LocalMainNavController.current
     ListElement(
         modifier = Modifier.clickable {
             navController.navigate(MainScreens.AboutScreen.name)
         },
-        icon = { Icon(Icons.Filled.Info, modifier = Modifier.size(24.dp), contentDescription = MR.strings.info) },
-        text = { Text(MR.strings.aboutTitle) },
-        secondaryText = { Text("${translate(MR.strings.version)} ${BuildKonfig.versionName}") }
+        icon = {
+            Icon(Icons.Filled.Info, modifier = Modifier.size(24.dp), contentDescription = MR.strings.info)
+        },
+        text = {
+            Text(MR.strings.aboutTitle)
+        },
+        secondaryText = {
+            Text("${translate(MR.strings.version)} ${BuildKonfig.versionName}")
+        }
     )
+
 }

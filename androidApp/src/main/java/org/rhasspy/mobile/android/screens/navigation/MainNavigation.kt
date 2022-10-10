@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.navigation
+package org.rhasspy.mobile.android.screens.navigation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -14,15 +14,24 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.rhasspy.mobile.android.screens.AboutScreen
-import org.rhasspy.mobile.android.screens.BottomBarScreensNavigation
-import org.rhasspy.mobile.android.screens.LocalMainNavController
-import org.rhasspy.mobile.android.screens.MainScreens
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.android.theme.getIsDarkTheme
 
+/**
+ * main screens, full size
+ */
+enum class MainScreens {
+    BoomBarScreen,
+    AboutScreen
+}
+
+/**
+ * root layout contains main navigation between the
+ * 3 screens in the bottom bar and the about screen
+ */
 @Preview
 @Composable
-fun RootNavigation() {
+fun MainNavigation() {
     AppTheme(true) {
         rememberSystemUiController().setStatusBarColor(MaterialTheme.colorScheme.surfaceVariant, darkIcons = !getIsDarkTheme())
         //fixes bright flashing when navigating between screens

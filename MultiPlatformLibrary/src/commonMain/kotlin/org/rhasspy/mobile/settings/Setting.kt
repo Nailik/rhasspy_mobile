@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.settings
 
 import com.russhwolf.settings.ExperimentalSettingsApi
+import com.russhwolf.settings.Settings
 import com.russhwolf.settings.get
 import com.russhwolf.settings.serialization.decodeValue
 import com.russhwolf.settings.serialization.encodeValue
@@ -13,11 +14,10 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.builtins.SetSerializer
 import kotlinx.serialization.builtins.serializer
 import org.rhasspy.mobile.data.DataEnum
-import org.rhasspy.mobile.viewModels.GlobalData
 
-abstract class Setting<T>(private val key: SettingsEnum, private val initial: T) {
+private val settings = Settings()
 
-    val scope = CoroutineScope(Dispatchers.Default)
+class Setting<T>(private val key: SettingsEnum, private val initial: T) {
 
     /**
      * data used to get current saved value or to set value for unsaved changes
@@ -30,7 +30,7 @@ abstract class Setting<T>(private val key: SettingsEnum, private val initial: T)
         }
     }
 
-    open var value = data.value
+    val value: T get() = data.value
 
     /**
      * save current value
@@ -39,12 +39,12 @@ abstract class Setting<T>(private val key: SettingsEnum, private val initial: T)
     @Suppress("UNCHECKED_CAST")
     private fun saveValue(newValue: T) {
         when (initial) {
-            is String -> GlobalData.settings[key.name] = newValue as String
-            is Int -> GlobalData.settings[key.name] = newValue as Int
-            is Float -> GlobalData.settings[key.name] = newValue as Float
-            is Boolean -> GlobalData.settings[key.name] = newValue as Boolean
-            is DataEnum<*> -> GlobalData.settings[key.name] = (newValue as DataEnum<*>).name
-            is Set<*> -> GlobalData.settings.encodeValue(SetSerializer(String.serializer()), key.name, newValue as Set<String>)
+            is String -> settings[key.name] = newValue as String
+            is Int -> settings[key.name] = newValue as Int
+            is Float -> settings[key.name] = newValue as Float
+            is Boolean -> settings[key.name] = newValue as Boolean
+            is DataEnum<*> -> settings[key.name] = (newValue as DataEnum<*>).name
+            is Set<*> -> settings.encodeValue(SetSerializer(String.serializer()), key.name, newValue as Set<String>)
             else -> throw RuntimeException()
         }
     }
@@ -56,12 +56,12 @@ abstract class Setting<T>(private val key: SettingsEnum, private val initial: T)
     @Suppress("UNCHECKED_CAST")
     private fun readValue(): T {
         return when (initial) {
-            is String -> GlobalData.settings[key.name, initial]
-            is Int -> GlobalData.settings[key.name, initial]
-            is Float -> GlobalData.settings[key.name, initial]
-            is Boolean -> GlobalData.settings[key.name, initial]
-            is DataEnum<*> -> initial.findValue(GlobalData.settings[key.name, initial.name])
-            is Set<*> -> GlobalData.settings.decodeValue(SetSerializer(String.serializer()), key.name, initial as Set<String>)
+            is String -> settings[key.name, initial]
+            is Int -> settings[key.name, initial]
+            is Float -> settings[key.name, initial]
+            is Boolean -> settings[key.name, initial]
+            is DataEnum<*> -> initial.findValue(settings[key.name, initial.name])
+            is Set<*> -> settings.decodeValue(SetSerializer(String.serializer()), key.name, initial as Set<String>)
             else -> throw RuntimeException()
         } as T
     }

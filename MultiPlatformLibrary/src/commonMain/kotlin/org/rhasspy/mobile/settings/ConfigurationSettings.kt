@@ -12,54 +12,54 @@ import org.rhasspy.mobile.data.WakeWordOption
 
 internal object ConfigurationSettings {
 
-    val siteId = ConfigurationSetting(SettingsEnum.SiteId, "mobile")
+    val siteId = Setting(SettingsEnum.SiteId, "mobile")
 
-    val isHttpServerEnabled = ConfigurationSetting(SettingsEnum.HttpServerEnabled, true)
-    val httpServerPort = ConfigurationSetting(SettingsEnum.HttpServerPort, "12101")
-    val isHttpServerSSLEnabled = ConfigurationSetting(SettingsEnum.HttpServerSSL, false)
+    val isHttpServerEnabled = Setting(SettingsEnum.HttpServerEnabled, true)
+    val httpServerPort = Setting(SettingsEnum.HttpServerPort, "12101")
+    val isHttpServerSSLEnabled = Setting(SettingsEnum.HttpServerSSL, false)
 
-    val isHttpSSLVerificationEnabled = ConfigurationSetting(SettingsEnum.SSLVerificationDisabled, false)
+    val isHttpSSLVerificationEnabled = Setting(SettingsEnum.SSLVerificationDisabled, false)
 
-    val isMqttEnabled = ConfigurationSetting(SettingsEnum.MQTT_ENABLED, false)
-    val mqttHost = ConfigurationSetting(SettingsEnum.MQTTHost, "")
-    val mqttPort = ConfigurationSetting(SettingsEnum.MQTTPort, "")
-    val mqttUserName = ConfigurationSetting(SettingsEnum.MQTTUserName, "")
-    val mqttPassword = ConfigurationSetting(SettingsEnum.MQTTPassword, "")
-    val isMqttSSLEnabled = ConfigurationSetting(SettingsEnum.MQTT_SSL, false)
-    val mqttConnectionTimeout = ConfigurationSetting(SettingsEnum.MQTTConnectionTimeout, "5")
-    val mqttKeepAliveInterval = ConfigurationSetting(SettingsEnum.MQTTKeepAliveInterval, "30")
-    val mqttRetryInterval = ConfigurationSetting(SettingsEnum.MQTTRetryInterval, "10")
+    val isMqttEnabled = Setting(SettingsEnum.MQTT_ENABLED, false)
+    val mqttHost = Setting(SettingsEnum.MQTTHost, "")
+    val mqttPort = Setting(SettingsEnum.MQTTPort, "")
+    val mqttUserName = Setting(SettingsEnum.MQTTUserName, "")
+    val mqttPassword = Setting(SettingsEnum.MQTTPassword, "")
+    val isMqttSSLEnabled = Setting(SettingsEnum.MQTT_SSL, false)
+    val mqttConnectionTimeout = Setting(SettingsEnum.MQTTConnectionTimeout, "5")
+    val mqttKeepAliveInterval = Setting(SettingsEnum.MQTTKeepAliveInterval, "30")
+    val mqttRetryInterval = Setting(SettingsEnum.MQTTRetryInterval, "10")
 
-    val isUdpOutputEnabled = ConfigurationSetting(SettingsEnum.UDPOutput, false)
-    val udpOutputHost = ConfigurationSetting(SettingsEnum.UDPOutputHost, "")
-    val udpOutputPort = ConfigurationSetting(SettingsEnum.UDPOutputPort, "")
+    val isUdpOutputEnabled = Setting(SettingsEnum.UDPOutput, false)
+    val udpOutputHost = Setting(SettingsEnum.UDPOutputHost, "")
+    val udpOutputPort = Setting(SettingsEnum.UDPOutputPort, "")
 
-    val wakeWordOption = ConfigurationSetting(SettingsEnum.WakeWordOption, WakeWordOption.Disabled)
-    val wakeWordPorcupineAccessToken = ConfigurationSetting(SettingsEnum.WakeWordPorcupineAccessToken, "")
-    val wakeWordPorcupineKeywordOption = ConfigurationSetting(SettingsEnum.WakeWordPorcupineKeywordOption, 0)
+    val wakeWordOption = Setting(SettingsEnum.WakeWordOption, WakeWordOption.Disabled)
+    val wakeWordPorcupineAccessToken = Setting(SettingsEnum.WakeWordPorcupineAccessToken, "")
+    val wakeWordPorcupineKeywordOption = Setting(SettingsEnum.WakeWordPorcupineKeywordOption, 0)
     val wakeWordPorcupineKeywordOptions =
-        ConfigurationSetting(SettingsEnum.WakeWordPorcupineKeywordOptions, WakeWordKeywordOption.values().map { it.name }.toSet())
-    val wakeWordPorcupineLanguage = ConfigurationSetting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOptions.EN)
-    val wakeWordPorcupineKeywordSensitivity = ConfigurationSetting(SettingsEnum.WakeWordPorcupineKeywordSensitivity, 0.5f)
+        Setting(SettingsEnum.WakeWordPorcupineKeywordOptions, WakeWordKeywordOption.values().map { it.name }.toSet())
+    val wakeWordPorcupineLanguage = Setting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOptions.EN)
+    val wakeWordPorcupineKeywordSensitivity = Setting(SettingsEnum.WakeWordPorcupineKeywordSensitivity, 0.5f)
 
-    val speechToTextOption = ConfigurationSetting(SettingsEnum.SpeechToTextOption, SpeechToTextOptions.Disabled)
-    val speechToTextHttpEndpoint = ConfigurationSetting(SettingsEnum.SpeechToTextHttpEndpoint, "")
+    val speechToTextOption = Setting(SettingsEnum.SpeechToTextOption, SpeechToTextOptions.Disabled)
+    val speechToTextHttpEndpoint = Setting(SettingsEnum.SpeechToTextHttpEndpoint, "")
 
-    val intentRecognitionOption = ConfigurationSetting(SettingsEnum.IntentRecognitionOption, IntentRecognitionOptions.Disabled)
-    val intentRecognitionEndpoint = ConfigurationSetting(SettingsEnum.IntentRecognitionEndpoint, "")
+    val intentRecognitionOption = Setting(SettingsEnum.IntentRecognitionOption, IntentRecognitionOptions.Disabled)
+    val intentRecognitionEndpoint = Setting(SettingsEnum.IntentRecognitionEndpoint, "")
 
-    val textToSpeechOption = ConfigurationSetting(SettingsEnum.TextToSpeechOption, TextToSpeechOptions.Disabled)
-    val textToSpeechEndpoint = ConfigurationSetting(SettingsEnum.TextToSpeechEndpoint, "")
+    val textToSpeechOption = Setting(SettingsEnum.TextToSpeechOption, TextToSpeechOptions.Disabled)
+    val textToSpeechEndpoint = Setting(SettingsEnum.TextToSpeechEndpoint, "")
 
-    val audioPlayingOption = ConfigurationSetting(SettingsEnum.AudioPlayingOption, AudioPlayingOptions.Disabled)
-    val audioPlayingEndpoint = ConfigurationSetting(SettingsEnum.AudioPlayingEndpoint, "")
+    val audioPlayingOption = Setting(SettingsEnum.AudioPlayingOption, AudioPlayingOptions.Disabled)
+    val audioPlayingEndpoint = Setting(SettingsEnum.AudioPlayingEndpoint, "")
 
-    val dialogueManagementOption = ConfigurationSetting(SettingsEnum.DialogueManagementOption, DialogueManagementOptions.Local)
+    val dialogueManagementOption = Setting(SettingsEnum.DialogueManagementOption, DialogueManagementOptions.Local)
 
-    val intentHandlingOption = ConfigurationSetting(SettingsEnum.IntentHandlingOption, IntentHandlingOptions.Disabled)
-    val intentHandlingEndpoint = ConfigurationSetting(SettingsEnum.IntentHandlingEndpoint, "")
-    val intentHandlingHassUrl = ConfigurationSetting(SettingsEnum.IntentHandlingHassUrl, "")
-    val intentHandlingHassAccessToken = ConfigurationSetting(SettingsEnum.IntentHandlingHassAccessToken, "")
-    val isIntentHandlingHassEvent = ConfigurationSetting(SettingsEnum.IsIntentHandlingHassEvent, false)
+    val intentHandlingOption = Setting(SettingsEnum.IntentHandlingOption, IntentHandlingOptions.Disabled)
+    val intentHandlingEndpoint = Setting(SettingsEnum.IntentHandlingEndpoint, "")
+    val intentHandlingHassUrl = Setting(SettingsEnum.IntentHandlingHassUrl, "")
+    val intentHandlingHassAccessToken = Setting(SettingsEnum.IntentHandlingHassAccessToken, "")
+    val isIntentHandlingHassEvent = Setting(SettingsEnum.IsIntentHandlingHassEvent, false)
 
 }

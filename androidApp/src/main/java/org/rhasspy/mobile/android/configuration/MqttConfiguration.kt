@@ -32,7 +32,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.screens.ConfigurationScreens
+import org.rhasspy.mobile.android.screens.BottomSheetScreens
 import org.rhasspy.mobile.android.utils.ConfigurationListContent
 import org.rhasspy.mobile.android.utils.ConfigurationListItem
 import org.rhasspy.mobile.android.utils.Icon
@@ -53,7 +53,7 @@ fun MqttConfigurationItem(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.mqtt,
         secondaryText = if (viewModel.isMQTTConnected.collectAsState().value) MR.strings.connected else MR.strings.notConnected,
-        screen = ConfigurationScreens.Mqtt
+        screen = BottomSheetScreens.Mqtt
     )
 
 }

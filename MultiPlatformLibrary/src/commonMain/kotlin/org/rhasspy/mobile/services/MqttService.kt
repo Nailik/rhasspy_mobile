@@ -184,8 +184,8 @@ object MqttService {
     suspend fun testConnection(): MqttError? {
         logger.v { "testConnection" }
         val testClient = MqttClient(
-            brokerUrl = "tcp://${ConfigurationSettings.mqttHost.unsaved.value}:${ConfigurationSettings.mqttPort.unsaved.value}",
-            clientId = ConfigurationSettings.siteId.unsaved.value,
+            brokerUrl = "tcp://${ConfigurationSettings.mqttHost.value}:${ConfigurationSettings.mqttPort.value}",
+            clientId = ConfigurationSettings.siteId.value,
             persistenceType = MqttPersistence.MEMORY,
             onDelivered = { },
             onMessageReceived = { topic, message -> onMessageReceived(topic, message) },
@@ -490,7 +490,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            AppSettings.isHotWordEnabled.value = true
+            AppSettings.isHotWordEnabled.data.value = true
         } else {
             logger.d { "received hotWordToggleOn but for other siteId" }
         }
@@ -506,7 +506,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            AppSettings.isHotWordEnabled.value = false
+            AppSettings.isHotWordEnabled.data.value = false
         } else {
             logger.d { "received hotWordToggleOff but for other siteId" }
         }
@@ -827,7 +827,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            AppSettings.isIntentHandlingEnabled.value = true
+            AppSettings.isIntentHandlingEnabled.data.value = true
         } else {
             logger.d { "received intentHandlingToggleOn but for other siteId" }
         }
@@ -842,7 +842,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            AppSettings.isIntentHandlingEnabled.value = false
+            AppSettings.isIntentHandlingEnabled.data.value = false
         } else {
             logger.d { "received intentHandlingToggleOff but for other siteId" }
         }
@@ -924,7 +924,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            AppSettings.isAudioOutputEnabled.value = false
+            AppSettings.isAudioOutputEnabled.data.value = false
         } else {
             logger.d { "received audioOutputToggleOff but for other siteId" }
         }
@@ -939,7 +939,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            AppSettings.isAudioOutputEnabled.value = true
+            AppSettings.isAudioOutputEnabled.data.value = true
         } else {
             logger.d { "received audioOutputToggleOff but for other siteId" }
         }
@@ -970,7 +970,7 @@ object MqttService {
 
         if (jsonObject.isThisSiteId()) {
             jsonObject["volume"]?.jsonPrimitive?.floatOrNull?.also {
-                AppSettings.volume.value = it
+                AppSettings.volume.data.value = it
             } ?: run {
                 logger.e { "setVolume invalid value ${jsonObject["volume"]}" }
             }

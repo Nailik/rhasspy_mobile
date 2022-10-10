@@ -98,9 +98,9 @@ import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.screens.ConfigurationScreens
-import org.rhasspy.mobile.android.screens.LocalModalBottomSheetScreen
-import org.rhasspy.mobile.android.screens.LocalModalBottomSheetState
+import org.rhasspy.mobile.android.screens.BottomSheetScreens
+import org.rhasspy.mobile.android.screens.navigation.LocalModalBottomSheetScreen
+import org.rhasspy.mobile.android.screens.navigation.LocalModalBottomSheetState
 import org.rhasspy.mobile.data.DataEnum
 import org.rhasspy.mobile.settings.sounds.SoundFile
 import org.rhasspy.mobile.viewModels.AppViewModel
@@ -500,7 +500,7 @@ fun ExpandableListItemString(
 fun ConfigurationListItem(
     text: StringResource,
     secondaryText: String? = null,
-    screen: ConfigurationScreens
+    screen: BottomSheetScreens
 ) {
     val bottomSheet = LocalModalBottomSheetState.current
     val bottomSheetScreen = LocalModalBottomSheetScreen.current
@@ -523,7 +523,7 @@ fun ConfigurationListItem(
 fun ConfigurationListItem(
     text: StringResource,
     secondaryText: StringResource,
-    screen: ConfigurationScreens
+    screen: BottomSheetScreens
 ) {
     val bottomSheet = LocalModalBottomSheetState.current
     val bottomSheetScreen = LocalModalBottomSheetScreen.current

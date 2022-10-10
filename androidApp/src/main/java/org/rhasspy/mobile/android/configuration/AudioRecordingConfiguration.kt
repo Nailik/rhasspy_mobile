@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.screens.ConfigurationScreens
+import org.rhasspy.mobile.android.screens.BottomSheetScreens
 import org.rhasspy.mobile.android.utils.ConfigurationListContent
 import org.rhasspy.mobile.android.utils.ConfigurationListItem
 import org.rhasspy.mobile.android.utils.SwitchListItem
@@ -30,7 +30,7 @@ fun AudioRecordingConfigurationItem(viewModel: ConfigurationScreenViewModel) {
         } else {
             MR.strings.udpAudioOutputOff
         },
-        screen = ConfigurationScreens.AudioRecording
+        screen = BottomSheetScreens.AudioRecording
     )
 
 }

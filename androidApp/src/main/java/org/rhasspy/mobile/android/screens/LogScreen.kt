@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.bottomBarScreens
+package org.rhasspy.mobile.android.screens
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -22,13 +22,22 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Severity
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.theme.*
+import org.rhasspy.mobile.android.theme.color_assert
+import org.rhasspy.mobile.android.theme.color_debug
+import org.rhasspy.mobile.android.theme.color_error
+import org.rhasspy.mobile.android.theme.color_info
+import org.rhasspy.mobile.android.theme.color_unknown
+import org.rhasspy.mobile.android.theme.color_verbose
+import org.rhasspy.mobile.android.theme.color_warn
 import org.rhasspy.mobile.android.utils.CustomDivider
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.StyledListItem
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 import org.rhasspy.mobile.viewModels.LogScreenViewModel
 
+/**
+ * show log information
+ */
 @Composable
 fun LogScreen(viewModel: LogScreenViewModel = viewModel()) {
 
@@ -71,7 +80,9 @@ fun LogScreen(viewModel: LogScreenViewModel = viewModel()) {
                 text = {
                     Text(text = "${item.message}${item.throwable?.let { "\n$it" } ?: run { "" }}")
                 },
-                secondaryText = { Text(item.time) }
+                secondaryText = {
+                    Text(item.time)
+                }
             )
             CustomDivider()
         }
@@ -79,13 +90,18 @@ fun LogScreen(viewModel: LogScreenViewModel = viewModel()) {
 
 }
 
+/**
+ * log screen actions to save and share log file
+ */
 @Composable
 fun LogScreenActions(viewModel: HomeScreenViewModel) {
     Row(modifier = Modifier.padding(start = 8.dp)) {
-        IconButton(onClick = { viewModel.shareLogFile() })
-        { Icon(imageVector = Icons.Filled.Share, contentDescription = MR.strings.share) }
+        IconButton(onClick = viewModel::shareLogFile) {
+            Icon(imageVector = Icons.Filled.Share, contentDescription = MR.strings.share)
+        }
 
-        IconButton(onClick = { viewModel.saveLogFile() })
-        { Icon(imageVector = Icons.Filled.Save, contentDescription = MR.strings.save) }
+        IconButton(onClick = viewModel::saveLogFile) {
+            Icon(imageVector = Icons.Filled.Save, contentDescription = MR.strings.save)
+        }
     }
 }

@@ -42,6 +42,11 @@ import org.rhasspy.mobile.viewModels.SettingsScreenViewModel
 
 
 @Composable
+fun AutomaticSilenceDetectionSettingsItem(viewModel: SettingsScreenViewModel) {
+
+}
+
+@Composable
 fun AutomaticSilenceDetectionItem(viewModel: SettingsScreenViewModel) {
 
     val isAutomaticSilenceDetectionEnabled by viewModel.isAutomaticSilenceDetectionEnabled.collectAsState()

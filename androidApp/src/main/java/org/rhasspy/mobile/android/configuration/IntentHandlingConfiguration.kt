@@ -17,7 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.screens.ConfigurationScreens
+import org.rhasspy.mobile.android.screens.BottomSheetScreens
 import org.rhasspy.mobile.android.utils.ConfigurationListContent
 import org.rhasspy.mobile.android.utils.ConfigurationListItem
 import org.rhasspy.mobile.android.utils.DropDownEnumListItem
@@ -37,7 +37,7 @@ fun IntentHandlingConfigurationItem(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.intentHandling,
         secondaryText = viewModel.intentHandlingOption.flow.collectAsState().value.text,
-        screen = ConfigurationScreens.IntentHandling
+        screen = BottomSheetScreens.IntentHandling
     )
 
 }

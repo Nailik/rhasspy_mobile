@@ -3,7 +3,7 @@ package org.rhasspy.mobile.android.configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.screens.ConfigurationScreens
+import org.rhasspy.mobile.android.screens.BottomSheetScreens
 import org.rhasspy.mobile.android.utils.ConfigurationListContent
 import org.rhasspy.mobile.android.utils.ConfigurationListItem
 import org.rhasspy.mobile.android.utils.DropDownEnumListItem
@@ -20,7 +20,7 @@ fun DialogManagementConfigurationItem(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.dialogueManagement,
         secondaryText = viewModel.dialogueManagementOption.flow.collectAsState().value.text,
-        screen = ConfigurationScreens.DialogueManagement
+        screen = BottomSheetScreens.DialogueManagement
     )
 
 }

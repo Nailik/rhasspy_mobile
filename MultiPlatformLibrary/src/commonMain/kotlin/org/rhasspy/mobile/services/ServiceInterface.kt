@@ -10,7 +10,6 @@ import org.rhasspy.mobile.handler.ForegroundServiceHandler
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.server.HttpServer
 import org.rhasspy.mobile.serviceInterfaces.HttpClientInterface
-import org.rhasspy.mobile.viewModels.GlobalData
 import kotlin.native.concurrent.ThreadLocal
 
 /**
@@ -71,7 +70,7 @@ object ServiceInterface {
     fun saveAndApplyChanges() {
         coroutineScope.launch {
             serviceAction(ServiceAction.Stop)
-            GlobalData.saveAllChanges()
+
 
             ForegroundServiceHandler.action(ServiceAction.Reload)
         }
@@ -81,7 +80,6 @@ object ServiceInterface {
      * resets configuration changes
      */
     fun resetChanges() {
-        GlobalData.resetChanges()
     }
 
 }

@@ -54,7 +54,7 @@ data class MqttConnectionOptions(
         }
 
         fun loadFromUnsavedConfigurationSettings(): MqttConnectionOptions {
-
+/*
             val connectionTimeout = ConfigurationSettings.mqttConnectionTimeout.unsaved.value.toIntOrNull() ?: kotlin.run {
                 logger.w { "using default connectionTimeout 5 because ${ConfigurationSettings.mqttConnectionTimeout.unsaved.value} is not an int or null" }
                 5
@@ -80,7 +80,8 @@ data class MqttConnectionOptions(
                 connectionTimeout = connectionTimeout,
                 retryInterval = mqttRetryInterval,
                 keepAliveInterval = mqttKeepAliveInterval
-            )
+            )*/
+            return loadFromConfigurationSettings()
         }
     }
 

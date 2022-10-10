@@ -33,7 +33,7 @@ class SettingsScreenViewModel : ViewModel() {
     val languageOptions = LanguageOptions::values
 
     fun selectLanguage(languageOption: LanguageOptions) {
-        AppSettings.languageOption.value = languageOption
+        AppSettings.languageOption.data.value = languageOption
     }
 
     //theme item
@@ -41,14 +41,14 @@ class SettingsScreenViewModel : ViewModel() {
     val themeOptions = ThemeOptions::values
 
     fun selectTheme(themeOption: ThemeOptions) {
-        AppSettings.themeOption.value = themeOption
+        AppSettings.themeOption.data.value = themeOption
     }
 
     //background service item
     val isBackgroundEnabled: StateFlow<Boolean> get() = AppSettings.isBackgroundEnabled.data
 
     fun toggleBackgroundEnabled(value: Boolean) {
-        AppSettings.isBackgroundEnabled.value = value
+        AppSettings.isBackgroundEnabled.data.value = value
     }
 
     fun isBatteryOptimizationDisabled(): Boolean = BatteryOptimization.isBatteryOptimizationDisabled()
@@ -65,16 +65,16 @@ class SettingsScreenViewModel : ViewModel() {
         if (value && !OverlayPermission.granted.value) {
             OverlayPermission.requestPermission {
                 if (it) {
-                    AppSettings.isMicrophoneOverlayEnabled.value = value
+                    AppSettings.isMicrophoneOverlayEnabled.data.value = value
                 }
             }
         } else {
-            AppSettings.isMicrophoneOverlayEnabled.value = value
+            AppSettings.isMicrophoneOverlayEnabled.data.value = value
         }
     }
 
     fun updateMicrophoneOverlayWhileApp(value: Boolean) {
-        AppSettings.isMicrophoneOverlayWhileApp.value = value
+        AppSettings.isMicrophoneOverlayWhileApp.data.value = value
     }
 
 
@@ -84,22 +84,22 @@ class SettingsScreenViewModel : ViewModel() {
     val isBackgroundWakeWordDetectionTurnOnDisplay: StateFlow<Boolean> get() = AppSettings.isBackgroundWakeWordDetectionTurnOnDisplayEnabled.data
 
     fun updateWakeWordSoundIndicationEnabled(value: Boolean) {
-        AppSettings.isWakeWordSoundIndicationEnabled.value = value
+        AppSettings.isWakeWordSoundIndicationEnabled.data.value = value
     }
 
     fun updateWakeWordLightIndicationEnabled(value: Boolean) {
-        AppSettings.isWakeWordLightIndicationEnabled.value = value
+        AppSettings.isWakeWordLightIndicationEnabled.data.value = value
     }
 
     fun updateBackgroundWakeWordDetectionTurnOnDisplay(value: Boolean) {
         if (value && !OverlayPermission.granted.value) {
             OverlayPermission.requestPermission {
                 if (it) {
-                    AppSettings.isBackgroundWakeWordDetectionTurnOnDisplayEnabled.value = value
+                    AppSettings.isBackgroundWakeWordDetectionTurnOnDisplayEnabled.data.value = value
                 }
             }
         } else {
-            AppSettings.isBackgroundWakeWordDetectionTurnOnDisplayEnabled.value = value
+            AppSettings.isBackgroundWakeWordDetectionTurnOnDisplayEnabled.data.value = value
         }
     }
 
@@ -115,23 +115,23 @@ class SettingsScreenViewModel : ViewModel() {
     val customSoundValuesUi: StateFlow<Array<SoundFile>> get() = customSoundValues
 
     fun selectWakeSoundFile(fileName: String) {
-        AppSettings.wakeSound.value = fileName
+        AppSettings.wakeSound.data.value = fileName
         checkCustomSoundUsage()
     }
 
     fun selectRecordedSoundFile(fileName: String) {
-        AppSettings.recordedSound.value = fileName
+        AppSettings.recordedSound.data.value = fileName
         checkCustomSoundUsage()
     }
 
     fun selectErrorSoundFile(fileName: String) {
-        AppSettings.errorSound.value = fileName
+        AppSettings.errorSound.data.value = fileName
         checkCustomSoundUsage()
     }
 
     fun selectCustomSoundFile() = SettingsUtils.selectSoundFile { fileName ->
         fileName?.also {
-            AppSettings.customSounds.value = AppSettings.customSounds.value.toMutableList()
+            AppSettings.customSounds.data.value = AppSettings.customSounds.value.toMutableList()
                 .apply {
                     this.add(it)
                 }.toSet()
@@ -144,7 +144,7 @@ class SettingsScreenViewModel : ViewModel() {
 
     fun removeCustomSoundFile(it: Int) {
         SettingsUtils.removeSoundFile(AppSettings.customSounds.value.elementAt(it))
-        AppSettings.customSounds.value = AppSettings.customSounds.value.toMutableList()
+        AppSettings.customSounds.data.value = AppSettings.customSounds.value.toMutableList()
             .apply {
                 this.removeAt(it)
             }.toSet()
@@ -159,14 +159,14 @@ class SettingsScreenViewModel : ViewModel() {
     }
 
     fun updateSoundVolume(value: Float) {
-        AppSettings.soundVolume.value = value
+        AppSettings.soundVolume.data.value = value
     }
 
     //device
     val volume: StateFlow<Float> get() = AppSettings.volume.data
 
     fun updateVolume(value: Float) {
-        AppSettings.volume.value = value
+        AppSettings.volume.data.value = value
     }
 
     val isHotWordEnabled: StateFlow<Boolean> get() = AppSettings.isHotWordEnabled.data
@@ -174,15 +174,15 @@ class SettingsScreenViewModel : ViewModel() {
     val isIntentHandlingEnabled: StateFlow<Boolean> get() = AppSettings.isIntentHandlingEnabled.data
 
     fun updateHotWordEnabled(value: Boolean) {
-        AppSettings.isHotWordEnabled.value = value
+        AppSettings.isHotWordEnabled.data.value = value
     }
 
     fun updateAudioOutputEnabled(value: Boolean) {
-        AppSettings.isAudioOutputEnabled.value = value
+        AppSettings.isAudioOutputEnabled.data.value = value
     }
 
     fun updateIntentHandlingEnabled(value: Boolean) {
-        AppSettings.isIntentHandlingEnabled.value = value
+        AppSettings.isIntentHandlingEnabled.data.value = value
     }
 
     //audio Level
@@ -191,7 +191,7 @@ class SettingsScreenViewModel : ViewModel() {
     val automaticSilenceDetectionAudioLevel: StateFlow<Int> get() = AppSettings.automaticSilenceDetectionAudioLevel.data
 
     fun updateAutomaticSilenceDetectionEnabled(value: Boolean) {
-        AppSettings.isAutomaticSilenceDetectionEnabled.value = value
+        AppSettings.isAutomaticSilenceDetectionEnabled.data.value = value
     }
 
     fun updateAutomaticSilenceDetectionTime(value: String) {
@@ -201,7 +201,7 @@ class SettingsScreenViewModel : ViewModel() {
             .replace(" ", "")
             .toIntOrNull()?.also {
 
-                AppSettings.automaticSilenceDetectionTime.value = it
+                AppSettings.automaticSilenceDetectionTime.data.value = it
                 logger.v { "parsed automaticSilenceDetectionTime to $it" }
 
             }
@@ -213,7 +213,7 @@ class SettingsScreenViewModel : ViewModel() {
             .replace(" ", "")
             .toIntOrNull()?.also {
 
-                AppSettings.automaticSilenceDetectionAudioLevel.value = it
+                AppSettings.automaticSilenceDetectionAudioLevel.data.value = it
                 logger.v { "parsed automaticSilenceDetectionAudioLevel to $it" }
 
             }
@@ -275,13 +275,13 @@ class SettingsScreenViewModel : ViewModel() {
     val isLogAudioFramesEnabled: StateFlow<Boolean> get() = AppSettings.isLogAudioFramesEnabled.data
 
     fun updateLogLevel(value: LogLevel) {
-        AppSettings.logLevel.value = value
+        AppSettings.logLevel.data.value = value
     }
     fun updateShowLogEnabled(value: Boolean) {
-        AppSettings.isShowLogEnabled.value = value
+        AppSettings.isShowLogEnabled.data.value = value
     }
     fun updateLogAudioFramesEnabled(value: Boolean) {
-        AppSettings.isLogAudioFramesEnabled.value = value
+        AppSettings.isLogAudioFramesEnabled.data.value = value
     }
 
     //problem handling
@@ -289,7 +289,7 @@ class SettingsScreenViewModel : ViewModel() {
     val isForceCancelEnabled: StateFlow<Boolean> get() = AppSettings.isForceCancelEnabled.data
 
     fun updateForceCancelEnabled(value: Boolean) {
-        AppSettings.isForceCancelEnabled.value = value
+        AppSettings.isForceCancelEnabled.data.value = value
     }
 
 

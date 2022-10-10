@@ -3,8 +3,6 @@ package org.rhasspy.mobile
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.mqtt.OverlayServices
@@ -16,7 +14,6 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
 
 abstract class Application : NativeApplication() {
     private val logger = Logger.withTag("Application")
-
 
     companion object {
         lateinit var Instance: NativeApplication

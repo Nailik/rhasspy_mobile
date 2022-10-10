@@ -13,15 +13,8 @@ import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.nativeutils.SettingsUtils
 import org.rhasspy.mobile.nativeutils.openLink
 import org.rhasspy.mobile.services.MqttService
-import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.ConfigurationSettings
-
-open class Element<T>(private val setting: ConfigurationSetting<T>) {
-    val flow: StateFlow<T> get() = setting.data
-    open fun set(value: T) {
-        setting.data.value = value
-    }
-}
+import org.rhasspy.mobile.settings.Element
 
 class ConfigurationScreenViewModel : ViewModel() {
 
@@ -121,7 +114,7 @@ class ConfigurationScreenViewModel : ViewModel() {
     }
 
     val isMQTTTestEnabled: StateFlow<Boolean>
-        get() = combineState(ConfigurationSettings.mqttHost.unsaved, ConfigurationSettings.mqttPort.unsaved)
+        get() = combineState(ConfigurationSettings.mqttHost.data, ConfigurationSettings.mqttPort.data)
         { host, port ->
             host.isNotEmpty() && port.isNotEmpty()
         }
@@ -136,25 +129,25 @@ class ConfigurationScreenViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            ConfigurationSettings.mqttHost.unsaved.collect {
+            ConfigurationSettings.mqttHost.data.collect {
                 _testingMqttError.value = null
             }
         }
 
         viewModelScope.launch {
-            ConfigurationSettings.mqttPort.unsaved.collect {
+            ConfigurationSettings.mqttPort.data.collect {
                 _testingMqttError.value = null
             }
         }
 
         viewModelScope.launch {
-            ConfigurationSettings.mqttUserName.unsaved.collect {
+            ConfigurationSettings.mqttUserName.data.collect {
                 _testingMqttError.value = null
             }
         }
 
         viewModelScope.launch {
-            ConfigurationSettings.mqttPassword.unsaved.collect {
+            ConfigurationSettings.mqttPassword.data.collect {
                 _testingMqttError.value = null
             }
         }
@@ -162,13 +155,13 @@ class ConfigurationScreenViewModel : ViewModel() {
 
     fun selectPorcupineWakeWordFile() = SettingsUtils.selectPorcupineFile { fileName ->
         fileName?.also {
-            ConfigurationSettings.wakeWordPorcupineKeywordOptions.unsaved.value =
-                ConfigurationSettings.wakeWordPorcupineKeywordOptions.unsaved.value.toMutableList()
+            ConfigurationSettings.wakeWordPorcupineKeywordOptions.data.value =
+                ConfigurationSettings.wakeWordPorcupineKeywordOptions.data.value.toMutableList()
                     .apply {
                         this.add(it)
                     }.toSet()
-            ConfigurationSettings.wakeWordPorcupineKeywordOption.unsaved.value =
-                ConfigurationSettings.wakeWordPorcupineKeywordOptions.unsaved.value.size - 1
+            ConfigurationSettings.wakeWordPorcupineKeywordOption.data.value =
+                ConfigurationSettings.wakeWordPorcupineKeywordOptions.data.value.size - 1
         }
     }
 

@@ -71,24 +71,7 @@ fun Header(viewModel: AboutScreenViewModel) {
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(bottom = 16.dp)
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-
-            val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-            IconButton(onClick = { onBackPressedDispatcher?.onBackPressed() }, modifier = Modifier.align(Alignment.TopStart)) {
-                Icon(imageVector = Icons.Filled.Close, contentDescription = MR.strings.close)
-            }
-
-            Icon(
-                imageResource = MR.images.ic_launcher,
-                contentDescription = MR.strings.icon,
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .size(96.dp)
-                    .background(MaterialTheme.colorScheme.surface, shape = CircleShape)
-                    .padding(8.dp)
-                    .align(Alignment.Center)
-            )
-        }
+        AppIcon()
 
 
         Text(
@@ -104,6 +87,31 @@ fun Header(viewModel: AboutScreenViewModel) {
         )
 
         AppInformationChips(viewModel.changelogText, viewModel::onOpenSourceCode)
+    }
+}
+
+/**
+ * image of app icon and back press
+ */
+@Composable
+fun AppIcon() {
+    Box(modifier = Modifier.fillMaxWidth()) {
+
+        val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+        IconButton(onClick = { onBackPressedDispatcher?.onBackPressed() }, modifier = Modifier.align(Alignment.TopStart)) {
+            Icon(imageVector = Icons.Filled.Close, contentDescription = MR.strings.close)
+        }
+
+        Icon(
+            imageResource = MR.images.ic_launcher,
+            contentDescription = MR.strings.icon,
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .size(96.dp)
+                .background(MaterialTheme.colorScheme.surface, shape = CircleShape)
+                .padding(8.dp)
+                .align(Alignment.Center)
+        )
     }
 }
 

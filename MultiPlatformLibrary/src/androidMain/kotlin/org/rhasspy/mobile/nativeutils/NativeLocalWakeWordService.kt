@@ -100,10 +100,11 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
     }
 
     private fun copyModelFileIfNecessary(): String {
-        val file = File(Application.Instance.filesDir, "porcupine/model_${ConfigurationSettings.wakeWordPorcupineLanguage.value.name.lowercase()}.pv")
+        val file =
+            File(Application.Instance.filesDir, "porcupine/model_${ConfigurationSettings.wakeWordPorcupineLanguage.data.value.name.lowercase()}.pv")
 
         if (!file.exists()) {
-            val modelFile = when (ConfigurationSettings.wakeWordPorcupineLanguage.value) {
+            val modelFile = when (ConfigurationSettings.wakeWordPorcupineLanguage.data.value) {
                 PorcupineLanguageOptions.EN -> MR.files.porcupine_params
                 PorcupineLanguageOptions.DE -> MR.files.porcupine_params_de
                 PorcupineLanguageOptions.FR -> MR.files.porcupine_params_fr
