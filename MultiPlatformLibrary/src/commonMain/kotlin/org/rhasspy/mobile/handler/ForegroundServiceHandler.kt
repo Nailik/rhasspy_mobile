@@ -21,7 +21,7 @@ object ForegroundServiceHandler {
     init {
         //when background enabled value changes, services need to be reloaded
         CoroutineScope(Dispatchers.Default).launch {
-            AppSettings.isBackgroundEnabled.data.collect {
+            AppSettings.isBackgroundServiceEnabled.data.collect {
                 CoroutineScope(Dispatchers.Default).launch {
                     action(ServiceAction.Reload)
                 }
@@ -41,7 +41,7 @@ object ForegroundServiceHandler {
         if (fromService) {
             ServiceInterface.serviceAction(serviceAction)
         } else {
-            if (!AppSettings.isBackgroundEnabled.value) {
+            if (!AppSettings.isBackgroundServiceEnabled.value) {
                 if (NativeServiceInterop.isRunning) {
                     //should not be running, stop it
                     NativeServiceInterop.stop()

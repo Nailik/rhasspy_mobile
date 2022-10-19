@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.settings
 
 import org.rhasspy.mobile.data.AudioPlayingOptions
-import org.rhasspy.mobile.data.DialogueManagementOptions
+import org.rhasspy.mobile.data.DialogManagementOptions
 import org.rhasspy.mobile.data.IntentHandlingOptions
 import org.rhasspy.mobile.data.IntentRecognitionOptions
 import org.rhasspy.mobile.data.PorcupineLanguageOptions
@@ -54,11 +54,11 @@ internal object ConfigurationSettings {
     val audioPlayingOption = Setting(SettingsEnum.AudioPlayingOption, AudioPlayingOptions.Disabled)
     val audioPlayingEndpoint = Setting(SettingsEnum.AudioPlayingEndpoint, "")
 
-    val dialogueManagementOption = Setting(SettingsEnum.DialogueManagementOption, DialogueManagementOptions.Local)
+    val dialogueManagementOption = Setting(SettingsEnum.DialogueManagementOption, DialogManagementOptions.Local)
 
     val intentHandlingOption = Setting(SettingsEnum.IntentHandlingOption, IntentHandlingOptions.Disabled)
-    val intentHandlingEndpoint = Setting(SettingsEnum.IntentHandlingEndpoint, "")
-    val intentHandlingHassUrl = Setting(SettingsEnum.IntentHandlingHassUrl, "")
+    val intentHandlingHttpEndpoint = Setting(SettingsEnum.IntentHandlingEndpoint, "")
+    val intentHandlingHassEndpoint = Setting(SettingsEnum.IntentHandlingHassUrl, "")
     val intentHandlingHassAccessToken = Setting(SettingsEnum.IntentHandlingHassAccessToken, "")
     val isIntentHandlingHassEvent = Setting(SettingsEnum.IsIntentHandlingHassEvent, false)
 

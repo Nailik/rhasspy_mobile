@@ -67,10 +67,12 @@ fun <T1, T2, T3, T4, R> combineState(
     transform.invoke(o1, o2, o3, o4)
 }.stateIn(scope, sharingStarted, transform.invoke(flow1.value, flow2.value, flow3.value, flow4.value))
 
-fun <T, R> MutableStateFlow<T>.mapReadonlyState(
+fun <T, R> StateFlow<T>.mapReadonlyState(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
     sharingStarted: SharingStarted = SharingStarted.Lazily,
     transform: (T) -> R
 ): StateFlow<R> = this.map {
     transform(it)
 }.stateIn(scope, sharingStarted, transform.invoke(this.value))
+
+val <T> MutableStateFlow<T>.readOnly get(): StateFlow<T> = this

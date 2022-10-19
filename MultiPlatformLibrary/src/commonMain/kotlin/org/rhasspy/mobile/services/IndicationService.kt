@@ -79,7 +79,7 @@ object IndicationService {
             IndicationState.Recording,
             IndicationState.Thinking,
             IndicationState.Speaking -> {
-                if (AppSettings.isBackgroundWakeWordDetectionTurnOnDisplayEnabled.value) {
+                if (AppSettings.isWakeWordDetectionTurnOnDisplayEnabled.value) {
                     NativeIndication.wakeUpScreen()
                 }
 

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.addWavHeader
-import org.rhasspy.mobile.data.DialogueManagementOptions
+import org.rhasspy.mobile.data.DialogManagementOptions
 import org.rhasspy.mobile.data.SpeechToTextOptions
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.nativeutils.AudioPlayer
@@ -135,7 +135,7 @@ object StateMachine {
         logger.v { "startedSession id: $sessionId keyword: $keyword" }
 
         if (state.value == State.StartingSession &&
-            (ConfigurationSettings.dialogueManagementOption.value == DialogueManagementOptions.RemoteMQTT || !fromMQTT)
+            (ConfigurationSettings.dialogueManagementOption.value == DialogManagementOptions.RemoteMQTT || !fromMQTT)
         ) {
             currentSession = Session(sessionId, keyword)
             state.value = State.StartedSession
@@ -261,7 +261,7 @@ object StateMachine {
                 state.value = State.RecordingStopped
 
                 //allow internal call or when dialog option is mqtt
-                if (!fromMQTT || ConfigurationSettings.dialogueManagementOption.value == DialogueManagementOptions.RemoteMQTT) {
+                if (!fromMQTT || ConfigurationSettings.dialogueManagementOption.value == DialogManagementOptions.RemoteMQTT) {
                     state.value = State.TranscribingIntent
 
                     //save recording to previous recording
@@ -532,7 +532,7 @@ object StateMachine {
         return previousRecordingFile.getFileData()
     }
 
-    private fun isDialogueLocal(): Boolean = ConfigurationSettings.dialogueManagementOption.value == DialogueManagementOptions.Local
+    private fun isDialogueLocal(): Boolean = ConfigurationSettings.dialogueManagementOption.value == DialogManagementOptions.Local
 
     private fun sessionMatches(sessionId: String?, fromMQTT: Boolean): Boolean =
         (sessionId == currentSession.sessionId || (fromMQTT && sessionId == currentSession.mqttSpeechToTextSessionId))

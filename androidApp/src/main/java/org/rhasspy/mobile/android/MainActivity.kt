@@ -5,7 +5,7 @@ import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import org.rhasspy.mobile.AppActivity
-import org.rhasspy.mobile.android.screens.navigation.MainNavigation
+import org.rhasspy.mobile.android.screens.MainNavigation
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 

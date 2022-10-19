@@ -60,7 +60,7 @@ object RhasspyActions {
                     val handleDirectly = ConfigurationSettings.intentHandlingOption.value == IntentHandlingOptions.WithRecognition
                     val intent = HttpClientInterface.intentRecognition(text, handleDirectly)
 
-                    if (!handleDirectly && ConfigurationSettings.dialogueManagementOption.value == DialogueManagementOptions.Local) {
+                    if (!handleDirectly && ConfigurationSettings.dialogueManagementOption.value == DialogManagementOptions.Local) {
                         //if intent wasn't already handled and local dialogue management, handle it
                         val json = intent?.let { Json.decodeFromString<JsonObject>(intent) }
                         val intentName = json?.get("intent")?.jsonObject?.get("name")?.jsonPrimitive?.content ?: ""
@@ -72,7 +72,7 @@ object RhasspyActions {
                         }
                     }
 
-                    if (handleDirectly && ConfigurationSettings.dialogueManagementOption.value == DialogueManagementOptions.Local) {
+                    if (handleDirectly && ConfigurationSettings.dialogueManagementOption.value == DialogManagementOptions.Local) {
                         //if intent was handled directly and local dialogue management it's time to end dialogue
                         StateMachine.endSession()
                     }
@@ -81,7 +81,7 @@ object RhasspyActions {
                 IntentRecognitionOptions.RemoteMQTT -> MqttService.intentQuery(StateMachine.currentSession.sessionId, text)
                 IntentRecognitionOptions.Disabled -> {
                     logger.d { "intentRecognition disabled" }
-                    if (ConfigurationSettings.dialogueManagementOption.value == DialogueManagementOptions.Local) {
+                    if (ConfigurationSettings.dialogueManagementOption.value == DialogManagementOptions.Local) {
                         StateMachine.intentNotRecognized()
                     }
 

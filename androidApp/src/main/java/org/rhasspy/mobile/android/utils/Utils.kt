@@ -29,12 +29,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.FileOpen
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
@@ -81,6 +82,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -98,9 +100,6 @@ import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.screens.BottomSheetScreens
-import org.rhasspy.mobile.android.screens.navigation.LocalModalBottomSheetScreen
-import org.rhasspy.mobile.android.screens.navigation.LocalModalBottomSheetState
 import org.rhasspy.mobile.data.DataEnum
 import org.rhasspy.mobile.settings.sounds.SoundFile
 import org.rhasspy.mobile.viewModels.AppViewModel
@@ -470,85 +469,15 @@ fun DropDownStringList(
 }
 
 @Composable
-fun ExpandableListItem(
-    text: StringResource,
-    secondaryText: StringResource? = null,
-    expandedContent: @Composable () -> Unit
-) {
-    ExpandableListItemInternal(
-        text = text,
-        secondaryText = secondaryText?.let { { Text(secondaryText) } } ?: run { null },
-        expandedContent = expandedContent
-    )
-}
-
-@Composable
-fun ExpandableListItemString(
-    text: StringResource,
-    secondaryText: String? = null,
-    expandedContent: @Composable () -> Unit
-) {
-    ExpandableListItemInternal(
-        text = text,
-        secondaryText = secondaryText?.let { { Text(secondaryText) } } ?: run { null },
-        expandedContent = expandedContent
-    )
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun ConfigurationListItem(
-    text: StringResource,
-    secondaryText: String? = null,
-    screen: BottomSheetScreens
-) {
-    val bottomSheet = LocalModalBottomSheetState.current
-    val bottomSheetScreen = LocalModalBottomSheetScreen.current
-    val scope = rememberCoroutineScope()
-
-    ListElement(
-        modifier = Modifier.clickable {
-            bottomSheetScreen.value = screen
-            scope.launch {
-                bottomSheet.show()
-            }
-        },
-        text = { Text(text) },
-        secondaryText = secondaryText?.let { { Text(secondaryText) } } ?: run { null }
-    )
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun ConfigurationListItem(
-    text: StringResource,
-    secondaryText: StringResource,
-    screen: BottomSheetScreens
-) {
-    val bottomSheet = LocalModalBottomSheetState.current
-    val bottomSheetScreen = LocalModalBottomSheetScreen.current
-    val scope = rememberCoroutineScope()
-
-    ListElement(
-        modifier = Modifier.clickable {
-            bottomSheetScreen.value = screen
-            scope.launch {
-                bottomSheet.show()
-            }
-        },
-        text = { Text(text) },
-        secondaryText = { Text(secondaryText) }
-    )
-}
-
-@Composable
-fun ConfigurationListContent(
+fun PageContent(
     text: StringResource,
     expandedContent: @Composable () -> Unit
 ) {
-    Column(modifier = Modifier
-        .padding(bottom = 8.dp)
-        .verticalScroll(rememberScrollState())) {
+    Column(
+        modifier = Modifier
+            .padding(bottom = 8.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
         Text(text, style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(horizontal = 16.dp))
         expandedContent()
     }
@@ -632,6 +561,46 @@ fun ListElement(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun TextFieldListItemVisibility(
+    modifier: Modifier = Modifier,
+    label: StringResource,
+    value: String,
+    readOnly: Boolean = false,
+    autoCorrect: Boolean = false,
+    enabled: Boolean = true,
+    onValueChange: ((String) -> Unit)? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    paddingValues: PaddingValues = PaddingValues(vertical = 2.dp),
+) {
+    var isShowPassword by rememberSaveable { mutableStateOf(false) }
+
+    TextFieldListItem(
+        modifier = modifier,
+        label = label,
+        value = value,
+        readOnly = readOnly,
+        autoCorrect = autoCorrect,
+        enabled = enabled,
+        onValueChange = onValueChange,
+        keyboardOptions = keyboardOptions,
+        trailingIcon = {
+            IconButton(onClick = { isShowPassword = !isShowPassword }) {
+                Icon(
+                    if (isShowPassword) {
+                        Icons.Filled.Visibility
+                    } else {
+                        Icons.Filled.VisibilityOff
+                    },
+                    contentDescription = MR.strings.visibility,
+                )
+            }
+        },
+        visualTransformation = if (isShowPassword) VisualTransformation.None else PasswordVisualTransformation(),
+        paddingValues = paddingValues
+    )
+}
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -724,7 +693,6 @@ fun SliderListItem(text: StringResource, value: Float, enabled: Boolean = true, 
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RadioButtonListItem(text: StringResource, isChecked: Boolean, enabled: Boolean = true, onClick: () -> Unit) {
     ListElement(modifier = Modifier.clickable { onClick() }) {
@@ -817,3 +785,4 @@ fun HtmlText(html: String, modifier: Modifier = Modifier, color: Color) {
         update = { it.text = HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_COMPACT) }
     )
 }
+

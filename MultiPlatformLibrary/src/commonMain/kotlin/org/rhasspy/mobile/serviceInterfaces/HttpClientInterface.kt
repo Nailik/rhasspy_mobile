@@ -197,12 +197,12 @@ object HttpClientInterface {
      */
     suspend fun intentHandling(intent: String) {
 
-        logger.v { "sending intentHandling\nendpoint:\n${ConfigurationSettings.intentHandlingEndpoint.value}\nintent:\n$intent" }
+        logger.v { "sending intentHandling\nendpoint:\n${ConfigurationSettings.intentHandlingHttpEndpoint.value}\nintent:\n$intent" }
 
         try {
 
             val request = httpClient.post(
-                url = Url(ConfigurationSettings.intentHandlingEndpoint.value)
+                url = Url(ConfigurationSettings.intentHandlingHttpEndpoint.value)
             ) {
                 setBody(intent)
             }
@@ -222,12 +222,12 @@ object HttpClientInterface {
     suspend fun hassEvent(json: String, intentName: String) {
 
         logger.v {
-            "sending intent as Event to Home Assistant\nendpoint:\n${ConfigurationSettings.intentHandlingHassUrl.value}/api/events/rhasspy_$intentName\nintent:\n$json"
+            "sending intent as Event to Home Assistant\nendpoint:\n${ConfigurationSettings.intentHandlingHassEndpoint.value}/api/events/rhasspy_$intentName\nintent:\n$json"
         }
 
         try {
 
-            val url = "${ConfigurationSettings.intentHandlingHassUrl.value}/api/events/rhasspy_$intentName"
+            val url = "${ConfigurationSettings.intentHandlingHassEndpoint.value}/api/events/rhasspy_$intentName"
 
             logger.v { "complete endpoint url" }
 
@@ -257,12 +257,12 @@ object HttpClientInterface {
      */
     suspend fun hassIntent(intent: String) {
 
-        logger.v { "sending intent as Intent to Home Assistant\nendpoint:\n${ConfigurationSettings.intentHandlingHassUrl.value}/api/intent/handle\nintent:\n$intent" }
+        logger.v { "sending intent as Intent to Home Assistant\nendpoint:\n${ConfigurationSettings.intentHandlingHassEndpoint.value}/api/intent/handle\nintent:\n$intent" }
 
         try {
 
             val request = httpClient.post(
-                url = Url("${ConfigurationSettings.intentHandlingHassUrl.value}/api/intent/handle")
+                url = Url("${ConfigurationSettings.intentHandlingHassEndpoint.value}/api/intent/handle")
             ) {
                 buildHeaders {
                     header("Authorization", "Bearer ${ConfigurationSettings.intentHandlingHassAccessToken.value}")
