@@ -4,13 +4,25 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -57,73 +69,123 @@ enum class ConfigurationScreens {
 /**
  * configuration screens with list items that open bottom sheet
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun ConfigurationListScreen() {
 
     val navController = rememberNavController()
 
+
     CompositionLocalProvider(
         LocalNavController provides navController
     ) {
+        val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+        Scaffold(
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = {
+                AppBar(scrollBehavior)
+            },
+        ) { paddingValues ->
 
-        NavHost(
-            navController = navController,
-            startDestination = ConfigurationScreens.ConfigurationList.name
-        ) {
+            NavHost(
+                modifier = Modifier.padding(paddingValues),
+                navController = navController,
+                startDestination = ConfigurationScreens.ConfigurationList.name
+            ) {
 
-            composable(ConfigurationScreens.ConfigurationList.name) {
-                ConfigurationList()
-            }
+                composable(ConfigurationScreens.ConfigurationList.name) {
+                    ConfigurationList()
+                }
 
-            composable(ConfigurationScreens.AudioPlayingConfiguration.name) {
-                AudioPlayingConfigurationContent()
-            }
+                composable(ConfigurationScreens.AudioPlayingConfiguration.name) {
+                    AudioPlayingConfigurationContent()
+                }
 
-            composable(ConfigurationScreens.AudioRecordingConfiguration.name) {
-                AudioRecordingConfigurationContent()
-            }
+                composable(ConfigurationScreens.AudioRecordingConfiguration.name) {
+                    AudioRecordingConfigurationContent()
+                }
 
-            composable(ConfigurationScreens.DialogManagementConfiguration.name) {
-                DialogManagementConfigurationContent()
-            }
+                composable(ConfigurationScreens.DialogManagementConfiguration.name) {
+                    DialogManagementConfigurationContent()
+                }
 
-            composable(ConfigurationScreens.IntentHandlingConfiguration.name) {
-                IntentHandlingConfigurationContent()
-            }
+                composable(ConfigurationScreens.IntentHandlingConfiguration.name) {
+                    IntentHandlingConfigurationContent()
+                }
 
-            composable(ConfigurationScreens.IntentRecognitionConfiguration.name) {
-                IntentRecognitionConfigurationContent()
-            }
+                composable(ConfigurationScreens.IntentRecognitionConfiguration.name) {
+                    IntentRecognitionConfigurationContent()
+                }
 
-            composable(ConfigurationScreens.MqttConfiguration.name) {
-                MqttConfigurationContent()
-            }
+                composable(ConfigurationScreens.MqttConfiguration.name) {
+                    MqttConfigurationContent()
+                }
 
-            composable(ConfigurationScreens.RemoteHermesHttpConfiguration.name) {
-                RemoteHermesHttpConfigurationContent()
-            }
+                composable(ConfigurationScreens.RemoteHermesHttpConfiguration.name) {
+                    RemoteHermesHttpConfigurationContent()
+                }
 
-            composable(ConfigurationScreens.SpeechToTextConfiguration.name) {
-                SpeechToTextConfigurationContent()
-            }
+                composable(ConfigurationScreens.SpeechToTextConfiguration.name) {
+                    SpeechToTextConfigurationContent()
+                }
 
-            composable(ConfigurationScreens.TextToSpeechConfiguration.name) {
-                TextToSpeechConfigurationContent()
-            }
+                composable(ConfigurationScreens.TextToSpeechConfiguration.name) {
+                    TextToSpeechConfigurationContent()
+                }
 
-            composable(ConfigurationScreens.WakeWordConfiguration.name) {
-                WakeWordConfigurationContent()
-            }
+                composable(ConfigurationScreens.WakeWordConfiguration.name) {
+                    WakeWordConfigurationContent()
+                }
 
-            composable(ConfigurationScreens.WebServerConfiguration.name) {
-                WebServerConfigurationContent()
+                composable(ConfigurationScreens.WebServerConfiguration.name) {
+                    WebServerConfigurationContent()
+                }
+
             }
 
         }
 
     }
 
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AppBar(scrollBehavior: TopAppBarScrollBehavior) {
+
+    var currentDestination by remember { mutableStateOf(ConfigurationScreens.ConfigurationList) }
+    val navController = LocalNavController.current
+
+    LaunchedEffect(navController) {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            currentDestination = ConfigurationScreens.valueOf(destination.route ?: ConfigurationScreens.ConfigurationList.name)
+        }
+    }
+
+    val title = when (currentDestination) {
+        ConfigurationScreens.ConfigurationList -> MR.strings.configuration
+        ConfigurationScreens.AudioPlayingConfiguration -> MR.strings.audioPlaying
+        ConfigurationScreens.AudioRecordingConfiguration -> MR.strings.audioRecording
+        ConfigurationScreens.DialogManagementConfiguration -> MR.strings.dialogueManagement
+        ConfigurationScreens.IntentHandlingConfiguration -> MR.strings.intentHandling
+        ConfigurationScreens.IntentRecognitionConfiguration -> MR.strings.intentRecognition
+        ConfigurationScreens.MqttConfiguration -> MR.strings.mqtt
+        ConfigurationScreens.RemoteHermesHttpConfiguration -> MR.strings.remoteHermesHTTP
+        ConfigurationScreens.SpeechToTextConfiguration -> MR.strings.speechToText
+        ConfigurationScreens.TextToSpeechConfiguration -> MR.strings.textToSpeech
+        ConfigurationScreens.WakeWordConfiguration -> MR.strings.wakeWord
+        ConfigurationScreens.WebServerConfiguration -> MR.strings.webserver
+    }
+
+    MediumTopAppBar(
+        title = {
+            Text(title)
+        },
+        scrollBehavior = scrollBehavior
+    )
 }
 
 @Preview
@@ -385,7 +447,7 @@ private fun ConfigurationListItem(
 private fun ConfigurationListItem(
     text: StringResource,
     secondaryText: String,
-    screen: ConfigurationScreens
+    @Suppress("SameParameterValue") screen: ConfigurationScreens
 ) {
     val navController = LocalNavController.current
 

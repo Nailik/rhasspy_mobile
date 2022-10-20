@@ -1,15 +1,21 @@
-package org.rhasspy.mobile.android.screens
+package org.rhasspy.mobile.android.screens.bottomnavigation
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -17,7 +23,9 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Severity
@@ -32,14 +40,42 @@ import org.rhasspy.mobile.android.theme.color_warn
 import org.rhasspy.mobile.android.utils.CustomDivider
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.StyledListItem
-import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 import org.rhasspy.mobile.viewModels.LogScreenViewModel
 
 /**
  * show log information
  */
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
 @Composable
 fun LogScreen(viewModel: LogScreenViewModel = viewModel()) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = { AppBar(viewModel) },
+    ) { paddingValues ->
+
+        Surface(Modifier.padding(paddingValues)) {
+            LogScreenContent(viewModel)
+        }
+
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AppBar(viewModel: LogScreenViewModel) {
+    TopAppBar(modifier = Modifier,
+        title = { org.rhasspy.mobile.android.utils.Text(MR.strings.appName, modifier = Modifier.testTag("appName")) },
+        actions = {
+            Row(modifier = Modifier.padding(horizontal = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                LogScreenActions(viewModel)
+            }
+        }
+    )
+}
+
+@Composable
+fun LogScreenContent(viewModel: LogScreenViewModel) {
 
     val items = viewModel.logArr.collectAsState().value
 
@@ -94,8 +130,10 @@ fun LogScreen(viewModel: LogScreenViewModel = viewModel()) {
  * log screen actions to save and share log file
  */
 @Composable
-fun LogScreenActions(viewModel: HomeScreenViewModel) {
+fun LogScreenActions(viewModel: LogScreenViewModel) {
+
     Row(modifier = Modifier.padding(start = 8.dp)) {
+
         IconButton(onClick = viewModel::shareLogFile) {
             Icon(imageVector = Icons.Filled.Share, contentDescription = MR.strings.share)
         }
@@ -103,5 +141,7 @@ fun LogScreenActions(viewModel: HomeScreenViewModel) {
         IconButton(onClick = viewModel::saveLogFile) {
             Icon(imageVector = Icons.Filled.Save, contentDescription = MR.strings.save)
         }
+
     }
+
 }

@@ -6,7 +6,6 @@ import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.combineState
-import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.logic.StateMachine.manualIntentRecognition
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
@@ -53,8 +52,4 @@ class HomeScreenViewModel : ViewModel() {
     fun saveAndApplyChanges() = ServiceInterface.saveAndApplyChanges()
 
     fun resetChanges() = ServiceInterface.resetChanges()
-
-    fun shareLogFile() = FileLogger.shareLogFile()
-
-    fun saveLogFile() = FileLogger.saveLogFile()
 }

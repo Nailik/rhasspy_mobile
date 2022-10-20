@@ -3,9 +3,13 @@ package org.rhasspy.mobile.android.screens.bottomnavigation
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -54,69 +58,88 @@ enum class SettingsScreens {
 /**
  * configuration screens with list items that open bottom sheet
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun SettingsListScreen() {
 
     val navController = rememberNavController()
 
-    CompositionLocalProvider(
-        LocalNavController provides navController
-    ) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = { AppBar() },
+    ) { paddingValues ->
 
-        NavHost(
-            navController = navController,
-            startDestination = SettingsScreens.SettingsList.name
+        CompositionLocalProvider(
+            LocalNavController provides navController
         ) {
 
-            composable(SettingsScreens.SettingsList.name) {
-                SettingsList()
-            }
+            NavHost(
+                modifier = Modifier.padding(paddingValues),
+                navController = navController,
+                startDestination = SettingsScreens.SettingsList.name
+            ) {
 
-            composable(SettingsScreens.BackgroundServiceSettings.name) {
-                BackgroundServiceSettingsContent()
-            }
+                composable(SettingsScreens.SettingsList.name) {
+                    SettingsList()
+                }
 
-            composable(SettingsScreens.MicrophoneOverlaySettings.name) {
-                MicrophoneOverlaySettingsContent()
-            }
+                composable(SettingsScreens.BackgroundServiceSettings.name) {
+                    BackgroundServiceSettingsContent()
+                }
 
-            composable(SettingsScreens.WakeWordIndicationSettings.name) {
-                WakeWordIndicationSettingsContent()
-            }
+                composable(SettingsScreens.MicrophoneOverlaySettings.name) {
+                    MicrophoneOverlaySettingsContent()
+                }
 
-            composable(SettingsScreens.SoundsSettings.name) {
-                SoundsSettingsContent()
-            }
+                composable(SettingsScreens.WakeWordIndicationSettings.name) {
+                    WakeWordIndicationSettingsContent()
+                }
 
-            composable(SettingsScreens.DeviceSettings.name) {
-                DeviceSettingsContent()
-            }
+                composable(SettingsScreens.SoundsSettings.name) {
+                    SoundsSettingsContent()
+                }
 
-            composable(SettingsScreens.AutomaticSilenceDetectionSettings.name) {
-                AutomaticSilenceDetectionSettingsContent()
-            }
+                composable(SettingsScreens.DeviceSettings.name) {
+                    DeviceSettingsContent()
+                }
 
-            composable(SettingsScreens.LogSettings.name) {
-                LogSettingsContent()
-            }
+                composable(SettingsScreens.AutomaticSilenceDetectionSettings.name) {
+                    AutomaticSilenceDetectionSettingsContent()
+                }
 
-            composable(SettingsScreens.ProblemHandlingSettings.name) {
-                ProblemHandlingSettingsContent()
-            }
+                composable(SettingsScreens.LogSettings.name) {
+                    LogSettingsContent()
+                }
 
-            composable(SettingsScreens.SaveAndRestoreSettings.name) {
-                SaveAndRestoreSettingsContent()
-            }
+                composable(SettingsScreens.ProblemHandlingSettings.name) {
+                    ProblemHandlingSettingsContent()
+                }
 
-            composable(SettingsScreens.AboutSettings.name) {
-                AboutSettingsContent()
+                composable(SettingsScreens.SaveAndRestoreSettings.name) {
+                    SaveAndRestoreSettingsContent()
+                }
+
+                composable(SettingsScreens.AboutSettings.name) {
+                    AboutSettingsContent()
+                }
+
             }
 
         }
 
     }
 
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AppBar() {
+    TopAppBar(
+        title = {
+            Text(MR.strings.settings)
+        },
+    )
 }
 
 /**
@@ -327,7 +350,7 @@ private fun SettingsListItem(
 private fun SettingsListItem(
     text: StringResource,
     secondaryText: String,
-    screen: SettingsScreens
+    @Suppress("SameParameterValue") screen: SettingsScreens
 ) {
     val navController = LocalNavController.current
 
