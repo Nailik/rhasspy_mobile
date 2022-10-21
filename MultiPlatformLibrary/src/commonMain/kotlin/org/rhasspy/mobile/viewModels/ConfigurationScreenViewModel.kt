@@ -25,4 +25,8 @@ class ConfigurationScreenViewModel : ViewModel() {
         _siteId.value = siteId
     }
 
+    init{
+        println("init")
+    }
+
 }

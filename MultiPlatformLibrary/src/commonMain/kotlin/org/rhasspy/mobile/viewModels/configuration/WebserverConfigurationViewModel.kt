@@ -15,7 +15,7 @@ class WebserverConfigurationViewModel : ViewModel() {
     //unsaved ui data
     val isHttpServerEnabled = _isHttpServerEnabled.readOnly
     val httpServerPort = _httpServerPort.readOnly
-    val isHttpServerSSLEnabled = _isHttpServerEnabled.readOnly
+    val isHttpServerSSLEnabled = _isHttpServerSSLEnabled.readOnly
     val isHttpServerSettingsVisible = _isHttpServerEnabled.readOnly
     val isHttpServerSSLCertificateVisible = _isHttpServerSSLEnabled.readOnly
 

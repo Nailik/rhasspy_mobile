@@ -132,6 +132,14 @@ kotlin {
 }
 
 android {
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("C:\\SynologyDrive\\Dokumente\\Dokumente\\AppKeystores\\rhasspymobile.jks")
+            storePassword = "cK2JcFWUye4f%n$!GY9p"
+            keyPassword = "cK2JcFWUye4f%n$!GY9p"
+            keyAlias = "RhasspyMobile"
+        }
+    }
     compileSdk = 33
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {

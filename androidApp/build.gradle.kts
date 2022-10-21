@@ -15,6 +15,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        create("release") {
+            storeFile = file("C:\\SynologyDrive\\Dokumente\\Dokumente\\AppKeystores\\rhasspymobile.jks")
+            keyAlias = "rhasspymobile"
+            storePassword = "cK2JcFWUye4f%n$!GY9p"
+            keyPassword = "cK2JcFWUye4f%n$!GY9p"
+        }
+    }
     compileSdk = 33
 
     defaultConfig {
@@ -34,6 +42,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
