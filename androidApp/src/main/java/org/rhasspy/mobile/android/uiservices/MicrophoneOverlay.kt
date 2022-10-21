@@ -55,7 +55,7 @@ object MicrophoneOverlay {
     @OptIn(ExperimentalMaterial3Api::class)
     private val view: ComposeView = ComposeView(AndroidApplication.Instance).apply {
         setContent {
-            AppTheme(false) {
+            AppTheme {
                 val snackbarHostState = remember { SnackbarHostState() }
                 Scaffold(
                     modifier = Modifier.size(96.dp),

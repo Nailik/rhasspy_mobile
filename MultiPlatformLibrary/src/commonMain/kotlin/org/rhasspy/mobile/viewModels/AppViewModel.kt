@@ -5,6 +5,9 @@ import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.settings.AppSettings
 
+/**
+ * holds information used by various ui items
+ */
 object AppViewModel {
 
     val themeOption: StateFlow<ThemeOptions> get() = AppSettings.themeOption.data

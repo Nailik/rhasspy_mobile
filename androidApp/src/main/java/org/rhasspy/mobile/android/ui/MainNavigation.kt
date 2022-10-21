@@ -31,7 +31,7 @@ enum class MainScreens {
 @Preview
 @Composable
 fun MainNavigation() {
-    AppTheme(true) {
+    AppTheme {
         rememberSystemUiController().setStatusBarColor(MaterialTheme.colorScheme.surfaceVariant, darkIcons = !getIsDarkTheme())
         //fixes bright flashing when navigating between screens
         Surface(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {

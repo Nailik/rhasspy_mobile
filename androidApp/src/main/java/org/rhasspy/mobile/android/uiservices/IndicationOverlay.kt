@@ -49,7 +49,7 @@ object IndicationOverlay {
      */
     private val view = ComposeView(AndroidApplication.Instance).apply {
         setContent {
-            AppTheme(false) {
+            AppTheme {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
