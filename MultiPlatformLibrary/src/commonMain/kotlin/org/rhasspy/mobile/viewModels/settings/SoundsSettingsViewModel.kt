@@ -95,11 +95,11 @@ class SoundsSettingsViewModel : ViewModel() {
      * save data configuration
      */
     fun save() {
-        AppSettings.soundVolume.data.value = _soundVolume.value
-        AppSettings.wakeSound.data.value = _wakeSound.value
-        AppSettings.recordedSound.data.value = _recordedSound.value
-        AppSettings.errorSound.data.value = _errorSound.value
-        AppSettings.customSounds.data.value = _customSounds.value
+        AppSettings.soundVolume.value = _soundVolume.value
+        AppSettings.wakeSound.value = _wakeSound.value
+        AppSettings.recordedSound.value = _recordedSound.value
+        AppSettings.errorSound.value = _errorSound.value
+        AppSettings.customSounds.value = _customSounds.value
 
         //remove sound files that are remove in ui
         _removedFiles.forEach {

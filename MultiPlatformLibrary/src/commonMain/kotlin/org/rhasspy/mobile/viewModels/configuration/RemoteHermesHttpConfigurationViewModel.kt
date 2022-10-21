@@ -22,7 +22,7 @@ class RemoteHermesHttpConfigurationViewModel : ViewModel() {
      * save data configuration
      */
     fun save() {
-        ConfigurationSettings.isHttpSSLVerificationEnabled.data.value = _isHttpSSLVerificationEnabled.value
+        ConfigurationSettings.isHttpSSLVerificationEnabled.value = _isHttpSSLVerificationEnabled.value
     }
 
     /**

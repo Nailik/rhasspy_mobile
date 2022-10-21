@@ -142,7 +142,7 @@ object HttpServer {
         logger.v { "received $action" }
 
         action?.also {
-            AppSettings.isHotWordEnabled.data.value = it
+            AppSettings.isHotWordEnabled.value = it
         } ?: run {
             logger.w { "invalid body" }
         }
@@ -205,7 +205,7 @@ object HttpServer {
 
         volume?.also {
             if (volume > 0F && volume < 1F) {
-                AppSettings.volume.data.value = volume
+                AppSettings.volume.value = volume
             }
             return@post
         }

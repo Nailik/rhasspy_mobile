@@ -62,12 +62,12 @@ class WakeWordConfigurationViewModel : ViewModel() {
      * save data configuration
      */
     fun save() {
-        ConfigurationSettings.wakeWordOption.data.value = _wakeWordOption.value
-        ConfigurationSettings.wakeWordPorcupineAccessToken.data.value = _wakeWordPorcupineAccessToken.value
-        ConfigurationSettings.wakeWordPorcupineKeywordOption.data.value = _wakeWordPorcupineKeywordOption.value
-        ConfigurationSettings.wakeWordPorcupineKeywordOptions.data.value = _wakeWordPorcupineKeywordOptions.value
-        ConfigurationSettings.wakeWordPorcupineLanguage.data.value = _wakeWordPorcupineLanguage.value
-        ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.data.value = _wakeWordPorcupineSensitivity.value
+        ConfigurationSettings.wakeWordOption.value = _wakeWordOption.value
+        ConfigurationSettings.wakeWordPorcupineAccessToken.value = _wakeWordPorcupineAccessToken.value
+        ConfigurationSettings.wakeWordPorcupineKeywordOption.value = _wakeWordPorcupineKeywordOption.value
+        ConfigurationSettings.wakeWordPorcupineKeywordOptions.value = _wakeWordPorcupineKeywordOptions.value
+        ConfigurationSettings.wakeWordPorcupineLanguage.value = _wakeWordPorcupineLanguage.value
+        ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.value = _wakeWordPorcupineSensitivity.value
     }
 
     /**

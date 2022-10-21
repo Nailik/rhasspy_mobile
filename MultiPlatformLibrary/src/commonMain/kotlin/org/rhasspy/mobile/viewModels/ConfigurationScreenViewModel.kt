@@ -1,25 +1,26 @@
 package org.rhasspy.mobile.viewModels
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.MqttService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class ConfigurationScreenViewModel : ViewModel() {
 
-    private val _siteId = ConfigurationSettings.siteId.data
+    private val _siteId = MutableStateFlow(ConfigurationSettings.siteId.value)
     val siteId = _siteId.readOnly
-    val isHttpServerEnabled = ConfigurationSettings.isHttpServerEnabled.data.readOnly
-    val isHttpSSLVerificationEnabled = ConfigurationSettings.isHttpSSLVerificationEnabled.data.readOnly
+    val isHttpServerEnabled = ConfigurationSettings.isHttpServerEnabled.data
+    val isHttpSSLVerificationEnabled = ConfigurationSettings.isHttpSSLVerificationEnabled.data
     val isMQTTConnected = MqttService.isConnected
-    val isUdpOutputEnabled = ConfigurationSettings.isUdpOutputEnabled.data.readOnly
-    val wakeWordOption = ConfigurationSettings.wakeWordOption.data.readOnly
-    val speechToTextOption = ConfigurationSettings.speechToTextOption.data.readOnly
-    val intentRecognitionOption = ConfigurationSettings.intentRecognitionOption.data.readOnly
-    val textToSpeechOption = ConfigurationSettings.textToSpeechOption.data.readOnly
-    val audioPlayingOption = ConfigurationSettings.audioPlayingOption.data.readOnly
-    val dialogueManagementOption = ConfigurationSettings.dialogueManagementOption.data.readOnly
-    val intentHandlingOption = ConfigurationSettings.intentHandlingOption.data.readOnly
+    val isUdpOutputEnabled = ConfigurationSettings.isUdpOutputEnabled.data
+    val wakeWordOption = ConfigurationSettings.wakeWordOption.data
+    val speechToTextOption = ConfigurationSettings.speechToTextOption.data
+    val intentRecognitionOption = ConfigurationSettings.intentRecognitionOption.data
+    val textToSpeechOption = ConfigurationSettings.textToSpeechOption.data
+    val audioPlayingOption = ConfigurationSettings.audioPlayingOption.data
+    val dialogueManagementOption = ConfigurationSettings.dialogueManagementOption.data
+    val intentHandlingOption = ConfigurationSettings.intentHandlingOption.data
 
     fun changeSiteId(siteId: String) {
         _siteId.value = siteId

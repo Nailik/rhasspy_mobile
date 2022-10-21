@@ -4,6 +4,9 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
+/**
+ * all used colors
+ */
 val md_theme_light_primary = Color(0xFF6750A4)
 val md_theme_light_onPrimary = Color(0xFFFFFFFF)
 val md_theme_light_primaryContainer = Color(0xFFEADDFF)
@@ -30,7 +33,6 @@ val md_theme_light_outline = Color(0xFF79747E)
 val md_theme_light_inverseOnSurface = Color(0xFFF4EFF4)
 val md_theme_light_inverseSurface = Color(0xFF313033)
 val md_theme_light_inversePrimary = Color(0xFFD0BCFF)
-val md_theme_light_shadow = Color(0xFF000000)
 
 val md_theme_dark_primary = Color(0xFFD0BCFF)
 val md_theme_dark_onPrimary = Color(0xFF381E72)
@@ -58,7 +60,6 @@ val md_theme_dark_outline = Color(0xFF938F99)
 val md_theme_dark_inverseOnSurface = Color(0xFF1C1B1F)
 val md_theme_dark_inverseSurface = Color(0xFFE6E1E5)
 val md_theme_dark_inversePrimary = Color(0xFF6750A4)
-val md_theme_dark_shadow = Color(0xFF000000)
 
 val assistant_color_one = Color(0xFF2196F3)
 val assistant_color_two = Color(0xFFF44336)
@@ -74,10 +75,9 @@ val color_error = Color(0xFFF44336)
 val color_assert = Color(0xFF673AB7)
 val color_unknown = Color(0xFF000000)
 
-val seed = Color(0xFF456c42)
-val error = Color(0xFFba1b1b)
-
-
+/**
+ * colors for light theme
+ */
 val LightThemeColors = lightColorScheme(
     primary = md_theme_light_primary,
     onPrimary = md_theme_light_onPrimary,
@@ -107,6 +107,9 @@ val LightThemeColors = lightColorScheme(
     inversePrimary = md_theme_light_inversePrimary,
 )
 
+/**
+ * colors for dark theme
+ */
 val DarkThemeColors = darkColorScheme(
     primary = md_theme_dark_primary,
     onPrimary = md_theme_dark_onPrimary,

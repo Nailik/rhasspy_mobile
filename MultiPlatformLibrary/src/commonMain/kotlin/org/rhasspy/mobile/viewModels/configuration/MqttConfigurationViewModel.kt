@@ -115,15 +115,15 @@ class MqttConfigurationViewModel : ViewModel() {
      * save data configuration
      */
     fun save() {
-        ConfigurationSettings.isMqttEnabled.data.value = _isMqttEnabled.value
-        ConfigurationSettings.mqttHost.data.value = _mqttHost.value
-        ConfigurationSettings.mqttPort.data.value = _mqttPort.value
-        ConfigurationSettings.mqttUserName.data.value = _mqttUserName.value
-        ConfigurationSettings.mqttPassword.data.value = _mqttPassword.value
-        ConfigurationSettings.isMqttSSLEnabled.data.value = _isMqttSSLEnabled.value
-        ConfigurationSettings.mqttConnectionTimeout.data.value = _mqttConnectionTimeout.value
-        ConfigurationSettings.mqttKeepAliveInterval.data.value = _mqttKeepAliveInterval.value
-        ConfigurationSettings.mqttRetryInterval.data.value = _mqttRetryInterval.value
+        ConfigurationSettings.isMqttEnabled.value = _isMqttEnabled.value
+        ConfigurationSettings.mqttHost.value = _mqttHost.value
+        ConfigurationSettings.mqttPort.value = _mqttPort.value
+        ConfigurationSettings.mqttUserName.value = _mqttUserName.value
+        ConfigurationSettings.mqttPassword.value = _mqttPassword.value
+        ConfigurationSettings.isMqttSSLEnabled.value = _isMqttSSLEnabled.value
+        ConfigurationSettings.mqttConnectionTimeout.value = _mqttConnectionTimeout.value
+        ConfigurationSettings.mqttKeepAliveInterval.value = _mqttKeepAliveInterval.value
+        ConfigurationSettings.mqttRetryInterval.value = _mqttRetryInterval.value
     }
 
     /**

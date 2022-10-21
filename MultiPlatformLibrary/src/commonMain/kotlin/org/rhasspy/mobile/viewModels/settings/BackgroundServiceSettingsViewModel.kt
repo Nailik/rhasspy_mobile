@@ -37,7 +37,7 @@ class BackgroundServiceSettingsViewModel : ViewModel() {
      * save data configuration
      */
     fun save() {
-        AppSettings.isBackgroundServiceEnabled.data.value = _isBackgroundServiceEnabled.value
+        AppSettings.isBackgroundServiceEnabled.value = _isBackgroundServiceEnabled.value
     }
 
     /**

@@ -45,8 +45,8 @@ class AudioPlayingConfigurationViewModel : ViewModel() {
      * save data configuration
      */
     fun save() {
-        ConfigurationSettings.audioPlayingOption.data.value = _audioPlayingOption.value
-        ConfigurationSettings.audioPlayingEndpoint.data.value = _audioPlayingEndpoint.value
+        ConfigurationSettings.audioPlayingOption.value = _audioPlayingOption.value
+        ConfigurationSettings.audioPlayingEndpoint.value = _audioPlayingEndpoint.value
     }
 
     /**

@@ -43,10 +43,10 @@ class DeviceSettingsSettingsViewModel : ViewModel() {
      * save data configuration
      */
     fun save() {
-        AppSettings.volume.data.value = _volume.value
-        AppSettings.isHotWordEnabled.data.value = _isHotWordEnabled.value
-        AppSettings.isAudioOutputEnabled.data.value = _isAudioOutputEnabled.value
-        AppSettings.isIntentHandlingEnabled.data.value = _isIntentHandlingEnabled.value
+        AppSettings.volume.value = _volume.value
+        AppSettings.isHotWordEnabled.value = _isHotWordEnabled.value
+        AppSettings.isAudioOutputEnabled.value = _isAudioOutputEnabled.value
+        AppSettings.isIntentHandlingEnabled.value = _isIntentHandlingEnabled.value
     }
 
     /**

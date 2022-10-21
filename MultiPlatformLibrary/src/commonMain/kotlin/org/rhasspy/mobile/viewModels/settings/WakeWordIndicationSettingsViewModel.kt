@@ -36,9 +36,9 @@ class WakeWordIndicationSettingsViewModel : ViewModel() {
      * save data configuration
      */
     fun save() {
-        AppSettings.isWakeWordSoundIndicationEnabled.data.value = _isWakeWordSoundIndicationEnabled.value
-        AppSettings.isWakeWordLightIndicationEnabled.data.value = _isWakeWordLightIndicationEnabled.value
-        AppSettings.isWakeWordDetectionTurnOnDisplayEnabled.data.value = _isWakeWordDetectionTurnOnDisplayEnabled.value
+        AppSettings.isWakeWordSoundIndicationEnabled.value = _isWakeWordSoundIndicationEnabled.value
+        AppSettings.isWakeWordLightIndicationEnabled.value = _isWakeWordLightIndicationEnabled.value
+        AppSettings.isWakeWordDetectionTurnOnDisplayEnabled.value = _isWakeWordDetectionTurnOnDisplayEnabled.value
     }
 
     /**

@@ -11,7 +11,7 @@ import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.AppSettings
 
-class AutomaticSilenceDetectionViewModel : ViewModel() {
+class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
 
     //unsaved data
     private val _isAutomaticSilenceDetectionEnabled = MutableStateFlow(AppSettings.isAutomaticSilenceDetectionEnabled.value)
@@ -100,9 +100,9 @@ class AutomaticSilenceDetectionViewModel : ViewModel() {
      * save data configuration
      */
     fun save() {
-        AppSettings.isAutomaticSilenceDetectionEnabled.data.value = _isAutomaticSilenceDetectionEnabled.value
-        AppSettings.automaticSilenceDetectionTime.data.value = _automaticSilenceDetectionTime.value
-        AppSettings.automaticSilenceDetectionAudioLevel.data.value = _automaticSilenceDetectionAudioLevel.value
+        AppSettings.isAutomaticSilenceDetectionEnabled.value = _isAutomaticSilenceDetectionEnabled.value
+        AppSettings.automaticSilenceDetectionTime.value = _automaticSilenceDetectionTime.value
+        AppSettings.automaticSilenceDetectionAudioLevel.value = _automaticSilenceDetectionAudioLevel.value
     }
 
     /**

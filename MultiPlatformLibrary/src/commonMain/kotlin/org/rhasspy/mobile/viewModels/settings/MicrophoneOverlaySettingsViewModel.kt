@@ -28,8 +28,8 @@ class MicrophoneOverlaySettingsViewModel : ViewModel() {
      * save data configuration
      */
     fun save() {
-        AppSettings.isMicrophoneOverlayEnabled.data.value = _isMicrophoneOverlayEnabled.value
-        AppSettings.isMicrophoneOverlayWhileAppEnabled.data.value = _isMicrophoneOverlayWhileAppEnabled.value
+        AppSettings.isMicrophoneOverlayEnabled.value = _isMicrophoneOverlayEnabled.value
+        AppSettings.isMicrophoneOverlayWhileAppEnabled.value = _isMicrophoneOverlayWhileAppEnabled.value
     }
 
     /**

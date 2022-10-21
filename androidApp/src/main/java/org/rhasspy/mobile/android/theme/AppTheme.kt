@@ -9,12 +9,9 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.viewModels.AppViewModel
 
-@Composable
-fun getIsDarkTheme(): Boolean {
-    val themeOption by AppViewModel.themeOption.collectAsState()
-    return (isSystemInDarkTheme() && themeOption == ThemeOptions.System) || themeOption == ThemeOptions.Dark
-}
-
+/**
+ * current App Theme
+ */
 @Composable
 fun AppTheme(systemUiTheme: Boolean, content: @Composable () -> Unit) {
 
@@ -30,4 +27,13 @@ fun AppTheme(systemUiTheme: Boolean, content: @Composable () -> Unit) {
     }
 
     MaterialTheme(colorScheme = colorScheme, content = content)
+}
+
+/**
+ * returns if the dark theme should be used
+ */
+@Composable
+fun getIsDarkTheme(): Boolean {
+    val themeOption by AppViewModel.themeOption.collectAsState()
+    return (isSystemInDarkTheme() && themeOption == ThemeOptions.System) || themeOption == ThemeOptions.Dark
 }

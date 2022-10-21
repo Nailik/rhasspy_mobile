@@ -35,8 +35,8 @@ class SpeechToTextConfigurationViewModel : ViewModel() {
      * save data configuration
      */
     fun save() {
-        ConfigurationSettings.speechToTextOption.data.value = _speechToTextOption.value
-        ConfigurationSettings.speechToTextHttpEndpoint.data.value = _speechToTextHttpEndpoint.value
+        ConfigurationSettings.speechToTextOption.value = _speechToTextOption.value
+        ConfigurationSettings.speechToTextHttpEndpoint.value = _speechToTextHttpEndpoint.value
     }
 
     /**

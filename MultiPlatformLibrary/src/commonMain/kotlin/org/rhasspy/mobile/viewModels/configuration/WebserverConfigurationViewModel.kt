@@ -38,9 +38,9 @@ class WebserverConfigurationViewModel : ViewModel() {
      * save data configuration
      */
     fun save() {
-        ConfigurationSettings.isHttpServerEnabled.data.value = _isHttpServerEnabled.value
-        ConfigurationSettings.httpServerPort.data.value = _httpServerPort.value
-        ConfigurationSettings.isHttpServerSSLEnabled.data.value = _isHttpServerSSLEnabled.value
+        ConfigurationSettings.isHttpServerEnabled.value = _isHttpServerEnabled.value
+        ConfigurationSettings.httpServerPort.value = _httpServerPort.value
+        ConfigurationSettings.isHttpServerSSLEnabled.value = _isHttpServerSSLEnabled.value
     }
 
     /**

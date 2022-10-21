@@ -37,8 +37,8 @@ class IntentRecognitionConfigurationViewModel : ViewModel() {
      * save data configuration
      */
     fun save() {
-        ConfigurationSettings.intentRecognitionOption.data.value = _intentRecognitionOption.value
-        ConfigurationSettings.intentRecognitionEndpoint.data.value = _intentRecognitionEndpoint.value
+        ConfigurationSettings.intentRecognitionOption.value = _intentRecognitionOption.value
+        ConfigurationSettings.intentRecognitionEndpoint.value = _intentRecognitionEndpoint.value
     }
 
     /**

@@ -22,8 +22,8 @@ class MicrophoneOverlayViewModel : ViewModel() {
     val microphoneOverlayPositionY: Int get() = AppSettings.microphoneOverlayPositionY.value
 
     fun updateMicrophoneOverlayPosition(offsetX: Float, offsetY: Float) {
-        AppSettings.microphoneOverlayPositionX.data.value = (((AppSettings.microphoneOverlayPositionX.value + offsetX).roundToInt()))
-        AppSettings.microphoneOverlayPositionY.data.value = (((AppSettings.microphoneOverlayPositionX.value + offsetY).roundToInt()))
+        AppSettings.microphoneOverlayPositionX.value = (((AppSettings.microphoneOverlayPositionX.value + offsetX).roundToInt()))
+        AppSettings.microphoneOverlayPositionY.value = (((AppSettings.microphoneOverlayPositionY.value + offsetY).roundToInt()))
     }
 
 }

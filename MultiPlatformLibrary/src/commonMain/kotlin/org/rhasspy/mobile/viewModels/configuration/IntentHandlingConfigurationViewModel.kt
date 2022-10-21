@@ -65,11 +65,11 @@ class IntentHandlingConfigurationViewModel : ViewModel() {
      * save data configuration
      */
     fun save() {
-        ConfigurationSettings.intentHandlingOption.data.value = _intentHandlingOption.value
-        ConfigurationSettings.intentHandlingHttpEndpoint.data.value = _intentHandlingHttpEndpoint.value
-        ConfigurationSettings.intentHandlingHassEndpoint.data.value = _intentHandlingHassEndpoint.value
-        ConfigurationSettings.intentHandlingHassAccessToken.data.value = _intentHandlingHassAccessToken.value
-        ConfigurationSettings.isIntentHandlingHassEvent.data.value = _isIntentHandlingHassEvent.value
+        ConfigurationSettings.intentHandlingOption.value = _intentHandlingOption.value
+        ConfigurationSettings.intentHandlingHttpEndpoint.value = _intentHandlingHttpEndpoint.value
+        ConfigurationSettings.intentHandlingHassEndpoint.value = _intentHandlingHassEndpoint.value
+        ConfigurationSettings.intentHandlingHassAccessToken.value = _intentHandlingHassAccessToken.value
+        ConfigurationSettings.isIntentHandlingHassEvent.value = _isIntentHandlingHassEvent.value
     }
 
     /**

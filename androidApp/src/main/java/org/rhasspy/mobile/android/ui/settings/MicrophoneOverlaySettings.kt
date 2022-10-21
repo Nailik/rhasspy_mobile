@@ -1,13 +1,18 @@
 package org.rhasspy.mobile.android.ui.settings
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.utils.PageContent
 import org.rhasspy.mobile.android.utils.SwitchListItem
+import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.viewModels.settings.MicrophoneOverlaySettingsViewModel
 
 @Preview
@@ -30,6 +35,12 @@ fun MicrophoneOverlaySettingsContent(viewModel: MicrophoneOverlaySettingsViewMod
                 isChecked = viewModel.isMicrophoneOverlayWhileAppEnabled.collectAsState().value,
                 onCheckedChange = viewModel::toggleMicrophoneOverlayWhileAppEnabled
             )
+
+            Spacer(modifier = Modifier.fillMaxWidth(1f))
+
+            Button(onClick = viewModel::save) {
+                Text(MR.strings.save)
+            }
 
         }
 

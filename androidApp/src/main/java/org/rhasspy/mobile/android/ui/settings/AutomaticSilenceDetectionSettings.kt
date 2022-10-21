@@ -38,12 +38,12 @@ import org.rhasspy.mobile.android.utils.PageContent
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.android.utils.TextFieldListItem
-import org.rhasspy.mobile.viewModels.settings.AutomaticSilenceDetectionViewModel
+import org.rhasspy.mobile.viewModels.settings.AutomaticSilenceDetectionSettingsViewModel
 
 
 @Preview
 @Composable
-fun AutomaticSilenceDetectionSettingsContent(viewModel: AutomaticSilenceDetectionViewModel = viewModel()) {
+fun AutomaticSilenceDetectionSettingsContent(viewModel: AutomaticSilenceDetectionSettingsViewModel = viewModel()) {
 
     PageContent(MR.strings.automaticSilenceDetection) {
 
@@ -80,7 +80,7 @@ fun AutomaticSilenceDetectionSettingsContent(viewModel: AutomaticSilenceDetectio
  * time duration of silence detection
  */
 @Composable
-private fun Time(viewModel: AutomaticSilenceDetectionViewModel) {
+private fun Time(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
 
     TextFieldListItem(
         label = MR.strings.silenceDetectionTime,
@@ -95,7 +95,7 @@ private fun Time(viewModel: AutomaticSilenceDetectionViewModel) {
  * audio level of silence detection
  */
 @Composable
-private fun AudioLevel(viewModel: AutomaticSilenceDetectionViewModel) {
+private fun AudioLevel(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
 
     TextFieldListItem(
         label = MR.strings.audioLevelThreshold,
@@ -110,7 +110,7 @@ private fun AudioLevel(viewModel: AutomaticSilenceDetectionViewModel) {
  * testing of audio level
  */
 @Composable
-private fun Test(viewModel: AutomaticSilenceDetectionViewModel) {
+private fun Test(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
 
     Row(
         modifier = Modifier
@@ -151,7 +151,7 @@ private fun Test(viewModel: AutomaticSilenceDetectionViewModel) {
  * button to start automatic silence detection test
  */
 @Composable
-private fun RowScope.StartTestButton(viewModel: AutomaticSilenceDetectionViewModel, animatedWeight: Float) {
+private fun RowScope.StartTestButton(viewModel: AutomaticSilenceDetectionSettingsViewModel, animatedWeight: Float) {
 
     Button(
         modifier = Modifier

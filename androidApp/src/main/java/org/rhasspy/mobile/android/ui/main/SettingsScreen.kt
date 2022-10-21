@@ -267,7 +267,7 @@ private fun MicrophoneOverlay(viewModel: SettingsScreenViewModel) {
 
     SettingsListItem(
         text = MR.strings.microphoneOverlay,
-        secondaryText = viewModel.isMicrophoneOverlayWhileApp.collectAsState().value.toText(),
+        secondaryText = viewModel.isMicrophoneOverlayEnabled.collectAsState().value.toText(),
         screen = SettingsScreens.MicrophoneOverlaySettings
     )
 

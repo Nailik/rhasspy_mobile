@@ -40,9 +40,9 @@ class LogSettingsViewModel : ViewModel() {
      * save data configuration
      */
     fun save() {
-        AppSettings.logLevel.data.value = _logLevel.value
-        AppSettings.isShowLogEnabled.data.value = _isShowLogEnabled.value
-        AppSettings.isLogAudioFramesEnabled.data.value = _isLogAudioFramesEnabled.value
+        AppSettings.logLevel.value = _logLevel.value
+        AppSettings.isShowLogEnabled.value = _isShowLogEnabled.value
+        AppSettings.isLogAudioFramesEnabled.value = _isLogAudioFramesEnabled.value
     }
 
 }

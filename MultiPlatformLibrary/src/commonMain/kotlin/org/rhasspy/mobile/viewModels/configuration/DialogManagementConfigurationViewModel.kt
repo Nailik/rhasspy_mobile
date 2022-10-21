@@ -32,7 +32,7 @@ class DialogManagementConfigurationViewModel : ViewModel() {
      * save data configuration
      */
     fun save() {
-        ConfigurationSettings.dialogueManagementOption.data.value = _dialogManagementOption.value
+        ConfigurationSettings.dialogueManagementOption.value = _dialogManagementOption.value
     }
 
     /**

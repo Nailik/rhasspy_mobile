@@ -22,7 +22,7 @@ class ProblemHandlingSettingsViewModel : ViewModel() {
      * save data configuration
      */
     fun save() {
-        AppSettings.isForceCancelEnabled.data.value = _isForceCancelEnabled.value
+        AppSettings.isForceCancelEnabled.value = _isForceCancelEnabled.value
     }
 
     /**
