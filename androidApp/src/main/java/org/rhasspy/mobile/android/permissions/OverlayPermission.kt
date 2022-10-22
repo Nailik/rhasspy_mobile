@@ -8,8 +8,10 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
@@ -28,12 +30,12 @@ import org.rhasspy.mobile.nativeutils.OverlayPermission
 fun requestOverlayPermission(
     onResult: (granted: Boolean) -> Unit
 ): () -> Unit {
-    val openRequestPermissionDialog = remember { mutableStateOf(false) }
+    var openRequestPermissionDialog by remember { mutableStateOf(false) }
 
-    if (openRequestPermissionDialog.value) {
+    if (openRequestPermissionDialog) {
         //show information dialog
         OverlayPermissionInfoDialog {
-            openRequestPermissionDialog.value = false
+            openRequestPermissionDialog = false
             //when user clicked yes redirect him to settings
             if (it) {
                 OverlayPermission.requestPermission(onResult::invoke)
@@ -44,7 +46,7 @@ fun requestOverlayPermission(
     return {
         //check if granted or not
         if (!OverlayPermission.granted.value) {
-            openRequestPermissionDialog.value = true
+            openRequestPermissionDialog = true
         } else {
             onResult.invoke(true)
         }

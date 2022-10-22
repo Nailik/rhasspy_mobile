@@ -126,6 +126,7 @@ kotlin {
 }
 
 dependencies {
+    implementation("androidx.test.uiautomator:uiautomator:2.2.0")
     coreLibraryDesugaring(Android.tools.desugarJdkLibs)
     implementation(project(":MultiPlatformLibrary"))
 
@@ -158,6 +159,7 @@ dependencies {
     implementation(Icerock.Resources)
     implementation(Icerock.Mvvm.core)
 
+    androidTestImplementation(project(":MultiPlatformLibrary"))
     androidTestImplementation(Kotlin.test)
     androidTestImplementation(Kotlin.Test.junit)
     androidTestImplementation(AndroidX.Test.Espresso.core)
