@@ -32,6 +32,7 @@ android {
         versionCode = Version.code
         versionName = Version.toString()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments.put("clearPackageData", "true")
     }
 
     buildTypes {
@@ -78,6 +79,7 @@ android {
     testOptions {
         unitTests.isIncludeAndroidResources = true
         testOptions.animationsDisabled = true
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
 
     lint {
@@ -160,6 +162,8 @@ dependencies {
     implementation(Icerock.Mvvm.core)
 
     androidTestImplementation(project(":MultiPlatformLibrary"))
+    androidTestImplementation(AndroidX.Test.runner)
+    androidTestUtil(AndroidX.Test.orchestrator)
     androidTestImplementation(Kotlin.test)
     androidTestImplementation(Kotlin.Test.junit)
     androidTestImplementation(AndroidX.Test.Espresso.core)
