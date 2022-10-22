@@ -53,7 +53,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.permissions.requestMicrophonePermission
 import org.rhasspy.mobile.android.permissions.requestOverlayPermission
 import org.rhasspy.mobile.android.ui.Fab
 import org.rhasspy.mobile.android.ui.UnsavedChanges
@@ -324,10 +323,8 @@ fun MicrophonePermissionMissing(viewModel: HomeScreenViewModel) {
         visible = !viewModel.isMicrophonePermissionRequestNotRequired.collectAsState().value
     ) {
 
-        val microphonePermission = requestMicrophonePermission(MR.strings.microphonePermissionInfoWakeWord) {}
-
         IconButton(
-            onClick = microphonePermission::invoke,
+            onClick = {  },
             modifier = Modifier.background(
                 color = MaterialTheme.colorScheme.errorContainer,
                 shape = RoundedCornerShape(8.dp)

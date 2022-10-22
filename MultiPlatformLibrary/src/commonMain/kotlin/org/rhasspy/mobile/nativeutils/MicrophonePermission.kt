@@ -9,6 +9,6 @@ expect object MicrophonePermission {
 
     fun shouldShowInformationDialog(): Boolean
 
-    fun requestPermission(redirect: Boolean, onResult: (granted: Boolean) -> Unit)
+    fun requestPermissionExternally()
 
 }

@@ -16,7 +16,6 @@ class MainActivity : AppActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
-        MicrophonePermission.init(this)
         OverlayPermission.init(this)
 
         WindowCompat.setDecorFitsSystemWindows(window, true)

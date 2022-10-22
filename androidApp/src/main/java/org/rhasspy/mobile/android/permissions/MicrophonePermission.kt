@@ -1,5 +1,8 @@
 package org.rhasspy.mobile.android.permissions
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -8,27 +11,106 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NoLiveLiterals
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.SecureFlagPolicy
 import dev.icerock.moko.resources.StringResource
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.ui.LocalSnackbarHostState
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.android.utils.translate
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 
+/**
+ * Wraps a composable that requires the Microphone Permission before click
+ * information Text is the text shown in the information dialog
+ * onClick is used when the permission is granted
+ * content is the content to be shown
+ *
+ * if necessary shows information dialog
+ * then shows system permission dialog
+ * when denied a snackbar toast is shown with a link to the app system settings
+ */
+@Composable
+fun RequiresMicrophonePermission(
+    informationText: StringResource,
+    onClick: () -> Unit,
+    content: @Composable (onClick: () -> Unit) -> Unit
+) {
+    val snackbarHostState = LocalSnackbarHostState.current
+    val coroutineScope = rememberCoroutineScope()
+
+    val snackBarMessage = translate(MR.strings.microphonePermissionDenied)
+    val snackBarActionLabel = translate(MR.strings.settings)
+
+    //launcher to get result of system request
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            onClick.invoke()
+        } else {
+            //snackbar to open app system settings
+            coroutineScope.launch {
+
+                val snackbarResult = snackbarHostState.showSnackbar(
+                    message = snackBarMessage,
+                    actionLabel = snackBarActionLabel,
+                    duration = SnackbarDuration.Short,
+                )
+
+                if (snackbarResult == SnackbarResult.ActionPerformed) {
+                    MicrophonePermission.requestPermissionExternally()
+                }
+            }
+        }
+    }
+
+
+    //shows information dialog
+    var openRequestPermissionDialog by rememberSaveable { mutableStateOf(false) }
+
+    if (openRequestPermissionDialog) {
+        MicrophonePermissionInfoDialog(informationText) { result ->
+            openRequestPermissionDialog = false
+            if (result) {
+                //if user click yes, show system permission request
+                launcher.launch(Manifest.permission.RECORD_AUDIO)
+            }
+        }
+    }
+
+
+    content {
+        //check if permission is not yet granted
+        if (!MicrophonePermission.granted.value) {
+            //check if info dialog is necessary
+            if (MicrophonePermission.shouldShowInformationDialog()) {
+                openRequestPermissionDialog = true
+            } else {
+                //request directly
+                launcher.launch(Manifest.permission.RECORD_AUDIO)
+            }
+        } else {
+            //permission granted
+            onClick.invoke()
+        }
+    }
+
+}
 
 /**
  * show an information dialog about why the permission is required
@@ -50,114 +132,30 @@ fun MicrophonePermissionInfoDialog(message: StringResource, onResult: (result: B
             Icon(imageVector = Icons.Filled.Mic, contentDescription = MR.strings.microphone)
         },
         confirmButton = {
-            Button(onClick = {
-                onResult.invoke(true)
-            }) {
+            Button(
+                onClick = {
+                    onResult.invoke(true)
+                },
+                modifier = Modifier.testTag(TestTag.DialogOk)
+            ) {
                 Text(MR.strings.ok)
             }
         },
         dismissButton = {
-            OutlinedButton(onClick = {
-                onResult.invoke(false)
-            }) {
+            OutlinedButton(
+                onClick = {
+                    onResult.invoke(false)
+                },
+                modifier = Modifier.testTag(TestTag.DialogCancel)
+            ) {
                 Text(MR.strings.cancel)
             }
         },
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
+            .testTag(TestTag.DialogInformationMicrophonePermission),
+        properties = DialogProperties(securePolicy = SecureFlagPolicy.SecureOff)
     )
 }
 
-/**
- * to request a microphone permission
- * informationText is to inform user why this is necessary
- * on Result will be called afterwards
- *
- * result can be invoked multiple times (from system dialog and afterwards from snackbar)
- */
-@NoLiveLiterals
-@Composable
-fun requestMicrophonePermission(
-    informationText: StringResource,
-    onResult: (granted: Boolean) -> Unit
-): () -> Unit {
-    //necessary items
-    val snackbarHostState = LocalSnackbarHostState.current
-    val coroutineScope = rememberCoroutineScope()
-
-    //info to show if it was denied
-    val snackBarMessage = translate(MR.strings.microphonePermissionDenied)
-    val snackBarActionLabel = translate(MR.strings.settings)
-
-    //if dialog is opened
-    var openRequestPermissionDialog by remember { mutableStateOf(false) }
-
-    if (openRequestPermissionDialog) {
-        //show info dialog
-        MicrophonePermissionInfoDialog(informationText) { result ->
-            //hide dialog after user closed information dialog
-            openRequestPermissionDialog = false
-            if (result) {
-                //if user click yes, show system permission request
-                requestMicrophonePermissionFromSystem(snackBarMessage, snackBarActionLabel, coroutineScope, snackbarHostState, onResult)
-            }
-        }
-    }
-
-    return {
-        //check if permission is not yet granted
-        if (!MicrophonePermission.granted.value) {
-            //check if info dialog is necessary
-            if (MicrophonePermission.shouldShowInformationDialog()) {
-                openRequestPermissionDialog = true
-            } else {
-                //request directly
-                requestMicrophonePermissionFromSystem(snackBarMessage, snackBarActionLabel, coroutineScope, snackbarHostState, onResult)
-            }
-        } else {
-            //permission already granted
-            onResult.invoke(true)
-        }
-    }
-}
-
-
-
-/**
- * to request the information by showing system dialog
- * result can be invoked multiple times (from system dialog and afterwards from snackbar)
- */
-@NoLiveLiterals
-private fun requestMicrophonePermissionFromSystem(
-    message: String,
-    actionLabel: String,
-    coroutineScope: CoroutineScope,
-    snackbarHostState: SnackbarHostState,
-    onResult: (granted: Boolean) -> Unit
-) {
-    //request from system
-    MicrophonePermission.requestPermission(false) { granted ->
-        onResult.invoke(granted)
-        if (!granted) {
-            //permission not granted
-            //    onResult.invoke(false)
-
-            //display snackbar when not granted
-            coroutineScope.launch {
-
-                val snackbarResult = snackbarHostState.showSnackbar(
-                    message = message,
-                    actionLabel = actionLabel,
-                    duration = SnackbarDuration.Short,
-                )
-
-                //button to show permission request
-                if (snackbarResult == SnackbarResult.ActionPerformed) {
-                    //open permission
-                    MicrophonePermission.requestPermission(true, onResult::invoke)
-                }
-            }
-        }
-    }
-}

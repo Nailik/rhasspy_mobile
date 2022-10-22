@@ -9,6 +9,7 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.rhasspy.mobile.nativeutils.MicrophonePermission
 
 actual open class NativeApplication : MultiDexApplication() {
 
@@ -42,7 +43,9 @@ actual open class NativeApplication : MultiDexApplication() {
                 }
             }
 
-            override fun onActivityResumed(p0: Activity) {}
+            override fun onActivityResumed(p0: Activity) {
+                MicrophonePermission.update()
+            }
             override fun onActivityPaused(p0: Activity) {}
             override fun onActivityStopped(p0: Activity) {}
             override fun onActivitySaveInstanceState(p0: Activity, p1: Bundle) {}

@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.android
 
 import android.content.Intent
+import android.net.Uri
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.NativeApplication
@@ -26,6 +27,8 @@ class AndroidApplication : Application() {
                 "uncaught exception in Thread $thread"
             }
         }
+
+
     }
 
     override fun onCreate() {
