@@ -104,7 +104,6 @@ kotlin {
                 implementation(Kotlin.Test.junit)
                 implementation(Kotlin.test)
                 implementation(Kotlin.Test.junit)
-                implementation(AndroidX.Test.Espresso.core)
                 implementation(AndroidX.Compose.Ui.testJunit4)
                 implementation(AndroidX.Compose.Ui.testManifest)
             }
