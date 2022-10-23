@@ -2,40 +2,27 @@ package org.rhasspy.mobile.nativeutils
 
 import android.content.Intent
 import android.provider.Settings
-import androidx.activity.ComponentActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.Application
+import org.rhasspy.mobile.readOnly
 
 actual object OverlayPermission {
 
-    private val status = MutableStateFlow(isGranted())
+    private val _granted = MutableStateFlow(isGranted())
+    actual val granted = _granted.readOnly
 
-    actual val granted: StateFlow<Boolean> get() = status
+    private var onGranted: (() -> Unit)? = null
 
-    private var onResultCallback: ((Boolean) -> Unit)? = null
-
-    fun init(activity: ComponentActivity) {
-        activity.lifecycle.addObserver(object : LifecycleEventObserver {
-            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                if (event == Lifecycle.Event.ON_RESUME) {
-                    status.value = isGranted()
-                    onResultCallback?.invoke(status.value)
-                }
-            }
-        })
+    fun update() {
+        _granted.value = isGranted()
+        if (_granted.value) {
+            onGranted?.invoke()
+        }
+        onGranted = null
     }
 
-    actual fun requestPermission(onResult: (granted: Boolean) -> Unit) {
-        if (status.value) {
-            onResult.invoke(true)
-            return
-        }
-
-        onResultCallback = onResult
+    actual fun requestPermission(onGranted: () -> Unit) {
+        this.onGranted = onGranted
         // send user to the device settings
         val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

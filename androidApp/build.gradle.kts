@@ -32,7 +32,7 @@ android {
         versionCode = Version.code
         versionName = Version.toString()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunnerArguments.put("clearPackageData", "true")
+        testInstrumentationRunnerArguments["clearPackageData"] = "true"
     }
 
     buildTypes {

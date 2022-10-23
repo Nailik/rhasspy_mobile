@@ -6,6 +6,7 @@ import androidx.compose.ui.semantics.testTag
 
 enum class TestTag {
     DialogInformationMicrophonePermission,
+    DialogInformationOverlayPermission,
     DialogOk,
     DialogCancel
 

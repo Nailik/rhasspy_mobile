@@ -15,8 +15,8 @@ fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     useUnmergedTree: Boolean = false
 ): SemanticsNodeInteraction = onNode(hasTestTag(testTag.name), useUnmergedTree)
 
-fun UiSelector.textMatches(regex: StringResource): UiSelector {
-    return this.textMatches(StringDesc.Resource(regex).toString(InstrumentationRegistry.getInstrumentation()
+fun UiSelector.text(text: StringResource): UiSelector {
+    return this.textMatches(StringDesc.Resource(text).toString(InstrumentationRegistry.getInstrumentation()
         .targetContext.applicationContext))
 }
 

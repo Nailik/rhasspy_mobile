@@ -32,7 +32,7 @@ import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.onNodeWithText
-import org.rhasspy.mobile.android.textMatches
+import org.rhasspy.mobile.android.text
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.android.ui.LocalSnackbarHostState
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
@@ -67,8 +67,9 @@ import kotlin.test.assertTrue
 @RunWith(AndroidJUnit4::class)
 class MicrophonePermissionTest {
 
+    // activity necessary for permission
     @get: Rule
-    val composeTestRule = createAndroidComposeRule<MainActivity>()   // activity necessary for permission
+    val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     //.google is on devices with google play services and is missing on devices without play services
     private val permissionDialogPackageNameRegex = when {
@@ -277,7 +278,7 @@ class MicrophonePermissionTest {
         composeTestRule.awaitIdle()
         //InformationDialog is shown
         composeTestRule.onNodeWithTag(TestTag.DialogInformationMicrophonePermission).assertExists()
-        //Cancel clicked
+        //ok clicked
         composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
         //System dialog is shown
         getInstrumentation().waitForIdleSync()
@@ -303,7 +304,7 @@ class MicrophonePermissionTest {
         //User clicks button
         composeTestRule.onNodeWithText(btnRequestPermission).performClick()
         //snack bar shown
-        assertTrue { device.findObject(UiSelector().textMatches(MR.strings.microphonePermissionDenied)).exists() }
+        assertTrue { device.findObject(UiSelector().text(MR.strings.microphonePermissionDenied)).exists() }
     }
 
     /**
@@ -351,7 +352,7 @@ class MicrophonePermissionTest {
         assertFalse { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
         assertFalse { MicrophonePermission.granted.value }
         //Snackbar is shown
-        assertTrue { device.findObject(UiSelector().textMatches(MR.strings.microphonePermissionDenied)).exists() }
+        assertTrue { device.findObject(UiSelector().text(MR.strings.microphonePermissionDenied)).exists() }
         assertFalse { MicrophonePermission.granted.value }
 
 
@@ -396,7 +397,7 @@ class MicrophonePermissionTest {
         composeTestRule.onNodeWithText(btnRequestPermission).performClick()
         //Snackbar is shown
         getInstrumentation().waitForIdleSync()
-        assertTrue { device.findObject(UiSelector().textMatches(MR.strings.microphonePermissionDenied)).exists() }
+        assertTrue { device.findObject(UiSelector().text(MR.strings.microphonePermissionDenied)).exists() }
         composeTestRule.waitForIdle()
         //Snackbar action is clicked
         composeTestRule.onNodeWithText(MR.strings.settings).performClick()

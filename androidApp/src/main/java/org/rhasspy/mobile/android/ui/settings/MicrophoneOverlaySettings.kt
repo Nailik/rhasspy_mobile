@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.permissions.RequiresOverlayPermission
 import org.rhasspy.mobile.android.utils.PageContent
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.Text
@@ -23,12 +24,14 @@ fun MicrophoneOverlaySettingsContent(viewModel: MicrophoneOverlaySettingsViewMod
 
         Column {
 
-            SwitchListItem(
-                text = MR.strings.showMicrophoneOverlay,
-                secondaryText = MR.strings.showMicrophoneOverlayInfo,
-                isChecked = viewModel.isMicrophoneOverlayEnabled.collectAsState().value,
-                onCheckedChange = viewModel::toggleMicrophoneOverlayEnabled
-            )
+            RequiresOverlayPermission({ viewModel.toggleMicrophoneOverlayEnabled(true) }) { onClick ->
+                SwitchListItem(
+                    text = MR.strings.showMicrophoneOverlay,
+                    secondaryText = MR.strings.showMicrophoneOverlayInfo,
+                    isChecked = viewModel.isMicrophoneOverlayEnabled.collectAsState().value,
+                    onCheckedChange = { if (it) onClick.invoke() else viewModel.toggleMicrophoneOverlayEnabled(false) }
+                )
+            }
 
             SwitchListItem(
                 text = MR.strings.whileAppIsOpened,

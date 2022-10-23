@@ -21,8 +21,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
-import androidx.compose.ui.window.SecureFlagPolicy
 import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
@@ -93,7 +91,6 @@ fun RequiresMicrophonePermission(
         }
     }
 
-
     content {
         //check if permission is not yet granted
         if (!MicrophonePermission.granted.value) {
@@ -117,7 +114,7 @@ fun RequiresMicrophonePermission(
  */
 @NoLiveLiterals
 @Composable
-fun MicrophonePermissionInfoDialog(message: StringResource, onResult: (result: Boolean) -> Unit) {
+private fun MicrophonePermissionInfoDialog(message: StringResource, onResult: (result: Boolean) -> Unit) {
 
     AlertDialog(
         onDismissRequest = {
@@ -155,8 +152,7 @@ fun MicrophonePermissionInfoDialog(message: StringResource, onResult: (result: B
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
-            .testTag(TestTag.DialogInformationMicrophonePermission),
-        properties = DialogProperties(securePolicy = SecureFlagPolicy.SecureOff)
+            .testTag(TestTag.DialogInformationMicrophonePermission)
     )
 
 }

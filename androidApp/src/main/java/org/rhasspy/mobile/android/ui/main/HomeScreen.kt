@@ -53,7 +53,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.permissions.requestOverlayPermission
 import org.rhasspy.mobile.android.ui.Fab
 import org.rhasspy.mobile.android.ui.UnsavedChanges
 import org.rhasspy.mobile.android.utils.Icon
@@ -351,16 +350,14 @@ fun OverlayPermissionMissing(viewModel: HomeScreenViewModel) {
         visible = viewModel.isOverlayPermissionRequestRequired.collectAsState().value
     ) {
 
-        val overlayPermission = requestOverlayPermission {}
 
         IconButton(
-            onClick = { overlayPermission.invoke() },
+            onClick = { },
             modifier = Modifier.background(
                 color = MaterialTheme.colorScheme.errorContainer,
                 shape = RoundedCornerShape(8.dp)
             )
-        )
-        {
+        ) {
             Icon(
                 imageVector = Icons.Filled.LayersClear,
                 tint = MaterialTheme.colorScheme.onErrorContainer,

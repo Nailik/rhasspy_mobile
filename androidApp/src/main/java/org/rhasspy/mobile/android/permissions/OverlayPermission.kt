@@ -15,6 +15,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.nativeutils.OverlayPermission
@@ -27,9 +29,11 @@ import org.rhasspy.mobile.nativeutils.OverlayPermission
  * result can be invoked multiple times (from system dialog and afterwards from snackbar)
  */
 @Composable
-fun requestOverlayPermission(
-    onResult: (granted: Boolean) -> Unit
-): () -> Unit {
+fun RequiresOverlayPermission(
+    onClick: () -> Unit,
+    content: @Composable (onClick: () -> Unit) -> Unit
+) {
+
     var openRequestPermissionDialog by remember { mutableStateOf(false) }
 
     if (openRequestPermissionDialog) {
@@ -38,19 +42,22 @@ fun requestOverlayPermission(
             openRequestPermissionDialog = false
             //when user clicked yes redirect him to settings
             if (it) {
-                OverlayPermission.requestPermission(onResult::invoke)
+                OverlayPermission.requestPermission(onClick)
             }
         }
     }
 
-    return {
+    content {
         //check if granted or not
         if (!OverlayPermission.granted.value) {
+            //show dialog that permission is necessary
             openRequestPermissionDialog = true
         } else {
-            onResult.invoke(true)
+            //permission granted
+            onClick.invoke()
         }
     }
+
 }
 
 /**
@@ -72,21 +79,28 @@ private fun OverlayPermissionInfoDialog(onResult: (result: Boolean) -> Unit) {
             Icon(imageVector = Icons.Filled.Layers, contentDescription = MR.strings.overlay)
         },
         confirmButton = {
-            Button(onClick = {
-                onResult.invoke(true)
-            }) {
+            Button(
+                onClick = {
+                    onResult.invoke(true)
+                },
+                modifier = Modifier.testTag(TestTag.DialogOk)
+            ) {
                 Text(MR.strings.ok)
             }
         },
         dismissButton = {
-            OutlinedButton(onClick = {
-                onResult.invoke(false)
-            }) {
+            OutlinedButton(
+                onClick = {
+                    onResult.invoke(false)
+                },
+                modifier = Modifier.testTag(TestTag.DialogCancel)
+            ) {
                 Text(MR.strings.cancel)
             }
         },
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
+            .testTag(TestTag.DialogInformationOverlayPermission)
     )
 }
