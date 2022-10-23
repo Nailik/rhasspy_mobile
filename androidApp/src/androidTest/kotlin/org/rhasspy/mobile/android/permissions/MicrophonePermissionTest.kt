@@ -41,29 +41,13 @@ import kotlin.test.assertTrue
 
 
 /**
- * Tests Permission requesting
+ * Tests Microphone Permission requesting
  *
  * differences between api levels:
  * - 23 : allow, deny, deny always (checkbox)
  * - 29 : allow, deny, deny always (button)
  * - 30 : allow only while using the app, ask every time, don't allow
- *
- * allow
- * allow only while using the app
- * ask every time
- *
- * deny
- * deny always
- *
- *
- * deny always redirect
- *
- * don't allow
- * info dialog
- * redirect allow
- *
  */
-
 @RunWith(AndroidJUnit4::class)
 class MicrophonePermissionTest {
 

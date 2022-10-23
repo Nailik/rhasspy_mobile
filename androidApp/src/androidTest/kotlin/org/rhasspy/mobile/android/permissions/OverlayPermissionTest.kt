@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.android.permissions
 
-import android.annotation.SuppressLint
 import android.widget.Switch
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Button
@@ -16,11 +15,9 @@ import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
-import org.junit.FixMethodOrder
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.MethodSorters
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
@@ -31,8 +28,10 @@ import org.rhasspy.mobile.nativeutils.OverlayPermission
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+/**
+ * Tests Overlay Permission redirecting and recognition
+ */
 @RunWith(AndroidJUnit4::class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class OverlayPermissionTest {
 
     // activity necessary for permission
@@ -47,7 +46,6 @@ class OverlayPermissionTest {
     private val btnRequestPermission = "btnRequestPermission"
     private var permissionResult = false
 
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @NoLiveLiterals
     @Before
     fun setUp() {

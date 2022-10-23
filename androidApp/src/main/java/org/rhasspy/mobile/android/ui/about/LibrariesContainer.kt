@@ -34,6 +34,8 @@ import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.entity.License
 import com.mikepenz.aboutlibraries.util.withContext
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.CustomDivider
 import org.rhasspy.mobile.android.utils.HtmlText
 import org.rhasspy.mobile.android.utils.ListElement
@@ -53,6 +55,7 @@ fun LibrariesContainer(
     header: (LazyListScope.() -> Unit)? = null,
     onLibraryClick: ((Library) -> Unit)? = null,
 ) {
+
     var libraries by remember { mutableStateOf<Libs?>(null) }
 
     val context = LocalContext.current
@@ -62,7 +65,7 @@ fun LibrariesContainer(
 
     libraries?.libraries?.also { libs ->
         Libraries(
-            libraries = libs,
+            libs,
             modifier,
             lazyListState,
             contentPadding,
@@ -70,13 +73,14 @@ fun LibrariesContainer(
             onLibraryClick
         )
     }
+
 }
 
 /**
  * Displays all provided libraries in a simple list.
  */
 @Composable
-fun Libraries(
+private fun Libraries(
     libraries: List<Library>,
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
@@ -84,7 +88,12 @@ fun Libraries(
     header: (LazyListScope.() -> Unit)? = null,
     onLibraryClick: ((Library) -> Unit)? = null,
 ) {
-    LazyColumn(modifier, state = lazyListState, contentPadding = contentPadding) {
+
+    LazyColumn(
+        modifier = modifier.testTag(TestTag.LibrariesContainer),
+        state = lazyListState,
+        contentPadding = contentPadding
+    ) {
         if (header != null) {
             header()
         }
@@ -109,6 +118,7 @@ fun Libraries(
             CustomDivider()
         }
     }
+
 }
 
 /**
@@ -116,34 +126,45 @@ fun Libraries(
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun Library(
+private fun Library(
     library: Library,
     onClick: () -> Unit,
 ) {
+
     ListElement(
-        modifier = Modifier
-            .clickable { onClick.invoke() },
-        text = { Text(text = library.correctedName) },
+        modifier = Modifier.clickable { onClick.invoke() },
+        text = {
+            Text(library.correctedName)
+        },
         secondaryText = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp)
             ) {
-                Text(text = library.author, modifier = Modifier.padding(vertical = 8.dp))
+                Text(
+                    text = library.author,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
                 library.licenses.forEach {
                     Badge(
                         contentColor = MaterialTheme.colorScheme.primaryContainer,
                         containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.padding(bottom = 8.dp)
                     ) {
-                        Text(modifier = Modifier.padding(4.dp), text = it.name)
+                        Text(
+                            modifier = Modifier.padding(4.dp),
+                            text = it.name
+                        )
                     }
                 }
             }
         },
-        trailing = { Text(text = library.artifactVersion ?: "") }
+        trailing = {
+            Text(library.artifactVersion ?: "")
+        }
     )
+
 }
 
 
@@ -151,12 +172,17 @@ internal fun Library(
  * Library dialog with more information
  */
 @Composable
-fun LibraryDialog(library: Library, onDismissRequest: () -> Unit) {
+private fun LibraryDialog(library: Library, onDismissRequest: () -> Unit) {
+
     val scrollState = rememberScrollState()
+
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
-            TextButton(onClick = onDismissRequest) {
+            TextButton(
+                onClick = onDismissRequest,
+                modifier = Modifier.testTag(TestTag.DialogOk)
+            ) {
                 Text(MR.strings.ok)
             }
         },
@@ -170,14 +196,16 @@ fun LibraryDialog(library: Library, onDismissRequest: () -> Unit) {
                 )
             }
         },
+        modifier = Modifier.testTag(TestTag.DialogLibrary)
     )
+
 }
 
 
 /**
  * fix wrong library names
  */
-val Library.correctedName: String
+private val Library.correctedName: String
     get() = when {
         uniqueId == "org.fusesource.jansi:jansi" -> "Jansi"
         name == "androidx.customview:poolingcontainer" -> "Poolingcontainer"
@@ -188,11 +216,11 @@ val Library.correctedName: String
 /**
  * get author of library
  */
-val Library.author: String
+private val Library.author: String
     get() = developers.takeIf { it.isNotEmpty() }?.map { it.name }?.joinToString(", ") ?: organization?.name ?: ""
 
 /**
  * read html license content
  */
-val License.htmlReadyLicenseContent: String?
+private val License.htmlReadyLicenseContent: String?
     get() = licenseContent?.replace("\n", "<br />")

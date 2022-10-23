@@ -8,8 +8,14 @@ enum class TestTag {
     DialogInformationMicrophonePermission,
     DialogInformationOverlayPermission,
     DialogOk,
-    DialogCancel
+    DialogCancel,
+    DialogChangelogButton,
+    DialogChangelog,
+    DialogDataPrivacyButton,
+    DialogDataPrivacy,
+    DialogLibrary,
 
+    LibrariesContainer
 }
 
 fun Modifier.testTag(tag: TestTag) = semantics(

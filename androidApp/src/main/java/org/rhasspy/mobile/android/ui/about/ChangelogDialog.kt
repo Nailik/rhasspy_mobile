@@ -14,6 +14,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.Text
 
 /**
@@ -24,7 +26,10 @@ fun ChangelogDialogButton(changelogText: String) {
 
     var openDialog by rememberSaveable { mutableStateOf(false) }
 
-    OutlinedButton(onClick = { openDialog = true }) {
+    OutlinedButton(
+        onClick = { openDialog = true },
+        modifier = Modifier.testTag(TestTag.DialogChangelogButton)
+    ) {
         Text(MR.strings.changelog)
     }
 
@@ -40,13 +45,17 @@ fun ChangelogDialogButton(changelogText: String) {
  * Displays changelog as text in a dialog
  */
 @Composable
-fun ChangelogDialog(changelogText: String, onDismissRequest: () -> Unit) {
+private fun ChangelogDialog(changelogText: String, onDismissRequest: () -> Unit) {
 
     val scrollState = rememberScrollState()
+
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
-            TextButton(onClick = onDismissRequest) {
+            TextButton(
+                onClick = onDismissRequest,
+                modifier = Modifier.testTag(TestTag.DialogOk)
+            ) {
                 Text(MR.strings.close)
             }
         },
@@ -64,7 +73,8 @@ fun ChangelogDialog(changelogText: String, onDismissRequest: () -> Unit) {
                         Text(text = "· $it")
                     }
             }
-        }
+        },
+        modifier = Modifier.testTag(TestTag.DialogChangelog)
     )
 
 }

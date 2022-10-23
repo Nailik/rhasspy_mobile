@@ -13,6 +13,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.Text
 
 /**
@@ -20,9 +22,13 @@ import org.rhasspy.mobile.android.utils.Text
  */
 @Composable
 fun DataPrivacyDialogButton() {
+
     var openDialog by rememberSaveable { mutableStateOf(false) }
 
-    OutlinedButton(onClick = { openDialog = true }) {
+    OutlinedButton(
+        onClick = { openDialog = true },
+        modifier = Modifier.testTag(TestTag.DialogDataPrivacyButton)
+    ) {
         Text(MR.strings.dataPrivacy)
     }
 
@@ -31,19 +37,24 @@ fun DataPrivacyDialogButton() {
             openDialog = false
         }
     }
+
 }
 
 /**
  * Dialog to show data privacy information
  */
 @Composable
-fun DataPrivacyDialog(onDismissRequest: () -> Unit) {
+private fun DataPrivacyDialog(onDismissRequest: () -> Unit) {
+
     val scrollState = rememberScrollState()
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
-            TextButton(onClick = onDismissRequest) {
+            TextButton(
+                onClick = onDismissRequest,
+                modifier = Modifier.testTag(TestTag.DialogOk)
+            ) {
                 Text(MR.strings.close)
             }
         },
@@ -53,6 +64,8 @@ fun DataPrivacyDialog(onDismissRequest: () -> Unit) {
             ) {
                 Text(MR.strings.dataPrivacy)
             }
-        }
+        },
+        modifier = Modifier.testTag(TestTag.DialogDataPrivacy)
     )
+
 }
