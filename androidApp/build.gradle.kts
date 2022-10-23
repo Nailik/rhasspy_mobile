@@ -166,7 +166,7 @@ dependencies {
     androidTestUtil(AndroidX.Test.orchestrator)
     androidTestImplementation(Kotlin.test)
     androidTestImplementation(Kotlin.Test.junit)
-    androidTestImplementation(AndroidX.Test.Espresso.core)
+    androidTestImplementation(AndroidX.Test.coreKtx)
     androidTestImplementation(AndroidX.Compose.Ui.testJunit4)
     debugImplementation(AndroidX.Compose.Ui.testManifest)
 }

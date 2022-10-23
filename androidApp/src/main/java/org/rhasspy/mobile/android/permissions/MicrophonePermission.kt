@@ -118,6 +118,7 @@ fun RequiresMicrophonePermission(
 @NoLiveLiterals
 @Composable
 fun MicrophonePermissionInfoDialog(message: StringResource, onResult: (result: Boolean) -> Unit) {
+
     AlertDialog(
         onDismissRequest = {
             onResult.invoke(false)
@@ -157,5 +158,6 @@ fun MicrophonePermissionInfoDialog(message: StringResource, onResult: (result: B
             .testTag(TestTag.DialogInformationMicrophonePermission),
         properties = DialogProperties(securePolicy = SecureFlagPolicy.SecureOff)
     )
+
 }
 
