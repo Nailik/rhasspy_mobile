@@ -57,6 +57,7 @@ import androidx.navigation.compose.rememberNavController
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.configuration.ConfigurationScreen
 import org.rhasspy.mobile.android.settings.SettingsScreen
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.services.ServiceState
@@ -186,7 +187,9 @@ fun RowScope.NavigationItem(screen: BottomBarScreens) {
     val navController = LocalNavController.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    NavigationBarItem(selected = currentDestination?.hierarchy?.any { it.route == screen.name } == true,
+    NavigationBarItem(
+        modifier = Modifier.testTag(screen),
+        selected = currentDestination?.hierarchy?.any { it.route == screen.name } == true,
         onClick = {
             navController.navigate(screen.name) {
                 popUpTo(navController.graph.findStartDestination().id) {

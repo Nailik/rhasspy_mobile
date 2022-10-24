@@ -29,7 +29,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
+import org.rhasspy.mobile.android.configuration.ConfigurationScreens
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.OutlineButtonListItem
 import org.rhasspy.mobile.android.utils.SwitchListItem
@@ -53,11 +57,13 @@ import org.rhasspy.mobile.viewModels.configuration.MqttConfigurationViewModel
 @Composable
 fun MqttConfigurationContent(viewModel: MqttConfigurationViewModel = viewModel()) {
 
-    Column(
-        modifier = Modifier
-            .padding(bottom = 8.dp)
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+    ConfigurationScreenItemContent(
+        modifier = Modifier.testTag(ConfigurationScreens.MqttConfiguration),
+        title = MR.strings.mqtt,
+        hasUnsavedChanges = MutableStateFlow(false),
+        onSave = viewModel::save,
+        onTest = viewModel::test,
+        onDiscard = {  }
     ) {
 
         //toggle to turn mqtt enabled on or off

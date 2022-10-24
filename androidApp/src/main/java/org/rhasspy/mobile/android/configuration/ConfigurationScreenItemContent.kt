@@ -33,7 +33,9 @@ import androidx.compose.ui.Modifier
 import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
 
@@ -95,7 +97,9 @@ fun ConfigurationScreenItemContent(
 
     //appbar, bottomAppBar, content
     Scaffold(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .testTag(TestTag.ConfigurationScreenItemContent),
         topBar = {
             AppBar(
                 title = title,
@@ -209,7 +213,10 @@ private fun AppBar(title: StringResource, onBackClick: () -> Unit) {
             Text(title)
         },
         navigationIcon = {
-            IconButton(onClick = onBackClick) {
+            IconButton(
+                onClick = onBackClick,
+                modifier = Modifier.testTag(TestTag.AppBarBackButton)
+            ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = MR.strings.back,

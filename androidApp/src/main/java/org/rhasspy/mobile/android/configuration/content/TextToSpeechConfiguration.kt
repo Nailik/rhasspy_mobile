@@ -14,8 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
+import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.utils.TextFieldListItem
@@ -31,11 +34,13 @@ import org.rhasspy.mobile.viewModels.configuration.TextToSpeechConfigurationView
 @Composable
 fun TextToSpeechConfigurationContent(viewModel: TextToSpeechConfigurationViewModel = viewModel()) {
 
-    Column(
-        modifier = Modifier
-            .padding(bottom = 8.dp)
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+    ConfigurationScreenItemContent(
+        modifier = Modifier.testTag(ConfigurationScreens.TextToSpeechConfiguration),
+        title = MR.strings.textToSpeech,
+        hasUnsavedChanges = MutableStateFlow(false),
+        onSave = viewModel::save,
+        onTest = viewModel::test,
+        onDiscard = {  }
     ) {
 
         //drop down to select text to speech

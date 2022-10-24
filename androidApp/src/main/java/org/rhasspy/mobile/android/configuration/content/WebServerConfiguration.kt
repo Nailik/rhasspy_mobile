@@ -16,7 +16,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
+import org.rhasspy.mobile.android.configuration.ConfigurationScreens
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.OutlineButtonListItem
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
@@ -32,11 +36,13 @@ import org.rhasspy.mobile.viewModels.configuration.WebserverConfigurationViewMod
 @Composable
 fun WebServerConfigurationContent(viewModel: WebserverConfigurationViewModel = viewModel()) {
 
-    Column(
-        modifier = Modifier
-            .padding(bottom = 8.dp)
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+    ConfigurationScreenItemContent(
+        modifier = Modifier.testTag(ConfigurationScreens.WebServerConfiguration),
+        title = MR.strings.webserver,
+        hasUnsavedChanges = MutableStateFlow(false),
+        onSave = viewModel::save,
+        onTest = viewModel::test,
+        onDiscard = {  }
     ) {
 
         //switch to enable http server

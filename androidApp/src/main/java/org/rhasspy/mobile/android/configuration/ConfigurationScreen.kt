@@ -17,6 +17,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.content.AudioPlayingConfigurationContent
 import org.rhasspy.mobile.android.configuration.content.AudioRecordingConfigurationContent
 import org.rhasspy.mobile.android.configuration.content.DialogManagementConfigurationContent
@@ -29,6 +30,7 @@ import org.rhasspy.mobile.android.configuration.content.TextToSpeechConfiguratio
 import org.rhasspy.mobile.android.configuration.content.WakeWordConfigurationContent
 import org.rhasspy.mobile.android.configuration.content.WebServerConfigurationContent
 import org.rhasspy.mobile.android.main.LocalMainNavController
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.CustomDivider
 import org.rhasspy.mobile.android.utils.ListElement
 import org.rhasspy.mobile.android.utils.Text
@@ -90,7 +92,9 @@ fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = viewModel()) {
 
 }
 
-
+/**
+ * add sub screens to main navigation
+ */
 fun NavGraphBuilder.addConfigurationScreens() {
 
     composable(ConfigurationScreens.AudioPlayingConfiguration.name) {
@@ -146,6 +150,7 @@ fun NavGraphBuilder.addConfigurationScreens() {
 private fun SiteId(viewModel: ConfigurationScreenViewModel) {
 
     TextFieldListItem(
+        modifier = Modifier.testTag(TestTag.ConfigurationSiteId),
         value = viewModel.siteId.collectAsState().value,
         onValueChange = viewModel::changeSiteId,
         label = MR.strings.siteId,
@@ -178,7 +183,7 @@ private fun RemoteHermesHttp(viewModel: ConfigurationScreenViewModel) {
 
     ConfigurationListItem(
         text = MR.strings.remoteHermesHTTP,
-        secondaryText = "${translate(MR.strings.sslValidation)} ${viewModel.isHttpSSLVerificationEnabled.collectAsState().value.toText()}",
+        secondaryText = "${translate(MR.strings.sslValidation)} ${translate(viewModel.isHttpSSLVerificationEnabled.collectAsState().value.toText())}",
         screen = ConfigurationScreens.RemoteHermesHttpConfiguration
     )
 
@@ -220,7 +225,7 @@ private fun AudioRecording(viewModel: ConfigurationScreenViewModel) {
 
 
 /**
- * List element for wake wordc onfiguration
+ * List element for wake word configuration
  * shows which option is selected
  */
 @Composable
@@ -327,36 +332,46 @@ private fun IntentHandling(viewModel: ConfigurationScreenViewModel) {
 
 }
 
+/**
+ * list item
+ */
 @Composable
 private fun ConfigurationListItem(
     text: StringResource,
     secondaryText: StringResource,
     screen: ConfigurationScreens
 ) {
+
     val navController = LocalMainNavController.current
 
     ListElement(
         modifier = Modifier.clickable {
             navController.navigate(screen.name)
-        },
+        }.testTag(screen),
         text = { Text(text) },
         secondaryText = { Text(secondaryText) }
     )
+
 }
 
+/**
+ * list item
+ */
 @Composable
 private fun ConfigurationListItem(
     text: StringResource,
     secondaryText: String,
     @Suppress("SameParameterValue") screen: ConfigurationScreens
 ) {
+
     val navController = LocalMainNavController.current
 
     ListElement(
         modifier = Modifier.clickable {
             navController.navigate(screen.name)
-        },
+        }.testTag(screen),
         text = { Text(text) },
         secondaryText = { Text(text = secondaryText) }
     )
+
 }

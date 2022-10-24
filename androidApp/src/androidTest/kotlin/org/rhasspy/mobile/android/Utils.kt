@@ -9,12 +9,12 @@ import androidx.test.uiautomator.UiSelector
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
+import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
-    testTag: TestTag,
+    testTag: Enum<*>,
     useUnmergedTree: Boolean = false
 ): SemanticsNodeInteraction = onNode(hasTestTag(testTag.name), useUnmergedTree)
-
 fun UiSelector.text(text: StringResource): UiSelector {
     return this.textMatches(StringDesc.Resource(text).toString(InstrumentationRegistry.getInstrumentation()
         .targetContext.applicationContext))

@@ -11,7 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
+import org.rhasspy.mobile.android.configuration.ConfigurationScreens
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.viewModels.configuration.RemoteHermesHttpConfigurationViewModel
 
@@ -24,11 +28,13 @@ import org.rhasspy.mobile.viewModels.configuration.RemoteHermesHttpConfiguration
 @Composable
 fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfigurationViewModel = viewModel()) {
 
-    Column(
-        modifier = Modifier
-            .padding(bottom = 8.dp)
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+    ConfigurationScreenItemContent(
+        modifier = Modifier.testTag(ConfigurationScreens.RemoteHermesHttpConfiguration),
+        title = MR.strings.remoteHermesHTTP,
+        hasUnsavedChanges = MutableStateFlow(false),
+        onSave = viewModel::save,
+        onTest = viewModel::test,
+        onDiscard = {  }
     ) {
 
         //switch to toggle validation of SSL certificate

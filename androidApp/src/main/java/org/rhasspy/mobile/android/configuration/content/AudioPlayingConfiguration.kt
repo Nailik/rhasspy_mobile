@@ -12,6 +12,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
+import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.utils.TextFieldListItem
@@ -27,7 +28,7 @@ import org.rhasspy.mobile.viewModels.configuration.AudioPlayingConfigurationView
 fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewModel = viewModel()) {
 
     ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(TestTag.AudioPlayingConfigurationScreen),
+        modifier = Modifier.testTag(ConfigurationScreens.AudioPlayingConfiguration),
         title = MR.strings.audioPlaying,
         hasUnsavedChanges = viewModel.hasUnsavedChanges,
         onSave = viewModel::save,
