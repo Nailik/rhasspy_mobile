@@ -6,7 +6,7 @@ import androidx.compose.runtime.NoLiveLiterals
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import org.rhasspy.mobile.AppActivity
-import org.rhasspy.mobile.android.ui.MainNavigation
+import org.rhasspy.mobile.android.main.MainNavigation
 
 @NoLiveLiterals
 class MainActivity : AppActivity() {

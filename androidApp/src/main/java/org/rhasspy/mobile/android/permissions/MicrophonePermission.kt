@@ -25,8 +25,8 @@ import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.ui.LocalSnackbarHostState
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.android.utils.translate

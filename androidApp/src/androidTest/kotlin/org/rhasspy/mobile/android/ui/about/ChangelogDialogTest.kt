@@ -6,6 +6,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.about.ChangelogDialogButton
 import org.rhasspy.mobile.android.onNodeWithTag
 
 /**

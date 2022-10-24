@@ -1,11 +1,8 @@
 package org.rhasspy.mobile.android.utils
 
 import android.widget.TextView
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -32,11 +29,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -283,6 +280,17 @@ fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, enabled: Boolean = true,
 }
 
 @Composable
+fun <E : DataEnum<*>> RadioButtonsEnumSelection(selected: E, onSelect: (item: E) -> Unit, values: () -> Array<E>) {
+    Card(modifier = Modifier.padding(16.dp)) {
+        values().forEach {
+            RadioButtonListItem(text = it.text, isChecked = selected == it) {
+                onSelect(it)
+            }
+        }
+    }
+}
+
+@Composable
 fun DropDownListRemovableWithFileOpen(
     overlineText: @Composable () -> Unit,
     enabled: Boolean = true,
@@ -484,41 +492,6 @@ fun PageContent(
 }
 
 @Composable
-private fun ExpandableListItemInternal(
-    text: StringResource,
-    secondaryText: (@Composable () -> Unit)?,
-    expandedContent: @Composable () -> Unit
-) {
-    var isExpanded by rememberSaveable { mutableStateOf(false) }
-
-    ListElement(
-        modifier = Modifier
-            .clickable { isExpanded = !isExpanded },
-        text = { Text(text) },
-        secondaryText = secondaryText,
-        trailing = {
-            IndicatedSmallIcon(isExpanded) {
-                Icon(
-                    modifier = it,
-                    imageVector = Icons.Filled.ExpandMore,
-                    contentDescription = MR.strings.expandListItem
-                )
-            }
-        }
-    )
-
-    AnimatedVisibility(
-        enter = expandVertically(),
-        exit = shrinkVertically(),
-        visible = isExpanded
-    ) {
-        Column(modifier = Modifier.padding(bottom = 8.dp)) {
-            expandedContent()
-        }
-    }
-}
-
-@Composable
 fun SwitchListItem(
     text: StringResource,
     secondaryText: StringResource? = null,
@@ -561,7 +534,6 @@ fun ListElement(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TextFieldListItemVisibility(
     modifier: Modifier = Modifier,
@@ -695,12 +667,10 @@ fun SliderListItem(text: StringResource, value: Float, enabled: Boolean = true, 
 
 @Composable
 fun RadioButtonListItem(text: StringResource, isChecked: Boolean, enabled: Boolean = true, onClick: () -> Unit) {
-    ListElement(modifier = Modifier.clickable { onClick() }) {
-        Row {
-            RadioButton(selected = isChecked, enabled = enabled, onClick = onClick)
-            Text(text, modifier = Modifier.weight(1f))
-        }
-    }
+    ListElement(
+        modifier = Modifier.clickable(onClick = onClick),
+        icon = { RadioButton(selected = isChecked, enabled = enabled, onClick = onClick) },
+        text = { Text(text) })
 }
 
 fun Boolean.toText(): StringResource {

@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.data.AudioPlayingOptions
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
@@ -24,6 +25,15 @@ class AudioPlayingConfigurationViewModel : ViewModel() {
     //unsaved ui data
     val audioPlayingOption = _audioPlayingOption.readOnly
     val audioPlayingEndpoint = _audioPlayingEndpoint.readOnly
+
+    //if there are unsaved changes
+    val hasUnsavedChanges  = combineState(
+        _audioPlayingOption, ConfigurationSettings.audioPlayingOption.data,
+        _audioPlayingEndpoint, ConfigurationSettings.audioPlayingEndpoint.data
+    ) { a1, a2, b1, b2 ->
+        a1 != a2 || b1 != b2
+    }
+
 
     //show input field for endpoint
     val isAudioPlayingEndpointVisible = _audioPlayingOption.mapReadonlyState { it == AudioPlayingOptions.RemoteHTTP }
@@ -49,11 +59,17 @@ class AudioPlayingConfigurationViewModel : ViewModel() {
         ConfigurationSettings.audioPlayingEndpoint.value = _audioPlayingEndpoint.value
     }
 
+    fun discard() {
+        _audioPlayingOption.value = ConfigurationSettings.audioPlayingOption.value
+        _audioPlayingEndpoint.value = ConfigurationSettings.audioPlayingEndpoint.value
+    }
+
     /**
      * test unsaved data configuration
      */
     fun test() {
 
     }
+
 
 }
