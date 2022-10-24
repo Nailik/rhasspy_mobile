@@ -20,11 +20,13 @@ import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.viewModels.ConfigurationScreenViewModel
 import kotlin.test.assertEquals
 
-
-@RunWith(AndroidJUnit4::class)
+/**
+ * Test Configuration Screen
+ * Items exist
+ * Site ID edit
+ */
 class ConfigurationScreenTest {
 
-    //activity necessary for permission
     @get: Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 

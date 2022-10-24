@@ -104,7 +104,7 @@ class MicrophonePermissionTest {
                 AppTheme {
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
-                        snackbarHost = { SnackbarHost(hostState = snackbarHostState, modifier = Modifier.testTag("test)")) },
+                        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
                     ) {
 
                         RequiresMicrophonePermission(MR.strings.defaultText, { permissionResult = true }) { onClick ->

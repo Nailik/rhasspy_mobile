@@ -10,12 +10,17 @@ enum class TestTag {
     DialogInformationOverlayPermission,
     DialogOk,
     DialogCancel,
+    DialogUnsavedChanges,
     DialogChangelogButton,
     DialogChangelog,
     DialogDataPrivacyButton,
     DialogDataPrivacy,
     DialogLibrary,
     AppBarBackButton,
+    AppBarTitle,
+    BottomAppBarDiscard,
+    BottomAppBarSave,
+    BottomAppBarTest,
 
     LibrariesContainer,
 

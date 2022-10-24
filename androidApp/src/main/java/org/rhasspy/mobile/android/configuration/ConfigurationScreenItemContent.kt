@@ -8,27 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.BottomAppBarDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.flow.StateFlow
@@ -83,15 +66,16 @@ fun ConfigurationScreenItemContent(
                 //close dialog on outside click
                 showDialog = false
             },
-            onResult = { result ->
-                if (result) {
-                    //save changes
-                    onSave.invoke()
-                }
-                //close dialog and go back
+            onSave = {
                 showDialog = false
+                onSave.invoke()
                 navigation.popBackStack()
             },
+            onDiscard = {
+                showDialog = false
+                onDiscard.invoke()
+                navigation.popBackStack()
+            }
         )
     }
 
@@ -131,17 +115,27 @@ fun ConfigurationScreenItemContent(
  * save changes or undo changes and go back
  */
 @Composable
-private fun UnsavedChangesDialog(onDismissRequest: () -> Unit, onResult: (result: Boolean) -> Unit) {
+private fun UnsavedChangesDialog(
+    onDismissRequest: () -> Unit,
+    onSave: () -> Unit,
+    onDiscard: () -> Unit
+) {
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
-            TextButton(onClick = { onResult(true) }) {
+            TextButton(
+                onClick = onSave,
+                modifier = Modifier.testTag(TestTag.DialogOk)
+            ) {
                 Text(MR.strings.save)
             }
         },
         dismissButton = {
-            TextButton(onClick = { onResult(false) }) {
+            TextButton(
+                onClick = onDiscard,
+                modifier = Modifier.testTag(TestTag.DialogCancel)
+            ) {
                 Text(MR.strings.discard)
             }
         },
@@ -152,7 +146,8 @@ private fun UnsavedChangesDialog(onDismissRequest: () -> Unit, onResult: (result
             )
         },
         title = { Text(MR.strings.unsavedChanges) },
-        text = { Text(MR.strings.unsavedChangesInformation) }
+        text = { Text(MR.strings.unsavedChangesInformation) },
+        modifier = Modifier.testTag(TestTag.DialogUnsavedChanges)
     )
 
 }
@@ -172,13 +167,21 @@ private fun BottomAppBar(
 
     BottomAppBar(
         actions = {
-            IconButton(onClick = onDiscard, enabled = hasUnsavedChanges) {
+            IconButton(
+                modifier = Modifier.testTag(TestTag.BottomAppBarDiscard),
+                onClick = onDiscard,
+                enabled = hasUnsavedChanges
+            ) {
                 Icon(
                     imageVector = Icons.Filled.Delete,
                     contentDescription = MR.strings.discard,
                 )
             }
-            IconButton(onClick = onSave, enabled = hasUnsavedChanges) {
+            IconButton(
+                modifier = Modifier.testTag(TestTag.BottomAppBarSave),
+                onClick = onSave,
+                enabled = hasUnsavedChanges
+            ) {
                 Icon(
                     imageVector = Icons.Filled.Save,
                     contentDescription = MR.strings.save
@@ -187,6 +190,7 @@ private fun BottomAppBar(
         },
         floatingActionButton = {
             FloatingActionButton(
+                modifier = Modifier.testTag(TestTag.BottomAppBarTest),
                 onClick = onTest,
                 containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
                 elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
@@ -210,7 +214,10 @@ private fun AppBar(title: StringResource, onBackClick: () -> Unit) {
 
     TopAppBar(
         title = {
-            Text(title)
+            Text(
+                resource = title,
+                modifier = Modifier.testTag(TestTag.AppBarTitle)
+            )
         },
         navigationIcon = {
             IconButton(
