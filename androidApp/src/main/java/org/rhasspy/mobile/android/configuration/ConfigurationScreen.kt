@@ -37,39 +37,62 @@ import org.rhasspy.mobile.android.utils.toText
 import org.rhasspy.mobile.android.utils.translate
 import org.rhasspy.mobile.viewModels.ConfigurationScreenViewModel
 
-enum class ConfigurationScreens {
-    AudioPlayingConfiguration,
-    AudioRecordingConfiguration,
-    DialogManagementConfiguration,
-    IntentHandlingConfiguration,
-    IntentRecognitionConfiguration,
-    MqttConfiguration,
-    RemoteHermesHttpConfiguration,
-    SpeechToTextConfiguration,
-    TextToSpeechConfiguration,
-    WakeWordConfiguration,
-    WebServerConfiguration
-}
-
 /**
  * configuration screens with list items that open bottom sheet
  */
 @Preview
 @Composable
-fun ConfigurationScreen() {
-    ConfigurationList()
+fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = viewModel()) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
+
+        SiteId(viewModel)
+        CustomDivider()
+
+        Webserver(viewModel)
+        CustomDivider()
+
+        RemoteHermesHttp(viewModel)
+        CustomDivider()
+
+        Mqtt(viewModel)
+        CustomDivider()
+
+        AudioRecording(viewModel)
+        CustomDivider()
+
+        WakeWord(viewModel)
+        CustomDivider()
+
+        SpeechToText(viewModel)
+        CustomDivider()
+
+        IntentRecognition(viewModel)
+        CustomDivider()
+
+        TextToSpeech(viewModel)
+        CustomDivider()
+
+        AudioPlaying(viewModel)
+        CustomDivider()
+
+        DialogManagement(viewModel)
+        CustomDivider()
+
+        IntentHandling(viewModel)
+        CustomDivider()
+
+    }
+
 }
+
 
 fun NavGraphBuilder.addConfigurationScreens() {
 
-    /**
-     *   composable(ConfigurationScreens.AudioPlayingConfiguration.name) {
-    ConfigurationScreenItemContent<AudioPlayingConfigurationViewModel>() {
-    AudioPlayingConfigurationContent(it)
-    }
-
-    }
-     */
     composable(ConfigurationScreens.AudioPlayingConfiguration.name) {
         AudioPlayingConfigurationContent()
     }
@@ -115,55 +138,6 @@ fun NavGraphBuilder.addConfigurationScreens() {
     }
 
 }
-
-@Preview
-@Composable
-private fun ConfigurationList(viewModel: ConfigurationScreenViewModel = viewModel()) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
-
-        SiteId(viewModel)
-        CustomDivider()
-
-        Webserver(viewModel)
-        CustomDivider()
-
-        RemoteHermesHttp(viewModel)
-        CustomDivider()
-
-        Mqtt(viewModel)
-        CustomDivider()
-
-        AudioRecording(viewModel)
-        CustomDivider()
-
-        WakeWord(viewModel)
-        CustomDivider()
-
-        SpeechToText(viewModel)
-        CustomDivider()
-
-        IntentRecognition(viewModel)
-        CustomDivider()
-
-        TextToSpeech(viewModel)
-        CustomDivider()
-
-        AudioPlaying(viewModel)
-        CustomDivider()
-
-        DialogManagement(viewModel)
-        CustomDivider()
-
-        IntentHandling(viewModel)
-        CustomDivider()
-
-    }
-}
-
 
 /**
  * site id element

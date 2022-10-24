@@ -15,6 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.viewModels.configuration.SpeechToTextConfigurationViewModel
@@ -37,6 +39,7 @@ fun SpeechToTextConfigurationContent(viewModel: SpeechToTextConfigurationViewMod
 
         //drop down of option
         RadioButtonsEnumSelection(
+            modifier = Modifier.testTag(TestTag.SpeechToTextOptions),
             selected = viewModel.speechToTextOption.collectAsState().value,
             onSelect = viewModel::selectSpeechToTextOption,
             values = viewModel.speechToTextOptions

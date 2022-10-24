@@ -48,6 +48,7 @@ import org.rhasspy.mobile.android.utils.Text
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfigurationScreenItemContent(
+    modifier: Modifier,
     title: StringResource,
     hasUnsavedChanges: StateFlow<Boolean>,
     onSave: () -> Unit,
@@ -94,7 +95,7 @@ fun ConfigurationScreenItemContent(
 
     //appbar, bottomAppBar, content
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         topBar = {
             AppBar(
                 title = title,

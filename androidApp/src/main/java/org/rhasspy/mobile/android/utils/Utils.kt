@@ -280,8 +280,8 @@ fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, enabled: Boolean = true,
 }
 
 @Composable
-fun <E : DataEnum<*>> RadioButtonsEnumSelection(selected: E, onSelect: (item: E) -> Unit, values: () -> Array<E>) {
-    Card(modifier = Modifier.padding(16.dp)) {
+fun <E : DataEnum<*>> RadioButtonsEnumSelection(modifier: Modifier, selected: E, onSelect: (item: E) -> Unit, values: () -> Array<E>) {
+    Card(modifier = modifier.padding(16.dp)) {
         values().forEach {
             RadioButtonListItem(text = it.text, isChecked = selected == it) {
                 onSelect(it)

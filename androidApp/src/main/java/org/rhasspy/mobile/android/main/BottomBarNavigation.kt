@@ -31,8 +31,10 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
@@ -102,6 +104,7 @@ fun BoxWithConstraintsScope.BottomBarScreensNavigation(viewModel: HomeScreenView
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
+            topBar = { AppBar() },
             snackbarHost = { SnackbarHost(snackbarHostState, modifier = Modifier.testTag("test)")) },
             bottomBar = {
                 //hide bottom navigation with keyboard and small screens
@@ -133,6 +136,31 @@ fun BoxWithConstraintsScope.BottomBarScreensNavigation(viewModel: HomeScreenView
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AppBar() {
+
+    var currentDestination by remember { mutableStateOf(BottomBarScreens.HomeScreen) }
+    val navController = LocalNavController.current
+
+    LaunchedEffect(navController) {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            currentDestination = BottomBarScreens.valueOf(destination.route ?: BottomBarScreens.HomeScreen.name)
+        }
+    }
+
+    val title = when (currentDestination) {
+        BottomBarScreens.HomeScreen -> MR.strings.appName
+        BottomBarScreens.ConfigurationScreen -> MR.strings.configuration
+        BottomBarScreens.SettingsScreen -> MR.strings.settings
+        BottomBarScreens.LogScreen -> MR.strings.log
+    }
+
+    TopAppBar(
+        title = { Text(title) }
+    )
+
+}
 
 @Composable
 fun BottomNavigation(viewModel: HomeScreenViewModel) {

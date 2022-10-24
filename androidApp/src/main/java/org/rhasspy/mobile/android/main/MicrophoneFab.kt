@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.ui
+package org.rhasspy.mobile.android.main
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons

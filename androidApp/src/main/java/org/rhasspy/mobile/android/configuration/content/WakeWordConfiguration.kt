@@ -15,6 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.DropDownEnumListItem
 import org.rhasspy.mobile.android.utils.DropDownListWithFileOpen
 import org.rhasspy.mobile.android.utils.OutlineButtonListItem
@@ -43,6 +45,7 @@ fun WakeWordConfigurationContent(viewModel: WakeWordConfigurationViewModel = vie
 
         //drop down list to select option
         RadioButtonsEnumSelection(
+            modifier = Modifier.testTag(TestTag.WakeWordOptions),
             selected = viewModel.wakeWordOption.collectAsState().value,
             onSelect = viewModel::selectWakeWordOption,
             values = viewModel.wakeWordOptions

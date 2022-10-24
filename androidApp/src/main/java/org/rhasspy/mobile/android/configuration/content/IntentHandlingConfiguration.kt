@@ -15,6 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.RadioButtonListItem
 import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.utils.TextFieldListItem
@@ -41,6 +43,7 @@ fun IntentHandlingConfigurationContent(viewModel: IntentHandlingConfigurationVie
 
         //drop down to select option
         RadioButtonsEnumSelection(
+            modifier = Modifier.testTag(TestTag.IntentHandlingOptions),
             selected = viewModel.intentHandlingOption.collectAsState().value,
             onSelect = viewModel::selectIntentHandlingOption,
             values = viewModel.intentHandlingOptionsList

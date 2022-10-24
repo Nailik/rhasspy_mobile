@@ -15,7 +15,21 @@ enum class TestTag {
     DialogDataPrivacy,
     DialogLibrary,
 
-    LibrariesContainer
+    LibrariesContainer,
+
+    AudioPlayingConfigurationScreen,
+    AudioPlayingOptions,
+    AudioPlayingEndpoint,
+
+    IntentHandlingOptions,
+
+    IntentRecognitionOptions,
+
+    SpeechToTextOptions,
+
+    TextToSpeechOptions,
+
+    WakeWordOptions,
 }
 
 fun Modifier.testTag(tag: TestTag) = semantics(

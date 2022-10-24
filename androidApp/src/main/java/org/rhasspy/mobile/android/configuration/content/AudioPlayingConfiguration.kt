@@ -6,10 +6,13 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.viewModels.configuration.AudioPlayingConfigurationViewModel
@@ -24,6 +27,7 @@ import org.rhasspy.mobile.viewModels.configuration.AudioPlayingConfigurationView
 fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewModel = viewModel()) {
 
     ConfigurationScreenItemContent(
+        modifier = Modifier.testTag(TestTag.AudioPlayingConfigurationScreen),
         title = MR.strings.audioPlaying,
         hasUnsavedChanges = viewModel.hasUnsavedChanges,
         onSave = viewModel::save,
@@ -35,6 +39,7 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
 
         //drop down of available values
         RadioButtonsEnumSelection(
+            modifier = Modifier.testTag(TestTag.AudioPlayingOptions),
             selected = audioPlayingOption,
             onSelect = viewModel::selectAudioPlayingOption,
             values = viewModel.audioPlayingOptionsList
@@ -49,6 +54,7 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
 
             //endpoint input field
             TextFieldListItem(
+                modifier = Modifier.testTag(TestTag.AudioPlayingEndpoint),
                 value = viewModel.audioPlayingEndpoint.collectAsState().value,
                 onValueChange = viewModel::changeAudioPlayingEndpoint,
                 label = MR.strings.audioOutputURL
