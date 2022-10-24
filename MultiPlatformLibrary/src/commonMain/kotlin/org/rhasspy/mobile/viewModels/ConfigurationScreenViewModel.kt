@@ -1,15 +1,12 @@
 package org.rhasspy.mobile.viewModels
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.MqttService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class ConfigurationScreenViewModel : ViewModel() {
 
-    private val _siteId = MutableStateFlow(ConfigurationSettings.siteId.value)
-    val siteId = _siteId.readOnly
+    val siteId = ConfigurationSettings.siteId.data
     val isHttpServerEnabled = ConfigurationSettings.isHttpServerEnabled.data
     val isHttpSSLVerificationEnabled = ConfigurationSettings.isHttpSSLVerificationEnabled.data
     val isMQTTConnected = MqttService.isConnected
@@ -23,7 +20,7 @@ class ConfigurationScreenViewModel : ViewModel() {
     val intentHandlingOption = ConfigurationSettings.intentHandlingOption.data
 
     fun changeSiteId(siteId: String) {
-        _siteId.value = siteId
+        ConfigurationSettings.siteId.value = siteId
     }
 
     init{

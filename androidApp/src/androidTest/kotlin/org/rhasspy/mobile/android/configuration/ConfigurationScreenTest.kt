@@ -1,8 +1,12 @@
 package org.rhasspy.mobile.android.configuration
 
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onChild
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -13,6 +17,8 @@ import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.BottomBarScreens
 import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.viewModels.ConfigurationScreenViewModel
+import kotlin.test.assertEquals
 
 
 @RunWith(AndroidJUnit4::class)
@@ -49,6 +55,22 @@ class ConfigurationScreenTest {
             //press toolbar back button
             composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
         }
+    }
+
+    /**
+     * Test site id to be changed
+     * text field changed text
+     * test if change is saved
+     */
+    @Test
+    fun testSiteIdEdit() {
+        val textInputTest = "siteIdTestInput"
+        //Test site id to be changed
+        composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId, true).performScrollTo().onChild().performTextClearance()
+        composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId, true).performScrollTo().onChild().performTextInput(textInputTest)
+        //text field changed text
+        composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId, true).onChild().assertTextEquals(textInputTest)
+        assertEquals(textInputTest, ConfigurationScreenViewModel().siteId.value)
     }
 
 }
