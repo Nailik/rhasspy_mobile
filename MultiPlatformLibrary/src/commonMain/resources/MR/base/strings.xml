@@ -180,4 +180,10 @@
     <string name="forceCancelInformation">Press to cancel Session</string>
     <string name="close">Close</string>
     <string name="backup">Backup Settings and Configuration</string>
+    <string name="unsavedChanges">Unsaved changes</string>
+    <string name="unsavedChangesInformation">Do you want to save the changes?</string>
+    <string name="save">Save</string>
+    <string name="discard">Discard</string>
+    <string name="test">Test</string>
+    <string name="back">Back</string>
 </resources>

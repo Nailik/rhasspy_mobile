@@ -12,15 +12,16 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -36,8 +37,14 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
 
-//unsaved
-//save
+/**
+ * Content of Configuration Screen Item
+ *
+ * AppBar with Back button and title
+ * BottomBar with Save, Discard actions and test FAB
+ *
+ * Shows dialog on Back press when there are unsaved changes
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfigurationScreenItemContent(
@@ -55,7 +62,7 @@ fun ConfigurationScreenItemContent(
 
     val hasUnsavedChangesValue by hasUnsavedChanges.collectAsState()
 
-    BackHandler {
+    val onBackPress: () -> Unit = {
         if (hasUnsavedChangesValue) {
             showDialog = true
         } else {
@@ -63,45 +70,43 @@ fun ConfigurationScreenItemContent(
         }
     }
 
+    //Back handler to show dialog if there are unsaved changes
+    BackHandler(onBack = onBackPress)
+
+    //Show unsaved changes dialog
     if (showDialog) {
-        AlertDialog(onDismissRequest = { /*TODO*/ },
-            confirmButton = {
-                Button(onClick = {
-                    showDialog = false
-                    navigation.popBackStack()
-                }) {
-                    Text(MR.strings.ok)
+        UnsavedChangesDialog(
+            onDismissRequest = {
+                //close dialog on outside click
+                showDialog = false
+            },
+            onResult = { result ->
+                if (result) {
+                    //save changes
+                    onSave.invoke()
                 }
-            }
+                //close dialog and go back
+                showDialog = false
+                navigation.popBackStack()
+            },
         )
     }
 
-
+    //appbar, bottomAppBar, content
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { AppBar(title) },
+        topBar = {
+            AppBar(
+                title = title,
+                onBackClick = onBackPress
+            )
+        },
         bottomBar = {
             BottomAppBar(
-                actions = {
-                    IconButton(onClick = onDiscard, enabled = hasUnsavedChangesValue) {
-                        Icon(
-                            Icons.Filled.Delete,
-                            contentDescription = MR.strings.audioOutputURL,
-                        )
-                    }
-                    IconButton(onClick = onSave, enabled = hasUnsavedChangesValue) {
-                        Icon(Icons.Filled.Save, contentDescription = MR.strings.audioOutputURL)
-                    }
-                },
-                floatingActionButton = {
-                    FloatingActionButton(
-                        onClick = onTest,
-                        containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
-                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
-                    ) {
-                        Icon(Icons.Filled.PlayArrow, MR.strings.audioOutputURL)
-                    }
-                }
+                hasUnsavedChanges = hasUnsavedChangesValue,
+                onSave = onSave,
+                onTest = onTest,
+                onDiscard = onDiscard
             )
         }
     ) { paddingValues ->
@@ -116,34 +121,100 @@ fun ConfigurationScreenItemContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Dialog to be shown when there are unsaved changes
+ * save changes or undo changes and go back
+ */
 @Composable
-fun AppBar(title: StringResource) {
-    /*
-        val title = when (configurationScreen) {
-            ConfigurationScreens.AudioPlayingConfiguration -> MR.strings.audioPlaying
-            ConfigurationScreens.AudioRecordingConfiguration -> MR.strings.audioRecording
-            ConfigurationScreens.DialogManagementConfiguration -> MR.strings.dialogueManagement
-            ConfigurationScreens.IntentHandlingConfiguration -> MR.strings.intentHandling
-            ConfigurationScreens.IntentRecognitionConfiguration -> MR.strings.intentRecognition
-            ConfigurationScreens.MqttConfiguration -> MR.strings.mqtt
-            ConfigurationScreens.RemoteHermesHttpConfiguration -> MR.strings.remoteHermesHTTP
-            ConfigurationScreens.SpeechToTextConfiguration -> MR.strings.speechToText
-            ConfigurationScreens.TextToSpeechConfiguration -> MR.strings.textToSpeech
-            ConfigurationScreens.WakeWordConfiguration -> MR.strings.wakeWord
-            ConfigurationScreens.WebServerConfiguration -> MR.strings.webserver
-        }
-    */
-    val navigation = LocalMainNavController.current
+private fun UnsavedChangesDialog(onDismissRequest: () -> Unit, onResult: (result: Boolean) -> Unit) {
 
-    TopAppBar(
-        title = { Text(title) },
-        navigationIcon = {
-            IconButton(onClick = navigation::popBackStack) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            TextButton(onClick = { onResult(true) }) {
+                Text(MR.strings.save)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = { onResult(false) }) {
+                Text(MR.strings.discard)
+            }
+        },
+        icon = {
+            Icon(
+                imageVector = Icons.Filled.Warning,
+                contentDescription = MR.strings.discard
+            )
+        },
+        title = { Text(MR.strings.unsavedChanges) },
+        text = { Text(MR.strings.unsavedChangesInformation) }
+    )
+
+}
+
+/**
+ * bottom app bar
+ * discard, save actions
+ * fab for testing
+ */
+@Composable
+private fun BottomAppBar(
+    hasUnsavedChanges: Boolean,
+    onSave: () -> Unit,
+    onTest: () -> Unit,
+    onDiscard: () -> Unit
+) {
+
+    BottomAppBar(
+        actions = {
+            IconButton(onClick = onDiscard, enabled = hasUnsavedChanges) {
                 Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = MR.strings.backup,
+                    imageVector = Icons.Filled.Delete,
+                    contentDescription = MR.strings.discard,
                 )
             }
-        })
+            IconButton(onClick = onSave, enabled = hasUnsavedChanges) {
+                Icon(
+                    imageVector = Icons.Filled.Save,
+                    contentDescription = MR.strings.save
+                )
+            }
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onTest,
+                containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
+                elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.PlayArrow,
+                    contentDescription = MR.strings.test
+                )
+            }
+        }
+    )
+
+}
+
+/**
+ * top app bar with title and back navigation button
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AppBar(title: StringResource, onBackClick: () -> Unit) {
+
+    TopAppBar(
+        title = {
+            Text(title)
+        },
+        navigationIcon = {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = MR.strings.back,
+                )
+            }
+        }
+    )
+
 }

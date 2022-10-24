@@ -30,11 +30,11 @@ import org.junit.runner.RunWith
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.onNodeWithText
 import org.rhasspy.mobile.android.text
 import org.rhasspy.mobile.android.theme.AppTheme
-import org.rhasspy.mobile.android.ui.LocalSnackbarHostState
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

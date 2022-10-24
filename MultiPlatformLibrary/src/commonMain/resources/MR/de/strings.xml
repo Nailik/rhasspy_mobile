@@ -185,4 +185,10 @@
     <string name="forceCancelInformation">Drücken zum Beenden der Session</string>
     <string name="close">Schließen</string>
     <string name="backup">Backup der Einstellungen und Konfiguration</string>
+    <string name="unsavedChanges">Nicht gespeicherte Änderungen</string>
+    <string name="unsavedChangesInformation">Wollen Sie die Änderungen speichern?</string>
+    <string name="save">Speichern</string>
+    <string name="discard">Verwerfen</string>
+    <string name="test">Test</string>
+    <string name="back">Zurück</string>
 </resources>
