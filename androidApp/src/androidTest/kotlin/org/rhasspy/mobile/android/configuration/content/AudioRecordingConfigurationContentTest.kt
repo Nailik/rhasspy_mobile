@@ -53,8 +53,11 @@ class AudioRecordingConfigurationContentTest {
     @Test
     fun testContent() = runBlocking {
         viewModel.toggleUdpOutputEnabled(false)
+        viewModel.save()
+
         val textInputTestHost = "hostTestInput"
         val textInputTestPort = "1556"
+
         //udp output option is off
         assertFalse { viewModel.isUdpOutputEnabled.value }
         composeTestRule.onNodeWithTag(TestTag.AudioRecordingUdpOutput).assertIsOff()

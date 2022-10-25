@@ -68,7 +68,7 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
                 //http endpoint input field
                 TextFieldListItem(
                     enabled = viewModel.isAudioPlayingHttpEndpointChangeEnabled.collectAsState().value,
-                    modifier = Modifier.testTag(TestTag.AudioPlayingHttpEndpoint),
+                    modifier = Modifier.testTag(TestTag.Endpoint),
                     value = viewModel.audioPlayingHttpEndpoint.collectAsState().value,
                     onValueChange = viewModel::changeAudioPlayingHttpEndpoint,
                     label = MR.strings.audioOutputURL

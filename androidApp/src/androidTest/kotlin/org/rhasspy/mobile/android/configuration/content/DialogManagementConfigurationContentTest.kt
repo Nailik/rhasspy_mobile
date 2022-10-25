@@ -49,14 +49,14 @@ class DialogManagementConfigurationContentTest {
      * option is saved to local
      */
     @Test
-    fun testContent() = runBlocking {
+    fun testEndpoint() = runBlocking {
         viewModel.selectDialogManagementOption(DialogManagementOptions.Disabled)
         viewModel.save()
 
         //option disable is set
         composeTestRule.onNodeWithTag(DialogManagementOptions.Disabled, true).onChildAt(0).assertIsSelected()
         //User clicks option local
-        composeTestRule.onNodeWithTag(DialogManagementOptions.Local, true).performClick()
+        composeTestRule.onNodeWithTag(DialogManagementOptions.Local).performClick()
         //new option is selected
         composeTestRule.onNodeWithTag(DialogManagementOptions.Local, true).onChildAt(0).assertIsSelected()
 

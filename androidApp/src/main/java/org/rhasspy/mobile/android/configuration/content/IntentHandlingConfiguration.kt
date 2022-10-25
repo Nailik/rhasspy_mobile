@@ -4,17 +4,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
@@ -75,11 +69,12 @@ private fun RemoteHTTPOption(viewModel: IntentHandlingConfigurationViewModel) {
     AnimatedVisibility(
         enter = expandVertically(),
         exit = shrinkVertically(),
-        visible = viewModel.isRemoteHttpEndpointVisible.collectAsState().value
+        visible = viewModel.isRemoteHttpSettingsVisible.collectAsState().value
     ) {
 
         //endpoint input field
         TextFieldListItem(
+            modifier = Modifier.testTag(TestTag.Endpoint),
             value = viewModel.intentHandlingHttpEndpoint.collectAsState().value,
             onValueChange = viewModel::changeIntentHandlingHttpEndpoint,
             label = MR.strings.remoteURL
@@ -109,6 +104,7 @@ private fun HomeAssistantOption(viewModel: IntentHandlingConfigurationViewModel)
 
             //endpoint url
             TextFieldListItem(
+                modifier = Modifier.testTag(TestTag.Endpoint),
                 value = viewModel.intentHandlingHassEndpoint.collectAsState().value,
                 onValueChange = viewModel::changeIntentHandlingHassEndpoint,
                 label = MR.strings.hassURL
@@ -116,6 +112,7 @@ private fun HomeAssistantOption(viewModel: IntentHandlingConfigurationViewModel)
 
             //hass access token
             TextFieldListItemVisibility(
+                modifier = Modifier.testTag(TestTag.AccessToken),
                 value = viewModel.intentHandlingHassAccessToken.collectAsState().value,
                 onValueChange = viewModel::changeIntentHandlingHassAccessToken,
                 label = MR.strings.accessToken
@@ -123,12 +120,14 @@ private fun HomeAssistantOption(viewModel: IntentHandlingConfigurationViewModel)
 
             //select hass event or hass intent
             RadioButtonListItem(
+                modifier = Modifier.testTag(TestTag.SendEvents),
                 text = MR.strings.homeAssistantEvents,
                 isChecked = viewModel.isIntentHandlingHassEvent.collectAsState().value,
                 onClick = viewModel::selectIntentHandlingHassEvent
             )
 
             RadioButtonListItem(
+                modifier = Modifier.testTag(TestTag.SendIntents),
                 text = MR.strings.homeAssistantIntents,
                 isChecked = viewModel.isIntentHandlingHassIntent.collectAsState().value,
                 onClick = viewModel::selectIntentHandlingHassIntent

@@ -25,7 +25,10 @@ enum class TestTag {
     LibrariesContainer,
 
     AudioPlayingOptions,
-    AudioPlayingHttpEndpoint,
+    Endpoint,
+    AccessToken,
+    SendEvents,
+    SendIntents,
     AudioRecordingUdpOutput,
     AudioRecordingUdpHost,
     AudioRecordingUdpPort,

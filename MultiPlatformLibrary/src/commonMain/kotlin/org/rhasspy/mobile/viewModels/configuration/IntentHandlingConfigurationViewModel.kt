@@ -35,7 +35,7 @@ class IntentHandlingConfigurationViewModel : ViewModel() {
     )
 
     //show input field for endpoint
-    val isRemoteHttpEndpointVisible = _intentHandlingOption.mapReadonlyState { it == IntentHandlingOptions.RemoteHTTP }
+    val isRemoteHttpSettingsVisible = _intentHandlingOption.mapReadonlyState { it == IntentHandlingOptions.RemoteHTTP }
     val isHomeAssistantSettingsVisible = _intentHandlingOption.mapReadonlyState { it == IntentHandlingOptions.HomeAssistant }
 
     //all options
@@ -53,7 +53,7 @@ class IntentHandlingConfigurationViewModel : ViewModel() {
 
     //edit endpoint
     fun changeIntentHandlingHassEndpoint(endpoint: String) {
-        _intentHandlingHttpEndpoint.value = endpoint
+        _intentHandlingHassEndpoint.value = endpoint
     }
 
     //edit endpoint
