@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.testTag
@@ -33,6 +34,7 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
         //base http endpoint
         TextFieldListItem(
             label = MR.strings.host,
+            modifier = Modifier.testTag(TestTag.Host),
             value = viewModel.httpServerEndpoint.collectAsState().value,
             onValueChange = viewModel::updateHttpServerEndpoint,
         )
@@ -40,6 +42,7 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
         //switch to toggle validation of SSL certificate
         SwitchListItem(
             text = MR.strings.disableSSLValidation,
+            modifier = Modifier.testTag(TestTag.SSLSwitch),
             secondaryText = MR.strings.disableSSLValidationInformation,
             isChecked = viewModel.isHttpSSLVerificationDisabled.collectAsState().value,
             onCheckedChange = viewModel::toggleHttpSSLVerificationDisabled
