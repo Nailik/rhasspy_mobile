@@ -26,6 +26,10 @@ import org.rhasspy.mobile.android.onNodeWithTag
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+/**
+ * Content Test of Configuration screens
+ * save, discard and test buttons
+ */
 class ConfigurationScreenItemContentTest {
 
     @get: Rule

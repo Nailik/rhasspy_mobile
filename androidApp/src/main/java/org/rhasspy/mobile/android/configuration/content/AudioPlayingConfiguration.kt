@@ -38,7 +38,7 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
 
         val audioPlayingOption by viewModel.audioPlayingOption.collectAsState()
 
-        //drop down of available values
+        //radio buttons list of available values
         RadioButtonsEnumSelection(
             modifier = Modifier.testTag(TestTag.AudioPlayingOptions),
             selected = audioPlayingOption,

@@ -3,7 +3,7 @@ package org.rhasspy.mobile.android
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
-import org.rhasspy.mobile.android.configuration.ConfigurationScreens
+import org.rhasspy.mobile.data.DataEnum
 
 enum class TestTag {
     DialogInformationMicrophonePermission,
@@ -24,7 +24,6 @@ enum class TestTag {
 
     LibrariesContainer,
 
-    AudioPlayingConfigurationScreen,
     AudioPlayingOptions,
     AudioPlayingEndpoint,
 
@@ -44,6 +43,12 @@ enum class TestTag {
 }
 
 fun Modifier.testTag(tag: Enum<*>) = semantics(
+    properties = {
+        testTag = tag.name
+    }
+)
+
+fun Modifier.testTag(tag: DataEnum<*>) = semantics(
     properties = {
         testTag = tag.name
     }
