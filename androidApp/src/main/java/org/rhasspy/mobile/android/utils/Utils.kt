@@ -583,26 +583,14 @@ fun TextFieldListItem(
 }
 
 @Composable
-fun OutlineButtonListItem(text: StringResource, enabled: Boolean = true, onClick: () -> Unit) {
+fun OutlineButtonListItem(modifier: Modifier = Modifier, text: StringResource, enabled: Boolean = true, onClick: () -> Unit) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .wrapContentSize(Alignment.Center)
     ) {
         OutlinedButton(enabled = enabled, onClick = onClick, content = { Text(text) })
-    }
-}
-
-@Composable
-fun OutlineButtonListItem(text: @Composable (() -> Unit), enabled: Boolean = true, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .wrapContentSize(Alignment.Center)
-    ) {
-        OutlinedButton(enabled = enabled, onClick = onClick, content = { text() })
     }
 }
 

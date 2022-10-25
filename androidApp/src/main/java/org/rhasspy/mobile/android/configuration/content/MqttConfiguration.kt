@@ -1,46 +1,25 @@
 package org.rhasspy.mobile.android.configuration.content
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Autorenew
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.OutlineButtonListItem
 import org.rhasspy.mobile.android.utils.SwitchListItem
-import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItemVisibility
-import org.rhasspy.mobile.android.utils.translate
 import org.rhasspy.mobile.viewModels.configuration.MqttConfigurationViewModel
 
 
@@ -69,6 +48,7 @@ fun MqttConfigurationContent(viewModel: MqttConfigurationViewModel = viewModel()
         //toggle to turn mqtt enabled on or off
         SwitchListItem(
             text = MR.strings.externalMQTT,
+            modifier = Modifier.testTag(TestTag.MqttSwitch),
             isChecked = viewModel.isMqttEnabled.collectAsState().value,
             onCheckedChange = viewModel::toggleMqttEnabled
         )
@@ -83,8 +63,6 @@ fun MqttConfigurationContent(viewModel: MqttConfigurationViewModel = viewModel()
             Column {
 
                 MqttConnectionSettings(viewModel)
-
-                MqttTestConnection(viewModel)
 
                 MqttSSL(viewModel)
 
@@ -109,6 +87,7 @@ private fun MqttConnectionSettings(viewModel: MqttConfigurationViewModel) {
     //host
     TextFieldListItem(
         label = MR.strings.host,
+        modifier = Modifier.testTag(TestTag.Host),
         value = viewModel.mqttHost.collectAsState().value,
         onValueChange = viewModel::updateMqttHost,
     )
@@ -117,6 +96,7 @@ private fun MqttConnectionSettings(viewModel: MqttConfigurationViewModel) {
     TextFieldListItem(
         label = MR.strings.port,
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+        modifier = Modifier.testTag(TestTag.Port),
         value = viewModel.mqttPort.collectAsState().value,
         onValueChange = viewModel::updateMqttPort,
     )
@@ -125,6 +105,7 @@ private fun MqttConnectionSettings(viewModel: MqttConfigurationViewModel) {
     TextFieldListItem(
         value = viewModel.mqttUserName.collectAsState().value,
         onValueChange = viewModel::updateMqttUserName,
+        modifier = Modifier.testTag(TestTag.UserName),
         label = MR.strings.userName
     )
 
@@ -132,50 +113,8 @@ private fun MqttConnectionSettings(viewModel: MqttConfigurationViewModel) {
     TextFieldListItemVisibility(
         value = viewModel.mqttPassword.collectAsState().value,
         onValueChange = viewModel::updateMqttPassword,
+        modifier = Modifier.testTag(TestTag.Password),
         label = MR.strings.password
-    )
-}
-
-/**
- * Button to test mqtt connection
- * is disabled while testing
- * shows testing result
- */
-@Composable
-private fun MqttTestConnection(viewModel: MqttConfigurationViewModel) {
-    OutlineButtonListItem(
-        text = {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (viewModel.isTestingMqttConnection.collectAsState().value) {
-
-                    val infiniteTransition = rememberInfiniteTransition()
-                    val angle by infiniteTransition.animateFloat(
-                        initialValue = 0F,
-                        targetValue = 360F,
-                        animationSpec = infiniteRepeatable(
-                            animation = tween(2000, easing = LinearEasing)
-                        )
-                    )
-
-                    Icon(
-                        modifier = Modifier.rotate(angle),
-                        imageVector = Icons.Filled.Autorenew,
-                        contentDescription = MR.strings.reset
-                    )
-                }
-
-                viewModel.testingMqttError.collectAsState().value?.also {
-                    Text(text = "${translate(MR.strings.error)}: ${it.statusCode.name}")
-                } ?: run {
-                    Text(MR.strings.testConnection)
-                }
-            }
-        },
-        enabled = viewModel.isMqttTestEnabled.collectAsState().value,
-        onClick = viewModel::testMqttConnection
     )
 }
 
@@ -188,6 +127,7 @@ private fun MqttSSL(viewModel: MqttConfigurationViewModel) {
 
     SwitchListItem(
         text = MR.strings.enableSSL,
+        modifier = Modifier.testTag(TestTag.SSLSwitch),
         isChecked = viewModel.isMqttSSLEnabled.collectAsState().value,
         onCheckedChange = viewModel::toggleMqttSSLEnabled
     )
@@ -200,6 +140,7 @@ private fun MqttSSL(viewModel: MqttConfigurationViewModel) {
 
         OutlineButtonListItem(
             text = MR.strings.chooseCertificate,
+            modifier = Modifier.testTag(TestTag.CertificateButton),
             onClick = { })
 
     }
@@ -216,6 +157,7 @@ private fun MqttConnectionTiming(viewModel: MqttConfigurationViewModel) {
     TextFieldListItem(
         label = MR.strings.connectionTimeout,
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+        modifier = Modifier.testTag(TestTag.ConnectionTimeout),
         value = viewModel.mqttConnectionTimeout.collectAsState().value,
         onValueChange = viewModel::updateMqttConnectionTimeout
     )
@@ -223,6 +165,7 @@ private fun MqttConnectionTiming(viewModel: MqttConfigurationViewModel) {
     TextFieldListItem(
         label = MR.strings.keepAliveInterval,
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+        modifier = Modifier.testTag(TestTag.KeepAliveInterval),
         value = viewModel.mqttKeepAliveInterval.collectAsState().value,
         onValueChange = viewModel::updateMqttKeepAliveInterval
     )
@@ -230,6 +173,7 @@ private fun MqttConnectionTiming(viewModel: MqttConfigurationViewModel) {
     TextFieldListItem(
         label = MR.strings.retryInterval,
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+        modifier = Modifier.testTag(TestTag.RetryInterval),
         value = viewModel.mqttRetryInterval.collectAsState().value,
         onValueChange = viewModel::updateMqttRetryInterval
     )

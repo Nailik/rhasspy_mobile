@@ -46,6 +46,17 @@ enum class TestTag {
     TextToSpeechOptions,
 
     WakeWordOptions,
+
+    MqttSwitch,
+    Host,
+    Port,
+    UserName,
+    Password,
+    SSLSwitch,
+    CertificateButton,
+    ConnectionTimeout,
+    KeepAliveInterval,
+    RetryInterval
 }
 
 fun Modifier.testTag(tag: Enum<*>) = semantics(

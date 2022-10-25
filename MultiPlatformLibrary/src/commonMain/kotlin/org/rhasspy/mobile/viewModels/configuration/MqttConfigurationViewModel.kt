@@ -1,12 +1,11 @@
 package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
-import org.rhasspy.mobile.*
-import org.rhasspy.mobile.mqtt.MqttError
-import org.rhasspy.mobile.services.MqttService
+import org.rhasspy.mobile.combineAny
+import org.rhasspy.mobile.combineStateNotEquals
+import org.rhasspy.mobile.mapReadonlyState
+import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class MqttConfigurationViewModel : ViewModel() {
@@ -48,16 +47,6 @@ class MqttConfigurationViewModel : ViewModel() {
 
     //show input field for endpoint
     val isMqttSettingsVisible = _isMqttEnabled.mapReadonlyState { it }
-
-    //Mqtt testing
-    private val _isTestingMqttConnection = MutableStateFlow(false)
-    private val _testingMqttError = MutableStateFlow<MqttError?>(null)
-
-    val isTestingMqttConnection = _isTestingMqttConnection.readOnly
-    val testingMqttError = _testingMqttError.readOnly
-    val isMqttTestEnabled = combineState(ConfigurationSettings.mqttHost.data, ConfigurationSettings.mqttPort.data) { host, port ->
-        host.isNotEmpty() && port.isNotEmpty()
-    }
 
     //set new intent recognition option
     fun toggleMqttEnabled(enabled: Boolean) {
@@ -103,23 +92,6 @@ class MqttConfigurationViewModel : ViewModel() {
     fun updateMqttRetryInterval(retryInterval: String) {
         _mqttRetryInterval.value = retryInterval
     }
-
-    /**
-     * test if the mqtt connection with current unsaved settings is working
-     */
-    fun testMqttConnection() {
-        if (!_isTestingMqttConnection.value) {
-            //show loading
-            _isTestingMqttConnection.value = true
-            viewModelScope.launch(Dispatchers.Default) {
-                _testingMqttError.value = MqttService.testConnection()
-                _isTestingMqttConnection.value = false
-            }
-        }
-        //disable editing of mqtt settings
-        //show result
-    }
-
 
     /**
      * save data configuration

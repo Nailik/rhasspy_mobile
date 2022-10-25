@@ -130,10 +130,10 @@ class IntentHandlingConfigurationContentTest {
         composeTestRule.onNodeWithTag(TestTag.SendIntents).assertExists()
 
         //endpoint can be changed
-        composeTestRule.onNodeWithTag(TestTag.Endpoint, true).performScrollTo().performClick()
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).performScrollTo().performClick()
         composeTestRule.onNodeWithTag(TestTag.Endpoint, true).onChild().performTextReplacement(textInputTestEndpoint)
         //access token can be changed
-        composeTestRule.onNodeWithTag(TestTag.AccessToken, true).performScrollTo().performClick()
+        composeTestRule.onNodeWithTag(TestTag.AccessToken).performScrollTo().performClick()
         composeTestRule.onNodeWithTag(TestTag.AccessToken, true).onChild().performTextReplacement(textInputTestToken)
 
         //send intents is set
