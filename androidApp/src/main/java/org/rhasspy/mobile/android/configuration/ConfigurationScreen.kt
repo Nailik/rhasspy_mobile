@@ -310,8 +310,8 @@ private fun AudioPlaying(viewModel: ConfigurationScreenViewModel) {
 private fun DialogManagement(viewModel: ConfigurationScreenViewModel) {
 
     ConfigurationListItem(
-        text = MR.strings.dialogueManagement,
-        secondaryText = viewModel.dialogueManagementOption.collectAsState().value.text,
+        text = MR.strings.dialogManagement,
+        secondaryText = viewModel.dialogManagementOption.collectAsState().value.text,
         screen = ConfigurationScreens.DialogManagementConfiguration
     )
 

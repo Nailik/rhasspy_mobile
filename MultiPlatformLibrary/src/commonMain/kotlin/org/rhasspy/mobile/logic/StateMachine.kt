@@ -135,7 +135,7 @@ object StateMachine {
         logger.v { "startedSession id: $sessionId keyword: $keyword" }
 
         if (state.value == State.StartingSession &&
-            (ConfigurationSettings.dialogueManagementOption.value == DialogManagementOptions.RemoteMQTT || !fromMQTT)
+            (ConfigurationSettings.dialogManagementOption.value == DialogManagementOptions.RemoteMQTT || !fromMQTT)
         ) {
             currentSession = Session(sessionId, keyword)
             state.value = State.StartedSession
@@ -261,7 +261,7 @@ object StateMachine {
                 state.value = State.RecordingStopped
 
                 //allow internal call or when dialog option is mqtt
-                if (!fromMQTT || ConfigurationSettings.dialogueManagementOption.value == DialogManagementOptions.RemoteMQTT) {
+                if (!fromMQTT || ConfigurationSettings.dialogManagementOption.value == DialogManagementOptions.RemoteMQTT) {
                     state.value = State.TranscribingIntent
 
                     //save recording to previous recording
@@ -288,7 +288,7 @@ object StateMachine {
                     }
 
                 } else {
-                    logger.d { "startListening called from fromMQTT $fromMQTT but dialogManagement is set to ${ConfigurationSettings.dialogueManagementOption.data}" }
+                    logger.d { "startListening called from fromMQTT $fromMQTT but dialogManagement is set to ${ConfigurationSettings.dialogManagementOption.data}" }
                 }
             } else {
                 logger.e { "stopListening call with invalid state ${state.value}" }
@@ -532,7 +532,7 @@ object StateMachine {
         return previousRecordingFile.getFileData()
     }
 
-    private fun isDialogueLocal(): Boolean = ConfigurationSettings.dialogueManagementOption.value == DialogManagementOptions.Local
+    private fun isDialogueLocal(): Boolean = ConfigurationSettings.dialogManagementOption.value == DialogManagementOptions.Local
 
     private fun sessionMatches(sessionId: String?, fromMQTT: Boolean): Boolean =
         (sessionId == currentSession.sessionId || (fromMQTT && sessionId == currentSession.mqttSpeechToTextSessionId))

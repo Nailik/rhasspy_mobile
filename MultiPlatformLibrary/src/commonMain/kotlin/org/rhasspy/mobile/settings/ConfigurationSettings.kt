@@ -59,7 +59,7 @@ internal object ConfigurationSettings {
     val isUseCustomAudioPlayingHttpEndpoint = Setting(SettingsEnum.CustomAudioPlayingHttpEndpoint, false)
     val audioPlayingHttpEndpoint = Setting(SettingsEnum.AudioPlayingHttpEndpoint, "")
 
-    val dialogueManagementOption = Setting(SettingsEnum.DialogueManagementOption, DialogManagementOptions.Local)
+    val dialogManagementOption = Setting(SettingsEnum.DialogManagementOption, DialogManagementOptions.Local)
 
     val intentHandlingOption = Setting(SettingsEnum.IntentHandlingOption, IntentHandlingOptions.Disabled)
     val intentHandlingHttpEndpoint = Setting(SettingsEnum.IntentHandlingEndpoint, "")

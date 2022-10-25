@@ -30,7 +30,7 @@
     <string name="rhasspyTextToSpeechURL">Rhasspy Text-zu-Sprache URL (//api/text-to-speech)</string>
     <string name="audioOutputURL">Audio Ausgabe URL (//api/play-wav)</string>
     <string name="audioPlaying">Audiowiedergabe</string>
-    <string name="dialogueManagement">Dialog-Verwaltung</string>
+    <string name="dialogManagement">Dialog-Verwaltung</string>
     <string name="intentHandling">Intent Handling</string>
     <string name="remoteURL">Entfernte URL</string>
     <string name="checkConnection">Verbindung prüfen</string>

@@ -82,7 +82,7 @@ enum class SettingsEnum {
     CustomAudioPlayingHttpEndpoint,
     AudioPlayingHttpEndpoint,
 
-    DialogueManagementOption,
+    DialogManagementOption,
 
     IntentHandlingOption,
     IntentHandlingEndpoint,

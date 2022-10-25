@@ -15,9 +15,6 @@ import org.rhasspy.mobile.data.AudioPlayingOptions
 import org.rhasspy.mobile.viewModels.configuration.AudioPlayingConfigurationViewModel
 import kotlin.test.assertEquals
 
-/**
- * Options changed and saved
- */
 class AudioPlayingConfigurationContentTest {
 
     @get: Rule

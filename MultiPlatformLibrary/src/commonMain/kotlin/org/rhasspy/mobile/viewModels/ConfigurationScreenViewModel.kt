@@ -16,7 +16,7 @@ class ConfigurationScreenViewModel : ViewModel() {
     val intentRecognitionOption = ConfigurationSettings.intentRecognitionOption.data
     val textToSpeechOption = ConfigurationSettings.textToSpeechOption.data
     val audioPlayingOption = ConfigurationSettings.audioPlayingOption.data
-    val dialogueManagementOption = ConfigurationSettings.dialogueManagementOption.data
+    val dialogManagementOption = ConfigurationSettings.dialogManagementOption.data
     val intentHandlingOption = ConfigurationSettings.intentHandlingOption.data
 
     fun changeSiteId(siteId: String) {

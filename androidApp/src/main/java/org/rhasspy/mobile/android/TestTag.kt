@@ -21,7 +21,7 @@ enum class TestTag {
     BottomAppBarDiscard,
     BottomAppBarSave,
     BottomAppBarTest,
-
+    DialogManagementOptions,
     LibrariesContainer,
 
     AudioPlayingOptions,

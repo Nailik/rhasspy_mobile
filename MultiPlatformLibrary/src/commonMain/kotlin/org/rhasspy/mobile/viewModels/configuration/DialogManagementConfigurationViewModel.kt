@@ -17,13 +17,13 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
 class DialogManagementConfigurationViewModel : ViewModel() {
 
     //unsaved data
-    private val _dialogManagementOption = MutableStateFlow(ConfigurationSettings.dialogueManagementOption.value)
+    private val _dialogManagementOption = MutableStateFlow(ConfigurationSettings.dialogManagementOption.value)
 
     //unsaved ui data
-    val dialogueManagementOption = _dialogManagementOption.readOnly
+    val dialogManagementOption = _dialogManagementOption.readOnly
 
     val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(_dialogManagementOption, ConfigurationSettings.dialogueManagementOption.data)
+        combineStateNotEquals(_dialogManagementOption, ConfigurationSettings.dialogManagementOption.data)
     )
 
     //all options
@@ -38,11 +38,11 @@ class DialogManagementConfigurationViewModel : ViewModel() {
      * save data configuration
      */
     fun save() {
-        ConfigurationSettings.dialogueManagementOption.value = _dialogManagementOption.value
+        ConfigurationSettings.dialogManagementOption.value = _dialogManagementOption.value
     }
 
     fun discard() {
-        _dialogManagementOption.value = ConfigurationSettings.dialogueManagementOption.value
+        _dialogManagementOption.value = ConfigurationSettings.dialogManagementOption.value
     }
 
     /**
