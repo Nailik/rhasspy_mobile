@@ -11,9 +11,7 @@ import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.data.AudioPlayingOptions
 import org.rhasspy.mobile.data.IntentRecognitionOptions
-import org.rhasspy.mobile.viewModels.configuration.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewModels.configuration.IntentRecognitionConfigurationViewModel
 import kotlin.test.assertEquals
 
