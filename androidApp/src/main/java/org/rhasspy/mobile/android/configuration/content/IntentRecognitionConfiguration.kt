@@ -56,6 +56,7 @@ fun IntentRecognitionConfigurationContent(viewModel: IntentRecognitionConfigurat
 
                 //switch to use custom
                 SwitchListItem(
+                    modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
                     text = MR.strings.useCustomEndpoint,
                     isChecked = viewModel.isUseCustomIntentRecognitionHttpEndpoint.collectAsState().value,
                     onCheckedChange = viewModel::toggleUseCustomHttpEndpoint
@@ -64,6 +65,7 @@ fun IntentRecognitionConfigurationContent(viewModel: IntentRecognitionConfigurat
                 //http endpoint input field
                 TextFieldListItem(
                     enabled = viewModel.isIntentRecognitionHttpEndpointChangeEnabled.collectAsState().value,
+                    modifier = Modifier.testTag(TestTag.Endpoint),
                     value = viewModel.intentRecognitionHttpEndpoint.collectAsState().value,
                     onValueChange = viewModel::changeIntentRecognitionHttpEndpoint,
                     label = MR.strings.rhasspyTextToIntentURL
