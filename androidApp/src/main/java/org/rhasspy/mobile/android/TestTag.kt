@@ -47,6 +47,7 @@ enum class TestTag {
 
     WakeWordOptions,
 
+    ServerSwitch,
     MqttSwitch,
     Host,
     Port,
