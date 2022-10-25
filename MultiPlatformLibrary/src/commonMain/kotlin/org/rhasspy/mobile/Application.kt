@@ -1,6 +1,7 @@
 package org.rhasspy.mobile
 
 import co.touchlab.kermit.Logger
+import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,9 +41,12 @@ abstract class Application : NativeApplication() {
         ServiceInterface
         MqttService
 
+        StringDesc.localeType = StringDesc.LocaleType.Custom(AppSettings.languageOption.value.code)
+
         CoroutineScope(Dispatchers.Default).launch {
             ServiceInterface.serviceAction(ServiceAction.Start)
         }
+
     }
 
 }

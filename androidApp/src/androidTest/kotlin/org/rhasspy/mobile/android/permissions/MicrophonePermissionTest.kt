@@ -4,17 +4,11 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.NoLiveLiterals
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -28,17 +22,14 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.MainActivity
-import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
-import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.onNodeWithText
-import org.rhasspy.mobile.android.text
 import org.rhasspy.mobile.android.theme.AppTheme
+import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
+import org.rhasspy.mobile.viewModels.SettingsScreenViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-
 
 /**
  * Tests Microphone Permission requesting
@@ -92,6 +83,9 @@ class MicrophonePermissionTest {
     @NoLiveLiterals
     @Before
     fun setUp() {
+        //set english
+        SettingsScreenViewModel().selectLanguage(LanguageOptions.English)
+
         //set content
         composeTestRule.activity.setContent {
             val snackbarHostState = remember { SnackbarHostState() }

@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.viewModels
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.settings.AppSettings
@@ -11,6 +12,7 @@ class SettingsScreenViewModel : ViewModel() {
     val languageOptions = LanguageOptions::values
 
     fun selectLanguage(option: LanguageOptions) {
+        StringDesc.localeType = StringDesc.LocaleType.Custom(option.code)
         AppSettings.languageOption.value = option
     }
 

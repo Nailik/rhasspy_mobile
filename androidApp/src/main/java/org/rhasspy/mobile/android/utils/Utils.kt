@@ -146,7 +146,7 @@ fun Icon(
 
 @Composable
 fun translate(resource: StringResource): String {
-    AppViewModel.languageOption.collectAsState()
+    AppViewModel.languageOption.collectAsState().value
     return StringDesc.Resource(resource).toString(LocalContext.current)
 }
 

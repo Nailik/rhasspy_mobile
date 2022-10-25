@@ -2,9 +2,7 @@ package org.rhasspy.mobile.viewModels
 
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.logic.StateMachine.manualIntentRecognition
@@ -29,12 +27,6 @@ class HomeScreenViewModel : ViewModel() {
 
     init {
         logger.v { "init" }
-
-        viewModelScope.launch {
-            AppSettings.languageOption.data.collect {
-                StringDesc.localeType = StringDesc.LocaleType.Custom(it.code)
-            }
-        }
     }
 
     val currentState = StateMachine.currentState
