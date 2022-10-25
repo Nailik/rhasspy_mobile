@@ -4,10 +4,8 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.combineState
-import org.rhasspy.mobile.mapReadonlyState
+import org.rhasspy.mobile.*
 import org.rhasspy.mobile.mqtt.MqttError
-import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.MqttService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -35,6 +33,18 @@ class MqttConfigurationViewModel : ViewModel() {
     val mqttConnectionTimeout = _mqttConnectionTimeout.readOnly
     val mqttKeepAliveInterval = _mqttKeepAliveInterval.readOnly
     val mqttRetryInterval = _mqttRetryInterval.readOnly
+
+    val hasUnsavedChanges = combineAny(
+        combineStateNotEquals(_isMqttEnabled, ConfigurationSettings.isMqttEnabled.data),
+        combineStateNotEquals(_mqttHost, ConfigurationSettings.mqttHost.data),
+        combineStateNotEquals(_mqttPort, ConfigurationSettings.mqttPort.data),
+        combineStateNotEquals(_mqttUserName, ConfigurationSettings.mqttUserName.data),
+        combineStateNotEquals(_mqttPassword, ConfigurationSettings.mqttPassword.data),
+        combineStateNotEquals(_isMqttSSLEnabled, ConfigurationSettings.isMqttSSLEnabled.data),
+        combineStateNotEquals(_mqttConnectionTimeout, ConfigurationSettings.mqttConnectionTimeout.data),
+        combineStateNotEquals(_mqttKeepAliveInterval, ConfigurationSettings.mqttKeepAliveInterval.data),
+        combineStateNotEquals(_mqttRetryInterval, ConfigurationSettings.mqttRetryInterval.data)
+    )
 
     //show input field for endpoint
     val isMqttSettingsVisible = _isMqttEnabled.mapReadonlyState { it }
@@ -125,6 +135,19 @@ class MqttConfigurationViewModel : ViewModel() {
         ConfigurationSettings.mqttKeepAliveInterval.value = _mqttKeepAliveInterval.value
         ConfigurationSettings.mqttRetryInterval.value = _mqttRetryInterval.value
     }
+
+    fun discard() {
+        _isMqttEnabled.value = ConfigurationSettings.isMqttEnabled.value
+        _mqttHost.value = ConfigurationSettings.mqttHost.value
+        _mqttPort.value = ConfigurationSettings.mqttPort.value
+        _mqttUserName.value = ConfigurationSettings.mqttUserName.value
+        _mqttPassword.value = ConfigurationSettings.mqttPassword.value
+        _isMqttSSLEnabled.value = ConfigurationSettings.isMqttSSLEnabled.value
+        _mqttConnectionTimeout.value = ConfigurationSettings.mqttConnectionTimeout.value
+        _mqttKeepAliveInterval.value = ConfigurationSettings.mqttKeepAliveInterval.value
+        _mqttRetryInterval.value = ConfigurationSettings.mqttRetryInterval.value
+    }
+
 
     /**
      * test unsaved data configuration

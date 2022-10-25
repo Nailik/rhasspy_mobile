@@ -2,6 +2,8 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.rhasspy.mobile.combineAny
+import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.data.PorcupineLanguageOptions
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.mapReadonlyState
@@ -28,6 +30,15 @@ class WakeWordConfigurationViewModel : ViewModel() {
     val wakeWordPorcupineLanguage = _wakeWordPorcupineLanguage.readOnly
     val wakeWordPorcupineSensitivity = _wakeWordPorcupineSensitivity.readOnly
     val wakeWordPorcupineSettingsVisible = _wakeWordOption.mapReadonlyState { it == WakeWordOption.Porcupine }
+
+    val hasUnsavedChanges = combineAny(
+        combineStateNotEquals(_wakeWordOption, ConfigurationSettings.wakeWordOption.data),
+        combineStateNotEquals(_wakeWordPorcupineAccessToken, ConfigurationSettings.wakeWordPorcupineAccessToken.data),
+        combineStateNotEquals(_wakeWordPorcupineKeywordOption, ConfigurationSettings.wakeWordPorcupineKeywordOption.data),
+        combineStateNotEquals(_wakeWordPorcupineKeywordOptions, ConfigurationSettings.wakeWordPorcupineKeywordOptions.data),
+        combineStateNotEquals(_wakeWordPorcupineLanguage, ConfigurationSettings.wakeWordPorcupineLanguage.data),
+        combineStateNotEquals(_wakeWordPorcupineSensitivity, ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.data)
+    )
 
     //all options
     val wakeWordOptions = WakeWordOption::values
@@ -68,6 +79,15 @@ class WakeWordConfigurationViewModel : ViewModel() {
         ConfigurationSettings.wakeWordPorcupineKeywordOptions.value = _wakeWordPorcupineKeywordOptions.value
         ConfigurationSettings.wakeWordPorcupineLanguage.value = _wakeWordPorcupineLanguage.value
         ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.value = _wakeWordPorcupineSensitivity.value
+    }
+
+    fun discard() {
+        _wakeWordOption.value = ConfigurationSettings.wakeWordOption.value
+        _wakeWordPorcupineAccessToken.value = ConfigurationSettings.wakeWordPorcupineAccessToken.value
+        _wakeWordPorcupineKeywordOption.value = ConfigurationSettings.wakeWordPorcupineKeywordOption.value
+        _wakeWordPorcupineKeywordOptions.value = ConfigurationSettings.wakeWordPorcupineKeywordOptions.value
+        _wakeWordPorcupineLanguage.value = ConfigurationSettings.wakeWordPorcupineLanguage.value
+        _wakeWordPorcupineSensitivity.value = ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.value
     }
 
     /**

@@ -39,10 +39,10 @@ fun WebServerConfigurationContent(viewModel: WebserverConfigurationViewModel = v
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.WebServerConfiguration),
         title = MR.strings.webserver,
-        hasUnsavedChanges = MutableStateFlow(false),
+        hasUnsavedChanges = viewModel.hasUnsavedChanges,
         onSave = viewModel::save,
         onTest = viewModel::test,
-        onDiscard = {  }
+        onDiscard = viewModel::discard
     ) {
 
         //switch to enable http server

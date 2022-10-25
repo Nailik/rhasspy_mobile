@@ -2,6 +2,8 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.rhasspy.mobile.combineAny
+import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.data.IntentHandlingOptions
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
@@ -23,6 +25,14 @@ class IntentHandlingConfigurationViewModel : ViewModel() {
     val intentHandlingHassAccessToken = _intentHandlingHassAccessToken.readOnly
     val isIntentHandlingHassEvent = _isIntentHandlingHassEvent.readOnly
     val isIntentHandlingHassIntent = _isIntentHandlingHassEvent.mapReadonlyState { !it }
+
+    val hasUnsavedChanges = combineAny(
+        combineStateNotEquals(_intentHandlingOption, ConfigurationSettings.intentHandlingOption.data),
+        combineStateNotEquals(_intentHandlingHttpEndpoint, ConfigurationSettings.intentHandlingHttpEndpoint.data),
+        combineStateNotEquals(_intentHandlingHassEndpoint, ConfigurationSettings.intentHandlingHassEndpoint.data),
+        combineStateNotEquals(_intentHandlingHassAccessToken, ConfigurationSettings.intentHandlingHassAccessToken.data),
+        combineStateNotEquals(_isIntentHandlingHassEvent, ConfigurationSettings.isIntentHandlingHassEvent.data)
+    )
 
     //show input field for endpoint
     val isRemoteHttpEndpointVisible = _intentHandlingOption.mapReadonlyState { it == IntentHandlingOptions.RemoteHTTP }
@@ -70,6 +80,14 @@ class IntentHandlingConfigurationViewModel : ViewModel() {
         ConfigurationSettings.intentHandlingHassEndpoint.value = _intentHandlingHassEndpoint.value
         ConfigurationSettings.intentHandlingHassAccessToken.value = _intentHandlingHassAccessToken.value
         ConfigurationSettings.isIntentHandlingHassEvent.value = _isIntentHandlingHassEvent.value
+    }
+
+    fun discard() {
+        _intentHandlingOption.value = ConfigurationSettings.intentHandlingOption.value
+        _intentHandlingHttpEndpoint.value = ConfigurationSettings.intentHandlingHttpEndpoint.value
+        _intentHandlingHassEndpoint.value = ConfigurationSettings.intentHandlingHassEndpoint.value
+        _intentHandlingHassAccessToken.value = ConfigurationSettings.intentHandlingHassAccessToken.value
+        _isIntentHandlingHassEvent.value = ConfigurationSettings.isIntentHandlingHassEvent.value
     }
 
     /**

@@ -37,10 +37,10 @@ fun TextToSpeechConfigurationContent(viewModel: TextToSpeechConfigurationViewMod
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.TextToSpeechConfiguration),
         title = MR.strings.textToSpeech,
-        hasUnsavedChanges = MutableStateFlow(false),
+        hasUnsavedChanges = viewModel.hasUnsavedChanges,
         onSave = viewModel::save,
         onTest = viewModel::test,
-        onDiscard = {  }
+        onDiscard = viewModel::discard
     ) {
 
         //drop down to select text to speech

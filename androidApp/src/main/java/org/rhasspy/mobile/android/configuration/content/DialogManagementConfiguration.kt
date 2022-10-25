@@ -30,10 +30,10 @@ fun DialogManagementConfigurationContent(viewModel: DialogManagementConfiguratio
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.DialogManagementConfiguration),
         title = MR.strings.dialogueManagement,
-        hasUnsavedChanges = MutableStateFlow(false),
+        hasUnsavedChanges = viewModel.hasUnsavedChanges,
         onSave = viewModel::save,
         onTest = viewModel::test,
-        onDiscard = {  }
+        onDiscard = viewModel::discard
     ) {
 
         //drop down to select option

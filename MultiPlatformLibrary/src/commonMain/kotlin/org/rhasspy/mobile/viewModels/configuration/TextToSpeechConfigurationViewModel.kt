@@ -2,6 +2,8 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.rhasspy.mobile.combineAny
+import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.data.TextToSpeechOptions
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
@@ -17,6 +19,11 @@ class TextToSpeechConfigurationViewModel : ViewModel() {
     val textToSpeechOption = _textToSpeechOption.readOnly
     val textToSpeechHttpEndpoint = _textToSpeechHttpEndpoint.readOnly
     val textToSpeechHttpEndpointVisible = _textToSpeechOption.mapReadonlyState { it == TextToSpeechOptions.RemoteHTTP }
+
+    val hasUnsavedChanges = combineAny(
+        combineStateNotEquals(_textToSpeechOption, ConfigurationSettings.textToSpeechOption.data),
+        combineStateNotEquals(_textToSpeechHttpEndpoint, ConfigurationSettings.textToSpeechEndpoint.data)
+    )
 
     //all options
     val textToSpeechOptions = TextToSpeechOptions::values
@@ -37,6 +44,11 @@ class TextToSpeechConfigurationViewModel : ViewModel() {
     fun save() {
         ConfigurationSettings.textToSpeechOption.value = _textToSpeechOption.value
         ConfigurationSettings.textToSpeechEndpoint.value = _textToSpeechHttpEndpoint.value
+    }
+
+    fun discard() {
+        _textToSpeechOption.value = ConfigurationSettings.textToSpeechOption.value
+        _textToSpeechHttpEndpoint.value = ConfigurationSettings.textToSpeechEndpoint.value
     }
 
     /**

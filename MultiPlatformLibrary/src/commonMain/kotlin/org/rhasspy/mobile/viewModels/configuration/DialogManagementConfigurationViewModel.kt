@@ -2,6 +2,8 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.rhasspy.mobile.combineAny
+import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.data.DialogManagementOptions
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSettings
@@ -20,6 +22,10 @@ class DialogManagementConfigurationViewModel : ViewModel() {
     //unsaved ui data
     val dialogueManagementOption = _dialogManagementOption.readOnly
 
+    val hasUnsavedChanges = combineAny(
+        combineStateNotEquals(_dialogManagementOption, ConfigurationSettings.dialogueManagementOption.data)
+    )
+
     //all options
     val dialogManagementOptionsList = DialogManagementOptions::values
 
@@ -33,6 +39,10 @@ class DialogManagementConfigurationViewModel : ViewModel() {
      */
     fun save() {
         ConfigurationSettings.dialogueManagementOption.value = _dialogManagementOption.value
+    }
+
+    fun discard() {
+        _dialogManagementOption.value = ConfigurationSettings.dialogueManagementOption.value
     }
 
     /**

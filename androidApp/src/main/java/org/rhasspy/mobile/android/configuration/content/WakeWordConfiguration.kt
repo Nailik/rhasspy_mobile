@@ -42,10 +42,10 @@ fun WakeWordConfigurationContent(viewModel: WakeWordConfigurationViewModel = vie
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.WakeWordConfiguration),
         title = MR.strings.wakeWord,
-        hasUnsavedChanges = MutableStateFlow(false),
+        hasUnsavedChanges = viewModel.hasUnsavedChanges,
         onSave = viewModel::save,
         onTest = viewModel::test,
-        onDiscard = {  }
+        onDiscard = viewModel::discard
     ) {
 
         //drop down list to select option

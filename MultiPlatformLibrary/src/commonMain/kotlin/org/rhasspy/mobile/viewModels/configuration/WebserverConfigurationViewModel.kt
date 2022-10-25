@@ -2,6 +2,8 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.rhasspy.mobile.combineAny
+import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -18,6 +20,12 @@ class WebserverConfigurationViewModel : ViewModel() {
     val isHttpServerSSLEnabled = _isHttpServerSSLEnabled.readOnly
     val isHttpServerSettingsVisible = _isHttpServerEnabled.readOnly
     val isHttpServerSSLCertificateVisible = _isHttpServerSSLEnabled.readOnly
+
+    val hasUnsavedChanges = combineAny(
+        combineStateNotEquals(_isHttpServerEnabled, ConfigurationSettings.isHttpServerEnabled.data),
+        combineStateNotEquals(_httpServerPort, ConfigurationSettings.httpServerPort.data),
+        combineStateNotEquals(_isHttpServerSSLEnabled, ConfigurationSettings.isHttpServerSSLEnabled.data)
+    )
 
     //toggle HTTP Server enabled
     fun toggleHttpServerEnabled(enabled: Boolean) {
@@ -41,6 +49,12 @@ class WebserverConfigurationViewModel : ViewModel() {
         ConfigurationSettings.isHttpServerEnabled.value = _isHttpServerEnabled.value
         ConfigurationSettings.httpServerPort.value = _httpServerPort.value
         ConfigurationSettings.isHttpServerSSLEnabled.value = _isHttpServerSSLEnabled.value
+    }
+
+    fun discard() {
+        _isHttpServerEnabled.value = ConfigurationSettings.isHttpServerEnabled.value
+        _httpServerPort.value = ConfigurationSettings.httpServerPort.value
+        _isHttpServerSSLEnabled.value = ConfigurationSettings.isHttpServerSSLEnabled.value
     }
 
     /**
