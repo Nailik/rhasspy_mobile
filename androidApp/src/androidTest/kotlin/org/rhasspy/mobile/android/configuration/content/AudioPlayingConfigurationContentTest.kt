@@ -4,6 +4,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -43,15 +44,24 @@ class AudioPlayingConfigurationContentTest {
      * option disable is set
      * User clicks option remote http
      * new option is selected
-     * Endpoint visible when option is remote http
+     *
+     * Endpoint visible
+     * custom endpoint switch visible
+     *
+     * switch is off
+     * endpoint cannot be changed
+     *
+     * user clicks switch
+     * switch is on
      * endpoint can be changed
      *
      * User clicks save
      * option is saved to remote http
      * endpoint is saved
+     * use custom endpoint is saved
      */
     @Test
-    fun testDialog() {
+    fun testContent() = runBlocking {
         viewModel.selectAudioPlayingOption(AudioPlayingOptions.Disabled)
         val textInputTest = "endpointTestInput"
         //option disable is set
@@ -61,10 +71,25 @@ class AudioPlayingConfigurationContentTest {
         composeTestRule.onNodeWithTag(AudioPlayingOptions.RemoteHTTP, true).performClick()
         //new option is selected
         assertEquals(AudioPlayingOptions.RemoteHTTP, viewModel.audioPlayingOption.value)
-        //Endpoint visible when option is remote http
+
+        //Endpoint visible
         composeTestRule.onNodeWithTag(TestTag.AudioPlayingHttpEndpoint, true).assertExists()
+        //custom endpoint switch visible
+        composeTestRule.onNodeWithTag(TestTag.AudioPlayingHttpEndpoint, true).assertExists()
+
+        //switch is off
+        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performScrollTo().assertIsOff()
+        //endpoint cannot be changed
+        composeTestRule.onNodeWithTag(TestTag.AudioPlayingHttpEndpoint).onChild().assertIsNotEnabled()
+
+        //user clicks switch
+        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performClick()
+        //switch is on
+        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).assertIsOn()
         //endpoint can be changed
-        composeTestRule.onNodeWithTag(TestTag.AudioPlayingHttpEndpoint, true).performScrollTo().onChild().performTextReplacement(textInputTest)
+        composeTestRule.onNodeWithTag(TestTag.AudioPlayingHttpEndpoint).onChild().assertIsEnabled()
+        composeTestRule.onNodeWithTag(TestTag.AudioPlayingHttpEndpoint, true).onChild().performTextReplacement(textInputTest)
+        composeTestRule.awaitIdle()
         assertEquals(textInputTest, viewModel.audioPlayingHttpEndpoint.value)
 
         //User clicks save
@@ -74,6 +99,8 @@ class AudioPlayingConfigurationContentTest {
         assertEquals(AudioPlayingOptions.RemoteHTTP, newViewModel.audioPlayingOption.value)
         //endpoint is saved
         assertEquals(textInputTest, newViewModel.audioPlayingHttpEndpoint.value)
+        //use custom endpoint is saved
+        assertEquals(true, newViewModel.isUseCustomAudioPlayingHttpEndpoint.value)
     }
 
 }

@@ -32,7 +32,7 @@ enum class TestTag {
 
     ConfigurationScreenItemContent,
     ConfigurationSiteId,
-
+    CustomEndpointSwitch,
 
     IntentHandlingOptions,
 

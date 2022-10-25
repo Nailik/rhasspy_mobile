@@ -4,6 +4,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -50,7 +51,7 @@ class AudioRecordingConfigurationContentTest {
      * output option and endpoint host and port is saved
      */
     @Test
-    fun testDialog() {
+    fun testContent() = runBlocking {
         viewModel.toggleUdpOutputEnabled(false)
         val textInputTestHost = "hostTestInput"
         val textInputTestPort = "1556"
@@ -72,9 +73,11 @@ class AudioRecordingConfigurationContentTest {
 
         //endpoint host and port can be changed
         composeTestRule.onNodeWithTag(TestTag.AudioRecordingUdpHost, true).performScrollTo().onChild().performTextReplacement(textInputTestHost)
+        composeTestRule.awaitIdle()
         assertEquals(textInputTestHost, viewModel.udpOutputHost.value)
         composeTestRule.onNodeWithTag(TestTag.AudioRecordingUdpPort, true).performScrollTo().performClick()
         composeTestRule.onNodeWithTag(TestTag.AudioRecordingUdpPort, true).onChild().performTextReplacement(textInputTestPort)
+        composeTestRule.awaitIdle()
         assertEquals(textInputTestPort, viewModel.udpOutputPort.value)
         //user click save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()

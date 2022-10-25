@@ -59,6 +59,7 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
 
                 //switch to use custom
                 SwitchListItem(
+                    modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
                     text = MR.strings.useCustomEndpoint,
                     isChecked = viewModel.isUseCustomAudioPlayingHttpEndpoint.collectAsState().value,
                     onCheckedChange = viewModel::toggleUseCustomHttpEndpoint
