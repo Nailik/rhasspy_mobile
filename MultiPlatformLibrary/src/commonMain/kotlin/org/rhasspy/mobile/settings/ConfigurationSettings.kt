@@ -44,16 +44,20 @@ internal object ConfigurationSettings {
     val wakeWordPorcupineKeywordSensitivity = Setting(SettingsEnum.WakeWordPorcupineKeywordSensitivity, 0.5f)
 
     val speechToTextOption = Setting(SettingsEnum.SpeechToTextOption, SpeechToTextOptions.Disabled)
+    val isUseCustomSpeechToTextHttpEndpoint = Setting(SettingsEnum.CustomSpeechToTextEndpoint, false)
     val speechToTextHttpEndpoint = Setting(SettingsEnum.SpeechToTextHttpEndpoint, "")
 
     val intentRecognitionOption = Setting(SettingsEnum.IntentRecognitionOption, IntentRecognitionOptions.Disabled)
-    val intentRecognitionEndpoint = Setting(SettingsEnum.IntentRecognitionEndpoint, "")
+    val isUseCustomIntentRecognitionHttpEndpoint = Setting(SettingsEnum.CustomIntentRecognitionHttpEndpoint, false)
+    val intentRecognitionHttpEndpoint = Setting(SettingsEnum.IntentRecognitionHttpEndpoint, "")
 
     val textToSpeechOption = Setting(SettingsEnum.TextToSpeechOption, TextToSpeechOptions.Disabled)
-    val textToSpeechEndpoint = Setting(SettingsEnum.TextToSpeechEndpoint, "")
+    val isUseCustomTextToSpeechHttpEndpoint = Setting(SettingsEnum.CustomTextToSpeechOptionHttpEndpoint, false)
+    val textToSpeechHttpEndpoint = Setting(SettingsEnum.TextToSpeechHttpEndpoint, "")
 
     val audioPlayingOption = Setting(SettingsEnum.AudioPlayingOption, AudioPlayingOptions.Disabled)
-    val audioPlayingEndpoint = Setting(SettingsEnum.AudioPlayingEndpoint, "")
+    val isUseCustomAudioPlayingHttpEndpoint = Setting(SettingsEnum.CustomAudioPlayingHttpEndpoint, false)
+    val audioPlayingHttpEndpoint = Setting(SettingsEnum.AudioPlayingHttpEndpoint, "")
 
     val dialogueManagementOption = Setting(SettingsEnum.DialogueManagementOption, DialogManagementOptions.Local)
 

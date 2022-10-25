@@ -191,4 +191,5 @@
     <string name="discard">Verwerfen</string>
     <string name="test">Test</string>
     <string name="back">Zurück</string>
+    <string name="useCustomEndpoint">Benutzerdefinierte Http-URL</string>
 </resources>

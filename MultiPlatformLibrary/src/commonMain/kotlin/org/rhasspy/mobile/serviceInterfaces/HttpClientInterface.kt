@@ -81,14 +81,14 @@ object HttpClientInterface {
      */
     suspend fun intentRecognition(text: String, handleDirectly: Boolean): String? {
 
-        logger.v { "sending intentRecognition text\nendpoint:\n${ConfigurationSettings.intentRecognitionEndpoint.value}\ntext:\n$text" }
+        logger.v { "sending intentRecognition text\nendpoint:\n${ConfigurationSettings.intentRecognitionHttpEndpoint.value}\ntext:\n$text" }
 
         return try {
             logger.v { "intent will be handled directly $handleDirectly" }
 
             val request = httpClient.post(
                 url = Url(
-                    "${ConfigurationSettings.intentRecognitionEndpoint.value}${
+                    "${ConfigurationSettings.intentRecognitionHttpEndpoint.value}${
                         if (!handleDirectly) {
                             "?nohass=true"
                         } else ""
@@ -128,12 +128,12 @@ object HttpClientInterface {
      */
     suspend fun textToSpeech(text: String): List<Byte>? {
 
-        logger.v { "sending text to speech\nendpoint:\n${ConfigurationSettings.textToSpeechEndpoint.value}\ntext:\n$text" }
+        logger.v { "sending text to speech\nendpoint:\n${ConfigurationSettings.textToSpeechHttpEndpoint.value}\ntext:\n$text" }
 
         return try {
 
             val request = httpClient.post(
-                url = Url(ConfigurationSettings.textToSpeechEndpoint.value)
+                url = Url(ConfigurationSettings.textToSpeechHttpEndpoint.value)
             ) {
                 setBody(text)
             }
@@ -157,11 +157,11 @@ object HttpClientInterface {
      */
     suspend fun playWav(data: List<Byte>) {
 
-        logger.v { "sending audio \nendpoint:\n${ConfigurationSettings.audioPlayingEndpoint.value}\ndata:\n${data.size}" }
+        logger.v { "sending audio \nendpoint:\n${ConfigurationSettings.audioPlayingHttpEndpoint.value}\ndata:\n${data.size}" }
 
         try {
             val request = httpClient.post(
-                url = Url(ConfigurationSettings.audioPlayingEndpoint.value)
+                url = Url(ConfigurationSettings.audioPlayingHttpEndpoint.value)
             ) {
                 setAttributes {
                     contentType(ContentType("audio", "wav"))

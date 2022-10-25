@@ -62,10 +62,10 @@ class AudioPlayingConfigurationContentTest {
         //new option is selected
         assertEquals(AudioPlayingOptions.RemoteHTTP, viewModel.audioPlayingOption.value)
         //Endpoint visible when option is remote http
-        composeTestRule.onNodeWithTag(TestTag.AudioPlayingEndpoint, true).assertExists()
+        composeTestRule.onNodeWithTag(TestTag.AudioPlayingHttpEndpoint, true).assertExists()
         //endpoint can be changed
-        composeTestRule.onNodeWithTag(TestTag.AudioPlayingEndpoint, true).performScrollTo().onChild().performTextReplacement(textInputTest)
-        assertEquals(textInputTest, viewModel.audioPlayingEndpoint.value)
+        composeTestRule.onNodeWithTag(TestTag.AudioPlayingHttpEndpoint, true).performScrollTo().onChild().performTextReplacement(textInputTest)
+        assertEquals(textInputTest, viewModel.audioPlayingHttpEndpoint.value)
 
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
@@ -73,7 +73,7 @@ class AudioPlayingConfigurationContentTest {
         //option is saved to remote http
         assertEquals(AudioPlayingOptions.RemoteHTTP, newViewModel.audioPlayingOption.value)
         //endpoint is saved
-        assertEquals(textInputTest, newViewModel.audioPlayingEndpoint.value)
+        assertEquals(textInputTest, newViewModel.audioPlayingHttpEndpoint.value)
     }
 
 }

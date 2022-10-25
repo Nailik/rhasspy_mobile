@@ -2,28 +2,39 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.rhasspy.mobile.combineAny
-import org.rhasspy.mobile.combineStateNotEquals
+import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.TextToSpeechOptions
-import org.rhasspy.mobile.mapReadonlyState
-import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class TextToSpeechConfigurationViewModel : ViewModel() {
 
     //unsaved data
     private val _textToSpeechOption = MutableStateFlow(ConfigurationSettings.textToSpeechOption.value)
-    private val _textToSpeechHttpEndpoint = MutableStateFlow(ConfigurationSettings.textToSpeechEndpoint.value)
+    private val _isUseCustomTextToSpeechHttpEndpoint = MutableStateFlow(ConfigurationSettings.isUseCustomTextToSpeechHttpEndpoint.value)
+    private val _textToSpeechHttpEndpoint = MutableStateFlow(ConfigurationSettings.textToSpeechHttpEndpoint.value)
 
     //unsaved ui data
     val textToSpeechOption = _textToSpeechOption.readOnly
-    val textToSpeechHttpEndpoint = _textToSpeechHttpEndpoint.readOnly
-    val textToSpeechHttpEndpointVisible = _textToSpeechOption.mapReadonlyState { it == TextToSpeechOptions.RemoteHTTP }
+    val textToSpeechHttpEndpoint =
+        combineState(_isUseCustomTextToSpeechHttpEndpoint, _textToSpeechHttpEndpoint) { useCustomTextToSpeechHttpEndpoint,
+                                                                                                  speechToTextHttpEndpoint ->
+            if (useCustomTextToSpeechHttpEndpoint) {
+                speechToTextHttpEndpoint
+            } else {
+                "${ConfigurationSettings.httpServerEndpoint.value}//api/text-to-speech"
+            }
+        }
+    val isUseCustomTextToSpeechHttpEndpoint = _isUseCustomTextToSpeechHttpEndpoint.readOnly
+    val isTextToSpeechHttpEndpointChangeEnabled = isUseCustomTextToSpeechHttpEndpoint
 
     val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_textToSpeechOption, ConfigurationSettings.textToSpeechOption.data),
-        combineStateNotEquals(_textToSpeechHttpEndpoint, ConfigurationSettings.textToSpeechEndpoint.data)
+        combineStateNotEquals(_isUseCustomTextToSpeechHttpEndpoint, ConfigurationSettings.isUseCustomTextToSpeechHttpEndpoint.data),
+        combineStateNotEquals(_textToSpeechHttpEndpoint, ConfigurationSettings.textToSpeechHttpEndpoint.data)
     )
+
+    //show endpoint settings
+    val isTextToSpeechHttpSettingsVisible = _textToSpeechOption.mapReadonlyState { it == TextToSpeechOptions.RemoteHTTP }
 
     //all options
     val textToSpeechOptions = TextToSpeechOptions::values
@@ -31,6 +42,11 @@ class TextToSpeechConfigurationViewModel : ViewModel() {
     //set new text to speech option
     fun selectTextToSpeechOption(option: TextToSpeechOptions) {
         _textToSpeechOption.value = option
+    }
+
+    //toggle if custom endpoint is used
+    fun toggleUseCustomHttpEndpoint(enabled: Boolean) {
+        _isUseCustomTextToSpeechHttpEndpoint.value = enabled
     }
 
     //set new text to speech http endpoint
@@ -43,12 +59,14 @@ class TextToSpeechConfigurationViewModel : ViewModel() {
      */
     fun save() {
         ConfigurationSettings.textToSpeechOption.value = _textToSpeechOption.value
-        ConfigurationSettings.textToSpeechEndpoint.value = _textToSpeechHttpEndpoint.value
+        ConfigurationSettings.isUseCustomTextToSpeechHttpEndpoint.value = _isUseCustomTextToSpeechHttpEndpoint.value
+        ConfigurationSettings.textToSpeechHttpEndpoint.value = _textToSpeechHttpEndpoint.value
     }
 
     fun discard() {
         _textToSpeechOption.value = ConfigurationSettings.textToSpeechOption.value
-        _textToSpeechHttpEndpoint.value = ConfigurationSettings.textToSpeechEndpoint.value
+        _isUseCustomTextToSpeechHttpEndpoint.value = ConfigurationSettings.isUseCustomTextToSpeechHttpEndpoint.value
+        _textToSpeechHttpEndpoint.value = ConfigurationSettings.textToSpeechHttpEndpoint.value
     }
 
     /**

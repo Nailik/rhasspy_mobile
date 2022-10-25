@@ -2,30 +2,39 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.rhasspy.mobile.combineAny
-import org.rhasspy.mobile.combineStateNotEquals
+import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.IntentRecognitionOptions
-import org.rhasspy.mobile.mapReadonlyState
-import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class IntentRecognitionConfigurationViewModel : ViewModel() {
 
     //unsaved data
     private val _intentRecognitionOption = MutableStateFlow(ConfigurationSettings.intentRecognitionOption.value)
-    private val _intentRecognitionEndpoint = MutableStateFlow(ConfigurationSettings.intentRecognitionEndpoint.value)
+    private val _isUseCustomIntentRecognitionHttpEndpoint = MutableStateFlow(ConfigurationSettings.isUseCustomIntentRecognitionHttpEndpoint.value)
+    private val _intentRecognitionHttpEndpoint = MutableStateFlow(ConfigurationSettings.intentRecognitionHttpEndpoint.value)
 
     //unsaved ui data
     val intentRecognitionOption = _intentRecognitionOption.readOnly
-    val intentRecognitionEndpoint = _intentRecognitionEndpoint.readOnly
+    val intentRecognitionHttpEndpoint =
+        combineState(_isUseCustomIntentRecognitionHttpEndpoint, _intentRecognitionHttpEndpoint) { useCustomIntentRecognitionHttpEndpoint,
+                                                                                                  intentRecognitionHttpEndpoint ->
+            if (useCustomIntentRecognitionHttpEndpoint) {
+                intentRecognitionHttpEndpoint
+            } else {
+                "${ConfigurationSettings.httpServerEndpoint.value}//api/text-to-intent"
+            }
+        }
+    val isUseCustomIntentRecognitionHttpEndpoint = _isUseCustomIntentRecognitionHttpEndpoint.readOnly
+    val isIntentRecognitionHttpEndpointChangeEnabled = isUseCustomIntentRecognitionHttpEndpoint
 
     val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_intentRecognitionOption, ConfigurationSettings.intentRecognitionOption.data),
-        combineStateNotEquals(_intentRecognitionEndpoint, ConfigurationSettings.intentRecognitionEndpoint.data)
+        combineStateNotEquals(_isUseCustomIntentRecognitionHttpEndpoint, ConfigurationSettings.isUseCustomIntentRecognitionHttpEndpoint.data),
+        combineStateNotEquals(_intentRecognitionHttpEndpoint, ConfigurationSettings.intentRecognitionHttpEndpoint.data)
     )
 
-    //show input field for endpoint
-    val isRemoteHttpEndpointVisible = _intentRecognitionOption.mapReadonlyState { it == IntentRecognitionOptions.RemoteHTTP }
+    //show endpoint settings
+    val isIntentRecognitionHttpSettingsVisible = _intentRecognitionOption.mapReadonlyState { it == IntentRecognitionOptions.RemoteHTTP }
 
     //all options
     val intentRecognitionOptionsList = IntentRecognitionOptions::values
@@ -35,9 +44,14 @@ class IntentRecognitionConfigurationViewModel : ViewModel() {
         _intentRecognitionOption.value = option
     }
 
+    //toggle if custom endpoint is used
+    fun toggleUseCustomHttpEndpoint(enabled: Boolean) {
+        _isUseCustomIntentRecognitionHttpEndpoint.value = enabled
+    }
+
     //set new intent recognition option
     fun changeIntentRecognitionHttpEndpoint(endpoint: String) {
-        _intentRecognitionEndpoint.value = endpoint
+        _intentRecognitionHttpEndpoint.value = endpoint
     }
 
     /**
@@ -45,12 +59,14 @@ class IntentRecognitionConfigurationViewModel : ViewModel() {
      */
     fun save() {
         ConfigurationSettings.intentRecognitionOption.value = _intentRecognitionOption.value
-        ConfigurationSettings.intentRecognitionEndpoint.value = _intentRecognitionEndpoint.value
+        ConfigurationSettings.isUseCustomIntentRecognitionHttpEndpoint.value = _isUseCustomIntentRecognitionHttpEndpoint.value
+        ConfigurationSettings.intentRecognitionHttpEndpoint.value = _intentRecognitionHttpEndpoint.value
     }
 
     fun discard() {
         _intentRecognitionOption.value = ConfigurationSettings.intentRecognitionOption.value
-        _intentRecognitionEndpoint.value = ConfigurationSettings.intentRecognitionEndpoint.value
+        _isUseCustomIntentRecognitionHttpEndpoint.value = ConfigurationSettings.isUseCustomIntentRecognitionHttpEndpoint.value
+        _intentRecognitionHttpEndpoint.value = ConfigurationSettings.intentRecognitionHttpEndpoint.value
     }
 
     /**

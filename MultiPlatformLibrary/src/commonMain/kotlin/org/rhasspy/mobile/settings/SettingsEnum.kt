@@ -67,16 +67,20 @@ enum class SettingsEnum {
     WakeWordPorcupineKeywordSensitivity,
 
     SpeechToTextOption,
+    CustomSpeechToTextEndpoint,
     SpeechToTextHttpEndpoint,
 
     IntentRecognitionOption,
-    IntentRecognitionEndpoint,
+    CustomIntentRecognitionHttpEndpoint,
+    IntentRecognitionHttpEndpoint,
 
     TextToSpeechOption,
-    TextToSpeechEndpoint,
+    CustomTextToSpeechOptionHttpEndpoint,
+    TextToSpeechHttpEndpoint,
 
     AudioPlayingOption,
-    AudioPlayingEndpoint,
+    CustomAudioPlayingHttpEndpoint,
+    AudioPlayingHttpEndpoint,
 
     DialogueManagementOption,
 

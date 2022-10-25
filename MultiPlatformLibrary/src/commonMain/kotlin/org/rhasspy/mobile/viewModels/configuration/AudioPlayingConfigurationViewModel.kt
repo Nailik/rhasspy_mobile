@@ -2,11 +2,8 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.rhasspy.mobile.combineAny
-import org.rhasspy.mobile.combineStateNotEquals
+import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.AudioPlayingOptions
-import org.rhasspy.mobile.mapReadonlyState
-import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 /**
@@ -21,20 +18,31 @@ class AudioPlayingConfigurationViewModel : ViewModel() {
 
     //unsaved data
     private val _audioPlayingOption = MutableStateFlow(ConfigurationSettings.audioPlayingOption.value)
-    private val _audioPlayingEndpoint = MutableStateFlow(ConfigurationSettings.audioPlayingEndpoint.value)
+    private val _isUseCustomAudioPlayingHttpEndpoint = MutableStateFlow(ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.value)
+    private val _audioPlayingHttpEndpoint = MutableStateFlow(ConfigurationSettings.audioPlayingHttpEndpoint.value)
 
     //unsaved ui data
     val audioPlayingOption = _audioPlayingOption.readOnly
-    val audioPlayingEndpoint = _audioPlayingEndpoint.readOnly
+    val audioPlayingHttpEndpoint = combineState(_isUseCustomAudioPlayingHttpEndpoint, _audioPlayingHttpEndpoint) { useCustomAudioPlayingHttpEndpoint,
+                                                                                                                   audioPlayingHttpEndpoint ->
+        if(useCustomAudioPlayingHttpEndpoint){
+             audioPlayingHttpEndpoint
+        } else {
+            "${ConfigurationSettings.httpServerEndpoint.value}//api/play-wav"
+        }
+    }
+    val isUseCustomAudioPlayingHttpEndpoint = _isUseCustomAudioPlayingHttpEndpoint.readOnly
+    val isAudioPlayingHttpEndpointChangeEnabled = isUseCustomAudioPlayingHttpEndpoint
 
     //if there are unsaved changes
     val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_audioPlayingOption, ConfigurationSettings.audioPlayingOption.data),
-        combineStateNotEquals(_audioPlayingEndpoint, ConfigurationSettings.audioPlayingEndpoint.data)
+        combineStateNotEquals(_isUseCustomAudioPlayingHttpEndpoint, ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.data),
+        combineStateNotEquals(_audioPlayingHttpEndpoint, ConfigurationSettings.audioPlayingHttpEndpoint.data)
     )
 
     //show input field for endpoint
-    val isAudioPlayingEndpointVisible = _audioPlayingOption.mapReadonlyState { it == AudioPlayingOptions.RemoteHTTP }
+    val isAudioPlayingHttpEndpointSettingsVisible = _audioPlayingOption.mapReadonlyState { it == AudioPlayingOptions.RemoteHTTP }
 
     //all options
     val audioPlayingOptionsList = AudioPlayingOptions::values
@@ -44,9 +52,14 @@ class AudioPlayingConfigurationViewModel : ViewModel() {
         _audioPlayingOption.value = option
     }
 
+    //toggle if custom endpoint is used
+    fun toggleUseCustomHttpEndpoint(enabled: Boolean) {
+        _isUseCustomAudioPlayingHttpEndpoint.value = enabled
+    }
+
     //edit endpoint
-    fun changeAudioPlayingEndpoint(endpoint: String) {
-        _audioPlayingEndpoint.value = endpoint
+    fun changeAudioPlayingHttpEndpoint(endpoint: String) {
+        _audioPlayingHttpEndpoint.value = endpoint
     }
 
     /**
@@ -54,12 +67,14 @@ class AudioPlayingConfigurationViewModel : ViewModel() {
      */
     fun save() {
         ConfigurationSettings.audioPlayingOption.value = _audioPlayingOption.value
-        ConfigurationSettings.audioPlayingEndpoint.value = _audioPlayingEndpoint.value
+        ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.value = _isUseCustomAudioPlayingHttpEndpoint.value
+        ConfigurationSettings.audioPlayingHttpEndpoint.value = _audioPlayingHttpEndpoint.value
     }
 
     fun discard() {
         _audioPlayingOption.value = ConfigurationSettings.audioPlayingOption.value
-        _audioPlayingEndpoint.value = ConfigurationSettings.audioPlayingEndpoint.value
+        _isUseCustomAudioPlayingHttpEndpoint.value = ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.value
+        _audioPlayingHttpEndpoint.value = ConfigurationSettings.audioPlayingHttpEndpoint.value
     }
 
     /**

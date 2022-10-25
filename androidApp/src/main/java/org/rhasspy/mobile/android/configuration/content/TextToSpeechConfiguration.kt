@@ -4,23 +4,18 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
+import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.viewModels.configuration.TextToSpeechConfigurationViewModel
 
@@ -55,16 +50,27 @@ fun TextToSpeechConfigurationContent(viewModel: TextToSpeechConfigurationViewMod
         AnimatedVisibility(
             enter = expandVertically(),
             exit = shrinkVertically(),
-            visible = viewModel.textToSpeechHttpEndpointVisible.collectAsState().value
+            visible = viewModel.isTextToSpeechHttpSettingsVisible.collectAsState().value
         ) {
 
-            //http endpoint input field
-            TextFieldListItem(
-                value = viewModel.textToSpeechHttpEndpoint.collectAsState().value,
-                onValueChange = viewModel::updateTextToSpeechHttpEndpoint,
-                label = MR.strings.rhasspyTextToSpeechURL
-            )
+            Column {
 
+                //switch to use custom
+                SwitchListItem(
+                    text = MR.strings.useCustomEndpoint,
+                    isChecked = viewModel.isUseCustomTextToSpeechHttpEndpoint.collectAsState().value,
+                    onCheckedChange = viewModel::toggleUseCustomHttpEndpoint
+                )
+
+                //http endpoint input field
+                TextFieldListItem(
+                    enabled = viewModel.isTextToSpeechHttpEndpointChangeEnabled.collectAsState().value,
+                    value = viewModel.textToSpeechHttpEndpoint.collectAsState().value,
+                    onValueChange = viewModel::updateTextToSpeechHttpEndpoint,
+                    label = MR.strings.rhasspyTextToSpeechURL
+                )
+
+            }
         }
 
     }
