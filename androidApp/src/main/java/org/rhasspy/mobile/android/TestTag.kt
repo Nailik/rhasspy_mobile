@@ -26,6 +26,9 @@ enum class TestTag {
 
     AudioPlayingOptions,
     AudioPlayingEndpoint,
+    AudioRecordingUdpOutput,
+    AudioRecordingUdpHost,
+    AudioRecordingUdpPort,
 
     ConfigurationScreenItemContent,
     ConfigurationSiteId,

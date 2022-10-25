@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.android
 
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiSelector
@@ -11,6 +12,9 @@ fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     testTag: Enum<*>,
     useUnmergedTree: Boolean = false
 ): SemanticsNodeInteraction = onNode(hasTestTag(testTag.name), useUnmergedTree)
+
+fun hasTestTag(testTag: Enum<*>): SemanticsMatcher =
+    SemanticsMatcher.expectValue(SemanticsProperties.TestTag, testTag.name)
 
 fun UiSelector.text(text: StringResource): UiSelector {
     return this.textMatches(

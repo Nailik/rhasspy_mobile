@@ -28,14 +28,14 @@ fun LogSettingsContent(viewModel: LogSettingsViewModel = viewModel()) {
 
         //show log enabled
         SwitchListItem(
-            MR.strings.showLog,
+            text = MR.strings.showLog,
             isChecked = viewModel.isShowLogEnabled.collectAsState().value,
             onCheckedChange = viewModel::toggleShowLogEnabled
         )
 
         //audio frames logging enabled
         SwitchListItem(
-            MR.strings.audioFramesLogging,
+            text = MR.strings.audioFramesLogging,
             isChecked = viewModel.isLogAudioFramesEnabled.collectAsState().value,
             onCheckedChange = viewModel::toggleLogAudioFramesEnabled
         )

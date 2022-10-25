@@ -28,6 +28,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.*
+import androidx.compose.ui.state.ToggleableState.Off
+import androidx.compose.ui.state.ToggleableState.On
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -452,19 +455,17 @@ fun PageContent(
 
 @Composable
 fun SwitchListItem(
+    modifier: Modifier = Modifier,
     text: StringResource,
     secondaryText: StringResource? = null,
-    enabled: Boolean = true,
     isChecked: Boolean,
     onCheckedChange: ((Boolean) -> Unit)
 ) {
-    ListElement(modifier = Modifier
-        .clickable { onCheckedChange(!isChecked) },
+    ListElement(modifier = modifier.clickable { onCheckedChange(!isChecked) },
         text = { Text(text) },
         secondaryText = secondaryText?.let { { Text(secondaryText) } } ?: run { null },
         trailing = {
             Switch(
-                enabled = enabled,
                 checked = isChecked,
                 onCheckedChange = null
             )
@@ -715,3 +716,24 @@ fun HtmlText(html: String, modifier: Modifier = Modifier, color: Color) {
     )
 }
 
+
+@Composable
+fun Switch(
+    checked: Boolean,
+    onCheckedChange: ((Boolean) -> Unit)?,
+) {
+    Switch(
+        modifier = Modifier
+            .clearAndSetSemantics {
+                testTag = "SWITCH_TAG"
+                role = Role.Switch
+                toggleableState = if (checked) {
+                    On
+                } else {
+                    Off
+                }
+            },
+        checked = checked,
+        onCheckedChange = onCheckedChange
+    )
+}

@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
@@ -34,14 +33,15 @@ fun AudioRecordingConfigurationContent(viewModel: AudioRecordingConfigurationVie
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.AudioRecordingConfiguration),
         title = MR.strings.audioRecording,
-        hasUnsavedChanges = MutableStateFlow(false),
+        hasUnsavedChanges = viewModel.hasUnsavedChanges,
         onSave = viewModel::save,
         onTest = viewModel::test,
-        onDiscard = {  }
+        onDiscard = viewModel::discard
     ) {
 
         //switch to enable udp output
         SwitchListItem(
+            modifier = Modifier.testTag(TestTag.AudioRecordingUdpOutput),
             text = MR.strings.udpAudioOutput,
             secondaryText = MR.strings.udpAudioOutputDetail,
             isChecked = viewModel.isUdpOutputEnabled.collectAsState().value,
@@ -74,6 +74,7 @@ private fun UdpSettings(viewModel: AudioRecordingConfigurationViewModel) {
 
         //udp host
         TextFieldListItem(
+            modifier = Modifier.testTag(TestTag.AudioRecordingUdpHost),
             label = MR.strings.host,
             value = viewModel.udpOutputHost.collectAsState().value,
             onValueChange = viewModel::changeUdpOutputHost
@@ -81,6 +82,7 @@ private fun UdpSettings(viewModel: AudioRecordingConfigurationViewModel) {
 
         //udp port
         TextFieldListItem(
+            modifier = Modifier.testTag(TestTag.AudioRecordingUdpPort),
             label = MR.strings.port,
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             value = viewModel.udpOutputPort.collectAsState().value,

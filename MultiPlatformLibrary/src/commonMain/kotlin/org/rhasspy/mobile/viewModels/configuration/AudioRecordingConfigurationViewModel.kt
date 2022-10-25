@@ -2,6 +2,8 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.rhasspy.mobile.combineAny
+import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -16,6 +18,13 @@ class AudioRecordingConfigurationViewModel : ViewModel() {
     val isUdpOutputEnabled = _isUdpOutputEnabled.readOnly
     val udpOutputHost = _udpOutputHost.readOnly
     val udpOutputPort = _udpOutputPort.readOnly
+
+    //if there are unsaved changes
+    val hasUnsavedChanges = combineAny(
+        combineStateNotEquals(_isUdpOutputEnabled, ConfigurationSettings.isUdpOutputEnabled.data),
+        combineStateNotEquals(_udpOutputHost, ConfigurationSettings.udpOutputHost.data),
+        combineStateNotEquals(_udpOutputPort, ConfigurationSettings.udpOutputPort.data)
+    )
 
     //show udp host and port settings
     val isOutputSettingsVisible = _isUdpOutputEnabled.readOnly
@@ -42,6 +51,12 @@ class AudioRecordingConfigurationViewModel : ViewModel() {
         ConfigurationSettings.isUdpOutputEnabled.value = _isUdpOutputEnabled.value
         ConfigurationSettings.udpOutputHost.value = _udpOutputHost.value
         ConfigurationSettings.udpOutputPort.value = _udpOutputPort.value
+    }
+
+    fun discard() {
+        _isUdpOutputEnabled.value = ConfigurationSettings.isUdpOutputEnabled.value
+        _udpOutputHost.value = ConfigurationSettings.udpOutputHost.value
+        _udpOutputPort.value = ConfigurationSettings.udpOutputPort.value
     }
 
     /**
