@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.ui.about
+package org.rhasspy.mobile.android.about
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
@@ -8,7 +8,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.about.LibrariesContainer
 import org.rhasspy.mobile.android.onNodeWithTag
 
 /**

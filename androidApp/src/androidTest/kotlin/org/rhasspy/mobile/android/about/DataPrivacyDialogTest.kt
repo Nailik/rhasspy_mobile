@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.ui.about
+package org.rhasspy.mobile.android.about
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
@@ -6,7 +6,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.about.DataPrivacyDialogButton
 import org.rhasspy.mobile.android.onNodeWithTag
 
 /**
