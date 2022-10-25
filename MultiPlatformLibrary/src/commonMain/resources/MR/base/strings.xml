@@ -75,7 +75,7 @@
     <string name="audioFramesLogging">Audio Frames Logging</string>
     <string name="httpSSL">HTTP SSL</string>
     <string name="porcupineAccessKey">AccessKey</string>
-    <string name="openPicoVoiceConsole">open PicoVoice Console (to generate AccessKey)</string>
+    <string name="openPicoVoiceConsole">generate AccessKey</string>
     <string name="expandListItem">Expand list item</string>
     <string name="expandDropDown">Expand drop down</string>
     <string name="visibility">Visibility</string>
@@ -186,5 +186,7 @@
     <string name="discard">Discard</string>
     <string name="test">Test</string>
     <string name="back">Back</string>
+    <string name="language">Language</string>
+    <string name="theme">Theme</string>
     <string name="useCustomEndpoint">Custom Http Endpoint</string>
 </resources>

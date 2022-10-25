@@ -233,6 +233,7 @@ fun SettingsList(viewModel: SettingsScreenViewModel = viewModel()) {
 private fun Language(viewModel: SettingsScreenViewModel) {
 
     DropDownEnumListItem(
+        label = MR.strings.language,
         selected = viewModel.currentLanguage.collectAsState().value,
         values = viewModel.languageOptions,
         onSelect = viewModel::selectLanguage
@@ -244,6 +245,7 @@ private fun Language(viewModel: SettingsScreenViewModel) {
 private fun Theme(viewModel: SettingsScreenViewModel) {
 
     DropDownEnumListItem(
+        label = MR.strings.theme,
         selected = viewModel.currentTheme.collectAsState().value,
         values = viewModel.themeOptions,
         onSelect = viewModel::selectTheme

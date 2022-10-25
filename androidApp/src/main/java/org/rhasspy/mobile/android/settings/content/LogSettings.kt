@@ -21,6 +21,7 @@ fun LogSettingsContent(viewModel: LogSettingsViewModel = viewModel()) {
 
         //log level
         DropDownEnumListItem(
+            label = MR.strings.notConnected,
             selected = viewModel.logLevel.collectAsState().value,
             onSelect = viewModel::selectLogLevel,
             values = viewModel.logLevelOptions

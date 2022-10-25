@@ -154,7 +154,6 @@ private fun SiteId(viewModel: ConfigurationScreenViewModel) {
         value = viewModel.siteId.collectAsState().value,
         onValueChange = viewModel::changeSiteId,
         label = MR.strings.siteId,
-        paddingValues = PaddingValues(top = 4.dp, bottom = 16.dp),
     )
 
 }

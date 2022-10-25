@@ -16,7 +16,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.OutlineButtonListItem
+import org.rhasspy.mobile.android.utils.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItemVisibility
@@ -138,7 +138,7 @@ private fun MqttSSL(viewModel: MqttConfigurationViewModel) {
         visible = viewModel.isMqttChooseCertificateVisible.collectAsState().value
     ) {
 
-        OutlineButtonListItem(
+        FilledTonalButtonListItem(
             text = MR.strings.chooseCertificate,
             modifier = Modifier.testTag(TestTag.CertificateButton),
             onClick = { })

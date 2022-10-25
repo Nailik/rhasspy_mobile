@@ -4,29 +4,19 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.DropDownEnumListItem
-import org.rhasspy.mobile.android.utils.DropDownListWithFileOpen
-import org.rhasspy.mobile.android.utils.OutlineButtonListItem
-import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
-import org.rhasspy.mobile.android.utils.SliderListItem
-import org.rhasspy.mobile.android.utils.Text
-import org.rhasspy.mobile.android.utils.TextFieldListItemVisibility
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
 
 
@@ -88,8 +78,9 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
             )
 
             //button to open picovoice console to generate access token
-            OutlineButtonListItem(
+            FilledTonalIconButtonListItem(
                 text = MR.strings.openPicoVoiceConsole,
+                imageVector = Icons.Filled.OpenInNew,
                 onClick = viewModel::openPicoVoiceConsole
             )
 
@@ -104,6 +95,7 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
 
             //porcupine language dropdown
             DropDownEnumListItem(
+                label = MR.strings.language,
                 selected = viewModel.wakeWordPorcupineLanguage.collectAsState().value,
                 onSelect = viewModel::selectWakeWordPorcupineLanguage,
                 values = viewModel.porcupineLanguageOptions

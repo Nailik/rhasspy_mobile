@@ -16,7 +16,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.OutlineButtonListItem
+import org.rhasspy.mobile.android.utils.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.viewModels.configuration.WebserverConfigurationViewModel
@@ -99,7 +99,7 @@ private fun WebserverSSL(viewModel: WebserverConfigurationViewModel) {
     ) {
 
         //button to select ssl certificate
-        OutlineButtonListItem(
+        FilledTonalButtonListItem(
             text = MR.strings.chooseCertificate,
             modifier = Modifier.testTag(TestTag.CertificateButton),
             onClick = { })

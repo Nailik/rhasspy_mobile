@@ -4,6 +4,7 @@ import android.widget.TextView
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -11,12 +12,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
@@ -201,21 +204,40 @@ fun IndicatedSmallIcon(isIndicated: Boolean, rotationTarget: Float = 180f, icon:
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, enabled: Boolean = true, onSelect: (item: E) -> Unit, values: () -> Array<E>) {
+fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, label: StringResource, onSelect: (item: E) -> Unit, values: () -> Array<E>) {
     var isExpanded by remember { mutableStateOf(false) }
 
     ListElement(modifier = Modifier
-        .clickable { isExpanded = true },
-        text = { Text(selected.text) },
-        trailing = {
-            IndicatedSmallIcon(isExpanded) {
-                Icon(
-                    modifier = it,
-                    imageVector = Icons.Filled.ArrowDropDown,
-                    contentDescription = MR.strings.expandDropDown,
+        .padding(vertical = 2.dp)
+        .clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = rememberRipple(bounded = true),
+            onClick = { isExpanded = true }
+        ),
+        paddingValues = PaddingValues(top = 4.dp, bottom = 16.dp),
+        text = {
+            OutlinedTextField(
+                value = translate(selected.text),
+                onValueChange = { },
+                label = { Text(label) },
+                enabled = false,
+                readOnly = true,
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(4)),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                    disabledBorderColor = MaterialTheme.colorScheme.outline,
+                    disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    disabledLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-            }
+
+            )
         })
 
     Box(
@@ -230,7 +252,6 @@ fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, enabled: Boolean = true,
             values().forEach {
                 DropdownMenuItem(
                     text = { Text(it.text) },
-                    enabled = enabled,
                     onClick = { isExpanded = false; onSelect(it) })
             }
         }
@@ -264,8 +285,10 @@ fun DropDownListRemovableWithFileOpen(
 ) {
     var isExpanded by remember { mutableStateOf(false) }
 
-    ListElement(modifier = Modifier
-        .clickable { isExpanded = true },
+    ListElement(
+        modifier = Modifier
+            .clickable { isExpanded = true },
+        paddingValues = PaddingValues(top = 4.dp, bottom = 16.dp),
         overlineText = overlineText,
         text = title,
         trailing = {
@@ -503,8 +526,7 @@ fun TextFieldListItemVisibility(
     autoCorrect: Boolean = false,
     enabled: Boolean = true,
     onValueChange: ((String) -> Unit)? = null,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    paddingValues: PaddingValues = PaddingValues(vertical = 2.dp),
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     var isShowPassword by rememberSaveable { mutableStateOf(false) }
 
@@ -529,8 +551,7 @@ fun TextFieldListItemVisibility(
                 )
             }
         },
-        visualTransformation = if (isShowPassword) VisualTransformation.None else PasswordVisualTransformation(),
-        paddingValues = paddingValues
+        visualTransformation = if (isShowPassword) VisualTransformation.None else PasswordVisualTransformation()
     )
 }
 
@@ -547,13 +568,12 @@ fun TextFieldListItem(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    paddingValues: PaddingValues = PaddingValues(vertical = 2.dp),
 ) {
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
 
     ListElement(
         modifier = modifier.bringIntoViewRequester(bringIntoViewRequester),
-        paddingValues = paddingValues
+        paddingValues = PaddingValues(top = 4.dp, bottom = 16.dp)
     ) {
         val coroutineScope = rememberCoroutineScope()
 
@@ -583,14 +603,36 @@ fun TextFieldListItem(
 }
 
 @Composable
-fun OutlineButtonListItem(modifier: Modifier = Modifier, text: StringResource, enabled: Boolean = true, onClick: () -> Unit) {
+fun FilledTonalButtonListItem(modifier: Modifier = Modifier, text: StringResource, enabled: Boolean = true, onClick: () -> Unit) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .wrapContentSize(Alignment.Center)
     ) {
-        OutlinedButton(enabled = enabled, onClick = onClick, content = { Text(text) })
+        FilledTonalButton(enabled = enabled, onClick = onClick, content = { Text(text) })
+    }
+}
+
+@Composable
+fun FilledTonalIconButtonListItem(
+    modifier: Modifier = Modifier, imageVector: ImageVector, text: StringResource, enabled: Boolean = true, onClick: () ->
+    Unit
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .wrapContentSize(Alignment.Center)
+    ) {
+        FilledTonalButton(enabled = enabled, onClick = onClick, content = {
+            Icon(
+                imageVector = imageVector,
+                contentDescription = MR.strings.icon
+            )
+            Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+            Text(text)
+        })
     }
 }
 
