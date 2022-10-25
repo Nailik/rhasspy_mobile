@@ -11,6 +11,7 @@ enum class SettingsEnum {
 
     BackgroundEnabled,
     SSLVerificationDisabled,
+    HttpServerEndpoint,
 
     MicrophoneOverlay,
     MicrophoneOverlayWhileApp,

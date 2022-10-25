@@ -10,6 +10,7 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.SwitchListItem
+import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.viewModels.configuration.RemoteHermesHttpConfigurationViewModel
 
 /**
@@ -29,16 +30,20 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
         onDiscard = viewModel::discard
     ) {
 
+        //base http endpoint
+        TextFieldListItem(
+            label = MR.strings.host,
+            value = viewModel.httpServerEndpoint.collectAsState().value,
+            onValueChange = viewModel::updateHttpServerEndpoint,
+        )
+
         //switch to toggle validation of SSL certificate
-        //TODO text
         SwitchListItem(
             text = MR.strings.disableSSLValidation,
             secondaryText = MR.strings.disableSSLValidationInformation,
-            isChecked = viewModel.isHttpSSLVerificationEnabled.collectAsState().value,
-            onCheckedChange = viewModel::toggleHttpSSLVerificationEnabled
+            isChecked = viewModel.isHttpSSLVerificationDisabled.collectAsState().value,
+            onCheckedChange = viewModel::toggleHttpSSLVerificationDisabled
         )
-
-        //TODO http endpoint settings and then inerhit on enpoints with option to set custom
 
     }
 

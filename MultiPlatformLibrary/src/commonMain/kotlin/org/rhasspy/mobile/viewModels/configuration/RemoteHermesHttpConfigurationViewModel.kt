@@ -10,29 +10,40 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
 class RemoteHermesHttpConfigurationViewModel : ViewModel() {
 
     //unsaved data
-    private val _isHttpSSLVerificationEnabled = MutableStateFlow(ConfigurationSettings.isHttpSSLVerificationEnabled.value)
+    private val _httpServerEndpoint = MutableStateFlow(ConfigurationSettings.httpServerEndpoint.value)
+    private val _isHttpSSLVerificationDisabled = MutableStateFlow(ConfigurationSettings.isHttpSSLVerificationDisabled.value)
 
     //unsaved ui data
-    val isHttpSSLVerificationEnabled = _isHttpSSLVerificationEnabled.readOnly
+    val httpServerEndpoint = _httpServerEndpoint.readOnly
+    val isHttpSSLVerificationDisabled = _isHttpSSLVerificationDisabled.readOnly
 
     val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(_isHttpSSLVerificationEnabled, ConfigurationSettings.isHttpSSLVerificationEnabled.data)
+        combineStateNotEquals(_httpServerEndpoint, ConfigurationSettings.httpServerEndpoint.data),
+        combineStateNotEquals(_isHttpSSLVerificationDisabled, ConfigurationSettings.isHttpSSLVerificationDisabled.data)
     )
 
-    //set new intent recognition option
-    fun toggleHttpSSLVerificationEnabled(enabled: Boolean) {
-        _isHttpSSLVerificationEnabled.value = enabled
+    //set new http server endpoint
+    fun updateHttpServerEndpoint(endpoint: String) {
+        _httpServerEndpoint.value = endpoint
     }
+
+    //set new intent recognition option
+    fun toggleHttpSSLVerificationDisabled(disabled: Boolean) {
+        _isHttpSSLVerificationDisabled.value = disabled
+    }
+
 
     /**
      * save data configuration
      */
     fun save() {
-        ConfigurationSettings.isHttpSSLVerificationEnabled.value = _isHttpSSLVerificationEnabled.value
+        ConfigurationSettings.httpServerEndpoint.value = _httpServerEndpoint.value
+        ConfigurationSettings.isHttpSSLVerificationDisabled.value = _isHttpSSLVerificationDisabled.value
     }
 
     fun discard() {
-        _isHttpSSLVerificationEnabled.value = ConfigurationSettings.isHttpSSLVerificationEnabled.value
+        _httpServerEndpoint.value = ConfigurationSettings.httpServerEndpoint.value
+        _isHttpSSLVerificationDisabled.value = ConfigurationSettings.isHttpSSLVerificationDisabled.value
     }
 
     /**

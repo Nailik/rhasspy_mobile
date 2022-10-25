@@ -18,7 +18,8 @@ internal object ConfigurationSettings {
     val httpServerPort = Setting(SettingsEnum.HttpServerPort, "12101")
     val isHttpServerSSLEnabled = Setting(SettingsEnum.HttpServerSSL, false)
 
-    val isHttpSSLVerificationEnabled = Setting(SettingsEnum.SSLVerificationDisabled, false)
+    val isHttpSSLVerificationDisabled = Setting(SettingsEnum.SSLVerificationDisabled, true)
+    val httpServerEndpoint = Setting(SettingsEnum.HttpServerEndpoint, "")
 
     val isMqttEnabled = Setting(SettingsEnum.MQTT_ENABLED, false)
     val mqttHost = Setting(SettingsEnum.MQTTHost, "")

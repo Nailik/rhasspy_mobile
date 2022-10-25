@@ -23,7 +23,7 @@ actual fun Application.installCallLogging() {
 
 actual fun CIOEngineConfig.configureEngine() {
     https {
-        if (!ConfigurationSettings.isHttpSSLVerificationEnabled.value) {
+        if (!ConfigurationSettings.isHttpSSLVerificationDisabled.value) {
             trustManager = @SuppressLint("CustomX509TrustManager")
             object : X509TrustManager {
                 @SuppressLint("TrustAllX509TrustManager")
