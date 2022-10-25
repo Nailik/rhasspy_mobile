@@ -465,7 +465,7 @@ fun SwitchListItem(
         text = { Text(text) },
         secondaryText = secondaryText?.let { { Text(secondaryText) } } ?: run { null },
         trailing = {
-            Switch(
+            org.rhasspy.mobile.android.utils.Switch(
                 checked = isChecked,
                 onCheckedChange = null
             )
@@ -722,7 +722,7 @@ fun Switch(
     checked: Boolean,
     onCheckedChange: ((Boolean) -> Unit)?,
 ) {
-    Switch(
+    androidx.compose.material3.Switch(
         modifier = Modifier
             .clearAndSetSemantics {
                 testTag = "SWITCH_TAG"
