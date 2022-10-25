@@ -56,6 +56,7 @@ fun SpeechToTextConfigurationContent(viewModel: SpeechToTextConfigurationViewMod
 
                 //switch to use custom
                 SwitchListItem(
+                    modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
                     text = MR.strings.useCustomEndpoint,
                     isChecked = viewModel.isUseCustomSpeechToTextHttpEndpoint.collectAsState().value,
                     onCheckedChange = viewModel::toggleUseCustomHttpEndpoint
@@ -63,6 +64,7 @@ fun SpeechToTextConfigurationContent(viewModel: SpeechToTextConfigurationViewMod
                 //input to edit http endpoint
                 TextFieldListItem(
                     enabled = viewModel.isSpeechToTextHttpEndpointChangeEnabled.collectAsState().value,
+                    modifier = Modifier.testTag(TestTag.Endpoint),
                     value = viewModel.speechToTextHttpEndpoint.collectAsState().value,
                     onValueChange = viewModel::updateSpeechToTextHttpEndpoint,
                     label = MR.strings.speechToTextURL
