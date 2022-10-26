@@ -208,7 +208,7 @@ private fun WakeWordKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
 @Composable
 private fun KeywordAppBar() {
 
-    val navigation = LocalMainNavController.current
+    val navigation = LocalNavController.current
 
     TopAppBar(
         title = {
@@ -216,7 +216,7 @@ private fun KeywordAppBar() {
         },
         navigationIcon = {
             IconButton(
-                onClick = { navigation.popBackStack() },
+                onClick = navigation::popBackStack,
                 modifier = Modifier.testTag(TestTag.AppBarBackButton)
             ) {
                 Icon(
