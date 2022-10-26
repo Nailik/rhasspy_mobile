@@ -193,5 +193,6 @@
     <string name="back">Zurück</string>
     <string name="language">Sprache</string>
     <string name="theme">Design</string>
+    <string name="fileOpen">Datei auswählen</string>
     <string name="useCustomEndpoint">Benutzerdefinierte Http-URL</string>
 </resources>

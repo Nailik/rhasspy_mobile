@@ -188,5 +188,6 @@
     <string name="back">Back</string>
     <string name="language">Language</string>
     <string name="theme">Theme</string>
+    <string name="fileOpen">select file</string>
     <string name="useCustomEndpoint">Custom Http Endpoint</string>
 </resources>

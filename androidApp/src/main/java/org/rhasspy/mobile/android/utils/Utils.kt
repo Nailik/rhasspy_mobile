@@ -638,20 +638,19 @@ fun FilledTonalIconButtonListItem(
 
 @Composable
 fun SliderListItem(text: StringResource, value: Float, enabled: Boolean = true, onValueChange: (Float) -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .wrapContentSize(Alignment.Center)
+    ListElement(
+        modifier = Modifier.fillMaxWidth(),
+        overlineText = {
+            Text("${translate(text)} ($value)")
+        }
     ) {
-        Text("${translate(text)} ($value)")
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Slider(
+                value = value,
+                onValueChange = onValueChange
+            )
+        }
 
-        Slider(
-            modifier = Modifier.padding(top = 12.dp),
-            enabled = enabled,
-            value = value,
-            onValueChange = onValueChange
-        )
     }
 }
 

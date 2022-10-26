@@ -3,31 +3,71 @@ package org.rhasspy.mobile.android.configuration.content
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material.icons.filled.OpenInNew
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
+import org.rhasspy.mobile.android.main.*
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
 
+private enum class WakeWordConfigurationScreens {
+    Overview,
+    Keyword
+}
 
 /**
- * Content to configure wake word
- * Drop Down of option
- * porcupine wake word settings
+ * Nav Host of Wake word configuration screens
  */
 @Preview
 @Composable
 fun WakeWordConfigurationContent(viewModel: WakeWordConfigurationViewModel = viewModel()) {
+
+    val navController = rememberNavController()
+
+    CompositionLocalProvider(
+        LocalNavController provides navController
+    ) {
+        NavHost(
+            navController = navController,
+            startDestination = WakeWordConfigurationScreens.Overview.name
+        ) {
+            composable(WakeWordConfigurationScreens.Overview.name) {
+                WakeWordConfigurationOverview(viewModel)
+            }
+            composable(WakeWordConfigurationScreens.Keyword.name) {
+                WakeWordKeywordScreen(viewModel)
+            }
+
+        }
+    }
+
+}
+
+/**
+ * Overview to configure wake word
+ * Drop Down of option
+ * porcupine wake word settings
+ */
+@Composable
+private fun WakeWordConfigurationOverview(viewModel: WakeWordConfigurationViewModel) {
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.WakeWordConfiguration),
@@ -49,6 +89,7 @@ fun WakeWordConfigurationContent(viewModel: WakeWordConfigurationViewModel = vie
         //porcupine settings
         PorcupineConfiguration(viewModel)
     }
+
 }
 
 /**
@@ -56,7 +97,7 @@ fun WakeWordConfigurationContent(viewModel: WakeWordConfigurationViewModel = vie
  * picovoice console for token
  * file option
  * language selection
- * sensitiy slider
+ * sensitivity slider
  */
 @Composable
 private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
@@ -84,13 +125,16 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
                 onClick = viewModel::openPicoVoiceConsole
             )
 
-            //drop down list of porcupine keyword option, contains option to add item from file manager
-            DropDownListWithFileOpen(
+            //opens page for keyword selection
+            val navigation = LocalNavController.current
+
+            val selectedOption = viewModel.wakeWordPorcupineKeywordOptions.collectAsState().value
+                .elementAt(viewModel.wakeWordPorcupineKeywordOption.collectAsState().value)
+
+            ListElement(
+                modifier = Modifier.clickable { navigation.navigate(WakeWordConfigurationScreens.Keyword.name) },
                 overlineText = { Text(MR.strings.wakeWord) },
-                selected = viewModel.wakeWordPorcupineKeywordOption.collectAsState().value,
-                values = viewModel.wakeWordPorcupineKeywordOptions.collectAsState().value.toTypedArray(),
-                onAdd = viewModel::selectPorcupineWakeWordFile,
-                onSelect = viewModel::selectWakeWordPorcupineKeywordOption
+                text = { Text(selectedOption) }
             )
 
             //porcupine language dropdown
@@ -111,5 +155,59 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
         }
 
     }
+
+}
+
+/**
+ *  list of porcupine keyword option, contains option to add item from file manager
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun WakeWordKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = { KeywordAppBar() },
+        floatingActionButton = {
+            FloatingActionButton(onClick = viewModel::selectPorcupineWakeWordFile) {
+                Icon(imageVector = Icons.Filled.FileOpen, contentDescription = MR.strings.fileOpen)
+            }
+        },
+    ) { paddingValues ->
+        Surface(Modifier.padding(paddingValues)) {
+            Column {
+                viewModel.wakeWordPorcupineKeywordOptions.collectAsState().value.forEach {
+                    ListElement {
+                        Text(it)
+                    }
+                    CustomDivider()
+                }
+            }
+        }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun KeywordAppBar() {
+
+    val navigation = LocalMainNavController.current
+
+    TopAppBar(
+        title = {
+            Text(MR.strings.wakeWord)
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = { navigation.popBackStack() },
+                modifier = Modifier.testTag(TestTag.AppBarBackButton)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = MR.strings.back,
+                )
+            }
+        }
+    )
 
 }
