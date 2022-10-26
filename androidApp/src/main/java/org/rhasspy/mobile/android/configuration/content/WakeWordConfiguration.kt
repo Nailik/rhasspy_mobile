@@ -21,6 +21,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
@@ -33,7 +34,8 @@ import java.util.*
 
 private enum class WakeWordConfigurationScreens {
     Overview,
-    Keyword
+    PorcupineKeyword,
+    PorcupineLanguage
 }
 
 /**
@@ -52,11 +54,17 @@ fun WakeWordConfigurationContent(viewModel: WakeWordConfigurationViewModel = vie
             navController = navController,
             startDestination = WakeWordConfigurationScreens.Overview.name
         ) {
+
             composable(WakeWordConfigurationScreens.Overview.name) {
                 WakeWordConfigurationOverview(viewModel)
             }
-            composable(WakeWordConfigurationScreens.Keyword.name) {
-                WakeWordKeywordScreen(viewModel)
+
+            composable(WakeWordConfigurationScreens.PorcupineKeyword.name) {
+                WakeWordPorcupineKeywordScreen(viewModel)
+            }
+
+            composable(WakeWordConfigurationScreens.PorcupineLanguage.name) {
+                WakeWordPorcupineLanguageScreen(viewModel)
             }
 
         }
@@ -128,24 +136,23 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
                 onClick = viewModel::openPicoVoiceConsole
             )
 
-            //opens page for keyword selection
+            //opens page for porcupine keyword selection
             val navigation = LocalNavController.current
 
             val selectedOption = viewModel.wakeWordPorcupineKeywordOptions.collectAsState().value
                 .elementAt(viewModel.wakeWordPorcupineKeywordOption.collectAsState().value)
 
             ListElement(
-                modifier = Modifier.clickable { navigation.navigate(WakeWordConfigurationScreens.Keyword.name) },
+                modifier = Modifier.clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineKeyword.name) },
                 text = { Text(MR.strings.wakeWord) },
                 secondaryText = { Text(selectedOption.lowercase().replaceFirstChar { it.uppercaseChar() }) }
             )
 
-            //porcupine language dropdown
-            DropDownEnumListItem(
-                label = MR.strings.language,
-                selected = viewModel.wakeWordPorcupineLanguage.collectAsState().value,
-                onSelect = viewModel::selectWakeWordPorcupineLanguage,
-                values = viewModel.porcupineLanguageOptions
+            //opens page for porcupine language selection
+            ListElement(
+                modifier = Modifier.clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineLanguage.name) },
+                text = { Text(MR.strings.language) },
+                secondaryText = { Text(viewModel.wakeWordPorcupineLanguage.collectAsState().value.text) }
             )
 
             //sensitivity of porcupine
@@ -166,16 +173,17 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun WakeWordKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
+private fun WakeWordPorcupineKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { KeywordAppBar() },
+        topBar = { AppBar(MR.strings.wakeWord) },
         floatingActionButton = {
             FloatingActionButton(onClick = viewModel::selectPorcupineWakeWordFile) {
                 Icon(imageVector = Icons.Filled.FileOpen, contentDescription = MR.strings.fileOpen)
             }
         },
     ) { paddingValues ->
+
         Surface(Modifier.padding(paddingValues)) {
 
             val selectedOption = viewModel.wakeWordPorcupineKeywordOptions.collectAsState().value
@@ -195,9 +203,47 @@ private fun WakeWordKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
                             onClick = { viewModel.selectWakeWordPorcupineKeywordOption(index) })
 
                         CustomDivider()
-                })
+                    })
             }
+
         }
+
+    }
+}
+
+/**
+ *  list of porcupine languages
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun WakeWordPorcupineLanguageScreen(viewModel: WakeWordConfigurationViewModel) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = { AppBar(MR.strings.language) }
+    ) { paddingValues ->
+
+        Surface(Modifier.padding(paddingValues)) {
+
+            val selectedOption by viewModel.wakeWordPorcupineLanguage.collectAsState()
+
+            val options = viewModel.porcupineLanguageOptions()
+
+            Column {
+                options.forEach { option ->
+
+                    RadioButtonListItem(
+                        modifier = Modifier.testTag(dataEnum = option),
+                        text = option.text,
+                        isChecked = selectedOption == option,
+                        onClick = { viewModel.selectWakeWordPorcupineLanguage(option) }
+                    )
+
+                    CustomDivider()
+                }
+            }
+
+        }
+
     }
 }
 
@@ -206,13 +252,13 @@ private fun WakeWordKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun KeywordAppBar() {
+private fun AppBar(title: StringResource) {
 
     val navigation = LocalNavController.current
 
     TopAppBar(
         title = {
-            Text(MR.strings.wakeWord)
+            Text(title)
         },
         navigationIcon = {
             IconButton(

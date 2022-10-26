@@ -60,14 +60,14 @@ enum class TestTag {
     RetryInterval
 }
 
-fun Modifier.testTag(tag: Enum<*>) = semantics(
+fun Modifier.testTag(enum: Enum<*>) = semantics(
     properties = {
-        testTag = tag.name
+        testTag = enum.name
     }
 )
 
-fun Modifier.testTag(tag: DataEnum<*>) = semantics(
+fun Modifier.testTag(dataEnum: DataEnum<*>) = semantics(
     properties = {
-        testTag = tag.name
+        testTag = dataEnum.name
     }
 )

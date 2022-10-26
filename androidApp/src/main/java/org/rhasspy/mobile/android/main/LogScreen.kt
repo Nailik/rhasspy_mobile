@@ -39,7 +39,7 @@ import org.rhasspy.mobile.android.theme.color_verbose
 import org.rhasspy.mobile.android.theme.color_warn
 import org.rhasspy.mobile.android.utils.CustomDivider
 import org.rhasspy.mobile.android.utils.Icon
-import org.rhasspy.mobile.android.utils.StyledListItem
+import org.rhasspy.mobile.android.utils.ListElement
 import org.rhasspy.mobile.viewModels.LogScreenViewModel
 
 /**
@@ -81,7 +81,7 @@ fun LogScreenContent(viewModel: LogScreenViewModel) {
 
     LazyColumn(modifier = Modifier.fillMaxHeight()) {
         items(items) { item ->
-            StyledListItem(
+            ListElement(
                 modifier = Modifier.drawBehind {
                     val canvasWidth = 8.dp
                     val canvasHeight = size.height

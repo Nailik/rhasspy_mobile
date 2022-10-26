@@ -210,13 +210,11 @@ fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, label: StringResource, o
     var isExpanded by remember { mutableStateOf(false) }
 
     ListElement(modifier = Modifier
-        .padding(vertical = 2.dp)
         .clickable(
             interactionSource = remember { MutableInteractionSource() },
             indication = rememberRipple(bounded = true),
             onClick = { isExpanded = true }
         ),
-        paddingValues = PaddingValues(top = 4.dp, bottom = 16.dp),
         text = {
             OutlinedTextField(
                 value = translate(selected.text),
@@ -242,11 +240,14 @@ fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, label: StringResource, o
 
     Box(
         modifier = Modifier
+            .padding(horizontal = 16.dp)
             .fillMaxWidth()
             .wrapContentSize(Alignment.TopStart)
     ) {
         DropdownMenu(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             expanded = isExpanded,
             onDismissRequest = { isExpanded = false }) {
             values().forEach {
@@ -260,7 +261,10 @@ fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, label: StringResource, o
 
 @Composable
 fun <E : DataEnum<*>> RadioButtonsEnumSelection(modifier: Modifier, selected: E, onSelect: (item: E) -> Unit, values: () -> Array<E>) {
-    Card(modifier = modifier.padding(16.dp)) {
+    Card(
+        modifier = modifier.padding(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+    ) {
         values().forEach {
             RadioButtonListItem(
                 modifier = Modifier.testTag(it),
@@ -288,7 +292,6 @@ fun DropDownListRemovableWithFileOpen(
     ListElement(
         modifier = Modifier
             .clickable { isExpanded = true },
-        paddingValues = PaddingValues(top = 4.dp, bottom = 16.dp),
         overlineText = overlineText,
         text = title,
         trailing = {
@@ -324,70 +327,6 @@ fun DropDownListRemovableWithFileOpen(
                             }
                         }
                     }, onClick = { onSelect?.invoke(index) })
-            }
-
-            Box(modifier = Modifier.fillMaxWidth()) {
-                OutlinedButton(
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .align(alignment = Alignment.Center),
-                    border = BorderStroke(ButtonDefaults.outlinedButtonBorder.width, MaterialTheme.colorScheme.primary),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
-                    onClick = {
-                        isExpanded = false
-                        onAdd.invoke()
-                    })
-                {
-                    Icon(imageVector = Icons.Filled.FileOpen, contentDescription = MR.strings.expandDropDown)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(MR.strings.selectFile)
-                }
-
-            }
-        }
-    }
-}
-
-
-@Composable
-fun DropDownListWithFileOpen(
-    overlineText: @Composable () -> Unit,
-    selected: Int,
-    enabled: Boolean = true,
-    values: Array<String>,
-    onAdd: () -> Unit,
-    onSelect: ((index: Int) -> Unit)? = null
-) {
-    var isExpanded by remember { mutableStateOf(false) }
-
-    ListElement(modifier = Modifier
-        .clickable { isExpanded = true },
-        overlineText = overlineText,
-        text = { Text(values[selected]) },
-        trailing = {
-            IndicatedSmallIcon(isExpanded) {
-                Icon(
-                    modifier = it,
-                    imageVector = Icons.Filled.ArrowDropDown,
-                    contentDescription = MR.strings.expandDropDown,
-                )
-            }
-        })
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentSize(Alignment.TopStart)
-    ) {
-        DropdownMenu(
-            modifier = Modifier.fillMaxWidth(),
-            expanded = isExpanded,
-            onDismissRequest = { isExpanded = false }) {
-            values.forEachIndexed { index, item ->
-                DropdownMenuItem(
-                    text = { Text(item) },
-                    enabled = enabled,
-                    onClick = { onSelect?.invoke(index) })
             }
 
             Box(modifier = Modifier.fillMaxWidth()) {
@@ -476,6 +415,7 @@ fun PageContent(
     }
 }
 
+
 @Composable
 fun SwitchListItem(
     modifier: Modifier = Modifier,
@@ -495,10 +435,11 @@ fun SwitchListItem(
         })
 }
 
+
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun ListElement(
     modifier: Modifier = Modifier,
-    paddingValues: PaddingValues = PaddingValues(vertical = 8.dp),
     icon: @Composable (() -> Unit)? = null,
     secondaryText: @Composable (() -> Unit)? = null,
     singleLineSecondaryText: Boolean = true,
@@ -506,14 +447,13 @@ fun ListElement(
     trailing: @Composable (() -> Unit)? = null,
     text: @Composable () -> Unit
 ) {
-    StyledListItem(
-        modifier = modifier.padding(paddingValues),
-        icon = icon,
-        secondaryText = secondaryText,
-        singleLineSecondaryText = singleLineSecondaryText,
+    androidx.compose.material3.ListItem(
+        headlineText = text,
+        modifier = modifier,
         overlineText = overlineText,
-        trailing = trailing,
-        text = text
+        supportingText = secondaryText,
+        leadingContent = icon,
+        trailingContent = trailing,
     )
 }
 
@@ -572,8 +512,7 @@ fun TextFieldListItem(
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
 
     ListElement(
-        modifier = modifier.bringIntoViewRequester(bringIntoViewRequester),
-        paddingValues = PaddingValues(top = 4.dp, bottom = 16.dp)
+        modifier = modifier.bringIntoViewRequester(bringIntoViewRequester)
     ) {
         val coroutineScope = rememberCoroutineScope()
 
@@ -636,8 +575,9 @@ fun FilledTonalIconButtonListItem(
     }
 }
 
+
 @Composable
-fun SliderListItem(text: StringResource, value: Float, enabled: Boolean = true, onValueChange: (Float) -> Unit) {
+fun SliderListItem(text: StringResource, value: Float, onValueChange: (Float) -> Unit) {
     ListElement(
         modifier = Modifier.fillMaxWidth(),
         text = {
@@ -647,7 +587,7 @@ fun SliderListItem(text: StringResource, value: Float, enabled: Boolean = true, 
             Box(modifier = Modifier.fillMaxWidth()) {
                 Slider(
                     value = value,
-                    onValueChange = onValueChange
+                    onValueChange = onValueChange,
                 )
             }
         }
