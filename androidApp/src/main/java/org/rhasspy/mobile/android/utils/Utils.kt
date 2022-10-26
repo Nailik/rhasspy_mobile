@@ -442,7 +442,6 @@ fun ListElement(
     modifier: Modifier = Modifier,
     icon: @Composable (() -> Unit)? = null,
     secondaryText: @Composable (() -> Unit)? = null,
-    singleLineSecondaryText: Boolean = true,
     overlineText: @Composable (() -> Unit)? = null,
     trailing: @Composable (() -> Unit)? = null,
     text: @Composable () -> Unit
@@ -581,7 +580,12 @@ fun SliderListItem(text: StringResource, value: Float, onValueChange: (Float) ->
     ListElement(
         modifier = Modifier.fillMaxWidth(),
         text = {
-            Text("${translate(text)} ($value)")
+            Row {
+                Text(text)
+                Spacer(modifier = Modifier.weight(1f))
+                Text("%.2f".format(value))
+            }
+
         },
         secondaryText = {
             Box(modifier = Modifier.fillMaxWidth()) {
