@@ -74,7 +74,7 @@
     <string name="log">Protokoll</string>
     <string name="audioFramesLogging">Audio Frames protokollieren</string>
     <string name="httpSSL">HTTP SSL</string>
-    <string name="porcupineAccessKey">Zugangsschlüssel</string>
+    <string name="porcupineAccessKey">PicoVoice Console</string>
     <string name="openPicoVoiceConsole">Zugangsschlüssel erstellen</string>
     <string name="expandListItem">Listenelement erweitern</string>
     <string name="expandDropDown">Ausklappen des Dropdowns</string>

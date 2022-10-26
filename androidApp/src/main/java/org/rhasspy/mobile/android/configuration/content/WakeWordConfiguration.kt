@@ -4,19 +4,17 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.FileOpen
-import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,6 +24,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
+import org.rhasspy.mobile.android.configuration.content.porcupine.PorcupineLanguageScreen
 import org.rhasspy.mobile.android.main.*
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.*
@@ -60,11 +59,11 @@ fun WakeWordConfigurationContent(viewModel: WakeWordConfigurationViewModel = vie
             }
 
             composable(WakeWordConfigurationScreens.PorcupineKeyword.name) {
-                WakeWordPorcupineKeywordScreen(viewModel)
+                PorcupineKeywordScreen(viewModel)
             }
 
             composable(WakeWordConfigurationScreens.PorcupineLanguage.name) {
-                WakeWordPorcupineLanguageScreen(viewModel)
+                PorcupineLanguageScreen(viewModel)
             }
 
         }
@@ -132,7 +131,7 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
             //button to open picovoice console to generate access token
             FilledTonalIconButtonListItem(
                 text = MR.strings.openPicoVoiceConsole,
-                imageVector = Icons.Filled.OpenInNew,
+                imageVector = Icons.Filled.Cloud,
                 onClick = viewModel::openPicoVoiceConsole
             )
 
@@ -155,122 +154,9 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
                 secondaryText = { Text(viewModel.wakeWordPorcupineLanguage.collectAsState().value.text) }
             )
 
-            //sensitivity of porcupine
-            SliderListItem(
-                text = MR.strings.sensitivity,
-                value = viewModel.wakeWordPorcupineSensitivity.collectAsState().value,
-                onValueChange = viewModel::updateWakeWordPorcupineSensitivity
-            )
 
         }
 
     }
-
-}
-
-/**
- *  list of porcupine keyword option, contains option to add item from file manager
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun WakeWordPorcupineKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = { AppBar(MR.strings.wakeWord) },
-        floatingActionButton = {
-            FloatingActionButton(onClick = viewModel::selectPorcupineWakeWordFile) {
-                Icon(imageVector = Icons.Filled.FileOpen, contentDescription = MR.strings.fileOpen)
-            }
-        },
-    ) { paddingValues ->
-
-        Surface(Modifier.padding(paddingValues)) {
-
-            val selectedOption = viewModel.wakeWordPorcupineKeywordOptions.collectAsState().value
-                .elementAt(viewModel.wakeWordPorcupineKeywordOption.collectAsState().value)
-
-            val options by viewModel.wakeWordPorcupineKeywordOptions.collectAsState()
-
-            LazyColumn(modifier = Modifier.fillMaxHeight()) {
-                items(count = options.size,
-                    itemContent = { index ->
-
-                        val element = options.elementAt(index)
-
-                        RadioButtonListItem(
-                            text = element.lowercase().replaceFirstChar { it.uppercaseChar() },
-                            isChecked = element == selectedOption,
-                            onClick = { viewModel.selectWakeWordPorcupineKeywordOption(index) })
-
-                        CustomDivider()
-                    })
-            }
-
-        }
-
-    }
-}
-
-/**
- *  list of porcupine languages
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun WakeWordPorcupineLanguageScreen(viewModel: WakeWordConfigurationViewModel) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = { AppBar(MR.strings.language) }
-    ) { paddingValues ->
-
-        Surface(Modifier.padding(paddingValues)) {
-
-            val selectedOption by viewModel.wakeWordPorcupineLanguage.collectAsState()
-
-            val options = viewModel.porcupineLanguageOptions()
-
-            Column {
-                options.forEach { option ->
-
-                    RadioButtonListItem(
-                        modifier = Modifier.testTag(dataEnum = option),
-                        text = option.text,
-                        isChecked = selectedOption == option,
-                        onClick = { viewModel.selectWakeWordPorcupineLanguage(option) }
-                    )
-
-                    CustomDivider()
-                }
-            }
-
-        }
-
-    }
-}
-
-/**
- * app bar for the keyword
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun AppBar(title: StringResource) {
-
-    val navigation = LocalNavController.current
-
-    TopAppBar(
-        title = {
-            Text(title)
-        },
-        navigationIcon = {
-            IconButton(
-                onClick = navigation::popBackStack,
-                modifier = Modifier.testTag(TestTag.AppBarBackButton)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = MR.strings.back,
-                )
-            }
-        }
-    )
 
 }

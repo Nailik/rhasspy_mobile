@@ -51,12 +51,16 @@ import androidx.core.text.HtmlCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
 import dev.icerock.moko.resources.ImageResource
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.DataEnum
 import org.rhasspy.mobile.settings.sounds.SoundFile
@@ -599,7 +603,7 @@ fun SliderListItem(text: StringResource, value: Float, onValueChange: (Float) ->
 }
 
 @Composable
-fun RadioButtonListItem(modifier: Modifier = Modifier,text: StringResource, isChecked: Boolean, enabled: Boolean = true,  onClick: () -> Unit) {
+fun RadioButtonListItem(modifier: Modifier = Modifier, text: StringResource, isChecked: Boolean, enabled: Boolean = true, onClick: () -> Unit) {
     ListElement(
         modifier = modifier.clickable(onClick = onClick),
         icon = { RadioButton(selected = isChecked, enabled = enabled, onClick = onClick) },
@@ -607,11 +611,13 @@ fun RadioButtonListItem(modifier: Modifier = Modifier,text: StringResource, isCh
 }
 
 @Composable
-fun RadioButtonListItem(modifier: Modifier = Modifier,text: String, isChecked: Boolean, enabled: Boolean = true,  onClick: () -> Unit) {
+fun CheckBoxListItem(modifier: Modifier = Modifier, text: String, isChecked: Boolean, trailing: @Composable () -> Unit, onClick: () -> Unit) {
     ListElement(
         modifier = modifier.clickable(onClick = onClick),
-        icon = { RadioButton(selected = isChecked, enabled = enabled, onClick = onClick) },
-        text = { Text(text) })
+        icon = { Checkbox(checked = isChecked, onCheckedChange = { onClick() }) }, //TODO
+        text = { Text(text) },
+        trailing = trailing
+    )
 }
 
 fun Boolean.toText(): StringResource {
@@ -717,4 +723,29 @@ fun Switch(
         checked = checked,
         onCheckedChange = onCheckedChange
     )
+}
+
+
+@Composable
+fun RowScope.NavigationItem(screen: Enum<*>, icon: @Composable () -> Unit, label: @Composable () -> Unit) {
+
+    val navController = LocalNavController.current
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    NavigationBarItem(
+        modifier = Modifier.testTag(screen),
+        selected = currentDestination?.hierarchy?.any { it.route == screen.name } == true,
+        onClick = {
+            navController.navigate(screen.name) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
+            }
+        },
+        icon = icon,
+        label = label
+    )
+
 }
