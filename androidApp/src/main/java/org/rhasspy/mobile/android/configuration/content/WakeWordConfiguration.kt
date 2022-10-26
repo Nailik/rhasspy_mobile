@@ -5,8 +5,10 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.FileOpen
@@ -27,6 +29,7 @@ import org.rhasspy.mobile.android.main.*
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
+import java.util.*
 
 private enum class WakeWordConfigurationScreens {
     Overview,
@@ -133,8 +136,8 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
 
             ListElement(
                 modifier = Modifier.clickable { navigation.navigate(WakeWordConfigurationScreens.Keyword.name) },
-                overlineText = { Text(MR.strings.wakeWord) },
-                text = { Text(selectedOption) }
+                text = { Text(MR.strings.wakeWord) },
+                secondaryText = { Text(selectedOption.lowercase().replaceFirstChar { it.uppercaseChar() }) }
             )
 
             //porcupine language dropdown
@@ -174,19 +177,33 @@ private fun WakeWordKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
         },
     ) { paddingValues ->
         Surface(Modifier.padding(paddingValues)) {
-            Column {
-                viewModel.wakeWordPorcupineKeywordOptions.collectAsState().value.forEach {
-                    ListElement {
-                        Text(it)
-                    }
-                    CustomDivider()
-                }
+
+            val selectedOption = viewModel.wakeWordPorcupineKeywordOptions.collectAsState().value
+                .elementAt(viewModel.wakeWordPorcupineKeywordOption.collectAsState().value)
+
+            val options by viewModel.wakeWordPorcupineKeywordOptions.collectAsState()
+
+            LazyColumn(modifier = Modifier.fillMaxHeight()) {
+                items(count = options.size,
+                    itemContent = { index ->
+
+                        val element = options.elementAt(index)
+
+                        RadioButtonListItem(
+                            text = element.lowercase().replaceFirstChar { it.uppercaseChar() },
+                            isChecked = element == selectedOption,
+                            onClick = { viewModel.selectWakeWordPorcupineKeywordOption(index) })
+
+                        CustomDivider()
+                })
             }
         }
     }
 }
 
-
+/**
+ * app bar for the keyword
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun KeywordAppBar() {

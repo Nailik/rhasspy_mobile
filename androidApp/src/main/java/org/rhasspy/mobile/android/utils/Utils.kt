@@ -640,22 +640,30 @@ fun FilledTonalIconButtonListItem(
 fun SliderListItem(text: StringResource, value: Float, enabled: Boolean = true, onValueChange: (Float) -> Unit) {
     ListElement(
         modifier = Modifier.fillMaxWidth(),
-        overlineText = {
+        text = {
             Text("${translate(text)} ($value)")
+        },
+        secondaryText = {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Slider(
+                    value = value,
+                    onValueChange = onValueChange
+                )
+            }
         }
-    ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Slider(
-                value = value,
-                onValueChange = onValueChange
-            )
-        }
-
-    }
+    )
 }
 
 @Composable
 fun RadioButtonListItem(modifier: Modifier = Modifier,text: StringResource, isChecked: Boolean, enabled: Boolean = true,  onClick: () -> Unit) {
+    ListElement(
+        modifier = modifier.clickable(onClick = onClick),
+        icon = { RadioButton(selected = isChecked, enabled = enabled, onClick = onClick) },
+        text = { Text(text) })
+}
+
+@Composable
+fun RadioButtonListItem(modifier: Modifier = Modifier,text: String, isChecked: Boolean, enabled: Boolean = true,  onClick: () -> Unit) {
     ListElement(
         modifier = modifier.clickable(onClick = onClick),
         icon = { RadioButton(selected = isChecked, enabled = enabled, onClick = onClick) },
