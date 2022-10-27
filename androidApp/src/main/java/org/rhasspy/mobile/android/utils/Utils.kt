@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -581,25 +582,66 @@ fun FilledTonalIconButtonListItem(
 
 @Composable
 fun SliderListItem(text: StringResource, value: Float, onValueChange: (Float) -> Unit) {
-    ListElement(
-        modifier = Modifier.fillMaxWidth(),
-        text = {
-            Row {
-                Text(text)
-                Spacer(modifier = Modifier.weight(1f))
-                Text("%.2f".format(value))
-            }
+    //uses custom list item to fix padding for slider
+    Surface(
+        modifier = Modifier,
+        shape = RectangleShape, //ListItemDefaults.shape,
+        color = MaterialTheme.colorScheme.surface, //ListItemDefaults.containerColor,
+        contentColor = MaterialTheme.colorScheme.onSurface, //ListItemDefaults.contentColor,
+        tonalElevation = 0.0.dp, //ListItemDefaults.Elevation,
+        shadowElevation = 0.0.dp, //ListItemDefaults.Elevation,
+    ) {
+        Row(
+            modifier = Modifier
+                .heightIn(min = 56.0.dp) //ListTokens.ListItemContainerHeight
+                .padding(PaddingValues(16.dp - 8.dp, 8.dp)), //ListItemHorizontalPadding, ListItemVerticalPadding
+            content = {
+                Box(
+                    Modifier
+                        .weight(1f)
+                        .align(Alignment.CenterVertically)
+                ) {
+                    Column {
 
-        },
-        secondaryText = {
-            Box(modifier = Modifier.fillMaxWidth()) {
-                Slider(
-                    value = value,
-                    onValueChange = onValueChange,
-                )
+                        ProvideTextStyleFromToken(
+                            MaterialTheme.colorScheme.onSurface, //colors.headlineColor(enabled = true).value
+                            MaterialTheme.typography.bodyLarge
+                        ) //ListTokens.ListItemLabelTextFont
+                        {
+                            Row(modifier = Modifier.padding(horizontal = 8.dp)) {
+                                Text(text)
+                                Spacer(modifier = Modifier.weight(1f))
+                                Text("%.2f".format(null, value))
+                            }
+                        }
+
+                        ProvideTextStyleFromToken(
+                            MaterialTheme.colorScheme.onSurfaceVariant, //colors.supportingColor().value
+                            MaterialTheme.typography.bodyMedium
+                        ) //ListTokens.ListItemSupportingTextFont
+                        {
+                            Slider(
+                                value = value,
+                                onValueChange = onValueChange,
+                            )
+                        }
+
+                    }
+                }
             }
-        }
-    )
+        )
+    }
+}
+
+@Composable
+private fun ProvideTextStyleFromToken(
+    color: Color,
+    textStyle: TextStyle,
+    content: @Composable () -> Unit,
+) {
+    CompositionLocalProvider(LocalContentColor provides color) {
+        ProvideTextStyle(textStyle, content)
+    }
 }
 
 @Composable
