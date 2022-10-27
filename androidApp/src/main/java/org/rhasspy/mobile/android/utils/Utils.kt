@@ -581,10 +581,10 @@ fun FilledTonalIconButtonListItem(
 
 
 @Composable
-fun SliderListItem(text: StringResource, value: Float, onValueChange: (Float) -> Unit) {
+fun SliderListItem(mdoifier: Modifier= Modifier, text: StringResource, value: Float, onValueChange: (Float) -> Unit) {
     //uses custom list item to fix padding for slider
     Surface(
-        modifier = Modifier,
+        modifier = mdoifier,
         shape = RectangleShape, //ListItemDefaults.shape,
         color = MaterialTheme.colorScheme.surface, //ListItemDefaults.containerColor,
         contentColor = MaterialTheme.colorScheme.onSurface, //ListItemDefaults.contentColor,

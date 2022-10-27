@@ -55,7 +55,7 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
             return
         }
 
-        try {
+   /*     try {
 
             val keywordName =
                 ConfigurationSettings.wakeWordPorcupineKeywordOptions.value.elementAt(ConfigurationSettings.wakeWordPorcupineKeywordOption.value)
@@ -78,7 +78,7 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
 
         } catch (e: Exception) {
             logger.e(e) { "initializePorcupineManger failed" }
-        }
+        }*/
     }
 
     /**
@@ -86,9 +86,9 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
      */
     override fun invoke(keywordIndex: Int) {
         logger.d { "invoke - keyword detected" }
-        val keywordName =
-            ConfigurationSettings.wakeWordPorcupineKeywordOptions.value.elementAt(ConfigurationSettings.wakeWordPorcupineKeywordOption.value)
-        StateMachine.hotWordDetected(keywordName)
+    //    val keywordName =
+   //         ConfigurationSettings.wakeWordPorcupineKeywordOptions.value.elementAt(ConfigurationSettings.wakeWordPorcupineKeywordOption.value)
+  //      StateMachine.hotWordDetected(keywordName)
     }
 
     private fun findBuiltInKeyword(keywordName: String): Porcupine.BuiltInKeyword? {

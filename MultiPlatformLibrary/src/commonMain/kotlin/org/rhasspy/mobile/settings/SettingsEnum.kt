@@ -61,8 +61,9 @@ enum class SettingsEnum {
 
     WakeWordOption,
     WakeWordPorcupineAccessToken,
-    WakeWordPorcupineKeywordOption,
-    WakeWordPorcupineKeywordOptions,
+    WakeWordPorcupineKeywordDefaultSelectedOptions,
+    WakeWordPorcupineKeywordCustomSelectedOptions,
+    WakeWordPorcupineKeywordCustomOptions,
     WakeWordPorcupineLanguage,
     WakeWordPorcupineKeywordSensitivity,
 

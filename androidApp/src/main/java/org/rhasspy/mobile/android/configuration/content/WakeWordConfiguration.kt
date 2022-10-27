@@ -5,31 +5,26 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Cloud
-import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
+import org.rhasspy.mobile.android.configuration.content.porcupine.PorcupineKeywordScreen
 import org.rhasspy.mobile.android.configuration.content.porcupine.PorcupineLanguageScreen
 import org.rhasspy.mobile.android.main.*
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
-import java.util.*
 
 private enum class WakeWordConfigurationScreens {
     Overview,
@@ -138,13 +133,13 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
             //opens page for porcupine keyword selection
             val navigation = LocalNavController.current
 
-            val selectedOption = viewModel.wakeWordPorcupineKeywordOptions.collectAsState().value
-                .elementAt(viewModel.wakeWordPorcupineKeywordOption.collectAsState().value)
+          //  val selectedOption = viewModel.wakeWordPorcupineKeywordOptions.collectAsState().value
+        //        .elementAt(viewModel.wakeWordPorcupineKeywordOption.collectAsState().value)
 
             ListElement(
                 modifier = Modifier.clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineKeyword.name) },
                 text = { Text(MR.strings.wakeWord) },
-                secondaryText = { Text(selectedOption.lowercase().replaceFirstChar { it.uppercaseChar() }) }
+                secondaryText = { Text("empty") }
             )
 
             //opens page for porcupine language selection

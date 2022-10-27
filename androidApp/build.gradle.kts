@@ -151,6 +151,7 @@ dependencies {
     implementation(AndroidX.Compose.ui)
     implementation(AndroidX.Compose.ui.util)
     implementation(AndroidX.Compose.ui.tooling)
+    implementation(Google.Accompanist.pager)
 
     implementation(AndroidX.multidex)
     implementation(AndroidX.window)

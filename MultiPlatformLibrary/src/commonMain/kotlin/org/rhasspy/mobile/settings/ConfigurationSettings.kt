@@ -1,14 +1,6 @@
 package org.rhasspy.mobile.settings
 
-import org.rhasspy.mobile.data.AudioPlayingOptions
-import org.rhasspy.mobile.data.DialogManagementOptions
-import org.rhasspy.mobile.data.IntentHandlingOptions
-import org.rhasspy.mobile.data.IntentRecognitionOptions
-import org.rhasspy.mobile.data.PorcupineLanguageOptions
-import org.rhasspy.mobile.data.SpeechToTextOptions
-import org.rhasspy.mobile.data.TextToSpeechOptions
-import org.rhasspy.mobile.data.WakeWordKeywordOption
-import org.rhasspy.mobile.data.WakeWordOption
+import org.rhasspy.mobile.data.*
 
 internal object ConfigurationSettings {
 
@@ -37,9 +29,13 @@ internal object ConfigurationSettings {
 
     val wakeWordOption = Setting(SettingsEnum.WakeWordOption, WakeWordOption.Disabled)
     val wakeWordPorcupineAccessToken = Setting(SettingsEnum.WakeWordPorcupineAccessToken, "")
-    val wakeWordPorcupineKeywordOption = Setting(SettingsEnum.WakeWordPorcupineKeywordOption, 0)
-    val wakeWordPorcupineKeywordOptions =
-        Setting(SettingsEnum.WakeWordPorcupineKeywordOptions, WakeWordKeywordOption.values().map { it.name }.toSet())
+
+
+    val wakeWordPorcupineKeywordDefaultOptions = Setting(SettingsEnum.WakeWordPorcupineKeywordDefaultSelectedOptions,
+        PorcupineKeywordOptions.values().map { Triple(it, false, 0.5f) }.toSet())
+    val wakeWordPorcupineKeywordCustomOptions = Setting(SettingsEnum.WakeWordPorcupineKeywordCustomOptions, setOf<Triple<String, Boolean, Float>>())
+
+
     val wakeWordPorcupineLanguage = Setting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOptions.EN)
     val wakeWordPorcupineKeywordSensitivity = Setting(SettingsEnum.WakeWordPorcupineKeywordSensitivity, 0.5f)
 

@@ -1,19 +1,24 @@
-package org.rhasspy.mobile.android.configuration.content
+package org.rhasspy.mobile.android.configuration.content.porcupine
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalNavController
@@ -21,19 +26,16 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
 
-private enum class PorcupineKeywordScreens {
-    Predefined,
-    Custom
-}
-
 /**
  *  list of porcupine keyword option, contains option to add item from file manager
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
 @Composable
 fun PorcupineKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
 
     val navController = rememberNavController()
+    val pagerState = rememberPagerState()
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -42,41 +44,46 @@ fun PorcupineKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
             CompositionLocalProvider(
                 LocalNavController provides navController
             ) {
-                BottomNavBar()
+                //bottom tab bar with pages tabs
+                BottomTabBar(
+                    state = pagerState,
+                    onSelectIndex = { index ->
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(index)
+                        }
+                    })
+            }
+        },
+        floatingActionButton = {
+            //button to select custom file
+            if (pagerState.currentPage == 1) {
+                FloatingActionButton(onClick = viewModel::selectPorcupineWakeWordFile) {
+                    Icon(imageVector = Icons.Filled.FileOpen, contentDescription = MR.strings.fileOpen)
+                }
             }
         }
 
     ) { paddingValues ->
-
+        //horizontal pager to slide between pages
         Surface(Modifier.padding(paddingValues)) {
-
-            NavHost(
-                navController = navController,
-                startDestination = PorcupineKeywordScreens.Predefined.name
-            ) {
-
-                composable(PorcupineKeywordScreens.Predefined.name) {
+            HorizontalPager(count = 2, state = pagerState) { page ->
+                if (page == 0) {
                     PredefinedKeywords(viewModel)
-                }
-
-                composable(PorcupineKeywordScreens.Custom.name) {
+                } else {
                     CustomKeywords(viewModel)
                 }
-
             }
         }
     }
 }
 
-//TODO use expected/actual enum with porcupine library
+/**
+ * predefined keywords
+ */
 @Composable
 private fun PredefinedKeywords(viewModel: WakeWordConfigurationViewModel) {
-    val selectedOption = viewModel.wakeWordPorcupineKeywordOptions.collectAsState().value
-        .elementAt(viewModel.wakeWordPorcupineKeywordOption.collectAsState().value)
 
-    val options by viewModel.wakeWordPorcupineKeywordOptions.collectAsState()
-
-    var selectedOptions by remember { mutableStateOf(listOf<Int>()) }
+    val options by viewModel.wakeWordPorcupineKeywordDefaultOptions.collectAsState()
 
     LazyColumn(
         modifier = Modifier
@@ -90,56 +97,32 @@ private fun PredefinedKeywords(viewModel: WakeWordConfigurationViewModel) {
 
                 ListElement(
                     modifier = Modifier.clickable {
-                        val newList = selectedOptions.toMutableList()
-                        if (selectedOptions.contains(index)) {
-                            newList.remove(index)
-                        } else {
-                            newList.add(index)
-                        }
-                        selectedOptions = newList
+                        viewModel.clickPredefinedPorcupineKeyword(index)
                     },
                     icon = {
                         Checkbox(
-                            checked = selectedOptions.contains(index),
-                            onCheckedChange = {
-                                val newList = selectedOptions.toMutableList()
-                                if (it) {
-                                    newList.add(index)
-                                } else {
-                                    newList.remove(index)
-                                }
-                                selectedOptions = newList
+                            checked = element.second,
+                            onCheckedChange = { enabled ->
+                                viewModel.togglePredefinedPorcupineKeyword(index, enabled)
                             })
                     },
                     text = {
-                        Text(element.lowercase().replaceFirstChar { it.uppercaseChar() })
+                        Text(element.first.text)
                     },
                 )
 
-                if (selectedOptions.contains(index)) {
+                if (element.second) {
                     //sensitivity of porcupine
                     SliderListItem(
+                        mdoifier = Modifier.padding(horizontal = 12.dp),
                         text = MR.strings.sensitivity,
-                        value = viewModel.wakeWordPorcupineSensitivity.collectAsState().value,
-                        onValueChange = viewModel::updateWakeWordPorcupineSensitivity
+                        value = element.third,
+                        onValueChange = { sensitivity -> viewModel.updateWakeWordPorcupineSensitivity(index, sensitivity) }
                     )
                 }
 
                 CustomDivider()
             }
-/*
-                        CheckBoxListItem(
-                            text = element.lowercase().replaceFirstChar { it.uppercaseChar() },
-                            isChecked = element == selectedOption,
-                            onClick = { viewModel.selectWakeWordPorcupineKeywordOption(index) },
-                            trailing = {
-                                IconButton(onClick = { /*TODO*/ }) {
-                                    Icon(Icons.Filled.Tune, MR.strings.settings)
-                                }
-                            })
-
-                        CustomDivider()
-                    })*/
         )
     }
 }
@@ -148,6 +131,9 @@ private fun PredefinedKeywords(viewModel: WakeWordConfigurationViewModel) {
 @Composable
 private fun CustomKeywords(viewModel: WakeWordConfigurationViewModel) {
 
+    Box(modifier = Modifier.fillMaxSize()) {
+
+    }
 
 }
 
@@ -179,16 +165,24 @@ private fun AppBar() {
 
 }
 
+/**
+ * Displays tabs on bottom (default/ custom)
+ */
+@OptIn(ExperimentalPagerApi::class)
 @Composable
-private fun BottomNavBar() {
+private fun BottomTabBar(state: PagerState, onSelectIndex: (index: Int) -> Unit) {
 
-    NavigationBar {
-        NavigationItem(screen = PorcupineKeywordScreens.Predefined,
-            icon = { Icon(Icons.Filled.Mic, MR.strings.home) },
-            label = { Text(MR.strings.home) })
-
-        NavigationItem(screen = PorcupineKeywordScreens.Custom,
-            icon = { Icon(Icons.Filled.Mic, MR.strings.home) },
-            label = { Text(MR.strings.home) })
+    TabRow(selectedTabIndex = state.currentPage) {
+        Tab(
+            selected = state.currentPage == 0,
+            onClick = { onSelectIndex(0) },
+            text = { Text(MR.strings.textDefault) }
+        )
+        Tab(
+            selected = state.currentPage == 1,
+            onClick = { onSelectIndex(1) },
+            text = { Text(MR.strings.textCustom) }
+        )
     }
+
 }
