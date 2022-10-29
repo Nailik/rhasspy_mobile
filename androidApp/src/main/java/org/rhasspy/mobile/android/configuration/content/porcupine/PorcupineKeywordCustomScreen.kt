@@ -2,8 +2,7 @@ package org.rhasspy.mobile.android.configuration.content.porcupine
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Delete
@@ -30,49 +29,45 @@ fun PorcupineKeywordCustomScreen(viewModel: WakeWordConfigurationViewModel) {
         modifier = Modifier
             .fillMaxSize()
     ) {
+        //added files
+        val options by viewModel.wakeWordPorcupineKeywordCustomOptions.collectAsState()
 
-        Column(
-            modifier = Modifier.weight(1f)
-                .verticalScroll(rememberScrollState())
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
         ) {
+            items(
+                count = options.size,
+                itemContent = { index ->
 
-            //added files
-            val options by viewModel.wakeWordPorcupineKeywordCustomOptions.collectAsState()
-            options.forEachIndexed { index, element ->
+                    val element = options.elementAt(index)
 
-                CustomKeywordListItem(
-                    element = element,
-                    onClick = {
-                        viewModel.clickPorcupineKeywordCustom(index)
-                    },
-                    onToggle = { enabled ->
-                        viewModel.togglePorcupineKeywordCustom(index, enabled)
-                    },
-                    onDelete = {
-                        viewModel.deletePorcupineKeywordCustom(index)
-                    },
-                    onUpdateSensitivity = { sensitivity ->
-                        viewModel.updateWakeWordPorcupineKeywordCustomSensitivity(index, sensitivity)
+                    if (element.deleted) {
+                        //small item to be deleted
+                        CustomKeywordDeletedListItem(
+                            keyword = element.keyword,
+                            onUndo = { viewModel.undoWakeWordPorcupineCustomKeywordDeleted(index) }
+                        )
+                    } else {
+                        //normal item
+                        CustomKeywordListItem(
+                            keyword = element.keyword,
+                            onClick = {
+                                viewModel.clickPorcupineKeywordCustom(index)
+                            },
+                            onToggle = { enabled ->
+                                viewModel.togglePorcupineKeywordCustom(index, enabled)
+                            },
+                            onDelete = {
+                                viewModel.deletePorcupineKeywordCustom(index)
+                            },
+                            onUpdateSensitivity = { sensitivity ->
+                                viewModel.updateWakeWordPorcupineKeywordCustomSensitivity(index, sensitivity)
+                            }
+                        )
                     }
-                )
-
-                CustomDivider()
-
-            }
-
-            //removed files (not yet saved)
-            val optionsRemoved by viewModel.wakeWordPorcupineKeywordCustomOptionsRemoved.collectAsState()
-            optionsRemoved.forEachIndexed { index, element ->
-
-                CustomKeywordDeletedListItem(
-                    element = element,
-                    onUndo = { viewModel.undoWakeWordPorcupineCustomKeywordDeleted(index) }
-                )
-
-                CustomDivider()
-
-            }
-
+                    CustomDivider()
+                })
         }
 
         CustomKeywordsActionButtons(modifier = Modifier.align(Alignment.End), viewModel = viewModel)
@@ -89,7 +84,7 @@ fun PorcupineKeywordCustomScreen(viewModel: WakeWordConfigurationViewModel) {
  */
 @Composable
 private fun CustomKeywordListItem(
-    element: PorcupineCustomKeyword,
+    keyword: PorcupineCustomKeyword,
     onClick: () -> Unit,
     onToggle: (enabled: Boolean) -> Unit,
     onDelete: () -> Unit,
@@ -99,12 +94,12 @@ private fun CustomKeywordListItem(
         modifier = Modifier.clickable(onClick = onClick),
         icon = {
             Checkbox(
-                checked = element.enabled,
+                checked = keyword.enabled,
                 onCheckedChange = onToggle
             )
         },
         text = {
-            Text(element.fileName)
+            Text(keyword.fileName)
         },
         trailing = {
             IconButton(onClick = onDelete) {
@@ -116,12 +111,12 @@ private fun CustomKeywordListItem(
         }
     )
 
-    if (element.enabled) {
+    if (keyword.enabled) {
         //sensitivity of porcupine
         SliderListItem(
             modifier = Modifier.padding(horizontal = 12.dp),
             text = MR.strings.sensitivity,
-            value = element.sensitivity,
+            value = keyword.sensitivity,
             onValueChange = onUpdateSensitivity
         )
     }
@@ -133,14 +128,14 @@ private fun CustomKeywordListItem(
  */
 @Composable
 private fun CustomKeywordDeletedListItem(
-    element: PorcupineCustomKeyword,
+    keyword: PorcupineCustomKeyword,
     onUndo: () -> Unit,
 ) {
     ListElement(
         text = {
             Text(
                 modifier = Modifier.padding(start = 8.dp),
-                text = element.fileName
+                text = keyword.fileName
             )
         },
         trailing = {

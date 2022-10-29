@@ -10,14 +10,19 @@ import org.rhasspy.mobile.nativeutils.openLink
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 
+data class PorcupineCustomKeywordUi(
+    val keyword: PorcupineCustomKeyword,
+    val deleted: Boolean = false
+)
+
 class WakeWordConfigurationViewModel : ViewModel() {
 
     //unsaved data
     private val _wakeWordOption = MutableStateFlow(ConfigurationSettings.wakeWordOption.value)
     private val _wakeWordPorcupineAccessToken = MutableStateFlow(ConfigurationSettings.wakeWordPorcupineAccessToken.value)
     private val _wakeWordPorcupineKeywordDefaultOptions = MutableStateFlow(ConfigurationSettings.wakeWordPorcupineKeywordDefaultOptions.value)
-    private val _wakeWordPorcupineKeywordCustomOptions = MutableStateFlow(ConfigurationSettings.wakeWordPorcupineKeywordCustomOptions.value)
-    private val _wakeWordPorcupineKeywordCustomOptionsRemoved = MutableStateFlow(listOf<PorcupineCustomKeyword>())
+    private val _wakeWordPorcupineKeywordCustomOptions = MutableStateFlow(ConfigurationSettings.wakeWordPorcupineKeywordCustomOptions.value
+        .map { PorcupineCustomKeywordUi(it) })
 
     private val _wakeWordPorcupineLanguage = MutableStateFlow(ConfigurationSettings.wakeWordPorcupineLanguage.value)
     private val _wakeWordPorcupineSensitivity = MutableStateFlow(ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.value)
@@ -27,11 +32,10 @@ class WakeWordConfigurationViewModel : ViewModel() {
     val wakeWordPorcupineAccessToken = _wakeWordPorcupineAccessToken.readOnly
     val wakeWordPorcupineKeywordCount =
         combineState(_wakeWordPorcupineKeywordDefaultOptions, _wakeWordPorcupineKeywordCustomOptions) { default, custom ->
-            default.filter { it.enabled }.size + custom.filter { it.enabled }.size
+            default.filter { it.enabled }.size + custom.filter { it.keyword.enabled && !it.deleted }.size
         }
     val wakeWordPorcupineKeywordDefaultOptions = _wakeWordPorcupineKeywordDefaultOptions.readOnly
     val wakeWordPorcupineKeywordCustomOptions = _wakeWordPorcupineKeywordCustomOptions.readOnly
-    val wakeWordPorcupineKeywordCustomOptionsRemoved = _wakeWordPorcupineKeywordCustomOptionsRemoved.readOnly
     val wakeWordPorcupineLanguage = _wakeWordPorcupineLanguage.readOnly
     val wakeWordPorcupineSettingsVisible = _wakeWordOption.mapReadonlyState { it == WakeWordOption.Porcupine }
 
@@ -45,8 +49,8 @@ class WakeWordConfigurationViewModel : ViewModel() {
     )
 
     //for custom wake word
-    private val filesToDelete = mutableListOf<String>()
     private val newFiles = mutableListOf<String>()
+    private val filesToDelete = mutableListOf<String>()
 
     //all options
     val wakeWordOptions = WakeWordOption::values
@@ -99,8 +103,8 @@ class WakeWordConfigurationViewModel : ViewModel() {
         _wakeWordPorcupineKeywordCustomOptions.value = _wakeWordPorcupineKeywordCustomOptions.value
             .toMutableList()
             .also {
-                it[index] = it[index].copy(sensitivity = sensitivity)
-            }.toSet()
+                it[index] = it[index].copy(keyword = it[index].keyword.copy(sensitivity = sensitivity))
+            }
     }
 
     //enable/disable custom keyword
@@ -108,8 +112,8 @@ class WakeWordConfigurationViewModel : ViewModel() {
         _wakeWordPorcupineKeywordCustomOptions.value = _wakeWordPorcupineKeywordCustomOptions.value
             .toMutableList()
             .also {
-                it[index] = it[index].copy(enabled = !it[index].enabled)
-            }.toSet()
+                it[index] = it[index].copy(keyword = it[index].keyword.copy(enabled = !it[index].keyword.enabled))
+            }
     }
 
     //toggle custom keyword
@@ -117,8 +121,8 @@ class WakeWordConfigurationViewModel : ViewModel() {
         _wakeWordPorcupineKeywordCustomOptions.value = _wakeWordPorcupineKeywordCustomOptions.value
             .toMutableList()
             .also {
-                it[index] = it[index].copy(enabled = enabled)
-            }.toSet()
+                it[index] = it[index].copy(keyword = it[index].keyword.copy(enabled = enabled))
+            }
     }
 
 
@@ -131,9 +135,9 @@ class WakeWordConfigurationViewModel : ViewModel() {
                 _wakeWordPorcupineKeywordCustomOptions.value = _wakeWordPorcupineKeywordCustomOptions.value
                     .toMutableList()
                     .also {
-                        it.add(PorcupineCustomKeyword(file, true, 0.5f))
+                        it.add(PorcupineCustomKeywordUi(PorcupineCustomKeyword(file, true, 0.5f)))
                         newFiles.add(file)
-                    }.toSet()
+                    }
             }
         }
     }
@@ -158,34 +162,21 @@ class WakeWordConfigurationViewModel : ViewModel() {
     fun deletePorcupineKeywordCustom(index: Int) {
         _wakeWordPorcupineKeywordCustomOptions.value = _wakeWordPorcupineKeywordCustomOptions.value
             .toMutableList()
-            .also { keywordList ->
-                val item = keywordList[index]
-                keywordList.removeAt(index)
-                filesToDelete.add(item.fileName)
-
-                _wakeWordPorcupineKeywordCustomOptionsRemoved.value = _wakeWordPorcupineKeywordCustomOptionsRemoved.value
-                    .toMutableList()
-                    .also {
-                        it.add(item)
-                    }
-            }.toSet()
+            .also {
+                filesToDelete.add(it[index].keyword.fileName)
+                it[index] = it[index].copy(deleted = true)
+            }
     }
 
     /**
-     * remove custom wakeword from delete list
+     * remove custom wake word from delete list
      */
     fun undoWakeWordPorcupineCustomKeywordDeleted(index: Int) {
-        _wakeWordPorcupineKeywordCustomOptionsRemoved.value = _wakeWordPorcupineKeywordCustomOptionsRemoved.value
+        _wakeWordPorcupineKeywordCustomOptions.value = _wakeWordPorcupineKeywordCustomOptions.value
             .toMutableList()
-            .also { deletedKeywordList ->
-                val item = deletedKeywordList[index]
-                deletedKeywordList.removeAt(index)
-
-                _wakeWordPorcupineKeywordCustomOptions.value = _wakeWordPorcupineKeywordCustomOptions.value
-                    .toMutableList()
-                    .also {
-                        it.add(item)
-                    }.toSet()
+            .also {
+                filesToDelete.remove(it[index].keyword.fileName)
+                it[index] = it[index].copy(deleted = false)
             }
     }
 
@@ -197,6 +188,7 @@ class WakeWordConfigurationViewModel : ViewModel() {
         ConfigurationSettings.wakeWordPorcupineAccessToken.value = _wakeWordPorcupineAccessToken.value
         ConfigurationSettings.wakeWordPorcupineKeywordDefaultOptions.value = _wakeWordPorcupineKeywordDefaultOptions.value
         ConfigurationSettings.wakeWordPorcupineKeywordCustomOptions.value = _wakeWordPorcupineKeywordCustomOptions.value
+            .filter { it.deleted }.map { it.keyword }.toSet()
         ConfigurationSettings.wakeWordPorcupineLanguage.value = _wakeWordPorcupineLanguage.value
         ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.value = _wakeWordPorcupineSensitivity.value
 
@@ -205,7 +197,6 @@ class WakeWordConfigurationViewModel : ViewModel() {
         }
         filesToDelete.clear()
         newFiles.clear()
-        _wakeWordPorcupineKeywordCustomOptionsRemoved.value = emptyList()
     }
 
     /**
@@ -216,6 +207,7 @@ class WakeWordConfigurationViewModel : ViewModel() {
         _wakeWordPorcupineAccessToken.value = ConfigurationSettings.wakeWordPorcupineAccessToken.value
         _wakeWordPorcupineKeywordDefaultOptions.value = ConfigurationSettings.wakeWordPorcupineKeywordDefaultOptions.value
         _wakeWordPorcupineKeywordCustomOptions.value = ConfigurationSettings.wakeWordPorcupineKeywordCustomOptions.value
+            .map { PorcupineCustomKeywordUi(it) }
         _wakeWordPorcupineLanguage.value = ConfigurationSettings.wakeWordPorcupineLanguage.value
         _wakeWordPorcupineSensitivity.value = ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.value
 
@@ -223,7 +215,6 @@ class WakeWordConfigurationViewModel : ViewModel() {
             SettingsUtils.removePorcupineFile(it)
         }
         filesToDelete.clear()
-        _wakeWordPorcupineKeywordCustomOptionsRemoved.value = emptyList()
     }
 
     /**
