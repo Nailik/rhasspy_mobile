@@ -139,7 +139,7 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
             ListElement(
                 modifier = Modifier.clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineKeyword.name) },
                 text = { Text(MR.strings.wakeWord) },
-                secondaryText = { Text(viewModel.wakeWordPorcupineKeywordCount.collectAsState().value.toString()) }
+                secondaryText = { Text("${viewModel.wakeWordPorcupineKeywordCount.collectAsState().value} ${translate(MR.strings.active)}") }
             )
 
             //opens page for porcupine language selection

@@ -199,4 +199,5 @@
     <string name="textCustom">Benutzerdefiniert</string>
     <string name="download">Herunterladen</string>
     <string name="delete">Löschen</string>
+    <string name="active">Aktiv</string>
 </resources>

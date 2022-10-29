@@ -29,11 +29,10 @@ fun PorcupineKeywordCustomScreen(viewModel: WakeWordConfigurationViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-    )
-    {
+    ) {
+
         Column(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.weight(1f)
                 .verticalScroll(rememberScrollState())
         ) {
 
@@ -77,6 +76,7 @@ fun PorcupineKeywordCustomScreen(viewModel: WakeWordConfigurationViewModel) {
         }
 
         CustomKeywordsActionButtons(modifier = Modifier.align(Alignment.End), viewModel = viewModel)
+
     }
 
 }
@@ -161,7 +161,7 @@ private fun CustomKeywordDeletedListItem(
 private fun CustomKeywordsActionButtons(modifier: Modifier, viewModel: WakeWordConfigurationViewModel) {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
