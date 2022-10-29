@@ -44,6 +44,10 @@ class WakeWordConfigurationViewModel : ViewModel() {
         combineStateNotEquals(_wakeWordPorcupineSensitivity, ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.data)
     )
 
+    //for custom wake word
+    private val filesToDelete = mutableListOf<String>()
+    private val newFiles = mutableListOf<String>()
+
     //all options
     val wakeWordOptions = WakeWordOption::values
     val porcupineLanguageOptions = PorcupineLanguageOptions::values
@@ -72,9 +76,7 @@ class WakeWordConfigurationViewModel : ViewModel() {
             }.toSet()
     }
 
-    //predefined keywords (keyword, enabled)
-    //custom keywords (keyword, enabled, can be deleted)
-
+    //enable/disable default keyword
     fun clickPorcupineKeywordDefault(index: Int) {
         _wakeWordPorcupineKeywordDefaultOptions.value = _wakeWordPorcupineKeywordDefaultOptions.value
             .toMutableList()
@@ -83,6 +85,7 @@ class WakeWordConfigurationViewModel : ViewModel() {
             }.toSet()
     }
 
+    //toggle default keyword
     fun togglePorcupineKeywordDefault(index: Int, enabled: Boolean) {
         _wakeWordPorcupineKeywordDefaultOptions.value = _wakeWordPorcupineKeywordDefaultOptions.value
             .toMutableList()
@@ -91,7 +94,7 @@ class WakeWordConfigurationViewModel : ViewModel() {
             }.toSet()
     }
 
-
+    //update custom keyword sensitivity
     fun updateWakeWordPorcupineKeywordCustomSensitivity(index: Int, sensitivity: Float) {
         _wakeWordPorcupineKeywordCustomOptions.value = _wakeWordPorcupineKeywordCustomOptions.value
             .toMutableList()
@@ -100,6 +103,7 @@ class WakeWordConfigurationViewModel : ViewModel() {
             }.toSet()
     }
 
+    //enable/disable custom keyword
     fun clickPorcupineKeywordCustom(index: Int) {
         _wakeWordPorcupineKeywordCustomOptions.value = _wakeWordPorcupineKeywordCustomOptions.value
             .toMutableList()
@@ -108,6 +112,7 @@ class WakeWordConfigurationViewModel : ViewModel() {
             }.toSet()
     }
 
+    //toggle custom keyword
     fun togglePorcupineKeywordCustom(index: Int, enabled: Boolean) {
         _wakeWordPorcupineKeywordCustomOptions.value = _wakeWordPorcupineKeywordCustomOptions.value
             .toMutableList()
@@ -116,8 +121,6 @@ class WakeWordConfigurationViewModel : ViewModel() {
             }.toSet()
     }
 
-    private val filesToDelete = mutableListOf<String>()
-    private val newFiles = mutableListOf<String>()
 
     /**
      * add a custom keyword
@@ -135,8 +138,18 @@ class WakeWordConfigurationViewModel : ViewModel() {
         }
     }
 
+    /**
+     * open link where user can download keyword
+     */
     fun downloadCustomPorcupineKeyword() {
         openLink("https://console.picovoice.ai/ppn")
+    }
+
+    /**
+     * open picovoice console to create access token
+     */
+    fun openPicoVoiceConsole() {
+        openLink("https://console.picovoice.ai")
     }
 
     /**
@@ -158,6 +171,9 @@ class WakeWordConfigurationViewModel : ViewModel() {
             }.toSet()
     }
 
+    /**
+     * remove custom wakeword from delete list
+     */
     fun undoWakeWordPorcupineCustomKeywordDeleted(index: Int) {
         _wakeWordPorcupineKeywordCustomOptionsRemoved.value = _wakeWordPorcupineKeywordCustomOptionsRemoved.value
             .toMutableList()
@@ -192,6 +208,9 @@ class WakeWordConfigurationViewModel : ViewModel() {
         _wakeWordPorcupineKeywordCustomOptionsRemoved.value = emptyList()
     }
 
+    /**
+     * undo all changes
+     */
     fun discard() {
         _wakeWordOption.value = ConfigurationSettings.wakeWordOption.value
         _wakeWordPorcupineAccessToken.value = ConfigurationSettings.wakeWordPorcupineAccessToken.value
@@ -213,13 +232,6 @@ class WakeWordConfigurationViewModel : ViewModel() {
      */
     fun test() {
 
-    }
-
-    /**
-     * open picovoice console to create access token
-     */
-    fun openPicoVoiceConsole() {
-        openLink("https://console.picovoice.ai")
     }
 
 }

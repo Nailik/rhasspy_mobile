@@ -41,6 +41,9 @@ class RemoteHermesHttpConfigurationViewModel : ViewModel() {
         ConfigurationSettings.isHttpSSLVerificationDisabled.value = _isHttpSSLVerificationDisabled.value
     }
 
+    /**
+     * undo all changes
+     */
     fun discard() {
         _httpServerEndpoint.value = ConfigurationSettings.httpServerEndpoint.value
         _isHttpSSLVerificationDisabled.value = ConfigurationSettings.isHttpSSLVerificationDisabled.value

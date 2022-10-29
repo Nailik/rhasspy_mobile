@@ -62,6 +62,9 @@ class SpeechToTextConfigurationViewModel : ViewModel() {
         ConfigurationSettings.speechToTextHttpEndpoint.value = _speechToTextHttpEndpoint.value
     }
 
+    /**
+     * undo all changes
+     */
     fun discard() {
         _speechToTextOption.value = ConfigurationSettings.speechToTextOption.value
         _isUseCustomSpeechToTextHttpEndpoint.value = ConfigurationSettings.isUseCustomSpeechToTextHttpEndpoint.value

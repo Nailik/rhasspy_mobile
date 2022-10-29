@@ -71,6 +71,9 @@ class AudioPlayingConfigurationViewModel : ViewModel() {
         ConfigurationSettings.audioPlayingHttpEndpoint.value = _audioPlayingHttpEndpoint.value
     }
 
+    /**
+     * undo all changes
+     */
     fun discard() {
         _audioPlayingOption.value = ConfigurationSettings.audioPlayingOption.value
         _isUseCustomAudioPlayingHttpEndpoint.value = ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.value

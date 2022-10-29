@@ -108,6 +108,9 @@ class MqttConfigurationViewModel : ViewModel() {
         ConfigurationSettings.mqttRetryInterval.value = _mqttRetryInterval.value
     }
 
+    /**
+     * undo all changes
+     */
     fun discard() {
         _isMqttEnabled.value = ConfigurationSettings.isMqttEnabled.value
         _mqttHost.value = ConfigurationSettings.mqttHost.value

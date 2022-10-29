@@ -41,6 +41,9 @@ class DialogManagementConfigurationViewModel : ViewModel() {
         ConfigurationSettings.dialogManagementOption.value = _dialogManagementOption.value
     }
 
+    /**
+     * undo all changes
+     */
     fun discard() {
         _dialogManagementOption.value = ConfigurationSettings.dialogManagementOption.value
     }

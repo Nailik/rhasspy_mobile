@@ -51,6 +51,9 @@ class WebserverConfigurationViewModel : ViewModel() {
         ConfigurationSettings.isHttpServerSSLEnabled.value = _isHttpServerSSLEnabled.value
     }
 
+    /**
+     * undo all changes
+     */
     fun discard() {
         _isHttpServerEnabled.value = ConfigurationSettings.isHttpServerEnabled.value
         _httpServerPort.value = ConfigurationSettings.httpServerPort.value

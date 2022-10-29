@@ -82,6 +82,9 @@ class IntentHandlingConfigurationViewModel : ViewModel() {
         ConfigurationSettings.isIntentHandlingHassEvent.value = _isIntentHandlingHassEvent.value
     }
 
+    /**
+     * undo all changes
+     */
     fun discard() {
         _intentHandlingOption.value = ConfigurationSettings.intentHandlingOption.value
         _intentHandlingHttpEndpoint.value = ConfigurationSettings.intentHandlingHttpEndpoint.value

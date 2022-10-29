@@ -63,6 +63,9 @@ class IntentRecognitionConfigurationViewModel : ViewModel() {
         ConfigurationSettings.intentRecognitionHttpEndpoint.value = _intentRecognitionHttpEndpoint.value
     }
 
+    /**
+     * undo all changes
+     */
     fun discard() {
         _intentRecognitionOption.value = ConfigurationSettings.intentRecognitionOption.value
         _isUseCustomIntentRecognitionHttpEndpoint.value = ConfigurationSettings.isUseCustomIntentRecognitionHttpEndpoint.value

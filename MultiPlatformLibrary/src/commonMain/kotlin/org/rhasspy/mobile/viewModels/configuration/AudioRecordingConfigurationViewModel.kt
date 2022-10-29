@@ -53,6 +53,9 @@ class AudioRecordingConfigurationViewModel : ViewModel() {
         ConfigurationSettings.udpOutputPort.value = _udpOutputPort.value
     }
 
+    /**
+     * undo all changes
+     */
     fun discard() {
         _isUdpOutputEnabled.value = ConfigurationSettings.isUdpOutputEnabled.value
         _udpOutputHost.value = ConfigurationSettings.udpOutputHost.value
