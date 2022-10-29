@@ -34,7 +34,7 @@ fun PorcupineKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.testTag(TestTag.PorcupineKeywordScreen).fillMaxSize(),
         topBar = { AppBar() },
         bottomBar = {
             CompositionLocalProvider(

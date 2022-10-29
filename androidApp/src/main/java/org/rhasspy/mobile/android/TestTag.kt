@@ -57,7 +57,15 @@ enum class TestTag {
     CertificateButton,
     ConnectionTimeout,
     KeepAliveInterval,
-    RetryInterval
+    RetryInterval,
+
+    PorcupineWakeWordSettings,
+    PorcupineAccessToken,
+    PorcupineOpenConsole,
+    PorcupineKeyword,
+    PorcupineLanguage,
+    PorcupineKeywordScreen,
+    PorcupineLanguageScreen
 }
 
 fun Modifier.testTag(enum: Enum<*>) = semantics(

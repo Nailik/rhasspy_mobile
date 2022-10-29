@@ -111,6 +111,7 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
 
     //visibility of porcupine settings
     AnimatedVisibility(
+        modifier = Modifier.testTag(TestTag.PorcupineWakeWordSettings),
         enter = expandVertically(),
         exit = shrinkVertically(),
         visible = viewModel.wakeWordPorcupineSettingsVisible.collectAsState().value
@@ -120,6 +121,7 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
 
             //porcupine access token
             TextFieldListItemVisibility(
+                modifier = Modifier.testTag(TestTag.PorcupineAccessToken),
                 value = viewModel.wakeWordPorcupineAccessToken.collectAsState().value,
                 onValueChange = viewModel::updateWakeWordPorcupineAccessToken,
                 label = MR.strings.porcupineAccessKey
@@ -127,6 +129,7 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
 
             //button to open picovoice console to generate access token
             FilledTonalIconButtonListItem(
+                modifier = Modifier.testTag(TestTag.PorcupineOpenConsole),
                 text = MR.strings.openPicoVoiceConsole,
                 imageVector = Icons.Filled.Cloud,
                 onClick = viewModel::openPicoVoiceConsole
@@ -137,14 +140,18 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
 
             //wake word list
             ListElement(
-                modifier = Modifier.clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineKeyword.name) },
+                modifier = Modifier
+                    .testTag(TestTag.PorcupineKeyword)
+                    .clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineKeyword.name) },
                 text = { Text(MR.strings.wakeWord) },
                 secondaryText = { Text("${viewModel.wakeWordPorcupineKeywordCount.collectAsState().value} ${translate(MR.strings.active)}") }
             )
 
             //opens page for porcupine language selection
             ListElement(
-                modifier = Modifier.clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineLanguage.name) },
+                modifier = Modifier
+                    .testTag(TestTag.PorcupineLanguage)
+                    .clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineLanguage.name) },
                 text = { Text(MR.strings.language) },
                 secondaryText = { Text(viewModel.wakeWordPorcupineLanguage.collectAsState().value.text) }
             )

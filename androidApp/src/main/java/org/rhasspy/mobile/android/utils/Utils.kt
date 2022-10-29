@@ -573,7 +573,7 @@ fun FilledTonalIconButtonListItem(
             )
     ) {
         FilledTonalButton(
-            modifier = modifier.align(Alignment.Center),
+            modifier = Modifier.align(Alignment.Center),
             imageVector = imageVector,
             text = text,
             onClick = onClick

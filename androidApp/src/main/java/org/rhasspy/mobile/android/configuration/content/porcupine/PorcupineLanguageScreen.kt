@@ -27,8 +27,9 @@ import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewMode
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PorcupineLanguageScreen(viewModel: WakeWordConfigurationViewModel) {
+
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.testTag(TestTag.PorcupineLanguageScreen).fillMaxSize(),
         topBar = { AppBar(MR.strings.language) }
     ) { paddingValues ->
 
