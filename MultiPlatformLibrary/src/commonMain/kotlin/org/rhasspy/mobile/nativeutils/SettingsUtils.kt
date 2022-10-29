@@ -13,4 +13,6 @@ expect object SettingsUtils {
 
     fun selectPorcupineFile(callback: (String?) -> Unit)
 
+    fun removePorcupineFile(fileName: String)
+
 }

@@ -1,6 +1,9 @@
 package org.rhasspy.mobile.settings
 
 import org.rhasspy.mobile.data.*
+import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
+import org.rhasspy.mobile.viewModels.settings.serializer.PorcupineCustomKeywordSerializer
+import org.rhasspy.mobile.viewModels.settings.serializer.PorcupineDefaultKeywordSerializer
 
 internal object ConfigurationSettings {
 
@@ -31,9 +34,17 @@ internal object ConfigurationSettings {
     val wakeWordPorcupineAccessToken = Setting(SettingsEnum.WakeWordPorcupineAccessToken, "")
 
 
-    val wakeWordPorcupineKeywordDefaultOptions = Setting(SettingsEnum.WakeWordPorcupineKeywordDefaultSelectedOptions,
-        PorcupineKeywordOptions.values().map { Triple(it, false, 0.5f) }.toSet())
-    val wakeWordPorcupineKeywordCustomOptions = Setting(SettingsEnum.WakeWordPorcupineKeywordCustomOptions, setOf<Triple<String, Boolean, Float>>())
+    val wakeWordPorcupineKeywordDefaultOptions = Setting(
+        SettingsEnum.WakeWordPorcupineKeywordDefaultSelectedOptions,
+        PorcupineKeywordOptions.values().map { PorcupineDefaultKeyword(it, false, 0.5f) }.toSet(),
+        PorcupineDefaultKeywordSerializer
+    )
+
+    val wakeWordPorcupineKeywordCustomOptions = Setting(
+        SettingsEnum.WakeWordPorcupineKeywordCustomOptions,
+        setOf(),
+        PorcupineCustomKeywordSerializer
+    )
 
 
     val wakeWordPorcupineLanguage = Setting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOptions.EN)

@@ -559,32 +559,54 @@ fun FilledTonalButtonListItem(modifier: Modifier = Modifier, text: StringResourc
 
 @Composable
 fun FilledTonalIconButtonListItem(
-    modifier: Modifier = Modifier, imageVector: ImageVector, text: StringResource, enabled: Boolean = true, onClick: () ->
-    Unit
+    modifier: Modifier = Modifier,
+    imageVector: ImageVector,
+    text: StringResource,
+    onClick: () -> Unit
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .wrapContentSize(Alignment.Center)
-    ) {
-        FilledTonalButton(enabled = enabled, onClick = onClick, content = {
-            Icon(
-                imageVector = imageVector,
-                contentDescription = MR.strings.icon
+            .padding(
+                horizontal = 16.dp,
+                vertical = 8.dp
             )
-            Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-            Text(text)
-        })
+    ) {
+        FilledTonalButton(
+            modifier = modifier.align(Alignment.Center),
+            imageVector = imageVector,
+            text = text,
+            onClick = onClick
+        )
     }
 }
 
+@Composable
+fun FilledTonalButton(
+    modifier: Modifier = Modifier,
+    imageVector: ImageVector,
+    text: StringResource,
+    onClick: () -> Unit
+) {
+    FilledTonalButton(
+        modifier = modifier,
+        onClick = onClick,
+        content = {
+            Icon(
+                imageVector = imageVector,
+                contentDescription = text
+            )
+            Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+            Text(text)
+        }
+    )
+}
 
 @Composable
-fun SliderListItem(mdoifier: Modifier= Modifier, text: StringResource, value: Float, onValueChange: (Float) -> Unit) {
+fun SliderListItem(modifier: Modifier = Modifier, text: StringResource, value: Float, onValueChange: (Float) -> Unit) {
     //uses custom list item to fix padding for slider
     Surface(
-        modifier = mdoifier,
+        modifier = modifier,
         shape = RectangleShape, //ListItemDefaults.shape,
         color = MaterialTheme.colorScheme.surface, //ListItemDefaults.containerColor,
         contentColor = MaterialTheme.colorScheme.onSurface, //ListItemDefaults.contentColor,

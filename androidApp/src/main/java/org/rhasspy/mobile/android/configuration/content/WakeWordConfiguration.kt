@@ -4,11 +4,13 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cloud
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -21,7 +23,7 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.configuration.content.porcupine.PorcupineKeywordScreen
 import org.rhasspy.mobile.android.configuration.content.porcupine.PorcupineLanguageScreen
-import org.rhasspy.mobile.android.main.*
+import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
@@ -133,13 +135,11 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
             //opens page for porcupine keyword selection
             val navigation = LocalNavController.current
 
-          //  val selectedOption = viewModel.wakeWordPorcupineKeywordOptions.collectAsState().value
-        //        .elementAt(viewModel.wakeWordPorcupineKeywordOption.collectAsState().value)
-
+            //wake word list
             ListElement(
                 modifier = Modifier.clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineKeyword.name) },
                 text = { Text(MR.strings.wakeWord) },
-                secondaryText = { Text("empty") }
+                secondaryText = { Text(viewModel.wakeWordPorcupineKeywordCount.collectAsState().value.toString()) }
             )
 
             //opens page for porcupine language selection

@@ -1,13 +1,12 @@
 package org.rhasspy.mobile.android.configuration.content.porcupine
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -47,19 +46,12 @@ fun PorcupineKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
                 //bottom tab bar with pages tabs
                 BottomTabBar(
                     state = pagerState,
+                    viewModel = viewModel,
                     onSelectIndex = { index ->
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(index)
                         }
                     })
-            }
-        },
-        floatingActionButton = {
-            //button to select custom file
-            if (pagerState.currentPage == 1) {
-                FloatingActionButton(onClick = viewModel::selectPorcupineWakeWordFile) {
-                    Icon(imageVector = Icons.Filled.FileOpen, contentDescription = MR.strings.fileOpen)
-                }
             }
         }
 
@@ -68,7 +60,7 @@ fun PorcupineKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
         Surface(Modifier.padding(paddingValues)) {
             HorizontalPager(count = 2, state = pagerState) { page ->
                 if (page == 0) {
-                    PredefinedKeywords(viewModel)
+                    DefaultKeywords(viewModel)
                 } else {
                     CustomKeywords(viewModel)
                 }
@@ -78,10 +70,10 @@ fun PorcupineKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
 }
 
 /**
- * predefined keywords
+ * default keywords screen
  */
 @Composable
-private fun PredefinedKeywords(viewModel: WakeWordConfigurationViewModel) {
+private fun DefaultKeywords(viewModel: WakeWordConfigurationViewModel) {
 
     val options by viewModel.wakeWordPorcupineKeywordDefaultOptions.collectAsState()
 
@@ -97,27 +89,27 @@ private fun PredefinedKeywords(viewModel: WakeWordConfigurationViewModel) {
 
                 ListElement(
                     modifier = Modifier.clickable {
-                        viewModel.clickPredefinedPorcupineKeyword(index)
+                        viewModel.clickPorcupineKeywordDefault(index)
                     },
                     icon = {
                         Checkbox(
-                            checked = element.second,
+                            checked = element.enabled,
                             onCheckedChange = { enabled ->
-                                viewModel.togglePredefinedPorcupineKeyword(index, enabled)
+                                viewModel.togglePorcupineKeywordDefault(index, enabled)
                             })
                     },
                     text = {
-                        Text(element.first.text)
+                        Text(element.option.text)
                     },
                 )
 
-                if (element.second) {
+                if (element.enabled) {
                     //sensitivity of porcupine
                     SliderListItem(
-                        mdoifier = Modifier.padding(horizontal = 12.dp),
+                        modifier = Modifier.padding(horizontal = 12.dp),
                         text = MR.strings.sensitivity,
-                        value = element.third,
-                        onValueChange = { sensitivity -> viewModel.updateWakeWordPorcupineSensitivity(index, sensitivity) }
+                        value = element.sensitivity,
+                        onValueChange = { sensitivity -> viewModel.updateWakeWordPorcupineKeywordDefaultSensitivity(index, sensitivity) }
                     )
                 }
 
@@ -125,14 +117,64 @@ private fun PredefinedKeywords(viewModel: WakeWordConfigurationViewModel) {
             }
         )
     }
+
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Custom keywords screen
+ */
 @Composable
 private fun CustomKeywords(viewModel: WakeWordConfigurationViewModel) {
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    val options by viewModel.wakeWordPorcupineKeywordCustomOptions.collectAsState()
 
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxHeight()
+    ) {
+        items(
+            count = options.size,
+            itemContent = { index ->
+
+                val element = options.elementAt(index)
+
+                ListElement(
+                    modifier = Modifier.clickable {
+                        viewModel.clickPorcupineKeywordCustom(index)
+                    },
+                    icon = {
+                        Checkbox(
+                            checked = element.enabled,
+                            onCheckedChange = { enabled ->
+                                viewModel.togglePorcupineKeywordCustom(index, enabled)
+                            })
+                    },
+                    text = {
+                        Text(element.fileName)
+                    },
+                    trailing = {
+                        IconButton(onClick = { viewModel.deletePorcupineKeywordCustom(index) }) {
+                            Icon(
+                                imageVector = Icons.Filled.Delete,
+                                contentDescription = MR.strings.defaultText
+                            )
+                        }
+                    }
+                )
+
+                if (element.enabled) {
+                    //sensitivity of porcupine
+                    SliderListItem(
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        text = MR.strings.sensitivity,
+                        value = element.sensitivity,
+                        onValueChange = { sensitivity -> viewModel.updateWakeWordPorcupineKeywordCustomSensitivity(index, sensitivity) }
+                    )
+                }
+
+                CustomDivider()
+            }
+        )
     }
 
 }
@@ -166,23 +208,69 @@ private fun AppBar() {
 }
 
 /**
+ * custom keywords action buttons (download and open file)
+ */
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+private fun CustomKeywordsActionButtons(state: PagerState, viewModel: WakeWordConfigurationViewModel) {
+    if (state.currentPage == 1) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+
+            FilledTonalButton(
+                onClick = viewModel::downloadCustomPorcupineKeyword,
+                content = {
+                    Icon(
+                        imageVector = Icons.Filled.Download,
+                        contentDescription = MR.strings.fileOpen
+                    )
+                    Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+                    Text(MR.strings.download)
+                })
+
+            FilledTonalButton(
+                onClick = viewModel::addCustomPorcupineKeyword,
+                content = {
+                    Icon(
+                        imageVector = Icons.Filled.FileOpen,
+                        contentDescription = MR.strings.fileOpen
+                    )
+                    Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+                    Text(MR.strings.fileOpen)
+                })
+
+        }
+    }
+}
+
+/**
  * Displays tabs on bottom (default/ custom)
  */
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-private fun BottomTabBar(state: PagerState, onSelectIndex: (index: Int) -> Unit) {
+private fun BottomTabBar(state: PagerState, viewModel: WakeWordConfigurationViewModel, onSelectIndex: (index: Int) -> Unit) {
 
-    TabRow(selectedTabIndex = state.currentPage) {
-        Tab(
-            selected = state.currentPage == 0,
-            onClick = { onSelectIndex(0) },
-            text = { Text(MR.strings.textDefault) }
-        )
-        Tab(
-            selected = state.currentPage == 1,
-            onClick = { onSelectIndex(1) },
-            text = { Text(MR.strings.textCustom) }
-        )
+    Column {
+        //action buttons
+        CustomKeywordsActionButtons(state, viewModel)
+
+        //tab bar row
+        TabRow(selectedTabIndex = state.currentPage) {
+            Tab(
+                selected = state.currentPage == 0,
+                onClick = { onSelectIndex(0) },
+                text = { Text(MR.strings.textDefault) }
+            )
+            Tab(
+                selected = state.currentPage == 1,
+                onClick = { onSelectIndex(1) },
+                text = { Text(MR.strings.textCustom) }
+            )
+        }
     }
 
 }

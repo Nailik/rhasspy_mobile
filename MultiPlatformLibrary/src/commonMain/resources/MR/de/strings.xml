@@ -197,4 +197,6 @@
     <string name="useCustomEndpoint">Benutzerdefinierte Http-URL</string>
     <string name="textDefault">Standard</string>
     <string name="textCustom">Benutzerdefiniert</string>
+    <string name="download">Herunterladen</string>
+    <string name="delete">Löschen</string>
 </resources>

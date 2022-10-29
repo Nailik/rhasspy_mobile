@@ -8,14 +8,13 @@ import com.russhwolf.settings.serialization.encodeValue
 import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.builtins.SetSerializer
-import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.KSerializer
 import org.rhasspy.mobile.data.DataEnum
 import org.rhasspy.mobile.readOnly
 
 private val settings = Settings()
 
-class Setting<T>(private val key: SettingsEnum, private val initial: T) {
+open class Setting<T>(private val key: SettingsEnum, private val initial: T, private val serializer: KSerializer<T>? = null) {
 
     /**
      * data used to get current saved value or to set value for unsaved changes
@@ -45,8 +44,11 @@ class Setting<T>(private val key: SettingsEnum, private val initial: T) {
             is Float -> settings[key.name] = newValue as Float
             is Boolean -> settings[key.name] = newValue as Boolean
             is DataEnum<*> -> settings[key.name] = (newValue as DataEnum<*>).name
-            is Set<*> -> settings.encodeValue(SetSerializer(String.serializer()), key.name, newValue as Set<String>)
-            else -> throw RuntimeException()
+            else -> serializer?.let {
+                settings.encodeValue(serializer, key.name, newValue)
+            } ?: kotlin.run {
+              //TODO  throw RuntimeException()
+            }
         }
     }
 
@@ -62,8 +64,12 @@ class Setting<T>(private val key: SettingsEnum, private val initial: T) {
             is Float -> settings[key.name, initial]
             is Boolean -> settings[key.name, initial]
             is DataEnum<*> -> initial.findValue(settings[key.name, initial.name])
-            is Set<*> -> settings.decodeValue(SetSerializer(String.serializer()), key.name, initial as Set<String>)
-            else -> throw RuntimeException()
+            else -> serializer?.let {
+                settings.decodeValue(serializer, key.name, initial)
+            } ?: kotlin.run {
+               // throw RuntimeException()
+                initial
+            }
         } as T
     }
 

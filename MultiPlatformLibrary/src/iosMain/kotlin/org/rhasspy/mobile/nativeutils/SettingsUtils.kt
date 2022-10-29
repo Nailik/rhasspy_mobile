@@ -14,11 +14,15 @@ actual object SettingsUtils {
         TODO("Not yet implemented")
     }
 
+    actual fun removeSoundFile(fileName: String) {
+        TODO("Not yet implemented")
+    }
+
     actual fun selectPorcupineFile(callback: (String?) -> Unit) {
         TODO("Not yet implemented")
     }
 
-    actual fun removeSoundFile(fileName: String) {
+    actual fun removePorcupineFile(fileName: String) {
         TODO("Not yet implemented")
     }
 

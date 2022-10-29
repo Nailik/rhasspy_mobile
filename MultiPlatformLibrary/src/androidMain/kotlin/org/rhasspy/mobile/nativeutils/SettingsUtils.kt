@@ -261,6 +261,10 @@ actual object SettingsUtils {
         }
     }
 
+    actual fun removePorcupineFile(fileName: String) {
+        File(Application.Instance.filesDir, "porcupine/$fileName").delete()
+    }
+
     //rename file while it already exists
     private fun renameFileWhileExists(folder: String, file: String): String {
         var fileName = file

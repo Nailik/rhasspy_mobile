@@ -192,4 +192,21 @@
     <string name="useCustomEndpoint">Custom Http Endpoint</string>
     <string name="textDefault">Default</string>
     <string name="textCustom">Custom</string>
+    <string name="download">Download</string>
+    <string name="delete">Delete</string>
+    <!-- not translatable -->
+    <string name="alexa">Alexa</string>
+    <string name="americano">Americano</string>
+    <string name="blueberry">Blueberry</string>
+    <string name="bumblebee">Bumblebee</string>
+    <string name="computer">Computer</string>
+    <string name="grapefruit">Grapefruit</string>
+    <string name="grasshopper">Grasshopper</string>
+    <string name="hey_google">Hey Google</string>
+    <string name="hey_siri">Hey Siri</string>
+    <string name="jarvis">Jarvis</string>
+    <string name="ok_google">Ok Google</string>
+    <string name="picovoice">Picovoice</string>
+    <string name="porcupine">Porcupine</string>
+    <string name="terminator">Terminator</string>
 </resources>
