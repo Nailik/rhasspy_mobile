@@ -16,6 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
@@ -27,6 +29,7 @@ import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewMode
 fun PorcupineKeywordCustomScreen(viewModel: WakeWordConfigurationViewModel) {
     Column(
         modifier = Modifier
+            .testTag(TestTag.PorcupineKeywordCustomScreen)
             .fillMaxSize()
     ) {
         //added files

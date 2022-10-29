@@ -108,11 +108,13 @@ private fun BottomTabBar(state: PagerState, onSelectIndex: (index: Int) -> Unit)
         TabRow(selectedTabIndex = state.currentPage) {
             Tab(
                 selected = state.currentPage == 0,
+                modifier = Modifier.testTag(TestTag.TabDefault),
                 onClick = { onSelectIndex(0) },
                 text = { Text(MR.strings.textDefault) }
             )
             Tab(
                 selected = state.currentPage == 1,
+                modifier = Modifier.testTag(TestTag.TabCustom),
                 onClick = { onSelectIndex(1) },
                 text = { Text(MR.strings.textCustom) }
             )

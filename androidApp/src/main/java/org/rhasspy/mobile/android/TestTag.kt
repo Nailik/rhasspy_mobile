@@ -65,7 +65,13 @@ enum class TestTag {
     PorcupineKeyword,
     PorcupineLanguage,
     PorcupineKeywordScreen,
-    PorcupineLanguageScreen
+    PorcupineLanguageScreen,
+    PorcupineKeywordCustomScreen,
+    PorcupineKeywordDefaultScreen,
+
+
+    TabDefault,
+    TabCustom
 }
 
 fun Modifier.testTag(enum: Enum<*>) = semantics(

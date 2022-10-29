@@ -11,6 +11,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.CustomDivider
 import org.rhasspy.mobile.android.utils.ListElement
 import org.rhasspy.mobile.android.utils.SliderListItem
@@ -28,6 +30,7 @@ fun PorcupineKeywordDefaultScreen(viewModel: WakeWordConfigurationViewModel) {
 
     LazyColumn(
         modifier = Modifier
+            .testTag(TestTag.PorcupineKeywordDefaultScreen)
             .fillMaxHeight()
     ) {
         items(
