@@ -12,7 +12,7 @@ class AboutScreenViewModel : ViewModel() {
 
     val changelogText = BuildKonfig.changelog
 
-    fun onOpenSourceCode(){
+    fun onOpenSourceCode() {
         openLink("https://github.com/Nailik/rhasspy_mobile")
     }
 

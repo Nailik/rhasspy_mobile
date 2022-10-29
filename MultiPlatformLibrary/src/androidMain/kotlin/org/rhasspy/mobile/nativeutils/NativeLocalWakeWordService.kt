@@ -10,7 +10,6 @@ import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.PorcupineLanguageOptions
-import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import java.io.File
 
@@ -55,30 +54,30 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
             return
         }
 
-   /*     try {
+        /*     try {
 
-            val keywordName =
-                ConfigurationSettings.wakeWordPorcupineKeywordOptions.value.elementAt(ConfigurationSettings.wakeWordPorcupineKeywordOption.value)
+                 val keywordName =
+                     ConfigurationSettings.wakeWordPorcupineKeywordOptions.value.elementAt(ConfigurationSettings.wakeWordPorcupineKeywordOption.value)
 
-            val buildInKeyword = findBuiltInKeyword(keywordName)
+                 val buildInKeyword = findBuiltInKeyword(keywordName)
 
-            val porcupineBuilder = PorcupineManager.Builder()
-                .setAccessKey(ConfigurationSettings.wakeWordPorcupineAccessToken.value)
-                .setSensitivity(ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.value).apply {
-                    setModelPath(copyModelFileIfNecessary())
-                    buildInKeyword?.also {
-                        setKeyword(it)
-                    } ?: run {
-                        setKeywordPath(File(Application.Instance.filesDir, "porcupine/$keywordName").absolutePath)
-                    }
-                }
-            File(Application.Instance.filesDir, "sounds").mkdirs()
+                 val porcupineBuilder = PorcupineManager.Builder()
+                     .setAccessKey(ConfigurationSettings.wakeWordPorcupineAccessToken.value)
+                     .setSensitivity(ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.value).apply {
+                         setModelPath(copyModelFileIfNecessary())
+                         buildInKeyword?.also {
+                             setKeyword(it)
+                         } ?: run {
+                             setKeywordPath(File(Application.Instance.filesDir, "porcupine/$keywordName").absolutePath)
+                         }
+                     }
+                 File(Application.Instance.filesDir, "sounds").mkdirs()
 
-            porcupineManager = porcupineBuilder.build(Application.Instance, this)
+                 porcupineManager = porcupineBuilder.build(Application.Instance, this)
 
-        } catch (e: Exception) {
-            logger.e(e) { "initializePorcupineManger failed" }
-        }*/
+             } catch (e: Exception) {
+                 logger.e(e) { "initializePorcupineManger failed" }
+             }*/
     }
 
     /**
@@ -86,9 +85,9 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
      */
     override fun invoke(keywordIndex: Int) {
         logger.d { "invoke - keyword detected" }
-    //    val keywordName =
-   //         ConfigurationSettings.wakeWordPorcupineKeywordOptions.value.elementAt(ConfigurationSettings.wakeWordPorcupineKeywordOption.value)
-  //      StateMachine.hotWordDetected(keywordName)
+        //    val keywordName =
+        //         ConfigurationSettings.wakeWordPorcupineKeywordOptions.value.elementAt(ConfigurationSettings.wakeWordPorcupineKeywordOption.value)
+        //      StateMachine.hotWordDetected(keywordName)
     }
 
     private fun findBuiltInKeyword(keywordName: String): Porcupine.BuiltInKeyword? {

@@ -22,7 +22,7 @@ import org.rhasspy.mobile.viewModels.settings.DeviceSettingsSettingsViewModel
 @Composable
 fun DeviceSettingsContent(viewModel: DeviceSettingsSettingsViewModel = viewModel()) {
 
-    PageContent(MR.strings.device,) {
+    PageContent(MR.strings.device) {
 
         Column {
 
@@ -30,7 +30,8 @@ fun DeviceSettingsContent(viewModel: DeviceSettingsSettingsViewModel = viewModel
             SliderListItem(
                 text = MR.strings.volume,
                 value = viewModel.volume.collectAsState().value,
-                onValueChange = viewModel::updateVolume)
+                onValueChange = viewModel::updateVolume
+            )
 
             //hot word enabled
             SwitchListItem(

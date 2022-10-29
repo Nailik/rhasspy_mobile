@@ -23,7 +23,7 @@ class ConfigurationScreenViewModel : ViewModel() {
         ConfigurationSettings.siteId.value = siteId
     }
 
-    init{
+    init {
         println("init")
     }
 

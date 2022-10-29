@@ -2,7 +2,6 @@ package org.rhasspy.mobile.android.configuration
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -11,32 +10,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.configuration.content.AudioPlayingConfigurationContent
-import org.rhasspy.mobile.android.configuration.content.AudioRecordingConfigurationContent
-import org.rhasspy.mobile.android.configuration.content.DialogManagementConfigurationContent
-import org.rhasspy.mobile.android.configuration.content.IntentHandlingConfigurationContent
-import org.rhasspy.mobile.android.configuration.content.IntentRecognitionConfigurationContent
-import org.rhasspy.mobile.android.configuration.content.MqttConfigurationContent
-import org.rhasspy.mobile.android.configuration.content.RemoteHermesHttpConfigurationContent
-import org.rhasspy.mobile.android.configuration.content.SpeechToTextConfigurationContent
-import org.rhasspy.mobile.android.configuration.content.TextToSpeechConfigurationContent
-import org.rhasspy.mobile.android.configuration.content.WakeWordConfigurationContent
-import org.rhasspy.mobile.android.configuration.content.WebServerConfigurationContent
+import org.rhasspy.mobile.android.configuration.content.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.CustomDivider
-import org.rhasspy.mobile.android.utils.ListElement
-import org.rhasspy.mobile.android.utils.Text
-import org.rhasspy.mobile.android.utils.TextFieldListItem
-import org.rhasspy.mobile.android.utils.toText
-import org.rhasspy.mobile.android.utils.translate
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.viewModels.ConfigurationScreenViewModel
 
 /**
@@ -344,9 +327,11 @@ private fun ConfigurationListItem(
     val navController = LocalMainNavController.current
 
     ListElement(
-        modifier = Modifier.clickable {
-            navController.navigate(screen.name)
-        }.testTag(screen),
+        modifier = Modifier
+            .clickable {
+                navController.navigate(screen.name)
+            }
+            .testTag(screen),
         text = { Text(text) },
         secondaryText = { Text(secondaryText) }
     )
@@ -366,9 +351,11 @@ private fun ConfigurationListItem(
     val navController = LocalMainNavController.current
 
     ListElement(
-        modifier = Modifier.clickable {
-            navController.navigate(screen.name)
-        }.testTag(screen),
+        modifier = Modifier
+            .clickable {
+                navController.navigate(screen.name)
+            }
+            .testTag(screen),
         text = { Text(text) },
         secondaryText = { Text(text = secondaryText) }
     )

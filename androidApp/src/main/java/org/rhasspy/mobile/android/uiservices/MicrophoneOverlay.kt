@@ -32,9 +32,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.android.AndroidApplication
+import org.rhasspy.mobile.android.main.Fab
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.theme.AppTheme
-import org.rhasspy.mobile.android.main.Fab
 import org.rhasspy.mobile.viewModels.MicrophoneOverlayViewModel
 
 object MicrophoneOverlay {

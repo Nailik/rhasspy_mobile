@@ -38,6 +38,7 @@ enum class SettingsEnum {
     LogLevel,
 
     ForceCancel,
+
     //Configuration Settings
     SiteId,
 

@@ -59,7 +59,6 @@ fun PorcupineLanguageScreen(viewModel: WakeWordConfigurationViewModel) {
 }
 
 
-
 /**
  * app bar for the language
  */

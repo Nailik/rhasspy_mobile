@@ -2,34 +2,16 @@ package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
-import io.ktor.utils.io.core.toByteArray
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import io.ktor.utils.io.core.*
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.booleanOrNull
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.floatOrNull
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
-import kotlinx.serialization.json.put
+import kotlinx.serialization.json.*
 import org.rhasspy.mobile.data.AudioPlayingOptions
 import org.rhasspy.mobile.logic.StateMachine
-import org.rhasspy.mobile.mqtt.MQTTTopicsPublish
-import org.rhasspy.mobile.mqtt.MQTTTopicsSubscription
-import org.rhasspy.mobile.mqtt.MqttConnectionOptions
-import org.rhasspy.mobile.mqtt.MqttError
-import org.rhasspy.mobile.mqtt.MqttMessage
-import org.rhasspy.mobile.mqtt.MqttPersistence
-import org.rhasspy.mobile.mqtt.MqttStatus
+import org.rhasspy.mobile.mqtt.*
 import org.rhasspy.mobile.nativeutils.MqttClient
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
@@ -231,7 +213,7 @@ object MqttService {
 
         isCurrentlyConnected = client?.isConnected == true
 
-        if(retryJob?.isActive != true) {
+        if (retryJob?.isActive != true) {
             retryJob = coroutineScope.launch {
                 retryToConnect()
             }

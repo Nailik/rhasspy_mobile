@@ -25,8 +25,8 @@ class AudioPlayingConfigurationViewModel : ViewModel() {
     val audioPlayingOption = _audioPlayingOption.readOnly
     val audioPlayingHttpEndpoint = combineState(_isUseCustomAudioPlayingHttpEndpoint, _audioPlayingHttpEndpoint) { useCustomAudioPlayingHttpEndpoint,
                                                                                                                    audioPlayingHttpEndpoint ->
-        if(useCustomAudioPlayingHttpEndpoint){
-             audioPlayingHttpEndpoint
+        if (useCustomAudioPlayingHttpEndpoint) {
+            audioPlayingHttpEndpoint
         } else {
             "${ConfigurationSettings.httpServerEndpoint.value}//api/play-wav"
         }

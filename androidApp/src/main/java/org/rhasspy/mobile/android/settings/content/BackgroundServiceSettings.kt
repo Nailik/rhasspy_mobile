@@ -10,13 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.utils.ComposableLifecycle
-import org.rhasspy.mobile.android.utils.Icon
-import org.rhasspy.mobile.android.utils.ListElement
-import org.rhasspy.mobile.android.utils.PageContent
-import org.rhasspy.mobile.android.utils.SwitchListItem
-import org.rhasspy.mobile.android.utils.Text
-import org.rhasspy.mobile.android.utils.toText
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.viewModels.settings.BackgroundServiceSettingsViewModel
 
 /**

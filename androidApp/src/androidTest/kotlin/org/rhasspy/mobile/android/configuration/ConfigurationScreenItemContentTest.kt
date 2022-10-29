@@ -160,7 +160,7 @@ class ConfigurationScreenItemContentTest {
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
         composeTestRule.onNodeWithTag(TestTag.DialogUnsavedChanges).assertExists()
         //outside click closes dialog
-        device.click(100,100)
+        device.click(100, 100)
         composeTestRule.onNodeWithTag(TestTag.DialogUnsavedChanges).assertDoesNotExist()
 
         //back click shows dialog

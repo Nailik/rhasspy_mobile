@@ -174,7 +174,7 @@ fun IndicationCircle(color: Color, item: Int, current: Float) {
     }
 
     var height = 60.dp * (1f - getHeight())
-    if(height < 12.dp){
+    if (height < 12.dp) {
         height = 12.dp
     }
 

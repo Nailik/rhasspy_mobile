@@ -6,23 +6,12 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -33,11 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.utils.Icon
-import org.rhasspy.mobile.android.utils.PageContent
-import org.rhasspy.mobile.android.utils.SwitchListItem
-import org.rhasspy.mobile.android.utils.Text
-import org.rhasspy.mobile.android.utils.TextFieldListItem
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.viewModels.settings.AutomaticSilenceDetectionSettingsViewModel
 
 
@@ -157,7 +142,8 @@ private fun RowScope.StartTestButton(viewModel: AutomaticSilenceDetectionSetting
         modifier = Modifier
             .weight(2f - animatedWeight)
             .wrapContentSize(),
-        onClick = viewModel::toggleAudioLevelTest)
+        onClick = viewModel::toggleAudioLevelTest
+    )
     {
 
         val status by viewModel.currentStatus.collectAsState()

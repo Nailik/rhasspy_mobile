@@ -31,6 +31,7 @@ class SpeechToTextConfigurationViewModel : ViewModel() {
         combineStateNotEquals(_isUseCustomSpeechToTextHttpEndpoint, ConfigurationSettings.isUseCustomSpeechToTextHttpEndpoint.data),
         combineStateNotEquals(_speechToTextHttpEndpoint, ConfigurationSettings.speechToTextHttpEndpoint.data)
     )
+
     //show endpoint settings
     val isSpeechToTextHttpSettingsVisible = _speechToTextOption.mapReadonlyState { it == SpeechToTextOptions.RemoteHTTP }
 

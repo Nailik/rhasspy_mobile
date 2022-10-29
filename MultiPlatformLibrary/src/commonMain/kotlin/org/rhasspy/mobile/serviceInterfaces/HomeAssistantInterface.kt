@@ -28,7 +28,7 @@ object HomeAssistantInterface {
             json["slots"]?.jsonArray?.forEach { element ->
                 val slotName = element.jsonObject["slotName"]?.jsonPrimitive?.content
 
-                if(slotName?.isNotEmpty() == true){
+                if (slotName?.isNotEmpty() == true) {
                     slots[slotName] = element.jsonObject["value"]?.jsonObject?.get("value")
                 }
             }

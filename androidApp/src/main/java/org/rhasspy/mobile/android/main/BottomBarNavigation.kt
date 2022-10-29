@@ -162,7 +162,7 @@ fun UnsavedChanges(viewModel: HomeScreenViewModel) {
         visible = false
     ) {
 
-    Row(modifier = Modifier.padding(start = 8.dp)) {
+        Row(modifier = Modifier.padding(start = 8.dp)) {
             IconButton(onClick = { viewModel.resetChanges() })
             {
                 Icon(

@@ -17,7 +17,7 @@ class TextToSpeechConfigurationViewModel : ViewModel() {
     val textToSpeechOption = _textToSpeechOption.readOnly
     val textToSpeechHttpEndpoint =
         combineState(_isUseCustomTextToSpeechHttpEndpoint, _textToSpeechHttpEndpoint) { useCustomTextToSpeechHttpEndpoint,
-                                                                                                  speechToTextHttpEndpoint ->
+                                                                                        speechToTextHttpEndpoint ->
             if (useCustomTextToSpeechHttpEndpoint) {
                 speechToTextHttpEndpoint
             } else {

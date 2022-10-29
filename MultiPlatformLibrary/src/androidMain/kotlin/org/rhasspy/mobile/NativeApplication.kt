@@ -48,6 +48,7 @@ actual open class NativeApplication : MultiDexApplication() {
                 MicrophonePermission.update()
                 OverlayPermission.update()
             }
+
             override fun onActivityPaused(p0: Activity) {}
             override fun onActivityStopped(p0: Activity) {}
             override fun onActivitySaveInstanceState(p0: Activity, p1: Bundle) {}

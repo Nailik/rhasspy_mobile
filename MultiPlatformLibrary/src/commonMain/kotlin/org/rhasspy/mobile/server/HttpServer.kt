@@ -1,19 +1,14 @@
 package org.rhasspy.mobile.server
 
 import co.touchlab.kermit.Logger
-import io.ktor.http.ContentType
-import io.ktor.http.HttpMethod
-import io.ktor.server.application.call
-import io.ktor.server.application.install
-import io.ktor.server.cio.CIO
-import io.ktor.server.cio.CIOApplicationEngine
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.plugins.cors.routing.CORS
-import io.ktor.server.plugins.dataconversion.DataConversion
-import io.ktor.server.request.contentType
-import io.ktor.server.request.receive
-import io.ktor.server.response.respondBytes
-import io.ktor.server.response.respondText
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.cio.*
+import io.ktor.server.engine.*
+import io.ktor.server.plugins.cors.routing.*
+import io.ktor.server.plugins.dataconversion.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.Routing
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post

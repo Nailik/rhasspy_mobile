@@ -47,7 +47,7 @@ open class Setting<T>(private val key: SettingsEnum, private val initial: T, pri
             else -> serializer?.let {
                 settings.encodeValue(serializer, key.name, newValue)
             } ?: kotlin.run {
-              //TODO  throw RuntimeException()
+                //TODO  throw RuntimeException()
             }
         }
     }
@@ -67,7 +67,7 @@ open class Setting<T>(private val key: SettingsEnum, private val initial: T, pri
             else -> serializer?.let {
                 settings.decodeValue(serializer, key.name, initial)
             } ?: kotlin.run {
-               // throw RuntimeException()
+                // throw RuntimeException()
                 initial
             }
         } as T

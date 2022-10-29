@@ -9,13 +9,14 @@
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
     <uses-permission-sdk-23 android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
         android:name="org.rhasspy.mobile.android.AndroidApplication"
+        android:exported="true"
         android:icon="@drawable/ic_launcher"
         android:label="Rhasspy Mobile"
-        android:exported="true"
         android:supportsRtl="true"
         tools:ignore="Instantiatable">
         <service

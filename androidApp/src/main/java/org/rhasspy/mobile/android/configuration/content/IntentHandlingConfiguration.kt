@@ -37,7 +37,7 @@ fun IntentHandlingConfigurationContent(viewModel: IntentHandlingConfigurationVie
         hasUnsavedChanges = viewModel.hasUnsavedChanges,
         onSave = viewModel::save,
         onTest = viewModel::test,
-        onDiscard = {  }
+        onDiscard = { }
     ) {
 
         //drop down to select option

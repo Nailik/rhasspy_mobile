@@ -1,20 +1,12 @@
 package org.rhasspy.mobile.nativeutils
 
 import co.touchlab.kermit.Logger
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
+import org.eclipse.paho.client.mqttv3.*
 import org.eclipse.paho.client.mqttv3.MqttClient
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions
-import org.eclipse.paho.client.mqttv3.MqttException
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException
-import org.eclipse.paho.client.mqttv3.MqttSecurityException
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence
-import org.rhasspy.mobile.mqtt.MqttConnectionOptions
-import org.rhasspy.mobile.mqtt.MqttError
+import org.rhasspy.mobile.mqtt.*
 import org.rhasspy.mobile.mqtt.MqttMessage
-import org.rhasspy.mobile.mqtt.MqttPersistence
-import org.rhasspy.mobile.mqtt.MqttQos
-import org.rhasspy.mobile.mqtt.MqttStatus
 import org.rhasspy.mobile.settings.AppSettings
 
 actual class MqttClient actual constructor(
