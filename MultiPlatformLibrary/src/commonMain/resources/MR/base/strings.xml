@@ -157,8 +157,12 @@
     <string name="enableHTTPApi">Enable HTTP Api</string>
     <string name="english">English</string>
     <string name="german">German</string>
-    <string name="french">French</string>
     <string name="spanish">Spanish</string>
+    <string name="french">French</string>
+    <string name="italian">Italian</string>
+    <string name="japanese">Japanese</string>
+    <string name="korean">Korean</string>
+    <string name="portuguese">Portuguese</string>
     <string name="icon">Icon</string>
     <string name="dataPrivacy">Data Privacy</string>
     <string name="sourceCode">Sourcecode</string>

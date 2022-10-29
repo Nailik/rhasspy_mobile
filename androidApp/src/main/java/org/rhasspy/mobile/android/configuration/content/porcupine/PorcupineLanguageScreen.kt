@@ -24,7 +24,6 @@ import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewMode
 /**
  *  list of porcupine languages
  */
-//TODO new languages only https://github.com/Picovoice/porcupine/tree/master/lib/common
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PorcupineLanguageScreen(viewModel: WakeWordConfigurationViewModel) {

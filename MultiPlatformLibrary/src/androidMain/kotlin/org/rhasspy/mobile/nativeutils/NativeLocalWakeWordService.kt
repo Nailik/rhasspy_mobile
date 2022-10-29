@@ -106,8 +106,12 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
             val modelFile = when (ConfigurationSettings.wakeWordPorcupineLanguage.data.value) {
                 PorcupineLanguageOptions.EN -> MR.files.porcupine_params
                 PorcupineLanguageOptions.DE -> MR.files.porcupine_params_de
-                PorcupineLanguageOptions.FR -> MR.files.porcupine_params_fr
                 PorcupineLanguageOptions.ES -> MR.files.porcupine_params_es
+                PorcupineLanguageOptions.FR -> MR.files.porcupine_params_fr
+                PorcupineLanguageOptions.IT -> MR.files.porcupine_params_it
+                PorcupineLanguageOptions.JA -> MR.files.porcupine_params_ja
+                PorcupineLanguageOptions.KO -> MR.files.porcupine_params_ko
+                PorcupineLanguageOptions.PT -> MR.files.porcupine_params_pt
             }
 
             file.outputStream().write(Application.Instance.resources.openRawResource(modelFile.rawResId).readBytes())

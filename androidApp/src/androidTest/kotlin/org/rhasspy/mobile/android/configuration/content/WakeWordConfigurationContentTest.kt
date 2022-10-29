@@ -32,6 +32,11 @@ class WakeWordConfigurationContentTest {
 
     }
 
+    @Test
+    fun test() = runBlocking {
+
+    }
+
     /**
      * option is disable
      * porcupine options not visible

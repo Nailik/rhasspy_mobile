@@ -162,8 +162,12 @@
     <string name="enableHTTPApi">Aktiviere HTTP Api</string>
     <string name="english">Englisch</string>
     <string name="german">Deutsch</string>
-    <string name="french">Französisch</string>
     <string name="spanish">Spanisch</string>
+    <string name="french">Französisch</string>
+    <string name="italian">Italienisch</string>
+    <string name="japanese">Japanisch</string>
+    <string name="korean">Koreanisch</string>
+    <string name="portuguese">Portugiesisch</string>
     <string name="icon">Icon</string>
     <string name="dataPrivacy">Datenschutz</string>
     <string name="sourceCode">Sourcecode</string>
