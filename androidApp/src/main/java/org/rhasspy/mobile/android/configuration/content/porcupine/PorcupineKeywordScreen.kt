@@ -3,11 +3,10 @@ package org.rhasspy.mobile.android.configuration.content.porcupine
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.FileOpen
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -23,6 +22,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
 
 /**
@@ -126,57 +126,112 @@ private fun DefaultKeywords(viewModel: WakeWordConfigurationViewModel) {
 @Composable
 private fun CustomKeywords(viewModel: WakeWordConfigurationViewModel) {
 
-    val options by viewModel.wakeWordPorcupineKeywordCustomOptions.collectAsState()
-
-    LazyColumn(
+    Column(
         modifier = Modifier
-            .fillMaxHeight()
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ) {
-        items(
-            count = options.size,
-            itemContent = { index ->
 
-                val element = options.elementAt(index)
+        val options by viewModel.wakeWordPorcupineKeywordCustomOptions.collectAsState()
+        options.forEachIndexed { index, element ->
 
-                ListElement(
-                    modifier = Modifier.clickable {
-                        viewModel.clickPorcupineKeywordCustom(index)
-                    },
-                    icon = {
-                        Checkbox(
-                            checked = element.enabled,
-                            onCheckedChange = { enabled ->
-                                viewModel.togglePorcupineKeywordCustom(index, enabled)
-                            })
-                    },
-                    text = {
-                        Text(element.fileName)
-                    },
-                    trailing = {
-                        IconButton(onClick = { viewModel.deletePorcupineKeywordCustom(index) }) {
-                            Icon(
-                                imageVector = Icons.Filled.Delete,
-                                contentDescription = MR.strings.defaultText
-                            )
-                        }
-                    }
-                )
-
-                if (element.enabled) {
-                    //sensitivity of porcupine
-                    SliderListItem(
-                        modifier = Modifier.padding(horizontal = 12.dp),
-                        text = MR.strings.sensitivity,
-                        value = element.sensitivity,
-                        onValueChange = { sensitivity -> viewModel.updateWakeWordPorcupineKeywordCustomSensitivity(index, sensitivity) }
-                    )
+            CustomKeywordListItem(
+                element = element,
+                onClick = {
+                    viewModel.clickPorcupineKeywordCustom(index)
+                },
+                onToggle = { enabled ->
+                    viewModel.togglePorcupineKeywordCustom(index, enabled)
+                },
+                onDelete = {
+                    viewModel.deletePorcupineKeywordCustom(index)
+                },
+                onUpdateSensitivity = { sensitivity ->
+                    viewModel.updateWakeWordPorcupineKeywordCustomSensitivity(index, sensitivity)
                 }
+            )
 
-                CustomDivider()
-            }
-        )
+            CustomDivider()
+
+        }
+
+        val optionsRemoved by viewModel.wakeWordPorcupineKeywordCustomOptionsRemoved.collectAsState()
+        optionsRemoved.forEachIndexed { index, element ->
+
+            CustomKeywordDeletedListItem(
+                element = element,
+                onUndo = { viewModel.undoWakeWordPorcupineCustomKeywordDeleted(index) }
+            )
+
+            CustomDivider()
+
+        }
+
     }
 
+}
+
+@Composable
+private fun CustomKeywordListItem(
+    element: PorcupineCustomKeyword,
+    onClick: () -> Unit,
+    onToggle: (enabled: Boolean) -> Unit,
+    onDelete: () -> Unit,
+    onUpdateSensitivity: (sensitivity: Float) -> Unit,
+) {
+    ListElement(
+        modifier = Modifier.clickable(onClick = onClick),
+        icon = {
+            Checkbox(
+                checked = element.enabled,
+                onCheckedChange = onToggle
+            )
+        },
+        text = {
+            Text(element.fileName)
+        },
+        trailing = {
+            IconButton(onClick = onDelete) {
+                Icon(
+                    imageVector = Icons.Filled.Delete,
+                    contentDescription = MR.strings.defaultText
+                )
+            }
+        }
+    )
+
+    if (element.enabled) {
+        //sensitivity of porcupine
+        SliderListItem(
+            modifier = Modifier.padding(horizontal = 12.dp),
+            text = MR.strings.sensitivity,
+            value = element.sensitivity,
+            onValueChange = onUpdateSensitivity
+        )
+    }
+}
+
+@Composable
+private fun CustomKeywordDeletedListItem(
+    element: PorcupineCustomKeyword,
+    onUndo: () -> Unit,
+) {
+    ListElement(
+        text = {
+            Text(
+                modifier = Modifier.padding(start = 8.dp),
+                text = element.fileName
+            )
+        },
+        trailing = {
+            IconButton(onClick = onUndo) {
+                Icon(
+                    imageVector = Icons.Filled.Block,
+                    contentDescription = MR.strings.defaultText
+                )
+            }
+        }
+    )
 }
 
 /**
