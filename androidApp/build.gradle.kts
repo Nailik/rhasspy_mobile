@@ -159,6 +159,7 @@ dependencies {
 
     androidTestImplementation(project(":MultiPlatformLibrary"))
     androidTestImplementation(AndroidX.Test.runner)
+    androidTestImplementation(AndroidX.Test.rules)
     androidTestUtil(AndroidX.Test.orchestrator)
     androidTestImplementation(Kotlin.test)
     androidTestImplementation(Kotlin.Test.junit)

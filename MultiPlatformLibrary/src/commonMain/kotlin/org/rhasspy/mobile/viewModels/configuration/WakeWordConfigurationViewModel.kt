@@ -10,12 +10,12 @@ import org.rhasspy.mobile.nativeutils.openLink
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 
-data class PorcupineCustomKeywordUi(
-    val keyword: PorcupineCustomKeyword,
-    val deleted: Boolean = false
-)
-
 class WakeWordConfigurationViewModel : ViewModel() {
+
+    data class PorcupineCustomKeywordUi(
+        val keyword: PorcupineCustomKeyword,
+        val deleted: Boolean = false
+    )
 
     //unsaved data
     private val _wakeWordOption = MutableStateFlow(ConfigurationSettings.wakeWordOption.value)
@@ -188,7 +188,7 @@ class WakeWordConfigurationViewModel : ViewModel() {
         ConfigurationSettings.wakeWordPorcupineAccessToken.value = _wakeWordPorcupineAccessToken.value
         ConfigurationSettings.wakeWordPorcupineKeywordDefaultOptions.value = _wakeWordPorcupineKeywordDefaultOptions.value
         ConfigurationSettings.wakeWordPorcupineKeywordCustomOptions.value = _wakeWordPorcupineKeywordCustomOptions.value
-            .filter { it.deleted }.map { it.keyword }.toSet()
+            .filter { !it.deleted }.map { it.keyword }.toSet()
         ConfigurationSettings.wakeWordPorcupineLanguage.value = _wakeWordPorcupineLanguage.value
         ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.value = _wakeWordPorcupineSensitivity.value
 

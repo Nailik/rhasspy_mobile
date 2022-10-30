@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.combinedTestTag
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
@@ -48,12 +49,14 @@ fun PorcupineKeywordCustomScreen(viewModel: WakeWordConfigurationViewModel) {
                     if (element.deleted) {
                         //small item to be deleted
                         CustomKeywordDeletedListItem(
+                            modifier = Modifier.testTag(element.keyword.fileName),
                             keyword = element.keyword,
                             onUndo = { viewModel.undoWakeWordPorcupineCustomKeywordDeleted(index) }
                         )
                     } else {
                         //normal item
                         CustomKeywordListItem(
+                            modifier = Modifier.testTag(element.keyword.fileName),
                             keyword = element.keyword,
                             onClick = {
                                 viewModel.clickPorcupineKeywordCustom(index)
@@ -87,6 +90,7 @@ fun PorcupineKeywordCustomScreen(viewModel: WakeWordConfigurationViewModel) {
  */
 @Composable
 private fun CustomKeywordListItem(
+    modifier: Modifier = Modifier,
     keyword: PorcupineCustomKeyword,
     onClick: () -> Unit,
     onToggle: (enabled: Boolean) -> Unit,
@@ -94,7 +98,7 @@ private fun CustomKeywordListItem(
     onUpdateSensitivity: (sensitivity: Float) -> Unit,
 ) {
     ListElement(
-        modifier = Modifier.clickable(onClick = onClick),
+        modifier = modifier.clickable(onClick = onClick),
         icon = {
             Checkbox(
                 checked = keyword.enabled,
@@ -105,7 +109,9 @@ private fun CustomKeywordListItem(
             Text(keyword.fileName)
         },
         trailing = {
-            IconButton(onClick = onDelete) {
+            IconButton(
+                modifier = Modifier.combinedTestTag(keyword.fileName, TestTag.Delete),
+                onClick = onDelete) {
                 Icon(
                     imageVector = Icons.Filled.Delete,
                     contentDescription = MR.strings.defaultText
@@ -131,10 +137,12 @@ private fun CustomKeywordListItem(
  */
 @Composable
 private fun CustomKeywordDeletedListItem(
+    modifier: Modifier = Modifier,
     keyword: PorcupineCustomKeyword,
     onUndo: () -> Unit,
 ) {
     ListElement(
+        modifier = modifier,
         text = {
             Text(
                 modifier = Modifier.padding(start = 8.dp),
@@ -142,7 +150,9 @@ private fun CustomKeywordDeletedListItem(
             )
         },
         trailing = {
-            IconButton(onClick = onUndo) {
+            IconButton(
+                modifier = Modifier.combinedTestTag(keyword.fileName, TestTag.Undo),
+                onClick = onUndo) {
                 Icon(
                     imageVector = Icons.Filled.Block,
                     contentDescription = MR.strings.defaultText
@@ -165,17 +175,21 @@ private fun CustomKeywordsActionButtons(modifier: Modifier, viewModel: WakeWordC
     ) {
 
         FilledTonalButton(
+            modifier = Modifier.testTag(TestTag.Download),
             onClick = viewModel::downloadCustomPorcupineKeyword,
             content = {
                 Icon(
                     imageVector = Icons.Filled.Download,
                     contentDescription = MR.strings.fileOpen
                 )
-                Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+                Spacer(
+                    modifier = Modifier.size(ButtonDefaults.IconSpacing)
+                )
                 Text(MR.strings.download)
             })
 
         FilledTonalButton(
+            modifier = Modifier.testTag(TestTag.SelectFile),
             onClick = viewModel::addCustomPorcupineKeyword,
             content = {
                 Icon(

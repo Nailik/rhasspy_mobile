@@ -9,10 +9,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.data.PorcupineLanguageOptions
 import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
 import kotlin.test.assertTrue
 

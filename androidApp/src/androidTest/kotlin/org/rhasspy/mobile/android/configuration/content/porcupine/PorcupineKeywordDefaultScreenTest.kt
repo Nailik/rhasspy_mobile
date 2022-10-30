@@ -10,6 +10,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
+import org.rhasspy.mobile.android.onNodeWithCombinedTag
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.data.PorcupineKeywordOptions
 import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
@@ -85,7 +86,7 @@ class PorcupineKeywordDefaultScreenTest {
         //americano is selected
         composeTestRule.onNodeWithTag(PorcupineKeywordOptions.AMERICANO).onChildAt(0).assertIsOn()
         //sensitivity is shown
-        composeTestRule.onNodeWithTag(PorcupineKeywordOptions.AMERICANO, TestTag.Sensitivity).assertIsDisplayed()
+        composeTestRule.onNodeWithCombinedTag(PorcupineKeywordOptions.AMERICANO, TestTag.Sensitivity).assertIsDisplayed()
 
         //user clicks porcupine
 
@@ -97,7 +98,7 @@ class PorcupineKeywordDefaultScreenTest {
         //porcupine is selected
         composeTestRule.onNodeWithTag(PorcupineKeywordOptions.PORCUPINE).onChildAt(0).assertIsOn()
         //sensitivity is shown
-        composeTestRule.onNodeWithTag(PorcupineKeywordOptions.PORCUPINE, TestTag.Sensitivity).assertIsDisplayed()
+        composeTestRule.onNodeWithCombinedTag(PorcupineKeywordOptions.PORCUPINE, TestTag.Sensitivity).assertIsDisplayed()
 
         //user clicks porcupine
         composeTestRule
@@ -108,7 +109,7 @@ class PorcupineKeywordDefaultScreenTest {
         //porcupine is unselected
         composeTestRule.onNodeWithTag(PorcupineKeywordOptions.PORCUPINE).onChildAt(0).assertIsOff()
         //sensitivity is not shown
-        composeTestRule.onNodeWithTag(PorcupineKeywordOptions.PORCUPINE, TestTag.Sensitivity).assertDoesNotExist()
+        composeTestRule.onNodeWithCombinedTag(PorcupineKeywordOptions.PORCUPINE, TestTag.Sensitivity).assertDoesNotExist()
 
         //viewModel save is invoked
         viewModel.save()
