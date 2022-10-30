@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.combinedTestTag
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.CustomDivider
 import org.rhasspy.mobile.android.utils.ListElement
@@ -35,6 +36,7 @@ fun PorcupineKeywordDefaultScreen(viewModel: WakeWordConfigurationViewModel) {
     ) {
         items(
             count = options.size,
+            key = { index -> options.elementAt(index).option },
             itemContent = { index ->
 
                 val element = options.elementAt(index)
@@ -64,7 +66,9 @@ private fun DefaultKeywordListItem(
     onUpdateSensitivity: (sensitivity: Float) -> Unit,
 ) {
     ListElement(
-        modifier = Modifier.clickable(onClick = onClick),
+        modifier = Modifier
+            .testTag(dataEnum = element.option)
+            .clickable(onClick = onClick),
         icon = {
             Checkbox(
                 checked = element.enabled,
@@ -79,7 +83,9 @@ private fun DefaultKeywordListItem(
     if (element.enabled) {
         //sensitivity of porcupine
         SliderListItem(
-            modifier = Modifier.padding(horizontal = 12.dp),
+            modifier = Modifier
+                .combinedTestTag(element.option, TestTag.Sensitivity)
+                .padding(horizontal = 12.dp),
             text = MR.strings.sensitivity,
             value = element.sensitivity,
             onValueChange = onUpdateSensitivity

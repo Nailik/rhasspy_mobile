@@ -13,6 +13,11 @@ fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     useUnmergedTree: Boolean = false
 ): SemanticsNodeInteraction = onNode(hasTestTag(testTag.name), useUnmergedTree)
 
+fun SemanticsNodeInteractionsProvider.onNodeWithTag(
+    testTag: Enum<*>, tag: TestTag,
+    useUnmergedTree: Boolean = false
+): SemanticsNodeInteraction = onNode(hasTestTag("${testTag.name}${tag.name}"), useUnmergedTree)
+
 fun hasTestTag(testTag: Enum<*>): SemanticsMatcher =
     SemanticsMatcher.expectValue(SemanticsProperties.TestTag, testTag.name)
 

@@ -71,8 +71,15 @@ enum class TestTag {
 
 
     TabDefault,
-    TabCustom
+    TabCustom,
+    Sensitivity
 }
+
+fun Modifier.combinedTestTag(dataEnum: DataEnum<*>, tag: TestTag) = semantics(
+    properties = {
+        testTag = "${dataEnum.name}${tag.name}"
+    }
+)
 
 fun Modifier.testTag(enum: Enum<*>) = semantics(
     properties = {
