@@ -11,7 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.permissions.RequiresOverlayPermission
-import org.rhasspy.mobile.android.utils.PageContent
+import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.viewModels.settings.MicrophoneOverlaySettingsViewModel
@@ -20,7 +20,7 @@ import org.rhasspy.mobile.viewModels.settings.MicrophoneOverlaySettingsViewModel
 @Composable
 fun MicrophoneOverlaySettingsContent(viewModel: MicrophoneOverlaySettingsViewModel = viewModel()) {
 
-    PageContent(MR.strings.microphoneOverlay) {
+    SettingsScreenItemContent(MR.strings.microphoneOverlay) {
 
         Column {
 

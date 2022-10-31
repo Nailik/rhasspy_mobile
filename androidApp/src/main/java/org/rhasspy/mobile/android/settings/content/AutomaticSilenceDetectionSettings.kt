@@ -22,7 +22,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
+import org.rhasspy.mobile.android.utils.Icon
+import org.rhasspy.mobile.android.utils.SwitchListItem
+import org.rhasspy.mobile.android.utils.Text
+import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.viewModels.settings.AutomaticSilenceDetectionSettingsViewModel
 
 
@@ -30,7 +34,7 @@ import org.rhasspy.mobile.viewModels.settings.AutomaticSilenceDetectionSettingsV
 @Composable
 fun AutomaticSilenceDetectionSettingsContent(viewModel: AutomaticSilenceDetectionSettingsViewModel = viewModel()) {
 
-    PageContent(MR.strings.automaticSilenceDetection) {
+    SettingsScreenItemContent(MR.strings.automaticSilenceDetection) {
 
         //toggle
         SwitchListItem(

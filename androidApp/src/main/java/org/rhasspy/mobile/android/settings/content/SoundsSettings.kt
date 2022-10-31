@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.viewModels.settings.SoundsSettingsViewModel
 
@@ -19,7 +20,7 @@ import org.rhasspy.mobile.viewModels.settings.SoundsSettingsViewModel
 @Composable
 fun SoundsSettingsContent(viewModel: SoundsSettingsViewModel = viewModel()) {
 
-    PageContent(MR.strings.sounds) {
+    SettingsScreenItemContent(MR.strings.sounds) {
 
         Column {
 

@@ -405,20 +405,6 @@ fun DropDownStringList(
     }
 }
 
-@Composable
-fun PageContent(
-    text: StringResource,
-    expandedContent: @Composable () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .padding(bottom = 8.dp)
-            .verticalScroll(rememberScrollState())
-    ) {
-        Text(text, style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(horizontal = 16.dp))
-        expandedContent()
-    }
-}
 
 
 @Composable

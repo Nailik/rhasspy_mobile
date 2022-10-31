@@ -18,6 +18,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.content.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
+import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.viewModels.ConfigurationScreenViewModel

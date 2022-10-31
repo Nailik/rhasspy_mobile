@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.rhasspy.mobile.android.configuration.addConfigurationScreens
+import org.rhasspy.mobile.android.settings.addSettingsScreen
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.android.theme.getIsDarkTheme
 
@@ -52,10 +53,8 @@ fun MainNavigation() {
                         composable(MainScreens.BoomBarScreen.name) {
                             BottomBarScreensNavigation()
                         }
-                        composable(MainScreens.AboutScreen.name) {
-                            AboutScreen()
-                        }
                         addConfigurationScreens()
+                        addSettingsScreen()
                     }
                 }
             }
