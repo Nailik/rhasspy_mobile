@@ -120,7 +120,7 @@ private fun AppBar() {
         BottomBarScreens.LogScreen -> MR.strings.log
     }
 
-    MediumTopAppBar(
+    TopAppBar(
         title = { Text(title) }
     )
 
