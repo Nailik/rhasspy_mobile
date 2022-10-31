@@ -43,7 +43,6 @@ class ConfigurationScreenTest {
         composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId).assertExists()
         //each item exists and navigates
         ConfigurationScreens.values().forEach { tag ->
-            //navigate
             composeTestRule.onNodeWithTag(tag).performScrollTo().performClick()
             //content exists
             composeTestRule.onNodeWithTag(tag).assertExists()

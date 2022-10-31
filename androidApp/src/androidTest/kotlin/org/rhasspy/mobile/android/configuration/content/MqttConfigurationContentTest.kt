@@ -121,15 +121,19 @@ class MqttConfigurationContentTest {
         assertTrue { viewModel.isMqttEnabled.value }
         //host is changed
         composeTestRule.onNodeWithTag(TestTag.Host).performScrollTo().performClick()
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Host, true).onChild().performTextReplacement(textInputTestHost)
         //port is changed
         composeTestRule.onNodeWithTag(TestTag.Port).performScrollTo().performClick()
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Port, true).onChild().performTextReplacement(textInputTestPort)
         //username is changed
         composeTestRule.onNodeWithTag(TestTag.UserName).performScrollTo().performClick()
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.UserName, true).onChild().performTextReplacement(textInputTestUsername)
         //password is changed
         composeTestRule.onNodeWithTag(TestTag.Password).performScrollTo().performClick()
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Password, true).onChild().performTextReplacement(textInputTestPassword)
 
         //user click save
@@ -213,12 +217,15 @@ class MqttConfigurationContentTest {
         assertTrue { viewModel.isMqttEnabled.value }
         //timeout is changed
         composeTestRule.onNodeWithTag(TestTag.ConnectionTimeout).performScrollTo().performClick()
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.ConnectionTimeout, true).onChild().performTextReplacement(textInputTestConnectionTimeout)
         //keepAliveInterval is changed
         composeTestRule.onNodeWithTag(TestTag.KeepAliveInterval).performScrollTo().performClick()
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.KeepAliveInterval, true).onChild().performTextReplacement(textInputTestKeepAliveInterval)
         //retry interval is changed
         composeTestRule.onNodeWithTag(TestTag.RetryInterval).performScrollTo().performClick()
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.RetryInterval, true).onChild().performTextReplacement(textInputTestRetryInterval)
 
         //user click save

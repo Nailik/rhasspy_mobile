@@ -52,6 +52,7 @@ class MicrophonePermissionTest {
         else -> ".*packageinstaller"
     }
 
+    private val indexOffset = 1
     private val device: UiDevice = UiDevice.getInstance(getInstrumentation())
 
     private val appName = "Rhasspy Mobile"
@@ -393,11 +394,11 @@ class MicrophonePermissionTest {
         //click microphone permission
         if (Build.VERSION.SDK_INT < 29) {
             device.findObject(UiSelector().resourceIdMatches(systemSettingsListRegex))
-                .getChild(UiSelector().clickable(true).index(0))
+                .getChild(UiSelector().clickable(true).index(indexOffset))
                 .click()
         } else {
             device.findObject(UiSelector().resourceIdMatches(systemSettingsListRegex))
-                .getChild(UiSelector().index(if (Build.VERSION.SDK_INT == 29) 3 else 4))
+                .getChild(UiSelector().index((if (Build.VERSION.SDK_INT == 29) 3 else 4) + indexOffset))
                 .clickAndWaitForNewWindow()
             if (Build.VERSION.SDK_INT < 30) {
                 device.findObject(UiSelector().resourceId(radioBtnAllow)).click()

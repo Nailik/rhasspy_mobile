@@ -23,9 +23,9 @@ class WakeWordConfigurationViewModel : ViewModel() {
     private val _wakeWordPorcupineKeywordDefaultOptions = MutableStateFlow(ConfigurationSettings.wakeWordPorcupineKeywordDefaultOptions.value)
     private val _wakeWordPorcupineKeywordCustomOptions = MutableStateFlow(ConfigurationSettings.wakeWordPorcupineKeywordCustomOptions.value
         .map { PorcupineCustomKeywordUi(it) })
+    private val _wakeWordPorcupineKeywordCustomOptionsNormal = _wakeWordPorcupineKeywordCustomOptions.mapReadonlyState { it.map { it.keyword }.toSet() }
 
     private val _wakeWordPorcupineLanguage = MutableStateFlow(ConfigurationSettings.wakeWordPorcupineLanguage.value)
-    private val _wakeWordPorcupineSensitivity = MutableStateFlow(ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.value)
 
     //unsaved ui data
     val wakeWordOption = _wakeWordOption.readOnly
@@ -43,9 +43,8 @@ class WakeWordConfigurationViewModel : ViewModel() {
         combineStateNotEquals(_wakeWordOption, ConfigurationSettings.wakeWordOption.data),
         combineStateNotEquals(_wakeWordPorcupineAccessToken, ConfigurationSettings.wakeWordPorcupineAccessToken.data),
         combineStateNotEquals(_wakeWordPorcupineKeywordDefaultOptions, ConfigurationSettings.wakeWordPorcupineKeywordDefaultOptions.data),
-        combineStateNotEquals(_wakeWordPorcupineKeywordCustomOptions, ConfigurationSettings.wakeWordPorcupineKeywordCustomOptions.data),
+        combineStateNotEquals(_wakeWordPorcupineKeywordCustomOptionsNormal, ConfigurationSettings.wakeWordPorcupineKeywordCustomOptions.data),
         combineStateNotEquals(_wakeWordPorcupineLanguage, ConfigurationSettings.wakeWordPorcupineLanguage.data),
-        combineStateNotEquals(_wakeWordPorcupineSensitivity, ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.data)
     )
 
     //for custom wake word
@@ -190,7 +189,6 @@ class WakeWordConfigurationViewModel : ViewModel() {
         ConfigurationSettings.wakeWordPorcupineKeywordCustomOptions.value = _wakeWordPorcupineKeywordCustomOptions.value
             .filter { !it.deleted }.map { it.keyword }.toSet()
         ConfigurationSettings.wakeWordPorcupineLanguage.value = _wakeWordPorcupineLanguage.value
-        ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.value = _wakeWordPorcupineSensitivity.value
 
         filesToDelete.forEach {
             SettingsUtils.removePorcupineFile(it)
@@ -209,7 +207,6 @@ class WakeWordConfigurationViewModel : ViewModel() {
         _wakeWordPorcupineKeywordCustomOptions.value = ConfigurationSettings.wakeWordPorcupineKeywordCustomOptions.value
             .map { PorcupineCustomKeywordUi(it) }
         _wakeWordPorcupineLanguage.value = ConfigurationSettings.wakeWordPorcupineLanguage.value
-        _wakeWordPorcupineSensitivity.value = ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.value
 
         newFiles.forEach {
             SettingsUtils.removePorcupineFile(it)
