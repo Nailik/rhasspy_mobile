@@ -13,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.MR
@@ -80,33 +81,37 @@ fun ConfigurationScreenItemContent(
     }
 
     //appbar, bottomAppBar, content
-    Scaffold(
-        modifier = modifier
-            .fillMaxSize()
-            .testTag(TestTag.ConfigurationScreenItemContent),
-        topBar = {
-            AppBar(
-                title = title,
-                onBackClick = onBackPress
-            )
-        },
-        bottomBar = {
-            BottomAppBar(
-                hasUnsavedChanges = hasUnsavedChangesValue,
-                onSave = onSave,
-                onTest = onTest,
-                onDiscard = onDiscard
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
+
+    Surface(tonalElevation = 1.dp) {
+        Scaffold(
+            modifier = modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-        ) {
-            Content()
+                .testTag(TestTag.ConfigurationScreenItemContent),
+            topBar = {
+                AppBar(
+                    title = title,
+                    onBackClick = onBackPress
+                )
+            },
+            bottomBar = {
+                BottomAppBar(
+                    hasUnsavedChanges = hasUnsavedChangesValue,
+                    onSave = onSave,
+                    onTest = onTest,
+                    onDiscard = onDiscard
+                )
+            }
+        ) { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Content()
+            }
         }
+
     }
 }
 
