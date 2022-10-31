@@ -41,16 +41,7 @@ var mainActionVisible = mutableStateOf(true)
 @Preview
 @Composable
 fun HomeScreen(viewModel: HomeScreenViewModel = viewModel()) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = { AppBar(viewModel) },
-    ) { paddingValues ->
-
-        Surface(Modifier.padding(paddingValues)) {
-            HomeScreenContent(viewModel)
-        }
-
-    }
+    HomeScreenContent(viewModel)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
