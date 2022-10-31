@@ -85,7 +85,7 @@ private fun AppBar() {
 
     TopAppBar(
         title = {
-            Text(MR.strings.wakeWord)
+            Text(MR.strings.porcupineKeyword)
         },
         navigationIcon = {
             IconButton(

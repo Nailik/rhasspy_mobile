@@ -204,4 +204,5 @@
     <string name="download">Herunterladen</string>
     <string name="delete">Löschen</string>
     <string name="active">Aktiv</string>
+    <string name="porcupineKeyword">Porcupine WakeWord</string>
 </resources>

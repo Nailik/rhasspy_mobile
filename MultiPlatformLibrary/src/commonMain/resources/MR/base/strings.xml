@@ -199,6 +199,7 @@
     <string name="download">Download</string>
     <string name="delete">Delete</string>
     <string name="active">Active</string>
+    <string name="porcupineKeyword">Porcupine WakeWord</string>
     <!-- not translatable -->
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>
