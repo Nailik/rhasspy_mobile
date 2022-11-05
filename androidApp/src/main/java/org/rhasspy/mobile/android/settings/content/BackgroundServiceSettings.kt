@@ -1,5 +1,8 @@
 package org.rhasspy.mobile.android.settings.content
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BatteryAlert
@@ -44,22 +47,31 @@ fun BackgroundServiceSettingsContent(viewModel: BackgroundServiceSettingsViewMod
             }
         }
 
-        //background battery optimization on/off
-        ListElement(
-            modifier = Modifier.clickable(onClick = viewModel::onDisableBatteryOptimization),
-            text = {
-                Text(MR.strings.batteryOptimization)
-            },
-            secondaryText = {
-                Text(viewModel.isBatteryOptimizationDisabled.value.toText())
-            },
-            trailing = {
-                Icon(
-                    imageVector = Icons.Filled.BatteryAlert,
-                    contentDescription = MR.strings.batteryOptimization
-                )
-            }
-        )
+        //visibility of http endpoint settings
+        AnimatedVisibility(
+            enter = expandVertically(),
+            exit = shrinkVertically(),
+            visible = viewModel.isBatteryOptimizationVisible.collectAsState().value
+        ) {
+
+            //background battery optimization on/off
+            ListElement(
+                modifier = Modifier.clickable(onClick = viewModel::onDisableBatteryOptimization),
+                text = {
+                    Text(MR.strings.batteryOptimization)
+                },
+                secondaryText = {
+                    Text(viewModel.isBatteryOptimizationDisabled.collectAsState().value.toText())
+                },
+                trailing = {
+                    Icon(
+                        imageVector = Icons.Filled.BatteryAlert,
+                        contentDescription = MR.strings.batteryOptimization
+                    )
+                }
+            )
+
+        }
 
     }
 

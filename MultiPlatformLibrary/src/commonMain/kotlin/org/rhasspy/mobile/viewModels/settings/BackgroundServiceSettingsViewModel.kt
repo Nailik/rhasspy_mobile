@@ -9,42 +9,24 @@ import org.rhasspy.mobile.settings.AppSettings
 class BackgroundServiceSettingsViewModel : ViewModel() {
 
     //unsaved data
-    private val _isBackgroundServiceEnabled = MutableStateFlow(AppSettings.isBackgroundServiceEnabled.value)
+    private var _isBatteryOptimizationDisabled = MutableStateFlow(BatteryOptimization.isBatteryOptimizationDisabled())
 
     //unsaved ui data
-    val isBackgroundServiceEnabled = _isBackgroundServiceEnabled.readOnly
-    private var _isBatteryOptimizationDisabled = MutableStateFlow(BatteryOptimization.isBatteryOptimizationDisabled())
+    val isBackgroundServiceEnabled = AppSettings.isBackgroundServiceEnabled.data
+    val isBatteryOptimizationVisible = isBackgroundServiceEnabled
     val isBatteryOptimizationDisabled = _isBatteryOptimizationDisabled.readOnly
 
-    //set new intent recognition option
+    //set new intent background option
     fun toggleBackgroundServiceEnabled(enabled: Boolean) {
-        _isBackgroundServiceEnabled.value = enabled
+        AppSettings.isBackgroundServiceEnabled.value = enabled
     }
 
-    /**
-     * update battery optimization enabled when resume
-     */
+    //update battery optimization enabled when resume
     fun onResume() {
         _isBatteryOptimizationDisabled.value = BatteryOptimization.isBatteryOptimizationDisabled()
     }
 
-    /**
-     * open optimization settings to disable battery optimization
-     */
+    //open optimization settings to disable battery optimization
     fun onDisableBatteryOptimization() = BatteryOptimization.openOptimizationSettings()
-
-    /**
-     * save data configuration
-     */
-    fun save() {
-        AppSettings.isBackgroundServiceEnabled.value = _isBackgroundServiceEnabled.value
-    }
-
-    /**
-     * test unsaved data configuration
-     */
-    fun test() {
-
-    }
 
 }
