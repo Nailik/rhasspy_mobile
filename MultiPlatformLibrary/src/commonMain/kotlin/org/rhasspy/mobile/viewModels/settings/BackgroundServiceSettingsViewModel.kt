@@ -6,6 +6,12 @@ import org.rhasspy.mobile.nativeutils.BatteryOptimization
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.AppSettings
 
+/**
+ * background service settings
+ *
+ * enabled on/off
+ * deactivate battery optimization
+ */
 class BackgroundServiceSettingsViewModel : ViewModel() {
 
     //unsaved data

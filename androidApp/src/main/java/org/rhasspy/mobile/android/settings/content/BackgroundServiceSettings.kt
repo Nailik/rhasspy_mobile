@@ -13,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.testTag
@@ -35,6 +36,7 @@ fun BackgroundServiceSettingsContent(viewModel: BackgroundServiceSettingsViewMod
 
         //on oFF
         SwitchListItem(
+            modifier = Modifier.testTag(TestTag.EnabledSwitch),
             text = MR.strings.enableBackground,
             isChecked = viewModel.isBackgroundServiceEnabled.collectAsState().value,
             onCheckedChange = viewModel::toggleBackgroundServiceEnabled
@@ -56,19 +58,21 @@ fun BackgroundServiceSettingsContent(viewModel: BackgroundServiceSettingsViewMod
 
             //background battery optimization on/off
             ListElement(
-                modifier = Modifier.clickable(onClick = viewModel::onDisableBatteryOptimization),
+                modifier = Modifier
+                    .clickable(onClick = viewModel::onDisableBatteryOptimization)
+                    .testTag(TestTag.BatteryOptimization),
+                icon = {
+                    Icon(
+                        imageVector = Icons.Filled.BatteryAlert,
+                        contentDescription = MR.strings.batteryOptimization
+                    )
+                },
                 text = {
                     Text(MR.strings.batteryOptimization)
                 },
                 secondaryText = {
                     Text(viewModel.isBatteryOptimizationDisabled.collectAsState().value.toText())
                 },
-                trailing = {
-                    Icon(
-                        imageVector = Icons.Filled.BatteryAlert,
-                        contentDescription = MR.strings.batteryOptimization
-                    )
-                }
             )
 
         }
