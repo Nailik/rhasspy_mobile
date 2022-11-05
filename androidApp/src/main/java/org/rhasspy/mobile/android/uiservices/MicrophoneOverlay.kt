@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Looper
 import android.view.Gravity
 import android.view.WindowManager
+import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -65,6 +66,7 @@ object MicrophoneOverlay {
                     containerColor = Color.Transparent
                 ) { paddingValues ->
                     CompositionLocalProvider(
+                        LocalActivityResultRegistryOwner provides AndroidApplication.Instance.currentActivity!!,
                         LocalSnackbarHostState provides snackbarHostState
                     ) {
                         val size = 96.dp
@@ -113,8 +115,8 @@ object MicrophoneOverlay {
 
         lifecycleOwner.performRestore(null)
         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
-        ViewTreeLifecycleOwner.set(view, lifecycleOwner)
         view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
+        ViewTreeLifecycleOwner.set(view, lifecycleOwner)
 
         val viewModelStore = ViewModelStore()
         ViewTreeViewModelStoreOwner.set(view) { viewModelStore }
