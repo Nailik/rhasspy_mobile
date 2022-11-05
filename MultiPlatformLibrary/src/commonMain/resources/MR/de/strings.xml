@@ -205,4 +205,7 @@
     <string name="delete">Löschen</string>
     <string name="active">Aktiv</string>
     <string name="porcupineKeyword">Porcupine WakeWord</string>
+    <string name="small">Klein</string>
+    <string name="medium">Mittel</string>
+    <string name="big">Groß</string>
 </resources>

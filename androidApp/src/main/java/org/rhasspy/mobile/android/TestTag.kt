@@ -23,6 +23,7 @@ enum class TestTag {
     BottomAppBarTest,
     DialogManagementOptions,
     LibrariesContainer,
+    MicrophoneOverlaySizeOptions,
 
     AudioPlayingOptions,
     Endpoint,

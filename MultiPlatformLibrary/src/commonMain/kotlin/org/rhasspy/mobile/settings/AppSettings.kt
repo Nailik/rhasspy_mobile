@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.settings
 
 import org.rhasspy.mobile.data.LanguageOptions
+import org.rhasspy.mobile.data.MicrophoneOverlaySizeOptions
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.logger.LogLevel
 import org.rhasspy.mobile.settings.sounds.SoundOptions
@@ -15,7 +16,7 @@ internal object AppSettings {
     val automaticSilenceDetectionTime = Setting(SettingsEnum.AutomaticSilenceDetectionTime, 2000)
 
     val isBackgroundServiceEnabled = Setting(SettingsEnum.BackgroundEnabled, false)
-    val isMicrophoneOverlayEnabled = Setting(SettingsEnum.MicrophoneOverlay, true)
+    val microphoneOverlaySizeOption = Setting(SettingsEnum.MicrophoneOverlaySize, MicrophoneOverlaySizeOptions.Disabled)
     val isMicrophoneOverlayWhileAppEnabled = Setting(SettingsEnum.MicrophoneOverlayWhileApp, false)
     val microphoneOverlayPositionX = Setting(SettingsEnum.MicrophoneOverlayPositionX, 0)
     val microphoneOverlayPositionY = Setting(SettingsEnum.MicrophoneOverlayPositionY, 0)

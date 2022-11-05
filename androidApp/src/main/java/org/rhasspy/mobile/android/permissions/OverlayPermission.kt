@@ -25,11 +25,12 @@ import org.rhasspy.mobile.nativeutils.OverlayPermission
  * result can be invoked multiple times (from system dialog and afterwards from snackbar)
  */
 @Composable
-fun RequiresOverlayPermission(
-    onClick: () -> Unit,
-    content: @Composable (onClick: () -> Unit) -> Unit
+fun <T : Any> RequiresOverlayPermission(
+    onClick: (data: T) -> Unit,
+    content: @Composable (onClick: (data: T) -> Unit) -> Unit
 ) {
 
+    lateinit var currentData: T
     var openRequestPermissionDialog by remember { mutableStateOf(false) }
 
     if (openRequestPermissionDialog) {
@@ -38,19 +39,20 @@ fun RequiresOverlayPermission(
             openRequestPermissionDialog = false
             //when user clicked yes redirect him to settings
             if (it) {
-                OverlayPermission.requestPermission(onClick)
+                OverlayPermission.requestPermission { onClick.invoke(currentData) }
             }
         }
     }
 
-    content {
+    content { data ->
+        currentData = data
         //check if granted or not
         if (!OverlayPermission.granted.value) {
             //show dialog that permission is necessary
             openRequestPermissionDialog = true
         } else {
             //permission granted
-            onClick.invoke()
+            onClick.invoke(data)
         }
     }
 

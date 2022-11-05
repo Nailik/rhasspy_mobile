@@ -10,11 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.permissions.RequiresOverlayPermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.utils.SwitchListItem
+import org.rhasspy.mobile.data.MicrophoneOverlaySizeOptions
 import org.rhasspy.mobile.viewModels.settings.MicrophoneOverlaySettingsViewModel
 
 /**
@@ -34,17 +37,24 @@ fun MicrophoneOverlaySettingsContent(viewModel: MicrophoneOverlaySettingsViewMod
         Column {
 
             //overlay permission request
-            RequiresOverlayPermission({ viewModel.toggleMicrophoneOverlayEnabled(true) }) { onClick ->
+            RequiresOverlayPermission({ option -> viewModel.selectMicrophoneOverlayOptionSize(option) }) { onClick ->
 
-                //overlay switch on/off
-                SwitchListItem(
-                    text = MR.strings.showMicrophoneOverlay,
-                    secondaryText = MR.strings.showMicrophoneOverlayInfo,
-                    isChecked = viewModel.isMicrophoneOverlayEnabled.collectAsState().value,
-                    onCheckedChange = { if (it) onClick.invoke() else viewModel.toggleMicrophoneOverlayEnabled(false) }
+                //drop down to select option
+                RadioButtonsEnumSelection(
+                    modifier = Modifier.testTag(TestTag.MicrophoneOverlaySizeOptions),
+                    selected = viewModel.microphoneOverlaySizeOption.collectAsState().value,
+                    onSelect = { option ->
+                        if (option != MicrophoneOverlaySizeOptions.Disabled) {
+                            onClick.invoke(option)
+                        } else {
+                            viewModel.selectMicrophoneOverlayOptionSize(option)
+                        }
+                    },
+                    values = viewModel.microphoneOverlaySizeOptions
                 )
 
             }
+
 
             //visibility of overlay while app
             AnimatedVisibility(

@@ -215,4 +215,7 @@
     <string name="picovoice">Picovoice</string>
     <string name="porcupine">Porcupine</string>
     <string name="terminator">Terminator</string>
+    <string name="small">Small</string>
+    <string name="medium">Medium</string>
+    <string name="big">Big</string>
 </resources>

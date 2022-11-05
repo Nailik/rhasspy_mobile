@@ -3,6 +3,7 @@ package org.rhasspy.mobile.viewModels
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.combineState
+import org.rhasspy.mobile.data.MicrophoneOverlaySizeOptions
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.settings.AppSettings
 import kotlin.math.roundToInt
@@ -11,11 +12,11 @@ class MicrophoneOverlayViewModel : ViewModel() {
 
     val shouldOverlayBeShown = combineState(
         OverlayPermission.granted,
-        AppSettings.isMicrophoneOverlayEnabled.data,
+        AppSettings.microphoneOverlaySizeOption.data,
         Application.Instance.isAppInBackground,
         AppSettings.isMicrophoneOverlayWhileAppEnabled.data
-    ) { permissionGranted, isMicrophoneOverlayEnabled, isAppInBackground, isMicrophoneOverlayWhileApp ->
-        permissionGranted && isMicrophoneOverlayEnabled && (isAppInBackground || isMicrophoneOverlayWhileApp)
+    ) { permissionGranted, microphoneOverlaySizeOption, isAppInBackground, isMicrophoneOverlayWhileApp ->
+        permissionGranted && microphoneOverlaySizeOption != MicrophoneOverlaySizeOptions.Disabled && (isAppInBackground || isMicrophoneOverlayWhileApp)
     }
 
     val microphoneOverlayPositionX: Int get() = AppSettings.microphoneOverlayPositionX.value
