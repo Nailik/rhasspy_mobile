@@ -47,7 +47,7 @@ fun BackgroundServiceSettingsContent(viewModel: BackgroundServiceSettingsViewMod
             }
         }
 
-        //visibility of http endpoint settings
+        //visibility of battery optimization
         AnimatedVisibility(
             enter = expandVertically(),
             exit = shrinkVertically(),
