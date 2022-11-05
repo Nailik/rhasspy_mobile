@@ -27,7 +27,6 @@ enum class SettingsScreens {
     BackgroundServiceSettings,
     MicrophoneOverlaySettings,
     WakeWordIndicationSettings,
-    SoundsSettings,
     DeviceSettings,
     AutomaticSilenceDetectionSettings,
     LogSettings,
@@ -59,9 +58,6 @@ fun SettingsScreen(viewModel: SettingsScreenViewModel = viewModel()) {
         CustomDivider()
 
         WakeWordIndication(viewModel)
-        CustomDivider()
-
-        Sounds()
         CustomDivider()
 
         Device()
@@ -109,10 +105,6 @@ fun NavGraphBuilder.addSettingsScreen() {
 
     composable(SettingsScreens.WakeWordIndicationSettings.name) {
         WakeWordIndicationSettingsContent()
-    }
-
-    composable(SettingsScreens.SoundsSettings.name) {
-        SoundsSettingsContent()
     }
 
     composable(SettingsScreens.DeviceSettings.name) {
@@ -206,17 +198,6 @@ private fun WakeWordIndication(viewModel: SettingsScreenViewModel) {
         text = MR.strings.wakeWordIndication,
         secondaryText = stateText,
         screen = SettingsScreens.WakeWordIndicationSettings
-    )
-
-}
-
-@Composable
-private fun Sounds() {
-
-    SettingsListItem(
-        text = MR.strings.sounds,
-        secondaryText = MR.strings.soundsText,
-        screen = SettingsScreens.SoundsSettings
     )
 
 }

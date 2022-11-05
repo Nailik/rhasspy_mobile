@@ -9,21 +9,7 @@ import org.rhasspy.mobile.settings.AppSettings
 class SettingsScreenViewModel : ViewModel() {
 
     val currentLanguage = AppSettings.languageOption.data
-    val languageOptions = LanguageOptions::values
-
-    fun selectLanguage(option: LanguageOptions) {
-        StringDesc.localeType = StringDesc.LocaleType.Custom(option.code)
-        AppSettings.languageOption.value = option
-    }
-
-
     val currentTheme = AppSettings.themeOption.data
-    val themeOptions = ThemeOptions::values
-
-    fun selectTheme(option: ThemeOptions) {
-        AppSettings.themeOption.value = option
-    }
-
     val isBackgroundEnabled = AppSettings.isBackgroundServiceEnabled.data
     val isMicrophoneOverlayEnabled = AppSettings.isMicrophoneOverlayEnabled.data
     val isWakeWordSoundIndicationEnabled = AppSettings.isWakeWordSoundIndicationEnabled.data
