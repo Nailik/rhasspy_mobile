@@ -16,9 +16,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.about.ChangelogDialogButton
 import org.rhasspy.mobile.android.about.DataPrivacyDialogButton
 import org.rhasspy.mobile.android.about.LibrariesContainer
+import org.rhasspy.mobile.android.settings.SettingsScreens
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.android.utils.translate
@@ -31,7 +34,7 @@ import org.rhasspy.mobile.viewModels.AboutScreenViewModel
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AboutScreen(viewModel: AboutScreenViewModel = viewModel()) {
-    Surface {
+    Surface(modifier = Modifier.testTag(SettingsScreens.AboutSettings)) {
         val configuration = LocalConfiguration.current
         LibrariesContainer(header = {
             if (configuration.screenHeightDp.dp > 600.dp) {
@@ -63,7 +66,6 @@ fun Header(viewModel: AboutScreenViewModel) {
     ) {
         AppIcon()
 
-
         Text(
             resource = MR.strings.appName,
             style = MaterialTheme.typography.headlineLarge,
@@ -88,7 +90,12 @@ fun AppIcon() {
     Box(modifier = Modifier.fillMaxWidth()) {
 
         val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-        IconButton(onClick = { onBackPressedDispatcher?.onBackPressed() }, modifier = Modifier.align(Alignment.TopStart)) {
+        IconButton(
+            onClick = { onBackPressedDispatcher?.onBackPressed() },
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .testTag(TestTag.AppBarBackButton)
+        ) {
             Icon(imageVector = Icons.Filled.Close, contentDescription = MR.strings.close)
         }
 

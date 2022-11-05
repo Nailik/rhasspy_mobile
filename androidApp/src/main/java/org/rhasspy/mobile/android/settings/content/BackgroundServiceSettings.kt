@@ -11,6 +11,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
+import org.rhasspy.mobile.android.settings.SettingsScreens
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.viewModels.settings.BackgroundServiceSettingsViewModel
 
@@ -23,7 +25,10 @@ import org.rhasspy.mobile.viewModels.settings.BackgroundServiceSettingsViewModel
 @Composable
 fun BackgroundServiceSettingsContent(viewModel: BackgroundServiceSettingsViewModel = viewModel()) {
 
-    SettingsScreenItemContent(MR.strings.background) {
+    SettingsScreenItemContent(
+        modifier = Modifier.testTag(SettingsScreens.BackgroundServiceSettings),
+        title = MR.strings.background
+    ) {
 
         //on oFF
         SwitchListItem(

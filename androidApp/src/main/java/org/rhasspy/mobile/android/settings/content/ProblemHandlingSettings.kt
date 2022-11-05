@@ -2,10 +2,13 @@ package org.rhasspy.mobile.android.settings.content
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
+import org.rhasspy.mobile.android.settings.SettingsScreens
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.viewModels.settings.ProblemHandlingSettingsViewModel
 
@@ -17,7 +20,9 @@ import org.rhasspy.mobile.viewModels.settings.ProblemHandlingSettingsViewModel
 @Composable
 fun ProblemHandlingSettingsContent(viewModel: ProblemHandlingSettingsViewModel = viewModel()) {
 
-    SettingsScreenItemContent(MR.strings.problemHandling) {
+    SettingsScreenItemContent(
+        modifier = Modifier.testTag(SettingsScreens.ProblemHandlingSettings),
+        title = MR.strings.problemHandling) {
 
         //on/off force cancel
         SwitchListItem(

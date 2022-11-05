@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
+import org.rhasspy.mobile.android.settings.SettingsScreens
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.ListElement
 import org.rhasspy.mobile.android.utils.Text
@@ -30,7 +32,9 @@ import org.rhasspy.mobile.viewModels.settings.SaveAndRestoreSettingsViewModel
 @Composable
 fun SaveAndRestoreSettingsContent(viewModel: SaveAndRestoreSettingsViewModel = viewModel()) {
 
-    SettingsScreenItemContent(MR.strings.saveAndRestoreSettings) {
+    SettingsScreenItemContent(
+        modifier = Modifier.testTag(SettingsScreens.SaveAndRestoreSettings),
+        title = MR.strings.saveAndRestoreSettings) {
 
         val openSaveSettingsDialog = remember { mutableStateOf(false) }
         val openRestoreSettingsDialog = remember { mutableStateOf(false) }

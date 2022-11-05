@@ -2,10 +2,13 @@ package org.rhasspy.mobile.android.settings.content
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
+import org.rhasspy.mobile.android.settings.SettingsScreens
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.DropDownEnumListItem
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.viewModels.settings.LogSettingsViewModel
@@ -17,7 +20,9 @@ import org.rhasspy.mobile.viewModels.settings.LogSettingsViewModel
 @Composable
 fun LogSettingsContent(viewModel: LogSettingsViewModel = viewModel()) {
 
-    SettingsScreenItemContent(MR.strings.logSettings) {
+    SettingsScreenItemContent(
+        modifier = Modifier.testTag(SettingsScreens.LogSettings),
+        title = MR.strings.logSettings) {
 
         //log level
         DropDownEnumListItem(

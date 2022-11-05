@@ -15,9 +15,9 @@ import androidx.navigation.compose.composable
 import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.settings.content.AboutScreen
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.settings.content.*
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.viewModels.SettingsScreenViewModel
 
@@ -298,9 +298,11 @@ private fun SettingsListItem(
     val navController = LocalMainNavController.current
 
     ListElement(
-        modifier = Modifier.clickable {
-            navController.navigate(screen.name)
-        },
+        modifier = Modifier
+            .clickable {
+                navController.navigate(screen.name)
+            }
+            .testTag(screen),
         text = { Text(text) },
         secondaryText = { secondaryText?.also { Text(secondaryText) } }
     )
@@ -315,9 +317,11 @@ private fun SettingsListItem(
     val navController = LocalMainNavController.current
 
     ListElement(
-        modifier = Modifier.clickable {
-            navController.navigate(screen.name)
-        },
+        modifier = Modifier
+            .clickable {
+                navController.navigate(screen.name)
+            }
+            .testTag(screen),
         text = { Text(text) },
         secondaryText = { Text(text = secondaryText) }
     )

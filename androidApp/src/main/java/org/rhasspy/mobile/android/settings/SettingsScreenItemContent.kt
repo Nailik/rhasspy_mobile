@@ -23,6 +23,7 @@ import org.rhasspy.mobile.android.utils.Text
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreenItemContent(
+    modifier: Modifier = Modifier,
     title: StringResource,
     expandedContent: @Composable () -> Unit
 ) {
@@ -30,7 +31,7 @@ fun SettingsScreenItemContent(
 
     Surface(tonalElevation = 1.dp) {
         Scaffold(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize(),
             topBar = {
                 AppBar(
