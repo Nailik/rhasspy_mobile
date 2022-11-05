@@ -28,6 +28,7 @@ import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.viewModels.SettingsScreenViewModel
+import org.rhasspy.mobile.viewModels.settings.LanguageSettingsViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -85,7 +86,7 @@ class MicrophonePermissionTest {
     @Before
     fun setUp() {
         //set english
-        SettingsScreenViewModel().selectLanguage(LanguageOptions.English)
+        LanguageSettingsViewModel().selectLanguageOption(LanguageOptions.English)
 
         //set content
         composeTestRule.activity.setContent {
