@@ -1,9 +1,9 @@
 package org.rhasspy.mobile.android.settings.content
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -15,9 +15,14 @@ import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.SwitchListItem
-import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.viewModels.settings.MicrophoneOverlaySettingsViewModel
 
+/**
+ * Settings vor Microphone overlay
+ *
+ * overlay on/off
+ * overlay while app is opened on/off
+ */
 @Preview
 @Composable
 fun MicrophoneOverlaySettingsContent(viewModel: MicrophoneOverlaySettingsViewModel = viewModel()) {
@@ -28,25 +33,32 @@ fun MicrophoneOverlaySettingsContent(viewModel: MicrophoneOverlaySettingsViewMod
 
         Column {
 
+            //overlay permission request
             RequiresOverlayPermission({ viewModel.toggleMicrophoneOverlayEnabled(true) }) { onClick ->
+
+                //overlay switch on/off
                 SwitchListItem(
                     text = MR.strings.showMicrophoneOverlay,
                     secondaryText = MR.strings.showMicrophoneOverlayInfo,
                     isChecked = viewModel.isMicrophoneOverlayEnabled.collectAsState().value,
                     onCheckedChange = { if (it) onClick.invoke() else viewModel.toggleMicrophoneOverlayEnabled(false) }
                 )
+
             }
 
-            SwitchListItem(
-                text = MR.strings.whileAppIsOpened,
-                isChecked = viewModel.isMicrophoneOverlayWhileAppEnabled.collectAsState().value,
-                onCheckedChange = viewModel::toggleMicrophoneOverlayWhileAppEnabled
-            )
+            //visibility of overlay while app
+            AnimatedVisibility(
+                enter = expandVertically(),
+                exit = shrinkVertically(),
+                visible = viewModel.isMicrophoneOverlayWhileAppEnabledVisible.collectAsState().value
+            ) {
 
-            Spacer(modifier = Modifier.fillMaxWidth(1f))
+                SwitchListItem(
+                    text = MR.strings.whileAppIsOpened,
+                    isChecked = viewModel.isMicrophoneOverlayWhileAppEnabled.collectAsState().value,
+                    onCheckedChange = viewModel::toggleMicrophoneOverlayWhileAppEnabled
+                )
 
-            Button(onClick = viewModel::save) {
-                Text(MR.strings.save)
             }
 
         }
