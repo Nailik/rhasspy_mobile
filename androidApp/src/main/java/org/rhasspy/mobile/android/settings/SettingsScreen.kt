@@ -15,15 +15,15 @@ import androidx.navigation.compose.composable
 import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.main.AboutScreen
+import org.rhasspy.mobile.android.settings.content.AboutScreen
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.settings.content.*
 import org.rhasspy.mobile.android.utils.*
-import org.rhasspy.mobile.viewModels.ConfigurationScreenViewModel
 import org.rhasspy.mobile.viewModels.SettingsScreenViewModel
 
 enum class SettingsScreens {
+    LanguageSettings,
+    ThemeSettings,
     BackgroundServiceSettings,
     MicrophoneOverlaySettings,
     WakeWordIndicationSettings,
@@ -91,6 +91,14 @@ fun SettingsScreen(viewModel: SettingsScreenViewModel = viewModel()) {
  */
 fun NavGraphBuilder.addSettingsScreen() {
 
+    composable(SettingsScreens.LanguageSettings.name) {
+        LanguageSettingsScreenItemContent()
+    }
+
+    composable(SettingsScreens.ThemeSettings.name) {
+        ThemeSettingsScreenItemContent()
+    }
+
     composable(SettingsScreens.BackgroundServiceSettings.name) {
         BackgroundServiceSettingsContent()
     }
@@ -136,11 +144,10 @@ fun NavGraphBuilder.addSettingsScreen() {
 @Composable
 private fun Language(viewModel: SettingsScreenViewModel) {
 
-    DropDownEnumListItem(
-        label = MR.strings.language,
-        selected = viewModel.currentLanguage.collectAsState().value,
-        values = viewModel.languageOptions,
-        onSelect = viewModel::selectLanguage
+    SettingsListItem(
+        text = MR.strings.language,
+        secondaryText = viewModel.currentLanguage.collectAsState().value.text,
+        screen = SettingsScreens.LanguageSettings
     )
 
 }
@@ -148,11 +155,10 @@ private fun Language(viewModel: SettingsScreenViewModel) {
 @Composable
 private fun Theme(viewModel: SettingsScreenViewModel) {
 
-    DropDownEnumListItem(
-        label = MR.strings.theme,
-        selected = viewModel.currentTheme.collectAsState().value,
-        values = viewModel.themeOptions,
-        onSelect = viewModel::selectTheme
+    SettingsListItem(
+        text = MR.strings.theme,
+        secondaryText = viewModel.currentTheme.collectAsState().value.text,
+        screen = SettingsScreens.ThemeSettings
     )
 
 }
