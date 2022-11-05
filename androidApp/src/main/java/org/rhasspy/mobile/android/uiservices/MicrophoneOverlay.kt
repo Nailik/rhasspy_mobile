@@ -145,7 +145,9 @@ object MicrophoneOverlay {
             viewModel.shouldOverlayBeShown.collect {
                 if (it != shouldBeShownOldValue) {
                     if (it) {
-                        Looper.prepare()
+                        if (Looper.myLooper() == null) {
+                            Looper.prepare()
+                        }
                         CoroutineScope(Dispatchers.Main).launch {
                             overlayWindowManager.addView(view, mParams)
                             lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
