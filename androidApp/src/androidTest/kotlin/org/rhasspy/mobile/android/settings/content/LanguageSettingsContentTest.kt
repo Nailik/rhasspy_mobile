@@ -46,14 +46,12 @@ class LanguageSettingsContentTest {
      * english is selected
      * title is "Language"
      * StringDesc is English
-     * AppViewModel languageOption is English
      *
      * User clicks german
      * language is german
      * german is selected
      * title is "Sprache"
      * StringDesc is German
-     * AppViewModel languageOption is German
      * language german is saved
      *
      * User clicks english
@@ -61,7 +59,6 @@ class LanguageSettingsContentTest {
      * english is selected
      * title is "Sprache"
      * StringDesc is English
-     * AppViewModel languageOption is English
      * language english is saved
      */
     @Test
@@ -87,8 +84,6 @@ class LanguageSettingsContentTest {
         composeTestRule.onNodeWithTag(TestTag.AppBarTitle).assertTextEquals("Sprache")
         //StringDesc is German
         assertEquals(LanguageOptions.German.code, StringDesc.localeType.systemLocale!!.language)
-        //AppViewModel languageOption is German
-        assertEquals(LanguageOptions.German, viewModel.languageOption.value)
         //language german is saved
         var newViewModel = LanguageSettingsViewModel()
         assertEquals(LanguageOptions.German, newViewModel.languageOption.value)
@@ -103,8 +98,6 @@ class LanguageSettingsContentTest {
         composeTestRule.onNodeWithTag(TestTag.AppBarTitle).assertTextEquals("Language")
         //StringDesc is English
         assertEquals(LanguageOptions.English.code, StringDesc.localeType.systemLocale!!.language)
-        //AppViewModel languageOption is English
-        assertEquals(LanguageOptions.English, viewModel.languageOption.value)
         //language english is saved
         newViewModel = LanguageSettingsViewModel()
         assertEquals(LanguageOptions.English, newViewModel.languageOption.value)

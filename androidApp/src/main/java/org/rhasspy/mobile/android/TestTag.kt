@@ -76,7 +76,8 @@ enum class TestTag {
     Download,
     SelectFile,
     Delete,
-    Undo
+    Undo,
+    Background
 }
 
 fun Modifier.combinedTestTag(dataEnum: DataEnum<*>, tag: TestTag) = semantics(
