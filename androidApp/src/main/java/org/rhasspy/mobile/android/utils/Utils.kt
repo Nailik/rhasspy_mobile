@@ -265,7 +265,7 @@ fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, label: StringResource, o
 }
 
 @Composable
-fun <E : DataEnum<*>> RadioButtonsEnumSelection(modifier: Modifier, selected: E, onSelect: (item: E) -> Unit, values: () -> Array<E>) {
+fun <E : DataEnum<*>> RadioButtonsEnumSelection(modifier: Modifier = Modifier, selected: E, onSelect: (item: E) -> Unit, values: () -> Array<E>) {
     Card(
         modifier = modifier.padding(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)

@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.main
+package org.rhasspy.mobile.android.settings.content
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.ExperimentalFoundationApi
