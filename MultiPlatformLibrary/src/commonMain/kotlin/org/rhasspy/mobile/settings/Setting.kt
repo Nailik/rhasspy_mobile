@@ -46,7 +46,7 @@ open class Setting<T>(private val key: SettingsEnum, private val initial: T, pri
             is DataEnum<*> -> settings[key.name] = (newValue as DataEnum<*>).name
             else -> serializer?.let {
                 settings.encodeValue(serializer, key.name, newValue)
-            } ?: kotlin.run {
+            } ?: run {
                 //TODO  throw RuntimeException()
             }
         }
@@ -66,8 +66,7 @@ open class Setting<T>(private val key: SettingsEnum, private val initial: T, pri
             is DataEnum<*> -> initial.findValue(settings[key.name, initial.name])
             else -> serializer?.let {
                 settings.decodeValue(serializer, key.name, initial)
-            } ?: kotlin.run {
-                // throw RuntimeException()
+            } ?: run {
                 initial
             }
         } as T

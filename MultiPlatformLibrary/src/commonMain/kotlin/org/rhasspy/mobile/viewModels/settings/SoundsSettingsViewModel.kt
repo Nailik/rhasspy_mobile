@@ -9,10 +9,6 @@ import org.rhasspy.mobile.settings.sounds.SoundFile
 
 class SoundsSettingsViewModel : ViewModel() {
 
-    init {
-        checkCustomSoundUsage()
-    }
-
     //unsaved data
     private val _soundVolume = MutableStateFlow(AppSettings.soundVolume.value)
     private val _wakeSound = MutableStateFlow(AppSettings.wakeSound.value)
@@ -29,6 +25,11 @@ class SoundsSettingsViewModel : ViewModel() {
     val errorSound = _errorSound.readOnly
     val customSounds = _customSounds.readOnly
     val customSoundValues = _customSoundValues.readOnly
+
+    init {
+        //after initialization of variables
+        checkCustomSoundUsage()
+    }
 
     //update sound volume
     fun updateSoundVolume(volume: Float) {
