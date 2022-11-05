@@ -64,6 +64,7 @@ fun MicrophoneOverlaySettingsContent(viewModel: MicrophoneOverlaySettingsViewMod
             ) {
 
                 SwitchListItem(
+                    modifier = Modifier.testTag(TestTag.VisibleWhileAppIsOpened),
                     text = MR.strings.whileAppIsOpened,
                     isChecked = viewModel.isMicrophoneOverlayWhileAppEnabled.collectAsState().value,
                     onCheckedChange = viewModel::toggleMicrophoneOverlayWhileAppEnabled

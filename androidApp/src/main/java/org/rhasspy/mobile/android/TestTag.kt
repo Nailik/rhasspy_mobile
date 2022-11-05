@@ -80,7 +80,9 @@ enum class TestTag {
     Undo,
     Background,
     EnabledSwitch,
-    BatteryOptimization
+    BatteryOptimization,
+    VisibleWhileAppIsOpened,
+
 }
 
 fun Modifier.combinedTestTag(dataEnum: DataEnum<*>, tag: TestTag) = semantics(

@@ -54,7 +54,7 @@ class OverlayPermissionTest {
             AppTheme {
 
                 RequiresOverlayPermission({ permissionResult = true }) { onClick ->
-                    Button(onClick = onClick) {
+                    Button(onClick = { onClick.invoke(Unit) }) {
                         Text(btnRequestPermission)
                     }
                 }
