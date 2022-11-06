@@ -19,10 +19,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.MainActivity
-import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.text
+import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 import kotlin.test.assertFalse
@@ -82,10 +79,7 @@ class OverlayPermissionTest {
      */
     @Test
     fun testAllow() = runBlocking {
-        if (OverlayPermission.isGranted()) {
-            assertTrue { OverlayPermission.granted.value }
-            return@runBlocking
-        }
+        device.resetOverlayPermission()
 
         permissionResult = false
         assertFalse { OverlayPermission.granted.value }

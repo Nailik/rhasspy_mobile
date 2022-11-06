@@ -15,11 +15,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.MainActivity
-import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.text
 import org.rhasspy.mobile.data.MicrophoneOverlaySizeOptions
 import org.rhasspy.mobile.viewModels.settings.MicrophoneOverlaySettingsViewModel
 import kotlin.test.assertEquals
@@ -78,6 +75,8 @@ class MicrophoneOverlaySettingsContentTest {
      */
     @Test
     fun testContent() = runBlocking {
+        device.resetOverlayPermission()
+
         viewModel.selectMicrophoneOverlayOptionSize(MicrophoneOverlaySizeOptions.Disabled)
         viewModel.toggleMicrophoneOverlayWhileAppEnabled(false)
 
