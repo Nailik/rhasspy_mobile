@@ -8,6 +8,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
@@ -26,11 +27,10 @@ import org.rhasspy.mobile.nativeutils.OverlayPermission
  */
 @Composable
 fun <T : Any> RequiresOverlayPermission(
-    onClick: (data: T) -> Unit,
-    content: @Composable (onClick: (data: T) -> Unit) -> Unit
+    onClick: (data: T?) -> Unit,
+    content: @Composable (onClick: (data: T?) -> Unit) -> Unit
 ) {
-
-    lateinit var currentData: T
+    var currentData by rememberSaveable { mutableStateOf<T?>(null) }
     var openRequestPermissionDialog by remember { mutableStateOf(false) }
 
     if (openRequestPermissionDialog) {
@@ -45,10 +45,10 @@ fun <T : Any> RequiresOverlayPermission(
     }
 
     content { data ->
-        currentData = data
         //check if granted or not
         if (!OverlayPermission.granted.value) {
             //show dialog that permission is necessary
+            currentData = data
             openRequestPermissionDialog = true
         } else {
             //permission granted
