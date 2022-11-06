@@ -12,9 +12,9 @@ expect object AudioPlayer {
 
     fun stopPlayingData()
 
-    fun playSoundFileResource(fileResource: FileResource)
+    fun playSoundFileResource(fileResource: FileResource, volume: Float)
 
-    fun playSoundFile(filename: String)
+    fun playSoundFile(subfolder: String, filename: String, volume: Float)
 
 
 }

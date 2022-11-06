@@ -282,130 +282,6 @@ fun <E : DataEnum<*>> RadioButtonsEnumSelection(modifier: Modifier = Modifier, s
     }
 }
 
-@Composable
-fun DropDownListRemovableWithFileOpen(
-    overlineText: @Composable () -> Unit,
-    enabled: Boolean = true,
-    values: Array<SoundFile>,
-    onAdd: () -> Unit,
-    onRemove: ((index: Int) -> Unit)? = null,
-    title: @Composable () -> Unit,
-    onSelect: ((index: Int) -> Unit)? = null
-) {
-    var isExpanded by remember { mutableStateOf(false) }
-
-    ListElement(
-        modifier = Modifier
-            .clickable { isExpanded = true },
-        overlineText = overlineText,
-        text = title,
-        trailing = {
-            IndicatedSmallIcon(isExpanded) {
-                Icon(
-                    modifier = it,
-                    imageVector = Icons.Filled.ArrowDropDown,
-                    contentDescription = MR.strings.expandDropDown,
-                )
-            }
-        })
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentSize(Alignment.TopStart)
-    ) {
-        DropdownMenu(
-            modifier = Modifier.fillMaxWidth(),
-            expanded = isExpanded,
-            onDismissRequest = { isExpanded = false }) {
-            values.forEachIndexed { index, item ->
-                DropdownMenuItem(
-                    text = { Text(item.fileName) },
-                    enabled = enabled,
-                    trailingIcon = {
-                        onRemove?.let { callback ->
-                            IconButton(
-                                onClick = { callback.invoke(index) },
-                                enabled = enabled && !item.used
-                            ) {
-                                Icon(imageVector = Icons.Filled.Delete, contentDescription = MR.strings.remove)
-                            }
-                        }
-                    }, onClick = { onSelect?.invoke(index) })
-            }
-
-            Box(modifier = Modifier.fillMaxWidth()) {
-                OutlinedButton(
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .align(alignment = Alignment.Center),
-                    border = BorderStroke(ButtonDefaults.outlinedButtonBorder.width, MaterialTheme.colorScheme.primary),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
-                    onClick = {
-                        isExpanded = false
-                        onAdd.invoke()
-                    })
-                {
-                    Icon(imageVector = Icons.Filled.FileOpen, contentDescription = MR.strings.expandDropDown)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(MR.strings.selectFile)
-                }
-
-            }
-        }
-    }
-}
-
-@Composable
-fun DropDownStringList(
-    overlineText: @Composable () -> Unit,
-    selected: String,
-    enabled: Boolean = true,
-    values: Array<String>,
-    onSelect: (item: String) -> Unit
-) {
-    var isExpanded by remember { mutableStateOf(false) }
-
-    ListElement(modifier = Modifier
-        .clickable { isExpanded = true },
-        overlineText = overlineText,
-        text = { Text(selected) },
-        trailing = {
-            IndicatedSmallIcon(isExpanded) {
-                Icon(
-                    modifier = it,
-                    imageVector = Icons.Filled.ArrowDropDown,
-                    contentDescription = MR.strings.expandDropDown,
-                )
-            }
-        })
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentSize(Alignment.TopStart)
-    ) {
-        DropdownMenu(
-            modifier = Modifier.fillMaxWidth(),
-            expanded = isExpanded,
-            onDismissRequest = { isExpanded = false }) {
-            values.forEach { text ->
-
-                DropdownMenuItem(
-                    modifier = if (text == selected) Modifier.background(MaterialTheme.colorScheme.surfaceVariant) else Modifier,
-                    text = { Text(text) },
-                    enabled = enabled,
-                    onClick = {
-                        isExpanded = false
-                        onSelect.invoke(text)
-                    })
-            }
-
-        }
-    }
-}
-
-
 
 @Composable
 fun SwitchListItem(
@@ -653,18 +529,42 @@ private fun ProvideTextStyleFromToken(
 }
 
 @Composable
-fun RadioButtonListItem(modifier: Modifier = Modifier, text: StringResource, isChecked: Boolean, enabled: Boolean = true, onClick: () -> Unit) {
+fun RadioButtonListItem(
+    modifier: Modifier = Modifier,
+    text: StringResource,
+    isChecked: Boolean,
+    trailing: @Composable (() -> Unit)? = null,
+    onClick: () -> Unit
+) {
     ListElement(
         modifier = modifier.clickable(onClick = onClick),
-        icon = { RadioButton(selected = isChecked, enabled = enabled, onClick = onClick) },
-        text = { Text(text) })
+        icon = { RadioButton(selected = isChecked, onClick = onClick) },
+        text = { Text(text) },
+        trailing = trailing
+    )
+}
+
+@Composable
+fun RadioButtonListItem(
+    modifier: Modifier = Modifier,
+    text: String,
+    isChecked: Boolean,
+    trailing: @Composable (() -> Unit)? = null,
+    onClick: () -> Unit
+) {
+    ListElement(
+        modifier = modifier.clickable(onClick = onClick),
+        icon = { RadioButton(selected = isChecked, onClick = onClick) },
+        text = { Text(text) },
+        trailing = trailing
+    )
 }
 
 @Composable
 fun CheckBoxListItem(modifier: Modifier = Modifier, text: String, isChecked: Boolean, trailing: @Composable () -> Unit, onClick: () -> Unit) {
     ListElement(
         modifier = modifier.clickable(onClick = onClick),
-        icon = { Checkbox(checked = isChecked, onCheckedChange = { onClick() }) }, //TODO
+        icon = { Checkbox(checked = isChecked, onCheckedChange = { onClick() }) },
         text = { Text(text) },
         trailing = trailing
     )

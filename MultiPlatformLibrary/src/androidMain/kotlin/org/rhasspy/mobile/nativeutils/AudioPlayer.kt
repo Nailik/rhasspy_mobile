@@ -99,7 +99,7 @@ actual object AudioPlayer {
         }
     }
 
-    private fun playSound(mediaPlayer: MediaPlayer) {
+    private fun playSound(mediaPlayer: MediaPlayer, volume: Float) {
         logger.v { "playSound" }
 
         if (isPlaying.value) {
@@ -115,7 +115,7 @@ actual object AudioPlayer {
                 .build()
         )
 
-        mediaPlayer.setVolume(AppSettings.soundVolume.value, AppSettings.soundVolume.value)
+        mediaPlayer.setVolume(volume, volume)
         //on completion listener is also called when error occurs
         mediaPlayer.setOnCompletionListener {
             isPlaying.value = false
@@ -126,30 +126,30 @@ actual object AudioPlayer {
     /**
      * play audio resource
      */
-    actual fun playSoundFileResource(fileResource: FileResource) {
+    actual fun playSoundFileResource(fileResource: FileResource, volume: Float) {
         logger.v { "playSoundFileResource" }
 
         playSound(
             MediaPlayer.create(
                 Application.Instance,
                 fileResource.rawResId
-            )
+            ), volume
         )
     }
 
     /**
      * play some sound file
      */
-    actual fun playSoundFile(filename: String) {
-        logger.v { "playSoundFile $filename" }
+    actual fun playSoundFile(subfolder: String, filename: String, volume: Float) {
+        logger.v { "playSoundFile $subfolder/$filename" }
 
-        val soundFile = File(Application.Instance.filesDir, "sounds/$filename")
+        val soundFile = File(Application.Instance.filesDir, "sounds/$subfolder/$filename")
 
         playSound(
             MediaPlayer.create(
                 Application.Instance,
                 Uri.fromFile(soundFile)
-            )
+            ), volume
         )
     }
 

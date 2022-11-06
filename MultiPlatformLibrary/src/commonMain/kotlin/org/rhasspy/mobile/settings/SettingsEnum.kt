@@ -19,7 +19,7 @@ enum class SettingsEnum {
     MicrophoneOverlayPositionY,
 
     BackgroundWakeWordDetectionTurnOnDisplay,
-    WakeWordSoundIndication,
+    SoundIndication,
     WakeWordLightIndication,
 
     HotWordEnabled,
@@ -27,11 +27,16 @@ enum class SettingsEnum {
     IntentHandlingEnabled,
     Volume,
 
-    SoundVolume,
+    WakeSoundVolume,
+    RecordedSoundVolume,
+    ErrorSoundVolume,
     WakeSound,
     RecordedSound,
     ErrorSound,
-    CustomSounds,
+    CustomWakeSounds,
+    CustomRecordedSounds,
+    CustomErrorSounds,
+
 
     ShowLog,
     LogAudioFrames,

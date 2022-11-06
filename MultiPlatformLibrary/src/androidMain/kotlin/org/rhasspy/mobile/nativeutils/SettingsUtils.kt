@@ -117,8 +117,8 @@ actual object SettingsUtils {
         }
     }
 
-    actual fun selectSoundFile(callback: (String?) -> Unit) {
-        File(Application.Instance.filesDir, "sounds").mkdirs()
+    actual fun selectSoundFile(subfolder: String, callback: (String?) -> Unit) {
+        File(Application.Instance.filesDir, "sounds/$subfolder").mkdirs()
 
         Application.Instance.currentActivity?.openDocument(arrayOf("audio/x-wav")) {
             if (it.resultCode == Activity.RESULT_OK) {
@@ -147,7 +147,7 @@ actual object SettingsUtils {
                     fileName = renameFileWhileExists("sounds", fileName)
 
                     Application.Instance.contentResolver.openInputStream(uri)?.let { inputStream ->
-                        File(Application.Instance.filesDir, "sounds/$fileName").apply {
+                        File(Application.Instance.filesDir, "sounds/$subfolder/$fileName").apply {
                             this.outputStream().apply {
                                 inputStream.copyTo(this)
 
@@ -168,8 +168,8 @@ actual object SettingsUtils {
         }
     }
 
-    actual fun removeSoundFile(fileName: String) {
-        File(Application.Instance.filesDir, "sounds/$fileName").delete()
+    actual fun removeSoundFile(subfolder: String, fileName: String) {
+        File(Application.Instance.filesDir, "sounds/$subfolder/$fileName").delete()
     }
 
     actual fun selectPorcupineFile(callback: (String?) -> Unit) {

@@ -76,12 +76,14 @@ enum class TestTag {
     Sensitivity,
     Download,
     SelectFile,
+    Play,
     Delete,
     Undo,
     Background,
     EnabledSwitch,
     BatteryOptimization,
     VisibleWhileAppIsOpened,
+    IndicationSoundScreen,
 
 }
 

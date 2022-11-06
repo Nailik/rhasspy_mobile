@@ -90,7 +90,7 @@ object IndicationService {
         }
 
         //handle sound indication
-        if (AppSettings.isWakeWordSoundIndicationEnabled.value) {
+        if (AppSettings.isSoundIndicationEnabled.value) {
             when (state) {
                 State.StartingSession -> playWakeSound()
                 State.RecordingStopped -> playRecordedSound()
@@ -105,24 +105,24 @@ object IndicationService {
     private fun playWakeSound() {
         when (AppSettings.wakeSound.value) {
             SoundOptions.Disabled.name -> {}
-            SoundOptions.Default.name -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_hi)
-            else -> AudioPlayer.playSoundFile(AppSettings.wakeSound.value)
+            SoundOptions.Default.name -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_hi, AppSettings.wakeSoundVolume.value)
+            else -> AudioPlayer.playSoundFile("wake", AppSettings.wakeSound.value, AppSettings.wakeSoundVolume.value)
         }
     }
 
     private fun playRecordedSound() {
         when (AppSettings.recordedSound.value) {
             SoundOptions.Disabled.name -> {}
-            SoundOptions.Default.name -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_lo)
-            else -> AudioPlayer.playSoundFile(AppSettings.recordedSound.value)
+            SoundOptions.Default.name -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_lo, AppSettings.recordedSoundVolume.value)
+            else -> AudioPlayer.playSoundFile("recorded", AppSettings.recordedSound.value, AppSettings.recordedSoundVolume.value)
         }
     }
 
     private fun playErrorSound() {
         when (AppSettings.errorSound.value) {
             SoundOptions.Disabled.name -> {}
-            SoundOptions.Default.name -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_error)
-            else -> AudioPlayer.playSoundFile(AppSettings.errorSound.value)
+            SoundOptions.Default.name -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_error, AppSettings.errorSoundVolume.value)
+            else -> AudioPlayer.playSoundFile("error", AppSettings.errorSound.value, AppSettings.errorSoundVolume.value)
         }
     }
 

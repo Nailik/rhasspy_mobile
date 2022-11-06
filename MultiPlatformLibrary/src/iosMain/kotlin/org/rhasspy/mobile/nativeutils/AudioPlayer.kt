@@ -12,11 +12,11 @@ actual object AudioPlayer {
     actual val isPlayingState: StateFlow<Boolean>
         get() = TODO("Not yet implemented")
 
-    actual fun playSoundFileResource(fileResource: FileResource) {
+    actual fun playSoundFileResource(fileResource: FileResource, volume: Float) {
         TODO("Not yet implemented")
     }
 
-    actual fun playSoundFile(filename: String) {
+    actual fun playSoundFile(subfolder: String, filename: String, volume: Float) {
         TODO("Not yet implemented")
     }
 

@@ -9,7 +9,7 @@ class SettingsScreenViewModel : ViewModel() {
     val currentTheme = AppSettings.themeOption.data
     val isBackgroundEnabled = AppSettings.isBackgroundServiceEnabled.data
     val microphoneOverlaySizeOption = AppSettings.microphoneOverlaySizeOption.data
-    val isWakeWordSoundIndicationEnabled = AppSettings.isWakeWordSoundIndicationEnabled.data
+    val isSoundIndicationEnabled = AppSettings.isSoundIndicationEnabled.data
     val isWakeWordLightIndicationEnabled = AppSettings.isWakeWordLightIndicationEnabled.data
     val isAutomaticSilenceDetectionEnabled = AppSettings.isAutomaticSilenceDetectionEnabled.data
     val logLevel = AppSettings.logLevel.data

@@ -10,11 +10,11 @@ actual object SettingsUtils {
         TODO("Not yet implemented")
     }
 
-    actual fun selectSoundFile(callback: (String?) -> Unit) {
+    actual fun selectSoundFile(subfolder: String, callback: (String?) -> Unit) {
         TODO("Not yet implemented")
     }
 
-    actual fun removeSoundFile(fileName: String) {
+    actual fun removeSoundFile(subfolder: String, fileName: String) {
         TODO("Not yet implemented")
     }
 

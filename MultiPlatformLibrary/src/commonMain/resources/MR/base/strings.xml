@@ -200,6 +200,12 @@
     <string name="delete">Delete</string>
     <string name="active">Active</string>
     <string name="porcupineKeyword">Porcupine WakeWord</string>
+    <string name="small">Small</string>
+    <string name="medium">Medium</string>
+    <string name="big">Big</string>
+    <string name="play">Play</string>
+    <string name="indication">Indication</string>
+    <string name="sounds">Sounds</string>
     <!-- not translatable -->
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>
@@ -215,7 +221,4 @@
     <string name="picovoice">Picovoice</string>
     <string name="porcupine">Porcupine</string>
     <string name="terminator">Terminator</string>
-    <string name="small">Small</string>
-    <string name="medium">Medium</string>
-    <string name="big">Big</string>
 </resources>
