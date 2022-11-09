@@ -2,11 +2,9 @@ package org.rhasspy.mobile.android.utils
 
 import android.widget.TextView
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.*
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
@@ -14,7 +12,8 @@ import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -23,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -209,7 +207,6 @@ fun translate(resource: StringResource, vararg args: Any): String {
 }
 
 //https://stackoverflow.com/questions/68389802/how-to-clear-textfield-focus-when-closing-the-keyboard-and-prevent-two-back-pres
-@OptIn(ExperimentalLayoutApi::class)
 fun Modifier.clearFocusOnKeyboardDismiss(): Modifier = composed {
     var isFocused by remember { mutableStateOf(false) }
     var keyboardAppearedSinceLastFocused by remember { mutableStateOf(false) }
@@ -235,31 +232,6 @@ fun Modifier.clearFocusOnKeyboardDismiss(): Modifier = composed {
     }
 }
 
-@Composable
-fun IndicatedSmallIcon(isIndicated: Boolean, rotationTarget: Float = 180f, icon: @Composable (modifier: Modifier) -> Unit) {
-    val rotation = animateFloatAsState(
-        targetValue = if (isIndicated) {
-            rotationTarget
-        } else 0f,
-        animationSpec = tween(300)
-    )
-    val animationProgress: Float by animateFloatAsState(
-        targetValue = if (isIndicated) 1f else 0f,
-        animationSpec = tween(100)
-    )
-    Box(
-        Modifier
-            .background(
-                color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = animationProgress),
-                shape = RoundedCornerShape(16.0.dp)
-            )
-            .padding(horizontal = 8.dp)
-    ) {
-        icon(Modifier.rotate(rotation.value))
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, label: StringResource, onSelect: (item: E) -> Unit, values: () -> Array<E>) {
     var isExpanded by remember { mutableStateOf(false) }
@@ -373,7 +345,7 @@ fun SwitchListItem(
         text = { Text(text) },
         secondaryText = secondaryText?.let { { Text(secondaryText) } } ?: run { null },
         trailing = {
-            org.rhasspy.mobile.android.utils.Switch(
+            Switch(
                 checked = isChecked,
                 onCheckedChange = null
             )
@@ -390,8 +362,7 @@ fun ListElement(
     trailing: @Composable (() -> Unit)? = null,
     text: @Composable () -> Unit
 ) {
-    @OptIn(ExperimentalMaterial3Api::class)
-    androidx.compose.material3.ListItem(
+    ListItem(
         headlineText = text,
         modifier = modifier,
         overlineText = overlineText,
@@ -606,7 +577,6 @@ private fun ProvideTextStyleFromToken(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RadioButtonListItem(
     modifier: Modifier = Modifier,
@@ -623,7 +593,6 @@ fun RadioButtonListItem(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RadioButtonListItem(
     modifier: Modifier = Modifier,
@@ -640,22 +609,10 @@ fun RadioButtonListItem(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CheckBoxListItem(modifier: Modifier = Modifier, text: String, isChecked: Boolean, trailing: @Composable () -> Unit, onClick: () -> Unit) {
-    ListElement(
-        modifier = modifier.clickable(onClick = onClick),
-        icon = { Checkbox(checked = isChecked, onCheckedChange = { onClick() }) },
-        text = { Text(text) },
-        trailing = trailing
-    )
-}
-
 fun Boolean.toText(): StringResource {
     return if (this) MR.strings.enabled else MR.strings.disabled
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TextWithAction(
     modifier: Modifier = Modifier,
@@ -740,7 +697,7 @@ fun Switch(
     checked: Boolean,
     onCheckedChange: ((Boolean) -> Unit)?,
 ) {
-    androidx.compose.material3.Switch(
+    Switch(
         modifier = Modifier
             .clearAndSetSemantics {
                 testTag = "SWITCH_TAG"

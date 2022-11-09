@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.android.settings.content
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -31,7 +30,6 @@ import org.rhasspy.mobile.viewModels.AboutScreenViewModel
  * About Screen contains A Header with Information,
  * and list of used dependencies
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AboutScreen(viewModel: AboutScreenViewModel = viewModel()) {
     Surface(modifier = Modifier.testTag(SettingsScreens.AboutSettings)) {

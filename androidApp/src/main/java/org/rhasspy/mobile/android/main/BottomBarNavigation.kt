@@ -51,7 +51,6 @@ enum class BottomBarScreens() {
     LogScreen
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BoxWithConstraintsScope.BottomBarScreensNavigation(viewModel: HomeScreenViewModel = viewModel()) {
     var isBottomNavigationHidden by remember { mutableStateOf(false) }
@@ -100,7 +99,6 @@ fun BoxWithConstraintsScope.BottomBarScreensNavigation(viewModel: HomeScreenView
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppBar() {
 
@@ -148,60 +146,6 @@ fun BottomNavigation(viewModel: HomeScreenViewModel) {
                 icon = { Icon(Icons.Filled.Code, MR.strings.log) },
                 label = { Text(MR.strings.log) })
         }
-
-    }
-
-}
-
-@Composable
-fun UnsavedChanges(viewModel: HomeScreenViewModel) {
-
-    AnimatedVisibility(
-        enter = fadeIn(animationSpec = tween(50)),
-        exit = fadeOut(animationSpec = tween(0)),
-        visible = false
-    ) {
-
-        Row(modifier = Modifier.padding(start = 8.dp)) {
-            IconButton(onClick = { viewModel.resetChanges() })
-            {
-                Icon(
-                    imageVector = Icons.Filled.Restore,
-                    contentDescription = MR.strings.reset
-                )
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            Button(
-                onClick = { viewModel.saveAndApplyChanges() }) {
-                Icon(
-                    imageVector = Icons.Filled.PublishedWithChanges,
-                    contentDescription = MR.strings.save
-                )
-            }
-        }
-
-    }
-
-    AnimatedVisibility(
-        enter = fadeIn(animationSpec = tween(50)),
-        exit = fadeOut(animationSpec = tween(50)),
-        visible = viewModel.currentServiceState.collectAsState().value != ServiceState.Running
-    ) {
-
-        val infiniteTransition = rememberInfiniteTransition()
-        val angle by infiniteTransition.animateFloat(
-            initialValue = 0F,
-            targetValue = 360F,
-            animationSpec = infiniteRepeatable(
-                animation = tween(2000, easing = LinearEasing)
-            )
-        )
-
-        Icon(
-            modifier = Modifier.rotate(angle),
-            imageVector = Icons.Filled.Autorenew,
-            contentDescription = MR.strings.reset
-        )
 
     }
 

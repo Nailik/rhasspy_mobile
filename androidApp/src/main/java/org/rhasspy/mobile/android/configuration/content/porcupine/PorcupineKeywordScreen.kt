@@ -1,14 +1,17 @@
 package org.rhasspy.mobile.android.configuration.content.porcupine
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
@@ -17,7 +20,8 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.android.utils.Icon
+import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
 
 /**
@@ -26,7 +30,6 @@ import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewMode
  *  page with custom options
  *  bottom bar to switch between pages
  */
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
 @Composable
 fun PorcupineKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
 
@@ -77,7 +80,6 @@ fun PorcupineKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
 /**
  * app bar for title and back button
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppBar() {
 
@@ -106,7 +108,6 @@ private fun AppBar() {
 /**
  * Displays tabs on bottom (default/ custom)
  */
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun BottomTabBar(state: PagerState, onSelectIndex: (index: Int) -> Unit) {
 

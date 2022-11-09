@@ -20,13 +20,12 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.*
-import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.settings.sounds.SoundFile
 import org.rhasspy.mobile.viewModels.settings.sound.IIndicationSoundSettingsViewModel
+
 //TODO stop playing opn button, on back , on close app,
 //TODO change volume while playing
 //TODO audio as music, notification,
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IndicationSoundScreen(viewModel: IIndicationSoundSettingsViewModel, title: StringResource, screen: IndicationSettingsScreens) {
     Scaffold(
@@ -203,7 +202,6 @@ private fun SoundActionButtons(
 /**
  * app bar for indication screen
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppBar(title: StringResource) {
 

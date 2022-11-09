@@ -30,7 +30,6 @@ import org.rhasspy.mobile.viewModels.LogScreenViewModel
 /**
  * show log information
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun LogScreen(viewModel: LogScreenViewModel = viewModel()) {
@@ -46,7 +45,6 @@ fun LogScreen(viewModel: LogScreenViewModel = viewModel()) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppBar(viewModel: LogScreenViewModel) {
     TopAppBar(modifier = Modifier,

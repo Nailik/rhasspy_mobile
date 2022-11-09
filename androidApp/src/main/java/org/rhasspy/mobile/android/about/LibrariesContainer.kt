@@ -110,7 +110,6 @@ private fun Libraries(
 /**
  * Library list element
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Library(
     library: Library,

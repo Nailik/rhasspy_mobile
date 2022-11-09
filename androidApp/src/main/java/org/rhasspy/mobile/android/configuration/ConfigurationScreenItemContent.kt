@@ -33,7 +33,6 @@ import org.rhasspy.mobile.android.utils.Text
  *
  * Shows dialog on Back press when there are unsaved changes
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfigurationScreenItemContent(
     modifier: Modifier,
@@ -279,7 +278,6 @@ private fun BottomAppBar(
 /**
  * top app bar with title and back navigation button
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppBar(title: StringResource, onBackClick: () -> Unit) {
 

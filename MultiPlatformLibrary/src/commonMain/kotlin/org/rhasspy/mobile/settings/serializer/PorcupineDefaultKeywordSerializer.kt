@@ -11,9 +11,9 @@ import kotlinx.serialization.serializer
 import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
 
 internal object PorcupineDefaultKeywordSerializer : KSerializer<Set<PorcupineDefaultKeyword>> {
+
     @OptIn(InternalSerializationApi::class)
     private val delegatedSerializer = ListSerializer(PorcupineDefaultKeyword::class.serializer())
-
     @OptIn(ExperimentalSerializationApi::class)
     override val descriptor = SerialDescriptor("PorcupineDefaultKeywordSerializer", delegatedSerializer.descriptor)
 

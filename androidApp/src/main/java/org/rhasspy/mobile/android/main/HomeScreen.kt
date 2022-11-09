@@ -15,10 +15,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -37,27 +35,10 @@ var isMainActionBig = mutableStateOf(true)
 var mainActionVisible = mutableStateOf(true)
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun HomeScreen(viewModel: HomeScreenViewModel = viewModel()) {
     HomeScreenContent(viewModel)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun AppBar(viewModel: HomeScreenViewModel) {
-    TopAppBar(
-        title = { Text(MR.strings.appName, modifier = Modifier.testTag("appName")) },
-        actions = {
-            Row(modifier = Modifier.padding(horizontal = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                MicrophonePermissionMissing(viewModel)
-                OverlayPermissionMissing(viewModel)
-                MqttConnectionStatus()
-                UnsavedChanges(viewModel)
-            }
-        }
-    )
 }
 
 
@@ -331,7 +312,6 @@ fun OverlayPermissionMissing(viewModel: HomeScreenViewModel) {
 }
 
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MqttConnectionStatus() {
 
@@ -373,12 +353,12 @@ fun MqttConnectionStatus() {
                 text = {
                     MqttService.hasConnectionError.collectAsState().value?.also {
                         val text = translate(MR.strings.mqttConnectionError)
-                        androidx.compose.material3.Text("$text\n${it.msg} (${it.statusCode})")
+                        Text("$text\n${it.msg} (${it.statusCode})")
                     }
 
                     MqttService.hasConnectionLostError.collectAsState().value?.also {
                         val text = translate(MR.strings.mqttConnectionLostError)
-                        androidx.compose.material3.Text("$text\n${it.message}")
+                        Text("$text\n${it.message}")
                     }
                 },
                 modifier = Modifier

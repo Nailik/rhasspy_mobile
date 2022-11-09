@@ -126,6 +126,13 @@ kotlin {
     }
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+
 android {
     signingConfigs {
         getByName("debug") {
@@ -139,7 +146,6 @@ android {
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
         minSdk = 23
-        targetSdk = 33
     }
     packagingOptions {
         resources.pickFirsts.add("META-INF/*")
@@ -209,13 +215,6 @@ tasks.withType<Test> {
         showStackTraces = true
     }
 }
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
-
 sonarqube {
     properties {
         property("sonar.projectKey", "Nailik_rhasspy_mobile")

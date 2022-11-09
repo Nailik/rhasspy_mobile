@@ -7,7 +7,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -20,7 +23,6 @@ import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreenItemContent(
     modifier: Modifier = Modifier,
@@ -55,7 +57,6 @@ fun SettingsScreenItemContent(
 /**
  * top app bar with title and back navigation button
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppBar(title: StringResource, onBackClick: () -> Unit) {
 

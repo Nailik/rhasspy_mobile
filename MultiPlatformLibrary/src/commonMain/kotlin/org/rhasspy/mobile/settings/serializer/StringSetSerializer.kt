@@ -10,9 +10,9 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.serializer
 
 internal object StringSetSerializer : KSerializer<Set<String>> {
+
     @OptIn(InternalSerializationApi::class)
     private val delegatedSerializer = ListSerializer(String::class.serializer())
-
     @OptIn(ExperimentalSerializationApi::class)
     override val descriptor = SerialDescriptor("StringSetSerializer", delegatedSerializer.descriptor)
 
