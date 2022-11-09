@@ -103,4 +103,23 @@ class AudioPlayingConfigurationContentTest {
         assertEquals(true, newViewModel.isUseCustomAudioPlayingHttpEndpoint.value)
     }
 
+    /**
+     * option disable is set
+     * sounds is invisible
+     *
+     * user clicks local
+     * sounds is visible
+     *
+     * user clicks sounds
+     * save popup is shown
+     *
+     * user clicks ok
+     * option local is saved
+     * user is redirected to sounds
+     */
+    @Test
+    fun testLinkage() = runBlocking {
+
+    }
+
 }

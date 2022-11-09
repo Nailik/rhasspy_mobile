@@ -15,7 +15,7 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewModels.settings.IndicationSettingsViewModel
 
-class WakeWordIndicationSettingsContentTest {
+class IndicationSettingsContentTest {
 
     @get: Rule
     val composeTestRule = createComposeRule()
@@ -61,7 +61,7 @@ class WakeWordIndicationSettingsContentTest {
      * sound is saved
      */
     @Test
-    fun testWakeWordIndicationSettings() {
+    fun testIndicationSettings() {
 
     }
 
@@ -76,7 +76,7 @@ class WakeWordIndicationSettingsContentTest {
      *
      */
     @Test
-    fun testWakeWordSoundIndication() {
+    fun testSoundIndicationOptions() {
 
     }
 

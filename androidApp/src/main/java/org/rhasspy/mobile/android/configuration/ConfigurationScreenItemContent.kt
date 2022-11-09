@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.MR
@@ -22,6 +23,7 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
+
 
 /**
  * Content of Configuration Screen Item
@@ -40,42 +42,55 @@ fun ConfigurationScreenItemContent(
     onSave: () -> Unit,
     onTest: () -> Unit,
     onDiscard: () -> Unit,
-    Content: @Composable ColumnScope.() -> Unit
+    Content: @Composable ColumnScope.(onNavigate: (route: String) -> Unit) -> Unit
 ) {
 
-    val navigation = LocalMainNavController.current
+    val navController = LocalMainNavController.current
 
-    var showDialog by rememberSaveable { mutableStateOf(false) }
+    var showBackButtonDialog by rememberSaveable { mutableStateOf(false) }
+    var showNavigateDialog by rememberSaveable { mutableStateOf(false) }
+    var navigationRoute by rememberSaveable { mutableStateOf("") }
 
     val hasUnsavedChangesValue by hasUnsavedChanges.collectAsState()
 
-    val onBackPress: () -> Unit = {
-        if (hasUnsavedChangesValue) {
-            showDialog = true
+    fun onBackPress() {
+        if (hasUnsavedChanges.value) {
+            showBackButtonDialog = true
         } else {
-            navigation.popBackStack()
+            navController.popBackStack()
+        }
+    }
+
+    fun onNavigate(route: String) {
+        if (hasUnsavedChanges.value) {
+            navigationRoute = route
+            showNavigateDialog = true
+        } else {
+            navController.navigateSingle(route)
         }
     }
 
     //Back handler to show dialog if there are unsaved changes
-    BackHandler(onBack = onBackPress)
+    BackHandler(onBack = { onBackPress() })
 
-    //Show unsaved changes dialog
-    if (showDialog) {
-        UnsavedChangesDialog(
-            onDismissRequest = {
-                //close dialog on outside click
-                showDialog = false
-            },
-            onSave = {
-                showDialog = false
-                onSave.invoke()
-                navigation.popBackStack()
-            },
-            onDiscard = {
-                showDialog = false
-                onDiscard.invoke()
-                navigation.popBackStack()
+    //Show unsaved changes dialog back press
+    if (showBackButtonDialog) {
+        UnsavedBackButtonDialog(
+            onSave = onSave,
+            onDiscard = onDiscard,
+            onClose = {
+                showBackButtonDialog = false
+            }
+        )
+    }
+
+    //Show unsaved changes dialog navigate
+    if (showNavigateDialog) {
+        UnsavedNavigationButtonDialog(
+            route = navigationRoute,
+            onSave = onSave,
+            onClose = {
+                showNavigateDialog = false
             }
         )
     }
@@ -90,7 +105,7 @@ fun ConfigurationScreenItemContent(
             topBar = {
                 AppBar(
                     title = title,
-                    onBackClick = onBackPress
+                    onBackClick = { onBackPress() }
                 )
             },
             bottomBar = {
@@ -108,11 +123,61 @@ fun ConfigurationScreenItemContent(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                Content()
+                Content { route -> onNavigate(route) }
             }
         }
 
     }
+}
+
+
+private fun NavController.navigateSingle(route: String) {
+    if (this.backQueue.lastOrNull { entry -> entry.destination.route == route } != null) {
+        this.popBackStack(
+            route = route,
+            inclusive = false
+        )
+    } else {
+        this.navigate(route)
+    }
+}
+
+
+@Composable
+private fun UnsavedBackButtonDialog(onSave: () -> Unit, onDiscard: () -> Unit, onClose: () -> Unit) {
+    val navController = LocalMainNavController.current
+
+    UnsavedChangesDialog(
+        onDismissRequest = onClose,
+        onSave = {
+            onSave.invoke()
+            navController.popBackStack()
+            onClose.invoke()
+        },
+        onDiscard = {
+            onDiscard.invoke()
+            navController.popBackStack()
+            onClose.invoke()
+        },
+        dismissButtonText = MR.strings.discard
+    )
+}
+
+@Composable
+private fun UnsavedNavigationButtonDialog(route: String, onSave: () -> Unit, onClose: () -> Unit) {
+    val navController = LocalMainNavController.current
+
+    UnsavedChangesDialog(
+        onDismissRequest = onClose,
+        onSave = {
+            onSave.invoke()
+            navController.navigateSingle(route)
+            onClose.invoke()
+        },
+        onDiscard = onClose,
+        dismissButtonText = MR.strings.cancel
+    )
+
 }
 
 /**
@@ -123,7 +188,8 @@ fun ConfigurationScreenItemContent(
 private fun UnsavedChangesDialog(
     onDismissRequest: () -> Unit,
     onSave: () -> Unit,
-    onDiscard: () -> Unit
+    onDiscard: () -> Unit,
+    dismissButtonText: StringResource
 ) {
 
     AlertDialog(
@@ -141,7 +207,7 @@ private fun UnsavedChangesDialog(
                 onClick = onDiscard,
                 modifier = Modifier.testTag(TestTag.DialogCancel)
             ) {
-                Text(MR.strings.discard)
+                Text(dismissButtonText)
             }
         },
         icon = {

@@ -71,6 +71,7 @@ class RecordedIndicationSoundSettingsViewModel : ViewModel(), IIndicationSoundSe
                 AppSettings.customRecordedSounds.value = customSounds.value.toMutableSet().apply {
                     add(it)
                 }
+                AppSettings.recordedSound.value = it
             }
         }
     }

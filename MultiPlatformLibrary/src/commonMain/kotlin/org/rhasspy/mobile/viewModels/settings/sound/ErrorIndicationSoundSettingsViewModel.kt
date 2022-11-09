@@ -71,6 +71,7 @@ class ErrorIndicationSoundSettingsViewModel : ViewModel(), IIndicationSoundSetti
                 AppSettings.customErrorSounds.value = customSounds.value.toMutableSet().apply {
                     add(it)
                 }
+                AppSettings.errorSound.value = it
             }
         }
     }

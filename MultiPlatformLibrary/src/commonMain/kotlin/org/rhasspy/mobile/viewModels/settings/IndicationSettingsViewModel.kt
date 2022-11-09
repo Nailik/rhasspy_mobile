@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewModels.settings
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.ConfigurationSettings
 
 
 class IndicationSettingsViewModel : ViewModel() {
@@ -11,6 +12,7 @@ class IndicationSettingsViewModel : ViewModel() {
     val isWakeWordLightIndicationEnabled = AppSettings.isWakeWordLightIndicationEnabled.data
     val isWakeWordDetectionTurnOnDisplayEnabled = AppSettings.isWakeWordDetectionTurnOnDisplayEnabled.data
     val isSoundSettingsVisible = isSoundIndicationEnabled
+    val audioPlayingOption = ConfigurationSettings.audioPlayingOption.data
 
     val wakeSound = AppSettings.wakeSound.data
     val recordedSound = AppSettings.recordedSound.data

@@ -2,8 +2,8 @@ package org.rhasspy.mobile.settings
 
 import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
-import org.rhasspy.mobile.viewModels.settings.serializer.PorcupineCustomKeywordSerializer
-import org.rhasspy.mobile.viewModels.settings.serializer.PorcupineDefaultKeywordSerializer
+import org.rhasspy.mobile.settings.serializer.PorcupineCustomKeywordSerializer
+import org.rhasspy.mobile.settings.serializer.PorcupineDefaultKeywordSerializer
 
 internal object ConfigurationSettings {
 

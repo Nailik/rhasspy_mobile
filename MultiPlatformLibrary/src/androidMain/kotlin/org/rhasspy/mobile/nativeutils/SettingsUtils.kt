@@ -144,7 +144,7 @@ actual object SettingsUtils {
                         cursor.close()
                     }
 
-                    fileName = renameFileWhileExists("sounds", fileName)
+                    fileName = renameFileWhileExists("sounds/$subfolder", fileName)
 
                     Application.Instance.contentResolver.openInputStream(uri)?.let { inputStream ->
                         File(Application.Instance.filesDir, "sounds/$subfolder/$fileName").apply {

@@ -11,6 +11,7 @@ import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.sounds.SoundFile
 import org.rhasspy.mobile.settings.sounds.SoundOptions
 
+
 class WakeIndicationSoundSettingsViewModel : ViewModel(), IIndicationSoundSettingsViewModel {
 
     override val isSoundIndicationDefault: StateFlow<Boolean> = AppSettings.wakeSound.data.mapReadonlyState {
@@ -71,6 +72,7 @@ class WakeIndicationSoundSettingsViewModel : ViewModel(), IIndicationSoundSettin
                 AppSettings.customWakeSounds.value = customSounds.value.toMutableSet().apply {
                     add(it)
                 }
+                AppSettings.wakeSound.value = it
             }
         }
     }

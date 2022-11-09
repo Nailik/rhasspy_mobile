@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewModels.settings.serializer
+package org.rhasspy.mobile.settings.serializer
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
@@ -8,21 +8,20 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.serializer
-import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
 
-internal object PorcupineDefaultKeywordSerializer : KSerializer<Set<PorcupineDefaultKeyword>> {
+internal object StringSetSerializer : KSerializer<Set<String>> {
     @OptIn(InternalSerializationApi::class)
-    private val delegatedSerializer = ListSerializer(PorcupineDefaultKeyword::class.serializer())
+    private val delegatedSerializer = ListSerializer(String::class.serializer())
 
     @OptIn(ExperimentalSerializationApi::class)
-    override val descriptor = SerialDescriptor("PorcupinDefaultKeywordSerializer", delegatedSerializer.descriptor)
+    override val descriptor = SerialDescriptor("StringSetSerializer", delegatedSerializer.descriptor)
 
-    override fun serialize(encoder: Encoder, value: Set<PorcupineDefaultKeyword>) {
+    override fun serialize(encoder: Encoder, value: Set<String>) {
         val l = value.toList()
         encoder.encodeSerializableValue(delegatedSerializer, l)
     }
 
-    override fun deserialize(decoder: Decoder): Set<PorcupineDefaultKeyword> {
+    override fun deserialize(decoder: Decoder): Set<String> {
         return decoder.decodeSerializableValue(delegatedSerializer).toSet()
     }
 }

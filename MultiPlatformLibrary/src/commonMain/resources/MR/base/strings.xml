@@ -206,6 +206,8 @@
     <string name="play">Play</string>
     <string name="indication">Indication</string>
     <string name="sounds">Sounds</string>
+    <string name="soundsInfo">Custom Sounds can be selected in the Settings</string>
+    <string name="audioPlayingInfo">can be set in configuration Settings</string>"
     <!-- not translatable -->
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>

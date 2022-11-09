@@ -4,6 +4,7 @@ import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.data.MicrophoneOverlaySizeOptions
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.logger.LogLevel
+import org.rhasspy.mobile.settings.serializer.StringSetSerializer
 import org.rhasspy.mobile.settings.sounds.SoundOptions
 
 internal object AppSettings {
@@ -39,9 +40,9 @@ internal object AppSettings {
     val errorSound = Setting(SettingsEnum.ErrorSound, SoundOptions.Default.name)
 
     //saves sound as pair, first is fileName as String, second is used and indicates if this custom sound file is used
-    val customWakeSounds = Setting(SettingsEnum.CustomWakeSounds, setOf<String>())
-    val customRecordedSounds = Setting(SettingsEnum.CustomRecordedSounds, setOf<String>())
-    val customErrorSounds = Setting(SettingsEnum.CustomErrorSounds, setOf<String>())
+    val customWakeSounds = Setting(SettingsEnum.CustomWakeSounds, setOf(), StringSetSerializer)
+    val customRecordedSounds = Setting(SettingsEnum.CustomRecordedSounds, setOf(), StringSetSerializer)
+    val customErrorSounds = Setting(SettingsEnum.CustomErrorSounds, setOf(), StringSetSerializer)
 
     val isShowLogEnabled = Setting(SettingsEnum.ShowLog, false)
     val isLogAudioFramesEnabled = Setting(SettingsEnum.LogAudioFrames, false)

@@ -58,6 +58,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import dev.icerock.moko.resources.ImageResource
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.desc.Resource
+import dev.icerock.moko.resources.desc.ResourceFormatted
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
@@ -88,6 +89,46 @@ fun Text(
 ) {
     Text(
         translate(resource),
+        modifier,
+        color,
+        fontSize,
+        fontStyle,
+        fontWeight,
+        fontFamily,
+        letterSpacing,
+        textDecoration,
+        textAlign,
+        lineHeight,
+        overflow,
+        softWrap,
+        maxLines,
+        onTextLayout,
+        style
+    )
+}
+
+@Composable
+fun Text(
+    resource: StringResource,
+    vararg args: Any,
+    modifier: Modifier = Modifier,
+    color: Color = Color.Unspecified,
+    fontSize: TextUnit = TextUnit.Unspecified,
+    fontStyle: FontStyle? = null,
+    fontWeight: FontWeight? = null,
+    fontFamily: FontFamily? = null,
+    letterSpacing: TextUnit = TextUnit.Unspecified,
+    textDecoration: TextDecoration? = null,
+    textAlign: TextAlign? = null,
+    lineHeight: TextUnit = TextUnit.Unspecified,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    onTextLayout: (TextLayoutResult) -> Unit = {},
+    style: TextStyle = LocalTextStyle.current
+) {
+    Text(
+        translate(resource, *args),
         modifier,
         color,
         fontSize,
@@ -156,6 +197,12 @@ fun Icon(
 fun translate(resource: StringResource): String {
     AppViewModel.languageOption.collectAsState().value
     return StringDesc.Resource(resource).toString(LocalContext.current)
+}
+
+@Composable
+fun translate(resource: StringResource, vararg args: Any): String {
+    AppViewModel.languageOption.collectAsState().value
+    return StringDesc.ResourceFormatted(resource, *args).toString(LocalContext.current)
 }
 
 //https://stackoverflow.com/questions/68389802/how-to-clear-textfield-focus-when-closing-the-keyboard-and-prevent-two-back-pres
