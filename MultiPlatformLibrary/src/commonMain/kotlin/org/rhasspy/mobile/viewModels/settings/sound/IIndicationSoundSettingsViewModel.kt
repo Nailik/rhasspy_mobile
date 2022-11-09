@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.viewModels.settings.sound
 
 import kotlinx.coroutines.flow.StateFlow
+import org.rhasspy.mobile.data.AudioPlayingOptions
+import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.settings.sounds.SoundFile
 
 interface IIndicationSoundSettingsViewModel {
@@ -8,6 +10,7 @@ interface IIndicationSoundSettingsViewModel {
 
     val isSoundIndicationDefault: StateFlow<Boolean>
     val isSoundIndicationDisabled: StateFlow<Boolean>
+    val audioPlayingOption: StateFlow<AudioPlayingOptions>
 
     val customSoundFiles: StateFlow<List<SoundFile>>
     val soundVolume: StateFlow<Float>

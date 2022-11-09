@@ -1,10 +1,12 @@
 package org.rhasspy.mobile.android.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.unit.dp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.viewModels.AppViewModel
@@ -35,3 +37,6 @@ fun getIsDarkTheme(): Boolean {
     val themeOption by AppViewModel.themeOption.collectAsState()
     return (isSystemInDarkTheme() && themeOption == ThemeOptions.System) || themeOption == ThemeOptions.Dark
 }
+
+val CardPaddingLevel0 = PaddingValues(16.dp)
+val CardPaddingLevel1 = PaddingValues(16.dp)

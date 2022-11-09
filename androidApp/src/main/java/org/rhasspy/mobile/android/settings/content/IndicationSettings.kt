@@ -21,6 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.main.LocalNavController
@@ -29,10 +30,7 @@ import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScreens
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSoundScreen
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.Icon
-import org.rhasspy.mobile.android.utils.ListElement
-import org.rhasspy.mobile.android.utils.SwitchListItem
-import org.rhasspy.mobile.android.utils.Text
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.viewModels.settings.IndicationSettingsViewModel
 import org.rhasspy.mobile.viewModels.settings.sound.ErrorIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewModels.settings.sound.RecordedIndicationSoundSettingsViewModel
@@ -97,7 +95,7 @@ fun IndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
     ) {
 
         Card(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(8.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
 
@@ -142,7 +140,7 @@ fun SoundIndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
 
 
         Card(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(8.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
 
@@ -175,7 +173,6 @@ fun SoundIndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
                 text = { Text(MR.strings.errorSound) },
                 secondaryText = { Text(text = viewModel.errorSound.collectAsState().value) }
             )
-
 
             val navController = LocalMainNavController.current
 

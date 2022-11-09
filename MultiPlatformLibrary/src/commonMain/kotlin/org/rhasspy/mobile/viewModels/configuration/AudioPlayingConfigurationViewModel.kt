@@ -41,9 +41,6 @@ class AudioPlayingConfigurationViewModel : ViewModel() {
         combineStateNotEquals(_audioPlayingHttpEndpoint, ConfigurationSettings.audioPlayingHttpEndpoint.data)
     )
 
-    //show input field for endpoint
-    val isAudioPlayingHttpEndpointSettingsVisible = _audioPlayingOption.mapReadonlyState { it == AudioPlayingOptions.RemoteHTTP }
-
     //all options
     val audioPlayingOptionsList = AudioPlayingOptions::values
 

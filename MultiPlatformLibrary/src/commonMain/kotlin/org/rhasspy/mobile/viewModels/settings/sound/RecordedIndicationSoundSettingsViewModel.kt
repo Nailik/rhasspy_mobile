@@ -4,10 +4,12 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.combineState
+import org.rhasspy.mobile.data.AudioPlayingOptions
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.nativeutils.SettingsUtils
 import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.settings.sounds.SoundFile
 import org.rhasspy.mobile.settings.sounds.SoundOptions
 
@@ -20,6 +22,8 @@ class RecordedIndicationSoundSettingsViewModel : ViewModel(), IIndicationSoundSe
     override val isSoundIndicationDisabled: StateFlow<Boolean> = AppSettings.recordedSound.data.mapReadonlyState {
         it == SoundOptions.Disabled.name
     }
+
+    override val audioPlayingOption: StateFlow<AudioPlayingOptions> = ConfigurationSettings.audioPlayingOption.data
 
     override val customSoundFiles: StateFlow<List<SoundFile>> =
         combineState(AppSettings.recordedSound.data, AppSettings.customRecordedSounds.data) { selected, set ->

@@ -1,8 +1,11 @@
 package org.rhasspy.mobile.android.utils
 
 import android.widget.TextView
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -64,8 +67,8 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.android.theme.CardPaddingLevel0
 import org.rhasspy.mobile.data.DataEnum
-import org.rhasspy.mobile.settings.sounds.SoundFile
 import org.rhasspy.mobile.viewModels.AppViewModel
 
 @Composable
@@ -312,19 +315,46 @@ fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, label: StringResource, o
 }
 
 @Composable
-fun <E : DataEnum<*>> RadioButtonsEnumSelection(modifier: Modifier = Modifier, selected: E, onSelect: (item: E) -> Unit, values: () -> Array<E>) {
+fun <E : DataEnum<*>> RadioButtonsEnumSelection(
+    modifier: Modifier = Modifier,
+    selected: E,
+    onSelect: (item: E) -> Unit,
+    values: () -> Array<E>,
+    content: (@Composable (item: E) -> Unit)? = null
+) {
     Card(
-        modifier = modifier.padding(16.dp),
+        modifier = modifier.padding(CardPaddingLevel0),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         values().forEach {
-            RadioButtonListItem(
-                modifier = Modifier.testTag(it),
-                text = it.text,
-                isChecked = selected == it,
-            ) {
-                onSelect(it)
+            Column {
+                RadioButtonListItem(
+                    modifier = Modifier.testTag(it),
+                    text = it.text,
+                    isChecked = selected == it,
+                ) {
+                    onSelect(it)
+                }
             }
+
+            content?.also { nullSafeContent ->
+                AnimatedVisibility(
+                    enter = expandVertically(),
+                    exit = shrinkVertically(),
+                    visible = selected == it
+                ) {
+                    CompositionLocalProvider(
+                        LocalAbsoluteTonalElevation provides 0.dp
+                    ) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.surface
+                        ) {
+                            nullSafeContent(it)
+                        }
+                    }
+                }
+            }
+
         }
     }
 }
@@ -338,7 +368,8 @@ fun SwitchListItem(
     isChecked: Boolean,
     onCheckedChange: ((Boolean) -> Unit)
 ) {
-    ListElement(modifier = modifier.clickable { onCheckedChange(!isChecked) },
+    ListElement(
+        modifier = modifier.clickable { onCheckedChange(!isChecked) },
         text = { Text(text) },
         secondaryText = secondaryText?.let { { Text(secondaryText) } } ?: run { null },
         trailing = {
@@ -351,7 +382,6 @@ fun SwitchListItem(
 
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun ListElement(
     modifier: Modifier = Modifier,
     icon: @Composable (() -> Unit)? = null,
@@ -360,15 +390,17 @@ fun ListElement(
     trailing: @Composable (() -> Unit)? = null,
     text: @Composable () -> Unit
 ) {
+    @OptIn(ExperimentalMaterial3Api::class)
     androidx.compose.material3.ListItem(
         headlineText = text,
         modifier = modifier,
         overlineText = overlineText,
         supportingText = secondaryText,
         leadingContent = icon,
-        trailingContent = trailing,
+        trailingContent = trailing
     )
 }
+
 
 @Composable
 fun TextFieldListItemVisibility(
@@ -408,7 +440,6 @@ fun TextFieldListItemVisibility(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TextFieldListItem(
     modifier: Modifier = Modifier,
@@ -575,6 +606,7 @@ private fun ProvideTextStyleFromToken(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RadioButtonListItem(
     modifier: Modifier = Modifier,
@@ -591,6 +623,7 @@ fun RadioButtonListItem(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RadioButtonListItem(
     modifier: Modifier = Modifier,
@@ -607,6 +640,7 @@ fun RadioButtonListItem(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CheckBoxListItem(modifier: Modifier = Modifier, text: String, isChecked: Boolean, trailing: @Composable () -> Unit, onClick: () -> Unit) {
     ListElement(

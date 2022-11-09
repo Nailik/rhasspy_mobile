@@ -1,27 +1,28 @@
 package org.rhasspy.mobile.android.configuration.content
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
-import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.android.theme.CardPaddingLevel1
 import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.data.AudioPlayingOptions
 import org.rhasspy.mobile.viewModels.configuration.AudioPlayingConfigurationViewModel
 
 /**
@@ -50,37 +51,17 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
             selected = audioPlayingOption,
             onSelect = viewModel::selectAudioPlayingOption,
             values = viewModel.audioPlayingOptionsList
-        )
-
-        //visibility of endpoint option
-        AnimatedVisibility(
-            enter = expandVertically(),
-            exit = shrinkVertically(),
-            visible = viewModel.isAudioPlayingHttpEndpointSettingsVisible.collectAsState().value
         ) {
-
-            Column {
-
-                //switch to use custom
-                SwitchListItem(
-                    modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
-                    text = MR.strings.useCustomEndpoint,
-                    isChecked = viewModel.isUseCustomAudioPlayingHttpEndpoint.collectAsState().value,
-                    onCheckedChange = viewModel::toggleUseCustomHttpEndpoint
-                )
-
-                //http endpoint input field
-                TextFieldListItem(
-                    enabled = viewModel.isAudioPlayingHttpEndpointChangeEnabled.collectAsState().value,
-                    modifier = Modifier.testTag(TestTag.Endpoint),
-                    value = viewModel.audioPlayingHttpEndpoint.collectAsState().value,
-                    onValueChange = viewModel::changeAudioPlayingHttpEndpoint,
-                    label = MR.strings.audioOutputURL
-                )
-
+            if (it == AudioPlayingOptions.RemoteHTTP) {
+                Card(
+                    modifier = Modifier.padding(CardPaddingLevel1),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                ) {
+                    HttpEndpointConfigurationContent(viewModel)
+                }
             }
-
         }
+
 
         //custom sounds
         ListElement(
@@ -95,4 +76,29 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
         )
     }
 
+}
+
+@Composable
+fun HttpEndpointConfigurationContent(viewModel: AudioPlayingConfigurationViewModel) {
+    //visibility of endpoint option
+    Column {
+
+        //switch to use custom
+        SwitchListItem(
+            modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
+            text = MR.strings.useCustomEndpoint,
+            isChecked = viewModel.isUseCustomAudioPlayingHttpEndpoint.collectAsState().value,
+            onCheckedChange = viewModel::toggleUseCustomHttpEndpoint
+        )
+
+        //http endpoint input field
+        TextFieldListItem(
+            enabled = viewModel.isAudioPlayingHttpEndpointChangeEnabled.collectAsState().value,
+            modifier = Modifier.testTag(TestTag.Endpoint),
+            value = viewModel.audioPlayingHttpEndpoint.collectAsState().value,
+            onValueChange = viewModel::changeAudioPlayingHttpEndpoint,
+            label = MR.strings.audioOutputURL
+        )
+
+    }
 }

@@ -1,12 +1,10 @@
 package org.rhasspy.mobile.android.settings.content.sound
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.FileOpen
-import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -17,11 +15,11 @@ import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.combinedTestTag
+import org.rhasspy.mobile.android.configuration.ConfigurationScreens
+import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.Icon
-import org.rhasspy.mobile.android.utils.RadioButtonListItem
-import org.rhasspy.mobile.android.utils.SliderListItem
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.settings.sounds.SoundFile
 import org.rhasspy.mobile.viewModels.settings.sound.IIndicationSoundSettingsViewModel
@@ -80,11 +78,39 @@ fun IndicationSoundScreen(viewModel: IIndicationSoundSettingsViewModel, title: S
                     )
                 }
 
-                SliderListItem(
-                    text = MR.strings.volume,
-                    value = viewModel.soundVolume.collectAsState().value,
-                    onValueChange = viewModel::updateSoundVolume
-                )
+
+                Card(
+                    modifier = Modifier.padding(8.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                ) {
+                    val navController = LocalMainNavController.current
+
+                    ListElement(
+                        modifier = Modifier
+                            .clickable {
+                                //when destination is already in backstack, backstack to destination
+                                if (navController.backQueue.lastOrNull { entry -> entry.destination.route == ConfigurationScreens.AudioPlayingConfiguration.name } != null) {
+                                    navController.popBackStack(
+                                        route = ConfigurationScreens.AudioPlayingConfiguration.name,
+                                        inclusive = false
+                                    )
+                                } else {
+                                    navController.navigate(ConfigurationScreens.AudioPlayingConfiguration.name)
+                                }
+                            }
+                            .testTag(ConfigurationScreens.AudioPlayingConfiguration),
+                        icon = { Icon(Icons.Filled.Info, contentDescription = MR.strings.info) },
+                        text = { Text(MR.strings.audioPlaying) },
+                        overlineText = { Text(viewModel.audioPlayingOption.collectAsState().value.name) },
+                        secondaryText = { Text(MR.strings.audioPlayingInfo) }
+                    )
+
+                    SliderListItem(
+                        text = MR.strings.volume,
+                        value = viewModel.soundVolume.collectAsState().value,
+                        onValueChange = viewModel::updateSoundVolume
+                    )
+                }
 
                 SoundActionButtons(
                     onPlay = viewModel::playSoundFile,
