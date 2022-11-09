@@ -2,8 +2,11 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.rhasspy.mobile.*
+import org.rhasspy.mobile.combineAny
+import org.rhasspy.mobile.combineState
+import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.data.IntentRecognitionOptions
+import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class IntentRecognitionConfigurationViewModel : ViewModel() {
@@ -34,7 +37,9 @@ class IntentRecognitionConfigurationViewModel : ViewModel() {
     )
 
     //show endpoint settings
-    val isIntentRecognitionHttpSettingsVisible = _intentRecognitionOption.mapReadonlyState { it == IntentRecognitionOptions.RemoteHTTP }
+    fun isIntentRecognitionHttpSettingsVisible(option: IntentRecognitionOptions): Boolean {
+        return option == IntentRecognitionOptions.RemoteHTTP
+    }
 
     //all options
     val intentRecognitionOptionsList = IntentRecognitionOptions::values

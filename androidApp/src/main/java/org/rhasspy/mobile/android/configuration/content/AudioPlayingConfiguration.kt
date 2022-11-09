@@ -22,7 +22,6 @@ import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.CardPaddingLevel1
 import org.rhasspy.mobile.android.utils.*
-import org.rhasspy.mobile.data.AudioPlayingOptions
 import org.rhasspy.mobile.viewModels.configuration.AudioPlayingConfigurationViewModel
 
 /**
@@ -52,7 +51,7 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
             onSelect = viewModel::selectAudioPlayingOption,
             values = viewModel.audioPlayingOptionsList
         ) {
-            if (it == AudioPlayingOptions.RemoteHTTP) {
+            if (viewModel.isAudioPlayingHttpEndpointSettingsVisible(it)) {
                 Card(
                     modifier = Modifier.padding(CardPaddingLevel1),
                     elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)

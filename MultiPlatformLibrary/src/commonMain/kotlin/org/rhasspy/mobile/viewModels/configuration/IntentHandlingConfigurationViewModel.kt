@@ -35,8 +35,14 @@ class IntentHandlingConfigurationViewModel : ViewModel() {
     )
 
     //show input field for endpoint
-    val isRemoteHttpSettingsVisible = _intentHandlingOption.mapReadonlyState { it == IntentHandlingOptions.RemoteHTTP }
-    val isHomeAssistantSettingsVisible = _intentHandlingOption.mapReadonlyState { it == IntentHandlingOptions.HomeAssistant }
+    fun isRemoteHttpSettingsVisible(option: IntentHandlingOptions): Boolean {
+        return option == IntentHandlingOptions.RemoteHTTP
+    }
+
+    //show fields for home assistant settings
+    fun isHomeAssistantSettingsVisible(option: IntentHandlingOptions): Boolean {
+        return option == IntentHandlingOptions.HomeAssistant
+    }
 
     //all options
     val intentHandlingOptionsList = IntentHandlingOptions::values

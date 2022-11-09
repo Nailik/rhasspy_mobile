@@ -2,8 +2,11 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.rhasspy.mobile.*
+import org.rhasspy.mobile.combineAny
+import org.rhasspy.mobile.combineState
+import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.data.AudioPlayingOptions
+import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 /**
@@ -58,6 +61,12 @@ class AudioPlayingConfigurationViewModel : ViewModel() {
     fun changeAudioPlayingHttpEndpoint(endpoint: String) {
         _audioPlayingHttpEndpoint.value = endpoint
     }
+
+    //show audio playing http endpoint settings
+    fun isAudioPlayingHttpEndpointSettingsVisible(option: AudioPlayingOptions): Boolean {
+        return option == AudioPlayingOptions.RemoteHTTP
+    }
+
 
     /**
      * save data configuration

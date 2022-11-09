@@ -38,5 +38,5 @@ fun getIsDarkTheme(): Boolean {
     return (isSystemInDarkTheme() && themeOption == ThemeOptions.System) || themeOption == ThemeOptions.Dark
 }
 
-val CardPaddingLevel0 = PaddingValues(16.dp)
-val CardPaddingLevel1 = PaddingValues(16.dp)
+val CardPaddingLevel0 = PaddingValues(8.dp)
+val CardPaddingLevel1 = PaddingValues(vertical = 16.dp, horizontal = 8.dp)

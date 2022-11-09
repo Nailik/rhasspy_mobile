@@ -1,19 +1,20 @@
 package org.rhasspy.mobile.android.configuration.content
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.android.theme.CardPaddingLevel1
 import org.rhasspy.mobile.android.utils.RadioButtonListItem
 import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.utils.TextFieldListItem
@@ -46,14 +47,27 @@ fun IntentHandlingConfigurationContent(viewModel: IntentHandlingConfigurationVie
             selected = viewModel.intentHandlingOption.collectAsState().value,
             onSelect = viewModel::selectIntentHandlingOption,
             values = viewModel.intentHandlingOptionsList
-        )
+        ) {
+            if (viewModel.isRemoteHttpSettingsVisible(it)) {
+                Card(
+                    modifier = Modifier.padding(CardPaddingLevel1),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                ) {
+                    //http endpoint
+                    RemoteHTTPOption(viewModel)
+                }
+            }
 
-        //http endpoint
-        RemoteHTTPOption(viewModel)
-
-        //home assistant settings
-        HomeAssistantOption(viewModel)
-
+            if (viewModel.isHomeAssistantSettingsVisible(it)) {
+                Card(
+                    modifier = Modifier.padding(CardPaddingLevel1),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                ) {
+                    //home assistant settings
+                    HomeAssistantOption(viewModel)
+                }
+            }
+        }
     }
 
 }
@@ -65,22 +79,13 @@ fun IntentHandlingConfigurationContent(viewModel: IntentHandlingConfigurationVie
 @Composable
 private fun RemoteHTTPOption(viewModel: IntentHandlingConfigurationViewModel) {
 
-    //visibility of endpoint setting
-    AnimatedVisibility(
-        enter = expandVertically(),
-        exit = shrinkVertically(),
-        visible = viewModel.isRemoteHttpSettingsVisible.collectAsState().value
-    ) {
-
-        //endpoint input field
-        TextFieldListItem(
-            modifier = Modifier.testTag(TestTag.Endpoint),
-            value = viewModel.intentHandlingHttpEndpoint.collectAsState().value,
-            onValueChange = viewModel::changeIntentHandlingHttpEndpoint,
-            label = MR.strings.remoteURL
-        )
-
-    }
+    //endpoint input field
+    TextFieldListItem(
+        modifier = Modifier.testTag(TestTag.Endpoint),
+        value = viewModel.intentHandlingHttpEndpoint.collectAsState().value,
+        onValueChange = viewModel::changeIntentHandlingHttpEndpoint,
+        label = MR.strings.remoteURL
+    )
 
 }
 
@@ -93,48 +98,35 @@ private fun RemoteHTTPOption(viewModel: IntentHandlingConfigurationViewModel) {
 @Composable
 private fun HomeAssistantOption(viewModel: IntentHandlingConfigurationViewModel) {
 
-    //home assistant settings visibility
-    AnimatedVisibility(
-        enter = expandVertically(),
-        exit = shrinkVertically(),
-        visible = viewModel.isHomeAssistantSettingsVisible.collectAsState().value
-    ) {
+    //endpoint url
+    TextFieldListItem(
+        modifier = Modifier.testTag(TestTag.Endpoint),
+        value = viewModel.intentHandlingHassEndpoint.collectAsState().value,
+        onValueChange = viewModel::changeIntentHandlingHassEndpoint,
+        label = MR.strings.hassURL
+    )
 
-        Column {
+    //hass access token
+    TextFieldListItemVisibility(
+        modifier = Modifier.testTag(TestTag.AccessToken),
+        value = viewModel.intentHandlingHassAccessToken.collectAsState().value,
+        onValueChange = viewModel::changeIntentHandlingHassAccessToken,
+        label = MR.strings.accessToken
+    )
 
-            //endpoint url
-            TextFieldListItem(
-                modifier = Modifier.testTag(TestTag.Endpoint),
-                value = viewModel.intentHandlingHassEndpoint.collectAsState().value,
-                onValueChange = viewModel::changeIntentHandlingHassEndpoint,
-                label = MR.strings.hassURL
-            )
+    //select hass event or hass intent
+    RadioButtonListItem(
+        modifier = Modifier.testTag(TestTag.SendEvents),
+        text = MR.strings.homeAssistantEvents,
+        isChecked = viewModel.isIntentHandlingHassEvent.collectAsState().value,
+        onClick = viewModel::selectIntentHandlingHassEvent
+    )
 
-            //hass access token
-            TextFieldListItemVisibility(
-                modifier = Modifier.testTag(TestTag.AccessToken),
-                value = viewModel.intentHandlingHassAccessToken.collectAsState().value,
-                onValueChange = viewModel::changeIntentHandlingHassAccessToken,
-                label = MR.strings.accessToken
-            )
-
-            //select hass event or hass intent
-            RadioButtonListItem(
-                modifier = Modifier.testTag(TestTag.SendEvents),
-                text = MR.strings.homeAssistantEvents,
-                isChecked = viewModel.isIntentHandlingHassEvent.collectAsState().value,
-                onClick = viewModel::selectIntentHandlingHassEvent
-            )
-
-            RadioButtonListItem(
-                modifier = Modifier.testTag(TestTag.SendIntents),
-                text = MR.strings.homeAssistantIntents,
-                isChecked = viewModel.isIntentHandlingHassIntent.collectAsState().value,
-                onClick = viewModel::selectIntentHandlingHassIntent
-            )
-
-        }
-
-    }
+    RadioButtonListItem(
+        modifier = Modifier.testTag(TestTag.SendIntents),
+        text = MR.strings.homeAssistantIntents,
+        isChecked = viewModel.isIntentHandlingHassIntent.collectAsState().value,
+        onClick = viewModel::selectIntentHandlingHassIntent
+    )
 
 }

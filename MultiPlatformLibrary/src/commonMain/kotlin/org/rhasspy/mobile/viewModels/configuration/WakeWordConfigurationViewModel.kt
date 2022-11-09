@@ -37,7 +37,9 @@ class WakeWordConfigurationViewModel : ViewModel() {
     val wakeWordPorcupineKeywordDefaultOptions = _wakeWordPorcupineKeywordDefaultOptions.readOnly
     val wakeWordPorcupineKeywordCustomOptions = _wakeWordPorcupineKeywordCustomOptions.readOnly
     val wakeWordPorcupineLanguage = _wakeWordPorcupineLanguage.readOnly
-    val wakeWordPorcupineSettingsVisible = _wakeWordOption.mapReadonlyState { it == WakeWordOption.Porcupine }
+    fun isWakeWordPorcupineSettingsVisible(option: WakeWordOption): Boolean {
+        return option == WakeWordOption.Porcupine
+    }
 
     val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_wakeWordOption, ConfigurationSettings.wakeWordOption.data),

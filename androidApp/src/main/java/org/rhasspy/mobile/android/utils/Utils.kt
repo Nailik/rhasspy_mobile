@@ -352,7 +352,6 @@ fun SwitchListItem(
         })
 }
 
-
 @Composable
 fun ListElement(
     modifier: Modifier = Modifier,
@@ -427,7 +426,7 @@ fun TextFieldListItem(
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
 
     ListElement(
-        modifier = modifier.bringIntoViewRequester(bringIntoViewRequester)
+        modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester)
     ) {
         val coroutineScope = rememberCoroutineScope()
 
@@ -441,7 +440,8 @@ fun TextFieldListItem(
             onValueChange = { onValueChange?.invoke(it) },
             trailingIcon = trailingIcon,
             visualTransformation = visualTransformation,
-            modifier = Modifier
+            modifier = modifier
+                .padding(bottom = 4.dp)
                 .fillMaxWidth()
                 .clearFocusOnKeyboardDismiss()
                 .onFocusEvent {
@@ -458,59 +458,9 @@ fun TextFieldListItem(
 
 @Composable
 fun FilledTonalButtonListItem(modifier: Modifier = Modifier, text: StringResource, enabled: Boolean = true, onClick: () -> Unit) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .wrapContentSize(Alignment.Center)
-    ) {
+    ListElement(modifier = modifier) {
         FilledTonalButton(enabled = enabled, onClick = onClick, content = { Text(text) })
     }
-}
-
-@Composable
-fun FilledTonalIconButtonListItem(
-    modifier: Modifier = Modifier,
-    imageVector: ImageVector,
-    text: StringResource,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(
-                horizontal = 16.dp,
-                vertical = 8.dp
-            )
-    ) {
-        FilledTonalButton(
-            modifier = Modifier.align(Alignment.Center),
-            imageVector = imageVector,
-            text = text,
-            onClick = onClick
-        )
-    }
-}
-
-@Composable
-fun FilledTonalButton(
-    modifier: Modifier = Modifier,
-    imageVector: ImageVector,
-    text: StringResource,
-    onClick: () -> Unit
-) {
-    FilledTonalButton(
-        modifier = modifier,
-        onClick = onClick,
-        content = {
-            Icon(
-                imageVector = imageVector,
-                contentDescription = text
-            )
-            Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-            Text(text)
-        }
-    )
 }
 
 @Composable
