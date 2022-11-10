@@ -310,23 +310,34 @@ fun <E : DataEnum<*>> RadioButtonsEnumSelection(
             }
 
             content?.also { nullSafeContent ->
-                AnimatedVisibility(
-                    enter = expandVertically(),
-                    exit = shrinkVertically(),
-                    visible = selected == it
-                ) {
-                    CompositionLocalProvider(
-                        LocalAbsoluteTonalElevation provides 0.dp
-                    ) {
-                        Surface(
-                            color = MaterialTheme.colorScheme.surface
-                        ) {
-                            nullSafeContent(it)
-                        }
-                    }
+                SecondaryContent(visible = selected == it) {
+                    nullSafeContent(it)
                 }
             }
+        }
 
+    }
+}
+
+
+@Composable
+fun SecondaryContent(
+    visible: Boolean,
+    content: (@Composable () -> Unit)
+) {
+    AnimatedVisibility(
+        enter = expandVertically(),
+        exit = shrinkVertically(),
+        visible = visible
+    ) {
+        CompositionLocalProvider(
+            LocalAbsoluteTonalElevation provides 0.dp
+        ) {
+            Surface(
+                color = MaterialTheme.colorScheme.surface
+            ) {
+                content()
+            }
         }
     }
 }

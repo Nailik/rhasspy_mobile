@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.android.configuration.content
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -12,6 +13,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
@@ -53,22 +55,28 @@ fun IntentRecognitionConfigurationContent(viewModel: IntentRecognitionConfigurat
 
 @Composable
 private fun IntentRecognitionHTTP(viewModel: IntentRecognitionConfigurationViewModel) {
-    //switch to use custom
-    SwitchListItem(
-        modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
-        text = MR.strings.useCustomEndpoint,
-        isChecked = viewModel.isUseCustomIntentRecognitionHttpEndpoint.collectAsState().value,
-        onCheckedChange = viewModel::toggleUseCustomHttpEndpoint
-    )
 
-    //http endpoint input field
-    TextFieldListItem(
-        enabled = viewModel.isIntentRecognitionHttpEndpointChangeEnabled.collectAsState().value,
-        modifier = Modifier
-            .testTag(TestTag.Endpoint)
-            .padding(bottom = 8.dp),
-        value = viewModel.intentRecognitionHttpEndpoint.collectAsState().value,
-        onValueChange = viewModel::changeIntentRecognitionHttpEndpoint,
-        label = MR.strings.rhasspyTextToIntentURL
-    )
+    Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
+
+        //switch to use custom
+        SwitchListItem(
+            modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
+            text = MR.strings.useCustomEndpoint,
+            isChecked = viewModel.isUseCustomIntentRecognitionHttpEndpoint.collectAsState().value,
+            onCheckedChange = viewModel::toggleUseCustomHttpEndpoint
+        )
+
+        //http endpoint input field
+        TextFieldListItem(
+            enabled = viewModel.isIntentRecognitionHttpEndpointChangeEnabled.collectAsState().value,
+            modifier = Modifier
+                .testTag(TestTag.Endpoint)
+                .padding(bottom = 8.dp),
+            value = viewModel.intentRecognitionHttpEndpoint.collectAsState().value,
+            onValueChange = viewModel::changeIntentRecognitionHttpEndpoint,
+            label = MR.strings.rhasspyTextToIntentURL
+        )
+
+    }
+
 }

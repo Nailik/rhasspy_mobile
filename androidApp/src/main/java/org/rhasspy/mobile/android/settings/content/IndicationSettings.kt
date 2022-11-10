@@ -1,9 +1,7 @@
 package org.rhasspy.mobile.android.settings.content
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -21,7 +19,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.main.LocalNavController
@@ -30,6 +27,7 @@ import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScreens
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSoundScreen
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.viewModels.settings.IndicationSettingsViewModel
 import org.rhasspy.mobile.viewModels.settings.sound.ErrorIndicationSoundSettingsViewModel
@@ -131,18 +129,11 @@ fun IndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
 
 @Composable
 fun SoundIndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
+
     //visibility of sounds settings
-    AnimatedVisibility(
-        enter = expandVertically(),
-        exit = shrinkVertically(),
-        visible = viewModel.isSoundSettingsVisible.collectAsState().value
-    ) {
+    SecondaryContent(visible = viewModel.isSoundSettingsVisible.collectAsState().value) {
 
-
-        Card(
-            modifier = Modifier.padding(8.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-        ) {
+        Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
             //opens page for sounds
             val navigation = LocalNavController.current
@@ -197,5 +188,7 @@ fun SoundIndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
             )
 
         }
+
     }
+
 }
