@@ -326,16 +326,14 @@ fun <E : DataEnum<*>> RadioButtonsEnumSelectionList(
     onSelect: (item: E) -> Unit,
     values: () -> Array<E>
 ) {
-    Box(modifier = modifier) {
+    Column(modifier = modifier) {
         values().forEach {
-            Column {
-                RadioButtonListItem(
-                    modifier = Modifier.testTag(it),
-                    text = it.text,
-                    isChecked = selected == it,
-                ) {
-                    onSelect(it)
-                }
+            RadioButtonListItem(
+                modifier = Modifier.testTag(it),
+                text = it.text,
+                isChecked = selected == it,
+            ) {
+                onSelect(it)
             }
         }
     }
