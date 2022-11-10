@@ -21,6 +21,7 @@ enum class SettingsEnum {
     BackgroundWakeWordDetectionTurnOnDisplay,
     SoundIndication,
     WakeWordLightIndication,
+    SoundIndicationOutput,
 
     HotWordEnabled,
     AudioOutputEnabled,

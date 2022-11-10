@@ -1,8 +1,8 @@
 package org.rhasspy.mobile.viewModels.settings
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import org.rhasspy.mobile.data.AudioOutputOptions
 import org.rhasspy.mobile.settings.AppSettings
-import org.rhasspy.mobile.settings.ConfigurationSettings
 
 
 class IndicationSettingsViewModel : ViewModel() {
@@ -12,16 +12,14 @@ class IndicationSettingsViewModel : ViewModel() {
     val isWakeWordLightIndicationEnabled = AppSettings.isWakeWordLightIndicationEnabled.data
     val isWakeWordDetectionTurnOnDisplayEnabled = AppSettings.isWakeWordDetectionTurnOnDisplayEnabled.data
     val isSoundSettingsVisible = isSoundIndicationEnabled
-    val audioPlayingOption = ConfigurationSettings.audioPlayingOption.data
+    val soundIndicationOutputOption = AppSettings.soundIndicationOutputOption.data
 
     val wakeSound = AppSettings.wakeSound.data
     val recordedSound = AppSettings.recordedSound.data
     val errorSound = AppSettings.errorSound.data
 
-    //toggle wake word sound indication
-    fun toggleWakeWordSoundIndicationEnabled(enabled: Boolean) {
-        AppSettings.isSoundIndicationEnabled.value = enabled
-    }
+    //all audio output options
+    val audioOutputOptionsList = AudioOutputOptions::values
 
     //toggle wake word light indication
     fun toggleWakeWordLightIndicationEnabled(enabled: Boolean) {
@@ -31,6 +29,16 @@ class IndicationSettingsViewModel : ViewModel() {
     //toggle wake word turn on display
     fun toggleWakeWordDetectionTurnOnDisplay(enabled: Boolean) {
         AppSettings.isWakeWordDetectionTurnOnDisplayEnabled.value = enabled
+    }
+
+    //toggle wake word sound indication
+    fun toggleWakeWordSoundIndicationEnabled(enabled: Boolean) {
+        AppSettings.isSoundIndicationEnabled.value = enabled
+    }
+
+    //set sound output option for indication
+    fun selectSoundIndicationOutputOption(option: AudioOutputOptions) {
+        AppSettings.soundIndicationOutputOption.value = option
     }
 
 }

@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.settings
 
+import org.rhasspy.mobile.data.AudioOutputOptions
 import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.data.MicrophoneOverlaySizeOptions
 import org.rhasspy.mobile.data.ThemeOptions
@@ -24,6 +25,7 @@ internal object AppSettings {
 
     val isWakeWordDetectionTurnOnDisplayEnabled = Setting(SettingsEnum.BackgroundWakeWordDetectionTurnOnDisplay, false)
     val isSoundIndicationEnabled = Setting(SettingsEnum.SoundIndication, false)
+    val soundIndicationOutputOption = Setting(SettingsEnum.SoundIndicationOutput, AudioOutputOptions.Notification)
     val isWakeWordLightIndicationEnabled = Setting(SettingsEnum.WakeWordLightIndication, false)
 
     val volume = Setting(SettingsEnum.Volume, 0.5F)

@@ -3,8 +3,6 @@ package org.rhasspy.mobile.android.settings.content
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -19,8 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.configuration.ConfigurationScreens
-import org.rhasspy.mobile.android.main.LocalMainNavController
+import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreens
@@ -135,6 +132,13 @@ fun SoundIndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
 
         Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
+            RadioButtonsEnumSelectionList(
+                modifier = Modifier.testTag(TestTag.AudioOutputOptions),
+                selected = viewModel.soundIndicationOutputOption.collectAsState().value,
+                onSelect = viewModel::selectSoundIndicationOutputOption,
+                values = viewModel.audioOutputOptionsList
+            )
+
             //opens page for sounds
             val navigation = LocalNavController.current
 
@@ -164,29 +168,6 @@ fun SoundIndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
                 text = { Text(MR.strings.errorSound) },
                 secondaryText = { Text(text = viewModel.errorSound.collectAsState().value) }
             )
-
-            val navController = LocalMainNavController.current
-
-            ListElement(
-                modifier = Modifier
-                    .clickable {
-                        //when destination is already in backstack, backstack to destination
-                        if (navController.backQueue.lastOrNull { entry -> entry.destination.route == ConfigurationScreens.AudioPlayingConfiguration.name } != null) {
-                            navController.popBackStack(
-                                route = ConfigurationScreens.AudioPlayingConfiguration.name,
-                                inclusive = false
-                            )
-                        } else {
-                            navController.navigate(ConfigurationScreens.AudioPlayingConfiguration.name)
-                        }
-                    }
-                    .testTag(ConfigurationScreens.AudioPlayingConfiguration),
-                icon = { Icon(Icons.Filled.Info, contentDescription = MR.strings.info) },
-                text = { Text(MR.strings.audioPlaying) },
-                overlineText = { Text(viewModel.audioPlayingOption.collectAsState().value.name) },
-                secondaryText = { Text(MR.strings.audioPlayingInfo) }
-            )
-
         }
 
     }

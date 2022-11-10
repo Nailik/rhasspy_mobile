@@ -1,10 +1,7 @@
 package org.rhasspy.mobile.android.configuration.content
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -15,10 +12,12 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
-import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
+import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelectionList
+import org.rhasspy.mobile.android.utils.SwitchListItem
+import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.viewModels.configuration.AudioPlayingConfigurationViewModel
 
 /**
@@ -37,7 +36,7 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
         onSave = viewModel::save,
         onTest = viewModel::test,
         onDiscard = viewModel::discard
-    ) { onNavigate ->
+    ) {
 
         val audioPlayingOption by viewModel.audioPlayingOption.collectAsState()
 
@@ -57,19 +56,6 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
                 HttpEndpointConfigurationContent(viewModel)
             }
         }
-
-
-        //custom sounds
-        ListElement(
-            modifier = Modifier
-                .clickable {
-                    onNavigate(SettingsScreens.IndicationSettings.name)
-                }
-                .testTag(SettingsScreens.IndicationSettings),
-            icon = { Icon(Icons.Filled.Info, contentDescription = MR.strings.info) },
-            text = { Text(MR.strings.sounds) },
-            secondaryText = { Text(MR.strings.soundsInfo) }
-        )
     }
 
 }
