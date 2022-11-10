@@ -214,4 +214,5 @@
     <string name="sounds">Töne</string>
     <string name="soundsInfo">Benutzerdefinierte Töne können in den Einstellungen ausgewählt werden</string>
     <string name="audioPlayingInfo">kann in den Konfigurationseinstellungen festgelegt werden</string>
+    <string name="notification">Benachrichtigung</string>
 </resources>

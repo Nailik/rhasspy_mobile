@@ -1,13 +1,18 @@
 package org.rhasspy.mobile.nativeutils
 
+import android.content.ContentResolver
+import android.content.res.Resources
 import android.media.*
 import android.net.Uri
+import androidx.annotation.AnyRes
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.resources.FileResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.Application
+import org.rhasspy.mobile.data.AudioOutputOptions
 import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.ConfigurationSettings
 import java.io.File
 import java.nio.ByteBuffer
 
@@ -111,6 +116,7 @@ actual object AudioPlayer {
 
         mediaPlayer.setAudioAttributes(
             AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build()
         )
@@ -129,11 +135,30 @@ actual object AudioPlayer {
     actual fun playSoundFileResource(fileResource: FileResource, volume: Float) {
         logger.v { "playSoundFileResource" }
 
-        playSound(
-            MediaPlayer.create(
-                Application.Instance,
-                fileResource.rawResId
-            ), volume
+        when (ConfigurationSettings.audioOutputOption.value) {
+            AudioOutputOptions.Sound -> {
+                playSound(
+                    MediaPlayer.create(
+                        Application.Instance,
+                        fileResource.rawResId
+                    ), volume
+                )
+            }
+            AudioOutputOptions.Notification -> {
+                val notification = RingtoneManager.getRingtone(Application.Instance, getUriFromResource(fileResource.rawResId))
+                notification.play()
+            }
+        }
+    }
+
+    @Throws(Resources.NotFoundException::class)
+    fun getUriFromResource(@AnyRes resId: Int): Uri {
+        val res: Resources = Application.Instance.resources
+        return Uri.parse(
+            ContentResolver.SCHEME_ANDROID_RESOURCE +
+                    "://" + res.getResourcePackageName(resId)
+                    + '/' + res.getResourceTypeName(resId)
+                    + '/' + res.getResourceEntryName(resId)
         )
     }
 
@@ -145,12 +170,20 @@ actual object AudioPlayer {
 
         val soundFile = File(Application.Instance.filesDir, "sounds/$subfolder/$filename")
 
-        playSound(
-            MediaPlayer.create(
-                Application.Instance,
-                Uri.fromFile(soundFile)
-            ), volume
-        )
+        when (ConfigurationSettings.audioOutputOption.value) {
+            AudioOutputOptions.Sound -> {
+                playSound(
+                    MediaPlayer.create(
+                        Application.Instance,
+                        Uri.fromFile(soundFile)
+                    ), volume
+                )
+            }
+            AudioOutputOptions.Notification -> {
+                val notification = RingtoneManager.getRingtone(Application.Instance, Uri.fromFile(soundFile))
+                notification.play()
+            }
+        }
     }
 
 }

@@ -48,6 +48,11 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
             onSelect = viewModel::selectAudioPlayingOption,
             values = viewModel.audioPlayingOptionsList
         ) {
+
+            if (viewModel.isAudioPlayingLocalSettingsVisible(it)) {
+                LocalConfigurationContent(viewModel)
+            }
+
             if (viewModel.isAudioPlayingHttpEndpointSettingsVisible(it)) {
                 HttpEndpointConfigurationContent(viewModel)
             }
@@ -70,7 +75,24 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
 }
 
 @Composable
-fun HttpEndpointConfigurationContent(viewModel: AudioPlayingConfigurationViewModel) {
+private fun LocalConfigurationContent(viewModel: AudioPlayingConfigurationViewModel) {
+
+    //visibility of local output options
+    Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
+
+        RadioButtonsEnumSelectionList(
+            modifier = Modifier.testTag(TestTag.AudioOutputOptions),
+            selected = viewModel.audioOutputOption.collectAsState().value,
+            onSelect = viewModel::selectAudioOutputOption,
+            values = viewModel.audioOutputOptionsList
+        )
+
+    }
+
+}
+
+@Composable
+private fun HttpEndpointConfigurationContent(viewModel: AudioPlayingConfigurationViewModel) {
 
     //visibility of endpoint option
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {

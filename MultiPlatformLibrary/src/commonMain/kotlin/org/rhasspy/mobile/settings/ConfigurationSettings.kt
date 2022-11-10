@@ -62,6 +62,7 @@ internal object ConfigurationSettings {
     val textToSpeechHttpEndpoint = Setting(SettingsEnum.TextToSpeechHttpEndpoint, "")
 
     val audioPlayingOption = Setting(SettingsEnum.AudioPlayingOption, AudioPlayingOptions.Disabled)
+    val audioOutputOption = Setting(SettingsEnum.AudioOutputOption, AudioOutputOptions.Sound)
     val isUseCustomAudioPlayingHttpEndpoint = Setting(SettingsEnum.CustomAudioPlayingHttpEndpoint, false)
     val audioPlayingHttpEndpoint = Setting(SettingsEnum.AudioPlayingHttpEndpoint, "")
 

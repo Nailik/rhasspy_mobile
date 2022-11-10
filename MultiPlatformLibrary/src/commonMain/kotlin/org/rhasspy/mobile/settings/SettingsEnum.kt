@@ -84,6 +84,7 @@ enum class SettingsEnum {
     TextToSpeechHttpEndpoint,
 
     AudioPlayingOption,
+    AudioOutputOption,
     CustomAudioPlayingHttpEndpoint,
     AudioPlayingHttpEndpoint,
 

@@ -26,6 +26,7 @@ enum class TestTag {
     MicrophoneOverlaySizeOptions,
 
     AudioPlayingOptions,
+    AudioOutputOptions,
     Endpoint,
     AccessToken,
     SendEvents,

@@ -319,6 +319,26 @@ fun <E : DataEnum<*>> RadioButtonsEnumSelection(
     }
 }
 
+@Composable
+fun <E : DataEnum<*>> RadioButtonsEnumSelectionList(
+    modifier: Modifier = Modifier,
+    selected: E,
+    onSelect: (item: E) -> Unit,
+    values: () -> Array<E>
+) {
+    values().forEach {
+        Column(modifier = modifier) {
+            RadioButtonListItem(
+                modifier = Modifier.testTag(it),
+                text = it.text,
+                isChecked = selected == it,
+            ) {
+                onSelect(it)
+            }
+        }
+    }
+}
+
 
 @Composable
 fun SecondaryContent(
