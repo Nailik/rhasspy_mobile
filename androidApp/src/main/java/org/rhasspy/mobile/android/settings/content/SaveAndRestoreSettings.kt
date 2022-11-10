@@ -4,6 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Restore
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -42,6 +44,12 @@ fun SaveAndRestoreSettingsContent(viewModel: SaveAndRestoreSettingsViewModel = v
         //save settings
         ListElement(
             modifier = Modifier.clickable { openSaveSettingsDialog.value = true },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Save,
+                    contentDescription = MR.strings.save
+                )
+            },
             text = {
                 Text(MR.strings.save)
             },
@@ -66,6 +74,12 @@ fun SaveAndRestoreSettingsContent(viewModel: SaveAndRestoreSettingsViewModel = v
         //restore settings
         ListElement(
             modifier = Modifier.clickable { openRestoreSettingsDialog.value = true },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Restore,
+                    contentDescription = MR.strings.restore
+                )
+            },
             text = {
                 Text(MR.strings.restore)
             },
