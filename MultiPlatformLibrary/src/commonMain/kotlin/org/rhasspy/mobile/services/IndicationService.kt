@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.logic.State
 import org.rhasspy.mobile.logic.StateMachine
-import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.nativeutils.NativeIndication
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.sounds.SoundOptions
@@ -28,12 +27,12 @@ object IndicationService {
             //change things according to state of the service
             StateMachine.currentState.collect {
                 logger.v { "currentState changed to $it" }
-                evaluateIndication(it, AudioPlayer.isPlayingState.value)
+                evaluateIndication(it, StateMachine.isPlayingAudio.value)
             }
         }
 
         scope.launch {
-            AudioPlayer.isPlayingState.collect {
+            StateMachine.isPlayingAudio.collect {
                 logger.v { "isPlayingState changed to $it" }
                 evaluateIndication(StateMachine.currentState.value, it)
             }
@@ -105,24 +104,51 @@ object IndicationService {
     private fun playWakeSound() {
         when (AppSettings.wakeSound.value) {
             SoundOptions.Disabled.name -> {}
-            SoundOptions.Default.name -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_hi, AppSettings.wakeSoundVolume.value)
-            else -> AudioPlayer.playSoundFile("wake", AppSettings.wakeSound.value, AppSettings.wakeSoundVolume.value)
+            SoundOptions.Default.name -> StateMachine.audioPlayer.playSoundFileResource(
+                MR.files.etc_wav_beep_hi,
+                AppSettings.wakeSoundVolume.data,
+                AppSettings.soundIndicationOutputOption.value
+            )
+            else -> StateMachine.audioPlayer.playSoundFile(
+                "wake",
+                AppSettings.wakeSound.value,
+                AppSettings.wakeSoundVolume.data,
+                AppSettings.soundIndicationOutputOption.value
+            )
         }
     }
 
     private fun playRecordedSound() {
         when (AppSettings.recordedSound.value) {
             SoundOptions.Disabled.name -> {}
-            SoundOptions.Default.name -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_lo, AppSettings.recordedSoundVolume.value)
-            else -> AudioPlayer.playSoundFile("recorded", AppSettings.recordedSound.value, AppSettings.recordedSoundVolume.value)
+            SoundOptions.Default.name -> StateMachine.audioPlayer.playSoundFileResource(
+                MR.files.etc_wav_beep_lo,
+                AppSettings.recordedSoundVolume.data,
+                AppSettings.soundIndicationOutputOption.value
+            )
+            else -> StateMachine.audioPlayer.playSoundFile(
+                "recorded",
+                AppSettings.recordedSound.value,
+                AppSettings.recordedSoundVolume.data,
+                AppSettings.soundIndicationOutputOption.value
+            )
         }
     }
 
     private fun playErrorSound() {
         when (AppSettings.errorSound.value) {
             SoundOptions.Disabled.name -> {}
-            SoundOptions.Default.name -> AudioPlayer.playSoundFileResource(MR.files.etc_wav_beep_error, AppSettings.errorSoundVolume.value)
-            else -> AudioPlayer.playSoundFile("error", AppSettings.errorSound.value, AppSettings.errorSoundVolume.value)
+            SoundOptions.Default.name -> StateMachine.audioPlayer.playSoundFileResource(
+                MR.files.etc_wav_beep_error,
+                AppSettings.errorSoundVolume.data,
+                AppSettings.soundIndicationOutputOption.value
+            )
+            else -> StateMachine.audioPlayer.playSoundFile(
+                "error",
+                AppSettings.errorSound.value,
+                AppSettings.errorSoundVolume.data,
+                AppSettings.soundIndicationOutputOption.value
+            )
         }
     }
 

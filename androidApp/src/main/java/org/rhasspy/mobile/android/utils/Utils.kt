@@ -513,6 +513,7 @@ fun SliderListItem(modifier: Modifier = Modifier, text: StringResource, value: F
                 Box(
                     Modifier
                         .weight(1f)
+                        .padding(top = 8.dp) //custom
                         .align(Alignment.CenterVertically)
                 ) {
                     Column {
@@ -717,4 +718,21 @@ fun RowScope.NavigationItem(screen: Enum<*>, icon: @Composable () -> Unit, label
         label = label
     )
 
+}
+
+@Composable
+fun OnPauseEffect(onPause: () -> Unit){
+    val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
+    DisposableEffect(onPause) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_PAUSE) {
+                onPause.invoke()
+            }
+        }
+        val lifecycle = lifecycleOwner.value.lifecycle
+        lifecycle.addObserver(observer)
+        onDispose {
+            lifecycle.removeObserver(observer)
+        }
+    }
 }

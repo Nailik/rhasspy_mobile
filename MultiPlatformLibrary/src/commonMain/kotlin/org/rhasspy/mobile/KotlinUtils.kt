@@ -80,7 +80,7 @@ fun combineAny(
 }.stateIn(scope, sharingStarted, flows.find { it.value } != null)
 
 fun <T, R> StateFlow<T>.mapReadonlyState(
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Default),
     sharingStarted: SharingStarted = SharingStarted.Lazily,
     transform: (T) -> R
 ): StateFlow<R> = this.map {

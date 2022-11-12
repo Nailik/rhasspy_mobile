@@ -12,7 +12,6 @@ import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.isNotAboveThreshold
 import org.rhasspy.mobile.logic.State
 import org.rhasspy.mobile.logic.StateMachine
-import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
@@ -58,7 +57,7 @@ object RecordingService {
 
         //audio indication sounds should be ignored
         scope.launch {
-            AudioPlayer.isPlayingState.collect {
+            StateMachine.isPlayingAudio.collect {
                 when (it) {
                     //stop recording while sounds are playing
                     true -> stopRecording()

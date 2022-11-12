@@ -7,23 +7,29 @@ import android.net.Uri
 import androidx.annotation.AnyRes
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.resources.FileResource
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.*
+import kotlinx.coroutines.android.awaitFrame
+import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.data.AudioOutputOptions
 import org.rhasspy.mobile.settings.AppSettings
-import org.rhasspy.mobile.settings.ConfigurationSettings
 import java.io.File
 import java.nio.ByteBuffer
 
-actual object AudioPlayer {
+
+actual class AudioPlayer {
+
+
     private val logger = Logger.withTag("AudioPlayer")
     private var isEnabled = true
 
-    private var isPlaying = MutableStateFlow(false)
-    actual val isPlayingState: StateFlow<Boolean> get() = isPlaying
+    private var _isPlayingState = MutableStateFlow(false)
+    actual val isPlayingState: StateFlow<Boolean> get() = _isPlayingState
     private var audioTrack: AudioTrack? = null
     private var onFinished: (() -> Unit)? = null
+    private var mediaPlayer: MediaPlayer? = null
+    private var notification: Ringtone? = null
+    private var volumeChange: Job? = null
 
     actual fun playData(data: List<Byte>, onFinished: () -> Unit) {
         if (!isEnabled) {
@@ -31,13 +37,13 @@ actual object AudioPlayer {
             return
         }
 
-        if (isPlaying.value) {
+        if (_isPlayingState.value) {
             logger.e { "AudioPlayer playData already playing data" }
             return
         }
 
         this.onFinished = onFinished
-        isPlaying.value = true
+        _isPlayingState.value = true
 
         try {
             logger.v { "start audio stream" }
@@ -74,7 +80,7 @@ actual object AudioPlayer {
 
                     override fun onMarkerReached(p0: AudioTrack?) {
                         logger.v { "finished playing audio stream" }
-                        isPlaying.value = false
+                        _isPlayingState.value = false
                         onFinished()
                     }
 
@@ -91,62 +97,88 @@ actual object AudioPlayer {
 
         } catch (e: Exception) {
             logger.e(e) { "Exception while playing audio data" }
-            isPlaying.value = false
+            _isPlayingState.value = false
             onFinished()
         }
     }
 
     actual fun stopPlayingData() {
-        if (onFinished != null && audioTrack != null && isPlaying.value) {
-            isPlaying.value = false
-            onFinished?.invoke()
-            audioTrack?.stop()
-        }
+        onFinished?.invoke()
+        audioTrack?.stop()
+        mediaPlayer?.stop()
+        notification?.stop()
+        audioTrack = null
+        mediaPlayer = null
+        notification = null
+        _isPlayingState.value = false
     }
 
-    private fun playSound(mediaPlayer: MediaPlayer, volume: Float) {
+    private fun playSound(uri: Uri, volume: StateFlow<Float>) {
         logger.v { "playSound" }
 
-        if (isPlaying.value) {
+        if (_isPlayingState.value) {
             logger.e { "AudioPlayer playSound already playing data" }
             return
         }
 
-        isPlaying.value = true
+        _isPlayingState.value = true
 
-        mediaPlayer.setAudioAttributes(
-            AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .build()
-        )
+        mediaPlayer = MediaPlayer.create(Application.Instance, uri).apply {
+            setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build()
+            )
 
-        mediaPlayer.setVolume(volume, volume)
-        //on completion listener is also called when error occurs
-        mediaPlayer.setOnCompletionListener {
-            isPlaying.value = false
+            setVolume(volume.value, volume.value)
+            //on completion listener is also called when error occurs
+            setOnCompletionListener {
+                _isPlayingState.value = false
+            }
+            start()
         }
-        mediaPlayer.start()
+
+        volumeChange = CoroutineScope(Dispatchers.IO).launch {
+            volume.collect {
+                mediaPlayer?.setVolume(volume.value, volume.value)
+            }
+        }
+    }
+
+
+
+    private fun playNotification(uri: Uri, volume: StateFlow<Float>) {
+        notification = RingtoneManager.getRingtone(Application.Instance, uri).apply {
+            play()
+            CoroutineScope(Dispatchers.IO).launch {
+                while (isPlaying) {
+                    _isPlayingState.value = true
+                    awaitFrame()
+                }
+                _isPlayingState.value = false
+            }
+        }
+
+        volumeChange = CoroutineScope(Dispatchers.IO).launch {
+            volume.collect {
+                notification?.volume = volume.value
+            }
+        }
     }
 
     /**
      * play audio resource
      */
-    actual fun playSoundFileResource(fileResource: FileResource, volume: Float) {
+    actual fun playSoundFileResource(fileResource: FileResource, volume: StateFlow<Float>, audioOutputOptions: AudioOutputOptions) {
         logger.v { "playSoundFileResource" }
 
-        when (ConfigurationSettings.audioOutputOption.value) {
+        when (audioOutputOptions) {
             AudioOutputOptions.Sound -> {
-                playSound(
-                    MediaPlayer.create(
-                        Application.Instance,
-                        fileResource.rawResId
-                    ), volume
-                )
+                playSound(getUriFromResource(fileResource.rawResId), volume)
             }
             AudioOutputOptions.Notification -> {
-                val notification = RingtoneManager.getRingtone(Application.Instance, getUriFromResource(fileResource.rawResId))
-                notification.play()
+                playNotification(getUriFromResource(fileResource.rawResId), volume)
             }
         }
     }
@@ -165,23 +197,17 @@ actual object AudioPlayer {
     /**
      * play some sound file
      */
-    actual fun playSoundFile(subfolder: String, filename: String, volume: Float) {
+    actual fun playSoundFile(subfolder: String, filename: String, volume: StateFlow<Float>, audioOutputOptions: AudioOutputOptions) {
         logger.v { "playSoundFile $subfolder/$filename" }
 
         val soundFile = File(Application.Instance.filesDir, "sounds/$subfolder/$filename")
 
-        when (ConfigurationSettings.audioOutputOption.value) {
+        when (audioOutputOptions) {
             AudioOutputOptions.Sound -> {
-                playSound(
-                    MediaPlayer.create(
-                        Application.Instance,
-                        Uri.fromFile(soundFile)
-                    ), volume
-                )
+                playSound(Uri.fromFile(soundFile), volume)
             }
             AudioOutputOptions.Notification -> {
-                val notification = RingtoneManager.getRingtone(Application.Instance, Uri.fromFile(soundFile))
-                notification.play()
+                playNotification(Uri.fromFile(soundFile), volume)
             }
         }
     }

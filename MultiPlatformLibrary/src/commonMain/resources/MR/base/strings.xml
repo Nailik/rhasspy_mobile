@@ -210,6 +210,7 @@
     <string name="soundsInfo">Custom Sounds can be selected in the Settings</string>
     <string name="audioPlayingInfo">can be set in configuration Settings</string>
     <string name="notification">Notification</string>
+    <string name="audioOutputSilentOrDisabled">Your audio Output is Silent or Disabled</string>
     <!-- not translatable -->
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>

@@ -215,4 +215,5 @@
     <string name="soundsInfo">Benutzerdefinierte Töne können in den Einstellungen ausgewählt werden</string>
     <string name="audioPlayingInfo">kann in den Konfigurationseinstellungen festgelegt werden</string>
     <string name="notification">Benachrichtigung</string>
+    <string name="audioOutputSilentOrDisabled">Ihr Audioausgang ist stumm oder deaktiviert</string>
 </resources>

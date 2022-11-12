@@ -27,6 +27,8 @@ object StateMachine {
     private val logger = Logger.withTag("StateMachine")
 
     private var previousRecordingFile = FileWriter("previousRecording.wav", 0)
+    val audioPlayer = AudioPlayer()
+    val isPlayingAudio = audioPlayer.isPlayingState
 
     //saves data about current session, dummy initial value
     var currentSession: Session = Session("", "")
@@ -488,7 +490,7 @@ object StateMachine {
     fun playAudio(data: List<Byte>, fromMQTT: Boolean = false) {
         logger.v { "playAudio" }
         if (state.value != State.RecordingIntent) {
-            AudioPlayer.playData(data) {
+            audioPlayer.playData(data) {
                 if (fromMQTT) {
                     //if call was from mqtt, send message when play has finished
                     MqttService.playFinished()
@@ -508,10 +510,10 @@ object StateMachine {
         if (state.value == State.AwaitingHotWord) {
             logger.d { "playRecording" }
             state.value = State.PlayingRecording
-            AudioPlayer.playData(getPreviousRecording()) { state.value = State.AwaitingHotWord }
+            audioPlayer.playData(getPreviousRecording()) { state.value = State.AwaitingHotWord }
         } else if (state.value == State.PlayingRecording) {
             logger.d { "stopPlayingRecording" }
-            AudioPlayer.stopPlayingData()
+            audioPlayer.stopPlayingData()
             state.value = State.AwaitingHotWord
         }
     }

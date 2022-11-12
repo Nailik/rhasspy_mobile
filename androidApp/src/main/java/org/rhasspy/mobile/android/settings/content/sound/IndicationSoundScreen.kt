@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.android.settings.content.sound
 
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -15,19 +17,17 @@ import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.combinedTestTag
-import org.rhasspy.mobile.android.configuration.ConfigurationScreens
-import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.settings.sounds.SoundFile
 import org.rhasspy.mobile.viewModels.settings.sound.IIndicationSoundSettingsViewModel
 
-//TODO stop playing opn button, on back , on close app,
-//TODO change volume while playing
-//TODO audio as music, notification,
 @Composable
 fun IndicationSoundScreen(viewModel: IIndicationSoundSettingsViewModel, title: StringResource, screen: IndicationSettingsScreens) {
+
+    OnPauseEffect(viewModel::onPause)
+
     Scaffold(
         modifier = Modifier
             .testTag(screen)
@@ -42,82 +42,86 @@ fun IndicationSoundScreen(viewModel: IIndicationSoundSettingsViewModel, title: S
                     .fillMaxSize()
             ) {
 
-                RadioButtonListItem(
-                    text = MR.strings.defaultText,
-                    isChecked = viewModel.isSoundIndicationDefault.collectAsState().value,
-                    onClick = viewModel::onClickSoundIndicationDefault
-                )
-
-                RadioButtonListItem(
-                    text = MR.strings.disabled,
-                    isChecked = viewModel.isSoundIndicationDisabled.collectAsState().value,
-                    onClick = viewModel::onClickSoundIndicationDisabled
-                )
-
-                val elements by viewModel.customSoundFiles.collectAsState()
-
-                //added files
-                LazyColumn(
-                    modifier = Modifier
-                        .weight(1f)
-                ) {
-
-                    items(
-                        count = elements.size,
-                        itemContent = { index ->
-                            val element = elements[index]
-
-                            //element
-                            SoundListItem(
-                                soundFile = element,
-                                onClick = { viewModel.selectSoundFile(element) },
-                                onDelete = { viewModel.deleteSoundFile(element) }
-                            )
-                        }
-                    )
-                }
-
+                SoundElements(viewModel)
 
                 Card(
                     modifier = Modifier.padding(8.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                 ) {
-                    val navController = LocalMainNavController.current
 
-                    ListElement(
-                        modifier = Modifier
-                            .clickable {
-                                //when destination is already in backstack, backstack to destination
-                                if (navController.backQueue.lastOrNull { entry -> entry.destination.route == ConfigurationScreens.AudioPlayingConfiguration.name } != null) {
-                                    navController.popBackStack(
-                                        route = ConfigurationScreens.AudioPlayingConfiguration.name,
-                                        inclusive = false
-                                    )
-                                } else {
-                                    navController.navigate(ConfigurationScreens.AudioPlayingConfiguration.name)
-                                }
-                            }
-                            .testTag(ConfigurationScreens.AudioPlayingConfiguration),
-                        icon = { Icon(Icons.Filled.Info, contentDescription = MR.strings.info) },
-                        text = { Text(MR.strings.audioPlaying) },
-                        overlineText = { Text(viewModel.audioPlayingOption.collectAsState().value.name) },
-                        secondaryText = { Text(MR.strings.audioPlayingInfo) }
-                    )
+                    AnimatedVisibility(
+                        enter = expandVertically(),
+                        exit = shrinkVertically(),
+                        visible = viewModel.isNoSoundInformationBoxVisible.collectAsState().value
+                    ) {
+
+                        ListElement(
+                            icon = { Icon(Icons.Filled.Info, contentDescription = MR.strings.info) },
+                            text = { Text(MR.strings.audioPlaying) },
+                            secondaryText = { Text(viewModel.audioOutputOption.collectAsState().value.text) }
+                        )
+
+                    }
 
                     SliderListItem(
                         text = MR.strings.volume,
                         value = viewModel.soundVolume.collectAsState().value,
                         onValueChange = viewModel::updateSoundVolume
                     )
-                }
 
-                SoundActionButtons(
-                    onPlay = viewModel::playSoundFile,
-                    onChooseFile = viewModel::chooseSoundFile
+                    SoundActionButtons(
+                        onPlay = viewModel::clickAudioPlayer,
+                        isPlaying = viewModel.isAudioPlaying.collectAsState().value,
+                        onChooseFile = viewModel::chooseSoundFile
+                    )
+                }
+            }
+
+        }
+
+    }
+
+}
+
+@Composable
+private fun ColumnScope.SoundElements(viewModel: IIndicationSoundSettingsViewModel) {
+
+    RadioButtonListItem(
+        modifier = Modifier.testTag(TestTag.Default),
+        text = MR.strings.defaultText,
+        isChecked = viewModel.isSoundIndicationDefault.collectAsState().value,
+        onClick = viewModel::onClickSoundIndicationDefault
+    )
+
+    RadioButtonListItem(
+        modifier = Modifier.testTag(TestTag.Disabled),
+        text = MR.strings.disabled,
+        isChecked = viewModel.isSoundIndicationDisabled.collectAsState().value,
+        onClick = viewModel::onClickSoundIndicationDisabled
+    )
+
+    val elements by viewModel.customSoundFiles.collectAsState()
+
+    //added files
+    LazyColumn(
+        modifier = Modifier.weight(1f)
+    ) {
+
+        items(
+            count = elements.size,
+            itemContent = { index ->
+                val element = elements[index]
+
+                //element
+                SoundListItem(
+                    soundFile = element,
+                    onClick = { viewModel.selectSoundFile(element) },
+                    onDelete = { viewModel.deleteSoundFile(element) }
                 )
             }
-        }
+        )
     }
+
 }
 
 /**
@@ -132,6 +136,7 @@ private fun SoundListItem(
     onClick: () -> Unit,
     onDelete: () -> Unit
 ) {
+
     RadioButtonListItem(
         modifier = Modifier.testTag(soundFile.fileName),
         text = soundFile.fileName,
@@ -151,6 +156,7 @@ private fun SoundListItem(
         },
         onClick = onClick
     )
+
 }
 
 /**
@@ -162,40 +168,51 @@ private fun SoundListItem(
 @Composable
 private fun SoundActionButtons(
     onPlay: () -> Unit,
+    isPlaying: Boolean,
     onChooseFile: () -> Unit
 ) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-    ) {
 
-        FilledTonalButton(
-            modifier = Modifier.testTag(TestTag.Play),
-            onClick = onPlay,
-            content = {
-                Icon(
-                    imageVector = Icons.Filled.PlayArrow,
-                    contentDescription = MR.strings.play
-                )
-                Spacer(
-                    modifier = Modifier.size(ButtonDefaults.IconSpacing)
-                )
-                Text(MR.strings.play)
-            })
+    ListElement {
+        Row(
+            modifier = Modifier.padding(vertical = 8.dp)
+        ) {
+            Spacer(modifier = Modifier.weight(0.15f))
 
-        FilledTonalButton(
-            modifier = Modifier.testTag(TestTag.SelectFile),
-            onClick = onChooseFile,
-            content = {
-                Icon(
-                    imageVector = Icons.Filled.FileOpen,
-                    contentDescription = MR.strings.fileOpen
-                )
-                Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-                Text(MR.strings.fileOpen)
-            })
+            Button(
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag(TestTag.PlayPause),
+                onClick = onPlay,
+                content = {
+                    Icon(
+                        imageVector = if (isPlaying) Icons.Filled.Stop else Icons.Filled.PlayArrow,
+                        contentDescription = if (isPlaying) MR.strings.stop else MR.strings.play
+                    )
+                    Spacer(
+                        modifier = Modifier.size(ButtonDefaults.IconSpacing)
+                    )
+                    Text(if (isPlaying) MR.strings.stop else MR.strings.play)
+                })
+
+            Spacer(modifier = Modifier.weight(0.3f))
+
+            //visibility of mqtt settings
+            FilledTonalButton(
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag(TestTag.SelectFile),
+                onClick = onChooseFile,
+                content = {
+                    Icon(
+                        imageVector = Icons.Filled.FileOpen,
+                        contentDescription = MR.strings.fileOpen
+                    )
+                    Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+                    Text(MR.strings.fileOpen)
+                })
+
+            Spacer(modifier = Modifier.weight(0.15f))
+        }
 
     }
 }

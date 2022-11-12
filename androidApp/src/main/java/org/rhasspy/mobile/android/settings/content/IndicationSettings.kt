@@ -96,6 +96,7 @@ fun IndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
 
             //turn on display
             SwitchListItem(
+                modifier = Modifier.testTag(TestTag.WakeWordDetectionTurnOnDisplay),
                 text = MR.strings.backgroundWakeWordDetectionTurnOnDisplay,
                 isChecked = viewModel.isWakeWordDetectionTurnOnDisplayEnabled.collectAsState().value,
                 onCheckedChange = viewModel::toggleWakeWordDetectionTurnOnDisplay
@@ -103,6 +104,7 @@ fun IndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
 
             //light indication
             SwitchListItem(
+                modifier = Modifier.testTag(TestTag.WakeWordLightIndicationEnabled),
                 text = MR.strings.wakeWordLightIndication,
                 isChecked = viewModel.isWakeWordLightIndicationEnabled.collectAsState().value,
                 onCheckedChange = viewModel::toggleWakeWordLightIndicationEnabled
@@ -110,6 +112,7 @@ fun IndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
 
             //sound indication
             SwitchListItem(
+                modifier = Modifier.testTag(TestTag.SoundIndicationEnabled),
                 text = MR.strings.wakeWordSoundIndication,
                 isChecked = viewModel.isSoundIndicationEnabled.collectAsState().value,
                 onCheckedChange = viewModel::toggleWakeWordSoundIndicationEnabled

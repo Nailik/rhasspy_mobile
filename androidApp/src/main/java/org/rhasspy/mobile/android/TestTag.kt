@@ -77,7 +77,7 @@ enum class TestTag {
     Sensitivity,
     Download,
     SelectFile,
-    Play,
+    PlayPause,
     Delete,
     Undo,
     Background,
@@ -86,6 +86,12 @@ enum class TestTag {
     VisibleWhileAppIsOpened,
     IndicationSoundScreen,
 
+    WakeWordDetectionTurnOnDisplay,
+    WakeWordLightIndicationEnabled,
+    SoundIndicationEnabled,
+
+    Disabled,
+    Default
 }
 
 fun Modifier.combinedTestTag(dataEnum: DataEnum<*>, tag: TestTag) = semantics(
