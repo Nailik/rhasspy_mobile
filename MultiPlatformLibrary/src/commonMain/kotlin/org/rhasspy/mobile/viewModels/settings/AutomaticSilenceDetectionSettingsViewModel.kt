@@ -21,9 +21,9 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
 
     //testing
     private val _currentAudioLevel = MutableStateFlow<Byte>(0)
-    private val _currentStatus = MutableStateFlow(false)
+    private val _isRecording = MutableStateFlow(false)
     val currentAudioLevel = _currentAudioLevel.readOnly
-    val currentStatus = _currentStatus.readOnly
+    val isRecording = _isRecording.readOnly
 
     //testing running
     private var job: Job? = null
@@ -35,10 +35,7 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
 
     //update time for automatic silence detection
     fun updateAutomaticSilenceDetectionTime(time: String) {
-        time.replace("-", "")
-            .replace(",", "")
-            .replace(".", "")
-            .replace(" ", "")
+        time.replace("""[-,. ]""".toRegex(), "")
             .toIntOrNull()?.also {
                 AppSettings.automaticSilenceDetectionTime.value = it
             }
@@ -52,18 +49,28 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
             }
     }
 
+    //toggle test (start or stop)
     fun toggleAudioLevelTest() {
-        if (currentStatus.value) {
+        if (isRecording.value) {
             stopAudioLevelTest()
         } else {
             startAudioLevelTest()
         }
     }
 
+    //stop recording when composable is not shown anymore
+    fun onPause() {
+        stopAudioLevelTest()
+    }
+
+    /**
+     * start the audio level test will launch a job that listens to the audio recorder
+     */
     private fun startAudioLevelTest() {
         _currentAudioLevel.value = 0
-        _currentStatus.value = true
+        _isRecording.value = true
 
+        job?.cancel()
         job = CoroutineScope(Dispatchers.Default).launch {
             AudioRecorder.output.collectIndexed { _, value ->
                 var max: Byte = 0
@@ -72,27 +79,22 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
                         max = it
                     }
                 }
-                viewModelScope.launch {
-                    _currentAudioLevel.value = max
-                }
+                _currentAudioLevel.value = max
             }
         }
 
         AudioRecorder.startRecording()
     }
 
+    /**
+     * stop audio level test stops recording and removes the job
+     */
     private fun stopAudioLevelTest() {
         AudioRecorder.stopRecording()
         job?.cancel()
+        job = null
 
-        _currentStatus.value = false
-    }
-
-    fun onPause(){
-        AudioRecorder.stopRecording()
-        job?.cancel()
-
-        _currentStatus.value = false
+        _isRecording.value = false
     }
 
 }

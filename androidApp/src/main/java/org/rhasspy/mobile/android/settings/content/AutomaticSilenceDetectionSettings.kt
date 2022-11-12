@@ -114,7 +114,7 @@ private fun Test(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
 
         val audioLevel by viewModel.currentAudioLevel.collectAsState()
 
-        val animatedWeight = animateFloatAsState(targetValue = if (viewModel.currentStatus.collectAsState().value) 1f else 0f)
+        val animatedWeight = animateFloatAsState(targetValue = if (viewModel.isRecording.collectAsState().value) 1f else 0f)
         val animatedColor = animateColorAsState(
             targetValue = if (audioLevel > viewModel.automaticSilenceDetectionAudioLevel.collectAsState().value) {
                 MaterialTheme.colorScheme.error
@@ -156,7 +156,7 @@ private fun RowScope.StartTestButton(viewModel: AutomaticSilenceDetectionSetting
         )
         {
 
-            val status by viewModel.currentStatus.collectAsState()
+            val status by viewModel.isRecording.collectAsState()
 
             Icon(if (status) Icons.Filled.MicOff else Icons.Filled.Mic, MR.strings.microphone)
 
