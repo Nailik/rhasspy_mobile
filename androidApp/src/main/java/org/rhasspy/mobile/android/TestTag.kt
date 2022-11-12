@@ -92,7 +92,12 @@ enum class TestTag {
 
     Disabled,
     Default,
-    Warning
+    Warning,
+
+    Volume,
+    HotWord,
+    AudioOutput,
+    IntentHandling
 }
 
 fun Modifier.combinedTestTag(dataEnum: DataEnum<*>, tag: TestTag) = semantics(

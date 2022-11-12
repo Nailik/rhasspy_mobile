@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.testTag
@@ -33,6 +34,7 @@ fun DeviceSettingsContent(viewModel: DeviceSettingsSettingsViewModel = viewModel
 
             //volume slider
             SliderListItem(
+                modifier = Modifier.testTag(TestTag.Volume),
                 text = MR.strings.volume,
                 value = viewModel.volume.collectAsState().value,
                 onValueChange = viewModel::updateVolume
@@ -40,6 +42,7 @@ fun DeviceSettingsContent(viewModel: DeviceSettingsSettingsViewModel = viewModel
 
             //hot word enabled
             SwitchListItem(
+                modifier = Modifier.testTag(TestTag.HotWord),
                 text = MR.strings.hotWord,
                 isChecked = viewModel.isHotWordEnabled.collectAsState().value,
                 onCheckedChange = viewModel::toggleHotWordEnabled
@@ -47,6 +50,7 @@ fun DeviceSettingsContent(viewModel: DeviceSettingsSettingsViewModel = viewModel
 
             //audio output enabled
             SwitchListItem(
+                modifier = Modifier.testTag(TestTag.AudioOutput),
                 text = MR.strings.audioOutput,
                 isChecked = viewModel.isAudioOutputEnabled.collectAsState().value,
                 onCheckedChange = viewModel::toggleAudioOutputEnabled
@@ -54,6 +58,7 @@ fun DeviceSettingsContent(viewModel: DeviceSettingsSettingsViewModel = viewModel
 
             //intent handling enabled
             SwitchListItem(
+                modifier = Modifier.testTag(TestTag.IntentHandling),
                 text = MR.strings.intentHandling,
                 isChecked = viewModel.isIntentHandlingEnabled.collectAsState().value,
                 onCheckedChange = viewModel::toggleIntentHandlingEnabled
