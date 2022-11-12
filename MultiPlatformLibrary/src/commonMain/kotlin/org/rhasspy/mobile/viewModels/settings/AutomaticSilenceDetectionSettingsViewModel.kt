@@ -13,16 +13,11 @@ import org.rhasspy.mobile.settings.AppSettings
 
 class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
 
-    //unsaved data
-    private val _isAutomaticSilenceDetectionEnabled = MutableStateFlow(AppSettings.isAutomaticSilenceDetectionEnabled.value)
-    private val _automaticSilenceDetectionTime = MutableStateFlow(AppSettings.automaticSilenceDetectionTime.value)
-    private val _automaticSilenceDetectionAudioLevel = MutableStateFlow(AppSettings.automaticSilenceDetectionAudioLevel.value)
-
     //unsaved ui data
-    val isAutomaticSilenceDetectionEnabled = _isAutomaticSilenceDetectionEnabled.readOnly
-    val isSilenceDetectionSettingsVisible = _isAutomaticSilenceDetectionEnabled.readOnly
-    val automaticSilenceDetectionTime = _automaticSilenceDetectionTime.readOnly
-    val automaticSilenceDetectionAudioLevel = _automaticSilenceDetectionAudioLevel.readOnly
+    val isAutomaticSilenceDetectionEnabled = AppSettings.isAutomaticSilenceDetectionEnabled.data
+    val isSilenceDetectionSettingsVisible = isAutomaticSilenceDetectionEnabled
+    val automaticSilenceDetectionTime = AppSettings.automaticSilenceDetectionTime.data
+    val automaticSilenceDetectionAudioLevel = AppSettings.automaticSilenceDetectionAudioLevel.data
 
     //testing
     private val _currentAudioLevel = MutableStateFlow<Byte>(0)
@@ -35,7 +30,7 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
 
     //set new intent recognition option
     fun toggleAutomaticSilenceDetectionEnabled(enabled: Boolean) {
-        _isAutomaticSilenceDetectionEnabled.value = enabled
+        AppSettings.isAutomaticSilenceDetectionEnabled.value  = enabled
     }
 
     //update time for automatic silence detection
@@ -45,7 +40,7 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
             .replace(".", "")
             .replace(" ", "")
             .toIntOrNull()?.also {
-                _automaticSilenceDetectionTime.value = it
+                AppSettings.automaticSilenceDetectionTime.value = it
             }
     }
 
@@ -56,7 +51,7 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
             .replace(".", "")
             .replace(" ", "")
             .toIntOrNull()?.also {
-                _automaticSilenceDetectionTime.value = it
+                AppSettings.automaticSilenceDetectionAudioLevel.value = it
             }
     }
 
@@ -94,22 +89,6 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
         job?.cancel()
 
         _currentStatus.value = false
-    }
-
-    /**
-     * save data configuration
-     */
-    fun save() {
-        AppSettings.isAutomaticSilenceDetectionEnabled.value = _isAutomaticSilenceDetectionEnabled.value
-        AppSettings.automaticSilenceDetectionTime.value = _automaticSilenceDetectionTime.value
-        AppSettings.automaticSilenceDetectionAudioLevel.value = _automaticSilenceDetectionAudioLevel.value
-    }
-
-    /**
-     * test unsaved data configuration
-     */
-    fun test() {
-
     }
 
 }
