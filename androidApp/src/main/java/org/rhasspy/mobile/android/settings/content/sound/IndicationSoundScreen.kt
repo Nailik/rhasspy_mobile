@@ -57,7 +57,7 @@ fun IndicationSoundScreen(viewModel: IIndicationSoundSettingsViewModel, title: S
 
                         ListElement(
                             icon = { Icon(Icons.Filled.Info, contentDescription = MR.strings.info) },
-                            text = { Text(MR.strings.audioPlaying) },
+                            text = { Text(MR.strings.audioOutputSilentOrDisabled) },
                             secondaryText = { Text(viewModel.audioOutputOption.collectAsState().value.text) }
                         )
 
