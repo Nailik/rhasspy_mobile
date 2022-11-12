@@ -46,10 +46,7 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
 
     //update audio detection level for automatic silence detection
     fun updateAutomaticSilenceDetectionAudioLevel(audioLevel: String) {
-        audioLevel.replace("-", "")
-            .replace(",", "")
-            .replace(".", "")
-            .replace(" ", "")
+        audioLevel.replace("""[-,. ]""".toRegex(), "")
             .toIntOrNull()?.also {
                 AppSettings.automaticSilenceDetectionAudioLevel.value = it
             }
@@ -85,6 +82,13 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
     }
 
     private fun stopAudioLevelTest() {
+        AudioRecorder.stopRecording()
+        job?.cancel()
+
+        _currentStatus.value = false
+    }
+
+    fun onPause(){
         AudioRecorder.stopRecording()
         job?.cancel()
 

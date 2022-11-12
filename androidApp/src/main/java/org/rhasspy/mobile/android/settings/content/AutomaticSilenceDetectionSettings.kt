@@ -22,13 +22,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.Icon
-import org.rhasspy.mobile.android.utils.SwitchListItem
-import org.rhasspy.mobile.android.utils.Text
-import org.rhasspy.mobile.android.utils.TextFieldListItem
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.viewModels.settings.AutomaticSilenceDetectionSettingsViewModel
 
 
@@ -36,9 +34,12 @@ import org.rhasspy.mobile.viewModels.settings.AutomaticSilenceDetectionSettingsV
 @Composable
 fun AutomaticSilenceDetectionSettingsContent(viewModel: AutomaticSilenceDetectionSettingsViewModel = viewModel()) {
 
+    OnPauseEffect(viewModel::onPause)
+
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreens.AutomaticSilenceDetectionSettings),
-        title = MR.strings.automaticSilenceDetection) {
+        title = MR.strings.automaticSilenceDetection
+    ) {
 
         //toggle
         SwitchListItem(
@@ -146,22 +147,24 @@ private fun Test(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
 @Composable
 private fun RowScope.StartTestButton(viewModel: AutomaticSilenceDetectionSettingsViewModel, animatedWeight: Float) {
 
-    Button(
-        modifier = Modifier
-            .weight(2f - animatedWeight)
-            .wrapContentSize(),
-        onClick = viewModel::toggleAudioLevelTest
-    )
-    {
+    RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::toggleAudioLevelTest) { onClick ->
+        Button(
+            modifier = Modifier
+                .weight(2f - animatedWeight)
+                .wrapContentSize(),
+            onClick = onClick
+        )
+        {
 
-        val status by viewModel.currentStatus.collectAsState()
+            val status by viewModel.currentStatus.collectAsState()
 
-        Icon(if (status) Icons.Filled.MicOff else Icons.Filled.Mic, MR.strings.microphone)
+            Icon(if (status) Icons.Filled.MicOff else Icons.Filled.Mic, MR.strings.microphone)
 
-        Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(8.dp))
 
-        Text(if (status) MR.strings.stop else MR.strings.testAudioLevel)
+            Text(if (status) MR.strings.stop else MR.strings.testAudioLevel)
 
+        }
     }
 
 }
