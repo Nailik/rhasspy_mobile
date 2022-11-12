@@ -2,7 +2,6 @@ package org.rhasspy.mobile.android
 
 import android.os.Build
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.permission.PermissionRequester
@@ -12,7 +11,6 @@ import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlin.test.assertEquals
-
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     testTag: Enum<*>,
     useUnmergedTree: Boolean = false
@@ -37,8 +35,6 @@ fun SemanticsNodeInteraction.assertBackgroundColor(expectedBackground: Color) {
     val capturedName = captureToImage().colorSpace.name
     assertEquals(expectedBackground.colorSpace.name, capturedName)
 }
-fun hasTestTag(testTag: Enum<*>): SemanticsMatcher =
-    SemanticsMatcher.expectValue(SemanticsProperties.TestTag, testTag.name)
 
 fun UiSelector.text(text: StringResource): UiSelector {
     return this.textMatches(
