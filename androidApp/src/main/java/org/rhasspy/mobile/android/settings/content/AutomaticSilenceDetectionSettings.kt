@@ -97,10 +97,11 @@ private fun Time(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
  */
 @Composable
 private fun AudioLevel(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
+
     SliderListItem(
         text = MR.strings.audioLevelThreshold,
         value = viewModel.automaticSilenceDetectionAudioLevelPercentage.collectAsState().value,
-        valueText = viewModel.automaticSilenceDetectionAudioLevel.collectAsState().value.toString(),
+        valueText = "%.0f".format(null, viewModel.automaticSilenceDetectionAudioLevel.collectAsState().value),
         onValueChange = viewModel::changeAutomaticSilenceDetectionAudioLevelPercentage
     )
 
@@ -113,39 +114,46 @@ private fun AudioLevel(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
 @Composable
 private fun CurrentAudioLevel(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
 
-    ListElement {
-        val animatedColor by animateColorAsState(
-            targetValue = if (viewModel.isAudioLevelBiggerThanMax.collectAsState().value) {
-                MaterialTheme.colorScheme.errorContainer
-            } else MaterialTheme.colorScheme.primary
-        )
+    AnimatedVisibility(
+        enter = expandVertically(),
+        exit = shrinkVertically(),
+        visible = viewModel.isSilenceDetectionAudioLevelVisible.collectAsState().value
+    ) {
+        ListElement {
+            val animatedColor by animateColorAsState(
+                targetValue = if (viewModel.isAudioLevelBiggerThanMax.collectAsState().value) {
+                    MaterialTheme.colorScheme.errorContainer
+                } else MaterialTheme.colorScheme.primary
+            )
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(32.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.secondaryContainer,
-                    shape = RoundedCornerShape(50)
-                )
-                .clip(RoundedCornerShape(50))
-        ) {
-            val animatedSize by animateFloatAsState(targetValue = viewModel.audioLevelPercentage.collectAsState().value)
             Box(
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(fraction = animatedSize)
-                    .background(animatedColor)
-            )
-            Text(
-                text = viewModel.currentAudioLevel.collectAsState().value.toString(),
-                color = MaterialTheme.colorScheme.surface,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .background(Color.Transparent)
-            )
+                    .fillMaxWidth()
+                    .height(32.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        shape = RoundedCornerShape(50)
+                    )
+                    .clip(RoundedCornerShape(50))
+            ) {
+                val animatedSize by animateFloatAsState(targetValue = viewModel.audioLevelPercentage.collectAsState().value)
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(fraction = animatedSize)
+                        .background(animatedColor)
+                )
+                Text(
+                    text = viewModel.currentAudioLevel.collectAsState().value.toString(),
+                    color = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .background(Color.Transparent)
+                )
+            }
         }
     }
+
 }
 
 /**

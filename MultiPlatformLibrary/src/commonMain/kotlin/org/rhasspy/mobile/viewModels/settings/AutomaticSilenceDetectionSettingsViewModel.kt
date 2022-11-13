@@ -25,18 +25,18 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
     val automaticSilenceDetectionAudioLevelPercentage = AppSettings.automaticSilenceDetectionAudioLevel.data.mapReadonlyState {
         (log(it.toDouble(), maxAudioLevel)).toFloat()
     }
-    val automaticSilenceDetectionAudioLevel = AppSettings.automaticSilenceDetectionAudioLevel.data
 
     //testing
+    val isRecording = AudioRecorder.isRecording
+    val isSilenceDetectionAudioLevelVisible = isRecording
+    val automaticSilenceDetectionAudioLevel = AppSettings.automaticSilenceDetectionAudioLevel.data
     val currentAudioLevel = AudioRecorder.maxVolume
     val isAudioLevelBiggerThanMax = combineState(AudioRecorder.maxVolume, AppSettings.automaticSilenceDetectionAudioLevel.data) { audioLevel, max ->
         audioLevel > max
     }
-
     val audioLevelPercentage = currentAudioLevel.mapReadonlyState {
         (log(it.toDouble(), maxAudioLevel)).toFloat()
     }
-    val isRecording = AudioRecorder.isRecording
 
     //set new intent recognition option
     fun toggleAutomaticSilenceDetectionEnabled(enabled: Boolean) {
