@@ -37,6 +37,7 @@ actual object AudioRecorder {
     actual val isRecording: StateFlow<Boolean>
         get() = _isRecording.readOnly
 
+    //https://developer.android.com/reference/android/media/AudioFormat#encoding
     actual val absoluteMaxVolume = 32767.0
 
     private const val SAMPLING_RATE_IN_HZ = 16000

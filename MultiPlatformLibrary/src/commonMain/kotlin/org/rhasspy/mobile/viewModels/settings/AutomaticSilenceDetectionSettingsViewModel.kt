@@ -33,7 +33,6 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
         audioLevel > max
     }
 
-    //https://developer.android.com/reference/android/media/AudioFormat#encoding
     val audioLevelPercentage = currentAudioLevel.mapReadonlyState {
         (log(it.toDouble(), maxAudioLevel)).toFloat()
     }
@@ -55,9 +54,6 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
     fun changeAutomaticSilenceDetectionAudioLevelPercentage(value: Float) {
         AppSettings.automaticSilenceDetectionAudioLevel.value = maxAudioLevel.pow(value.toDouble()).toFloat()
     }
-
-//    32767^0,5 = 181
-
 
 
     //toggle test (start or stop)
