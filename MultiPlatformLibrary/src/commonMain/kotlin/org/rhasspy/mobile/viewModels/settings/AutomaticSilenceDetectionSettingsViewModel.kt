@@ -1,53 +1,64 @@
 package org.rhasspy.mobile.viewModels.settings
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectIndexed
-import kotlinx.coroutines.launch
+import org.rhasspy.mobile.combineState
+import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.AppSettings
+import kotlin.math.log
+import kotlin.math.pow
 
 class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
 
+    //unsaved data
+    private val _automaticSilenceDetectionTimeText = MutableStateFlow(AppSettings.automaticSilenceDetectionTime.value.toString())
+    private val maxAudioLevel = AudioRecorder.absoluteMaxVolume
+
     //unsaved ui data
     val isAutomaticSilenceDetectionEnabled = AppSettings.isAutomaticSilenceDetectionEnabled.data
+
     val isSilenceDetectionSettingsVisible = isAutomaticSilenceDetectionEnabled
-    val automaticSilenceDetectionTime = AppSettings.automaticSilenceDetectionTime.data
+    val automaticSilenceDetectionTimeText = _automaticSilenceDetectionTimeText.readOnly
+
+    val automaticSilenceDetectionAudioLevelPercentage = AppSettings.automaticSilenceDetectionAudioLevel.data.mapReadonlyState {
+        (log(it.toDouble(), maxAudioLevel)).toFloat()
+    }
     val automaticSilenceDetectionAudioLevel = AppSettings.automaticSilenceDetectionAudioLevel.data
 
     //testing
-    private val _currentAudioLevel = MutableStateFlow<Byte>(0)
-    private val _isRecording = MutableStateFlow(false)
-    val currentAudioLevel = _currentAudioLevel.readOnly
-    val isRecording = _isRecording.readOnly
+    val currentAudioLevel = AudioRecorder.maxVolume
+    val isAudioLevelBiggerThanMax = combineState(AudioRecorder.maxVolume, AppSettings.automaticSilenceDetectionAudioLevel.data) { audioLevel, max ->
+        audioLevel > max
+    }
 
-    //testing running
-    private var job: Job? = null
+    //https://developer.android.com/reference/android/media/AudioFormat#encoding
+    val audioLevelPercentage = currentAudioLevel.mapReadonlyState {
+        (log(it.toDouble(), maxAudioLevel)).toFloat()
+    }
+    val isRecording = AudioRecorder.isRecording
 
     //set new intent recognition option
     fun toggleAutomaticSilenceDetectionEnabled(enabled: Boolean) {
-        AppSettings.isAutomaticSilenceDetectionEnabled.value  = enabled
+        AppSettings.isAutomaticSilenceDetectionEnabled.value = enabled
     }
 
     //update time for automatic silence detection
     fun updateAutomaticSilenceDetectionTime(time: String) {
-        time.replace("""[-,. ]""".toRegex(), "")
-            .toIntOrNull()?.also {
-                AppSettings.automaticSilenceDetectionTime.value = it
-            }
+        val text = time.replace("""[-,. ]""".toRegex(), "")
+        _automaticSilenceDetectionTimeText.value = text
+        AppSettings.automaticSilenceDetectionTime.value = text.toIntOrNull() ?: 0
     }
 
     //update audio detection level for automatic silence detection
-    fun updateAutomaticSilenceDetectionAudioLevel(audioLevel: String) {
-        audioLevel.replace("""[-,. ]""".toRegex(), "")
-            .toIntOrNull()?.also {
-                AppSettings.automaticSilenceDetectionAudioLevel.value = it
-            }
+    fun changeAutomaticSilenceDetectionAudioLevelPercentage(value: Float) {
+        AppSettings.automaticSilenceDetectionAudioLevel.value = maxAudioLevel.pow(value.toDouble()).toFloat()
     }
+
+//    32767^0,5 = 181
+
+
 
     //toggle test (start or stop)
     fun toggleAudioLevelTest() {
@@ -67,22 +78,6 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
      * start the audio level test will launch a job that listens to the audio recorder
      */
     private fun startAudioLevelTest() {
-        _currentAudioLevel.value = 0
-        _isRecording.value = true
-
-        job?.cancel()
-        job = CoroutineScope(Dispatchers.Default).launch {
-            AudioRecorder.output.collectIndexed { _, value ->
-                var max: Byte = 0
-                value.forEach {
-                    if (it >= max || it <= -max) {
-                        max = it
-                    }
-                }
-                _currentAudioLevel.value = max
-            }
-        }
-
         AudioRecorder.startRecording()
     }
 
@@ -91,10 +86,6 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
      */
     private fun stopAudioLevelTest() {
         AudioRecorder.stopRecording()
-        job?.cancel()
-        job = null
-
-        _isRecording.value = false
     }
 
 }

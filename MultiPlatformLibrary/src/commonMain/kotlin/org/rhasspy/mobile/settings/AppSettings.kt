@@ -14,7 +14,7 @@ internal object AppSettings {
     val themeOption = Setting(SettingsEnum.ThemeOption, ThemeOptions.System)
 
     val isAutomaticSilenceDetectionEnabled = Setting(SettingsEnum.AutomaticSilenceDetection, false)
-    val automaticSilenceDetectionAudioLevel = Setting(SettingsEnum.AutomaticSilenceDetectionAudioLevel, 40)
+    val automaticSilenceDetectionAudioLevel = Setting(SettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
     val automaticSilenceDetectionTime = Setting(SettingsEnum.AutomaticSilenceDetectionTime, 2000)
 
     val isBackgroundServiceEnabled = Setting(SettingsEnum.BackgroundEnabled, false)

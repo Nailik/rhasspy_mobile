@@ -10,7 +10,7 @@ fun Number.toByteArray(size: Int = 4): ByteArray =
 
 //https://stackoverflow.com/questions/19145213/android-audio-capture-silence-detection
 //check if any byte is above the threshold
-fun List<Byte>.isNotAboveThreshold(threshold: Int): Boolean {
+fun List<Byte>.isNotAboveThreshold(threshold: Float): Boolean {
     return find { it >= threshold || it <= -threshold } == null
 }
 

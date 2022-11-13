@@ -495,7 +495,13 @@ fun FilledTonalButtonListItem(modifier: Modifier = Modifier, text: StringResourc
 }
 
 @Composable
-fun SliderListItem(modifier: Modifier = Modifier, text: StringResource, value: Float, onValueChange: (Float) -> Unit) {
+fun SliderListItem(
+    modifier: Modifier = Modifier,
+    text: StringResource,
+    value: Float,
+    valueText: String? = null,
+    onValueChange: (Float) -> Unit
+) {
     //uses custom list item to fix padding for slider
     Surface(
         modifier = modifier,
@@ -526,7 +532,7 @@ fun SliderListItem(modifier: Modifier = Modifier, text: StringResource, value: F
                             Row(modifier = Modifier.padding(horizontal = 8.dp)) {
                                 Text(text)
                                 Spacer(modifier = Modifier.weight(1f))
-                                Text("%.2f".format(null, value))
+                                Text(valueText ?: "%.2f".format(null, value))
                             }
                         }
 
@@ -537,7 +543,7 @@ fun SliderListItem(modifier: Modifier = Modifier, text: StringResource, value: F
                         {
                             Slider(
                                 value = value,
-                                onValueChange = onValueChange,
+                                onValueChange = onValueChange
                             )
                         }
 

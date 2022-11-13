@@ -5,18 +5,23 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,9 +64,11 @@ fun AutomaticSilenceDetectionSettingsContent(viewModel: AutomaticSilenceDetectio
 
                 Time(viewModel)
 
+                CurrentAudioLevel(viewModel)
+
                 AudioLevel(viewModel)
 
-                Test(viewModel)
+                StartTestButton(viewModel)
 
             }
 
@@ -79,7 +86,7 @@ private fun Time(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
     TextFieldListItem(
         label = MR.strings.silenceDetectionTime,
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-        value = viewModel.automaticSilenceDetectionTime.collectAsState().value.toString(),
+        value = viewModel.automaticSilenceDetectionTimeText.collectAsState().value,
         onValueChange = viewModel::updateAutomaticSilenceDetectionTime
     )
 
@@ -90,54 +97,54 @@ private fun Time(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
  */
 @Composable
 private fun AudioLevel(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
-
-    TextFieldListItem(
-        label = MR.strings.audioLevelThreshold,
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-        value = viewModel.automaticSilenceDetectionAudioLevel.collectAsState().value.toString(),
-        onValueChange = viewModel::updateAutomaticSilenceDetectionAudioLevel
+    SliderListItem(
+        text = MR.strings.audioLevelThreshold,
+        value = viewModel.automaticSilenceDetectionAudioLevelPercentage.collectAsState().value,
+        valueText = viewModel.automaticSilenceDetectionAudioLevel.collectAsState().value.toString(),
+        onValueChange = viewModel::changeAutomaticSilenceDetectionAudioLevelPercentage
     )
 
 }
+
 
 /**
  * testing of audio level
  */
 @Composable
-private fun Test(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
+private fun CurrentAudioLevel(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
 
-    Row(
-        modifier = Modifier
-            .padding(vertical = 8.dp, horizontal = 16.dp)
-            .fillMaxWidth()
-    ) {
-
-        val audioLevel by viewModel.currentAudioLevel.collectAsState()
-
-        val animatedWeight = animateFloatAsState(targetValue = if (viewModel.isRecording.collectAsState().value) 1f else 0f)
-        val animatedColor = animateColorAsState(
-            targetValue = if (audioLevel > viewModel.automaticSilenceDetectionAudioLevel.collectAsState().value) {
-                MaterialTheme.colorScheme.error
+    ListElement {
+        val animatedColor by animateColorAsState(
+            targetValue = if (viewModel.isAudioLevelBiggerThanMax.collectAsState().value) {
+                MaterialTheme.colorScheme.errorContainer
             } else MaterialTheme.colorScheme.primary
         )
 
-        if (animatedWeight.value > 0f) {
-
-            OutlinedButton(
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(32.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    shape = RoundedCornerShape(50)
+                )
+                .clip(RoundedCornerShape(50))
+        ) {
+            val animatedSize by animateFloatAsState(targetValue = viewModel.audioLevelPercentage.collectAsState().value)
+            Box(
                 modifier = Modifier
-                    .weight(animatedWeight.value)
-                    .alpha(animatedWeight.value)
-                    .padding(end = 16.dp)
-                    .fillMaxWidth(),
-                border = BorderStroke(ButtonDefaults.outlinedButtonBorder.width, animatedColor.value),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = animatedColor.value),
-                onClick = { })
-            {
-                Text(audioLevel.toString())
-            }
+                    .fillMaxHeight()
+                    .fillMaxWidth(fraction = animatedSize)
+                    .background(animatedColor)
+            )
+            Text(
+                text = viewModel.currentAudioLevel.collectAsState().value.toString(),
+                color = MaterialTheme.colorScheme.surface,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .background(Color.Transparent)
+            )
         }
-
-        StartTestButton(viewModel, animatedWeight.value)
     }
 }
 
@@ -145,25 +152,29 @@ private fun Test(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
  * button to start automatic silence detection test
  */
 @Composable
-private fun RowScope.StartTestButton(viewModel: AutomaticSilenceDetectionSettingsViewModel, animatedWeight: Float) {
+private fun StartTestButton(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
 
     RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::toggleAudioLevelTest) { onClick ->
-        Button(
-            modifier = Modifier
-                .weight(2f - animatedWeight)
-                .wrapContentSize(),
-            onClick = onClick
-        )
-        {
+        ListElement {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Button(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .align(Alignment.CenterHorizontally),
+                    onClick = onClick
+                ) {
 
-            val status by viewModel.isRecording.collectAsState()
+                    val isRecording by viewModel.isRecording.collectAsState()
 
-            Icon(if (status) Icons.Filled.MicOff else Icons.Filled.Mic, MR.strings.microphone)
+                    Icon(if (isRecording) Icons.Filled.MicOff else Icons.Filled.Mic, MR.strings.microphone)
 
-            Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
 
-            Text(if (status) MR.strings.stop else MR.strings.testAudioLevel)
+                    Text(if (isRecording) MR.strings.stop else MR.strings.testAudioLevel)
 
+                }
+
+            }
         }
     }
 

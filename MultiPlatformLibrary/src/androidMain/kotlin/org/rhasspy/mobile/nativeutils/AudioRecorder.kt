@@ -10,9 +10,13 @@ import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.Application
+import org.rhasspy.mobile.readOnly
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 actual object AudioRecorder {
     private val logger = Logger.withTag("AudioRecorder")
@@ -21,8 +25,30 @@ actual object AudioRecorder {
 
     private var recorder: AudioRecord? = null
 
-    actual val output = MutableSharedFlow<List<Byte>>()
+    private val _output = MutableStateFlow<List<Byte>>(listOf())
+    private val _maxVolume = MutableStateFlow<Short>(0)
+    private val _isRecording = MutableStateFlow(false)
 
+
+    actual val output: StateFlow<List<Byte>>
+        get() = _output.readOnly
+    actual val maxVolume: StateFlow<Short>
+        get() = _maxVolume.readOnly
+    actual val isRecording: StateFlow<Boolean>
+        get() = _isRecording.readOnly
+
+    actual val absoluteMaxVolume = 32767.0
+
+    private const val SAMPLING_RATE_IN_HZ = 16000
+    private const val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
+    private const val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT
+
+    private const val BUFFER_SIZE_FACTOR = 2
+
+    private val BUFFER_SIZE: Int = AudioRecord.getMinBufferSize(
+        SAMPLING_RATE_IN_HZ,
+        CHANNEL_CONFIG, AUDIO_FORMAT
+    ) * BUFFER_SIZE_FACTOR
 
     actual fun startRecording() {
         logger.v { "startRecording" }
@@ -39,15 +65,16 @@ actual object AudioRecorder {
                 .setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION)
                 .setAudioFormat(
                     AudioFormat.Builder()
-                        .setSampleRate(16000)
-                        .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
-                        .setChannelMask(AudioFormat.CHANNEL_IN_MONO)
+                        .setSampleRate(SAMPLING_RATE_IN_HZ)
+                        .setChannelMask(CHANNEL_CONFIG)
+                        .setEncoding(AUDIO_FORMAT)
                         .build()
                 )
-                .setBufferSizeInBytes(8000)
+                .setBufferSizeInBytes(BUFFER_SIZE) //8000
                 .build()
         }
 
+        _isRecording.value = true
         recorder?.startRecording()
         read()
     }
@@ -56,10 +83,26 @@ actual object AudioRecorder {
         coroutineScope.launch {
             recorder?.also {
                 while (it.recordingState == RECORDSTATE_RECORDING) {
-                    val byteArray = ByteArray(it.bufferSizeInFrames)
+                    val byteArray = ByteArray(BUFFER_SIZE)
                     it.read(byteArray, 0, byteArray.size)
 
-                    output.emit(byteArray.toList())
+                    coroutineScope.launch {
+                        var max: Short = 0
+                        for (i in 0..byteArray.size step 2) {
+                            if (i < byteArray.size) {
+                                val bb = ByteBuffer.wrap(byteArray.copyOfRange(i, i + 2))
+                                bb.order(ByteOrder.nativeOrder())
+                                val short = bb.short
+
+                                if (short > max) {
+                                    max = short
+                                }
+                            }
+                        }
+                        _maxVolume.value = max
+                    }
+
+                    _output.value = byteArray.toList()
                 }
             }
         }
@@ -67,6 +110,7 @@ actual object AudioRecorder {
 
 
     actual fun stopRecording() {
+        _isRecording.value = false
         logger.v { "stopRecording" }
         recorder?.stop()
     }
