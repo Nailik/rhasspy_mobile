@@ -18,6 +18,7 @@ import kotlinx.coroutines.withContext
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.test.R
@@ -112,7 +113,10 @@ class PorcupineKeywordCustomScreenTest {
         device.findObject(UiSelector().textMatches(fileName)).exists()
         //user clicks back twice
         device.pressBack()
-        device.pressBack()
+
+        if(Application.Instance.isAppInBackground.value){
+            device.pressBack()
+        }
         //app is opened with current page (custom)
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordCustomScreen).assertIsDisplayed()

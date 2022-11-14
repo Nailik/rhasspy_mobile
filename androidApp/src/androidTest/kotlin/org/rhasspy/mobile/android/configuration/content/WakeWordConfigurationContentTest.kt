@@ -105,7 +105,7 @@ class WakeWordConfigurationContentTest {
         //user changes access token
         composeTestRule.onNodeWithTag(TestTag.PorcupineAccessToken).performScrollTo().performClick()
         //access token change
-        composeTestRule.onNodeWithTag(TestTag.PorcupineAccessToken, true).onChild().performTextReplacement(textInputTest)
+        composeTestRule.onNodeWithTag(TestTag.PorcupineAccessToken).performTextReplacement(textInputTest)
 
         //user clicks picovoice console
         composeTestRule.onNodeWithTag(TestTag.PorcupineOpenConsole).performScrollTo().performClick()

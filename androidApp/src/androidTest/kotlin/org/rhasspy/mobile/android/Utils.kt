@@ -59,7 +59,7 @@ fun requestExternalStoragePermissions(device: UiDevice) {
         Build.VERSION.SDK_INT == Build.VERSION_CODES.Q -> {
             device.executeShellCommand("appops set --uid ${InstrumentationRegistry.getInstrumentation().targetContext.packageName} LEGACY_STORAGE allow")
         }
-        Build.VERSION.SDK_INT == Build.VERSION_CODES.R -> {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
             device.executeShellCommand("appops set --uid ${InstrumentationRegistry.getInstrumentation().targetContext.packageName} MANAGE_EXTERNAL_STORAGE allow")
         }
         else -> return

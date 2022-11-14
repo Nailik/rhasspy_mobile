@@ -9,4 +9,6 @@ class SaveAndRestoreSettingsViewModel : ViewModel() {
 
     fun restoreSettingsFromFile() = SettingsUtils.restoreSettingsFromFile()
 
+    fun shareSettingsFile() = SettingsUtils.saveSettingsFile() //TODO
+
 }

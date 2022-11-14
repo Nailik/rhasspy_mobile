@@ -60,7 +60,7 @@ class RemoteHermesHttpConfigurationContentTest {
 
         //host is changed
         composeTestRule.onNodeWithTag(TestTag.Host).performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(TestTag.Host, true).onChild().performTextReplacement(textInputTest)
+        composeTestRule.onNodeWithTag(TestTag.Host).performTextReplacement(textInputTest)
         //disable ssl validation is on
         assertTrue { viewModel.isHttpSSLVerificationDisabled.value }
         //switch is on

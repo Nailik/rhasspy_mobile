@@ -93,7 +93,7 @@ class WebServerConfigurationContentTest {
 
         //port is changed
         composeTestRule.onNodeWithTag(TestTag.Port).performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(TestTag.Port, true).onChild().performTextReplacement(textInputTest)
+        composeTestRule.onNodeWithTag(TestTag.Port).performTextReplacement(textInputTest)
 
         //enable ssl is off
         assertFalse { viewModel.isHttpServerSSLEnabled.value }

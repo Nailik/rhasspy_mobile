@@ -60,10 +60,8 @@ class ConfigurationScreenTest {
     fun testSiteIdEdit() {
         val textInputTest = "siteIdTestInput"
         //Test site id to be changed
-        composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId, true).performScrollTo().onChild().performTextClearance()
-        composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId, true).performScrollTo().onChild().performTextInput(textInputTest)
+        composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId).performScrollTo().performTextReplacement(textInputTest)
         //text field changed text
-        composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId, true).onChild().assertTextEquals(textInputTest)
         assertEquals(textInputTest, ConfigurationScreenViewModel().siteId.value)
     }
 

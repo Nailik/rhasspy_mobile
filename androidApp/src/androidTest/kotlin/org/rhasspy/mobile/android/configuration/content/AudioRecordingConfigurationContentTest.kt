@@ -75,11 +75,11 @@ class AudioRecordingConfigurationContentTest {
         composeTestRule.onNodeWithTag(TestTag.AudioRecordingUdpPort).assertExists()
 
         //endpoint host and port can be changed
-        composeTestRule.onNodeWithTag(TestTag.AudioRecordingUdpHost, true).performScrollTo().onChild().performTextReplacement(textInputTestHost)
+        composeTestRule.onNodeWithTag(TestTag.AudioRecordingUdpHost).performScrollTo().performTextReplacement(textInputTestHost)
         composeTestRule.awaitIdle()
         assertEquals(textInputTestHost, viewModel.udpOutputHost.value)
-        composeTestRule.onNodeWithTag(TestTag.AudioRecordingUdpPort, true).performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(TestTag.AudioRecordingUdpPort, true).onChild().performTextReplacement(textInputTestPort)
+        composeTestRule.onNodeWithTag(TestTag.AudioRecordingUdpPort).performScrollTo().performClick()
+        composeTestRule.onNodeWithTag(TestTag.AudioRecordingUdpPort).performTextReplacement(textInputTestPort)
         composeTestRule.awaitIdle()
         assertEquals(textInputTestPort, viewModel.udpOutputPort.value)
         //user click save

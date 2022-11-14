@@ -65,8 +65,8 @@ class IntentHandlingConfigurationContentTest {
         //Endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint, true).assertExists()
         //endpoint can be changed
-        composeTestRule.onNodeWithTag(TestTag.Endpoint).onChild().assertIsEnabled()
-        composeTestRule.onNodeWithTag(TestTag.Endpoint, true).onChild().performTextReplacement(textInputTest)
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsEnabled()
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextReplacement(textInputTest)
         composeTestRule.awaitIdle()
         assertEquals(textInputTest, viewModel.intentHandlingHttpEndpoint.value)
 
@@ -131,10 +131,10 @@ class IntentHandlingConfigurationContentTest {
 
         //endpoint can be changed
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(TestTag.Endpoint, true).onChild().performTextReplacement(textInputTestEndpoint)
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextReplacement(textInputTestEndpoint)
         //access token can be changed
         composeTestRule.onNodeWithTag(TestTag.AccessToken).performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(TestTag.AccessToken, true).onChild().performTextReplacement(textInputTestToken)
+        composeTestRule.onNodeWithTag(TestTag.AccessToken).performTextReplacement(textInputTestToken)
 
         //send intents is set
         composeTestRule.onNodeWithTag(TestTag.SendIntents, true).performScrollTo().onChildAt(0).assertIsSelected()

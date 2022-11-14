@@ -81,15 +81,15 @@ class AudioPlayingConfigurationContentTest {
         //switch is off
         composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performScrollTo().assertIsOff()
         //endpoint cannot be changed
-        composeTestRule.onNodeWithTag(TestTag.Endpoint).onChild().assertIsNotEnabled()
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsNotEnabled()
 
         //user clicks switch
         composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performClick()
         //switch is on
         composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).assertIsOn()
         //endpoint can be changed
-        composeTestRule.onNodeWithTag(TestTag.Endpoint).onChild().assertIsEnabled()
-        composeTestRule.onNodeWithTag(TestTag.Endpoint, true).onChild().performTextReplacement(textInputTest)
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsEnabled()
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextReplacement(textInputTest)
         composeTestRule.awaitIdle()
         assertEquals(textInputTest, viewModel.audioPlayingHttpEndpoint.value)
 

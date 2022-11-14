@@ -111,7 +111,9 @@ private fun WakeWordConfigurationOverview(viewModel: WakeWordConfigurationViewMo
 @Composable
 private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
 
-    Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
+    Column(modifier = Modifier
+        .testTag(TestTag.PorcupineWakeWordSettings)
+        .padding(ContentPaddingLevel1)) {
 
         //porcupine access token
         TextFieldListItemVisibility(

@@ -18,7 +18,8 @@
         android:icon="@drawable/ic_launcher"
         android:label="Rhasspy Mobile"
         android:supportsRtl="true"
-        tools:ignore="Instantiatable">
+        tools:ignore="Instantiatable,UnusedAttribute"
+        android:enableOnBackInvokedCallback="true">
         <service
             android:name="org.rhasspy.mobile.nativeutils.NativeServiceInterop"
             android:foregroundServiceType="microphone" />

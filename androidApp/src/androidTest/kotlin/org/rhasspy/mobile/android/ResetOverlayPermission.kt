@@ -10,7 +10,6 @@ import androidx.test.uiautomator.UiSelector
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.nativeutils.OverlayPermission
-import kotlin.test.assertTrue
 
 fun UiDevice.resetOverlayPermission() {
     if (!Settings.canDrawOverlays(Application.Instance)) {
@@ -25,7 +24,7 @@ fun UiDevice.resetOverlayPermission() {
     val list = ".*list"
 
     InstrumentationRegistry.getInstrumentation().waitForIdleSync()
-    assertTrue { this.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
+    //not true on api 33 assertTrue { this.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
     UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName))
     this.findObject(UiSelector().text(MR.strings.appName)).click()
     this.findObject(UiSelector().className(Switch::class.java)).click()

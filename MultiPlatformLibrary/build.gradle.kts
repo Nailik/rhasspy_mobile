@@ -92,6 +92,7 @@ kotlin {
                 implementation(Slf4j.simple)
                 implementation(Ktor2.Server.compression)
                 implementation(Ktor2.Server.callLogging)
+                implementation("androidx.documentfile:documentfile:_")
                 implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
             }
         }

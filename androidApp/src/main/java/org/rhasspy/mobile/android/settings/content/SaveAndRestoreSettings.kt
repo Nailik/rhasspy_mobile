@@ -6,13 +6,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,72 +37,119 @@ fun SaveAndRestoreSettingsContent(viewModel: SaveAndRestoreSettingsViewModel = v
         modifier = Modifier.testTag(SettingsScreens.SaveAndRestoreSettings),
         title = MR.strings.saveAndRestoreSettings) {
 
-        val openSaveSettingsDialog = remember { mutableStateOf(false) }
-        val openRestoreSettingsDialog = remember { mutableStateOf(false) }
+        //Save Settings
+        SaveSettings(viewModel)
 
-        //save settings
-        ListElement(
-            modifier = Modifier.clickable { openSaveSettingsDialog.value = true },
-            icon = {
-                Icon(
-                    imageVector = Icons.Filled.Save,
-                    contentDescription = MR.strings.save
-                )
+        //Restore Settings
+        RestoreSettings(viewModel)
+
+        //Share Settings
+        ShareSettings(viewModel)
+    }
+
+}
+
+/**
+ * Save Settings
+ * Shows warning Dialog that the file contains sensitive information
+ */
+@Composable
+private fun SaveSettings(viewModel: SaveAndRestoreSettingsViewModel){
+
+    var openSaveSettingsDialog by remember { mutableStateOf(false) }
+
+    //save settings
+    ListElement(
+        modifier = Modifier.clickable { openSaveSettingsDialog = true },
+        icon = {
+            Icon(
+                imageVector = Icons.Filled.Save,
+                contentDescription = MR.strings.save
+            )
+        },
+        text = {
+            Text(MR.strings.save)
+        },
+        secondaryText = {
+            Text(MR.strings.saveSettingsText)
+        }
+    )
+
+    //save settings dialog
+    if (openSaveSettingsDialog) {
+        SaveSettingsDialog(
+            onConfirm = {
+                openSaveSettingsDialog = false
+                viewModel.saveSettingsFile()
             },
-            text = {
-                Text(MR.strings.save)
-            },
-            secondaryText = {
-                Text(MR.strings.saveText)
+            onDismiss = {
+                openSaveSettingsDialog = false
             }
         )
+    }
+}
 
-        //save settings dialog
-        if (openSaveSettingsDialog.value) {
-            SaveSettingsDialog(
-                onConfirm = {
-                    openSaveSettingsDialog.value = false
-                    viewModel.saveSettingsFile()
-                },
-                onDismiss = {
-                    openSaveSettingsDialog.value = false
-                }
+/**
+ * Restore settings
+ * shows dialog that current settings will be overwritten
+ */
+@Composable
+private fun RestoreSettings(viewModel: SaveAndRestoreSettingsViewModel){
+
+    var openRestoreSettingsDialog by remember { mutableStateOf(false) }
+
+    //restore settings
+    ListElement(
+        modifier = Modifier.clickable { openRestoreSettingsDialog = true },
+        icon = {
+            Icon(
+                imageVector = Icons.Filled.Restore,
+                contentDescription = MR.strings.restore
             )
+        },
+        text = {
+            Text(MR.strings.restore)
+        },
+        secondaryText = {
+            Text(MR.strings.restoreSettingsText)
         }
+    )
 
-        //restore settings
-        ListElement(
-            modifier = Modifier.clickable { openRestoreSettingsDialog.value = true },
-            icon = {
-                Icon(
-                    imageVector = Icons.Filled.Restore,
-                    contentDescription = MR.strings.restore
-                )
+    //restore settings dialog
+    if (openRestoreSettingsDialog) {
+
+        RestoreSettingsDialog(
+            onConfirm = {
+                openRestoreSettingsDialog = false
+                viewModel.restoreSettingsFromFile()
             },
-            text = {
-                Text(MR.strings.restore)
-            },
-            secondaryText = {
-                Text(MR.strings.restoreText)
+            onDismiss = {
+                openRestoreSettingsDialog = false
             }
         )
-
-        //restore settings dialog
-        if (openRestoreSettingsDialog.value) {
-
-            RestoreSettingsDialog(
-                onConfirm = {
-                    openRestoreSettingsDialog.value = false
-                    viewModel.restoreSettingsFromFile()
-                },
-                onDismiss = {
-                    openRestoreSettingsDialog.value = false
-                }
-            )
-
-        }
 
     }
+}
+
+@Composable
+private fun ShareSettings(viewModel: SaveAndRestoreSettingsViewModel){
+
+    //restore settings
+    ListElement(
+        modifier = Modifier.clickable(onClick = viewModel::shareSettingsFile),
+        icon = {
+            Icon(
+                imageVector = Icons.Filled.Share,
+                contentDescription = MR.strings.share
+            )
+        },
+        text = {
+            Text(MR.strings.share)
+        },
+        secondaryText = {
+            Text(MR.strings.shareSettingsText)
+        }
+    )
 
 }
 
@@ -120,7 +166,7 @@ private fun SaveSettingsDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
         },
         text = {
             Text(
-                resource = MR.strings.saveSettingsText,
+                resource = MR.strings.saveSettingsWarningText,
                 textAlign = TextAlign.Center
             )
         },
@@ -160,7 +206,7 @@ private fun RestoreSettingsDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) 
         },
         text = {
             Text(
-                resource = MR.strings.restoreSettingsText,
+                resource = MR.strings.restoreSettingsWarningText,
                 textAlign = TextAlign.Center
             )
         },

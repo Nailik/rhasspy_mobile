@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.android.permissions
 
+import android.os.Build
 import android.widget.Switch
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Button
@@ -104,19 +105,23 @@ class OverlayPermissionTest {
         //Dialog is closed
         composeTestRule.onNodeWithTag(TestTag.DialogInformationOverlayPermission).assertDoesNotExist()
 
-        //Redirected to settings
-        getInstrumentation().waitForIdleSync()
-        assertTrue { device.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
-        UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName))
-        device.findObject(UiSelector().text(MR.strings.appName)).click()
-        device.findObject(UiSelector().className(Switch::class.java)).click()
-        //User clicks back
-        device.pressBack()
-        device.pressBack()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            //on Q app is restarted when allowing overlay permission
 
-        //Dialog is closed and permission granted
-        composeTestRule.awaitIdle()
-        assertTrue { permissionResult }
-        assertTrue { OverlayPermission.granted.value }
+            //Redirected to settings
+            getInstrumentation().waitForIdleSync()
+            assertTrue { device.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
+            UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName))
+            device.findObject(UiSelector().text(MR.strings.appName)).click()
+            device.findObject(UiSelector().className(Switch::class.java)).click()
+            //User clicks back
+            device.pressBack()
+            device.pressBack()
+
+            //app will be closed when pressing one more back
+            OverlayPermission.update()
+            //Dialog is closed and permission granted
+            assertTrue { OverlayPermission.granted.value }
+        }
     }
 }
