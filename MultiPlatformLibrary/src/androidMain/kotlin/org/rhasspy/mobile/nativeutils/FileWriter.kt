@@ -5,11 +5,12 @@ import android.content.Intent
 import android.net.Uri
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
+import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
 import java.io.File
 
-
 actual class FileWriter actual constructor(filename: String, actual val maxFileSize: Long) {
+    private val logger = Logger.withTag("FileWriter")
 
     private val file = File(Application.Instance.filesDir, filename)
 
@@ -33,7 +34,7 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
                     }
                     file.copyTo(oldFile)
                 } catch (e: Exception) {
-
+                    logger.e(e) { "" }
                 }
             }
         }
@@ -61,8 +62,8 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
         Application.Instance.startActivity(intent)
     }
 
-    actual fun saveFile(fileName: String) {
-        Application.Instance.currentActivity?.createDocument(fileName) {
+    actual fun saveFile(fileName: String, fileType: String) {
+        Application.Instance.currentActivity?.createDocument(fileName, fileType) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
                     Application.Instance.contentResolver.openOutputStream(uri)?.also { outputStream ->
