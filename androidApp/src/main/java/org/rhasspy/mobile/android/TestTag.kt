@@ -101,7 +101,9 @@ enum class TestTag {
     AutomaticSilenceDetectionSettingsConfiguration,
     AutomaticSilenceDetectionSettingsTime,
     AutomaticSilenceDetectionSettingsAudioLevelTest,
-    AutomaticSilenceDetectionSettingsTest
+    AutomaticSilenceDetectionSettingsTest,
+    ShowLogEnabled,
+    AudioFramesEnabled
 }
 
 fun Modifier.combinedTestTag(dataEnum: DataEnum<*>, tag: TestTag) = semantics(
