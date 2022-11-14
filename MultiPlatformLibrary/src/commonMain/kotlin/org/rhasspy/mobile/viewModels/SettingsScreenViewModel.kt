@@ -13,6 +13,5 @@ class SettingsScreenViewModel : ViewModel() {
     val isWakeWordLightIndicationEnabled = AppSettings.isWakeWordLightIndicationEnabled.data
     val isAutomaticSilenceDetectionEnabled = AppSettings.isAutomaticSilenceDetectionEnabled.data
     val logLevel = AppSettings.logLevel.data
-    val isForceCancelEnabled = AppSettings.isForceCancelEnabled.data
 
 }

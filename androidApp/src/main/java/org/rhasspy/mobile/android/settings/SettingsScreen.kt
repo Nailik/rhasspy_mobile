@@ -30,7 +30,6 @@ enum class SettingsScreens {
     DeviceSettings,
     AutomaticSilenceDetectionSettings,
     LogSettings,
-    ProblemHandlingSettings,
     SaveAndRestoreSettings,
     AboutSettings
 }
@@ -67,9 +66,6 @@ fun SettingsScreen(viewModel: SettingsScreenViewModel = viewModel()) {
         CustomDivider()
 
         Log(viewModel)
-        CustomDivider()
-
-        ProblemHandling(viewModel)
         CustomDivider()
 
         SaveAndRestore()
@@ -117,10 +113,6 @@ fun NavGraphBuilder.addSettingsScreen() {
 
     composable(SettingsScreens.LogSettings.name) {
         LogSettingsContent()
-    }
-
-    composable(SettingsScreens.ProblemHandlingSettings.name) {
-        ProblemHandlingSettingsContent()
     }
 
     composable(SettingsScreens.SaveAndRestoreSettings.name) {
@@ -231,17 +223,6 @@ private fun Log(viewModel: SettingsScreenViewModel) {
         text = MR.strings.logSettings,
         secondaryText = viewModel.logLevel.collectAsState().value.text,
         screen = SettingsScreens.LogSettings
-    )
-
-}
-
-@Composable
-private fun ProblemHandling(viewModel: SettingsScreenViewModel) {
-
-    SettingsListItem(
-        text = MR.strings.problemHandling,
-        secondaryText = viewModel.isForceCancelEnabled.collectAsState().value.toText(),
-        screen = SettingsScreens.ProblemHandlingSettings
     )
 
 }

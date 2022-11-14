@@ -185,8 +185,6 @@
     <string name="mqttNotConnected">MQTT nicht verbunden</string>
     <string name="mqttConnectionError">Fehler beim Verbindungsaufbau:</string>
     <string name="mqttConnectionLostError">Fehler bei verlorener Verbindung:</string>
-    <string name="problemHandling">Problembehandlung</string>
-    <string name="forceCancel">Zwangsbeendung der Session</string>
     <string name="forceCancelInformation">Drücken zum Beenden der Session</string>
     <string name="close">Schließen</string>
     <string name="backup">Backup der Einstellungen und Konfiguration</string>

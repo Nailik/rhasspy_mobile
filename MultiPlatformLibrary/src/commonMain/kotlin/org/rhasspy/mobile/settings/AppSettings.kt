@@ -50,6 +50,4 @@ internal object AppSettings {
     val isLogAudioFramesEnabled = Setting(SettingsEnum.LogAudioFrames, false)
     val logLevel = Setting(SettingsEnum.LogLevel, LogLevel.Debug)
 
-    val isForceCancelEnabled = Setting(SettingsEnum.ForceCancel, false)
-
 }

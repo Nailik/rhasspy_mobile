@@ -524,8 +524,6 @@ object StateMachine {
         } else {
             if (state.value == State.RecordingIntent) {
                 stopListening()
-            } else if (AppSettings.isForceCancelEnabled.value) {
-                endSession()
             }
         }
     }
