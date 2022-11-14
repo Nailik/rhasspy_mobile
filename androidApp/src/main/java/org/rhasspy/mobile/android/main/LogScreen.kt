@@ -10,10 +10,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -65,12 +61,14 @@ fun LogScreenContent(viewModel: LogScreenViewModel) {
     LazyColumn(modifier = Modifier.fillMaxHeight()) {
         items(items) { item ->
             ListElement(
-                modifier = Modifier.drawBehind {
-                    val canvasWidth = 8.dp
-                    val canvasHeight = size.height
-                    drawRoundRect(
-                        cornerRadius = CornerRadius(2.dp.toPx()),
-                        color = when (item.severity) {
+                overlineText = {
+                    Row {
+                        Text(
+                            text = item.tag,
+                            modifier = Modifier.weight(1f)
+                        )
+
+                        val color = when (item.severity) {
                             Severity.Verbose -> color_verbose
                             Severity.Debug -> color_debug
                             Severity.Info -> color_info
@@ -78,22 +76,21 @@ fun LogScreenContent(viewModel: LogScreenViewModel) {
                             Severity.Error -> color_error
                             Severity.Assert -> color_assert
                             else -> color_unknown
-                        },
-                        topLeft = Offset(x = 0f, y = 0f),
-                        size = Size(canvasWidth.toPx(), canvasHeight)
-                    )
-                },
-                overlineText = {
-                    Row {
-                        Text(
-                            text = item.tag,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = item.severity.name,
-                            modifier = Modifier.weight(1f),
-                            textAlign = TextAlign.End
-                        )
+                        }
+
+                        Badge(
+                            contentColor = MaterialTheme.colorScheme.inverseOnSurface,
+                            containerColor = color,
+                            modifier = Modifier.wrapContentSize()
+                        ) {
+                            Text(
+                                text = item.severity.name,
+                                modifier = Modifier
+                                    .wrapContentSize()
+                                    .padding(4.dp),
+                                textAlign = TextAlign.End
+                            )
+                        }
                     }
                 },
                 text = {

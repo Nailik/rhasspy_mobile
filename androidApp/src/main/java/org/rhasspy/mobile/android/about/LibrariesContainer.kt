@@ -133,8 +133,8 @@ private fun Library(
                 )
                 library.licenses.forEach {
                     Badge(
-                        contentColor = MaterialTheme.colorScheme.primaryContainer,
-                        containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         modifier = Modifier.padding(bottom = 8.dp)
                     ) {
                         Text(
