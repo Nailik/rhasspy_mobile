@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreens
@@ -48,6 +49,7 @@ fun AutomaticSilenceDetectionSettingsContent(viewModel: AutomaticSilenceDetectio
 
         //toggle
         SwitchListItem(
+            modifier = Modifier.testTag(TestTag.EnabledSwitch),
             text = MR.strings.automaticSilenceDetection,
             isChecked = viewModel.isAutomaticSilenceDetectionEnabled.collectAsState().value,
             onCheckedChange = viewModel::toggleAutomaticSilenceDetectionEnabled
@@ -60,7 +62,7 @@ fun AutomaticSilenceDetectionSettingsContent(viewModel: AutomaticSilenceDetectio
             visible = viewModel.isSilenceDetectionSettingsVisible.collectAsState().value
         ) {
 
-            Column {
+            Column(modifier = Modifier.testTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration)) {
 
                 Time(viewModel)
 
@@ -85,6 +87,7 @@ private fun Time(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
 
     TextFieldListItem(
         label = MR.strings.silenceDetectionTime,
+        modifier = Modifier.testTag(TestTag.AutomaticSilenceDetectionSettingsTime),
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         value = viewModel.automaticSilenceDetectionTimeText.collectAsState().value,
         onValueChange = viewModel::updateAutomaticSilenceDetectionTime
@@ -119,7 +122,7 @@ private fun CurrentAudioLevel(viewModel: AutomaticSilenceDetectionSettingsViewMo
         exit = shrinkVertically(),
         visible = viewModel.isSilenceDetectionAudioLevelVisible.collectAsState().value
     ) {
-        ListElement {
+        ListElement(modifier = Modifier.testTag(TestTag.AutomaticSilenceDetectionSettingsAudioLevelTest)) {
             val animatedColor by animateColorAsState(
                 targetValue = if (viewModel.isAudioLevelBiggerThanMax.collectAsState().value) {
                     MaterialTheme.colorScheme.errorContainer
@@ -167,6 +170,7 @@ private fun StartTestButton(viewModel: AutomaticSilenceDetectionSettingsViewMode
             Column(modifier = Modifier.fillMaxWidth()) {
                 Button(
                     modifier = Modifier
+                        .testTag(TestTag.AutomaticSilenceDetectionSettingsTest)
                         .wrapContentSize()
                         .align(Alignment.CenterHorizontally),
                     onClick = onClick

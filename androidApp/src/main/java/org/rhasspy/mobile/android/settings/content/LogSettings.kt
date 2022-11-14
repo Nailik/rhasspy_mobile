@@ -9,7 +9,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.DropDownEnumListItem
+import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.viewModels.settings.LogSettingsViewModel
 
@@ -25,8 +25,7 @@ fun LogSettingsContent(viewModel: LogSettingsViewModel = viewModel()) {
         title = MR.strings.logSettings) {
 
         //log level
-        DropDownEnumListItem(
-            label = MR.strings.notConnected,
+        RadioButtonsEnumSelection(
             selected = viewModel.logLevel.collectAsState().value,
             onSelect = viewModel::selectLogLevel,
             values = viewModel.logLevelOptions

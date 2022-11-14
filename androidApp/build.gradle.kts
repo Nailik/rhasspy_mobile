@@ -157,7 +157,6 @@ dependencies {
     implementation(Mikepenz.aboutLibrariesCore)
     implementation(Icerock.Resources)
     implementation(Icerock.Mvvm.core)
-    implementation(Koin.core)
 
     androidTestImplementation(project(":MultiPlatformLibrary"))
     androidTestImplementation(AndroidX.Test.runner)

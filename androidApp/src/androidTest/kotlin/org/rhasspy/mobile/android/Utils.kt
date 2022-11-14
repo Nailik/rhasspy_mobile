@@ -65,6 +65,15 @@ fun requestExternalStoragePermissions(device: UiDevice) {
         else -> return
     }
 }
+
+fun requestMicrophonePermissions() {
+            with(PermissionRequester()) {
+                addPermissions("android.permission.RECORD_AUDIO")
+                requestPermissions()
+            }
+}
+
+
 fun SemanticsNodeInteraction.assertTextEquals(
     text: StringResource,
     includeEditableText: Boolean = true

@@ -97,7 +97,11 @@ enum class TestTag {
     Volume,
     HotWord,
     AudioOutput,
-    IntentHandling
+    IntentHandling,
+    AutomaticSilenceDetectionSettingsConfiguration,
+    AutomaticSilenceDetectionSettingsTime,
+    AutomaticSilenceDetectionSettingsAudioLevelTest,
+    AutomaticSilenceDetectionSettingsTest
 }
 
 fun Modifier.combinedTestTag(dataEnum: DataEnum<*>, tag: TestTag) = semantics(
