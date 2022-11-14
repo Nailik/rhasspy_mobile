@@ -135,12 +135,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 
 android {
     signingConfigs {
-        getByName("debug") {
-            storeFile = file("C:\\SynologyDrive\\Dokumente\\Dokumente\\AppKeystores\\rhasspymobile.jks")
-            storePassword = "cK2JcFWUye4f%n$!GY9p"
-            keyPassword = "cK2JcFWUye4f%n$!GY9p"
-            keyAlias = "RhasspyMobile"
-        }
+        getByName("debug") {}
     }
     compileSdk = 33
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")

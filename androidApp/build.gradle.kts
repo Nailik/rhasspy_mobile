@@ -11,12 +11,7 @@ plugins {
 
 android {
     signingConfigs {
-        create("release") {
-            storeFile = file("C:\\SynologyDrive\\Dokumente\\Dokumente\\AppKeystores\\rhasspymobile.jks")
-            keyAlias = "rhasspymobile"
-            storePassword = "cK2JcFWUye4f%n$!GY9p"
-            keyPassword = "cK2JcFWUye4f%n$!GY9p"
-        }
+        create("release") {}
     }
     compileSdk = 33
 
@@ -162,6 +157,7 @@ dependencies {
     implementation(Mikepenz.aboutLibrariesCore)
     implementation(Icerock.Resources)
     implementation(Icerock.Mvvm.core)
+    implementation(Koin.core)
 
     androidTestImplementation(project(":MultiPlatformLibrary"))
     androidTestImplementation(AndroidX.Test.runner)
