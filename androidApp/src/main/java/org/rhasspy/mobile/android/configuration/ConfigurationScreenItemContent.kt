@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.android.configuration
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,7 +21,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -111,6 +114,7 @@ fun ConfigurationScreenItemContent(
 
     Surface(tonalElevation = 1.dp) {
         ModalBottomSheetLayout(
+            sheetBackgroundColor = Color.Transparent,
             sheetState = modalBottomSheetState,
             sheetContent = { BottomSheet() })
         {
@@ -362,5 +366,25 @@ private fun AppBar(title: StringResource, onBackClick: () -> Unit) {
 
 @Composable
 private fun BottomSheet() {
-    Text(text = "test")
+    Surface(
+        tonalElevation = 2.dp,
+        shape = RoundedCornerShape(28.dp, 28.dp)) {
+        Column(
+            modifier = Modifier
+                .widthIn(max = 640.dp)
+                .fillMaxWidth()
+                .padding(8.dp),
+        ) {
+            Box(modifier = Modifier
+                    .background(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
+                        shape = RoundedCornerShape(50),
+                    )
+                    .size(width = 32.dp, height = 4.dp)
+                    .padding(vertical = 22.dp)
+                    .align(Alignment.CenterHorizontally),
+            )
+            Spacer(modifier = Modifier.height(100.dp))
+        }
+    }
 }
