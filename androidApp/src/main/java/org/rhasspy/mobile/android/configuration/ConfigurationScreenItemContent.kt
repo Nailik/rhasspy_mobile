@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import dev.icerock.moko.resources.StringResource
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
@@ -38,6 +39,7 @@ fun ConfigurationScreenItemContent(
     modifier: Modifier,
     title: StringResource,
     hasUnsavedChanges: StateFlow<Boolean>,
+    testingEnabled: StateFlow<Boolean> = MutableStateFlow(true),
     onSave: () -> Unit,
     onTest: () -> Unit,
     onDiscard: () -> Unit,
@@ -49,8 +51,6 @@ fun ConfigurationScreenItemContent(
     var showBackButtonDialog by rememberSaveable { mutableStateOf(false) }
     var showNavigateDialog by rememberSaveable { mutableStateOf(false) }
     var navigationRoute by rememberSaveable { mutableStateOf("") }
-
-    val hasUnsavedChangesValue by hasUnsavedChanges.collectAsState()
 
     fun onBackPress() {
         if (hasUnsavedChanges.value) {
@@ -109,7 +109,8 @@ fun ConfigurationScreenItemContent(
             },
             bottomBar = {
                 BottomAppBar(
-                    hasUnsavedChanges = hasUnsavedChangesValue,
+                    hasUnsavedChanges = hasUnsavedChanges,
+                    testingEnabled = testingEnabled,
                     onSave = onSave,
                     onTest = onTest,
                     onDiscard = onDiscard
@@ -229,18 +230,21 @@ private fun UnsavedChangesDialog(
  */
 @Composable
 private fun BottomAppBar(
-    hasUnsavedChanges: Boolean,
+    hasUnsavedChanges: StateFlow<Boolean>,
+    testingEnabled: StateFlow<Boolean>,
     onSave: () -> Unit,
     onTest: () -> Unit,
     onDiscard: () -> Unit
 ) {
+    val isHasUnsavedChanges by hasUnsavedChanges.collectAsState()
+    val isTestingEnabled by testingEnabled.collectAsState()
 
     BottomAppBar(
         actions = {
             IconButton(
                 modifier = Modifier.testTag(TestTag.BottomAppBarDiscard),
                 onClick = onDiscard,
-                enabled = hasUnsavedChanges
+                enabled = isHasUnsavedChanges
             ) {
                 Icon(
                     imageVector = Icons.Filled.Delete,
@@ -250,7 +254,7 @@ private fun BottomAppBar(
             IconButton(
                 modifier = Modifier.testTag(TestTag.BottomAppBarSave),
                 onClick = onSave,
-                enabled = hasUnsavedChanges
+                enabled = isHasUnsavedChanges
             ) {
                 Icon(
                     imageVector = Icons.Filled.Save,
@@ -265,14 +269,18 @@ private fun BottomAppBar(
                 containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
                 elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
             ) {
-                Icon(
-                    imageVector = Icons.Filled.PlayArrow,
-                    contentDescription = MR.strings.test
-                )
+                IconButton(
+                    onClick = onTest,
+                    enabled = isTestingEnabled
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.PlayArrow,
+                        contentDescription = MR.strings.test
+                    )
+                }
             }
         }
     )
-
 }
 
 /**
