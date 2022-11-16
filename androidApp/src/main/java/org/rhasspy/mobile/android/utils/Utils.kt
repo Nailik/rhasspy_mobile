@@ -490,7 +490,13 @@ fun TextFieldListItem(
 @Composable
 fun FilledTonalButtonListItem(modifier: Modifier = Modifier, text: StringResource, enabled: Boolean = true, onClick: () -> Unit) {
     ListElement(modifier = modifier) {
-        FilledTonalButton(enabled = enabled, onClick = onClick, content = { Text(text) })
+        Column(modifier = Modifier.fillMaxWidth()) {
+            FilledTonalButton(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                enabled = enabled,
+                onClick = onClick,
+                content = { Text(text) })
+        }
     }
 }
 
