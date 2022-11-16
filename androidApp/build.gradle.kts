@@ -139,6 +139,7 @@ dependencies {
     implementation(AndroidX.Navigation.compose)
 
     implementation(AndroidX.Compose.material3)
+    implementation(AndroidX.Compose.material)
     implementation(AndroidX.Compose.material.icons.extended)
     implementation(AndroidX.Compose.foundation)
     implementation(AndroidX.Compose.runtime.liveData)

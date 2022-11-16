@@ -1,23 +1,33 @@
 package org.rhasspy.mobile.android.configuration
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material3.*
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
@@ -34,6 +44,7 @@ import org.rhasspy.mobile.android.utils.Text
  *
  * Shows dialog on Back press when there are unsaved changes
  */
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ConfigurationScreenItemContent(
     modifier: Modifier,
@@ -47,6 +58,8 @@ fun ConfigurationScreenItemContent(
 ) {
 
     val navController = LocalMainNavController.current
+    val modalBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    val scope = rememberCoroutineScope()
 
     var showBackButtonDialog by rememberSaveable { mutableStateOf(false) }
     var showNavigateDialog by rememberSaveable { mutableStateOf(false) }
@@ -97,36 +110,44 @@ fun ConfigurationScreenItemContent(
     //appbar, bottomAppBar, content
 
     Surface(tonalElevation = 1.dp) {
-        Scaffold(
-            modifier = modifier
-                .fillMaxSize()
-                .testTag(TestTag.ConfigurationScreenItemContent),
-            topBar = {
-                AppBar(
-                    title = title,
-                    onBackClick = { onBackPress() }
-                )
-            },
-            bottomBar = {
-                BottomAppBar(
-                    hasUnsavedChanges = hasUnsavedChanges,
-                    testingEnabled = testingEnabled,
-                    onSave = onSave,
-                    onTest = onTest,
-                    onDiscard = onDiscard
-                )
-            }
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
+        ModalBottomSheetLayout(
+            sheetState = modalBottomSheetState,
+            sheetContent = { BottomSheet() })
+        {
+            Scaffold(
+                modifier = modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                Content { route -> onNavigate(route) }
+                    .testTag(TestTag.ConfigurationScreenItemContent),
+                topBar = {
+                    AppBar(
+                        title = title,
+                        onBackClick = { onBackPress() }
+                    )
+                },
+                bottomBar = {
+                    BottomAppBar(
+                        hasUnsavedChanges = hasUnsavedChanges,
+                        testingEnabled = testingEnabled,
+                        onSave = onSave,
+                        onTest = {
+                            scope.launch {
+                                modalBottomSheetState.show()
+                            }
+                        },
+                        onDiscard = onDiscard
+                    )
+                }
+            ) { paddingValues ->
+                Column(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Content { route -> onNavigate(route) }
+                }
             }
         }
-
     }
 }
 
@@ -269,17 +290,46 @@ private fun BottomAppBar(
                 containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
                 elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
             ) {
-                IconButton(
-                    onClick = onTest,
-                    enabled = isTestingEnabled
+                val contentColor = LocalContentColor.current
+
+                CompositionLocalProvider(
+                    LocalRippleTheme provides if (isTestingEnabled) LocalRippleTheme.current else NoRippleTheme
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.PlayArrow,
-                        contentDescription = MR.strings.test
-                    )
+                    Button(
+                        modifier = Modifier.defaultMinSize(
+                            minWidth = 56.0.dp,
+                            minHeight = 56.0.dp,
+                        ),
+                        shape = RoundedCornerShape(16.0.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            contentColor = contentColor,
+                            containerColor = Color.Transparent,
+                            disabledContainerColor = Color.Transparent
+                        ),
+                        onClick = { /*TODO*/ },
+                        enabled = isTestingEnabled
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.PlayArrow,
+                            contentDescription = MR.strings.test
+                        )
+                    }
                 }
             }
         }
+    )
+}
+
+private object NoRippleTheme : RippleTheme {
+    @Composable
+    override fun defaultColor() = Color.Unspecified
+
+    @Composable
+    override fun rippleAlpha(): RippleAlpha = RippleAlpha(
+        draggedAlpha = 0f,
+        focusedAlpha = 0f,
+        hoveredAlpha = 0f,
+        pressedAlpha = 0f,
     )
 }
 
@@ -308,5 +358,9 @@ private fun AppBar(title: StringResource, onBackClick: () -> Unit) {
             }
         }
     )
+}
 
+@Composable
+private fun BottomSheet() {
+    Text(text = "test")
 }
