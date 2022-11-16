@@ -129,7 +129,7 @@ fun ConfigurationScreenItemContent(
                         hasUnsavedChanges = hasUnsavedChanges,
                         testingEnabled = testingEnabled,
                         onSave = onSave,
-                        onTest = {
+                        onClick = {
                             scope.launch {
                                 modalBottomSheetState.show()
                             }
@@ -254,7 +254,7 @@ private fun BottomAppBar(
     hasUnsavedChanges: StateFlow<Boolean>,
     testingEnabled: StateFlow<Boolean>,
     onSave: () -> Unit,
-    onTest: () -> Unit,
+    onClick: () -> Unit,
     onDiscard: () -> Unit
 ) {
     val isHasUnsavedChanges by hasUnsavedChanges.collectAsState()
@@ -286,8 +286,8 @@ private fun BottomAppBar(
         floatingActionButton = {
             FloatingActionButton(
                 modifier = Modifier.testTag(TestTag.BottomAppBarTest),
-                onClick = onTest,
-                containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
+                onClick = {},
+                containerColor = Color.Transparent,
                 elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
             ) {
                 val contentColor = LocalContentColor.current
@@ -303,10 +303,10 @@ private fun BottomAppBar(
                         shape = RoundedCornerShape(16.0.dp),
                         colors = ButtonDefaults.buttonColors(
                             contentColor = contentColor,
-                            containerColor = Color.Transparent,
-                            disabledContainerColor = Color.Transparent
+                            containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
+                            disabledContainerColor = BottomAppBarDefaults.bottomAppBarFabColor.copy(alpha = 0.12f)
                         ),
-                        onClick = { /*TODO*/ },
+                        onClick = onClick,
                         enabled = isTestingEnabled
                     ) {
                         Icon(
