@@ -23,7 +23,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -47,7 +46,6 @@ import org.rhasspy.mobile.android.utils.Text
  *
  * Shows dialog on Back press when there are unsaved changes
  */
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ConfigurationScreenItemContent(
     modifier: Modifier,
@@ -57,7 +55,8 @@ fun ConfigurationScreenItemContent(
     onSave: () -> Unit,
     onTest: () -> Unit,
     onDiscard: () -> Unit,
-    Content: @Composable ColumnScope.(onNavigate: (route: String) -> Unit) -> Unit
+    bottomSheetContent: (@Composable ColumnScope.() -> Unit)? = null,
+    content: @Composable ColumnScope.(onNavigate: (route: String) -> Unit) -> Unit
 ) {
 
     val navController = LocalMainNavController.current
@@ -116,7 +115,7 @@ fun ConfigurationScreenItemContent(
         ModalBottomSheetLayout(
             sheetBackgroundColor = Color.Transparent,
             sheetState = modalBottomSheetState,
-            sheetContent = { BottomSheet() })
+            sheetContent = { BottomSheet(content = bottomSheetContent) })
         {
             Scaffold(
                 modifier = modifier
@@ -148,7 +147,7 @@ fun ConfigurationScreenItemContent(
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                 ) {
-                    Content { route -> onNavigate(route) }
+                    content { route -> onNavigate(route) }
                 }
             }
         }
@@ -365,7 +364,7 @@ private fun AppBar(title: StringResource, onBackClick: () -> Unit) {
 }
 
 @Composable
-private fun BottomSheet() {
+private fun BottomSheet(content: (@Composable ColumnScope.() -> Unit)? = null) {
     Surface(
         tonalElevation = 2.dp,
         shape = RoundedCornerShape(28.dp, 28.dp)) {
@@ -384,7 +383,9 @@ private fun BottomSheet() {
                     .padding(vertical = 22.dp)
                     .align(Alignment.CenterHorizontally),
             )
-            Spacer(modifier = Modifier.height(100.dp))
+            if (content != null) {
+                content()
+            }
         }
     }
 }
