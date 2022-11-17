@@ -24,7 +24,7 @@ import org.rhasspy.mobile.viewModels.HomeScreenViewModel
  */
 @Composable
 fun Fab(modifier: Modifier = Modifier, iconSize: Dp, viewModel: HomeScreenViewModel) {
-
+/*
     RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::toggleSession) { onClick ->
 
         FloatingActionButton(
@@ -45,5 +45,5 @@ fun Fab(modifier: Modifier = Modifier, iconSize: Dp, viewModel: HomeScreenViewMo
             )
         }
 
-    }
+    }*/
 }

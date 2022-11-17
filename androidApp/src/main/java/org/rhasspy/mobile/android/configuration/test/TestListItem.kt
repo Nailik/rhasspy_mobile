@@ -11,43 +11,44 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import org.rhasspy.mobile.viewModels.configuration.test.TestState
+import org.rhasspy.mobile.services.state.ServiceState
+import org.rhasspy.mobile.services.state.State
 
 //loading, positive, negative state, text
 @Composable
-fun TestListItem(testState: TestState, text: String, description: String) {
-    val contentColor = when (testState) {
-        TestState.Pending -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-        TestState.Loading -> LocalContentColor.current
-        TestState.Negative -> MaterialTheme.colorScheme.error
-        TestState.Positive -> MaterialTheme.colorScheme.primary
+fun TestListItem(state: ServiceState) {
+    val contentColor = when (state.state) {
+        State.Pending -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+        State.Loading -> LocalContentColor.current
+        State.Error -> MaterialTheme.colorScheme.error
+        State.Success -> MaterialTheme.colorScheme.primary
     }
 
     ListItem(
-        leadingContent = { TestIcon(testState) },
+        leadingContent = { TestIcon(state.state) },
         colors = ListItemDefaults.colors(
             leadingIconColor = contentColor,
             headlineColor = contentColor
         ),
         supportingText = {
-            Text(description)
+            Text(state.description?.toString() ?: "")
         },
         headlineText = {
-            Text(text)
+            Text(state.stateType.toString())
         })
 }
 
 @Composable
-private fun TestIcon(testState: TestState){
+private fun TestIcon(state: State) {
 
-    val icon = when(testState){
-        TestState.Pending -> Icons.Outlined.Pending
-        TestState.Loading -> Icons.Outlined.RotateRight
-        TestState.Negative -> Icons.Outlined.Close
-        TestState.Positive -> Icons.Outlined.Done
+    val icon = when (state) {
+        State.Pending -> Icons.Outlined.Pending
+        State.Loading -> Icons.Outlined.RotateRight
+        State.Error -> Icons.Outlined.Close
+        State.Success -> Icons.Outlined.Done
     }
 
-    val rotation = if(testState == TestState.Loading) {
+    val rotation = if (state == State.Loading) {
         val infiniteTransition = rememberInfiniteTransition()
         val animateRotation by infiniteTransition.animateFloat(
             initialValue = 0f,
@@ -57,7 +58,7 @@ private fun TestIcon(testState: TestState){
             )
         )
         animateRotation
-    }  else {
+    } else {
         0f
     }
 

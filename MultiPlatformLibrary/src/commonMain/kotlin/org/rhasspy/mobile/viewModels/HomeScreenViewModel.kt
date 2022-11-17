@@ -29,8 +29,6 @@ class HomeScreenViewModel : ViewModel() {
         logger.v { "init" }
     }
 
-    val currentState = StateMachine.currentState
-    val currentServiceState = ServiceInterface.currentState
     val isShowLogEnabled: StateFlow<Boolean> get() = AppSettings.isShowLogEnabled.data
 
     fun toggleSession() = StateMachine.toggleSessionManually()

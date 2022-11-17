@@ -135,6 +135,7 @@ fun ConfigurationScreenItemContent(
                         onClick = {
                             scope.launch {
                                 modalBottomSheetState.show()
+                                modalBottomSheetState.show()
                             }
                             onTest()
                         },

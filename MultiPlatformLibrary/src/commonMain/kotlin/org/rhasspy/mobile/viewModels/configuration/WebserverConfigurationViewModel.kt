@@ -7,19 +7,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
-import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.readOnly
-import org.rhasspy.mobile.services.WebserverService
-import org.rhasspy.mobile.services.WebserverServiceState
-import org.rhasspy.mobile.services.WebserverServiceStateType
-import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.services.state.ServiceState
+import org.rhasspy.mobile.services.state.State
+import org.rhasspy.mobile.services.webserver.WebServerService
+import org.rhasspy.mobile.services.webserver.WebServerServiceStateType.*
 import org.rhasspy.mobile.settings.ConfigurationSettings
-import org.rhasspy.mobile.viewModels.configuration.test.TestState
 
 class WebserverConfigurationViewModel : ViewModel(), KoinComponent {
 
@@ -87,7 +84,7 @@ class WebserverConfigurationViewModel : ViewModel(), KoinComponent {
 
     //for testing
     private val testScope = CoroutineScope(Dispatchers.Default)
-    private val webserver: WebserverService by inject {
+    private val webserver: WebServerService by inject {
         parametersOf(
             _isHttpServerEnabled.value,
             _httpServerPort.value,
@@ -95,12 +92,10 @@ class WebserverConfigurationViewModel : ViewModel(), KoinComponent {
         )
     }
     private val _currentTestStartingState = MutableStateFlow(
-        WebserverServiceState(WebserverServiceStateType.STARTING, TestState.Pending)
+        ServiceState(State.Pending, STARTING)
     )
     private val _currentTestReceivingStateList = MutableStateFlow(
-        listOf(
-            WebserverServiceState(WebserverServiceStateType.RECEIVING, TestState.Pending)
-        )
+        listOf(ServiceState(State.Pending, RECEIVING))
     )
     val currentTestStartingState = _currentTestStartingState.readOnly
     val currentTestReceivingStateList = _currentTestReceivingStateList.readOnly
@@ -112,13 +107,13 @@ class WebserverConfigurationViewModel : ViewModel(), KoinComponent {
         CoroutineScope(Dispatchers.Default).launch {
             webserver.currentState.filterNotNull().collect { state ->
                 when (state.stateType) {
-                    WebserverServiceStateType.STARTING -> {
+                    STARTING -> {
                         _currentTestStartingState.value = state
                         _currentTestReceivingStateList.value = listOf(
-                            WebserverServiceState(WebserverServiceStateType.RECEIVING, TestState.Loading)
+                            ServiceState(State.Loading, RECEIVING)
                         )
                     }
-                    WebserverServiceStateType.RECEIVING -> {
+                    RECEIVING -> {
                         //take last
                         val list = _currentTestReceivingStateList.value.toMutableList()
                         list.add(list.lastIndex, state)

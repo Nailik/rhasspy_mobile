@@ -186,7 +186,7 @@ fun PlayRecording(
     modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel
 ) {
-    val isPlaying = viewModel.currentState.collectAsState().value == State.PlayingRecording
+    val isPlaying = false//viewModel.currentState.collectAsState().value == State.PlayingRecording
 
     ElevatedButton(
         onClick = viewModel::togglePlayRecording,

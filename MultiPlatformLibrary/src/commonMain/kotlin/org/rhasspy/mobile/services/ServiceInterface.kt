@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.handler.ForegroundServiceHandler
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.serviceInterfaces.HttpClientInterface
+import org.rhasspy.mobile.services.state.ServiceState
 import kotlin.native.concurrent.ThreadLocal
 
 /**
@@ -20,8 +21,8 @@ object ServiceInterface {
     private val logger = Logger.withTag("ServerService")
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
-    private var state = MutableStateFlow(ServiceState.Stopped)
-    val currentState: StateFlow<ServiceState> get() = state
+   /*private var state = MutableStateFlow(ServiceState.Stopped)
+    val currentState: StateFlow<ServiceState> get() = state*/
 
     //call all services to activate them
     init {
@@ -36,7 +37,7 @@ object ServiceInterface {
      */
     suspend fun serviceAction(serviceAction: ServiceAction) {
         logger.d { "serviceAction ${serviceAction.name}" }
-
+/*
         when (serviceAction) {
             ServiceAction.Start -> {
                 state.value = ServiceState.Starting
@@ -59,7 +60,7 @@ object ServiceInterface {
                 serviceAction(ServiceAction.Stop)
                 serviceAction(ServiceAction.Start)
             }
-        }
+        }*/
     }
 
     //foreground service handler starts itself

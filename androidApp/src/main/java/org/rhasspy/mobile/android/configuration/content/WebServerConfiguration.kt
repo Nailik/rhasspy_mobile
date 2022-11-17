@@ -5,9 +5,14 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -15,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.single
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
@@ -25,7 +31,6 @@ import org.rhasspy.mobile.android.utils.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.viewModels.configuration.WebserverConfigurationViewModel
-import org.rhasspy.mobile.viewModels.configuration.test.TestState
 
 /**
  * Content to configure text to speech
@@ -118,13 +123,29 @@ private fun WebserverSSL(viewModel: WebserverConfigurationViewModel) {
 
 @Composable
 private fun BottomSheetContent(viewModel: WebserverConfigurationViewModel) {
-    Column(modifier = Modifier.height(400.dp)) {
+
+    val scrollState = rememberScrollState()
+    val size = viewModel.currentTestReceivingStateList.collectAsState().value.size
+
+    LaunchedEffect(size){
+        scrollState.animateScrollTo(size)
+    }
+
+    Column(modifier = Modifier
+        .heightIn(min = 400.dp)
+        .wrapContentHeight()
+        .verticalScroll(scrollState)) {
         val startingState by viewModel.currentTestStartingState.collectAsState()
-        TestListItem(testState = startingState.result, text = startingState.stateType.toString(), description = startingState.description?.toString() ?: "")
+        TestListItem(startingState)
 
         val receivingStateList by viewModel.currentTestReceivingStateList.collectAsState()
         receivingStateList.forEach {
-            TestListItem(testState = it.result, text = it.stateType.toString(), description = it.description?.toString() ?: "")
+            TestListItem(it)
         }
     }
+
+    FilledTonalButtonListItem(text = MR.strings.stop) {
+
+    }
+
 }
