@@ -66,7 +66,9 @@ class AudioRecordingConfigurationViewModel : ViewModel() {
      * test unsaved data configuration
      */
     fun test() {
-
+        //only test button when enabled
+        //require microphone permission
+        //send data (show information that data is being send)
     }
 
 }

@@ -117,7 +117,7 @@ class WebServerConfigurationContentTest {
         //enable http api is saved
         assertEquals(true, newViewModel.isHttpServerEnabled.value)
         //port is saved
-        assertEquals(textInputTest, newViewModel.httpServerPort.value)
+        assertEquals(textInputTest, newViewModel.httpServerPortText.value)
         //enable ssl is saved
         assertEquals(true, newViewModel.isHttpServerSSLEnabled.value)
     }

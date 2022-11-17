@@ -53,7 +53,8 @@ class RemoteHermesHttpConfigurationViewModel : ViewModel() {
      * test unsaved data configuration
      */
     fun test() {
-
+        //check if connection is possible
+        //TODO default and custom port?
     }
 
 }

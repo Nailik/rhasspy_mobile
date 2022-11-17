@@ -81,7 +81,11 @@ class TextToSpeechConfigurationViewModel : ViewModel() {
      * test unsaved data configuration
      */
     fun test() {
-
+        //TODO only when enabled
+        //textfield to input test
+        //button to send text
+        //play audio (on music)
+        //warning when output is silent
     }
 
 }

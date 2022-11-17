@@ -80,7 +80,11 @@ class SpeechToTextConfigurationViewModel : ViewModel() {
      * test unsaved data configuration
      */
     fun test() {
-
+        //TODO require microphone permission
+        //TODO pause record button
+        //TODO only when enabled
+        //record audio
+        //show when text was transcribed and which text
     }
 
 }

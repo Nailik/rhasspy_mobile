@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.server
+package org.rhasspy.mobile.services
 
 import co.touchlab.kermit.Logger
 import io.ktor.http.*
@@ -15,50 +15,67 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import org.koin.core.component.getScopeName
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.nativeutils.installCallLogging
 import org.rhasspy.mobile.nativeutils.installCompression
-import org.rhasspy.mobile.services.RhasspyActions
+import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.AppSettings
-import org.rhasspy.mobile.settings.ConfigurationSettings
-import kotlin.native.concurrent.ThreadLocal
+import org.rhasspy.mobile.viewModels.configuration.test.TestState
+import org.rhasspy.mobile.services.WebserverServiceStateType.*
+
+data class WebserverServiceState(
+    val stateType: WebserverServiceStateType,
+    val result: TestState,
+    val description: Any? = null
+)
+
+enum class WebserverServiceStateType {
+    STARTING,
+    RECEIVING
+}
 
 //https://rhasspy.readthedocs.io/en/latest/reference/#http-api
 /**
  * same endpoints as a rhasspy server sends the requests to the according service (mostly state machine)
  */
-@ThreadLocal
-object HttpServer {
+class WebserverService(
+    private val isHttpApiEnabled: Boolean,
+    private val port: Int,
+    private val isSSLEnabled: Boolean
+) {
     private val logger = Logger.withTag("HttpServer")
-
     private var server: CIOApplicationEngine? = null
 
-    fun start() {
-        logger.v { "startHttpServer" }
+    private val _currentState = MutableStateFlow<WebserverServiceState?>(null)
+    val currentState = _currentState.readOnly
 
-        if (server == null || !ConfigurationSettings.isHttpServerEnabled.value) {
-            ConfigurationSettings.httpServerPort.value.toIntOrNull()?.also { port ->
-                logger.v { "server == null" }
-                server = getServer(port)
-                CoroutineScope(Dispatchers.Main).launch {
-                    //necessary else netty has problems when the coroutine scope is closed
+    fun start() {
+        if (isHttpApiEnabled) {
+            _currentState.value = WebserverServiceState(STARTING, TestState.Loading)
+
+            logger.v { "starting server" }
+            server = getServer(port)
+
+            CoroutineScope(Dispatchers.Default).launch {
+                //necessary else netty has problems when the coroutine scope is closed
+                try {
                     server?.start()
+                    _currentState.value = WebserverServiceState(STARTING, TestState.Positive)
+                } catch (e: Exception) {
+                        _currentState.value =
+                            WebserverServiceState(STARTING, TestState.Negative, e.cause?.message ?: e.message)
                 }
-            } ?: run {
-                logger.w { "configured server port is not a valid number ${ConfigurationSettings.httpServerPort.data}" }
             }
         } else {
-            logger.v {
-                if (server != null) {
-                    "server already running"
-                } else {
-                    "webserver disabled"
-                }
-            }
+            logger.v { "Server disabled" }
         }
     }
-
+    fun destroy() {
+        server?.stop()
+    }
 
     private fun getServer(port: Int): CIOApplicationEngine {
         return embeddedServer(factory = CIO, port = port, watchPaths = emptyList()) {
@@ -96,13 +113,6 @@ object HttpServer {
         }
     }
 
-    fun stop() {
-        logger.v { "stop" }
-
-        server?.stop(0, 0)
-        server = null
-    }
-
 
     /**
      * /api/listen-for-command
@@ -113,6 +123,7 @@ object HttpServer {
      * ?entity=<entity>&value=<value> - set custom entities/values in recognized intent
      */
     private fun Routing.listenForCommand() = post("/api/listen-for-command") {
+        _currentState.value = WebserverServiceState(RECEIVING, TestState.Positive, "/api/listen-for-command")
         logger.v { "post /api/listen-for-command" }
 
         StateMachine.hotWordDetected("REMOTE")
@@ -126,6 +137,7 @@ object HttpServer {
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     private fun Routing.listenForWake() = post("/api/listen-for-wake") {
+        _currentState.value = WebserverServiceState(RECEIVING, TestState.Positive, this.subject)
         logger.v { "post /api/listen-for-wake" }
 
         val action = when (call.receive<String>()) {
@@ -150,6 +162,7 @@ object HttpServer {
      * POST to play last recorded voice command
      */
     private fun Routing.playRecordingPost() = post("/api/play-recording") {
+        _currentState.value = WebserverServiceState(RECEIVING, TestState.Positive, this.subject)
         logger.v { "post /api/play-recording" }
 
         StateMachine.playRecording()
@@ -161,6 +174,7 @@ object HttpServer {
      * GET to download WAV data from last recorded voice command
      */
     private fun Routing.playRecordingGet() = get("/api/play-recording") {
+        _currentState.value = WebserverServiceState(RECEIVING, TestState.Positive, this.subject)
         logger.v { "get /api/play-recording" }
 
         call.respondBytes(
@@ -177,6 +191,7 @@ object HttpServer {
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     private fun Routing.playWav() = post("/api/play-wav") {
+        _currentState.value = WebserverServiceState(RECEIVING, TestState.Positive, this.subject)
         logger.v { "post /api/play-wav" }
 
         if (call.request.contentType() != ContentType("audio", "wav")) {
@@ -193,6 +208,7 @@ object HttpServer {
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     private fun Routing.setVolume() = post("/api/set-volume") {
+        _currentState.value = WebserverServiceState(RECEIVING, TestState.Positive, this.subject)
         logger.v { "post /api/set-volume" }
 
         //double and float or double not working but string??
@@ -215,6 +231,7 @@ object HttpServer {
      * actually starts a session
      */
     private fun Routing.startRecording() = post("/api/start-recording") {
+        _currentState.value = WebserverServiceState(RECEIVING, TestState.Positive, this.subject)
         logger.v { "post /api/start-recording" }
 
         StateMachine.startListening()
@@ -232,6 +249,7 @@ object HttpServer {
      * ?entity=<entity>&value=<value> - set custom entity/value in recognized intent
      */
     private fun Routing.stopRecording() = post("/api/stop-recording") {
+        _currentState.value = WebserverServiceState(RECEIVING, TestState.Positive, this.subject)
         logger.v { "post /api/stop-recording" }
 
         StateMachine.stopListening()
@@ -246,6 +264,7 @@ object HttpServer {
      * just like using say in the ui start screen but remote
      */
     private fun Routing.say() = post("/api/say") {
+        _currentState.value = WebserverServiceState(RECEIVING, TestState.Positive, this.subject)
         logger.v { "post /api/say" }
 
         RhasspyActions.say(call.receive())

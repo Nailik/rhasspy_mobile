@@ -65,6 +65,7 @@ kotlin {
                 implementation(Ktor2.Server.cio)
                 implementation(Ktor2.Client.cio)
                 implementation(Benasher.uuid)
+                implementation(Koin.core)
             }
         }
         val commonTest by getting {

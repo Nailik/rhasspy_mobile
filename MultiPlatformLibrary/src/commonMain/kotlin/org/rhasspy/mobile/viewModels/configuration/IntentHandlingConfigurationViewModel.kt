@@ -103,7 +103,9 @@ class IntentHandlingConfigurationViewModel : ViewModel() {
      * test unsaved data configuration
      */
     fun test() {
-
+        //TODO only when enabled
+        //textfield for intent name and button
+        //alternative? - textfield for text string to recognize intent and then handle
     }
 
 }

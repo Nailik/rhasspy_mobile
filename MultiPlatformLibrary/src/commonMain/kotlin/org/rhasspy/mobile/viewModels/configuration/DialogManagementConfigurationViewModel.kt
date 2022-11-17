@@ -52,7 +52,8 @@ class DialogManagementConfigurationViewModel : ViewModel() {
      * test unsaved data configuration
      */
     fun test() {
-
+        //TODO only when enabled
+        //?? maybe record button -> test flow
     }
 
 }

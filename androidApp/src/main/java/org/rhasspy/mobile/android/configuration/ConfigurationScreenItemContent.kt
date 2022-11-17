@@ -136,6 +136,7 @@ fun ConfigurationScreenItemContent(
                             scope.launch {
                                 modalBottomSheetState.show()
                             }
+                            onTest()
                         },
                         onDiscard = onDiscard
                     )

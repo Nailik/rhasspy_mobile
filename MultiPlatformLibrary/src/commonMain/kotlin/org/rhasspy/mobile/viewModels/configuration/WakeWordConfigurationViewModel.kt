@@ -221,7 +221,10 @@ class WakeWordConfigurationViewModel : ViewModel() {
      * also test if porcupine activation works
      */
     fun test() {
-
+        //TODO require microphone permission
+        //TODO only when enabled
+        //record audio
+        //show when wakeword was detected, also which wakeword
     }
 
 }

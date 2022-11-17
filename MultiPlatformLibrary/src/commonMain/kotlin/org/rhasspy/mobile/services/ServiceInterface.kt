@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.handler.ForegroundServiceHandler
 import org.rhasspy.mobile.logic.StateMachine
-import org.rhasspy.mobile.server.HttpServer
 import org.rhasspy.mobile.serviceInterfaces.HttpClientInterface
 import kotlin.native.concurrent.ThreadLocal
 
@@ -43,7 +42,7 @@ object ServiceInterface {
                 state.value = ServiceState.Starting
                 HttpClientInterface.reloadHttpClient()
                 UdpService.start()
-                HttpServer.start()
+                //WebserverService.start()
                 MqttService.start()
                 StateMachine.started()
                 state.value = ServiceState.Running
@@ -52,7 +51,7 @@ object ServiceInterface {
                 state.value = ServiceState.Stopping
                 StateMachine.stopped()
                 UdpService.stop()
-                HttpServer.stop()
+                //WebserverService.stop()
                 MqttService.stop()
                 state.value = ServiceState.Stopped
             }

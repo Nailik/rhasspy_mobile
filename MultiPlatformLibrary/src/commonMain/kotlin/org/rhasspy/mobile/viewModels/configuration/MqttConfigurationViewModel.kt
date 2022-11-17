@@ -128,7 +128,8 @@ class MqttConfigurationViewModel : ViewModel() {
      * test unsaved data configuration
      */
     fun test() {
-
+        //TODO default MQTT port
+        //check if mqtt connection can be established
     }
 
 }

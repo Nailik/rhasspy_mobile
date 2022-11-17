@@ -47,7 +47,7 @@ class MicrophonePermissionTest {
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     //.google is on devices with google play services and is missing on devices without play services
-    private val permissionDialogPackageNameRegex = when {
+    private val permissionDialogPackageNameRegex = when { //TODO api 33
         Build.VERSION.SDK_INT >= 29 -> ".*permissioncontroller"
         else -> ".*packageinstaller"
     }
@@ -396,12 +396,12 @@ class MicrophonePermissionTest {
                 .getChild(UiSelector().clickable(true).index(indexOffset))
                 .click()
         } else {
-            device.findObject(UiSelector().resourceIdMatches(systemSettingsListRegex))
+            device.findObject(UiSelector().resourceIdMatches(systemSettingsListRegex)) //TODO api 33
                 .getChild(UiSelector().index((if (Build.VERSION.SDK_INT == 29) 3 else 4) + indexOffset))
                 .clickAndWaitForNewWindow()
             if (Build.VERSION.SDK_INT < 30) {
                 device.findObject(UiSelector().resourceId(radioBtnAllow)).click()
-            } else {
+            } else if (Build.VERSION.SDK_INT < 33) {
                 device.findObject(UiSelector().resourceId(radioBtnAllowForegroundOnly)).click()
             }
         }

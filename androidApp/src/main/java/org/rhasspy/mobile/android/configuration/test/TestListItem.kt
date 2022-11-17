@@ -15,7 +15,7 @@ import org.rhasspy.mobile.viewModels.configuration.test.TestState
 
 //loading, positive, negative state, text
 @Composable
-fun TestListItem(testState: TestState, text: String) {
+fun TestListItem(testState: TestState, text: String, description: String) {
     val contentColor = when (testState) {
         TestState.Pending -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
         TestState.Loading -> LocalContentColor.current
@@ -29,6 +29,9 @@ fun TestListItem(testState: TestState, text: String) {
             leadingIconColor = contentColor,
             headlineColor = contentColor
         ),
+        supportingText = {
+            Text(description)
+        },
         headlineText = {
             Text(text)
         })

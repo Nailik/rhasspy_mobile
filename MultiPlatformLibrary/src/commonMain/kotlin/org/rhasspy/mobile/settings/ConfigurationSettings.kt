@@ -10,7 +10,7 @@ internal object ConfigurationSettings {
     val siteId = Setting(SettingsEnum.SiteId, "mobile")
 
     val isHttpServerEnabled = Setting(SettingsEnum.HttpServerEnabled, true)
-    val httpServerPort = Setting(SettingsEnum.HttpServerPort, "12101")
+    val httpServerPort = Setting(SettingsEnum.HttpServerPort, 12101)
     val isHttpServerSSLEnabled = Setting(SettingsEnum.HttpServerSSL, false)
 
     val isHttpSSLVerificationDisabled = Setting(SettingsEnum.SSLVerificationDisabled, true)

@@ -81,7 +81,10 @@ class IntentRecognitionConfigurationViewModel : ViewModel() {
      * test unsaved data configuration
      */
     fun test() {
-
+        //TODO only when enabled
+        //textfield to input test
+        //button to send intent
+        //information if was recognized
     }
 
 }
