@@ -27,11 +27,15 @@ class WebServerService(
     private val isHttpApiEnabled: Boolean,
     private val port: Int,
     private val isSSLEnabled: Boolean
-) : IService() {
-    private val logger = Logger.withTag("WebServerService")
+) : IService("WebServerService") {
+
     private var server: CIOApplicationEngine? = null
     private val _receivedRequest = MutableSharedFlow<Pair<ApplicationCall, WebServerPath>>()
     val receivedRequest: SharedFlow<Pair<ApplicationCall, WebServerPath>> = _receivedRequest
+
+    init {
+        pending(STARTING)
+    }
 
     fun start() {
         if (isHttpApiEnabled) {
@@ -45,6 +49,7 @@ class WebServerService(
                 try {
                     server?.start()
                     success(STARTING)
+                    pending(RECEIVING)
                 } catch (e: Exception) {
                     error(STARTING, e.cause?.message ?: e.message)
                 }

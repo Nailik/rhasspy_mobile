@@ -6,19 +6,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material3.*
-import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -26,17 +19,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
+import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
 
+
+val LocalConfigurationNavController = compositionLocalOf<NavController> {
+    error("No NavController provided")
+}
+
+enum class ConfigurationContentScreens {
+    Edit,
+    Test
+}
 
 /**
  * Content of Configuration Screen Item
@@ -55,14 +60,54 @@ fun ConfigurationScreenItemContent(
     onSave: () -> Unit,
     onTest: () -> Unit,
     onDiscard: () -> Unit,
-    bottomSheetContent: (@Composable ColumnScope.() -> Unit)? = null,
+    testContent: @Composable (modifier: Modifier) -> Unit = { },
     content: @Composable ColumnScope.(onNavigate: (route: String) -> Unit) -> Unit
 ) {
 
-    val navController = LocalMainNavController.current
-    val modalBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
-    val scope = rememberCoroutineScope()
+    val navController = rememberNavController()
 
+    CompositionLocalProvider(
+        LocalConfigurationNavController provides navController
+    ) {
+        NavHost(
+            navController = navController,
+            startDestination = ConfigurationContentScreens.Edit.name,
+            modifier = modifier
+        ) {
+            composable(ConfigurationContentScreens.Edit.name) {
+                EditConfigurationScreen(
+                    title = title,
+                    hasUnsavedChanges = hasUnsavedChanges,
+                    testingEnabled = testingEnabled,
+                    onSave = onSave,
+                    onTest = {
+                        navController.navigate(ConfigurationContentScreens.Test.name)
+                        onTest()
+                    },
+                    onDiscard = onDiscard,
+                    content = content
+                )
+            }
+            composable(ConfigurationContentScreens.Test.name) {
+                TestConfigurationScreen(
+                    content = testContent
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun EditConfigurationScreen(
+    title: StringResource,
+    hasUnsavedChanges: StateFlow<Boolean>,
+    testingEnabled: StateFlow<Boolean> = MutableStateFlow(true),
+    onSave: () -> Unit,
+    onTest: () -> Unit,
+    onDiscard: () -> Unit,
+    content: @Composable ColumnScope.(onNavigate: (route: String) -> Unit) -> Unit
+) {
+    val navController = LocalMainNavController.current
     var showBackButtonDialog by rememberSaveable { mutableStateOf(false) }
     var showNavigateDialog by rememberSaveable { mutableStateOf(false) }
     var navigationRoute by rememberSaveable { mutableStateOf("") }
@@ -85,7 +130,7 @@ fun ConfigurationScreenItemContent(
     }
 
     //Back handler to show dialog if there are unsaved changes
-    BackHandler(onBack = { onBackPress() })
+    BackHandler(onBack = ::onBackPress)
 
     //Show unsaved changes dialog back press
     if (showBackButtonDialog) {
@@ -109,53 +154,48 @@ fun ConfigurationScreenItemContent(
         )
     }
 
-    //appbar, bottomAppBar, content
-
-    Surface(tonalElevation = 1.dp) {
-        ModalBottomSheetLayout(
-            sheetBackgroundColor = Color.Transparent,
-            sheetState = modalBottomSheetState,
-            sheetContent = { BottomSheet(content = bottomSheetContent) })
-        {
-            Scaffold(
-                modifier = modifier
-                    .fillMaxSize()
-                    .testTag(TestTag.ConfigurationScreenItemContent),
-                topBar = {
-                    AppBar(
-                        title = title,
-                        onBackClick = { onBackPress() }
-                    )
-                },
-                bottomBar = {
-                    BottomAppBar(
-                        hasUnsavedChanges = hasUnsavedChanges,
-                        testingEnabled = testingEnabled,
-                        onSave = onSave,
-                        onClick = {
-                            scope.launch {
-                                modalBottomSheetState.show()
-                                modalBottomSheetState.show()
-                            }
-                            onTest()
-                        },
-                        onDiscard = onDiscard
-                    )
-                }
-            ) { paddingValues ->
-                Column(
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    content { route -> onNavigate(route) }
-                }
-            }
+    Scaffold(
+        topBar = {
+            AppBar(
+                title = title,
+                onBackClick = ::onBackPress
+            )
+        },
+        bottomBar = {
+            BottomAppBar(
+                hasUnsavedChanges = hasUnsavedChanges,
+                testingEnabled = testingEnabled,
+                onSave = onSave,
+                onClick = onTest,
+                onDiscard = onDiscard
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            content { route -> onNavigate(route) }
         }
     }
 }
 
+@Composable
+private fun TestConfigurationScreen(content: @Composable (modifier: Modifier) -> Unit) {
+    val navController = LocalConfigurationNavController.current
+    Scaffold(
+        topBar = {
+            AppBar(
+                title = MR.strings.test,
+                onBackClick = navController::popBackStack
+            )
+        },
+    ) { paddingValues ->
+        content(Modifier.padding(paddingValues))
+    }
+}
 
 private fun NavController.navigateSingle(route: String) {
     if (this.backQueue.lastOrNull { entry -> entry.destination.route == route } != null) {
@@ -363,31 +403,4 @@ private fun AppBar(title: StringResource, onBackClick: () -> Unit) {
             }
         }
     )
-}
-
-@Composable
-private fun BottomSheet(content: (@Composable ColumnScope.() -> Unit)? = null) {
-    Surface(
-        tonalElevation = 2.dp,
-        shape = RoundedCornerShape(28.dp, 28.dp)) {
-        Column(
-            modifier = Modifier
-                .widthIn(max = 640.dp)
-                .fillMaxWidth()
-                .padding(8.dp),
-        ) {
-            Box(modifier = Modifier
-                    .background(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
-                        shape = RoundedCornerShape(50),
-                    )
-                    .size(width = 32.dp, height = 4.dp)
-                    .padding(vertical = 22.dp)
-                    .align(Alignment.CenterHorizontally),
-            )
-            if (content != null) {
-                content()
-            }
-        }
-    }
 }

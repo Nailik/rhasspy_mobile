@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.services
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -9,8 +10,9 @@ import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.services.state.State
 import org.rhasspy.mobile.services.state.StateType
 
-abstract class IService {
+abstract class IService(tag: String) {
 
+    internal val logger = Logger.withTag(tag)
     private val _currentState = MutableSharedFlow<ServiceState>()
     val currentState: SharedFlow<ServiceState> = _currentState
 
@@ -39,6 +41,7 @@ abstract class IService {
     ) {
         scope.launch {
             _currentState.emit(ServiceState(state, stateType, description))
+            logger.d { "new state $state at $stateType with $description" }
         }
     }
 }

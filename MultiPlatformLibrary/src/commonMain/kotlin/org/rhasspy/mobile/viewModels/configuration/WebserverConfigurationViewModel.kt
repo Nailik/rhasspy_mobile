@@ -15,7 +15,8 @@ import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.services.state.State
 import org.rhasspy.mobile.services.webserver.WebServerService
-import org.rhasspy.mobile.services.webserver.WebServerServiceStateType.*
+import org.rhasspy.mobile.services.webserver.WebServerServiceStateType.RECEIVING
+import org.rhasspy.mobile.services.webserver.WebServerServiceStateType.STARTING
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class WebserverConfigurationViewModel : ViewModel(), KoinComponent {
@@ -91,12 +92,8 @@ class WebserverConfigurationViewModel : ViewModel(), KoinComponent {
             _isHttpServerSSLEnabled.value
         )
     }
-    private val _currentTestStartingState = MutableStateFlow(
-        ServiceState(State.Pending, STARTING)
-    )
-    private val _currentTestReceivingStateList = MutableStateFlow(
-        listOf(ServiceState(State.Pending, RECEIVING))
-    )
+    private val _currentTestStartingState = MutableStateFlow<ServiceState?>(null)
+    private val _currentTestReceivingStateList = MutableStateFlow(listOf<ServiceState>())
     val currentTestStartingState = _currentTestStartingState.readOnly
     val currentTestReceivingStateList = _currentTestReceivingStateList.readOnly
 

@@ -4,13 +4,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -20,7 +18,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.flow.single
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
@@ -50,7 +47,7 @@ fun WebServerConfigurationContent(viewModel: WebserverConfigurationViewModel = v
         onSave = viewModel::save,
         onTest = viewModel::test,
         onDiscard = viewModel::discard,
-        bottomSheetContent = { BottomSheetContent(viewModel) }
+        testContent = { modifier -> TestContent(modifier, viewModel) }
     ) {
 
         //switch to enable http server
@@ -121,31 +118,35 @@ private fun WebserverSSL(viewModel: WebserverConfigurationViewModel) {
 
 }
 
+//TODO new page instead of bottom sheet
 @Composable
-private fun BottomSheetContent(viewModel: WebserverConfigurationViewModel) {
+fun TestContent(modifier: Modifier, viewModel: WebserverConfigurationViewModel) {
 
     val scrollState = rememberScrollState()
     val size = viewModel.currentTestReceivingStateList.collectAsState().value.size
 
-    LaunchedEffect(size){
+    LaunchedEffect(size) {
         scrollState.animateScrollTo(size)
     }
 
-    Column(modifier = Modifier
-        .heightIn(min = 400.dp)
-        .wrapContentHeight()
-        .verticalScroll(scrollState)) {
+    Column(
+        modifier = modifier
+            .heightIn(min = 400.dp)
+            .wrapContentHeight()
+            .verticalScroll(scrollState)
+    ) {
         val startingState by viewModel.currentTestStartingState.collectAsState()
-        TestListItem(startingState)
+        startingState?.also {
+            TestListItem(it)
+        }
 
         val receivingStateList by viewModel.currentTestReceivingStateList.collectAsState()
         receivingStateList.forEach {
             TestListItem(it)
         }
-    }
+        FilledTonalButtonListItem(text = MR.strings.stop) {
 
-    FilledTonalButtonListItem(text = MR.strings.stop) {
-
+        }
     }
 
 }
