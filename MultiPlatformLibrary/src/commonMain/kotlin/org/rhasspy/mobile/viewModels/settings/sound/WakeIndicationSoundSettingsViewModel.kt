@@ -56,7 +56,7 @@ class WakeIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel()
     }
 
     override fun clickAudioPlayer() {
-        if(isAudioPlaying.value){
+        if (isAudioPlaying.value) {
             audioPlayer.stopPlayingData()
         } else {
             when (AppSettings.wakeSound.value) {
@@ -64,12 +64,14 @@ class WakeIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel()
                 SoundOptions.Default.name -> audioPlayer.playSoundFileResource(
                     MR.files.etc_wav_beep_hi,
                     AppSettings.wakeSoundVolume.data,
-                    AppSettings.soundIndicationOutputOption.value)
+                    AppSettings.soundIndicationOutputOption.value
+                )
                 else -> audioPlayer.playSoundFile(
                     "wake",
                     AppSettings.wakeSound.value,
                     AppSettings.wakeSoundVolume.data,
-                    AppSettings.soundIndicationOutputOption.value)
+                    AppSettings.soundIndicationOutputOption.value
+                )
             }
         }
     }

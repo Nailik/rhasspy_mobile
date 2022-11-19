@@ -217,6 +217,7 @@ private fun SoundActionButtons(
 
     }
 }
+
 /**
  * app bar for indication screen
  */

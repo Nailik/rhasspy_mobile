@@ -27,7 +27,6 @@ import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.android.utils.TextWithAction
 import org.rhasspy.mobile.android.utils.translate
-import org.rhasspy.mobile.logic.State
 import org.rhasspy.mobile.services.MqttService
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 

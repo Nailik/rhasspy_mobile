@@ -63,12 +63,14 @@ class ErrorIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel(
                 SoundOptions.Default.name -> audioPlayer.playSoundFileResource(
                     MR.files.etc_wav_beep_error,
                     AppSettings.errorSoundVolume.data,
-                    AppSettings.soundIndicationOutputOption.value)
+                    AppSettings.soundIndicationOutputOption.value
+                )
                 else -> audioPlayer.playSoundFile(
                     "error",
                     AppSettings.errorSound.value,
                     AppSettings.errorSoundVolume.data,
-                    AppSettings.soundIndicationOutputOption.value)
+                    AppSettings.soundIndicationOutputOption.value
+                )
             }
         }
     }

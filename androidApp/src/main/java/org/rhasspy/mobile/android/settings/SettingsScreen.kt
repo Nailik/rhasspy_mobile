@@ -250,7 +250,6 @@ private fun About() {
 }
 
 
-
 @Composable
 private fun SettingsListItem(
     text: StringResource,

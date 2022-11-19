@@ -32,7 +32,8 @@ fun MicrophoneOverlaySettingsContent(viewModel: MicrophoneOverlaySettingsViewMod
 
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreens.MicrophoneOverlaySettings),
-        title = MR.strings.microphoneOverlay) {
+        title = MR.strings.microphoneOverlay
+    ) {
 
         Column {
 

@@ -5,7 +5,7 @@ import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.settings.AppSettings
 
-class LanguageSettingsViewModel : ViewModel()  {
+class LanguageSettingsViewModel : ViewModel() {
 
     //unsaved ui data
     val languageOption = AppSettings.languageOption.data

@@ -28,7 +28,8 @@ fun DeviceSettingsContent(viewModel: DeviceSettingsSettingsViewModel = viewModel
 
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreens.DeviceSettings),
-        title = MR.strings.device) {
+        title = MR.strings.device
+    ) {
 
         Column {
 

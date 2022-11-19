@@ -24,7 +24,7 @@ class HttpClientServiceTest(
         scope.launch {
             httpClientLink.receivedResponse.collect {
                 if (it is HttpClientResponse.HttpClientSuccess) {
-                    when(it.callType){
+                    when (it.callType) {
                         HttpClientCallType.TextToSpeech -> success(it.callType, "success")
                         HttpClientCallType.SpeechToText,
                         HttpClientCallType.IntentRecognition,

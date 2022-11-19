@@ -58,7 +58,7 @@ class DeviceSettingsContentTest {
      * intent handling disabled is saved
      */
     @Test
-    fun testContent(){
+    fun testContent() {
         //Volume is visible
         composeTestRule.onNodeWithTag(TestTag.Volume).assertIsDisplayed()
 

@@ -23,7 +23,8 @@ fun LogSettingsContent(viewModel: LogSettingsViewModel = viewModel()) {
 
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreens.LogSettings),
-        title = MR.strings.logSettings) {
+        title = MR.strings.logSettings
+    ) {
 
         //log level
         RadioButtonsEnumSelection(

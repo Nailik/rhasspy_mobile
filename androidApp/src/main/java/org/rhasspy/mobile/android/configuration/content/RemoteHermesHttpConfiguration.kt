@@ -21,7 +21,6 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.viewModels.configuration.RemoteHermesHttpConfigurationViewModel
-import org.rhasspy.mobile.viewModels.configuration.WebServerConfigurationViewModel
 
 /**
  * content to configure http configuration

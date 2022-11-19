@@ -20,9 +20,9 @@ abstract class IIndicationSoundSettingsViewModel : ViewModel() {
     internal val audioPlayer = AudioPlayer()
     val isAudioPlaying: StateFlow<Boolean> = audioPlayer.isPlayingState
     val audioOutputOption = AppSettings.soundIndicationOutputOption.data
-    val isNoSoundInformationBoxVisible = when(AppSettings.soundIndicationOutputOption.value){
+    val isNoSoundInformationBoxVisible = when (AppSettings.soundIndicationOutputOption.value) {
         AudioOutputOptions.Sound -> DeviceVolume.volumeFlowSound.mapReadonlyState { it == 0 }
-        AudioOutputOptions.Notification ->  DeviceVolume.volumeFlowNotification.mapReadonlyState { it == 0 }
+        AudioOutputOptions.Notification -> DeviceVolume.volumeFlowNotification.mapReadonlyState { it == 0 }
     }
 
     abstract fun onClickSoundIndicationDefault()

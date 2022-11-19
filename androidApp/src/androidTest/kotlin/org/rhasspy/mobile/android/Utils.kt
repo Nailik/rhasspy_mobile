@@ -11,6 +11,7 @@ import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlin.test.assertEquals
+
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     testTag: Enum<*>,
     useUnmergedTree: Boolean = false
@@ -67,10 +68,10 @@ fun requestExternalStoragePermissions(device: UiDevice) {
 }
 
 fun requestMicrophonePermissions() {
-            with(PermissionRequester()) {
-                addPermissions("android.permission.RECORD_AUDIO")
-                requestPermissions()
-            }
+    with(PermissionRequester()) {
+        addPermissions("android.permission.RECORD_AUDIO")
+        requestPermissions()
+    }
 }
 
 

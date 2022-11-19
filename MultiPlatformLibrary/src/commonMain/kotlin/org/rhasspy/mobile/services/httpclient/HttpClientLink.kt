@@ -12,7 +12,6 @@ import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -23,7 +22,6 @@ import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IServiceLink
 import org.rhasspy.mobile.services.httpclient.data.HttpClientCallType
 import org.rhasspy.mobile.services.httpclient.data.HttpClientResponse
-import org.rhasspy.mobile.services.webserver.data.WebServerCall
 
 class HttpClientLink(
     private val isHttpSSLVerificationDisabled: Boolean,

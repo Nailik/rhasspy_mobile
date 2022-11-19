@@ -733,7 +733,7 @@ fun RowScope.NavigationItem(screen: Enum<*>, icon: @Composable () -> Unit, label
 }
 
 @Composable
-fun OnPauseEffect(onPause: () -> Unit){
+fun OnPauseEffect(onPause: () -> Unit) {
     val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
     DisposableEffect(onPause) {
         val observer = LifecycleEventObserver { _, event ->

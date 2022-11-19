@@ -1,22 +1,8 @@
 package org.rhasspy.mobile.android.main
 
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.MicOff
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
-import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
-import org.rhasspy.mobile.android.utils.Icon
-import org.rhasspy.mobile.logic.State
-import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
 /**

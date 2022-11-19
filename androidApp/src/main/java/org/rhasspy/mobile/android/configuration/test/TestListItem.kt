@@ -62,5 +62,5 @@ private fun TestIcon(state: State) {
         0f
     }
 
-        Icon(icon, "", modifier = Modifier.rotate(rotation))
+    Icon(icon, "", modifier = Modifier.rotate(rotation))
 }

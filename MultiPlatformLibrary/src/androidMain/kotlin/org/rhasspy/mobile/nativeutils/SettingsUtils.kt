@@ -26,7 +26,10 @@ actual object SettingsUtils {
         File(Application.Instance.filesDir, "sounds").mkdirs()
         File(Application.Instance.filesDir, "porcupine").mkdirs()
 
-        Application.Instance.currentActivity?.createDocument("rhasspy_settings_${Clock.System.now().toLocalDateTime(TimeZone.UTC)}.zip", "application/zip") {
+        Application.Instance.currentActivity?.createDocument(
+            "rhasspy_settings_${Clock.System.now().toLocalDateTime(TimeZone.UTC)}.zip",
+            "application/zip"
+        ) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
 

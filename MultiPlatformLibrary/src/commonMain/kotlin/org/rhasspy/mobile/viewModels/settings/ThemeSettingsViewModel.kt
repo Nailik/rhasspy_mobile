@@ -1,11 +1,10 @@
 package org.rhasspy.mobile.viewModels.settings
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.data.ThemeOptions
 import org.rhasspy.mobile.settings.AppSettings
 
-class ThemeSettingsViewModel  : ViewModel()  {
+class ThemeSettingsViewModel : ViewModel() {
 
     //unsaved ui data
     val themeOption = AppSettings.themeOption.data

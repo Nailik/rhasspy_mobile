@@ -35,7 +35,8 @@ fun SaveAndRestoreSettingsContent(viewModel: SaveAndRestoreSettingsViewModel = v
 
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreens.SaveAndRestoreSettings),
-        title = MR.strings.saveAndRestoreSettings) {
+        title = MR.strings.saveAndRestoreSettings
+    ) {
 
         //Save Settings
         SaveSettings(viewModel)
@@ -54,7 +55,7 @@ fun SaveAndRestoreSettingsContent(viewModel: SaveAndRestoreSettingsViewModel = v
  * Shows warning Dialog that the file contains sensitive information
  */
 @Composable
-private fun SaveSettings(viewModel: SaveAndRestoreSettingsViewModel){
+private fun SaveSettings(viewModel: SaveAndRestoreSettingsViewModel) {
 
     var openSaveSettingsDialog by remember { mutableStateOf(false) }
 
@@ -94,7 +95,7 @@ private fun SaveSettings(viewModel: SaveAndRestoreSettingsViewModel){
  * shows dialog that current settings will be overwritten
  */
 @Composable
-private fun RestoreSettings(viewModel: SaveAndRestoreSettingsViewModel){
+private fun RestoreSettings(viewModel: SaveAndRestoreSettingsViewModel) {
 
     var openRestoreSettingsDialog by remember { mutableStateOf(false) }
 
@@ -132,7 +133,7 @@ private fun RestoreSettings(viewModel: SaveAndRestoreSettingsViewModel){
 }
 
 @Composable
-private fun ShareSettings(viewModel: SaveAndRestoreSettingsViewModel){
+private fun ShareSettings(viewModel: SaveAndRestoreSettingsViewModel) {
 
     //restore settings
     ListElement(

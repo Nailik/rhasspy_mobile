@@ -10,7 +10,6 @@ import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
-import org.rhasspy.mobile.viewModels.settings.LanguageSettingsViewModel
 import org.rhasspy.mobile.viewModels.settings.ThemeSettingsViewModel
 
 @Preview
@@ -19,7 +18,8 @@ fun ThemeSettingsScreenItemContent(viewModel: ThemeSettingsViewModel = viewModel
 
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreens.ThemeSettings),
-        title = MR.strings.theme) {
+        title = MR.strings.theme
+    ) {
 
         RadioButtonsEnumSelection(
             selected = viewModel.themeOption.collectAsState().value,

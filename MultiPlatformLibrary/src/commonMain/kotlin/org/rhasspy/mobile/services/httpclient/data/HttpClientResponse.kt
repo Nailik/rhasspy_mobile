@@ -1,7 +1,5 @@
 package org.rhasspy.mobile.services.httpclient.data
 
-import io.ktor.client.statement.*
-
 abstract class HttpClientResponse(
     open val callType: HttpClientCallType
 ) {

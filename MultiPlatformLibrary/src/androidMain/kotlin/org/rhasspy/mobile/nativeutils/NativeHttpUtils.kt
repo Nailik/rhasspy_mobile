@@ -5,7 +5,6 @@ import io.ktor.client.engine.cio.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.compression.*
-import org.rhasspy.mobile.settings.ConfigurationSettings
 import java.security.cert.X509Certificate
 import javax.net.ssl.X509TrustManager
 

@@ -111,7 +111,8 @@ private fun CustomKeywordListItem(
         trailing = {
             IconButton(
                 modifier = Modifier.combinedTestTag(keyword.fileName, TestTag.Delete),
-                onClick = onDelete) {
+                onClick = onDelete
+            ) {
                 Icon(
                     imageVector = Icons.Filled.Delete,
                     contentDescription = MR.strings.defaultText
@@ -152,7 +153,8 @@ private fun CustomKeywordDeletedListItem(
         trailing = {
             IconButton(
                 modifier = Modifier.combinedTestTag(keyword.fileName, TestTag.Undo),
-                onClick = onUndo) {
+                onClick = onUndo
+            ) {
                 Icon(
                     imageVector = Icons.Filled.Block,
                     contentDescription = MR.strings.defaultText

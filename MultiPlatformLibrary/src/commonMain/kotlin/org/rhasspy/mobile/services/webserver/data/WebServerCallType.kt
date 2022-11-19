@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.services.webserver.data
 
-enum class WebServerCallType{
+enum class WebServerCallType {
     POST,
     GET
 }

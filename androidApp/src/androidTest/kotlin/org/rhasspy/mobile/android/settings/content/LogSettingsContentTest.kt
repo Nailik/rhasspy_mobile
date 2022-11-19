@@ -58,7 +58,7 @@ class LogSettingsContentTest {
      * audio frame logging true is saved
      */
     @Test
-    fun contentTest(){
+    fun contentTest() {
         //debug is saved
         assertEquals(LogLevel.Debug, viewModel.logLevel.value)
         //debug is selected

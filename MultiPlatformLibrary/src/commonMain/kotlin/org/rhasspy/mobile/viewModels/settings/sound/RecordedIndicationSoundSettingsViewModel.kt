@@ -55,7 +55,7 @@ class RecordedIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewMod
     }
 
     override fun clickAudioPlayer() {
-        if(isAudioPlaying.value){
+        if (isAudioPlaying.value) {
             audioPlayer.stopPlayingData()
         } else {
             when (AppSettings.recordedSound.value) {
@@ -63,12 +63,14 @@ class RecordedIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewMod
                 SoundOptions.Default.name -> audioPlayer.playSoundFileResource(
                     MR.files.etc_wav_beep_lo,
                     AppSettings.recordedSoundVolume.data,
-                    AppSettings.soundIndicationOutputOption.value)
+                    AppSettings.soundIndicationOutputOption.value
+                )
                 else -> audioPlayer.playSoundFile(
                     "recorded",
                     AppSettings.recordedSound.value,
                     AppSettings.recordedSoundVolume.data,
-                    AppSettings.soundIndicationOutputOption.value)
+                    AppSettings.soundIndicationOutputOption.value
+                )
             }
         }
     }

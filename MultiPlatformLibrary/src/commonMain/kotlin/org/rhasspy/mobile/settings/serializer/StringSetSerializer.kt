@@ -13,6 +13,7 @@ internal object StringSetSerializer : KSerializer<Set<String>> {
 
     @OptIn(InternalSerializationApi::class)
     private val delegatedSerializer = ListSerializer(String::class.serializer())
+
     @OptIn(ExperimentalSerializationApi::class)
     override val descriptor = SerialDescriptor("StringSetSerializer", delegatedSerializer.descriptor)
 

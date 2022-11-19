@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.services.webserver.data
 
-import org.rhasspy.mobile.services.webserver.data.WebServerCallType.*
+import org.rhasspy.mobile.services.webserver.data.WebServerCallType.GET
+import org.rhasspy.mobile.services.webserver.data.WebServerCallType.POST
 
 enum class WebServerPath(val path: String, val type: WebServerCallType) {
     ListenForCommand("/api/listen-for-command", POST),

@@ -16,8 +16,8 @@ object ServiceInterface {
     private val logger = Logger.withTag("ServerService")
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
-   /*private var state = MutableStateFlow(ServiceState.Stopped)
-    val currentState: StateFlow<ServiceState> get() = state*/
+    /*private var state = MutableStateFlow(ServiceState.Stopped)
+     val currentState: StateFlow<ServiceState> get() = state*/
 
     //call all services to activate them
     init {

@@ -114,7 +114,7 @@ class PorcupineKeywordCustomScreenTest {
         //user clicks back twice
         device.pressBack()
 
-        if(Application.Instance.isAppInBackground.value){
+        if (Application.Instance.isAppInBackground.value) {
             device.pressBack()
         }
         //app is opened with current page (custom)

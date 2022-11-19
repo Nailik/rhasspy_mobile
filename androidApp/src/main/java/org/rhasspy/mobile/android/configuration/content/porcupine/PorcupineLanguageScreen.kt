@@ -31,7 +31,9 @@ import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewMode
 fun PorcupineLanguageScreen(viewModel: WakeWordConfigurationViewModel) {
 
     Scaffold(
-        modifier = Modifier.testTag(TestTag.PorcupineLanguageScreen).fillMaxSize(),
+        modifier = Modifier
+            .testTag(TestTag.PorcupineLanguageScreen)
+            .fillMaxSize(),
         topBar = { AppBar(MR.strings.language) }
     ) { paddingValues ->
 

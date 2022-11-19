@@ -105,9 +105,9 @@ object RhasspyActions : KoinComponent {
                 TextToSpeechOptions.RemoteHTTP -> {
                     //use remote text to speech to get audio data and then play it
                     httpClientService.textToSpeech(text)
-                        /*?.also {
-                        playAudio(it)
-                    }*/
+                    /*?.also {
+                    playAudio(it)
+                }*/
                 }
                 //when mqtt is used, say will published and automatically playBytes will be invoked on this siteId
                 TextToSpeechOptions.RemoteMQTT -> MqttService.say(StateMachine.currentSession.sessionId, text)

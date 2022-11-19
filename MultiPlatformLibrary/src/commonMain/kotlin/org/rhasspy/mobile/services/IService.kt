@@ -30,7 +30,7 @@ abstract class IService<T> {
         onStarted(scope)
     }
 
-    internal abstract fun onStart(scope: CoroutineScope) : IServiceLink
+    internal abstract fun onStart(scope: CoroutineScope): IServiceLink
 
     fun stop() {
         onStop()
@@ -46,11 +46,11 @@ abstract class IService<T> {
         onStopped()
     }
 
-    open fun onStop() { }
+    open fun onStop() {}
 
-    open fun onStopped() { }
+    open fun onStopped() {}
 
-    open fun onStarted(scope: CoroutineScope) { }
+    open fun onStarted(scope: CoroutineScope) {}
 
     fun restart() {
         stop()

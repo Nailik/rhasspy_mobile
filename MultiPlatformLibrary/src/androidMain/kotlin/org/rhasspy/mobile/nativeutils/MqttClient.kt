@@ -2,7 +2,6 @@ package org.rhasspy.mobile.nativeutils
 
 import co.touchlab.kermit.Logger
 import org.eclipse.paho.client.mqttv3.*
-import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence
 import org.rhasspy.mobile.mqtt.*

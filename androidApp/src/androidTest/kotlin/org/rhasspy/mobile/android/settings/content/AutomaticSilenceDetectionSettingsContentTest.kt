@@ -79,7 +79,7 @@ class AutomaticSilenceDetectionSettingsContentTest {
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration).assertIsDisplayed()
 
         //user changes silence detection time to 5000
-        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsTime,).performTextReplacement(numberInputTest)
+        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsTime).performTextReplacement(numberInputTest)
         composeTestRule.awaitIdle()
         assertEquals(numberInputTest, viewModel.automaticSilenceDetectionTimeText.value)
         //silence detection time 5000 saved

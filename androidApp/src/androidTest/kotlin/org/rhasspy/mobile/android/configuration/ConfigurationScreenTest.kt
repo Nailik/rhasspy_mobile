@@ -1,7 +1,9 @@
 package org.rhasspy.mobile.android.configuration
 
-import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextReplacement
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule

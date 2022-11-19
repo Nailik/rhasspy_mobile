@@ -138,7 +138,8 @@
     <string name="restore">Restore</string>
     <string name="saveAndRestoreSettings">Save and Restore Settings</string>
     <string name="saveSettings">Save Settings</string>
-    <string name="saveSettingsWarningText">The exported Settings file contains sensitive Data!\nRead the file and edit carefully before sharing.</string>
+    <string name="saveSettingsWarningText">The exported Settings file contains sensitive Data!\nRead the file and edit carefully before sharing.
+    </string>
     <string name="restoreSettings">Restore Settings</string>
     <string name="restoreSettingsWarningText">Your current settings will be lost after restoring from file!</string>
     <string name="warning">Warning</string>

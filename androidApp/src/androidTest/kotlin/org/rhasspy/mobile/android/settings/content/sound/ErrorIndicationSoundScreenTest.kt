@@ -7,7 +7,7 @@ import org.junit.Test
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.viewModels.settings.sound.ErrorIndicationSoundSettingsViewModel
 
-class ErrorIndicationSoundScreenTest :IndicationSoundScreenTest(
+class ErrorIndicationSoundScreenTest : IndicationSoundScreenTest(
     viewModel = ErrorIndicationSoundSettingsViewModel(),
     title = MR.strings.errorSound,
     screen = IndicationSettingsScreens.ErrorIndicationSound
