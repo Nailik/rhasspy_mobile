@@ -115,7 +115,7 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
 
 //TODO new page instead of bottom sheet
 @Composable
-fun TestContent(modifier: Modifier, viewModel: WebServerConfigurationViewModel) {
+private fun TestContent(modifier: Modifier, viewModel: WebServerConfigurationViewModel) {
     Column(
         modifier = modifier
             .heightIn(min = 400.dp)

@@ -4,14 +4,19 @@ import co.touchlab.kermit.Logger
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 /**
  * used to send intents or events to home assistant
  */
-object HomeAssistantInterface {
+object HomeAssistantInterface : KoinComponent {
 
     val logger = Logger.withTag("HomeAssistantInterface")
+
+    private val httpClientService by inject<HttpClientService>()
 
     /**
      * simplified conversion from intent to hass event or hass intent
@@ -47,8 +52,8 @@ object HomeAssistantInterface {
         val intentRes = Json.encodeToString(slots)
 
         when (ConfigurationSettings.isIntentHandlingHassEvent.value) {
-            true -> HttpClientInterface.hassEvent(intentRes, intentName)
-            false -> HttpClientInterface.hassIntent("{\"name\" : \"$intentName\", \"data\": $intent }")
+            true -> httpClientService.hassEvent(intentRes, intentName)
+            false -> httpClientService.hassIntent("{\"name\" : \"$intentName\", \"data\": $intent }")
         }
     }
 }

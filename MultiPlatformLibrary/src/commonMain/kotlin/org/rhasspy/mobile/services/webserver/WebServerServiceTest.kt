@@ -37,6 +37,10 @@ class WebServerServiceTest(
         }
     }
 
+    override fun runTest(scope: CoroutineScope) {
+        //nothing to do
+    }
+
     override fun getService(): WebServerService = get()
 
 }

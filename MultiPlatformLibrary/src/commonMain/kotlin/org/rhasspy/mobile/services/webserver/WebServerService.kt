@@ -23,7 +23,7 @@ class WebServerService : IService<WebServerLinkStateType>() {
 
     private val logger = Logger.withTag("WebServerService")
     private val _currentError = MutableSharedFlow<ServiceError<WebServerLinkStateType>?>()
-    override val currentError: SharedFlow<ServiceError<WebServerLinkStateType>?> = _currentError.readOnly
+    override val currentError = _currentError.readOnly
 
     override fun onStart(scope: CoroutineScope): WebServerLink {
         val webServerLink = WebServerLink(

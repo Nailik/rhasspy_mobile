@@ -66,6 +66,10 @@ kotlin {
                 implementation(Ktor2.Client.cio)
                 implementation(Benasher.uuid)
                 implementation(Koin.core)
+                implementation(Ktor.Client.cio)
+                implementation(Ktor.Server.core)
+                implementation(Ktor.Server.cio)
+                implementation(Ktor.plugins.network)
             }
         }
         val commonTest by getting {
@@ -86,15 +90,11 @@ kotlin {
                 implementation(AndroidX.Compose.material3)
                 implementation(Icerock.Resources.resourcesCompose)
                 implementation(Picovoice.porcupineAndroid)
-                implementation(Ktor.Client.cio)
-                implementation(Ktor.Server.core)
-                implementation(Ktor.Server.netty)
-                implementation(Ktor.plugins.network)
                 implementation(Slf4j.simple)
-                implementation(Ktor2.Server.compression)
-                implementation(Ktor2.Server.callLogging)
                 implementation("androidx.documentfile:documentfile:_")
                 implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
+                implementation(Ktor2.Server.compression)
+                implementation(Ktor2.Server.callLogging)
             }
         }
         val androidTest by getting {

@@ -39,10 +39,16 @@ abstract class IServiceTest<T>(
 
     abstract fun onStartTest(scope: CoroutineScope)
 
+    abstract fun runTest(scope: CoroutineScope)
+
     override fun onStart(scope: CoroutineScope): IServiceLink {
         getService().stop()
         onStartTest(scope)
         return serviceLink
+    }
+
+    override fun onStarted(scope: CoroutineScope) {
+        runTest(scope)
     }
 
     override fun onStopped() {

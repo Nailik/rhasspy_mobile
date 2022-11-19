@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.TextToSpeechOptions
+import org.rhasspy.mobile.services.httpclient.data.HttpClientPath
 import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -23,7 +24,7 @@ class TextToSpeechConfigurationViewModel : ViewModel(), IConfigurationViewModel 
             if (useCustomTextToSpeechHttpEndpoint) {
                 speechToTextHttpEndpoint
             } else {
-                "${ConfigurationSettings.httpServerEndpoint.value}//api/text-to-speech"
+                "${ConfigurationSettings.httpServerEndpoint.value}${HttpClientPath.TextToSpeech}"
             }
         }
     val isUseCustomTextToSpeechHttpEndpoint = _isUseCustomTextToSpeechHttpEndpoint.readOnly

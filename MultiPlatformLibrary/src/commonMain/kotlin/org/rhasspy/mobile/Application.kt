@@ -13,6 +13,8 @@ import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.mqtt.OverlayServices
 import org.rhasspy.mobile.services.MqttService
 import org.rhasspy.mobile.services.ServiceInterface
+import org.rhasspy.mobile.services.httpclient.HttpClientService
+import org.rhasspy.mobile.services.httpclient.HttpClientServiceTest
 import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.services.webserver.WebServerServiceTest
 import org.rhasspy.mobile.settings.AppSettings
@@ -21,6 +23,8 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
 val serviceModule = module {
     factory { params -> WebServerServiceTest(params.get()) }
     single { WebServerService() }
+    factory { params -> HttpClientServiceTest(params.get()) }
+    single { HttpClientService() }
 }
 
 abstract class Application : NativeApplication(), KoinComponent {

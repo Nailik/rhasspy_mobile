@@ -142,7 +142,7 @@ class WebServerConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
     }
 
     override fun stopTest() {
-        logger.e { "stopTest()" }
+        logger.d { "stopTest()" }
         _currentTestStartingState.value = null
         _currentTestReceivingStateList.value = listOf()
         //destroy instance
@@ -150,5 +150,4 @@ class WebServerConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
             webServerServiceTest.stop()
         }
     }
-
 }

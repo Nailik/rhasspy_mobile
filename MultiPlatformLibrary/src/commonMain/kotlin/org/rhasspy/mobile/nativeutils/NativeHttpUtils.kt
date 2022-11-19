@@ -10,4 +10,4 @@ expect fun Application.installCompression()
 expect fun Application.installCallLogging()
 
 @Suppress("NO_ACTUAL_FOR_EXPECT")
-expect fun CIOEngineConfig.configureEngine()
+expect fun CIOEngineConfig.configureEngine(isHttpVerificationDisabled: Boolean)

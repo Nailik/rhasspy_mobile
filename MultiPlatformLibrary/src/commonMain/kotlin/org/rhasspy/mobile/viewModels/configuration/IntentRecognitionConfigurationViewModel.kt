@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.IntentRecognitionOptions
 import org.rhasspy.mobile.data.SpeechToTextOptions
+import org.rhasspy.mobile.services.httpclient.data.HttpClientPath
 import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -24,7 +25,7 @@ class IntentRecognitionConfigurationViewModel : ViewModel(), IConfigurationViewM
             if (useCustomIntentRecognitionHttpEndpoint) {
                 intentRecognitionHttpEndpoint
             } else {
-                "${ConfigurationSettings.httpServerEndpoint.value}//api/text-to-intent"
+                "${ConfigurationSettings.httpServerEndpoint.value}${HttpClientPath.TextToIntent}"
             }
         }
     val isUseCustomIntentRecognitionHttpEndpoint = _isUseCustomIntentRecognitionHttpEndpoint.readOnly

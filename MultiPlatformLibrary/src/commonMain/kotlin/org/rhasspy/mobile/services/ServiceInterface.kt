@@ -3,13 +3,8 @@ package org.rhasspy.mobile.services
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.handler.ForegroundServiceHandler
-import org.rhasspy.mobile.logic.StateMachine
-import org.rhasspy.mobile.serviceInterfaces.HttpClientInterface
-import org.rhasspy.mobile.services.state.ServiceState
 import kotlin.native.concurrent.ThreadLocal
 
 /**
