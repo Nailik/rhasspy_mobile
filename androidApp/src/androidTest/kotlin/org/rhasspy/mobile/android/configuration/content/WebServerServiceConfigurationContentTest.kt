@@ -11,7 +11,7 @@ import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.viewModels.configuration.WebserverConfigurationViewModel
+import org.rhasspy.mobile.viewModels.configuration.WebServerConfigurationViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -21,7 +21,7 @@ class WebServerServiceConfigurationContentTest {
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = WebserverConfigurationViewModel()
+    private val viewModel = WebServerConfigurationViewModel()
 
     @Before
     fun setUp() {
@@ -113,7 +113,7 @@ class WebServerServiceConfigurationContentTest {
 
         //user click save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
-        val newViewModel = WebserverConfigurationViewModel()
+        val newViewModel = WebServerConfigurationViewModel()
         //enable http api is saved
         assertEquals(true, newViewModel.isHttpServerEnabled.value)
         //port is saved

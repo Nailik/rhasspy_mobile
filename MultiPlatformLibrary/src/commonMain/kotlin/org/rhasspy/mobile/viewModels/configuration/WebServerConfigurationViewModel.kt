@@ -16,12 +16,13 @@ import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.services.state.State
 import org.rhasspy.mobile.services.webserver.WebServerLink
+import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.services.webserver.WebServerServiceTest
 import org.rhasspy.mobile.services.webserver.data.WebServerServiceStateType.RECEIVING
 import org.rhasspy.mobile.services.webserver.data.WebServerServiceStateType.STARTING
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-class WebserverConfigurationViewModel : ViewModel(), IConfigurationViewModel, KoinComponent {
+class WebServerConfigurationViewModel : ViewModel(), IConfigurationViewModel, KoinComponent {
 
     private val logger = Logger.withTag("WebserverConfigurationViewModel")
 
@@ -75,7 +76,9 @@ class WebserverConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
         ConfigurationSettings.isHttpServerEnabled.value = _isHttpServerEnabled.value
         ConfigurationSettings.httpServerPort.value = _httpServerPort.value
         ConfigurationSettings.isHttpServerSSLEnabled.value = _isHttpServerSSLEnabled.value
-        //TODO recreate WebServerService and shut down previous one
+        get<WebServerService>().also {
+            it.restart()
+        }
     }
 
     /**
@@ -88,7 +91,7 @@ class WebserverConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
     }
 
     //for testing
-    private lateinit var webserver: WebServerServiceTest
+    private lateinit var webServerServiceTest: WebServerServiceTest
     private val _currentTestStartingState = MutableStateFlow<ServiceState?>(null)
     private val _currentTestReceivingStateList = MutableStateFlow(listOf<ServiceState>())
 
@@ -105,16 +108,15 @@ class WebserverConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
      * test unsaved data configuration
      */
     override fun test() {
-        webserver = get {
+        webServerServiceTest = get {
             parametersOf(
                 WebServerLink(_isHttpServerEnabled.value, _httpServerPort.value, _isHttpServerSSLEnabled.value)
             )
         }
 
-        //TODO get WebServerServiceTest
         //run tests
         CoroutineScope(Dispatchers.Default).launch {
-            webserver.currentState.collect { state ->
+            webServerServiceTest.currentState.collect { state ->
                 when (state.stateType) {
                     STARTING -> {
                         _currentTestStartingState.value = state
@@ -131,6 +133,8 @@ class WebserverConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
                 }
             }
         }
+
+        webServerServiceTest.start()
     }
 
     override fun stopTest() {
@@ -138,8 +142,8 @@ class WebserverConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
         _currentTestStartingState.value = null
         _currentTestReceivingStateList.value = listOf()
         //destroy instance
-        if (::webserver.isInitialized) {
-            webserver.destroy()
+        if (::webServerServiceTest.isInitialized) {
+            webServerServiceTest.stop()
         }
     }
 

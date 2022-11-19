@@ -5,23 +5,25 @@ import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.mqtt.OverlayServices
 import org.rhasspy.mobile.services.MqttService
-import org.rhasspy.mobile.services.ServiceAction
 import org.rhasspy.mobile.services.ServiceInterface
-import org.rhasspy.mobile.services.webserver.WebServerLink
+import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.services.webserver.WebServerServiceTest
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 val serviceModule = module {
     factory { params -> WebServerServiceTest(params.get()) }
+    single { WebServerService() }
 }
 
-abstract class Application : NativeApplication() {
+abstract class Application : NativeApplication(), KoinComponent {
     private val logger = Logger.withTag("Application")
 
     companion object {
@@ -57,8 +59,10 @@ abstract class Application : NativeApplication() {
 
         StringDesc.localeType = StringDesc.LocaleType.Custom(AppSettings.languageOption.value.code)
 
+        //start all services
         CoroutineScope(Dispatchers.Default).launch {
-            ServiceInterface.serviceAction(ServiceAction.Start)
+            //ServiceInterface.serviceAction(ServiceAction.Start)
+            get<WebServerService>().start()
         }
 
     }

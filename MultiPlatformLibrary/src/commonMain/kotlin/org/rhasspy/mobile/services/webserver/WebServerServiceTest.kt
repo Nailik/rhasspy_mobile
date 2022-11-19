@@ -1,30 +1,25 @@
 package org.rhasspy.mobile.services.webserver
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.rhasspy.mobile.services.IServiceLink
 import org.rhasspy.mobile.services.IServiceTest
 import org.rhasspy.mobile.services.webserver.data.WebServerServiceStateType
 
 class WebServerServiceTest(
-    val service: WebServerLink
-) : IServiceTest("WebServerService") {
+    private val webServerLink: WebServerLink
+) : IServiceTest("WebServerService", webServerLink), KoinComponent {
 
-    private val scope = CoroutineScope(Dispatchers.Default)
-
-    init {
+    override fun onStartTest(scope: CoroutineScope) {
         scope.launch {
-            service.receivedRequest.collect {
+            webServerLink.receivedRequest.collect {
                 success(WebServerServiceStateType.RECEIVING, it.second.path)
             }
         }
-        service.start()
     }
 
-    fun destroy() {
-        service.destroy()
-        scope.cancel()
-    }
+    override fun getService(): WebServerService = get()
 
 }

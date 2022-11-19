@@ -6,29 +6,34 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
+import org.rhasspy.mobile.services.IServiceLink
 import org.rhasspy.mobile.services.RhasspyActions
 import org.rhasspy.mobile.services.ServiceError
 import org.rhasspy.mobile.services.webserver.data.WebServerPath
 import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.ConfigurationSettings
 
-class WebServerService(
-    val service: WebServerLink
-) : IService() {
+class WebServerService : IService() {
+
     private val logger = Logger.withTag("WebServerService")
-
     private val _currentError = MutableSharedFlow<ServiceError?>()
     override val currentError: SharedFlow<ServiceError?> = _currentError.readOnly
 
-    init {
-        CoroutineScope(Dispatchers.Default).launch {
-            service.receivedRequest.collect {
+    override fun onStart(scope: CoroutineScope): IServiceLink {
+        val webServerLink = WebServerLink(
+            ConfigurationSettings.isHttpServerEnabled.value,
+            ConfigurationSettings.httpServerPort.value,
+            ConfigurationSettings.isHttpServerSSLEnabled.value
+        )
+
+        scope.launch {
+            webServerLink.receivedRequest.collect {
                 when (it.second) {
                     WebServerPath.ListenForCommand -> listenForCommand()
                     WebServerPath.ListenForWake -> listenForWake(it.first)
@@ -42,7 +47,8 @@ class WebServerService(
                 }
             }
         }
-        service.start()
+
+        return webServerLink
     }
 
 

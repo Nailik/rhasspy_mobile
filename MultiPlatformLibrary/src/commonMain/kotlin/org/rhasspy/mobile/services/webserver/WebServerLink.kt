@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.nativeutils.installCallLogging
 import org.rhasspy.mobile.nativeutils.installCompression
+import org.rhasspy.mobile.services.IServiceLink
 import org.rhasspy.mobile.services.webserver.data.WebServerCallType
 import org.rhasspy.mobile.services.webserver.data.WebServerPath
 
@@ -26,15 +27,15 @@ class WebServerLink(
     private val isHttpApiEnabled: Boolean,
     private val port: Int,
     private val isSSLEnabled: Boolean
-) {
+) : IServiceLink {
 
     private val logger = Logger.withTag("WebServerLink")
 
-    private var server: CIOApplicationEngine? = null
+    private lateinit var server: CIOApplicationEngine
     private val _receivedRequest = MutableSharedFlow<Pair<ApplicationCall, WebServerPath>>()
     val receivedRequest: SharedFlow<Pair<ApplicationCall, WebServerPath>> = _receivedRequest
 
-    fun start() {
+    override fun start() {
         if (isHttpApiEnabled) {
             logger.v { "starting server" }
             server = getServer(port)
@@ -42,7 +43,7 @@ class WebServerLink(
             CoroutineScope(Dispatchers.Default).launch {
                 //necessary else netty has problems when the coroutine scope is closed
                 try {
-                    server?.start()
+                    server.start()
                 } catch (e: Exception) {
                     logger.e(e) { "While Starting server" }
                 }
@@ -52,8 +53,10 @@ class WebServerLink(
         }
     }
 
-    fun destroy() {
-        server?.stop()
+    override fun destroy() {
+        if (::server.isInitialized) {
+            server.stop()
+        }
     }
 
     private fun getServer(port: Int): CIOApplicationEngine {

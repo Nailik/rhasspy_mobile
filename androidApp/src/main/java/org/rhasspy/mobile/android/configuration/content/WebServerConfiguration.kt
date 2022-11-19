@@ -6,9 +6,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -24,7 +22,7 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
-import org.rhasspy.mobile.viewModels.configuration.WebserverConfigurationViewModel
+import org.rhasspy.mobile.viewModels.configuration.WebServerConfigurationViewModel
 
 /**
  * Content to configure text to speech
@@ -34,7 +32,7 @@ import org.rhasspy.mobile.viewModels.configuration.WebserverConfigurationViewMod
  */
 @Preview
 @Composable
-fun WebServerConfigurationContent(viewModel: WebserverConfigurationViewModel = viewModel()) {
+fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = viewModel()) {
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.WebServerConfiguration),
@@ -84,7 +82,7 @@ fun WebServerConfigurationContent(viewModel: WebserverConfigurationViewModel = v
  * certificate selection
  */
 @Composable
-private fun WebserverSSL(viewModel: WebserverConfigurationViewModel) {
+private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
 
     //switch to enabled http ssl
     SwitchListItem(
@@ -113,7 +111,7 @@ private fun WebserverSSL(viewModel: WebserverConfigurationViewModel) {
 
 //TODO new page instead of bottom sheet
 @Composable
-fun TestContent(modifier: Modifier, viewModel: WebserverConfigurationViewModel) {
+fun TestContent(modifier: Modifier, viewModel: WebServerConfigurationViewModel) {
 
     Column(
         modifier = modifier
