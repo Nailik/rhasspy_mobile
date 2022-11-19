@@ -142,7 +142,7 @@ class MqttConfigurationContentTest {
         //host is saved
         assertEquals(textInputTestHost, newViewModel.mqttHost.value)
         //port is saved
-        assertEquals(textInputTestPort, newViewModel.mqttPort.value)
+        assertEquals(textInputTestPort, newViewModel.mqttPortText.value)
         //username is saved
         assertEquals(textInputTestUsername, newViewModel.mqttUserName.value)
         //password is saved
@@ -232,11 +232,11 @@ class MqttConfigurationContentTest {
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         val newViewModel = MqttConfigurationViewModel()
         //timeout is saved
-        assertEquals(textInputTestConnectionTimeout, newViewModel.mqttConnectionTimeout.value)
+        assertEquals(textInputTestConnectionTimeout, newViewModel.mqttConnectionTimeoutText.value)
         //keepAliveInterval is saved
-        assertEquals(textInputTestKeepAliveInterval, newViewModel.mqttKeepAliveInterval.value)
+        assertEquals(textInputTestKeepAliveInterval, newViewModel.mqttKeepAliveIntervalText.value)
         //retry interval is saved
-        assertEquals(textInputTestRetryInterval, newViewModel.mqttRetryInterval.value)
+        assertEquals(textInputTestRetryInterval, newViewModel.mqttRetryIntervalText.value)
     }
 
 }

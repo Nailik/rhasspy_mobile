@@ -29,9 +29,9 @@ class WebServerConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
     //unsaved data
     private val _isHttpServerEnabled =
         MutableStateFlow(ConfigurationSettings.isHttpServerEnabled.value)
+    private val _httpServerPort = MutableStateFlow(ConfigurationSettings.httpServerPort.value)
     private val _httpServerPortText =
         MutableStateFlow(ConfigurationSettings.httpServerPort.value.toString())
-    private val _httpServerPort = MutableStateFlow(ConfigurationSettings.httpServerPort.value)
     private val _isHttpServerSSLEnabled =
         MutableStateFlow(ConfigurationSettings.isHttpServerSSLEnabled.value)
 
@@ -46,10 +46,7 @@ class WebServerConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_isHttpServerEnabled, ConfigurationSettings.isHttpServerEnabled.data),
         combineStateNotEquals(_httpServerPort, ConfigurationSettings.httpServerPort.data),
-        combineStateNotEquals(
-            _isHttpServerSSLEnabled,
-            ConfigurationSettings.isHttpServerSSLEnabled.data
-        )
+        combineStateNotEquals(_isHttpServerSSLEnabled, ConfigurationSettings.isHttpServerSSLEnabled.data)
     )
 
     //toggle HTTP Server enabled
@@ -61,7 +58,7 @@ class WebServerConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
     fun changeHttpServerPort(port: String) {
         val text = port.replace("""[-,. ]""".toRegex(), "")
         _httpServerPortText.value = text
-        _httpServerPort.value = port.toIntOrNull() ?: 0
+        _httpServerPort.value = text.toIntOrNull() ?: 0
     }
 
     //Toggle http server ssl enabled

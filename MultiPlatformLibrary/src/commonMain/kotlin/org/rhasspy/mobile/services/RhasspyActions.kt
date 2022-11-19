@@ -10,6 +10,7 @@ import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.interfaces.HomeAssistantInterface
 import org.rhasspy.mobile.services.httpclient.HttpClientService
+import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.native.concurrent.ThreadLocal

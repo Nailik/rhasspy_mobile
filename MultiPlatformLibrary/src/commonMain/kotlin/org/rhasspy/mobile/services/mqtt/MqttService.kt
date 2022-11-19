@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.services
+package org.rhasspy.mobile.services.mqtt
 
 import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
@@ -13,6 +13,7 @@ import org.rhasspy.mobile.data.AudioPlayingOptions
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.mqtt.*
 import org.rhasspy.mobile.nativeutils.MqttClient
+import org.rhasspy.mobile.services.RhasspyActions
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.math.min
@@ -89,7 +90,7 @@ object MqttService {
         logger.d { "retry to connect to mqtt" }
         connectClient()
         if (!isConnected.value && ConfigurationSettings.isMqttEnabled.value) {
-            val seconds = (ConfigurationSettings.mqttRetryInterval.value.toLongOrNull() ?: 10).seconds
+            val seconds = (ConfigurationSettings.mqttRetryInterval.value).seconds
             logger.d { "retry did not work, retry in $seconds seconds" }
             delay(seconds)
             retryToConnect()

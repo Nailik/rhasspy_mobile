@@ -13,7 +13,7 @@ import org.rhasspy.mobile.data.SpeechToTextOptions
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.nativeutils.FileWriter
-import org.rhasspy.mobile.services.MqttService
+import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.RhasspyActions
 import org.rhasspy.mobile.services.UdpService
 import org.rhasspy.mobile.settings.AppSettings

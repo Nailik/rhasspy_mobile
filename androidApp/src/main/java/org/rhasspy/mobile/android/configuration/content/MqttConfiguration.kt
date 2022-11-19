@@ -94,7 +94,7 @@ private fun MqttConnectionSettings(viewModel: MqttConfigurationViewModel) {
         label = MR.strings.port,
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         modifier = Modifier.testTag(TestTag.Port),
-        value = viewModel.mqttPort.collectAsState().value,
+        value = viewModel.mqttPortText.collectAsState().value,
         onValueChange = viewModel::updateMqttPort,
     )
 
@@ -155,7 +155,7 @@ private fun MqttConnectionTiming(viewModel: MqttConfigurationViewModel) {
         label = MR.strings.connectionTimeout,
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         modifier = Modifier.testTag(TestTag.ConnectionTimeout),
-        value = viewModel.mqttConnectionTimeout.collectAsState().value,
+        value = viewModel.mqttConnectionTimeoutText.collectAsState().value,
         onValueChange = viewModel::updateMqttConnectionTimeout
     )
 
@@ -163,7 +163,7 @@ private fun MqttConnectionTiming(viewModel: MqttConfigurationViewModel) {
         label = MR.strings.keepAliveInterval,
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         modifier = Modifier.testTag(TestTag.KeepAliveInterval),
-        value = viewModel.mqttKeepAliveInterval.collectAsState().value,
+        value = viewModel.mqttKeepAliveIntervalText.collectAsState().value,
         onValueChange = viewModel::updateMqttKeepAliveInterval
     )
 
@@ -171,7 +171,7 @@ private fun MqttConnectionTiming(viewModel: MqttConfigurationViewModel) {
         label = MR.strings.retryInterval,
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         modifier = Modifier.testTag(TestTag.RetryInterval),
-        value = viewModel.mqttRetryInterval.collectAsState().value,
+        value = viewModel.mqttRetryIntervalText.collectAsState().value,
         onValueChange = viewModel::updateMqttRetryInterval
     )
 

@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.viewModels
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import org.rhasspy.mobile.services.MqttService
+import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class ConfigurationScreenViewModel : ViewModel() {

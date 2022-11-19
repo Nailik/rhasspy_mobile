@@ -16,24 +16,28 @@ class MqttConfigurationViewModel : ViewModel(), IConfigurationViewModel {
     private val _isMqttEnabled = MutableStateFlow(ConfigurationSettings.isMqttEnabled.value)
     private val _mqttHost = MutableStateFlow(ConfigurationSettings.mqttHost.value)
     private val _mqttPort = MutableStateFlow(ConfigurationSettings.mqttPort.value)
+    private val _mqttPortText = MutableStateFlow(ConfigurationSettings.mqttPort.value.toString())
     private val _mqttUserName = MutableStateFlow(ConfigurationSettings.mqttUserName.value)
     private val _mqttPassword = MutableStateFlow(ConfigurationSettings.mqttPassword.value)
     private val _isMqttSSLEnabled = MutableStateFlow(ConfigurationSettings.isMqttSSLEnabled.value)
     private val _mqttConnectionTimeout = MutableStateFlow(ConfigurationSettings.mqttConnectionTimeout.value)
+    private val _mqttConnectionTimeoutText = MutableStateFlow(ConfigurationSettings.mqttConnectionTimeout.value.toString())
     private val _mqttKeepAliveInterval = MutableStateFlow(ConfigurationSettings.mqttKeepAliveInterval.value)
+    private val _mqttKeepAliveIntervalText = MutableStateFlow(ConfigurationSettings.mqttKeepAliveInterval.value.toString())
     private val _mqttRetryInterval = MutableStateFlow(ConfigurationSettings.mqttRetryInterval.value)
+    private val _mqttRetryIntervalText = MutableStateFlow(ConfigurationSettings.mqttRetryInterval.value.toString())
 
     //unsaved ui data
     val isMqttEnabled = _isMqttEnabled.readOnly
     val mqttHost = _mqttHost.readOnly
-    val mqttPort = _mqttPort.readOnly
+    val mqttPortText = _mqttPortText.readOnly
     val mqttUserName = _mqttUserName.readOnly
     val mqttPassword = _mqttPassword.readOnly
     val isMqttSSLEnabled = _isMqttSSLEnabled.readOnly
     val isMqttChooseCertificateVisible = isMqttSSLEnabled
-    val mqttConnectionTimeout = _mqttConnectionTimeout.readOnly
-    val mqttKeepAliveInterval = _mqttKeepAliveInterval.readOnly
-    val mqttRetryInterval = _mqttRetryInterval.readOnly
+    val mqttConnectionTimeoutText = _mqttConnectionTimeoutText.readOnly
+    val mqttKeepAliveIntervalText = _mqttKeepAliveIntervalText.readOnly
+    val mqttRetryIntervalText = _mqttRetryIntervalText.readOnly
 
     override val isTestingEnabled = _isMqttEnabled.readOnly
     override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
@@ -65,7 +69,9 @@ class MqttConfigurationViewModel : ViewModel(), IConfigurationViewModel {
 
     //set mqtt port
     fun updateMqttPort(port: String) {
-        _mqttPort.value = port
+        val text = port.replace("""[-,. ]""".toRegex(), "")
+        _mqttPortText.value = text
+        _mqttPort.value = text.toIntOrNull() ?: 0
     }
 
     //set mqtt username
@@ -85,17 +91,23 @@ class MqttConfigurationViewModel : ViewModel(), IConfigurationViewModel {
 
     //set connection timeout time
     fun updateMqttConnectionTimeout(connectionTimeout: String) {
-        _mqttConnectionTimeout.value = connectionTimeout
+        val text = connectionTimeout.replace("""[-,. ]""".toRegex(), "")
+        _mqttConnectionTimeoutText.value = text
+        _mqttConnectionTimeout.value = text.toIntOrNull() ?: 0
     }
 
     //set keep alive interval time
     fun updateMqttKeepAliveInterval(keepAliveInterval: String) {
-        _mqttKeepAliveInterval.value = keepAliveInterval
+        val text = keepAliveInterval.replace("""[-,. ]""".toRegex(), "")
+        _mqttKeepAliveIntervalText.value = text
+        _mqttKeepAliveInterval.value = text.toIntOrNull() ?: 0
     }
 
     //set retry interval time
     fun updateMqttRetryInterval(retryInterval: String) {
-        _mqttRetryInterval.value = retryInterval
+        val text = retryInterval.replace("""[-,. ]""".toRegex(), "")
+        _mqttRetryIntervalText.value = text
+        _mqttRetryInterval.value = text.toIntOrNull() ?: 0
     }
 
     /**
