@@ -6,7 +6,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.IntentHandlingOptions
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
@@ -14,7 +13,6 @@ import org.rhasspy.mobile.services.IServiceLink
 import org.rhasspy.mobile.services.ServiceError
 import org.rhasspy.mobile.services.httpclient.data.HttpClientCallType
 import org.rhasspy.mobile.services.httpclient.data.HttpClientPath
-import org.rhasspy.mobile.services.httpclient.data.HttpClientResponse
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class HttpClientService : IService<HttpClientCallType>() {
@@ -51,27 +49,7 @@ class HttpClientService : IService<HttpClientCallType>() {
             intentHandlingHttpEndpoint = ConfigurationSettings.intentHandlingHttpEndpoint.value,
             intentHandlingHassEndpoint = ConfigurationSettings.intentHandlingHassEndpoint.value,
             intentHandlingHassAccessToken = ConfigurationSettings.intentHandlingHassAccessToken.value,
-        ).also { clientLink ->
-            scope.launch {
-                //TODO call state machine etc
-                clientLink.receivedResponse.collect { response ->
-                    if (response is HttpClientResponse.HttpClientSuccess) {
-                        when (response.callType) {
-                            HttpClientCallType.SpeechToText -> TODO()
-                            HttpClientCallType.IntentRecognition -> TODO()
-                            HttpClientCallType.TextToSpeech -> TODO()
-                            HttpClientCallType.PlayWav -> TODO()
-                            HttpClientCallType.IntentHandling -> TODO()
-                            HttpClientCallType.HassEvent -> TODO()
-                            HttpClientCallType.HassIntent -> TODO()
-                        }
-                    }
-                    if (response is HttpClientResponse.HttpClientError) {
-                        _currentError.emit(ServiceError(response.e, response.callType, MR.strings.error))
-                    }
-                }
-            }
-        }
+        )
     }
 
     override fun onStop() {
@@ -99,11 +77,7 @@ class HttpClientService : IService<HttpClientCallType>() {
      *
      * returns null if the intent is not found
      */
-    fun intentRecognition(text: String) {
-        scope.launch {
-            httpClientLink?.intentRecognition(text)
-        }
-    }
+    suspend fun intentRecognition(text: String) = httpClientLink?.intentRecognition(text)
 
     /**
      * api/text-to-speech
@@ -114,11 +88,7 @@ class HttpClientService : IService<HttpClientCallType>() {
      * ?volume=<volume> - volume level to speak at (0 = off, 1 = full volume)
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun textToSpeech(text: String) {
-        scope.launch {
-            httpClientLink?.textToSpeech(text)
-        }
-    }
+    suspend fun textToSpeech(text: String) = httpClientLink?.textToSpeech(text)
 
     /**
      * /api/play-wav
@@ -126,11 +96,7 @@ class HttpClientService : IService<HttpClientCallType>() {
      * Make sure to set Content-Type to audio/wav
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    fun playWav(data: List<Byte>) {
-        scope.launch {
-            httpClientLink?.playWav(data)
-        }
-    }
+    suspend fun playWav(data: List<Byte>) = httpClientLink?.playWav(data)
 
     /**
      * Rhasspy can POST the intent JSON to a remote URL.
@@ -148,28 +114,16 @@ class HttpClientService : IService<HttpClientCallType>() {
      *
      * Implemented by rhasspy-remote-http-hermes
      */
-    fun intentHandling(intent: String) {
-        scope.launch {
-            httpClientLink?.intentHandling(intent)
-        }
-    }
+    suspend fun intentHandling(intent: String) = httpClientLink?.intentHandling(intent)
 
     /**
      * send intent as Event to Home Assistant
      */
-    fun hassEvent(json: String, intentName: String) {
-        scope.launch {
-            httpClientLink?.hassEvent(json, intentName)
-        }
-    }
+    suspend fun hassEvent(json: String, intentName: String) = httpClientLink?.hassEvent(json, intentName)
 
     /**
      * send intent as Intent to Home Assistant
      */
-    fun hassIntent(intent: String) {
-        scope.launch {
-            httpClientLink?.hassIntent(intent)
-        }
-    }
+    suspend fun hassIntent(intent: String) = httpClientLink?.hassIntent(intent)
 
 }

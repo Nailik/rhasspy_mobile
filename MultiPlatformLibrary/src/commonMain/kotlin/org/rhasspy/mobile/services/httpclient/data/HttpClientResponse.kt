@@ -1,15 +1,15 @@
 package org.rhasspy.mobile.services.httpclient.data
 
-abstract class HttpClientResponse(
+abstract class HttpClientResponse<T>(
     open val callType: HttpClientCallType
 ) {
-    data class HttpClientError(
+    data class HttpClientError<T>(
         val e: Exception,
         override val callType: HttpClientCallType
-    ) : HttpClientResponse(callType)
+    ) : HttpClientResponse<T>(callType)
 
-    data class HttpClientSuccess(
-        val response: Any?,
+    data class HttpClientSuccess<T>(
+        val response: T,
         override val callType: HttpClientCallType
-    ) : HttpClientResponse(callType)
+    ) : HttpClientResponse<T>(callType)
 }
