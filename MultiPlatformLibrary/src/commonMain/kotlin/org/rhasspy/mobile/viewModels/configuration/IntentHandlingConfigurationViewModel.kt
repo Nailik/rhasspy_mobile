@@ -2,14 +2,16 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.data.IntentHandlingOptions
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-class IntentHandlingConfigurationViewModel : ViewModel() {
+class IntentHandlingConfigurationViewModel : ViewModel(), IConfigurationViewModel {
 
     //unsaved data
     private val _intentHandlingOption = MutableStateFlow(ConfigurationSettings.intentHandlingOption.value)
@@ -26,7 +28,10 @@ class IntentHandlingConfigurationViewModel : ViewModel() {
     val isIntentHandlingHassEvent = _isIntentHandlingHassEvent.readOnly
     val isIntentHandlingHassIntent = _isIntentHandlingHassEvent.mapReadonlyState { !it }
 
-    val hasUnsavedChanges = combineAny(
+    override val isTestingEnabled = _intentHandlingOption.mapReadonlyState { it != IntentHandlingOptions.Disabled }
+    override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
+
+    override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_intentHandlingOption, ConfigurationSettings.intentHandlingOption.data),
         combineStateNotEquals(_intentHandlingHttpEndpoint, ConfigurationSettings.intentHandlingHttpEndpoint.data),
         combineStateNotEquals(_intentHandlingHassEndpoint, ConfigurationSettings.intentHandlingHassEndpoint.data),
@@ -80,7 +85,7 @@ class IntentHandlingConfigurationViewModel : ViewModel() {
     /**
      * save data configuration
      */
-    fun save() {
+    override fun save() {
         ConfigurationSettings.intentHandlingOption.value = _intentHandlingOption.value
         ConfigurationSettings.intentHandlingHttpEndpoint.value = _intentHandlingHttpEndpoint.value
         ConfigurationSettings.intentHandlingHassEndpoint.value = _intentHandlingHassEndpoint.value
@@ -91,7 +96,7 @@ class IntentHandlingConfigurationViewModel : ViewModel() {
     /**
      * undo all changes
      */
-    fun discard() {
+    override fun discard() {
         _intentHandlingOption.value = ConfigurationSettings.intentHandlingOption.value
         _intentHandlingHttpEndpoint.value = ConfigurationSettings.intentHandlingHttpEndpoint.value
         _intentHandlingHassEndpoint.value = ConfigurationSettings.intentHandlingHassEndpoint.value
@@ -102,10 +107,14 @@ class IntentHandlingConfigurationViewModel : ViewModel() {
     /**
      * test unsaved data configuration
      */
-    fun test() {
+    override fun test() {
         //TODO only when enabled
         //textfield for intent name and button
         //alternative? - textfield for text string to recognize intent and then handle
+    }
+
+    override fun stopTest() {
+
     }
 
 }

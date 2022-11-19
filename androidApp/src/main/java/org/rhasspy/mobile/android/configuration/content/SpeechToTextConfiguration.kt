@@ -30,10 +30,7 @@ fun SpeechToTextConfigurationContent(viewModel: SpeechToTextConfigurationViewMod
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.SpeechToTextConfiguration),
         title = MR.strings.speechToText,
-        hasUnsavedChanges = viewModel.hasUnsavedChanges,
-        onSave = viewModel::save,
-        onTest = viewModel::test,
-        onDiscard = viewModel::discard
+        viewModel = viewModel
     ) {
 
         //drop down of option

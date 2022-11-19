@@ -10,16 +10,17 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
+import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.services.state.State
-import org.rhasspy.mobile.services.webserver.WebServerService
-import org.rhasspy.mobile.services.webserver.WebServerServiceStateType.RECEIVING
-import org.rhasspy.mobile.services.webserver.WebServerServiceStateType.STARTING
+import org.rhasspy.mobile.services.webserver.WebServerLink
+import org.rhasspy.mobile.services.webserver.data.WebServerServiceStateType.RECEIVING
+import org.rhasspy.mobile.services.webserver.data.WebServerServiceStateType.STARTING
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-class WebserverConfigurationViewModel : ViewModel(), KoinComponent {
+class WebserverConfigurationViewModel : ViewModel(), IConfigurationViewModel, KoinComponent {
 
     //unsaved data
     private val _isHttpServerEnabled =
@@ -36,9 +37,9 @@ class WebserverConfigurationViewModel : ViewModel(), KoinComponent {
     val isHttpServerSSLEnabled = _isHttpServerSSLEnabled.readOnly
     val isHttpServerSettingsVisible = _isHttpServerEnabled.readOnly
     val isHttpServerSSLCertificateVisible = _isHttpServerSSLEnabled.readOnly
-    val isTestingEnabled = _isHttpServerEnabled.readOnly
+    override val isTestingEnabled = _isHttpServerEnabled.readOnly
 
-    val hasUnsavedChanges = combineAny(
+    override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_isHttpServerEnabled, ConfigurationSettings.isHttpServerEnabled.data),
         combineStateNotEquals(_httpServerPort, ConfigurationSettings.httpServerPort.data),
         combineStateNotEquals(
@@ -67,7 +68,7 @@ class WebserverConfigurationViewModel : ViewModel(), KoinComponent {
     /**
      * save data configuration
      */
-    fun save() {
+    override fun save() {
         ConfigurationSettings.isHttpServerEnabled.value = _isHttpServerEnabled.value
         ConfigurationSettings.httpServerPort.value = _httpServerPort.value
         ConfigurationSettings.isHttpServerSSLEnabled.value = _isHttpServerSSLEnabled.value
@@ -76,7 +77,7 @@ class WebserverConfigurationViewModel : ViewModel(), KoinComponent {
     /**
      * undo all changes
      */
-    fun discard() {
+    override fun discard() {
         _isHttpServerEnabled.value = ConfigurationSettings.isHttpServerEnabled.value
         _httpServerPort.value = ConfigurationSettings.httpServerPort.value
         _isHttpServerSSLEnabled.value = ConfigurationSettings.isHttpServerSSLEnabled.value
@@ -84,8 +85,7 @@ class WebserverConfigurationViewModel : ViewModel(), KoinComponent {
 
 
     //for testing
-    private val testScope = CoroutineScope(Dispatchers.Default)
-    private val webserver: WebServerService by inject {
+    private val webserver: WebServerLink by inject {
         parametersOf(
             _isHttpServerEnabled.value,
             _httpServerPort.value,
@@ -94,13 +94,20 @@ class WebserverConfigurationViewModel : ViewModel(), KoinComponent {
     }
     private val _currentTestStartingState = MutableStateFlow<ServiceState?>(null)
     private val _currentTestReceivingStateList = MutableStateFlow(listOf<ServiceState>())
-    val currentTestStartingState = _currentTestStartingState.readOnly
-    val currentTestReceivingStateList = _currentTestReceivingStateList.readOnly
+
+    override val testState = combineState(_currentTestStartingState, _currentTestReceivingStateList) { startingState, receivingStateList ->
+        mutableListOf<ServiceState>().also { list ->
+            startingState?.also {
+                list.add(startingState)
+            }
+            list.addAll(receivingStateList)
+        }
+    }
 
     /**
      * test unsaved data configuration
      */
-    fun test() {
+    override fun test() {
         CoroutineScope(Dispatchers.Default).launch {
             webserver.currentState.filterNotNull().collect { state ->
                 when (state.stateType) {
@@ -122,7 +129,7 @@ class WebserverConfigurationViewModel : ViewModel(), KoinComponent {
         webserver.start()
     }
 
-    fun stopTest() {
+    override fun stopTest() {
         webserver.destroy()
     }
 

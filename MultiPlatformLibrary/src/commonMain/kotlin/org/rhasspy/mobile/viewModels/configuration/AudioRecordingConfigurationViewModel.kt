@@ -2,12 +2,16 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
+import org.rhasspy.mobile.data.DialogManagementOptions
+import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-class AudioRecordingConfigurationViewModel : ViewModel() {
+class AudioRecordingConfigurationViewModel : ViewModel(), IConfigurationViewModel {
 
     //unsaved data
     private val _isUdpOutputEnabled = MutableStateFlow(ConfigurationSettings.isUdpOutputEnabled.value)
@@ -19,8 +23,11 @@ class AudioRecordingConfigurationViewModel : ViewModel() {
     val udpOutputHost = _udpOutputHost.readOnly
     val udpOutputPort = _udpOutputPort.readOnly
 
+    override val isTestingEnabled = _isUdpOutputEnabled.readOnly
+    override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
+
     //if there are unsaved changes
-    val hasUnsavedChanges = combineAny(
+    override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_isUdpOutputEnabled, ConfigurationSettings.isUdpOutputEnabled.data),
         combineStateNotEquals(_udpOutputHost, ConfigurationSettings.udpOutputHost.data),
         combineStateNotEquals(_udpOutputPort, ConfigurationSettings.udpOutputPort.data)
@@ -47,7 +54,7 @@ class AudioRecordingConfigurationViewModel : ViewModel() {
     /**
      * save data configuration
      */
-    fun save() {
+    override fun save() {
         ConfigurationSettings.isUdpOutputEnabled.value = _isUdpOutputEnabled.value
         ConfigurationSettings.udpOutputHost.value = _udpOutputHost.value
         ConfigurationSettings.udpOutputPort.value = _udpOutputPort.value
@@ -56,7 +63,7 @@ class AudioRecordingConfigurationViewModel : ViewModel() {
     /**
      * undo all changes
      */
-    fun discard() {
+    override fun discard() {
         _isUdpOutputEnabled.value = ConfigurationSettings.isUdpOutputEnabled.value
         _udpOutputHost.value = ConfigurationSettings.udpOutputHost.value
         _udpOutputPort.value = ConfigurationSettings.udpOutputPort.value
@@ -65,10 +72,14 @@ class AudioRecordingConfigurationViewModel : ViewModel() {
     /**
      * test unsaved data configuration
      */
-    fun test() {
+    override fun test() {
         //only test button when enabled
         //require microphone permission
         //send data (show information that data is being send)
+    }
+
+    override fun stopTest() {
+
     }
 
 }

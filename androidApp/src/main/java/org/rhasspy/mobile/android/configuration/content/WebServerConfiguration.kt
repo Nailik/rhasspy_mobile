@@ -42,11 +42,7 @@ fun WebServerConfigurationContent(viewModel: WebserverConfigurationViewModel = v
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.WebServerConfiguration),
         title = MR.strings.webserver,
-        hasUnsavedChanges = viewModel.hasUnsavedChanges,
-        testingEnabled = viewModel.isTestingEnabled,
-        onSave = viewModel::save,
-        onTest = viewModel::test,
-        onDiscard = viewModel::discard,
+        viewModel = viewModel,
         testContent = { modifier -> TestContent(modifier, viewModel) }
     ) {
 
@@ -123,7 +119,7 @@ private fun WebserverSSL(viewModel: WebserverConfigurationViewModel) {
 fun TestContent(modifier: Modifier, viewModel: WebserverConfigurationViewModel) {
 
     val scrollState = rememberScrollState()
-    val size = viewModel.currentTestReceivingStateList.collectAsState().value.size
+    val size = viewModel.testState.collectAsState().value.size
 
     LaunchedEffect(size) {
         scrollState.animateScrollTo(size)
@@ -135,12 +131,7 @@ fun TestContent(modifier: Modifier, viewModel: WebserverConfigurationViewModel) 
             .wrapContentHeight()
             .verticalScroll(scrollState)
     ) {
-        val startingState by viewModel.currentTestStartingState.collectAsState()
-        startingState?.also {
-            TestListItem(it)
-        }
-
-        val receivingStateList by viewModel.currentTestReceivingStateList.collectAsState()
+        val receivingStateList by viewModel.testState.collectAsState()
         receivingStateList.forEach {
             TestListItem(it)
         }

@@ -33,10 +33,7 @@ fun IntentHandlingConfigurationContent(viewModel: IntentHandlingConfigurationVie
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.IntentHandlingConfiguration),
         title = MR.strings.intentHandling,
-        hasUnsavedChanges = viewModel.hasUnsavedChanges,
-        onSave = viewModel::save,
-        onTest = viewModel::test,
-        onDiscard = { }
+        viewModel = viewModel
     ) {
 
         //drop down to select option

@@ -31,10 +31,7 @@ fun IntentRecognitionConfigurationContent(viewModel: IntentRecognitionConfigurat
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.IntentRecognitionConfiguration),
         title = MR.strings.intentRecognition,
-        hasUnsavedChanges = viewModel.hasUnsavedChanges,
-        onSave = viewModel::save,
-        onTest = viewModel::test,
-        onDiscard = viewModel::discard
+        viewModel = viewModel
     ) {
 
         //drop down to select intent recognition option

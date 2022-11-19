@@ -2,15 +2,17 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.PorcupineLanguageOptions
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.nativeutils.SettingsUtils
 import org.rhasspy.mobile.nativeutils.openLink
+import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 
-class WakeWordConfigurationViewModel : ViewModel() {
+class WakeWordConfigurationViewModel : ViewModel(), IConfigurationViewModel {
 
     data class PorcupineCustomKeywordUi(
         val keyword: PorcupineCustomKeyword,
@@ -23,7 +25,9 @@ class WakeWordConfigurationViewModel : ViewModel() {
     private val _wakeWordPorcupineKeywordDefaultOptions = MutableStateFlow(ConfigurationSettings.wakeWordPorcupineKeywordDefaultOptions.value)
     private val _wakeWordPorcupineKeywordCustomOptions = MutableStateFlow(ConfigurationSettings.wakeWordPorcupineKeywordCustomOptions.value
         .map { PorcupineCustomKeywordUi(it) })
-    private val _wakeWordPorcupineKeywordCustomOptionsNormal = _wakeWordPorcupineKeywordCustomOptions.mapReadonlyState { it.map { it.keyword }.toSet() }
+    private val _wakeWordPorcupineKeywordCustomOptionsNormal = _wakeWordPorcupineKeywordCustomOptions.mapReadonlyState { options ->
+        options.map { it.keyword }.toSet()
+    }
 
     private val _wakeWordPorcupineLanguage = MutableStateFlow(ConfigurationSettings.wakeWordPorcupineLanguage.value)
 
@@ -41,7 +45,10 @@ class WakeWordConfigurationViewModel : ViewModel() {
         return option == WakeWordOption.Porcupine
     }
 
-    val hasUnsavedChanges = combineAny(
+    override val isTestingEnabled = _wakeWordOption.mapReadonlyState { it != WakeWordOption.Disabled }
+    override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
+
+    override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_wakeWordOption, ConfigurationSettings.wakeWordOption.data),
         combineStateNotEquals(_wakeWordPorcupineAccessToken, ConfigurationSettings.wakeWordPorcupineAccessToken.data),
         combineStateNotEquals(_wakeWordPorcupineKeywordDefaultOptions, ConfigurationSettings.wakeWordPorcupineKeywordDefaultOptions.data),
@@ -184,7 +191,7 @@ class WakeWordConfigurationViewModel : ViewModel() {
     /**
      * save data configuration
      */
-    fun save() {
+    override fun save() {
         ConfigurationSettings.wakeWordOption.value = _wakeWordOption.value
         ConfigurationSettings.wakeWordPorcupineAccessToken.value = _wakeWordPorcupineAccessToken.value
         ConfigurationSettings.wakeWordPorcupineKeywordDefaultOptions.value = _wakeWordPorcupineKeywordDefaultOptions.value
@@ -202,7 +209,7 @@ class WakeWordConfigurationViewModel : ViewModel() {
     /**
      * undo all changes
      */
-    fun discard() {
+    override fun discard() {
         _wakeWordOption.value = ConfigurationSettings.wakeWordOption.value
         _wakeWordPorcupineAccessToken.value = ConfigurationSettings.wakeWordPorcupineAccessToken.value
         _wakeWordPorcupineKeywordDefaultOptions.value = ConfigurationSettings.wakeWordPorcupineKeywordDefaultOptions.value
@@ -220,11 +227,15 @@ class WakeWordConfigurationViewModel : ViewModel() {
      * test unsaved data configuration
      * also test if porcupine activation works
      */
-    fun test() {
+    override fun test() {
         //TODO require microphone permission
         //TODO only when enabled
         //record audio
         //show when wakeword was detected, also which wakeword
+    }
+
+    override fun stopTest() {
+
     }
 
 }

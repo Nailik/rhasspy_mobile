@@ -32,10 +32,7 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.AudioPlayingConfiguration),
         title = MR.strings.audioPlaying,
-        hasUnsavedChanges = viewModel.hasUnsavedChanges,
-        onSave = viewModel::save,
-        onTest = viewModel::test,
-        onDiscard = viewModel::discard
+        viewModel = viewModel
     ) {
 
         val audioPlayingOption by viewModel.audioPlayingOption.collectAsState()

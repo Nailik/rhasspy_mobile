@@ -2,12 +2,14 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-class RemoteHermesHttpConfigurationViewModel : ViewModel() {
+class RemoteHermesHttpConfigurationViewModel : ViewModel(), IConfigurationViewModel {
 
     //unsaved data
     private val _httpServerEndpoint = MutableStateFlow(ConfigurationSettings.httpServerEndpoint.value)
@@ -17,7 +19,10 @@ class RemoteHermesHttpConfigurationViewModel : ViewModel() {
     val httpServerEndpoint = _httpServerEndpoint.readOnly
     val isHttpSSLVerificationDisabled = _isHttpSSLVerificationDisabled.readOnly
 
-    val hasUnsavedChanges = combineAny(
+    override val isTestingEnabled = MutableStateFlow(true)
+    override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
+
+    override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_httpServerEndpoint, ConfigurationSettings.httpServerEndpoint.data),
         combineStateNotEquals(_isHttpSSLVerificationDisabled, ConfigurationSettings.isHttpSSLVerificationDisabled.data)
     )
@@ -36,7 +41,7 @@ class RemoteHermesHttpConfigurationViewModel : ViewModel() {
     /**
      * save data configuration
      */
-    fun save() {
+    override fun save() {
         ConfigurationSettings.httpServerEndpoint.value = _httpServerEndpoint.value
         ConfigurationSettings.isHttpSSLVerificationDisabled.value = _isHttpSSLVerificationDisabled.value
     }
@@ -44,7 +49,7 @@ class RemoteHermesHttpConfigurationViewModel : ViewModel() {
     /**
      * undo all changes
      */
-    fun discard() {
+    override fun discard() {
         _httpServerEndpoint.value = ConfigurationSettings.httpServerEndpoint.value
         _isHttpSSLVerificationDisabled.value = ConfigurationSettings.isHttpSSLVerificationDisabled.value
     }
@@ -52,9 +57,13 @@ class RemoteHermesHttpConfigurationViewModel : ViewModel() {
     /**
      * test unsaved data configuration
      */
-    fun test() {
+    override fun test() {
         //check if connection is possible
         //TODO default and custom port?
+    }
+
+    override fun stopTest() {
+
     }
 
 }

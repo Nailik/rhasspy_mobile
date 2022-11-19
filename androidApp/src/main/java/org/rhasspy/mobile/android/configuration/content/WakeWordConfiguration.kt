@@ -78,10 +78,7 @@ private fun WakeWordConfigurationOverview(viewModel: WakeWordConfigurationViewMo
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.WakeWordConfiguration),
         title = MR.strings.wakeWord,
-        hasUnsavedChanges = viewModel.hasUnsavedChanges,
-        onSave = viewModel::save,
-        onTest = viewModel::test,
-        onDiscard = viewModel::discard
+        viewModel = viewModel,
     ) {
 
         //drop down list to select option

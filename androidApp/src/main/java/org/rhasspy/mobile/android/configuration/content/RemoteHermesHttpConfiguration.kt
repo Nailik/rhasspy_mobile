@@ -25,10 +25,7 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.RemoteHermesHttpConfiguration),
         title = MR.strings.remoteHermesHTTP,
-        hasUnsavedChanges = viewModel.hasUnsavedChanges,
-        onSave = viewModel::save,
-        onTest = viewModel::test,
-        onDiscard = viewModel::discard
+        viewModel = viewModel
     ) {
 
         //base http endpoint

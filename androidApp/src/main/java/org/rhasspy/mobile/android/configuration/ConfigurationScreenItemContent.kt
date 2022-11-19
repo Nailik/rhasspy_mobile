@@ -32,6 +32,7 @@ import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
+import org.rhasspy.mobile.viewModels.configuration.IConfigurationViewModel
 
 
 val LocalConfigurationNavController = compositionLocalOf<NavController> {
@@ -55,11 +56,7 @@ enum class ConfigurationContentScreens {
 fun ConfigurationScreenItemContent(
     modifier: Modifier,
     title: StringResource,
-    hasUnsavedChanges: StateFlow<Boolean>,
-    testingEnabled: StateFlow<Boolean> = MutableStateFlow(true),
-    onSave: () -> Unit,
-    onTest: () -> Unit,
-    onDiscard: () -> Unit,
+    viewModel: IConfigurationViewModel,
     testContent: @Composable (modifier: Modifier) -> Unit = { },
     content: @Composable ColumnScope.(onNavigate: (route: String) -> Unit) -> Unit
 ) {
@@ -77,14 +74,14 @@ fun ConfigurationScreenItemContent(
             composable(ConfigurationContentScreens.Edit.name) {
                 EditConfigurationScreen(
                     title = title,
-                    hasUnsavedChanges = hasUnsavedChanges,
-                    testingEnabled = testingEnabled,
-                    onSave = onSave,
+                    hasUnsavedChanges = viewModel.hasUnsavedChanges,
+                    testingEnabled = viewModel.isTestingEnabled,
+                    onSave = viewModel::save,
                     onTest = {
                         navController.navigate(ConfigurationContentScreens.Test.name)
-                        onTest()
+                        viewModel.test()
                     },
-                    onDiscard = onDiscard,
+                    onDiscard = viewModel::discard,
                     content = content
                 )
             }

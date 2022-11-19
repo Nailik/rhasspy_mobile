@@ -2,12 +2,11 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.rhasspy.mobile.combineAny
-import org.rhasspy.mobile.combineState
-import org.rhasspy.mobile.combineStateNotEquals
+import kotlinx.coroutines.flow.StateFlow
+import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.AudioOutputOptions
 import org.rhasspy.mobile.data.AudioPlayingOptions
-import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 /**
@@ -18,7 +17,7 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
  * if Endpoint option should be shown
  * all Options as list
  */
-class AudioPlayingConfigurationViewModel : ViewModel() {
+class AudioPlayingConfigurationViewModel : ViewModel(), IConfigurationViewModel {
 
     //unsaved data
     private val _audioPlayingOption = MutableStateFlow(ConfigurationSettings.audioPlayingOption.value)
@@ -40,8 +39,11 @@ class AudioPlayingConfigurationViewModel : ViewModel() {
     val isUseCustomAudioPlayingHttpEndpoint = _isUseCustomAudioPlayingHttpEndpoint.readOnly
     val isAudioPlayingHttpEndpointChangeEnabled = isUseCustomAudioPlayingHttpEndpoint
 
+    override val isTestingEnabled = _audioPlayingOption.mapReadonlyState { it != AudioPlayingOptions.Disabled }
+    override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
+
     //if there are unsaved changes
-    val hasUnsavedChanges = combineAny(
+    override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_audioPlayingOption, ConfigurationSettings.audioPlayingOption.data),
         combineStateNotEquals(_audioOutputOption, ConfigurationSettings.audioOutputOption.data),
         combineStateNotEquals(_isUseCustomAudioPlayingHttpEndpoint, ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.data),
@@ -86,7 +88,7 @@ class AudioPlayingConfigurationViewModel : ViewModel() {
     /**
      * save data configuration
      */
-    fun save() {
+    override fun save() {
         ConfigurationSettings.audioPlayingOption.value = _audioPlayingOption.value
         ConfigurationSettings.audioOutputOption.value = _audioOutputOption.value
         ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.value = _isUseCustomAudioPlayingHttpEndpoint.value
@@ -96,7 +98,7 @@ class AudioPlayingConfigurationViewModel : ViewModel() {
     /**
      * undo all changes
      */
-    fun discard() {
+    override fun discard() {
         _audioPlayingOption.value = ConfigurationSettings.audioPlayingOption.value
         _audioOutputOption.value = ConfigurationSettings.audioOutputOption.value
         _isUseCustomAudioPlayingHttpEndpoint.value = ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.value
@@ -106,10 +108,14 @@ class AudioPlayingConfigurationViewModel : ViewModel() {
     /**
      * test unsaved data configuration
      */
-    fun test() {
+    override fun test() {
         //TODO only when enabled
         //record audio button
         //play audio button
+    }
+
+    override fun stopTest() {
+
     }
 
 

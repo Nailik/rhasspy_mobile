@@ -39,10 +39,7 @@ fun MqttConfigurationContent(viewModel: MqttConfigurationViewModel = viewModel()
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.MqttConfiguration),
         title = MR.strings.mqtt,
-        hasUnsavedChanges = viewModel.hasUnsavedChanges,
-        onSave = viewModel::save,
-        onTest = viewModel::test,
-        onDiscard = viewModel::discard
+        viewModel = viewModel
     ) {
 
         //toggle to turn mqtt enabled on or off

@@ -2,10 +2,13 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.data.DialogManagementOptions
+import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 /**
@@ -14,7 +17,7 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
  * Current Option
  * all Options as list
  */
-class DialogManagementConfigurationViewModel : ViewModel() {
+class DialogManagementConfigurationViewModel : ViewModel(), IConfigurationViewModel {
 
     //unsaved data
     private val _dialogManagementOption = MutableStateFlow(ConfigurationSettings.dialogManagementOption.value)
@@ -22,7 +25,10 @@ class DialogManagementConfigurationViewModel : ViewModel() {
     //unsaved ui data
     val dialogManagementOption = _dialogManagementOption.readOnly
 
-    val hasUnsavedChanges = combineAny(
+    override val isTestingEnabled = _dialogManagementOption.mapReadonlyState { it != DialogManagementOptions.Disabled }
+    override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
+
+    override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_dialogManagementOption, ConfigurationSettings.dialogManagementOption.data)
     )
 
@@ -37,23 +43,27 @@ class DialogManagementConfigurationViewModel : ViewModel() {
     /**
      * save data configuration
      */
-    fun save() {
+    override fun save() {
         ConfigurationSettings.dialogManagementOption.value = _dialogManagementOption.value
     }
 
     /**
      * undo all changes
      */
-    fun discard() {
+    override fun discard() {
         _dialogManagementOption.value = ConfigurationSettings.dialogManagementOption.value
     }
 
     /**
      * test unsaved data configuration
      */
-    fun test() {
+    override fun test() {
         //TODO only when enabled
         //?? maybe record button -> test flow
+    }
+
+    override fun stopTest() {
+
     }
 
 }

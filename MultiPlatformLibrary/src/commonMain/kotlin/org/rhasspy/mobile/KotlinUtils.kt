@@ -88,3 +88,5 @@ fun <T, R> StateFlow<T>.mapReadonlyState(
 }.stateIn(scope, sharingStarted, transform.invoke(this.value))
 
 val <T> MutableStateFlow<T>.readOnly get(): StateFlow<T> = this
+
+val <T> MutableSharedFlow<T>.readOnly get(): SharedFlow<T> = this

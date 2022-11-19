@@ -2,13 +2,15 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-class MqttConfigurationViewModel : ViewModel() {
+class MqttConfigurationViewModel : ViewModel(), IConfigurationViewModel {
 
     //unsaved data
     private val _isMqttEnabled = MutableStateFlow(ConfigurationSettings.isMqttEnabled.value)
@@ -33,7 +35,10 @@ class MqttConfigurationViewModel : ViewModel() {
     val mqttKeepAliveInterval = _mqttKeepAliveInterval.readOnly
     val mqttRetryInterval = _mqttRetryInterval.readOnly
 
-    val hasUnsavedChanges = combineAny(
+    override val isTestingEnabled = _isMqttEnabled.readOnly
+    override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
+
+    override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_isMqttEnabled, ConfigurationSettings.isMqttEnabled.data),
         combineStateNotEquals(_mqttHost, ConfigurationSettings.mqttHost.data),
         combineStateNotEquals(_mqttPort, ConfigurationSettings.mqttPort.data),
@@ -96,7 +101,7 @@ class MqttConfigurationViewModel : ViewModel() {
     /**
      * save data configuration
      */
-    fun save() {
+    override fun save() {
         ConfigurationSettings.isMqttEnabled.value = _isMqttEnabled.value
         ConfigurationSettings.mqttHost.value = _mqttHost.value
         ConfigurationSettings.mqttPort.value = _mqttPort.value
@@ -111,7 +116,7 @@ class MqttConfigurationViewModel : ViewModel() {
     /**
      * undo all changes
      */
-    fun discard() {
+    override fun discard() {
         _isMqttEnabled.value = ConfigurationSettings.isMqttEnabled.value
         _mqttHost.value = ConfigurationSettings.mqttHost.value
         _mqttPort.value = ConfigurationSettings.mqttPort.value
@@ -127,9 +132,13 @@ class MqttConfigurationViewModel : ViewModel() {
     /**
      * test unsaved data configuration
      */
-    fun test() {
+    override fun test() {
         //TODO default MQTT port
         //check if mqtt connection can be established
+    }
+
+    override fun stopTest() {
+
     }
 
 }

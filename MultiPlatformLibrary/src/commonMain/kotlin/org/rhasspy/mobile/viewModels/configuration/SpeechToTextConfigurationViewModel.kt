@@ -2,14 +2,13 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.rhasspy.mobile.combineAny
-import org.rhasspy.mobile.combineState
-import org.rhasspy.mobile.combineStateNotEquals
+import kotlinx.coroutines.flow.StateFlow
+import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.SpeechToTextOptions
-import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-class SpeechToTextConfigurationViewModel : ViewModel() {
+class SpeechToTextConfigurationViewModel : ViewModel(), IConfigurationViewModel {
 
     //unsaved data
     private val _speechToTextOption = MutableStateFlow(ConfigurationSettings.speechToTextOption.value)
@@ -29,7 +28,10 @@ class SpeechToTextConfigurationViewModel : ViewModel() {
     val isUseCustomSpeechToTextHttpEndpoint = _isUseCustomSpeechToTextHttpEndpoint.readOnly
     val isSpeechToTextHttpEndpointChangeEnabled = isUseCustomSpeechToTextHttpEndpoint
 
-    val hasUnsavedChanges = combineAny(
+    override val isTestingEnabled = _speechToTextOption.mapReadonlyState { it != SpeechToTextOptions.Disabled }
+    override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
+
+    override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_speechToTextOption, ConfigurationSettings.speechToTextOption.data),
         combineStateNotEquals(_isUseCustomSpeechToTextHttpEndpoint, ConfigurationSettings.isUseCustomSpeechToTextHttpEndpoint.data),
         combineStateNotEquals(_speechToTextHttpEndpoint, ConfigurationSettings.speechToTextHttpEndpoint.data)
@@ -61,7 +63,7 @@ class SpeechToTextConfigurationViewModel : ViewModel() {
     /**
      * save data configuration
      */
-    fun save() {
+    override fun save() {
         ConfigurationSettings.speechToTextOption.value = _speechToTextOption.value
         ConfigurationSettings.isUseCustomSpeechToTextHttpEndpoint.value = _isUseCustomSpeechToTextHttpEndpoint.value
         ConfigurationSettings.speechToTextHttpEndpoint.value = _speechToTextHttpEndpoint.value
@@ -70,7 +72,7 @@ class SpeechToTextConfigurationViewModel : ViewModel() {
     /**
      * undo all changes
      */
-    fun discard() {
+    override fun discard() {
         _speechToTextOption.value = ConfigurationSettings.speechToTextOption.value
         _isUseCustomSpeechToTextHttpEndpoint.value = ConfigurationSettings.isUseCustomSpeechToTextHttpEndpoint.value
         _speechToTextHttpEndpoint.value = ConfigurationSettings.speechToTextHttpEndpoint.value
@@ -79,12 +81,16 @@ class SpeechToTextConfigurationViewModel : ViewModel() {
     /**
      * test unsaved data configuration
      */
-    fun test() {
+    override fun test() {
         //TODO require microphone permission
         //TODO pause record button
         //TODO only when enabled
         //record audio
         //show when text was transcribed and which text
+    }
+
+    override fun stopTest() {
+
     }
 
 }

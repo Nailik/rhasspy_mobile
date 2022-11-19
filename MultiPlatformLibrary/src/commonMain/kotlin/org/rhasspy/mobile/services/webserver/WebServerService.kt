@@ -3,100 +3,166 @@ package org.rhasspy.mobile.services.webserver
 import co.touchlab.kermit.Logger
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.cio.*
-import io.ktor.server.engine.*
-import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.plugins.dataconversion.*
-import io.ktor.server.routing.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.nativeutils.installCallLogging
-import org.rhasspy.mobile.nativeutils.installCompression
+import org.rhasspy.mobile.logic.StateMachine
+import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.webserver.WebServerServiceStateType.RECEIVING
-import org.rhasspy.mobile.services.webserver.WebServerServiceStateType.STARTING
+import org.rhasspy.mobile.services.RhasspyActions
+import org.rhasspy.mobile.services.ServiceError
+import org.rhasspy.mobile.services.webserver.data.WebServerPath
+import org.rhasspy.mobile.settings.AppSettings
 
-//https://rhasspy.readthedocs.io/en/latest/reference/#http-api
-/**
- * same endpoints as a rhasspy server sends the requests to the according service (mostly state machine)
- */
 class WebServerService(
-    private val isHttpApiEnabled: Boolean,
-    private val port: Int,
-    private val isSSLEnabled: Boolean
-) : IService("WebServerService") {
+    val service: WebServerLink
+) : IService() {
+    private val logger = Logger.withTag("WebServerService")
 
-    private var server: CIOApplicationEngine? = null
-    private val _receivedRequest = MutableSharedFlow<Pair<ApplicationCall, WebServerPath>>()
-    val receivedRequest: SharedFlow<Pair<ApplicationCall, WebServerPath>> = _receivedRequest
+    private val _currentError = MutableSharedFlow<ServiceError?>()
+    override val currentError: SharedFlow<ServiceError?> = _currentError.readOnly
 
     init {
-        pending(STARTING)
-    }
-
-    fun start() {
-        if (isHttpApiEnabled) {
-            loading(STARTING)
-
-            logger.v { "starting server" }
-            server = getServer(port)
-
-            CoroutineScope(Dispatchers.Default).launch {
-                //necessary else netty has problems when the coroutine scope is closed
-                try {
-                    server?.start()
-                    success(STARTING)
-                    pending(RECEIVING)
-                } catch (e: Exception) {
-                    error(STARTING, e.cause?.message ?: e.message)
-                }
-            }
-        } else {
-            logger.v { "Server disabled" }
-        }
-    }
-    fun destroy() {
-        server?.stop()
-    }
-
-    private fun getServer(port: Int): CIOApplicationEngine {
-        return embeddedServer(factory = CIO, port = port, watchPaths = emptyList()) {
-            //install(WebSockets)
-            installCallLogging()
-            install(DataConversion)
-            //Greatly reduces the amount of data that's needed to be sent to the client by
-            //gzipping outgoing content when applicable.
-            installCompression()
-
-            // configures Cross-Origin Resource Sharing. CORS is needed to make calls from arbitrary
-            // JavaScript clients, and helps us prevent issues down the line.
-            install(CORS) {
-                methods.add(HttpMethod.Get)
-                methods.add(HttpMethod.Post)
-                methods.add(HttpMethod.Delete)
-                anyHost()
-            }
-
-            routing {
-                WebServerPath.values().forEach { path ->
-                    when (path.type) {
-                        WebServerCallType.POST -> post(path.path) {
-                            logger.v { "post ${path.path}" }
-                            _receivedRequest.emit(Pair(call, path))
-                            success(RECEIVING, path.path)
-                        }
-                        WebServerCallType.GET -> get(path.path) {
-                            logger.v { "get ${path.path}" }
-                            _receivedRequest.emit(Pair(call, path))
-                            success(RECEIVING, path.path)
-                        }
-                    }
+        CoroutineScope(Dispatchers.Default).launch {
+            service.receivedRequest.collect {
+                when (it.second) {
+                    WebServerPath.ListenForCommand -> listenForCommand()
+                    WebServerPath.ListenForWake -> listenForWake(it.first)
+                    WebServerPath.PlayRecordingPost -> playRecordingPost()
+                    WebServerPath.PlayRecordingGet -> playRecordingGet(it.first)
+                    WebServerPath.PlayWav -> playWav(it.first)
+                    WebServerPath.SetVolume -> setVolume(it.first)
+                    WebServerPath.StartRecording -> startRecording()
+                    WebServerPath.StopRecording -> stopRecording()
+                    WebServerPath.Say -> say(it.first)
                 }
             }
         }
+        service.start()
+    }
+
+
+    /**
+     * /api/listen-for-command
+     * POST to wake Rhasspy up and start listening for a voice command
+     * Returns intent JSON when command is finished
+     * ?nohass=true - stop Rhasspy from handling the intent
+     * ?timeout=<seconds> - override default command timeout
+     * ?entity=<entity>&value=<value> - set custom entities/values in recognized intent
+     */
+    private fun listenForCommand() = StateMachine.hotWordDetected("REMOTE")
+
+
+    /**
+     * /api/listen-for-wake
+     * POST "on" to have Rhasspy listen for a wake word
+     * POST "off" to disable wake word
+     * ?siteId=site1,site2,... to apply to specific site(s)
+     */
+    private suspend fun listenForWake(call: ApplicationCall) {
+        val action = when (call.receive<String>()) {
+            "on" -> true
+            "off" -> false
+            else -> null
+        }
+
+        logger.v { "received $action" }
+
+        action?.also {
+            AppSettings.isHotWordEnabled.value = it
+        } ?: run {
+            logger.w { "invalid body" }
+        }
+    }
+
+
+    /**
+     * /api/play-recording
+     * POST to play last recorded voice command
+     */
+    private fun playRecordingPost() = StateMachine.playRecording()
+
+
+    /**
+     * /api/play-recording
+     * GET to download WAV data from last recorded voice command
+     */
+    private suspend fun playRecordingGet(call: ApplicationCall) {
+        call.respondBytes(
+            bytes = StateMachine.getPreviousRecording().toByteArray(),
+            contentType = ContentType("audio", "wav")
+        )
+    }
+
+    /**
+     * /api/play-wav
+     * POST to play WAV data
+     * Make sure to set Content-Type to audio/wav
+     * ?siteId=site1,site2,... to apply to specific site(s)
+     */
+    private suspend fun playWav(call: ApplicationCall) {
+        if (call.request.contentType() != ContentType("audio", "wav")) {
+            logger.w { "invalid content type ${call.request.contentType()}" }
+        }
+        //play even without header
+        StateMachine.playAudio(call.receive<ByteArray>().toList())
+    }
+
+    /**
+     * /api/set-volume
+     * POST to set volume at one or more sites
+     * Body text is volume level (0 = off, 1 = full volume)
+     * ?siteId=site1,site2,... to apply to specific site(s)
+     */
+    private suspend fun setVolume(call: ApplicationCall) {
+        //double and float or double not working but string??
+        val volume = call.receive<String>().toFloatOrNull()
+
+        volume?.also {
+            if (volume > 0F && volume < 1F) {
+                AppSettings.volume.value = volume
+            }
+            return
+        }
+
+        logger.w { "invalid volume $volume" }
+
+    }
+
+    /**
+     * /api/start-recording
+     * POST to have Rhasspy start recording a voice command
+     * actually starts a session
+     */
+    private fun startRecording() = StateMachine.startListening()
+
+    /**
+     * /api/stop-recording
+     * POST to have Rhasspy stop recording and process recorded data as a voice command
+     * handled just like silence was detected
+     * (if dialogue management was set to local)
+     *
+     * Not Yet:
+     * Returns intent JSON when command has been processed
+     * ?nohass=true - stop Rhasspy from handling the intent
+     * ?entity=<entity>&value=<value> - set custom entity/value in recognized intent
+     */
+    private fun stopRecording() = StateMachine.stopListening()
+
+    /**
+     * /api/say
+     *
+     * custom endpoint for the rhasspy app
+     * POST text to have Rhasspy use the text-to-speech endpoint to translate the text to audio
+     * Afterwards Rhasspy will use the audio endpoint to play the audio
+     * just like using say in the ui start screen but remote
+     */
+    private suspend fun say(call: ApplicationCall) {
+        RhasspyActions.say(call.receive())
     }
 
 }

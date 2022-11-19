@@ -2,14 +2,14 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.rhasspy.mobile.combineAny
-import org.rhasspy.mobile.combineState
-import org.rhasspy.mobile.combineStateNotEquals
+import kotlinx.coroutines.flow.StateFlow
+import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.IntentRecognitionOptions
-import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.data.SpeechToTextOptions
+import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-class IntentRecognitionConfigurationViewModel : ViewModel() {
+class IntentRecognitionConfigurationViewModel : ViewModel(), IConfigurationViewModel {
 
     //unsaved data
     private val _intentRecognitionOption = MutableStateFlow(ConfigurationSettings.intentRecognitionOption.value)
@@ -30,7 +30,10 @@ class IntentRecognitionConfigurationViewModel : ViewModel() {
     val isUseCustomIntentRecognitionHttpEndpoint = _isUseCustomIntentRecognitionHttpEndpoint.readOnly
     val isIntentRecognitionHttpEndpointChangeEnabled = isUseCustomIntentRecognitionHttpEndpoint
 
-    val hasUnsavedChanges = combineAny(
+    override val isTestingEnabled = _intentRecognitionOption.mapReadonlyState { it != IntentRecognitionOptions.Disabled }
+    override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
+
+    override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_intentRecognitionOption, ConfigurationSettings.intentRecognitionOption.data),
         combineStateNotEquals(_isUseCustomIntentRecognitionHttpEndpoint, ConfigurationSettings.isUseCustomIntentRecognitionHttpEndpoint.data),
         combineStateNotEquals(_intentRecognitionHttpEndpoint, ConfigurationSettings.intentRecognitionHttpEndpoint.data)
@@ -62,7 +65,7 @@ class IntentRecognitionConfigurationViewModel : ViewModel() {
     /**
      * save data configuration
      */
-    fun save() {
+    override fun save() {
         ConfigurationSettings.intentRecognitionOption.value = _intentRecognitionOption.value
         ConfigurationSettings.isUseCustomIntentRecognitionHttpEndpoint.value = _isUseCustomIntentRecognitionHttpEndpoint.value
         ConfigurationSettings.intentRecognitionHttpEndpoint.value = _intentRecognitionHttpEndpoint.value
@@ -71,7 +74,7 @@ class IntentRecognitionConfigurationViewModel : ViewModel() {
     /**
      * undo all changes
      */
-    fun discard() {
+    override fun discard() {
         _intentRecognitionOption.value = ConfigurationSettings.intentRecognitionOption.value
         _isUseCustomIntentRecognitionHttpEndpoint.value = ConfigurationSettings.isUseCustomIntentRecognitionHttpEndpoint.value
         _intentRecognitionHttpEndpoint.value = ConfigurationSettings.intentRecognitionHttpEndpoint.value
@@ -80,11 +83,15 @@ class IntentRecognitionConfigurationViewModel : ViewModel() {
     /**
      * test unsaved data configuration
      */
-    fun test() {
+    override fun test() {
         //TODO only when enabled
         //textfield to input test
         //button to send intent
         //information if was recognized
+    }
+
+    override fun stopTest() {
+
     }
 
 }

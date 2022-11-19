@@ -33,10 +33,7 @@ fun AudioRecordingConfigurationContent(viewModel: AudioRecordingConfigurationVie
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.AudioRecordingConfiguration),
         title = MR.strings.audioRecording,
-        hasUnsavedChanges = viewModel.hasUnsavedChanges,
-        onSave = viewModel::save,
-        onTest = viewModel::test,
-        onDiscard = viewModel::discard
+        viewModel = viewModel
     ) {
 
         //switch to enable udp output
