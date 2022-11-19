@@ -26,12 +26,12 @@ actual class AudioPlayer {
     private var _isPlayingState = MutableStateFlow(false)
     actual val isPlayingState: StateFlow<Boolean> get() = _isPlayingState
     private var audioTrack: AudioTrack? = null
-    private var onFinished: (() -> Unit)? = null
+    private var onFinished: (suspend () -> Unit)? = null
     private var mediaPlayer: MediaPlayer? = null
     private var notification: Ringtone? = null
     private var volumeChange: Job? = null
 
-    actual fun playData(data: List<Byte>, onFinished: () -> Unit) {
+    actual suspend fun playData(data: List<Byte>, onFinished: suspend () -> Unit) {
         if (!isEnabled) {
             logger.v { "AudioPlayer NOT enabled" }
             return
@@ -81,7 +81,9 @@ actual class AudioPlayer {
                     override fun onMarkerReached(p0: AudioTrack?) {
                         logger.v { "finished playing audio stream" }
                         _isPlayingState.value = false
-                        onFinished()
+                        CoroutineScope(Dispatchers.Default).launch {
+                            onFinished()
+                        }
                     }
 
                     override fun onPeriodicNotification(p0: AudioTrack?) {}
@@ -103,7 +105,9 @@ actual class AudioPlayer {
     }
 
     actual fun stopPlayingData() {
-        onFinished?.invoke()
+        CoroutineScope(Dispatchers.Default).launch {
+            onFinished?.invoke()
+        }
         audioTrack?.stop()
         mediaPlayer?.stop()
         notification?.stop()

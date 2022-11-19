@@ -28,7 +28,6 @@ object RhasspyActions : KoinComponent {
 
     private val logger = Logger.withTag("RhasspyActions")
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
-
     private val httpClientService by inject<HttpClientService>()
 
     /**
@@ -56,7 +55,7 @@ object RhasspyActions : KoinComponent {
             when (ConfigurationSettings.intentRecognitionOption.value) {
                 IntentRecognitionOptions.RemoteHTTP -> {
                     //get intent from http endpoint
-                    val intent = httpClientService.intentRecognition(text)
+                    val intent = httpClientService.recognizeIntent(text)
 /*
                     if (!handleDirectly && ConfigurationSettings.dialogManagementOption.value == DialogManagementOptions.Local) {
                         //if intent wasn't already handled and local dialogue management, handle it
@@ -76,7 +75,7 @@ object RhasspyActions : KoinComponent {
                     }*/
                 }
                 //send intent to mqtt service
-                IntentRecognitionOptions.RemoteMQTT -> MqttService.intentQuery(StateMachine.currentSession.sessionId, text)
+                IntentRecognitionOptions.RemoteMQTT -> MqttService.recognizeIntent(StateMachine.currentSession.sessionId, text)
                 IntentRecognitionOptions.Disabled -> {
                     logger.d { "intentRecognition disabled" }
                     if (ConfigurationSettings.dialogManagementOption.value == DialogManagementOptions.Local) {
@@ -90,7 +89,6 @@ object RhasspyActions : KoinComponent {
 
     /**
      * hermes/tts/say
-     * Does NOT Generate spoken audio for a sentence using the configured text to speech system
      * uses configured Text to speed system to generate audio and then plays it
      *
      * Response(s)

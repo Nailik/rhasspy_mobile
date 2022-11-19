@@ -59,7 +59,7 @@ class WebServerService : IService<WebServerLinkStateType>() {
      * ?timeout=<seconds> - override default command timeout
      * ?entity=<entity>&value=<value> - set custom entities/values in recognized intent
      */
-    private fun listenForCommand() = StateMachine.hotWordDetected("REMOTE")
+    private suspend fun listenForCommand() = StateMachine.hotWordDetected("REMOTE")
 
 
     /**
@@ -89,7 +89,7 @@ class WebServerService : IService<WebServerLinkStateType>() {
      * /api/play-recording
      * POST to play last recorded voice command
      */
-    private fun playRecordingPost() = StateMachine.playRecording()
+    private suspend fun playRecordingPost() = StateMachine.playRecording()
 
 
     /**
@@ -143,7 +143,7 @@ class WebServerService : IService<WebServerLinkStateType>() {
      * POST to have Rhasspy start recording a voice command
      * actually starts a session
      */
-    private fun startRecording() = StateMachine.startListening()
+    private suspend fun startRecording() = StateMachine.startListening()
 
     /**
      * /api/stop-recording
@@ -156,7 +156,7 @@ class WebServerService : IService<WebServerLinkStateType>() {
      * ?nohass=true - stop Rhasspy from handling the intent
      * ?entity=<entity>&value=<value> - set custom entity/value in recognized intent
      */
-    private fun stopRecording() = StateMachine.stopListening()
+    private suspend fun stopRecording() = StateMachine.stopListening()
 
     /**
      * /api/say

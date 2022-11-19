@@ -9,8 +9,10 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
+import org.rhasspy.mobile.interfaces.HomeAssistantInterface
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.mqtt.OverlayServices
+import org.rhasspy.mobile.services.LocalAudioService
 import org.rhasspy.mobile.services.MqttService
 import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.services.httpclient.HttpClientService
@@ -22,9 +24,12 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
 
 val serviceModule = module {
     factory { params -> WebServerServiceTest(params.get()) }
-    single { WebServerService() }
     factory { params -> HttpClientServiceTest(params.get()) }
+    single { WebServerService() }
     single { HttpClientService() }
+    single { LocalAudioService() }
+    single { MqttService }
+    single { HomeAssistantInterface }
 }
 
 abstract class Application : NativeApplication(), KoinComponent {

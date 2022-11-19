@@ -21,7 +21,7 @@ object HomeAssistantInterface : KoinComponent {
     /**
      * simplified conversion from intent to hass event or hass intent
      */
-    suspend fun sendIntent(intentName: String, intent: String) {
+    suspend fun sendIntent(intentName: String, intent: String) : Boolean {
         val slots = mutableMapOf<String, JsonElement?>()
 
         val json = Json.decodeFromString<JsonObject>(intent)
@@ -55,5 +55,7 @@ object HomeAssistantInterface : KoinComponent {
             true -> httpClientService.hassEvent(intentRes, intentName)
             false -> httpClientService.hassIntent("{\"name\" : \"$intentName\", \"data\": $intent }")
         }
+
+        return true
     }
 }

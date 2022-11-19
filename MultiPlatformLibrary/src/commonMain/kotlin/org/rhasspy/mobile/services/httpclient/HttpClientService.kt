@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.IntentHandlingOptions
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
@@ -13,6 +14,7 @@ import org.rhasspy.mobile.services.IServiceLink
 import org.rhasspy.mobile.services.ServiceError
 import org.rhasspy.mobile.services.httpclient.data.HttpClientCallType
 import org.rhasspy.mobile.services.httpclient.data.HttpClientPath
+import org.rhasspy.mobile.services.httpclient.data.HttpClientResponse
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class HttpClientService : IService<HttpClientCallType>() {
@@ -26,7 +28,7 @@ class HttpClientService : IService<HttpClientCallType>() {
     private var scope = CoroutineScope(Dispatchers.Default)
 
     override fun onStart(scope: CoroutineScope): IServiceLink {
-
+        logger.v { "onStart" }
         return HttpClientLink(
             isHttpSSLVerificationDisabled = ConfigurationSettings.isHttpServerSSLEnabled.value,
             speechToTextHttpEndpoint = if (ConfigurationSettings.isUseCustomSpeechToTextHttpEndpoint.value) {
@@ -49,7 +51,27 @@ class HttpClientService : IService<HttpClientCallType>() {
             intentHandlingHttpEndpoint = ConfigurationSettings.intentHandlingHttpEndpoint.value,
             intentHandlingHassEndpoint = ConfigurationSettings.intentHandlingHassEndpoint.value,
             intentHandlingHassAccessToken = ConfigurationSettings.intentHandlingHassAccessToken.value,
-        )
+        ).also { clientLink ->
+            scope.launch {
+                //TODO call state machine etc
+                clientLink.receivedResponse.collect { response ->
+                    if (response is HttpClientResponse.HttpClientSuccess) {
+                        when (response.callType) {
+                            HttpClientCallType.SpeechToText -> TODO()
+                            HttpClientCallType.IntentRecognition -> TODO()
+                            HttpClientCallType.TextToSpeech -> TODO()
+                            HttpClientCallType.PlayWav -> TODO()
+                            HttpClientCallType.IntentHandling -> TODO()
+                            HttpClientCallType.HassEvent -> TODO()
+                            HttpClientCallType.HassIntent -> TODO()
+                        }
+                    }
+                    if (response is HttpClientResponse.HttpClientError) {
+                        _currentError.emit(ServiceError(response.e, response.callType, MR.strings.error))
+                    }
+                }
+            }
+        }
     }
 
     override fun onStop() {
@@ -62,11 +84,7 @@ class HttpClientService : IService<HttpClientCallType>() {
      * Set Accept: application/json to receive JSON with more details
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
-    fun speechToText(data: List<Byte>) {
-        scope.launch {
-            httpClientLink?.speechToText(data)
-        }
-    }
+    suspend fun speechToText(data: List<Byte>): Boolean = httpClientLink?.speechToText(data) ?: false
 
     /**
      * /api/text-to-intent
@@ -77,7 +95,7 @@ class HttpClientService : IService<HttpClientCallType>() {
      *
      * returns null if the intent is not found
      */
-    suspend fun intentRecognition(text: String) = httpClientLink?.intentRecognition(text)
+    suspend fun recognizeIntent(text: String): Boolean = httpClientLink?.intentRecognition(text) ?: false
 
     /**
      * api/text-to-speech
@@ -88,7 +106,7 @@ class HttpClientService : IService<HttpClientCallType>() {
      * ?volume=<volume> - volume level to speak at (0 = off, 1 = full volume)
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun textToSpeech(text: String) = httpClientLink?.textToSpeech(text)
+    suspend fun textToSpeech(text: String) = httpClientLink?.textToSpeech(text) ?: false
 
     /**
      * /api/play-wav
@@ -96,7 +114,7 @@ class HttpClientService : IService<HttpClientCallType>() {
      * Make sure to set Content-Type to audio/wav
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun playWav(data: List<Byte>) = httpClientLink?.playWav(data)
+    suspend fun playWav(data: List<Byte>) = httpClientLink?.playWav(data) ?: false
 
     /**
      * Rhasspy can POST the intent JSON to a remote URL.
@@ -114,16 +132,16 @@ class HttpClientService : IService<HttpClientCallType>() {
      *
      * Implemented by rhasspy-remote-http-hermes
      */
-    suspend fun intentHandling(intent: String) = httpClientLink?.intentHandling(intent)
+    suspend fun intentHandling(intent: String) = httpClientLink?.intentHandling(intent) ?: false
 
     /**
      * send intent as Event to Home Assistant
      */
-    suspend fun hassEvent(json: String, intentName: String) = httpClientLink?.hassEvent(json, intentName)
+    suspend fun hassEvent(json: String, intentName: String) = httpClientLink?.hassEvent(json, intentName) ?: false
 
     /**
      * send intent as Intent to Home Assistant
      */
-    suspend fun hassIntent(intent: String) = httpClientLink?.hassIntent(intent)
+    suspend fun hassIntent(intent: String) = httpClientLink?.hassIntent(intent) ?: false
 
 }

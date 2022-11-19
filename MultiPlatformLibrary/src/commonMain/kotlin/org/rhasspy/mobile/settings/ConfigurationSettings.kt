@@ -47,11 +47,9 @@ internal object ConfigurationSettings {
     )
 
 
-    val wakeWordPorcupineLanguage = Setting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOptions.EN)
+    val dialogManagementOption = Setting(SettingsEnum.DialogManagementOption, DialogManagementOptions.Local)
 
-    val speechToTextOption = Setting(SettingsEnum.SpeechToTextOption, SpeechToTextOptions.Disabled)
-    val isUseCustomSpeechToTextHttpEndpoint = Setting(SettingsEnum.CustomSpeechToTextEndpoint, false)
-    val speechToTextHttpEndpoint = Setting(SettingsEnum.SpeechToTextHttpEndpoint, "")
+    val wakeWordPorcupineLanguage = Setting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOptions.EN)
 
     val intentRecognitionOption = Setting(SettingsEnum.IntentRecognitionOption, IntentRecognitionOptions.Disabled)
     val isUseCustomIntentRecognitionHttpEndpoint = Setting(SettingsEnum.CustomIntentRecognitionHttpEndpoint, false)
@@ -66,10 +64,13 @@ internal object ConfigurationSettings {
     val isUseCustomAudioPlayingHttpEndpoint = Setting(SettingsEnum.CustomAudioPlayingHttpEndpoint, false)
     val audioPlayingHttpEndpoint = Setting(SettingsEnum.AudioPlayingHttpEndpoint, "")
 
-    val dialogManagementOption = Setting(SettingsEnum.DialogManagementOption, DialogManagementOptions.Local)
+    val speechToTextOption = Setting(SettingsEnum.SpeechToTextOption, SpeechToTextOptions.Disabled)
+    val isUseCustomSpeechToTextHttpEndpoint = Setting(SettingsEnum.CustomSpeechToTextEndpoint, false)
+    val speechToTextHttpEndpoint = Setting(SettingsEnum.SpeechToTextHttpEndpoint, "")
 
     val intentHandlingOption = Setting(SettingsEnum.IntentHandlingOption, IntentHandlingOptions.Disabled)
     val intentHandlingHttpEndpoint = Setting(SettingsEnum.IntentHandlingEndpoint, "")
+
     val intentHandlingHassEndpoint = Setting(SettingsEnum.IntentHandlingHassUrl, "")
     val intentHandlingHassAccessToken = Setting(SettingsEnum.IntentHandlingHassAccessToken, "")
     val isIntentHandlingHassEvent = Setting(SettingsEnum.IsIntentHandlingHassEvent, false)

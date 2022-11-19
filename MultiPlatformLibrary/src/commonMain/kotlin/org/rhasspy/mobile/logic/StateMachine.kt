@@ -23,7 +23,7 @@ import kotlin.native.concurrent.ThreadLocal
 @ThreadLocal
 object StateMachine {
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Default)
+    private val scope = CoroutineScope(Dispatchers.Default)
     private val logger = Logger.withTag("StateMachine")
 
     private var previousRecordingFile = FileWriter("previousRecording.wav", 0)
@@ -71,7 +71,7 @@ object StateMachine {
      * hermes/wake/hotword/<wakewordId>/detected
      * Indicates a hotWord was successfully detected
      */
-    fun hotWordDetected(keyword: String) {
+    suspend fun hotWordDetected(keyword: String) {
         logger.v { "hotWordDetected" }
 
         if (state.value == State.AwaitingHotWord) {
@@ -93,7 +93,7 @@ object StateMachine {
      *
      * used when there is an error in the porcupine system
      */
-    fun hotWordError(description: String) {
+    suspend fun hotWordError(description: String) {
         logger.e { "hotWordError $description" }
         //send that there was an error in hotWord system
         MqttService.hotWordError(description)
@@ -110,7 +110,7 @@ object StateMachine {
      * Response(s)
      * hermes/dialogueManager/sessionStarted
      */
-    fun startSession() {
+    suspend fun startSession() {
         logger.v { "startSession" }
 
         if (isDialogueLocal()) {
@@ -133,7 +133,7 @@ object StateMachine {
      *
      * Response to [hermes/dialogueManager/startSession]
      */
-    fun startedSession(sessionId: String, keyword: String, fromMQTT: Boolean = false) {
+    suspend fun startedSession(sessionId: String, keyword: String, fromMQTT: Boolean = false) {
         logger.v { "startedSession id: $sessionId keyword: $keyword" }
 
         if (state.value == State.StartingSession &&
@@ -162,7 +162,7 @@ object StateMachine {
      * hermes/asr/startListening
      * Tell ASR system to start recording/transcribing
      */
-    fun startListening(sessionId: String? = currentSession.sessionId, sendAudioCaptured: Boolean = false, fromMQTT: Boolean = false) {
+    suspend fun startListening(sessionId: String? = currentSession.sessionId, sendAudioCaptured: Boolean = false, fromMQTT: Boolean = false) {
         logger.v { "startListening id: $sessionId sendAudioCaptured: $sendAudioCaptured fromMQTT: $fromMQTT" }
 
         if (sessionMatches(sessionId, fromMQTT)) {
@@ -200,7 +200,7 @@ object StateMachine {
      * WAV chunk from microphone
      */
     fun audioFrame(byteData: List<Byte>) {
-        coroutineScope.launch {
+        scope.launch {
 
             if (AppSettings.isLogAudioFramesEnabled.value) {
                 logger.d { "audioFrame ${byteData.size}" }
@@ -254,7 +254,7 @@ object StateMachine {
      *
      * Emits textCaptured if silence was not detected earlier
      */
-    fun stopListening(sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
+    suspend fun stopListening(sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
         //stop it if state is recording
         logger.v { "stopListening id: $sessionId fromMQTT: $fromMQTT" }
 
@@ -308,7 +308,7 @@ object StateMachine {
      * hermes/asr/textCaptured
      * Successful transcription, sent either when silence is detected or on stopListening
      */
-    fun intentTranscribed(sessionId: String? = currentSession.sessionId, intent: String, fromMQTT: Boolean = false) {
+    suspend fun intentTranscribed(sessionId: String? = currentSession.sessionId, intent: String, fromMQTT: Boolean = false) {
         logger.v { "intentTranscribed $intent" }
 
         if (state.value == State.RecordingIntent || state.value == State.TranscribingIntent || state.value == State.RecordingStopped) {
@@ -346,7 +346,7 @@ object StateMachine {
      * hermes/error/asr
      * Sent when an error occurs in the ASR system
      */
-    fun intentTranscriptionError(sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
+    suspend fun intentTranscriptionError(sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
         logger.v { "intentTranscriptionError" }
 
         if (state.value == State.TranscribingIntent || state.value == State.RecordingStopped) {
@@ -372,7 +372,7 @@ object StateMachine {
      *
      * intent was recognized will now be handled and session will be ended
      */
-    fun intentRecognized(intentName: String, intent: String, sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
+    suspend fun intentRecognized(intentName: String, intent: String, sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
         logger.v { "intentRecognized $intent" }
 
         if (sessionMatches(sessionId, fromMQTT)) {
@@ -401,7 +401,7 @@ object StateMachine {
      *
      * Response to hermes/nlu/query
      */
-    fun intentNotRecognized(sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
+    suspend fun intentNotRecognized(sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
         logger.v { "intentNotRecognized" }
 
         if (state.value == State.RecognizingIntent) {
@@ -425,7 +425,7 @@ object StateMachine {
      * hermes/dialogueManager/endSession
      * Requests that a session be terminated nominally
      */
-    fun endSession(sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
+    suspend fun endSession(sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
         logger.v { "endSession $sessionId" }
 
         if (sessionMatches(sessionId, fromMQTT)) {
@@ -455,7 +455,7 @@ object StateMachine {
      *
      * Response to hermes/dialogueManager/endSession or other reasons for a session termination
      */
-    fun sessionEnded(sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
+    suspend fun sessionEnded(sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
         logger.v { "sessionEnded" }
 
         if (sessionMatches(sessionId, fromMQTT)) {
@@ -487,7 +487,7 @@ object StateMachine {
     /**
      * plays indication audio and calls finished to do whatever is needed
      */
-    fun playAudio(data: List<Byte>, fromMQTT: Boolean = false) {
+    suspend fun playAudio(data: List<Byte>, fromMQTT: Boolean = false) {
         logger.v { "playAudio" }
         if (state.value != State.RecordingIntent) {
             audioPlayer.playData(data) {
@@ -500,30 +500,34 @@ object StateMachine {
     }
 
     //only start recording, do not stop it
-    fun playRecording() {
+    suspend fun playRecording() {
         if (state.value != State.PlayingRecording) {
             togglePlayRecording()
         }
     }
 
     fun togglePlayRecording() {
-        if (state.value == State.AwaitingHotWord) {
-            logger.d { "playRecording" }
-            state.value = State.PlayingRecording
-            audioPlayer.playData(getPreviousRecording()) { state.value = State.AwaitingHotWord }
-        } else if (state.value == State.PlayingRecording) {
-            logger.d { "stopPlayingRecording" }
-            audioPlayer.stopPlayingData()
-            state.value = State.AwaitingHotWord
+        scope.launch {
+            if (state.value == State.AwaitingHotWord) {
+                logger.d { "playRecording" }
+                state.value = State.PlayingRecording
+                audioPlayer.playData(getPreviousRecording()) { state.value = State.AwaitingHotWord }
+            } else if (state.value == State.PlayingRecording) {
+                logger.d { "stopPlayingRecording" }
+                audioPlayer.stopPlayingData()
+                state.value = State.AwaitingHotWord
+            }
         }
     }
 
     fun toggleSessionManually() {
-        if (state.value == State.AwaitingHotWord) {
-            hotWordDetected("${ConfigurationSettings.siteId.value}_manual")
-        } else {
-            if (state.value == State.RecordingIntent) {
-                stopListening()
+        scope.launch {
+            if (state.value == State.AwaitingHotWord) {
+                hotWordDetected("${ConfigurationSettings.siteId.value}_manual")
+            } else {
+                if (state.value == State.RecordingIntent) {
+                    stopListening()
+                }
             }
         }
     }

@@ -46,7 +46,7 @@ object HotWordService {
         }
     }
 
-    private fun evaluateHotWordAction(state: State, enabled: Boolean) {
+    private suspend fun evaluateHotWordAction(state: State, enabled: Boolean) {
         logger.v { "evaluateHotWordAction state $state enabled $enabled running $isRunning" }
         when (state) {
             State.AwaitingHotWord -> {
@@ -72,7 +72,7 @@ object HotWordService {
     /**
      * start hotWord services
      */
-    private fun start() {
+    private suspend fun start() {
         isRunning = true
         logger.d { "startHotWord" }
 

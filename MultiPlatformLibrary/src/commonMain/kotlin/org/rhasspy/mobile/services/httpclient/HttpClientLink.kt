@@ -11,12 +11,14 @@ import io.ktor.client.utils.*
 import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.rhasspy.mobile.nativeutils.configureEngine
+import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IServiceLink
 import org.rhasspy.mobile.services.httpclient.data.HttpClientCallType
 import org.rhasspy.mobile.services.httpclient.data.HttpClientResponse
@@ -36,6 +38,9 @@ class HttpClientLink(
     private val logger = Logger.withTag("HttpClientLink")
 
     private lateinit var httpClient: HttpClient
+
+    private val _receivedResponse = MutableSharedFlow<HttpClientResponse>()
+    val receivedResponse = _receivedResponse.readOnly
 
     override fun start(scope: CoroutineScope) {
         httpClient = HttpClient(CIO) {
@@ -62,7 +67,7 @@ class HttpClientLink(
      * Set Accept: application/json to receive JSON with more details
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
-    suspend fun speechToText(data: List<Byte>): HttpClientResponse<String> {
+    suspend fun speechToText(data: List<Byte>): Boolean {
         val callType = HttpClientCallType.SpeechToText
 
         logger.v { "sending speechToText \nendpoint:\n$speechToTextHttpEndpoint\ndata:\n${data.size}" }
@@ -76,11 +81,13 @@ class HttpClientLink(
 
             val response = request.body<String>()
             logger.v { "speechToText received:\n$response" }
-            HttpClientResponse.HttpClientSuccess(response, callType)
+            _receivedResponse.emit(HttpClientResponse.HttpClientSuccess(response, callType))
+            true
         } catch (e: Exception) {
 
             logger.e(e) { "sending speechToText Exception" }
-            HttpClientResponse.HttpClientError(e, callType)
+            _receivedResponse.emit(HttpClientResponse.HttpClientError(e, callType))
+            false
         }
     }
 
@@ -94,7 +101,7 @@ class HttpClientLink(
      *
      * returns null if the intent is not found
      */
-    suspend fun intentRecognition(text: String): HttpClientResponse<String?> {
+    suspend fun intentRecognition(text: String): Boolean {
         val callType = HttpClientCallType.IntentRecognition
 
         logger.v { "sending intentRecognition text\nendpoint:\n$intentRecognitionHttpEndpoint\ntext:\n$text" }
@@ -126,11 +133,13 @@ class HttpClientLink(
                 null
             }
             logger.v { "intentRecognition received:\n$data" }
-            HttpClientResponse.HttpClientSuccess(data, callType)
+            _receivedResponse.emit(HttpClientResponse.HttpClientSuccess(data, callType))
+            true
         } catch (e: Exception) {
 
             logger.e(e) { "sending intentRecognition Exception" }
-            HttpClientResponse.HttpClientError(e, callType)
+            _receivedResponse.emit(HttpClientResponse.HttpClientError(e, callType))
+            false
         }
     }
 
@@ -143,26 +152,29 @@ class HttpClientLink(
      * ?volume=<volume> - volume level to speak at (0 = off, 1 = full volume)
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun textToSpeech(text: String): HttpClientResponse<ByteArray> {
+    suspend fun textToSpeech(text: String): Boolean {
         val callType = HttpClientCallType.TextToSpeech
 
         logger.v { "sending text to speech\nendpoint:\n$textToSpeechHttpEndpoint\ntext:\n$text" }
 
         return try {
+
             val request = httpClient.post(
                 url = Url(textToSpeechHttpEndpoint)
             ) {
                 setBody(text)
             }
 
-            val response = request.body<ByteArray>()
+            val response = request.body<ByteArray>().toList()
 
             logger.v { "textToSpeech received Data" }
-            HttpClientResponse.HttpClientSuccess(response, callType)
+            _receivedResponse.emit(HttpClientResponse.HttpClientSuccess(response, callType))
+            true
         } catch (e: Exception) {
 
             logger.e(e) { "sending text to speech Exception" }
-            HttpClientResponse.HttpClientError(e, callType)
+            _receivedResponse.emit(HttpClientResponse.HttpClientError(e, callType))
+            false
         }
     }
 
@@ -172,7 +184,7 @@ class HttpClientLink(
      * Make sure to set Content-Type to audio/wav
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun playWav(data: List<Byte>): HttpClientResponse<String> {
+    suspend fun playWav(data: List<Byte>): Boolean {
         val callType = HttpClientCallType.PlayWav
 
         logger.v { "sending audio \nendpoint:\n$audioPlayingHttpEndpoint data:\n${data.size}" }
@@ -189,11 +201,14 @@ class HttpClientLink(
 
             val response = request.body<String>()
             logger.v { "sending audio received:\n${response}" }
-            HttpClientResponse.HttpClientSuccess(response, callType)
+            _receivedResponse.emit(HttpClientResponse.HttpClientSuccess(response, callType))
+            true
         } catch (e: Exception) {
 
             logger.e(e) { "sending audio Exception" }
-            HttpClientResponse.HttpClientError(e, callType)
+            _receivedResponse.emit(HttpClientResponse.HttpClientError(e, callType))
+            false
+
         }
     }
 
@@ -214,7 +229,7 @@ class HttpClientLink(
      *
      * Implemented by rhasspy-remote-http-hermes
      */
-    suspend fun intentHandling(intent: String): HttpClientResponse<String> {
+    suspend fun intentHandling(intent: String): Boolean {
         val callType = HttpClientCallType.IntentHandling
 
         logger.v { "sending intentHandling\nendpoint:\n$intentHandlingHttpEndpoint\nintent:\n$intent" }
@@ -229,18 +244,21 @@ class HttpClientLink(
 
             val response = request.body<String>()
             logger.v { "sending intent received:\n${response}" }
-            HttpClientResponse.HttpClientSuccess(response, callType)
+            _receivedResponse.emit(HttpClientResponse.HttpClientSuccess(response, callType))
+            true
         } catch (e: Exception) {
 
             logger.e(e) { "sending intentHandling Exception" }
-            HttpClientResponse.HttpClientError(e, callType)
+            _receivedResponse.emit(HttpClientResponse.HttpClientError(e, callType))
+            false
+
         }
     }
 
     /**
      * send intent as Event to Home Assistant
      */
-    suspend fun hassEvent(json: String, intentName: String): HttpClientResponse<String> {
+    suspend fun hassEvent(json: String, intentName: String): Boolean {
         val callType = HttpClientCallType.HassEvent
 
         logger.v {
@@ -265,11 +283,14 @@ class HttpClientLink(
 
             val response = request.body<String>()
             logger.v { "sending intent received:\n${response}" }
-            HttpClientResponse.HttpClientSuccess(response, callType)
+            _receivedResponse.emit(HttpClientResponse.HttpClientSuccess(response, callType))
+            true
         } catch (e: Exception) {
 
             logger.e(e) { "sending hassEvent Exception" }
-            HttpClientResponse.HttpClientError(e, callType)
+            _receivedResponse.emit(HttpClientResponse.HttpClientError(e, callType))
+            false
+
         }
 
     }
@@ -278,7 +299,7 @@ class HttpClientLink(
     /**
      * send intent as Intent to Home Assistant
      */
-    suspend fun hassIntent(intentJson: String): HttpClientResponse<String> {
+    suspend fun hassIntent(intentJson: String): Boolean {
         val callType = HttpClientCallType.HassIntent
 
         logger.v { "sending intent as Intent to Home Assistant\nendpoint:\n$intentHandlingHassEndpoint/api/intent/handle\nintent:\n$intentJson" }
@@ -297,11 +318,13 @@ class HttpClientLink(
 
             val response = request.body<String>()
             logger.v { "sending intent received:\n${response}" }
-            HttpClientResponse.HttpClientSuccess(response, callType)
+            _receivedResponse.emit(HttpClientResponse.HttpClientSuccess(response, callType))
+            true
         } catch (e: Exception) {
 
             logger.e(e) { "sending hassIntent Exception" }
-            HttpClientResponse.HttpClientError(e, callType)
+            _receivedResponse.emit(HttpClientResponse.HttpClientError(e, callType))
+            false
         }
     }
 }
