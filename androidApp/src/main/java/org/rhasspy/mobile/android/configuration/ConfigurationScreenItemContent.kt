@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.android.configuration
 
-import android.os.Bundle
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -8,6 +7,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material.ripple.RippleTheme
@@ -18,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -329,7 +330,7 @@ private fun BottomAppBar(
                 enabled = isHasUnsavedChanges
             ) {
                 Icon(
-                    imageVector = Icons.Filled.Delete,
+                    imageVector = if (isHasUnsavedChanges) Icons.Outlined.Delete else Icons.Filled.Delete,
                     contentDescription = MR.strings.discard,
                 )
             }
@@ -339,7 +340,7 @@ private fun BottomAppBar(
                 enabled = isHasUnsavedChanges
             ) {
                 Icon(
-                    imageVector = Icons.Filled.Save,
+                    imageVector = if (isHasUnsavedChanges) Icons.Outlined.Save else Icons.Filled.Save,
                     contentDescription = MR.strings.save
                 )
             }
@@ -371,7 +372,7 @@ private fun BottomAppBar(
                         enabled = isTestingEnabled
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.PlayArrow,
+                            imageVector = if (isTestingEnabled) Icons.Filled.PlayArrow else Icons.Outlined.PlayArrow,
                             contentDescription = MR.strings.test
                         )
                     }

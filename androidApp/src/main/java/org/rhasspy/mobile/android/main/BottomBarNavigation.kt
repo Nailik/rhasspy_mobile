@@ -8,6 +8,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Mic
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -17,6 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.configuration.ConfigurationScreen
@@ -70,7 +73,7 @@ fun BoxWithConstraintsScope.BottomBarScreensNavigation(viewModel: HomeScreenView
             bottomBar = {
                 //hide bottom navigation with keyboard and small screens
                 if (!isBottomNavigationHidden) {
-                    BottomNavigation(viewModel)
+                    BottomNavigation(viewModel, navController)
                 }
             }
         ) { paddingValues ->
@@ -123,12 +126,23 @@ private fun AppBar() {
 }
 
 @Composable
-fun BottomNavigation(viewModel: HomeScreenViewModel) {
+fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavController) {
+
 
     NavigationBar {
 
+        val currentBackStackEntry by navController.currentBackStackEntryAsState()
+
         NavigationItem(screen = BottomBarScreens.HomeScreen,
-            icon = { Icon(Icons.Filled.Mic, MR.strings.home) },
+            icon = {
+                Icon(
+                    if (currentBackStackEntry?.destination?.route == BottomBarScreens.HomeScreen.name) {
+                        Icons.Filled.Mic
+                    } else {
+                        Icons.Outlined.Mic
+                    }, MR.strings.home
+                )
+            },
             label = { Text(MR.strings.home) })
 
         NavigationItem(screen = BottomBarScreens.ConfigurationScreen,
@@ -136,7 +150,15 @@ fun BottomNavigation(viewModel: HomeScreenViewModel) {
             label = { Text(MR.strings.configuration) })
 
         NavigationItem(screen = BottomBarScreens.SettingsScreen,
-            icon = { Icon(Icons.Filled.Settings, MR.strings.settings) },
+            icon = {
+                Icon(
+                    if (currentBackStackEntry?.destination?.route == BottomBarScreens.SettingsScreen.name) {
+                        Icons.Filled.Settings
+                    } else {
+                        Icons.Outlined.Settings
+                    }, MR.strings.settings
+                )
+            },
             label = { Text(MR.strings.settings) })
 
         if (viewModel.isShowLogEnabled.collectAsState().value) {
