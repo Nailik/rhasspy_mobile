@@ -167,7 +167,12 @@ private fun EditConfigurationScreen(
             AppBar(
                 title = title,
                 onBackClick = ::onBackPress
-            )
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = MR.strings.back,
+                )
+            }
         },
         bottomBar = {
             BottomAppBar(
@@ -207,7 +212,12 @@ private fun TestConfigurationScreen(content: @Composable (modifier: Modifier) ->
             AppBar(
                 title = MR.strings.test,
                 onBackClick = navController::popBackStack
-            )
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = MR.strings.stop,
+                )
+            }
         },
     ) { paddingValues ->
         content(Modifier.padding(paddingValues))
@@ -399,7 +409,7 @@ private object NoRippleTheme : RippleTheme {
  * top app bar with title and back navigation button
  */
 @Composable
-private fun AppBar(title: StringResource, onBackClick: () -> Unit) {
+private fun AppBar(title: StringResource, onBackClick: () -> Unit, icon: @Composable () -> Unit) {
 
     TopAppBar(
         title = {
@@ -411,13 +421,9 @@ private fun AppBar(title: StringResource, onBackClick: () -> Unit) {
         navigationIcon = {
             IconButton(
                 onClick = onBackClick,
-                modifier = Modifier.testTag(TestTag.AppBarBackButton)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = MR.strings.back,
-                )
-            }
+                modifier = Modifier.testTag(TestTag.AppBarBackButton),
+                content = icon
+            )
         }
     )
 }

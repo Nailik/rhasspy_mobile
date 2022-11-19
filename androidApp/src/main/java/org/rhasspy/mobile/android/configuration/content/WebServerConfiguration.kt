@@ -4,10 +4,14 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.runtime.*
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -112,18 +116,15 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
 //TODO new page instead of bottom sheet
 @Composable
 fun TestContent(modifier: Modifier, viewModel: WebServerConfigurationViewModel) {
-
     Column(
         modifier = modifier
             .heightIn(min = 400.dp)
-            .wrapContentHeight()
+            .fillMaxHeight()
+            .verticalScroll(rememberScrollState())
     ) {
         val receivingStateList by viewModel.testState.collectAsState()
         receivingStateList.forEach {
             TestListItem(it)
-        }
-        FilledTonalButtonListItem(text = MR.strings.stop) {
-
         }
     }
 

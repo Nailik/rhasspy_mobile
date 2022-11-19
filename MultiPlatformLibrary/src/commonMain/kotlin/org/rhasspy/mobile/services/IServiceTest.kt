@@ -24,10 +24,10 @@ import org.rhasspy.mobile.services.state.StateType
  * contains the current service state in a shared flow
  * currentError of service is always null
  */
-abstract class IServiceTest(
+abstract class IServiceTest<T>(
     tag: String,
     private val serviceLink: IServiceLink
-) : IService(), KoinComponent {
+) : IService<T>(), KoinComponent {
 
     internal val logger = Logger.withTag("$tag-Test")
     private val _currentState = MutableSharedFlow<ServiceState>()
@@ -35,7 +35,7 @@ abstract class IServiceTest(
 
     private val scope = CoroutineScope(Dispatchers.Default)
 
-    abstract fun getService(): IService
+    abstract fun getService(): IService<T>
 
     abstract fun onStartTest(scope: CoroutineScope)
 
@@ -50,7 +50,7 @@ abstract class IServiceTest(
     }
 
     //tests have no error
-    override val currentError: SharedFlow<ServiceError?>
+    override val currentError: SharedFlow<ServiceError<T>?>
         get() = MutableSharedFlow()
 
     internal fun pending(stateType: StateType, description: Any? = null) {
@@ -68,6 +68,7 @@ abstract class IServiceTest(
     internal fun success(stateType: StateType, description: Any? = null) {
         emitState(State.Success, stateType, description)
     }
+
 
     private fun emitState(
         state: State,

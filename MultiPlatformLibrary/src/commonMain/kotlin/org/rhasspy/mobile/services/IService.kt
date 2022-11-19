@@ -14,9 +14,9 @@ import kotlinx.coroutines.flow.SharedFlow
  * service link should be created in on start
  * onStop can be overwritten if in addition to scope and service link other tasks need to be stopped
  */
-abstract class IService {
+abstract class IService<T> {
 
-    abstract val currentError: SharedFlow<ServiceError?>
+    abstract val currentError: SharedFlow<ServiceError<T>?>
     private lateinit var scope: CoroutineScope
     private lateinit var serviceLink: IServiceLink
 
@@ -25,7 +25,7 @@ abstract class IService {
         //recreate service link
 
         serviceLink = onStart(scope)
-        serviceLink.start()
+        serviceLink.start(scope)
     }
 
     internal abstract fun onStart(scope: CoroutineScope) : IServiceLink

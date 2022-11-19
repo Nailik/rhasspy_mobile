@@ -9,14 +9,18 @@ import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.dataconversion.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.nativeutils.installCallLogging
 import org.rhasspy.mobile.nativeutils.installCompression
+import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IServiceLink
+import org.rhasspy.mobile.services.ServiceError
+import org.rhasspy.mobile.services.webserver.data.WebServerCall
 import org.rhasspy.mobile.services.webserver.data.WebServerCallType
+import org.rhasspy.mobile.services.webserver.data.WebServerLinkStateType
 import org.rhasspy.mobile.services.webserver.data.WebServerPath
 
 //https://rhasspy.readthedocs.io/en/latest/reference/#http-api
@@ -32,19 +36,27 @@ class WebServerLink(
     private val logger = Logger.withTag("WebServerLink")
 
     private lateinit var server: CIOApplicationEngine
-    private val _receivedRequest = MutableSharedFlow<Pair<ApplicationCall, WebServerPath>>()
-    val receivedRequest: SharedFlow<Pair<ApplicationCall, WebServerPath>> = _receivedRequest
+    private val _receivedRequest = MutableSharedFlow<WebServerCall>()
+    val receivedRequest = _receivedRequest.readOnly
 
-    override fun start() {
+    private val _currentError = MutableStateFlow<ServiceError<WebServerLinkStateType>?>(null)
+    val currentError = _currentError.readOnly
+
+    private val _isServerRunning = MutableStateFlow(false)
+    val isServerRunning = _isServerRunning.readOnly
+
+    override fun start(scope: CoroutineScope) {
         if (isHttpApiEnabled) {
             logger.v { "starting server" }
             server = getServer(port)
 
-            CoroutineScope(Dispatchers.Default).launch {
+            scope.launch {
                 //necessary else netty has problems when the coroutine scope is closed
                 try {
                     server.start()
+                    _isServerRunning.value = true
                 } catch (e: Exception) {
+                    _currentError.value = ServiceError(e, WebServerLinkStateType.STARTING, MR.strings.error)
                     logger.e(e) { "While Starting server" }
                 }
             }
@@ -57,6 +69,7 @@ class WebServerLink(
         if (::server.isInitialized) {
             server.stop()
         }
+        _isServerRunning.value = false
     }
 
     private fun getServer(port: Int): CIOApplicationEngine {
@@ -79,15 +92,20 @@ class WebServerLink(
 
             routing {
                 WebServerPath.values().forEach { path ->
-                    when (path.type) {
-                        WebServerCallType.POST -> post(path.path) {
-                            logger.v { "post ${path.path}" }
-                            _receivedRequest.emit(Pair(call, path))
+                    try {
+                        when (path.type) {
+                            WebServerCallType.POST -> post(path.path) {
+                                logger.v { "post ${path.path}" }
+                                _receivedRequest.emit(WebServerCall(call, path))
+                            }
+                            WebServerCallType.GET -> get(path.path) {
+                                logger.v { "get ${path.path}" }
+                                _receivedRequest.emit(WebServerCall(call, path))
+                            }
                         }
-                        WebServerCallType.GET -> get(path.path) {
-                            logger.v { "get ${path.path}" }
-                            _receivedRequest.emit(Pair(call, path))
-                        }
+                    } catch (e: Exception) {
+                        _currentError.value = ServiceError(e, WebServerLinkStateType.RECEIVING, MR.strings.error)
+                        logger.e(e) { "While receiving" }
                     }
                 }
             }

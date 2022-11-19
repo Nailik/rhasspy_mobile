@@ -18,8 +18,8 @@ import org.rhasspy.mobile.services.state.State
 import org.rhasspy.mobile.services.webserver.WebServerLink
 import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.services.webserver.WebServerServiceTest
-import org.rhasspy.mobile.services.webserver.data.WebServerServiceStateType.RECEIVING
-import org.rhasspy.mobile.services.webserver.data.WebServerServiceStateType.STARTING
+import org.rhasspy.mobile.services.webserver.data.WebServerLinkStateType.RECEIVING
+import org.rhasspy.mobile.services.webserver.data.WebServerLinkStateType.STARTING
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class WebServerConfigurationViewModel : ViewModel(), IConfigurationViewModel, KoinComponent {
@@ -127,7 +127,11 @@ class WebServerConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
                     RECEIVING -> {
                         //take last
                         val list = _currentTestReceivingStateList.value.toMutableList()
-                        list.add(state)
+                        if (list.size > 0) {
+                            list.add(list.lastIndex, state)
+                        } else {
+                            list.add(state)
+                        }
                         _currentTestReceivingStateList.value = list
                     }
                 }

@@ -12,20 +12,20 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.IServiceLink
 import org.rhasspy.mobile.services.RhasspyActions
 import org.rhasspy.mobile.services.ServiceError
+import org.rhasspy.mobile.services.webserver.data.WebServerLinkStateType
 import org.rhasspy.mobile.services.webserver.data.WebServerPath
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-class WebServerService : IService() {
+class WebServerService : IService<WebServerLinkStateType>() {
 
     private val logger = Logger.withTag("WebServerService")
-    private val _currentError = MutableSharedFlow<ServiceError?>()
-    override val currentError: SharedFlow<ServiceError?> = _currentError.readOnly
+    private val _currentError = MutableSharedFlow<ServiceError<WebServerLinkStateType>?>()
+    override val currentError: SharedFlow<ServiceError<WebServerLinkStateType>?> = _currentError.readOnly
 
-    override fun onStart(scope: CoroutineScope): IServiceLink {
+    override fun onStart(scope: CoroutineScope): WebServerLink {
         val webServerLink = WebServerLink(
             ConfigurationSettings.isHttpServerEnabled.value,
             ConfigurationSettings.httpServerPort.value,
@@ -34,16 +34,16 @@ class WebServerService : IService() {
 
         scope.launch {
             webServerLink.receivedRequest.collect {
-                when (it.second) {
+                when (it.path) {
                     WebServerPath.ListenForCommand -> listenForCommand()
-                    WebServerPath.ListenForWake -> listenForWake(it.first)
+                    WebServerPath.ListenForWake -> listenForWake(it.call)
                     WebServerPath.PlayRecordingPost -> playRecordingPost()
-                    WebServerPath.PlayRecordingGet -> playRecordingGet(it.first)
-                    WebServerPath.PlayWav -> playWav(it.first)
-                    WebServerPath.SetVolume -> setVolume(it.first)
+                    WebServerPath.PlayRecordingGet -> playRecordingGet(it.call)
+                    WebServerPath.PlayWav -> playWav(it.call)
+                    WebServerPath.SetVolume -> setVolume(it.call)
                     WebServerPath.StartRecording -> startRecording()
                     WebServerPath.StopRecording -> stopRecording()
-                    WebServerPath.Say -> say(it.first)
+                    WebServerPath.Say -> say(it.call)
                 }
             }
         }
