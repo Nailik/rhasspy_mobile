@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.serviceInterfaces
+package org.rhasspy.mobile.interfaces
 
 import co.touchlab.kermit.Logger
 import kotlinx.serialization.decodeFromString

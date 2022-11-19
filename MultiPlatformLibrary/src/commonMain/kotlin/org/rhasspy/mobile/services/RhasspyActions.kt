@@ -8,7 +8,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.logic.StateMachine
-import org.rhasspy.mobile.serviceInterfaces.HomeAssistantInterface
+import org.rhasspy.mobile.interfaces.HomeAssistantInterface
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
