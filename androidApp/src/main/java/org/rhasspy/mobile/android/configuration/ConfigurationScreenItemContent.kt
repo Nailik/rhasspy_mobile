@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.android.configuration
 
+import android.os.Bundle
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,21 +14,21 @@ import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
@@ -62,6 +62,16 @@ fun ConfigurationScreenItemContent(
 ) {
 
     val navController = rememberNavController()
+
+    LaunchedEffect(Unit) {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.route == ConfigurationContentScreens.Edit.name) {
+                viewModel.stopTest()
+            }
+        }
+    }
+
+
 
     CompositionLocalProvider(
         LocalConfigurationNavController provides navController
@@ -182,6 +192,15 @@ private fun EditConfigurationScreen(
 @Composable
 private fun TestConfigurationScreen(content: @Composable (modifier: Modifier) -> Unit) {
     val navController = LocalConfigurationNavController.current
+
+    LaunchedEffect(Unit) {
+        Application.Instance.isAppInBackground.collect {
+            if (it) {
+                navController.popBackStack()
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             AppBar(

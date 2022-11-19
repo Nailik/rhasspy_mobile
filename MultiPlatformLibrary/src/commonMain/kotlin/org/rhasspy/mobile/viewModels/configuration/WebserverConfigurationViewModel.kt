@@ -1,13 +1,13 @@
 package org.rhasspy.mobile.viewModels.configuration
 
+import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
+import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineState
@@ -16,11 +16,14 @@ import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.services.state.State
 import org.rhasspy.mobile.services.webserver.WebServerLink
+import org.rhasspy.mobile.services.webserver.WebServerServiceTest
 import org.rhasspy.mobile.services.webserver.data.WebServerServiceStateType.RECEIVING
 import org.rhasspy.mobile.services.webserver.data.WebServerServiceStateType.STARTING
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class WebserverConfigurationViewModel : ViewModel(), IConfigurationViewModel, KoinComponent {
+
+    private val logger = Logger.withTag("WebserverConfigurationViewModel")
 
     //unsaved data
     private val _isHttpServerEnabled =
@@ -72,6 +75,7 @@ class WebserverConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
         ConfigurationSettings.isHttpServerEnabled.value = _isHttpServerEnabled.value
         ConfigurationSettings.httpServerPort.value = _httpServerPort.value
         ConfigurationSettings.isHttpServerSSLEnabled.value = _isHttpServerSSLEnabled.value
+        //TODO recreate WebServerService and shut down previous one
     }
 
     /**
@@ -83,15 +87,8 @@ class WebserverConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
         _isHttpServerSSLEnabled.value = ConfigurationSettings.isHttpServerSSLEnabled.value
     }
 
-
     //for testing
-    private val webserver: WebServerLink by inject {
-        parametersOf(
-            _isHttpServerEnabled.value,
-            _httpServerPort.value,
-            _isHttpServerSSLEnabled.value
-        )
-    }
+    private lateinit var webserver: WebServerServiceTest
     private val _currentTestStartingState = MutableStateFlow<ServiceState?>(null)
     private val _currentTestReceivingStateList = MutableStateFlow(listOf<ServiceState>())
 
@@ -108,8 +105,16 @@ class WebserverConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
      * test unsaved data configuration
      */
     override fun test() {
+        webserver = get {
+            parametersOf(
+                WebServerLink(_isHttpServerEnabled.value, _httpServerPort.value, _isHttpServerSSLEnabled.value)
+            )
+        }
+
+        //TODO get WebServerServiceTest
+        //run tests
         CoroutineScope(Dispatchers.Default).launch {
-            webserver.currentState.filterNotNull().collect { state ->
+            webserver.currentState.collect { state ->
                 when (state.stateType) {
                     STARTING -> {
                         _currentTestStartingState.value = state
@@ -120,17 +125,22 @@ class WebserverConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
                     RECEIVING -> {
                         //take last
                         val list = _currentTestReceivingStateList.value.toMutableList()
-                        list.add(list.lastIndex, state)
+                        list.add(state)
                         _currentTestReceivingStateList.value = list
                     }
                 }
             }
         }
-        webserver.start()
     }
 
     override fun stopTest() {
-        webserver.destroy()
+        logger.e { "stopTest()" }
+        _currentTestStartingState.value = null
+        _currentTestReceivingStateList.value = listOf()
+        //destroy instance
+        if (::webserver.isInitialized) {
+            webserver.destroy()
+        }
     }
 
 }

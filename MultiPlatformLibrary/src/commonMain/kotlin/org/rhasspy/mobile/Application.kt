@@ -13,11 +13,12 @@ import org.rhasspy.mobile.services.MqttService
 import org.rhasspy.mobile.services.ServiceAction
 import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.services.webserver.WebServerLink
+import org.rhasspy.mobile.services.webserver.WebServerServiceTest
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 val serviceModule = module {
-    factory { params -> WebServerLink(params.get(), params.get(), params.get()) }
+    factory { params -> WebServerServiceTest(params.get()) }
 }
 
 abstract class Application : NativeApplication() {

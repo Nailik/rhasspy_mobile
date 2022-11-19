@@ -9,10 +9,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -118,18 +115,10 @@ private fun WebserverSSL(viewModel: WebserverConfigurationViewModel) {
 @Composable
 fun TestContent(modifier: Modifier, viewModel: WebserverConfigurationViewModel) {
 
-    val scrollState = rememberScrollState()
-    val size = viewModel.testState.collectAsState().value.size
-
-    LaunchedEffect(size) {
-        scrollState.animateScrollTo(size)
-    }
-
     Column(
         modifier = modifier
             .heightIn(min = 400.dp)
             .wrapContentHeight()
-            .verticalScroll(scrollState)
     ) {
         val receivingStateList by viewModel.testState.collectAsState()
         receivingStateList.forEach {
