@@ -1,44 +1,37 @@
 package org.rhasspy.mobile.services.rhasspyactions
 
-import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.rhasspy.mobile.ServiceTestName
 import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.interfaces.HomeAssistantInterface
-import org.rhasspy.mobile.services.IServiceLink
 import org.rhasspy.mobile.services.LocalAudioService
 import org.rhasspy.mobile.services.MqttService
 import org.rhasspy.mobile.services.httpclient.HttpClientService
+import org.rhasspy.mobile.services.`interface`.IService2
 
 /**
  * actions are fired and state machine has to react for results in other services
  */
-class RhasspyActionsLink(
-    private val intentRecognitionOption: IntentRecognitionOptions,
-    private val textToSpeechOption: TextToSpeechOptions,
-    private val audioPlayingOption: AudioPlayingOptions,
-    private val speechToTextOption: SpeechToTextOptions,
-    private val intentHandlingOption: IntentHandlingOptions
-) : IServiceLink, KoinComponent {
-
-    private val logger = Logger.withTag("RhasspyActionsLink")
-
-    private var coroutineScope = CoroutineScope(Dispatchers.Default)
+class RhasspyActionsService(
+    private var params: RhasspyActionsServiceParams = RhasspyActionsServiceParams.loadFromConfiguration(),
+    isTest: Boolean = false
+) : IService2(
+    isTest = isTest,
+    serviceName = ServiceTestName.RhasspyActions
+) {
 
     private val localAudioService by inject<LocalAudioService>()
     private val httpClientService by inject<HttpClientService>()
     private val mqttClientService by inject<MqttService>()
     private val homeAssistantService by inject<HomeAssistantInterface>()
 
-    override fun start(scope: CoroutineScope) {
-        coroutineScope = CoroutineScope(Dispatchers.Default)
+    override fun onStart(scope: CoroutineScope) {
+        params = RhasspyActionsServiceParams.loadFromConfiguration()
     }
 
-    override fun destroy() {
-        coroutineScope.cancel()
+    override fun onStop() {
+        //nothing to do
     }
 
     /**
@@ -59,7 +52,7 @@ class RhasspyActionsLink(
      * - later eventually intentRecognized or intentNotRecognized will be called with received data
      */
     suspend fun recognizeIntent(text: String): Boolean {
-        return when (intentRecognitionOption) {
+        return when (params.intentRecognitionOption) {
             IntentRecognitionOptions.RemoteHTTP -> httpClientService.recognizeIntent(text)
             IntentRecognitionOptions.RemoteMQTT -> mqttClientService.recognizeIntent(text)
             IntentRecognitionOptions.Disabled -> false
@@ -76,7 +69,7 @@ class RhasspyActionsLink(
      * is called when playing audio is finished
      */
     suspend fun say(text: String): Boolean {
-        return when (textToSpeechOption) {
+        return when (params.textToSpeechOption) {
             TextToSpeechOptions.RemoteHTTP -> httpClientService.textToSpeech(text)
             TextToSpeechOptions.RemoteMQTT -> mqttClientService.say(text)
             TextToSpeechOptions.Disabled -> false
@@ -102,7 +95,7 @@ class RhasspyActionsLink(
      * - calls default site to play audio
      */
     suspend fun playAudio(data: List<Byte>): Boolean {
-        return when (audioPlayingOption) {
+        return when (params.audioPlayingOption) {
             AudioPlayingOptions.Local -> localAudioService.playAudio(data)
             AudioPlayingOptions.RemoteHTTP -> httpClientService.playWav(data)
             AudioPlayingOptions.RemoteMQTT -> mqttClientService.playBytes(data)
@@ -121,7 +114,7 @@ class RhasspyActionsLink(
      * - audio was already send to mqtt while recording in audioFrame
      */
     suspend fun speechToText(data: List<Byte>): Boolean {
-        return when (speechToTextOption) {
+        return when (params.speechToTextOption) {
             SpeechToTextOptions.RemoteHTTP -> httpClientService.speechToText(data)
             SpeechToTextOptions.RemoteMQTT -> false //nothing to do
             SpeechToTextOptions.Disabled -> false
@@ -144,7 +137,7 @@ class RhasspyActionsLink(
      * if local dialogue management it will end the session
      */
     suspend fun intentHandling(intentName: String, intent: String): Boolean {
-        return when (intentHandlingOption) {
+        return when (params.intentHandlingOption) {
             IntentHandlingOptions.HomeAssistant -> homeAssistantService.sendIntent(intentName, intent)
             IntentHandlingOptions.RemoteHTTP -> httpClientService.intentHandling(intent)
             IntentHandlingOptions.WithRecognition -> false //nothing to do

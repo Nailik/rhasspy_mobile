@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.context.startKoin
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.rhasspy.mobile.interfaces.HomeAssistantInterface
 import org.rhasspy.mobile.logger.FileLogger
@@ -17,10 +18,16 @@ import org.rhasspy.mobile.services.MqttService
 import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceTest
+import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.services.webserver.WebServerServiceTest
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
+
+enum class ServiceTestName {
+    RhasspyActions,
+    RhasspyActionsTest;
+}
 
 val serviceModule = module {
     factory { params -> WebServerServiceTest(params.get()) }
@@ -30,6 +37,11 @@ val serviceModule = module {
     single { LocalAudioService() }
     single { MqttService }
     single { HomeAssistantInterface }
+
+    single(named(ServiceTestName.RhasspyActions)) { RhasspyActionsService() }
+
+    factory(named(ServiceTestName.RhasspyActionsTest)) { params -> RhasspyActionsService(params.get(), isTest = true) }
+
 }
 
 abstract class Application : NativeApplication(), KoinComponent {
