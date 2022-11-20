@@ -5,10 +5,18 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.koin.core.context.loadKoinModules
+import org.koin.core.context.unloadKoinModules
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
+import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.serviceModule
 import org.rhasspy.mobile.services.state.ServiceState
+import org.rhasspy.mobile.services.statemachine.StateMachineService
+import org.rhasspy.mobile.services.statemachine.StateMachineServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class WebServerConfigurationViewModel : ViewModel(), IConfigurationViewModel, KoinComponent {
@@ -95,6 +103,12 @@ class WebServerConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
      * test unsaved data configuration
      */
     override fun test() {
+        unloadKoinModules(serviceModule)
+        loadKoinModules(serviceModule)
+
+        val params = get<StateMachineServiceParams> { parametersOf(StateMachineServiceParams("foo")) }
+
+        val stateMachineService = get<StateMachineService>()
         /*   webServerServiceTest = get {
                parametersOf(
                    WebServerLink(_isHttpServerEnabled.value, _httpServerPort.value, _isHttpServerSSLEnabled.value)
@@ -129,6 +143,10 @@ class WebServerConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
     }
 
     override fun stopTest() {
+        unloadKoinModules(serviceModule)
+        loadKoinModules(serviceModule)
+
+        val stateMachineService = get<StateMachineService>()
         /*     logger.d { "stopTest()" }
              _currentTestStartingState.value = null
              _currentTestReceivingStateList.value = listOf()

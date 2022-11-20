@@ -19,6 +19,7 @@ import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.services.statemachine.StateMachineService
+import org.rhasspy.mobile.services.statemachine.StateMachineServiceParams
 import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
@@ -41,6 +42,13 @@ val serviceModule = module {
     single { HttpClientService() }
     single { LocalAudioService() }
     single { HomeAssistantInterface }
+    single { StateMachineService() }
+
+    single { params ->
+        params.getOrNull<StateMachineServiceParams>() ?: run {
+            StateMachineServiceParams.loadFromConfig()
+        }
+    }
 
     single(named(ServiceTestName.StateMachine)) { StateMachineService() }
     single(named(ServiceTestName.RhasspyActions)) { RhasspyActionsService() }
