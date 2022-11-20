@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.AudioOutputOptions
 import org.rhasspy.mobile.data.AudioPlayingOptions
-import org.rhasspy.mobile.services.httpclient.data.HttpClientPath
+import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 

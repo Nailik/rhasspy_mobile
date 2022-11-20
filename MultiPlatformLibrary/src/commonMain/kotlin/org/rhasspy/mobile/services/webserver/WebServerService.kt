@@ -19,8 +19,6 @@ import org.rhasspy.mobile.nativeutils.installCallLogging
 import org.rhasspy.mobile.nativeutils.installCompression
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.statemachine.StateMachineService
-import org.rhasspy.mobile.services.webserver.data.WebServerCallType
-import org.rhasspy.mobile.services.webserver.data.WebServerPath
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class WebServerService(
@@ -95,11 +93,11 @@ class WebServerService(
                 WebServerPath.values().forEach { path ->
                     try {
                         when (path.type) {
-                            WebServerCallType.POST -> post(path.path) {
+                            WebServerPath.WebServerCallType.POST -> post(path.path) {
                                 logger.v { "post ${path.path}" }
                                 evaluateCall(path, call)
                             }
-                            WebServerCallType.GET -> get(path.path) {
+                            WebServerPath.WebServerCallType.GET -> get(path.path) {
                                 logger.v { "get ${path.path}" }
                                 evaluateCall(path, call)
                             }

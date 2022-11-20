@@ -1,7 +1,7 @@
-package org.rhasspy.mobile.services.webserver.data
+package org.rhasspy.mobile.services.webserver
 
-import org.rhasspy.mobile.services.webserver.data.WebServerCallType.GET
-import org.rhasspy.mobile.services.webserver.data.WebServerCallType.POST
+import org.rhasspy.mobile.services.webserver.WebServerPath.WebServerCallType.GET
+import org.rhasspy.mobile.services.webserver.WebServerPath.WebServerCallType.POST
 
 enum class WebServerPath(val path: String, val type: WebServerCallType) {
     ListenForCommand("/api/listen-for-command", POST),
@@ -12,5 +12,10 @@ enum class WebServerPath(val path: String, val type: WebServerCallType) {
     SetVolume("/api/set-volume", POST),
     StartRecording("/api/start-recording", POST),
     StopRecording("/api/stop-recording", POST),
-    Say("/api/say", POST)
+    Say("/api/say", POST);
+
+    enum class WebServerCallType {
+        POST,
+        GET
+    }
 }
