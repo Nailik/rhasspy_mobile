@@ -23,10 +23,6 @@ object ServiceInterface {
 
     //call all services to activate them
     init {
-        HotWordService
-        IndicationService
-        RecordingService
-        ForegroundServiceHandler
     }
 
     /**
