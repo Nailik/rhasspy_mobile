@@ -5,11 +5,12 @@ import dev.icerock.moko.resources.desc.StringDesc
 import org.koin.core.component.KoinComponent
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
-import org.rhasspy.mobile.interfaces.HomeAssistantInterface
+import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.mqtt.OverlayServices
 import org.rhasspy.mobile.services.LocalAudioService
 import org.rhasspy.mobile.services.ServiceInterface
+import org.rhasspy.mobile.services.homeassistant.HomeAssistantServiceParams
 import org.rhasspy.mobile.services.httpclient.HttpClientParams
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.mqtt.MqttService
@@ -27,7 +28,6 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
 
 val serviceModule = module {
     single { LocalAudioService() }
-    single { HomeAssistantInterface }
 
     single { StateMachineService() }
     single { RhasspyActionsService() }
@@ -35,6 +35,7 @@ val serviceModule = module {
     single { HttpClientService() }
     single { WebServerService() }
     single { UdpService() }
+    single { HomeAssistantService() }
 
     single { params -> params.getOrNull<StateMachineServiceParams>() ?: StateMachineServiceParams() }
     single { params -> params.getOrNull<RhasspyActionsServiceParams>() ?: RhasspyActionsServiceParams() }
@@ -42,6 +43,7 @@ val serviceModule = module {
     single { params -> params.getOrNull<HttpClientParams>() ?: HttpClientParams() }
     single { params -> params.getOrNull<WebServerServiceParams>() ?: WebServerServiceParams() }
     single { params -> params.getOrNull<UdpServiceParams>() ?: UdpServiceParams() }
+    single { params -> params.getOrNull<HomeAssistantServiceParams>() ?: HomeAssistantServiceParams() }
 }
 
 abstract class Application : NativeApplication(), KoinComponent {

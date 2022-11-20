@@ -2,7 +2,7 @@ package org.rhasspy.mobile.services.rhasspyactions
 
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.*
-import org.rhasspy.mobile.interfaces.HomeAssistantInterface
+import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.LocalAudioService
 import org.rhasspy.mobile.services.httpclient.HttpClientService
@@ -17,7 +17,7 @@ open class RhasspyActionsService : IService() {
     private val localAudioService by inject<LocalAudioService>()
     private val httpClientService by inject<HttpClientService>()
     private val mqttClientService by inject<MqttService>()
-    private val homeAssistantService by inject<HomeAssistantInterface>()
+    private val homeAssistantService by inject<HomeAssistantService>()
 
     /**
      * hermes/nlu/query

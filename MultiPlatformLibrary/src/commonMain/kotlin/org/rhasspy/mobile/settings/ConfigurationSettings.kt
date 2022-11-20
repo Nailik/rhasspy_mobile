@@ -76,6 +76,6 @@ internal object ConfigurationSettings {
 
     val intentHandlingHassEndpoint = Setting(SettingsEnum.IntentHandlingHassUrl, "")
     val intentHandlingHassAccessToken = Setting(SettingsEnum.IntentHandlingHassAccessToken, "")
-    val isIntentHandlingHassEvent = Setting(SettingsEnum.IsIntentHandlingHassEvent, false)
+    val intentHandlingHomeAssistantOption = Setting(SettingsEnum.IsIntentHandlingHassEvent, HomeAssistantIntentHandlingOptions.Event)
 
 }

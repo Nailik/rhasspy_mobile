@@ -1,21 +1,23 @@
-package org.rhasspy.mobile.interfaces
+package org.rhasspy.mobile.services.homeassistant
 
 import co.touchlab.kermit.Logger
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.rhasspy.mobile.data.HomeAssistantIntentHandlingOptions
+import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 /**
  * used to send intents or events to home assistant
  */
-object HomeAssistantInterface : KoinComponent {
+class HomeAssistantService : IService()  {
 
     val logger = Logger.withTag("HomeAssistantInterface")
 
+    private val params by inject<HomeAssistantServiceParams>()
     private val httpClientService by inject<HttpClientService>()
 
     /**
@@ -47,13 +49,13 @@ object HomeAssistantInterface : KoinComponent {
         //add meta slots
         slots["_text"] = json["text"]?.jsonPrimitive
         slots["_raw_text"] = json["raw_text"]?.jsonPrimitive
-        slots["_site_id"] = JsonPrimitive(ConfigurationSettings.siteId.value)
+        slots["_site_id"] = JsonPrimitive(params.siteId)
 
         val intentRes = Json.encodeToString(slots)
 
-        when (ConfigurationSettings.isIntentHandlingHassEvent.value) {
-            true -> httpClientService.hassEvent(intentRes, intentName)
-            false -> httpClientService.hassIntent("{\"name\" : \"$intentName\", \"data\": $intent }")
+        when (params.intentHandlingHomeAssistantOption) {
+            HomeAssistantIntentHandlingOptions.Event -> httpClientService.hassEvent(intentRes, intentName)
+            HomeAssistantIntentHandlingOptions.Intent -> httpClientService.hassIntent("{\"name\" : \"$intentName\", \"data\": $intent }")
         }
 
         return true

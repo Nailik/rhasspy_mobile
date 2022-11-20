@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
+import org.rhasspy.mobile.data.HomeAssistantIntentHandlingOptions
 import org.rhasspy.mobile.data.IntentHandlingOptions
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
@@ -18,15 +19,15 @@ class IntentHandlingConfigurationViewModel : ViewModel(), IConfigurationViewMode
     private val _intentHandlingHttpEndpoint = MutableStateFlow(ConfigurationSettings.intentHandlingHttpEndpoint.value)
     private val _intentHandlingHassEndpoint = MutableStateFlow(ConfigurationSettings.intentHandlingHassEndpoint.value)
     private val _intentHandlingHassAccessToken = MutableStateFlow(ConfigurationSettings.intentHandlingHassAccessToken.value)
-    private val _isIntentHandlingHassEvent = MutableStateFlow(ConfigurationSettings.isIntentHandlingHassEvent.value)
+    private val _intentHandlingHomeAssistantOption = MutableStateFlow(ConfigurationSettings.intentHandlingHomeAssistantOption.value)
 
     //unsaved ui data
     val intentHandlingOption = _intentHandlingOption.readOnly
     val intentHandlingHttpEndpoint = _intentHandlingHttpEndpoint.readOnly
     val intentHandlingHassEndpoint = _intentHandlingHassEndpoint.readOnly
     val intentHandlingHassAccessToken = _intentHandlingHassAccessToken.readOnly
-    val isIntentHandlingHassEvent = _isIntentHandlingHassEvent.readOnly
-    val isIntentHandlingHassIntent = _isIntentHandlingHassEvent.mapReadonlyState { !it }
+    val isIntentHandlingHassEvent = _intentHandlingHomeAssistantOption.mapReadonlyState { it == HomeAssistantIntentHandlingOptions.Event }
+    val isIntentHandlingHassIntent = _intentHandlingHomeAssistantOption.mapReadonlyState { it == HomeAssistantIntentHandlingOptions.Intent }
 
     override val isTestingEnabled = _intentHandlingOption.mapReadonlyState { it != IntentHandlingOptions.Disabled }
     override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
@@ -36,7 +37,7 @@ class IntentHandlingConfigurationViewModel : ViewModel(), IConfigurationViewMode
         combineStateNotEquals(_intentHandlingHttpEndpoint, ConfigurationSettings.intentHandlingHttpEndpoint.data),
         combineStateNotEquals(_intentHandlingHassEndpoint, ConfigurationSettings.intentHandlingHassEndpoint.data),
         combineStateNotEquals(_intentHandlingHassAccessToken, ConfigurationSettings.intentHandlingHassAccessToken.data),
-        combineStateNotEquals(_isIntentHandlingHassEvent, ConfigurationSettings.isIntentHandlingHassEvent.data)
+        combineStateNotEquals(_intentHandlingHomeAssistantOption, ConfigurationSettings.intentHandlingHomeAssistantOption.data)
     )
 
     //show input field for endpoint
@@ -74,12 +75,12 @@ class IntentHandlingConfigurationViewModel : ViewModel(), IConfigurationViewMode
 
     //choose hass intent handling as event
     fun selectIntentHandlingHassEvent() {
-        _isIntentHandlingHassEvent.value = true
+        _intentHandlingHomeAssistantOption.value = HomeAssistantIntentHandlingOptions.Event
     }
 
     //choose hass intent handling as intent
     fun selectIntentHandlingHassIntent() {
-        _isIntentHandlingHassEvent.value = false
+        _intentHandlingHomeAssistantOption.value = HomeAssistantIntentHandlingOptions.Intent
     }
 
     /**
@@ -90,7 +91,7 @@ class IntentHandlingConfigurationViewModel : ViewModel(), IConfigurationViewMode
         ConfigurationSettings.intentHandlingHttpEndpoint.value = _intentHandlingHttpEndpoint.value
         ConfigurationSettings.intentHandlingHassEndpoint.value = _intentHandlingHassEndpoint.value
         ConfigurationSettings.intentHandlingHassAccessToken.value = _intentHandlingHassAccessToken.value
-        ConfigurationSettings.isIntentHandlingHassEvent.value = _isIntentHandlingHassEvent.value
+        ConfigurationSettings.intentHandlingHomeAssistantOption.value = _intentHandlingHomeAssistantOption.value
     }
 
     /**
@@ -101,7 +102,7 @@ class IntentHandlingConfigurationViewModel : ViewModel(), IConfigurationViewMode
         _intentHandlingHttpEndpoint.value = ConfigurationSettings.intentHandlingHttpEndpoint.value
         _intentHandlingHassEndpoint.value = ConfigurationSettings.intentHandlingHassEndpoint.value
         _intentHandlingHassAccessToken.value = ConfigurationSettings.intentHandlingHassAccessToken.value
-        _isIntentHandlingHassEvent.value = ConfigurationSettings.isIntentHandlingHassEvent.value
+        _intentHandlingHomeAssistantOption.value = ConfigurationSettings.intentHandlingHomeAssistantOption.value
     }
 
     /**
