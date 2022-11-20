@@ -6,9 +6,9 @@ import org.koin.core.qualifier.named
 import org.rhasspy.mobile.ServiceTestName
 import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.interfaces.HomeAssistantInterface
+import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.LocalAudioService
 import org.rhasspy.mobile.services.httpclient.HttpClientService
-import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 

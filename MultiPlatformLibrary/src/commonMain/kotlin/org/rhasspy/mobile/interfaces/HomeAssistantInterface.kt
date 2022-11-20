@@ -21,7 +21,7 @@ object HomeAssistantInterface : KoinComponent {
     /**
      * simplified conversion from intent to hass event or hass intent
      */
-    suspend fun sendIntent(intentName: String, intent: String) : Boolean {
+    suspend fun sendIntent(intentName: String, intent: String): Boolean {
         val slots = mutableMapOf<String, JsonElement?>()
 
         val json = Json.decodeFromString<JsonObject>(intent)

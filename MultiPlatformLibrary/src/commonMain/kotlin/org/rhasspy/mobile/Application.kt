@@ -14,9 +14,9 @@ import org.rhasspy.mobile.interfaces.HomeAssistantInterface
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.mqtt.OverlayServices
 import org.rhasspy.mobile.services.LocalAudioService
-import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.services.httpclient.HttpClientService
+import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.services.statemachine.StateMachineService
 import org.rhasspy.mobile.services.webserver.WebServerService

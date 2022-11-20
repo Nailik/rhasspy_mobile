@@ -37,7 +37,7 @@ class HomeScreenViewModel : ViewModel() {
     fun intentRecognition(text: String) = manualIntentRecognition(text)
 
     fun speakText(text: String) {
-        
+
     }
 
     fun saveAndApplyChanges() = ServiceInterface.saveAndApplyChanges()

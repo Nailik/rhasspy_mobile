@@ -14,47 +14,47 @@ class StateMachineService(
 
     }
 
-    fun startedMqttSession(sessionId: String?){
+    fun startedMqttSession(sessionId: String?) {
 
     }
 
-    fun sessionEndedMqtt(sessionId: String?){
+    fun sessionEndedMqtt(sessionId: String?) {
 
     }
 
-    fun toggleHotWordEnabledMqtt(isEnabled: Boolean ){
+    fun toggleHotWordEnabledMqtt(isEnabled: Boolean) {
 
     }
 
-    fun startListeningMqtt(sessionId: String?, isSendAudioCaptured: Boolean){
+    fun startListeningMqtt(sessionId: String?, isSendAudioCaptured: Boolean) {
 
     }
 
-    fun stopListeningMqtt(sessionId: String?){
+    fun stopListeningMqtt(sessionId: String?) {
 
     }
 
-    fun intentTranscribedMqtt(sessionId: String?, text: String?){
+    fun intentTranscribedMqtt(sessionId: String?, text: String?) {
 
     }
 
-    fun intentTranscribedErrorMqtt(sessionId: String?){
+    fun intentTranscribedErrorMqtt(sessionId: String?) {
 
     }
 
-    fun intentNotRecognizedMqtt(sessionId: String?){
+    fun intentNotRecognizedMqtt(sessionId: String?) {
 
     }
 
-    fun intentRecognizedMqtt(sessionId: String?, intentName: String?, intent: String){
+    fun intentRecognizedMqtt(sessionId: String?, intentName: String?, intent: String) {
 
     }
 
-    fun toggleIntentHandlingEnabledMqtt(isEnabled: Boolean ){
+    fun toggleIntentHandlingEnabledMqtt(isEnabled: Boolean) {
 
     }
 
-    fun playAudioMqtt(data: List<Byte>){
+    fun playAudioMqtt(data: List<Byte>) {
 
     }
 
@@ -106,7 +106,7 @@ class StateMachineService(
         TODO("Not yet implemented")
     }
 
-    fun playRecordingGetWebServer() : List<Byte> {
+    fun playRecordingGetWebServer(): List<Byte> {
         TODO()
     }
 
