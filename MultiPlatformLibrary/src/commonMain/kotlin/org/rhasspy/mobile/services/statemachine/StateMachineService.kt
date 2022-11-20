@@ -5,9 +5,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.rhasspy.mobile.settings.AppSettings
 
-class StateMachineService(
-    isTest: Boolean = false
-) : KoinComponent {
+class StateMachineService() : KoinComponent {
 
     val logger = Logger.withTag("StateMachineService")
     private val params by inject<StateMachineServiceParams>()

@@ -1,20 +1,9 @@
 package org.rhasspy.mobile.services
 
-import co.touchlab.kermit.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
-import org.koin.core.qualifier.named
-import org.rhasspy.mobile.ServiceTestName
 
-abstract class IService<T>(
-    params: T,
-    private val isTest: Boolean,
-    private val serviceName: ServiceTestName
-) : KoinComponent {
-
+abstract class IService : KoinComponent {
+/*
     internal var params: T = params
         private set
 
@@ -38,7 +27,6 @@ abstract class IService<T>(
             get<IService<T>>(named(serviceName)).stop()
         } else {
             //load settings from configuration
-            params = loadParamsFromConfiguration()
         }
 
         //run
@@ -60,7 +48,5 @@ abstract class IService<T>(
             get<IService<T>>(named(serviceName)).start()
         }
     }
-
-    abstract fun loadParamsFromConfiguration(): T
-
+*/
 }

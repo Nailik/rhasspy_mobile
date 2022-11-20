@@ -13,39 +13,20 @@ import io.ktor.server.routing.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
-import org.koin.core.qualifier.named
-import org.rhasspy.mobile.ServiceTestName
 import org.rhasspy.mobile.nativeutils.installCallLogging
 import org.rhasspy.mobile.nativeutils.installCompression
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.statemachine.StateMachineService
-import org.rhasspy.mobile.settings.ConfigurationSettings
 
-class WebServerService(
-    params: WebServerServiceParams = WebServerService.loadParamsFromConfiguration(),
-    isTest: Boolean = false
-) : IService<WebServerServiceParams>(
-    params = params,
-    isTest = isTest,
-    serviceName = ServiceTestName.RhasspyActions
-) {
+class WebServerService : IService() {
 
     private val logger = Logger.withTag("WebServerService")
     private lateinit var server: CIOApplicationEngine
 
-    private val stateMachineService by inject<StateMachineService>(named(if (isTest) ServiceTestName.StateMachineTest else ServiceTestName.StateMachine))
+    private val params by inject<WebServerServiceParams>()
+    private val stateMachineService by inject<StateMachineService>()
 
-    companion object {
-        private fun loadParamsFromConfiguration(): WebServerServiceParams {
-            return WebServerServiceParams(
-                isHttpServerEnabled = ConfigurationSettings.isHttpServerEnabled.value,
-                httpServerPort = ConfigurationSettings.httpServerPort.value,
-                isHttpServerSSLEnabled = ConfigurationSettings.isHttpServerSSLEnabled.value
-            )
-        }
-    }
-
-    override fun onStart(scope: CoroutineScope) {
+    fun onStart(scope: CoroutineScope) {
         if (params.isHttpServerEnabled) {
             logger.v { "starting server" }
             server = getServer(params.httpServerPort)
@@ -63,13 +44,11 @@ class WebServerService(
         }
     }
 
-    override fun onStop() {
+    fun onStop() {
         if (::server.isInitialized) {
             server.stop()
         }
     }
-
-    override fun loadParamsFromConfiguration() = WebServerService.loadParamsFromConfiguration()
 
     private fun getServer(port: Int): CIOApplicationEngine {
         return embeddedServer(factory = CIO, port = port, watchPaths = emptyList()) {

@@ -18,57 +18,19 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.koin.core.component.inject
-import org.koin.core.qualifier.named
-import org.rhasspy.mobile.ServiceTestName
-import org.rhasspy.mobile.data.IntentHandlingOptions
 import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.statemachine.StateMachineService
-import org.rhasspy.mobile.settings.ConfigurationSettings
 
-class HttpClientService(
-    params: HttpClientParams = HttpClientService.loadParamsFromConfiguration(),
-    isTest: Boolean = false
-) : IService<HttpClientParams>(
-    params = params,
-    isTest = isTest,
-    serviceName = ServiceTestName.HttpClient
-) {
+class HttpClientService : IService() {
 
     private val logger = Logger.withTag("HttpClientService")
     private var httpClient: HttpClient? = null
-    private val stateMachineService by inject<StateMachineService>(named(if (isTest) ServiceTestName.StateMachineTest else ServiceTestName.StateMachine))
 
-    companion object {
-        fun loadParamsFromConfiguration(): HttpClientParams {
-            return HttpClientParams(
-                isHttpSSLVerificationDisabled = ConfigurationSettings.isHttpServerSSLEnabled.value,
-                speechToTextHttpEndpoint = if (ConfigurationSettings.isUseCustomSpeechToTextHttpEndpoint.value) {
-                    ConfigurationSettings.speechToTextHttpEndpoint.value
-                } else {
-                    "${ConfigurationSettings.httpServerEndpoint.value}${HttpClientPath.SpeechToText}"
-                },
-                intentRecognitionHttpEndpoint = if (ConfigurationSettings.isUseCustomIntentRecognitionHttpEndpoint.value) {
-                    ConfigurationSettings.intentRecognitionHttpEndpoint.value
-                } else {
-                    "${ConfigurationSettings.httpServerEndpoint.value}${HttpClientPath.TextToIntent}"
-                },
-                isHandleIntentDirectly = ConfigurationSettings.intentHandlingOption.value == IntentHandlingOptions.WithRecognition,
-                textToSpeechHttpEndpoint = if (ConfigurationSettings.isUseCustomSpeechToTextHttpEndpoint.value) {
-                    ConfigurationSettings.speechToTextHttpEndpoint.value
-                } else {
-                    "${ConfigurationSettings.httpServerEndpoint.value}${HttpClientPath.TextToSpeech}"
-                },
-                audioPlayingHttpEndpoint = ConfigurationSettings.audioPlayingHttpEndpoint.value,
-                intentHandlingHttpEndpoint = ConfigurationSettings.intentHandlingHttpEndpoint.value,
-                intentHandlingHassEndpoint = ConfigurationSettings.intentHandlingHassEndpoint.value,
-                intentHandlingHassAccessToken = ConfigurationSettings.intentHandlingHassAccessToken.value
-            )
-        }
+    private val params by inject<HttpClientParams>()
+    private val stateMachineService by inject<StateMachineService>()
 
-    }
-
-    override fun onStart(scope: CoroutineScope) {
+    fun onStart(scope: CoroutineScope) {
         //nothing to do
         scope.launch {
             httpClient = HttpClient(CIO) {
@@ -84,12 +46,10 @@ class HttpClientService(
         }
     }
 
-    override fun onStop() {
+    fun onStop() {
         //nothing to do
         httpClient?.cancel()
     }
-
-    override fun loadParamsFromConfiguration() = HttpClientService.loadParamsFromConfiguration()
 
     /**
      * /api/speech-to-text

@@ -10,25 +10,15 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.koin.core.component.inject
-import org.koin.core.qualifier.named
-import org.rhasspy.mobile.ServiceTestName
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.mqtt.*
 import org.rhasspy.mobile.nativeutils.MqttClient
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.statemachine.StateMachineService
-import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.math.min
 
-class MqttService(
-    params: MqttServiceParams = MqttService.loadParamsFromConfiguration(),
-    isTest: Boolean = false
-) : IService<MqttServiceParams>(
-    params = params,
-    isTest = isTest,
-    serviceName = ServiceTestName.Mqtt
-) {
+class MqttService : IService() {
     private val logger = Logger.withTag("MqttService")
 
     private var client: MqttClient? = null
@@ -42,28 +32,8 @@ class MqttService(
     private val _connectionError = MutableStateFlow<MqttError?>(null)
     val connectionError = _connectionError.readOnly
 
-    private val stateMachineService by inject<StateMachineService>(named(if (isTest) ServiceTestName.StateMachineTest else ServiceTestName.StateMachine))
-
-    companion object {
-        private fun loadParamsFromConfiguration(): MqttServiceParams {
-            return MqttServiceParams(
-                siteId = ConfigurationSettings.siteId.value,
-                isMqttEnabled = ConfigurationSettings.isMqttEnabled.value,
-                mqttHost = ConfigurationSettings.mqttHost.value,
-                mqttPort = ConfigurationSettings.mqttPort.value,
-                retryInterval = ConfigurationSettings.mqttRetryInterval.value,
-                mqttServiceConnectionOptions = MqttServiceConnectionOptions(
-                    cleanSession = true,
-                    cleanStart = false,
-                    ssl = ConfigurationSettings.isMqttSSLEnabled.value,
-                    connUsername = ConfigurationSettings.mqttUserName.value,
-                    connPassword = ConfigurationSettings.mqttPassword.value,
-                    connectionTimeout = ConfigurationSettings.mqttConnectionTimeout.value,
-                    keepAliveInterval = ConfigurationSettings.mqttKeepAliveInterval.value
-                )
-            )
-        }
-    }
+    private val params by inject<MqttServiceParams>()
+    private val stateMachineService by inject<StateMachineService>()
 
     /**
      * start client externally, only starts if mqtt is enabled
@@ -75,7 +45,7 @@ class MqttService(
      *
      * sets connected value
      */
-    override fun onStart(scope: CoroutineScope) {
+    fun onStart(scope: CoroutineScope) {
         if (params.isMqttEnabled) {
             client = MqttClient(
                 brokerUrl = "tcp://${params.mqttHost}:${params.mqttPort}",
@@ -107,7 +77,7 @@ class MqttService(
      *
      * disconnects, resets connected value and deletes client object
      */
-    override fun onStop() {
+    fun onStop() {
         client?.disconnect()
         _isConnected.value = false
         retryJob?.cancel()
@@ -155,9 +125,6 @@ class MqttService(
             }
         }
     }
-
-    override fun loadParamsFromConfiguration() = MqttService.loadParamsFromConfiguration()
-
 
     private suspend fun onMessageReceived(topic: String, message: MqttMessage) {
         //subSequence so we don't print super long wave data
