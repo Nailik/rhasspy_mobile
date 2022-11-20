@@ -6,6 +6,8 @@ package org.rhasspy.mobile.nativeutils
 @Suppress("NO_ACTUAL_FOR_EXPECT")
 expect object NativeIndication {
 
+    fun checkPermission(): Boolean
+
     /**
      * wake up screen as long as possible
      */

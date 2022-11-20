@@ -11,10 +11,13 @@ import org.rhasspy.mobile.settings.AppSettings
 class StateMachineService: IService() {
 
     val logger = Logger.withTag("StateMachineService")
+
     private val params by inject<StateMachineServiceParams>()
 
     init {
         logger.e { params.test }
+        //start all services
+
     }
 
     override fun onClose() {

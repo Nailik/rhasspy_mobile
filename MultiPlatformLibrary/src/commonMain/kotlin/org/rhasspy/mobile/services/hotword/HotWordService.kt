@@ -5,6 +5,7 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.nativeutils.NativeLocalPorcupineWakeWordService
 import org.rhasspy.mobile.services.IService
+import org.rhasspy.mobile.services.ServiceWatchdog
 import org.rhasspy.mobile.services.recording.RecordingService
 import org.rhasspy.mobile.services.statemachine.StateMachineService
 
@@ -20,6 +21,7 @@ class HotWordService : IService() {
     private var nativeLocalPorcupineWakeWordService: NativeLocalPorcupineWakeWordService? = null
 
     private val stateMachineService by inject<StateMachineService>()
+    private val serviceWatchdog by inject<ServiceWatchdog>()
     private val recordingService by inject<RecordingService>()
 
     /**
@@ -39,9 +41,7 @@ class HotWordService : IService() {
                 )
                 val error = nativeLocalPorcupineWakeWordService?.start()
                 error?.also {
-                    stateMachineService.hotWordServiceError(error)
-                } ?: run {
-                    stateMachineService.hotWordServiceStartedSuccessfully()
+                    serviceWatchdog.hotWordServiceError(error)
                 }
             }
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored

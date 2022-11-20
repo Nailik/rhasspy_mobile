@@ -59,7 +59,7 @@ object IndicationOverlay {
 
                     when (IndicationService.readonlyState.collectAsState().value) {
                         IndicationState.Idle -> {}
-                        IndicationState.Wakeup -> WakeupIndication()
+                        IndicationState.WakeUp -> WakeupIndication()
                         IndicationState.Recording -> RecordingIndication()
                         IndicationState.Thinking -> ThinkingIndication()
                         IndicationState.Speaking -> SpeakingIndication()

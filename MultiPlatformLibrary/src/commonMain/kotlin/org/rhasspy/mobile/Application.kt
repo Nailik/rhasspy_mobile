@@ -12,6 +12,7 @@ import org.koin.dsl.module
 import org.koin.dsl.onClose
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.mqtt.OverlayServices
+import org.rhasspy.mobile.services.ServiceWatchdog
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantServiceParams
 import org.rhasspy.mobile.services.hotword.HotWordService
@@ -52,6 +53,7 @@ val serviceModule = module {
     closeableSingle { HomeAssistantService() }
     closeableSingle { RecordingService() }
     closeableSingle { HotWordService() }
+    closeableSingle { ServiceWatchdog() }
 
     single { params -> params.getOrNull<StateMachineServiceParams>() ?: StateMachineServiceParams() }
     single { params -> params.getOrNull<RhasspyActionsServiceParams>() ?: RhasspyActionsServiceParams() }

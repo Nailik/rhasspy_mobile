@@ -18,6 +18,7 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.nativeutils.installCallLogging
 import org.rhasspy.mobile.nativeutils.installCompression
 import org.rhasspy.mobile.services.IService
+import org.rhasspy.mobile.services.ServiceWatchdog
 import org.rhasspy.mobile.services.statemachine.StateMachineService
 
 class WebServerService : IService() {
@@ -28,6 +29,7 @@ class WebServerService : IService() {
 
     private val params by inject<WebServerServiceParams>()
     private val stateMachineService by inject<StateMachineService>()
+    private val serviceWatchdog by inject<ServiceWatchdog>()
 
     init {
         scope = CoroutineScope(Dispatchers.Default)
@@ -40,6 +42,7 @@ class WebServerService : IService() {
                 try {
                     server.start()
                 } catch (e: Exception) {
+                    serviceWatchdog.webServerServiceStartError(e)
                     logger.e(e) { "While Starting server" }
                 }
             }

@@ -16,6 +16,7 @@ import org.rhasspy.mobile.nativeutils.MqttClient
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceResponse
+import org.rhasspy.mobile.services.ServiceWatchdog
 import org.rhasspy.mobile.services.statemachine.StateMachineService
 import kotlin.math.min
 
@@ -32,6 +33,7 @@ class MqttService : IService() {
 
     private val params by inject<MqttServiceParams>()
     private val stateMachineService by inject<StateMachineService>()
+    private val serviceWatchdog by inject<ServiceWatchdog>()
 
     /**
      * start client externally, only starts if mqtt is enabled
@@ -94,9 +96,7 @@ class MqttService : IService() {
             //connect to server
             client.connect(params.mqttServiceConnectionOptions)?.also {
                 logger.e { "connect \n${it.statusCode.name} ${it.msg}" }
-                stateMachineService.mqttServiceError(it)
-            } ?: run {
-                stateMachineService.mqttServiceStartedSuccessfully()
+                serviceWatchdog.mqttServiceStartError(it)
             }
         } else {
             logger.v { "connectClient already connected" }

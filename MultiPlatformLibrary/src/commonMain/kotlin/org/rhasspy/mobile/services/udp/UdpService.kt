@@ -9,6 +9,7 @@ import kotlinx.coroutines.channels.SendChannel
 import org.koin.core.component.inject
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceResponse
+import org.rhasspy.mobile.services.ServiceWatchdog
 import org.rhasspy.mobile.services.statemachine.StateMachineService
 
 class UdpService : IService() {
@@ -19,6 +20,7 @@ class UdpService : IService() {
 
     private val params by inject<UdpServiceParams>()
     private val stateMachineService by inject<StateMachineService>()
+    private val serviceWatchdog by inject<ServiceWatchdog>()
 
     /**
      * makes sure the address is up to date
@@ -37,7 +39,7 @@ class UdpService : IService() {
                     params.udpOutputPort
                 )
             } catch (e: Exception) {
-                stateMachineService.udpServiceError(e)
+                serviceWatchdog.udpServiceError(e)
                 logger.e(e) { "unable to initialize address with host: ${params.udpOutputHost} and port ${params.udpOutputPort}" }
             }
         } else {

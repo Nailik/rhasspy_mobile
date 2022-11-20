@@ -22,6 +22,7 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceResponse
+import org.rhasspy.mobile.services.ServiceWatchdog
 
 /**
  * contains client to send data to http endpoints
@@ -35,6 +36,7 @@ class HttpClientService : IService() {
     private var scope = CoroutineScope(Dispatchers.Default)
 
     private val params by inject<HttpClientParams>()
+    private val serviceWatchdog by inject<ServiceWatchdog>()
 
     /**
      * launches scope and starts client
@@ -43,15 +45,19 @@ class HttpClientService : IService() {
     init {
         scope = CoroutineScope(Dispatchers.Default)
         scope.launch {
-            httpClient = HttpClient(CIO) {
-                expectSuccess = true
-                install(WebSockets)
-                install(HttpTimeout) {
-                    requestTimeoutMillis = 10000
+            try {
+                httpClient = HttpClient(CIO) {
+                    expectSuccess = true
+                    install(WebSockets)
+                    install(HttpTimeout) {
+                        requestTimeoutMillis = 10000
+                    }
+                    engine {
+                        configureEngine(params.isHttpSSLVerificationDisabled)
+                    }
                 }
-                engine {
-                    configureEngine(params.isHttpSSLVerificationDisabled)
-                }
+            } catch (e: Exception) {
+                serviceWatchdog.httpClientServiceError(e)
             }
         }
     }
