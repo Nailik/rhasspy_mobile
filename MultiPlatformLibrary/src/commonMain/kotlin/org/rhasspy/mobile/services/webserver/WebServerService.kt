@@ -25,6 +25,9 @@ class WebServerService : IService() {
 
     private val params by inject<WebServerServiceParams>()
     private val stateMachineService by inject<StateMachineService>()
+    override fun onClose() {
+        TODO("Not yet implemented")
+    }
 
     fun onStart(scope: CoroutineScope) {
         if (params.isHttpServerEnabled) {

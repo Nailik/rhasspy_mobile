@@ -10,10 +10,11 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.logic.State
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.nativeutils.NativeIndication
+import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.sounds.SoundOptions
 
-object IndicationService {
+object IndicationService : IService() {
     private val logger = Logger.withTag("IndicationService")
 
     private val currentState = MutableStateFlow(IndicationState.Idle)
@@ -37,6 +38,10 @@ object IndicationService {
                 evaluateIndication(StateMachine.currentState.value, it)
             }
         }
+    }
+
+    override fun onClose() {
+        TODO("Not yet implemented")
     }
 
     private fun evaluateIndication(state: State, isPlayingAudio: Boolean) {

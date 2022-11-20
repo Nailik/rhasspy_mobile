@@ -43,6 +43,9 @@ class UdpService : IService() {
             logger.v { "not enabled" }
         }
     }
+    override fun onClose() {
+        TODO("Not yet implemented")
+    }
 
     fun stop() {
         sendChannel?.close()

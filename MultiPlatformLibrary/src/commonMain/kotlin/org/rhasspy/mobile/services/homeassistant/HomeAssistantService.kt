@@ -10,7 +10,10 @@ import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 
 /**
- * used to send intents or events to home assistant
+ * send data to home assistant
+ *
+ * events
+ * intent
  */
 class HomeAssistantService : IService() {
 
@@ -18,6 +21,10 @@ class HomeAssistantService : IService() {
 
     private val params by inject<HomeAssistantServiceParams>()
     private val httpClientService by inject<HttpClientService>()
+
+    override fun onClose() {
+        TODO("Not yet implemented")
+    }
 
     /**
      * simplified conversion from intent to hass event or hass intent

@@ -18,6 +18,9 @@ open class RhasspyActionsService : IService() {
     private val httpClientService by inject<HttpClientService>()
     private val mqttClientService by inject<MqttService>()
     private val homeAssistantService by inject<HomeAssistantService>()
+    override fun onClose() {
+        TODO("Not yet implemented")
+    }
 
     /**
      * hermes/nlu/query

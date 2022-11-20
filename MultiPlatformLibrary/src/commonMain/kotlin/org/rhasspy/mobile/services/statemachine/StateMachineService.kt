@@ -3,15 +3,20 @@ package org.rhasspy.mobile.services.statemachine
 import co.touchlab.kermit.Logger
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.settings.AppSettings
 
-class StateMachineService() : KoinComponent {
+class StateMachineService: IService() {
 
     val logger = Logger.withTag("StateMachineService")
     private val params by inject<StateMachineServiceParams>()
 
     init {
         logger.e { params.test }
+    }
+
+    override fun onClose() {
+        TODO("Not yet implemented")
     }
 
     fun startMqttSession() {

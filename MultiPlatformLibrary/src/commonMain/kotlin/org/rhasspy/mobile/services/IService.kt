@@ -1,52 +1,14 @@
 package org.rhasspy.mobile.services
 
+import io.ktor.utils.io.core.*
 import org.koin.core.component.KoinComponent
 
-abstract class IService : KoinComponent {
-/*
-    internal var params: T = params
-        private set
+abstract class IService : KoinComponent, Closeable {
 
-    private val logger = Logger.withTag("$serviceName${if (isTest) "Test" else ""}")
-
-    abstract fun onStart(scope: CoroutineScope)
-
-    abstract fun onStop()
-
-
-    private lateinit var scope: CoroutineScope
-
-    fun start() {
-        logger.v { "start" }
-
-        //create scope
-        scope = CoroutineScope(Dispatchers.Default)
-
-        if (isTest) {
-            //stop normal service
-            get<IService<T>>(named(serviceName)).stop()
-        } else {
-            //load settings from configuration
-        }
-
-        //run
-        onStart(scope)
+    override fun close() {
+        onClose()
     }
 
-    fun stop() {
-        logger.v { "stop" }
+    abstract fun onClose()
 
-        //stop
-        onStop()
-
-        if (::scope.isInitialized) {
-            scope.cancel()
-        }
-
-        if (isTest) {
-            //start normal service
-            get<IService<T>>(named(serviceName)).start()
-        }
-    }
-*/
 }

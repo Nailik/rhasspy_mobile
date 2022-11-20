@@ -30,6 +30,10 @@ class HttpClientService : IService() {
     private val params by inject<HttpClientParams>()
     private val stateMachineService by inject<StateMachineService>()
 
+    override fun onClose() {
+        TODO("Not yet implemented")
+    }
+
     fun onStart(scope: CoroutineScope) {
         //nothing to do
         scope.launch {

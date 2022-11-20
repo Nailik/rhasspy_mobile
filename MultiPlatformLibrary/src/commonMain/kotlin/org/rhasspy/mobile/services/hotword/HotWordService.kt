@@ -50,6 +50,10 @@ class HotWordService : IService() {
         }
     }
 
+    override fun onClose() {
+        TODO("Not yet implemented")
+    }
+
     private suspend fun evaluateHotWordAction(state: State, enabled: Boolean) {
         logger.v { "evaluateHotWordAction state $state enabled $enabled running $isRunning" }
         when (state) {

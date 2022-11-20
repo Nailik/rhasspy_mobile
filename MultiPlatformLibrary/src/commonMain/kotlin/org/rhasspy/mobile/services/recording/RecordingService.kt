@@ -71,6 +71,10 @@ class RecordingService : IService() {
         }
     }
 
+    override fun onClose() {
+        TODO("Not yet implemented")
+    }
+
 
     /**
      * should be called when wake word is detected or user wants to speak

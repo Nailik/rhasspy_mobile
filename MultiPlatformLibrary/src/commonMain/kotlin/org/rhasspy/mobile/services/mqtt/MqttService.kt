@@ -34,6 +34,9 @@ class MqttService : IService() {
 
     private val params by inject<MqttServiceParams>()
     private val stateMachineService by inject<StateMachineService>()
+    override fun onClose() {
+        TODO("Not yet implemented")
+    }
 
     /**
      * start client externally, only starts if mqtt is enabled
