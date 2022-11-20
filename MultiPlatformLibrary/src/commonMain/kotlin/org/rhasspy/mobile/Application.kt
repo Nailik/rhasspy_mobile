@@ -44,11 +44,7 @@ val serviceModule = module {
     single { HomeAssistantInterface }
     single { StateMachineService() }
 
-    single { params ->
-        params.getOrNull<StateMachineServiceParams>() ?: run {
-            StateMachineServiceParams.loadFromConfig()
-        }
-    }
+    single { params -> params.getOrNull<StateMachineServiceParams>() ?: StateMachineServiceParams() }
 
     single(named(ServiceTestName.StateMachine)) { StateMachineService() }
     single(named(ServiceTestName.RhasspyActions)) { RhasspyActionsService() }

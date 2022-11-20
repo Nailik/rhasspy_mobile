@@ -106,7 +106,8 @@ class WebServerConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
         unloadKoinModules(serviceModule)
         loadKoinModules(serviceModule)
 
-        val params = get<StateMachineServiceParams> { parametersOf(StateMachineServiceParams("foo")) }
+        val params = get<StateMachineServiceParams> { parametersOf(StateMachineServiceParams()
+            .copy(test = "foo")) }
 
         val stateMachineService = get<StateMachineService>()
         /*   webServerServiceTest = get {
