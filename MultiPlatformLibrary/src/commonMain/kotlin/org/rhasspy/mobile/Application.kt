@@ -18,6 +18,8 @@ import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.services.statemachine.StateMachineService
 import org.rhasspy.mobile.services.statemachine.StateMachineServiceParams
+import org.rhasspy.mobile.services.udp.UdpService
+import org.rhasspy.mobile.services.udp.UdpServiceParams
 import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.services.webserver.WebServerServiceParams
 import org.rhasspy.mobile.settings.AppSettings
@@ -32,12 +34,14 @@ val serviceModule = module {
     single { MqttService() }
     single { HttpClientService() }
     single { WebServerService() }
+    single { UdpService() }
 
     single { params -> params.getOrNull<StateMachineServiceParams>() ?: StateMachineServiceParams() }
     single { params -> params.getOrNull<RhasspyActionsServiceParams>() ?: RhasspyActionsServiceParams() }
     single { params -> params.getOrNull<MqttServiceParams>() ?: MqttServiceParams() }
     single { params -> params.getOrNull<HttpClientParams>() ?: HttpClientParams() }
     single { params -> params.getOrNull<WebServerServiceParams>() ?: WebServerServiceParams() }
+    single { params -> params.getOrNull<UdpServiceParams>() ?: UdpServiceParams() }
 }
 
 abstract class Application : NativeApplication(), KoinComponent {

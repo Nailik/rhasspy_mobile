@@ -81,14 +81,14 @@ class AudioRecordingConfigurationContentTest {
         composeTestRule.onNodeWithTag(TestTag.AudioRecordingUdpPort).performScrollTo().performClick()
         composeTestRule.onNodeWithTag(TestTag.AudioRecordingUdpPort).performTextReplacement(textInputTestPort)
         composeTestRule.awaitIdle()
-        assertEquals(textInputTestPort, viewModel.udpOutputPort.value)
+        assertEquals(textInputTestPort, viewModel.udpOutputPortText.value)
         //user click save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         //output option and endpoint host and port is saved
         val newViewModel = AudioRecordingConfigurationViewModel()
         assertEquals(true, newViewModel.isUdpOutputEnabled.value)
         assertEquals(textInputTestHost, newViewModel.udpOutputHost.value)
-        assertEquals(textInputTestPort, newViewModel.udpOutputPort.value)
+        assertEquals(textInputTestPort, newViewModel.udpOutputPortText.value)
     }
 
 }

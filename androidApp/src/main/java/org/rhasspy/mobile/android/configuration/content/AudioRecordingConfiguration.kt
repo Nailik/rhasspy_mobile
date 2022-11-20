@@ -82,7 +82,7 @@ private fun UdpSettings(viewModel: AudioRecordingConfigurationViewModel) {
             modifier = Modifier.testTag(TestTag.AudioRecordingUdpPort),
             label = MR.strings.port,
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            value = viewModel.udpOutputPort.collectAsState().value,
+            value = viewModel.udpOutputPortText.collectAsState().value,
             onValueChange = viewModel::changeUdpOutputPort
         )
 

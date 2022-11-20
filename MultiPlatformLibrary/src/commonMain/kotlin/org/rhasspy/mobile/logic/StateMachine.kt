@@ -13,7 +13,7 @@ import org.rhasspy.mobile.data.SpeechToTextOptions
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.nativeutils.FileWriter
-import org.rhasspy.mobile.services.UdpService
+import org.rhasspy.mobile.services.udp.UdpService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.native.concurrent.ThreadLocal
@@ -226,7 +226,7 @@ object StateMachine {
                     //no current session running
                     if (ConfigurationSettings.isUdpOutputEnabled.value) {
                         //send to udp if udp streaming only outside asr listening
-                        UdpService.streamAudio(dataWithHeader)
+                       //   UdpService.streamAudio(dataWithHeader)
                     }
                     if (ConfigurationSettings.wakeWordOption.value == WakeWordOption.MQTT) {
                         //send to mqtt for wake word detection

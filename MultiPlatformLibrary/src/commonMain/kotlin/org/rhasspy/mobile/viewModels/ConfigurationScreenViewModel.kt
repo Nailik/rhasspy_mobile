@@ -3,8 +3,6 @@ package org.rhasspy.mobile.viewModels
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.koin.core.qualifier.named
-import org.rhasspy.mobile.ServiceTestName
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -13,7 +11,7 @@ class ConfigurationScreenViewModel : ViewModel(), KoinComponent {
     val siteId = ConfigurationSettings.siteId.data
     val isHttpServerEnabled = ConfigurationSettings.isHttpServerEnabled.data
     val isHttpSSLVerificationEnabled = ConfigurationSettings.isHttpSSLVerificationDisabled.data
-    val isMQTTConnected = get<MqttService>(named(ServiceTestName.Mqtt)).isConnected
+    val isMQTTConnected = get<MqttService>().isConnected
     val isUdpOutputEnabled = ConfigurationSettings.isUdpOutputEnabled.data
     val wakeWordOption = ConfigurationSettings.wakeWordOption.data
     val speechToTextOption = ConfigurationSettings.speechToTextOption.data

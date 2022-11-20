@@ -5,6 +5,9 @@ import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.settings.serializer.PorcupineCustomKeywordSerializer
 import org.rhasspy.mobile.settings.serializer.PorcupineDefaultKeywordSerializer
 
+/**
+ * used by di needs to be called after change to have an effect
+ */
 internal object ConfigurationSettings {
 
     val siteId = Setting(SettingsEnum.SiteId, "mobile")
@@ -28,7 +31,7 @@ internal object ConfigurationSettings {
 
     val isUdpOutputEnabled = Setting(SettingsEnum.UDPOutput, false)
     val udpOutputHost = Setting(SettingsEnum.UDPOutputHost, "")
-    val udpOutputPort = Setting(SettingsEnum.UDPOutputPort, "")
+    val udpOutputPort = Setting(SettingsEnum.UDPOutputPort, 12101)
 
     val wakeWordOption = Setting(SettingsEnum.WakeWordOption, WakeWordOption.Disabled)
     val wakeWordPorcupineAccessToken = Setting(SettingsEnum.WakeWordPorcupineAccessToken, "")

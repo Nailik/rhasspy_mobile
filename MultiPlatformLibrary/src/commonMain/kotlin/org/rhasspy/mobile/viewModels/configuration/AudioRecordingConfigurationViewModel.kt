@@ -15,11 +15,13 @@ class AudioRecordingConfigurationViewModel : ViewModel(), IConfigurationViewMode
     private val _isUdpOutputEnabled = MutableStateFlow(ConfigurationSettings.isUdpOutputEnabled.value)
     private val _udpOutputHost = MutableStateFlow(ConfigurationSettings.udpOutputHost.value)
     private val _udpOutputPort = MutableStateFlow(ConfigurationSettings.udpOutputPort.value)
+    private val _udpOutputPortText = MutableStateFlow(ConfigurationSettings.udpOutputPort.value.toString())
 
     //unsaved ui data
     val isUdpOutputEnabled = _isUdpOutputEnabled.readOnly
     val udpOutputHost = _udpOutputHost.readOnly
     val udpOutputPort = _udpOutputPort.readOnly
+    val udpOutputPortText = _udpOutputPortText.readOnly
 
     override val isTestingEnabled = _isUdpOutputEnabled.readOnly
     override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
@@ -46,7 +48,9 @@ class AudioRecordingConfigurationViewModel : ViewModel(), IConfigurationViewMode
 
     //edit udp port
     fun changeUdpOutputPort(port: String) {
-        _udpOutputPort.value = port
+        val text = port.replace("""[-,. ]""".toRegex(), "")
+        _udpOutputPortText.value = text
+        _udpOutputPort.value = text.toIntOrNull() ?: 0
     }
 
     /**

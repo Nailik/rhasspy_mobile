@@ -8,6 +8,9 @@ import org.rhasspy.mobile.logger.LogLevel
 import org.rhasspy.mobile.settings.serializer.StringSetSerializer
 import org.rhasspy.mobile.settings.sounds.SoundOptions
 
+/**
+ * directly consumed
+ */
 internal object AppSettings {
 
     val languageOption = Setting(SettingsEnum.LanguageOption, LanguageOptions.English)
