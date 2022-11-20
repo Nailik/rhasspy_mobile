@@ -8,12 +8,11 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.HomeAssistantIntentHandlingOptions
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.httpclient.HttpClientService
-import org.rhasspy.mobile.settings.ConfigurationSettings
 
 /**
  * used to send intents or events to home assistant
  */
-class HomeAssistantService : IService()  {
+class HomeAssistantService : IService() {
 
     val logger = Logger.withTag("HomeAssistantInterface")
 

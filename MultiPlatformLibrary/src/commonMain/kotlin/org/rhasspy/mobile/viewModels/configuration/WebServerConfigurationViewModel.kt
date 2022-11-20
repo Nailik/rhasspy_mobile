@@ -11,7 +11,6 @@ import org.koin.core.context.unloadKoinModules
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
-import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.serviceModule
 import org.rhasspy.mobile.services.state.ServiceState
@@ -106,8 +105,12 @@ class WebServerConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
         unloadKoinModules(serviceModule)
         loadKoinModules(serviceModule)
 
-        val params = get<StateMachineServiceParams> { parametersOf(StateMachineServiceParams()
-            .copy(test = "foo")) }
+        val params = get<StateMachineServiceParams> {
+            parametersOf(
+                StateMachineServiceParams()
+                    .copy(test = "foo")
+            )
+        }
 
         val stateMachineService = get<StateMachineService>()
         /*   webServerServiceTest = get {

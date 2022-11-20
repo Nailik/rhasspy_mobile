@@ -10,7 +10,6 @@ import kotlinx.coroutines.channels.SendChannel
 import org.koin.core.component.inject
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.settings.AppSettings
-import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class UdpService : IService() {
     private val logger = Logger.withTag("UdpService")

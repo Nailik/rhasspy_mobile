@@ -5,11 +5,11 @@ import dev.icerock.moko.resources.desc.StringDesc
 import org.koin.core.component.KoinComponent
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
-import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.mqtt.OverlayServices
 import org.rhasspy.mobile.services.LocalAudioService
 import org.rhasspy.mobile.services.ServiceInterface
+import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantServiceParams
 import org.rhasspy.mobile.services.httpclient.HttpClientParams
 import org.rhasspy.mobile.services.httpclient.HttpClientService
