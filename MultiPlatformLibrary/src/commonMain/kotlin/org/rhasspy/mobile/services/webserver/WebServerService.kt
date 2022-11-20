@@ -17,7 +17,7 @@ import org.koin.core.qualifier.named
 import org.rhasspy.mobile.ServiceTestName
 import org.rhasspy.mobile.nativeutils.installCallLogging
 import org.rhasspy.mobile.nativeutils.installCompression
-import org.rhasspy.mobile.services.IService2
+import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.statemachine.StateMachineService
 import org.rhasspy.mobile.services.webserver.data.WebServerCallType
 import org.rhasspy.mobile.services.webserver.data.WebServerPath
@@ -26,7 +26,7 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
 class WebServerService(
     params: WebServerServiceParams = WebServerService.loadParamsFromConfiguration(),
     isTest: Boolean = false
-) : IService2<WebServerServiceParams>(
+) : IService<WebServerServiceParams>(
     params = params,
     isTest = isTest,
     serviceName = ServiceTestName.RhasspyActions

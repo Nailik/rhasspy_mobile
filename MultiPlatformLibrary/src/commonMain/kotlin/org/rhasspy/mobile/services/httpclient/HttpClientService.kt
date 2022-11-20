@@ -23,14 +23,14 @@ import org.rhasspy.mobile.ServiceTestName
 import org.rhasspy.mobile.data.IntentHandlingOptions
 import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.services.httpclient.data.HttpClientPath
-import org.rhasspy.mobile.services.IService2
+import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.statemachine.StateMachineService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class HttpClientService(
     params: HttpClientParams = HttpClientService.loadParamsFromConfiguration(),
     isTest: Boolean = false
-) : IService2<HttpClientParams>(
+) : IService<HttpClientParams>(
     params = params,
     isTest = isTest,
     serviceName = ServiceTestName.HttpClient

@@ -8,7 +8,7 @@ import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.interfaces.HomeAssistantInterface
 import org.rhasspy.mobile.services.LocalAudioService
 import org.rhasspy.mobile.services.httpclient.HttpClientService
-import org.rhasspy.mobile.services.IService2
+import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -18,7 +18,7 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
 open class RhasspyActionsService(
     params: RhasspyActionsServiceParams = RhasspyActionsService.loadParamsFromConfiguration(),
     isTest: Boolean = false
-) : IService2<RhasspyActionsServiceParams>(
+) : IService<RhasspyActionsServiceParams>(
     params = params,
     isTest = isTest,
     serviceName = ServiceTestName.RhasspyActions

@@ -16,7 +16,7 @@ import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.mqtt.*
 import org.rhasspy.mobile.nativeutils.MqttClient
 import org.rhasspy.mobile.readOnly
-import org.rhasspy.mobile.services.IService2
+import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.statemachine.StateMachineService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.math.min
@@ -24,7 +24,7 @@ import kotlin.math.min
 class MqttService(
     params: MqttServiceParams = MqttService.loadParamsFromConfiguration(),
     isTest: Boolean = false
-) : IService2<MqttServiceParams>(
+) : IService<MqttServiceParams>(
     params = params,
     isTest = isTest,
     serviceName = ServiceTestName.Mqtt

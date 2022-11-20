@@ -9,7 +9,7 @@ import org.koin.core.component.get
 import org.koin.core.qualifier.named
 import org.rhasspy.mobile.ServiceTestName
 
-abstract class IService2<T>(
+abstract class IService<T>(
     params: T,
     private val isTest: Boolean,
     private val serviceName: ServiceTestName
@@ -35,7 +35,7 @@ abstract class IService2<T>(
 
         if (isTest) {
             //stop normal service
-            get<IService2<T>>(named(serviceName)).stop()
+            get<IService<T>>(named(serviceName)).stop()
         } else {
             //load settings from configuration
             params = loadParamsFromConfiguration()
@@ -57,7 +57,7 @@ abstract class IService2<T>(
 
         if (isTest) {
             //start normal service
-            get<IService2<T>>(named(serviceName)).start()
+            get<IService<T>>(named(serviceName)).start()
         }
     }
 
