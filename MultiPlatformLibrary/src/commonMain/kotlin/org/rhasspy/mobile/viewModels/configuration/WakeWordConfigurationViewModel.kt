@@ -36,7 +36,7 @@ class WakeWordConfigurationViewModel : ViewModel(), IConfigurationViewModel {
     val wakeWordPorcupineAccessToken = _wakeWordPorcupineAccessToken.readOnly
     val wakeWordPorcupineKeywordCount =
         combineState(_wakeWordPorcupineKeywordDefaultOptions, _wakeWordPorcupineKeywordCustomOptions) { default, custom ->
-            default.filter { it.enabled }.size + custom.filter { it.keyword.enabled && !it.deleted }.size
+            default.filter { it.isEnabled }.size + custom.filter { it.keyword.isEnabled && !it.deleted }.size
         }
     val wakeWordPorcupineKeywordDefaultOptions = _wakeWordPorcupineKeywordDefaultOptions.readOnly
     val wakeWordPorcupineKeywordCustomOptions = _wakeWordPorcupineKeywordCustomOptions.readOnly
@@ -93,7 +93,7 @@ class WakeWordConfigurationViewModel : ViewModel(), IConfigurationViewModel {
         _wakeWordPorcupineKeywordDefaultOptions.value = _wakeWordPorcupineKeywordDefaultOptions.value
             .toMutableList()
             .also {
-                it[index] = it[index].copy(enabled = !it[index].enabled)
+                it[index] = it[index].copy(isEnabled = !it[index].isEnabled)
             }.toSet()
     }
 
@@ -102,7 +102,7 @@ class WakeWordConfigurationViewModel : ViewModel(), IConfigurationViewModel {
         _wakeWordPorcupineKeywordDefaultOptions.value = _wakeWordPorcupineKeywordDefaultOptions.value
             .toMutableList()
             .also {
-                it[index] = it[index].copy(enabled = enabled)
+                it[index] = it[index].copy(isEnabled = enabled)
             }.toSet()
     }
 
@@ -120,7 +120,7 @@ class WakeWordConfigurationViewModel : ViewModel(), IConfigurationViewModel {
         _wakeWordPorcupineKeywordCustomOptions.value = _wakeWordPorcupineKeywordCustomOptions.value
             .toMutableList()
             .also {
-                it[index] = it[index].copy(keyword = it[index].keyword.copy(enabled = !it[index].keyword.enabled))
+                it[index] = it[index].copy(keyword = it[index].keyword.copy(isEnabled = !it[index].keyword.isEnabled))
             }
     }
 
@@ -129,7 +129,7 @@ class WakeWordConfigurationViewModel : ViewModel(), IConfigurationViewModel {
         _wakeWordPorcupineKeywordCustomOptions.value = _wakeWordPorcupineKeywordCustomOptions.value
             .toMutableList()
             .also {
-                it[index] = it[index].copy(keyword = it[index].keyword.copy(enabled = enabled))
+                it[index] = it[index].copy(keyword = it[index].keyword.copy(isEnabled = enabled))
             }
     }
 

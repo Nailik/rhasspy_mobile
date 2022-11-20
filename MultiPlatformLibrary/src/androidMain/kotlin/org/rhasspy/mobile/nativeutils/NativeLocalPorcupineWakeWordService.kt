@@ -1,8 +1,6 @@
 package org.rhasspy.mobile.nativeutils
 
-import ai.picovoice.porcupine.Porcupine
-import ai.picovoice.porcupine.PorcupineManager
-import ai.picovoice.porcupine.PorcupineManagerCallback
+import ai.picovoice.porcupine.*
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
@@ -10,17 +8,22 @@ import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.PorcupineLanguageOptions
+import org.rhasspy.mobile.services.hotword.HotWordServiceError
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
 import java.io.File
 
 /**
  * Listens to WakeWord with Porcupine
+ *
+ * checks for audio permission
  */
 actual class NativeLocalPorcupineWakeWordService actual constructor(
+    private val wakeWordPorcupineAccessToken: String,
     private val wakeWordPorcupineKeywordDefaultOptions: Set<PorcupineDefaultKeyword>,
     private val wakeWordPorcupineKeywordCustomOptions: Set<PorcupineCustomKeyword>,
-    private val wakeWordPorcupineLanguage: PorcupineLanguageOptions
+    private val wakeWordPorcupineLanguage: PorcupineLanguageOptions,
+    private val onKeywordDetected: (index: Int) -> Unit
 ) : PorcupineManagerCallback {
     private val logger = Logger.withTag("NativeLocalWakeWordService")
 
@@ -30,12 +33,61 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
     /**
      * start listening to wake words
      * requires internet to activate porcupine the very first time
+     *
+     * checks for audio permission
+     * tries to start porcupine
      */
-    init {
-        logger.d { "start" }
-
-        initializePorcupineManger()
+    actual fun start(): HotWordServiceError? {
         porcupineManager?.start()
+
+        if (ActivityCompat.checkSelfPermission(Application.Instance, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            logger.e { "missing recording permission" }
+            return HotWordServiceError.MicrophonePermissionMissing
+        }
+
+        return try {
+            val porcupineBuilder = PorcupineManager.Builder()
+                .setAccessKey(wakeWordPorcupineAccessToken)
+                .setKeywords(wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled }.map {
+                    findBuiltInKeyword(it.option.name)
+                }.toTypedArray())
+                .setKeywordPaths(wakeWordPorcupineKeywordCustomOptions.filter { it.isEnabled }.map {
+                    File(Application.Instance.filesDir, "porcupine/${it.fileName}").absolutePath
+                }.toTypedArray())
+                .setSensitivities(
+                    wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled }.map {
+                        it.sensitivity
+                    }.toMutableList().also { list ->
+                        list.addAll(
+                            wakeWordPorcupineKeywordCustomOptions.filter { it.isEnabled }.map {
+                                it.sensitivity
+                            }
+                        )
+                    }.toTypedArray().toFloatArray()
+                )
+                .setModelPath(copyModelFileIfNecessary())
+
+            File(Application.Instance.filesDir, "sounds").mkdirs()
+
+            porcupineManager = porcupineBuilder.build(Application.Instance, this)
+
+            null//no error
+        } catch (e: Exception) {
+            return when(e){
+                is PorcupineActivationException -> HotWordServiceError.PorcupineActivationException
+                is PorcupineActivationLimitException -> HotWordServiceError.PorcupineActivationLimitException
+                is PorcupineActivationRefusedException -> HotWordServiceError.PorcupineActivationRefusedException
+                is PorcupineActivationThrottledException -> HotWordServiceError.PorcupineActivationThrottledException
+                is PorcupineInvalidArgumentException -> HotWordServiceError.PorcupineInvalidArgumentException
+                is PorcupineInvalidStateException -> HotWordServiceError.PorcupineInvalidStateException
+                is PorcupineIOException -> HotWordServiceError.PorcupineIOException
+                is PorcupineKeyException -> HotWordServiceError.PorcupineKeyException
+                is PorcupineMemoryException -> HotWordServiceError.PorcupineMemoryException
+                is PorcupineRuntimeException -> HotWordServiceError.PorcupineRuntimeException
+                is PorcupineStopIterationException -> HotWordServiceError.PorcupineStopIterationException
+                else -> HotWordServiceError.Unknown
+            }
+        }
     }
 
     /**
@@ -43,56 +95,16 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
      */
     actual fun stop() {
         logger.d { "stop" }
-
         porcupineManager?.stop()
     }
 
-    /**
-     * initialize porcupine with access token, internet access necessary
-     */
-    private fun initializePorcupineManger() {
-        logger.d { "initializePorcupineManger" }
-
-
-        if (ActivityCompat.checkSelfPermission(Application.Instance, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            logger.e { "missing recording permission" }
-            return
-        }
-
-        /*     try {
-
-                 val keywordName =
-                     ConfigurationSettings.wakeWordPorcupineKeywordOptions.value.elementAt(ConfigurationSettings.wakeWordPorcupineKeywordOption.value)
-
-                 val buildInKeyword = findBuiltInKeyword(keywordName)
-
-                 val porcupineBuilder = PorcupineManager.Builder()
-                     .setAccessKey(ConfigurationSettings.wakeWordPorcupineAccessToken.value)
-                     .setSensitivity(ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.value).apply {
-                         setModelPath(copyModelFileIfNecessary())
-                         buildInKeyword?.also {
-                             setKeyword(it)
-                         } ?: run {
-                             setKeywordPath(File(Application.Instance.filesDir, "porcupine/$keywordName").absolutePath)
-                         }
-                     }
-                 File(Application.Instance.filesDir, "sounds").mkdirs()
-
-                 porcupineManager = porcupineBuilder.build(Application.Instance, this)
-
-             } catch (e: Exception) {
-                 logger.e(e) { "initializePorcupineManger failed" }
-             }*/
-    }
 
     /**
      * invoked when a WakeWord is detected, informs listening service
      */
     override fun invoke(keywordIndex: Int) {
         logger.d { "invoke - keyword detected" }
-        //    val keywordName =
-        //         ConfigurationSettings.wakeWordPorcupineKeywordOptions.value.elementAt(ConfigurationSettings.wakeWordPorcupineKeywordOption.value)
-        //      StateMachine.hotWordDetected(keywordName)
+        onKeywordDetected(keywordIndex)
     }
 
     private fun findBuiltInKeyword(keywordName: String): Porcupine.BuiltInKeyword? {

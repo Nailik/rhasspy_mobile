@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.rhasspy.mobile.services.IService
+import org.rhasspy.mobile.services.hotword.HotWordServiceError
 import org.rhasspy.mobile.settings.AppSettings
 
 class StateMachineService: IService() {
@@ -140,6 +141,15 @@ class StateMachineService: IService() {
     }
 
     fun sayWebServer(receive: ByteArray) {
+
+    }
+
+    fun hotWordServiceError(error: HotWordServiceError) {
+        TODO("Not yet implemented")
+    }
+
+    fun hotWordDetected(index: Int) {
+
 
     }
 

@@ -101,7 +101,7 @@ private fun CustomKeywordListItem(
         modifier = modifier.clickable(onClick = onClick),
         icon = {
             Checkbox(
-                checked = keyword.enabled,
+                checked = keyword.isEnabled,
                 onCheckedChange = onToggle
             )
         },
@@ -121,7 +121,7 @@ private fun CustomKeywordListItem(
         }
     )
 
-    if (keyword.enabled) {
+    if (keyword.isEnabled) {
         //sensitivity of porcupine
         SliderListItem(
             modifier = Modifier.padding(horizontal = 12.dp),

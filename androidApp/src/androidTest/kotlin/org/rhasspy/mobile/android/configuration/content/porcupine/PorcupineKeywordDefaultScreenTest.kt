@@ -64,7 +64,7 @@ class PorcupineKeywordDefaultScreenTest {
     fun testList() = runBlocking {
         //no wake word is set
         viewModel.wakeWordPorcupineKeywordDefaultOptions.value.forEach {
-            assertFalse(it.enabled)
+            assertFalse(it.isEnabled)
         }
         //none is selected
         viewModel.wakeWordPorcupineKeywordDefaultOptions.value.forEach {
@@ -119,9 +119,9 @@ class PorcupineKeywordDefaultScreenTest {
             //porcupine is saved with not enabled
             //everything else is saved with not enabled
             if (it.option == PorcupineKeywordOptions.AMERICANO) {
-                assertTrue(it.enabled)
+                assertTrue(it.isEnabled)
             } else {
-                assertFalse(it.enabled)
+                assertFalse(it.isEnabled)
             }
         }
     }

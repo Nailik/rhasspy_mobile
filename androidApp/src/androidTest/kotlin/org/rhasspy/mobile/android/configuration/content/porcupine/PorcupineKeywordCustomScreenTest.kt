@@ -138,7 +138,7 @@ class PorcupineKeywordCustomScreenTest {
         viewModel.save()
         val newViewModel = WakeWordConfigurationViewModel()
         //jarvis is saved with enabled
-        assertTrue { newViewModel.wakeWordPorcupineKeywordCustomOptions.value.find { it.keyword.fileName == ppn && it.keyword.enabled } != null }
+        assertTrue { newViewModel.wakeWordPorcupineKeywordCustomOptions.value.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null }
     }
 
     /**
@@ -166,7 +166,7 @@ class PorcupineKeywordCustomScreenTest {
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
         composeTestRule.awaitIdle()
         viewModel.save()
-        assertTrue { viewModel.wakeWordPorcupineKeywordCustomOptions.value.find { it.keyword.fileName == ppn && it.keyword.enabled } != null }
+        assertTrue { viewModel.wakeWordPorcupineKeywordCustomOptions.value.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null }
 
         //user clicks delete on ppn
         composeTestRule.onNodeWithCombinedTag(ppn, TestTag.Delete).assertIsDisplayed()
@@ -180,7 +180,7 @@ class PorcupineKeywordCustomScreenTest {
         viewModel.save()
         val newViewModel = WakeWordConfigurationViewModel()
         //ppn is saved with ppn.ppn and enabled
-        assertTrue { newViewModel.wakeWordPorcupineKeywordCustomOptions.value.find { it.keyword.fileName == ppn && it.keyword.enabled } != null }
+        assertTrue { newViewModel.wakeWordPorcupineKeywordCustomOptions.value.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null }
     }
 
 }

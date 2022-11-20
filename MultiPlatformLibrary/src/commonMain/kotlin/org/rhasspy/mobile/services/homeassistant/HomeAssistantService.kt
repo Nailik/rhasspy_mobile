@@ -23,7 +23,7 @@ class HomeAssistantService : IService() {
     private val httpClientService by inject<HttpClientService>()
 
     override fun onClose() {
-        TODO("Not yet implemented")
+        //nothing to close
     }
 
     /**

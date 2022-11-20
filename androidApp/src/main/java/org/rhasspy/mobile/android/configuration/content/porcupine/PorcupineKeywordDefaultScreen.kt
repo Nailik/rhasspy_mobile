@@ -71,7 +71,7 @@ private fun DefaultKeywordListItem(
             .clickable(onClick = onClick),
         icon = {
             Checkbox(
-                checked = element.enabled,
+                checked = element.isEnabled,
                 onCheckedChange = onToggle
             )
         },
@@ -80,7 +80,7 @@ private fun DefaultKeywordListItem(
         }
     )
 
-    if (element.enabled) {
+    if (element.isEnabled) {
         //sensitivity of porcupine
         SliderListItem(
             modifier = Modifier
