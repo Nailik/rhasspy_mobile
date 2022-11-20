@@ -8,7 +8,6 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.component.inject
-import org.rhasspy.mobile.isNotAboveThreshold
 import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceResponse
@@ -40,19 +39,23 @@ class RecordingService : IService() {
                 val byteData = value.toList()
                 if (isRecordingNormal) {
                     stateMachineService.audioFrame(byteData)
-                    silenceDetection(byteData)
                 }
                 if (isRecordingWakeWord) {
                     stateMachineService.audioFrameWakeWord(byteData)
                 }
             }
         }
+
+        scope.launch {
+            AudioRecorder.maxVolume.collect {
+                silenceDetection(it)
+            }
+        }
     }
 
-    private fun silenceDetection(byteData: List<Byte>) {
+    private fun silenceDetection(volume: Short) {
         if (AppSettings.isAutomaticSilenceDetectionEnabled.value) {
-            //TODO fix not correctly checking volume
-            if (byteData.isNotAboveThreshold(AppSettings.automaticSilenceDetectionAudioLevel.value)) {
+            if (volume < AppSettings.automaticSilenceDetectionAudioLevel.value) {
                 //no data was above threshold, there is silence
                 silenceStartTime?.also {
                     logger.d { "silenceDetected" }
