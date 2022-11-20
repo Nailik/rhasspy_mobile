@@ -10,13 +10,18 @@ import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.PorcupineLanguageOptions
-import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
+import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
 import java.io.File
 
 /**
  * Listens to WakeWord with Porcupine
  */
-actual object NativeLocalWakeWordService : PorcupineManagerCallback {
+actual class NativeLocalPorcupineWakeWordService actual constructor(
+    private val wakeWordPorcupineKeywordDefaultOptions: Set<PorcupineDefaultKeyword>,
+    private val wakeWordPorcupineKeywordCustomOptions: Set<PorcupineCustomKeyword>,
+    private val wakeWordPorcupineLanguage: PorcupineLanguageOptions
+) : PorcupineManagerCallback {
     private val logger = Logger.withTag("NativeLocalWakeWordService")
 
     //manager to stop start and reload porcupine
@@ -26,7 +31,7 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
      * start listening to wake words
      * requires internet to activate porcupine the very first time
      */
-    actual fun start() {
+    init {
         logger.d { "start" }
 
         initializePorcupineManger()
@@ -100,10 +105,10 @@ actual object NativeLocalWakeWordService : PorcupineManagerCallback {
 
     private fun copyModelFileIfNecessary(): String {
         val file =
-            File(Application.Instance.filesDir, "porcupine/model_${ConfigurationSettings.wakeWordPorcupineLanguage.data.value.name.lowercase()}.pv")
+            File(Application.Instance.filesDir, "porcupine/model_${wakeWordPorcupineLanguage.name.lowercase()}.pv")
 
         if (!file.exists()) {
-            val modelFile = when (ConfigurationSettings.wakeWordPorcupineLanguage.data.value) {
+            val modelFile = when (wakeWordPorcupineLanguage) {
                 PorcupineLanguageOptions.EN -> MR.files.porcupine_params
                 PorcupineLanguageOptions.DE -> MR.files.porcupine_params_de
                 PorcupineLanguageOptions.ES -> MR.files.porcupine_params_es

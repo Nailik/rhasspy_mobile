@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.nativeutils
 
 
-actual object NativeLocalWakeWordService {
+actual object NativeLocalPorcupineWakeWordService {
 
     actual fun start() {
         TODO("Not yet implemented")

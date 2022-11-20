@@ -8,13 +8,9 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.logic.State
 import org.rhasspy.mobile.logic.StateMachine
-import org.rhasspy.mobile.nativeutils.NativeLocalWakeWordService
+import org.rhasspy.mobile.nativeutils.NativeLocalPorcupineWakeWordService
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.recording.RecordingService
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.settings.AppSettings
-import org.rhasspy.mobile.settings.ConfigurationSettings
-import kotlin.native.concurrent.ThreadLocal
 
 /**
  * hot word services listens if hotword is enabled and the current state of the state machine
@@ -26,6 +22,7 @@ class HotWordService : IService() {
     private var isRunning = false
 
     private val params by inject<HotWordServiceParams>()
+    private var nativeLocalPorcupineWakeWordService: NativeLocalPorcupineWakeWordService? = null
 
     /**
      * starts the service
@@ -88,7 +85,11 @@ class HotWordService : IService() {
             WakeWordOption.Porcupine -> {
                 //when porcupine is used for hotWord then start local service
                 if (params.wakeWordPorcupineAccessToken.isNotEmpty()) {
-                    NativeLocalWakeWordService.start()
+                    nativeLocalPorcupineWakeWordService = NativeLocalPorcupineWakeWordService(
+                        params.wakeWordPorcupineKeywordDefaultOptions,
+                        params.wakeWordPorcupineKeywordCustomOptions,
+                        params.wakeWordPorcupineLanguage
+                    )
                 } else {
                     val description = "couldn't start local wake word service, access Token Empty"
                     StateMachine.hotWordError(description)
@@ -110,7 +111,7 @@ class HotWordService : IService() {
 
         logger.d { "stopHotWord" }
         //make sure it is stopped
-        NativeLocalWakeWordService.stop()
+        nativeLocalPorcupineWakeWordService?.stop()
         //stop recorder for wake word, will determine internally if recording is stopped completely or resumed for intent recoording
     TODO() //    RecordingService.stopRecordingWakeWord()
     }

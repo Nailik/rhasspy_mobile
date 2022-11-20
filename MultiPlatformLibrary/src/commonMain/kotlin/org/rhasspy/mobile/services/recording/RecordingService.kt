@@ -99,6 +99,7 @@ class RecordingService : IService() {
                 data.addAll(byteData)
                 StateMachine.audioFrame(byteData)
 
+                /*
                 if (AppSettings.isAutomaticSilenceDetectionEnabled.value && ConfigurationSettings.wakeWordOption.value != WakeWordOption.MQTT) {
                     if (byteData.isNotAboveThreshold(AppSettings.automaticSilenceDetectionAudioLevel.value)) {
                         //no data was above threshold, there is silence
@@ -114,7 +115,7 @@ class RecordingService : IService() {
                             silenceStartTime = Clock.System.now()
                         }
                     }
-                }
+                }*/
             }
         }
 
