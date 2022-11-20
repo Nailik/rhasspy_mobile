@@ -24,8 +24,8 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.nativeutils.OverlayPermission
-import org.rhasspy.mobile.services.IndicationService
-import org.rhasspy.mobile.services.IndicationState
+import org.rhasspy.mobile.services.indication.IndicationService
+import org.rhasspy.mobile.services.indication.IndicationState
 
 /**
  * Overlay Service

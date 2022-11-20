@@ -7,8 +7,7 @@ import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.mqtt.OverlayServices
-import org.rhasspy.mobile.services.LocalAudioService
-import org.rhasspy.mobile.services.ServiceInterface
+import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantServiceParams
 import org.rhasspy.mobile.services.hotword.HotWordService
@@ -83,7 +82,6 @@ abstract class Application : NativeApplication(), KoinComponent {
         startNativeServices()
         //makes sure that the MutableStateFlow inside those objects are created in ui thread because they internally use livedata which cannot be
         // created in background tread
-        ServiceInterface
 
         StringDesc.localeType = StringDesc.LocaleType.Custom(AppSettings.languageOption.value.code)
     }

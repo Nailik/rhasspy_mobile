@@ -5,8 +5,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.nativeutils.NativeServiceInterop
-import org.rhasspy.mobile.services.ServiceAction
-import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.settings.AppSettings
 
 /**
@@ -23,7 +21,7 @@ object ForegroundServiceHandler {
         CoroutineScope(Dispatchers.Default).launch {
             AppSettings.isBackgroundServiceEnabled.data.collect {
                 CoroutineScope(Dispatchers.Default).launch {
-                    action(ServiceAction.Reload)
+              //      action(ServiceAction.Reload)
                 }
             }
         }
@@ -35,9 +33,9 @@ object ForegroundServiceHandler {
      * Starts background service, if not called by service and
      * isBackgroundEnabled is true and service is not running yet
      */
-    suspend fun action(serviceAction: ServiceAction, fromService: Boolean = false) {
-        logger.v { "action $serviceAction fromService $fromService" }
-
+    suspend fun action(fromService: Boolean = false) {
+     //   logger.v { "action $serviceAction fromService $fromService" }
+/*
         if (fromService) {
             ServiceInterface.serviceAction(serviceAction)
         } else {
@@ -52,6 +50,6 @@ object ForegroundServiceHandler {
                 //start or update service
                 NativeServiceInterop.doAction(serviceAction)
             }
-        }
+        }*/
     }
 }

@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.services
+package org.rhasspy.mobile.services.indication
 
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope

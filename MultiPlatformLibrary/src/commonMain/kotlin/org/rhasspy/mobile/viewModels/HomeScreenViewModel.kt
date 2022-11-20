@@ -8,7 +8,6 @@ import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.logic.StateMachine.manualIntentRecognition
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.nativeutils.OverlayPermission
-import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.settings.AppSettings
 
 class HomeScreenViewModel : ViewModel() {
@@ -39,8 +38,4 @@ class HomeScreenViewModel : ViewModel() {
     fun speakText(text: String) {
 
     }
-
-    fun saveAndApplyChanges() = ServiceInterface.saveAndApplyChanges()
-
-    fun resetChanges() = ServiceInterface.resetChanges()
 }

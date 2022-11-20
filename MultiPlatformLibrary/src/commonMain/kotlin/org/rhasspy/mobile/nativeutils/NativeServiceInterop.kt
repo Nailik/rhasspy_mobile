@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.nativeutils
 
-import org.rhasspy.mobile.services.ServiceAction
 import kotlin.native.concurrent.ThreadLocal
 
 /**
@@ -18,7 +17,7 @@ expect class NativeServiceInterop() {
         /**
          * When there is an action to be done by the services
          */
-        fun doAction(serviceAction: ServiceAction)
+        fun doAction(/*serviceAction: ServiceAction*/)
 
         /**
          * stop background work

@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.services
+package org.rhasspy.mobile.services.localaudio
 
 class LocalAudioService {
 

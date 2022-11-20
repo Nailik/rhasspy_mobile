@@ -9,8 +9,6 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.rhasspy.mobile.Application
-import org.rhasspy.mobile.services.ServiceAction
-import org.rhasspy.mobile.services.ServiceInterface
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
@@ -84,10 +82,7 @@ actual object SettingsUtils {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
 
-                    CoroutineScope(Dispatchers.Default).launch {
-                        ServiceInterface.serviceAction(ServiceAction.Stop)
-                    }
-
+                    TODO("reinitialize koin di")
                     Application.Instance.contentResolver.openInputStream(uri)?.also { inputStream ->
 
                         val zipInputStream = ZipInputStream(BufferedInputStream(inputStream))
