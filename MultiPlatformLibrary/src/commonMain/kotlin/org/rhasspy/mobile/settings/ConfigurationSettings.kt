@@ -35,24 +35,20 @@ internal object ConfigurationSettings {
 
     val wakeWordOption = Setting(SettingsEnum.WakeWordOption, WakeWordOption.Disabled)
     val wakeWordPorcupineAccessToken = Setting(SettingsEnum.WakeWordPorcupineAccessToken, "")
-
-
     val wakeWordPorcupineKeywordDefaultOptions = Setting(
         SettingsEnum.WakeWordPorcupineKeywordDefaultSelectedOptions,
         PorcupineKeywordOptions.values().map { PorcupineDefaultKeyword(it, false, 0.5f) }.toSet(),
         PorcupineDefaultKeywordSerializer
     )
-
     val wakeWordPorcupineKeywordCustomOptions = Setting(
         SettingsEnum.WakeWordPorcupineKeywordCustomOptions,
         setOf(),
         PorcupineCustomKeywordSerializer
     )
+    val wakeWordPorcupineLanguage = Setting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOptions.EN)
 
 
     val dialogManagementOption = Setting(SettingsEnum.DialogManagementOption, DialogManagementOptions.Local)
-
-    val wakeWordPorcupineLanguage = Setting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOptions.EN)
 
     val intentRecognitionOption = Setting(SettingsEnum.IntentRecognitionOption, IntentRecognitionOptions.Disabled)
     val isUseCustomIntentRecognitionHttpEndpoint = Setting(SettingsEnum.CustomIntentRecognitionHttpEndpoint, false)

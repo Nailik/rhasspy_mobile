@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.services
+package org.rhasspy.mobile.services.recording
 
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
@@ -13,6 +13,7 @@ import org.rhasspy.mobile.isNotAboveThreshold
 import org.rhasspy.mobile.logic.State
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.nativeutils.AudioRecorder
+import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.native.concurrent.ThreadLocal
@@ -21,8 +22,7 @@ import kotlin.time.Duration.Companion.milliseconds
 /**
  * records wakeword or intent
  */
-@ThreadLocal
-object RecordingService {
+class RecordingService : IService() {
 
     private val logger = Logger.withTag("RecordingService")
     private val coroutineScope = CoroutineScope(Dispatchers.Default)

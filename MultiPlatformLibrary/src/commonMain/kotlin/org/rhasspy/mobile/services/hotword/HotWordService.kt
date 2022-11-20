@@ -1,13 +1,17 @@
-package org.rhasspy.mobile.services
+package org.rhasspy.mobile.services.hotword
 
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.core.component.inject
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.logic.State
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.nativeutils.NativeLocalWakeWordService
+import org.rhasspy.mobile.services.IService
+import org.rhasspy.mobile.services.recording.RecordingService
+import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.native.concurrent.ThreadLocal
@@ -17,11 +21,11 @@ import kotlin.native.concurrent.ThreadLocal
  *
  * according to this it starts and stops the native hot word service or eventually starts recording to send the speech data to mqtt
  */
-
-@ThreadLocal
-object HotWordService {
+class HotWordService : IService() {
     private val logger = Logger.withTag("HotWordService")
     private var isRunning = false
+
+    private val params by inject<HotWordServiceParams>()
 
     /**
      * starts the service
@@ -76,10 +80,10 @@ object HotWordService {
         isRunning = true
         logger.d { "startHotWord" }
 
-        when (ConfigurationSettings.wakeWordOption.value) {
+        when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {
                 //when porcupine is used for hotWord then start local service
-                if (ConfigurationSettings.wakeWordPorcupineAccessToken.value.isNotEmpty()) {
+                if (params.wakeWordPorcupineAccessToken.isNotEmpty()) {
                     NativeLocalWakeWordService.start()
                 } else {
                     val description = "couldn't start local wake word service, access Token Empty"
@@ -88,7 +92,7 @@ object HotWordService {
                 }
             }
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
-            WakeWordOption.MQTT -> RecordingService.startRecordingWakeWord()
+            WakeWordOption.MQTT -> TODO() //RecordingService.startRecordingWakeWord()
             WakeWordOption.Disabled -> logger.v { "hotWordDisabled" }
         }
     }
@@ -104,7 +108,7 @@ object HotWordService {
         //make sure it is stopped
         NativeLocalWakeWordService.stop()
         //stop recorder for wake word, will determine internally if recording is stopped completely or resumed for intent recoording
-        RecordingService.stopRecordingWakeWord()
+    TODO() //    RecordingService.stopRecordingWakeWord()
     }
 
 }

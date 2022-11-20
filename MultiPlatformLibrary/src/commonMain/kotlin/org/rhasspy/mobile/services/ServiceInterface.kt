@@ -5,6 +5,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.handler.ForegroundServiceHandler
+import org.rhasspy.mobile.services.hotword.HotWordService
+import org.rhasspy.mobile.services.recording.RecordingService
 import kotlin.native.concurrent.ThreadLocal
 
 /**

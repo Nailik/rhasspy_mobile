@@ -11,10 +11,13 @@ import org.rhasspy.mobile.services.LocalAudioService
 import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantServiceParams
+import org.rhasspy.mobile.services.hotword.HotWordService
+import org.rhasspy.mobile.services.hotword.HotWordServiceParams
 import org.rhasspy.mobile.services.httpclient.HttpClientParams
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.mqtt.MqttServiceParams
+import org.rhasspy.mobile.services.recording.RecordingService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.services.statemachine.StateMachineService
@@ -31,11 +34,13 @@ val serviceModule = module {
 
     single { StateMachineService() }
     single { RhasspyActionsService() }
-    single { MqttService() }
+    single { MqttService() }w
     single { HttpClientService() }
     single { WebServerService() }
     single { UdpService() }
     single { HomeAssistantService() }
+    single { RecordingService() }
+    single { HotWordService() }
 
     single { params -> params.getOrNull<StateMachineServiceParams>() ?: StateMachineServiceParams() }
     single { params -> params.getOrNull<RhasspyActionsServiceParams>() ?: RhasspyActionsServiceParams() }
@@ -44,6 +49,7 @@ val serviceModule = module {
     single { params -> params.getOrNull<WebServerServiceParams>() ?: WebServerServiceParams() }
     single { params -> params.getOrNull<UdpServiceParams>() ?: UdpServiceParams() }
     single { params -> params.getOrNull<HomeAssistantServiceParams>() ?: HomeAssistantServiceParams() }
+    single { params -> params.getOrNull<HotWordServiceParams>() ?: HotWordServiceParams() }
 }
 
 abstract class Application : NativeApplication(), KoinComponent {
