@@ -213,7 +213,7 @@ class MqttService : IService() {
     /**
      * published new messages
      */
-    private suspend fun publishMessage(topic: String, message: MqttMessage): ServiceResponse<Any> {
+    private suspend fun publishMessage(topic: String, message: MqttMessage): ServiceResponse<*> {
         message.msgId = id
 
         return client?.let { mqttClient ->
