@@ -58,12 +58,41 @@ class StateMachineService(
 
     }
 
-    fun toggleAudioOutputEnabledMqtt(isEnabled: Boolean){
+    fun toggleAudioOutputEnabledMqtt(isEnabled: Boolean) {
         AppSettings.isAudioOutputEnabled.value = isEnabled
     }
 
-    fun setAudioVolumeMqtt(value: Float){
+    fun setAudioVolumeMqtt(value: Float) {
 
     }
+
+    fun speechToTextResponseHttp(response: String) {
+        TODO("Not yet implemented")
+    }
+
+    fun recognizeIntentResponseHttp(data: String?) {
+
+    }
+
+    fun textToSpeechResponseHttp(response: List<Byte>) {
+
+    }
+
+    fun playWavResponseHttp(response: String) {
+
+    }
+
+    fun intentHandlingResponseHttp(response: String) {
+
+    }
+
+    fun hassEventResponseHttp(response: String) {
+
+    }
+
+    fun hassIntentResponseHttp(response: String) {
+
+    }
+
 
 }

@@ -17,7 +17,6 @@ import org.rhasspy.mobile.services.LocalAudioService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.ServiceInterface
 import org.rhasspy.mobile.services.httpclient.HttpClientService
-import org.rhasspy.mobile.services.httpclient.HttpClientServiceTest
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.services.statemachine.StateMachineService
 import org.rhasspy.mobile.services.webserver.WebServerService
@@ -31,12 +30,15 @@ enum class ServiceTestName {
     RhasspyActions,
     RhasspyActionsTest,
     Mqtt,
-    MqttTest;
+    MqttTest,
+    HttpClient,
+    HttpClientTest;
 }
 
 val serviceModule = module {
     factory { params -> WebServerServiceTest(params.get()) }
-    factory { params -> HttpClientServiceTest(params.get()) }
+
+
     single { WebServerService() }
     single { HttpClientService() }
     single { LocalAudioService() }
@@ -45,10 +47,12 @@ val serviceModule = module {
     single(named(ServiceTestName.StateMachine)) { StateMachineService() }
     single(named(ServiceTestName.RhasspyActions)) { RhasspyActionsService() }
     single(named(ServiceTestName.Mqtt)) { MqttService() }
+    single(named(ServiceTestName.HttpClient)) { HttpClientService() }
 
     single(named(ServiceTestName.StateMachineTest)) { StateMachineService(isTest = true) }
     factory(named(ServiceTestName.RhasspyActionsTest)) { params -> RhasspyActionsService(params.get(), isTest = true) }
     factory(named(ServiceTestName.MqttTest)) { params -> MqttService(params.get(), isTest = true) }
+    factory(named(ServiceTestName.HttpClientTest)) { params -> HttpClientService(params.get(), isTest = true) }
 
 }
 
