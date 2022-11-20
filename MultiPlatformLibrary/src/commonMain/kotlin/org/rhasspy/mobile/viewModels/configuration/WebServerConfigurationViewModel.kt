@@ -11,6 +11,7 @@ import org.koin.core.context.unloadKoinModules
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
+import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.serviceModule
 import org.rhasspy.mobile.services.state.ServiceState

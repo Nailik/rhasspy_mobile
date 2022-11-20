@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.nativeutils
 
 import kotlinx.coroutines.flow.StateFlow
+import org.rhasspy.mobile.services.ServiceResponse
 
 @Suppress("NO_ACTUAL_FOR_EXPECT")
 expect object AudioRecorder {
@@ -11,7 +12,7 @@ expect object AudioRecorder {
 
     val absoluteMaxVolume: Double
 
-    fun startRecording()
+    fun startRecording() : ServiceResponse<*>
 
     fun stopRecording()
 

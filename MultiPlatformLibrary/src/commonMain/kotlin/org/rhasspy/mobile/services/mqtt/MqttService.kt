@@ -24,20 +24,14 @@ class MqttService : IService() {
 
     private var client: MqttClient? = null
     private val id = uuid4().variant
-    private val coroutineScope = CoroutineScope(Dispatchers.Default)
+    private var scope = CoroutineScope(Dispatchers.Default)
     private var retryJob: Job? = null
 
     private val _isConnected = MutableStateFlow(false)
     val isConnected = _isConnected.readOnly
 
-    private val _connectionError = MutableStateFlow<MqttError?>(null)
-    val connectionError = _connectionError.readOnly
-
     private val params by inject<MqttServiceParams>()
     private val stateMachineService by inject<StateMachineService>()
-    override fun onClose() {
-        TODO("Not yet implemented")
-    }
 
     /**
      * start client externally, only starts if mqtt is enabled
@@ -49,7 +43,8 @@ class MqttService : IService() {
      *
      * sets connected value
      */
-    fun onStart(scope: CoroutineScope) {
+    init {
+        scope = CoroutineScope(Dispatchers.Default)
         if (params.isMqttEnabled) {
             client = MqttClient(
                 brokerUrl = "tcp://${params.mqttHost}:${params.mqttPort}",
@@ -81,12 +76,12 @@ class MqttService : IService() {
      *
      * disconnects, resets connected value and deletes client object
      */
-    fun onStop() {
+    override fun onClose() {
         client?.disconnect()
         _isConnected.value = false
         retryJob?.cancel()
         retryJob = null
-        coroutineScope.cancel()
+        scope.cancel()
     }
 
     /**
@@ -97,8 +92,11 @@ class MqttService : IService() {
             //only if not connected
             logger.v { "connectClient" }
             //connect to server
-            _connectionError.value = client.connect(params.mqttServiceConnectionOptions)?.also {
+            client.connect(params.mqttServiceConnectionOptions)?.also {
                 logger.e { "connect \n${it.statusCode.name} ${it.msg}" }
+                stateMachineService.mqttServiceError(it)
+            } ?: run {
+                stateMachineService.mqttServiceStartedSuccessfully()
             }
         } else {
             logger.v { "connectClient already connected" }
@@ -117,7 +115,7 @@ class MqttService : IService() {
         _isConnected.value = client?.isConnected == true
 
         if (retryJob?.isActive != true) {
-            retryJob = coroutineScope.launch {
+            retryJob = scope.launch {
                 client?.also {
                     while (!it.isConnected) {
                         connectClient(it)

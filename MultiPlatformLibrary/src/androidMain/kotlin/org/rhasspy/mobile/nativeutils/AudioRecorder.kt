@@ -11,10 +11,10 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.ServiceResponse
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -29,13 +29,9 @@ actual object AudioRecorder {
     private val _maxVolume = MutableStateFlow<Short>(0)
     private val _isRecording = MutableStateFlow(false)
 
-
-    actual val output: StateFlow<List<Byte>>
-        get() = _output.readOnly
-    actual val maxVolume: StateFlow<Short>
-        get() = _maxVolume.readOnly
-    actual val isRecording: StateFlow<Boolean>
-        get() = _isRecording.readOnly
+    actual val output = _output.readOnly
+    actual val maxVolume = _maxVolume.readOnly
+    actual val isRecording = _isRecording.readOnly
 
     //https://developer.android.com/reference/android/media/AudioFormat#encoding
     actual val absoluteMaxVolume = 32767.0
@@ -44,14 +40,14 @@ actual object AudioRecorder {
     private const val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
     private const val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT
 
-    private const val BUFFER_SIZE_FACTOR = 2
+    private val BUFFER_SIZE_FACTOR = 2
 
     private val BUFFER_SIZE: Int = AudioRecord.getMinBufferSize(
         SAMPLING_RATE_IN_HZ,
         CHANNEL_CONFIG, AUDIO_FORMAT
     ) * BUFFER_SIZE_FACTOR
 
-    actual fun startRecording() {
+    actual fun startRecording(): ServiceResponse<*> {
         logger.v { "startRecording" }
 
         if (recorder == null) {
@@ -59,7 +55,7 @@ actual object AudioRecorder {
 
             if (ActivityCompat.checkSelfPermission(Application.Instance, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
                 logger.e { "missing recording permission" }
-                return
+                return ServiceResponse.Error(Exception("MissingRecordingPermission"))
             }
 
             recorder = AudioRecord.Builder()
@@ -76,8 +72,15 @@ actual object AudioRecorder {
         }
 
         _isRecording.value = true
-        recorder?.startRecording()
-        read()
+
+        try {
+            recorder?.startRecording()
+            read()
+        } catch (e: Exception) {
+            return ServiceResponse.Error(e)
+        }
+
+        return ServiceResponse.Success(Unit)
     }
 
     private fun read() {

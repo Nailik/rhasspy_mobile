@@ -1,9 +1,10 @@
 package org.rhasspy.mobile.services.statemachine
 
 import co.touchlab.kermit.Logger
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.rhasspy.mobile.mqtt.MqttError
 import org.rhasspy.mobile.services.IService
+import org.rhasspy.mobile.services.ServiceResponse
 import org.rhasspy.mobile.services.hotword.HotWordServiceError
 import org.rhasspy.mobile.settings.AppSettings
 
@@ -17,7 +18,7 @@ class StateMachineService: IService() {
     }
 
     override fun onClose() {
-        TODO("Not yet implemented")
+
     }
 
     fun startMqttSession() {
@@ -153,5 +154,30 @@ class StateMachineService: IService() {
 
     }
 
+    fun mqttServiceError(error: MqttError) {
 
+
+    }
+
+
+    fun mqttServiceStartedSuccessfully() {
+
+
+    }
+
+    fun hotWordServiceStartedSuccessfully() {
+
+    }
+
+    fun silenceDetected() {
+        TODO("Not yet implemented")
+    }
+
+    fun audioFrame(byteData: List<Byte>) {
+
+    }
+
+    fun audioFrameWakeWord(byteData: Any) {
+        TODO("Not yet implemented")
+    }
 }

@@ -3,150 +3,107 @@ package org.rhasspy.mobile.services.recording
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import org.rhasspy.mobile.data.WakeWordOption
+import org.koin.core.component.inject
 import org.rhasspy.mobile.isNotAboveThreshold
-import org.rhasspy.mobile.logic.State
-import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.services.IService
+import org.rhasspy.mobile.services.ServiceResponse
+import org.rhasspy.mobile.services.statemachine.StateMachineService
 import org.rhasspy.mobile.settings.AppSettings
-import org.rhasspy.mobile.settings.ConfigurationSettings
-import kotlin.native.concurrent.ThreadLocal
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
- * records wakeword or intent
+ * records audio and sends data to state machine service
+ * also records for wake word
+ * knows if it is recording for wake word, will send wake word data to stateMachineService
  */
 class RecordingService : IService() {
 
     private val logger = Logger.withTag("RecordingService")
-    private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
-    //state if recording
-    private var isRecording: Boolean = false
+    private val stateMachineService by inject<StateMachineService>()
 
-    //job for async recording
-    private var recordingJob: Job? = null
-
-    //time when the silence was detected
+    private val scope = CoroutineScope(Dispatchers.Default)
     private var silenceStartTime: Instant? = null
 
-    //data storage to reuse list
-    private var data = mutableListOf<Byte>()
-
-    private var isRecordingForWakeWord = false
+    private var isRecordingWakeWord = false
+    private var isRecordingNormal = false
 
     init {
-        val scope = CoroutineScope(Dispatchers.Default)
         scope.launch {
-            StateMachine.currentState.collect {
-                when (it) {
-                    //start recording intent
-                    State.RecordingIntent -> startRecording()
-                    //stop recording intent
-                    State.AwaitingHotWord -> if (isRecordingForWakeWord) startRecording() else stopRecording()
-                    else -> stopRecording()
+            //collect from audio recorder
+            AudioRecorder.output.collect { value ->
+                val byteData = value.toList()
+                if (isRecordingNormal) {
+                    stateMachineService.audioFrame(byteData)
+                    silenceDetection(byteData)
+                }
+                if (isRecordingWakeWord) {
+                    stateMachineService.audioFrameWakeWord(byteData)
                 }
             }
         }
+    }
 
-        //audio indication sounds should be ignored
-        scope.launch {
-            StateMachine.isPlayingAudio.collect {
-                when (it) {
-                    //stop recording while sounds are playing
-                    true -> stopRecording()
-                    //resume recording if necessary
-                    false -> if (isRecordingForWakeWord || StateMachine.currentState.value == State.RecordingIntent) {
-                        //resume recording
-                        startRecording()
+    private fun silenceDetection(byteData: List<Byte>) {
+        if (AppSettings.isAutomaticSilenceDetectionEnabled.value) {
+            //TODO fix not correctly checking volume
+            if (byteData.isNotAboveThreshold(AppSettings.automaticSilenceDetectionAudioLevel.value)) {
+                //no data was above threshold, there is silence
+                silenceStartTime?.also {
+                    logger.d { "silenceDetected" }
+                    //check if silence was detected for x milliseconds
+                    if (it.minus(Clock.System.now()) < -AppSettings.automaticSilenceDetectionTime.value.milliseconds) {
+                        stateMachineService.silenceDetected()
                     }
+                } ?: run {
+                    logger.v { "start silence detected" }
+                    //first time silence was detected
+                    silenceStartTime = Clock.System.now()
                 }
             }
+        }
+    }
+
+    fun startRecording(): ServiceResponse<*> {
+        isRecordingNormal = true
+        return startRecorder()
+    }
+
+    fun stopRecording() {
+        isRecordingNormal = false
+        startRecorder()
+    }
+
+    fun startRecordingWakeWord(): ServiceResponse<*> {
+        isRecordingWakeWord = true
+        return startRecorder()
+    }
+
+    fun stopRecordingWakeWord() {
+        isRecordingWakeWord = false
+        stopRecorder()
+    }
+
+
+    private fun startRecorder(): ServiceResponse<*> {
+        return if (!AudioRecorder.isRecording.value) {
+            AudioRecorder.startRecording()
+        } else ServiceResponse.Nothing()
+    }
+
+    private fun stopRecorder() {
+        if (!isRecordingNormal && !isRecordingWakeWord) {
+            AudioRecorder.stopRecording()
         }
     }
 
     override fun onClose() {
-        TODO("Not yet implemented")
+        AudioRecorder.stopRecording()
+        scope.cancel()
     }
-
-
-    /**
-     * should be called when wake word is detected or user wants to speak
-     * by clicking ui
-     */
-    private fun startRecording() {
-        if (isRecording) {
-            logger.d { "alreadyRecording" }
-            return
-        }
-
-        logger.d { "startRecording" }
-        isRecording = true
-        silenceStartTime = null
-
-        data.clear()
-
-        recordingJob = coroutineScope.launch {
-            AudioRecorder.output.collectIndexed { _, value ->
-
-                val byteData = value.toList()
-                data.addAll(byteData)
-                StateMachine.audioFrame(byteData)
-
-                /*
-                if (AppSettings.isAutomaticSilenceDetectionEnabled.value && ConfigurationSettings.wakeWordOption.value != WakeWordOption.MQTT) {
-                    if (byteData.isNotAboveThreshold(AppSettings.automaticSilenceDetectionAudioLevel.value)) {
-                        //no data was above threshold, there is silence
-                        silenceStartTime?.also {
-                            logger.d { "silenceDetected" }
-                            //check if silence was detected for x milliseconds
-                            if (it.minus(Clock.System.now()) < -AppSettings.automaticSilenceDetectionTime.value.milliseconds) {
-                                StateMachine.stopListening()
-                            }
-                        } ?: run {
-                            logger.v { "start silence detected" }
-                            //first time silence was detected
-                            silenceStartTime = Clock.System.now()
-                        }
-                    }
-                }*/
-            }
-        }
-
-        AudioRecorder.startRecording()
-    }
-
-    /**
-     * called when service should stop listening
-     */
-    private fun stopRecording() {
-        logger.d { "stopRecording" }
-
-        if (isRecording) {
-            AudioRecorder.stopRecording()
-            isRecording = false
-            recordingJob?.cancel()
-        }
-    }
-
-    /**
-     * starts recording (if not already recording)
-     * and saves recording for wakeWord, so recording will resume after indication sound
-     */
-    fun startRecordingWakeWord() {
-        isRecordingForWakeWord = true
-        startRecording()
-    }
-
-    fun stopRecordingWakeWord() {
-        isRecordingForWakeWord = false
-        stopRecording()
-    }
-
 }

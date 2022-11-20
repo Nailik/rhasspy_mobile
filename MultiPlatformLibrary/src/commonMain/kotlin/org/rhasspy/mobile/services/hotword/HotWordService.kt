@@ -3,6 +3,7 @@ package org.rhasspy.mobile.services.hotword
 import co.touchlab.kermit.Logger
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.WakeWordOption
+import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.nativeutils.NativeLocalPorcupineWakeWordService
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.recording.RecordingService
@@ -40,10 +41,12 @@ class HotWordService : IService() {
                 val error = nativeLocalPorcupineWakeWordService?.start()
                 error?.also {
                     stateMachineService.hotWordServiceError(error)
+                } ?: run {
+                    stateMachineService.hotWordServiceStartedSuccessfully()
                 }
             }
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
-            WakeWordOption.MQTT -> recordingService.startRecordingWakeWord()
+            WakeWordOption.MQTT -> {} //nothing to do
             WakeWordOption.Disabled -> logger.v { "hotWordDisabled" }
         }
     }
@@ -62,11 +65,10 @@ class HotWordService : IService() {
         nativeLocalPorcupineWakeWordService?.stop()
     }
 
-    private fun onKeywordDetected(index: Int) {
-        stateMachineService.hotWordDetected(index)
-    }
+    private fun onKeywordDetected(index: Int) = stateMachineService.hotWordDetected(index)
 
     override fun onClose() {
+        recordingService.stopRecording()
         nativeLocalPorcupineWakeWordService?.stop()
     }
 
