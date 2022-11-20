@@ -94,5 +94,41 @@ class StateMachineService(
 
     }
 
+    fun listenForCommandWebServer() {
+
+    }
+
+    fun toggleListenForWakeWebServer(it: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    fun playRecordingPostWebServer() {
+        TODO("Not yet implemented")
+    }
+
+    fun playRecordingGetWebServer() : List<Byte> {
+        TODO()
+    }
+
+    fun playWavWebServer(toList: List<Byte>) {
+        TODO("Not yet implemented")
+    }
+
+    fun setVolumeWebServer(volume: Float?) {
+        TODO("Not yet implemented")
+    }
+
+    fun startRecordingWebServer() {
+
+    }
+
+    fun stopRecordingWebServer() {
+
+    }
+
+    fun sayWebServer(receive: ByteArray) {
+
+    }
+
 
 }

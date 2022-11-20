@@ -2,29 +2,19 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
-import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
-import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.state.ServiceState
-import org.rhasspy.mobile.services.state.State
-import org.rhasspy.mobile.services.webserver.WebServerLink
-import org.rhasspy.mobile.services.webserver.WebServerService
-import org.rhasspy.mobile.services.webserver.WebServerServiceTest
-import org.rhasspy.mobile.services.webserver.data.WebServerLinkStateType.RECEIVING
-import org.rhasspy.mobile.services.webserver.data.WebServerLinkStateType.STARTING
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class WebServerConfigurationViewModel : ViewModel(), IConfigurationViewModel, KoinComponent {
 
     private val logger = Logger.withTag("WebserverConfigurationViewModel")
+    override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
 
     //unsaved data
     private val _isHttpServerEnabled =
@@ -73,9 +63,9 @@ class WebServerConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
         ConfigurationSettings.isHttpServerEnabled.value = _isHttpServerEnabled.value
         ConfigurationSettings.httpServerPort.value = _httpServerPort.value
         ConfigurationSettings.isHttpServerSSLEnabled.value = _isHttpServerSSLEnabled.value
-        get<WebServerService>().also {
-            it.restart()
-        }
+        /* get<WebServerService>().also {
+             it.restart()
+         }*/
     }
 
     /**
@@ -86,7 +76,7 @@ class WebServerConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
         _httpServerPort.value = ConfigurationSettings.httpServerPort.value
         _isHttpServerSSLEnabled.value = ConfigurationSettings.isHttpServerSSLEnabled.value
     }
-
+/*
     //for testing
     private lateinit var webServerServiceTest: WebServerServiceTest
     private val _currentTestStartingState = MutableStateFlow<ServiceState?>(null)
@@ -99,52 +89,52 @@ class WebServerConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
             }
             list.addAll(receivingStateList)
         }
-    }
+    }*/
 
     /**
      * test unsaved data configuration
      */
     override fun test() {
-        webServerServiceTest = get {
-            parametersOf(
-                WebServerLink(_isHttpServerEnabled.value, _httpServerPort.value, _isHttpServerSSLEnabled.value)
-            )
-        }
+        /*   webServerServiceTest = get {
+               parametersOf(
+                   WebServerLink(_isHttpServerEnabled.value, _httpServerPort.value, _isHttpServerSSLEnabled.value)
+               )
+           }
 
-        //run tests
-        CoroutineScope(Dispatchers.Default).launch {
-            webServerServiceTest.currentState.collect { state ->
-                when (state.stateType) {
-                    STARTING -> {
-                        _currentTestStartingState.value = state
-                        _currentTestReceivingStateList.value = listOf(
-                            ServiceState(State.Loading, RECEIVING)
-                        )
-                    }
-                    RECEIVING -> {
-                        //take last
-                        val list = _currentTestReceivingStateList.value.toMutableList()
-                        if (list.size > 0) {
-                            list.add(list.lastIndex, state)
-                        } else {
-                            list.add(state)
-                        }
-                        _currentTestReceivingStateList.value = list
-                    }
-                }
-            }
-        }
+           //run tests
+           CoroutineScope(Dispatchers.Default).launch {
+               webServerServiceTest.currentState.collect { state ->
+                   when (state.stateType) {
+                       STARTING -> {
+                           _currentTestStartingState.value = state
+                           _currentTestReceivingStateList.value = listOf(
+                               ServiceState(State.Loading, RECEIVING)
+                           )
+                       }
+                       RECEIVING -> {
+                           //take last
+                           val list = _currentTestReceivingStateList.value.toMutableList()
+                           if (list.size > 0) {
+                               list.add(list.lastIndex, state)
+                           } else {
+                               list.add(state)
+                           }
+                           _currentTestReceivingStateList.value = list
+                       }
+                   }
+               }
+           }
 
-        webServerServiceTest.start()
+           webServerServiceTest.start()*/
     }
 
     override fun stopTest() {
-        logger.d { "stopTest()" }
-        _currentTestStartingState.value = null
-        _currentTestReceivingStateList.value = listOf()
-        //destroy instance
-        if (::webServerServiceTest.isInitialized) {
-            webServerServiceTest.stop()
-        }
+        /*     logger.d { "stopTest()" }
+             _currentTestStartingState.value = null
+             _currentTestReceivingStateList.value = listOf()
+             //destroy instance
+             if (::webServerServiceTest.isInitialized) {
+                 webServerServiceTest.stop()
+             }*/
     }
 }

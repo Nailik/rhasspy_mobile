@@ -3,52 +3,128 @@ package org.rhasspy.mobile.services.webserver
 import co.touchlab.kermit.Logger
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.cio.*
+import io.ktor.server.engine.*
+import io.ktor.server.plugins.cors.routing.*
+import io.ktor.server.plugins.dataconversion.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.logic.StateMachine
-import org.rhasspy.mobile.readOnly
-import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.ServiceError
-import org.rhasspy.mobile.services.webserver.data.WebServerLinkStateType
+import org.koin.core.component.inject
+import org.koin.core.qualifier.named
+import org.rhasspy.mobile.ServiceTestName
+import org.rhasspy.mobile.nativeutils.installCallLogging
+import org.rhasspy.mobile.nativeutils.installCompression
+import org.rhasspy.mobile.services.IService2
+import org.rhasspy.mobile.services.statemachine.StateMachineService
+import org.rhasspy.mobile.services.webserver.data.WebServerCallType
 import org.rhasspy.mobile.services.webserver.data.WebServerPath
-import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-class WebServerService : IService<WebServerLinkStateType>() {
+class WebServerService(
+    params: WebServerServiceParams = WebServerService.loadParamsFromConfiguration(),
+    isTest: Boolean = false
+) : IService2<WebServerServiceParams>(
+    params = params,
+    isTest = isTest,
+    serviceName = ServiceTestName.RhasspyActions
+) {
 
     private val logger = Logger.withTag("WebServerService")
-    private val _currentError = MutableSharedFlow<ServiceError<WebServerLinkStateType>?>()
-    override val currentError = _currentError.readOnly
+    private lateinit var server: CIOApplicationEngine
 
-    override fun onStart(scope: CoroutineScope): WebServerLink {
-        val webServerLink = WebServerLink(
-            ConfigurationSettings.isHttpServerEnabled.value,
-            ConfigurationSettings.httpServerPort.value,
-            ConfigurationSettings.isHttpServerSSLEnabled.value
-        )
+    private val stateMachineService by inject<StateMachineService>(named(if (isTest) ServiceTestName.StateMachineTest else ServiceTestName.StateMachine))
 
-        scope.launch {
-            webServerLink.receivedRequest.collect {
-                when (it.path) {
-                    WebServerPath.ListenForCommand -> listenForCommand()
-                    WebServerPath.ListenForWake -> listenForWake(it.call)
-                    WebServerPath.PlayRecordingPost -> playRecordingPost()
-                    WebServerPath.PlayRecordingGet -> playRecordingGet(it.call)
-                    WebServerPath.PlayWav -> playWav(it.call)
-                    WebServerPath.SetVolume -> setVolume(it.call)
-                    WebServerPath.StartRecording -> startRecording()
-                    WebServerPath.StopRecording -> stopRecording()
-                    WebServerPath.Say -> say(it.call)
+    companion object {
+        private fun loadParamsFromConfiguration(): WebServerServiceParams {
+            return WebServerServiceParams(
+                isHttpServerEnabled = ConfigurationSettings.isHttpServerEnabled.value,
+                httpServerPort = ConfigurationSettings.httpServerPort.value,
+                isHttpServerSSLEnabled = ConfigurationSettings.isHttpServerSSLEnabled.value
+            )
+        }
+    }
+
+    override fun onStart(scope: CoroutineScope) {
+        if (params.isHttpServerEnabled) {
+            logger.v { "starting server" }
+            server = getServer(params.httpServerPort)
+
+            scope.launch {
+                //necessary else netty has problems when the coroutine scope is closed
+                try {
+                    server.start()
+                } catch (e: Exception) {
+                    logger.e(e) { "While Starting server" }
+                }
+            }
+        } else {
+            logger.v { "Server disabled" }
+        }
+    }
+
+    override fun onStop() {
+        if (::server.isInitialized) {
+            server.stop()
+        }
+    }
+
+    override fun loadParamsFromConfiguration() = WebServerService.loadParamsFromConfiguration()
+
+    private fun getServer(port: Int): CIOApplicationEngine {
+        return embeddedServer(factory = CIO, port = port, watchPaths = emptyList()) {
+            //install(WebSockets)
+            installCallLogging()
+            install(DataConversion)
+            //Greatly reduces the amount of data that's needed to be sent to the client by
+            //gzipping outgoing content when applicable.
+            installCompression()
+
+            // configures Cross-Origin Resource Sharing. CORS is needed to make calls from arbitrary
+            // JavaScript clients, and helps us prevent issues down the line.
+            install(CORS) {
+                methods.add(HttpMethod.Get)
+                methods.add(HttpMethod.Post)
+                methods.add(HttpMethod.Delete)
+                anyHost()
+            }
+
+            routing {
+                WebServerPath.values().forEach { path ->
+                    try {
+                        when (path.type) {
+                            WebServerCallType.POST -> post(path.path) {
+                                logger.v { "post ${path.path}" }
+                                evaluateCall(path, call)
+                            }
+                            WebServerCallType.GET -> get(path.path) {
+                                logger.v { "get ${path.path}" }
+                                evaluateCall(path, call)
+                            }
+                        }
+                    } catch (e: Exception) {
+                        logger.e(e) { "While receiving" }
+                    }
                 }
             }
         }
-
-        return webServerLink
     }
 
+    private suspend fun evaluateCall(path: WebServerPath, call: ApplicationCall) {
+        when (path) {
+            WebServerPath.ListenForCommand -> listenForCommand()
+            WebServerPath.ListenForWake -> listenForWake(call)
+            WebServerPath.PlayRecordingPost -> playRecordingPost()
+            WebServerPath.PlayRecordingGet -> playRecordingGet(call)
+            WebServerPath.PlayWav -> playWav(call)
+            WebServerPath.SetVolume -> setVolume(call)
+            WebServerPath.StartRecording -> startRecording()
+            WebServerPath.StopRecording -> stopRecording()
+            WebServerPath.Say -> say(call)
+        }
+    }
 
     /**
      * /api/listen-for-command
@@ -58,7 +134,7 @@ class WebServerService : IService<WebServerLinkStateType>() {
      * ?timeout=<seconds> - override default command timeout
      * ?entity=<entity>&value=<value> - set custom entities/values in recognized intent
      */
-    private suspend fun listenForCommand() = StateMachine.hotWordDetected("REMOTE")
+    private fun listenForCommand() = stateMachineService.listenForCommandWebServer()
 
 
     /**
@@ -77,7 +153,7 @@ class WebServerService : IService<WebServerLinkStateType>() {
         logger.v { "received $action" }
 
         action?.also {
-            AppSettings.isHotWordEnabled.value = it
+            stateMachineService.toggleListenForWakeWebServer(it)
         } ?: run {
             logger.w { "invalid body" }
         }
@@ -88,7 +164,7 @@ class WebServerService : IService<WebServerLinkStateType>() {
      * /api/play-recording
      * POST to play last recorded voice command
      */
-    private suspend fun playRecordingPost() = StateMachine.playRecording()
+    private fun playRecordingPost() = stateMachineService.playRecordingPostWebServer()
 
 
     /**
@@ -97,7 +173,7 @@ class WebServerService : IService<WebServerLinkStateType>() {
      */
     private suspend fun playRecordingGet(call: ApplicationCall) {
         call.respondBytes(
-            bytes = StateMachine.getPreviousRecording().toByteArray(),
+            bytes = stateMachineService.playRecordingGetWebServer().toByteArray(),
             contentType = ContentType("audio", "wav")
         )
     }
@@ -113,7 +189,7 @@ class WebServerService : IService<WebServerLinkStateType>() {
             logger.w { "invalid content type ${call.request.contentType()}" }
         }
         //play even without header
-        StateMachine.playAudio(call.receive<ByteArray>().toList())
+        stateMachineService.playWavWebServer(call.receive<ByteArray>().toList())
     }
 
     /**
@@ -124,17 +200,7 @@ class WebServerService : IService<WebServerLinkStateType>() {
      */
     private suspend fun setVolume(call: ApplicationCall) {
         //double and float or double not working but string??
-        val volume = call.receive<String>().toFloatOrNull()
-
-        volume?.also {
-            if (volume > 0F && volume < 1F) {
-                AppSettings.volume.value = volume
-            }
-            return
-        }
-
-        logger.w { "invalid volume $volume" }
-
+        stateMachineService.setVolumeWebServer(call.receive<String>().toFloatOrNull())
     }
 
     /**
@@ -142,7 +208,7 @@ class WebServerService : IService<WebServerLinkStateType>() {
      * POST to have Rhasspy start recording a voice command
      * actually starts a session
      */
-    private suspend fun startRecording() = StateMachine.startListening()
+    private fun startRecording() = stateMachineService.startRecordingWebServer()
 
     /**
      * /api/stop-recording
@@ -155,7 +221,7 @@ class WebServerService : IService<WebServerLinkStateType>() {
      * ?nohass=true - stop Rhasspy from handling the intent
      * ?entity=<entity>&value=<value> - set custom entity/value in recognized intent
      */
-    private suspend fun stopRecording() = StateMachine.stopListening()
+    private fun stopRecording() = stateMachineService.stopRecordingWebServer()
 
     /**
      * /api/say
@@ -165,8 +231,6 @@ class WebServerService : IService<WebServerLinkStateType>() {
      * Afterwards Rhasspy will use the audio endpoint to play the audio
      * just like using say in the ui start screen but remote
      */
-    private suspend fun say(call: ApplicationCall) {
-      //  RhasspyActions.say(call.receive())
-    }
+    private suspend fun say(call: ApplicationCall) = stateMachineService.sayWebServer(call.receive())
 
 }

@@ -23,7 +23,7 @@ import org.rhasspy.mobile.ServiceTestName
 import org.rhasspy.mobile.data.IntentHandlingOptions
 import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.services.httpclient.data.HttpClientPath
-import org.rhasspy.mobile.services.`interface`.IService2
+import org.rhasspy.mobile.services.IService2
 import org.rhasspy.mobile.services.statemachine.StateMachineService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 

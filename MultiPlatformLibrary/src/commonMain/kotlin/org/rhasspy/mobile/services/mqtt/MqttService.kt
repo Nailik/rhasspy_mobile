@@ -16,7 +16,7 @@ import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.mqtt.*
 import org.rhasspy.mobile.nativeutils.MqttClient
 import org.rhasspy.mobile.readOnly
-import org.rhasspy.mobile.services.`interface`.IService2
+import org.rhasspy.mobile.services.IService2
 import org.rhasspy.mobile.services.statemachine.StateMachineService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.math.min
@@ -45,7 +45,7 @@ class MqttService(
     private val stateMachineService by inject<StateMachineService>(named(if (isTest) ServiceTestName.StateMachineTest else ServiceTestName.StateMachine))
 
     companion object {
-        fun loadParamsFromConfiguration(): MqttServiceParams {
+        private fun loadParamsFromConfiguration(): MqttServiceParams {
             return MqttServiceParams(
                 siteId = ConfigurationSettings.siteId.value,
                 isMqttEnabled = ConfigurationSettings.isMqttEnabled.value,

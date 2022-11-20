@@ -1,22 +1,12 @@
 package org.rhasspy.mobile.viewModels.configuration
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
-import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
-import org.rhasspy.mobile.data.IntentHandlingOptions
 import org.rhasspy.mobile.readOnly
-import org.rhasspy.mobile.services.httpclient.HttpClientLink
-import org.rhasspy.mobile.services.httpclient.HttpClientService
-import org.rhasspy.mobile.services.httpclient.HttpClientServiceTest
-import org.rhasspy.mobile.services.httpclient.data.HttpClientPath
 import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -58,9 +48,9 @@ class RemoteHermesHttpConfigurationViewModel : ViewModel(), IConfigurationViewMo
     override fun save() {
         ConfigurationSettings.httpServerEndpoint.value = _httpServerEndpoint.value
         ConfigurationSettings.isHttpSSLVerificationDisabled.value = _isHttpSSLVerificationDisabled.value
-        get<HttpClientService>().also {
-            it.restart()
-        }
+        /*get<HttpClientService>().also {
+             it.restart() //TODO()
+         }*/
     }
 
     /**
@@ -71,12 +61,12 @@ class RemoteHermesHttpConfigurationViewModel : ViewModel(), IConfigurationViewMo
         _isHttpSSLVerificationDisabled.value = ConfigurationSettings.isHttpSSLVerificationDisabled.value
     }
 
-    private lateinit var httpClientServiceTest: HttpClientServiceTest
 
     /**
      * test unsaved data configuration
      */
     override fun test() {
+        /*
         httpClientServiceTest = get {
             parametersOf(
                 HttpClientLink(
@@ -120,13 +110,18 @@ class RemoteHermesHttpConfigurationViewModel : ViewModel(), IConfigurationViewMo
         }
 
         httpClientServiceTest.start()
+
+         */
     }
 
     override fun stopTest() {
+        /*
         //destroy instance
         if (::httpClientServiceTest.isInitialized) {
             httpClientServiceTest.stop()
         }
+
+         */
     }
 
 }

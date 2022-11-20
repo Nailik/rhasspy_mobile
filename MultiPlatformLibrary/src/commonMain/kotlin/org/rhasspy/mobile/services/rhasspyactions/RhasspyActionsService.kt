@@ -8,7 +8,7 @@ import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.interfaces.HomeAssistantInterface
 import org.rhasspy.mobile.services.LocalAudioService
 import org.rhasspy.mobile.services.httpclient.HttpClientService
-import org.rhasspy.mobile.services.`interface`.IService2
+import org.rhasspy.mobile.services.IService2
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -30,7 +30,7 @@ open class RhasspyActionsService(
     private val homeAssistantService by inject<HomeAssistantInterface>()
 
     companion object {
-        fun loadParamsFromConfiguration(): RhasspyActionsServiceParams {
+        private fun loadParamsFromConfiguration(): RhasspyActionsServiceParams {
             return RhasspyActionsServiceParams(
                 intentRecognitionOption = ConfigurationSettings.intentRecognitionOption.value,
                 textToSpeechOption = ConfigurationSettings.textToSpeechOption.value,
