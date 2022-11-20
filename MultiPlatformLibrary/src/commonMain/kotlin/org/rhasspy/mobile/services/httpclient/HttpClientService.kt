@@ -20,8 +20,8 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.koin.core.component.inject
 import org.rhasspy.mobile.nativeutils.configureEngine
-import org.rhasspy.mobile.services.ServiceResponse
 import org.rhasspy.mobile.services.IService
+import org.rhasspy.mobile.services.ServiceResponse
 
 /**
  * contains client to send data to http endpoints
@@ -67,7 +67,7 @@ class HttpClientService : IService() {
      * Set Accept: application/json to receive JSON with more details
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
-    suspend fun speechToText(data: List<Byte>): ServiceResponse<String> {
+    suspend fun speechToText(data: List<Byte>): ServiceResponse<*> {
         logger.v { "sending speechToText \nendpoint:\n${params.speechToTextHttpEndpoint}\ndata:\n${data.size}" }
 
         return httpClient?.let { client ->
@@ -102,7 +102,7 @@ class HttpClientService : IService() {
      *
      * returns null if the intent is not found
      */
-    suspend fun recognizeIntent(text: String): ServiceResponse<String> {
+    suspend fun recognizeIntent(text: String): ServiceResponse<*> {
         logger.v { "sending intentRecognition text\nendpoint:\n${params.intentRecognitionHttpEndpoint}\ntext:\n$text" }
 
         return httpClient?.let { client ->
@@ -159,7 +159,7 @@ class HttpClientService : IService() {
      * ?volume=<volume> - volume level to speak at (0 = off, 1 = full volume)
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun textToSpeech(text: String): ServiceResponse<List<Byte>> {
+    suspend fun textToSpeech(text: String): ServiceResponse<*> {
         logger.v { "sending text to speech\nendpoint:\n${params.textToSpeechHttpEndpoint}\ntext:\n$text" }
 
         return httpClient?.let { client ->
@@ -191,7 +191,7 @@ class HttpClientService : IService() {
      * Make sure to set Content-Type to audio/wav
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun playWav(data: List<Byte>): ServiceResponse<String> {
+    suspend fun playWav(data: List<Byte>): ServiceResponse<*> {
         logger.v { "sending audio \nendpoint:\n${params.audioPlayingHttpEndpoint}data:\n${data.size}" }
 
         return httpClient?.let { client ->
@@ -236,7 +236,7 @@ class HttpClientService : IService() {
      *
      * Implemented by rhasspy-remote-http-hermes
      */
-    suspend fun intentHandling(intent: String): ServiceResponse<String> {
+    suspend fun intentHandling(intent: String): ServiceResponse<*> {
         logger.v { "sending intentHandling\nendpoint:\n${params.intentHandlingHttpEndpoint}\nintent:\n$intent" }
         return httpClient?.let { client ->
             try {
@@ -265,7 +265,7 @@ class HttpClientService : IService() {
     /**
      * send intent as Event to Home Assistant
      */
-    suspend fun hassEvent(json: String, intentName: String): ServiceResponse<String> {
+    suspend fun hassEvent(json: String, intentName: String): ServiceResponse<*> {
         logger.v {
             "sending intent as Event to Home Assistant\nendpoint:\n" +
                     "${params.intentHandlingHassEndpoint}/api/events/rhasspy_$intentName\nintent:\n$json"
@@ -304,7 +304,7 @@ class HttpClientService : IService() {
     /**
      * send intent as Intent to Home Assistant
      */
-    suspend fun hassIntent(intentJson: String): ServiceResponse<String> {
+    suspend fun hassIntent(intentJson: String): ServiceResponse<*> {
         logger.v {
             "sending intent as Intent to Home Assistant\nendpoint:\n" +
                     "${params.intentHandlingHassEndpoint}/api/intent/handle\nintent:\n$intentJson"

@@ -4,9 +4,9 @@ abstract class ServiceResponse<T> {
 
     data class Success<T>(val data: T) : ServiceResponse<T>()
 
-    data class Error<T>(val exception: Exception) : ServiceResponse<T>()
+    data class Error(val exception: Exception) : ServiceResponse<Unit>()
 
-    class NotInitialized<T> : ServiceResponse<T>()
+    class NotInitialized : ServiceResponse<Unit>()
 
     class Disabled: ServiceResponse<Unit>()
 
