@@ -3,13 +3,16 @@ package org.rhasspy.mobile.services.rhasspyactions
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.localaudio.LocalAudioService
+import org.rhasspy.mobile.services.ServiceResponse
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.services.httpclient.HttpClientService
+import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.services.mqtt.MqttService
 
 /**
- * actions are fired and state machine has to react for results in other services
+ * calls actions and returns result
+ *
+ * when data is null the service was most probably mqtt and will return result in a call function
  */
 open class RhasspyActionsService : IService() {
 
@@ -18,8 +21,9 @@ open class RhasspyActionsService : IService() {
     private val httpClientService by inject<HttpClientService>()
     private val mqttClientService by inject<MqttService>()
     private val homeAssistantService by inject<HomeAssistantService>()
+
     override fun onClose() {
-        TODO("Not yet implemented")
+        //nothing to do
     }
 
     /**
@@ -39,11 +43,11 @@ open class RhasspyActionsService : IService() {
      * - calls default site to recognize intent
      * - later eventually intentRecognized or intentNotRecognized will be called with received data
      */
-    suspend fun recognizeIntent(text: String): Boolean {
+    suspend fun recognizeIntent(text: String): ServiceResponse<*> {
         return when (params.intentRecognitionOption) {
             IntentRecognitionOptions.RemoteHTTP -> httpClientService.recognizeIntent(text)
             IntentRecognitionOptions.RemoteMQTT -> mqttClientService.recognizeIntent(text)
-            IntentRecognitionOptions.Disabled -> false
+            IntentRecognitionOptions.Disabled -> ServiceResponse.Disabled()
         }
     }
 
@@ -56,11 +60,11 @@ open class RhasspyActionsService : IService() {
      * hermes/tts/sayFinished (JSON)
      * is called when playing audio is finished
      */
-    suspend fun say(text: String): Boolean {
+    suspend fun say(text: String): ServiceResponse<*> {
         return when (params.textToSpeechOption) {
             TextToSpeechOptions.RemoteHTTP -> httpClientService.textToSpeech(text)
             TextToSpeechOptions.RemoteMQTT -> mqttClientService.say(text)
-            TextToSpeechOptions.Disabled -> false
+            TextToSpeechOptions.Disabled -> ServiceResponse.Disabled()
         }
     }
 
@@ -82,12 +86,12 @@ open class RhasspyActionsService : IService() {
      * MQTT:
      * - calls default site to play audio
      */
-    suspend fun playAudio(data: List<Byte>): Boolean {
+    suspend fun playAudio(data: List<Byte>): ServiceResponse<*> {
         return when (params.audioPlayingOption) {
             AudioPlayingOptions.Local -> localAudioService.playAudio(data)
             AudioPlayingOptions.RemoteHTTP -> httpClientService.playWav(data)
             AudioPlayingOptions.RemoteMQTT -> mqttClientService.playBytes(data)
-            AudioPlayingOptions.Disabled -> false
+            AudioPlayingOptions.Disabled -> ServiceResponse.Disabled()
         }
     }
 
@@ -101,11 +105,11 @@ open class RhasspyActionsService : IService() {
      * RemoteMQTT
      * - audio was already send to mqtt while recording in audioFrame
      */
-    suspend fun speechToText(data: List<Byte>): Boolean {
+    suspend fun speechToText(data: List<Byte>): ServiceResponse<*> {
         return when (params.speechToTextOption) {
             SpeechToTextOptions.RemoteHTTP -> httpClientService.speechToText(data)
-            SpeechToTextOptions.RemoteMQTT -> false //nothing to do
-            SpeechToTextOptions.Disabled -> false
+            SpeechToTextOptions.RemoteMQTT -> ServiceResponse.Nothing()
+            SpeechToTextOptions.Disabled -> ServiceResponse.Disabled()
         }
     }
 
@@ -124,12 +128,12 @@ open class RhasspyActionsService : IService() {
      *
      * if local dialogue management it will end the session
      */
-    suspend fun intentHandling(intentName: String, intent: String): Boolean {
+    suspend fun intentHandling(intentName: String, intent: String): ServiceResponse<*> {
         return when (params.intentHandlingOption) {
             IntentHandlingOptions.HomeAssistant -> homeAssistantService.sendIntent(intentName, intent)
             IntentHandlingOptions.RemoteHTTP -> httpClientService.intentHandling(intent)
-            IntentHandlingOptions.WithRecognition -> false //nothing to do
-            IntentHandlingOptions.Disabled -> false
+            IntentHandlingOptions.WithRecognition -> ServiceResponse.Nothing()
+            IntentHandlingOptions.Disabled -> ServiceResponse.Disabled()
         }
     }
 }

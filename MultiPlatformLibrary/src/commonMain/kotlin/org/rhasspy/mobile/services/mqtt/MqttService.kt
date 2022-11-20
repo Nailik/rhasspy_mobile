@@ -15,6 +15,7 @@ import org.rhasspy.mobile.mqtt.*
 import org.rhasspy.mobile.nativeutils.MqttClient
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
+import org.rhasspy.mobile.services.ServiceResponse
 import org.rhasspy.mobile.services.statemachine.StateMachineService
 import kotlin.math.min
 
@@ -212,15 +213,15 @@ class MqttService : IService() {
     /**
      * published new messages
      */
-    private suspend fun publishMessage(topic: String, message: MqttMessage): Boolean {
+    private suspend fun publishMessage(topic: String, message: MqttMessage): ServiceResponse<Any> {
         message.msgId = id
 
         return client?.let { mqttClient ->
             mqttClient.publish(topic, message)?.let {
                 logger.e { "unable to publish topic \n${it.statusCode.name} ${it.msg}" }
-                false//there was an error
-            } ?: true //error was null
-        } ?: false //client was null
+                ServiceResponse.Error(Exception(it.statusCode.name))
+            } ?: ServiceResponse.Success(Unit)
+        } ?: ServiceResponse.NotInitialized()
 
     }
 
@@ -308,7 +309,7 @@ class MqttService : IService() {
      * Response to [hermes/dialogueManager/startSession]
      * Also used when session has started for other reasons
      */
-    suspend fun sessionStarted(sessionId: String): Boolean {
+    suspend fun sessionStarted(sessionId: String): ServiceResponse<*> {
         return publishMessage(
             MQTTTopicsPublish.SessionStarted.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
@@ -347,7 +348,7 @@ class MqttService : IService() {
      *
      * Response to hermes/dialogueManager/endSession or other reasons for a session termination
      */
-    suspend fun sessionEnded(sessionId: String?): Boolean {
+    suspend fun sessionEnded(sessionId: String?): ServiceResponse<*> {
         return publishMessage(
             MQTTTopicsPublish.SessionEnded.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
@@ -364,7 +365,7 @@ class MqttService : IService() {
      * sessionId: string - current session ID
      * siteId: string = "default" - Hermes site ID
      */
-    suspend fun intentNotRecognized(sessionId: String?): Boolean {
+    suspend fun intentNotRecognized(sessionId: String?): ServiceResponse<*> {
         return publishMessage(
             MQTTTopicsPublish.IntentNotRecognizedInSession.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
@@ -381,7 +382,7 @@ class MqttService : IService() {
      * wav_bytes: bytes - WAV data to play (message payload)
      * siteId: string - Hermes site ID (part of topic)
      */
-    suspend fun audioFrame(byteArray: List<Byte>): Boolean {
+    suspend fun audioFrame(byteArray: List<Byte>): ServiceResponse<*> {
         return publishMessage(
             MQTTTopicsPublish.AsrAudioFrame.topic.replace("<siteId>", params.siteId),
             MqttMessage(byteArray.toByteArray())
@@ -663,7 +664,7 @@ class MqttService : IService() {
      * hermes/intent/<intentName>
      * hermes/nlu/intentNotRecognized
      */
-    suspend fun recognizeIntent(text: String, sessionId: String? = StateMachine.currentSession.sessionId): Boolean {
+    suspend fun recognizeIntent(text: String, sessionId: String? = StateMachine.currentSession.sessionId): ServiceResponse<*> {
         return publishMessage(
             MQTTTopicsPublish.Query.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
@@ -762,7 +763,7 @@ class MqttService : IService() {
      * Response(s)
      * hermes/tts/sayFinished (JSON)
      */
-    suspend fun say(text: String, sessionId: String? = StateMachine.currentSession.sessionId): Boolean {
+    suspend fun say(text: String, sessionId: String? = StateMachine.currentSession.sessionId): ServiceResponse<*> {
         return publishMessage(
             MQTTTopicsPublish.Say.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
@@ -800,7 +801,7 @@ class MqttService : IService() {
      * Response(s)
      * hermes/audioServer/<siteId>/playFinished (JSON)
      */
-    suspend fun playBytes(data: List<Byte>): Boolean {
+    suspend fun playBytes(data: List<Byte>): ServiceResponse<*> {
         return publishMessage(
             MQTTTopicsPublish.AudioOutputPlayBytes.topic
                 .replace("<siteId>", params.siteId)

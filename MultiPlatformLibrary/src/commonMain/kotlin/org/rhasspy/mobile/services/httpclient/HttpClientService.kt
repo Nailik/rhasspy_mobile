@@ -20,6 +20,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.koin.core.component.inject
 import org.rhasspy.mobile.nativeutils.configureEngine
+import org.rhasspy.mobile.services.ServiceResponse
 import org.rhasspy.mobile.services.IService
 
 /**
@@ -66,7 +67,7 @@ class HttpClientService : IService() {
      * Set Accept: application/json to receive JSON with more details
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
-    suspend fun speechToText(data: List<Byte>): HttpClientResponse<String> {
+    suspend fun speechToText(data: List<Byte>): ServiceResponse<String> {
         logger.v { "sending speechToText \nendpoint:\n${params.speechToTextHttpEndpoint}\ndata:\n${data.size}" }
 
         return httpClient?.let { client ->
@@ -79,16 +80,16 @@ class HttpClientService : IService() {
 
                 val response = request.body<String>()
                 logger.v { "speechToText received:\n$response" }
-                return HttpClientResponse.Success(response)
+                return ServiceResponse.Success(response)
 
             } catch (e: Exception) {
 
                 logger.e(e) { "sending speechToText Exception" }
-                return HttpClientResponse.Error(e)
+                return ServiceResponse.Error(e)
 
             }
         } ?: run {
-            return HttpClientResponse.NotInitialized()
+            return ServiceResponse.NotInitialized()
         }
     }
 
@@ -101,7 +102,7 @@ class HttpClientService : IService() {
      *
      * returns null if the intent is not found
      */
-    suspend fun recognizeIntent(text: String): HttpClientResponse<String?> {
+    suspend fun recognizeIntent(text: String): ServiceResponse<String> {
         logger.v { "sending intentRecognition text\nendpoint:\n${params.intentRecognitionHttpEndpoint}\ntext:\n$text" }
 
         return httpClient?.let { client ->
@@ -133,19 +134,19 @@ class HttpClientService : IService() {
                     response
                 } else {
                     //there was no intent found, return null
-                    null
+                    "NoIntentFound"
                 }
                 logger.v { "intentRecognition received:\n$data" }
-                return HttpClientResponse.Success(data)
+                return ServiceResponse.Success(data)
 
             } catch (e: Exception) {
 
                 logger.e(e) { "sending intentRecognition Exception" }
-                return HttpClientResponse.Error(e)
+                return ServiceResponse.Error(e)
 
             }
         } ?: run {
-            return HttpClientResponse.NotInitialized()
+            return ServiceResponse.NotInitialized()
         }
     }
 
@@ -158,7 +159,7 @@ class HttpClientService : IService() {
      * ?volume=<volume> - volume level to speak at (0 = off, 1 = full volume)
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun textToSpeech(text: String): HttpClientResponse<List<Byte>> {
+    suspend fun textToSpeech(text: String): ServiceResponse<List<Byte>> {
         logger.v { "sending text to speech\nendpoint:\n${params.textToSpeechHttpEndpoint}\ntext:\n$text" }
 
         return httpClient?.let { client ->
@@ -171,16 +172,16 @@ class HttpClientService : IService() {
 
                 val response = request.body<ByteArray>().toList()
                 logger.v { "textToSpeech received Data" }
-                return HttpClientResponse.Success(response)
+                return ServiceResponse.Success(response)
 
             } catch (e: Exception) {
 
                 logger.e(e) { "sending text to speech Exception" }
-                return HttpClientResponse.Error(e)
+                return ServiceResponse.Error(e)
 
             }
         } ?: run {
-            return HttpClientResponse.NotInitialized()
+            return ServiceResponse.NotInitialized()
         }
     }
 
@@ -190,7 +191,7 @@ class HttpClientService : IService() {
      * Make sure to set Content-Type to audio/wav
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun playWav(data: List<Byte>): HttpClientResponse<String> {
+    suspend fun playWav(data: List<Byte>): ServiceResponse<String> {
         logger.v { "sending audio \nendpoint:\n${params.audioPlayingHttpEndpoint}data:\n${data.size}" }
 
         return httpClient?.let { client ->
@@ -206,16 +207,16 @@ class HttpClientService : IService() {
 
                 val response = request.body<String>()
                 logger.v { "sending audio received:\n${response}" }
-                return HttpClientResponse.Success(response)
+                return ServiceResponse.Success(response)
 
             } catch (e: Exception) {
 
                 logger.e(e) { "sending audio Exception" }
-                return HttpClientResponse.Error(e)
+                return ServiceResponse.Error(e)
 
             }
         } ?: run {
-            return HttpClientResponse.NotInitialized()
+            return ServiceResponse.NotInitialized()
         }
     }
 
@@ -235,7 +236,7 @@ class HttpClientService : IService() {
      *
      * Implemented by rhasspy-remote-http-hermes
      */
-    suspend fun intentHandling(intent: String): HttpClientResponse<String> {
+    suspend fun intentHandling(intent: String): ServiceResponse<String> {
         logger.v { "sending intentHandling\nendpoint:\n${params.intentHandlingHttpEndpoint}\nintent:\n$intent" }
         return httpClient?.let { client ->
             try {
@@ -248,23 +249,23 @@ class HttpClientService : IService() {
 
                 val response = request.body<String>()
                 logger.v { "sending intent received:\n${response}" }
-                return HttpClientResponse.Success(response)
+                return ServiceResponse.Success(response)
 
             } catch (e: Exception) {
 
                 logger.e(e) { "sending intentHandling Exception" }
-                return HttpClientResponse.Error(e)
+                return ServiceResponse.Error(e)
 
             }
         } ?: run {
-            return HttpClientResponse.NotInitialized()
+            return ServiceResponse.NotInitialized()
         }
     }
 
     /**
      * send intent as Event to Home Assistant
      */
-    suspend fun hassEvent(json: String, intentName: String): HttpClientResponse<String> {
+    suspend fun hassEvent(json: String, intentName: String): ServiceResponse<String> {
         logger.v {
             "sending intent as Event to Home Assistant\nendpoint:\n" +
                     "${params.intentHandlingHassEndpoint}/api/events/rhasspy_$intentName\nintent:\n$json"
@@ -286,16 +287,16 @@ class HttpClientService : IService() {
 
                 val response = request.body<String>()
                 logger.v { "sending intent received:\n${response}" }
-                return HttpClientResponse.Success(response)
+                return ServiceResponse.Success(response)
 
             } catch (e: Exception) {
 
                 logger.e(e) { "sending hassEvent Exception" }
-                return HttpClientResponse.Error(e)
+                return ServiceResponse.Error(e)
 
             }
         } ?: run {
-            return HttpClientResponse.NotInitialized()
+            return ServiceResponse.NotInitialized()
         }
     }
 
@@ -303,7 +304,7 @@ class HttpClientService : IService() {
     /**
      * send intent as Intent to Home Assistant
      */
-    suspend fun hassIntent(intentJson: String): HttpClientResponse<String> {
+    suspend fun hassIntent(intentJson: String): ServiceResponse<String> {
         logger.v {
             "sending intent as Intent to Home Assistant\nendpoint:\n" +
                     "${params.intentHandlingHassEndpoint}/api/intent/handle\nintent:\n$intentJson"
@@ -324,16 +325,16 @@ class HttpClientService : IService() {
 
                 val response = request.body<String>()
                 logger.v { "sending intent received:\n${response}" }
-                return HttpClientResponse.Success(response)
+                return ServiceResponse.Success(response)
 
             } catch (e: Exception) {
 
                 logger.e(e) { "sending hassIntent Exception" }
-                return HttpClientResponse.Error(e)
+                return ServiceResponse.Error(e)
 
             }
         } ?: run {
-            return HttpClientResponse.NotInitialized()
+            return ServiceResponse.NotInitialized()
         }
     }
 
