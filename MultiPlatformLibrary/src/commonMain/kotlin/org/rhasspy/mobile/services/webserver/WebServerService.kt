@@ -11,6 +11,8 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.nativeutils.installCallLogging
@@ -22,14 +24,13 @@ class WebServerService : IService() {
 
     private val logger = Logger.withTag("WebServerService")
     private lateinit var server: CIOApplicationEngine
+    private var scope = CoroutineScope(Dispatchers.Default)
 
     private val params by inject<WebServerServiceParams>()
     private val stateMachineService by inject<StateMachineService>()
-    override fun onClose() {
-        TODO("Not yet implemented")
-    }
 
-    fun onStart(scope: CoroutineScope) {
+    init {
+        scope = CoroutineScope(Dispatchers.Default)
         if (params.isHttpServerEnabled) {
             logger.v { "starting server" }
             server = getServer(params.httpServerPort)
@@ -47,10 +48,11 @@ class WebServerService : IService() {
         }
     }
 
-    fun onStop() {
+    override fun onClose() {
         if (::server.isInitialized) {
             server.stop()
         }
+        scope.cancel()
     }
 
     private fun getServer(port: Int): CIOApplicationEngine {

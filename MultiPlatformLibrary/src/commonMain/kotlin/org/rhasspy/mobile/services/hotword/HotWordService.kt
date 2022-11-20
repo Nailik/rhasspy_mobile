@@ -3,7 +3,6 @@ package org.rhasspy.mobile.services.hotword
 import co.touchlab.kermit.Logger
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.WakeWordOption
-import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.nativeutils.NativeLocalPorcupineWakeWordService
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.recording.RecordingService
@@ -51,7 +50,7 @@ class HotWordService : IService() {
         }
     }
 
-    fun start() {
+    fun startDetection() {
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> nativeLocalPorcupineWakeWordService?.start()
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
@@ -60,7 +59,7 @@ class HotWordService : IService() {
         }
     }
 
-    fun stop() {
+    fun stopDetection() {
         recordingService.stopRecordingWakeWord()
         nativeLocalPorcupineWakeWordService?.stop()
     }

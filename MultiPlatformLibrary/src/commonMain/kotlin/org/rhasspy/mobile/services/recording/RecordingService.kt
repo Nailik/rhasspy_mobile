@@ -26,13 +26,14 @@ class RecordingService : IService() {
 
     private val stateMachineService by inject<StateMachineService>()
 
-    private val scope = CoroutineScope(Dispatchers.Default)
+    private var scope = CoroutineScope(Dispatchers.Default)
     private var silenceStartTime: Instant? = null
 
     private var isRecordingWakeWord = false
     private var isRecordingNormal = false
 
     init {
+        scope = CoroutineScope(Dispatchers.Default)
         scope.launch {
             //collect from audio recorder
             AudioRecorder.output.collect { value ->
@@ -51,6 +52,11 @@ class RecordingService : IService() {
                 silenceDetection(it)
             }
         }
+    }
+
+    override fun onClose() {
+        AudioRecorder.stopRecording()
+        scope.cancel()
     }
 
     private fun silenceDetection(volume: Short) {
@@ -103,10 +109,5 @@ class RecordingService : IService() {
         if (!isRecordingNormal && !isRecordingWakeWord) {
             AudioRecorder.stopRecording()
         }
-    }
-
-    override fun onClose() {
-        AudioRecorder.stopRecording()
-        scope.cancel()
     }
 }

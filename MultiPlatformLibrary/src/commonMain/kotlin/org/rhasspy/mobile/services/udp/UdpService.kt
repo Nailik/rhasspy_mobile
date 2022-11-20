@@ -4,12 +4,12 @@ import co.touchlab.kermit.Logger
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.utils.io.core.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
 import org.koin.core.component.inject
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.services.ServiceResponse
+import org.rhasspy.mobile.services.statemachine.StateMachineService
 
 class UdpService : IService() {
     private val logger = Logger.withTag("UdpService")
@@ -18,15 +18,15 @@ class UdpService : IService() {
     private var sendChannel: SendChannel<Datagram>? = null
 
     private val params by inject<UdpServiceParams>()
+    private val stateMachineService by inject<StateMachineService>()
 
     /**
      * makes sure the address is up to date
      *
      * suspend is necessary else there is an network on main thread error at least on android
      */
-    fun start(scope: CoroutineScope) {
+    init {
         if (params.isUdpOutputEnabled) {
-
             logger.v { "start" }
 
             try {
@@ -37,31 +37,28 @@ class UdpService : IService() {
                     params.udpOutputPort
                 )
             } catch (e: Exception) {
+                stateMachineService.udpServiceError(e)
                 logger.e(e) { "unable to initialize address with host: ${params.udpOutputHost} and port ${params.udpOutputPort}" }
             }
         } else {
             logger.v { "not enabled" }
         }
     }
-    override fun onClose() {
-        TODO("Not yet implemented")
-    }
 
-    fun stop() {
+    override fun onClose() {
         sendChannel?.close()
         socketAddress = null
     }
 
-    suspend fun streamAudio(byteData: List<Byte>) {
-        val data = byteData.toByteArray()
-
-        if (AppSettings.isLogAudioFramesEnabled.value) {
-            logger.v { "streamAudio ${data.size}" }
-        }
-
+    suspend fun streamAudio(byteData: List<Byte>): ServiceResponse<*> {
         socketAddress?.also {
-            sendChannel?.send(Datagram(ByteReadPacket(data), it))
+            sendChannel?.send(Datagram(ByteReadPacket(byteData.toByteArray()), it)) ?: run {
+                return ServiceResponse.NotInitialized()
+            }
+        } ?: run {
+            return ServiceResponse.NotInitialized()
         }
+        return ServiceResponse.Success(Unit)
     }
 
 }

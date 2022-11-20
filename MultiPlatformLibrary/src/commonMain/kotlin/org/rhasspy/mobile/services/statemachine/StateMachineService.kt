@@ -180,4 +180,8 @@ class StateMachineService: IService() {
     fun audioFrameWakeWord(byteData: Any) {
         TODO("Not yet implemented")
     }
+
+    fun udpServiceError(e: Exception) {
+        TODO("Not yet implemented")
+    }
 }
