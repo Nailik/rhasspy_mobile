@@ -34,7 +34,7 @@ val serviceModule = module {
 
     single { StateMachineService() }
     single { RhasspyActionsService() }
-    single { MqttService() }w
+    single { MqttService() }
     single { HttpClientService() }
     single { WebServerService() }
     single { UdpService() }
