@@ -2,37 +2,54 @@ package org.rhasspy.mobile.services.rhasspyactions
 
 import kotlinx.coroutines.CoroutineScope
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import org.rhasspy.mobile.ServiceTestName
 import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.interfaces.HomeAssistantInterface
 import org.rhasspy.mobile.services.LocalAudioService
-import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.`interface`.IService2
+import org.rhasspy.mobile.services.mqtt.MqttService
+import org.rhasspy.mobile.settings.ConfigurationSettings
 
 /**
  * actions are fired and state machine has to react for results in other services
  */
-class RhasspyActionsService(
-    private var params: RhasspyActionsServiceParams = RhasspyActionsServiceParams.loadFromConfiguration(),
+open class RhasspyActionsService(
+    params: RhasspyActionsServiceParams = RhasspyActionsService.loadParamsFromConfiguration(),
     isTest: Boolean = false
-) : IService2(
+) : IService2<RhasspyActionsServiceParams>(
+    params = params,
     isTest = isTest,
     serviceName = ServiceTestName.RhasspyActions
 ) {
 
     private val localAudioService by inject<LocalAudioService>()
     private val httpClientService by inject<HttpClientService>()
-    private val mqttClientService by inject<MqttService>()
+    private val mqttClientService by inject<MqttService>(named(if (isTest) ServiceTestName.MqttTest else ServiceTestName.Mqtt))
     private val homeAssistantService by inject<HomeAssistantInterface>()
 
+    companion object {
+        fun loadParamsFromConfiguration(): RhasspyActionsServiceParams {
+            return RhasspyActionsServiceParams(
+                intentRecognitionOption = ConfigurationSettings.intentRecognitionOption.value,
+                textToSpeechOption = ConfigurationSettings.textToSpeechOption.value,
+                audioPlayingOption = ConfigurationSettings.audioPlayingOption.value,
+                speechToTextOption = ConfigurationSettings.speechToTextOption.value,
+                intentHandlingOption = ConfigurationSettings.intentHandlingOption.value
+            )
+        }
+    }
+
     override fun onStart(scope: CoroutineScope) {
-        params = RhasspyActionsServiceParams.loadFromConfiguration()
+        //nothing to do
     }
 
     override fun onStop() {
         //nothing to do
     }
+
+    override fun loadParamsFromConfiguration() = RhasspyActionsService.loadParamsFromConfiguration()
 
     /**
      * hermes/nlu/query

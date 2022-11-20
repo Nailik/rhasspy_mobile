@@ -14,7 +14,6 @@ import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.nativeutils.FileWriter
 import org.rhasspy.mobile.services.mqtt.MqttService
-import org.rhasspy.mobile.services.RhasspyActions
 import org.rhasspy.mobile.services.UdpService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
@@ -77,7 +76,7 @@ object StateMachine {
         if (state.value == State.AwaitingHotWord) {
             state.value = State.StartingSession
             //send to mqtt that hotWord was detected
-            MqttService.hotWordDetected(keyword)
+           // MqttService.hotWordDetected(keyword)
             //call session started with a new unique id
             if (isDialogueLocal()) {
                 startedSession(uuid4().toString(), keyword)
@@ -96,7 +95,7 @@ object StateMachine {
     suspend fun hotWordError(description: String) {
         logger.e { "hotWordError $description" }
         //send that there was an error in hotWord system
-        MqttService.hotWordError(description)
+  //      MqttService.hotWordError(description)
     }
 
     /**
@@ -143,7 +142,7 @@ object StateMachine {
             state.value = State.StartedSession
             //send to mqtt that a session has started
             if (!fromMQTT) {
-                MqttService.sessionStarted(sessionId)
+      //          MqttService.sessionStarted(sessionId)
             }
             //start recording (listening)
             startListening()
@@ -179,7 +178,7 @@ object StateMachine {
                     ConfigurationSettings.speechToTextOption.value == SpeechToTextOptions.RemoteMQTT
                 ) {
                     //tell asr system to start listening and transcribe text when mqtt is used for speech to text
-                    MqttService.startListening(currentSession.sessionId)
+         //           MqttService.startListening(currentSession.sessionId)
                 }
             } else {
                 logger.e { "startListening call with invalid state ${state.value}" }
@@ -218,7 +217,7 @@ object StateMachine {
 
                 if (ConfigurationSettings.speechToTextOption.value == SpeechToTextOptions.RemoteMQTT) {
                     //send to mqtt for speech to text
-                    MqttService.audioFrame(dataWithHeader)
+        //            MqttService.audioFrame(dataWithHeader)
                 }
 
             } else if (state.value == State.AwaitingHotWord) {
@@ -232,7 +231,7 @@ object StateMachine {
                     }
                     if (ConfigurationSettings.wakeWordOption.value == WakeWordOption.MQTT) {
                         //send to mqtt for wake word detection
-                        MqttService.audioFrame(dataWithHeader)
+             //           MqttService.audioFrame(dataWithHeader)
                     }
                 }
             } else {
@@ -272,13 +271,13 @@ object StateMachine {
 
                     //send audio to mqtt
                     if (currentSession.isSendAudioCaptured) {
-                        MqttService.audioCaptured(sessionId, currentSession.currentRecording)
+                 //       MqttService.audioCaptured(sessionId, currentSession.currentRecording)
                     }
 
                     //when local dialogue management it's necessary to turn on hotWord again and transcribe the speech to text
                     //only if there is a running session, maybe recording was started external
                     if (isDialogueLocal()) {
-                        RhasspyActions.speechToText()
+                //        RhasspyActions.speechToText()
                     }
 
                     //when mqtt is used for speech to text, the service needs to know that no more frames are coming
@@ -286,7 +285,7 @@ object StateMachine {
                         ConfigurationSettings.speechToTextOption.value == SpeechToTextOptions.RemoteMQTT
                     ) {
                         //tell asr system to start listening and transcribe text when mqtt is used for speech to text
-                        MqttService.stopListening(currentSession.sessionId)
+                //        MqttService.stopListening(currentSession.sessionId)
                     }
 
                 } else {
@@ -316,9 +315,9 @@ object StateMachine {
                 state.value = State.RecognizingIntent
 
                 if (isDialogueLocal()) {
-                    MqttService.asrTextCaptured(currentSession.sessionId, intent)
+               //     MqttService.asrTextCaptured(currentSession.sessionId, intent)
                     //when dialogue management is local endpoint, try to recognize intent
-                    RhasspyActions.recognizeIntent(intent)
+              //      RhasspyActions.recognizeIntent(intent)
                 }
 
             }
@@ -334,7 +333,7 @@ object StateMachine {
         //only if nothing is currently to be done
         if (state.value == State.AwaitingHotWord) {
             state.value = State.RecognizingIntent
-            RhasspyActions.recognizeIntent(intent)
+      //      RhasspyActions.recognizeIntent(intent)
         }
     }
 
@@ -354,7 +353,7 @@ object StateMachine {
                 state.value = State.TranscribingError
 
                 if (isDialogueLocal()) {
-                    MqttService.asrError(currentSession.sessionId)
+              //      MqttService.asrError(currentSession.sessionId)
                     //when dialogue management is local end the session
                     endSession()
                 }
@@ -381,7 +380,7 @@ object StateMachine {
 
                 currentSession.isIntentRecognized = true
 
-                RhasspyActions.intentHandling(intentName, intent)
+             //   RhasspyActions.intentHandling(intentName, intent)
 
                 if (isDialogueLocal()) {
                     endSession()
@@ -467,10 +466,10 @@ object StateMachine {
                 //check if sessionId is correct
                 state.value = State.EndedSession
                 //tell mqtt that session has ended
-                MqttService.sessionEnded(sessionId)
+          //      MqttService.sessionEnded(sessionId)
                 //after session end, send that no intent was recognized if none was recognized
                 if (!currentSession.isIntentRecognized) {
-                    MqttService.intentNotRecognized(sessionId)
+          //          MqttService.intentNotRecognized(sessionId)
                 }
                 //reset session
                 currentSession = Session("", "")
@@ -493,7 +492,7 @@ object StateMachine {
             audioPlayer.playData(data) {
                 if (fromMQTT) {
                     //if call was from mqtt, send message when play has finished
-                    MqttService.playFinished()
+              //      MqttService.playFinished()
                 }
             }
         }

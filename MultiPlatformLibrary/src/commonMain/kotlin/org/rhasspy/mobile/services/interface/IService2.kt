@@ -9,15 +9,21 @@ import org.koin.core.component.get
 import org.koin.core.qualifier.named
 import org.rhasspy.mobile.ServiceTestName
 
-abstract class IService2(
+abstract class IService2<T>(
+    params: T,
     private val isTest: Boolean,
-    private val serviceName: ServiceTestName) : KoinComponent {
+    private val serviceName: ServiceTestName
+) : KoinComponent {
+
+    internal var params: T = params
+        private set
 
     private val logger = Logger.withTag("$serviceName${if (isTest) "Test" else ""}")
 
     abstract fun onStart(scope: CoroutineScope)
 
     abstract fun onStop()
+
 
     private lateinit var scope: CoroutineScope
 
@@ -29,7 +35,10 @@ abstract class IService2(
 
         if (isTest) {
             //stop normal service
-            get<IService2>(named(serviceName)).stop()
+            get<IService2<T>>(named(serviceName)).stop()
+        } else {
+            //load settings from configuration
+            params = loadParamsFromConfiguration()
         }
 
         //run
@@ -48,8 +57,10 @@ abstract class IService2(
 
         if (isTest) {
             //start normal service
-            get<IService2>(named(serviceName)).start()
+            get<IService2<T>>(named(serviceName)).start()
         }
     }
+
+    abstract fun loadParamsFromConfiguration(): T
 
 }

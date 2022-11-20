@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.nativeutils
 
 import org.rhasspy.mobile.mqtt.*
+import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
 
 /** Represents a MQTT client which can connect to the MQTT Broker. */
 @Suppress("NO_ACTUAL_FOR_EXPECT")
@@ -57,11 +58,11 @@ expect class MqttClient(
      * @param connOptions The connection options to use.
      * @return Will return a [error][MqttError] if a problem has occurred.
      */
-    suspend fun connect(connOptions: MqttConnectionOptions): MqttError?
+    suspend fun connect(connOptions: MqttServiceConnectionOptions): MqttError?
 
     /**
      * Disconnects from the MQTT Broker.
      * @return Will return a [error][MqttError] if a problem has occurred.
      */
-    suspend fun disconnect(): MqttError?
+    fun disconnect(): MqttError?
 }

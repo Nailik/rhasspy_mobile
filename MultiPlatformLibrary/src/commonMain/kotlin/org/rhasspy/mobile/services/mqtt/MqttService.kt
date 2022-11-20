@@ -2,54 +2,71 @@ package org.rhasspy.mobile.services.mqtt
 
 import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
+import com.benasher44.uuid.variant
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
-import org.rhasspy.mobile.data.AudioPlayingOptions
+import org.koin.core.component.inject
+import org.koin.core.qualifier.named
+import org.rhasspy.mobile.ServiceTestName
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.mqtt.*
 import org.rhasspy.mobile.nativeutils.MqttClient
-import org.rhasspy.mobile.services.RhasspyActions
-import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.`interface`.IService2
+import org.rhasspy.mobile.services.statemachine.StateMachineService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.math.min
-import kotlin.native.concurrent.ThreadLocal
-import kotlin.time.Duration.Companion.seconds
 
-@ThreadLocal
-object MqttService {
+class MqttService(
+    params: MqttServiceParams = MqttService.loadParamsFromConfiguration(),
+    isTest: Boolean = false
+) : IService2<MqttServiceParams>(
+    params = params,
+    isTest = isTest,
+    serviceName = ServiceTestName.Mqtt
+) {
     private val logger = Logger.withTag("MqttService")
-    private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     private var client: MqttClient? = null
-
-    private val connected = MutableStateFlow(false)
-    val isConnected: StateFlow<Boolean> get() = connected
-
-    private var connectionError = MutableStateFlow<MqttError?>(null)
-    private var connectionLostError = MutableStateFlow<Throwable?>(null)
-    val hasConnectionError: StateFlow<MqttError?> get() = connectionError
-    val hasConnectionLostError: StateFlow<Throwable?> get() = connectionLostError
-
+    private val id = uuid4().variant
+    private val coroutineScope = CoroutineScope(Dispatchers.Default)
     private var retryJob: Job? = null
 
+    private val _isConnected = MutableStateFlow(false)
+    val isConnected = _isConnected.readOnly
 
-    private var isCurrentlyConnected: Boolean = false
-        set(value) {
-            if (field != value) {
-                field = value
-                connected.value = value
-            }
+    private val _connectionError = MutableStateFlow<MqttError?>(null)
+    val connectionError = _connectionError.readOnly
+
+    private val stateMachineService by inject<StateMachineService>(named(if (isTest) ServiceTestName.StateMachineTest else ServiceTestName.StateMachine))
+
+    companion object {
+        fun loadParamsFromConfiguration(): MqttServiceParams {
+            return MqttServiceParams(
+                siteId = ConfigurationSettings.siteId.value,
+                isMqttEnabled = ConfigurationSettings.isMqttEnabled.value,
+                mqttHost = ConfigurationSettings.mqttHost.value,
+                mqttPort = ConfigurationSettings.mqttPort.value,
+                retryInterval = ConfigurationSettings.mqttRetryInterval.value,
+                mqttServiceConnectionOptions = MqttServiceConnectionOptions(
+                    cleanSession = true,
+                    cleanStart = false,
+                    ssl = ConfigurationSettings.isMqttSSLEnabled.value,
+                    connUsername = ConfigurationSettings.mqttUserName.value,
+                    connPassword = ConfigurationSettings.mqttPassword.value,
+                    connectionTimeout = ConfigurationSettings.mqttConnectionTimeout.value,
+                    keepAliveInterval = ConfigurationSettings.mqttKeepAliveInterval.value
+                )
+            )
         }
-
-    private const val id = 98489482
+    }
 
     /**
-     * start client externaly, only starts if mqtt is enabled
+     * start client externally, only starts if mqtt is enabled
      *
      * creates new client
      * connects client to server
@@ -58,45 +75,30 @@ object MqttService {
      *
      * sets connected value
      */
-    suspend fun start() {
-        retryJob?.cancel()
-        retryJob = null
-
-        connectionError.value = null
-        connectionLostError.value = null
-
-        if (!ConfigurationSettings.isMqttEnabled.value) {
+    override fun onStart(scope: CoroutineScope) {
+        if (params.isMqttEnabled) {
+            client = MqttClient(
+                brokerUrl = "tcp://${params.mqttHost}:${params.mqttPort}",
+                clientId = params.siteId,
+                persistenceType = MqttPersistence.MEMORY,
+                onDelivered = { },
+                onMessageReceived = { topic, message ->
+                    scope.launch {
+                        onMessageReceived(topic, message)
+                    }
+                },
+                onDisconnect = { error -> onDisconnect(error) },
+            ).also {
+                scope.launch {
+                    if (connectClient(it)) {
+                        subscribeTopics()
+                    } else {
+                        logger.e { "client not connected after attempt" }
+                    }
+                }
+            }
+        } else {
             logger.v { "mqtt not enabled" }
-            return
-        }
-
-        logger.d { "start" }
-
-        //setup client
-        createClient()
-
-        isCurrentlyConnected
-
-        //connect client
-        if (connectClient()) {
-            subscribeTopics()
-        } else {
-            logger.e { "client not connected after attempt" }
-        }
-        isCurrentlyConnected = client?.isConnected == true
-    }
-
-    private suspend fun retryToConnect() {
-        logger.d { "retry to connect to mqtt" }
-        connectClient()
-        if (!isConnected.value && ConfigurationSettings.isMqttEnabled.value) {
-            val seconds = (ConfigurationSettings.mqttRetryInterval.value).seconds
-            logger.d { "retry did not work, retry in $seconds seconds" }
-            delay(seconds)
-            retryToConnect()
-        } else {
-            retryJob?.cancel()
-            retryJob = null
         }
     }
 
@@ -105,123 +107,59 @@ object MqttService {
      *
      * disconnects, resets connected value and deletes client object
      */
-    suspend fun stop() {
+    override fun onStop() {
+        client?.disconnect()
+        _isConnected.value = false
         retryJob?.cancel()
         retryJob = null
-
-        logger.d { "stop" }
-        client?.apply {
-            if (isCurrentlyConnected) {
-                disconnect()?.also {
-                    logger.e { "disconnect \n${it.statusCode.name} ${it.msg}" }
-                }
-            }
-            isCurrentlyConnected = isConnected
-        }
-        client = null
-    }
-
-    /**
-     * creates new client according to settings
-     */
-    private fun createClient() {
-        logger.v { "createClient" }
-
-        client = MqttClient(
-            brokerUrl = "tcp://${ConfigurationSettings.mqttHost.value}:${ConfigurationSettings.mqttPort.value}",
-            clientId = ConfigurationSettings.siteId.value,
-            persistenceType = MqttPersistence.MEMORY,
-            onDelivered = { },
-            onMessageReceived = { topic, message -> onMessageReceived(topic, message) },
-            onDisconnect = { error -> onDisconnect(error) },
-        )
+        coroutineScope.cancel()
     }
 
     /**
      * connects client to server and returns if client is now connected
      */
-    private suspend fun connectClient(): Boolean {
-        if (client?.isConnected != true) {
+    private suspend fun connectClient(client: MqttClient): Boolean {
+        if (!client.isConnected) {
             //only if not connected
             logger.v { "connectClient" }
             //connect to server
-            connectionError.value = client?.connect(
-                MqttConnectionOptions.loadFromConfigurationSettings()
-            )?.also {
+            _connectionError.value = client.connect(params.mqttServiceConnectionOptions)?.also {
                 logger.e { "connect \n${it.statusCode.name} ${it.msg}" }
             }
         } else {
             logger.v { "connectClient already connected" }
         }
-        isCurrentlyConnected = client?.isConnected == true
 
-        logger.d { "connection result, connected: $isCurrentlyConnected" }
-
-        return isCurrentlyConnected
+        _isConnected.value = client.isConnected
+        return _isConnected.value
     }
 
 
     /**
-     * test if connection with given settings is possible and returns result
+     * try to reconnect after disconnect
      */
-    suspend fun testConnection(): MqttError? {
-        logger.v { "testConnection" }
-        val testClient = MqttClient(
-            brokerUrl = "tcp://${ConfigurationSettings.mqttHost.value}:${ConfigurationSettings.mqttPort.value}",
-            clientId = ConfigurationSettings.siteId.value,
-            persistenceType = MqttPersistence.MEMORY,
-            onDelivered = { },
-            onMessageReceived = { topic, message -> onMessageReceived(topic, message) },
-            onDisconnect = { error -> onDisconnect(error) },
-        )
-        logger.v { "testConnection 1" }
-        //connect to server
-        var error = testClient.connect(MqttConnectionOptions.loadFromUnsavedConfigurationSettings())
-        logger.v { "testConnection 2 $error" }
-
-        if (error == null && !testClient.isConnected) {
-            error = MqttError("unkown", MqttStatus.UNKNOWN)
-        }
-        logger.v { "testConnection 3" }
-
-        testClient.disconnect()
-        logger.v { "testConnection 4 $error" }
-
-        return error
-    }
-
-
-    /**
-     * Subscribes to topics that are necessary
-     */
-    private suspend fun subscribeTopics() {
-        logger.v { "subscribeTopics" }
-
-        //subscribe to topics with this site id (if contained in topic, currently only in PlayBytes)
-        MQTTTopicsSubscription.values().forEach { topic ->
-            client?.subscribe(
-                topic.topic
-                    .replace("<siteId>", ConfigurationSettings.siteId.value)
-            )?.also {
-                logger.e { "subscribe $topic \n${it.statusCode.name} ${it.msg}" }
-            }
-        }
-    }
-
     private fun onDisconnect(error: Throwable) {
         logger.e(error) { "onDisconnect" }
-        connectionLostError.value = error
-
-        isCurrentlyConnected = client?.isConnected == true
+        _isConnected.value = client?.isConnected == true
 
         if (retryJob?.isActive != true) {
             retryJob = coroutineScope.launch {
-                retryToConnect()
+                client?.also {
+                    while (!it.isConnected) {
+                        connectClient(it)
+                        delay(params.retryInterval)
+                    }
+                    retryJob?.cancel()
+                    retryJob = null
+                }
             }
         }
     }
 
-    private fun onMessageReceived(topic: String, message: MqttMessage) {
+    override fun loadParamsFromConfiguration() = MqttService.loadParamsFromConfiguration()
+
+
+    private suspend fun onMessageReceived(topic: String, message: MqttMessage) {
         //subSequence so we don't print super long wave data
         logger.v {
             "onMessageReceived id ${message.msgId} $topic ${
@@ -235,59 +173,75 @@ object MqttService {
             return
         }
 
-        coroutineScope.launch {
-            try {
-                when (MQTTTopicsSubscription.fromTopic(topic)) {
-                    MQTTTopicsSubscription.StartSession -> startSession(message)
-                    MQTTTopicsSubscription.EndSession -> endSession(message)
-                    MQTTTopicsSubscription.SessionStarted -> sessionStarted(message)
-                    MQTTTopicsSubscription.SessionEnded -> sessionEnded(message)
-                    MQTTTopicsSubscription.HotWordToggleOn -> hotWordToggleOn(message)
-                    MQTTTopicsSubscription.HotWordToggleOff -> hotWordToggleOff(message)
-                    MQTTTopicsSubscription.AsrStartListening -> startListening(message)
-                    MQTTTopicsSubscription.AsrStopListening -> stopListening(message)
-                    MQTTTopicsSubscription.AsrTextCaptured -> asrTextCaptured(message)
-                    MQTTTopicsSubscription.AsrError -> asrError(message)
-                    MQTTTopicsSubscription.IntentNotRecognized -> intentNotRecognized(message)
-                    MQTTTopicsSubscription.IntentHandlingToggleOn -> intentHandlingToggleOn(message)
-                    MQTTTopicsSubscription.IntentHandlingToggleOff -> intentHandlingToggleOff(message)
-                    MQTTTopicsSubscription.AudioOutputToggleOff -> audioOutputToggleOff(message)
-                    MQTTTopicsSubscription.AudioOutputToggleOn -> audioOutputToggleOn(message)
-                    MQTTTopicsSubscription.SetVolume -> setVolume(message)
-                    else -> {
-                        when {
-                            MQTTTopicsSubscription.PlayBytes.topic
-                                .replace("<siteId>", ConfigurationSettings.siteId.value)
-                                .replace("/", "\\/") //escape slashes
-                                .replace("+", ".*") //replace wildcard with regex text
-                                .toRegex()
-                                .matches(topic) -> {
-                                playBytes(message)
-                            }
-                            MQTTTopicsSubscription.HotWordDetected.topic
-                                .replace("/", "\\/") //escape slashes
-                                .replace("+", ".*") //replace wildcard with regex text
-                                .toRegex()
-                                .matches(topic) -> {
-                                hotWordDetected(message, topic)
-                            }
-                            MQTTTopicsSubscription.IntentRecognitionResult.topic
-                                .replace("/", "\\/") //escape slashes
-                                .replace("+", ".*") //replace wildcard with regex text
-                                .toRegex()
-                                .matches(topic) -> {
-                                intentRecognitionResult(message)
-                            }
+        try {
+            when (MQTTTopicsSubscription.fromTopic(topic)) {
+                MQTTTopicsSubscription.StartSession -> startSession(message)
+                MQTTTopicsSubscription.EndSession -> endSession(message)
+                MQTTTopicsSubscription.SessionStarted -> sessionStarted(message)
+                MQTTTopicsSubscription.SessionEnded -> sessionEnded(message)
+                MQTTTopicsSubscription.HotWordToggleOn -> hotWordToggleOn(message)
+                MQTTTopicsSubscription.HotWordToggleOff -> hotWordToggleOff(message)
+                MQTTTopicsSubscription.AsrStartListening -> startListening(message)
+                MQTTTopicsSubscription.AsrStopListening -> stopListening(message)
+                MQTTTopicsSubscription.AsrTextCaptured -> asrTextCaptured(message)
+                MQTTTopicsSubscription.AsrError -> asrError(message)
+                MQTTTopicsSubscription.IntentNotRecognized -> intentNotRecognized(message)
+                MQTTTopicsSubscription.IntentHandlingToggleOn -> intentHandlingToggleOn(message)
+                MQTTTopicsSubscription.IntentHandlingToggleOff -> intentHandlingToggleOff(message)
+                MQTTTopicsSubscription.AudioOutputToggleOff -> audioOutputToggleOff(message)
+                MQTTTopicsSubscription.AudioOutputToggleOn -> audioOutputToggleOn(message)
+                MQTTTopicsSubscription.SetVolume -> setVolume(message)
+                else -> {
+                    when {
+                        MQTTTopicsSubscription.PlayBytes.topic
+                            .replace("<siteId>", params.siteId)
+                            .replace("/", "\\/") //escape slashes
+                            .replace("+", ".*") //replace wildcard with regex text
+                            .toRegex()
+                            .matches(topic) -> {
+                            playBytes(message)
+                        }
+                        MQTTTopicsSubscription.HotWordDetected.topic
+                            .replace("/", "\\/") //escape slashes
+                            .replace("+", ".*") //replace wildcard with regex text
+                            .toRegex()
+                            .matches(topic) -> {
+                            hotWordDetected(message, topic)
+                        }
+                        MQTTTopicsSubscription.IntentRecognitionResult.topic
+                            .replace("/", "\\/") //escape slashes
+                            .replace("+", ".*") //replace wildcard with regex text
+                            .toRegex()
+                            .matches(topic) -> {
+                            intentRecognitionResult(message)
                         }
                     }
                 }
+            }
+        } catch (e: Exception) {
+            logger.e(e) { "onMessageReceived error" }
+        }
+    }
 
-            } catch (e: Exception) {
-                logger.e(e) { "onMessageReceived error" }
+    /**
+     * Subscribes to topics that are necessary
+     */
+    private suspend fun subscribeTopics() {
+        logger.v { "subscribeTopics" }
+
+        //subscribe to topics with this site id (if contained in topic, currently only in PlayBytes)
+        MQTTTopicsSubscription.values().forEach { topic ->
+            client?.subscribe(
+                topic.topic.replace("<siteId>", params.siteId)
+            )?.also {
+                logger.e { "subscribe $topic \n${it.statusCode.name} ${it.msg}" }
             }
         }
     }
 
+    /**
+     * published new messages
+     */
     private suspend fun publishMessage(topic: String, message: MqttMessage): Boolean {
         message.msgId = id
 
@@ -300,10 +254,17 @@ object MqttService {
 
     }
 
-    private suspend fun JsonObject.isThisSiteId(): Boolean {
+    /**
+     * check if site id is this id
+     */
+    private fun JsonObject.isThisSiteId(): Boolean {
         val siteId = this["siteId"]?.jsonPrimitive?.content
         logger.v { "siteId is $siteId" }
-        return siteId == ConfigurationSettings.siteId.value
+        return siteId == params.siteId
+    }
+
+    private fun JsonObject.getSessionId(): String? {
+        return jsonObject["sessionId"]?.jsonPrimitive?.content
     }
 
     //###################################  Input Messages
@@ -324,7 +285,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            StateMachine.startSession()
+            stateMachineService.startMqttSession()
         } else {
             logger.d { "received startSession but for other siteId" }
         }
@@ -337,11 +298,11 @@ object MqttService {
      * Requests that a session be terminated nominally
      * sessionId: string - current session ID (required)
      */
-    private suspend fun endSession(message: MqttMessage) {
+    private fun endSession(message: MqttMessage) {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            StateMachine.endSession(jsonObject["sessionId"]?.jsonPrimitive?.content, true)
+            stateMachineService.endMqttSession(jsonObject.getSessionId())
         } else {
             logger.d { "received endSession but for other siteId" }
         }
@@ -358,15 +319,11 @@ object MqttService {
      *
      * used to save the sessionId and check for it when recording etc
      */
-    private suspend fun sessionStarted(message: MqttMessage) {
+    private fun sessionStarted(message: MqttMessage) {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            jsonObject["sessionId"]?.jsonPrimitive?.content?.also {
-                StateMachine.startedSession(it, "extern", true)
-            } ?: run {
-                logger.d { "received sessionStarted with empty session Id" }
-            }
+            stateMachineService.startedMqttSession(jsonObject.getSessionId())
         } else {
             logger.d { "received endSession but for other siteId" }
         }
@@ -381,12 +338,12 @@ object MqttService {
      * Response to [hermes/dialogueManager/startSession]
      * Also used when session has started for other reasons
      */
-    suspend fun sessionStarted(sessionId: String) {
-        publishMessage(
+    suspend fun sessionStarted(sessionId: String): Boolean {
+        return publishMessage(
             MQTTTopicsPublish.SessionStarted.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("sessionId", sessionId)
-                    put("siteId", ConfigurationSettings.siteId.value)
+                    put("siteId", params.siteId)
                 }).toByteArray()
             )
         )
@@ -401,15 +358,11 @@ object MqttService {
      *
      * Response to hermes/dialogueManager/endSession or other reasons for a session termination
      */
-    private suspend fun sessionEnded(message: MqttMessage) {
+    private fun sessionEnded(message: MqttMessage) {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            jsonObject["sessionId"]?.jsonPrimitive?.content?.also {
-                StateMachine.sessionEnded(it, true)
-            } ?: run {
-                logger.d { "received sessionStarted with empty session Id" }
-            }
+            stateMachineService.sessionEndedMqtt(jsonObject.getSessionId())
         } else {
             logger.d { "received endSession but for other siteId" }
         }
@@ -424,12 +377,12 @@ object MqttService {
      *
      * Response to hermes/dialogueManager/endSession or other reasons for a session termination
      */
-    suspend fun sessionEnded(sessionId: String?) {
-        publishMessage(
+    suspend fun sessionEnded(sessionId: String?): Boolean {
+        return publishMessage(
             MQTTTopicsPublish.SessionEnded.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("sessionId", sessionId)
-                    put("siteId", ConfigurationSettings.siteId.value)
+                    put("siteId", params.siteId)
                 }).toByteArray()
             )
         )
@@ -441,12 +394,12 @@ object MqttService {
      * sessionId: string - current session ID
      * siteId: string = "default" - Hermes site ID
      */
-    suspend fun intentNotRecognized(sessionId: String?) {
-        publishMessage(
+    suspend fun intentNotRecognized(sessionId: String?): Boolean {
+        return publishMessage(
             MQTTTopicsPublish.IntentNotRecognizedInSession.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("sessionId", sessionId)
-                    put("siteId", ConfigurationSettings.siteId.value)
+                    put("siteId", params.siteId)
                 }).toByteArray()
             )
         )
@@ -458,9 +411,9 @@ object MqttService {
      * wav_bytes: bytes - WAV data to play (message payload)
      * siteId: string - Hermes site ID (part of topic)
      */
-    suspend fun audioFrame(byteArray: List<Byte>) {
-        publishMessage(
-            MQTTTopicsPublish.AsrAudioFrame.topic.replace("<siteId>", ConfigurationSettings.siteId.value),
+    suspend fun audioFrame(byteArray: List<Byte>): Boolean {
+        return publishMessage(
+            MQTTTopicsPublish.AsrAudioFrame.topic.replace("<siteId>", params.siteId),
             MqttMessage(byteArray.toByteArray())
         )
     }
@@ -471,11 +424,11 @@ object MqttService {
      * siteId: string = "default" - Hermes site ID
      * reason: string = "" - Reason for toggle on
      */
-    private suspend fun hotWordToggleOn(message: MqttMessage) {
+    private fun hotWordToggleOn(message: MqttMessage) {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            AppSettings.isHotWordEnabled.value = true
+            stateMachineService.toggleHotWordEnabledMqtt(true)
         } else {
             logger.d { "received hotWordToggleOn but for other siteId" }
         }
@@ -487,11 +440,11 @@ object MqttService {
      * siteId: string = "default" - Hermes site ID
      * reason: string = "" - Reason for toggle off
      */
-    private suspend fun hotWordToggleOff(message: MqttMessage) {
+    private fun hotWordToggleOff(message: MqttMessage) {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            AppSettings.isHotWordEnabled.value = false
+            stateMachineService.toggleHotWordEnabledMqtt(false)
         } else {
             logger.d { "received hotWordToggleOff but for other siteId" }
         }
@@ -532,7 +485,7 @@ object MqttService {
             MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     //put("currentSensitivity", ConfigurationSettings.wakeWordPorcupineKeywordSensitivity.value)
-                    put("siteId", ConfigurationSettings.siteId.value)
+                    put("siteId", params.siteId)
                     //put("sendAudioCaptured", true)
                     //necessary
                     put("modelId", keyword)
@@ -554,7 +507,7 @@ object MqttService {
             MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("error", description)
-                    put("siteId", ConfigurationSettings.siteId.value)
+                    put("siteId", params.siteId)
                 }).toByteArray()
             )
         )
@@ -571,10 +524,9 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            StateMachine.startListening(
-                jsonObject["sessionId"]?.jsonPrimitive?.content,
-                jsonObject["sendAudioCaptured"]?.jsonPrimitive?.booleanOrNull == true,
-                true
+            stateMachineService.startListeningMqtt(
+                jsonObject.getSessionId(),
+                jsonObject["sendAudioCaptured"]?.jsonPrimitive?.booleanOrNull == true
             )
         } else {
             logger.d { "received startListening but for other siteId" }
@@ -594,7 +546,7 @@ object MqttService {
             MQTTTopicsPublish.AsrStartListening.topic,
             MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
-                    put("siteId", ConfigurationSettings.siteId.value)
+                    put("siteId", params.siteId)
                     put("sessionId", sessionId)
                     put("stopOnSilence", true)
                     put("sendAudioCaptured", true)
@@ -614,7 +566,7 @@ object MqttService {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            StateMachine.stopListening(jsonObject["sessionId"]?.jsonPrimitive?.content, true)
+            stateMachineService.stopListeningMqtt(jsonObject.getSessionId())
         } else {
             logger.d { "received stopListening but for other siteId" }
         }
@@ -632,7 +584,7 @@ object MqttService {
             MQTTTopicsPublish.AsrStopListening.topic,
             MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
-                    put("siteId", ConfigurationSettings.siteId.value)
+                    put("siteId", params.siteId)
                     put("sessionId", sessionId)
                 }).toByteArray()
             )
@@ -647,15 +599,11 @@ object MqttService {
      * siteId: string = "default" - Hermes site ID
      * sessionId: string? = null - current session ID
      */
-    private suspend fun asrTextCaptured(message: MqttMessage) {
+    private fun asrTextCaptured(message: MqttMessage) {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            StateMachine.intentTranscribed(
-                jsonObject["sessionId"]?.jsonPrimitive?.content,
-                jsonObject["text"]?.jsonPrimitive?.content ?: "",
-                true
-            )
+            stateMachineService.intentTranscribedMqtt(jsonObject.getSessionId(), jsonObject["text"]?.jsonPrimitive?.content)
         } else {
             logger.d { "received asrTextCaptured but for other siteId" }
         }
@@ -674,7 +622,7 @@ object MqttService {
             MQTTTopicsPublish.AsrTextCaptured.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("text", JsonPrimitive(text))
-                    put("siteId", ConfigurationSettings.siteId.value)
+                    put("siteId", params.siteId)
                     put("sessionId", sessionId)
                 }).toByteArray()
             )
@@ -688,11 +636,11 @@ object MqttService {
      * siteId: string = "default" - Hermes site ID
      * sessionId: string? = null - current session ID
      */
-    private suspend fun asrError(message: MqttMessage) {
+    private fun asrError(message: MqttMessage) {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            StateMachine.intentTranscriptionError(jsonObject["sessionId"]?.jsonPrimitive?.content, true)
+            stateMachineService.intentTranscribedErrorMqtt(jsonObject.getSessionId())
         } else {
             logger.d { "received asrError but for other siteId" }
         }
@@ -710,7 +658,7 @@ object MqttService {
         publishMessage(
             MQTTTopicsPublish.AsrError.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
-                    put("siteId", ConfigurationSettings.siteId.value)
+                    put("siteId", params.siteId)
                     put("sessionId", sessionId)
                 }).toByteArray()
             )
@@ -727,7 +675,7 @@ object MqttService {
     suspend fun audioCaptured(sessionId: String?, byteData: List<Byte>) {
         publishMessage(
             MQTTTopicsPublish.AudioCaptured.topic
-                .replace("<siteId>", ConfigurationSettings.siteId.value)
+                .replace("<siteId>", params.siteId)
                 .replace("<sessionId>", sessionId ?: ""),
             MqttMessage(byteData.toByteArray())
         )
@@ -750,7 +698,7 @@ object MqttService {
             MQTTTopicsPublish.Query.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("input", JsonPrimitive(text))
-                    put("siteId", ConfigurationSettings.siteId.value)
+                    put("siteId", params.siteId)
                     put("sessionId", sessionId)
                 }).toByteArray()
             )
@@ -773,15 +721,10 @@ object MqttService {
 
         if (jsonObject.isThisSiteId()) {
             val intent = jsonObject.toString()
-            val intentName = jsonObject["intent"]?.jsonObject?.get("intentName")?.jsonPrimitive?.content ?: ""
-            val sessionId = jsonObject["sessionId"]?.jsonPrimitive?.content
+            val intentName = jsonObject["intent"]?.jsonObject?.get("intentName")?.jsonPrimitive?.content
+            val sessionId = jsonObject.getSessionId()
 
-            if (intentName.isEmpty()) {
-                StateMachine.intentNotRecognized(sessionId, true)
-            } else {
-                StateMachine.intentRecognized(intentName, intent, sessionId, true)
-            }
-
+            stateMachineService.intentRecognizedMqtt(sessionId, intentName, intent)
         } else {
             logger.d { "received intentRecognitionResult but for other siteId" }
         }
@@ -794,11 +737,11 @@ object MqttService {
      * sessionId: string - current session ID
      * siteId: string = "default" - Hermes site ID
      */
-    private suspend fun intentNotRecognized(message: MqttMessage) {
+    private fun intentNotRecognized(message: MqttMessage) {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            StateMachine.intentNotRecognized(jsonObject["sessionId"]?.jsonPrimitive?.content, true)
+            stateMachineService.intentNotRecognizedMqtt(jsonObject.getSessionId())
         } else {
             logger.d { "received intentNotRecognized but for other siteId" }
         }
@@ -808,11 +751,11 @@ object MqttService {
      * hermes/handle/toggleOn
      * Enable intent handling
      */
-    private suspend fun intentHandlingToggleOn(message: MqttMessage) {
+    private fun intentHandlingToggleOn(message: MqttMessage) {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            AppSettings.isIntentHandlingEnabled.value = true
+            stateMachineService.toggleIntentHandlingEnabledMqtt(true)
         } else {
             logger.d { "received intentHandlingToggleOn but for other siteId" }
         }
@@ -823,11 +766,11 @@ object MqttService {
      * hermes/handle/toggleOff
      * Disable intent handling
      */
-    private suspend fun intentHandlingToggleOff(message: MqttMessage) {
+    private fun intentHandlingToggleOff(message: MqttMessage) {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            AppSettings.isIntentHandlingEnabled.value = false
+            stateMachineService.toggleIntentHandlingEnabledMqtt(false)
         } else {
             logger.d { "received intentHandlingToggleOff but for other siteId" }
         }
@@ -849,12 +792,12 @@ object MqttService {
      * Response(s)
      * hermes/tts/sayFinished (JSON)
      */
-    suspend fun say(text: String, sessionId: String? = StateMachine.currentSession.sessionId) : Boolean {
+    suspend fun say(text: String, sessionId: String? = StateMachine.currentSession.sessionId): Boolean {
         return publishMessage(
             MQTTTopicsPublish.Say.topic, MqttMessage(
                 payload = Json.encodeToString(buildJsonObject {
                     put("text", JsonPrimitive(text))
-                    put("siteId", ConfigurationSettings.siteId.value)
+                    put("siteId", params.siteId)
                     put("sessionId", sessionId)
                 }).toByteArray()
             )
@@ -872,13 +815,9 @@ object MqttService {
      * Response(s)
      * hermes/audioServer/<siteId>/playFinished (JSON)
      */
-    private suspend fun playBytes(message: MqttMessage) {
+    private fun playBytes(message: MqttMessage) {
         //not necessary to check SiteId for this topic, because it is in topic string
-        if (ConfigurationSettings.audioPlayingOption.value != AudioPlayingOptions.RemoteMQTT) {
-            RhasspyActions.playAudio(message.payload.toList())
-        } else {
-            logger.d { "received playBytes but audio playing is set to mqtt, ignoring this to prevent looping" }
-        }
+        stateMachineService.playAudioMqtt(message.payload.toList())
     }
 
     /**
@@ -894,7 +833,7 @@ object MqttService {
     suspend fun playBytes(data: List<Byte>): Boolean {
         return publishMessage(
             MQTTTopicsPublish.AudioOutputPlayBytes.topic
-                .replace("<siteId>", ConfigurationSettings.siteId.value)
+                .replace("<siteId>", params.siteId)
                 .replace("<requestId>", uuid4().toString()),
             MqttMessage(data.toByteArray())
         )
@@ -905,11 +844,11 @@ object MqttService {
      * Disable audio output
      * siteId: string = "default" - Hermes site ID
      */
-    private suspend fun audioOutputToggleOff(message: MqttMessage) {
+    private fun audioOutputToggleOff(message: MqttMessage) {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            AppSettings.isAudioOutputEnabled.value = false
+            stateMachineService.toggleAudioOutputEnabledMqtt(false)
         } else {
             logger.d { "received audioOutputToggleOff but for other siteId" }
         }
@@ -920,11 +859,11 @@ object MqttService {
      * Enable audio output
      * siteId: string = "default" - Hermes site ID
      */
-    private suspend fun audioOutputToggleOn(message: MqttMessage) {
+    private fun audioOutputToggleOn(message: MqttMessage) {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
-            AppSettings.isAudioOutputEnabled.value = true
+            stateMachineService.toggleAudioOutputEnabledMqtt(true)
         } else {
             logger.d { "received audioOutputToggleOff but for other siteId" }
         }
@@ -938,8 +877,7 @@ object MqttService {
      */
     suspend fun playFinished() {
         publishMessage(
-            MQTTTopicsPublish.AudioOutputPlayFinished.topic
-                .replace("<siteId>", ConfigurationSettings.siteId.value),
+            MQTTTopicsPublish.AudioOutputPlayFinished.topic.replace("<siteId>", params.siteId),
             MqttMessage(ByteArray(0))
         )
     }
@@ -950,12 +888,12 @@ object MqttService {
      * volume: float - volume level to set (0 = off, 1 = full volume)
      * siteId: string = "default" - Hermes site ID
      */
-    private suspend fun setVolume(message: MqttMessage) {
+    private fun setVolume(message: MqttMessage) {
         val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
 
         if (jsonObject.isThisSiteId()) {
             jsonObject["volume"]?.jsonPrimitive?.floatOrNull?.also {
-                AppSettings.volume.value = it
+                stateMachineService.setAudioVolumeMqtt(it)
             } ?: run {
                 logger.e { "setVolume invalid value ${jsonObject["volume"]}" }
             }

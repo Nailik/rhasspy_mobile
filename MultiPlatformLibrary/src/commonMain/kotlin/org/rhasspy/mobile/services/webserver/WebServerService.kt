@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.RhasspyActions
 import org.rhasspy.mobile.services.ServiceError
 import org.rhasspy.mobile.services.webserver.data.WebServerLinkStateType
 import org.rhasspy.mobile.services.webserver.data.WebServerPath
@@ -167,7 +166,7 @@ class WebServerService : IService<WebServerLinkStateType>() {
      * just like using say in the ui start screen but remote
      */
     private suspend fun say(call: ApplicationCall) {
-        RhasspyActions.say(call.receive())
+      //  RhasspyActions.say(call.receive())
     }
 
 }

@@ -6,6 +6,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence
 import org.rhasspy.mobile.mqtt.*
 import org.rhasspy.mobile.mqtt.MqttMessage
+import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.settings.AppSettings
 
 actual class MqttClient actual constructor(
@@ -106,7 +107,7 @@ actual class MqttClient actual constructor(
      * - [Identifier rejected][MqttStatus.IDENTIFIER_REJECTED]
      * - [Unacceptable protocol][MqttStatus.UNACCEPTABLE_PROTOCOL]
      */
-    actual suspend fun connect(connOptions: MqttConnectionOptions): MqttError? {
+    actual suspend fun connect(connOptions: MqttServiceConnectionOptions): MqttError? {
         logger.v { "connect" }
         var result: MqttError? = null
         if (!isConnected) {
@@ -150,7 +151,7 @@ actual class MqttClient actual constructor(
      * @return Will return a [error][MqttError] if a problem has occurred. If a [error][MqttError] is returned then the
      * [message persistence failed][MqttStatus.MSG_PERSISTENCE_FAILED] status (via [MqttError.statusCode]) is used.
      */
-    actual suspend fun disconnect(): MqttError? {
+    actual fun disconnect(): MqttError? {
         logger.v { "disconnect" }
         var result: MqttError? = null
         if (client.isConnected) {
@@ -164,7 +165,7 @@ actual class MqttClient actual constructor(
         return result
     }
 
-    private fun MqttConnectionOptions.toPhaoConnectOptions(): MqttConnectOptions {
+    private fun MqttServiceConnectionOptions.toPhaoConnectOptions(): MqttConnectOptions {
         return MqttConnectOptions().also {
             it.isCleanSession = cleanSession
             it.keepAliveInterval = keepAliveInterval

@@ -24,7 +24,7 @@ internal object ConfigurationSettings {
     val isMqttSSLEnabled = Setting(SettingsEnum.MQTT_SSL, false)
     val mqttConnectionTimeout = Setting(SettingsEnum.MQTTConnectionTimeout, 5)
     val mqttKeepAliveInterval = Setting(SettingsEnum.MQTTKeepAliveInterval, 30)
-    val mqttRetryInterval = Setting(SettingsEnum.MQTTRetryInterval, 10)
+    val mqttRetryInterval = Setting(SettingsEnum.MQTTRetryInterval, 10L)
 
     val isUdpOutputEnabled = Setting(SettingsEnum.UDPOutput, false)
     val udpOutputHost = Setting(SettingsEnum.UDPOutputHost, "")

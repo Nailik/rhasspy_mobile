@@ -107,7 +107,7 @@ class MqttConfigurationViewModel : ViewModel(), IConfigurationViewModel {
     fun updateMqttRetryInterval(retryInterval: String) {
         val text = retryInterval.replace("""[-,. ]""".toRegex(), "")
         _mqttRetryIntervalText.value = text
-        _mqttRetryInterval.value = text.toIntOrNull() ?: 0
+        _mqttRetryInterval.value = text.toLongOrNull() ?: 0
     }
 
     /**

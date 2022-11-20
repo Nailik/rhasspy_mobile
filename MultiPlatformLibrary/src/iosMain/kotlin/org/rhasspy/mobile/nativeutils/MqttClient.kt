@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.nativeutils
 
 import org.rhasspy.mobile.mqtt.*
+import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
 
 actual class MqttClient actual constructor(
     brokerUrl: String,
@@ -56,7 +57,7 @@ actual class MqttClient actual constructor(
      * @param connOptions The connection options to use.
      * @return Will return a [error][MqttError] if a problem has occurred.
      */
-    actual suspend fun connect(connOptions: MqttConnectionOptions): MqttError? {
+    actual suspend fun connect(connOptions: MqttServiceConnectionOptions): MqttError? {
         TODO("Not yet implemented")
     }
 
