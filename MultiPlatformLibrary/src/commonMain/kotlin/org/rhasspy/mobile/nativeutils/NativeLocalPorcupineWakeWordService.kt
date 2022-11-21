@@ -17,7 +17,7 @@ expect class NativeLocalPorcupineWakeWordService(
     wakeWordPorcupineKeywordDefaultOptions: Set<PorcupineDefaultKeyword>,
     wakeWordPorcupineKeywordCustomOptions: Set<PorcupineCustomKeyword>,
     wakeWordPorcupineLanguage: PorcupineLanguageOptions,
-    onKeywordDetected: (index: Int) -> Unit
+    onKeywordDetected: (hotWord: String) -> Unit
 ) {
 
     fun start(): HotWordServiceError?

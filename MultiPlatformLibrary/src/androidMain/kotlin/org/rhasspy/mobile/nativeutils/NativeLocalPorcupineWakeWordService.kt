@@ -12,6 +12,7 @@ import org.rhasspy.mobile.services.hotword.HotWordServiceError
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
 import java.io.File
+import java.util.Collections.addAll
 
 /**
  * Listens to WakeWord with Porcupine
@@ -23,7 +24,7 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
     private val wakeWordPorcupineKeywordDefaultOptions: Set<PorcupineDefaultKeyword>,
     private val wakeWordPorcupineKeywordCustomOptions: Set<PorcupineCustomKeyword>,
     private val wakeWordPorcupineLanguage: PorcupineLanguageOptions,
-    private val onKeywordDetected: (index: Int) -> Unit
+    private val onKeywordDetected: (hotWord: String) -> Unit
 ) : PorcupineManagerCallback {
     private val logger = Logger.withTag("NativeLocalWakeWordService")
 
@@ -104,7 +105,20 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
      */
     override fun invoke(keywordIndex: Int) {
         logger.d { "invoke - keyword detected" }
-        onKeywordDetected(keywordIndex)
+
+        val allKeywords = wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled }.map {
+            it.option.name
+        }.toMutableList().also {
+            addAll(wakeWordPorcupineKeywordCustomOptions.filter { it.isEnabled }.map {
+                it.fileName
+            }.toMutableList())
+        }
+
+        if(allKeywords.size > keywordIndex){
+            onKeywordDetected(allKeywords[keywordIndex])
+        } else {
+            onKeywordDetected("Unknown")
+        }
     }
 
     private fun findBuiltInKeyword(keywordName: String): Porcupine.BuiltInKeyword? {

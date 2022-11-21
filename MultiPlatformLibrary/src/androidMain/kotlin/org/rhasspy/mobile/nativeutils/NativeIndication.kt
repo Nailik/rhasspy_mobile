@@ -42,4 +42,6 @@ actual object NativeIndication {
         }
     }
 
+    actual fun checkPermission(): Boolean = OverlayPermission.isGranted()
+
 }

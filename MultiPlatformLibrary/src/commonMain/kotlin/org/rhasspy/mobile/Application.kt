@@ -13,6 +13,8 @@ import org.koin.dsl.onClose
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.mqtt.OverlayServices
 import org.rhasspy.mobile.services.ServiceWatchdog
+import org.rhasspy.mobile.services.dialogManager.DialogManagerServiceParams
+import org.rhasspy.mobile.services.dialogManager.IDialogManagerService
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantServiceParams
 import org.rhasspy.mobile.services.hotword.HotWordService
@@ -25,6 +27,7 @@ import org.rhasspy.mobile.services.mqtt.MqttServiceParams
 import org.rhasspy.mobile.services.recording.RecordingService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
+import org.rhasspy.mobile.services.settings.AppSettingsService
 import org.rhasspy.mobile.services.statemachine.StateMachineService
 import org.rhasspy.mobile.services.statemachine.StateMachineServiceParams
 import org.rhasspy.mobile.services.udp.UdpService
@@ -54,6 +57,8 @@ val serviceModule = module {
     closeableSingle { RecordingService() }
     closeableSingle { HotWordService() }
     closeableSingle { ServiceWatchdog() }
+    closeableSingle { IDialogManagerService.getService() }
+    closeableSingle { AppSettingsService() }
 
     single { params -> params.getOrNull<StateMachineServiceParams>() ?: StateMachineServiceParams() }
     single { params -> params.getOrNull<RhasspyActionsServiceParams>() ?: RhasspyActionsServiceParams() }
@@ -63,6 +68,7 @@ val serviceModule = module {
     single { params -> params.getOrNull<UdpServiceParams>() ?: UdpServiceParams() }
     single { params -> params.getOrNull<HomeAssistantServiceParams>() ?: HomeAssistantServiceParams() }
     single { params -> params.getOrNull<HotWordServiceParams>() ?: HotWordServiceParams() }
+    single { params -> params.getOrNull<DialogManagerServiceParams>() ?: DialogManagerServiceParams() }
 }
 
 abstract class Application : NativeApplication(), KoinComponent {

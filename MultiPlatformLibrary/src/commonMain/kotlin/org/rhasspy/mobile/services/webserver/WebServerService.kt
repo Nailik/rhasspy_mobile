@@ -19,6 +19,8 @@ import org.rhasspy.mobile.nativeutils.installCallLogging
 import org.rhasspy.mobile.nativeutils.installCompression
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceWatchdog
+import org.rhasspy.mobile.services.dialogManager.IDialogManagerService
+import org.rhasspy.mobile.services.settings.AppSettingsService
 import org.rhasspy.mobile.services.statemachine.StateMachineService
 
 class WebServerService : IService() {
@@ -29,6 +31,8 @@ class WebServerService : IService() {
 
     private val params by inject<WebServerServiceParams>()
     private val stateMachineService by inject<StateMachineService>()
+    private val dialogManagerService by inject<IDialogManagerService>()
+    private val appSettingsService by inject<AppSettingsService>()
     private val serviceWatchdog by inject<ServiceWatchdog>()
 
     init {
@@ -119,7 +123,7 @@ class WebServerService : IService() {
      * ?timeout=<seconds> - override default command timeout
      * ?entity=<entity>&value=<value> - set custom entities/values in recognized intent
      */
-    private fun listenForCommand() = stateMachineService.listenForCommandWebServer()
+    private fun listenForCommand() = dialogManagerService.listenForCommandWebServer()
 
 
     /**
@@ -138,7 +142,7 @@ class WebServerService : IService() {
         logger.v { "received $action" }
 
         action?.also {
-            stateMachineService.toggleListenForWakeWebServer(it)
+            appSettingsService.toggleListenForWakeWebServer(it)
         } ?: run {
             logger.w { "invalid body" }
         }
@@ -185,7 +189,11 @@ class WebServerService : IService() {
      */
     private suspend fun setVolume(call: ApplicationCall) {
         //double and float or double not working but string??
-        stateMachineService.setVolumeWebServer(call.receive<String>().toFloatOrNull())
+        call.receive<String>().toFloatOrNull()?.also {
+            appSettingsService.setVolumeWebServer(it)
+        } ?: run {
+            logger.d { "invalid volume" }
+        }
     }
 
     /**
@@ -193,7 +201,7 @@ class WebServerService : IService() {
      * POST to have Rhasspy start recording a voice command
      * actually starts a session
      */
-    private fun startRecording() = stateMachineService.startRecordingWebServer()
+    private fun startRecording() = dialogManagerService.startRecordingWebServer()
 
     /**
      * /api/stop-recording
@@ -206,7 +214,7 @@ class WebServerService : IService() {
      * ?nohass=true - stop Rhasspy from handling the intent
      * ?entity=<entity>&value=<value> - set custom entity/value in recognized intent
      */
-    private fun stopRecording() = stateMachineService.stopRecordingWebServer()
+    private fun stopRecording() = dialogManagerService.stopRecordingWebServer()
 
     /**
      * /api/say

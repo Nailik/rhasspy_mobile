@@ -21,16 +21,19 @@ import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.services.indication.IndicationService
 import org.rhasspy.mobile.services.indication.IndicationState
+import org.rhasspy.mobile.services.statemachine.StateMachineServiceParams
 
 /**
  * Overlay Service
  */
-object IndicationOverlay {
+object IndicationOverlay: KoinComponent {
 
     private lateinit var mParams: WindowManager.LayoutParams
     private val lifecycleOwner = CustomLifecycleOwner()
@@ -39,6 +42,7 @@ object IndicationOverlay {
     private var showVisualIndicationOldValue = false
 
     private var mainScope = CoroutineScope(Dispatchers.Main)
+    private val indicationService by inject<IndicationService>()
 
     private val overlayWindowManager by lazy {
         AndroidApplication.Instance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -57,7 +61,7 @@ object IndicationOverlay {
                     contentAlignment = Alignment.Center
                 ) {
 
-                    when (IndicationService.readonlyState.collectAsState().value) {
+                    when (indicationService.indicationState.collectAsState().value) {
                         IndicationState.Idle -> {}
                         IndicationState.WakeUp -> WakeupIndication()
                         IndicationState.Recording -> RecordingIndication()
@@ -100,7 +104,7 @@ object IndicationOverlay {
      */
     fun start() {
         CoroutineScope(Dispatchers.Default).launch {
-            IndicationService.showVisualIndicationUi.collect {
+            indicationService.showVisualIndication.collect {
                 if (it != showVisualIndicationOldValue) {
                     if (it) {
                         if (OverlayPermission.isGranted()) {

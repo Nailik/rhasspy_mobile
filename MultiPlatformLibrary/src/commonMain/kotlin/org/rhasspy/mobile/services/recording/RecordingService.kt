@@ -8,9 +8,11 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.component.inject
+import org.rhasspy.mobile.addWavHeader
 import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceResponse
+import org.rhasspy.mobile.services.dialogManager.IDialogManagerService
 import org.rhasspy.mobile.services.statemachine.StateMachineService
 import org.rhasspy.mobile.settings.AppSettings
 import kotlin.time.Duration.Companion.milliseconds
@@ -24,7 +26,7 @@ class RecordingService : IService() {
 
     private val logger = Logger.withTag("RecordingService")
 
-    private val stateMachineService by inject<StateMachineService>()
+    private val dialogManagerService by inject<IDialogManagerService>()
 
     private var scope = CoroutineScope(Dispatchers.Default)
     private var silenceStartTime: Instant? = null
@@ -37,12 +39,14 @@ class RecordingService : IService() {
         scope.launch {
             //collect from audio recorder
             AudioRecorder.output.collect { value ->
-                val byteData = value.toList()
+                val byteData = value.toMutableList().apply {
+                    addWavHeader()
+                }
                 if (isRecordingNormal) {
-                    stateMachineService.audioFrame(byteData)
+                    dialogManagerService.audioFrameLocal(byteData)
                 }
                 if (isRecordingWakeWord) {
-                    stateMachineService.audioFrameWakeWord(byteData)
+                    dialogManagerService.audioFrameWakeWordLocal(byteData)
                 }
             }
         }
@@ -67,7 +71,7 @@ class RecordingService : IService() {
                     logger.d { "silenceDetected" }
                     //check if silence was detected for x milliseconds
                     if (it.minus(Clock.System.now()) < -AppSettings.automaticSilenceDetectionTime.value.milliseconds) {
-                        stateMachineService.silenceDetected()
+                        dialogManagerService.silenceDetectedLocal()
                     }
                 } ?: run {
                     logger.v { "start silence detected" }
