@@ -68,17 +68,16 @@ class WebServerService : IService() {
     init {
         if (params.isHttpServerEnabled) {
             val startEvent = eventLogger.event(EventType.WebServerStart)
-            callEvent = eventLogger.event(EventType.WebServerIncomingCall)
 
-            //pending
-            server = buildServer(params.httpServerPort)
-
-            //starting
-            startEvent.loading()
             try {
+                //starting
+                startEvent.loading()
+
+                server = buildServer(params.httpServerPort)
                 server.start()
                 //successfully start
                 startEvent.success()
+                callEvent = eventLogger.event(EventType.WebServerIncomingCall)
                 callEvent.loading()
             } catch (e: Exception) {
                 //start error

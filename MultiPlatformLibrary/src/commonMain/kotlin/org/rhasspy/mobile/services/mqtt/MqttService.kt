@@ -10,8 +10,15 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
+import org.rhasspy.mobile.logger.EventLogger
+import org.rhasspy.mobile.logger.EventTag
+import org.rhasspy.mobile.logger.EventType
 import org.rhasspy.mobile.logic.StateMachine
-import org.rhasspy.mobile.mqtt.*
+import org.rhasspy.mobile.mqtt.MQTTTopicsPublish
+import org.rhasspy.mobile.mqtt.MQTTTopicsSubscription
+import org.rhasspy.mobile.mqtt.MqttMessage
+import org.rhasspy.mobile.mqtt.MqttPersistence
 import org.rhasspy.mobile.nativeutils.MqttClient
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
@@ -23,21 +30,25 @@ import org.rhasspy.mobile.services.statemachine.StateMachineService
 import kotlin.math.min
 
 class MqttService : IService() {
+
+    private val params by inject<MqttServiceParams>()
+
+    private val stateMachineService by inject<StateMachineService>()
+    private val dialogManagerService by inject<IDialogManagerService>()
+    private val appSettingsService by inject<AppSettingsService>()
+
     private val logger = Logger.withTag("MqttService")
+    private val eventLogger by inject<EventLogger>(named(EventTag.MqttService.name))
+
+    private var scope = CoroutineScope(Dispatchers.Default)
 
     private var client: MqttClient? = null
-    private val id = uuid4().variant
-    private var scope = CoroutineScope(Dispatchers.Default)
     private var retryJob: Job? = null
+    private val id = uuid4().variant
 
     private val _isConnected = MutableStateFlow(false)
     val isConnected = _isConnected.readOnly
 
-    private val params by inject<MqttServiceParams>()
-    private val stateMachineService by inject<StateMachineService>()
-    private val dialogManagerService by inject<IDialogManagerService>()
-    private val appSettingsService by inject<AppSettingsService>()
-    private val serviceWatchdog by inject<ServiceWatchdog>()
 
     /**
      * start client externally, only starts if mqtt is enabled
@@ -50,31 +61,45 @@ class MqttService : IService() {
      * sets connected value
      */
     init {
-        scope = CoroutineScope(Dispatchers.Default)
         if (params.isMqttEnabled) {
-            client = MqttClient(
-                brokerUrl = "tcp://${params.mqttHost}:${params.mqttPort}",
-                clientId = params.siteId,
-                persistenceType = MqttPersistence.MEMORY,
-                onDelivered = { },
-                onMessageReceived = { topic, message ->
-                    scope.launch {
-                        onMessageReceived(topic, message)
-                    }
-                },
-                onDisconnect = { error -> onDisconnect(error) },
-            ).also {
+            val startEvent = eventLogger.event(EventType.MqttClientStart)
+
+            try {
+                //starting
+                startEvent.loading()
+
+                client = buildClient()
                 scope.launch {
-                    if (connectClient(it)) {
+                    if (connectClient()) {
                         subscribeTopics()
                     } else {
                         logger.e { "client not connected after attempt" }
                     }
                 }
+
+                startEvent.success()
+            } catch (e: Exception) {
+                //start error
+                startEvent.error(e)
             }
         } else {
             logger.v { "mqtt not enabled" }
         }
+    }
+
+    private fun buildClient(): MqttClient {
+        return MqttClient(
+            brokerUrl = "tcp://${params.mqttHost}:${params.mqttPort}",
+            clientId = params.siteId,
+            persistenceType = MqttPersistence.MEMORY,
+            onDelivered = { },
+            onMessageReceived = { topic, message ->
+                scope.launch {
+                    onMessageReceived(topic, message)
+                }
+            },
+            onDisconnect = { error -> onDisconnect(error) },
+        )
     }
 
     /**
@@ -93,20 +118,24 @@ class MqttService : IService() {
     /**
      * connects client to server and returns if client is now connected
      */
-    private suspend fun connectClient(client: MqttClient): Boolean {
-        if (!client.isConnected) {
+    private suspend fun connectClient(): Boolean {
+        val connectEvent = eventLogger.event(EventType.MqttClientConnecting)
+
+        if (client?.isConnected == false) {
             //only if not connected
-            logger.v { "connectClient" }
+            connectEvent.loading()
             //connect to server
-            client.connect(params.mqttServiceConnectionOptions)?.also {
-                logger.e { "connect \n${it.statusCode.name} ${it.msg}" }
-                serviceWatchdog.mqttServiceStartError(it)
+            client?.connect(params.mqttServiceConnectionOptions)?.also {
+                connectEvent.error("${it.statusCode.name} ${it.msg}")
+            } ?: run{
+                connectEvent.success()
             }
         } else {
-            logger.v { "connectClient already connected" }
+            connectEvent.success("already connected")
         }
 
-        _isConnected.value = client.isConnected
+        //update value, may be used from reconnect
+        _isConnected.value = client?.isConnected == true
         return _isConnected.value
     }
 
@@ -122,7 +151,7 @@ class MqttService : IService() {
             retryJob = scope.launch {
                 client?.also {
                     while (!it.isConnected) {
-                        connectClient(it)
+                        connectClient()
                         delay(params.retryInterval)
                     }
                     retryJob?.cancel()
@@ -200,16 +229,19 @@ class MqttService : IService() {
      * Subscribes to topics that are necessary
      */
     private suspend fun subscribeTopics() {
+        val subscribeEvent = eventLogger.event(EventType.MqttClientSubscribing)
         logger.v { "subscribeTopics" }
-
+        subscribeEvent.loading()
         //subscribe to topics with this site id (if contained in topic, currently only in PlayBytes)
         MQTTTopicsSubscription.values().forEach { topic ->
             client?.subscribe(
                 topic.topic.replace("<siteId>", params.siteId)
             )?.also {
+                //TODO event for all topics?
                 logger.e { "subscribe $topic \n${it.statusCode.name} ${it.msg}" }
             }
         }
+        subscribeEvent.success()
     }
 
     /**

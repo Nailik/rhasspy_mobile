@@ -6,8 +6,8 @@ data class MqttServiceConnectionOptions(
      * When set to *true* the session isn't retained. This means no subscriptions or undelivered messages are
      * stored.
      */
-    val cleanSession: Boolean,
-    val cleanStart: Boolean,
+    val cleanSession: Boolean = false,
+    val cleanStart: Boolean = true,
     val ssl: Boolean,
     /** Connection timeout in seconds. */
     val connectionTimeout: Int,

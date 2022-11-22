@@ -2,11 +2,20 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.core.component.get
+import org.koin.core.component.inject
+import org.koin.core.parameter.parametersOf
+import org.koin.core.qualifier.named
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.logger.Event
+import org.rhasspy.mobile.logger.EventLogger
+import org.rhasspy.mobile.logger.EventTag
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.mqtt.MqttService
+import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
+import org.rhasspy.mobile.services.mqtt.MqttServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class MqttConfigurationViewModel : IConfigurationViewModel() {
@@ -143,9 +152,29 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
      * test unsaved data configuration
      */
     override fun onTest(): StateFlow<List<Event>> {
-        //TODO default MQTT port
-        //check if mqtt connection can be established
-        TODO()
+        //initialize test params
+        get<MqttServiceParams> {
+            parametersOf(
+                MqttServiceParams(
+                    isMqttEnabled = _isMqttEnabled.value,
+                    mqttHost = _mqttHost.value,
+                    mqttPort = _mqttPort.value,
+                    retryInterval = _mqttRetryInterval.value,
+                    mqttServiceConnectionOptions = MqttServiceConnectionOptions(
+                        ssl = _isMqttSSLEnabled.value,
+                        connUsername = _mqttUserName.value,
+                        connPassword = _mqttPassword.value,
+                        connectionTimeout = _mqttConnectionTimeout.value,
+                        keepAliveInterval = _mqttKeepAliveInterval.value
+                    )
+                )
+            )
+        }
+        //start web server
+        get<MqttService>()
+        //get logger
+        val eventLogger by inject<EventLogger>(named(EventTag.MqttService.name))
+        return eventLogger.events
     }
 
 }

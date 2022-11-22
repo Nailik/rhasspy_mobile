@@ -68,9 +68,9 @@ class HttpClientService : IService() {
     init {
         val startEvent = eventLogger.event(EventType.HttpClientStart)
 
-        //starting
-        startEvent.loading()
         try {
+            //starting
+            startEvent.loading()
             httpClient = buildClient()
             //successfully start
             startEvent.success()

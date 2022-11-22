@@ -10,5 +10,8 @@ enum class EventType {
     HttpClientPlayWav,
     HttpClientIntentHandling,
     HttpClientHassEvent,
-    HttpClientHassIntent
+    HttpClientHassIntent,
+    MqttClientStart,
+    MqttClientConnecting,
+    MqttClientSubscribing
 }

@@ -84,9 +84,9 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
         get<WebServerServiceParams> {
             parametersOf(
                 WebServerServiceParams(
-                    _isHttpServerEnabled.value,
-                    _httpServerPort.value,
-                    _isHttpServerSSLEnabled.value
+                    isHttpServerEnabled = _isHttpServerEnabled.value,
+                    httpServerPort = _httpServerPort.value,
+                    isHttpServerSSLEnabled = _isHttpServerSSLEnabled.value
                 )
             )
         }

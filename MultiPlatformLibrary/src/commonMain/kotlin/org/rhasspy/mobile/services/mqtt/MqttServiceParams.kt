@@ -9,8 +9,6 @@ data class MqttServiceParams(
     val mqttPort: Int = ConfigurationSettings.mqttPort.value,
     val retryInterval: Long = ConfigurationSettings.mqttRetryInterval.value,
     val mqttServiceConnectionOptions: MqttServiceConnectionOptions = MqttServiceConnectionOptions(
-        cleanSession = true,
-        cleanStart = false,
         ssl = ConfigurationSettings.isMqttSSLEnabled.value,
         connUsername = ConfigurationSettings.mqttUserName.value,
         connPassword = ConfigurationSettings.mqttPassword.value,
