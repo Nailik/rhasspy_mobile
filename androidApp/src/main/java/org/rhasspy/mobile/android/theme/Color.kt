@@ -81,7 +81,7 @@ private val color_unknown_any = Color(0xFF000000)
 
 val ColorScheme.warn: Color
     @Composable
-    get() = if (getIsDarkTheme()) color_warn_light else color_warn_dark
+    get() = if (getIsDarkTheme()) color_warn_dark else color_warn_light
 
 val ColorScheme.assistant_color_one: Color
     get() = assistant_color_one_any

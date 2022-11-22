@@ -11,12 +11,12 @@ import org.koin.core.context.unloadKoinModules
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
-import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.serviceModule
 import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.services.statemachine.StateMachineService
-import org.rhasspy.mobile.services.statemachine.StateMachineServiceParams
+import org.rhasspy.mobile.services.webserver.WebServerService
+import org.rhasspy.mobile.services.webserver.WebServerServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class WebServerConfigurationViewModel : ViewModel(), IConfigurationViewModel, KoinComponent {
@@ -106,14 +106,17 @@ class WebServerConfigurationViewModel : ViewModel(), IConfigurationViewModel, Ko
         unloadKoinModules(serviceModule)
         loadKoinModules(serviceModule)
 
-        val params = get<StateMachineServiceParams> {
+        //load web serv
+        val webServerService = get<WebServerService> {
             parametersOf(
-                StateMachineServiceParams()
-                    .copy(test = "foo")
+                WebServerServiceParams(
+                    _isHttpServerEnabled.value,
+                    _httpServerPort.value,
+                    _isHttpServerSSLEnabled.value
+                )
             )
         }
 
-        val stateMachineService = get<StateMachineService>()
         /*   webServerServiceTest = get {
                parametersOf(
                    WebServerLink(_isHttpServerEnabled.value, _httpServerPort.value, _isHttpServerSSLEnabled.value)

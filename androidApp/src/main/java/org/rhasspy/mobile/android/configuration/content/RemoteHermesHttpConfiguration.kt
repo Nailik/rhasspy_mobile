@@ -16,7 +16,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
-import org.rhasspy.mobile.android.configuration.test.TestListItem
+import org.rhasspy.mobile.android.configuration.test.EventListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
@@ -66,10 +66,6 @@ private fun TestContent(modifier: Modifier, viewModel: RemoteHermesHttpConfigura
             .fillMaxHeight()
             .verticalScroll(rememberScrollState())
     ) {
-        val receivingStateList by viewModel.testState.collectAsState()
-        receivingStateList.forEach {
-            TestListItem(it)
-        }
     }
 
 }

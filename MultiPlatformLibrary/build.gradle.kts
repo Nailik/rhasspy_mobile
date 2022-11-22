@@ -69,6 +69,7 @@ kotlin {
                 implementation(Ktor.Client.cio)
                 implementation(Ktor.Server.core)
                 implementation(Ktor.Server.cio)
+                implementation(Ktor.Server.statusPages)
                 implementation(Ktor.plugins.network)
             }
         }

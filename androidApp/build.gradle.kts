@@ -169,4 +169,5 @@ dependencies {
     androidTestImplementation(AndroidX.Test.coreKtx)
     androidTestImplementation(AndroidX.Compose.Ui.testJunit4)
     debugImplementation(AndroidX.Compose.Ui.testManifest)
+    implementation("dev.burnoo:cokoin:_")
 }

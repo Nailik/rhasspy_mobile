@@ -19,15 +19,16 @@ class StateMachineService: IService() {
     //other from webserver (audio)
 
     fun playRecordingPostWebServer() {
-        TODO("Not yet implemented")
+      //  TODO("Not yet implemented")
     }
 
     fun playRecordingGetWebServer(): List<Byte> {
-        TODO()
+  //      TODO()
+        return listOf()
     }
 
     fun playWavWebServer(toList: List<Byte>) {
-        TODO("Not yet implemented")
+   //     TODO("Not yet implemented")
     }
 
     fun sayWebServer(receive: ByteArray) {
@@ -35,7 +36,7 @@ class StateMachineService: IService() {
     }
 
     fun playAudioMqtt(toList: List<Byte>) {
-        TODO("Not yet implemented")
+    //    TODO("Not yet implemented")
     }
 
 }
