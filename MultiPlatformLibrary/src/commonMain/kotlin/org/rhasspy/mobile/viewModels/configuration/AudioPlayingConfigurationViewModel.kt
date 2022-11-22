@@ -1,13 +1,12 @@
 package org.rhasspy.mobile.viewModels.configuration
 
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.AudioOutputOptions
 import org.rhasspy.mobile.data.AudioPlayingOptions
+import org.rhasspy.mobile.logger.Event
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
-import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 /**
@@ -18,7 +17,7 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
  * if Endpoint option should be shown
  * all Options as list
  */
-class AudioPlayingConfigurationViewModel : ViewModel(), IConfigurationViewModel {
+class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
 
     //unsaved data
     private val _audioPlayingOption = MutableStateFlow(ConfigurationSettings.audioPlayingOption.value)
@@ -41,7 +40,6 @@ class AudioPlayingConfigurationViewModel : ViewModel(), IConfigurationViewModel 
     val isAudioPlayingHttpEndpointChangeEnabled = isUseCustomAudioPlayingHttpEndpoint
 
     override val isTestingEnabled = _audioPlayingOption.mapReadonlyState { it != AudioPlayingOptions.Disabled }
-    override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
 
     //if there are unsaved changes
     override val hasUnsavedChanges = combineAny(
@@ -89,7 +87,7 @@ class AudioPlayingConfigurationViewModel : ViewModel(), IConfigurationViewModel 
     /**
      * save data configuration
      */
-    override fun save() {
+    override fun onSave() {
         ConfigurationSettings.audioPlayingOption.value = _audioPlayingOption.value
         ConfigurationSettings.audioOutputOption.value = _audioOutputOption.value
         ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.value = _isUseCustomAudioPlayingHttpEndpoint.value
@@ -109,15 +107,11 @@ class AudioPlayingConfigurationViewModel : ViewModel(), IConfigurationViewModel 
     /**
      * test unsaved data configuration
      */
-    override fun test() {
+    override fun onTest(): StateFlow<List<Event>> {
         //TODO only when enabled
         //record audio button
         //play audio button
+        TODO()
     }
-
-    override fun stopTest() {
-
-    }
-
 
 }

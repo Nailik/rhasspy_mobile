@@ -1,15 +1,14 @@
 package org.rhasspy.mobile.viewModels.configuration
 
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.TextToSpeechOptions
+import org.rhasspy.mobile.logger.Event
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
-import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-class TextToSpeechConfigurationViewModel : ViewModel(), IConfigurationViewModel {
+class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
 
     //unsaved data
     private val _textToSpeechOption = MutableStateFlow(ConfigurationSettings.textToSpeechOption.value)
@@ -31,7 +30,6 @@ class TextToSpeechConfigurationViewModel : ViewModel(), IConfigurationViewModel 
     val isTextToSpeechHttpEndpointChangeEnabled = isUseCustomTextToSpeechHttpEndpoint
 
     override val isTestingEnabled = _textToSpeechOption.mapReadonlyState { it != TextToSpeechOptions.Disabled }
-    override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
 
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_textToSpeechOption, ConfigurationSettings.textToSpeechOption.data),
@@ -65,7 +63,7 @@ class TextToSpeechConfigurationViewModel : ViewModel(), IConfigurationViewModel 
     /**
      * save data configuration
      */
-    override fun save() {
+    override fun onSave() {
         ConfigurationSettings.textToSpeechOption.value = _textToSpeechOption.value
         ConfigurationSettings.isUseCustomTextToSpeechHttpEndpoint.value = _isUseCustomTextToSpeechHttpEndpoint.value
         ConfigurationSettings.textToSpeechHttpEndpoint.value = _textToSpeechHttpEndpoint.value
@@ -83,16 +81,13 @@ class TextToSpeechConfigurationViewModel : ViewModel(), IConfigurationViewModel 
     /**
      * test unsaved data configuration
      */
-    override fun test() {
+    override fun onTest(): StateFlow<List<Event>> {
         //TODO only when enabled
         //textfield to input test
         //button to send text
         //play audio (on music)
         //warning when output is silent
-    }
-
-    override fun stopTest() {
-
+        TODO()
     }
 
 }

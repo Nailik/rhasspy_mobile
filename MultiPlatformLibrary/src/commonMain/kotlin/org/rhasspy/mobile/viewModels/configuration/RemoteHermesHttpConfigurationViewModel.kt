@@ -1,17 +1,15 @@
 package org.rhasspy.mobile.viewModels.configuration
 
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
+import org.rhasspy.mobile.logger.Event
 import org.rhasspy.mobile.readOnly
-import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 //TODO add all other endpoints to this list
-class RemoteHermesHttpConfigurationViewModel : ViewModel(), IConfigurationViewModel, KoinComponent {
+class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
 
     //unsaved data
     private val _httpServerEndpoint = MutableStateFlow(ConfigurationSettings.httpServerEndpoint.value)
@@ -22,9 +20,6 @@ class RemoteHermesHttpConfigurationViewModel : ViewModel(), IConfigurationViewMo
     val isHttpSSLVerificationDisabled = _isHttpSSLVerificationDisabled.readOnly
 
     override val isTestingEnabled = MutableStateFlow(true)
-
-    private val _testState = MutableStateFlow(listOf<ServiceState>())
-    override val testState: StateFlow<List<ServiceState>> = _testState.readOnly
 
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_httpServerEndpoint, ConfigurationSettings.httpServerEndpoint.data),
@@ -45,12 +40,9 @@ class RemoteHermesHttpConfigurationViewModel : ViewModel(), IConfigurationViewMo
     /**
      * save data configuration
      */
-    override fun save() {
+    override fun onSave() {
         ConfigurationSettings.httpServerEndpoint.value = _httpServerEndpoint.value
         ConfigurationSettings.isHttpSSLVerificationDisabled.value = _isHttpSSLVerificationDisabled.value
-        /*get<HttpClientService>().also {
-             it.restart() //TODO()
-         }*/
     }
 
     /**
@@ -65,7 +57,7 @@ class RemoteHermesHttpConfigurationViewModel : ViewModel(), IConfigurationViewMo
     /**
      * test unsaved data configuration
      */
-    override fun test() {
+    override fun onTest(): StateFlow<List<Event>> {
         /*
         httpClientServiceTest = get {
             parametersOf(
@@ -112,16 +104,7 @@ class RemoteHermesHttpConfigurationViewModel : ViewModel(), IConfigurationViewMo
         httpClientServiceTest.start()
 
          */
-    }
-
-    override fun stopTest() {
-        /*
-        //destroy instance
-        if (::httpClientServiceTest.isInitialized) {
-            httpClientServiceTest.stop()
-        }
-
-         */
+        TODO()
     }
 
 }

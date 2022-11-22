@@ -7,13 +7,15 @@ import io.ktor.utils.io.core.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
+import org.rhasspy.mobile.logger.EventLogger
+import org.rhasspy.mobile.logger.EventTag
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceResponse
 import org.rhasspy.mobile.services.ServiceWatchdog
 import org.rhasspy.mobile.services.statemachine.StateMachineService
 
 class UdpService : IService() {
-    private val logger = Logger.withTag("UdpService")
 
     private var socketAddress: SocketAddress? = null
     private var sendChannel: SendChannel<Datagram>? = null
@@ -21,6 +23,9 @@ class UdpService : IService() {
     private val params by inject<UdpServiceParams>()
     private val stateMachineService by inject<StateMachineService>()
     private val serviceWatchdog by inject<ServiceWatchdog>()
+
+    private val logger = Logger.withTag("UdpService")
+    private val eventLogger by inject<EventLogger>(named(EventTag.UdpService.name))
 
     /**
      * makes sure the address is up to date

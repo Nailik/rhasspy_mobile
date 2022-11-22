@@ -18,8 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.burnoo.cokoin.Koin
-import dev.burnoo.cokoin.get
-import org.koin.core.qualifier.named
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
@@ -29,8 +27,6 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
-import org.rhasspy.mobile.logger.EventLogger
-import org.rhasspy.mobile.logger.EventTag
 import org.rhasspy.mobile.serviceModule
 import org.rhasspy.mobile.viewModels.configuration.WebServerConfigurationViewModel
 
@@ -123,22 +119,19 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
 
 }
 
-//TODO new page instead of bottom sheet
 @Composable
 private fun TestContent(
     modifier: Modifier, viewModel: WebServerConfigurationViewModel) {
 
-        val eventLogger = get<EventLogger>(named(EventTag.WebServer.name))
-
-        Column(
-            modifier = modifier
-                .heightIn(min = 400.dp)
-                .fillMaxHeight()
-                .verticalScroll(rememberScrollState())
-        ) {
-            val receivingStateList by eventLogger.events.collectAsState()
-            receivingStateList.forEach {
-                EventListItem(it)
+    Column(
+        modifier = modifier
+            .heightIn(min = 400.dp)
+            .fillMaxHeight()
+            .verticalScroll(rememberScrollState())
+    ) {
+        val receivingStateList by viewModel.events.collectAsState()
+        receivingStateList.forEach {
+            EventListItem(it)
         }
     }
 

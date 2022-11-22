@@ -1,18 +1,17 @@
 package org.rhasspy.mobile.viewModels.configuration
 
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.data.HomeAssistantIntentHandlingOptions
 import org.rhasspy.mobile.data.IntentHandlingOptions
+import org.rhasspy.mobile.logger.Event
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
-import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-class IntentHandlingConfigurationViewModel : ViewModel(), IConfigurationViewModel {
+class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
 
     //unsaved data
     private val _intentHandlingOption = MutableStateFlow(ConfigurationSettings.intentHandlingOption.value)
@@ -30,7 +29,6 @@ class IntentHandlingConfigurationViewModel : ViewModel(), IConfigurationViewMode
     val isIntentHandlingHassIntent = _intentHandlingHomeAssistantOption.mapReadonlyState { it == HomeAssistantIntentHandlingOptions.Intent }
 
     override val isTestingEnabled = _intentHandlingOption.mapReadonlyState { it != IntentHandlingOptions.Disabled }
-    override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
 
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_intentHandlingOption, ConfigurationSettings.intentHandlingOption.data),
@@ -86,7 +84,7 @@ class IntentHandlingConfigurationViewModel : ViewModel(), IConfigurationViewMode
     /**
      * save data configuration
      */
-    override fun save() {
+    override fun onSave() {
         ConfigurationSettings.intentHandlingOption.value = _intentHandlingOption.value
         ConfigurationSettings.intentHandlingHttpEndpoint.value = _intentHandlingHttpEndpoint.value
         ConfigurationSettings.intentHandlingHassEndpoint.value = _intentHandlingHassEndpoint.value
@@ -108,14 +106,11 @@ class IntentHandlingConfigurationViewModel : ViewModel(), IConfigurationViewMode
     /**
      * test unsaved data configuration
      */
-    override fun test() {
+    override fun onTest(): StateFlow<List<Event>> {
         //TODO only when enabled
         //textfield for intent name and button
         //alternative? - textfield for text string to recognize intent and then handle
-    }
-
-    override fun stopTest() {
-
+        TODO()
     }
 
 }

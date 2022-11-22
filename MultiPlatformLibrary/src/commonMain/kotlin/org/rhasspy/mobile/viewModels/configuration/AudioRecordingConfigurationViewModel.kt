@@ -1,15 +1,14 @@
 package org.rhasspy.mobile.viewModels.configuration
 
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
+import org.rhasspy.mobile.logger.Event
 import org.rhasspy.mobile.readOnly
-import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-class AudioRecordingConfigurationViewModel : ViewModel(), IConfigurationViewModel {
+class AudioRecordingConfigurationViewModel : IConfigurationViewModel() {
 
     //unsaved data
     private val _isUdpOutputEnabled = MutableStateFlow(ConfigurationSettings.isUdpOutputEnabled.value)
@@ -24,7 +23,6 @@ class AudioRecordingConfigurationViewModel : ViewModel(), IConfigurationViewMode
     val udpOutputPortText = _udpOutputPortText.readOnly
 
     override val isTestingEnabled = _isUdpOutputEnabled.readOnly
-    override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
 
     //if there are unsaved changes
     override val hasUnsavedChanges = combineAny(
@@ -56,7 +54,7 @@ class AudioRecordingConfigurationViewModel : ViewModel(), IConfigurationViewMode
     /**
      * save data configuration
      */
-    override fun save() {
+    override fun onSave() {
         ConfigurationSettings.isUdpOutputEnabled.value = _isUdpOutputEnabled.value
         ConfigurationSettings.udpOutputHost.value = _udpOutputHost.value
         ConfigurationSettings.udpOutputPort.value = _udpOutputPort.value
@@ -74,14 +72,11 @@ class AudioRecordingConfigurationViewModel : ViewModel(), IConfigurationViewMode
     /**
      * test unsaved data configuration
      */
-    override fun test() {
+    override fun onTest(): StateFlow<List<Event>> {
         //only test button when enabled
         //require microphone permission
         //send data (show information that data is being send)
-    }
-
-    override fun stopTest() {
-
+        TODO()
     }
 
 }

@@ -1,15 +1,14 @@
 package org.rhasspy.mobile.viewModels.configuration
 
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.IntentRecognitionOptions
+import org.rhasspy.mobile.logger.Event
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
-import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-class IntentRecognitionConfigurationViewModel : ViewModel(), IConfigurationViewModel {
+class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
 
     //unsaved data
     private val _intentRecognitionOption = MutableStateFlow(ConfigurationSettings.intentRecognitionOption.value)
@@ -31,7 +30,6 @@ class IntentRecognitionConfigurationViewModel : ViewModel(), IConfigurationViewM
     val isIntentRecognitionHttpEndpointChangeEnabled = isUseCustomIntentRecognitionHttpEndpoint
 
     override val isTestingEnabled = _intentRecognitionOption.mapReadonlyState { it != IntentRecognitionOptions.Disabled }
-    override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
 
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_intentRecognitionOption, ConfigurationSettings.intentRecognitionOption.data),
@@ -65,7 +63,7 @@ class IntentRecognitionConfigurationViewModel : ViewModel(), IConfigurationViewM
     /**
      * save data configuration
      */
-    override fun save() {
+    override fun onSave() {
         ConfigurationSettings.intentRecognitionOption.value = _intentRecognitionOption.value
         ConfigurationSettings.isUseCustomIntentRecognitionHttpEndpoint.value = _isUseCustomIntentRecognitionHttpEndpoint.value
         ConfigurationSettings.intentRecognitionHttpEndpoint.value = _intentRecognitionHttpEndpoint.value
@@ -83,15 +81,12 @@ class IntentRecognitionConfigurationViewModel : ViewModel(), IConfigurationViewM
     /**
      * test unsaved data configuration
      */
-    override fun test() {
+    override fun onTest(): StateFlow<List<Event>> {
         //TODO only when enabled
         //textfield to input test
         //button to send intent
         //information if was recognized
-    }
-
-    override fun stopTest() {
-
+        TODO()
     }
 
 }

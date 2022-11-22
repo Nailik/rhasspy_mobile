@@ -1,14 +1,13 @@
 package org.rhasspy.mobile.viewModels.configuration
 
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.data.DialogManagementOptions
+import org.rhasspy.mobile.logger.Event
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
-import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 /**
@@ -17,7 +16,7 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
  * Current Option
  * all Options as list
  */
-class DialogManagementConfigurationViewModel : ViewModel(), IConfigurationViewModel {
+class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
 
     //unsaved data
     private val _dialogManagementOption = MutableStateFlow(ConfigurationSettings.dialogManagementOption.value)
@@ -26,7 +25,6 @@ class DialogManagementConfigurationViewModel : ViewModel(), IConfigurationViewMo
     val dialogManagementOption = _dialogManagementOption.readOnly
 
     override val isTestingEnabled = _dialogManagementOption.mapReadonlyState { it != DialogManagementOptions.Disabled }
-    override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
 
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_dialogManagementOption, ConfigurationSettings.dialogManagementOption.data)
@@ -43,7 +41,7 @@ class DialogManagementConfigurationViewModel : ViewModel(), IConfigurationViewMo
     /**
      * save data configuration
      */
-    override fun save() {
+    override fun onSave() {
         ConfigurationSettings.dialogManagementOption.value = _dialogManagementOption.value
     }
 
@@ -57,13 +55,10 @@ class DialogManagementConfigurationViewModel : ViewModel(), IConfigurationViewMo
     /**
      * test unsaved data configuration
      */
-    override fun test() {
+    override fun onTest(): StateFlow<List<Event>> {
         //TODO only when enabled
         //?? maybe record button -> test flow
-    }
-
-    override fun stopTest() {
-
+        TODO()
     }
 
 }

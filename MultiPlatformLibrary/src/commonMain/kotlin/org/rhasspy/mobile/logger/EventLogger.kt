@@ -5,6 +5,10 @@ import org.rhasspy.mobile.readOnly
 
 class EventLogger constructor(val tag: EventTag) {
 
+    init{
+        println("created event logger for $tag")
+    }
+
     private val _events = MutableStateFlow<List<Event>>(listOf())
     val events = _events.readOnly
 

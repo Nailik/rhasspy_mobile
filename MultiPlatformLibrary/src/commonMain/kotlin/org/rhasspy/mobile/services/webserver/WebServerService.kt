@@ -54,7 +54,7 @@ class WebServerService : IService() {
     private val appSettingsService by inject<AppSettingsService>()
 
     private val logger = Logger.withTag("WebServerService")
-    private val eventLogger by inject<EventLogger>(named(EventTag.WebServer.name))
+    private val eventLogger by inject<EventLogger>(named(EventTag.WebServerService.name))
 
     private val scope = CoroutineScope(Dispatchers.Default)
     private val audioContentType = ContentType("audio", "wav")

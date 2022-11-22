@@ -1,16 +1,15 @@
 package org.rhasspy.mobile.viewModels.configuration
 
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
+import org.rhasspy.mobile.logger.Event
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
-import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-class MqttConfigurationViewModel : ViewModel(), IConfigurationViewModel {
+class MqttConfigurationViewModel : IConfigurationViewModel() {
 
     //unsaved data
     private val _isMqttEnabled = MutableStateFlow(ConfigurationSettings.isMqttEnabled.value)
@@ -40,7 +39,6 @@ class MqttConfigurationViewModel : ViewModel(), IConfigurationViewModel {
     val mqttRetryIntervalText = _mqttRetryIntervalText.readOnly
 
     override val isTestingEnabled = _isMqttEnabled.readOnly
-    override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
 
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_isMqttEnabled, ConfigurationSettings.isMqttEnabled.data),
@@ -113,7 +111,7 @@ class MqttConfigurationViewModel : ViewModel(), IConfigurationViewModel {
     /**
      * save data configuration
      */
-    override fun save() {
+    override fun onSave() {
         ConfigurationSettings.isMqttEnabled.value = _isMqttEnabled.value
         ConfigurationSettings.mqttHost.value = _mqttHost.value
         ConfigurationSettings.mqttPort.value = _mqttPort.value
@@ -144,13 +142,10 @@ class MqttConfigurationViewModel : ViewModel(), IConfigurationViewModel {
     /**
      * test unsaved data configuration
      */
-    override fun test() {
+    override fun onTest(): StateFlow<List<Event>> {
         //TODO default MQTT port
         //check if mqtt connection can be established
-    }
-
-    override fun stopTest() {
-
+        TODO()
     }
 
 }

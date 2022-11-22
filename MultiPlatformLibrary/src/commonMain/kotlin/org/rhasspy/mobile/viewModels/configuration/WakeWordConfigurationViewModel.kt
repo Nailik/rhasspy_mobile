@@ -1,18 +1,17 @@
 package org.rhasspy.mobile.viewModels.configuration
 
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.PorcupineLanguageOptions
 import org.rhasspy.mobile.data.WakeWordOption
+import org.rhasspy.mobile.logger.Event
 import org.rhasspy.mobile.nativeutils.SettingsUtils
 import org.rhasspy.mobile.nativeutils.openLink
-import org.rhasspy.mobile.services.state.ServiceState
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 
-class WakeWordConfigurationViewModel : ViewModel(), IConfigurationViewModel {
+class WakeWordConfigurationViewModel : IConfigurationViewModel() {
 
     data class PorcupineCustomKeywordUi(
         val keyword: PorcupineCustomKeyword,
@@ -46,7 +45,6 @@ class WakeWordConfigurationViewModel : ViewModel(), IConfigurationViewModel {
     }
 
     override val isTestingEnabled = _wakeWordOption.mapReadonlyState { it != WakeWordOption.Disabled }
-    override val testState: StateFlow<List<ServiceState>> = MutableStateFlow(listOf())
 
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_wakeWordOption, ConfigurationSettings.wakeWordOption.data),
@@ -191,7 +189,7 @@ class WakeWordConfigurationViewModel : ViewModel(), IConfigurationViewModel {
     /**
      * save data configuration
      */
-    override fun save() {
+    override fun onSave() {
         ConfigurationSettings.wakeWordOption.value = _wakeWordOption.value
         ConfigurationSettings.wakeWordPorcupineAccessToken.value = _wakeWordPorcupineAccessToken.value
         ConfigurationSettings.wakeWordPorcupineKeywordDefaultOptions.value = _wakeWordPorcupineKeywordDefaultOptions.value
@@ -227,15 +225,12 @@ class WakeWordConfigurationViewModel : ViewModel(), IConfigurationViewModel {
      * test unsaved data configuration
      * also test if porcupine activation works
      */
-    override fun test() {
+    override fun onTest(): StateFlow<List<Event>> {
         //TODO require microphone permission
         //TODO only when enabled
         //record audio
         //show when wakeword was detected, also which wakeword
-    }
-
-    override fun stopTest() {
-
+        TODO()
     }
 
 }
