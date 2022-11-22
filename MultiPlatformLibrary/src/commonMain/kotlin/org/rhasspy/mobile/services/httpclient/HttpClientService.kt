@@ -12,7 +12,6 @@ import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -20,14 +19,12 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
-import org.rhasspy.mobile.logger.Event
 import org.rhasspy.mobile.logger.EventLogger
 import org.rhasspy.mobile.logger.EventTag
 import org.rhasspy.mobile.logger.EventType
 import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceResponse
-import org.rhasspy.mobile.services.ServiceWatchdog
 
 /**
  * contains client to send data to http endpoints
@@ -42,41 +39,40 @@ class HttpClientService : IService() {
     private val logger = Logger.withTag("HttpClientService")
     private val eventLogger by inject<EventLogger>(named(EventTag.HttpClientService.name))
 
-    private var scope = CoroutineScope(Dispatchers.Default)
-
     private var httpClient: HttpClient? = null
 
     /**
-     * launches scope and starts client
-     * creates new scope
+     * starts client and updates event
      */
     init {
         val startEvent = eventLogger.event(EventType.HttpClientStart)
 
-            //starting
-            startEvent.loading()
-            try {
-                httpClient = HttpClient(CIO) {
-                    expectSuccess = true
-                    install(WebSockets)
-                    install(HttpTimeout) {
-                        requestTimeoutMillis = 30000
-                    }
-                    engine {
-                        configureEngine(params.isHttpSSLVerificationDisabled)
-                    }
+        //starting
+        startEvent.loading()
+        try {
+            httpClient = HttpClient(CIO) {
+                expectSuccess = true
+                install(WebSockets)
+                install(HttpTimeout) {
+                    requestTimeoutMillis = 30000
                 }
-                //successfully start
-                startEvent.success()
-            } catch (e: Exception) {
-                //start error
-                startEvent.error(e)
+                engine {
+                    configureEngine(params.isHttpSSLVerificationDisabled)
+                }
             }
+            //successfully start
+            startEvent.success()
+        } catch (e: Exception) {
+            //start error
+            startEvent.error(e)
+        }
     }
 
+    /**
+     * stops client
+     */
     override fun onClose() {
         httpClient?.cancel()
-        scope.cancel()
     }
 
     /**
