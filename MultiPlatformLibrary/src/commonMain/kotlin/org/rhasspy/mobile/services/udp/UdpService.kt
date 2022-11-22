@@ -60,10 +60,10 @@ class UdpService : IService() {
     suspend fun streamAudio(byteData: List<Byte>): ServiceResponse<*> {
         socketAddress?.also {
             sendChannel?.send(Datagram(ByteReadPacket(byteData.toByteArray()), it)) ?: run {
-                return ServiceResponse.NotInitialized()
+                return ServiceResponse.NotInitialized
             }
         } ?: run {
-            return ServiceResponse.NotInitialized()
+            return ServiceResponse.NotInitialized
         }
         return ServiceResponse.Success(Unit)
     }

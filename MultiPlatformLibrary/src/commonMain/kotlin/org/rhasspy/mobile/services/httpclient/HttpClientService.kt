@@ -19,6 +19,11 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
+import org.rhasspy.mobile.logger.Event
+import org.rhasspy.mobile.logger.EventLogger
+import org.rhasspy.mobile.logger.EventTag
+import org.rhasspy.mobile.logger.EventType
 import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceResponse
@@ -31,35 +36,42 @@ import org.rhasspy.mobile.services.ServiceWatchdog
  */
 class HttpClientService : IService() {
 
+    private val params by inject<HttpClientServiceParams>()
+
+
     private val logger = Logger.withTag("HttpClientService")
-    private var httpClient: HttpClient? = null
+    private val eventLogger by inject<EventLogger>(named(EventTag.HttpClientService.name))
+
     private var scope = CoroutineScope(Dispatchers.Default)
 
-    private val params by inject<HttpClientParams>()
-    private val serviceWatchdog by inject<ServiceWatchdog>()
+    private var httpClient: HttpClient? = null
 
     /**
      * launches scope and starts client
      * creates new scope
      */
     init {
-        scope = CoroutineScope(Dispatchers.Default)
-        scope.launch {
+        val startEvent = eventLogger.event(EventType.HttpClientStart)
+
+            //starting
+            startEvent.loading()
             try {
                 httpClient = HttpClient(CIO) {
                     expectSuccess = true
                     install(WebSockets)
                     install(HttpTimeout) {
-                        requestTimeoutMillis = 10000
+                        requestTimeoutMillis = 30000
                     }
                     engine {
                         configureEngine(params.isHttpSSLVerificationDisabled)
                     }
                 }
+                //successfully start
+                startEvent.success()
             } catch (e: Exception) {
-                serviceWatchdog.httpClientServiceError(e)
+                //start error
+                startEvent.error(e)
             }
-        }
     }
 
     override fun onClose() {
@@ -74,10 +86,13 @@ class HttpClientService : IService() {
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
     suspend fun speechToText(data: List<Byte>): ServiceResponse<*> {
+        val event = eventLogger.event(EventType.HttpClientSpeechToText)
         logger.v { "sending speechToText \nendpoint:\n${params.speechToTextHttpEndpoint}\ndata:\n${data.size}" }
 
         return httpClient?.let { client ->
+            event.loading()
             try {
+
                 val request = client.post(
                     url = Url("${params.speechToTextHttpEndpoint}?noheader=true")
                 ) {
@@ -86,16 +101,19 @@ class HttpClientService : IService() {
 
                 val response = request.body<String>()
                 logger.v { "speechToText received:\n$response" }
-                return ServiceResponse.Success(response)
 
+                event.success(response)
+                return ServiceResponse.Success(response)
             } catch (e: Exception) {
 
+                event.error(e)
                 logger.e(e) { "sending speechToText Exception" }
                 return ServiceResponse.Error(e)
 
             }
         } ?: run {
-            return ServiceResponse.NotInitialized()
+            event.error("NotInitialized")
+            return ServiceResponse.NotInitialized
         }
     }
 
@@ -109,9 +127,11 @@ class HttpClientService : IService() {
      * returns null if the intent is not found
      */
     suspend fun recognizeIntent(text: String): ServiceResponse<*> {
+        val event = eventLogger.event(EventType.RecognizeIntent)
         logger.v { "sending intentRecognition text\nendpoint:\n${params.intentRecognitionHttpEndpoint}\ntext:\n$text" }
 
         return httpClient?.let { client ->
+            event.loading()
             try {
                 logger.v { "intent will be handled directly ${params.isHandleIntentDirectly}" }
 
@@ -143,16 +163,19 @@ class HttpClientService : IService() {
                     "NoIntentFound"
                 }
                 logger.v { "intentRecognition received:\n$data" }
+                event.success(data)
                 return ServiceResponse.Success(data)
 
             } catch (e: Exception) {
 
+                event.error(e)
                 logger.e(e) { "sending intentRecognition Exception" }
                 return ServiceResponse.Error(e)
 
             }
         } ?: run {
-            return ServiceResponse.NotInitialized()
+            event.error("NotInitialized")
+            return ServiceResponse.NotInitialized
         }
     }
 
@@ -166,9 +189,11 @@ class HttpClientService : IService() {
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     suspend fun textToSpeech(text: String): ServiceResponse<*> {
+        val event = eventLogger.event(EventType.HttpClientTextToSpeech)
         logger.v { "sending text to speech\nendpoint:\n${params.textToSpeechHttpEndpoint}\ntext:\n$text" }
 
         return httpClient?.let { client ->
+            event.loading()
             try {
                 val request = client.post(
                     url = Url(params.textToSpeechHttpEndpoint)
@@ -178,16 +203,19 @@ class HttpClientService : IService() {
 
                 val response = request.body<ByteArray>().toList()
                 logger.v { "textToSpeech received Data" }
+                event.success(response.toString())
                 return ServiceResponse.Success(response)
 
             } catch (e: Exception) {
 
                 logger.e(e) { "sending text to speech Exception" }
+                event.error(e)
                 return ServiceResponse.Error(e)
 
             }
         } ?: run {
-            return ServiceResponse.NotInitialized()
+            event.error("NotInitialized")
+            return ServiceResponse.NotInitialized
         }
     }
 
@@ -222,7 +250,7 @@ class HttpClientService : IService() {
 
             }
         } ?: run {
-            return ServiceResponse.NotInitialized()
+            return ServiceResponse.NotInitialized
         }
     }
 
@@ -264,7 +292,7 @@ class HttpClientService : IService() {
 
             }
         } ?: run {
-            return ServiceResponse.NotInitialized()
+            return ServiceResponse.NotInitialized
         }
     }
 
@@ -302,7 +330,7 @@ class HttpClientService : IService() {
 
             }
         } ?: run {
-            return ServiceResponse.NotInitialized()
+            return ServiceResponse.NotInitialized
         }
     }
 
@@ -340,7 +368,7 @@ class HttpClientService : IService() {
 
             }
         } ?: run {
-            return ServiceResponse.NotInitialized()
+            return ServiceResponse.NotInitialized
         }
     }
 

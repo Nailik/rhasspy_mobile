@@ -81,7 +81,7 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
      */
     override fun onTest(): StateFlow<List<Event>> {
         //initialize test params
-        val p = get<WebServerServiceParams> {
+        get<WebServerServiceParams> {
             parametersOf(
                 WebServerServiceParams(
                     _isHttpServerEnabled.value,
@@ -91,7 +91,8 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
             )
         }
         //start web server
-        val s = get<WebServerService>()
+        get<WebServerService>()
+        //get logger
         val eventLogger by inject<EventLogger>(named(EventTag.WebServerService.name))
         return eventLogger.events
     }

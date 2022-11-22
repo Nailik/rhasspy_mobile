@@ -22,7 +22,7 @@ import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantServiceParams
 import org.rhasspy.mobile.services.hotword.HotWordService
 import org.rhasspy.mobile.services.hotword.HotWordServiceParams
-import org.rhasspy.mobile.services.httpclient.HttpClientParams
+import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.indication.IndicationService
 import org.rhasspy.mobile.services.localaudio.LocalAudioService
@@ -68,7 +68,7 @@ val serviceModule = module {
     single { params -> params.getOrNull<StateMachineServiceParams>() ?: StateMachineServiceParams() }
     single { params -> params.getOrNull<RhasspyActionsServiceParams>() ?: RhasspyActionsServiceParams() }
     single { params -> params.getOrNull<MqttServiceParams>() ?: MqttServiceParams() }
-    single { params -> params.getOrNull<HttpClientParams>() ?: HttpClientParams() }
+    single { params -> params.getOrNull<HttpClientServiceParams>() ?: HttpClientServiceParams() }
     single { params -> params.getOrNull<WebServerServiceParams>() ?: WebServerServiceParams() }
     single { params -> params.getOrNull<UdpServiceParams>() ?: UdpServiceParams() }
     single { params -> params.getOrNull<HomeAssistantServiceParams>() ?: HomeAssistantServiceParams() }

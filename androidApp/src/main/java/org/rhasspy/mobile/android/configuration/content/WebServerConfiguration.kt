@@ -5,17 +5,15 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.burnoo.cokoin.Koin
 import org.rhasspy.mobile.MR
@@ -44,11 +42,7 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = v
         modifier = Modifier.testTag(ConfigurationScreens.WebServerConfiguration),
         title = MR.strings.webserver,
         viewModel = viewModel,
-        testContent = { modifier ->
-            Koin(appDeclaration = { modules(serviceModule) }) {
-                TestContent(modifier, viewModel)
-            }
-        }
+        testContent = { modifier -> TestContent(modifier, viewModel) }
     ) {
 
         //switch to enable http server
@@ -121,18 +115,15 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
 
 @Composable
 private fun TestContent(
-    modifier: Modifier, viewModel: WebServerConfigurationViewModel) {
+    modifier: Modifier,
+    viewModel: WebServerConfigurationViewModel
+) {
 
-    Column(
-        modifier = modifier
-            .heightIn(min = 400.dp)
-            .fillMaxHeight()
-            .verticalScroll(rememberScrollState())
-    ) {
-        val receivingStateList by viewModel.events.collectAsState()
-        receivingStateList.forEach {
-            EventListItem(it)
+    val eventsList by viewModel.events.collectAsState()
+
+    LazyColumn(modifier = modifier.fillMaxHeight()) {
+        items(eventsList) { item ->
+            EventListItem(item)
         }
     }
-
 }

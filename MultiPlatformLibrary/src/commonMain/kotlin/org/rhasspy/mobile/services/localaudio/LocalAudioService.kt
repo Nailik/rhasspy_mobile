@@ -8,7 +8,7 @@ class LocalAudioService : IService() {
         TODO("Not yet implemented")
     }
     suspend fun playAudio(data: List<Byte>): ServiceResponse<*> {
-        return ServiceResponse.NotInitialized()
+        return ServiceResponse.NotInitialized
     }
 
 }

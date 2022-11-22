@@ -2,13 +2,21 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.core.component.get
+import org.koin.core.component.inject
+import org.koin.core.parameter.parametersOf
+import org.koin.core.qualifier.named
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.logger.Event
+import org.rhasspy.mobile.logger.EventLogger
+import org.rhasspy.mobile.logger.EventTag
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.httpclient.HttpClientPath
+import org.rhasspy.mobile.services.httpclient.HttpClientService
+import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-//TODO add all other endpoints to this list
 class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
 
     //unsaved data
@@ -58,53 +66,27 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
      * test unsaved data configuration
      */
     override fun onTest(): StateFlow<List<Event>> {
-        /*
-        httpClientServiceTest = get {
+        //initialize test params
+        get<HttpClientServiceParams> {
             parametersOf(
-                HttpClientLink(
-                    isHttpSSLVerificationDisabled = ConfigurationSettings.isHttpServerSSLEnabled.value,
-                    speechToTextHttpEndpoint = if (ConfigurationSettings.isUseCustomSpeechToTextHttpEndpoint.value) {
-                        _httpServerEndpoint.value
-                    } else {
-                        "${ConfigurationSettings.httpServerEndpoint.value}${HttpClientPath.SpeechToText}"
-                    },
-                    intentRecognitionHttpEndpoint = if (ConfigurationSettings.isUseCustomIntentRecognitionHttpEndpoint.value) {
-                        _httpServerEndpoint.value
-                    } else {
-                        "${ConfigurationSettings.httpServerEndpoint.value}${HttpClientPath.TextToIntent}"
-                    },
-                    isHandleIntentDirectly = ConfigurationSettings.intentHandlingOption.value == IntentHandlingOptions.WithRecognition,
-                    textToSpeechHttpEndpoint = if (ConfigurationSettings.isUseCustomSpeechToTextHttpEndpoint.value) {
-                        _httpServerEndpoint.value
-                    } else {
-                        "${ConfigurationSettings.httpServerEndpoint.value}${HttpClientPath.TextToSpeech}"
-                    },
-                    audioPlayingHttpEndpoint = ConfigurationSettings.audioPlayingHttpEndpoint.value,
-                    intentHandlingHttpEndpoint = ConfigurationSettings.intentHandlingHttpEndpoint.value,
-                    intentHandlingHassEndpoint = ConfigurationSettings.intentHandlingHassEndpoint.value,
-                    intentHandlingHassAccessToken = ConfigurationSettings.intentHandlingHassAccessToken.value,
+                HttpClientServiceParams(
+                    speechToTextHttpEndpoint = "${ConfigurationSettings.httpServerEndpoint.value}${HttpClientPath.SpeechToText}",
+                    intentRecognitionHttpEndpoint = "${ConfigurationSettings.httpServerEndpoint.value}${HttpClientPath.TextToIntent}",
+                    textToSpeechHttpEndpoint = "${ConfigurationSettings.httpServerEndpoint.value}${HttpClientPath.TextToSpeech}",
                 )
             )
         }
+        //get logger
+        val eventLogger by inject<EventLogger>(named(EventTag.HttpClientService.name))
+        return eventLogger.events
+    }
 
-        //run tests
-        CoroutineScope(Dispatchers.Default).launch {
-            httpClientServiceTest.currentState.collect { currentState ->
-                val list = _testState.value.toMutableList()
-                list.firstOrNull { it.stateType == currentState.stateType }?.also {
-                    list.add(list.indexOf(it), it.copy(state = currentState.state, description = currentState.description))
-                    list.remove(it)
-                } ?: run {
-                    list.add(currentState)
-                }
-                _testState.value = list
-            }
-        }
-
-        httpClientServiceTest.start()
-
-         */
-        TODO()
+    override suspend fun runTest() {
+        val client = get<HttpClientService>()
+        client.speechToText(emptyList())
+        client.recognizeIntent("text")
+        client.textToSpeech("text")
+        super.runTest()
     }
 
 }

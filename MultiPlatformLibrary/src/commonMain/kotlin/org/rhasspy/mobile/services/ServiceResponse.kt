@@ -1,15 +1,15 @@
 package org.rhasspy.mobile.services
 
-abstract class ServiceResponse<T> {
+sealed class ServiceResponse<T> {
 
     data class Success<T>(val data: T) : ServiceResponse<T>()
 
     data class Error(val error: Exception) : ServiceResponse<Unit>()
 
-    class NotInitialized : ServiceResponse<Unit>()
+    object NotInitialized : ServiceResponse<Unit>()
 
-    class Disabled: ServiceResponse<Unit>()
+    object Disabled: ServiceResponse<Unit>()
 
-    class Nothing: ServiceResponse<Unit>()
+    object Nothing: ServiceResponse<Unit>()
 
 }

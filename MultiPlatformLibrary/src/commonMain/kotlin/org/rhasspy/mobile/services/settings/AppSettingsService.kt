@@ -9,7 +9,7 @@ import org.rhasspy.mobile.settings.AppSettings
 class AppSettingsService : IService() {
 
     override fun onClose() {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
     }
 
     fun hotWordToggleOnMqtt() {

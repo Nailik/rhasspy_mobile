@@ -47,7 +47,7 @@ open class RhasspyActionsService : IService() {
         return when (params.intentRecognitionOption) {
             IntentRecognitionOptions.RemoteHTTP -> httpClientService.recognizeIntent(text)
             IntentRecognitionOptions.RemoteMQTT -> mqttClientService.recognizeIntent(text)
-            IntentRecognitionOptions.Disabled -> ServiceResponse.Disabled()
+            IntentRecognitionOptions.Disabled -> ServiceResponse.Disabled
         }
     }
 
@@ -64,7 +64,7 @@ open class RhasspyActionsService : IService() {
         return when (params.textToSpeechOption) {
             TextToSpeechOptions.RemoteHTTP -> httpClientService.textToSpeech(text)
             TextToSpeechOptions.RemoteMQTT -> mqttClientService.say(text)
-            TextToSpeechOptions.Disabled -> ServiceResponse.Disabled()
+            TextToSpeechOptions.Disabled -> ServiceResponse.Disabled
         }
     }
 
@@ -91,7 +91,7 @@ open class RhasspyActionsService : IService() {
             AudioPlayingOptions.Local -> localAudioService.playAudio(data)
             AudioPlayingOptions.RemoteHTTP -> httpClientService.playWav(data)
             AudioPlayingOptions.RemoteMQTT -> mqttClientService.playBytes(data)
-            AudioPlayingOptions.Disabled -> ServiceResponse.Disabled()
+            AudioPlayingOptions.Disabled -> ServiceResponse.Disabled
         }
     }
 
@@ -108,8 +108,8 @@ open class RhasspyActionsService : IService() {
     suspend fun speechToText(data: List<Byte>): ServiceResponse<*> {
         return when (params.speechToTextOption) {
             SpeechToTextOptions.RemoteHTTP -> httpClientService.speechToText(data)
-            SpeechToTextOptions.RemoteMQTT -> ServiceResponse.Nothing()
-            SpeechToTextOptions.Disabled -> ServiceResponse.Disabled()
+            SpeechToTextOptions.RemoteMQTT -> ServiceResponse.Nothing
+            SpeechToTextOptions.Disabled -> ServiceResponse.Disabled
         }
     }
 
@@ -132,8 +132,8 @@ open class RhasspyActionsService : IService() {
         return when (params.intentHandlingOption) {
             IntentHandlingOptions.HomeAssistant -> homeAssistantService.sendIntent(intentName, intent)
             IntentHandlingOptions.RemoteHTTP -> httpClientService.intentHandling(intent)
-            IntentHandlingOptions.WithRecognition -> ServiceResponse.Nothing()
-            IntentHandlingOptions.Disabled -> ServiceResponse.Disabled()
+            IntentHandlingOptions.WithRecognition -> ServiceResponse.Nothing
+            IntentHandlingOptions.Disabled -> ServiceResponse.Disabled
         }
     }
 }

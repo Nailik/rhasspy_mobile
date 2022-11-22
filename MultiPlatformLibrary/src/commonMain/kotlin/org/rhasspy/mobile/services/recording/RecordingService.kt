@@ -106,7 +106,7 @@ class RecordingService : IService() {
     private fun startRecorder(): ServiceResponse<*> {
         return if (!AudioRecorder.isRecording.value) {
             AudioRecorder.startRecording()
-        } else ServiceResponse.Nothing()
+        } else ServiceResponse.Nothing
     }
 
     private fun stopRecorder() {

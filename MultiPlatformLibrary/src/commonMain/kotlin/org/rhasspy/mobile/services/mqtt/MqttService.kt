@@ -223,7 +223,7 @@ class MqttService : IService() {
                 logger.e { "unable to publish topic \n${it.statusCode.name} ${it.msg}" }
                 ServiceResponse.Error(Exception(it.statusCode.name))
             } ?: ServiceResponse.Success(Unit)
-        } ?: ServiceResponse.NotInitialized()
+        } ?: ServiceResponse.NotInitialized
 
     }
 

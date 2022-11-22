@@ -37,6 +37,10 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
 
     abstract fun onTest(): StateFlow<List<Event>>
 
+    open suspend fun runTest(){
+
+    }
+
     fun test() {
         testScope = CoroutineScope(Dispatchers.Default)
 
@@ -48,6 +52,9 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
             eventFlow.collect {
                 _events.value = it
             }
+        }
+        testScope.launch {
+            runTest()
         }
     }
 

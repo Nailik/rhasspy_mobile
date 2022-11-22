@@ -14,7 +14,6 @@ import io.ktor.server.routing.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 import org.rhasspy.mobile.logger.Event
@@ -74,18 +73,16 @@ class WebServerService : IService() {
             //pending
             server = buildServer(params.httpServerPort)
 
-            scope.launch {
-                //starting
-                startEvent.loading()
-                try {
-                    server.start()
-                    //successfully start
-                    startEvent.success()
-                    callEvent.loading()
-                } catch (e: Exception) {
-                    //start error
-                    startEvent.error(e)
-                }
+            //starting
+            startEvent.loading()
+            try {
+                server.start()
+                //successfully start
+                startEvent.success()
+                callEvent.loading()
+            } catch (e: Exception) {
+                //start error
+                startEvent.error(e)
             }
         } else {
             //server disabled

@@ -3,7 +3,7 @@ package org.rhasspy.mobile.services.httpclient
 import org.rhasspy.mobile.data.IntentHandlingOptions
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
-data class HttpClientParams(
+data class HttpClientServiceParams(
     val isHttpSSLVerificationDisabled: Boolean = ConfigurationSettings.isHttpServerSSLEnabled.value,
     val speechToTextHttpEndpoint: String = if (ConfigurationSettings.isUseCustomSpeechToTextHttpEndpoint.value) {
         ConfigurationSettings.speechToTextHttpEndpoint.value
