@@ -69,13 +69,13 @@ fun LogScreenContent(viewModel: LogScreenViewModel) {
                         )
 
                         val color = when (item.severity) {
-                            Severity.Verbose -> color_verbose
-                            Severity.Debug -> color_debug
-                            Severity.Info -> color_info
-                            Severity.Warn -> color_warn
-                            Severity.Error -> color_error
-                            Severity.Assert -> color_assert
-                            else -> color_unknown
+                            Severity.Verbose -> MaterialTheme.colorScheme.color_verbose
+                            Severity.Debug -> MaterialTheme.colorScheme.color_debug
+                            Severity.Info -> MaterialTheme.colorScheme.color_info
+                            Severity.Warn -> MaterialTheme.colorScheme.color_warn
+                            Severity.Error -> MaterialTheme.colorScheme.color_error
+                            Severity.Assert -> MaterialTheme.colorScheme.color_assert
+                            else -> MaterialTheme.colorScheme.color_unknown
                         }
 
                         Badge(
