@@ -28,49 +28,74 @@ import org.rhasspy.mobile.services.dialogManager.IDialogManagerService
 import org.rhasspy.mobile.services.settings.AppSettingsService
 import org.rhasspy.mobile.services.statemachine.StateMachineService
 
+/**
+ * Web server service holds all routes for WebServerPath values
+ *
+ * Responds to any request
+ * - no parameter and valid : OK
+ * - parameter and valid: Accepted
+ * - parameter Invalid: BadRequest
+ * - else: determined by Ktor
+ */
 class WebServerService : IService() {
 
-    private val logger = Logger.withTag("WebServerService")
-    private lateinit var server: CIOApplicationEngine
-    private var scope = CoroutineScope(Dispatchers.Default)
+    enum class BadRequestTypes(val description: String) {
+        WakeOptionInvalid("Invalid value, allowed: \"on\", \"off\""),
+        VolumeValueOutOfRange("Volume Out of Range, allowed: 0f...1f"),
+        VolumeValueInvalid("Invalid Volume, allowed: 0f...1f"),
+
+        AudioContentTypeWarning("Missing Content Type")
+    }
 
     private val params by inject<WebServerServiceParams>()
+
     private val stateMachineService by inject<StateMachineService>()
     private val dialogManagerService by inject<IDialogManagerService>()
     private val appSettingsService by inject<AppSettingsService>()
 
+    private val logger = Logger.withTag("WebServerService")
     private val eventLogger by inject<EventLogger>(named(EventTag.WebServer.name))
 
-    lateinit var callEvent: Event
+    private val scope = CoroutineScope(Dispatchers.Default)
+    private val audioContentType = ContentType("audio", "wav")
 
+    private lateinit var server: CIOApplicationEngine
+    private lateinit var callEvent: Event
+
+    /**
+     * starts server when enabled
+     * logs start event
+     */
     init {
-        scope = CoroutineScope(Dispatchers.Default)
         if (params.isHttpServerEnabled) {
-
             val startEvent = eventLogger.event(EventType.WebServerStart)
             callEvent = eventLogger.event(EventType.WebServerIncomingCall)
 
-            logger.v { "starting server" }
-            server = getServer(params.httpServerPort)
+            //pending
+            server = buildServer(params.httpServerPort)
 
             scope.launch {
+                //starting
                 startEvent.loading()
-
-                //necessary else netty has problems when the coroutine scope is closed
                 try {
                     server.start()
+                    //successfully start
                     startEvent.success()
                     callEvent.loading()
                 } catch (e: Exception) {
+                    //start error
                     startEvent.error(e)
-                    logger.e(e) { "While Starting server" }
                 }
             }
         } else {
+            //server disabled
             logger.v { "Server disabled" }
         }
     }
 
+    /**
+     * closes server and scope
+     */
     override fun onClose() {
         if (::server.isInitialized) {
             server.stop()
@@ -78,7 +103,10 @@ class WebServerService : IService() {
         scope.cancel()
     }
 
-    private fun getServer(port: Int): CIOApplicationEngine {
+    /**
+     * build server with routing and addons
+     */
+    private fun buildServer(port: Int): CIOApplicationEngine {
         return embeddedServer(factory = CIO, port = port, watchPaths = emptyList()) {
             //install(WebSockets)
             installCallLogging()
@@ -96,43 +124,58 @@ class WebServerService : IService() {
                 anyHost()
             }
 
-            install(StatusPages) {
-                HttpStatusCode.allStatusCodes
-                    .forEach {
-                        status(it) { call, status ->
-                            if (status != HttpStatusCode.OK && status != HttpStatusCode.Accepted) {
-                                call.respondText(text = status.description, status = status)
-                                callEvent.error("${call.request.path()} $status")
-                            } else {
-                                callEvent.success(call.request.path())
-                            }
-                            callEvent = eventLogger.event(EventType.WebServerIncomingCall)
-                            callEvent.loading()
-                        }
-                    }
-            }
+            buildStatusPages()
 
-            routing {
-                WebServerPath.values().forEach { path ->
-                    try {
-                        when (path.type) {
-                            WebServerPath.WebServerCallType.POST -> post(path.path) {
-                                logger.v { "post ${path.path}" }
-                                evaluateCall(path, call)
-                            }
-                            WebServerPath.WebServerCallType.GET -> get(path.path) {
-                                logger.v { "get ${path.path}" }
-                                evaluateCall(path, call)
-                            }
+            buildRouting()
+        }
+    }
+
+    /**
+     * evaluates HttpStatusCode and updates event state
+     */
+    private fun Application.buildStatusPages() {
+        install(StatusPages) {
+            HttpStatusCode.allStatusCodes
+                .forEach {
+                    status(it) { call, status ->
+                        if (status != HttpStatusCode.OK && status != HttpStatusCode.Accepted) {
+                            call.respondText(text = status.description, status = status)
+                            callEvent.error("${call.request.path()} $status")
+                        } else {
+                            callEvent.success(call.request.path())
                         }
-                    } catch (e: Exception) {
-                        logger.e(e) { "While receiving" }
+                        callEvent = eventLogger.event(EventType.WebServerIncomingCall)
+                        callEvent.loading()
                     }
+                }
+        }
+    }
+
+    /**
+     * creates Routing for all WebServerPath values
+     */
+    private fun Application.buildRouting() {
+        routing {
+            WebServerPath.values().forEach { path ->
+                try {
+                    when (path.type) {
+                        WebServerPath.WebServerCallType.POST -> post(path.path) {
+                            evaluateCall(path, call)
+                        }
+                        WebServerPath.WebServerCallType.GET -> get(path.path) {
+                            evaluateCall(path, call)
+                        }
+                    }
+                } catch (e: Exception) {
+                    callEvent.error(e)
                 }
             }
         }
     }
 
+    /**
+     * evaluates any call
+     */
     private suspend fun evaluateCall(path: WebServerPath, call: ApplicationCall) {
         when (path) {
             WebServerPath.ListenForCommand -> listenForCommand(call)
@@ -178,7 +221,7 @@ class WebServerService : IService() {
             call.respond(HttpStatusCode.Accepted)
             appSettingsService.toggleListenForWakeWebServer(it)
         } ?: run {
-            call.respond(HttpStatusCode.BadRequest, "Invalid value, allowed: \"on\", \"off\"")
+            call.respond(HttpStatusCode.BadRequest, BadRequestTypes.WakeOptionInvalid.description)
         }
     }
 
@@ -200,7 +243,7 @@ class WebServerService : IService() {
     private suspend fun playRecordingGet(call: ApplicationCall) {
         call.respondBytes(
             bytes = stateMachineService.playRecordingGetWebServer().toByteArray(),
-            contentType = ContentType("audio", "wav")
+            contentType = audioContentType
         )
     }
 
@@ -211,9 +254,8 @@ class WebServerService : IService() {
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     private suspend fun playWav(call: ApplicationCall) {
-        if (call.request.contentType() != ContentType("audio", "wav")) {
-            logger.w { "invalid content type ${call.request.contentType()}" }
-            callEvent.warning("Missing Content Type")
+        if (call.request.contentType() != audioContentType) {
+            callEvent.warning(BadRequestTypes.AudioContentTypeWarning.description)
         }
         call.respond(HttpStatusCode.OK)
         //play even without header
@@ -233,10 +275,10 @@ class WebServerService : IService() {
                 call.respond(HttpStatusCode.Accepted)
                 appSettingsService.setVolumeWebServer(it)
             } else {
-                call.respond(HttpStatusCode.BadRequest, "Invalid volume, allowed: 0f-1f")
+                callEvent.error(BadRequestTypes.VolumeValueOutOfRange.description)
             }
         } ?: run {
-            call.respond(HttpStatusCode.BadRequest, "Missing volume, allowed: 0f-1f")
+            callEvent.error(BadRequestTypes.VolumeValueInvalid.description)
         }
     }
 
