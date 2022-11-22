@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.services.httpclient
 
-import co.touchlab.kermit.Logger
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
@@ -9,16 +8,10 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.utils.*
 import io.ktor.http.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
+import org.rhasspy.mobile.data.IntentHandlingOptions
 import org.rhasspy.mobile.logger.EventLogger
 import org.rhasspy.mobile.logger.EventTag
 import org.rhasspy.mobile.logger.EventType
@@ -33,11 +26,39 @@ import org.rhasspy.mobile.services.ServiceResponse
  */
 class HttpClientService : IService() {
 
+    enum class ErrorType(val description: String) {
+        NotInitialized(""),
+        IllegalArgumentException("IllegalArgumentException"),
+        InvalidTLSRecordType("Invalid TLS record type code: 72"), // Invalid TLS record type code: 72)
+        UnresolvedAddressException("UnresolvedAddressException"), //server cannot be reached
+        ConnectException("ConnectException"),
+        ConnectionRefused("Connection refused") //wrong port or address
+    }
+
     private val params by inject<HttpClientServiceParams>()
 
-
-    private val logger = Logger.withTag("HttpClientService")
     private val eventLogger by inject<EventLogger>(named(EventTag.HttpClientService.name))
+
+    private val audioContentType = ContentType("audio", "wav")
+    private val jsonContentType = ContentType("application", "json")
+    private fun HttpMessageBuilder.hassAuthorization() = this.header("Authorization", "Bearer ${params.intentHandlingHassAccessToken}")
+
+    private val isHandleIntentDirectly = params.intentHandlingOption == IntentHandlingOptions.WithRecognition
+
+    private val speechToTextUrl =
+        (if (params.isUseCustomSpeechToTextHttpEndpoint) params.speechToTextHttpEndpoint else params.httpServerEndpoint) +
+                "${HttpClientPath.SpeechToText.path}?noheader=true"
+    private val recognizeIntentUrl =
+        (if (params.isUseCustomIntentRecognitionHttpEndpoint) params.intentRecognitionHttpEndpoint else params.httpServerEndpoint) +
+                HttpClientPath.TextToIntent.path +
+                if (!isHandleIntentDirectly) {
+                    "?nohass=true"
+                } else ""
+    private val textToSpeechUrl =
+        (if (params.isUseCustomTextToSpeechHttpEndpoint) params.textToSpeechHttpEndpoint else params.httpServerEndpoint) +
+                HttpClientPath.TextToSpeech.path
+    private val hassEventUrl = "${params.intentHandlingHassEndpoint}/api/events/rhasspy_"
+    private val hassIntentUrl = "${params.intentHandlingHassEndpoint}/api/intent/handle"
 
     private var httpClient: HttpClient? = null
 
@@ -50,16 +71,7 @@ class HttpClientService : IService() {
         //starting
         startEvent.loading()
         try {
-            httpClient = HttpClient(CIO) {
-                expectSuccess = true
-                install(WebSockets)
-                install(HttpTimeout) {
-                    requestTimeoutMillis = 30000
-                }
-                engine {
-                    configureEngine(params.isHttpSSLVerificationDisabled)
-                }
-            }
+            httpClient = buildClient()
             //successfully start
             startEvent.success()
         } catch (e: Exception) {
@@ -76,40 +88,31 @@ class HttpClientService : IService() {
     }
 
     /**
+     * builds client
+     */
+    private fun buildClient(): HttpClient {
+        return HttpClient(CIO) {
+            expectSuccess = true
+            install(WebSockets)
+            install(HttpTimeout) {
+                requestTimeoutMillis = 30000
+            }
+            engine {
+                configureEngine(params.isHttpSSLVerificationDisabled)
+            }
+        }
+    }
+
+
+    /**
      * /api/speech-to-text
      * POST a WAV file and have Rhasspy return the text transcription
      * Set Accept: application/json to receive JSON with more details
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
     suspend fun speechToText(data: List<Byte>): ServiceResponse<*> {
-        val event = eventLogger.event(EventType.HttpClientSpeechToText)
-        logger.v { "sending speechToText \nendpoint:\n${params.speechToTextHttpEndpoint}\ndata:\n${data.size}" }
-
-        return httpClient?.let { client ->
-            event.loading()
-            try {
-
-                val request = client.post(
-                    url = Url("${params.speechToTextHttpEndpoint}?noheader=true")
-                ) {
-                    setBody(data.toByteArray())
-                }
-
-                val response = request.body<String>()
-                logger.v { "speechToText received:\n$response" }
-
-                event.success(response)
-                return ServiceResponse.Success(response)
-            } catch (e: Exception) {
-
-                event.error(e)
-                logger.e(e) { "sending speechToText Exception" }
-                return ServiceResponse.Error(e)
-
-            }
-        } ?: run {
-            event.error("NotInitialized")
-            return ServiceResponse.NotInitialized
+        return post<String>(EventType.HttpClientSpeechToText, speechToTextUrl) {
+            setBody(data.toByteArray())
         }
     }
 
@@ -123,55 +126,8 @@ class HttpClientService : IService() {
      * returns null if the intent is not found
      */
     suspend fun recognizeIntent(text: String): ServiceResponse<*> {
-        val event = eventLogger.event(EventType.RecognizeIntent)
-        logger.v { "sending intentRecognition text\nendpoint:\n${params.intentRecognitionHttpEndpoint}\ntext:\n$text" }
-
-        return httpClient?.let { client ->
-            event.loading()
-            try {
-                logger.v { "intent will be handled directly ${params.isHandleIntentDirectly}" }
-
-                val request = client.post(
-                    url = Url(
-                        "${params.intentRecognitionHttpEndpoint}${
-                            if (!params.isHandleIntentDirectly) {
-                                "?nohass=true"
-                            } else ""
-                        }"
-                    )
-                ) {
-                    setBody(text)
-                }
-
-                val response = request.body<String>()
-
-                //return only intent
-                //no intent:
-                val data = if (
-                    Json.decodeFromString<JsonObject>(response)["intent"]?.jsonObject?.get("name")?.jsonPrimitive
-                        .toString()
-                        .isNotEmpty()
-                ) {
-                    //there was an intent found, return json
-                    response
-                } else {
-                    //there was no intent found, return null
-                    "NoIntentFound"
-                }
-                logger.v { "intentRecognition received:\n$data" }
-                event.success(data)
-                return ServiceResponse.Success(data)
-
-            } catch (e: Exception) {
-
-                event.error(e)
-                logger.e(e) { "sending intentRecognition Exception" }
-                return ServiceResponse.Error(e)
-
-            }
-        } ?: run {
-            event.error("NotInitialized")
-            return ServiceResponse.NotInitialized
+        return post<String>(EventType.HttpClientRecognizeIntent, recognizeIntentUrl) {
+            setBody(text)
         }
     }
 
@@ -185,33 +141,8 @@ class HttpClientService : IService() {
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     suspend fun textToSpeech(text: String): ServiceResponse<*> {
-        val event = eventLogger.event(EventType.HttpClientTextToSpeech)
-        logger.v { "sending text to speech\nendpoint:\n${params.textToSpeechHttpEndpoint}\ntext:\n$text" }
-
-        return httpClient?.let { client ->
-            event.loading()
-            try {
-                val request = client.post(
-                    url = Url(params.textToSpeechHttpEndpoint)
-                ) {
-                    setBody(text)
-                }
-
-                val response = request.body<ByteArray>().toList()
-                logger.v { "textToSpeech received Data" }
-                event.success(response.toString())
-                return ServiceResponse.Success(response)
-
-            } catch (e: Exception) {
-
-                logger.e(e) { "sending text to speech Exception" }
-                event.error(e)
-                return ServiceResponse.Error(e)
-
-            }
-        } ?: run {
-            event.error("NotInitialized")
-            return ServiceResponse.NotInitialized
+        return post<ByteArray>(EventType.HttpClientTextToSpeech, textToSpeechUrl) {
+            setBody(text)
         }
     }
 
@@ -222,31 +153,11 @@ class HttpClientService : IService() {
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     suspend fun playWav(data: List<Byte>): ServiceResponse<*> {
-        logger.v { "sending audio \nendpoint:\n${params.audioPlayingHttpEndpoint}data:\n${data.size}" }
-
-        return httpClient?.let { client ->
-            try {
-                val request = client.post(
-                    url = Url(params.audioPlayingHttpEndpoint)
-                ) {
-                    setAttributes {
-                        contentType(ContentType("audio", "wav"))
-                    }
-                    setBody(data.toByteArray())
-                }
-
-                val response = request.body<String>()
-                logger.v { "sending audio received:\n${response}" }
-                return ServiceResponse.Success(response)
-
-            } catch (e: Exception) {
-
-                logger.e(e) { "sending audio Exception" }
-                return ServiceResponse.Error(e)
-
+        return post<String>(EventType.HttpClientPlayWav, params.audioPlayingHttpEndpoint) {
+            setAttributes {
+                contentType(audioContentType)
             }
-        } ?: run {
-            return ServiceResponse.NotInitialized
+            setBody(data.toByteArray())
         }
     }
 
@@ -267,28 +178,8 @@ class HttpClientService : IService() {
      * Implemented by rhasspy-remote-http-hermes
      */
     suspend fun intentHandling(intent: String): ServiceResponse<*> {
-        logger.v { "sending intentHandling\nendpoint:\n${params.intentHandlingHttpEndpoint}\nintent:\n$intent" }
-        return httpClient?.let { client ->
-            try {
-
-                val request = client.post(
-                    url = Url(params.intentHandlingHttpEndpoint)
-                ) {
-                    setBody(intent)
-                }
-
-                val response = request.body<String>()
-                logger.v { "sending intent received:\n${response}" }
-                return ServiceResponse.Success(response)
-
-            } catch (e: Exception) {
-
-                logger.e(e) { "sending intentHandling Exception" }
-                return ServiceResponse.Error(e)
-
-            }
-        } ?: run {
-            return ServiceResponse.NotInitialized
+        return post<String>(EventType.HttpClientIntentHandling, params.intentHandlingHttpEndpoint) {
+            setBody(intent)
         }
     }
 
@@ -296,37 +187,12 @@ class HttpClientService : IService() {
      * send intent as Event to Home Assistant
      */
     suspend fun hassEvent(json: String, intentName: String): ServiceResponse<*> {
-        logger.v {
-            "sending intent as Event to Home Assistant\nendpoint:\n" +
-                    "${params.intentHandlingHassEndpoint}/api/events/rhasspy_$intentName\nintent:\n$json"
-        }
-
-        return httpClient?.let { client ->
-            try {
-                logger.v { "complete endpoint url" }
-
-                val request = client.post(
-                    url = Url("${params.intentHandlingHassEndpoint}/api/events/rhasspy_$intentName")
-                ) {
-                    buildHeaders {
-                        header("Authorization", "Bearer ${params.intentHandlingHassAccessToken}")
-                        contentType(ContentType("application", "json"))
-                    }
-                    setBody(json)
-                }
-
-                val response = request.body<String>()
-                logger.v { "sending intent received:\n${response}" }
-                return ServiceResponse.Success(response)
-
-            } catch (e: Exception) {
-
-                logger.e(e) { "sending hassEvent Exception" }
-                return ServiceResponse.Error(e)
-
+        return post<String>(EventType.HttpClientHassEvent, "$hassEventUrl$intentName") {
+            buildHeaders {
+                hassAuthorization()
+                contentType(jsonContentType)
             }
-        } ?: run {
-            return ServiceResponse.NotInitialized
+            setBody(json)
         }
     }
 
@@ -335,36 +201,73 @@ class HttpClientService : IService() {
      * send intent as Intent to Home Assistant
      */
     suspend fun hassIntent(intentJson: String): ServiceResponse<*> {
-        logger.v {
-            "sending intent as Intent to Home Assistant\nendpoint:\n" +
-                    "${params.intentHandlingHassEndpoint}/api/intent/handle\nintent:\n$intentJson"
+        return post<String>(EventType.HttpClientHassIntent, hassIntentUrl) {
+            buildHeaders {
+                hassAuthorization()
+                contentType(jsonContentType)
+            }
+            setBody(intentJson)
         }
+    }
+
+    /**
+     * post data to endpoint
+     * handles even in event logger
+     */
+    private suspend inline fun <reified T> post(
+        eventType: EventType,
+        url: String,
+        block: HttpRequestBuilder.() -> Unit
+    ): ServiceResponse<*> {
+        val event = eventLogger.event(eventType)
 
         return httpClient?.let { client ->
+            event.loading()
             try {
 
-                val request = client.post(
-                    url = Url("${params.intentHandlingHassEndpoint}/api/intent/handle")
-                ) {
-                    buildHeaders {
-                        header("Authorization", "Bearer ${params.intentHandlingHassAccessToken}")
-                        contentType(ContentType("application", "json"))
-                    }
-                    setBody(intentJson)
-                }
+                val request = client.post(url, block)
 
-                val response = request.body<String>()
-                logger.v { "sending intent received:\n${response}" }
+                val response = request.body<T>()
+                event.success(request.status.toString())
                 return ServiceResponse.Success(response)
 
             } catch (e: Exception) {
 
-                logger.e(e) { "sending hassIntent Exception" }
+                getErrorDescription(e)?.also { description ->
+                    event.error(description)
+                } ?: run {
+                    event.error(e)
+                }
                 return ServiceResponse.Error(e)
 
             }
         } ?: run {
+            event.error(ErrorType.NotInitialized.toString())
             return ServiceResponse.NotInitialized
+        }
+    }
+
+    /**
+     * Evaluate if the Error is a know exception to help the user
+     */
+    private fun getErrorDescription(e: Exception): String? {
+        return if (e::class.simpleName == ErrorType.IllegalArgumentException.description) {
+            if (e.message == ErrorType.InvalidTLSRecordType.description) {
+                ErrorType.InvalidTLSRecordType.toString()
+            } else {
+                ErrorType.IllegalArgumentException.toString()
+            }
+        } else if (e::class.simpleName == ErrorType.UnresolvedAddressException.description) {
+            ErrorType.UnresolvedAddressException.toString()
+        } else if (e::class.simpleName == ErrorType.ConnectException.description) {
+            if (e.message == ErrorType.ConnectionRefused.description) {
+                ErrorType.ConnectionRefused.toString()
+            } else {
+                ErrorType.ConnectException.toString()
+            }
+            ErrorType.UnresolvedAddressException.toString()
+        } else {
+            null
         }
     }
 

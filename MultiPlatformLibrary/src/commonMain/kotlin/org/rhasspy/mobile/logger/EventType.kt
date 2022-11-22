@@ -5,6 +5,10 @@ enum class EventType {
     WebServerIncomingCall,
     HttpClientStart,
     HttpClientSpeechToText,
-    RecognizeIntent,
-    HttpClientTextToSpeech
+    HttpClientRecognizeIntent,
+    HttpClientTextToSpeech,
+    HttpClientPlayWav,
+    HttpClientIntentHandling,
+    HttpClientHassEvent,
+    HttpClientHassIntent
 }

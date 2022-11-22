@@ -71,9 +71,10 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
             parametersOf(
                 HttpClientServiceParams(
                     isHttpSSLVerificationDisabled = _isHttpSSLVerificationDisabled.value,
-                    speechToTextHttpEndpoint = "${_httpServerEndpoint.value}${HttpClientPath.SpeechToText}",
-                    intentRecognitionHttpEndpoint = "${_httpServerEndpoint.value}${HttpClientPath.TextToIntent}",
-                    textToSpeechHttpEndpoint = "${_httpServerEndpoint.value}${HttpClientPath.TextToSpeech}",
+                    httpServerEndpoint = _httpServerEndpoint.value,
+                    isUseCustomSpeechToTextHttpEndpoint = false,
+                    isUseCustomIntentRecognitionHttpEndpoint = false,
+                    isUseCustomTextToSpeechHttpEndpoint = false
                 )
             )
         }

@@ -5,24 +5,16 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
 
 data class HttpClientServiceParams(
     val isHttpSSLVerificationDisabled: Boolean = ConfigurationSettings.isHttpServerSSLEnabled.value,
-    val speechToTextHttpEndpoint: String = if (ConfigurationSettings.isUseCustomSpeechToTextHttpEndpoint.value) {
-        ConfigurationSettings.speechToTextHttpEndpoint.value
-    } else {
-        "${ConfigurationSettings.httpServerEndpoint.value}${HttpClientPath.SpeechToText}"
-    },
-    val intentRecognitionHttpEndpoint: String = if (ConfigurationSettings.isUseCustomIntentRecognitionHttpEndpoint.value) {
-        ConfigurationSettings.intentRecognitionHttpEndpoint.value
-    } else {
-        "${ConfigurationSettings.httpServerEndpoint.value}${HttpClientPath.TextToIntent}"
-    },
-    val isHandleIntentDirectly: Boolean = ConfigurationSettings.intentHandlingOption.value == IntentHandlingOptions.WithRecognition,
-    val textToSpeechHttpEndpoint: String = if (ConfigurationSettings.isUseCustomSpeechToTextHttpEndpoint.value) {
-        ConfigurationSettings.speechToTextHttpEndpoint.value
-    } else {
-        "${ConfigurationSettings.httpServerEndpoint.value}${HttpClientPath.TextToSpeech}"
-    },
+    val httpServerEndpoint: String = ConfigurationSettings.httpServerEndpoint.value,
+    val isUseCustomSpeechToTextHttpEndpoint: Boolean = ConfigurationSettings.isUseCustomSpeechToTextHttpEndpoint.value,
+    val speechToTextHttpEndpoint: String = ConfigurationSettings.speechToTextHttpEndpoint.value,
+    val isUseCustomIntentRecognitionHttpEndpoint: Boolean = ConfigurationSettings.isUseCustomIntentRecognitionHttpEndpoint.value,
+    val intentRecognitionHttpEndpoint: String = ConfigurationSettings.intentRecognitionHttpEndpoint.value,
+    val isUseCustomTextToSpeechHttpEndpoint: Boolean = ConfigurationSettings.isUseCustomTextToSpeechHttpEndpoint.value,
+    val textToSpeechHttpEndpoint: String = ConfigurationSettings.textToSpeechHttpEndpoint.value,
     val audioPlayingHttpEndpoint: String = ConfigurationSettings.audioPlayingHttpEndpoint.value,
     val intentHandlingHttpEndpoint: String = ConfigurationSettings.intentHandlingHttpEndpoint.value,
     val intentHandlingHassEndpoint: String = ConfigurationSettings.intentHandlingHassEndpoint.value,
-    val intentHandlingHassAccessToken: String = ConfigurationSettings.intentHandlingHassAccessToken.value
+    val intentHandlingHassAccessToken: String = ConfigurationSettings.intentHandlingHassAccessToken.value,
+    val intentHandlingOption: IntentHandlingOptions = ConfigurationSettings.intentHandlingOption.value
 )
