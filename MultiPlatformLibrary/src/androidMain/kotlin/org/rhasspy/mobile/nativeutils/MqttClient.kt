@@ -109,13 +109,12 @@ actual class MqttClient actual constructor(
      */
     actual suspend fun connect(connOptions: MqttServiceConnectionOptions): MqttError? {
         logger.v { "connect" }
-        var result: MqttError? = null
-        if (!isConnected) {
+
+        return if (!isConnected) {
             connectToBroker(connOptions.toPhaoConnectOptions())
         } else {
-            result = MqttError("Cannot connect to MQTT Broker.", MqttStatus.ALREADY_CONNECTED)
+            MqttError("Cannot connect to MQTT Broker.", MqttStatus.ALREADY_CONNECTED)
         }
-        return result
     }
 
     /** Makes a attempt to establish a connection to the MQTT broker. */

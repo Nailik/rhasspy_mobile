@@ -60,6 +60,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
 
     fun stopTest() {
         testScope.cancel()
+        _events.value = listOf()
         unloadKoinModules(serviceModule)
         loadKoinModules(serviceModule)
     }
