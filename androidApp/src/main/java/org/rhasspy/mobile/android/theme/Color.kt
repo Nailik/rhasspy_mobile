@@ -1,79 +1,111 @@
 package org.rhasspy.mobile.android.theme
 
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 /**
  * all used colors
  */
-val md_theme_light_primary = Color(0xFF6750A4)
-val md_theme_light_onPrimary = Color(0xFFFFFFFF)
-val md_theme_light_primaryContainer = Color(0xFFEADDFF)
-val md_theme_light_onPrimaryContainer = Color(0xFF21005D)
-val md_theme_light_secondary = Color(0xFF625B71)
-val md_theme_light_onSecondary = Color(0xFFFFFFFF)
-val md_theme_light_secondaryContainer = Color(0xFFE8DEF8)
-val md_theme_light_onSecondaryContainer = Color(0xFF1D192B)
-val md_theme_light_tertiary = Color(0xFF7D5260)
-val md_theme_light_onTertiary = Color(0xFFFFFFFF)
-val md_theme_light_tertiaryContainer = Color(0xFFFFD8E4)
-val md_theme_light_onTertiaryContainer = Color(0xFF31111D)
-val md_theme_light_error = Color(0xFFF9DEDC)
-val md_theme_light_errorContainer = Color(0xFFB3261E)
-val md_theme_light_onError = Color(0xFF410E0B)
-val md_theme_light_onErrorContainer = Color(0xFFFFFFFF)
-val md_theme_light_background = Color(0xFFFFFBFE)
-val md_theme_light_onBackground = Color(0xFF1C1B1F)
-val md_theme_light_surface = Color(0xFFFFFBFE)
-val md_theme_light_onSurface = Color(0xFF1C1B1F)
-val md_theme_light_surfaceVariant = Color(0xFFE7E0EC)
-val md_theme_light_onSurfaceVariant = Color(0xFF49454F)
-val md_theme_light_outline = Color(0xFF79747E)
-val md_theme_light_inverseOnSurface = Color(0xFFF4EFF4)
-val md_theme_light_inverseSurface = Color(0xFF313033)
-val md_theme_light_inversePrimary = Color(0xFFD0BCFF)
+private val md_theme_light_primary = Color(0xFF6750A4)
+private val md_theme_light_onPrimary = Color(0xFFFFFFFF)
+private val md_theme_light_primaryContainer = Color(0xFFEADDFF)
+private val md_theme_light_onPrimaryContainer = Color(0xFF21005D)
+private val md_theme_light_secondary = Color(0xFF625B71)
+private val md_theme_light_onSecondary = Color(0xFFFFFFFF)
+private val md_theme_light_secondaryContainer = Color(0xFFE8DEF8)
+private val md_theme_light_onSecondaryContainer = Color(0xFF1D192B)
+private val md_theme_light_tertiary = Color(0xFF7D5260)
+private val md_theme_light_onTertiary = Color(0xFFFFFFFF)
+private val md_theme_light_tertiaryContainer = Color(0xFFFFD8E4)
+private val md_theme_light_onTertiaryContainer = Color(0xFF31111D)
+private val md_theme_light_error = Color(0xFFF9DEDC)
+private val md_theme_light_errorContainer = Color(0xFFB3261E)
+private val md_theme_light_onError = Color(0xFF410E0B)
+private val md_theme_light_onErrorContainer = Color(0xFFFFFFFF)
+private val md_theme_light_background = Color(0xFFFFFBFE)
+private val md_theme_light_onBackground = Color(0xFF1C1B1F)
+private val md_theme_light_surface = Color(0xFFFFFBFE)
+private val md_theme_light_onSurface = Color(0xFF1C1B1F)
+private val md_theme_light_surfaceVariant = Color(0xFFE7E0EC)
+private val md_theme_light_onSurfaceVariant = Color(0xFF49454F)
+private val md_theme_light_outline = Color(0xFF79747E)
+private val md_theme_light_inverseOnSurface = Color(0xFFF4EFF4)
+private val md_theme_light_inverseSurface = Color(0xFF313033)
+private val md_theme_light_inversePrimary = Color(0xFFD0BCFF)
 
-val md_theme_dark_primary = Color(0xFFD0BCFF)
-val md_theme_dark_onPrimary = Color(0xFF381E72)
-val md_theme_dark_primaryContainer = Color(0xFF4F378B)
-val md_theme_dark_onPrimaryContainer = Color(0xFFEADDFF)
-val md_theme_dark_secondary = Color(0xFFCCC2DC)
-val md_theme_dark_onSecondary = Color(0xFF332D41)
-val md_theme_dark_secondaryContainer = Color(0xFF4A4458)
-val md_theme_dark_onSecondaryContainer = Color(0xFFE8DEF8)
-val md_theme_dark_tertiary = Color(0xFFEFB8C8)
-val md_theme_dark_onTertiary = Color(0xFF492532)
-val md_theme_dark_tertiaryContainer = Color(0xFF633B48)
-val md_theme_dark_onTertiaryContainer = Color(0xFFFFD8E4)
-val md_theme_dark_error = Color(0xFFF2B8B5)
-val md_theme_dark_errorContainer = Color(0xFF8C1D18)
-val md_theme_dark_onError = Color(0xFF601410)
-val md_theme_dark_onErrorContainer = Color(0xFFF9DEDC)
-val md_theme_dark_background = Color(0xFF1C1B1F)
-val md_theme_dark_onBackground = Color(0xFFE6E1E5)
-val md_theme_dark_surface = Color(0xFF1C1B1F)
-val md_theme_dark_onSurface = Color(0xFFE6E1E5)
-val md_theme_dark_surfaceVariant = Color(0xFF49454F)
-val md_theme_dark_onSurfaceVariant = Color(0xFFCAC4D0)
-val md_theme_dark_outline = Color(0xFF938F99)
-val md_theme_dark_inverseOnSurface = Color(0xFF1C1B1F)
-val md_theme_dark_inverseSurface = Color(0xFFE6E1E5)
-val md_theme_dark_inversePrimary = Color(0xFF6750A4)
+private val md_theme_dark_primary = Color(0xFFD0BCFF)
+private val md_theme_dark_onPrimary = Color(0xFF381E72)
+private val md_theme_dark_primaryContainer = Color(0xFF4F378B)
+private val md_theme_dark_onPrimaryContainer = Color(0xFFEADDFF)
+private val md_theme_dark_secondary = Color(0xFFCCC2DC)
+private val md_theme_dark_onSecondary = Color(0xFF332D41)
+private val md_theme_dark_secondaryContainer = Color(0xFF4A4458)
+private val md_theme_dark_onSecondaryContainer = Color(0xFFE8DEF8)
+private val md_theme_dark_tertiary = Color(0xFFEFB8C8)
+private val md_theme_dark_onTertiary = Color(0xFF492532)
+private val md_theme_dark_tertiaryContainer = Color(0xFF633B48)
+private val md_theme_dark_onTertiaryContainer = Color(0xFFFFD8E4)
+private val md_theme_dark_error = Color(0xFFF2B8B5)
+private val md_theme_dark_errorContainer = Color(0xFF8C1D18)
+private val md_theme_dark_onError = Color(0xFF601410)
+private val md_theme_dark_onErrorContainer = Color(0xFFF9DEDC)
+private val md_theme_dark_background = Color(0xFF1C1B1F)
+private val md_theme_dark_onBackground = Color(0xFFE6E1E5)
+private val md_theme_dark_surface = Color(0xFF1C1B1F)
+private val md_theme_dark_onSurface = Color(0xFFE6E1E5)
+private val md_theme_dark_surfaceVariant = Color(0xFF49454F)
+private val md_theme_dark_onSurfaceVariant = Color(0xFFCAC4D0)
+private val md_theme_dark_outline = Color(0xFF938F99)
+private val md_theme_dark_inverseOnSurface = Color(0xFF1C1B1F)
+private val md_theme_dark_inverseSurface = Color(0xFFE6E1E5)
+private val md_theme_dark_inversePrimary = Color(0xFF6750A4)
 
-val assistant_color_one = Color(0xFF2196F3)
-val assistant_color_two = Color(0xFFF44336)
-val assistant_color_three = Color(0xFFFFEB3B)
-val assistant_color_four = Color(0xFF4CAF50)
+private val color_warn_dark = Color(0xFFEFD4B8)
+private val color_warn_light = Color(0xFFD46E00)
 
+private val assistant_color_one_any = Color(0xFF2196F3)
+private val assistant_color_two_any = Color(0xFFF44336)
+private val assistant_color_three_any = Color(0xFFFFEB3B)
+private val assistant_color_four_any = Color(0xFF4CAF50)
 
-val color_verbose = Color(0xFF00BCD4)
-val color_debug = Color(0xFF2196F3)
-val color_info = Color(0xFFCDDC39)
-val color_warn = Color(0xFFFF9800)
-val color_error = Color(0xFFF44336)
-val color_assert = Color(0xFF673AB7)
-val color_unknown = Color(0xFF000000)
+private val color_verbose_any = Color(0xFF00BCD4)
+private val color_debug_any = Color(0xFF2196F3)
+private val color_info_any = Color(0xFFCDDC39)
+private val color_warn_any = Color(0xFFFF9800)
+private val color_error_any = Color(0xFFF44336)
+private val color_assert_any = Color(0xFF673AB7)
+private val color_unknown_any = Color(0xFF000000)
+
+val ColorScheme.warn: Color
+    @Composable
+    get() = if (getIsDarkTheme()) color_warn_light else color_warn_dark
+
+val ColorScheme.assistant_color_one: Color
+    get() = assistant_color_one_any
+val ColorScheme.assistant_color_two: Color
+    get() = assistant_color_two_any
+val ColorScheme.assistant_color_three: Color
+    get() = assistant_color_three_any
+val ColorScheme.assistant_color_four: Color
+    get() = assistant_color_four_any
+
+val ColorScheme.color_verbose: Color
+    get() = color_verbose_any
+val ColorScheme.color_debug: Color
+    get() = color_debug_any
+val ColorScheme.color_info: Color
+    get() = color_info_any
+val ColorScheme.color_warn: Color
+    get() = color_warn_any
+val ColorScheme.color_error: Color
+    get() = color_error_any
+val ColorScheme.color_assert: Color
+    get() = color_assert_any
+val ColorScheme.color_unknown: Color
+    get() = color_unknown_any
 
 /**
  * colors for light theme
