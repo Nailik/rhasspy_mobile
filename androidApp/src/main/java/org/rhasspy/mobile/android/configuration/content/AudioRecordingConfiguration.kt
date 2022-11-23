@@ -4,9 +4,13 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -15,6 +19,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
+import org.rhasspy.mobile.android.configuration.test.EventListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
@@ -33,7 +38,8 @@ fun AudioRecordingConfigurationContent(viewModel: AudioRecordingConfigurationVie
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.AudioRecordingConfiguration),
         title = MR.strings.audioRecording,
-        viewModel = viewModel
+        viewModel = viewModel,
+        testContent = { modifier -> TestContent(modifier, viewModel) }
     ) {
 
         //switch to enable udp output
@@ -88,4 +94,19 @@ private fun UdpSettings(viewModel: AudioRecordingConfigurationViewModel) {
 
     }
 
+}
+
+@Composable
+private fun TestContent(
+    modifier: Modifier,
+    viewModel: AudioRecordingConfigurationViewModel
+) {
+
+    val eventsList by viewModel.events.collectAsState()
+
+    LazyColumn(modifier = modifier.fillMaxHeight()) {
+        items(eventsList) { item ->
+            EventListItem(item)
+        }
+    }
 }
