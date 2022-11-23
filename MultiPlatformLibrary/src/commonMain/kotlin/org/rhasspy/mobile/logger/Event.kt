@@ -30,6 +30,12 @@ data class Event(val type: EventType) {
         }
     }
 
+    fun error(exception: Throwable) {
+        if (_eventState.value == EventState.Loading || _eventState.value == EventState.Pending) {
+            _eventState.value = EventState.Error(exception.message)
+        }
+    }
+
     fun error(exception: Exception) {
         if (_eventState.value == EventState.Loading || _eventState.value == EventState.Pending) {
             _eventState.value = EventState.Error(exception.message)

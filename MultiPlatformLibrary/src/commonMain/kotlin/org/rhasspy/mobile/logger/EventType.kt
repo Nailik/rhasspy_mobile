@@ -13,5 +13,9 @@ enum class EventType {
     HttpClientHassIntent,
     MqttClientStart,
     MqttClientConnecting,
-    MqttClientSubscribing
+    MqttClientDisconnected,
+    MqttClientReconnect,
+    MqttClientSubscribing,
+    MqttClientPublish,
+    MqttClientReceived
 }

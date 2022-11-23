@@ -3,7 +3,7 @@ package org.rhasspy.mobile.mqtt
 /**
  * topics where the mqtt client will publish to
  */
-enum class MQTTTopicsPublish(val topic: String) {
+enum class MqttTopicsPublish(override val topic: String): MqttTopic {
 
     SessionStarted("hermes/dialogueManager/sessionStarted"),
     SessionEnded("hermes/dialogueManager/sessionEnded"),
@@ -12,12 +12,13 @@ enum class MQTTTopicsPublish(val topic: String) {
     AsrStopListening("hermes/asr/stopListening"),
     AsrTextCaptured("hermes/asr/textCaptured"),
     AsrError("hermes/error/asr"),
-    AudioCaptured("rhasspy/asr/<siteId>/<sessionId>/audioCaptured"),
-    AsrAudioFrame("hermes/audioServer/<siteId>/audioFrame"),
-    HotWordDetected("hermes/hotword/default/detected"),
+    AudioCaptured("rhasspy/asr/${MqttTopicPlaceholder.SiteId}/${MqttTopicPlaceholder.SessionId}/audioCaptured"),
+    AsrAudioFrame("hermes/audioServer/${MqttTopicPlaceholder.SiteId}/audioFrame"),
+    HotWordDetected("hermes/hotword/${MqttTopicPlaceholder.WakeWord}/detected"),
     HotWordError("hermes/error/hotword"),
     Query("hermes/nlu/query"),
     Say("hermes/tts/say"),
-    AudioOutputPlayBytes("hermes/audioServer/<siteId>/playBytes/<requestId>"),
-    AudioOutputPlayFinished("hermes/audioServer/<siteId>/playFinished");
+    AudioOutputPlayBytes("hermes/audioServer/${MqttTopicPlaceholder.SiteId}/playBytes/<requestId>"),
+    AudioOutputPlayFinished("hermes/audioServer/${MqttTopicPlaceholder.SiteId}/playFinished");
+
 }

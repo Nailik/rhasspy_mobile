@@ -3,7 +3,7 @@ package org.rhasspy.mobile.mqtt
 /**
  * contains all mqtt topics that the mqtt service subscribes to
  */
-enum class MQTTTopicsSubscription(val topic: String) {
+enum class MqttTopicsSubscription(override val topic: String) : MqttTopic {
 
     StartSession("hermes/dialogueManager/startSession"),
     EndSession("hermes/dialogueManager/endSession"),
@@ -20,13 +20,17 @@ enum class MQTTTopicsSubscription(val topic: String) {
     IntentNotRecognized("hermes/nlu/intentNotRecognized"),
     IntentHandlingToggleOn("hermes/handle/toggleOn"),
     IntentHandlingToggleOff("hermes/handle/toggleOff"),
-    PlayBytes("hermes/audioServer/<siteId>/playBytes/+"),
+    PlayBytes("hermes/audioServer/${MqttTopicPlaceholder.SiteId}/playBytes/+"),
     AudioOutputToggleOff("hermes/audioServer/toggleOff"),
     AudioOutputToggleOn("hermes/audioServer/toggleOn"),
     SetVolume("rhasspy/audioServer/setVolume");
 
+    override fun toString(): String {
+        return topic
+    }
+
     companion object {
-        fun fromTopic(topic: String): MQTTTopicsSubscription? {
+        fun fromTopic(topic: String): MqttTopicsSubscription? {
             return values().firstOrNull { it.topic == topic }
         }
     }
