@@ -4,5 +4,6 @@ enum class EventTag {
     WebServerService,
     HttpClientService,
     MqttService,
+    RhasspyActionsService,
     UdpService
 }

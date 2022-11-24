@@ -43,7 +43,6 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
 
     fun test() {
         testScope = CoroutineScope(Dispatchers.Default)
-
         unloadKoinModules(serviceModule)
         loadKoinModules(serviceModule)
 

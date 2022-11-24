@@ -1,7 +1,11 @@
 package org.rhasspy.mobile.services.statemachine
 
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.core.component.inject
+import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.services.IService
 
 //TODO mqtt say finished
@@ -11,6 +15,7 @@ class StateMachineService: IService() {
     val logger = Logger.withTag("StateMachineService")
 
     private val params by inject<StateMachineServiceParams>()
+
 
     override fun onClose() {
 
@@ -36,6 +41,12 @@ class StateMachineService: IService() {
     }
 
     fun playAudioMqtt(toList: List<Byte>) {
+        val audioPlayer = AudioPlayer()
+        CoroutineScope(Dispatchers.Default).launch {
+            audioPlayer.playData(toList.toList()){
+
+            }
+        }
     //    TODO("Not yet implemented")
     }
 

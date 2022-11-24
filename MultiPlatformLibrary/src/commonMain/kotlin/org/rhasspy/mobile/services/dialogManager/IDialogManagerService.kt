@@ -27,7 +27,7 @@ abstract class IDialogManagerService : IService() {
     val mqttService by inject<MqttService>()
     val hotWordService by inject<HotWordService>()
     val udpService by inject<UdpService>()
-    val sessionId: String = ""
+    val sessionId: String = "45j89"
 
     private var scope = CoroutineScope(Dispatchers.Default)
 

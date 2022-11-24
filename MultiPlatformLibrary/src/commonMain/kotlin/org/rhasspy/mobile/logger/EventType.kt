@@ -17,5 +17,11 @@ enum class EventType {
     MqttClientReconnect,
     MqttClientSubscribing,
     MqttClientPublish,
-    MqttClientReceived
+    MqttClientReceived,
+    RhasspyActionRecognizeIntent,
+    RhasspyActionSay,
+    RhasspyActionPlayAudio,
+    RhasspyActionSpeechToText,
+    RhasspyActionIntentHandling,
+
 }

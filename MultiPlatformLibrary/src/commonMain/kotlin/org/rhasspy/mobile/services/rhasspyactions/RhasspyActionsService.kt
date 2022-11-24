@@ -1,7 +1,12 @@
 package org.rhasspy.mobile.services.rhasspyactions
 
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import org.rhasspy.mobile.data.*
+import org.rhasspy.mobile.logger.Event
+import org.rhasspy.mobile.logger.EventLogger
+import org.rhasspy.mobile.logger.EventTag
+import org.rhasspy.mobile.logger.EventType
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceResponse
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
@@ -17,10 +22,13 @@ import org.rhasspy.mobile.services.mqtt.MqttService
 open class RhasspyActionsService : IService() {
 
     private val params by inject<RhasspyActionsServiceParams>()
+
     private val localAudioService by inject<LocalAudioService>()
     private val httpClientService by inject<HttpClientService>()
     private val mqttClientService by inject<MqttService>()
     private val homeAssistantService by inject<HomeAssistantService>()
+
+    private val eventLogger by inject<EventLogger>(named(EventTag.RhasspyActionsService.name))
 
     override fun onClose() {
         //nothing to do
@@ -44,11 +52,15 @@ open class RhasspyActionsService : IService() {
      * - later eventually intentRecognized or intentNotRecognized will be called with received data
      */
     suspend fun recognizeIntent(text: String): ServiceResponse<*> {
-        return when (params.intentRecognitionOption) {
+        val event = eventLogger.event(EventType.RhasspyActionRecognizeIntent)
+        event.loading()
+        val result = when (params.intentRecognitionOption) {
             IntentRecognitionOptions.RemoteHTTP -> httpClientService.recognizeIntent(text)
             IntentRecognitionOptions.RemoteMQTT -> mqttClientService.recognizeIntent(text)
             IntentRecognitionOptions.Disabled -> ServiceResponse.Disabled
         }
+        event.evaluateResult(result)
+        return result
     }
 
     /**
@@ -61,11 +73,15 @@ open class RhasspyActionsService : IService() {
      * is called when playing audio is finished
      */
     suspend fun say(text: String): ServiceResponse<*> {
-        return when (params.textToSpeechOption) {
+        val event = eventLogger.event(EventType.RhasspyActionSay)
+        event.loading()
+        val result = when (params.textToSpeechOption) {
             TextToSpeechOptions.RemoteHTTP -> httpClientService.textToSpeech(text)
             TextToSpeechOptions.RemoteMQTT -> mqttClientService.say(text)
             TextToSpeechOptions.Disabled -> ServiceResponse.Disabled
         }
+        event.evaluateResult(result)
+        return result
     }
 
     /**
@@ -87,12 +103,16 @@ open class RhasspyActionsService : IService() {
      * - calls default site to play audio
      */
     suspend fun playAudio(data: List<Byte>): ServiceResponse<*> {
-        return when (params.audioPlayingOption) {
+        val event = eventLogger.event(EventType.RhasspyActionPlayAudio)
+        event.loading()
+        val result = when (params.audioPlayingOption) {
             AudioPlayingOptions.Local -> localAudioService.playAudio(data)
             AudioPlayingOptions.RemoteHTTP -> httpClientService.playWav(data)
             AudioPlayingOptions.RemoteMQTT -> mqttClientService.playBytes(data)
             AudioPlayingOptions.Disabled -> ServiceResponse.Disabled
         }
+        event.evaluateResult(result)
+        return result
     }
 
     /**
@@ -106,11 +126,15 @@ open class RhasspyActionsService : IService() {
      * - audio was already send to mqtt while recording in audioFrame
      */
     suspend fun speechToText(data: List<Byte>): ServiceResponse<*> {
-        return when (params.speechToTextOption) {
+        val event = eventLogger.event(EventType.RhasspyActionSpeechToText)
+        event.loading()
+        val result = when (params.speechToTextOption) {
             SpeechToTextOptions.RemoteHTTP -> httpClientService.speechToText(data)
             SpeechToTextOptions.RemoteMQTT -> ServiceResponse.Nothing
             SpeechToTextOptions.Disabled -> ServiceResponse.Disabled
         }
+        event.evaluateResult(result)
+        return result
     }
 
     /**
@@ -129,11 +153,28 @@ open class RhasspyActionsService : IService() {
      * if local dialogue management it will end the session
      */
     suspend fun intentHandling(intentName: String, intent: String): ServiceResponse<*> {
-        return when (params.intentHandlingOption) {
+        val event = eventLogger.event(EventType.RhasspyActionIntentHandling)
+        event.loading()
+        val result = when (params.intentHandlingOption) {
             IntentHandlingOptions.HomeAssistant -> homeAssistantService.sendIntent(intentName, intent)
             IntentHandlingOptions.RemoteHTTP -> httpClientService.intentHandling(intent)
             IntentHandlingOptions.WithRecognition -> ServiceResponse.Nothing
             IntentHandlingOptions.Disabled -> ServiceResponse.Disabled
+        }
+        event.evaluateResult(result)
+        return result
+    }
+
+    /**
+     * update event depending on result of action
+     */
+    private fun Event.evaluateResult(result: ServiceResponse<*>) {
+        when (result) {
+            is ServiceResponse.Success -> this.success(result.data.toString())
+            is ServiceResponse.Nothing -> this.success("Nothing")
+            is ServiceResponse.Disabled -> this.warning("Disabled")
+            is ServiceResponse.Error -> this.error(result.error)
+            is ServiceResponse.NotInitialized -> this.error("NotInitialized")
         }
     }
 }

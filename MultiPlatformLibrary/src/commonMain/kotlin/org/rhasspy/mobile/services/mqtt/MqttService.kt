@@ -54,6 +54,8 @@ class MqttService : IService() {
 
     private val _isConnected = MutableStateFlow(false)
     val isConnected = _isConnected.readOnly
+    private val _isHasStarted = MutableStateFlow(false)
+    val isHasStarted = _isHasStarted.readOnly
 
 
     /**
@@ -79,6 +81,7 @@ class MqttService : IService() {
                     if (connectClient()) {
                         startEvent.success()
                         subscribeTopics()
+                        _isHasStarted.value = true
                     } else {
                         startEvent.error(ErrorType.ConnectionError.toString())
                     }
@@ -114,8 +117,9 @@ class MqttService : IService() {
      * disconnects, resets connected value and deletes client object
      */
     override fun onClose() {
-        client?.disconnect()
+        _isHasStarted.value = false
         _isConnected.value = false
+        client?.disconnect()
         retryJob?.cancel()
         retryJob = null
         scope.cancel()
@@ -187,10 +191,10 @@ class MqttService : IService() {
         }
 
         val receiveEvent = eventLogger.event(EventType.MqttClientReceived)
+        try {
 
-        MqttTopicsSubscription.fromTopic(topic)?.also { mqttTopic ->
+            MqttTopicsSubscription.fromTopic(topic)?.also { mqttTopic ->
 
-            try {
 
                 if (!mqttTopic.topic.contains(MqttTopicPlaceholder.SiteId.toString())) {
                     //site id in payload
@@ -217,35 +221,33 @@ class MqttService : IService() {
                             MqttTopicsSubscription.SetVolume -> if (!setVolume(jsonObject)) {
                                 receiveEvent.error(ErrorType.InvalidVolume.toString())
                             }
-                            else -> {
-                                when {
-                                    MqttTopicsSubscription.HotWordDetected.topic.matches(topic) -> hotWordDetectedCalled(topic)
-                                    MqttTopicsSubscription.IntentRecognitionResult.topic.matches(topic) -> intentRecognitionResult(jsonObject)
-                                    else -> receiveEvent.error(ErrorType.InvalidTopic.toString())
-                                }
-                            }
+                            else -> receiveEvent.error("${ErrorType.InvalidTopic} $topic")
                         }
                     } else {
                         receiveEvent.warning(ErrorType.DifferentSiteId.toString())
                     }
-
-                } else {
-                    //site id in topic
-                    when {
-                        MqttTopicsSubscription.PlayBytes.topic
-                            .set(MqttTopicPlaceholder.SiteId, params.siteId)
-                            .matches(topic) -> playBytes(message.payload)
-                        else -> receiveEvent.error(ErrorType.InvalidTopic.toString())
-                    }
                 }
-
-            } catch (e: Exception) {
-                receiveEvent.error(e)
+            } ?: run {
+                //site id in topic
+                when {
+                    MqttTopicsSubscription.HotWordDetected.topic.matches(topic) -> hotWordDetectedCalled(topic)
+                    MqttTopicsSubscription.IntentRecognitionResult.topic.matches(topic) -> {
+                        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
+                        intentRecognitionResult(jsonObject)
+                    }
+                    MqttTopicsSubscription.PlayBytes.topic
+                        .set(MqttTopicPlaceholder.SiteId, params.siteId)
+                        .matches(topic) -> playBytes(message.payload)
+                    else -> receiveEvent.error("${ErrorType.InvalidTopic} $topic")
+                }
             }
 
-        } ?: run {
-            receiveEvent.error(ErrorType.InvalidTopic.toString())
+
+        } catch (e: Exception) {
+            receiveEvent.error(e)
         }
+
+
     }
 
     /**

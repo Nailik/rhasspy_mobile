@@ -1,11 +1,24 @@
 package org.rhasspy.mobile.viewModels.configuration
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import org.koin.core.component.get
+import org.koin.core.component.inject
+import org.koin.core.parameter.parametersOf
+import org.koin.core.qualifier.named
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.SpeechToTextOptions
 import org.rhasspy.mobile.logger.Event
+import org.rhasspy.mobile.logger.EventLogger
+import org.rhasspy.mobile.logger.EventTag
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
+import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
+import org.rhasspy.mobile.services.mqtt.MqttService
+import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
+import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
 class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
@@ -81,12 +94,53 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
      * test unsaved data configuration
      */
     override fun onTest(): StateFlow<List<Event>> {
-        //TODO require microphone permission
-        //TODO pause record button
-        //TODO only when enabled
-        //record audio
-        //show when text was transcribed and which text
-        TODO()
+        //initialize test params
+        get<HttpClientServiceParams> {
+            parametersOf(
+                HttpClientServiceParams(
+                    isUseCustomSpeechToTextHttpEndpoint = _isUseCustomSpeechToTextHttpEndpoint.value,
+                    speechToTextHttpEndpoint = _speechToTextHttpEndpoint.value
+                )
+            )
+        }
+        get<RhasspyActionsServiceParams> {
+            parametersOf(
+                RhasspyActionsServiceParams(
+                    speechToTextOption = _speechToTextOption.value
+                )
+            )
+        }
+        get<MqttService>()
+        //start web server
+        get<RhasspyActionsService>()
+        //get logger
+        val eventLogger by inject<EventLogger>(named(EventTag.RhasspyActionsService.name))
+        return eventLogger.events
+    }
+
+    override suspend fun runTest() {
+        //TODO test with real audio??
+
+        val service = get<MqttService>()
+        CoroutineScope(Dispatchers.Default).launch {
+            service.isHasStarted.collect {
+                if (it) {
+
+                    //seems necessary to tell remote to start listening (published anyway)
+                    //service.hotWordDetected("test")
+
+
+                    //wait till start listening?
+                    //send audio frames?
+                    //publish stop listening? (On user click, or will mqtt send this when silence was detected)
+
+
+                    val client = get<RhasspyActionsService>()
+                    client.speechToText(listOf())
+                }
+            }
+        }
+        super.runTest()
     }
 
 }
