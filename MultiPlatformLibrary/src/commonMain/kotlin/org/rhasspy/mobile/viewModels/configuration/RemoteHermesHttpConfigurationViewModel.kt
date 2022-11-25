@@ -1,18 +1,11 @@
 package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.get
-import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.koin.core.qualifier.named
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
-import org.rhasspy.mobile.logger.Event
-import org.rhasspy.mobile.logger.EventLogger
-import org.rhasspy.mobile.logger.EventTag
 import org.rhasspy.mobile.readOnly
-import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
@@ -65,7 +58,7 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     /**
      * test unsaved data configuration
      */
-    override fun onTest(): StateFlow<List<Event>> {
+    override fun onTest() {
         //initialize test params
         get<HttpClientServiceParams> {
             parametersOf(
@@ -78,9 +71,6 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
                 )
             )
         }
-        //get logger
-        val eventLogger by inject<EventLogger>(named(EventTag.HttpClientService.name))
-        return eventLogger.events
     }
 
     override suspend fun runTest() {

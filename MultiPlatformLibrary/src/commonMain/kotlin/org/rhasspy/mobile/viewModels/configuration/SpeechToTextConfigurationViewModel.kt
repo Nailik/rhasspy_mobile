@@ -4,17 +4,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
-import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.koin.core.qualifier.named
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.SpeechToTextOptions
-import org.rhasspy.mobile.logger.Event
-import org.rhasspy.mobile.logger.EventLogger
-import org.rhasspy.mobile.logger.EventTag
 import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
@@ -95,7 +89,7 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
     /**
      * test unsaved data configuration
      */
-    override fun onTest(): StateFlow<List<Event>> {
+    override fun onTest() {
         //initialize test params
         get<HttpClientServiceParams> {
             parametersOf(
@@ -115,9 +109,6 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
         get<MqttService>()
         //start web server
         get<RhasspyActionsService>()
-        //get logger
-        val eventLogger by inject<EventLogger>(named(EventTag.RhasspyActionsService.name))
-        return eventLogger.events
     }
 
     private var testScope = CoroutineScope(Dispatchers.Default)
@@ -132,7 +123,7 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
             _isRecording.value = true
             testScope = CoroutineScope(Dispatchers.Default)
             testScope.launch {
-                service.startListening()
+               // service.startListening()
                 //await start listening
                 AudioRecorder.output.collect {
                     if(_isRecording.value) {

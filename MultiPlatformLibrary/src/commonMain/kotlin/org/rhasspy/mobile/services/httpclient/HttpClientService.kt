@@ -10,11 +10,12 @@ import io.ktor.client.utils.*
 import io.ktor.http.*
 import kotlinx.coroutines.cancel
 import org.koin.core.component.inject
-import org.koin.core.qualifier.named
 import org.rhasspy.mobile.data.IntentHandlingOptions
-import org.rhasspy.mobile.logger.EventLogger
-import org.rhasspy.mobile.logger.EventTag
-import org.rhasspy.mobile.logger.EventType
+import org.rhasspy.mobile.middleware.ErrorType.HttpClientServiceErrorType
+import org.rhasspy.mobile.middleware.ErrorType.HttpClientServiceErrorType.*
+import org.rhasspy.mobile.middleware.EventType
+import org.rhasspy.mobile.middleware.EventType.HttpClientServiceEventType.*
+import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceResponse
@@ -26,18 +27,9 @@ import org.rhasspy.mobile.services.ServiceResponse
  */
 class HttpClientService : IService() {
 
-    enum class ErrorType(val description: String) {
-        NotInitialized(""),
-        IllegalArgumentException("IllegalArgumentException"),
-        InvalidTLSRecordType("Invalid TLS record type code: 72"), // Invalid TLS record type code: 72)
-        UnresolvedAddressException("UnresolvedAddressException"), //server cannot be reached
-        ConnectException("ConnectException"),
-        ConnectionRefused("Connection refused") //wrong port or address
-    }
-
     private val params by inject<HttpClientServiceParams>()
 
-    private val eventLogger by inject<EventLogger>(named(EventTag.HttpClientService.name))
+    private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private val audioContentType = ContentType("audio", "wav")
     private val jsonContentType = ContentType("application", "json")
@@ -66,11 +58,10 @@ class HttpClientService : IService() {
      * starts client and updates event
      */
     init {
-        val startEvent = eventLogger.event(EventType.HttpClientStart)
+        val startEvent = serviceMiddleware.createEvent(Start)
 
         try {
             //starting
-            startEvent.loading()
             httpClient = buildClient()
             //successfully start
             startEvent.success()
@@ -111,7 +102,7 @@ class HttpClientService : IService() {
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
     suspend fun speechToText(data: List<Byte>): ServiceResponse<*> {
-        return post<String>(EventType.HttpClientSpeechToText, speechToTextUrl) {
+        return post<String>(EventType.HttpClientServiceEventType.SpeechToText, speechToTextUrl) {
             setBody(data.toByteArray())
         }
     }
@@ -126,7 +117,7 @@ class HttpClientService : IService() {
      * returns null if the intent is not found
      */
     suspend fun recognizeIntent(text: String): ServiceResponse<*> {
-        return post<String>(EventType.HttpClientRecognizeIntent, recognizeIntentUrl) {
+        return post<String>(RecognizeIntent, recognizeIntentUrl) {
             setBody(text)
         }
     }
@@ -141,7 +132,7 @@ class HttpClientService : IService() {
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     suspend fun textToSpeech(text: String): ServiceResponse<*> {
-        return post<ByteArray>(EventType.HttpClientTextToSpeech, textToSpeechUrl) {
+        return post<ByteArray>(TextToSpeech, textToSpeechUrl) {
             setBody(text)
         }
     }
@@ -153,7 +144,7 @@ class HttpClientService : IService() {
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     suspend fun playWav(data: List<Byte>): ServiceResponse<*> {
-        return post<String>(EventType.HttpClientPlayWav, params.audioPlayingHttpEndpoint) {
+        return post<String>(PlayWav, params.audioPlayingHttpEndpoint) {
             setAttributes {
                 contentType(audioContentType)
             }
@@ -178,7 +169,7 @@ class HttpClientService : IService() {
      * Implemented by rhasspy-remote-http-hermes
      */
     suspend fun intentHandling(intent: String): ServiceResponse<*> {
-        return post<String>(EventType.HttpClientIntentHandling, params.intentHandlingHttpEndpoint) {
+        return post<String>(IntentHandling, params.intentHandlingHttpEndpoint) {
             setBody(intent)
         }
     }
@@ -187,7 +178,7 @@ class HttpClientService : IService() {
      * send intent as Event to Home Assistant
      */
     suspend fun hassEvent(json: String, intentName: String): ServiceResponse<*> {
-        return post<String>(EventType.HttpClientHassEvent, "$hassEventUrl$intentName") {
+        return post<String>(HassEvent, "$hassEventUrl$intentName") {
             buildHeaders {
                 hassAuthorization()
                 contentType(jsonContentType)
@@ -201,7 +192,7 @@ class HttpClientService : IService() {
      * send intent as Intent to Home Assistant
      */
     suspend fun hassIntent(intentJson: String): ServiceResponse<*> {
-        return post<String>(EventType.HttpClientHassIntent, hassIntentUrl) {
+        return post<String>(HassIntent, hassIntentUrl) {
             buildHeaders {
                 hassAuthorization()
                 contentType(jsonContentType)
@@ -219,30 +210,30 @@ class HttpClientService : IService() {
         url: String,
         block: HttpRequestBuilder.() -> Unit
     ): ServiceResponse<*> {
-        val event = eventLogger.event(eventType)
+        val postEvent = serviceMiddleware.createEvent(eventType)
 
         return httpClient?.let { client ->
-            event.loading()
+            postEvent.loading()
             try {
 
                 val request = client.post(url, block)
 
                 val response = request.body<T>()
-                event.success(request.status.toString())
+                postEvent.success()
                 return ServiceResponse.Success(response)
 
             } catch (e: Exception) {
 
-                getErrorDescription(e)?.also { description ->
-                    event.error(description)
+                mapError(e)?.also { description ->
+                    postEvent.error(description)
                 } ?: run {
-                    event.error(e)
+                    postEvent.error(e)
                 }
                 return ServiceResponse.Error(e)
 
             }
         } ?: run {
-            event.error(ErrorType.NotInitialized.toString())
+            postEvent.error(NotInitialized)
             return ServiceResponse.NotInitialized
         }
     }
@@ -250,22 +241,22 @@ class HttpClientService : IService() {
     /**
      * Evaluate if the Error is a know exception to help the user
      */
-    private fun getErrorDescription(e: Exception): String? {
-        return if (e::class.simpleName == ErrorType.IllegalArgumentException.description) {
-            if (e.message == ErrorType.InvalidTLSRecordType.description) {
-                ErrorType.InvalidTLSRecordType.toString()
+    private fun mapError(e: Exception): HttpClientServiceErrorType? {
+        return if (e::class.simpleName == IllegalArgumentException.description) {
+            if (e.message == InvalidTLSRecordType.description) {
+                InvalidTLSRecordType
             } else {
-                ErrorType.IllegalArgumentException.toString()
+                IllegalArgumentException
             }
-        } else if (e::class.simpleName == ErrorType.UnresolvedAddressException.description) {
-            ErrorType.UnresolvedAddressException.toString()
-        } else if (e::class.simpleName == ErrorType.ConnectException.description) {
-            if (e.message == ErrorType.ConnectionRefused.description) {
-                ErrorType.ConnectionRefused.toString()
+        } else if (e::class.simpleName == UnresolvedAddressException.description) {
+            UnresolvedAddressException
+        } else if (e::class.simpleName == ConnectException.description) {
+            if (e.message == ConnectionRefused.description) {
+                ConnectionRefused
             } else {
-                ErrorType.ConnectException.toString()
+                ConnectException
             }
-            ErrorType.UnresolvedAddressException.toString()
+            UnresolvedAddressException
         } else {
             null
         }

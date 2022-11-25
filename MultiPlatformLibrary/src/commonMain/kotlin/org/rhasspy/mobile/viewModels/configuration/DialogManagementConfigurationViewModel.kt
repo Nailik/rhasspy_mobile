@@ -1,11 +1,9 @@
 package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.data.DialogManagementOptions
-import org.rhasspy.mobile.logger.Event
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSettings
@@ -55,7 +53,7 @@ class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
     /**
      * test unsaved data configuration
      */
-    override fun onTest(): StateFlow<List<Event>> {
+    override fun onTest() {
         //TODO only when enabled
         //?? maybe record button -> test flow
         TODO()

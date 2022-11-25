@@ -1,10 +1,8 @@
 package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
-import org.rhasspy.mobile.logger.Event
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -72,7 +70,7 @@ class AudioRecordingConfigurationViewModel : IConfigurationViewModel() {
     /**
      * test unsaved data configuration
      */
-    override fun onTest(): StateFlow<List<Event>> {
+    override fun onTest() {
         //only test button when enabled
         //require microphone permission
         //send data (show information that data is being send)

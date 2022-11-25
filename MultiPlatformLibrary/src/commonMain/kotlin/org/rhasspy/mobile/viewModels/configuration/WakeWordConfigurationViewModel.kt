@@ -1,11 +1,9 @@
 package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.PorcupineLanguageOptions
 import org.rhasspy.mobile.data.WakeWordOption
-import org.rhasspy.mobile.logger.Event
 import org.rhasspy.mobile.nativeutils.SettingsUtils
 import org.rhasspy.mobile.nativeutils.openLink
 import org.rhasspy.mobile.settings.ConfigurationSettings
@@ -225,7 +223,7 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
      * test unsaved data configuration
      * also test if porcupine activation works
      */
-    override fun onTest(): StateFlow<List<Event>> {
+    override fun onTest(){
         //TODO require microphone permission
         //TODO only when enabled
         //record audio

@@ -8,11 +8,8 @@ import org.koin.core.context.startKoin
 import org.koin.core.definition.Definition
 import org.koin.core.module.Module
 import org.koin.core.qualifier.Qualifier
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.dsl.onClose
-import org.rhasspy.mobile.logger.EventLogger
-import org.rhasspy.mobile.logger.EventTag
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.mqtt.OverlayServices
 import org.rhasspy.mobile.services.ServiceWatchdog
@@ -22,8 +19,8 @@ import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantServiceParams
 import org.rhasspy.mobile.services.hotword.HotWordService
 import org.rhasspy.mobile.services.hotword.HotWordServiceParams
-import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.services.httpclient.HttpClientService
+import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.services.indication.IndicationService
 import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.services.mqtt.MqttService
@@ -74,11 +71,6 @@ val serviceModule = module {
     single { params -> params.getOrNull<HomeAssistantServiceParams>() ?: HomeAssistantServiceParams() }
     single { params -> params.getOrNull<HotWordServiceParams>() ?: HotWordServiceParams() }
     single { params -> params.getOrNull<DialogManagerServiceParams>() ?: DialogManagerServiceParams() }
-
-    EventTag.values().forEach { eventTag ->
-        println("created single for ${eventTag.name}")
-        single(named(eventTag.name)) { EventLogger(eventTag) }
-    }
 }
 
 abstract class Application : NativeApplication(), KoinComponent {

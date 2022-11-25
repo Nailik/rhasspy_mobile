@@ -10,37 +10,23 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.koin.core.component.inject
-import org.koin.core.qualifier.named
-import org.rhasspy.mobile.logger.Event
-import org.rhasspy.mobile.logger.EventLogger
-import org.rhasspy.mobile.logger.EventTag
-import org.rhasspy.mobile.logger.EventType
+import org.rhasspy.mobile.middleware.ErrorType.MqttServiceErrorType.*
+import org.rhasspy.mobile.middleware.EventType.MqttServiceEventType.*
+import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.middleware.action.MqttAction.*
 import org.rhasspy.mobile.mqtt.*
 import org.rhasspy.mobile.nativeutils.MqttClient
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceResponse
-import org.rhasspy.mobile.services.middleware.IServiceMiddleware
-import org.rhasspy.mobile.services.middleware.MqttEvent.*
 
 class MqttService : IService() {
-
-    enum class ErrorType {
-        NotInitialized,
-        InvalidVolume,
-        InvalidTopic,
-        DifferentSiteId,
-        SubscriptionError,
-        ConnectionError,
-        AlreadyConnected
-    }
 
     private val params by inject<MqttServiceParams>()
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private val logger = Logger.withTag("MqttService")
-    private val eventLogger by inject<EventLogger>(named(EventTag.MqttService.name))
 
     private var scope = CoroutineScope(Dispatchers.Default)
     private val url = "tcp://${params.mqttHost}:${params.mqttPort}"
@@ -67,26 +53,24 @@ class MqttService : IService() {
      */
     init {
         if (params.isMqttEnabled) {
-            val startEvent = eventLogger.event(EventType.MqttClientStart)
+            val startEvent = serviceMiddleware.createEvent(Start)
 
             try {
-                //starting
-                startEvent.loading()
-
                 client = buildClient()
                 scope.launch {
                     if (connectClient()) {
                         startEvent.success()
+
                         subscribeTopics()
                         _isHasStarted.value = true
                     } else {
-                        startEvent.error(ErrorType.ConnectionError.toString())
+                        startEvent.error()
                     }
                 }
 
-            } catch (e: Exception) {
+            } catch (exception: Exception) {
                 //start error
-                startEvent.error(e)
+                startEvent.error(exception)
             }
         } else {
             logger.v { "mqtt not enabled" }
@@ -126,23 +110,25 @@ class MqttService : IService() {
      * connects client to server and returns if client is now connected
      */
     private suspend fun connectClient(): Boolean {
-        val connectEvent = eventLogger.event(EventType.MqttClientConnecting)
+        val connectEvent = serviceMiddleware.createEvent(Connecting)
 
-        if (client?.isConnected == false) {
-            //only if not connected
-            connectEvent.loading()
-            //connect to server
-            client?.connect(params.mqttServiceConnectionOptions)?.also {
-                connectEvent.error("${it.statusCode.name} ${it.msg}")
-            } ?: run{
-                connectEvent.success()
+        client?.also {
+            if (!it.isConnected) {
+                //connect to server
+                it.connect(params.mqttServiceConnectionOptions)?.also { error ->
+                    connectEvent.error(ConnectionError(error))
+                } ?: run {
+                    connectEvent.success()
+                }
+            } else {
+                connectEvent.error(AlreadyConnected)
             }
-        } else {
-            connectEvent.success(ErrorType.AlreadyConnected.toString())
+            //update value, may be used from reconnect
+            _isConnected.value = it.isConnected == true
+        } ?: run {
+            connectEvent.error(NotInitialized)
         }
 
-        //update value, may be used from reconnect
-        _isConnected.value = client?.isConnected == true
         return _isConnected.value
     }
 
@@ -151,25 +137,23 @@ class MqttService : IService() {
      * try to reconnect after disconnect
      */
     private fun onDisconnect(error: Throwable) {
-        val disconnectEvent = eventLogger.event(EventType.MqttClientDisconnected)
-        disconnectEvent.error(error)
+        serviceMiddleware.createEvent(Disconnect).error(error)
+
 
         _isConnected.value = client?.isConnected == true
 
         if (retryJob?.isActive != true) {
             retryJob = scope.launch {
 
-                var reconnectEvent: Event? = null
+                val reconnectEvent = serviceMiddleware.createEvent(Reconnect)
 
                 client?.also {
                     while (!it.isConnected) {
-                        reconnectEvent = eventLogger.event(EventType.MqttClientReconnect)
-                        reconnectEvent?.loading()
                         connectClient()
                         delay(params.retryInterval)
-                        reconnectEvent?.error(ErrorType.ConnectionError.toString())
                     }
-                    reconnectEvent?.success()
+                    reconnectEvent.success()
+
                     retryJob?.cancel()
                     retryJob = null
                 }
@@ -187,11 +171,10 @@ class MqttService : IService() {
             return
         }
 
-        val receiveEvent = eventLogger.event(EventType.MqttClientReceived)
+        val receivedEvent = serviceMiddleware.createEvent(Received, topic)
+
         try {
-
             MqttTopicsSubscription.fromTopic(topic)?.also { mqttTopic ->
-
 
                 if (!mqttTopic.topic.contains(MqttTopicPlaceholder.SiteId.toString())) {
                     //site id in payload
@@ -216,14 +199,12 @@ class MqttService : IService() {
                             MqttTopicsSubscription.AudioOutputToggleOff -> audioOutputToggleOff()
                             MqttTopicsSubscription.AudioOutputToggleOn -> audioOutputToggleOn()
                             MqttTopicsSubscription.SetVolume -> if (!setVolume(jsonObject)) {
-                                receiveEvent.error(ErrorType.InvalidVolume.toString())
+                                receivedEvent.error(InvalidVolume)
                             }
-                            else -> receiveEvent.error("${ErrorType.InvalidTopic} $topic")
+                            else -> receivedEvent.error(InvalidTopic)
                         }
-                    } else {
-                        receiveEvent.warning("${ErrorType.DifferentSiteId.toString()} ${message.payload.decodeToString()}")
+                        receivedEvent.success()
                     }
-                    receiveEvent.success()
                 }
             } ?: run {
                 //site id in topic
@@ -236,40 +217,36 @@ class MqttService : IService() {
                     MqttTopicsSubscription.PlayBytes.topic
                         .set(MqttTopicPlaceholder.SiteId, params.siteId)
                         .matches(topic) -> playBytes(message.payload)
-                    else -> receiveEvent.error("${ErrorType.InvalidTopic} $topic")
+                    else -> receivedEvent.error(InvalidTopic)
                 }
-                receiveEvent.success()
+                receivedEvent.success()
             }
 
-
         } catch (e: Exception) {
-            receiveEvent.error(e)
+            receivedEvent.error(e)
         }
-
-
     }
 
     /**
      * Subscribes to topics that are necessary
      */
     private suspend fun subscribeTopics() {
-        val subscribeTopics = eventLogger.event(EventType.MqttClientSubscribing)
-        subscribeTopics.loading()
+        val subscribeTopicsEvent = serviceMiddleware.createEvent(SubscribeTopic)
+
         var hasError = false
         var hasSuccess = false
 
         //subscribe to topics with this site id (if contained in topic, currently only in PlayBytes)
         MqttTopicsSubscription.values().forEach { mqttTopic ->
-            val subscribeEvent = eventLogger.event(EventType.MqttClientSubscribing)
-            subscribeEvent.loading()
+            val subscribeEvent = serviceMiddleware.createEvent(Subscribing, mqttTopic.topic)
 
             try {
                 client?.subscribe(mqttTopic.topic.set(MqttTopicPlaceholder.SiteId, params.siteId))?.also {
                     hasError = true
-                    subscribeEvent.error("$mqttTopic ${it.statusCode.name} ${it.msg}")
+                    subscribeEvent.error(SubscriptionError(it))
                 } ?: run {
                     hasSuccess = true
-                    subscribeEvent.success("$mqttTopic")
+                    subscribeEvent.success()
                 }
             } catch (e: Exception) {
                 subscribeEvent.error(e)
@@ -279,13 +256,13 @@ class MqttService : IService() {
         if (hasError) {
             if (hasSuccess) {
                 //some worked
-                subscribeTopics.warning()
+                subscribeTopicsEvent.warning()
             } else {
                 //none worked
-                subscribeTopics.error(ErrorType.SubscriptionError.toString())
+                subscribeTopicsEvent.error()
             }
         } else {
-            subscribeTopics.success()
+            subscribeTopicsEvent.success()
         }
     }
 
@@ -294,20 +271,20 @@ class MqttService : IService() {
      * published new messages
      */
     private suspend fun publishMessage(topic: String, message: MqttMessage): ServiceResponse<*> {
-        val publishEvent = eventLogger.event(EventType.MqttClientPublish)
+        val publishEvent = serviceMiddleware.createEvent(Publish)
+
         message.msgId = id
 
         return client?.let { mqttClient ->
-            publishEvent.loading()
             mqttClient.publish(topic, message)?.let {
-                publishEvent.error("$topic ${it.statusCode.name} ${it.msg}")
+                publishEvent.error(PublishError(it))
                 ServiceResponse.Error(Exception(it.statusCode.name))
             } ?: run {
-                publishEvent.success(topic)
+                publishEvent.success()
                 ServiceResponse.Success(Unit)
             }
         } ?: run {
-            publishEvent.error(ErrorType.NotInitialized.toString())
+            publishEvent.error(NotInitialized)
             ServiceResponse.NotInitialized
         }
     }
@@ -336,7 +313,7 @@ class MqttService : IService() {
      * hermes/dialogueManager/sessionQueued
      */
     private fun startSession() =
-        serviceMiddleware.mqttEvent(StartSession)
+        serviceMiddleware.mqttAction(StartSession)
 
     /**
      * https://rhasspy.readthedocs.io/en/latest/reference/#dialoguemanager_endsession
@@ -346,7 +323,7 @@ class MqttService : IService() {
      * sessionId: string - current session ID (required)
      */
     private fun endSession(jsonObject: JsonObject) =
-        serviceMiddleware.mqttEvent(EndSession(jsonObject.getSessionId()))
+        serviceMiddleware.mqttAction(EndSession(jsonObject.getSessionId()))
 
     /**
      * hermes/dialogueManager/sessionStarted (JSON)
@@ -360,7 +337,7 @@ class MqttService : IService() {
      * used to save the sessionId and check for it when recording etc
      */
     private fun sessionStarted(jsonObject: JsonObject) =
-        serviceMiddleware.mqttEvent(SessionStarted(jsonObject.getSessionId()))
+        serviceMiddleware.mqttAction(SessionStarted(jsonObject.getSessionId()))
 
     /**
      * hermes/dialogueManager/sessionStarted (JSON)
@@ -390,7 +367,7 @@ class MqttService : IService() {
      * Response to hermes/dialogueManager/endSession or other reasons for a session termination
      */
     private fun sessionEnded(jsonObject: JsonObject) =
-        serviceMiddleware.mqttEvent(SessionEnded(jsonObject.getSessionId()))
+        serviceMiddleware.mqttAction(SessionEnded(jsonObject.getSessionId()))
 
     /**
      * hermes/dialogueManager/sessionEnded (JSON)
@@ -444,7 +421,7 @@ class MqttService : IService() {
      * reason: string = "" - Reason for toggle on
      */
     private fun hotWordToggleOn() =
-        serviceMiddleware.mqttEvent(HotWordToggle(true))
+        serviceMiddleware.mqttAction(HotWordToggle(true))
 
     /**
      * hermes/hotword/toggleOff (JSON)
@@ -453,7 +430,7 @@ class MqttService : IService() {
      * reason: string = "" - Reason for toggle off
      */
     private fun hotWordToggleOff() =
-        serviceMiddleware.mqttEvent(HotWordToggle(false))
+        serviceMiddleware.mqttAction(HotWordToggle(false))
 
 
     /**
@@ -468,7 +445,7 @@ class MqttService : IService() {
         topic.split("/").let {
             if (it.size > 2) {
                 scope.launch {
-                    serviceMiddleware.mqttEvent(HotWordDetected(it[2]))
+                    serviceMiddleware.mqttAction(HotWordDetected(it[2]))
                 }
                 true
             } else {
@@ -518,7 +495,7 @@ class MqttService : IService() {
      * wakewordId: string? = null - id of wake word that triggered session (Rhasspy only)
      */
     private fun startListening(jsonObject: JsonObject) =
-        serviceMiddleware.mqttEvent(StartListening(jsonObject[MqttParams.SendAudioCaptured.value]?.jsonPrimitive?.booleanOrNull == true))
+        serviceMiddleware.mqttAction(StartListening(jsonObject[MqttParams.SendAudioCaptured.value]?.jsonPrimitive?.booleanOrNull == true))
 
     /**
      * hermes/asr/startListening (JSON)
@@ -548,7 +525,7 @@ class MqttService : IService() {
      * sessionId: string = "" - current session ID
      */
     private fun stopListening(jsonObject: JsonObject) =
-        serviceMiddleware.mqttEvent(StopListening(jsonObject.getSessionId()))
+        serviceMiddleware.mqttAction(StopListening(jsonObject.getSessionId()))
 
     /**
      * hermes/asr/stopListening (JSON)
@@ -574,7 +551,7 @@ class MqttService : IService() {
      * sessionId: string? = null - current session ID
      */
     private fun asrTextCaptured(jsonObject: JsonObject) =
-        serviceMiddleware.mqttEvent(
+        serviceMiddleware.mqttAction(
             IntentTranscribed(
                 jsonObject.getSessionId(),
                 jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content
@@ -607,7 +584,7 @@ class MqttService : IService() {
      * sessionId: string? = null - current session ID
      */
     private fun asrError(jsonObject: JsonObject) =
-        serviceMiddleware.mqttEvent(IntentTranscribedError(jsonObject.getSessionId()))
+        serviceMiddleware.mqttAction(IntentTranscribedError(jsonObject.getSessionId()))
 
 
     /**
@@ -675,7 +652,7 @@ class MqttService : IService() {
      * Response to hermes/nlu/query
      */
     private fun intentRecognitionResult(jsonObject: JsonObject) =
-        serviceMiddleware.mqttEvent(
+        serviceMiddleware.mqttAction(
             IntentRecognitionResult(
                 jsonObject.getSessionId(),
                 intentName = jsonObject[MqttParams.Intent.value]?.jsonObject?.get(MqttParams.IntentName.value)?.jsonPrimitive?.content,
@@ -690,21 +667,21 @@ class MqttService : IService() {
      * siteId: string = "default" - Hermes site ID
      */
     private fun intentNotRecognized(jsonObject: JsonObject) =
-        serviceMiddleware.mqttEvent(IntentTranscribedError(jsonObject.getSessionId()))
+        serviceMiddleware.mqttAction(IntentTranscribedError(jsonObject.getSessionId()))
 
     /**
      * hermes/handle/toggleOn
      * Enable intent handling
      */
     private fun intentHandlingToggleOn() =
-        serviceMiddleware.mqttEvent(IntentHandlingToggle(true))
+        serviceMiddleware.mqttAction(IntentHandlingToggle(true))
 
     /**
      * hermes/handle/toggleOff
      * Disable intent handling
      */
     private fun intentHandlingToggleOff() =
-        serviceMiddleware.mqttEvent(IntentHandlingToggle(false))
+        serviceMiddleware.mqttAction(IntentHandlingToggle(false))
 
     /**
      * hermes/tts/say (JSON)
@@ -743,7 +720,7 @@ class MqttService : IService() {
      * hermes/audioServer/<siteId>/playFinished (JSON)
      */
     private fun playBytes(payload: ByteArray) =
-        serviceMiddleware.mqttEvent(PlayAudio(payload))
+        serviceMiddleware.mqttAction(PlayAudio(payload))
 
     /**
      * hermes/audioServer/<siteId>/playBytes/<requestId> (JSON)
@@ -770,7 +747,7 @@ class MqttService : IService() {
      * siteId: string = "default" - Hermes site ID
      */
     private fun audioOutputToggleOff() =
-        serviceMiddleware.mqttEvent(AudioOutputToggle(false))
+        serviceMiddleware.mqttAction(AudioOutputToggle(false))
 
     /**
      * hermes/audioServer/toggleOn (JSON)
@@ -778,7 +755,7 @@ class MqttService : IService() {
      * siteId: string = "default" - Hermes site ID
      */
     private fun audioOutputToggleOn() =
-        serviceMiddleware.mqttEvent(AudioOutputToggle(true))
+        serviceMiddleware.mqttAction(AudioOutputToggle(true))
 
     /**
      * hermes/audioServer/<siteId>/playFinished
@@ -802,7 +779,7 @@ class MqttService : IService() {
      */
     private fun setVolume(jsonObject: JsonObject): Boolean =
         jsonObject[MqttParams.Volume.value]?.jsonPrimitive?.floatOrNull?.let {
-            serviceMiddleware.mqttEvent(AudioVolumeChange(it))
+            serviceMiddleware.mqttAction(AudioVolumeChange(it))
             true
         } ?: false
 

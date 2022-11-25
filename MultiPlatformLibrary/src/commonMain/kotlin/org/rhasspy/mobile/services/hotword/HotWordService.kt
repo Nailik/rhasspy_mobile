@@ -6,8 +6,8 @@ import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.nativeutils.NativeLocalPorcupineWakeWordService
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceWatchdog
-import org.rhasspy.mobile.services.middleware.IServiceMiddleware
-import org.rhasspy.mobile.services.middleware.LocalEvent
+import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.middleware.action.LocalAction
 import org.rhasspy.mobile.services.recording.RecordingService
 
 /**
@@ -66,7 +66,7 @@ class HotWordService : IService() {
     }
 
     private fun onKeywordDetected(hotWord: String) =
-        serviceMiddleware.localEvent(LocalEvent.HotWordDetected(hotWord))
+        serviceMiddleware.localAction(LocalAction.HotWordDetected(hotWord))
 
     override fun onClose() {
         recordingService.stopRecording()

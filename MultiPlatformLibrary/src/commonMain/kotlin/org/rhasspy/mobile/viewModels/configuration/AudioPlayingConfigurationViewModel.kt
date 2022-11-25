@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.AudioOutputOptions
 import org.rhasspy.mobile.data.AudioPlayingOptions
-import org.rhasspy.mobile.logger.Event
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -107,7 +106,7 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
     /**
      * test unsaved data configuration
      */
-    override fun onTest(): StateFlow<List<Event>> {
+    override fun onTest() {
         //TODO only when enabled
         //record audio button
         //play audio button

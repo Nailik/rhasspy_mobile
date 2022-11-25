@@ -7,13 +7,12 @@ import io.ktor.utils.io.core.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
 import org.koin.core.component.inject
-import org.koin.core.qualifier.named
-import org.rhasspy.mobile.logger.EventLogger
-import org.rhasspy.mobile.logger.EventTag
+import org.rhasspy.mobile.middleware.ErrorType.UdpServiceErrorType.NotInitialized
+import org.rhasspy.mobile.middleware.EventType.UdpServiceEventType.Start
+import org.rhasspy.mobile.middleware.EventType.UdpServiceEventType.StreamAudio
+import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceResponse
-import org.rhasspy.mobile.services.ServiceWatchdog
-import org.rhasspy.mobile.services.statemachine.StateMachineService
 
 class UdpService : IService() {
 
@@ -21,11 +20,10 @@ class UdpService : IService() {
     private var sendChannel: SendChannel<Datagram>? = null
 
     private val params by inject<UdpServiceParams>()
-    private val stateMachineService by inject<StateMachineService>()
-    private val serviceWatchdog by inject<ServiceWatchdog>()
+
+    private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private val logger = Logger.withTag("UdpService")
-    private val eventLogger by inject<EventLogger>(named(EventTag.UdpService.name))
 
     /**
      * makes sure the address is up to date
@@ -34,7 +32,7 @@ class UdpService : IService() {
      */
     init {
         if (params.isUdpOutputEnabled) {
-            logger.v { "start" }
+            val startEvent = serviceMiddleware.createEvent(Start)
 
             try {
                 sendChannel = aSocket(SelectorManager(Dispatchers.Default)).udp().bind().outgoing
@@ -43,9 +41,10 @@ class UdpService : IService() {
                     params.udpOutputHost,
                     params.udpOutputPort
                 )
+
+                startEvent.success()
             } catch (e: Exception) {
-                serviceWatchdog.udpServiceError(e)
-                logger.e(e) { "unable to initialize address with host: ${params.udpOutputHost} and port ${params.udpOutputPort}" }
+                startEvent.error(e)
             }
         } else {
             logger.v { "not enabled" }
@@ -58,13 +57,18 @@ class UdpService : IService() {
     }
 
     suspend fun streamAudio(byteData: List<Byte>): ServiceResponse<*> {
+        val streamAudioEvent = serviceMiddleware.createEvent(StreamAudio)
+
         socketAddress?.also {
             sendChannel?.send(Datagram(ByteReadPacket(byteData.toByteArray()), it)) ?: run {
+                streamAudioEvent.error(NotInitialized)
                 return ServiceResponse.NotInitialized
             }
         } ?: run {
+            streamAudioEvent.error(NotInitialized)
             return ServiceResponse.NotInitialized
         }
+        streamAudioEvent.success()
         return ServiceResponse.Success(Unit)
     }
 

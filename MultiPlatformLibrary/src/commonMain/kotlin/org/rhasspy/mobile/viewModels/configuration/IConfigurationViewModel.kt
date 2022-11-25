@@ -10,8 +10,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
-import org.rhasspy.mobile.logger.Event
-import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.middleware.Event
 import org.rhasspy.mobile.serviceModule
 
 abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
@@ -19,8 +18,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     abstract val hasUnsavedChanges: StateFlow<Boolean>
     abstract val isTestingEnabled: StateFlow<Boolean>
 
-    private val _events: MutableStateFlow<List<Event>> = MutableStateFlow(listOf())
-    val events: StateFlow<List<Event>> = _events.readOnly
+    val events = MutableStateFlow<List<Event>>(listOf())
 
     private var testScope = CoroutineScope(Dispatchers.Default)
 
@@ -35,7 +33,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
 
     abstract fun onSave()
 
-    abstract fun onTest(): StateFlow<List<Event>>
+    abstract fun onTest()
 
     open suspend fun runTest(){
 
@@ -51,9 +49,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
 
         val eventFlow = onTest()
         testScope.launch {
-            eventFlow.collect {
-                _events.value = it
-            }
+
         }
         testScope.launch {
             runTest()
@@ -63,7 +59,6 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     fun stopTest() {
         onStopTest()
         testScope.cancel()
-        _events.value = listOf()
         unloadKoinModules(serviceModule)
         loadKoinModules(serviceModule)
     }

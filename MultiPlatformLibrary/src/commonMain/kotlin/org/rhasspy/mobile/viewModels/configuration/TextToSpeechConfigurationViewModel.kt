@@ -1,10 +1,8 @@
 package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.TextToSpeechOptions
-import org.rhasspy.mobile.logger.Event
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -81,7 +79,7 @@ class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
     /**
      * test unsaved data configuration
      */
-    override fun onTest(): StateFlow<List<Event>> {
+    override fun onTest(){
         //TODO only when enabled
         //textfield to input test
         //button to send text

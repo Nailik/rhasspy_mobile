@@ -1,16 +1,10 @@
 package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.get
-import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.koin.core.qualifier.named
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
-import org.rhasspy.mobile.logger.Event
-import org.rhasspy.mobile.logger.EventLogger
-import org.rhasspy.mobile.logger.EventTag
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.services.webserver.WebServerServiceParams
@@ -79,7 +73,7 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
     /**
      * test unsaved data configuration
      */
-    override fun onTest(): StateFlow<List<Event>> {
+    override fun onTest() {
         //initialize test params
         get<WebServerServiceParams> {
             parametersOf(
@@ -93,8 +87,6 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
         //start web server
         get<WebServerService>()
         //get logger
-        val eventLogger by inject<EventLogger>(named(EventTag.WebServerService.name))
-        return eventLogger.events
     }
 
 }

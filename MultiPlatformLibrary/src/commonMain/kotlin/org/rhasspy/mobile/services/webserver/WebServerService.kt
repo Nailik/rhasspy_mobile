@@ -15,15 +15,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import org.koin.core.component.inject
-import org.koin.core.qualifier.named
-import org.rhasspy.mobile.logger.Event
-import org.rhasspy.mobile.logger.EventLogger
-import org.rhasspy.mobile.logger.EventTag
-import org.rhasspy.mobile.logger.EventType
+import org.rhasspy.mobile.middleware.ErrorType.WebServerServiceErrorType
+import org.rhasspy.mobile.middleware.ErrorType.WebServerServiceErrorType.*
+import org.rhasspy.mobile.middleware.Event
+import org.rhasspy.mobile.middleware.EventType.WebServerServiceEventType.Received
+import org.rhasspy.mobile.middleware.EventType.WebServerServiceEventType.Start
+import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.middleware.action.WebServerAction.*
 import org.rhasspy.mobile.nativeutils.installCallLogging
 import org.rhasspy.mobile.nativeutils.installCompression
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.dialogManager.IDialogManagerService
 import org.rhasspy.mobile.services.settings.AppSettingsService
 import org.rhasspy.mobile.services.statemachine.StateMachineService
 
@@ -38,28 +39,19 @@ import org.rhasspy.mobile.services.statemachine.StateMachineService
  */
 class WebServerService : IService() {
 
-    enum class BadRequestTypes(val description: String) {
-        WakeOptionInvalid("Invalid value, allowed: \"on\", \"off\""),
-        VolumeValueOutOfRange("Volume Out of Range, allowed: 0f...1f"),
-        VolumeValueInvalid("Invalid Volume, allowed: 0f...1f"),
-
-        AudioContentTypeWarning("Missing Content Type")
-    }
-
     private val params by inject<WebServerServiceParams>()
 
     private val stateMachineService by inject<StateMachineService>()
-    private val dialogManagerService by inject<IDialogManagerService>()
     private val appSettingsService by inject<AppSettingsService>()
 
+    private val serviceMiddleware by inject<IServiceMiddleware>()
+
     private val logger = Logger.withTag("WebServerService")
-    private val eventLogger by inject<EventLogger>(named(EventTag.WebServerService.name))
 
     private val scope = CoroutineScope(Dispatchers.Default)
     private val audioContentType = ContentType("audio", "wav")
 
     private lateinit var server: CIOApplicationEngine
-    private lateinit var callEvent: Event
 
     /**
      * starts server when enabled
@@ -67,18 +59,13 @@ class WebServerService : IService() {
      */
     init {
         if (params.isHttpServerEnabled) {
-            val startEvent = eventLogger.event(EventType.WebServerStart)
+            val startEvent = serviceMiddleware.createEvent(Start)
 
             try {
-                //starting
-                startEvent.loading()
-
                 server = buildServer(params.httpServerPort)
                 server.start()
                 //successfully start
                 startEvent.success()
-                callEvent = eventLogger.event(EventType.WebServerIncomingCall)
-                callEvent.loading()
             } catch (e: Exception) {
                 //start error
                 startEvent.error(e)
@@ -136,12 +123,7 @@ class WebServerService : IService() {
                     status(it) { call, status ->
                         if (status != HttpStatusCode.OK && status != HttpStatusCode.Accepted) {
                             call.respondText(text = status.description, status = status)
-                            callEvent.error("${call.request.path()} $status")
-                        } else {
-                            callEvent.success(call.request.path())
                         }
-                        callEvent = eventLogger.event(EventType.WebServerIncomingCall)
-                        callEvent.loading()
                     }
                 }
         }
@@ -153,17 +135,13 @@ class WebServerService : IService() {
     private fun Application.buildRouting() {
         routing {
             WebServerPath.values().forEach { path ->
-                try {
-                    when (path.type) {
-                        WebServerPath.WebServerCallType.POST -> post(path.path) {
-                            evaluateCall(path, call)
-                        }
-                        WebServerPath.WebServerCallType.GET -> get(path.path) {
-                            evaluateCall(path, call)
-                        }
+                when (path.type) {
+                    WebServerPath.WebServerCallType.POST -> post(path.path) {
+                        evaluateCall(path, call)
                     }
-                } catch (e: Exception) {
-                    callEvent.error(e)
+                    WebServerPath.WebServerCallType.GET -> get(path.path) {
+                        evaluateCall(path, call)
+                    }
                 }
             }
         }
@@ -173,16 +151,26 @@ class WebServerService : IService() {
      * evaluates any call
      */
     private suspend fun evaluateCall(path: WebServerPath, call: ApplicationCall) {
-        when (path) {
-            WebServerPath.ListenForCommand -> listenForCommand(call)
-            WebServerPath.ListenForWake -> listenForWake(call)
-            WebServerPath.PlayRecordingPost -> playRecordingPost(call)
-            WebServerPath.PlayRecordingGet -> playRecordingGet(call)
-            WebServerPath.PlayWav -> playWav(call)
-            WebServerPath.SetVolume -> setVolume(call)
-            WebServerPath.StartRecording -> startRecording(call)
-            WebServerPath.StopRecording -> stopRecording(call)
-            WebServerPath.Say -> say(call)
+        val callEvent = serviceMiddleware.createEvent(Received, path.path)
+        try {
+            when (path) {
+                WebServerPath.ListenForCommand -> listenForCommand(call)
+                WebServerPath.ListenForWake -> listenForWake(call)?.also {
+                    callEvent.error(it)
+                }
+                WebServerPath.PlayRecordingPost -> playRecordingPost(call)
+                WebServerPath.PlayRecordingGet -> playRecordingGet(call)
+                WebServerPath.PlayWav -> playWav(call, callEvent)
+                WebServerPath.SetVolume -> setVolume(call)?.also {
+                    callEvent.error(it)
+                }
+                WebServerPath.StartRecording -> startRecording(call)
+                WebServerPath.StopRecording -> stopRecording(call)
+                WebServerPath.Say -> say(call)
+            }
+            callEvent.success()
+        } catch (exception: Exception) {
+            callEvent.error(exception)
         }
     }
 
@@ -196,7 +184,7 @@ class WebServerService : IService() {
      */
     private suspend fun listenForCommand(call: ApplicationCall) {
         call.respond(HttpStatusCode.OK)
-        dialogManagerService.listenForCommandWebServer()
+        serviceMiddleware.webServerAction(ListenForCommand)
     }
 
 
@@ -206,18 +194,20 @@ class WebServerService : IService() {
      * POST "off" to disable wake word
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    private suspend fun listenForWake(call: ApplicationCall) {
+    private suspend fun listenForWake(call: ApplicationCall): WebServerServiceErrorType? {
         val action = when (call.receive<String>()) {
             "on" -> true
             "off" -> false
             else -> null
         }
 
-        action?.also {
+        return action?.let {
             call.respond(HttpStatusCode.Accepted)
             appSettingsService.toggleListenForWakeWebServer(it)
+            null
         } ?: run {
-            call.respond(HttpStatusCode.BadRequest, BadRequestTypes.WakeOptionInvalid.description)
+            call.respond(HttpStatusCode.BadRequest, WakeOptionInvalid.description)
+            WakeOptionInvalid
         }
     }
 
@@ -249,9 +239,9 @@ class WebServerService : IService() {
      * Make sure to set Content-Type to audio/wav
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    private suspend fun playWav(call: ApplicationCall) {
+    private suspend fun playWav(call: ApplicationCall, event: Event) {
         if (call.request.contentType() != audioContentType) {
-            callEvent.warning(BadRequestTypes.AudioContentTypeWarning.description)
+            event.warning(AudioContentTypeWarning)
         }
         call.respond(HttpStatusCode.OK)
         //play even without header
@@ -264,17 +254,20 @@ class WebServerService : IService() {
      * Body text is volume level (0 = off, 1 = full volume)
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    private suspend fun setVolume(call: ApplicationCall) {
+    private suspend fun setVolume(call: ApplicationCall): WebServerServiceErrorType? {
         //double and float or double not working but string??
-        call.receive<String>().toFloatOrNull()?.also {
-            if (it in 0f..1f) {
+        return call.receive<String>().toFloatOrNull()?.let {
+            return if (it in 0f..1f) {
                 call.respond(HttpStatusCode.Accepted)
                 appSettingsService.setVolumeWebServer(it)
+                null
             } else {
-                callEvent.error(BadRequestTypes.VolumeValueOutOfRange.description)
+                call.respond(HttpStatusCode.BadRequest, VolumeValueOutOfRange.description)
+                VolumeValueOutOfRange
             }
         } ?: run {
-            callEvent.error(BadRequestTypes.VolumeValueInvalid.description)
+            call.respond(HttpStatusCode.BadRequest, VolumeValueInvalid.description)
+            AudioContentTypeWarning
         }
     }
 
@@ -285,7 +278,7 @@ class WebServerService : IService() {
      */
     private suspend fun startRecording(call: ApplicationCall) {
         call.respond(HttpStatusCode.OK)
-        dialogManagerService.startRecordingWebServer()
+        serviceMiddleware.webServerAction(StartRecording)
     }
 
     /**
@@ -301,7 +294,7 @@ class WebServerService : IService() {
      */
     private suspend fun stopRecording(call: ApplicationCall) {
         call.respond(HttpStatusCode.OK)
-        dialogManagerService.stopRecordingWebServer()
+        serviceMiddleware.webServerAction(StopRecording)
     }
 
     /**

@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.logger
+package org.rhasspy.mobile.middleware
 
 sealed class EventState(val information: String? = null) {
 

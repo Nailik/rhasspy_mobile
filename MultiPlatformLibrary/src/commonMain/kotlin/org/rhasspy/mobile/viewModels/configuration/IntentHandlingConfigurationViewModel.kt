@@ -1,12 +1,10 @@
 package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.data.HomeAssistantIntentHandlingOptions
 import org.rhasspy.mobile.data.IntentHandlingOptions
-import org.rhasspy.mobile.logger.Event
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.ConfigurationSettings
@@ -106,7 +104,7 @@ class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
     /**
      * test unsaved data configuration
      */
-    override fun onTest(): StateFlow<List<Event>> {
+    override fun onTest(){
         //TODO only when enabled
         //textfield for intent name and button
         //alternative? - textfield for text string to recognize intent and then handle
