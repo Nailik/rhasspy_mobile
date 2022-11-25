@@ -6,9 +6,9 @@ import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.nativeutils.NativeLocalPorcupineWakeWordService
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceWatchdog
-import org.rhasspy.mobile.services.dialogManager.IDialogManagerService
+import org.rhasspy.mobile.services.middleware.IServiceMiddleware
+import org.rhasspy.mobile.services.middleware.LocalEvent
 import org.rhasspy.mobile.services.recording.RecordingService
-import org.rhasspy.mobile.services.statemachine.StateMachineService
 
 /**
  * hot word services listens for hot word, evaluates configuration settings but no states
@@ -21,7 +21,7 @@ class HotWordService : IService() {
     private val params by inject<HotWordServiceParams>()
     private var nativeLocalPorcupineWakeWordService: NativeLocalPorcupineWakeWordService? = null
 
-    private val dialogManagerService by inject<IDialogManagerService>()
+    private val serviceMiddleware by inject<IServiceMiddleware>()
     private val serviceWatchdog by inject<ServiceWatchdog>()
     private val recordingService by inject<RecordingService>()
 
@@ -65,7 +65,8 @@ class HotWordService : IService() {
         nativeLocalPorcupineWakeWordService?.stop()
     }
 
-    private fun onKeywordDetected(hotWord: String) = dialogManagerService.hotWordDetectedLocal(hotWord)
+    private fun onKeywordDetected(hotWord: String) =
+        serviceMiddleware.localEvent(LocalEvent.HotWordDetected(hotWord))
 
     override fun onClose() {
         recordingService.stopRecording()
