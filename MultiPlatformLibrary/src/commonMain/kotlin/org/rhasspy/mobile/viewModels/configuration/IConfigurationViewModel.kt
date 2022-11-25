@@ -40,6 +40,9 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     open suspend fun runTest(){
 
     }
+    open fun onStopTest(){
+
+    }
 
     fun test() {
         testScope = CoroutineScope(Dispatchers.Default)
@@ -58,6 +61,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     }
 
     fun stopTest() {
+        onStopTest()
         testScope.cancel()
         _events.value = listOf()
         unloadKoinModules(serviceModule)

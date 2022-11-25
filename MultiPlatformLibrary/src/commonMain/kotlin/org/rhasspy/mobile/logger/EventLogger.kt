@@ -3,7 +3,7 @@ package org.rhasspy.mobile.logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.readOnly
 
-class EventLogger constructor(val tag: EventTag) {
+class EventLogger constructor(public val tag: EventTag) {
 
     init{
         println("created event logger for $tag")

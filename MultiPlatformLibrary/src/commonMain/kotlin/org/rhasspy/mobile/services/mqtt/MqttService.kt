@@ -224,8 +224,9 @@ class MqttService : IService() {
                             else -> receiveEvent.error("${ErrorType.InvalidTopic} $topic")
                         }
                     } else {
-                        receiveEvent.warning(ErrorType.DifferentSiteId.toString())
+                        receiveEvent.warning("${ErrorType.DifferentSiteId.toString()} ${message.payload.decodeToString()}")
                     }
+                    receiveEvent.success()
                 }
             } ?: run {
                 //site id in topic
@@ -240,6 +241,7 @@ class MqttService : IService() {
                         .matches(topic) -> playBytes(message.payload)
                     else -> receiveEvent.error("${ErrorType.InvalidTopic} $topic")
                 }
+                receiveEvent.success()
             }
 
 

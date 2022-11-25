@@ -16,7 +16,7 @@ fun List<Byte>.isNotAboveThreshold(threshold: Float): Boolean {
 
 //https://stackoverflow.com/questions/13039846/what-do-the-bytes-in-a-wav-file-represent
 //adds wav header in front of data
-fun MutableList<Byte>.addWavHeader() {
+fun MutableList<Byte>.addWavHeader() : List<Byte> {
     val dataSize = (this.size + 44 - 8).toByteArray()
     val audioDataSize = this.size.toByteArray()
 
@@ -27,6 +27,7 @@ fun MutableList<Byte>.addWavHeader() {
         audioDataSize[0], audioDataSize[1], audioDataSize[2], audioDataSize[3] //40-43 data size of rest
     )
     this.addAll(0, header.toList())
+    return this
 }
 
 fun <T1, T2, R> combineState(

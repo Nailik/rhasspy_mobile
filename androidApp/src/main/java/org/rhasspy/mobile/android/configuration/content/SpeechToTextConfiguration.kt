@@ -2,6 +2,7 @@ package org.rhasspy.mobile.android.configuration.content
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,8 +17,10 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.configuration.test.EventListItem
+import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.android.utils.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
@@ -88,11 +91,26 @@ private fun TestContent(
     viewModel: SpeechToTextConfigurationViewModel
 ) {
 
+    Column(modifier = modifier.fillMaxWidth()) {
+
+  //  RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::startTestRecording) { onClick ->
+        FilledTonalButtonListItem(
+            text = if (viewModel.isRecording.collectAsState().value) {
+                MR.strings.stop
+            } else MR.strings.microphone,
+            onClick =  viewModel::startTestRecording
+        )
+ //   }
+
     val eventsList by viewModel.events.collectAsState()
 
-    LazyColumn(modifier = modifier.fillMaxHeight()) {
+    LazyColumn(modifier = Modifier.fillMaxHeight()) {
         items(eventsList) { item ->
             EventListItem(item)
         }
     }
+
+    }
+
+
 }

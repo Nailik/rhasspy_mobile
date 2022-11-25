@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -14,6 +15,7 @@ import org.rhasspy.mobile.data.SpeechToTextOptions
 import org.rhasspy.mobile.logger.Event
 import org.rhasspy.mobile.logger.EventLogger
 import org.rhasspy.mobile.logger.EventTag
+import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.services.mqtt.MqttService
@@ -118,26 +120,54 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
         return eventLogger.events
     }
 
+    private var testScope = CoroutineScope(Dispatchers.Default)
+
+    private val _isRecording = MutableStateFlow(false)
+    val isRecording = _isRecording.readOnly
+
+    fun startTestRecording() {
+        val service = get<MqttService>()
+
+        if (!_isRecording.value) {
+            _isRecording.value = true
+            testScope = CoroutineScope(Dispatchers.Default)
+            testScope.launch {
+                service.startListening()
+                //await start listening
+                AudioRecorder.output.collect {
+                    if(_isRecording.value) {
+                        service.audioFrame(it.toMutableList().addWavHeader())
+                    }
+                }
+            }
+
+            AudioRecorder.startRecording()
+        } else {
+            testScope.launch {
+                AudioRecorder.output.collect {
+                    if(!_isRecording.value) {
+                        //send silence to force stop recording
+                        //Works, fake silence
+                        service.audioFrame(it.map { 0.toByte() }.toMutableList().addWavHeader())
+                    }
+                }
+            }
+        }
+
+    }
+
+    override fun onStopTest() {
+        _isRecording.value = false
+        testScope.cancel()
+    }
+
     override suspend fun runTest() {
         //TODO test with real audio??
 
         val service = get<MqttService>()
         CoroutineScope(Dispatchers.Default).launch {
             service.isHasStarted.collect {
-                if (it) {
-
-                    //seems necessary to tell remote to start listening (published anyway)
-                    //service.hotWordDetected("test")
-
-
-                    //wait till start listening?
-                    //send audio frames?
-                    //publish stop listening? (On user click, or will mqtt send this when silence was detected)
-
-
-                    val client = get<RhasspyActionsService>()
-                    client.speechToText(listOf())
-                }
+                //allow record button
             }
         }
         super.runTest()
