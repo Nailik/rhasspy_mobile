@@ -1,11 +1,18 @@
 package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.koin.core.component.get
+import org.koin.core.component.inject
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.AudioOutputOptions
 import org.rhasspy.mobile.data.AudioPlayingOptions
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
+import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
+import org.rhasspy.mobile.services.localaudio.LocalAudioServiceParams
+import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.viewModels.configuration.test.AudioPlayingConfigurationTest
 
 /**
  * ViewModel for Audio Playing Configuration
@@ -16,6 +23,9 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
  * all Options as list
  */
 class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
+
+    private val testRunner by inject<AudioPlayingConfigurationTest>()
+    override val events = testRunner.events
 
     //unsaved data
     private val _audioPlayingOption = MutableStateFlow(ConfigurationSettings.audioPlayingOption.value)
@@ -102,14 +112,33 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
         _audioPlayingHttpEndpoint.value = ConfigurationSettings.audioPlayingHttpEndpoint.value
     }
 
-    /**
-     * test unsaved data configuration
-     */
-    override fun onTest() {
-        //TODO only when enabled
-        //record audio button
-        //play audio button
-        TODO()
+    override fun initializeTestParams() {
+        get<RhasspyActionsServiceParams> {
+            parametersOf(
+                RhasspyActionsServiceParams(
+                    audioPlayingOption = _audioPlayingOption.value
+                )
+            )
+        }
+
+        get<HttpClientServiceParams> {
+            parametersOf(
+                HttpClientServiceParams(
+                    isUseCustomAudioPlayingEndpoint = _isUseCustomAudioPlayingHttpEndpoint.value,
+                    audioPlayingHttpEndpoint = _audioPlayingHttpEndpoint.value
+                )
+            )
+        }
+
+        get<LocalAudioServiceParams> {
+            parametersOf(
+                LocalAudioServiceParams(
+                    audioOutputOption = _audioOutputOption.value
+                )
+            )
+        }
     }
+
+    override fun runTest() = testRunner.startTest()
 
 }

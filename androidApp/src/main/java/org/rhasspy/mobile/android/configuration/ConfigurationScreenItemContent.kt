@@ -72,8 +72,6 @@ fun ConfigurationScreenItemContent(
         }
     }
 
-
-
     CompositionLocalProvider(
         LocalConfigurationNavController provides navController
     ) {
@@ -90,7 +88,6 @@ fun ConfigurationScreenItemContent(
                     onSave = viewModel::save,
                     onTest = {
                         navController.navigate(ConfigurationContentScreens.Test.name)
-                        viewModel.test()
                     },
                     onDiscard = viewModel::discard,
                     content = content
@@ -98,7 +95,8 @@ fun ConfigurationScreenItemContent(
             }
             composable(ConfigurationContentScreens.Test.name) {
                 TestConfigurationScreen(
-                    content = testContent
+                    content = testContent,
+                    onOpenPage = viewModel::onOpenTestPage
                 )
             }
         }
@@ -196,10 +194,14 @@ private fun EditConfigurationScreen(
 }
 
 @Composable
-private fun TestConfigurationScreen(content: @Composable (modifier: Modifier) -> Unit) {
+private fun TestConfigurationScreen(
+    content: @Composable (modifier: Modifier) -> Unit,
+    onOpenPage: () -> Unit
+) {
     val navController = LocalConfigurationNavController.current
 
     LaunchedEffect(Unit) {
+        onOpenPage.invoke()
         Application.Instance.isAppInBackground.collect {
             if (it) {
                 navController.popBackStack()

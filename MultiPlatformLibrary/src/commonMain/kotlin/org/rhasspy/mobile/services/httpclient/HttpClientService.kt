@@ -49,6 +49,9 @@ class HttpClientService : IService() {
     private val textToSpeechUrl =
         (if (params.isUseCustomTextToSpeechHttpEndpoint) params.textToSpeechHttpEndpoint else params.httpServerEndpoint) +
                 HttpClientPath.TextToSpeech.path
+    private val audioPlayingUrl =
+        (if (params.isUseCustomAudioPlayingEndpoint) params.audioPlayingHttpEndpoint else params.httpServerEndpoint) +
+                HttpClientPath.PlayWav.path
     private val hassEventUrl = "${params.intentHandlingHassEndpoint}/api/events/rhasspy_"
     private val hassIntentUrl = "${params.intentHandlingHassEndpoint}/api/intent/handle"
 
@@ -144,7 +147,7 @@ class HttpClientService : IService() {
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     suspend fun playWav(data: List<Byte>): ServiceResponse<*> {
-        return post<String>(PlayWav, params.audioPlayingHttpEndpoint) {
+        return post<String>(PlayWav, audioPlayingUrl) {
             setAttributes {
                 contentType(audioContentType)
             }
@@ -200,6 +203,7 @@ class HttpClientService : IService() {
             setBody(intentJson)
         }
     }
+
 
     /**
      * post data to endpoint

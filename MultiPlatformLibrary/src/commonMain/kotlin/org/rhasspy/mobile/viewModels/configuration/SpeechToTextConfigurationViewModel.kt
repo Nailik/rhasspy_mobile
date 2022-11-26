@@ -1,25 +1,21 @@
 package org.rhasspy.mobile.viewModels.configuration
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import org.koin.core.component.get
+import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.SpeechToTextOptions
-import org.rhasspy.mobile.middleware.EventType
-import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
-import org.rhasspy.mobile.services.mqtt.MqttService
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
-import kotlin.reflect.KClass
+import org.rhasspy.mobile.viewModels.configuration.test.SpeechToTextConfigurationTest
 
 class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
+
+    private val testRunner by inject<SpeechToTextConfigurationTest>()
+    override val events = testRunner.events
 
     //unsaved data
     private val _speechToTextOption = MutableStateFlow(ConfigurationSettings.speechToTextOption.value)
@@ -88,11 +84,15 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
         _speechToTextHttpEndpoint.value = ConfigurationSettings.speechToTextHttpEndpoint.value
     }
 
-    /**
-     * test unsaved data configuration
-     */
-    override fun onTest() {
-        //initialize test params
+    override fun initializeTestParams() {
+        get<RhasspyActionsServiceParams> {
+            parametersOf(
+                RhasspyActionsServiceParams(
+                    speechToTextOption = _speechToTextOption.value
+                )
+            )
+        }
+
         get<HttpClientServiceParams> {
             parametersOf(
                 HttpClientServiceParams(
@@ -101,74 +101,8 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
                 )
             )
         }
-        get<RhasspyActionsServiceParams> {
-            parametersOf(
-                RhasspyActionsServiceParams(
-                    speechToTextOption = _speechToTextOption.value
-                )
-            )
-        }
-        get<MqttService>()
-        //start web server
-        get<RhasspyActionsService>()
     }
 
-    private var testScope = CoroutineScope(Dispatchers.Default)
-
-    private val _isRecording = MutableStateFlow(false)
-    val isRecording = _isRecording.readOnly
-
-
-
-    //for test
-    override val evenFilterType: KClass<*> = EventType.MqttServiceEventType::class
-
-    override fun onStopTest() {
-        _isRecording.value = false
-        testScope.cancel()
-    }
-
-    override suspend fun runTest() {
-        //TODO test with real audio??
-
-        val service = get<MqttService>()
-        CoroutineScope(Dispatchers.Default).launch {
-            service.isHasStarted.collect {
-                //allow record button
-            }
-        }
-        super.runTest()
-    }
-
-    fun startTestRecording() {
-        val service = get<MqttService>()
-
-        if (!_isRecording.value) {
-            _isRecording.value = true
-            testScope = CoroutineScope(Dispatchers.Default)
-            testScope.launch {
-                service.hotWordDetected("test")
-                //await start listening
-                AudioRecorder.output.collect {
-                    if (_isRecording.value) {
-                        service.audioFrame(it.toMutableList().addWavHeader())
-                    }
-                }
-            }
-
-            AudioRecorder.startRecording()
-        } else {
-            testScope.launch {
-                AudioRecorder.output.collect {
-                    if (!_isRecording.value) {
-                        //send silence to force stop recording
-                        //Works, fake silence
-                        service.audioFrame(it.map { 0.toByte() }.toMutableList().addWavHeader())
-                    }
-                }
-            }
-        }
-
-    }
+    override fun runTest() = testRunner.startTest()
 
 }

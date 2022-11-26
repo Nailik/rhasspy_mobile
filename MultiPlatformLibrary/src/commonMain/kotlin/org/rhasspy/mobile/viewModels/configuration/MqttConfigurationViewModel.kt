@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
+import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
@@ -10,8 +11,12 @@ import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.services.mqtt.MqttServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.viewModels.configuration.test.MqttConfigurationTest
 
 class MqttConfigurationViewModel : IConfigurationViewModel() {
+
+    private val testRunner by inject<MqttConfigurationTest>()
+    override val events = testRunner.events
 
     //unsaved data
     private val _isMqttEnabled = MutableStateFlow(ConfigurationSettings.isMqttEnabled.value)
@@ -144,7 +149,7 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
     /**
      * test unsaved data configuration
      */
-    override fun onTest() {
+    override fun initializeTestParams() {
         //initialize test params
         get<MqttServiceParams> {
             parametersOf(
@@ -164,5 +169,7 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
             )
         }
     }
+
+    override fun runTest() = testRunner.startTest()
 
 }

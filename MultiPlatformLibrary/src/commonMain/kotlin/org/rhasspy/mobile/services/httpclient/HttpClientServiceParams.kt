@@ -12,6 +12,7 @@ data class HttpClientServiceParams(
     val intentRecognitionHttpEndpoint: String = ConfigurationSettings.intentRecognitionHttpEndpoint.value,
     val isUseCustomTextToSpeechHttpEndpoint: Boolean = ConfigurationSettings.isUseCustomTextToSpeechHttpEndpoint.value,
     val textToSpeechHttpEndpoint: String = ConfigurationSettings.textToSpeechHttpEndpoint.value,
+    val isUseCustomAudioPlayingEndpoint: Boolean = ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.value,
     val audioPlayingHttpEndpoint: String = ConfigurationSettings.audioPlayingHttpEndpoint.value,
     val intentHandlingHttpEndpoint: String = ConfigurationSettings.intentHandlingHttpEndpoint.value,
     val intentHandlingHassEndpoint: String = ConfigurationSettings.intentHandlingHassEndpoint.value,

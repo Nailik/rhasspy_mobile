@@ -25,6 +25,7 @@ import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.services.indication.IndicationService
 import org.rhasspy.mobile.services.localaudio.LocalAudioService
+import org.rhasspy.mobile.services.localaudio.LocalAudioServiceParams
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.mqtt.MqttServiceParams
 import org.rhasspy.mobile.services.recording.RecordingService
@@ -37,6 +38,7 @@ import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.services.webserver.WebServerServiceParams
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.viewModels.configuration.test.*
 
 inline fun <reified T : Closeable> Module.closeableSingle(
     qualifier: Qualifier? = null,
@@ -61,6 +63,8 @@ val serviceModule = module {
     closeableSingle { IndicationService }
 
     single { params -> createServiceMiddleware(params.getOrNull() ?: false) }
+
+    single { params -> params.getOrNull<LocalAudioServiceParams>() ?: LocalAudioServiceParams() }
     single { params -> params.getOrNull<RhasspyActionsServiceParams>() ?: RhasspyActionsServiceParams() }
     single { params -> params.getOrNull<MqttServiceParams>() ?: MqttServiceParams() }
     single { params -> params.getOrNull<HttpClientServiceParams>() ?: HttpClientServiceParams() }
@@ -69,7 +73,20 @@ val serviceModule = module {
     single { params -> params.getOrNull<HomeAssistantServiceParams>() ?: HomeAssistantServiceParams() }
     single { params -> params.getOrNull<HotWordServiceParams>() ?: HotWordServiceParams() }
     single { params -> params.getOrNull<DialogManagerServiceParams>() ?: DialogManagerServiceParams() }
+
+    closeableSingle { AudioPlayingConfigurationTest() }
+    closeableSingle { AudioRecordingConfigurationTest() }
+    closeableSingle { DialogManagementConfigurationTest() }
+    closeableSingle { IntentHandlingConfigurationTest() }
+    closeableSingle { IntentRecognitionConfigurationTest() }
+    closeableSingle { MqttConfigurationTest() }
+    closeableSingle { RemoteHermesHttpConfigurationTest() }
+    closeableSingle { SpeechToTextConfigurationTest() }
+    closeableSingle { TextToSpeechConfigurationTest() }
+    closeableSingle { WakeWordConfigurationTest() }
+    closeableSingle { WebServerConfigurationTest() }
 }
+
 
 fun createServiceMiddleware(isTest: Boolean): IServiceMiddleware {
     return when (isTest) {

@@ -1,15 +1,25 @@
 package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.koin.core.component.get
+import org.koin.core.component.inject
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.data.HomeAssistantIntentHandlingOptions
 import org.rhasspy.mobile.data.IntentHandlingOptions
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.homeassistant.HomeAssistantServiceParams
+import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
+import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.viewModels.configuration.test.IntentHandlingConfigurationTest
 
 class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
+
+    private val testRunner by inject<IntentHandlingConfigurationTest>()
+    override val events = testRunner.events
 
     //unsaved data
     private val _intentHandlingOption = MutableStateFlow(ConfigurationSettings.intentHandlingOption.value)
@@ -101,14 +111,35 @@ class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
         _intentHandlingHomeAssistantOption.value = ConfigurationSettings.intentHandlingHomeAssistantOption.value
     }
 
-    /**
-     * test unsaved data configuration
-     */
-    override fun onTest() {
-        //TODO only when enabled
-        //textfield for intent name and button
-        //alternative? - textfield for text string to recognize intent and then handle
-        TODO()
+    override fun initializeTestParams() {
+        get<RhasspyActionsServiceParams> {
+            parametersOf(
+                RhasspyActionsServiceParams(
+                    intentHandlingOption = _intentHandlingOption.value
+                )
+            )
+        }
+
+        get<HttpClientServiceParams> {
+            parametersOf(
+                HttpClientServiceParams(
+                    intentHandlingHttpEndpoint = _intentHandlingHttpEndpoint.value,
+                    intentHandlingHassEndpoint = _intentHandlingHassEndpoint.value,
+                    intentHandlingHassAccessToken = _intentHandlingHassAccessToken.value,
+                    intentHandlingOption = _intentHandlingOption.value
+                )
+            )
+        }
+
+        get<HomeAssistantServiceParams> {
+            parametersOf(
+                HomeAssistantServiceParams(
+                    intentHandlingHomeAssistantOption = _intentHandlingHomeAssistantOption.value
+                )
+            )
+        }
     }
+
+    override fun runTest() = testRunner.startTest()
 
 }

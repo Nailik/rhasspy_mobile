@@ -1,15 +1,23 @@
 package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.koin.core.component.get
+import org.koin.core.component.inject
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.PorcupineLanguageOptions
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.nativeutils.SettingsUtils
 import org.rhasspy.mobile.nativeutils.openLink
+import org.rhasspy.mobile.services.hotword.HotWordServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
+import org.rhasspy.mobile.viewModels.configuration.test.WakeWordConfigurationTest
 
 class WakeWordConfigurationViewModel : IConfigurationViewModel() {
+
+    private val testRunner by inject<WakeWordConfigurationTest>()
+    override val events = testRunner.events
 
     data class PorcupineCustomKeywordUi(
         val keyword: PorcupineCustomKeyword,
@@ -219,16 +227,22 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
         filesToDelete.clear()
     }
 
-    /**
-     * test unsaved data configuration
-     * also test if porcupine activation works
-     */
-    override fun onTest() {
-        //TODO require microphone permission
-        //TODO only when enabled
-        //record audio
-        //show when wakeword was detected, also which wakeword
-        TODO()
+
+    override fun initializeTestParams() {
+        get<HotWordServiceParams> {
+            parametersOf(
+                HotWordServiceParams(
+                    wakeWordOption = _wakeWordOption.value,
+                    wakeWordPorcupineAccessToken = _wakeWordPorcupineAccessToken.value,
+                    wakeWordPorcupineKeywordDefaultOptions = _wakeWordPorcupineKeywordDefaultOptions.value,
+                    wakeWordPorcupineKeywordCustomOptions = _wakeWordPorcupineKeywordCustomOptions.value
+                        .filter { !it.deleted }.map { it.keyword }.toSet(),
+                    wakeWordPorcupineLanguage = _wakeWordPorcupineLanguage.value
+                )
+            )
+        }
     }
+
+    override fun runTest() = testRunner.startTest()
 
 }

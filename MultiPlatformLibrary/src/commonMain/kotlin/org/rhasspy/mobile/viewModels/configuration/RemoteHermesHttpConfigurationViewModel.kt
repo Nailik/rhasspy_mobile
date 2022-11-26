@@ -2,17 +2,19 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
+import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
-import org.rhasspy.mobile.middleware.EventType
 import org.rhasspy.mobile.readOnly
-import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
-import kotlin.reflect.KClass
+import org.rhasspy.mobile.viewModels.configuration.test.RemoteHermesHttpConfigurationTest
 
 class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
+
+    private val testRunner by inject<RemoteHermesHttpConfigurationTest>()
+    override val events = testRunner.events
 
     //unsaved data
     private val _httpServerEndpoint = MutableStateFlow(ConfigurationSettings.httpServerEndpoint.value)
@@ -55,33 +57,17 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
         _isHttpSSLVerificationDisabled.value = ConfigurationSettings.isHttpSSLVerificationDisabled.value
     }
 
-    //for test
-    override val evenFilterType: KClass<*> = EventType.HttpClientServiceEventType::class
-
-    /**
-     * test unsaved data configuration
-     */
-    override fun onTest() {
-        //initialize test params
+    override fun initializeTestParams() {
         get<HttpClientServiceParams> {
             parametersOf(
                 HttpClientServiceParams(
                     isHttpSSLVerificationDisabled = _isHttpSSLVerificationDisabled.value,
-                    httpServerEndpoint = _httpServerEndpoint.value,
-                    isUseCustomSpeechToTextHttpEndpoint = false,
-                    isUseCustomIntentRecognitionHttpEndpoint = false,
-                    isUseCustomTextToSpeechHttpEndpoint = false
+                    httpServerEndpoint = _httpServerEndpoint.value
                 )
             )
         }
     }
 
-    override suspend fun runTest() {
-        val client = get<HttpClientService>()
-        client.speechToText(emptyList())
-        client.recognizeIntent("text")
-        client.textToSpeech("text")
-        super.runTest()
-    }
+    override fun runTest() = testRunner.startTest()
 
 }

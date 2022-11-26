@@ -2,17 +2,19 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
+import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
-import org.rhasspy.mobile.middleware.EventType
 import org.rhasspy.mobile.readOnly
-import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.services.webserver.WebServerServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
-import kotlin.reflect.KClass
+import org.rhasspy.mobile.viewModels.configuration.test.WebServerConfigurationTest
 
 class WebServerConfigurationViewModel : IConfigurationViewModel() {
+
+    private val testRunner by inject<WebServerConfigurationTest>()
+    override val events = testRunner.events
 
     //unsaved data
     private val _isHttpServerEnabled =
@@ -72,14 +74,7 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
         _isHttpServerSSLEnabled.value = ConfigurationSettings.isHttpServerSSLEnabled.value
     }
 
-    //for test
-    override val evenFilterType: KClass<*> = EventType.WebServerServiceEventType::class
-
-    /**
-     * test unsaved data configuration
-     */
-    override fun onTest() {
-        //initialize test params
+    override fun initializeTestParams() {
         get<WebServerServiceParams> {
             parametersOf(
                 WebServerServiceParams(
@@ -91,9 +86,6 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
         }
     }
 
-    override suspend fun runTest() {
-        //start web server
-        get<WebServerService>()
-    }
+    override fun runTest() = testRunner.startTest()
 
 }

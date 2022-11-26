@@ -1,12 +1,21 @@
 package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.koin.core.component.get
+import org.koin.core.component.inject
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.TextToSpeechOptions
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
+import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
+import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.viewModels.configuration.test.TextToSpeechConfigurationTest
 
 class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
+
+    private val testRunner by inject<TextToSpeechConfigurationTest>()
+    override val events = testRunner.events
 
     //unsaved data
     private val _textToSpeechOption = MutableStateFlow(ConfigurationSettings.textToSpeechOption.value)
@@ -76,16 +85,25 @@ class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
         _textToSpeechHttpEndpoint.value = ConfigurationSettings.textToSpeechHttpEndpoint.value
     }
 
-    /**
-     * test unsaved data configuration
-     */
-    override fun onTest() {
-        //TODO only when enabled
-        //textfield to input test
-        //button to send text
-        //play audio (on music)
-        //warning when output is silent
-        TODO()
+    override fun initializeTestParams() {
+        get<RhasspyActionsServiceParams> {
+            parametersOf(
+                RhasspyActionsServiceParams(
+                    textToSpeechOption = _textToSpeechOption.value
+                )
+            )
+        }
+
+        get<HttpClientServiceParams> {
+            parametersOf(
+                HttpClientServiceParams(
+                    isUseCustomTextToSpeechHttpEndpoint = _isUseCustomTextToSpeechHttpEndpoint.value,
+                    textToSpeechHttpEndpoint = _textToSpeechHttpEndpoint.value
+                )
+            )
+        }
     }
+
+    override fun runTest() = testRunner.startTest()
 
 }

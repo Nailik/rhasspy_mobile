@@ -1,12 +1,20 @@
 package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.koin.core.component.get
+import org.koin.core.component.inject
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.udp.UdpServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.viewModels.configuration.test.AudioRecordingConfigurationTest
 
 class AudioRecordingConfigurationViewModel : IConfigurationViewModel() {
+
+    private val testRunner by inject<AudioRecordingConfigurationTest>()
+    override val events = testRunner.events
 
     //unsaved data
     private val _isUdpOutputEnabled = MutableStateFlow(ConfigurationSettings.isUdpOutputEnabled.value)
@@ -67,14 +75,18 @@ class AudioRecordingConfigurationViewModel : IConfigurationViewModel() {
         _udpOutputPort.value = ConfigurationSettings.udpOutputPort.value
     }
 
-    /**
-     * test unsaved data configuration
-     */
-    override fun onTest() {
-        //only test button when enabled
-        //require microphone permission
-        //send data (show information that data is being send)
-        TODO()
+    override fun initializeTestParams() {
+        get<UdpServiceParams> {
+            parametersOf(
+                UdpServiceParams(
+                    isUdpOutputEnabled = _isUdpOutputEnabled.value,
+                    udpOutputHost = _udpOutputHost.value,
+                    udpOutputPort = _udpOutputPort.value
+                )
+            )
+        }
     }
+
+    override fun runTest() = testRunner.startTest()
 
 }

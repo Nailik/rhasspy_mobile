@@ -1,0 +1,26 @@
+package org.rhasspy.mobile.viewModels.configuration.test
+
+import kotlinx.coroutines.CoroutineScope
+
+class AudioPlayingConfigurationTest : IConfigurationTest() {
+
+    public override fun startTest() {
+        super.startTest()
+    }
+
+    override fun initializeTest() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onTest(scope: CoroutineScope) {
+        TODO("Not yet implemented")
+    }
+
+    override fun runTest(scope: CoroutineScope) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onClose() {
+        TODO("Not yet implemented")
+    }
+}

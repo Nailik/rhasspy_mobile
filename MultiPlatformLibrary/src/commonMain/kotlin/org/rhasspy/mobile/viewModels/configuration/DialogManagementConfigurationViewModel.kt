@@ -1,12 +1,17 @@
 package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.koin.core.component.get
+import org.koin.core.component.inject
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.data.DialogManagementOptions
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.dialogManager.DialogManagerServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.viewModels.configuration.test.DialogManagementConfigurationTest
 
 /**
  * ViewModel for Dialog Management Configuration
@@ -15,6 +20,9 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
  * all Options as list
  */
 class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
+
+    private val testRunner by inject<DialogManagementConfigurationTest>()
+    override val events = testRunner.events
 
     //unsaved data
     private val _dialogManagementOption = MutableStateFlow(ConfigurationSettings.dialogManagementOption.value)
@@ -50,13 +58,16 @@ class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
         _dialogManagementOption.value = ConfigurationSettings.dialogManagementOption.value
     }
 
-    /**
-     * test unsaved data configuration
-     */
-    override fun onTest() {
-        //TODO only when enabled
-        //?? maybe record button -> test flow
-        TODO()
+    override fun initializeTestParams() {
+        get<DialogManagerServiceParams> {
+            parametersOf(
+                DialogManagerServiceParams(
+                    option = _dialogManagementOption.value
+                )
+            )
+        }
     }
+
+    override fun runTest() = testRunner.startTest()
 
 }

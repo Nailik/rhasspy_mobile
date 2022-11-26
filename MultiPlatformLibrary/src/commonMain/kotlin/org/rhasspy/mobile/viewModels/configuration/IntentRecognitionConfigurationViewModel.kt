@@ -1,12 +1,21 @@
 package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.koin.core.component.get
+import org.koin.core.component.inject
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.IntentRecognitionOptions
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
+import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
+import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.viewModels.configuration.test.IntentRecognitionConfigurationTest
 
 class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
+
+    private val testRunner by inject<IntentRecognitionConfigurationTest>()
+    override val events = testRunner.events
 
     //unsaved data
     private val _intentRecognitionOption = MutableStateFlow(ConfigurationSettings.intentRecognitionOption.value)
@@ -76,15 +85,25 @@ class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
         _intentRecognitionHttpEndpoint.value = ConfigurationSettings.intentRecognitionHttpEndpoint.value
     }
 
-    /**
-     * test unsaved data configuration
-     */
-    override fun onTest() {
-        //TODO only when enabled
-        //textfield to input test
-        //button to send intent
-        //information if was recognized
-        TODO()
+    override fun initializeTestParams() {
+        get<RhasspyActionsServiceParams> {
+            parametersOf(
+                RhasspyActionsServiceParams(
+                    intentRecognitionOption = _intentRecognitionOption.value
+                )
+            )
+        }
+
+        get<HttpClientServiceParams> {
+            parametersOf(
+                HttpClientServiceParams(
+                    isUseCustomTextToSpeechHttpEndpoint = _isUseCustomIntentRecognitionHttpEndpoint.value,
+                    intentRecognitionHttpEndpoint = _intentRecognitionHttpEndpoint.value,
+                )
+            )
+        }
     }
+
+    override fun runTest() = testRunner.startTest()
 
 }
