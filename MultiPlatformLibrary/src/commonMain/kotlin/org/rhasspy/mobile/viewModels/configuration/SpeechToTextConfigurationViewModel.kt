@@ -9,6 +9,7 @@ import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.SpeechToTextOptions
+import org.rhasspy.mobile.middleware.EventType
 import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
@@ -16,6 +17,7 @@ import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import kotlin.reflect.KClass
 
 class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
 
@@ -116,6 +118,28 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
     private val _isRecording = MutableStateFlow(false)
     val isRecording = _isRecording.readOnly
 
+
+
+    //for test
+    override val evenFilterType: KClass<*> = EventType.MqttServiceEventType::class
+
+    override fun onStopTest() {
+        _isRecording.value = false
+        testScope.cancel()
+    }
+
+    override suspend fun runTest() {
+        //TODO test with real audio??
+
+        val service = get<MqttService>()
+        CoroutineScope(Dispatchers.Default).launch {
+            service.isHasStarted.collect {
+                //allow record button
+            }
+        }
+        super.runTest()
+    }
+
     fun startTestRecording() {
         val service = get<MqttService>()
 
@@ -123,7 +147,7 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
             _isRecording.value = true
             testScope = CoroutineScope(Dispatchers.Default)
             testScope.launch {
-                // service.startListening()
+                service.hotWordDetected("test")
                 //await start listening
                 AudioRecorder.output.collect {
                     if (_isRecording.value) {
@@ -145,23 +169,6 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
             }
         }
 
-    }
-
-    override fun onStopTest() {
-        _isRecording.value = false
-        testScope.cancel()
-    }
-
-    override suspend fun runTest() {
-        //TODO test with real audio??
-
-        val service = get<MqttService>()
-        CoroutineScope(Dispatchers.Default).launch {
-            service.isHasStarted.collect {
-                //allow record button
-            }
-        }
-        super.runTest()
     }
 
 }

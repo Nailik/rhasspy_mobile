@@ -5,10 +5,12 @@ import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
+import org.rhasspy.mobile.middleware.EventType
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import kotlin.reflect.KClass
 
 class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
 
@@ -37,7 +39,6 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
         _isHttpSSLVerificationDisabled.value = disabled
     }
 
-
     /**
      * save data configuration
      */
@@ -54,6 +55,8 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
         _isHttpSSLVerificationDisabled.value = ConfigurationSettings.isHttpSSLVerificationDisabled.value
     }
 
+    //for test
+    override val evenFilterType: KClass<*> = EventType.HttpClientServiceEventType::class
 
     /**
      * test unsaved data configuration
