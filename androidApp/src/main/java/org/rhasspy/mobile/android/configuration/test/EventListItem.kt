@@ -40,7 +40,7 @@ fun EventListItem(event: Event) {
                     EventState.Loading -> "Loading"
                     is EventState.Success -> state.information ?: "No Details"
                     is EventState.Warning -> state.information ?: "No Details"
-                    is EventState.Error -> state.information ?: "Unknown exception"
+                    is EventState.Error -> state.toString()
                 }
             )
         },

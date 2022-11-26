@@ -54,6 +54,7 @@ class WebServerService : IService() {
      * logs start event
      */
     init {
+        println("Testting - start webserver")
         if (params.isHttpServerEnabled) {
             val startEvent = serviceMiddleware.createEvent(Start)
 
@@ -263,7 +264,7 @@ class WebServerService : IService() {
             }
         } ?: run {
             call.respond(HttpStatusCode.BadRequest, VolumeValueInvalid.description)
-            AudioContentTypeWarning
+            VolumeValueInvalid
         }
     }
 

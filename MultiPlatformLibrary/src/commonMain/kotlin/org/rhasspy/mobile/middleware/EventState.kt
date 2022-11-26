@@ -10,6 +10,10 @@ sealed class EventState(val information: String? = null) {
 
     class Warning(information: String? = null) : EventState(information)
 
-    class Error(information: String? = null) : EventState(information)
+    class Error(private val errorType: ErrorType? = null) : EventState("") {
+        override fun toString(): String {
+            return errorType?.toString() ?: ""
+        }
+    }
 
 }
