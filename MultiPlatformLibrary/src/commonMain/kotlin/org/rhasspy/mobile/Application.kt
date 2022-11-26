@@ -29,8 +29,6 @@ import org.rhasspy.mobile.services.recording.RecordingService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.services.settings.AppSettingsService
-import org.rhasspy.mobile.services.statemachine.StateMachineService
-import org.rhasspy.mobile.services.statemachine.StateMachineServiceParams
 import org.rhasspy.mobile.services.udp.UdpService
 import org.rhasspy.mobile.services.udp.UdpServiceParams
 import org.rhasspy.mobile.services.webserver.WebServerService
@@ -48,7 +46,6 @@ inline fun <reified T : Closeable> Module.closeableSingle(
 
 val serviceModule = module {
     closeableSingle { LocalAudioService() }
-    closeableSingle { StateMachineService() }
     closeableSingle { RhasspyActionsService() }
     closeableSingle { MqttService() }
     closeableSingle { HttpClientService() }
@@ -62,7 +59,6 @@ val serviceModule = module {
     closeableSingle { AppSettingsService() }
     closeableSingle { IndicationService }
 
-    single { params -> params.getOrNull<StateMachineServiceParams>() ?: StateMachineServiceParams() }
     single { params -> params.getOrNull<RhasspyActionsServiceParams>() ?: RhasspyActionsServiceParams() }
     single { params -> params.getOrNull<MqttServiceParams>() ?: MqttServiceParams() }
     single { params -> params.getOrNull<HttpClientServiceParams>() ?: HttpClientServiceParams() }

@@ -9,6 +9,11 @@ sealed interface EventType {
         IncomingCall
     }
 
+    enum class HotWordServiceEventType: EventType {
+        StartPorcupine,
+        Detected
+    }
+
     enum class HttpClientServiceEventType : EventType {
         Start,
         SpeechToText,
@@ -23,7 +28,6 @@ sealed interface EventType {
     enum class WebServerServiceEventType : EventType {
         Start,
         Received
-
     }
 
     enum class UdpServiceEventType : EventType {
@@ -50,6 +54,13 @@ sealed interface EventType {
         IntentHandling
     }
 
+    enum class HomeAssistantServiceEventType : EventType {
+        SendIntent
+    }
+
+    enum class IndicationServiceEventType : EventType {
+        Start
+    }
 
 }
 
@@ -89,6 +100,26 @@ sealed interface ErrorType {
         VolumeValueOutOfRange("Volume Out of Range, allowed: 0f...1f"),
         VolumeValueInvalid("Invalid Volume, allowed: 0f...1f"),
         AudioContentTypeWarning("Missing Content Type")
+    }
+
+    enum class HotWordServiceError : ErrorType{
+        MicrophonePermissionMissing,
+        PorcupineActivationException,
+        PorcupineActivationLimitException,
+        PorcupineActivationRefusedException,
+        PorcupineActivationThrottledException,
+        PorcupineInvalidArgumentException,
+        PorcupineInvalidStateException,
+        PorcupineIOException,
+        PorcupineKeyException,
+        PorcupineMemoryException,
+        PorcupineRuntimeException,
+        PorcupineStopIterationException,
+        Unknown
+    }
+
+    enum class IndicationServiceErrorType: ErrorType {
+        OverlayPermissionMissing
     }
 
 }

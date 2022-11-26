@@ -3,6 +3,7 @@ package org.rhasspy.mobile.middleware
 import org.rhasspy.mobile.middleware.action.LocalAction
 import org.rhasspy.mobile.middleware.action.MqttAction
 import org.rhasspy.mobile.middleware.action.WebServerAction
+import org.rhasspy.mobile.middleware.action.WebServerRequest
 
 /**
  * handles ALL INCOMING events
@@ -24,12 +25,16 @@ abstract class IServiceMiddleware {
 
     }
 
+    fun <T> webServerRequest(event: WebServerRequest<T>): T {
+        TODO()
+    }
+
 
     fun httpAction() {
 
     }
 
-    fun createEvent(eventType: EventType, description: String? = null) : Event{
+    fun createEvent(eventType: EventType, description: String? = null): Event {
 
         /**
          * eventually when testing update an existing(pending) event with event type
@@ -37,6 +42,5 @@ abstract class IServiceMiddleware {
 
         return Event(eventType, description).loading()
     }
-
 
 }

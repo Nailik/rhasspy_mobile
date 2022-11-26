@@ -22,11 +22,10 @@ import org.rhasspy.mobile.middleware.EventType.WebServerServiceEventType.Receive
 import org.rhasspy.mobile.middleware.EventType.WebServerServiceEventType.Start
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.middleware.action.WebServerAction.*
+import org.rhasspy.mobile.middleware.action.WebServerRequest.*
 import org.rhasspy.mobile.nativeutils.installCallLogging
 import org.rhasspy.mobile.nativeutils.installCompression
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.settings.AppSettingsService
-import org.rhasspy.mobile.services.statemachine.StateMachineService
 
 /**
  * Web server service holds all routes for WebServerPath values
@@ -40,9 +39,6 @@ import org.rhasspy.mobile.services.statemachine.StateMachineService
 class WebServerService : IService() {
 
     private val params by inject<WebServerServiceParams>()
-
-    private val stateMachineService by inject<StateMachineService>()
-    private val appSettingsService by inject<AppSettingsService>()
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
 
@@ -201,13 +197,13 @@ class WebServerService : IService() {
             else -> null
         }
 
-        return action?.let {
+        action?.let {
             call.respond(HttpStatusCode.Accepted)
-            appSettingsService.toggleListenForWakeWebServer(it)
-            null
+            serviceMiddleware.webServerAction(ListenForWake(it))
+            return null
         } ?: run {
             call.respond(HttpStatusCode.BadRequest, WakeOptionInvalid.description)
-            WakeOptionInvalid
+            return WakeOptionInvalid
         }
     }
 
@@ -218,7 +214,7 @@ class WebServerService : IService() {
      */
     private suspend fun playRecordingPost(call: ApplicationCall) {
         call.respond(HttpStatusCode.OK)
-        stateMachineService.playRecordingPostWebServer()
+        serviceMiddleware.webServerAction(PlayRecording)
     }
 
 
@@ -228,7 +224,7 @@ class WebServerService : IService() {
      */
     private suspend fun playRecordingGet(call: ApplicationCall) {
         call.respondBytes(
-            bytes = stateMachineService.playRecordingGetWebServer().toByteArray(),
+            bytes = serviceMiddleware.webServerRequest(PlayRecordingGet),
             contentType = audioContentType
         )
     }
@@ -245,7 +241,7 @@ class WebServerService : IService() {
         }
         call.respond(HttpStatusCode.OK)
         //play even without header
-        stateMachineService.playWavWebServer(call.receive<ByteArray>().toList())
+        serviceMiddleware.webServerAction(PlayWav(call.receive()))
     }
 
     /**
@@ -259,7 +255,7 @@ class WebServerService : IService() {
         return call.receive<String>().toFloatOrNull()?.let {
             return if (it in 0f..1f) {
                 call.respond(HttpStatusCode.Accepted)
-                appSettingsService.setVolumeWebServer(it)
+                serviceMiddleware.webServerAction(SetVolume(it))
                 null
             } else {
                 call.respond(HttpStatusCode.BadRequest, VolumeValueOutOfRange.description)
@@ -307,7 +303,7 @@ class WebServerService : IService() {
      */
     private suspend fun say(call: ApplicationCall) {
         call.respond(HttpStatusCode.OK)
-        stateMachineService.sayWebServer(call.receive())
+        serviceMiddleware.webServerAction(Say(call.receive()))
     }
 
 }

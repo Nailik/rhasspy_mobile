@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.services
 
+import org.rhasspy.mobile.middleware.ErrorType.HotWordServiceError
 import org.rhasspy.mobile.mqtt.MqttError
-import org.rhasspy.mobile.services.hotword.HotWordServiceError
 
 class ServiceWatchdog : IService() {
 

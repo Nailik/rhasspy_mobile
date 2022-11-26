@@ -13,7 +13,6 @@ import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceResponse
 import org.rhasspy.mobile.services.dialogManager.IDialogManagerService
-import org.rhasspy.mobile.services.statemachine.StateMachineService
 import org.rhasspy.mobile.settings.AppSettings
 import kotlin.time.Duration.Companion.milliseconds
 

@@ -1,31 +1,32 @@
 package org.rhasspy.mobile.services.indication
 
-import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.inject
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.logic.StateMachine
+import org.rhasspy.mobile.middleware.ErrorType.IndicationServiceErrorType.OverlayPermissionMissing
+import org.rhasspy.mobile.middleware.EventType.IndicationServiceEventType.Start
+import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.nativeutils.NativeIndication
+import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.ServiceWatchdog
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.sounds.SoundOptions
 
 object IndicationService : IService() {
-    private val logger = Logger.withTag("IndicationService")
 
     private val _indicationState = MutableStateFlow(IndicationState.Idle)
     private val _showVisualIndication = MutableStateFlow(false)
     val showVisualIndication = _showVisualIndication.readOnly
     val indicationState = _indicationState.readOnly
 
-    private val serviceWatchdog by inject<ServiceWatchdog>()
+    private val serviceMiddleware by inject<IServiceMiddleware>()
 
     init {
         if (AppSettings.isWakeWordLightIndicationEnabled.value) {
-            if (!NativeIndication.checkPermission()) {
-                serviceWatchdog.indicationServiceOverlayPermissionMissing()
+            if (!OverlayPermission.isGranted()) {
+                serviceMiddleware.createEvent(Start).error(OverlayPermissionMissing)
             }
         }
     }

@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.nativeutils
 
 import org.rhasspy.mobile.data.PorcupineLanguageOptions
-import org.rhasspy.mobile.services.hotword.HotWordServiceError
+import org.rhasspy.mobile.middleware.ErrorType
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
 
@@ -20,7 +20,7 @@ expect class NativeLocalPorcupineWakeWordService(
     onKeywordDetected: (hotWord: String) -> Unit
 ) {
 
-    fun start(): HotWordServiceError?
+    fun start(): ErrorType.HotWordServiceError?
 
     /**
      * stops porcupine

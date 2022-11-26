@@ -12,39 +12,19 @@ class AppSettingsService : IService() {
 //        TODO("Not yet implemented")
     }
 
-    fun hotWordToggleOnMqtt() {
-        AppSettings.isHotWordEnabled.value = true
-    }
-
-    fun hotWordToggleOffMqtt() {
-        AppSettings.isHotWordEnabled.value = false
-    }
-
-    fun intentHandlingToggleOnMqtt() {
-        AppSettings.isIntentHandlingEnabled.value = true
-    }
-
-    fun intentHandlingToggleOffMqtt() {
-        AppSettings.isIntentHandlingEnabled.value = false
-    }
-
-    fun audioOutputToggleOnMqtt() {
-        AppSettings.isAudioOutputEnabled.value = true
-    }
-
-    fun audioOutputToggleOffMqtt() {
-        AppSettings.isAudioOutputEnabled.value = false
-    }
-
-    fun setAudioVolumeMqtt(volume: Float) {
-        AppSettings.volume.value = volume
-    }
-
-    fun toggleListenForWakeWebServer(value: Boolean) {
+    fun hotWordToggle(value: Boolean) {
         AppSettings.isHotWordEnabled.value = value
     }
 
-    fun setVolumeWebServer(volume: Float) {
+    fun intentHandlingToggle(value: Boolean) {
+        AppSettings.isIntentHandlingEnabled.value = value
+    }
+
+    fun audioOutputToggle(value: Boolean) {
+        AppSettings.isAudioOutputEnabled.value = value
+    }
+
+    fun setAudioVolume(volume: Float) {
         AppSettings.volume.value = volume
     }
 

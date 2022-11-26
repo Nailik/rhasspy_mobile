@@ -3,11 +3,12 @@ package org.rhasspy.mobile.services.hotword
 import co.touchlab.kermit.Logger
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.WakeWordOption
+import org.rhasspy.mobile.middleware.EventType.HotWordServiceEventType.*
+import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.middleware.action.LocalAction
 import org.rhasspy.mobile.nativeutils.NativeLocalPorcupineWakeWordService
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceWatchdog
-import org.rhasspy.mobile.middleware.IServiceMiddleware
-import org.rhasspy.mobile.middleware.action.LocalAction
 import org.rhasspy.mobile.services.recording.RecordingService
 
 /**
@@ -21,9 +22,9 @@ class HotWordService : IService() {
     private val params by inject<HotWordServiceParams>()
     private var nativeLocalPorcupineWakeWordService: NativeLocalPorcupineWakeWordService? = null
 
-    private val serviceMiddleware by inject<IServiceMiddleware>()
-    private val serviceWatchdog by inject<ServiceWatchdog>()
     private val recordingService by inject<RecordingService>()
+
+    private val serviceMiddleware by inject<IServiceMiddleware>()
 
     /**
      * starts the service
@@ -32,6 +33,7 @@ class HotWordService : IService() {
         logger.d { "startHotWord" }
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {
+                val startPorcupineEvent = serviceMiddleware.createEvent(StartPorcupine)
                 //when porcupine is used for hotWord then start local service
                 nativeLocalPorcupineWakeWordService = NativeLocalPorcupineWakeWordService(
                     params.wakeWordPorcupineAccessToken,
@@ -42,7 +44,9 @@ class HotWordService : IService() {
                 )
                 val error = nativeLocalPorcupineWakeWordService?.start()
                 error?.also {
-                    serviceWatchdog.hotWordServiceError(error)
+                    startPorcupineEvent.error(it)
+                } ?: run {
+                    startPorcupineEvent.success()
                 }
             }
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
@@ -65,8 +69,10 @@ class HotWordService : IService() {
         nativeLocalPorcupineWakeWordService?.stop()
     }
 
-    private fun onKeywordDetected(hotWord: String) =
+    private fun onKeywordDetected(hotWord: String) {
+        serviceMiddleware.createEvent(Detected, hotWord).success()
         serviceMiddleware.localAction(LocalAction.HotWordDetected(hotWord))
+    }
 
     override fun onClose() {
         recordingService.stopRecording()

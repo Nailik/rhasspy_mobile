@@ -8,7 +8,7 @@ import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.PorcupineLanguageOptions
-import org.rhasspy.mobile.services.hotword.HotWordServiceError
+import org.rhasspy.mobile.middleware.ErrorType.HotWordServiceError
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
 import java.io.File
