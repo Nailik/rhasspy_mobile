@@ -11,8 +11,10 @@ import org.koin.core.qualifier.Qualifier
 import org.koin.dsl.module
 import org.koin.dsl.onClose
 import org.rhasspy.mobile.logger.FileLogger
+import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.middleware.ServiceMiddleware
+import org.rhasspy.mobile.middleware.ServiceTestMiddleware
 import org.rhasspy.mobile.mqtt.OverlayServices
-import org.rhasspy.mobile.services.ServiceWatchdog
 import org.rhasspy.mobile.services.dialogManager.DialogManagerServiceParams
 import org.rhasspy.mobile.services.dialogManager.IDialogManagerService
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
@@ -54,11 +56,11 @@ val serviceModule = module {
     closeableSingle { HomeAssistantService() }
     closeableSingle { RecordingService() }
     closeableSingle { HotWordService() }
-    closeableSingle { ServiceWatchdog() }
     closeableSingle { IDialogManagerService.getService() }
     closeableSingle { AppSettingsService() }
     closeableSingle { IndicationService }
 
+    single { params -> createServiceMiddleware(params.getOrNull() ?: false) }
     single { params -> params.getOrNull<RhasspyActionsServiceParams>() ?: RhasspyActionsServiceParams() }
     single { params -> params.getOrNull<MqttServiceParams>() ?: MqttServiceParams() }
     single { params -> params.getOrNull<HttpClientServiceParams>() ?: HttpClientServiceParams() }
@@ -67,6 +69,13 @@ val serviceModule = module {
     single { params -> params.getOrNull<HomeAssistantServiceParams>() ?: HomeAssistantServiceParams() }
     single { params -> params.getOrNull<HotWordServiceParams>() ?: HotWordServiceParams() }
     single { params -> params.getOrNull<DialogManagerServiceParams>() ?: DialogManagerServiceParams() }
+}
+
+fun createServiceMiddleware(isTest: Boolean): IServiceMiddleware {
+    return when (isTest) {
+        true -> ServiceTestMiddleware()
+        false -> ServiceMiddleware()
+    }
 }
 
 abstract class Application : NativeApplication(), KoinComponent {

@@ -8,7 +8,6 @@ import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.middleware.action.LocalAction
 import org.rhasspy.mobile.nativeutils.NativeLocalPorcupineWakeWordService
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.ServiceWatchdog
 import org.rhasspy.mobile.services.recording.RecordingService
 
 /**
