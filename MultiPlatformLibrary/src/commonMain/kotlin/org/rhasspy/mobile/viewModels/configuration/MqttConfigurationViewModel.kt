@@ -144,7 +144,7 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
     /**
      * test unsaved data configuration
      */
-    override fun onTest(){
+    override fun onTest() {
         //initialize test params
         get<MqttServiceParams> {
             parametersOf(

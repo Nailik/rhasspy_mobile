@@ -74,7 +74,7 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
 
             null//no error
         } catch (e: Exception) {
-            return when(e){
+            return when (e) {
                 is PorcupineActivationException -> HotWordServiceError.PorcupineActivationException
                 is PorcupineActivationLimitException -> HotWordServiceError.PorcupineActivationLimitException
                 is PorcupineActivationRefusedException -> HotWordServiceError.PorcupineActivationRefusedException
@@ -114,7 +114,7 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
             }.toMutableList())
         }
 
-        if(allKeywords.size > keywordIndex){
+        if (allKeywords.size > keywordIndex) {
             onKeywordDetected(allKeywords[keywordIndex])
         } else {
             onKeywordDetected("Unknown")

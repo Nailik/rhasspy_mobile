@@ -9,7 +9,7 @@ sealed interface EventType {
         IncomingCall
     }
 
-    enum class HotWordServiceEventType: EventType {
+    enum class HotWordServiceEventType : EventType {
         StartPorcupine,
         Detected
     }
@@ -102,7 +102,7 @@ sealed interface ErrorType {
         AudioContentTypeWarning("Missing Content Type")
     }
 
-    enum class HotWordServiceError : ErrorType{
+    enum class HotWordServiceError : ErrorType {
         MicrophonePermissionMissing,
         PorcupineActivationException,
         PorcupineActivationLimitException,
@@ -118,7 +118,7 @@ sealed interface ErrorType {
         Unknown
     }
 
-    enum class IndicationServiceErrorType: ErrorType {
+    enum class IndicationServiceErrorType : ErrorType {
         OverlayPermissionMissing
     }
 

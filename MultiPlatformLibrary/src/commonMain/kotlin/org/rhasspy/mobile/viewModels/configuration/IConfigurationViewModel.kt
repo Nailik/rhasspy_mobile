@@ -35,10 +35,11 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
 
     abstract fun onTest()
 
-    open suspend fun runTest(){
+    open suspend fun runTest() {
 
     }
-    open fun onStopTest(){
+
+    open fun onStopTest() {
 
     }
 

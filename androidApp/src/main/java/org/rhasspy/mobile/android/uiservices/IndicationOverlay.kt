@@ -32,7 +32,7 @@ import org.rhasspy.mobile.services.indication.IndicationState
 /**
  * Overlay Service
  */
-object IndicationOverlay: KoinComponent {
+object IndicationOverlay : KoinComponent {
 
     private lateinit var mParams: WindowManager.LayoutParams
     private val lifecycleOwner = CustomLifecycleOwner()

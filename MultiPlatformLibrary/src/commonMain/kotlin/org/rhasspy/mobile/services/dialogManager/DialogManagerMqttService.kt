@@ -2,7 +2,7 @@ package org.rhasspy.mobile.services.dialogManager
 
 import org.rhasspy.mobile.logic.Session
 
-class DialogManagerMqttService: IDialogManagerService() {
+class DialogManagerMqttService : IDialogManagerService() {
 
     var currentSession: Session? = null
         private set
@@ -66,7 +66,6 @@ class DialogManagerMqttService: IDialogManagerService() {
     override fun silenceDetectedLocal() {
         TODO("Not yet implemented")
     }
-
 
 
     override fun hotWordDetectedMqtt(hotWord: String) {

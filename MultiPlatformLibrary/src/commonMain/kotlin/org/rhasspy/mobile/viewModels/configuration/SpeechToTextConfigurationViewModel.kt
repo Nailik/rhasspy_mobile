@@ -123,10 +123,10 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
             _isRecording.value = true
             testScope = CoroutineScope(Dispatchers.Default)
             testScope.launch {
-               // service.startListening()
+                // service.startListening()
                 //await start listening
                 AudioRecorder.output.collect {
-                    if(_isRecording.value) {
+                    if (_isRecording.value) {
                         service.audioFrame(it.toMutableList().addWavHeader())
                     }
                 }
@@ -136,7 +136,7 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
         } else {
             testScope.launch {
                 AudioRecorder.output.collect {
-                    if(!_isRecording.value) {
+                    if (!_isRecording.value) {
                         //send silence to force stop recording
                         //Works, fake silence
                         service.audioFrame(it.map { 0.toByte() }.toMutableList().addWavHeader())

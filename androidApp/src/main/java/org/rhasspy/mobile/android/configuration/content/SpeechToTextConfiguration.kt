@@ -17,7 +17,6 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.configuration.test.EventListItem
-import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.android.utils.FilledTonalButtonListItem
@@ -93,22 +92,22 @@ private fun TestContent(
 
     Column(modifier = modifier.fillMaxWidth()) {
 
-  //  RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::startTestRecording) { onClick ->
+        //  RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::startTestRecording) { onClick ->
         FilledTonalButtonListItem(
             text = if (viewModel.isRecording.collectAsState().value) {
                 MR.strings.stop
             } else MR.strings.microphone,
-            onClick =  viewModel::startTestRecording
+            onClick = viewModel::startTestRecording
         )
- //   }
+        //   }
 
-    val eventsList by viewModel.events.collectAsState()
+        val eventsList by viewModel.events.collectAsState()
 
-    LazyColumn(modifier = Modifier.fillMaxHeight()) {
-        items(eventsList) { item ->
-            EventListItem(item)
+        LazyColumn(modifier = Modifier.fillMaxHeight()) {
+            items(eventsList) { item ->
+                EventListItem(item)
+            }
         }
-    }
 
     }
 

@@ -3,7 +3,8 @@ package org.rhasspy.mobile.services.hotword
 import co.touchlab.kermit.Logger
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.WakeWordOption
-import org.rhasspy.mobile.middleware.EventType.HotWordServiceEventType.*
+import org.rhasspy.mobile.middleware.EventType.HotWordServiceEventType.Detected
+import org.rhasspy.mobile.middleware.EventType.HotWordServiceEventType.StartPorcupine
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.middleware.action.LocalAction
 import org.rhasspy.mobile.nativeutils.NativeLocalPorcupineWakeWordService

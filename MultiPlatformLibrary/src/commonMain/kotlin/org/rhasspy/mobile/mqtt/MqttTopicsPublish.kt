@@ -3,7 +3,7 @@ package org.rhasspy.mobile.mqtt
 /**
  * topics where the mqtt client will publish to
  */
-enum class MqttTopicsPublish(override val topic: String): MqttTopic {
+enum class MqttTopicsPublish(override val topic: String) : MqttTopic {
 
     SessionStarted("hermes/dialogueManager/sessionStarted"),
     SessionEnded("hermes/dialogueManager/sessionEnded"),

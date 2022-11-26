@@ -104,7 +104,7 @@ class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
     /**
      * test unsaved data configuration
      */
-    override fun onTest(){
+    override fun onTest() {
         //TODO only when enabled
         //textfield for intent name and button
         //alternative? - textfield for text string to recognize intent and then handle

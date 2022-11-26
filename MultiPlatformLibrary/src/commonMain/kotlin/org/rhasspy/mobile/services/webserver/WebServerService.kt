@@ -22,7 +22,7 @@ import org.rhasspy.mobile.middleware.EventType.WebServerServiceEventType.Receive
 import org.rhasspy.mobile.middleware.EventType.WebServerServiceEventType.Start
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.middleware.action.WebServerAction.*
-import org.rhasspy.mobile.middleware.action.WebServerRequest.*
+import org.rhasspy.mobile.middleware.action.WebServerRequest.PlayRecordingGet
 import org.rhasspy.mobile.nativeutils.installCallLogging
 import org.rhasspy.mobile.nativeutils.installCompression
 import org.rhasspy.mobile.services.IService

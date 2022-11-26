@@ -223,7 +223,7 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
      * test unsaved data configuration
      * also test if porcupine activation works
      */
-    override fun onTest(){
+    override fun onTest() {
         //TODO require microphone permission
         //TODO only when enabled
         //record audio

@@ -8,8 +8,8 @@ sealed class ServiceResponse<T> {
 
     object NotInitialized : ServiceResponse<Unit>()
 
-    object Disabled: ServiceResponse<Unit>()
+    object Disabled : ServiceResponse<Unit>()
 
-    object Nothing: ServiceResponse<Unit>()
+    object Nothing : ServiceResponse<Unit>()
 
 }

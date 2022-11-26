@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.burnoo.cokoin.Koin
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
@@ -25,7 +24,6 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
-import org.rhasspy.mobile.serviceModule
 import org.rhasspy.mobile.viewModels.configuration.WebServerConfigurationViewModel
 
 /**

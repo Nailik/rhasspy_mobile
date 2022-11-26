@@ -109,6 +109,6 @@ abstract class IDialogManagerService : IService() {
 
 }
 
-enum class DialogManagerState(){
+enum class DialogManagerState() {
     IDLE
 }

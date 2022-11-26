@@ -12,7 +12,7 @@ expect object AudioRecorder {
 
     val absoluteMaxVolume: Double
 
-    fun startRecording() : ServiceResponse<*>
+    fun startRecording(): ServiceResponse<*>
 
     fun stopRecording()
 

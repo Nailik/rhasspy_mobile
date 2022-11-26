@@ -2,9 +2,6 @@ package org.rhasspy.mobile.nativeutils
 
 import android.app.Activity
 import android.provider.OpenableColumns
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime

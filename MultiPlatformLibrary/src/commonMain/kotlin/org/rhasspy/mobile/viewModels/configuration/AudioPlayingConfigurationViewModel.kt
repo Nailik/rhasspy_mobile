@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.AudioOutputOptions
 import org.rhasspy.mobile.data.AudioPlayingOptions
