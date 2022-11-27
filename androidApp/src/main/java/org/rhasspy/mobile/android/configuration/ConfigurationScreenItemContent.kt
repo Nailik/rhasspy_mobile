@@ -160,35 +160,37 @@ private fun EditConfigurationScreen(
         )
     }
 
-    Scaffold(
-        topBar = {
-            AppBar(
-                title = title,
-                onBackClick = ::onBackPress
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = MR.strings.back,
+    Surface(tonalElevation = 1.dp) {
+        Scaffold(
+            topBar = {
+                AppBar(
+                    title = title,
+                    onBackClick = ::onBackPress
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = MR.strings.back,
+                    )
+                }
+            },
+            bottomBar = {
+                BottomAppBar(
+                    hasUnsavedChanges = hasUnsavedChanges,
+                    testingEnabled = testingEnabled,
+                    onSave = onSave,
+                    onClick = onTest,
+                    onDiscard = onDiscard
                 )
             }
-        },
-        bottomBar = {
-            BottomAppBar(
-                hasUnsavedChanges = hasUnsavedChanges,
-                testingEnabled = testingEnabled,
-                onSave = onSave,
-                onClick = onTest,
-                onDiscard = onDiscard
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-        ) {
-            content { route -> onNavigate(route) }
+        ) { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                content { route -> onNavigate(route) }
+            }
         }
     }
 }
@@ -209,20 +211,23 @@ private fun TestConfigurationScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            AppBar(
-                title = MR.strings.test,
-                onBackClick = navController::popBackStack
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = MR.strings.stop,
-                )
-            }
-        },
-    ) { paddingValues ->
-        content(Modifier.padding(paddingValues))
+
+    Surface(tonalElevation = 3.dp) {
+        Scaffold(
+            topBar = {
+                AppBar(
+                    title = MR.strings.test,
+                    onBackClick = navController::popBackStack
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = MR.strings.stop,
+                    )
+                }
+            },
+        ) { paddingValues ->
+            content(Modifier.padding(paddingValues))
+        }
     }
 }
 
