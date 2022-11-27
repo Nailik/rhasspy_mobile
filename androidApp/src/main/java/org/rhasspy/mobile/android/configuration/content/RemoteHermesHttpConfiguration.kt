@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.android.configuration.content
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,6 +16,7 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.configuration.test.EventListItem
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.android.utils.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.viewModels.configuration.RemoteHermesHttpConfigurationViewModel
@@ -60,12 +62,18 @@ private fun TestContent(
     modifier: Modifier,
     viewModel: RemoteHermesHttpConfigurationViewModel
 ) {
+    Column {
+        val eventsList by viewModel.events.collectAsState()
 
-    val eventsList by viewModel.events.collectAsState()
-
-    LazyColumn(modifier = modifier.fillMaxHeight()) {
-        items(eventsList) { item ->
-            EventListItem(item)
+        LazyColumn(modifier = modifier.weight(1f)) {
+            items(eventsList) { item ->
+                EventListItem(item)
+            }
         }
+
+        FilledTonalButtonListItem(
+            text = MR.strings.test,
+            onClick = viewModel::runTest
+        )
     }
 }

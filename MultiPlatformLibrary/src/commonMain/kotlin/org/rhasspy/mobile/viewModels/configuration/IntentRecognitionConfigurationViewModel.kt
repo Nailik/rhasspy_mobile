@@ -14,7 +14,7 @@ import org.rhasspy.mobile.viewModels.configuration.test.IntentRecognitionConfigu
 
 class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
 
-    private val testRunner by inject<IntentRecognitionConfigurationTest>()
+    override val testRunner by inject<IntentRecognitionConfigurationTest>()
     override val events = testRunner.events
 
     //unsaved data

@@ -24,7 +24,7 @@ import org.rhasspy.mobile.viewModels.configuration.test.AudioPlayingConfiguratio
  */
 class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
 
-    private val testRunner by inject<AudioPlayingConfigurationTest>()
+    override val testRunner by inject<AudioPlayingConfigurationTest>()
     override val events = testRunner.events
 
     //unsaved data

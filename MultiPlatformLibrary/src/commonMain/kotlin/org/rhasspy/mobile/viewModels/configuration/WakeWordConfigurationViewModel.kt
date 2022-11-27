@@ -16,7 +16,7 @@ import org.rhasspy.mobile.viewModels.configuration.test.WakeWordConfigurationTes
 
 class WakeWordConfigurationViewModel : IConfigurationViewModel() {
 
-    private val testRunner by inject<WakeWordConfigurationTest>()
+    override val testRunner by inject<WakeWordConfigurationTest>()
     override val events = testRunner.events
 
     data class PorcupineCustomKeywordUi(

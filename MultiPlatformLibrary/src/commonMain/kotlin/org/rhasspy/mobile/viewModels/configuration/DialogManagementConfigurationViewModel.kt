@@ -21,7 +21,7 @@ import org.rhasspy.mobile.viewModels.configuration.test.DialogManagementConfigur
  */
 class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
 
-    private val testRunner by inject<DialogManagementConfigurationTest>()
+    override val testRunner by inject<DialogManagementConfigurationTest>()
     override val events = testRunner.events
 
     //unsaved data

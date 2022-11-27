@@ -13,7 +13,7 @@ import org.rhasspy.mobile.viewModels.configuration.test.WebServerConfigurationTe
 
 class WebServerConfigurationViewModel : IConfigurationViewModel() {
 
-    private val testRunner by inject<WebServerConfigurationTest>()
+    override val testRunner by inject<WebServerConfigurationTest>()
     override val events = testRunner.events
 
     //unsaved data
@@ -86,6 +86,6 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
         }
     }
 
-    override fun runTest() = testRunner.startTest()
+    override fun runTest() = testRunner.runTest()
 
 }

@@ -11,10 +11,13 @@ import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
 import org.rhasspy.mobile.middleware.Event
 import org.rhasspy.mobile.serviceModule
+import org.rhasspy.mobile.viewModels.configuration.test.IConfigurationTest
 
 abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
 
     private val logger = Logger.withTag("IConfigurationViewModel")
+
+    protected abstract val testRunner: IConfigurationTest
 
     abstract val hasUnsavedChanges: StateFlow<Boolean>
     abstract val isTestingEnabled: StateFlow<Boolean>
@@ -43,6 +46,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
             unloadKoinModules(serviceModule)
             loadKoinModules(serviceModule)
             initializeTestParams()
+            testRunner.initializeTest()
         }
     }
 

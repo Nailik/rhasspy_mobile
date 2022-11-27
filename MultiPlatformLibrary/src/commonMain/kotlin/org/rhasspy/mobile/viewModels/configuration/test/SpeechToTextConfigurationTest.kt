@@ -4,12 +4,8 @@ import kotlinx.coroutines.CoroutineScope
 
 class SpeechToTextConfigurationTest : IConfigurationTest() {
 
-    public override fun startTest() {
-        super.startTest()
-    }
+    public fun startTest() {
 
-    override fun runTest(scope: CoroutineScope) {
-        //TODO("Not yet implemented")
     }
 
     override fun onClose() {

@@ -1,18 +1,13 @@
 package org.rhasspy.mobile.viewModels.configuration.test
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.rhasspy.mobile.services.webserver.WebServerService
 
 class WebServerConfigurationTest : IConfigurationTest() {
 
-    public override fun startTest() {
-        super.startTest()
-    }
-
-    override fun runTest(scope: CoroutineScope) {
-        scope.launch {
+    fun runTest() {
+        testScope.launch {
             //start web server
             get<WebServerService>()
         }
