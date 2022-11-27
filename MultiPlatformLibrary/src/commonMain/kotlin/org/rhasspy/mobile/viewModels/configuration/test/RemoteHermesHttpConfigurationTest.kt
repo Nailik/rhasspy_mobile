@@ -9,11 +9,11 @@ class RemoteHermesHttpConfigurationTest : IConfigurationTest() {
     }
 
     override fun initializeTest() {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override fun onTest(scope: CoroutineScope) {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override fun runTest(scope: CoroutineScope) {
@@ -24,6 +24,6 @@ class RemoteHermesHttpConfigurationTest : IConfigurationTest() {
     }
 
     override fun onClose() {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 }

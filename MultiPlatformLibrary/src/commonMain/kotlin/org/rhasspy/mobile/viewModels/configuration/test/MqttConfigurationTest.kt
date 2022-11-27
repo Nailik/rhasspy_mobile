@@ -9,18 +9,18 @@ class MqttConfigurationTest : IConfigurationTest() {
     }
 
     override fun initializeTest() {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override fun onTest(scope: CoroutineScope) {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override fun runTest(scope: CoroutineScope) {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override fun onClose() {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 }
