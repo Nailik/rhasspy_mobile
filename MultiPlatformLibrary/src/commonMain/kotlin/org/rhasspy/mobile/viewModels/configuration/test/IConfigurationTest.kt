@@ -34,8 +34,6 @@ abstract class IConfigurationTest : Closeable, KoinComponent {
             unloadKoinModules(serviceModule)
             loadKoinModules(serviceModule)
 
-            //initialize koin params
-            initializeTest()
             //load middleware
             val middleware = get<IServiceMiddleware> { parametersOf(true) }
 
@@ -58,11 +56,6 @@ abstract class IConfigurationTest : Closeable, KoinComponent {
         testScope.cancel()
         _events.value = listOf()
     }
-
-    /**
-     * initialize koin params
-     */
-    protected abstract fun initializeTest()
 
     protected abstract fun onTest(scope: CoroutineScope)
 

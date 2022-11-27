@@ -8,10 +8,6 @@ class IntentHandlingConfigurationTest : IConfigurationTest() {
         super.startTest()
     }
 
-    override fun initializeTest() {
-        //TODO("Not yet implemented")
-    }
-
     override fun onTest(scope: CoroutineScope) {
         //TODO("Not yet implemented")
     }
