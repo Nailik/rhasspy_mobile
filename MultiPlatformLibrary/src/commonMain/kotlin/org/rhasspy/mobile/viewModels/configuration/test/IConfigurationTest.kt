@@ -29,26 +29,19 @@ abstract class IConfigurationTest : Closeable, KoinComponent {
     protected open fun startTest() {
         testScope = CoroutineScope(Dispatchers.Default)
 
+        //load middleware
+        val middleware = get<IServiceMiddleware> { parametersOf(true) }
+
         testScope.launch {
-            //reload koin modules
-            unloadKoinModules(serviceModule)
-            loadKoinModules(serviceModule)
-
-            //load middleware
-            val middleware = get<IServiceMiddleware> { parametersOf(true) }
-
-            testScope.launch {
-                middleware.event.collect { event ->
-                    _events.value = _events.value.toMutableList().also {
-                        it.add(event)
-                    }
+            middleware.event.collect { event ->
+                _events.value = _events.value.toMutableList().also {
+                    it.add(event)
                 }
             }
-
         }
 
         //run the actual test
-        onTest(testScope)
+        runTest(testScope)
     }
 
     override fun close() {

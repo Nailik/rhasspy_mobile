@@ -1,6 +1,9 @@
 package org.rhasspy.mobile.viewModels.configuration.test
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import org.koin.core.component.get
+import org.rhasspy.mobile.services.webserver.WebServerService
 
 class WebServerConfigurationTest : IConfigurationTest() {
 
@@ -12,7 +15,10 @@ class WebServerConfigurationTest : IConfigurationTest() {
     }
 
     override fun runTest(scope: CoroutineScope) {
-        //TODO("Not yet implemented")
+        scope.launch {
+            //start web server
+            get<WebServerService>()
+        }
     }
 
     override fun onClose() {

@@ -2,7 +2,10 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
@@ -34,18 +37,24 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
 
     //TODO carefully test this works correctly
     fun onOpenTestPage() {
-        logger.e { "************* onOpenTestPage ************" }
-        unloadKoinModules(serviceModule)
-        loadKoinModules(serviceModule)
-        initializeTestParams()
+        //needs to be suspend, else ui thread is blocked
+        CoroutineScope(Dispatchers.Default).launch {
+            logger.e { "************* onOpenTestPage ************" }
+            unloadKoinModules(serviceModule)
+            loadKoinModules(serviceModule)
+            initializeTestParams()
+        }
     }
 
     //TODO carefully test this works correctly
     fun stopTest() {
-        logger.e { "************* stopTest ************" }
-        //reload koin modules when test is stopped
-        unloadKoinModules(serviceModule)
-        loadKoinModules(serviceModule)
+        //needs to be suspend, else ui thread is blocked
+        CoroutineScope(Dispatchers.Default).launch {
+            logger.e { "************* stopTest ************" }
+            //reload koin modules when test is stopped
+            unloadKoinModules(serviceModule)
+            loadKoinModules(serviceModule)
+        }
     }
 
 }
