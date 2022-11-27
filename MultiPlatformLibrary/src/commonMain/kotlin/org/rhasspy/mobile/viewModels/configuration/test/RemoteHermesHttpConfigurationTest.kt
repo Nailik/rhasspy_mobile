@@ -8,10 +8,6 @@ class RemoteHermesHttpConfigurationTest : IConfigurationTest() {
         super.startTest()
     }
 
-    override fun onTest(scope: CoroutineScope) {
-        //TODO("Not yet implemented")
-    }
-
     override fun runTest(scope: CoroutineScope) {
         //    val client = get<HttpClientService>()
         //    client.speechToText(emptyList())

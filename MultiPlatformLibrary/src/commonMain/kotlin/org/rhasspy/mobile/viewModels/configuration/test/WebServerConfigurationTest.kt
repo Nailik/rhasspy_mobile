@@ -10,9 +10,6 @@ class WebServerConfigurationTest : IConfigurationTest() {
     public override fun startTest() {
         super.startTest()
     }
-    override fun onTest(scope: CoroutineScope) {
-        //TODO("Not yet implemented")
-    }
 
     override fun runTest(scope: CoroutineScope) {
         scope.launch {
@@ -22,7 +19,7 @@ class WebServerConfigurationTest : IConfigurationTest() {
     }
 
     override fun onClose() {
-        //TODO("Not yet implemented")
+        //nothing to do
     }
 
 }

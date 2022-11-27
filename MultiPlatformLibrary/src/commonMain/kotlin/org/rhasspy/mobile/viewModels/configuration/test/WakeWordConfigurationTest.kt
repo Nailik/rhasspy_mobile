@@ -8,10 +8,6 @@ class WakeWordConfigurationTest : IConfigurationTest() {
         super.startTest()
     }
 
-    override fun onTest(scope: CoroutineScope) {
-        //TODO("Not yet implemented")
-    }
-
     override fun runTest(scope: CoroutineScope) {
         //TODO("Not yet implemented")
     }

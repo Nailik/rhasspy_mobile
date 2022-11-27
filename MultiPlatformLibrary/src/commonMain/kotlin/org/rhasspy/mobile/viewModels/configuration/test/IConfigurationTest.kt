@@ -50,8 +50,6 @@ abstract class IConfigurationTest : Closeable, KoinComponent {
         _events.value = listOf()
     }
 
-    protected abstract fun onTest(scope: CoroutineScope)
-
     protected abstract fun runTest(scope: CoroutineScope)
 
     protected abstract fun onClose()
