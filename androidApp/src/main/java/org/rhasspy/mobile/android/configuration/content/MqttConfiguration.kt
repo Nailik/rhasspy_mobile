@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
@@ -187,12 +186,18 @@ private fun TestContent(
     modifier: Modifier,
     viewModel: MqttConfigurationViewModel
 ) {
+    Column {
+        val eventsList by viewModel.events.collectAsState()
 
-    val eventsList by viewModel.events.collectAsState()
-
-    LazyColumn(modifier = modifier.fillMaxHeight()) {
-        items(eventsList) { item ->
-            EventListItem(item)
+        LazyColumn(modifier = modifier.weight(1f)) {
+            items(eventsList) { item ->
+                EventListItem(item)
+            }
         }
+
+        FilledTonalButtonListItem(
+            text = MR.strings.test,
+            onClick = viewModel::runTest
+        )
     }
 }

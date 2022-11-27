@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
+import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.middleware.Event
 import org.rhasspy.mobile.serviceModule
 import org.rhasspy.mobile.viewModels.configuration.test.IConfigurationTest
@@ -58,6 +59,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
             //reload koin modules when test is stopped
             unloadKoinModules(serviceModule)
             loadKoinModules(serviceModule)
+            Application.startServices()
         }
     }
 

@@ -1,11 +1,12 @@
 package org.rhasspy.mobile.viewModels.configuration.test
 
-import kotlinx.coroutines.CoroutineScope
+import org.koin.core.component.get
+import org.rhasspy.mobile.services.mqtt.MqttService
 
 class MqttConfigurationTest : IConfigurationTest() {
 
-    public fun startTest() {
-
+    fun startTest() {
+        get<MqttService>()
     }
 
     override fun onClose() {

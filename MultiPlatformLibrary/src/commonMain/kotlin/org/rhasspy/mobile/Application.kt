@@ -99,6 +99,10 @@ abstract class Application : NativeApplication(), KoinComponent {
     private val logger = Logger.withTag("Application")
 
     companion object {
+        fun startServices() {
+
+        }
+
         lateinit var Instance: NativeApplication
             private set
     }
