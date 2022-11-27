@@ -15,6 +15,13 @@ class SpeechToTextConfigurationTest : IConfigurationTest() {
 
 
 /*
+hermes/asr/toggleOn
+hermes/asr/startListening
+
+//send
+
+//stop
+
     fun startTestRecording() {
 val service = get<MqttService>()
 

@@ -103,6 +103,6 @@ class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
         }
     }
 
-    override fun runTest() = testRunner.startTest()
+    override fun runTest() = testRunner.startTest("text test")
 
 }

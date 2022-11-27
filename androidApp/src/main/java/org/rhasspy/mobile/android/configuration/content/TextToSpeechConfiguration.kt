@@ -18,6 +18,7 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.configuration.test.EventListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.android.utils.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
@@ -90,12 +91,18 @@ private fun TestContent(
     modifier: Modifier,
     viewModel: TextToSpeechConfigurationViewModel
 ) {
+    Column {
+        val eventsList by viewModel.events.collectAsState()
 
-    val eventsList by viewModel.events.collectAsState()
-
-    LazyColumn(modifier = modifier.fillMaxHeight()) {
-        items(eventsList) { item ->
-            EventListItem(item)
+        LazyColumn(modifier = modifier.weight(1f)) {
+            items(eventsList) { item ->
+                EventListItem(item)
+            }
         }
+
+        FilledTonalButtonListItem(
+            text = MR.strings.test,
+            onClick = viewModel::runTest
+        )
     }
 }

@@ -72,7 +72,7 @@ open class RhasspyActionsService : IService() {
      * hermes/tts/sayFinished (JSON)
      * is called when playing audio is finished
      */
-    suspend fun say(sessionId: String, text: String): ServiceResponse<*> {
+    suspend fun textToSpeech(sessionId: String, text: String): ServiceResponse<*> {
         val event = serviceMiddleware.createEvent(Say)
 
         val result = when (params.textToSpeechOption) {
