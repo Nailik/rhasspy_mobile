@@ -18,14 +18,17 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.icerock.moko.resources.StringResource
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
@@ -63,11 +66,14 @@ fun ConfigurationScreenItemContent(
 ) {
 
     val navController = rememberNavController()
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.route == ConfigurationContentScreens.Edit.name) {
-                viewModel.stopTest()
+                scope.launch {
+                    viewModel.stopTest()
+                }
             }
         }
     }
@@ -198,12 +204,16 @@ private fun EditConfigurationScreen(
 @Composable
 private fun TestConfigurationScreen(
     content: @Composable (modifier: Modifier) -> Unit,
-    onOpenPage: () -> Unit
+    onOpenPage: suspend () -> Unit
 ) {
     val navController = LocalConfigurationNavController.current
 
+    val scope = rememberCoroutineScope()
+
     LaunchedEffect(Unit) {
-        onOpenPage.invoke()
+        scope.launch {
+            onOpenPage.invoke()
+        }
         Application.Instance.isAppInBackground.collect {
             if (it) {
                 navController.popBackStack()

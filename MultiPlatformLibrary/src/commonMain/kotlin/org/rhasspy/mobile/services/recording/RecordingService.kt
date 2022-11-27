@@ -88,7 +88,7 @@ class RecordingService : IService() {
 
     fun stopRecording() {
         isRecordingNormal = false
-        startRecorder()
+        stopRecorder()
     }
 
     fun startRecordingWakeWord(): ServiceResponse<*> {

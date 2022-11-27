@@ -45,7 +45,10 @@ inline fun <reified T : Closeable> Module.closeableSingle(
     createdAtStart: Boolean = false,
     noinline definition: Definition<T>
 ) {
-    single(qualifier, createdAtStart, definition) onClose { it?.close() }
+    single(qualifier, createdAtStart, definition) onClose {
+        //println("onCLose $definition $it")
+        it?.close()
+    }
 }
 
 val serviceModule = module {
@@ -62,7 +65,7 @@ val serviceModule = module {
     closeableSingle { AppSettingsService() }
     closeableSingle { IndicationService }
 
-    single { params -> createServiceMiddleware(params.getOrNull() ?: false) }
+    closeableSingle { params -> createServiceMiddleware(params.getOrNull() ?: false) }
 
     single { params -> params.getOrNull<LocalAudioServiceParams>() ?: LocalAudioServiceParams() }
     single { params -> params.getOrNull<RhasspyActionsServiceParams>() ?: RhasspyActionsServiceParams() }

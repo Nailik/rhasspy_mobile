@@ -1,5 +1,7 @@
 package org.rhasspy.mobile.middleware
 
+import io.ktor.utils.io.core.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import org.rhasspy.mobile.middleware.action.LocalAction
@@ -11,7 +13,7 @@ import org.rhasspy.mobile.readOnly
 /**
  * handles ALL INCOMING events
  */
-abstract class IServiceMiddleware {
+abstract class IServiceMiddleware : Closeable {
 
     //replay because maybe the test starts a little bit earlier than subscription to the shared flow
     private val _event = MutableSharedFlow<Event>(
@@ -47,6 +49,11 @@ abstract class IServiceMiddleware {
         val event = Event(eventType, description).loading()
         _event.tryEmit(event)
         return event
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun close() {
+        _event.resetReplayCache()
     }
 
 

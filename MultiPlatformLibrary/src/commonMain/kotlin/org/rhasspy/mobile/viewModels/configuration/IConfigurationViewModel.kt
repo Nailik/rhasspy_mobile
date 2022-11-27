@@ -2,10 +2,7 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
@@ -22,7 +19,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
 
     abstract val hasUnsavedChanges: StateFlow<Boolean>
     abstract val isTestingEnabled: StateFlow<Boolean>
-    abstract val events: StateFlow<List<Event>>
+    val events: StateFlow<List<Event>> get() = testRunner.events
 
     fun save() {
         onSave()
@@ -40,27 +37,26 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     abstract fun initializeTestParams()
 
     //TODO carefully test this works correctly
-    fun onOpenTestPage() {
+    @Suppress("RedundantSuspendModifier")
+    suspend fun onOpenTestPage() {
         //needs to be suspend, else ui thread is blocked
-        CoroutineScope(Dispatchers.Default).launch {
-            logger.e { "************* onOpenTestPage ************" }
-            unloadKoinModules(serviceModule)
-            loadKoinModules(serviceModule)
-            initializeTestParams()
-            testRunner.initializeTest()
-        }
+        logger.e { "************* onOpenTestPage ************" }
+        unloadKoinModules(serviceModule)
+        loadKoinModules(serviceModule)
+        initializeTestParams()
+        testRunner.initializeTest()
+
     }
 
     //TODO carefully test this works correctly
-    fun stopTest() {
+    @Suppress("RedundantSuspendModifier")
+    suspend fun stopTest() {
         //needs to be suspend, else ui thread is blocked
-        CoroutineScope(Dispatchers.Default).launch {
-            logger.e { "************* stopTest ************" }
-            //reload koin modules when test is stopped
-            unloadKoinModules(serviceModule)
-            loadKoinModules(serviceModule)
-            Application.startServices()
-        }
+        logger.e { "************* stopTest ************" }
+        //reload koin modules when test is stopped
+        unloadKoinModules(serviceModule)
+        loadKoinModules(serviceModule)
+        Application.startServices()
     }
 
 }

@@ -14,4 +14,8 @@ class WakeWordConfigurationTest : IConfigurationTest() {
     override fun onClose() {
         //TODO("Not yet implemented")
     }
+
+    override fun close() {
+        super.close()
+    }
 }

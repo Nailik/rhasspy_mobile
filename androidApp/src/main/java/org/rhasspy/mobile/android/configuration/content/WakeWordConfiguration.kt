@@ -208,12 +208,18 @@ private fun TestContent(
     modifier: Modifier,
     viewModel: WakeWordConfigurationViewModel
 ) {
+    Column {
+        val eventsList by viewModel.events.collectAsState()
 
-    val eventsList by viewModel.events.collectAsState()
-
-    LazyColumn(modifier = modifier.fillMaxHeight()) {
-        items(eventsList) { item ->
-            EventListItem(item)
+        LazyColumn(modifier = modifier.weight(1f)) {
+            items(eventsList) { item ->
+                EventListItem(item)
+            }
         }
+
+        FilledTonalButtonListItem(
+            text = MR.strings.test,
+            onClick = viewModel::runTest
+        )
     }
 }

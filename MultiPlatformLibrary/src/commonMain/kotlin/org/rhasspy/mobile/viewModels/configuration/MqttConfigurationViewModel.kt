@@ -15,8 +15,7 @@ import org.rhasspy.mobile.viewModels.configuration.test.MqttConfigurationTest
 
 class MqttConfigurationViewModel : IConfigurationViewModel() {
 
-    override val testRunner by inject<MqttConfigurationTest>()
-    override val events = testRunner.events
+    override val testRunner get() = get<MqttConfigurationTest>()
 
     //unsaved data
     private val _isMqttEnabled = MutableStateFlow(ConfigurationSettings.isMqttEnabled.value)

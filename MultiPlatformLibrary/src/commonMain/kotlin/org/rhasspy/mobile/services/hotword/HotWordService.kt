@@ -92,6 +92,7 @@ class HotWordService : IService() {
 
     override fun onClose() {
         recordingService.stopRecording()
+        recordingService.stopRecordingWakeWord()
         nativeLocalPorcupineWakeWordService?.stop()
     }
 

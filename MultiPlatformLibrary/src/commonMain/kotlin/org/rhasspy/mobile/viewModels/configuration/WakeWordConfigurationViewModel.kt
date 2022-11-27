@@ -2,7 +2,6 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
-import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.PorcupineLanguageOptions
@@ -17,8 +16,7 @@ import org.rhasspy.mobile.viewModels.configuration.test.WakeWordConfigurationTes
 
 class WakeWordConfigurationViewModel : IConfigurationViewModel() {
 
-    override val testRunner by inject<WakeWordConfigurationTest>()
-    override val events = testRunner.events
+    override val testRunner get() = get<WakeWordConfigurationTest>()
 
     data class PorcupineCustomKeywordUi(
         val keyword: PorcupineCustomKeyword,
@@ -52,7 +50,6 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
     val wakeWordPorcupineKeywordCustomOptions = _wakeWordPorcupineKeywordCustomOptions.readOnly
     val wakeWordPorcupineLanguage = _wakeWordPorcupineLanguage.readOnly
     val udpOutputHost = _udpOutputHost.readOnly
-    val udpOutputPort = _udpOutputPort.readOnly
     val udpOutputPortText = _udpOutputPortText.readOnly
 
 
@@ -284,6 +281,8 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
         }
     }
 
-    override fun runTest() = testRunner.startTest()
+    override fun runTest() {
+        testRunner.startTest()
+    }
 
 }

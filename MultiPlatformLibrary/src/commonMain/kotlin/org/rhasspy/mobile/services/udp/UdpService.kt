@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.services.udp
 
-import co.touchlab.kermit.Logger
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.utils.io.core.*
@@ -31,18 +30,18 @@ class UdpService : IService() {
     init {
         val startEvent = serviceMiddleware.createEvent(Start)
 
-        try {
-            sendChannel = aSocket(SelectorManager(Dispatchers.Default)).udp().bind().outgoing
+            try {
+                sendChannel = aSocket(SelectorManager(Dispatchers.Default)).udp().bind().outgoing
 
-            socketAddress = InetSocketAddress(
-                params.udpOutputHost,
-                params.udpOutputPort
-            )
+                socketAddress = InetSocketAddress(
+                    params.udpOutputHost,
+                    params.udpOutputPort
+                )
 
-            startEvent.success()
-        } catch (e: Exception) {
-            startEvent.error(e)
-        }
+                startEvent.success()
+            } catch (e: Exception) {
+                startEvent.error(e)
+            }
     }
 
     override fun onClose() {
