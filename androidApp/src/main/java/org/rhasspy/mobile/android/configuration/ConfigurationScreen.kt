@@ -47,9 +47,6 @@ fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = viewModel()) {
         Mqtt(viewModel)
         CustomDivider()
 
-        AudioRecording(viewModel)
-        CustomDivider()
-
         WakeWord(viewModel)
         CustomDivider()
 
@@ -82,10 +79,6 @@ fun NavGraphBuilder.addConfigurationScreens() {
 
     composable(ConfigurationScreens.AudioPlayingConfiguration.name) {
         AudioPlayingConfigurationContent()
-    }
-
-    composable(ConfigurationScreens.AudioRecordingConfiguration.name) {
-        AudioRecordingConfigurationContent()
     }
 
     composable(ConfigurationScreens.DialogManagementConfiguration.name) {
@@ -182,25 +175,6 @@ private fun Mqtt(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.mqtt,
         secondaryText = if (viewModel.isMQTTConnected.collectAsState().value) MR.strings.connected else MR.strings.notConnected,
         screen = ConfigurationScreens.MqttConfiguration
-    )
-
-}
-
-/**
- * List element for audio recording configuration
- * shows if udp audio output is turned on
- */
-@Composable
-private fun AudioRecording(viewModel: ConfigurationScreenViewModel) {
-
-    ConfigurationListItem(
-        text = MR.strings.audioRecording,
-        secondaryText = if (viewModel.isUdpOutputEnabled.collectAsState().value) {
-            MR.strings.udpAudioOutputOn
-        } else {
-            MR.strings.udpAudioOutputOff
-        },
-        screen = ConfigurationScreens.AudioRecordingConfiguration
     )
 
 }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material3.Text
@@ -14,6 +15,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -99,6 +101,10 @@ private fun WakeWordConfigurationOverview(viewModel: WakeWordConfigurationViewMo
                 PorcupineConfiguration(viewModel)
             }
 
+            if (viewModel.isUdpOutputSettingsVisible(it)) {
+                UdpSettings(viewModel)
+            }
+
         }
     }
 
@@ -162,6 +168,35 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
                 .clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineLanguage.name) },
             text = { Text(MR.strings.language) },
             secondaryText = { Text(viewModel.wakeWordPorcupineLanguage.collectAsState().value.text) }
+        )
+
+    }
+
+}
+
+/**
+ *  udp host and port
+ */
+@Composable
+private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
+
+    Column {
+
+        //udp host
+        TextFieldListItem(
+            modifier = Modifier.testTag(TestTag.AudioRecordingUdpHost),
+            label = MR.strings.host,
+            value = viewModel.udpOutputHost.collectAsState().value,
+            onValueChange = viewModel::changeUdpOutputHost
+        )
+
+        //udp port
+        TextFieldListItem(
+            modifier = Modifier.testTag(TestTag.AudioRecordingUdpPort),
+            label = MR.strings.port,
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            value = viewModel.udpOutputPortText.collectAsState().value,
+            onValueChange = viewModel::changeUdpOutputPort
         )
 
     }

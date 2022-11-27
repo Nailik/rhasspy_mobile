@@ -75,7 +75,6 @@ val serviceModule = module {
     single { params -> params.getOrNull<DialogManagerServiceParams>() ?: DialogManagerServiceParams() }
 
     closeableSingle { AudioPlayingConfigurationTest() }
-    closeableSingle { AudioRecordingConfigurationTest() }
     closeableSingle { DialogManagementConfigurationTest() }
     closeableSingle { IntentHandlingConfigurationTest() }
     closeableSingle { IntentRecognitionConfigurationTest() }

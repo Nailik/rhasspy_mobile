@@ -13,7 +13,6 @@ class ConfigurationScreenViewModel : ViewModel(), KoinComponent {
     val isHttpServerEnabled = ConfigurationSettings.isHttpServerEnabled.data
     val isHttpSSLVerificationEnabled = ConfigurationSettings.isHttpSSLVerificationDisabled.data
     val isMQTTConnected get() = get<MqttService>().isConnected
-    val isUdpOutputEnabled = ConfigurationSettings.isUdpOutputEnabled.data
     val wakeWordOption = ConfigurationSettings.wakeWordOption.data
     val speechToTextOption = ConfigurationSettings.speechToTextOption.data
     val intentRecognitionOption = ConfigurationSettings.intentRecognitionOption.data

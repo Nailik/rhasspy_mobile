@@ -13,6 +13,7 @@ import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.hotword.HotWordService
 import org.rhasspy.mobile.services.mqtt.MqttService
+import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.services.udp.UdpService
 
 /**
@@ -24,9 +25,8 @@ import org.rhasspy.mobile.services.udp.UdpService
 abstract class IDialogManagerService : IService() {
 
     val params by inject<DialogManagerServiceParams>()
-    val mqttService by inject<MqttService>()
     val hotWordService by inject<HotWordService>()
-    val udpService by inject<UdpService>()
+    val rhasspyActionsService by inject<RhasspyActionsService>()
     val sessionId: String = "45j89"
 
     private var scope = CoroutineScope(Dispatchers.Default)
@@ -84,27 +84,12 @@ abstract class IDialogManagerService : IService() {
     abstract fun silenceDetectedLocal()
 
     suspend fun audioFrameLocal(byteData: List<Byte>) {
-        //send to udp when enabled
-        if (params.isUdpOutputEnabled) {
-            scope.launch {
-                udpService.streamAudio(byteData)
-            }
-        }
-        //send to mqtt if necessary
-        if (params.speechToTextOption == SpeechToTextOptions.RemoteMQTT) {
-            scope.launch {
-                mqttService.audioFrame(byteData)
-            }
-        }
+        rhasspyActionsService.audioFrame(byteData)
     }
 
+    //TODO post again when stop listening?
     suspend fun audioFrameWakeWordLocal(byteData: List<Byte>) {
-        //send to mqtt when necessary
-        if (params.wakeWordOption == WakeWordOption.MQTT) {
-            scope.launch {
-                mqttService.audioFrame(byteData)
-            }
-        }
+        hotWordService.hotWordAudioFrame(byteData)
     }
 
 }

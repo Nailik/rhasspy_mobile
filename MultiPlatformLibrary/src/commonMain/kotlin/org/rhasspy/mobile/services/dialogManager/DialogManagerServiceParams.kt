@@ -11,5 +11,4 @@ data class DialogManagerServiceParams(
     val wakeWordOption: WakeWordOption = ConfigurationSettings.wakeWordOption.value,
     val speechToTextOption: SpeechToTextOptions = ConfigurationSettings.speechToTextOption.value,
     val intentRecognitionOption: IntentRecognitionOptions = ConfigurationSettings.intentRecognitionOption.value,
-    val isUdpOutputEnabled: Boolean = ConfigurationSettings.isUdpOutputEnabled.value
 )

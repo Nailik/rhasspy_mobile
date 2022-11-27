@@ -23,31 +23,25 @@ class UdpService : IService() {
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
 
-    private val logger = Logger.withTag("UdpService")
-
     /**
      * makes sure the address is up to date
      *
      * suspend is necessary else there is an network on main thread error at least on android
      */
     init {
-        if (params.isUdpOutputEnabled) {
-            val startEvent = serviceMiddleware.createEvent(Start)
+        val startEvent = serviceMiddleware.createEvent(Start)
 
-            try {
-                sendChannel = aSocket(SelectorManager(Dispatchers.Default)).udp().bind().outgoing
+        try {
+            sendChannel = aSocket(SelectorManager(Dispatchers.Default)).udp().bind().outgoing
 
-                socketAddress = InetSocketAddress(
-                    params.udpOutputHost,
-                    params.udpOutputPort
-                )
+            socketAddress = InetSocketAddress(
+                params.udpOutputHost,
+                params.udpOutputPort
+            )
 
-                startEvent.success()
-            } catch (e: Exception) {
-                startEvent.error(e)
-            }
-        } else {
-            logger.v { "not enabled" }
+            startEvent.success()
+        } catch (e: Exception) {
+            startEvent.error(e)
         }
     }
 

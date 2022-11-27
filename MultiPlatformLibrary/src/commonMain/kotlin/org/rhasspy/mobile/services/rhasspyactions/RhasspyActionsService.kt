@@ -137,6 +137,14 @@ open class RhasspyActionsService : IService() {
         return result
     }
 
+    suspend fun audioFrame(data: List<Byte>) {
+        when (params.speechToTextOption) {
+            SpeechToTextOptions.RemoteHTTP -> {}//nothing to do
+            SpeechToTextOptions.RemoteMQTT -> mqttClientService.audioFrame(data)
+            SpeechToTextOptions.Disabled -> {}//nothing to do
+        }
+    }
+
     /**
      * Only does something if intent handling is enabled
      *

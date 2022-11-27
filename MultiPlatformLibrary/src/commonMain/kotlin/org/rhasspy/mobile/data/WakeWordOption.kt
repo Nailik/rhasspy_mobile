@@ -6,6 +6,7 @@ import org.rhasspy.mobile.MR
 enum class WakeWordOption(override val text: StringResource) : DataEnum<WakeWordOption> {
     Porcupine(MR.strings.localPorcupine),
     MQTT(MR.strings.mqtt),
+    Udp(MR.strings.udpAudioOutput),
     Disabled(MR.strings.disabled);
 
     override fun findValue(value: String): WakeWordOption {

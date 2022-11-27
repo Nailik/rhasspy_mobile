@@ -114,7 +114,7 @@ class DialogManagerLocalService : IDialogManagerService() {
         //Hot word was detected
         scope.launch {
             //tell mqtt
-            mqttService.hotWordDetected(hotWord)
+            //TODO mqttService.hotWordDetected(hotWord)
             //disable hot word
             hotWordService.stopDetection()
         }

@@ -5,7 +5,6 @@ package org.rhasspy.mobile.android.configuration
  */
 enum class ConfigurationScreens {
     AudioPlayingConfiguration,
-    AudioRecordingConfiguration,
     DialogManagementConfiguration,
     IntentHandlingConfiguration,
     IntentRecognitionConfiguration,
