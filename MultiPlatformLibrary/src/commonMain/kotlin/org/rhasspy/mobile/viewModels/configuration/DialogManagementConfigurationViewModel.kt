@@ -21,7 +21,7 @@ import org.rhasspy.mobile.viewModels.configuration.test.DialogManagementConfigur
  */
 class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
 
-    override val testRunner get() = get<DialogManagementConfigurationTest>()
+    override val testRunner by inject<DialogManagementConfigurationTest>()
 
     //unsaved data
     private val _dialogManagementOption = MutableStateFlow(ConfigurationSettings.dialogManagementOption.value)

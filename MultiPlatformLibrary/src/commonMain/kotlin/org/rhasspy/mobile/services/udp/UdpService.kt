@@ -30,18 +30,19 @@ class UdpService : IService() {
     init {
         val startEvent = serviceMiddleware.createEvent(Start)
 
-            try {
-                sendChannel = aSocket(SelectorManager(Dispatchers.Default)).udp().bind().outgoing
+        try {
+            sendChannel = aSocket(SelectorManager(Dispatchers.Default)).udp().bind().outgoing
 
-                socketAddress = InetSocketAddress(
-                    params.udpOutputHost,
-                    params.udpOutputPort
-                )
+            socketAddress = InetSocketAddress(
+                params.udpOutputHost,
+                params.udpOutputPort
+            )
 
-                startEvent.success()
-            } catch (e: Exception) {
-                startEvent.error(e)
-            }
+            startEvent.success()
+        } catch (e: Exception) {
+            //TODO find solution
+            startEvent.error(e)
+        }
     }
 
     override fun onClose() {

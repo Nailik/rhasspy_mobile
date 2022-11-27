@@ -14,7 +14,7 @@ import org.rhasspy.mobile.viewModels.configuration.test.TextToSpeechConfiguratio
 
 class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
 
-    override val testRunner get() = get<TextToSpeechConfigurationTest>()
+    override val testRunner by inject<TextToSpeechConfigurationTest>()
 
     //unsaved data
     private val _textToSpeechOption = MutableStateFlow(ConfigurationSettings.textToSpeechOption.value)

@@ -18,7 +18,7 @@ import org.rhasspy.mobile.viewModels.configuration.test.IntentHandlingConfigurat
 
 class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
 
-    override val testRunner get() = get<IntentHandlingConfigurationTest>()
+    override val testRunner by inject<IntentHandlingConfigurationTest>()
 
     //unsaved data
     private val _intentHandlingOption = MutableStateFlow(ConfigurationSettings.intentHandlingOption.value)

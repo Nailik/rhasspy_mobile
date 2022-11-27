@@ -13,7 +13,7 @@ import org.rhasspy.mobile.viewModels.configuration.test.RemoteHermesHttpConfigur
 
 class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
 
-    override val testRunner get() = get<RemoteHermesHttpConfigurationTest>()
+    override val testRunner by inject<RemoteHermesHttpConfigurationTest>()
 
     //unsaved data
     private val _httpServerEndpoint = MutableStateFlow(ConfigurationSettings.httpServerEndpoint.value)

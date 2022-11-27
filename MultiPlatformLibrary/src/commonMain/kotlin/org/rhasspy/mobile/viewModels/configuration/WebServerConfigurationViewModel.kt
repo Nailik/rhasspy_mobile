@@ -13,7 +13,7 @@ import org.rhasspy.mobile.viewModels.configuration.test.WebServerConfigurationTe
 
 class WebServerConfigurationViewModel : IConfigurationViewModel() {
 
-    override val testRunner get() = get<WebServerConfigurationTest>()
+    override val testRunner by inject<WebServerConfigurationTest>()
 
     //unsaved data
     private val _isHttpServerEnabled =

@@ -6,6 +6,9 @@ import org.rhasspy.mobile.services.webserver.WebServerService
 
 class WebServerConfigurationTest : IConfigurationTest() {
 
+    init {
+        println("init WebServerConfigurationTest $this")
+    }
     fun runTest() {
         testScope.launch {
             //start web server
