@@ -40,7 +40,6 @@ class UdpService : IService() {
 
             startEvent.success()
         } catch (e: Exception) {
-            //TODO find solution
             startEvent.error(e)
         }
     }
@@ -54,9 +53,14 @@ class UdpService : IService() {
         val streamAudioEvent = serviceMiddleware.createEvent(StreamAudio)
 
         socketAddress?.also {
-            sendChannel?.send(Datagram(ByteReadPacket(byteData.toByteArray()), it)) ?: run {
-                streamAudioEvent.error(NotInitialized)
-                return ServiceResponse.NotInitialized
+            try {
+                sendChannel?.send(Datagram(ByteReadPacket(byteData.toByteArray()), it)) ?: run {
+                    streamAudioEvent.error(NotInitialized)
+                    return ServiceResponse.NotInitialized
+                }
+            } catch (exception: Exception) {
+                streamAudioEvent.error(exception)
+                return ServiceResponse.Error(exception)
             }
         } ?: run {
             streamAudioEvent.error(NotInitialized)
