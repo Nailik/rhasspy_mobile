@@ -23,6 +23,7 @@ import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.viewModels.configuration.SpeechToTextConfigurationViewModel
+import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
 
 /**
  * Content to configure speech to text
@@ -37,7 +38,7 @@ fun SpeechToTextConfigurationContent(viewModel: SpeechToTextConfigurationViewMod
         modifier = Modifier.testTag(ConfigurationScreens.SpeechToTextConfiguration),
         title = MR.strings.speechToText,
         viewModel = viewModel,
-        testContent = { modifier -> TestContent(modifier, viewModel) }
+        testContent = { TestContent(viewModel) }
     ) {
 
         //drop down of option
@@ -85,30 +86,10 @@ private fun SpeechToTextHTTP(viewModel: SpeechToTextConfigurationViewModel) {
 
 @Composable
 private fun TestContent(
-    modifier: Modifier,
     viewModel: SpeechToTextConfigurationViewModel
 ) {
-
-    Column(modifier = modifier.fillMaxWidth()) {
-/*
-        //  RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::startTestRecording) { onClick ->
-        FilledTonalButtonListItem(
-            text = if (viewModel.isRecording.collectAsState().value) {
-                MR.strings.stop
-            } else MR.strings.microphone,
-            onClick = viewModel::startTestRecording
-        )
-        //   }
-*/
-        val eventsList by viewModel.events.collectAsState()
-
-        LazyColumn(modifier = Modifier.fillMaxHeight()) {
-            items(eventsList) { item ->
-                EventListItem(item)
-            }
-        }
-
+    Column {
+        //button to record text
+        //record can be stopped
     }
-
-
 }

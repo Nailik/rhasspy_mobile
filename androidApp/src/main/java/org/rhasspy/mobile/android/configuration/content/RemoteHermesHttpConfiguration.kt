@@ -20,6 +20,7 @@ import org.rhasspy.mobile.android.utils.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.viewModels.configuration.RemoteHermesHttpConfigurationViewModel
+import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
 
 /**
  * content to configure http configuration
@@ -33,7 +34,7 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
         modifier = Modifier.testTag(ConfigurationScreens.RemoteHermesHttpConfiguration),
         title = MR.strings.remoteHermesHTTP,
         viewModel = viewModel,
-        testContent = { modifier -> TestContent(modifier, viewModel) }
+        testContent = { TestContent(viewModel) }
     ) {
 
         //base http endpoint
@@ -59,21 +60,9 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
 
 @Composable
 private fun TestContent(
-    modifier: Modifier,
     viewModel: RemoteHermesHttpConfigurationViewModel
 ) {
     Column {
-        val eventsList by viewModel.events.collectAsState()
-
-        LazyColumn(modifier = modifier.weight(1f)) {
-            items(eventsList) { item ->
-                EventListItem(item)
-            }
-        }
-
-        FilledTonalButtonListItem(
-            text = MR.strings.test,
-            onClick = viewModel::runTest
-        )
+        //button to execute intent recognition, speech to text (recording), text to speech
     }
 }

@@ -4,15 +4,19 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
@@ -38,8 +42,7 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = v
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.WebServerConfiguration),
         title = MR.strings.webserver,
-        viewModel = viewModel,
-        testContent = { modifier -> TestContent(modifier, viewModel) }
+        viewModel = viewModel
     ) {
 
         //switch to enable http server
@@ -108,25 +111,4 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
 
     }
 
-}
-
-@Composable
-private fun TestContent(
-    modifier: Modifier,
-    viewModel: WebServerConfigurationViewModel
-) {
-    Column {
-        val eventsList by viewModel.events.collectAsState()
-
-        LazyColumn(modifier = modifier.weight(1f)) {
-            items(eventsList) { item ->
-                EventListItem(item)
-            }
-        }
-
-        FilledTonalButtonListItem(
-            text = MR.strings.test,
-            onClick = viewModel::runTest
-        )
-    }
 }

@@ -8,12 +8,14 @@ class WebServerConfigurationTest : IConfigurationTest() {
 
     init {
         println("init WebServerConfigurationTest $this")
-    }
-    fun runTest() {
+
         testScope.launch {
             //start web server
             get<WebServerService>()
         }
+    }
+    fun runTest() {
+        //nothing to do
     }
 
     override fun onClose() {

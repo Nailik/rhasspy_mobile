@@ -23,6 +23,7 @@ import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.viewModels.configuration.IntentRecognitionConfigurationViewModel
+import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
 
 /**
  * configuration content for intent recognition
@@ -37,7 +38,7 @@ fun IntentRecognitionConfigurationContent(viewModel: IntentRecognitionConfigurat
         modifier = Modifier.testTag(ConfigurationScreens.IntentRecognitionConfiguration),
         title = MR.strings.intentRecognition,
         viewModel = viewModel,
-        testContent = { modifier -> TestContent(modifier, viewModel) }
+        testContent = { TestContent(viewModel) }
     ) {
 
         //drop down to select intent recognition option
@@ -86,15 +87,10 @@ private fun IntentRecognitionHTTP(viewModel: IntentRecognitionConfigurationViewM
 
 @Composable
 private fun TestContent(
-    modifier: Modifier,
     viewModel: IntentRecognitionConfigurationViewModel
 ) {
-
-    val eventsList by viewModel.events.collectAsState()
-
-    LazyColumn(modifier = modifier.fillMaxHeight()) {
-        items(eventsList) { item ->
-            EventListItem(item)
-        }
+    Column {
+        //textfield to insert text for intent recognition
+        //button to execute intent recognition
     }
 }

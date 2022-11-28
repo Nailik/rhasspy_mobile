@@ -23,6 +23,7 @@ import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.viewModels.configuration.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
 
 /**
  * Content to configure audio playing
@@ -37,7 +38,7 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
         modifier = Modifier.testTag(ConfigurationScreens.AudioPlayingConfiguration),
         title = MR.strings.audioPlaying,
         viewModel = viewModel,
-        testContent = { modifier -> TestContent(modifier, viewModel) }
+        testContent = { TestContent(viewModel) }
     ) {
 
         val audioPlayingOption by viewModel.audioPlayingOption.collectAsState()
@@ -108,15 +109,9 @@ private fun HttpEndpointConfigurationContent(viewModel: AudioPlayingConfiguratio
 
 @Composable
 private fun TestContent(
-    modifier: Modifier,
     viewModel: AudioPlayingConfigurationViewModel
 ) {
-
-    val eventsList by viewModel.events.collectAsState()
-
-    LazyColumn(modifier = modifier.fillMaxHeight()) {
-        items(eventsList) { item ->
-            EventListItem(item)
-        }
+    Column {
+        //??
     }
 }

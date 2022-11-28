@@ -2,6 +2,8 @@ package org.rhasspy.mobile.android.configuration
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -29,6 +31,7 @@ import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.configuration.test.EventListItem
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.Icon
@@ -58,7 +61,7 @@ fun ConfigurationScreenItemContent(
     modifier: Modifier,
     title: StringResource,
     viewModel: IConfigurationViewModel,
-    testContent: @Composable (modifier: Modifier) -> Unit = { },
+    testContent: (@Composable () -> Unit)? = null,
     content: @Composable ColumnScope.(onNavigate: (route: String) -> Unit) -> Unit
 ) {
 
@@ -95,6 +98,7 @@ fun ConfigurationScreenItemContent(
             }
             composable(ConfigurationContentScreens.Test.name) {
                 TestConfigurationScreen(
+                    viewModel = viewModel,
                     content = testContent,
                     onOpenPage = viewModel::onOpenTestPage
                 )
@@ -197,7 +201,8 @@ private fun EditConfigurationScreen(
 
 @Composable
 private fun TestConfigurationScreen(
-    content: @Composable (modifier: Modifier) -> Unit,
+    viewModel: IConfigurationViewModel,
+    content: (@Composable () -> Unit)?,
     onOpenPage: () -> Unit
 ) {
     val navController = LocalConfigurationNavController.current
@@ -226,7 +231,25 @@ private fun TestConfigurationScreen(
                 }
             },
         ) { paddingValues ->
-            content(Modifier.padding(paddingValues))
+
+            Column(modifier = Modifier.padding(paddingValues)) {
+                val eventsList by viewModel.events.collectAsState()
+
+                LazyColumn(modifier = Modifier.weight(1f)) {
+                    items(eventsList) { item ->
+                        EventListItem(item)
+                    }
+                }
+
+                if (content != null) {
+                    Card(
+                        modifier = Modifier.padding(8.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                    ) {
+                        content()
+                    }
+                }
+            }
         }
     }
 }

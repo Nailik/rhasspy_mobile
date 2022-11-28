@@ -23,6 +23,7 @@ import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItemVisibility
 import org.rhasspy.mobile.viewModels.configuration.IntentHandlingConfigurationViewModel
+import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
 
 
 /**
@@ -39,7 +40,7 @@ fun IntentHandlingConfigurationContent(viewModel: IntentHandlingConfigurationVie
         modifier = Modifier.testTag(ConfigurationScreens.IntentHandlingConfiguration),
         title = MR.strings.intentHandling,
         viewModel = viewModel,
-        testContent = { modifier -> TestContent(modifier, viewModel) }
+        testContent = { TestContent(viewModel) }
     ) {
 
         //drop down to select option
@@ -132,15 +133,10 @@ private fun HomeAssistantOption(viewModel: IntentHandlingConfigurationViewModel)
 
 @Composable
 private fun TestContent(
-    modifier: Modifier,
     viewModel: IntentHandlingConfigurationViewModel
 ) {
-
-    val eventsList by viewModel.events.collectAsState()
-
-    LazyColumn(modifier = modifier.fillMaxHeight()) {
-        items(eventsList) { item ->
-            EventListItem(item)
-        }
+    Column {
+        //textfield to insert intent json??
+        //button to execute intent handling
     }
 }

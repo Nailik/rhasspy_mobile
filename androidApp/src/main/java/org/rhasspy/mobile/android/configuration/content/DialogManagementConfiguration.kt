@@ -28,8 +28,7 @@ fun DialogManagementConfigurationContent(viewModel: DialogManagementConfiguratio
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.DialogManagementConfiguration),
         title = MR.strings.dialogManagement,
-        viewModel = viewModel,
-        testContent = { modifier -> TestContent(modifier, viewModel) }
+        viewModel = viewModel
     ) {
 
         //drop down to select option
@@ -42,19 +41,4 @@ fun DialogManagementConfigurationContent(viewModel: DialogManagementConfiguratio
 
     }
 
-}
-
-@Composable
-private fun TestContent(
-    modifier: Modifier,
-    viewModel: DialogManagementConfigurationViewModel
-) {
-
-    val eventsList by viewModel.events.collectAsState()
-
-    LazyColumn(modifier = modifier.fillMaxHeight()) {
-        items(eventsList) { item ->
-            EventListItem(item)
-        }
-    }
 }

@@ -25,6 +25,7 @@ import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItemVisibility
 import org.rhasspy.mobile.viewModels.configuration.MqttConfigurationViewModel
+import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
 
 /**
  * mqtt configuration content
@@ -42,8 +43,7 @@ fun MqttConfigurationContent(viewModel: MqttConfigurationViewModel = viewModel()
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.MqttConfiguration),
         title = MR.strings.mqtt,
-        viewModel = viewModel,
-        testContent = { modifier -> TestContent(modifier, viewModel) }
+        viewModel = viewModel
     ) {
 
         //toggle to turn mqtt enabled on or off
@@ -179,25 +179,4 @@ private fun MqttConnectionTiming(viewModel: MqttConfigurationViewModel) {
         onValueChange = viewModel::updateMqttRetryInterval
     )
 
-}
-
-@Composable
-private fun TestContent(
-    modifier: Modifier,
-    viewModel: MqttConfigurationViewModel
-) {
-    Column {
-        val eventsList by viewModel.events.collectAsState()
-
-        LazyColumn(modifier = modifier.weight(1f)) {
-            items(eventsList) { item ->
-                EventListItem(item)
-            }
-        }
-
-        FilledTonalButtonListItem(
-            text = MR.strings.test,
-            onClick = viewModel::runTest
-        )
-    }
 }

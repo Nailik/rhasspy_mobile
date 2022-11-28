@@ -23,6 +23,7 @@ import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.viewModels.configuration.TextToSpeechConfigurationViewModel
+import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
 
 
 /**
@@ -38,7 +39,7 @@ fun TextToSpeechConfigurationContent(viewModel: TextToSpeechConfigurationViewMod
         modifier = Modifier.testTag(ConfigurationScreens.TextToSpeechConfiguration),
         title = MR.strings.textToSpeech,
         viewModel = viewModel,
-        testContent = { modifier -> TestContent(modifier, viewModel) }
+        testContent = { TestContent(viewModel) }
     ) {
 
         //drop down to select text to speech
@@ -88,21 +89,10 @@ private fun TextToSpeechHTTP(viewModel: TextToSpeechConfigurationViewModel) {
 
 @Composable
 private fun TestContent(
-    modifier: Modifier,
     viewModel: TextToSpeechConfigurationViewModel
 ) {
     Column {
-        val eventsList by viewModel.events.collectAsState()
-
-        LazyColumn(modifier = modifier.weight(1f)) {
-            items(eventsList) { item ->
-                EventListItem(item)
-            }
-        }
-
-        FilledTonalButtonListItem(
-            text = MR.strings.test,
-            onClick = viewModel::runTest
-        )
+        //textfield to insert text
+        //button to run text to speech
     }
 }
