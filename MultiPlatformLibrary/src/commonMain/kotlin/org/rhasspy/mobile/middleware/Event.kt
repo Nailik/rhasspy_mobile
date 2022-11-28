@@ -3,7 +3,7 @@ package org.rhasspy.mobile.middleware
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.readOnly
 
-class Event(val eventType: EventType, description: String? = null) {
+class Event(val eventType: EventType, val description: String? = null) {
 
     private val _eventState = MutableStateFlow<EventState>(EventState.Loading)
     val eventState = _eventState.readOnly
@@ -16,6 +16,12 @@ class Event(val eventType: EventType, description: String? = null) {
     fun success() {
         if (_eventState.value == EventState.Loading) {
             _eventState.value = EventState.Success()
+            //when not error/warning
+        }
+    }
+    fun success(data: String) {
+        if (_eventState.value == EventState.Loading) {
+            _eventState.value = EventState.Success(data)
             //when not error/warning
         }
     }

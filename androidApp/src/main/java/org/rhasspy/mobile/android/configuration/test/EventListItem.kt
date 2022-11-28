@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.android.configuration.test
 
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -9,8 +11,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.theme.warn
 import org.rhasspy.mobile.android.utils.Text
+import org.rhasspy.mobile.android.utils.translate
 import org.rhasspy.mobile.middleware.Event
 import org.rhasspy.mobile.middleware.EventState
 import org.rhasspy.mobile.middleware.name
@@ -39,18 +43,24 @@ fun EventListItem(event: Event) {
             Text(event.eventType.name)
         },
         supportingText = {
-            Text(
-                when (state) {
-                    EventState.Pending -> "Pending"
-                    EventState.Loading -> "Loading"
-                    is EventState.Success -> state.information ?: "No Details"
-                    is EventState.Warning -> state.information ?: "No Details"
-                    is EventState.Error -> state.toString()
-                }
-            )
+            val text = when (state) {
+                EventState.Pending -> translate(MR.strings.pending)
+                EventState.Loading -> translate(MR.strings.loading)
+                is EventState.Success -> state.information
+                is EventState.Warning -> state.information
+                is EventState.Error -> state.toString()
+            }
+
+            Text(text ?: translate(MR.strings.noDetails))
         },
         headlineText = {
-            Text(event.eventType.title)
+            Row {
+                Text(event.eventType.title)
+                event.description?.also { description ->
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(description)
+                }
+            }
         })
 }
 

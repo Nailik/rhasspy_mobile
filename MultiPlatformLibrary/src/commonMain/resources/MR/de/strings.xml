@@ -244,4 +244,7 @@
     <string name="rhasspyActionService">Rhasspy Actions Dienst</string>
     <string name="udpService">Udp Dienst</string>
     <string name="webServerService">Webserver Dienst</string>
+    <string name="pending">Wartet</string>
+    <string name="loading">Lädt</string>
+    <string name="noDetails">keine Details</string>
 </resources>

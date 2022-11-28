@@ -54,7 +54,6 @@ class WebServerService : IService() {
      * logs start event
      */
     init {
-        println("Testting - start webserver")
         if (params.isHttpServerEnabled) {
             val startEvent = serviceMiddleware.createEvent(Start)
 
@@ -150,22 +149,34 @@ class WebServerService : IService() {
     private suspend fun evaluateCall(path: WebServerPath, call: ApplicationCall) {
         val callEvent = serviceMiddleware.createEvent(Received, path.path)
         try {
-            when (path) {
-                WebServerPath.ListenForCommand -> listenForCommand(call)
-                WebServerPath.ListenForWake -> listenForWake(call)?.also {
-                    callEvent.error(it)
-                }
-                WebServerPath.PlayRecordingPost -> playRecordingPost(call)
+            val result = when (path) {
+                WebServerPath.ListenForCommand -> listenForCommand()
+                WebServerPath.ListenForWake -> listenForWake(call)
+                WebServerPath.PlayRecordingPost -> playRecordingPost()
                 WebServerPath.PlayRecordingGet -> playRecordingGet(call)
                 WebServerPath.PlayWav -> playWav(call, callEvent)
-                WebServerPath.SetVolume -> setVolume(call)?.also {
-                    callEvent.error(it)
-                }
-                WebServerPath.StartRecording -> startRecording(call)
-                WebServerPath.StopRecording -> stopRecording(call)
+                WebServerPath.SetVolume -> setVolume(call)
+                WebServerPath.StartRecording -> startRecording()
+                WebServerPath.StopRecording -> stopRecording()
                 WebServerPath.Say -> say(call)
             }
-            callEvent.success()
+
+            when (result) {
+                is WebServerResult.Accepted -> {
+                    call.respond(HttpStatusCode.Accepted)
+                    callEvent.success(result.data)
+                }
+                is WebServerResult.Error -> {
+                    call.respond(HttpStatusCode.BadRequest, result.errorType.description)
+                    callEvent.error(result.errorType)
+                }
+                WebServerResult.Ok -> {
+                    call.respond(HttpStatusCode.OK)
+                    callEvent.success()
+                }
+                else -> callEvent.success()
+            }
+
         } catch (exception: Exception) {
             callEvent.error(exception)
         }
@@ -179,9 +190,9 @@ class WebServerService : IService() {
      * ?timeout=<seconds> - override default command timeout
      * ?entity=<entity>&value=<value> - set custom entities/values in recognized intent
      */
-    private suspend fun listenForCommand(call: ApplicationCall) {
-        call.respond(HttpStatusCode.OK)
+    private fun listenForCommand(): WebServerResult {
         serviceMiddleware.webServerAction(ListenForCommand)
+        return WebServerResult.Ok
     }
 
 
@@ -191,7 +202,7 @@ class WebServerService : IService() {
      * POST "off" to disable wake word
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    private suspend fun listenForWake(call: ApplicationCall): WebServerServiceErrorType? {
+    private suspend fun listenForWake(call: ApplicationCall): WebServerResult {
         val action = when (call.receive<String>()) {
             "on" -> true
             "off" -> false
@@ -199,12 +210,10 @@ class WebServerService : IService() {
         }
 
         action?.let {
-            call.respond(HttpStatusCode.Accepted)
             serviceMiddleware.webServerAction(ListenForWake(it))
-            return null
+            return WebServerResult.Accepted(it.toString())
         } ?: run {
-            call.respond(HttpStatusCode.BadRequest, WakeOptionInvalid.description)
-            return WakeOptionInvalid
+            return WebServerResult.Error(WakeOptionInvalid)
         }
     }
 
@@ -213,9 +222,9 @@ class WebServerService : IService() {
      * /api/play-recording
      * POST to play last recorded voice command
      */
-    private suspend fun playRecordingPost(call: ApplicationCall) {
-        call.respond(HttpStatusCode.OK)
+    private fun playRecordingPost(): WebServerResult {
         serviceMiddleware.webServerAction(PlayRecording)
+        return WebServerResult.Ok
     }
 
 
@@ -223,11 +232,12 @@ class WebServerService : IService() {
      * /api/play-recording
      * GET to download WAV data from last recorded voice command
      */
-    private suspend fun playRecordingGet(call: ApplicationCall) {
+    private suspend fun playRecordingGet(call: ApplicationCall): WebServerResult? {
         call.respondBytes(
             bytes = serviceMiddleware.webServerRequest(PlayRecordingGet),
             contentType = audioContentType
         )
+        return null
     }
 
     /**
@@ -236,13 +246,13 @@ class WebServerService : IService() {
      * Make sure to set Content-Type to audio/wav
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    private suspend fun playWav(call: ApplicationCall, event: Event) {
+    private suspend fun playWav(call: ApplicationCall, event: Event): WebServerResult {
         if (call.request.contentType() != audioContentType) {
             event.warning(AudioContentTypeWarning)
         }
-        call.respond(HttpStatusCode.OK)
         //play even without header
         serviceMiddleware.webServerAction(PlayWav(call.receive()))
+        return WebServerResult.Ok
     }
 
     /**
@@ -251,20 +261,17 @@ class WebServerService : IService() {
      * Body text is volume level (0 = off, 1 = full volume)
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    private suspend fun setVolume(call: ApplicationCall): WebServerServiceErrorType? {
+    private suspend fun setVolume(call: ApplicationCall): WebServerResult {
         //double and float or double not working but string??
         return call.receive<String>().toFloatOrNull()?.let {
-            return if (it in 0f..1f) {
-                call.respond(HttpStatusCode.Accepted)
+            if (it in 0f..1f) {
                 serviceMiddleware.webServerAction(SetVolume(it))
-                null
+                return WebServerResult.Accepted(it.toString())
             } else {
-                call.respond(HttpStatusCode.BadRequest, VolumeValueOutOfRange.description)
-                VolumeValueOutOfRange
+                return WebServerResult.Error(VolumeValueOutOfRange)
             }
         } ?: run {
-            call.respond(HttpStatusCode.BadRequest, VolumeValueInvalid.description)
-            VolumeValueInvalid
+            return WebServerResult.Error(VolumeValueInvalid)
         }
     }
 
@@ -273,9 +280,9 @@ class WebServerService : IService() {
      * POST to have Rhasspy start recording a voice command
      * actually starts a session
      */
-    private suspend fun startRecording(call: ApplicationCall) {
-        call.respond(HttpStatusCode.OK)
+    private fun startRecording(): WebServerResult {
         serviceMiddleware.webServerAction(StartRecording)
+        return WebServerResult.Ok
     }
 
     /**
@@ -289,9 +296,9 @@ class WebServerService : IService() {
      * ?nohass=true - stop Rhasspy from handling the intent
      * ?entity=<entity>&value=<value> - set custom entity/value in recognized intent
      */
-    private suspend fun stopRecording(call: ApplicationCall) {
-        call.respond(HttpStatusCode.OK)
+    private fun stopRecording(): WebServerResult {
         serviceMiddleware.webServerAction(StopRecording)
+        return WebServerResult.Ok
     }
 
     /**
@@ -302,9 +309,19 @@ class WebServerService : IService() {
      * Afterwards Rhasspy will use the audio endpoint to play the audio
      * just like using say in the ui start screen but remote
      */
-    private suspend fun say(call: ApplicationCall) {
-        call.respond(HttpStatusCode.OK)
+    private suspend fun say(call: ApplicationCall): WebServerResult {
         serviceMiddleware.webServerAction(Say(call.receive()))
+        return WebServerResult.Ok
+    }
+
+    sealed interface WebServerResult {
+
+        object Ok : WebServerResult
+
+        class Accepted(val data: String) : WebServerResult
+
+        class Error(val errorType: WebServerServiceErrorType) : WebServerResult
+
     }
 
 }
