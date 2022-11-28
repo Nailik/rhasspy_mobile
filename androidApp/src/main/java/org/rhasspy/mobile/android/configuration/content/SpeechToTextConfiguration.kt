@@ -11,8 +11,10 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
+import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.android.utils.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
@@ -81,8 +83,10 @@ private fun SpeechToTextHTTP(viewModel: SpeechToTextConfigurationViewModel) {
 private fun TestContent(
     viewModel: SpeechToTextConfigurationViewModel
 ) {
-    Column {
-        //button to record text
-        //record can be stopped
+    RequiresMicrophonePermission(MR.strings.defaultText, viewModel::toggleRecording) { onClick ->
+        FilledTonalButtonListItem(
+            text = if (viewModel.isRecordingAudio.collectAsState().value) MR.strings.stopRecordAudio else MR.strings.startRecordAudio,
+            onClick = onClick
+        )
     }
 }

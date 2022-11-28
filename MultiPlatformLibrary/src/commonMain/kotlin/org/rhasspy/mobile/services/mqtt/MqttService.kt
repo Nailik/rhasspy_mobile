@@ -163,7 +163,7 @@ class MqttService : IService() {
 
 
     private fun onMessageReceived(topic: String, message: MqttMessage) {
-        logger.v { "onMessageReceived id ${message.msgId} $topic" }
+        logger.v { "onMessageReceived id ${message.msgId} $topic ${message.payload.decodeToString()}" }
 
         if (message.msgId == id) {
             //ignore all messages that i have send
@@ -191,7 +191,9 @@ class MqttService : IService() {
                             MqttTopicsSubscription.HotWordToggleOff -> hotWordToggleOff()
                             MqttTopicsSubscription.AsrStartListening -> startListening(jsonObject)
                             MqttTopicsSubscription.AsrStopListening -> stopListening(jsonObject)
-                            MqttTopicsSubscription.AsrTextCaptured -> asrTextCaptured(jsonObject)
+                            MqttTopicsSubscription.AsrTextCaptured -> asrTextCaptured(jsonObject) //TODO other site id but this session id when
+                            // calling asr stop listening and disabled stop on silence
+                            //TODO when stop on silence then it is called with this site id ->
                             MqttTopicsSubscription.AsrError -> asrError(jsonObject)
                             MqttTopicsSubscription.IntentNotRecognized -> intentNotRecognized(jsonObject)
                             MqttTopicsSubscription.IntentHandlingToggleOn -> intentHandlingToggleOn()
@@ -203,25 +205,29 @@ class MqttService : IService() {
                             }
                             else -> receivedEvent.error(InvalidTopic)
                         }
-                        receivedEvent.success()
+                        receivedEvent.success(jsonObject.toString())
+                    } else {
+                        logger.v { "message ignored, different side id $jsonObject" }
                     }
+                } else {
+                    //site id in topic
+                    when {
+                        MqttTopicsSubscription.HotWordDetected.topic.matches(topic) -> hotWordDetectedCalled(topic)
+                        MqttTopicsSubscription.IntentRecognitionResult.topic.matches(topic) -> {
+                            val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
+                            intentRecognitionResult(jsonObject)
+                        }
+                        MqttTopicsSubscription.PlayBytes.topic
+                            .set(MqttTopicPlaceholder.SiteId, params.siteId)
+                            .matches(topic) -> playBytes(message.payload)
+                        else -> receivedEvent.error(InvalidTopic)
+                    }
+                    receivedEvent.success()
                 }
             } ?: run {
-                //site id in topic
-                when {
-                    MqttTopicsSubscription.HotWordDetected.topic.matches(topic) -> hotWordDetectedCalled(topic)
-                    MqttTopicsSubscription.IntentRecognitionResult.topic.matches(topic) -> {
-                        val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
-                        intentRecognitionResult(jsonObject)
-                    }
-                    MqttTopicsSubscription.PlayBytes.topic
-                        .set(MqttTopicPlaceholder.SiteId, params.siteId)
-                        .matches(topic) -> playBytes(message.payload)
-                    else -> receivedEvent.error(InvalidTopic)
-                }
-                receivedEvent.success()
+                //no topic found
+                receivedEvent.warning()
             }
-
         } catch (e: Exception) {
             receivedEvent.error(e)
         }
@@ -511,7 +517,7 @@ class MqttService : IService() {
             createMqttMessage {
                 put(MqttParams.SiteId, params.siteId)
                 put(MqttParams.SessionId, sessionId)
-                put(MqttParams.StopOnSilence, true)
+                put(MqttParams.StopOnSilence, true) //TODO !!!
                 put(MqttParams.SendAudioCaptured, true)
             }
         )

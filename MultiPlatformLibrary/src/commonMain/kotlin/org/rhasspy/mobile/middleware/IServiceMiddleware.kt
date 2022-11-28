@@ -31,7 +31,11 @@ abstract class IServiceMiddleware : Closeable {
     }
 
     fun mqttAction(event: MqttAction) {
+        //post action to the service that needs it
+        // -> asr (stop, start, text captured) is needed by rhasspy actions
+        //intent recognized, intent not recognized is needed by rhasspy actions
 
+        //TODO split rhasspy actions service into speechtotext, texttospeech, intent recognition
     }
 
     fun webServerAction(event: WebServerAction) {

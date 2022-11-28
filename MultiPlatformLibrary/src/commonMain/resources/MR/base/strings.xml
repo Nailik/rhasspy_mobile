@@ -242,6 +242,8 @@
     <string name="pending">Pending</string>
     <string name="loading">Loading</string>
     <string name="noDetails">no Details</string>
+    <string name="startRecordAudio">Start Record Audio</string>
+    <string name="stopRecordAudio">Stop Record Audio</string>
     <!-- not translatable -->
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>

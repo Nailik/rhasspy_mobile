@@ -55,6 +55,8 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
         unloadKoinModules(serviceModule)
         loadKoinModules(serviceModule)
         initializeTestParams()
+
+        _events.value = emptyList()
         testRunner.initializeTest()
 
         testScope.launch {

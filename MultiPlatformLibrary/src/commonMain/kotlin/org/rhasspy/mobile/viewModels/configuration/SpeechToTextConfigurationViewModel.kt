@@ -14,7 +14,9 @@ import org.rhasspy.mobile.viewModels.configuration.test.SpeechToTextConfiguratio
 
 class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
 
+    //for testing
     override val testRunner by inject<SpeechToTextConfigurationTest>()
+    val isRecordingAudio = testRunner.isRecording
 
     //unsaved data
     private val _speechToTextOption = MutableStateFlow(ConfigurationSettings.speechToTextOption.value)
@@ -102,6 +104,13 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
         }
     }
 
-    override fun runTest() = testRunner.startTest()
+    override fun onOpenTestPage() {
+        super.onOpenTestPage()
+        testRunner.initialize()
+    }
+
+    override fun runTest() = testRunner.toggleRecording()
+
+    fun toggleRecording() = testRunner.toggleRecording()
 
 }

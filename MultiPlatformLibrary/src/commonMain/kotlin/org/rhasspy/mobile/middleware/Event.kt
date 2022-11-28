@@ -14,14 +14,14 @@ class Event(val eventType: EventType, val description: String? = null) {
     }
 
     fun success() {
-        if (_eventState.value == EventState.Loading) {
+        if (_eventState.value !is EventState.Error) {
             _eventState.value = EventState.Success()
             //when not error/warning
         }
     }
 
     fun success(data: String) {
-        if (_eventState.value == EventState.Loading) {
+        if (_eventState.value !is EventState.Error) {
             _eventState.value = EventState.Success(data)
             //when not error/warning
         }

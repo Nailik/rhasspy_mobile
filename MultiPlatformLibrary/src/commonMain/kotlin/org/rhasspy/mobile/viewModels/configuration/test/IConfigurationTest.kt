@@ -24,6 +24,8 @@ abstract class IConfigurationTest : Closeable, KoinComponent {
     val events = _events.readOnly
 
     fun initializeTest() {
+        _events.value = emptyList()
+
         testScope = CoroutineScope(Dispatchers.Default)
 
         //load middleware

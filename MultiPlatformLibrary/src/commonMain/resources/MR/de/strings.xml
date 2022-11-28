@@ -247,4 +247,6 @@
     <string name="pending">Wartet</string>
     <string name="loading">Lädt</string>
     <string name="noDetails">keine Details</string>
+    <string name="startRecordAudio">Audio Aufnahme starten</string>
+    <string name="stopRecordAudio">Audio Aufnahme stoppen</string>
 </resources>

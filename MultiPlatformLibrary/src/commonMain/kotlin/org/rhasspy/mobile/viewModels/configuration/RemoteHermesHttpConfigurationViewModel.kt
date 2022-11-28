@@ -67,6 +67,11 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
         }
     }
 
+    override fun onOpenTestPage() {
+        super.onOpenTestPage()
+        runTest()
+    }
+
     override fun runTest() = testRunner.startTest()
 
 }

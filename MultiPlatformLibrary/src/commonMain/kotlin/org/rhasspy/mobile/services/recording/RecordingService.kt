@@ -35,20 +35,18 @@ class RecordingService : IService() {
 
     init {
         scope = CoroutineScope(Dispatchers.Default)
-        scope.launch {
+        //TODO custom output for audio frame stt and wake word
+      /*  scope.launch {
             //collect from audio recorder
             AudioRecorder.output.collect { value ->
-                val byteData = value.toMutableList().apply {
-                    addWavHeader()
-                }
                 if (isRecordingNormal) {
-                    dialogManagerService.audioFrameLocal(byteData)
+                    dialogManagerService.audioFrameLocal(value)
                 }
                 if (isRecordingWakeWord) {
-                    dialogManagerService.audioFrameWakeWordLocal(byteData)
+                    dialogManagerService.audioFrameWakeWordLocal(value)
                 }
             }
-        }
+        }*/
 
         scope.launch {
             AudioRecorder.maxVolume.collect {
@@ -67,13 +65,13 @@ class RecordingService : IService() {
             if (volume < AppSettings.automaticSilenceDetectionAudioLevel.value) {
                 //no data was above threshold, there is silence
                 silenceStartTime?.also {
-                    logger.d { "silenceDetected" }
+                  //  logger.d { "silenceDetected" }
                     //check if silence was detected for x milliseconds
                     if (it.minus(Clock.System.now()) < -AppSettings.automaticSilenceDetectionTime.value.milliseconds) {
                         dialogManagerService.silenceDetectedLocal()
                     }
                 } ?: run {
-                    logger.v { "start silence detected" }
+                  //  logger.v { "start silence detected" }
                     //first time silence was detected
                     silenceStartTime = Clock.System.now()
                 }
