@@ -44,6 +44,8 @@ abstract class IConfigurationTest : Closeable, KoinComponent {
         _events.value = listOf()
     }
 
-    protected abstract fun onClose()
+    protected open fun onClose() {
+
+    }
 
 }

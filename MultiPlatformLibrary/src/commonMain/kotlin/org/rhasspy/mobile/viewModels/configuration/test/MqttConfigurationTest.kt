@@ -9,7 +9,4 @@ class MqttConfigurationTest : IConfigurationTest() {
         get<MqttService>()
     }
 
-    override fun onClose() {
-        //TODO("Not yet implemented")
-    }
 }

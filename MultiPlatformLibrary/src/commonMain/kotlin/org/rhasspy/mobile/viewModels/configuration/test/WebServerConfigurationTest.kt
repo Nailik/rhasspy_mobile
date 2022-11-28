@@ -13,8 +13,4 @@ class WebServerConfigurationTest : IConfigurationTest() {
         }
     }
 
-    override fun onClose() {
-        //nothing to do
-    }
-
 }

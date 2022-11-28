@@ -169,6 +169,14 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
         }
     }
 
+    /**
+     * run test immediately
+     */
+    override fun onOpenTestPage() {
+        super.onOpenTestPage()
+        runTest()
+    }
+
     override fun runTest() = testRunner.startTest()
 
 }
