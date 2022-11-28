@@ -19,6 +19,7 @@ class Event(val eventType: EventType, val description: String? = null) {
             //when not error/warning
         }
     }
+
     fun success(data: String) {
         if (_eventState.value == EventState.Loading) {
             _eventState.value = EventState.Success(data)

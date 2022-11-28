@@ -3,7 +3,6 @@ package org.rhasspy.mobile.viewModels
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.koin.core.component.inject
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 

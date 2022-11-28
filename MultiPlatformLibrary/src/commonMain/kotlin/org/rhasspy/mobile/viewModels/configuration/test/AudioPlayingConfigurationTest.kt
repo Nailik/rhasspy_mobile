@@ -1,7 +1,5 @@
 package org.rhasspy.mobile.viewModels.configuration.test
 
-import kotlinx.coroutines.CoroutineScope
-
 class AudioPlayingConfigurationTest : IConfigurationTest() {
 
     public fun startTest() {

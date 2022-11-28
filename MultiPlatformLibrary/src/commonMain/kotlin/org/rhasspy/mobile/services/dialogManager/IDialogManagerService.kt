@@ -3,18 +3,13 @@ package org.rhasspy.mobile.services.dialogManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.DialogManagementOptions
-import org.rhasspy.mobile.data.SpeechToTextOptions
-import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.hotword.HotWordService
-import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
-import org.rhasspy.mobile.services.udp.UdpService
 
 /**
  * idle

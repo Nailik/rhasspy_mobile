@@ -1,7 +1,5 @@
 package org.rhasspy.mobile.viewModels.configuration.test
 
-import kotlinx.coroutines.CoroutineScope
-
 class IntentRecognitionConfigurationTest : IConfigurationTest() {
 
     public fun startTest() {

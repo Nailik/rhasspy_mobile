@@ -14,6 +14,7 @@ class WebServerConfigurationTest : IConfigurationTest() {
             get<WebServerService>()
         }
     }
+
     fun runTest() {
         //nothing to do
     }

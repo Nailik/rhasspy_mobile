@@ -1,10 +1,7 @@
 package org.rhasspy.mobile.android.configuration.content
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -15,7 +12,6 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
-import org.rhasspy.mobile.android.configuration.test.EventListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
@@ -23,7 +19,6 @@ import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
 import org.rhasspy.mobile.viewModels.configuration.AudioPlayingConfigurationViewModel
-import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
 
 /**
  * Content to configure audio playing

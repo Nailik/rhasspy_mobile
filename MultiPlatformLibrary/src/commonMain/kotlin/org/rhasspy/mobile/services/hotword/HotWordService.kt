@@ -70,7 +70,7 @@ class HotWordService : IService() {
         }
     }
 
-    suspend fun hotWordAudioFrame(byteData: List<Byte>){
+    suspend fun hotWordAudioFrame(byteData: List<Byte>) {
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> nativeLocalPorcupineWakeWordService?.start()
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored

@@ -1,11 +1,7 @@
 package org.rhasspy.mobile.android.configuration.content
 
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -13,7 +9,6 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
-import org.rhasspy.mobile.android.configuration.test.EventListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
 import org.rhasspy.mobile.viewModels.configuration.DialogManagementConfigurationViewModel

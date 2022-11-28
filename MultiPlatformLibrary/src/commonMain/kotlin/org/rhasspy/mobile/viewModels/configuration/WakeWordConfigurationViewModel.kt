@@ -2,7 +2,6 @@ package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
-import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.PorcupineLanguageOptions
