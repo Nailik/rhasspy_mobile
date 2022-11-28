@@ -1,61 +1,75 @@
 package org.rhasspy.mobile.middleware
 
-import org.rhasspy.mobile.mqtt.MqttError
+import dev.icerock.moko.resources.StringResource
+import org.rhasspy.mobile.MR
 
 sealed interface EventType {
 
-    enum class HotWordServiceEventType : EventType {
-        StartPorcupine,
-        Detected
+    val title: StringResource
+
+    enum class HotWordServiceEventType(override val title: StringResource) : EventType {
+        StartPorcupine(MR.strings.startPorcupine),
+        Detected(MR.strings.hotWordDetected);
     }
 
-    enum class HttpClientServiceEventType : EventType {
-        Start,
-        SpeechToText,
-        RecognizeIntent,
-        TextToSpeech,
-        PlayWav,
-        IntentHandling,
-        HassEvent,
-        HassIntent
+    enum class HttpClientServiceEventType(override val title: StringResource) : EventType {
+        Start(MR.strings.start),
+        SpeechToText(MR.strings.speechToText),
+        RecognizeIntent(MR.strings.recognizeIntent),
+        TextToSpeech(MR.strings.textToSpeech),
+        PlayWav(MR.strings.playWav),
+        IntentHandling(MR.strings.intentHandling),
+        HassEvent(MR.strings.hassEvent),
+        HassIntent(MR.strings.hassIntent);
     }
 
-    enum class WebServerServiceEventType : EventType {
-        Start,
-        Received
+    enum class WebServerServiceEventType(override val title: StringResource) : EventType {
+        Start(MR.strings.start),
+        Received(MR.strings.received);
     }
 
-    enum class UdpServiceEventType : EventType {
-        Start,
-        StreamAudio
+    enum class UdpServiceEventType(override val title: StringResource) : EventType {
+        Start(MR.strings.start),
+        StreamAudio(MR.strings.streamAudio);
     }
 
-    enum class MqttServiceEventType : EventType {
-        Start,
-        Connecting,
-        Disconnect,
-        Reconnect,
-        SubscribeTopic,
-        Subscribing,
-        Publish,
-        Received
+    enum class MqttServiceEventType(override val title: StringResource) : EventType {
+        Start(MR.strings.start),
+        Connecting(MR.strings.connecting),
+        Disconnect(MR.strings.disconnect),
+        Reconnect(MR.strings.reconnect),
+        SubscribeTopic(MR.strings.subscribeTopic),
+        Subscribing(MR.strings.subscribing),
+        Publish(MR.strings.publish),
+        Received(MR.strings.received);
     }
 
-    enum class RhasspyActionServiceEventType : EventType {
-        RecognizeIntent,
-        Say,
-        PlayAudio,
-        SpeechToText,
-        IntentHandling
+    enum class RhasspyActionServiceEventType(override val title: StringResource) : EventType {
+        RecognizeIntent(MR.strings.startPorcupine),
+        Say(MR.strings.say),
+        PlayAudio(MR.strings.playAudio),
+        SpeechToText(MR.strings.speechToText),
+        IntentHandling(MR.strings.intentHandling);
     }
 
-    enum class HomeAssistantServiceEventType : EventType {
-        SendIntent
+    enum class HomeAssistantServiceEventType(override val title: StringResource) : EventType {
+        SendIntent(MR.strings.sendIntent);
     }
 
-    enum class IndicationServiceEventType : EventType {
-        Start
+    enum class IndicationServiceEventType(override val title: StringResource) : EventType {
+        Start(MR.strings.start);
     }
 
 }
 
+val EventType.name: StringResource
+    get() = when (this) {
+        is EventType.HomeAssistantServiceEventType -> MR.strings.homeAssistantService
+        is EventType.HotWordServiceEventType -> MR.strings.hotWordService
+        is EventType.HttpClientServiceEventType -> MR.strings.httpClientService
+        is EventType.IndicationServiceEventType -> MR.strings.indicationService
+        is EventType.MqttServiceEventType -> MR.strings.mqttService
+        is EventType.RhasspyActionServiceEventType -> MR.strings.rhasspyActionService
+        is EventType.UdpServiceEventType -> MR.strings.udpService
+        is EventType.WebServerServiceEventType -> MR.strings.webServerService
+    }

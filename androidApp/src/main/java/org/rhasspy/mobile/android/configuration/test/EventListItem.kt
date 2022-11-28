@@ -10,8 +10,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import org.rhasspy.mobile.android.theme.warn
+import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.middleware.Event
 import org.rhasspy.mobile.middleware.EventState
+import org.rhasspy.mobile.middleware.name
 
 //loading, positive, negative state, text
 @Composable
@@ -33,6 +35,9 @@ fun EventListItem(event: Event) {
             leadingIconColor = contentColor,
             headlineColor = contentColor
         ),
+        overlineText = {
+            Text(event.eventType.name)
+        },
         supportingText = {
             Text(
                 when (state) {
@@ -45,7 +50,7 @@ fun EventListItem(event: Event) {
             )
         },
         headlineText = {
-            Text(event.eventType.toString())
+            Text(event.eventType.title)
         })
 }
 
