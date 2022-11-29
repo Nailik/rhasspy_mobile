@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.services.dialogManager
 
+import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -22,8 +23,7 @@ abstract class IDialogManagerService : IService() {
     val params by inject<DialogManagerServiceParams>()
     val hotWordService by inject<HotWordService>()
     val rhasspyActionsService by inject<RhasspyActionsService>()
-    val sessionId: String = "45j89"
-
+    val sessionId: String = uuid4().toString()
     private var scope = CoroutineScope(Dispatchers.Default)
 
     override fun onClose() {

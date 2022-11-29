@@ -128,11 +128,6 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
         }
     }
 
-    override fun onOpenTestPage() {
-        super.onOpenTestPage()
-        testRunner.initialize()
-    }
-
     override fun runTest() = testRunner.toggleRecording()
 
     fun toggleRecording() = testRunner.toggleRecording()

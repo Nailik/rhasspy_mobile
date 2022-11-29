@@ -1,16 +1,19 @@
 package org.rhasspy.mobile.middleware
 
+import com.benasher44.uuid.uuid4
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.middleware.action.LocalAction
 import org.rhasspy.mobile.middleware.action.MqttAction
 import org.rhasspy.mobile.middleware.action.WebServerAction
 import org.rhasspy.mobile.middleware.action.WebServerRequest
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.dialogManager.IDialogManagerService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 
 /**
@@ -25,9 +28,11 @@ abstract class IServiceMiddleware : KoinComponent, Closeable {
     )
     val event = _event.readOnly
 
+    val sessionId: String get() = get<IDialogManagerService>().sessionId
 
     val rhasspyActionsService by inject<RhasspyActionsService>()
     val coroutineScope = CoroutineScope(Dispatchers.Default)
+
 
     /**
      * user clicks start or hotword was detected
@@ -36,7 +41,7 @@ abstract class IServiceMiddleware : KoinComponent, Closeable {
 
     }
 
-    fun mqttAction(event: MqttAction) {
+    open fun mqttAction(event: MqttAction) {
         //post action to the service that needs it
         // -> asr (stop, start, text captured) is needed by rhasspy actions
         //intent recognized, intent not recognized is needed by rhasspy actions
@@ -51,9 +56,9 @@ abstract class IServiceMiddleware : KoinComponent, Closeable {
                 is MqttAction.HotWordToggle -> {}// TODO()
                 is MqttAction.IntentHandlingToggle -> {}// TODO()
                 is MqttAction.IntentRecognitionResult -> {}// TODO()
-                is MqttAction.AsrError -> rhasspyActionsService.endSpeechToText(event.sessionId ?: "")
+                is MqttAction.AsrError -> {  }
                 //TODO only if mqtt is used?? for speech to text and session id is correct (but for dialog manager mqtt any)
-                is MqttAction.AsrTextCaptured -> rhasspyActionsService.endSpeechToText(event.sessionId ?: "")
+                is MqttAction.AsrTextCaptured -> {    }
                 //TODO only if mqtt is used?? for speech to text and session id is correct (but for dialog manager mqtt any)
                 is MqttAction.IntentTranscribed -> {}// TODO()
                 is MqttAction.IntentTranscribedError -> {}// TODO()

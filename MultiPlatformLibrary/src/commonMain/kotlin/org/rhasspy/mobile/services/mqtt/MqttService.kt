@@ -171,6 +171,7 @@ class MqttService : IService() {
             return
         }
 
+        //TODO events when should be ignored not nice (like wrong site id but used for AsrTextCaptured)
         val receivedEvent = serviceMiddleware.createEvent(Received, topic)
 
         try {
@@ -209,11 +210,11 @@ class MqttService : IService() {
                             MqttTopicsSubscription.AsrTextCaptured -> asrTextCaptured(jsonObject)
                             MqttTopicsSubscription.AsrError -> asrError(jsonObject)
                             else -> {
+
                                 logger.v { "message ignored, different side id $jsonObject" }
                                 receivedEvent.warning()
                             }
                         }
-                        receivedEvent.success(jsonObject.toString())
                     }
                 } else {
                     //site id in topic
