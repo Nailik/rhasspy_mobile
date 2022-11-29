@@ -171,7 +171,7 @@ class MqttService : IService() {
             return
         }
 
-        //TODO events when should be ignored not nice (like wrong site id but used for AsrTextCaptured)
+        //TODO events when should be ignored not nice (like wrong site id but used for AsrTextCaptured duo to session id)
         val receivedEvent = serviceMiddleware.createEvent(Received, topic)
 
         try {
