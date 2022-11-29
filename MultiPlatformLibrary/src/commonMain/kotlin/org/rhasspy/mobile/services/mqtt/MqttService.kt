@@ -191,9 +191,7 @@ class MqttService : IService() {
                             MqttTopicsSubscription.HotWordToggleOff -> hotWordToggleOff()
                             MqttTopicsSubscription.AsrStartListening -> startListening(jsonObject)
                             MqttTopicsSubscription.AsrStopListening -> stopListening(jsonObject)
-                            MqttTopicsSubscription.AsrTextCaptured -> asrTextCaptured(jsonObject) //TODO other site id but this session id when
-                            // calling asr stop listening and disabled stop on silence
-                            //TODO when stop on silence then it is called with this site id ->
+                            MqttTopicsSubscription.AsrTextCaptured -> asrTextCaptured(jsonObject)
                             MqttTopicsSubscription.AsrError -> asrError(jsonObject)
                             MqttTopicsSubscription.IntentNotRecognized -> intentNotRecognized(jsonObject)
                             MqttTopicsSubscription.IntentHandlingToggleOn -> intentHandlingToggleOn()
@@ -207,7 +205,15 @@ class MqttService : IService() {
                         }
                         receivedEvent.success(jsonObject.toString())
                     } else {
-                        logger.v { "message ignored, different side id $jsonObject" }
+                        when (mqttTopic) {
+                            MqttTopicsSubscription.AsrTextCaptured -> asrTextCaptured(jsonObject)
+                            MqttTopicsSubscription.AsrError -> asrError(jsonObject)
+                            else -> {
+                                logger.v { "message ignored, different side id $jsonObject" }
+                                receivedEvent.warning()
+                            }
+                        }
+                        receivedEvent.success(jsonObject.toString())
                     }
                 } else {
                     //site id in topic
@@ -517,7 +523,7 @@ class MqttService : IService() {
             createMqttMessage {
                 put(MqttParams.SiteId, params.siteId)
                 put(MqttParams.SessionId, sessionId)
-                put(MqttParams.StopOnSilence, true) //TODO !!!
+                put(MqttParams.StopOnSilence, false) //TODO !!!
                 put(MqttParams.SendAudioCaptured, true)
             }
         )

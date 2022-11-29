@@ -36,7 +36,7 @@ class RecordingService : IService() {
     private var isRecordingNormal = false
 
     private val _output = MutableStateFlow<List<Byte>>(emptyList())
-    val output: StateFlow<List<Byte>> = AudioRecorder.output
+    val output: StateFlow<List<Byte>> = _output
 
     // when no one observes output then stop recording?
 

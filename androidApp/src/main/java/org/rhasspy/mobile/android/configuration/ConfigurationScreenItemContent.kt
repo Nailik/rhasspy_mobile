@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -28,6 +29,7 @@ import androidx.navigation.compose.rememberNavController
 import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
@@ -234,8 +236,19 @@ private fun TestConfigurationScreen(
 
             Column(modifier = Modifier.padding(paddingValues)) {
                 val eventsList by viewModel.events.collectAsState()
+                val coroutineScope = rememberCoroutineScope()
+                val scrollState = rememberLazyListState()
 
-                LazyColumn(modifier = Modifier.weight(1f)) {
+                LaunchedEffect(eventsList.size) {
+                    coroutineScope.launch {
+                        scrollState.animateScrollToItem(eventsList.size - 1)
+                    }
+                }
+
+                LazyColumn(
+                    state = scrollState,
+                    modifier = Modifier.weight(1f)
+                ) {
                     items(eventsList) { item ->
                         EventListItem(item)
                     }
