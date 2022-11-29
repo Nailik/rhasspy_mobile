@@ -38,6 +38,7 @@ enum class TestTag {
     ConfigurationScreenItemContent,
     ConfigurationSiteId,
     CustomEndpointSwitch,
+    MqttSilenceDetectionSwitch,
 
     IntentHandlingOptions,
 

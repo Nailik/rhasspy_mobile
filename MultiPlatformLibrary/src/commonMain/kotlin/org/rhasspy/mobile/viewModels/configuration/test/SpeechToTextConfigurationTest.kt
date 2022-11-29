@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.viewModels.configuration.test
 
+import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
@@ -12,26 +13,27 @@ class SpeechToTextConfigurationTest : IConfigurationTest() {
 
     private val _isRecording = MutableStateFlow(false)
     val isRecording = _isRecording.readOnly
+    private val sessionId = uuid4().toString()
 
 
-    public fun initialize(){
+    fun initialize(){
         get<MqttService>()
     }
 
-    public fun toggleRecording() {
+    fun toggleRecording() {
 
         val rhasspyActionsService = get<RhasspyActionsService>()
 
         if (!isRecording.value) {
             _isRecording.value = true
             testScope.launch {
-                rhasspyActionsService.startSpeechToText("testsessionrecordingstt")
+                rhasspyActionsService.startSpeechToText(sessionId)
             }
         } else {
             _isRecording.value = false
             //execute
             testScope.launch {
-                val response = rhasspyActionsService.endSpeechToText("testsessionrecordingstt")
+                val response = rhasspyActionsService.endSpeechToText(sessionId)
 
                 if(response is ServiceResponse.Success){
                     println(response.data)

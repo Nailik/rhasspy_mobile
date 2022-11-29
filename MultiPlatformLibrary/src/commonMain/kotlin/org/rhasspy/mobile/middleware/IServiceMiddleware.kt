@@ -1,19 +1,22 @@
 package org.rhasspy.mobile.middleware
 
 import io.ktor.utils.io.core.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.rhasspy.mobile.middleware.action.LocalAction
 import org.rhasspy.mobile.middleware.action.MqttAction
 import org.rhasspy.mobile.middleware.action.WebServerAction
 import org.rhasspy.mobile.middleware.action.WebServerRequest
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 
 /**
  * handles ALL INCOMING events
  */
-abstract class IServiceMiddleware : Closeable {
+abstract class IServiceMiddleware : KoinComponent, Closeable {
 
     //replay because maybe the test starts a little bit earlier than subscription to the shared flow
     private val _event = MutableSharedFlow<Event>(
@@ -22,6 +25,9 @@ abstract class IServiceMiddleware : Closeable {
     )
     val event = _event.readOnly
 
+
+    val rhasspyActionsService by inject<RhasspyActionsService>()
+    val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     /**
      * user clicks start or hotword was detected
@@ -35,7 +41,31 @@ abstract class IServiceMiddleware : Closeable {
         // -> asr (stop, start, text captured) is needed by rhasspy actions
         //intent recognized, intent not recognized is needed by rhasspy actions
 
-        //TODO split rhasspy actions service into speechtotext, texttospeech, intent recognition
+        coroutineScope.launch {
+            //TODO split rhasspy actions service into speechtotext, texttospeech, intent recognition
+            when (event) {
+                is MqttAction.AudioOutputToggle -> {}// TODO()
+                is MqttAction.AudioVolumeChange -> {}// TODO()
+                is MqttAction.EndSession -> {}// TODO()
+                is MqttAction.HotWordDetected -> {}// TODO()
+                is MqttAction.HotWordToggle -> {}// TODO()
+                is MqttAction.IntentHandlingToggle -> {}// TODO()
+                is MqttAction.IntentRecognitionResult -> {}// TODO()
+                is MqttAction.AsrError -> rhasspyActionsService.endSpeechToText(event.sessionId ?: "")
+                //TODO only if mqtt is used?? for speech to text and session id is correct (but for dialog manager mqtt any)
+                is MqttAction.AsrTextCaptured -> rhasspyActionsService.endSpeechToText(event.sessionId ?: "")
+                //TODO only if mqtt is used?? for speech to text and session id is correct (but for dialog manager mqtt any)
+                is MqttAction.IntentTranscribed -> {}// TODO()
+                is MqttAction.IntentTranscribedError -> {}// TODO()
+                is MqttAction.PlayAudio -> {}// TODO()
+                is MqttAction.SessionEnded -> {}// TODO()
+                is MqttAction.SessionStarted -> {}// TODO()
+                is MqttAction.StartListening -> {}// TODO()
+                MqttAction.StartSession -> {}// TODO()
+                is MqttAction.StopListening -> {}// TODO()
+            }
+        }
+
     }
 
     fun webServerAction(event: WebServerAction) {
@@ -57,6 +87,7 @@ abstract class IServiceMiddleware : Closeable {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun close() {
+        coroutineScope.cancel()
         _event.resetReplayCache()
     }
 

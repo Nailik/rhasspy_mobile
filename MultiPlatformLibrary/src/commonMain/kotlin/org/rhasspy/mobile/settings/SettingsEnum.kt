@@ -75,6 +75,7 @@ enum class SettingsEnum {
     SpeechToTextOption,
     CustomSpeechToTextEndpoint,
     SpeechToTextHttpEndpoint,
+    SpeechToTextMqttSilenceDetection,
 
     IntentRecognitionOption,
     CustomIntentRecognitionHttpEndpoint,

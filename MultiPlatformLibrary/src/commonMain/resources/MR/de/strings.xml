@@ -250,4 +250,5 @@
     <string name="noDetails">keine Details</string>
     <string name="startRecordAudio">Audio Aufnahme starten</string>
     <string name="stopRecordAudio">Audio Aufnahme stoppen</string>
+    <string name="useMqttSilenceDetection">Nutze Mqtt Stille-Erkennung</string>
 </resources>

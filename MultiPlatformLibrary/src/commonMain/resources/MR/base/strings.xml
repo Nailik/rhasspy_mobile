@@ -245,6 +245,7 @@
     <string name="noDetails">no Details</string>
     <string name="startRecordAudio">Start Record Audio</string>
     <string name="stopRecordAudio">Stop Record Audio</string>
+    <string name="useMqttSilenceDetection">Use Mqtt Silence Detection</string>
     <!-- not translatable -->
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>

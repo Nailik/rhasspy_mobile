@@ -64,6 +64,7 @@ internal object ConfigurationSettings {
 
     val speechToTextOption = Setting(SettingsEnum.SpeechToTextOption, SpeechToTextOptions.Disabled)
     val isUseCustomSpeechToTextHttpEndpoint = Setting(SettingsEnum.CustomSpeechToTextEndpoint, false)
+    val isUseSpeechToTextMqttSilenceDetection = Setting(SettingsEnum.SpeechToTextMqttSilenceDetection, true)
     val speechToTextHttpEndpoint = Setting(SettingsEnum.SpeechToTextHttpEndpoint, "")
 
     val intentHandlingOption = Setting(SettingsEnum.IntentHandlingOption, IntentHandlingOptions.Disabled)

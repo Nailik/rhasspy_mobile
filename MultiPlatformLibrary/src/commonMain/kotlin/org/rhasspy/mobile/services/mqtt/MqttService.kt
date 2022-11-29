@@ -523,7 +523,7 @@ class MqttService : IService() {
             createMqttMessage {
                 put(MqttParams.SiteId, params.siteId)
                 put(MqttParams.SessionId, sessionId)
-                put(MqttParams.StopOnSilence, false) //TODO !!!
+                put(MqttParams.StopOnSilence, params.isUseSpeechToTextMqttSilenceDetection)
                 put(MqttParams.SendAudioCaptured, true)
             }
         )
@@ -564,7 +564,7 @@ class MqttService : IService() {
      */
     private fun asrTextCaptured(jsonObject: JsonObject) =
         serviceMiddleware.mqttAction(
-            IntentTranscribed(
+            AsrTextCaptured(
                 jsonObject.getSessionId(),
                 jsonObject[MqttParams.Text.value]?.jsonPrimitive?.content
             )
@@ -596,7 +596,7 @@ class MqttService : IService() {
      * sessionId: string? = null - current session ID
      */
     private fun asrError(jsonObject: JsonObject) =
-        serviceMiddleware.mqttAction(IntentTranscribedError(jsonObject.getSessionId()))
+        serviceMiddleware.mqttAction(AsrError(jsonObject.getSessionId()))
 
 
     /**

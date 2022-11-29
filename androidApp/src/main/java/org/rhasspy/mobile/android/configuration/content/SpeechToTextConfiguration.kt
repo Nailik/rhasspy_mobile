@@ -47,6 +47,10 @@ fun SpeechToTextConfigurationContent(viewModel: SpeechToTextConfigurationViewMod
             if (viewModel.isSpeechToTextHttpSettingsVisible(it)) {
                 SpeechToTextHTTP(viewModel)
             }
+
+            if (viewModel.isSpeechToTextMqttSettingsVisible(it)) {
+                SpeechToTextMqtt(viewModel)
+            }
         }
 
     }
@@ -75,6 +79,22 @@ private fun SpeechToTextHTTP(viewModel: SpeechToTextConfigurationViewModel) {
             label = MR.strings.speechToTextURL
         )
 
+    }
+
+}
+
+@Composable
+private fun SpeechToTextMqtt(viewModel: SpeechToTextConfigurationViewModel) {
+
+    Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
+
+        //switch to use silence detection
+        SwitchListItem(
+            modifier = Modifier.testTag(TestTag.MqttSilenceDetectionSwitch),
+            text = MR.strings.useMqttSilenceDetection,
+            isChecked = viewModel.isUseSpeechToTextMqttSilenceDetection.collectAsState().value,
+            onCheckedChange = viewModel::toggleUseSpeechToTextMqttSilenceDetection
+        )
     }
 
 }
