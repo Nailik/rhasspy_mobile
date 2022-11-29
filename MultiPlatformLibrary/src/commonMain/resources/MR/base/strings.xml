@@ -239,6 +239,7 @@
     <string name="rhasspyActionService">Rhasspy Actions Service</string>
     <string name="udpService">Udp Service</string>
     <string name="webServerService">Webserver Service</string>
+    <string name="recordingService">Recording Service</string>
     <string name="pending">Pending</string>
     <string name="loading">Loading</string>
     <string name="noDetails">no Details</string>

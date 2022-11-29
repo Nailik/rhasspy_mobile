@@ -60,6 +60,11 @@ sealed interface EventType {
         Start(MR.strings.start);
     }
 
+    enum class RecordingServiceEventType(override val title: StringResource) : EventType {
+        Start(MR.strings.start),
+        Stop(MR.strings.stop);
+    }
+
 }
 
 val EventType.name: StringResource
@@ -72,4 +77,5 @@ val EventType.name: StringResource
         is EventType.RhasspyActionServiceEventType -> MR.strings.rhasspyActionService
         is EventType.UdpServiceEventType -> MR.strings.udpService
         is EventType.WebServerServiceEventType -> MR.strings.webServerService
+        is EventType.RecordingServiceEventType -> MR.strings.recordingService
     }

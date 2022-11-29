@@ -9,23 +9,23 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.component.inject
+import org.rhasspy.mobile.middleware.ErrorType.RecordingServiceErrorType.NotInitialized
+import org.rhasspy.mobile.middleware.EventType.RecordingServiceEventType.Start
+import org.rhasspy.mobile.middleware.EventType.RecordingServiceEventType.Stop
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.services.IService
+import org.rhasspy.mobile.services.ServiceResponse
 import org.rhasspy.mobile.settings.AppSettings
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * records audio and sends data to state machine service
  * also records for wake word
- * knows if it is recording for wake word, will send wake word data to stateMachineService
+ *
+ * recording is started and stopped automatically when output is observed
  */
 class RecordingService : IService() {
-
-    /**
-     * recrding is started and stopped automatically when output is observed
-     */
-    private val logger = Logger.withTag("RecordingService")
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
 
@@ -90,15 +90,24 @@ class RecordingService : IService() {
     }
 
     private fun startRecording() {
+        val event = serviceMiddleware.createEvent(Start)
         if (!AudioRecorder.isRecording.value) {
-            AudioRecorder.startRecording()
+            when (val result = AudioRecorder.startRecording()) {
+                is ServiceResponse.Error -> event.error(result.error)
+                ServiceResponse.NotInitialized -> event.error(NotInitialized)
+                is ServiceResponse.Success -> event.success()
+                else -> {}
+            }
         }
+        event.success()
     }
 
     private fun stopRecording() {
+        val event = serviceMiddleware.createEvent(Stop)
         if (!isRecordingNormal && !isRecordingWakeWord) {
             AudioRecorder.stopRecording()
         }
+        event.success()
     }
 
 }

@@ -65,4 +65,9 @@ sealed interface ErrorType {
     }
 
 
+    enum class RecordingServiceErrorType : ErrorType {
+        NotInitialized
+    }
+
+
 }
