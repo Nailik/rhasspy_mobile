@@ -78,14 +78,6 @@ abstract class IDialogManagerService : IService() {
 
     abstract fun silenceDetectedLocal()
 
-    suspend fun audioFrameLocal(byteData: List<Byte>) {
-        rhasspyActionsService.audioFrame(byteData)
-    }
-
-    //TODO post again when stop listening?
-    suspend fun audioFrameWakeWordLocal(byteData: List<Byte>) {
-        hotWordService.hotWordAudioFrame(byteData)
-    }
 
 }
 

@@ -4,15 +4,14 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.component.inject
-import org.rhasspy.mobile.addWavHeader
+import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.ServiceResponse
-import org.rhasspy.mobile.services.dialogManager.IDialogManagerService
 import org.rhasspy.mobile.settings.AppSettings
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -23,9 +22,12 @@ import kotlin.time.Duration.Companion.milliseconds
  */
 class RecordingService : IService() {
 
+    /**
+     * recrding is started and stopped automatically when output is observed
+     */
     private val logger = Logger.withTag("RecordingService")
 
-    private val dialogManagerService by inject<IDialogManagerService>()
+    private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private var scope = CoroutineScope(Dispatchers.Default)
     private var silenceStartTime: Instant? = null
@@ -33,20 +35,28 @@ class RecordingService : IService() {
     private var isRecordingWakeWord = false
     private var isRecordingNormal = false
 
+    private val _output = MutableStateFlow<List<Byte>>(emptyList())
+    val output: StateFlow<List<Byte>> = AudioRecorder.output
+
+    // when no one observes output then stop recording?
+
     init {
         scope = CoroutineScope(Dispatchers.Default)
-        //TODO custom output for audio frame stt and wake word
-      /*  scope.launch {
+
+        _output.subscriptionCount
+            .map { count -> count > 0 } // map count into active/inactive flag
+            .distinctUntilChanged() // only react to true<->false changes
+            .onEach { isActive -> // configure an action
+                if (isActive) startRecording() else stopRecording()
+            }
+            .launchIn(scope) // launch it
+
+        scope.launch {
             //collect from audio recorder
             AudioRecorder.output.collect { value ->
-                if (isRecordingNormal) {
-                    dialogManagerService.audioFrameLocal(value)
-                }
-                if (isRecordingWakeWord) {
-                    dialogManagerService.audioFrameWakeWordLocal(value)
-                }
+                _output.value = value
             }
-        }*/
+        }
 
         scope.launch {
             AudioRecorder.maxVolume.collect {
@@ -68,10 +78,10 @@ class RecordingService : IService() {
                   //  logger.d { "silenceDetected" }
                     //check if silence was detected for x milliseconds
                     if (it.minus(Clock.System.now()) < -AppSettings.automaticSilenceDetectionTime.value.milliseconds) {
-                        dialogManagerService.silenceDetectedLocal()
+                        serviceMiddleware.silenceDetected()
                     }
                 } ?: run {
-                  //  logger.v { "start silence detected" }
+                    //  logger.v { "start silence detected" }
                     //first time silence was detected
                     silenceStartTime = Clock.System.now()
                 }
@@ -79,36 +89,16 @@ class RecordingService : IService() {
         }
     }
 
-    fun startRecording(): ServiceResponse<*> {
-        isRecordingNormal = true
-        return startRecorder()
-    }
-
-    fun stopRecording() {
-        isRecordingNormal = false
-        stopRecorder()
-    }
-
-    fun startRecordingWakeWord(): ServiceResponse<*> {
-        isRecordingWakeWord = true
-        return startRecorder()
-    }
-
-    fun stopRecordingWakeWord() {
-        isRecordingWakeWord = false
-        stopRecorder()
-    }
-
-
-    private fun startRecorder(): ServiceResponse<*> {
-        return if (!AudioRecorder.isRecording.value) {
+    private fun startRecording() {
+        if (!AudioRecorder.isRecording.value) {
             AudioRecorder.startRecording()
-        } else ServiceResponse.Nothing
+        }
     }
 
-    private fun stopRecorder() {
+    private fun stopRecording() {
         if (!isRecordingNormal && !isRecordingWakeWord) {
             AudioRecorder.stopRecording()
         }
     }
+
 }

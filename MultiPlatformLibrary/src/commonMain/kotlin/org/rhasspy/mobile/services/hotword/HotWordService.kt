@@ -64,9 +64,10 @@ class HotWordService : IService() {
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> nativeLocalPorcupineWakeWordService?.start()
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
-            WakeWordOption.MQTT -> recordingService.startRecordingWakeWord()
-            WakeWordOption.Udp -> recordingService.startRecordingWakeWord()
+          //  WakeWordOption.MQTT -> recordingService.startRecordingWakeWord()
+         //   WakeWordOption.Udp -> recordingService.startRecordingWakeWord()
             WakeWordOption.Disabled -> logger.v { "hotWordDisabled" }
+            else -> {}
         }
     }
 
@@ -81,7 +82,7 @@ class HotWordService : IService() {
     }
 
     fun stopDetection() {
-        recordingService.stopRecordingWakeWord()
+   //     recordingService.stopRecordingWakeWord()
         nativeLocalPorcupineWakeWordService?.stop()
     }
 
@@ -91,8 +92,8 @@ class HotWordService : IService() {
     }
 
     override fun onClose() {
-        recordingService.stopRecording()
-        recordingService.stopRecordingWakeWord()
+    //    recordingService.stopRecording()
+     //   recordingService.stopRecordingWakeWord()
         nativeLocalPorcupineWakeWordService?.stop()
     }
 

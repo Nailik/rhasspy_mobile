@@ -1,9 +1,6 @@
 package org.rhasspy.mobile.services.rhasspyactions
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.koin.core.component.inject
 import org.rhasspy.mobile.addWavHeader
 import org.rhasspy.mobile.data.*
@@ -12,7 +9,6 @@ import org.rhasspy.mobile.middleware.ErrorType.RhasspyActionsServiceErrorType.No
 import org.rhasspy.mobile.middleware.Event
 import org.rhasspy.mobile.middleware.EventType.RhasspyActionServiceEventType.*
 import org.rhasspy.mobile.middleware.IServiceMiddleware
-import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceResponse
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
@@ -39,21 +35,14 @@ open class RhasspyActionsService : IService() {
     private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private val speechToTextAudioData = mutableListOf<Byte>()
-    private var saveAudioForSpeechToText = false
 
     private val scope = CoroutineScope(Dispatchers.Default)
-
-    init {
-        scope.launch {
-            AudioRecorder.output.collect {
-                audioFrame(it)
-            }
-        }
-    }
+    private var collector: Job? = null
 
     override fun onClose() {
         //nothing to do
         scope.cancel()
+        collector?.cancel()
     }
 
     /**
@@ -148,43 +137,51 @@ open class RhasspyActionsService : IService() {
      * - audio was already send to mqtt while recording in audioFrame
      */
     suspend fun endSpeechToText(sessionId: String): ServiceResponse<*> {
-        saveAudioForSpeechToText = false
-        recordingService.stopRecording()
         val event = serviceMiddleware.createEvent(SpeechToText)
+        //stop collection
+        collector?.cancel()
 
+        //evaluate result
         val result = when (params.speechToTextOption) {
             SpeechToTextOptions.RemoteHTTP -> httpClientService.speechToText(speechToTextAudioData.addWavHeader())
-            SpeechToTextOptions.RemoteMQTT -> mqttClientService.stopListening(sessionId) //TODO eventually send silent data
+            SpeechToTextOptions.RemoteMQTT -> mqttClientService.stopListening(sessionId)
             SpeechToTextOptions.Disabled -> ServiceResponse.Disabled
         }
 
+        //clear data
         speechToTextAudioData.clear()
         event.evaluateResult(result)
         return result
     }
 
     suspend fun startSpeechToText(sessionId: String): ServiceResponse<*> {
-        saveAudioForSpeechToText = true
-        recordingService.startRecording()
+        val event = serviceMiddleware.createEvent(SpeechToText)
+        //clear data and start recording
+        collector?.cancel()
         speechToTextAudioData.clear()
 
-        val event = serviceMiddleware.createEvent(SpeechToText)
+        if (params.speechToTextOption != SpeechToTextOptions.Disabled) {
+            //start collection
+            collector = scope.launch {
+                recordingService.output.collect(::audioFrame)
+            }
+        }
+
         val result = when (params.speechToTextOption) {
             SpeechToTextOptions.RemoteHTTP -> ServiceResponse.Nothing
-            SpeechToTextOptions.RemoteMQTT -> mqttClientService.startListening(sessionId) //TODO eventually hot word
+            SpeechToTextOptions.RemoteMQTT -> mqttClientService.startListening(sessionId)
             SpeechToTextOptions.Disabled -> ServiceResponse.Nothing
         }
+
         event.evaluateResult(result)
         return result
     }
 
-    suspend fun audioFrame(data: List<Byte>) {
-        if (saveAudioForSpeechToText) {
-            when (params.speechToTextOption) {
-                SpeechToTextOptions.RemoteHTTP -> speechToTextAudioData.addAll(data)
-                SpeechToTextOptions.RemoteMQTT -> mqttClientService.audioFrame(data.toMutableList().addWavHeader())
-                SpeechToTextOptions.Disabled -> {}//nothing to do
-            }
+    private suspend fun audioFrame(data: List<Byte>) {
+        when (params.speechToTextOption) {
+            SpeechToTextOptions.RemoteHTTP -> speechToTextAudioData.addAll(data)
+            SpeechToTextOptions.RemoteMQTT -> mqttClientService.audioFrame(data.toMutableList().addWavHeader())
+            SpeechToTextOptions.Disabled -> {}//nothing to do
         }
     }
 

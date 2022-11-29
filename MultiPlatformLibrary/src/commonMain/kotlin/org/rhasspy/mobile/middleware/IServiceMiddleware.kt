@@ -60,5 +60,9 @@ abstract class IServiceMiddleware : Closeable {
         _event.resetReplayCache()
     }
 
+    fun silenceDetected() {
+        //TODO("Not yet implemented")
+    }
+
 
 }
