@@ -13,6 +13,7 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.android.utils.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
@@ -69,8 +70,7 @@ private fun TextToSpeechHTTP(viewModel: TextToSpeechConfigurationViewModel) {
         //http endpoint input field
         TextFieldListItem(
             enabled = viewModel.isTextToSpeechHttpEndpointChangeEnabled.collectAsState().value,
-            modifier = Modifier
-                .testTag(TestTag.Endpoint),
+            modifier = Modifier.testTag(TestTag.Endpoint),
             value = viewModel.textToSpeechHttpEndpoint.collectAsState().value,
             onValueChange = viewModel::updateTextToSpeechHttpEndpoint,
             label = MR.strings.rhasspyTextToSpeechURL
@@ -85,7 +85,16 @@ private fun TestContent(
     viewModel: TextToSpeechConfigurationViewModel
 ) {
     Column {
-        //textfield to insert text
-        //button to run text to speech
+        TextFieldListItem(
+            modifier = Modifier.testTag(TestTag.TextToSpeechText),
+            value = viewModel.testTextToSpeechText.collectAsState().value,
+            onValueChange = viewModel::updateTestTextToSpeechText,
+            label = MR.strings.textToSpeechText
+        )
+
+        FilledTonalButtonListItem(
+            text = MR.strings.executeTextToSpeechText,
+            onClick = viewModel::runTest
+        )
     }
 }

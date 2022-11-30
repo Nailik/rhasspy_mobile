@@ -22,7 +22,7 @@ class SpeechToTextConfigurationTest : IConfigurationTest() {
     fun toggleRecording() {
         testScope.launch {
             if(get<RhasspyActionsServiceParams>().speechToTextOption == SpeechToTextOptions.RemoteMQTT) {
-                //await for mqtt serice to start if necessary
+                //await for mqtt service to start if necessary
                 get<MqttService>()
                     .isHasStarted
                     .map { it }
@@ -53,47 +53,6 @@ class SpeechToTextConfigurationTest : IConfigurationTest() {
         }
     }
 
-    override fun onClose() {
-        //TODO("Not yet implemented")
-    }
+    override fun onClose() {}
+
 }
-
-
-/*
-hermes/asr/toggleOn
-hermes/asr/startListening
-
-//send
-
-//stop
-
-    fun startTestRecording() {
-val service = get<MqttService>()
-
-if (!_isRecording.value) {
-    _isRecording.value = true
-    testScope = CoroutineScope(Dispatchers.Default)
-    testScope.launch {
-        service.hotWordDetected("test")
-        //await start listening
-        AudioRecorder.output.collect {
-            if (_isRecording.value) {
-                service.audioFrame(it.toMutableList().addWavHeader())
-            }
-        }
-    }
-
-    AudioRecorder.startRecording()
-} else {
-    testScope.launch {
-        AudioRecorder.output.collect {
-            if (!_isRecording.value) {
-                //send silence to force stop recording
-                //Works, fake silence
-                service.audioFrame(it.map { 0.toByte() }.toMutableList().addWavHeader())
-            }
-        }
-    }
-}
-
- */

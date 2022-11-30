@@ -251,4 +251,6 @@
     <string name="startRecordAudio">Audio Aufnahme starten</string>
     <string name="stopRecordAudio">Audio Aufnahme stoppen</string>
     <string name="useMqttSilenceDetection">Nutze Mqtt Stille-Erkennung</string>
+    <string name="textToSpeechText">Text zu Sprache Text</string>
+    <string name="executeTextToSpeechText">Execute Text zu Sprache</string>
 </resources>

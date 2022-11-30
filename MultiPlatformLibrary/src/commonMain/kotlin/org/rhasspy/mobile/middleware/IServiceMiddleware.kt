@@ -14,6 +14,7 @@ import org.rhasspy.mobile.middleware.action.WebServerAction
 import org.rhasspy.mobile.middleware.action.WebServerRequest
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.dialogManager.IDialogManagerService
+import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 
 /**
@@ -73,7 +74,7 @@ abstract class IServiceMiddleware : KoinComponent, Closeable {
 
     }
 
-    fun webServerAction(event: WebServerAction) {
+    open fun webServerAction(event: WebServerAction) {
 
     }
 

@@ -162,8 +162,19 @@ class MqttService : IService() {
     }
 
 
+    private fun getMqttTopic(topic: String): MqttTopicsSubscription? {
+        return when {
+            MqttTopicsSubscription.HotWordDetected.topic.matches(topic) -> MqttTopicsSubscription.HotWordDetected
+            MqttTopicsSubscription.IntentRecognitionResult.topic.matches(topic) -> MqttTopicsSubscription.IntentRecognitionResult
+            MqttTopicsSubscription.PlayBytes.topic
+                .set(MqttTopicPlaceholder.SiteId, params.siteId)
+                .matches(topic) -> MqttTopicsSubscription.IntentRecognitionResult
+            else -> MqttTopicsSubscription.fromTopic(topic)
+        }
+    }
+
     private fun onMessageReceived(topic: String, message: MqttMessage) {
-        logger.v { "onMessageReceived id ${message.msgId} $topic ${message.payload.decodeToString()}" }
+        logger.v { "onMessageReceived id ${message.msgId} $topic" }
 
         if (message.msgId == id) {
             //ignore all messages that i have send
@@ -175,7 +186,30 @@ class MqttService : IService() {
         val receivedEvent = serviceMiddleware.createEvent(Received, topic)
 
         try {
-            MqttTopicsSubscription.fromTopic(topic)?.also { mqttTopic ->
+            //regex topic
+            when {
+                MqttTopicsSubscription.HotWordDetected.topic.matches(topic) -> {
+                    hotWordDetectedCalled(topic)
+                    receivedEvent.success()
+                    return
+                }
+                MqttTopicsSubscription.IntentRecognitionResult.topic.matches(topic) -> {
+                    val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
+                    intentRecognitionResult(jsonObject)
+                    receivedEvent.success()
+                    return
+                }
+                MqttTopicsSubscription.PlayBytes.topic
+                    .set(MqttTopicPlaceholder.SiteId, params.siteId)
+                    .matches(topic) -> {
+                    playBytes(message.payload)
+                    receivedEvent.success()
+                    return
+                }
+            }
+
+            //topic matches enum
+            getMqttTopic(topic)?.also { mqttTopic ->
 
                 if (!mqttTopic.topic.contains(MqttTopicPlaceholder.SiteId.toString())) {
                     //site id in payload
@@ -199,6 +233,8 @@ class MqttService : IService() {
                             MqttTopicsSubscription.IntentHandlingToggleOff -> intentHandlingToggleOff()
                             MqttTopicsSubscription.AudioOutputToggleOff -> audioOutputToggleOff()
                             MqttTopicsSubscription.AudioOutputToggleOn -> audioOutputToggleOn()
+                            MqttTopicsSubscription.HotWordDetected -> hotWordDetectedCalled(topic)
+                            MqttTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(jsonObject)
                             MqttTopicsSubscription.SetVolume -> if (!setVolume(jsonObject)) {
                                 receivedEvent.error(InvalidVolume)
                             }
@@ -210,7 +246,6 @@ class MqttService : IService() {
                             MqttTopicsSubscription.AsrTextCaptured -> asrTextCaptured(jsonObject)
                             MqttTopicsSubscription.AsrError -> asrError(jsonObject)
                             else -> {
-
                                 logger.v { "message ignored, different side id $jsonObject" }
                                 receivedEvent.warning()
                             }
@@ -219,17 +254,14 @@ class MqttService : IService() {
                 } else {
                     //site id in topic
                     when {
-                        MqttTopicsSubscription.HotWordDetected.topic.matches(topic) -> hotWordDetectedCalled(topic)
-                        MqttTopicsSubscription.IntentRecognitionResult.topic.matches(topic) -> {
-                            val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
-                            intentRecognitionResult(jsonObject)
-                        }
                         MqttTopicsSubscription.PlayBytes.topic
                             .set(MqttTopicPlaceholder.SiteId, params.siteId)
-                            .matches(topic) -> playBytes(message.payload)
+                            .matches(topic) -> {
+                            playBytes(message.payload)
+                            receivedEvent.success()
+                        }
                         else -> receivedEvent.error(InvalidTopic)
                     }
-                    receivedEvent.success()
                 }
             } ?: run {
                 //no topic found

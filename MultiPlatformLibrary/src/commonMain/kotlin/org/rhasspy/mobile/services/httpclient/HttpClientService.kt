@@ -38,20 +38,34 @@ class HttpClientService : IService() {
     private val isHandleIntentDirectly = params.intentHandlingOption == IntentHandlingOptions.WithRecognition
 
     private val speechToTextUrl =
-        (if (params.isUseCustomSpeechToTextHttpEndpoint) params.speechToTextHttpEndpoint else params.httpServerEndpoint) +
-                "${HttpClientPath.SpeechToText.path}?noheader=true"
+        if (params.isUseCustomSpeechToTextHttpEndpoint) {
+            params.speechToTextHttpEndpoint
+        } else {
+            params.httpServerEndpoint + HttpClientPath.SpeechToText.path
+        } + "?noheader=true"
+
     private val recognizeIntentUrl =
-        (if (params.isUseCustomIntentRecognitionHttpEndpoint) params.intentRecognitionHttpEndpoint else params.httpServerEndpoint) +
-                HttpClientPath.TextToIntent.path +
-                if (!isHandleIntentDirectly) {
-                    "?nohass=true"
-                } else ""
-    private val textToSpeechUrl =
-        (if (params.isUseCustomTextToSpeechHttpEndpoint) params.textToSpeechHttpEndpoint else params.httpServerEndpoint) +
-                HttpClientPath.TextToSpeech.path
-    private val audioPlayingUrl =
-        (if (params.isUseCustomAudioPlayingEndpoint) params.audioPlayingHttpEndpoint else params.httpServerEndpoint) +
-                HttpClientPath.PlayWav.path
+        if (params.isUseCustomIntentRecognitionHttpEndpoint) {
+            params.intentRecognitionHttpEndpoint
+        } else {
+            params.httpServerEndpoint + HttpClientPath.TextToIntent.path
+
+        } + if (!isHandleIntentDirectly) {
+            "?nohass=true"
+        } else ""
+
+    private val textToSpeechUrl = if (params.isUseCustomTextToSpeechHttpEndpoint) {
+        params.textToSpeechHttpEndpoint
+    } else {
+        params.httpServerEndpoint + HttpClientPath.TextToSpeech.path
+    }
+
+    private val audioPlayingUrl = if (params.isUseCustomAudioPlayingEndpoint) {
+        params.audioPlayingHttpEndpoint
+    } else {
+        params.httpServerEndpoint + HttpClientPath.PlayWav.path
+    }
+
     private val hassEventUrl = "${params.intentHandlingHassEndpoint}/api/events/rhasspy_"
     private val hassIntentUrl = "${params.intentHandlingHassEndpoint}/api/intent/handle"
 
@@ -223,6 +237,7 @@ class HttpClientService : IService() {
                 val request = client.post(url, block)
 
                 val response = request.body<T>()
+
                 postEvent.success()
                 return ServiceResponse.Success(response)
 

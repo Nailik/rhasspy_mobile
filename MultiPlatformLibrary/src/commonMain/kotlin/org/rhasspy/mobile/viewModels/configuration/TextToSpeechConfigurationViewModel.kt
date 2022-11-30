@@ -14,7 +14,10 @@ import org.rhasspy.mobile.viewModels.configuration.test.TextToSpeechConfiguratio
 
 class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
 
+    //test data
     override val testRunner by inject<TextToSpeechConfigurationTest>()
+    private val _testTextToSpeechText = MutableStateFlow("")
+    val testTextToSpeechText = _testTextToSpeechText.readOnly
 
     //unsaved data
     private val _textToSpeechOption = MutableStateFlow(ConfigurationSettings.textToSpeechOption.value)
@@ -66,6 +69,10 @@ class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
         _textToSpeechHttpEndpoint.value = endpoint
     }
 
+    fun updateTestTextToSpeechText(text: String) {
+        _testTextToSpeechText.value = text
+    }
+
     /**
      * save data configuration
      */
@@ -103,6 +110,6 @@ class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
         }
     }
 
-    override fun runTest() = testRunner.startTest("text test")
+    override fun runTest() = testRunner.startTest(_testTextToSpeechText.value)
 
 }

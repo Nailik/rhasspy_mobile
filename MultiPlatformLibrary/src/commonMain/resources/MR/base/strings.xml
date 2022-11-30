@@ -246,6 +246,8 @@
     <string name="startRecordAudio">Start Record Audio</string>
     <string name="stopRecordAudio">Stop Record Audio</string>
     <string name="useMqttSilenceDetection">Use Mqtt Silence Detection</string>
+    <string name="textToSpeechText">Text To Speech Text</string>
+    <string name="executeTextToSpeechText">Execute Text To Speech</string>
     <!-- not translatable -->
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>

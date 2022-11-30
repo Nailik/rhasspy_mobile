@@ -28,6 +28,7 @@ enum class TestTag {
     AudioPlayingOptions,
     AudioOutputOptions,
     Endpoint,
+    TextToSpeechText,
     AccessToken,
     SendEvents,
     SendIntents,
