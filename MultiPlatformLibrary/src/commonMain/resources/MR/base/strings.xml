@@ -258,10 +258,12 @@
     <string name="computer">Computer</string>
     <string name="grapefruit">Grapefruit</string>
     <string name="grasshopper">Grasshopper</string>
+    <string name="hey_barista">Hey Barista</string>
     <string name="hey_google">Hey Google</string>
     <string name="hey_siri">Hey Siri</string>
     <string name="jarvis">Jarvis</string>
     <string name="ok_google">Ok Google</string>
+    <string name="pico_clock">Pico Clock</string>
     <string name="picovoice">Picovoice</string>
     <string name="porcupine">Porcupine</string>
     <string name="terminator">Terminator</string>

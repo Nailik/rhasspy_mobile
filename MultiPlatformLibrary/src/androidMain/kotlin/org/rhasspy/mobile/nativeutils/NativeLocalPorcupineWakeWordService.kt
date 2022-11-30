@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
-import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.PorcupineLanguageOptions
 import org.rhasspy.mobile.middleware.ErrorType.HotWordServiceError
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
@@ -49,12 +48,18 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
         return try {
             val porcupineBuilder = PorcupineManager.Builder()
                 .setAccessKey(wakeWordPorcupineAccessToken)
-                .setKeywords(wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled }.map {
-                    findBuiltInKeyword(it.option.name)
-                }.toTypedArray())
-                .setKeywordPaths(wakeWordPorcupineKeywordCustomOptions.filter { it.isEnabled }.map {
-                    File(Application.Instance.filesDir, "porcupine/${it.fileName}").absolutePath
-                }.toTypedArray())
+                //keyword paths can not be used with keywords, therefore also the built in keywords are copied to a usable file location
+                .setKeywordPaths(
+                    wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled }.map {
+                        copyBuildInKeywordFileIfNecessary(it)
+                    }.toMutableList().also { list ->
+                        list.addAll(
+                            wakeWordPorcupineKeywordCustomOptions.filter { it.isEnabled }.map {
+                                File(Application.Instance.filesDir, "porcupine/${it.fileName}").absolutePath
+                            }
+                        )
+                    }.toTypedArray()
+                )
                 .setSensitivities(
                     wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled }.map {
                         it.sensitivity
@@ -95,10 +100,10 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
      * stops porcupine
      */
     actual fun stop() {
-        logger.d { "stop" }
-        porcupineManager?.stop()
+        //TODO does not release microphone??
+        logger.d { "delete" }
+        porcupineManager?.delete()
     }
-
 
     /**
      * invoked when a WakeWord is detected, informs listening service
@@ -108,7 +113,7 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
 
         val allKeywords = wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled }.map {
             it.option.name
-        }.toMutableList().also {
+        }.toMutableList().apply {
             addAll(wakeWordPorcupineKeywordCustomOptions.filter { it.isEnabled }.map {
                 it.fileName
             }.toMutableList())
@@ -121,31 +126,21 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
         }
     }
 
-    private fun findBuiltInKeyword(keywordName: String): Porcupine.BuiltInKeyword? {
-        return try {
-            Porcupine.BuiltInKeyword.valueOf(keywordName)
-        } catch (e: IllegalArgumentException) {
-            null
-        }
-    }
-
     private fun copyModelFileIfNecessary(): String {
-        val file =
-            File(Application.Instance.filesDir, "porcupine/model_${wakeWordPorcupineLanguage.name.lowercase()}.pv")
+        val file = File(Application.Instance.filesDir, "porcupine/model_${wakeWordPorcupineLanguage.name.lowercase()}.pv")
 
         if (!file.exists()) {
-            val modelFile = when (wakeWordPorcupineLanguage) {
-                PorcupineLanguageOptions.EN -> MR.files.porcupine_params
-                PorcupineLanguageOptions.DE -> MR.files.porcupine_params_de
-                PorcupineLanguageOptions.ES -> MR.files.porcupine_params_es
-                PorcupineLanguageOptions.FR -> MR.files.porcupine_params_fr
-                PorcupineLanguageOptions.IT -> MR.files.porcupine_params_it
-                PorcupineLanguageOptions.JA -> MR.files.porcupine_params_ja
-                PorcupineLanguageOptions.KO -> MR.files.porcupine_params_ko
-                PorcupineLanguageOptions.PT -> MR.files.porcupine_params_pt
-            }
+            file.outputStream().write(Application.Instance.resources.openRawResource(wakeWordPorcupineLanguage.file.rawResId).readBytes())
+        }
 
-            file.outputStream().write(Application.Instance.resources.openRawResource(modelFile.rawResId).readBytes())
+        return file.absolutePath
+    }
+
+    private fun copyBuildInKeywordFileIfNecessary(defaultKeyword: PorcupineDefaultKeyword): String {
+        val file = File(Application.Instance.filesDir, "porcupine/model_${defaultKeyword.option.name.lowercase()}.ppn")
+
+        if (!file.exists()) {
+            file.outputStream().write(Application.Instance.resources.openRawResource(defaultKeyword.option.file.rawResId).readBytes())
         }
 
         return file.absolutePath

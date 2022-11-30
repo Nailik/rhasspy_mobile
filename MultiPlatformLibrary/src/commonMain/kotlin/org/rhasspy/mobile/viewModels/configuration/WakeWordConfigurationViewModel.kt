@@ -283,7 +283,7 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
     }
 
     override fun runTest() {
-        testRunner.startTest()
+        testRunner.runTest()
     }
 
 }

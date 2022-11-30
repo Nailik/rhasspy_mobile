@@ -24,6 +24,7 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.configuration.content.porcupine.PorcupineKeywordScreen
 import org.rhasspy.mobile.android.configuration.content.porcupine.PorcupineLanguageScreen
 import org.rhasspy.mobile.android.main.LocalNavController
+import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.android.utils.*
@@ -202,7 +203,10 @@ private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
 private fun TestContent(
     viewModel: WakeWordConfigurationViewModel
 ) {
-    Column {
-        //button to record audio
+    RequiresMicrophonePermission(MR.strings.defaultText, viewModel::runTest) { onClick ->
+        FilledTonalButtonListItem(
+            text = MR.strings.startRecordAudio,
+            onClick = onClick
+        )
     }
 }

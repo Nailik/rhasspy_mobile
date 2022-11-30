@@ -130,6 +130,4 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
 
     override fun runTest() = testRunner.toggleRecording()
 
-    fun toggleRecording() = testRunner.toggleRecording()
-
 }
