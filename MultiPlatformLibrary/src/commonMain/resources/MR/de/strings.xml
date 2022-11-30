@@ -253,4 +253,6 @@
     <string name="useMqttSilenceDetection">Nutze Mqtt Stille-Erkennung</string>
     <string name="textToSpeechText">Text zu Sprache Text</string>
     <string name="executeTextToSpeechText">Execute Text zu Sprache</string>
+    <string name="textIntentRecognitionText">Text zur Erkennung des Intent</string>
+    <string name="executeIntentRecognition">Ausführen des Intent</string>
 </resources>

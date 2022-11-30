@@ -14,7 +14,10 @@ import org.rhasspy.mobile.viewModels.configuration.test.IntentRecognitionConfigu
 
 class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
 
+    //test data
     override val testRunner by inject<IntentRecognitionConfigurationTest>()
+    private val _testIntentRecognitionText = MutableStateFlow("")
+    val testIntentRecognitionText = _testIntentRecognitionText.readOnly
 
     //unsaved data
     private val _intentRecognitionOption = MutableStateFlow(ConfigurationSettings.intentRecognitionOption.value)
@@ -66,6 +69,10 @@ class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
         _intentRecognitionHttpEndpoint.value = endpoint
     }
 
+    fun updateTestIntentRecognitionText(text: String) {
+        _testIntentRecognitionText.value = text
+    }
+
     /**
      * save data configuration
      */
@@ -103,6 +110,6 @@ class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
         }
     }
 
-    override fun runTest() = testRunner.startTest()
+    override fun runTest() = testRunner.runTest(_testIntentRecognitionText.value)
 
 }

@@ -14,6 +14,7 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.android.utils.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.android.utils.TextFieldListItem
@@ -84,7 +85,16 @@ private fun TestContent(
     viewModel: IntentRecognitionConfigurationViewModel
 ) {
     Column {
-        //textfield to insert text for intent recognition
-        //button to execute intent recognition
+        TextFieldListItem(
+            modifier = Modifier.testTag(TestTag.TextToSpeechText),
+            value = viewModel.testIntentRecognitionText.collectAsState().value,
+            onValueChange = viewModel::updateTestIntentRecognitionText,
+            label = MR.strings.textIntentRecognitionText
+        )
+
+        FilledTonalButtonListItem(
+            text = MR.strings.executeIntentRecognition,
+            onClick = viewModel::runTest
+        )
     }
 }

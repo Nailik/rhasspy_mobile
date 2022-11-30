@@ -248,6 +248,8 @@
     <string name="useMqttSilenceDetection">Use Mqtt Silence Detection</string>
     <string name="textToSpeechText">Text To Speech Text</string>
     <string name="executeTextToSpeechText">Execute Text To Speech</string>
+    <string name="textIntentRecognitionText">Text To Recognize Intent</string>
+    <string name="executeIntentRecognition">Execute Intent Recognition</string>
     <!-- not translatable -->
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>

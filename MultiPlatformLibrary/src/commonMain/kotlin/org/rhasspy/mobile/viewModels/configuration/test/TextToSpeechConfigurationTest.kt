@@ -5,32 +5,26 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
-import org.rhasspy.mobile.addWavHeader
-import org.rhasspy.mobile.data.SpeechToTextOptions
-import org.rhasspy.mobile.data.TextToSpeechOptions
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.services.ServiceResponse
 import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 
 class TextToSpeechConfigurationTest : IConfigurationTest() {
 
     fun startTest(text: String) {
         testScope.launch {
-           // if(get<RhasspyActionsServiceParams>().textToSpeechOption == TextToSpeechOptions.RemoteMQTT) {
-                //await for mqtt service to start if necessary
-                get<MqttService>()
-                    .isHasStarted
-                    .map { it }
-                    .distinctUntilChanged()
-                    .first { it }
-         //  }
+            //await for mqtt
+            get<MqttService>()
+                .isHasStarted
+                .map { it }
+                .distinctUntilChanged()
+                .first { it }
 
             val middleware = get<IServiceMiddleware>()
             val result = get<RhasspyActionsService>().textToSpeech(middleware.sessionId, text)
-            if(result is ServiceResponse.Success && result.data is ByteArray){
+            if (result is ServiceResponse.Success && result.data is ByteArray) {
                 get<LocalAudioService>().playAudio(result.data.toMutableList())
             }
         }
