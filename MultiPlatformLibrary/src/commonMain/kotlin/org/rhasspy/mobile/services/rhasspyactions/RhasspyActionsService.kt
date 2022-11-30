@@ -144,7 +144,7 @@ open class RhasspyActionsService : IService() {
         //evaluate result
         val result = when (params.speechToTextOption) {
             SpeechToTextOptions.RemoteHTTP -> httpClientService.speechToText(speechToTextAudioData.addWavHeader())
-            SpeechToTextOptions.RemoteMQTT -> mqttClientService.stopListening(sessionId)
+            SpeechToTextOptions.RemoteMQTT -> mqttClientService.stopListening(sessionId) //TODO do not send when end was triggered my mqtt silence detected
             SpeechToTextOptions.Disabled -> ServiceResponse.Disabled
         }
 
