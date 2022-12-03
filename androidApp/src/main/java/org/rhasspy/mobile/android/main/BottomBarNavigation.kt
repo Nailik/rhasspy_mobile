@@ -21,6 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.configuration.ConfigurationScreen
 import org.rhasspy.mobile.android.settings.SettingsScreen
@@ -53,7 +54,7 @@ enum class BottomBarScreens() {
 }
 
 @Composable
-fun BoxWithConstraintsScope.BottomBarScreensNavigation(viewModel: HomeScreenViewModel = viewModel()) {
+fun BoxWithConstraintsScope.BottomBarScreensNavigation(viewModel: HomeScreenViewModel = getViewModel()) {
     var isBottomNavigationHidden by remember { mutableStateOf(false) }
 
     isBottomNavigationHidden = this.maxHeight < 250.dp

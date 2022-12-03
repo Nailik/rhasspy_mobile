@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
@@ -27,7 +28,7 @@ import org.rhasspy.mobile.viewModels.configuration.AudioPlayingConfigurationView
  */
 @Preview(showBackground = true)
 @Composable
-fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewModel = viewModel()) {
+fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewModel = getViewModel()) {
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.AudioPlayingConfiguration),

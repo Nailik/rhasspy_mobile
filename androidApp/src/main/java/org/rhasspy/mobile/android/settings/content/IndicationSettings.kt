@@ -16,6 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalNavController
@@ -33,7 +34,7 @@ import org.rhasspy.mobile.viewModels.settings.sound.WakeIndicationSoundSettingsV
 
 @Preview
 @Composable
-fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = viewModel()) {
+fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = getViewModel()) {
 
     val navController = rememberNavController()
 
@@ -51,7 +52,7 @@ fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = v
 
             composable(IndicationSettingsScreens.WakeIndicationSound.name) {
                 IndicationSoundScreen(
-                    viewModel = WakeIndicationSoundSettingsViewModel(),
+                    viewModel = getViewModel<WakeIndicationSoundSettingsViewModel>(),
                     title = MR.strings.wakeSound,
                     screen = IndicationSettingsScreens.WakeIndicationSound
                 )
@@ -59,7 +60,7 @@ fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = v
 
             composable(IndicationSettingsScreens.RecordedIndicationSound.name) {
                 IndicationSoundScreen(
-                    viewModel = RecordedIndicationSoundSettingsViewModel(),
+                    viewModel = getViewModel<RecordedIndicationSoundSettingsViewModel>(),
                     title = MR.strings.recordedSound,
                     screen = IndicationSettingsScreens.RecordedIndicationSound
                 )
@@ -67,7 +68,7 @@ fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = v
 
             composable(IndicationSettingsScreens.ErrorIndicationSound.name) {
                 IndicationSoundScreen(
-                    viewModel = ErrorIndicationSoundSettingsViewModel(),
+                    viewModel = getViewModel<ErrorIndicationSoundSettingsViewModel>(),
                     title = MR.strings.errorSound,
                     screen = IndicationSettingsScreens.ErrorIndicationSound
                 )

@@ -25,19 +25,20 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.main.Fab
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.viewModels.MicrophoneOverlayViewModel
 
-object MicrophoneOverlay {
+object MicrophoneOverlay : KoinComponent {
     private val logger = Logger.withTag("MicrophoneOverlay")
 
     private lateinit var mParams: WindowManager.LayoutParams
@@ -47,7 +48,7 @@ object MicrophoneOverlay {
         AndroidApplication.Instance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     }
 
-    private val viewModel = MicrophoneOverlayViewModel()
+    private val viewModel by inject<MicrophoneOverlayViewModel>()
 
     /**
      * view that's displayed as overlay to start wake word detection
@@ -79,8 +80,7 @@ object MicrophoneOverlay {
                                         onDrag(dragAmount)
                                     }
                                 },
-                            iconSize = (size.value * 0.4).dp,
-                            viewModel = viewModel()
+                            iconSize = (size.value * 0.4).dp
                         )
                     }
                 }

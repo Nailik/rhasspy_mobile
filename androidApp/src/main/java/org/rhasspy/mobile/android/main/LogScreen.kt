@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Severity
+import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.theme.*
 import org.rhasspy.mobile.android.utils.CustomDivider
@@ -28,7 +29,7 @@ import org.rhasspy.mobile.viewModels.LogScreenViewModel
  */
 @Preview
 @Composable
-fun LogScreen(viewModel: LogScreenViewModel = viewModel()) {
+fun LogScreen(viewModel: LogScreenViewModel = getViewModel()) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { AppBar(viewModel) },

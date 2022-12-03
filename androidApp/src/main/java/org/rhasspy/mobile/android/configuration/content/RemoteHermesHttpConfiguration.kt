@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
@@ -21,7 +22,7 @@ import org.rhasspy.mobile.viewModels.configuration.RemoteHermesHttpConfiguration
  */
 @Preview
 @Composable
-fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfigurationViewModel = viewModel()) {
+fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfigurationViewModel = getViewModel()) {
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.RemoteHermesHttpConfiguration),

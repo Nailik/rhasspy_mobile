@@ -11,6 +11,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import dev.icerock.moko.resources.StringResource
+import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.main.LocalMainNavController
@@ -34,7 +35,7 @@ enum class SettingsScreens {
 
 @Preview
 @Composable
-fun SettingsScreen(viewModel: SettingsScreenViewModel = viewModel()) {
+fun SettingsScreen(viewModel: SettingsScreenViewModel = getViewModel()) {
 
     LazyColumn(Modifier.fillMaxSize()) {
 

@@ -18,6 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import dev.icerock.moko.resources.StringResource
+import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.content.*
@@ -31,7 +32,7 @@ import org.rhasspy.mobile.viewModels.ConfigurationScreenViewModel
  */
 @Preview
 @Composable
-fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = viewModel()) {
+fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = getViewModel()) {
 
     val state = rememberLazyListState()
 

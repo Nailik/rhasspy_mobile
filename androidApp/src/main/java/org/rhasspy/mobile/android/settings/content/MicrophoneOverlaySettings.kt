@@ -9,6 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.permissions.RequiresOverlayPermission
@@ -28,7 +29,7 @@ import org.rhasspy.mobile.viewModels.settings.MicrophoneOverlaySettingsViewModel
  */
 @Preview
 @Composable
-fun MicrophoneOverlaySettingsContent(viewModel: MicrophoneOverlaySettingsViewModel = viewModel()) {
+fun MicrophoneOverlaySettingsContent(viewModel: MicrophoneOverlaySettingsViewModel = getViewModel()) {
 
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreens.MicrophoneOverlaySettings),

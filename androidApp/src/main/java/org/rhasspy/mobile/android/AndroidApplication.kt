@@ -9,7 +9,12 @@ import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.NativeApplication
 import org.rhasspy.mobile.android.uiservices.IndicationOverlay
 import org.rhasspy.mobile.android.uiservices.MicrophoneOverlay
-import org.rhasspy.mobile.viewModels.HomeScreenViewModel
+import org.rhasspy.mobile.viewModels.*
+import org.rhasspy.mobile.viewModels.configuration.*
+import org.rhasspy.mobile.viewModels.settings.*
+import org.rhasspy.mobile.viewModels.settings.sound.ErrorIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewModels.settings.sound.RecordedIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewModels.settings.sound.WakeIndicationSoundSettingsViewModel
 
 
 class AndroidApplication : Application() {
@@ -52,7 +57,34 @@ class AndroidApplication : Application() {
 
     override val viewModelModule: Module
         get() = module {
+            viewModelOf(::ConfigurationScreenViewModel)
+            viewModelOf(::AudioPlayingConfigurationViewModel)
+            viewModelOf(::DialogManagementConfigurationViewModel)
+            viewModelOf(::IntentHandlingConfigurationViewModel)
+            viewModelOf(::IntentRecognitionConfigurationViewModel)
+            viewModelOf(::MqttConfigurationViewModel)
+            viewModelOf(::RemoteHermesHttpConfigurationViewModel)
+            viewModelOf(::SpeechToTextConfigurationViewModel)
+            viewModelOf(::TextToSpeechConfigurationViewModel)
+            viewModelOf(::WakeWordConfigurationViewModel)
+            viewModelOf(::WebServerConfigurationViewModel)
             viewModelOf(::HomeScreenViewModel)
+            viewModelOf(::LogScreenViewModel)
+            viewModelOf(::SettingsScreenViewModel)
+            viewModelOf(::AboutScreenViewModel)
+            viewModelOf(::AutomaticSilenceDetectionSettingsViewModel)
+            viewModelOf(::BackgroundServiceSettingsViewModel)
+            viewModelOf(::DeviceSettingsSettingsViewModel)
+            viewModelOf(::IndicationSettingsViewModel)
+            viewModelOf(::WakeIndicationSoundSettingsViewModel)
+            viewModelOf(::RecordedIndicationSoundSettingsViewModel)
+            viewModelOf(::ErrorIndicationSoundSettingsViewModel)
+            viewModelOf(::LanguageSettingsViewModel)
+            viewModelOf(::LogSettingsViewModel)
+            viewModelOf(::MicrophoneOverlaySettingsViewModel)
+            viewModelOf(::SaveAndRestoreSettingsViewModel)
+            viewModelOf(::ThemeSettingsViewModel)
+            viewModelOf(::MicrophoneOverlayViewModel)
         }
 
 }

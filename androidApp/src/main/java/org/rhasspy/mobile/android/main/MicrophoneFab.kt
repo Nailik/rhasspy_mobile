@@ -13,6 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
@@ -24,7 +25,7 @@ import org.rhasspy.mobile.viewModels.HomeScreenViewModel
  * Floating Action Button with microphone
  */
 @Composable
-fun Fab(modifier: Modifier = Modifier, iconSize: Dp, viewModel: HomeScreenViewModel) {
+fun Fab(modifier: Modifier = Modifier, iconSize: Dp, viewModel: HomeScreenViewModel = getViewModel()) {
 
     RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::toggleSession) { onClick ->
 
