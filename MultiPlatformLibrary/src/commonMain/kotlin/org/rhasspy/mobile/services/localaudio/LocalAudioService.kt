@@ -6,11 +6,11 @@ import org.rhasspy.mobile.services.ServiceResponse
 
 class LocalAudioService : IService() {
     override fun onClose() {
-       // TODO("Not yet implemented")
+        // TODO("Not yet implemented")
     }
 
     suspend fun playAudio(data: List<Byte>): ServiceResponse<*> { //TODO play byte array
-         AudioPlayer().playData(data) {}
+        AudioPlayer().playData(data) {}
         return ServiceResponse.Success("yay")
     }
 

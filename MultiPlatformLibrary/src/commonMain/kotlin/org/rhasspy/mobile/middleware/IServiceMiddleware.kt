@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.middleware
 
-import com.benasher44.uuid.uuid4
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
@@ -14,7 +13,6 @@ import org.rhasspy.mobile.middleware.action.WebServerAction
 import org.rhasspy.mobile.middleware.action.WebServerRequest
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.dialogManager.IDialogManagerService
-import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 
 /**
@@ -57,9 +55,9 @@ abstract class IServiceMiddleware : KoinComponent, Closeable {
                 is MqttAction.HotWordToggle -> {}// TODO()
                 is MqttAction.IntentHandlingToggle -> {}// TODO()
                 is MqttAction.IntentRecognitionResult -> {}// TODO()
-                is MqttAction.AsrError -> {  }
+                is MqttAction.AsrError -> {}
                 //TODO only if mqtt is used?? for speech to text and session id is correct (but for dialog manager mqtt any)
-                is MqttAction.AsrTextCaptured -> {    }
+                is MqttAction.AsrTextCaptured -> {}
                 //TODO only if mqtt is used?? for speech to text and session id is correct (but for dialog manager mqtt any)
                 is MqttAction.IntentTranscribed -> {}// TODO()
                 is MqttAction.IntentTranscribedError -> {}// TODO()

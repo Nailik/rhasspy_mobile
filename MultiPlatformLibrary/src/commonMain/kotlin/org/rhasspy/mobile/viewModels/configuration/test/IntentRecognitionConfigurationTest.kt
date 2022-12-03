@@ -16,7 +16,7 @@ class IntentRecognitionConfigurationTest : IConfigurationTest() {
     public fun runTest(text: String) {
         testScope.launch {
             //await for mqtt
-            if(get<RhasspyActionsServiceParams>().intentRecognitionOption == IntentRecognitionOptions.RemoteMQTT) {
+            if (get<RhasspyActionsServiceParams>().intentRecognitionOption == IntentRecognitionOptions.RemoteMQTT) {
                 get<MqttService>()
                     .isHasStarted
                     .map { it }

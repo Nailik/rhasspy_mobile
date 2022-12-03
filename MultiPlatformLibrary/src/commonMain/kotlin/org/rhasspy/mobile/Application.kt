@@ -46,7 +46,7 @@ inline fun <reified T : Closeable> Module.closeableSingle(
     noinline definition: Definition<T>
 ) {
     single(qualifier, createdAtStart, definition) onClose {
-       // println("onCLose $definition $it")
+        // println("onCLose $definition $it")
         it?.close()
     }
 }

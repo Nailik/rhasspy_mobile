@@ -241,7 +241,7 @@ private fun TestConfigurationScreen(
 
                 LaunchedEffect(eventsList.size) {
                     coroutineScope.launch {
-                        if(eventsList.isNotEmpty()) {
+                        if (eventsList.isNotEmpty()) {
                             scrollState.animateScrollToItem(eventsList.size - 1)
                         }
                     }

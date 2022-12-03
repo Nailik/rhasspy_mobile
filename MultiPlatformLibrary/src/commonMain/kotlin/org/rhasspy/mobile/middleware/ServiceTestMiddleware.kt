@@ -30,7 +30,7 @@ class ServiceTestMiddleware : IServiceMiddleware() {
 
     override fun webServerAction(event: WebServerAction) {
         coroutineScope.launch {
-            when(event){
+            when (event) {
                 is WebServerAction.PlayWav -> {
                     rhasspyActionsService.playAudio(event.byteArray.toList())
                 }

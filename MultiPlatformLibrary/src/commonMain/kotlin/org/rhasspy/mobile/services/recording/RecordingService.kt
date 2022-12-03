@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.services.recording
 
-import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -75,7 +74,7 @@ class RecordingService : IService() {
             if (volume < AppSettings.automaticSilenceDetectionAudioLevel.value) {
                 //no data was above threshold, there is silence
                 silenceStartTime?.also {
-                  //  logger.d { "silenceDetected" }
+                    //  logger.d { "silenceDetected" }
                     //check if silence was detected for x milliseconds
                     if (it.minus(Clock.System.now()) < -AppSettings.automaticSilenceDetectionTime.value.milliseconds) {
                         serviceMiddleware.silenceDetected()

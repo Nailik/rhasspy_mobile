@@ -33,7 +33,7 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
                         oldFile.delete()
                     }
                     if (!File("${file.parent}/${file.nameWithoutExtension}_old.${file.extension}").exists()) {
-                      //TODO issue  file.copyTo(oldFile)
+                        //TODO issue  file.copyTo(oldFile)
                     }
                 } catch (e: Exception) {
                     logger.e(e) { "" }

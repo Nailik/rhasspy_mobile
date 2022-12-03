@@ -21,7 +21,7 @@ class SpeechToTextConfigurationTest : IConfigurationTest() {
 
     fun toggleRecording() {
         testScope.launch {
-            if(get<RhasspyActionsServiceParams>().speechToTextOption == SpeechToTextOptions.RemoteMQTT) {
+            if (get<RhasspyActionsServiceParams>().speechToTextOption == SpeechToTextOptions.RemoteMQTT) {
                 //await for mqtt service to start if necessary
                 get<MqttService>()
                     .isHasStarted
