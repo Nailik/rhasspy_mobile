@@ -28,7 +28,6 @@ class HomeScreenViewModel : ViewModel(), KoinComponent {
     val isOverlayPermissionRequestRequired: StateFlow<Boolean> get() = isCurrentOverlayPermissionRequestRequired
 
 
-
     val isShowLogEnabled: StateFlow<Boolean> get() = AppSettings.isShowLogEnabled.data
 
     fun toggleSession() = StateMachine.toggleSessionManually()

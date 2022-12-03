@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR

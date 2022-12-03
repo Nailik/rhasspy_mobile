@@ -8,9 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import dev.burnoo.cokoin.Koin
 import org.rhasspy.mobile.data.ThemeOptions
-import org.rhasspy.mobile.serviceModule
 import org.rhasspy.mobile.viewModels.AppViewModel
 
 /**
