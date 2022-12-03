@@ -33,6 +33,7 @@ kotlin {
         podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "MultiPlatformLibrary"
+            isStatic = true
         }
     }
 
@@ -50,7 +51,6 @@ kotlin {
                 implementation(kotlin("stdlib"))
                 implementation(Touchlab.kermit)
                 implementation(Icerock.Mvvm.core)
-                runtimeOnly(Icerock.permissions)
                 implementation(Icerock.Resources)
                 implementation(Russhwolf.multiplatformSettings)
                 implementation(Russhwolf.multiplatformSettingsNoArg)

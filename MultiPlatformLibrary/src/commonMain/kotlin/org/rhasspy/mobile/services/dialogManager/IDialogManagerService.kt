@@ -41,6 +41,12 @@ abstract class IDialogManagerService : IService() {
         }
     }
 
+    //TODO states and go to next state etc
+
+    //aktionen:
+
+    //
+
     abstract fun startSessionMqtt()
 
     abstract fun endSessionMqtt(sessionId: String?)
