@@ -13,6 +13,7 @@ import org.rhasspy.mobile.middleware.EventType.RecordingServiceEventType.Start
 import org.rhasspy.mobile.middleware.EventType.RecordingServiceEventType.Stop
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.nativeutils.AudioRecorder
+import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceResponse
 import org.rhasspy.mobile.settings.AppSettings
@@ -31,11 +32,11 @@ class RecordingService : IService() {
     private var scope = CoroutineScope(Dispatchers.Default)
     private var silenceStartTime: Instant? = null
 
-    private var isRecordingWakeWord = false
-    private var isRecordingNormal = false
+    private val _isRecording = MutableStateFlow(false)
+    val isRecording = _isRecording.readOnly
 
     private val _output = MutableStateFlow<List<Byte>>(emptyList())
-    val output: StateFlow<List<Byte>> = _output
+    val output = _output.readOnly
 
     // when no one observes output then stop recording?
 
@@ -95,7 +96,7 @@ class RecordingService : IService() {
                 is ServiceResponse.Error -> event.error(result.error)
                 ServiceResponse.NotInitialized -> event.error(NotInitialized)
                 is ServiceResponse.Success -> event.success()
-                else -> {}
+                else -> _isRecording.value = true
             }
         }
         event.success()
@@ -103,9 +104,8 @@ class RecordingService : IService() {
 
     private fun stopRecording() {
         val event = serviceMiddleware.createEvent(Stop)
-        if (!isRecordingNormal && !isRecordingWakeWord) {
-            AudioRecorder.stopRecording()
-        }
+        AudioRecorder.stopRecording()
+        _isRecording.value = false
         event.success()
     }
 

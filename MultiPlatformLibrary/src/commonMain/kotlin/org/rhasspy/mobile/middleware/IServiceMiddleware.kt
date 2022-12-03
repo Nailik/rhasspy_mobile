@@ -27,6 +27,9 @@ abstract class IServiceMiddleware : KoinComponent, Closeable {
     )
     val event = _event.readOnly
 
+    private val _serviceErrors = MutableSharedFlow<EventState.Error>()
+    val serviceErrors = _serviceErrors.readOnly
+
     val sessionId: String get() = get<IDialogManagerService>().sessionId
 
     val rhasspyActionsService by inject<RhasspyActionsService>()

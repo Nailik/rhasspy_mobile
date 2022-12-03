@@ -28,9 +28,7 @@ fun AppTheme(content: @Composable () -> Unit) {
     systemUiController.setNavigationBarColor(colorScheme.background, darkIcons = !isDarkTheme)
     systemUiController.setStatusBarColor(colorScheme.background, darkIcons = !isDarkTheme)
 
-    Koin(appDeclaration = { modules(serviceModule) }) {
-        MaterialTheme(colorScheme = colorScheme, content = content)
-    }
+    MaterialTheme(colorScheme = colorScheme, content = content)
 }
 
 /**

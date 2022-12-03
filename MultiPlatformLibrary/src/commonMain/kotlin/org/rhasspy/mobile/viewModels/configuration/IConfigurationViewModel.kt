@@ -52,8 +52,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
         testScope = CoroutineScope(Dispatchers.Default)
         //needs to be suspend, else ui thread is blocked
         logger.e { "************* onOpenTestPage ************" }
-        unloadKoinModules(serviceModule)
-        loadKoinModules(serviceModule)
+        Application.reloadServiceModules()
         initializeTestParams()
 
         _events.value = emptyList()
@@ -73,8 +72,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
         //needs to be suspend, else ui thread is blocked
         logger.e { "************* stopTest ************" }
         //reload koin modules when test is stopped
-        unloadKoinModules(serviceModule)
-        loadKoinModules(serviceModule)
+        Application.reloadServiceModules()
         Application.startServices()
     }
 

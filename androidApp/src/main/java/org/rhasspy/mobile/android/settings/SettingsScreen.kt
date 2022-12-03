@@ -1,10 +1,8 @@
 package org.rhasspy.mobile.android.settings
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -38,41 +36,57 @@ enum class SettingsScreens {
 @Composable
 fun SettingsScreen(viewModel: SettingsScreenViewModel = viewModel()) {
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
+    LazyColumn(Modifier.fillMaxSize()) {
 
-        Language(viewModel)
-        CustomDivider()
+        item {
+            Language(viewModel)
+            CustomDivider()
+        }
 
-        Theme(viewModel)
-        CustomDivider()
+        item {
+            Theme(viewModel)
+            CustomDivider()
+        }
 
-        BackgroundService(viewModel)
-        CustomDivider()
+        item {
+            BackgroundService(viewModel)
+            CustomDivider()
+        }
 
-        MicrophoneOverlay(viewModel)
-        CustomDivider()
+        item {
+            MicrophoneOverlay(viewModel)
+            CustomDivider()
+        }
 
-        Indication(viewModel)
-        CustomDivider()
+        item {
+            Indication(viewModel)
+            CustomDivider()
+        }
 
-        Device()
-        CustomDivider()
+        item {
+            Device()
+            CustomDivider()
+        }
 
-        AutomaticSilenceDetection(viewModel)
-        CustomDivider()
+        item {
+            AutomaticSilenceDetection(viewModel)
+            CustomDivider()
+        }
 
-        Log(viewModel)
-        CustomDivider()
+        item {
+            Log(viewModel)
+            CustomDivider()
+        }
 
-        SaveAndRestore()
-        CustomDivider()
+        item {
+            SaveAndRestore()
+            CustomDivider()
+        }
 
-        About()
-        CustomDivider()
+        item {
+            About()
+            CustomDivider()
+        }
 
     }
 

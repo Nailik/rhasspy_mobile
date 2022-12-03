@@ -1,15 +1,19 @@
 package org.rhasspy.mobile.android.configuration
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -29,44 +33,75 @@ import org.rhasspy.mobile.viewModels.ConfigurationScreenViewModel
 @Composable
 fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = viewModel()) {
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+    val state = rememberLazyListState()
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        state = state
     ) {
 
-        SiteId(viewModel)
-        CustomDivider()
+        stickyHeader {
+            val animatedTonalElevation by animateDpAsState(
+                targetValue = if (state.firstVisibleItemIndex == 0 && state.firstVisibleItemScrollOffset == 0) 0.dp else 5.dp
+            )
 
-        Webserver(viewModel)
-        CustomDivider()
+            Surface(tonalElevation = animatedTonalElevation) {
+                Column {
+                    SiteId(viewModel)
+                    ServiceErrorInformation(viewModel)
+                }
+            }
+        }
 
-        RemoteHermesHttp(viewModel)
-        CustomDivider()
+        item {
+            Webserver(viewModel)
+            CustomDivider()
+        }
 
-        Mqtt(viewModel)
-        CustomDivider()
+        item {
+            RemoteHermesHttp(viewModel)
+            CustomDivider()
+        }
 
-        WakeWord(viewModel)
-        CustomDivider()
+        item {
+            Mqtt(viewModel)
+            CustomDivider()
+        }
 
-        SpeechToText(viewModel)
-        CustomDivider()
+        item {
+            WakeWord(viewModel)
+            CustomDivider()
+        }
 
-        IntentRecognition(viewModel)
-        CustomDivider()
+        item {
+            SpeechToText(viewModel)
+            CustomDivider()
+        }
 
-        TextToSpeech(viewModel)
-        CustomDivider()
+        item {
+            IntentRecognition(viewModel)
+            CustomDivider()
+        }
 
-        AudioPlaying(viewModel)
-        CustomDivider()
+        item {
+            TextToSpeech(viewModel)
+            CustomDivider()
+        }
 
-        DialogManagement(viewModel)
-        CustomDivider()
+        item {
+            AudioPlaying(viewModel)
+            CustomDivider()
+        }
 
-        IntentHandling(viewModel)
-        CustomDivider()
+        item {
+            DialogManagement(viewModel)
+            CustomDivider()
+        }
+
+        item {
+            IntentHandling(viewModel)
+            CustomDivider()
+        }
 
     }
 
@@ -118,6 +153,38 @@ fun NavGraphBuilder.addConfigurationScreens() {
     }
 
 }
+
+@Composable
+private fun ServiceErrorInformation(viewModel: ConfigurationScreenViewModel) {
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp, bottom = 16.dp)
+            .padding(horizontal = 16.dp),
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Error,
+                contentDescription = MR.strings.error,
+                tint = MaterialTheme.colorScheme.onErrorContainer
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "error on 5 services",
+                color = MaterialTheme.colorScheme.onErrorContainer
+            )
+        }
+    }
+}
+
 
 /**
  * site id element

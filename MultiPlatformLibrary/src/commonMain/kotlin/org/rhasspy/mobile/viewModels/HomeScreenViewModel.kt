@@ -1,18 +1,22 @@
 package org.rhasspy.mobile.viewModels
 
-import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.logic.StateMachine.manualIntentRecognition
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.nativeutils.OverlayPermission
+import org.rhasspy.mobile.services.recording.RecordingService
 import org.rhasspy.mobile.settings.AppSettings
 
-class HomeScreenViewModel : ViewModel() {
-    private val logger = Logger.withTag("HomeScreenViewModel")
+class HomeScreenViewModel : ViewModel(), KoinComponent {
 
+
+    val isRecording = get<RecordingService>().isRecording
+    val isOkState: StateFlow<Boolean> = MicrophonePermission.granted
 
     val isMicrophonePermissionRequestNotRequired: StateFlow<Boolean> = MicrophonePermission.granted
 
@@ -23,9 +27,7 @@ class HomeScreenViewModel : ViewModel() {
 
     val isOverlayPermissionRequestRequired: StateFlow<Boolean> get() = isCurrentOverlayPermissionRequestRequired
 
-    init {
-        logger.v { "init" }
-    }
+
 
     val isShowLogEnabled: StateFlow<Boolean> get() = AppSettings.isShowLogEnabled.data
 

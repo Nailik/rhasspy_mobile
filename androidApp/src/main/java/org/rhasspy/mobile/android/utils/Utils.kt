@@ -5,23 +5,19 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -233,60 +229,6 @@ fun Modifier.clearFocusOnKeyboardDismiss(): Modifier = composed {
 }
 
 @Composable
-fun <E : DataEnum<*>> DropDownEnumListItem(selected: E, label: StringResource, onSelect: (item: E) -> Unit, values: () -> Array<E>) {
-    var isExpanded by remember { mutableStateOf(false) }
-
-    ListElement(modifier = Modifier
-        .clickable(
-            interactionSource = remember { MutableInteractionSource() },
-            indication = rememberRipple(bounded = true),
-            onClick = { isExpanded = true }
-        ),
-        text = {
-            OutlinedTextField(
-                value = translate(selected.text),
-                onValueChange = { },
-                label = { Text(label) },
-                enabled = false,
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(4)),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                    disabledBorderColor = MaterialTheme.colorScheme.outline,
-                    disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    disabledLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-            )
-        })
-
-    Box(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .fillMaxWidth()
-            .wrapContentSize(Alignment.TopStart)
-    ) {
-        DropdownMenu(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            expanded = isExpanded,
-            onDismissRequest = { isExpanded = false }) {
-            values().forEach {
-                DropdownMenuItem(
-                    text = { Text(it.text) },
-                    onClick = { isExpanded = false; onSelect(it) })
-            }
-        }
-    }
-}
-
-@Composable
 fun <E : DataEnum<*>> RadioButtonsEnumSelection(
     modifier: Modifier = Modifier,
     selected: E,
@@ -488,14 +430,40 @@ fun TextFieldListItem(
 }
 
 @Composable
-fun FilledTonalButtonListItem(modifier: Modifier = Modifier, text: StringResource, enabled: Boolean = true, onClick: () -> Unit) {
+fun FilledTonalButtonListItem(
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+    text: StringResource,
+    enabled: Boolean = true,
+    onClick: () -> Unit
+) {
     ListElement(modifier = modifier) {
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             FilledTonalButton(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 enabled = enabled,
                 onClick = onClick,
-                content = { Text(text) })
+                content = {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        icon?.also {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = text
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                        }
+
+                        Text(resource = text)
+                    }
+                })
         }
     }
 }
@@ -605,51 +573,6 @@ fun RadioButtonListItem(
 
 fun Boolean.toText(): StringResource {
     return if (this) MR.strings.enabled else MR.strings.disabled
-}
-
-@Composable
-fun TextWithAction(
-    modifier: Modifier = Modifier,
-    text: String,
-    label: StringResource,
-    onValueChange: (String) -> Unit,
-    onClick: () -> Unit, icon:
-    @Composable () -> Unit
-) {
-    val bringIntoViewRequester = remember { BringIntoViewRequester() }
-    val coroutineScope = rememberCoroutineScope()
-
-    Row(
-        modifier = modifier
-            .padding(vertical = 6.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        OutlinedTextField(
-            singleLine = true,
-            value = text,
-            textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colorScheme.onBackground),
-            onValueChange = onValueChange,
-            modifier = Modifier
-                .clearFocusOnKeyboardDismiss()
-                .weight(1f)
-                .bringIntoViewRequester(bringIntoViewRequester)
-                .onFocusEvent {
-                    if (it.isFocused) {
-                        coroutineScope.launch {
-                            bringIntoViewRequester.bringIntoView()
-                        }
-                    }
-                },
-            label = { Text(resource = label) }
-        )
-        ElevatedButton(
-            modifier = Modifier.padding(horizontal = 24.dp),
-            onClick = onClick
-        ) {
-            icon()
-        }
-    }
 }
 
 @Composable

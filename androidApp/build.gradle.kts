@@ -159,6 +159,7 @@ dependencies {
     implementation(Icerock.Resources)
     implementation(Icerock.Mvvm.core)
     implementation(Koin.core)
+    implementation(Koin.compose)
 
     androidTestImplementation(project(":MultiPlatformLibrary"))
     androidTestImplementation(AndroidX.Test.runner)

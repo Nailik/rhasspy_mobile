@@ -2,10 +2,14 @@ package org.rhasspy.mobile.android
 
 import android.content.Intent
 import co.touchlab.kermit.Logger
+import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.NativeApplication
 import org.rhasspy.mobile.android.uiservices.IndicationOverlay
 import org.rhasspy.mobile.android.uiservices.MicrophoneOverlay
+import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
 
 class AndroidApplication : Application() {
@@ -45,5 +49,10 @@ class AndroidApplication : Application() {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         })
     }
+
+    override val viewModelModule: Module
+        get() = module {
+            viewModelOf(::HomeScreenViewModel)
+        }
 
 }

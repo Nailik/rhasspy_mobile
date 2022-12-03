@@ -4,7 +4,9 @@ import co.touchlab.kermit.Logger
 import dev.icerock.moko.resources.desc.StringDesc
 import io.ktor.utils.io.core.*
 import org.koin.core.component.KoinComponent
+import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
+import org.koin.core.context.unloadKoinModules
 import org.koin.core.definition.Definition
 import org.koin.core.module.Module
 import org.koin.core.qualifier.Qualifier
@@ -105,6 +107,12 @@ abstract class Application : NativeApplication(), KoinComponent {
 
         }
 
+
+        fun reloadServiceModules(){
+            unloadKoinModules(serviceModule)
+            loadKoinModules(serviceModule)
+        }
+
         lateinit var Instance: NativeApplication
             private set
     }
@@ -118,7 +126,7 @@ abstract class Application : NativeApplication(), KoinComponent {
         // start a KoinApplication in Global context
         startKoin {
             // declare used modules
-            modules(serviceModule)
+            modules(serviceModule, viewModelModule)
         }
 
         Logger.addLogWriter(FileLogger)
@@ -135,5 +143,7 @@ abstract class Application : NativeApplication(), KoinComponent {
 
         StringDesc.localeType = StringDesc.LocaleType.Custom(AppSettings.languageOption.value.code)
     }
+
+    abstract val viewModelModule: Module
 
 }

@@ -24,6 +24,7 @@ enum class TestTag {
     DialogManagementOptions,
     LibrariesContainer,
     MicrophoneOverlaySizeOptions,
+    MicrophoneFab,
 
     AudioPlayingOptions,
     AudioOutputOptions,
