@@ -116,6 +116,8 @@ actual object AudioRecorder {
     actual fun stopRecording() {
         _isRecording.value = false
         logger.v { "stopRecording" }
-        recorder?.stop()
+        recorder?.stop()  //TODO simplify do not always create new recorder
+        recorder?.release()
+        recorder = null
     }
 }

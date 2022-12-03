@@ -210,6 +210,7 @@
     <string name="audioPlayingInfo">can be set in configuration Settings</string>
     <string name="notification">Notification</string>
     <string name="audioOutputSilentOrDisabled">Your audio Output is Silent or Disabled</string>
+    <string name="initializePorcupine">Initialize Porcupine</string>
     <string name="startPorcupine">Start Porcupine</string>
     <string name="hotWordDetected">HotWord Detected</string>
     <string name="start">Start</string>

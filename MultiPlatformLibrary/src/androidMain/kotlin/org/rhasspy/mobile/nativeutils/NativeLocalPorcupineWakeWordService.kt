@@ -11,7 +11,6 @@ import org.rhasspy.mobile.middleware.ErrorType.HotWordServiceError
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
 import java.io.File
-import java.util.Collections.addAll
 
 /**
  * Listens to WakeWord with Porcupine
@@ -30,16 +29,8 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
     //manager to stop start and reload porcupine
     private var porcupineManager: PorcupineManager? = null
 
-    /**
-     * start listening to wake words
-     * requires internet to activate porcupine the very first time
-     *
-     * checks for audio permission
-     * tries to start porcupine
-     */
-    actual fun start(): HotWordServiceError? {
-        porcupineManager?.start()
 
+    actual fun initialize(): HotWordServiceError? {
         if (ActivityCompat.checkSelfPermission(Application.Instance, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             logger.e { "missing recording permission" }
             return HotWordServiceError.MicrophonePermissionMissing
@@ -72,6 +63,10 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
                     }.toTypedArray().toFloatArray()
                 )
                 .setModelPath(copyModelFileIfNecessary())
+                .setErrorCallback {
+                    //TODO
+                }
+
 
             File(Application.Instance.filesDir, "sounds").mkdirs()
 
@@ -97,12 +92,26 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
     }
 
     /**
+     * start listening to wake words
+     * requires internet to activate porcupine the very first time
+     *
+     * checks for audio permission
+     * tries to start porcupine
+     */
+    actual fun start(): HotWordServiceError? {
+        porcupineManager?.let {
+            it.start()
+            return null
+        } ?: run {
+            return HotWordServiceError.NotInitialized
+        }
+    }
+
+    /**
      * stops porcupine
      */
     actual fun stop() {
-        //TODO does not release microphone??
-        logger.d { "delete" }
-        porcupineManager?.delete()
+        porcupineManager?.stop()
     }
 
     /**
@@ -144,5 +153,9 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
         }
 
         return file.absolutePath
+    }
+
+    actual fun delete() {
+        porcupineManager?.delete()
     }
 }

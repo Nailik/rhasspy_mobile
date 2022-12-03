@@ -20,11 +20,15 @@ expect class NativeLocalPorcupineWakeWordService(
     onKeywordDetected: (hotWord: String) -> Unit
 ) {
 
+    fun initialize(): ErrorType.HotWordServiceError?
+
     fun start(): ErrorType.HotWordServiceError?
 
     /**
      * stops porcupine
      */
     fun stop()
+
+    fun delete()
 
 }

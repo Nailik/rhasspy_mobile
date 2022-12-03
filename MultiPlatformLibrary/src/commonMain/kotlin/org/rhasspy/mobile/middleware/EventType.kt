@@ -8,6 +8,7 @@ sealed interface EventType {
     val title: StringResource
 
     enum class HotWordServiceEventType(override val title: StringResource) : EventType {
+        InitializePorcupine(MR.strings.startPorcupine),
         StartPorcupine(MR.strings.startPorcupine),
         Detected(MR.strings.hotWordDetected);
     }

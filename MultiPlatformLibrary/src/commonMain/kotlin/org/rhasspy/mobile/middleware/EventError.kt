@@ -57,7 +57,8 @@ sealed interface ErrorType {
         PorcupineMemoryException,
         PorcupineRuntimeException,
         PorcupineStopIterationException,
-        Unknown
+        Unknown,
+        NotInitialized
     }
 
     enum class IndicationServiceErrorType : ErrorType {
