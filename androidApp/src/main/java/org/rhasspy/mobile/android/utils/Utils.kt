@@ -202,32 +202,6 @@ fun translate(resource: StringResource, vararg args: Any): String {
     return StringDesc.ResourceFormatted(resource, *args).toString(LocalContext.current)
 }
 
-//https://stackoverflow.com/questions/68389802/how-to-clear-textfield-focus-when-closing-the-keyboard-and-prevent-two-back-pres
-fun Modifier.clearFocusOnKeyboardDismiss(): Modifier = composed {
-    var isFocused by remember { mutableStateOf(false) }
-    var keyboardAppearedSinceLastFocused by remember { mutableStateOf(false) }
-    if (isFocused) {
-        val imeIsVisible = WindowInsets.isImeVisible
-        val focusManager = LocalFocusManager.current
-        LaunchedEffect(imeIsVisible) {
-            if (imeIsVisible) {
-                keyboardAppearedSinceLastFocused = true
-            } else if (keyboardAppearedSinceLastFocused) {
-                focusManager.clearFocus()
-            }
-        }
-    }
-
-    onFocusEvent {
-        if (isFocused != it.isFocused) {
-            isFocused = it.isFocused
-            if (isFocused) {
-                keyboardAppearedSinceLastFocused = false
-            }
-        }
-    }
-}
-
 @Composable
 fun <E : DataEnum<*>> RadioButtonsEnumSelection(
     modifier: Modifier = Modifier,
@@ -416,7 +390,6 @@ fun TextFieldListItem(
             modifier = modifier
                 .padding(bottom = 4.dp)
                 .fillMaxWidth()
-                .clearFocusOnKeyboardDismiss()
                 .onFocusEvent {
                     if (it.isFocused) {
                         coroutineScope.launch {

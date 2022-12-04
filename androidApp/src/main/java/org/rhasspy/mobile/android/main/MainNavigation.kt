@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.android.main
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
@@ -38,32 +37,29 @@ fun MainNavigation() {
         //fixes bright flashing when navigating between screens
         Surface(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
 
-            BoxWithConstraints(
-                modifier = Modifier.fillMaxSize()
+
+            val navController = rememberNavController()
+            val snackbarHostState = remember { SnackbarHostState() }
+
+            CompositionLocalProvider(
+                LocalMainNavController provides navController,
+                LocalSnackbarHostState provides snackbarHostState
             ) {
-                val navController = rememberNavController()
-                val snackbarHostState = remember { SnackbarHostState() }
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    snackbarHost = { SnackbarHost(snackbarHostState) },
+                ) { paddingValues ->
 
-                CompositionLocalProvider(
-                    LocalMainNavController provides navController,
-                    LocalSnackbarHostState provides snackbarHostState
-                ) {
-                    Scaffold(
-                        modifier = Modifier.fillMaxSize(),
-                        snackbarHost = { SnackbarHost(snackbarHostState) },
-                    ) { paddingValues ->
-
-                        NavHost(
-                            navController = navController,
-                            startDestination = MainScreens.BoomBarScreen.name,
-                            modifier = Modifier.padding(paddingValues)
-                        ) {
-                            composable(MainScreens.BoomBarScreen.name) {
-                                BottomBarScreensNavigation()
-                            }
-                            addConfigurationScreens()
-                            addSettingsScreen()
+                    NavHost(
+                        navController = navController,
+                        startDestination = MainScreens.BoomBarScreen.name,
+                        modifier = Modifier.padding(paddingValues)
+                    ) {
+                        composable(MainScreens.BoomBarScreen.name) {
+                            BottomBarScreensNavigation()
                         }
+                        addConfigurationScreens()
+                        addSettingsScreen()
                     }
                 }
             }

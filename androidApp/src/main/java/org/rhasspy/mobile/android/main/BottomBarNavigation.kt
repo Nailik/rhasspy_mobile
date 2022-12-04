@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.android.main
 
-import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -10,7 +9,10 @@ import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.*
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -53,10 +55,7 @@ enum class BottomBarScreens {
 }
 
 @Composable
-fun BoxWithConstraintsScope.BottomBarScreensNavigation(viewModel: HomeScreenViewModel = getViewModel()) {
-    var isBottomNavigationHidden by remember { mutableStateOf(false) }
-
-    isBottomNavigationHidden = this.maxHeight < 250.dp
+fun BottomBarScreensNavigation(viewModel: HomeScreenViewModel = getViewModel()) {
 
     val navController = rememberNavController()
 
@@ -69,12 +68,7 @@ fun BoxWithConstraintsScope.BottomBarScreensNavigation(viewModel: HomeScreenView
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             snackbarHost = { SnackbarHost(snackbarHostState) },
-            bottomBar = {
-                //hide bottom navigation with keyboard and small screens
-                if (!isBottomNavigationHidden) {
-                    BottomNavigation(viewModel, navController)
-                }
-            }
+            bottomBar = { BottomNavigation(viewModel, navController) }
         ) { paddingValues ->
 
             NavHost(
@@ -101,7 +95,6 @@ fun BoxWithConstraintsScope.BottomBarScreensNavigation(viewModel: HomeScreenView
 
 @Composable
 fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavController) {
-
 
     NavigationBar {
 
