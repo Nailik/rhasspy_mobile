@@ -10,7 +10,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -21,6 +20,7 @@ import org.rhasspy.mobile.android.theme.*
 import org.rhasspy.mobile.android.utils.CustomDivider
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.ListElement
+import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.viewModels.LogScreenViewModel
 
 /**
@@ -33,7 +33,6 @@ fun LogScreen(viewModel: LogScreenViewModel = getViewModel()) {
         modifier = Modifier.fillMaxSize(),
         topBar = { AppBar(viewModel) },
     ) { paddingValues ->
-
         Surface(Modifier.padding(paddingValues)) {
             LogScreenContent(viewModel)
         }
@@ -44,11 +43,9 @@ fun LogScreen(viewModel: LogScreenViewModel = getViewModel()) {
 @Composable
 private fun AppBar(viewModel: LogScreenViewModel) {
     TopAppBar(modifier = Modifier,
-        title = { org.rhasspy.mobile.android.utils.Text(MR.strings.appName, modifier = Modifier.testTag("appName")) },
+        title = { Text(MR.strings.log) },
         actions = {
-            Row(modifier = Modifier.padding(horizontal = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                LogScreenActions(viewModel)
-            }
+            LogScreenActions(viewModel)
         }
     )
 }
@@ -112,7 +109,10 @@ fun LogScreenContent(viewModel: LogScreenViewModel) {
 @Composable
 fun LogScreenActions(viewModel: LogScreenViewModel) {
 
-    Row(modifier = Modifier.padding(start = 8.dp)) {
+    Row(
+        modifier = Modifier.padding(start = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
 
         IconButton(onClick = viewModel::shareLogFile) {
             Icon(imageVector = Icons.Filled.Share, contentDescription = MR.strings.share)

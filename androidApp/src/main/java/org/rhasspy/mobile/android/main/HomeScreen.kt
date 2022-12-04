@@ -5,10 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,6 +15,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.utils.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.ListElement
+import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
 
@@ -25,30 +23,44 @@ import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 @Composable
 fun HomeScreen(viewModel: HomeScreenViewModel = koinViewModel()) {
 
-    Column(Modifier.fillMaxSize()) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = { Text(MR.strings.appName) }
+            )
+        },
+    ) { paddingValues ->
+        Column(
+            Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        ServiceErrorInformation(viewModel)
+            ServiceErrorInformation(viewModel)
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Fab(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .weight(1f),
-            iconSize = 96.dp,
-            viewModel = viewModel
-        )
+            Fab(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .weight(1f),
+                iconSize = 96.dp,
+                viewModel = viewModel
+            )
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-        PlayRecording(viewModel)
+            PlayRecording(viewModel)
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
+        }
     }
+
 }
 
 @Composable

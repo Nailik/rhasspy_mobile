@@ -30,67 +30,80 @@ import org.rhasspy.mobile.viewModels.ConfigurationScreenViewModel
 @Composable
 fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = getViewModel()) {
 
-    LazyColumn(Modifier.fillMaxSize()) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = { Text(MR.strings.configuration) }
+            )
+        },
+    ) { paddingValues ->
+        LazyColumn(
+            Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
 
-        stickyHeader {
-            ServiceErrorInformation(viewModel)
+            stickyHeader {
+                ServiceErrorInformation(viewModel)
+            }
+
+            item {
+                SiteId(viewModel)
+                CustomDivider()
+            }
+
+            item {
+                Webserver(viewModel)
+                CustomDivider()
+            }
+
+            item {
+                RemoteHermesHttp(viewModel)
+                CustomDivider()
+            }
+
+            item {
+                Mqtt(viewModel)
+                CustomDivider()
+            }
+
+            item {
+                WakeWord(viewModel)
+                CustomDivider()
+            }
+
+            item {
+                SpeechToText(viewModel)
+                CustomDivider()
+            }
+
+            item {
+                IntentRecognition(viewModel)
+                CustomDivider()
+            }
+
+            item {
+                TextToSpeech(viewModel)
+                CustomDivider()
+            }
+
+            item {
+                AudioPlaying(viewModel)
+                CustomDivider()
+            }
+
+            item {
+                DialogManagement(viewModel)
+                CustomDivider()
+            }
+
+            item {
+                IntentHandling(viewModel)
+                CustomDivider()
+            }
+
         }
-
-        item {
-            SiteId(viewModel)
-            CustomDivider()
-        }
-
-        item {
-            Webserver(viewModel)
-            CustomDivider()
-        }
-
-        item {
-            RemoteHermesHttp(viewModel)
-            CustomDivider()
-        }
-
-        item {
-            Mqtt(viewModel)
-            CustomDivider()
-        }
-
-        item {
-            WakeWord(viewModel)
-            CustomDivider()
-        }
-
-        item {
-            SpeechToText(viewModel)
-            CustomDivider()
-        }
-
-        item {
-            IntentRecognition(viewModel)
-            CustomDivider()
-        }
-
-        item {
-            TextToSpeech(viewModel)
-            CustomDivider()
-        }
-
-        item {
-            AudioPlaying(viewModel)
-            CustomDivider()
-        }
-
-        item {
-            DialogManagement(viewModel)
-            CustomDivider()
-        }
-
-        item {
-            IntentHandling(viewModel)
-            CustomDivider()
-        }
-
     }
 
 }

@@ -2,9 +2,6 @@ package org.rhasspy.mobile.android.configuration
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -29,11 +26,8 @@ import androidx.navigation.compose.rememberNavController
 import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.configuration.test.EventListItem
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.utils.Icon
@@ -99,7 +93,7 @@ fun ConfigurationScreenItemContent(
                 )
             }
             composable(ConfigurationContentScreens.Test.name) {
-                TestConfigurationScreen(
+                ConfigurationScreenTest(
                     viewModel = viewModel,
                     content = testContent,
                     onOpenPage = viewModel::onOpenTestPage
@@ -196,74 +190,6 @@ private fun EditConfigurationScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 content { route -> onNavigate(route) }
-            }
-        }
-    }
-}
-
-@Composable
-private fun TestConfigurationScreen(
-    viewModel: IConfigurationViewModel,
-    content: (@Composable () -> Unit)?,
-    onOpenPage: () -> Unit
-) {
-    val navController = LocalConfigurationNavController.current
-
-    LaunchedEffect(Unit) {
-        onOpenPage.invoke()
-        Application.Instance.isAppInBackground.collect {
-            if (it) {
-                navController.popBackStack()
-            }
-        }
-    }
-
-
-    Surface(tonalElevation = 3.dp) {
-        Scaffold(
-            topBar = {
-                AppBar(
-                    title = MR.strings.test,
-                    onBackClick = navController::popBackStack
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = MR.strings.stop,
-                    )
-                }
-            },
-        ) { paddingValues ->
-
-            Column(modifier = Modifier.padding(paddingValues)) {
-                val eventsList by viewModel.events.collectAsState()
-                val coroutineScope = rememberCoroutineScope()
-                val scrollState = rememberLazyListState()
-
-                LaunchedEffect(eventsList.size) {
-                    coroutineScope.launch {
-                        if (eventsList.isNotEmpty()) {
-                            scrollState.animateScrollToItem(eventsList.size - 1)
-                        }
-                    }
-                }
-
-                LazyColumn(
-                    state = scrollState,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    items(eventsList) { item ->
-                        EventListItem(item)
-                    }
-                }
-
-                if (content != null) {
-                    Card(
-                        modifier = Modifier.padding(8.dp),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-                    ) {
-                        content()
-                    }
-                }
             }
         }
     }

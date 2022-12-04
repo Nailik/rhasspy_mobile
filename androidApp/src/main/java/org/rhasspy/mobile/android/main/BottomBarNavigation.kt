@@ -45,7 +45,7 @@ val LocalSnackbarHostState = compositionLocalOf<SnackbarHostState> {
 /**
  * screens in the bottom bar
  */
-enum class BottomBarScreens() {
+enum class BottomBarScreens {
     HomeScreen,
     ConfigurationScreen,
     SettingsScreen,
@@ -68,7 +68,6 @@ fun BoxWithConstraintsScope.BottomBarScreensNavigation(viewModel: HomeScreenView
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            topBar = { AppBar() },
             snackbarHost = { SnackbarHost(snackbarHostState) },
             bottomBar = {
                 //hide bottom navigation with keyboard and small screens
@@ -98,31 +97,6 @@ fun BoxWithConstraintsScope.BottomBarScreensNavigation(viewModel: HomeScreenView
             }
         }
     }
-}
-
-@Composable
-private fun AppBar() {
-
-    var currentDestination by remember { mutableStateOf(BottomBarScreens.HomeScreen) }
-    val navController = LocalNavController.current
-
-    LaunchedEffect(navController) {
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            currentDestination = BottomBarScreens.valueOf(destination.route ?: BottomBarScreens.HomeScreen.name)
-        }
-    }
-
-    val title = when (currentDestination) {
-        BottomBarScreens.HomeScreen -> MR.strings.appName
-        BottomBarScreens.ConfigurationScreen -> MR.strings.configuration
-        BottomBarScreens.SettingsScreen -> MR.strings.settings
-        BottomBarScreens.LogScreen -> MR.strings.log
-    }
-
-    TopAppBar(
-        title = { Text(title) }
-    )
-
 }
 
 @Composable

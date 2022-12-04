@@ -2,6 +2,7 @@ package org.rhasspy.mobile.android.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -36,58 +37,71 @@ enum class SettingsScreens {
 @Composable
 fun SettingsScreen(viewModel: SettingsScreenViewModel = getViewModel()) {
 
-    LazyColumn(Modifier.fillMaxSize()) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = { Text(MR.strings.settings) }
+            )
+        },
+    ) { paddingValues ->
+        LazyColumn(
+            Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
 
-        item {
-            Language(viewModel)
-            CustomDivider()
+            item {
+                Language(viewModel)
+                CustomDivider()
+            }
+
+            item {
+                Theme(viewModel)
+                CustomDivider()
+            }
+
+            item {
+                BackgroundService(viewModel)
+                CustomDivider()
+            }
+
+            item {
+                MicrophoneOverlay(viewModel)
+                CustomDivider()
+            }
+
+            item {
+                Indication(viewModel)
+                CustomDivider()
+            }
+
+            item {
+                Device()
+                CustomDivider()
+            }
+
+            item {
+                AutomaticSilenceDetection(viewModel)
+                CustomDivider()
+            }
+
+            item {
+                Log(viewModel)
+                CustomDivider()
+            }
+
+            item {
+                SaveAndRestore()
+                CustomDivider()
+            }
+
+            item {
+                About()
+                CustomDivider()
+            }
+
         }
-
-        item {
-            Theme(viewModel)
-            CustomDivider()
-        }
-
-        item {
-            BackgroundService(viewModel)
-            CustomDivider()
-        }
-
-        item {
-            MicrophoneOverlay(viewModel)
-            CustomDivider()
-        }
-
-        item {
-            Indication(viewModel)
-            CustomDivider()
-        }
-
-        item {
-            Device()
-            CustomDivider()
-        }
-
-        item {
-            AutomaticSilenceDetection(viewModel)
-            CustomDivider()
-        }
-
-        item {
-            Log(viewModel)
-            CustomDivider()
-        }
-
-        item {
-            SaveAndRestore()
-            CustomDivider()
-        }
-
-        item {
-            About()
-            CustomDivider()
-        }
-
     }
 
 }
