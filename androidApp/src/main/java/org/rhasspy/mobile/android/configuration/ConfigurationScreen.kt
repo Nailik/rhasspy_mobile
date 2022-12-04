@@ -243,7 +243,8 @@ private fun Webserver(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.webserver,
         secondaryText = viewModel.isHttpServerEnabled.collectAsState().value.toText(),
-        screen = ConfigurationScreens.WebServerConfiguration
+        screen = ConfigurationScreens.WebServerConfiguration,
+        hasError = viewModel.isHttpServerHasError.collectAsState().value
     )
 
 }
@@ -258,7 +259,8 @@ private fun RemoteHermesHttp(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.remoteHermesHTTP,
         secondaryText = "${translate(MR.strings.sslValidation)} ${translate(viewModel.isHttpSSLVerificationEnabled.collectAsState().value.toText())}",
-        screen = ConfigurationScreens.RemoteHermesHttpConfiguration
+        screen = ConfigurationScreens.RemoteHermesHttpConfiguration,
+        hasError = viewModel.isHttpClientHasError.collectAsState().value
     )
 
 }
@@ -273,7 +275,8 @@ private fun Mqtt(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.mqtt,
         secondaryText = if (viewModel.isMQTTConnected.collectAsState().value) MR.strings.connected else MR.strings.notConnected,
-        screen = ConfigurationScreens.MqttConfiguration
+        screen = ConfigurationScreens.MqttConfiguration,
+        hasError = viewModel.isMqttHasError.collectAsState().value
     )
 
 }
@@ -291,7 +294,8 @@ private fun WakeWord(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.wakeWord,
         secondaryText = wakeWordValueOption.text,
-        screen = ConfigurationScreens.WakeWordConfiguration
+        screen = ConfigurationScreens.WakeWordConfiguration,
+        hasError = viewModel.isWakeWordServiceHasError.collectAsState().value
     )
 
 }
@@ -307,7 +311,7 @@ private fun SpeechToText(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.speechToText,
         secondaryText = viewModel.speechToTextOption.collectAsState().value.text,
         screen = ConfigurationScreens.SpeechToTextConfiguration,
-        hasError = true
+        hasError = viewModel.isSpeechToTextHasError.collectAsState().value
     )
 
 }
@@ -323,7 +327,8 @@ private fun IntentRecognition(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.intentRecognition,
         secondaryText = viewModel.intentRecognitionOption.collectAsState().value.text,
-        screen = ConfigurationScreens.IntentRecognitionConfiguration
+        screen = ConfigurationScreens.IntentRecognitionConfiguration,
+        hasError = viewModel.isIntentRecognitionHasError.collectAsState().value
     )
 
 }
@@ -338,7 +343,8 @@ private fun TextToSpeech(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.textToSpeech,
         secondaryText = viewModel.textToSpeechOption.collectAsState().value.text,
-        screen = ConfigurationScreens.TextToSpeechConfiguration
+        screen = ConfigurationScreens.TextToSpeechConfiguration,
+        hasError = viewModel.isTextToSpeechHasError.collectAsState().value
     )
 
 }
@@ -353,7 +359,8 @@ private fun AudioPlaying(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.audioPlaying,
         secondaryText = viewModel.audioPlayingOption.collectAsState().value.text,
-        screen = ConfigurationScreens.AudioPlayingConfiguration
+        screen = ConfigurationScreens.AudioPlayingConfiguration,
+        hasError = viewModel.isAudioPlayingHasError.collectAsState().value
     )
 
 }
@@ -368,7 +375,8 @@ private fun DialogManagement(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.dialogManagement,
         secondaryText = viewModel.dialogManagementOption.collectAsState().value.text,
-        screen = ConfigurationScreens.DialogManagementConfiguration
+        screen = ConfigurationScreens.DialogManagementConfiguration,
+        hasError = viewModel.isDialogManagementHasError.collectAsState().value
     )
 
 }
@@ -383,7 +391,8 @@ private fun IntentHandling(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.intentHandling,
         secondaryText = viewModel.intentHandlingOption.collectAsState().value.text,
-        screen = ConfigurationScreens.IntentHandlingConfiguration
+        screen = ConfigurationScreens.IntentHandlingConfiguration,
+        hasError = viewModel.isIntentHandlingHasError.collectAsState().value
     )
 
 }

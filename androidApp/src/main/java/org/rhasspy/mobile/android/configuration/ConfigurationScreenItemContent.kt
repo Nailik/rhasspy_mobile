@@ -330,7 +330,7 @@ private fun BottomAppBar(
                         minWidth = 56.0.dp,
                         minHeight = 56.0.dp,
                     ),
-                onClick = {},
+                onClick = onClick,
                 isEnabled = isTestingEnabled,
                 containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
                 contentColor = LocalContentColor.current,
