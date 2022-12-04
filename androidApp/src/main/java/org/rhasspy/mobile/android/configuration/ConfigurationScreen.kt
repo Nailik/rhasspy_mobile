@@ -1,16 +1,13 @@
 package org.rhasspy.mobile.android.configuration
 
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,24 +30,15 @@ import org.rhasspy.mobile.viewModels.ConfigurationScreenViewModel
 @Composable
 fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = getViewModel()) {
 
-    val state = rememberLazyListState()
-
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        state = state
-    ) {
+    LazyColumn(Modifier.fillMaxSize()) {
 
         stickyHeader {
-            val animatedTonalElevation by animateDpAsState(
-                targetValue = if (state.firstVisibleItemIndex == 0 && state.firstVisibleItemScrollOffset == 0) 0.dp else 5.dp
-            )
+            ServiceErrorInformation(viewModel)
+        }
 
-            Surface(tonalElevation = animatedTonalElevation) {
-                Column {
-                    SiteId(viewModel)
-                    ServiceErrorInformation(viewModel)
-                }
-            }
+        item {
+            SiteId(viewModel)
+            CustomDivider()
         }
 
         item {
@@ -156,31 +144,32 @@ fun NavGraphBuilder.addConfigurationScreens() {
 
 @Composable
 private fun ServiceErrorInformation(viewModel: ConfigurationScreenViewModel) {
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp, bottom = 16.dp)
-            .padding(horizontal = 16.dp),
-        colors = CardDefaults.outlinedCardColors(
-            containerColor = MaterialTheme.colorScheme.errorContainer
-        )
-    ) {
-        Row(
+    Surface {
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(top = 8.dp, bottom = 16.dp)
+                .padding(horizontal = 16.dp),
+            colors = CardDefaults.outlinedCardColors(
+                containerColor = MaterialTheme.colorScheme.errorContainer
+            )
         ) {
-            Icon(
-                imageVector = Icons.Filled.Error,
-                contentDescription = MR.strings.error,
-                tint = MaterialTheme.colorScheme.onErrorContainer
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = "error on 5 services",
-                color = MaterialTheme.colorScheme.onErrorContainer
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Error,
+                    contentDescription = MR.strings.error,
+                    tint = MaterialTheme.colorScheme.onErrorContainer
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "error on 5 services",
+                    color = MaterialTheme.colorScheme.onErrorContainer
+                )
+            }
         }
     }
 }
@@ -274,7 +263,8 @@ private fun SpeechToText(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.speechToText,
         secondaryText = viewModel.speechToTextOption.collectAsState().value.text,
-        screen = ConfigurationScreens.SpeechToTextConfiguration
+        screen = ConfigurationScreens.SpeechToTextConfiguration,
+        hasError = true
     )
 
 }
@@ -362,7 +352,8 @@ private fun IntentHandling(viewModel: ConfigurationScreenViewModel) {
 private fun ConfigurationListItem(
     text: StringResource,
     secondaryText: StringResource,
-    screen: ConfigurationScreens
+    screen: ConfigurationScreens,
+    hasError: Boolean = false
 ) {
 
     val navController = LocalMainNavController.current
@@ -374,7 +365,16 @@ private fun ConfigurationListItem(
             }
             .testTag(screen),
         text = { Text(text) },
-        secondaryText = { Text(secondaryText) }
+        secondaryText = { Text(secondaryText) },
+        trailing = if (hasError) {
+            {
+                Icon(
+                    imageVector = Icons.Filled.Error,
+                    contentDescription = MR.strings.error,
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
+        } else null
     )
 
 }
@@ -386,7 +386,8 @@ private fun ConfigurationListItem(
 private fun ConfigurationListItem(
     text: StringResource,
     secondaryText: String,
-    @Suppress("SameParameterValue") screen: ConfigurationScreens
+    @Suppress("SameParameterValue") screen: ConfigurationScreens,
+    hasError: Boolean = false
 ) {
 
     val navController = LocalMainNavController.current
@@ -398,7 +399,16 @@ private fun ConfigurationListItem(
             }
             .testTag(screen),
         text = { Text(text) },
-        secondaryText = { Text(text = secondaryText) }
+        secondaryText = { Text(text = secondaryText) },
+        trailing = if (hasError) {
+            {
+                Icon(
+                    imageVector = Icons.Filled.Error,
+                    contentDescription = MR.strings.error,
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
+        } else null
     )
 
 }
