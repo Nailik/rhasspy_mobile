@@ -17,8 +17,8 @@ class HomeScreenViewModel : ViewModel(), KoinComponent {
 
     private val dialogManagerServiceState = get<IDialogManagerService>().currentState
 
-    val isActionEnabled =
-        dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingHotWord }
+    val isActionEnabled = dialogManagerServiceState
+        .mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingHotWord }
     val isPlayingRecordingEnabled = isActionEnabled
 
     val isHotWordRecording = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.AwaitingHotWord }

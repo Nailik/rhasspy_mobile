@@ -3,21 +3,16 @@ package org.rhasspy.mobile.android.configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Save
-import androidx.compose.material.ripple.LocalRippleTheme
-import androidx.compose.material.ripple.RippleAlpha
-import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -30,6 +25,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.android.utils.FloatingActionButton
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.viewModels.configuration.IConfigurationViewModel
@@ -328,51 +324,25 @@ private fun BottomAppBar(
         },
         floatingActionButton = {
             FloatingActionButton(
-                modifier = Modifier.testTag(TestTag.BottomAppBarTest),
+                modifier = Modifier
+                    .testTag(TestTag.BottomAppBarTest)
+                    .defaultMinSize(
+                        minWidth = 56.0.dp,
+                        minHeight = 56.0.dp,
+                    ),
                 onClick = {},
-                containerColor = Color.Transparent,
-                elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
-            ) {
-                val contentColor = LocalContentColor.current
-
-                CompositionLocalProvider(
-                    LocalRippleTheme provides if (isTestingEnabled) LocalRippleTheme.current else NoRippleTheme
-                ) {
-                    Button(
-                        modifier = Modifier.defaultMinSize(
-                            minWidth = 56.0.dp,
-                            minHeight = 56.0.dp,
-                        ),
-                        shape = RoundedCornerShape(16.0.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            contentColor = contentColor,
-                            containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
-                            disabledContainerColor = BottomAppBarDefaults.bottomAppBarFabColor.copy(alpha = 0.12f)
-                        ),
-                        onClick = onClick,
-                        enabled = isTestingEnabled
-                    ) {
-                        Icon(
-                            imageVector = if (isTestingEnabled) Icons.Filled.PlayArrow else Icons.Outlined.PlayArrow,
-                            contentDescription = MR.strings.test
-                        )
-                    }
+                isEnabled = isTestingEnabled,
+                containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
+                contentColor = LocalContentColor.current,
+                elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
+                icon = {
+                    Icon(
+                        imageVector = if (isTestingEnabled) Icons.Filled.PlayArrow else Icons.Outlined.PlayArrow,
+                        contentDescription = MR.strings.test
+                    )
                 }
-            }
+            )
         }
-    )
-}
-
-private object NoRippleTheme : RippleTheme {
-    @Composable
-    override fun defaultColor() = Color.Unspecified
-
-    @Composable
-    override fun rippleAlpha(): RippleAlpha = RippleAlpha(
-        draggedAlpha = 0f,
-        focusedAlpha = 0f,
-        hoveredAlpha = 0f,
-        pressedAlpha = 0f,
     )
 }
 

@@ -1,11 +1,12 @@
 package org.rhasspy.mobile.android.main
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +21,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.android.utils.FloatingActionButton
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
@@ -29,40 +31,49 @@ import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 @Composable
 fun Fab(modifier: Modifier = Modifier, iconSize: Dp, viewModel: HomeScreenViewModel = getViewModel()) {
 
-    RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::toggleSession) { onClick ->
+    Box(modifier = modifier) {
 
-        val isActionEnabled by viewModel.isActionEnabled.collectAsState()
-        val isRecording by viewModel.isActionEnabled.collectAsState()
+        RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::toggleSession) { onClick ->
 
-        FloatingActionButton(
-            onClick = onClick,
-            modifier = modifier
-                .testTag(TestTag.MicrophoneFab)
-                .let {
-                    if (viewModel.isHotWordRecording.collectAsState().value) {
-                        return@let it.border(2.dp, MaterialTheme.colorScheme.errorContainer, FloatingActionButtonDefaults.shape)
+            val isActionEnabled by viewModel.isActionEnabled.collectAsState()
+            val isRecording by viewModel.isActionEnabled.collectAsState()
+
+            FloatingActionButton(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .testTag(TestTag.MicrophoneFab)
+                    .let {
+                        if (viewModel.isHotWordRecording.collectAsState().value) {
+                            return@let it.border(2.dp, MaterialTheme.colorScheme.errorContainer, FloatingActionButtonDefaults.shape)
+                        }
+                        it
+                    },
+                onClick = {
+                    if (isActionEnabled) {
+                        onClick()
                     }
-                    it
                 },
-            elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
-            containerColor = when {
-                isActionEnabled -> MaterialTheme.colorScheme.primaryContainer
-                isRecording -> MaterialTheme.colorScheme.errorContainer
-                else -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
-            }
-        ) {
-
-            Icon(
-                modifier = Modifier.size(iconSize),
-                imageVector = if (viewModel.isMicrophonePermissionGranted.collectAsState().value) Icons.Filled.Mic else Icons.Filled.MicOff,
-                contentDescription = MR.strings.wakeUp,
-                tint = when {
-                    isActionEnabled -> LocalContentColor.current
+                isEnabled = isActionEnabled,
+                containerColor = when {
+                    isActionEnabled -> MaterialTheme.colorScheme.primaryContainer
+                    isRecording -> MaterialTheme.colorScheme.errorContainer
+                    else -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+                },
+                contentColor = when {
+                    isActionEnabled -> MaterialTheme.colorScheme.onPrimaryContainer
                     isRecording -> MaterialTheme.colorScheme.onErrorContainer
-                    else -> LocalContentColor.current.copy(alpha = 0.4f)
+                    else -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.4f)
+                },
+                elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
+                icon = {
+                    Icon(
+                        modifier = Modifier.size(iconSize),
+                        imageVector = if (viewModel.isMicrophonePermissionGranted.collectAsState().value) Icons.Filled.Mic else Icons.Filled.MicOff,
+                        contentDescription = MR.strings.wakeUp,
+                    )
                 }
             )
-        }
 
+        }
     }
 }

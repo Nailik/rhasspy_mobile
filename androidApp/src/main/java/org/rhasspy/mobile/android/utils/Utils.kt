@@ -8,10 +8,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -598,6 +602,55 @@ fun Switch(
             },
         checked = checked,
         onCheckedChange = onCheckedChange
+    )
+}
+
+@Composable
+fun FloatingActionButton(
+    modifier: Modifier,
+    onClick: () -> Unit,
+    isEnabled: Boolean,
+    containerColor: Color,
+    contentColor: Color,
+    elevation: FloatingActionButtonElevation,
+    icon: @Composable RowScope.() -> Unit
+) {
+    FloatingActionButton(
+        onClick = { },
+        containerColor = MaterialTheme.colorScheme.surface,
+        elevation = elevation
+    ) {
+
+        CompositionLocalProvider(
+            LocalRippleTheme provides if (isEnabled) LocalRippleTheme.current else NoRippleTheme
+        ) {
+            Button(
+                modifier = modifier,
+                shape = RoundedCornerShape(16.0.dp),
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = contentColor,
+                    containerColor = containerColor,
+                    disabledContainerColor = containerColor.copy(alpha = 0.12f)
+                ),
+                onClick = onClick,
+                enabled = isEnabled
+            ) {
+                icon()
+            }
+        }
+    }
+}
+
+private object NoRippleTheme : RippleTheme {
+    @Composable
+    override fun defaultColor() = Color.Unspecified
+
+    @Composable
+    override fun rippleAlpha(): RippleAlpha = RippleAlpha(
+        draggedAlpha = 0f,
+        focusedAlpha = 0f,
+        hoveredAlpha = 0f,
+        pressedAlpha = 0f,
     )
 }
 
