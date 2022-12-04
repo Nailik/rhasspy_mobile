@@ -22,9 +22,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.configuration.ConfigurationScreen
+import org.rhasspy.mobile.android.navigation.BottomBarScreens
+import org.rhasspy.mobile.android.navigation.NavigationParams
 import org.rhasspy.mobile.android.settings.SettingsScreen
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.NavigationItem
@@ -41,17 +44,6 @@ val LocalNavController = compositionLocalOf<NavController> {
 
 val LocalSnackbarHostState = compositionLocalOf<SnackbarHostState> {
     error("No SnackbarHostState provided")
-}
-
-
-/**
- * screens in the bottom bar
- */
-enum class BottomBarScreens {
-    HomeScreen,
-    ConfigurationScreen,
-    SettingsScreen,
-    LogScreen
 }
 
 @Composable
@@ -79,8 +71,14 @@ fun BottomBarScreensNavigation(viewModel: HomeScreenViewModel = getViewModel()) 
                 composable(BottomBarScreens.HomeScreen.name) {
                     HomeScreen()
                 }
-                composable(BottomBarScreens.ConfigurationScreen.name) {
-                    ConfigurationScreen()
+                composable(
+                    BottomBarScreens.ConfigurationScreen
+                        .appendOptionalParameter(NavigationParams.ScrollToError, "{${NavigationParams.ScrollToError.name}}"),
+                    arguments = listOf(navArgument(NavigationParams.ScrollToError.name) {
+                        defaultValue = false
+                    })
+                ) {
+                    ConfigurationScreen(scrollToError = it.arguments?.getBoolean(NavigationParams.ScrollToError.name) ?: false)
                 }
                 composable(BottomBarScreens.SettingsScreen.name) {
                     SettingsScreen()
@@ -100,7 +98,8 @@ fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavControlle
 
         val currentBackStackEntry by navController.currentBackStackEntryAsState()
 
-        NavigationItem(screen = BottomBarScreens.HomeScreen,
+        NavigationItem(
+            screen = BottomBarScreens.HomeScreen,
             icon = {
                 Icon(
                     if (currentBackStackEntry?.destination?.route == BottomBarScreens.HomeScreen.name) {
@@ -110,13 +109,17 @@ fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavControlle
                     }, MR.strings.home
                 )
             },
-            label = { Text(MR.strings.home) })
+            label = { Text(MR.strings.home) }
+        )
 
-        NavigationItem(screen = BottomBarScreens.ConfigurationScreen,
+        NavigationItem(
+            screen = BottomBarScreens.ConfigurationScreen,
             icon = { Icon(painterResource(MR.images.ic_launcher.drawableResId), MR.strings.configuration, Modifier.size(24.dp)) },
-            label = { Text(MR.strings.configuration) })
+            label = { Text(MR.strings.configuration) }
+        )
 
-        NavigationItem(screen = BottomBarScreens.SettingsScreen,
+        NavigationItem(
+            screen = BottomBarScreens.SettingsScreen,
             icon = {
                 Icon(
                     if (currentBackStackEntry?.destination?.route == BottomBarScreens.SettingsScreen.name) {
@@ -126,12 +129,14 @@ fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavControlle
                     }, MR.strings.settings
                 )
             },
-            label = { Text(MR.strings.settings) })
+            label = { Text(MR.strings.settings) }
+        )
 
         if (viewModel.isShowLogEnabled.collectAsState().value) {
             NavigationItem(screen = BottomBarScreens.LogScreen,
                 icon = { Icon(Icons.Filled.Code, MR.strings.log) },
-                label = { Text(MR.strings.log) })
+                label = { Text(MR.strings.log) }
+            )
         }
 
     }

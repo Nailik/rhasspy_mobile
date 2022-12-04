@@ -1,5 +1,8 @@
 package org.rhasspy.mobile.android.main
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
@@ -7,11 +10,15 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.navigation.BottomBarScreens
+import org.rhasspy.mobile.android.navigation.NavigationParams
 import org.rhasspy.mobile.android.utils.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.android.utils.ListElement
@@ -39,9 +46,17 @@ fun HomeScreen(viewModel: HomeScreenViewModel = koinViewModel()) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            ServiceErrorInformation(viewModel)
+            AnimatedVisibility(
+                enter = expandVertically(),
+                exit = shrinkVertically(),
+                visible = viewModel.isHasError.collectAsState().value
+            ) {
+                Column {
+                    ServiceErrorInformation()
 
-            Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
 
             Fab(
                 modifier = Modifier
@@ -63,14 +78,22 @@ fun HomeScreen(viewModel: HomeScreenViewModel = koinViewModel()) {
 
 }
 
+/**
+ * shows up when there are errors
+ */
 @Composable
-private fun ServiceErrorInformation(viewModel: HomeScreenViewModel) {
+private fun ServiceErrorInformation() {
+
+    val navigate = LocalNavController.current
 
     ListElement {
         Card(
             colors = CardDefaults.outlinedCardColors(
                 containerColor = MaterialTheme.colorScheme.errorContainer
             ),
+            onClick = {
+                navigate.navigate(BottomBarScreens.ConfigurationScreen.appendOptionalParameter(NavigationParams.ScrollToError, true))
+            }
         ) {
             Row(
                 modifier = Modifier
@@ -84,7 +107,7 @@ private fun ServiceErrorInformation(viewModel: HomeScreenViewModel) {
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "error on 5 services",
+                    resource = MR.strings.serviceErrorText,
                     color = MaterialTheme.colorScheme.onErrorContainer
                 )
             }
@@ -98,10 +121,12 @@ private fun ServiceErrorInformation(viewModel: HomeScreenViewModel) {
  */
 @Composable
 private fun PlayRecording(viewModel: HomeScreenViewModel) {
-    val isPlaying = false//viewModel.currentState.collectAsState().value == State.PlayingRecording
+
+    val isPlaying by viewModel.isPlayingRecording.collectAsState()
 
     FilledTonalButtonListItem(
         onClick = viewModel::togglePlayRecording,
+        enabled = viewModel.isPlayingRecordingEnabled.collectAsState().value,
         icon = if (isPlaying) Icons.Filled.Stop else Icons.Filled.PlayArrow,
         text = if (isPlaying) MR.strings.stopPlayRecording else MR.strings.playRecording
     )

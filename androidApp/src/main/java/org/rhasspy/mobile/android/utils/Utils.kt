@@ -17,7 +17,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -26,7 +25,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.*
@@ -612,12 +610,10 @@ fun RowScope.NavigationItem(screen: Enum<*>, icon: @Composable () -> Unit, label
     val currentDestination = navBackStackEntry?.destination
     NavigationBarItem(
         modifier = Modifier.testTag(screen),
-        selected = currentDestination?.hierarchy?.any { it.route == screen.name } == true,
+        selected = currentDestination?.hierarchy?.any { it.route?.startsWith(screen.name) == true } == true,
         onClick = {
             navController.navigate(screen.name) {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    saveState = true
-                }
+                popUpTo(navController.graph.findStartDestination().id)
                 launchSingleTop = true
                 restoreState = true
             }

@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.WakeWordOption
@@ -11,6 +12,7 @@ import org.rhasspy.mobile.middleware.EventType.HotWordServiceEventType.*
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.middleware.action.LocalAction
 import org.rhasspy.mobile.nativeutils.NativeLocalPorcupineWakeWordService
+import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.recording.RecordingService
@@ -32,6 +34,9 @@ class HotWordService : IService() {
     private val recordingService by inject<RecordingService>()
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
+
+    private val _isRecording = MutableStateFlow(false)
+    val isRecording = _isRecording.readOnly
 
     private var recording: Job? = null
 
@@ -68,6 +73,7 @@ class HotWordService : IService() {
     fun startDetection() {
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {
+                _isRecording.value = true
                 val startPorcupineEvent = serviceMiddleware.createEvent(StartPorcupine)
                 val error = nativeLocalPorcupineWakeWordService?.start()
                 error?.also {
@@ -79,6 +85,7 @@ class HotWordService : IService() {
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
             WakeWordOption.MQTT,
             WakeWordOption.Udp -> {
+                _isRecording.value = true
                 //collect audio from recorder
                 if (recording == null) {
                     recording = CoroutineScope(Dispatchers.Default).launch {
@@ -101,6 +108,7 @@ class HotWordService : IService() {
     }
 
     fun stopDetection() {
+        _isRecording.value = false
         recording?.cancel()
         recording = null
         recordingService.close()

@@ -4,10 +4,12 @@ import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.DialogManagementOptions
+import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.hotword.HotWordService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
@@ -18,6 +20,16 @@ import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
  *
  */
 
+enum class DialogManagerServiceState {
+    Idle,                   //doing nothing, hotword from externally awaited
+    AwaitingHotWord,        //recording HotWord
+    RecordingIntent,        //recording the intent
+    TranscribingIntent,     //transcribe the recorded sound to text
+    RecognizingIntent,      //recognize the intent from the recorded text
+    HandlingIntent,          //doing intent action
+    PlayingAudio
+}
+
 abstract class IDialogManagerService : IService() {
 
     val params by inject<DialogManagerServiceParams>()
@@ -25,6 +37,9 @@ abstract class IDialogManagerService : IService() {
     val rhasspyActionsService by inject<RhasspyActionsService>()
     val sessionId: String = uuid4().toString()
     private var scope = CoroutineScope(Dispatchers.Default)
+
+    private val _currentState = MutableStateFlow(DialogManagerServiceState.Idle)
+    val currentState = _currentState.readOnly
 
     override fun onClose() {
         scope.cancel()

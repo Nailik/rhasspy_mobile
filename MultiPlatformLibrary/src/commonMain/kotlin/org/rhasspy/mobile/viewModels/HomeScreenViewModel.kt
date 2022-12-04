@@ -1,42 +1,37 @@
 package org.rhasspy.mobile.viewModels
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.logic.StateMachine
-import org.rhasspy.mobile.logic.StateMachine.manualIntentRecognition
+import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
-import org.rhasspy.mobile.nativeutils.OverlayPermission
-import org.rhasspy.mobile.services.recording.RecordingService
+import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.dialogManager.DialogManagerServiceState
+import org.rhasspy.mobile.services.dialogManager.IDialogManagerService
 import org.rhasspy.mobile.settings.AppSettings
 
 class HomeScreenViewModel : ViewModel(), KoinComponent {
 
+    private val dialogManagerServiceState = get<IDialogManagerService>().currentState
 
-    val isRecording = get<RecordingService>().isRecording
-    val isOkState: StateFlow<Boolean> = MicrophonePermission.granted
+    val isActionEnabled =
+        dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingHotWord }
+    val isPlayingRecordingEnabled = isActionEnabled
 
-    val isMicrophonePermissionRequestNotRequired: StateFlow<Boolean> = MicrophonePermission.granted
+    val isHotWordRecording = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.AwaitingHotWord }
+    val isRecording = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
+    val isPlayingRecording = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.PlayingAudio }
 
-    private val isCurrentOverlayPermissionRequestRequired: StateFlow<Boolean> =
-        combineState(OverlayPermission.granted, AppSettings.isWakeWordLightIndicationEnabled.data) { a: Boolean, b: Boolean ->
-            (a && !b && AppSettings.isWakeWordLightIndicationEnabled.value)
-        }
+    val isMicrophonePermissionGranted: StateFlow<Boolean> = MicrophonePermission.granted
+    val isHasError = MutableStateFlow(true).readOnly
 
-    val isOverlayPermissionRequestRequired: StateFlow<Boolean> get() = isCurrentOverlayPermissionRequestRequired
-
-
-    val isShowLogEnabled: StateFlow<Boolean> get() = AppSettings.isShowLogEnabled.data
+    val isShowLogEnabled = AppSettings.isShowLogEnabled.data
 
     fun toggleSession() = StateMachine.toggleSessionManually()
 
     fun togglePlayRecording() = StateMachine.togglePlayRecording()
 
-    fun intentRecognition(text: String) = manualIntentRecognition(text)
-
-    fun speakText(text: String) {
-
-    }
 }

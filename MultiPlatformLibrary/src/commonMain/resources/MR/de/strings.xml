@@ -255,4 +255,5 @@
     <string name="executeTextToSpeechText">Execute Text zu Sprache</string>
     <string name="textIntentRecognitionText">Text zur Erkennung des Intent</string>
     <string name="executeIntentRecognition">Ausführen des Intent</string>
+    <string name="serviceErrorText">Bei einigen Diensten gibt es ein Problem</string>
 </resources>

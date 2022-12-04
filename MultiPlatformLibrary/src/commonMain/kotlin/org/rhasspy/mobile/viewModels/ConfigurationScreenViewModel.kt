@@ -1,8 +1,10 @@
 package org.rhasspy.mobile.viewModels
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 
@@ -19,6 +21,8 @@ class ConfigurationScreenViewModel : ViewModel(), KoinComponent {
     val audioPlayingOption = ConfigurationSettings.audioPlayingOption.data
     val dialogManagementOption = ConfigurationSettings.dialogManagementOption.data
     val intentHandlingOption = ConfigurationSettings.intentHandlingOption.data
+
+    val firstErrorIndex = MutableStateFlow(3).readOnly
 
     fun changeSiteId(siteId: String) {
         ConfigurationSettings.siteId.value = siteId

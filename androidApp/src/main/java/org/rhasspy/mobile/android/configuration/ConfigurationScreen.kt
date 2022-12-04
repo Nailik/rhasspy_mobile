@@ -3,17 +3,20 @@ package org.rhasspy.mobile.android.configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import dev.icerock.moko.resources.StringResource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
@@ -28,7 +31,21 @@ import org.rhasspy.mobile.viewModels.ConfigurationScreenViewModel
  */
 @Preview
 @Composable
-fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = getViewModel()) {
+fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = getViewModel(), scrollToError: Boolean = false) {
+
+    val coroutineScope = rememberCoroutineScope()
+    val scrollState = rememberLazyListState()
+    val firstErrorIndex by viewModel.firstErrorIndex.collectAsState()
+
+    LaunchedEffect(scrollToError) {
+        if (scrollToError) {
+            scrollToFirstError(
+                firstErrorIndex = firstErrorIndex,
+                coroutineScope = coroutineScope,
+                scrollState = scrollState
+            )
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -39,13 +56,14 @@ fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = getViewModel()
         },
     ) { paddingValues ->
         LazyColumn(
-            Modifier
+            modifier = Modifier
                 .padding(paddingValues)
-                .fillMaxSize()
+                .fillMaxSize(),
+            state = scrollState
         ) {
 
             stickyHeader {
-                ServiceErrorInformation(viewModel)
+                ServiceErrorInformation(viewModel, scrollState)
             }
 
             item {
@@ -156,7 +174,11 @@ fun NavGraphBuilder.addConfigurationScreens() {
 }
 
 @Composable
-private fun ServiceErrorInformation(viewModel: ConfigurationScreenViewModel) {
+private fun ServiceErrorInformation(viewModel: ConfigurationScreenViewModel, scrollState: LazyListState) {
+
+    val coroutineScope = rememberCoroutineScope()
+    val firstErrorIndex by viewModel.firstErrorIndex.collectAsState()
+
     Surface {
         Card(
             modifier = Modifier
@@ -165,7 +187,14 @@ private fun ServiceErrorInformation(viewModel: ConfigurationScreenViewModel) {
                 .padding(horizontal = 16.dp),
             colors = CardDefaults.outlinedCardColors(
                 containerColor = MaterialTheme.colorScheme.errorContainer
-            )
+            ),
+            onClick = {
+                scrollToFirstError(
+                    firstErrorIndex = firstErrorIndex,
+                    coroutineScope = coroutineScope,
+                    scrollState = scrollState
+                )
+            }
         ) {
             Row(
                 modifier = Modifier
@@ -179,12 +208,13 @@ private fun ServiceErrorInformation(viewModel: ConfigurationScreenViewModel) {
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "error on 5 services",
+                    resource = MR.strings.serviceErrorText,
                     color = MaterialTheme.colorScheme.onErrorContainer
                 )
             }
         }
     }
+
 }
 
 
@@ -424,4 +454,18 @@ private fun ConfigurationListItem(
         } else null
     )
 
+}
+
+
+private fun scrollToFirstError(
+    firstErrorIndex: Int,
+    coroutineScope: CoroutineScope,
+    scrollState: LazyListState
+) {
+    coroutineScope.launch {
+        if (firstErrorIndex in 0..10) {
+            //+1 to account for sticky header
+            scrollState.animateScrollToItem(firstErrorIndex + 1)
+        }
+    }
 }
