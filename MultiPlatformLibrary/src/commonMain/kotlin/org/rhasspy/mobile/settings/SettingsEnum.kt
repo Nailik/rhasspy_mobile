@@ -2,6 +2,7 @@ package org.rhasspy.mobile.settings
 
 enum class SettingsEnum {
     //App Settings
+    Crashlytics,
     LanguageOption,
     ThemeOption,
 

@@ -252,6 +252,8 @@
     <string name="textIntentRecognitionText">Text To Recognize Intent</string>
     <string name="executeIntentRecognition">Execute Intent Recognition</string>
     <string name="serviceErrorText">Some services have an issue</string>
+    <string name="crashlytics">Crashlytics</string>
+    <string name="crashlyticsText">send crashes to help improve the app</string>
     <!-- not translatable -->
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>

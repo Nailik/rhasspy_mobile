@@ -1,8 +1,9 @@
 package org.rhasspy.mobile.android
 
 import android.content.Intent
-import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -89,5 +90,9 @@ class AndroidApplication : Application() {
             viewModelOf(::ThemeSettingsViewModel)
             viewModelOf(::MicrophoneOverlayViewModel)
         }
+
+    override fun setCrashlyticsCollectionEnabled(enabled: Boolean) {
+        Firebase.crashlytics.setCrashlyticsCollectionEnabled(enabled)
+    }
 
 }

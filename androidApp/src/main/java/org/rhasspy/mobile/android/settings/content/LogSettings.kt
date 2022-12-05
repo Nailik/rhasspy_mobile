@@ -33,6 +33,15 @@ fun LogSettingsContent(viewModel: LogSettingsViewModel = getViewModel()) {
             values = viewModel.logLevelOptions
         )
 
+        //crashlytics
+        SwitchListItem(
+            text = MR.strings.crashlytics,
+            secondaryText = MR.strings.crashlyticsText,
+            modifier = Modifier.testTag(TestTag.CrashlyticsEnabled),
+            isChecked = viewModel.isCrashlyticsEnabled.collectAsState().value,
+            onCheckedChange = viewModel::toggleCrashlyticsEnabled
+        )
+
         //show log enabled
         SwitchListItem(
             text = MR.strings.showLog,

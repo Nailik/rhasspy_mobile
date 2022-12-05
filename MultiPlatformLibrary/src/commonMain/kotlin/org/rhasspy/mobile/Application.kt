@@ -1,10 +1,14 @@
 package org.rhasspy.mobile
 
+import co.touchlab.kermit.ExperimentalKermitApi
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import dev.icerock.moko.resources.desc.StringDesc
 import io.ktor.utils.io.core.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
@@ -43,6 +47,7 @@ import org.rhasspy.mobile.services.webserver.WebServerServiceParams
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.viewModels.configuration.test.*
+
 
 inline fun <reified T : Closeable> Module.closeableSingle(
     qualifier: Qualifier? = null,
@@ -109,7 +114,6 @@ abstract class Application : NativeApplication(), KoinComponent {
 
         }
 
-
         fun reloadServiceModules() {
             unloadKoinModules(serviceModule)
             loadKoinModules(serviceModule)
@@ -124,6 +128,7 @@ abstract class Application : NativeApplication(), KoinComponent {
         Instance = this
     }
 
+    @OptIn(ExperimentalKermitApi::class)
     fun onCreated() {
         // start a KoinApplication in Global context
         startKoin {
@@ -131,11 +136,17 @@ abstract class Application : NativeApplication(), KoinComponent {
             modules(serviceModule, viewModelModule)
         }
 
+        Logger.addLogWriter(
+            CrashlyticsLogWriter(
+            )
+        )
         Logger.addLogWriter(FileLogger)
-        Logger.addLogWriter(CrashlyticsLogWriter(
-            minSeverity = Severity.Error,
-            minCrashSeverity = Severity.Error
-        ))
+
+        CoroutineScope(Dispatchers.Default).launch {
+            AppSettings.isCrashlyticsEnabled.data.collect {
+                setCrashlyticsCollectionEnabled(it)
+            }
+        }
 
         logger.a { "######## Application started ########" }
 
@@ -144,12 +155,12 @@ abstract class Application : NativeApplication(), KoinComponent {
         ConfigurationSettings
         OverlayServices.checkPermission()
         startNativeServices()
-        //makes sure that the MutableStateFlow inside those objects are created in ui thread because they internally use livedata which cannot be
-        // created in background tread
 
         StringDesc.localeType = StringDesc.LocaleType.Custom(AppSettings.languageOption.value.code)
     }
 
     abstract val viewModelModule: Module
+
+    abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)
 
 }

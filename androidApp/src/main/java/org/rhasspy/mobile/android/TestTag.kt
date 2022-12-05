@@ -105,6 +105,7 @@ enum class TestTag {
     AutomaticSilenceDetectionSettingsTime,
     AutomaticSilenceDetectionSettingsAudioLevelTest,
     AutomaticSilenceDetectionSettingsTest,
+    CrashlyticsEnabled,
     ShowLogEnabled,
     AudioFramesEnabled
 }

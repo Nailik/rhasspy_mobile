@@ -8,6 +8,7 @@ class LogSettingsViewModel : ViewModel() {
 
     //unsaved ui data
     val logLevel = AppSettings.logLevel.data
+    val isCrashlyticsEnabled = AppSettings.isCrashlyticsEnabled.data
     val isShowLogEnabled = AppSettings.isShowLogEnabled.data
     val isLogAudioFramesEnabled = AppSettings.isLogAudioFramesEnabled.data
 
@@ -17,6 +18,14 @@ class LogSettingsViewModel : ViewModel() {
     //select log level
     fun selectLogLevel(logLevel: LogLevel) {
         AppSettings.logLevel.value = logLevel
+    }
+
+    /**
+     * set if crashlytics enabled
+     * changes will be detected in Application.kt and crashlytics will be enabled/disabled there
+     */
+    fun toggleCrashlyticsEnabled(enabled: Boolean) {
+        AppSettings.isCrashlyticsEnabled.value = enabled
     }
 
     //toggle show log enabled

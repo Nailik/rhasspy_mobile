@@ -256,4 +256,6 @@
     <string name="textIntentRecognitionText">Text zur Erkennung des Intent</string>
     <string name="executeIntentRecognition">Ausführen des Intent</string>
     <string name="serviceErrorText">Bei einigen Diensten gibt es ein Problem</string>
+    <string name="crashlytics">Crashlytics</string>
+    <string name="crashlyticsText">Senden Sie Abstürze, um die Anwendung zu verbessern</string>
 </resources>

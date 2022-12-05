@@ -11,7 +11,7 @@ import org.rhasspy.mobile.settings.sounds.SoundOptions
 /**
  * directly consumed
  */
-internal object AppSettings {
+object AppSettings {
 
     val languageOption = Setting(SettingsEnum.LanguageOption, LanguageOptions.English)
     val themeOption = Setting(SettingsEnum.ThemeOption, ThemeOptions.System)
@@ -49,6 +49,7 @@ internal object AppSettings {
     val customRecordedSounds = Setting(SettingsEnum.CustomRecordedSounds, setOf(), StringSetSerializer)
     val customErrorSounds = Setting(SettingsEnum.CustomErrorSounds, setOf(), StringSetSerializer)
 
+    val isCrashlyticsEnabled = Setting(SettingsEnum.Crashlytics, false)
     val isShowLogEnabled = Setting(SettingsEnum.ShowLog, false)
     val isLogAudioFramesEnabled = Setting(SettingsEnum.LogAudioFrames, false)
     val logLevel = Setting(SettingsEnum.LogLevel, LogLevel.Debug)
