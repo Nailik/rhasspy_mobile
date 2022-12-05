@@ -92,7 +92,7 @@ class AndroidApplication : Application() {
         }
 
     override fun setCrashlyticsCollectionEnabled(enabled: Boolean) {
-        Firebase.crashlytics.setCrashlyticsCollectionEnabled(enabled)
+        Firebase.crashlytics.setCrashlyticsCollectionEnabled(if (BuildConfig.DEBUG) false else enabled)
     }
 
 }

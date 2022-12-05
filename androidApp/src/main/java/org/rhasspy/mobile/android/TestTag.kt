@@ -6,6 +6,7 @@ import androidx.compose.ui.semantics.testTag
 import org.rhasspy.mobile.data.DataEnum
 
 enum class TestTag {
+    DialogCrashlytics,
     DialogInformationMicrophonePermission,
     DialogInformationOverlayPermission,
     DialogOk,
