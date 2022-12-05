@@ -11,3 +11,4 @@
 local.properties
 version
 /androidApp/release/
+signing.properties

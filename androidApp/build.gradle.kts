@@ -2,6 +2,7 @@
 
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
+import java.util.*
 
 plugins {
     id("com.android.application")
@@ -10,9 +11,23 @@ plugins {
     id("com.google.firebase.crashlytics")
 }
 
+val signingProperties = Properties()
+signingProperties.load(file("../signing.properties").inputStream())
+
 android {
     signingConfigs {
-        create("release") {}
+        create("release") {
+            storeFile = file(signingProperties.getProperty("storeFile"))
+            storePassword = signingProperties["storePassword"].toString()
+            keyAlias = signingProperties["keyAlias"].toString()
+            keyPassword = signingProperties["keyPassword"].toString()
+        }
+        getByName("debug") {
+            storeFile = file(signingProperties.getProperty("storeFileDebug"))
+            storePassword = signingProperties["storePasswordDebug"].toString()
+            keyAlias = signingProperties["keyAliasDebug"].toString()
+            keyPassword = signingProperties["keyPasswordDebug"].toString()
+        }
     }
     compileSdk = 33
 
@@ -39,6 +54,7 @@ android {
         debug {
             isMinifyEnabled = false
             isShrinkResources = false
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 

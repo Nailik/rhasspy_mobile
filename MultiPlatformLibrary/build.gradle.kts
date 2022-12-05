@@ -143,12 +143,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 
 
 android {
-    signingConfigs {
-        getByName("debug") {}
-    }
     compileSdk = 33
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-    //sourceSets["main"].res.srcDir(File(buildDir, "generated/moko/androidMain/res"))
 
     defaultConfig {
         minSdk = 23
