@@ -14,7 +14,7 @@ plugins {
     id("dev.icerock.mobile.multiplatform-resources")
     id("com.mikepenz.aboutlibraries.plugin")
     id("com.codingfeline.buildkonfig")
-    id("org.sonarqube") version "3.4.0.2513"
+    id("org.sonarqube") version "3.5.0.2730"
 }
 
 version = Version.toString()
