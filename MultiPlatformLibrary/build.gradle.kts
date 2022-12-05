@@ -4,6 +4,7 @@ import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
+import co.touchlab.faktory.crashlyticsLinkerConfig
 
 plugins {
     kotlin("multiplatform")
@@ -50,6 +51,7 @@ kotlin {
                 implementation(kotlin("stdlib-common"))
                 implementation(kotlin("stdlib"))
                 implementation(Touchlab.kermit)
+                implementation(Touchlab.Kermit.crashlytics)
                 implementation(Icerock.Mvvm.core)
                 implementation(Icerock.Resources)
                 implementation(Russhwolf.multiplatformSettings)
@@ -127,9 +129,13 @@ kotlin {
             iosSimulatorArm64Test.dependsOn(this)
         }
     }
+
+    crashlyticsLinkerConfig()
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions.freeCompilerArgs += "-opt-in=co.touchlab.kermit.ExperimentalKermitApi"
+
     kotlinOptions {
         jvmTarget = "1.8"
     }

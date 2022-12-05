@@ -29,7 +29,6 @@ actual open class NativeApplication : MultiDexApplication() {
                 }
             }
         })
-
     }
 
     override fun onCreate() {

@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.android
 
 import android.content.Intent
+import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.Module
@@ -15,9 +16,12 @@ import org.rhasspy.mobile.viewModels.settings.*
 import org.rhasspy.mobile.viewModels.settings.sound.ErrorIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewModels.settings.sound.RecordedIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewModels.settings.sound.WakeIndicationSoundSettingsViewModel
+import kotlin.system.exitProcess
 
 
 class AndroidApplication : Application() {
+
+    private val logger = Logger.withTag("AndroidApplication")
 
     init {
         Instance = this
@@ -31,12 +35,11 @@ class AndroidApplication : Application() {
     init {
         //catches all exceptions
         Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
-            Logger.withTag("AndroidApplication").e(exception) {
+            logger.e(exception) {
                 "uncaught exception in Thread $thread"
             }
+            exitProcess(2)
         }
-
-
     }
 
     override fun onCreate() {

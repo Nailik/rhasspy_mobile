@@ -6,7 +6,8 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 plugins {
     id("com.android.application")
     kotlin("android")
-    id("kotlin-android")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -170,5 +171,9 @@ dependencies {
     androidTestImplementation(AndroidX.Test.coreKtx)
     androidTestImplementation(AndroidX.Compose.Ui.testJunit4)
     debugImplementation(AndroidX.Compose.Ui.testManifest)
-    implementation("dev.burnoo:cokoin:_")
+
+    implementation(platform(Firebase.bom))
+
+    implementation(Firebase.analyticsKtx)
+    implementation(Firebase.crashlyticsKtx)
 }

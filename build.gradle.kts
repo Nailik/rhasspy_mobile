@@ -12,6 +12,9 @@ buildscript {
         classpath("dev.icerock.moko:resources-generator:_")
         classpath("com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:_")
         classpath("com.codingfeline.buildkonfig:buildkonfig-gradle-plugin:_")
+        classpath("com.google.gms:google-services:_")
+        classpath("com.google.firebase:firebase-crashlytics-gradle:_")
+        classpath("co.touchlab.crashkios:utils:_")
     }
 }
 

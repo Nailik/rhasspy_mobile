@@ -1,6 +1,8 @@
 package org.rhasspy.mobile
 
 import co.touchlab.kermit.Logger
+import co.touchlab.kermit.Severity
+import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import dev.icerock.moko.resources.desc.StringDesc
 import io.ktor.utils.io.core.*
 import org.koin.core.component.KoinComponent
@@ -130,6 +132,10 @@ abstract class Application : NativeApplication(), KoinComponent {
         }
 
         Logger.addLogWriter(FileLogger)
+        Logger.addLogWriter(CrashlyticsLogWriter(
+            minSeverity = Severity.Error,
+            minCrashSeverity = Severity.Error
+        ))
 
         logger.a { "######## Application started ########" }
 
