@@ -579,7 +579,7 @@ fun HtmlText(html: String, modifier: Modifier = Modifier, color: Color) {
     AndroidView(
         modifier = modifier,
         factory = { context -> TextView(context).apply { setTextColor(color.toArgb()) } },
-        update = { it.text = HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_COMPACT) }
+        update = { it.text = HtmlCompat.fromHtml(html, HtmlCompat.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE) }
     )
 }
 
