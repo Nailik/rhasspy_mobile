@@ -44,6 +44,7 @@ fun ConfigurationScreenTest(
         Scaffold(
             topBar = {
                 AppBar(
+                    viewModel = viewModel,
                     title = MR.strings.test,
                     onBackClick = navController::popBackStack
                 ) {
@@ -112,7 +113,12 @@ private fun ConfigurationScreenTestList(
  * actions: autoscroll, expand and filter
  */
 @Composable
-private fun AppBar(title: StringResource, onBackClick: () -> Unit, icon: @Composable () -> Unit) {
+private fun AppBar(
+    viewModel: IConfigurationViewModel,
+    title: StringResource,
+    onBackClick: () -> Unit,
+    icon: @Composable () -> Unit
+) {
 
     TopAppBar(
         title = {
@@ -129,14 +135,23 @@ private fun AppBar(title: StringResource, onBackClick: () -> Unit, icon: @Compos
             )
         },
         actions = {
-            IconButton(onClick = {  }) {
-                Icon(imageVector = Icons.Filled.Expand, contentDescription = MR.strings.share) //Compress
+            IconButton(onClick = viewModel::toggleListExpanded) {
+                Icon(
+                    imageVector = if (viewModel.isListExpanded.collectAsState().value) Icons.Filled.Compress else Icons.Filled.Expand,
+                    contentDescription = MR.strings.share
+                )
             }
-            IconButton(onClick = {  }) {
-                Icon(imageVector = Icons.Filled.FilterList, contentDescription = MR.strings.share) //FilterListOff
+            IconButton(onClick = viewModel::toggleListFiltered) {
+                Icon(
+                    imageVector = if (viewModel.isListFiltered.collectAsState().value) Icons.Filled.FilterListOff else Icons.Filled.FilterList,
+                    contentDescription = MR.strings.share
+                ) //FilterListOff
             }
-            IconButton(onClick = {  }) {
-                Icon(imageVector = Icons.Filled.PlaylistRemove, contentDescription = MR.strings.share) //LowPriority
+            IconButton(onClick = viewModel::toggleListAutoscroll) {
+                Icon(
+                    imageVector = if (viewModel.isListAutoscroll.collectAsState().value) Icons.Filled.LowPriority else Icons.Filled.PlaylistRemove,
+                    contentDescription = MR.strings.share
+                ) //LowPriority
             }
         }
     )

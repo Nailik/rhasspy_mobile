@@ -29,7 +29,30 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     private val _events = MutableStateFlow<List<Event>>(listOf())
     val events = _events.readOnly
 
+
+    private val _isListExpanded = MutableStateFlow(false)
+    val isListExpanded = _isListExpanded.readOnly
+
+    private val _isListFiltered = MutableStateFlow(false)
+    val isListFiltered = _isListFiltered.readOnly
+
+    private val _isListAutoscroll = MutableStateFlow(false)
+    val isListAutoscroll = _isListAutoscroll.readOnly
+
     private var testScope = CoroutineScope(Dispatchers.Default)
+
+    fun toggleListExpanded(){
+        _isListExpanded.value = !_isListExpanded.value
+    }
+
+    fun toggleListFiltered(){
+        _isListFiltered.value = !_isListFiltered.value
+    }
+
+    fun toggleListAutoscroll(){
+        _isListAutoscroll.value = !_isListAutoscroll.value
+    }
+
 
     fun save() {
         onSave()
