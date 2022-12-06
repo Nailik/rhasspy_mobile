@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.addConfigurationScreens
 import org.rhasspy.mobile.android.settings.addSettingsScreen
@@ -30,6 +31,7 @@ enum class MainScreens {
     BoomBarScreen
 }
 
+//TODO display debug banner like in flutter and also on app icon
 /**
  * root layout contains main navigation between the
  * 3 screens in the bottom bar and the about screen
@@ -55,7 +57,7 @@ fun MainNavigation() {
                     snackbarHost = { SnackbarHost(snackbarHostState) },
                 ) { paddingValues ->
 
-                    var shouldShowCrashlyticsDialog by remember { mutableStateOf(true) }
+                    var shouldShowCrashlyticsDialog by remember { mutableStateOf(MainActivity.isFirstLaunch) }
 
                     if (shouldShowCrashlyticsDialog) {
                         CrashlyticsDialog {

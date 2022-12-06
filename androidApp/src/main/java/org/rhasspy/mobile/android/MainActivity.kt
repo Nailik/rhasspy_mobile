@@ -21,8 +21,8 @@ class MainActivity : AppActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         if(!AppLaunchChecker.hasStartedFromLauncher(this)){
             isFirstLaunch = true
-            AppLaunchChecker.onActivityCreate(this)
         }
+        AppLaunchChecker.onActivityCreate(this)
 
         installSplashScreen()
         super.onCreate(savedInstanceState)
