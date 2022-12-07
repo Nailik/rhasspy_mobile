@@ -26,7 +26,6 @@ class HomeScreenViewModel : ViewModel(), KoinComponent {
     val isPlayingRecording = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.PlayingAudio }
 
     val isMicrophonePermissionGranted: StateFlow<Boolean> = MicrophonePermission.granted
-    val isHasError = MutableStateFlow(true).readOnly
 
     val isShowLogEnabled = AppSettings.isShowLogEnabled.data
 

@@ -1,8 +1,6 @@
 package org.rhasspy.mobile.android.main
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
@@ -13,15 +11,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.navigation.BottomBarScreens
 import org.rhasspy.mobile.android.navigation.NavigationParams
-import org.rhasspy.mobile.android.utils.FilledTonalButtonListItem
+import org.rhasspy.mobile.android.utils.FilledTonalButton
 import org.rhasspy.mobile.android.utils.Icon
-import org.rhasspy.mobile.android.utils.ListElement
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
@@ -38,45 +36,79 @@ fun HomeScreen(viewModel: HomeScreenViewModel = koinViewModel()) {
             )
         },
     ) { paddingValues ->
-        Column(
-            Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-        ) {
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            AnimatedVisibility(
-                enter = expandVertically(),
-                exit = shrinkVertically(),
-                visible = viewModel.isHasError.collectAsState().value
-            ) {
-                Column {
-                    ServiceErrorInformation()
-
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
+        when (LocalConfiguration.current.orientation) {
+            Configuration.ORIENTATION_PORTRAIT -> {
+                PortraitContent(paddingValues, viewModel)
             }
+            else -> {
+                LandscapeContent(paddingValues, viewModel)
+            }
+        }
 
-            Fab(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .weight(1f),
-                iconSize = 96.dp,
-                viewModel = viewModel
-            )
+    }
+}
 
-            Spacer(modifier = Modifier.height(8.dp))
+@Composable
+private fun PortraitContent(
+    paddingValues: PaddingValues,
+    viewModel: HomeScreenViewModel
+) {
+    Column(
+        modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+
+        ServiceErrorInformation()
+
+        Fab(
+            modifier = Modifier
+                .weight(1f),
+            iconSize = 96.dp,
+            viewModel = viewModel
+        )
+
+        PlayRecording(viewModel)
+
+    }
+}
+
+@Composable
+fun LandscapeContent(
+    paddingValues: PaddingValues,
+    viewModel: HomeScreenViewModel
+) {
+    Row(
+        modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+
+        Fab(
+            modifier = Modifier
+                .weight(1f),
+            iconSize = 96.dp,
+            viewModel = viewModel
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(1f),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            ServiceErrorInformation()
 
             PlayRecording(viewModel)
-
-            Spacer(modifier = Modifier.height(8.dp))
-
         }
     }
-
 }
+
 
 /**
  * shows up when there are errors
@@ -86,31 +118,29 @@ private fun ServiceErrorInformation() {
 
     val navigate = LocalNavController.current
 
-    ListElement {
-        Card(
-            colors = CardDefaults.outlinedCardColors(
-                containerColor = MaterialTheme.colorScheme.errorContainer
-            ),
-            onClick = {
-                navigate.navigate(BottomBarScreens.ConfigurationScreen.appendOptionalParameter(NavigationParams.ScrollToError, true))
-            }
+    Card(
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer
+        ),
+        onClick = {
+            navigate.navigate(BottomBarScreens.ConfigurationScreen.appendOptionalParameter(NavigationParams.ScrollToError, true))
+        }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Error,
-                    contentDescription = MR.strings.error,
-                    tint = MaterialTheme.colorScheme.onErrorContainer
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    resource = MR.strings.serviceErrorText,
-                    color = MaterialTheme.colorScheme.onErrorContainer
-                )
-            }
+            Icon(
+                imageVector = Icons.Filled.Error,
+                contentDescription = MR.strings.error,
+                tint = MaterialTheme.colorScheme.onErrorContainer
+            )
+            Text(
+                resource = MR.strings.serviceErrorText,
+                color = MaterialTheme.colorScheme.onErrorContainer
+            )
         }
     }
 
@@ -124,7 +154,8 @@ private fun PlayRecording(viewModel: HomeScreenViewModel) {
 
     val isPlaying by viewModel.isPlayingRecording.collectAsState()
 
-    FilledTonalButtonListItem(
+    FilledTonalButton(
+        modifier = Modifier.fillMaxWidth(),
         onClick = viewModel::togglePlayRecording,
         enabled = viewModel.isPlayingRecordingEnabled.collectAsState().value,
         icon = if (isPlaying) Icons.Filled.Stop else Icons.Filled.PlayArrow,

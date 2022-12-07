@@ -444,6 +444,38 @@ fun FilledTonalButtonListItem(
 }
 
 @Composable
+fun FilledTonalButton(
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+    text: StringResource,
+    enabled: Boolean = true,
+    onClick: () -> Unit
+) {
+    FilledTonalButton(
+        modifier = modifier,
+        enabled = enabled,
+        onClick = onClick,
+        content = {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                icon?.also {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = text
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+
+                Text(resource = text)
+            }
+        })
+}
+
+
+@Composable
 fun SliderListItem(
     modifier: Modifier = Modifier,
     text: StringResource,
@@ -579,7 +611,7 @@ fun HtmlText(html: String, modifier: Modifier = Modifier, color: Color) {
     AndroidView(
         modifier = modifier,
         factory = { context -> TextView(context).apply { setTextColor(color.toArgb()) } },
-        update = { it.text = HtmlCompat.fromHtml(html, HtmlCompat.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE) }
+        update = { it.text = HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY) }
     )
 }
 
