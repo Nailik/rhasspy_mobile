@@ -23,7 +23,7 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     val httpServerEndpoint = _httpServerEndpoint.readOnly
     val isHttpSSLVerificationDisabled = _isHttpSSLVerificationDisabled.readOnly
 
-    override val isTestingEnabled = MutableStateFlow(true)
+    override val isTestingEnabled = MutableStateFlow(false)
 
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_httpServerEndpoint, ConfigurationSettings.httpServerEndpoint.data),
@@ -67,11 +67,6 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
         }
     }
 
-    override fun onOpenTestPage() {
-        super.onOpenTestPage()
-        runTest()
-    }
-
-    override fun runTest() = testRunner.startTest()
+    override fun runTest() {}
 
 }

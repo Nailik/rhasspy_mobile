@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.android.configuration.content
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -27,12 +26,12 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
         modifier = Modifier.testTag(ConfigurationScreens.RemoteHermesHttpConfiguration),
         title = MR.strings.remoteHermesHTTP,
         viewModel = viewModel,
-        testContent = { TestContent(viewModel) }
+        hasTestButton = false
     ) {
 
         //base http endpoint
         TextFieldListItem(
-            label = MR.strings.host,
+            label = MR.strings.baseHost,
             modifier = Modifier.testTag(TestTag.Host),
             value = viewModel.httpServerEndpoint.collectAsState().value,
             onValueChange = viewModel::updateHttpServerEndpoint,
@@ -49,13 +48,4 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
 
     }
 
-}
-
-@Composable
-private fun TestContent(
-    viewModel: RemoteHermesHttpConfigurationViewModel
-) {
-    Column {
-        //button to execute intent recognition, speech to text (recording), text to speech
-    }
 }

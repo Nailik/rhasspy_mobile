@@ -76,12 +76,12 @@ fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = getViewModel()
             }
 
             item {
-                Webserver(viewModel)
+                RemoteHermesHttp(viewModel)
                 CustomDivider()
             }
 
             item {
-                RemoteHermesHttp(viewModel)
+                Webserver(viewModel)
                 CustomDivider()
             }
 
@@ -238,22 +238,6 @@ private fun SiteId(viewModel: ConfigurationScreenViewModel) {
 }
 
 /**
- * List element for text to speech configuration
- * shows if web server is enabled
- */
-@Composable
-private fun Webserver(viewModel: ConfigurationScreenViewModel) {
-
-    ConfigurationListItem(
-        text = MR.strings.webserver,
-        secondaryText = viewModel.isHttpServerEnabled.collectAsState().value.toText(),
-        screen = ConfigurationScreens.WebServerConfiguration,
-        serviceState = viewModel.isHttpServerHasError.collectAsState().value
-    )
-
-}
-
-/**
  * List element for http configuration
  * shows if ssl verification is enabled
  */
@@ -265,6 +249,22 @@ private fun RemoteHermesHttp(viewModel: ConfigurationScreenViewModel) {
         secondaryText = "${translate(MR.strings.sslValidation)} ${translate(viewModel.isHttpSSLVerificationEnabled.collectAsState().value.toText())}",
         screen = ConfigurationScreens.RemoteHermesHttpConfiguration,
         serviceState = viewModel.isHttpClientHasError.collectAsState().value
+    )
+
+}
+
+/**
+ * List element for text to speech configuration
+ * shows if web server is enabled
+ */
+@Composable
+private fun Webserver(viewModel: ConfigurationScreenViewModel) {
+
+    ConfigurationListItem(
+        text = MR.strings.webserver,
+        secondaryText = viewModel.isHttpServerEnabled.collectAsState().value.toText(),
+        screen = ConfigurationScreens.WebServerConfiguration,
+        serviceState = viewModel.isHttpServerHasError.collectAsState().value
     )
 
 }

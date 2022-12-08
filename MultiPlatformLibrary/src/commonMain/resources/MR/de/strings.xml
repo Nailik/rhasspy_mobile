@@ -13,6 +13,7 @@
     <string name="off">Aus</string>
     <string name="host">Host</string>
     <string name="port">Port</string>
+    <string name="baseHost">Basis Host</string>
     <string name="userName">Benutzername</string>
     <string name="password">Passwort</string>
     <string name="audioRecording">Audioaufnahme</string>

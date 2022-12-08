@@ -54,6 +54,7 @@ fun ConfigurationScreenItemContent(
     title: StringResource,
     viewModel: IConfigurationViewModel,
     testContent: (@Composable () -> Unit)? = null,
+    hasTestButton: Boolean = true,
     content: @Composable ColumnScope.(onNavigate: (route: String) -> Unit) -> Unit
 ) {
 
@@ -81,6 +82,7 @@ fun ConfigurationScreenItemContent(
                     hasUnsavedChanges = viewModel.hasUnsavedChanges,
                     testingEnabled = viewModel.isTestingEnabled,
                     onSave = viewModel::save,
+                    hasTestButton = hasTestButton,
                     onTest = {
                         navController.navigate(ConfigurationContentScreens.Test.name)
                     },
@@ -103,6 +105,7 @@ fun ConfigurationScreenItemContent(
 private fun EditConfigurationScreen(
     title: StringResource,
     hasUnsavedChanges: StateFlow<Boolean>,
+    hasTestButton: Boolean,
     testingEnabled: StateFlow<Boolean> = MutableStateFlow(true),
     onSave: () -> Unit,
     onTest: () -> Unit,
@@ -172,6 +175,7 @@ private fun EditConfigurationScreen(
             bottomBar = {
                 BottomAppBar(
                     hasUnsavedChanges = hasUnsavedChanges,
+                    hasTestButton = hasTestButton,
                     testingEnabled = testingEnabled,
                     onSave = onSave,
                     onClick = onTest,
@@ -291,6 +295,7 @@ private fun UnsavedChangesDialog(
 @Composable
 private fun BottomAppBar(
     hasUnsavedChanges: StateFlow<Boolean>,
+    hasTestButton: Boolean,
     testingEnabled: StateFlow<Boolean>,
     onSave: () -> Unit,
     onClick: () -> Unit,
@@ -323,25 +328,27 @@ private fun BottomAppBar(
             }
         },
         floatingActionButton = {
-            FloatingActionButton(
-                modifier = Modifier
-                    .testTag(TestTag.BottomAppBarTest)
-                    .defaultMinSize(
-                        minWidth = 56.0.dp,
-                        minHeight = 56.0.dp,
-                    ),
-                onClick = onClick,
-                isEnabled = isTestingEnabled,
-                containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
-                contentColor = LocalContentColor.current,
-                elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
-                icon = {
-                    Icon(
-                        imageVector = if (isTestingEnabled) Icons.Filled.PlayArrow else Icons.Outlined.PlayArrow,
-                        contentDescription = MR.strings.test
-                    )
-                }
-            )
+            if(hasTestButton) {
+                FloatingActionButton(
+                    modifier = Modifier
+                        .testTag(TestTag.BottomAppBarTest)
+                        .defaultMinSize(
+                            minWidth = 56.0.dp,
+                            minHeight = 56.0.dp,
+                        ),
+                    onClick = onClick,
+                    isEnabled = isTestingEnabled,
+                    containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
+                    contentColor = LocalContentColor.current,
+                    elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
+                    icon = {
+                        Icon(
+                            imageVector = if (isTestingEnabled) Icons.Filled.PlayArrow else Icons.Outlined.PlayArrow,
+                            contentDescription = MR.strings.test
+                        )
+                    }
+                )
+            }
         }
     )
 }
