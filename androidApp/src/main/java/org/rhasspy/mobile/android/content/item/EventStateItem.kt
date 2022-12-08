@@ -34,25 +34,51 @@ fun EventStateIcon(eventState: EventState) {
         0f
     }
 
-    Icon(
-        modifier = Modifier.rotate(rotation),
-        imageVector = when (eventState) {
-            is EventState.Pending -> Icons.Outlined.Pending
-            is EventState.Loading -> Icons.Outlined.RotateRight
-            is EventState.Success -> Icons.Outlined.Done
-            is EventState.Warning -> Icons.Outlined.Warning
-            is EventState.Error -> Icons.Outlined.ErrorOutline
-        },
-        contentDescription = when (eventState) {
-            is EventState.Pending -> MR.strings.pending
-            is EventState.Loading -> MR.strings.loading
-            is EventState.Success -> MR.strings.success
-            is EventState.Warning -> MR.strings.warning
-            is EventState.Error -> MR.strings.error
-        }
-    )
+
+    EventStateContent(
+        eventState = eventState
+    ) {
+        Icon(
+            modifier = Modifier.rotate(rotation),
+            imageVector = when (eventState) {
+                is EventState.Pending -> Icons.Outlined.Pending
+                is EventState.Loading -> Icons.Outlined.RotateRight
+                is EventState.Success -> Icons.Outlined.Done
+                is EventState.Warning -> Icons.Outlined.Warning
+                is EventState.Error -> Icons.Outlined.ErrorOutline
+                is EventState.Disabled -> Icons.Outlined.Circle
+            },
+            contentDescription = when (eventState) {
+                is EventState.Pending -> MR.strings.pending
+                is EventState.Loading -> MR.strings.loading
+                is EventState.Success -> MR.strings.success
+                is EventState.Warning -> MR.strings.warning
+                is EventState.Error -> MR.strings.error
+                is EventState.Disabled -> MR.strings.disabled
+            }
+        )
+    }
 }
 
+@Composable
+fun EventStateContent(
+    eventState: EventState,
+    content: @Composable () -> Unit
+) {
+    val contentColor = when (eventState) {
+        is EventState.Pending -> MaterialTheme.colorScheme.onSurfaceVariant
+        is EventState.Loading -> MaterialTheme.colorScheme.onSecondaryContainer
+        is EventState.Success -> MaterialTheme.colorScheme.onPrimaryContainer
+        is EventState.Warning -> MaterialTheme.colorScheme.on_color_warn
+        is EventState.Error -> MaterialTheme.colorScheme.onErrorContainer
+        is EventState.Disabled -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+    }
+
+    CompositionLocalProvider(
+        LocalContentColor provides contentColor,
+        content = content
+    )
+}
 
 @Composable
 fun EventStateCard(
@@ -68,20 +94,13 @@ fun EventStateCard(
                 is EventState.Success -> MaterialTheme.colorScheme.primaryContainer
                 is EventState.Warning -> MaterialTheme.colorScheme.warn
                 is EventState.Error -> MaterialTheme.colorScheme.errorContainer
+                is EventState.Disabled -> MaterialTheme.colorScheme.surface.copy(alpha = 0.38f)
             }
         ),
         onClick = onClick,
         content = {
-            val contentColor = when (eventState) {
-                is EventState.Pending -> MaterialTheme.colorScheme.onSurfaceVariant
-                is EventState.Loading -> MaterialTheme.colorScheme.onSecondaryContainer
-                is EventState.Success -> MaterialTheme.colorScheme.onPrimaryContainer
-                is EventState.Warning -> MaterialTheme.colorScheme.on_color_warn
-                is EventState.Error -> MaterialTheme.colorScheme.onErrorContainer
-            }
-
-            CompositionLocalProvider(
-                LocalContentColor provides contentColor,
+            EventStateContent(
+                eventState = eventState,
                 content = content
             )
         }

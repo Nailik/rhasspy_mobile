@@ -22,10 +22,12 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.content.*
 import org.rhasspy.mobile.android.content.elements.*
+import org.rhasspy.mobile.android.content.item.EventStateIcon
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.middleware.EventState
 import org.rhasspy.mobile.viewModels.ConfigurationScreenViewModel
 
 /**
@@ -246,7 +248,7 @@ private fun Webserver(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.webserver,
         secondaryText = viewModel.isHttpServerEnabled.collectAsState().value.toText(),
         screen = ConfigurationScreens.WebServerConfiguration,
-        hasError = viewModel.isHttpServerHasError.collectAsState().value
+        serviceState = viewModel.isHttpServerHasError.collectAsState().value
     )
 
 }
@@ -262,7 +264,7 @@ private fun RemoteHermesHttp(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.remoteHermesHTTP,
         secondaryText = "${translate(MR.strings.sslValidation)} ${translate(viewModel.isHttpSSLVerificationEnabled.collectAsState().value.toText())}",
         screen = ConfigurationScreens.RemoteHermesHttpConfiguration,
-        hasError = viewModel.isHttpClientHasError.collectAsState().value
+        serviceState = viewModel.isHttpClientHasError.collectAsState().value
     )
 
 }
@@ -278,7 +280,7 @@ private fun Mqtt(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.mqtt,
         secondaryText = if (viewModel.isMQTTConnected.collectAsState().value) MR.strings.connected else MR.strings.notConnected,
         screen = ConfigurationScreens.MqttConfiguration,
-        hasError = viewModel.isMqttHasError.collectAsState().value
+        serviceState = viewModel.isMqttHasError.collectAsState().value
     )
 
 }
@@ -297,7 +299,7 @@ private fun WakeWord(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.wakeWord,
         secondaryText = wakeWordValueOption.text,
         screen = ConfigurationScreens.WakeWordConfiguration,
-        hasError = viewModel.isWakeWordServiceHasError.collectAsState().value
+        serviceState = viewModel.isWakeWordServiceHasError.collectAsState().value
     )
 
 }
@@ -313,7 +315,7 @@ private fun SpeechToText(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.speechToText,
         secondaryText = viewModel.speechToTextOption.collectAsState().value.text,
         screen = ConfigurationScreens.SpeechToTextConfiguration,
-        hasError = viewModel.isSpeechToTextHasError.collectAsState().value
+        serviceState = viewModel.isSpeechToTextHasError.collectAsState().value
     )
 
 }
@@ -330,7 +332,7 @@ private fun IntentRecognition(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.intentRecognition,
         secondaryText = viewModel.intentRecognitionOption.collectAsState().value.text,
         screen = ConfigurationScreens.IntentRecognitionConfiguration,
-        hasError = viewModel.isIntentRecognitionHasError.collectAsState().value
+        serviceState = viewModel.isIntentRecognitionHasError.collectAsState().value
     )
 
 }
@@ -346,7 +348,7 @@ private fun TextToSpeech(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.textToSpeech,
         secondaryText = viewModel.textToSpeechOption.collectAsState().value.text,
         screen = ConfigurationScreens.TextToSpeechConfiguration,
-        hasError = viewModel.isTextToSpeechHasError.collectAsState().value
+        serviceState = viewModel.isTextToSpeechHasError.collectAsState().value
     )
 
 }
@@ -362,7 +364,7 @@ private fun AudioPlaying(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.audioPlaying,
         secondaryText = viewModel.audioPlayingOption.collectAsState().value.text,
         screen = ConfigurationScreens.AudioPlayingConfiguration,
-        hasError = viewModel.isAudioPlayingHasError.collectAsState().value
+        serviceState = viewModel.isAudioPlayingHasError.collectAsState().value
     )
 
 }
@@ -378,7 +380,7 @@ private fun DialogManagement(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.dialogManagement,
         secondaryText = viewModel.dialogManagementOption.collectAsState().value.text,
         screen = ConfigurationScreens.DialogManagementConfiguration,
-        hasError = viewModel.isDialogManagementHasError.collectAsState().value
+        serviceState = viewModel.isDialogManagementHasError.collectAsState().value
     )
 
 }
@@ -394,7 +396,7 @@ private fun IntentHandling(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.intentHandling,
         secondaryText = viewModel.intentHandlingOption.collectAsState().value.text,
         screen = ConfigurationScreens.IntentHandlingConfiguration,
-        hasError = viewModel.isIntentHandlingHasError.collectAsState().value
+        serviceState = viewModel.isIntentHandlingHasError.collectAsState().value
     )
 
 }
@@ -407,7 +409,7 @@ private fun ConfigurationListItem(
     text: StringResource,
     secondaryText: StringResource,
     screen: ConfigurationScreens,
-    hasError: Boolean = false
+    serviceState: EventState
 ) {
 
     val navController = LocalMainNavController.current
@@ -420,15 +422,7 @@ private fun ConfigurationListItem(
             .testTag(screen),
         text = { Text(text) },
         secondaryText = { Text(secondaryText) },
-        trailing = if (hasError) {
-            {
-                Icon(
-                    imageVector = Icons.Filled.Error,
-                    contentDescription = MR.strings.error,
-                    tint = MaterialTheme.colorScheme.error
-                )
-            }
-        } else null
+        trailing = { EventStateIcon(serviceState) }
     )
 
 }
@@ -436,12 +430,13 @@ private fun ConfigurationListItem(
 /**
  * list item
  */
+@Suppress("SameParameterValue")
 @Composable
 private fun ConfigurationListItem(
     text: StringResource,
     secondaryText: String,
-    @Suppress("SameParameterValue") screen: ConfigurationScreens,
-    hasError: Boolean = false
+    screen: ConfigurationScreens,
+    serviceState: EventState
 ) {
 
     val navController = LocalMainNavController.current
@@ -454,15 +449,7 @@ private fun ConfigurationListItem(
             .testTag(screen),
         text = { Text(text) },
         secondaryText = { Text(text = secondaryText) },
-        trailing = if (hasError) {
-            {
-                Icon(
-                    imageVector = Icons.Filled.Error,
-                    contentDescription = MR.strings.error,
-                    tint = MaterialTheme.colorScheme.error
-                )
-            }
-        } else null
+        trailing = { EventStateIcon(serviceState) }
     )
 
 }

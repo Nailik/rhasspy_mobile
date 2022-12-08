@@ -183,6 +183,7 @@ private fun ServiceStateText(serviceState: EventState) {
             is EventState.Success -> MR.strings.serviceStatusRunningText
             is EventState.Warning -> MR.strings.serviceStatusWarningText
             is EventState.Error -> MR.strings.serviceStatusErrorText
+            is EventState.Disabled -> MR.strings.disabled
         }
     )
 
