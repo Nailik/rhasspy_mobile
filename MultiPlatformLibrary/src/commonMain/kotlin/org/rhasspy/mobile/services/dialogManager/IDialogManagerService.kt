@@ -38,8 +38,8 @@ abstract class IDialogManagerService : IService() {
     val sessionId: String = uuid4().toString()
     private var scope = CoroutineScope(Dispatchers.Default)
 
-    private val _currentState = MutableStateFlow(DialogManagerServiceState.Idle)
-    val currentState = _currentState.readOnly
+    private val _currentDialogState = MutableStateFlow(DialogManagerServiceState.Idle)
+    val currentDialogState = _currentDialogState.readOnly
 
     override fun onClose() {
         scope.cancel()

@@ -9,14 +9,17 @@ import io.ktor.client.request.*
 import io.ktor.client.utils.*
 import io.ktor.http.*
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.IntentHandlingOptions
 import org.rhasspy.mobile.middleware.ErrorType.HttpClientServiceErrorType
 import org.rhasspy.mobile.middleware.ErrorType.HttpClientServiceErrorType.*
+import org.rhasspy.mobile.middleware.EventState
 import org.rhasspy.mobile.middleware.EventType
 import org.rhasspy.mobile.middleware.EventType.HttpClientServiceEventType.*
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.nativeutils.configureEngine
+import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceResponse
 
@@ -41,14 +44,14 @@ class HttpClientService : IService() {
         if (params.isUseCustomSpeechToTextHttpEndpoint) {
             params.speechToTextHttpEndpoint
         } else {
-            HttpClientPath.SpeechToText.path
+            HttpClientPath.SpeechToText.fromBaseConfiguration()
         } + "?noheader=true"
 
     private val recognizeIntentUrl =
         if (params.isUseCustomIntentRecognitionHttpEndpoint) {
             params.intentRecognitionHttpEndpoint
         } else {
-            HttpClientPath.TextToIntent.path
+            HttpClientPath.TextToIntent.fromBaseConfiguration()
         } + if (!isHandleIntentDirectly) {
             "?nohass=true"
         } else ""
@@ -56,7 +59,7 @@ class HttpClientService : IService() {
     private val textToSpeechUrl = if (params.isUseCustomTextToSpeechHttpEndpoint) {
         params.textToSpeechHttpEndpoint
     } else {
-        HttpClientPath.TextToSpeech.path
+        HttpClientPath.TextToSpeech.fromBaseConfiguration()
     }
 
     private val audioPlayingUrl = if (params.isUseCustomAudioPlayingEndpoint) {
@@ -74,15 +77,18 @@ class HttpClientService : IService() {
      * starts client and updates event
      */
     init {
+        _currentState.value = EventState.Loading
         val startEvent = serviceMiddleware.createEvent(Start)
 
         try {
             //starting
             httpClient = buildClient()
             //successfully start
+            _currentState.value = EventState.Success()
             startEvent.success()
         } catch (e: Exception) {
             //start error
+            _currentState.value = EventState.Error()
             startEvent.error(e)
         }
     }
@@ -241,6 +247,7 @@ class HttpClientService : IService() {
                 return ServiceResponse.Success(response)
 
             } catch (e: Exception) {
+                _currentState.value = EventState.Error()
 
                 mapError(e)?.also { description ->
                     postEvent.error(description)
@@ -251,6 +258,7 @@ class HttpClientService : IService() {
 
             }
         } ?: run {
+            _currentState.value = EventState.Error()
             postEvent.error(NotInitialized)
             return ServiceResponse.NotInitialized
         }

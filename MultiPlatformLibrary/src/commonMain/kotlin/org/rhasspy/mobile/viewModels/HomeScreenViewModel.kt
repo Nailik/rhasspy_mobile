@@ -16,7 +16,7 @@ import org.rhasspy.mobile.settings.AppSettings
 
 class HomeScreenViewModel : ViewModel(), KoinComponent {
 
-    private val dialogManagerServiceState = get<IDialogManagerService>().currentState
+    private val dialogManagerServiceState = get<IDialogManagerService>().currentDialogState
 
     val isActionEnabled = dialogManagerServiceState
         .mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingHotWord }

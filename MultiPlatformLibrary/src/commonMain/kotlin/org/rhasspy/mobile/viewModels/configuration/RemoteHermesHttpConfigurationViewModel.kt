@@ -6,6 +6,7 @@ import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
+import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
@@ -18,7 +19,7 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     //unsaved data
     private val _httpServerEndpointHost = MutableStateFlow(ConfigurationSettings.httpServerEndpointHost.value)
     private val _httpServerEndpointPort = MutableStateFlow(ConfigurationSettings.httpServerEndpointPort.value)
-    private val _httpServerEndpointPortText = MutableStateFlow(ConfigurationSettings.mqttPort.value.toString())
+    private val _httpServerEndpointPortText = MutableStateFlow(ConfigurationSettings.httpServerEndpointPort.value.toString())
     private val _isHttpSSLVerificationDisabled = MutableStateFlow(ConfigurationSettings.isHttpSSLVerificationDisabled.value)
 
     //unsaved ui data
@@ -26,7 +27,7 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     val httpServerEndpointPort = _httpServerEndpointPortText.readOnly
     val isHttpSSLVerificationDisabled = _isHttpSSLVerificationDisabled.readOnly
 
-    override val isTestingEnabled = MutableStateFlow(false)
+    override val isTestingEnabled = _httpServerEndpointHost.mapReadonlyState { it.isNotBlank() }
 
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_httpServerEndpointHost, ConfigurationSettings.httpServerEndpointHost.data),
