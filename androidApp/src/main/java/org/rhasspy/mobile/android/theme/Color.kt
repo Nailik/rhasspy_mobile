@@ -22,7 +22,7 @@ private val md_theme_light_onTertiary = Color(0xFFFFFFFF)
 private val md_theme_light_tertiaryContainer = Color(0xFFFFD8E4)
 private val md_theme_light_onTertiaryContainer = Color(0xFF31111D)
 private val md_theme_light_error = Color(0xFFF9DEDC)
-private val md_theme_light_errorContainer = Color(0xFF2DB31E)
+private val md_theme_light_errorContainer = Color(0xFFFA473F)
 private val md_theme_light_onError = Color(0xFF410E0B)
 private val md_theme_light_onErrorContainer = Color(0xFFFFFFFF)
 private val md_theme_light_background = Color(0xFFFFFBFE)
@@ -63,8 +63,11 @@ private val md_theme_dark_inverseOnSurface = Color(0xFF1C1B1F)
 private val md_theme_dark_inverseSurface = Color(0xFFE6E1E5)
 private val md_theme_dark_inversePrimary = Color(0xFF6750A4)
 
-private val color_warn_dark = Color(0xFFEFD4B8)
-private val color_warn_light = Color(0xFFD46E00)
+private val color_warn_dark = Color(0xFFFFC107)
+private val color_warn_light = Color(0xFFFCBE7E)
+
+private val on_color_warn_dark = Color(0xFF363438)
+private val on_color_warn_light = Color(0xFF363438)
 
 private val assistant_color_one_any = Color(0xFF2196F3)
 private val assistant_color_two_any = Color(0xFFF44336)
@@ -79,9 +82,14 @@ private val color_error_any = Color(0xFFF44336)
 private val color_assert_any = Color(0xFF673AB7)
 private val color_unknown_any = Color(0xFF000000)
 
+
 val ColorScheme.warn: Color
     @Composable
     get() = if (getIsDarkTheme()) color_warn_dark else color_warn_light
+
+val ColorScheme.on_color_warn: Color
+    @Composable
+    get() = if (getIsDarkTheme()) on_color_warn_dark else on_color_warn_light
 
 val ColorScheme.assistant_color_one: Color
     get() = assistant_color_one_any
@@ -106,7 +114,6 @@ val ColorScheme.color_assert: Color
     get() = color_assert_any
 val ColorScheme.color_unknown: Color
     get() = color_unknown_any
-
 /**
  * colors for light theme
  */

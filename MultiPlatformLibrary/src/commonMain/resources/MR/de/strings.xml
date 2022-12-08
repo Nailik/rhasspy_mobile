@@ -147,6 +147,7 @@
     <string name="restoreSettings">Einstellungen Laden</string>
     <string name="restoreSettingsWarningText">Ihre aktuellen Einstellungen gehen beim Wiederherstellen aus der Datei verloren!</string>
     <string name="warning">Warnung</string>
+    <string name="success">Success</string>
     <string name="aboutTitle">Über Rhasspy Mobile</string>
     <string name="version">Version</string>
     <string name="sounds">Töne</string>
@@ -253,7 +254,6 @@
     <string name="executeTextToSpeechText">Execute Text zu Sprache</string>
     <string name="textIntentRecognitionText">Text zur Erkennung des Intent</string>
     <string name="executeIntentRecognition">Ausführen des Intent</string>
-    <string name="serviceErrorText">Bei einigen Diensten gibt es ein Problem</string>
     <string name="crashlytics">Crashlytics</string>
     <string name="crashlyticsText">Senden Sie Abstürze, um die Anwendung zu verbessern</string>
     <string name="crashlyticsDialogText">Bitte erlauben Sie das Sammeln von Absturzberichten, um die App zu verbessern.\nDie Einstellungen können
@@ -261,4 +261,12 @@
         Log-Einstellungen-Seite geändert werden</string>
     <string name="confirm">Zustimmen</string>
     <string name="deny">Ablehnen</string>
+    <string name="serviceStatusPending">Pending</string>
+    <string name="serviceStatusLoading">Ladend</string>
+    <string name="serviceStatusWarning">Warnung</string>
+    <string name="serviceStatusFehler">Fehler</string>
+    <string name="serviceStatusPendingText">Dienste warten</string>
+    <string name="serviceStatusLoadingText">Dienste werden gestartet</string>
+    <string name="serviceStatusWarningText">Dienste haben mögliche Probleme entdeckt</string>
+    <string name="serviceStatusErrorText">Dienstfehler ist aufgetreten</string>
 </resources>

@@ -208,7 +208,7 @@ private fun ServiceErrorInformation(viewModel: ConfigurationScreenViewModel, scr
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    resource = MR.strings.serviceErrorText,
+                    resource = MR.strings.error,
                     color = MaterialTheme.colorScheme.onErrorContainer
                 )
             }

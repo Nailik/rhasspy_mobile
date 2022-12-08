@@ -1,17 +1,14 @@
 package org.rhasspy.mobile.android.configuration.test
 
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.content.EventStateIcon
 import org.rhasspy.mobile.android.theme.warn
 import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.android.utils.translate
@@ -34,7 +31,7 @@ fun EventListItem(event: Event) {
     }
 
     ListItem(
-        leadingContent = { TestIcon(state) },
+        leadingContent = { EventStateIcon(state) },
         colors = ListItemDefaults.colors(
             leadingIconColor = contentColor,
             headlineColor = contentColor
@@ -62,32 +59,4 @@ fun EventListItem(event: Event) {
                 }
             }
         })
-}
-
-@Composable
-private fun TestIcon(state: EventState) {
-
-    val icon = when (state) {
-        EventState.Pending -> Icons.Outlined.Pending
-        EventState.Loading -> Icons.Outlined.RotateRight
-        is EventState.Success -> Icons.Outlined.Done
-        is EventState.Warning -> Icons.Outlined.Warning
-        is EventState.Error -> Icons.Outlined.ErrorOutline
-    }
-
-    val rotation = if (state == EventState.Loading) {
-        val infiniteTransition = rememberInfiniteTransition()
-        val animateRotation by infiniteTransition.animateFloat(
-            initialValue = 0f,
-            targetValue = 359f, animationSpec = infiniteRepeatable(
-                animation = tween(800),
-                repeatMode = RepeatMode.Restart
-            )
-        )
-        animateRotation
-    } else {
-        0f
-    }
-
-    Icon(icon, "", modifier = Modifier.rotate(rotation))
 }
