@@ -152,7 +152,6 @@ private fun ServiceStatusInformation(viewModel: HomeScreenViewModel) {
     EventStateCard(
         eventState = serviceState,
         onClick = {
-            viewModel.onClick()
             if (viewModel.isActionEnabled.value) {
                 navigate.navigate(BottomBarScreens.ConfigurationScreen.appendOptionalParameter(NavigationParams.ScrollToError, true))
             }

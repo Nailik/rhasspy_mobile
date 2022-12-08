@@ -36,14 +36,5 @@ class HomeScreenViewModel : ViewModel(), KoinComponent {
     fun toggleSession() = StateMachine.toggleSessionManually()
 
     fun togglePlayRecording() = StateMachine.togglePlayRecording()
-    fun onClick() {
-        serviceState.value = when (serviceState.value) {
-            is EventState.Loading -> EventState.Pending
-            is EventState.Pending -> EventState.Warning()
-            is EventState.Warning -> EventState.Success()
-            is EventState.Success -> EventState.Error()
-            is EventState.Error -> EventState.Loading
-        }
-    }
 
 }
