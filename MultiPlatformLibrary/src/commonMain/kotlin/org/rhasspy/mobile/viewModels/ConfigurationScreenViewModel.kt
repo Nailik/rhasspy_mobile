@@ -29,7 +29,7 @@ class ConfigurationScreenViewModel : ViewModel(), KoinComponent {
     val isSpeechToTextHasError = MutableStateFlow(EventState.Warning()).readOnly //TODO
 
     val intentRecognitionOption = ConfigurationSettings.intentRecognitionOption.data
-    val isIntentRecognitionHasError = MutableStateFlow(EventState.Loading).readOnly //TODO
+    val isIntentRecognitionHasError = MutableStateFlow(EventState.Disabled).readOnly //TODO
 
     val textToSpeechOption = ConfigurationSettings.textToSpeechOption.data
     val isTextToSpeechHasError = MutableStateFlow(EventState.Loading).readOnly //TODO

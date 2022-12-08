@@ -22,7 +22,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.content.*
 import org.rhasspy.mobile.android.content.elements.*
-import org.rhasspy.mobile.android.content.item.EventStateIcon
+import org.rhasspy.mobile.android.content.item.EventStateIconTinted
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.main.LocalMainNavController
@@ -422,7 +422,7 @@ private fun ConfigurationListItem(
             .testTag(screen),
         text = { Text(text) },
         secondaryText = { Text(secondaryText) },
-        trailing = { EventStateIcon(serviceState) }
+        trailing = { EventStateIconTinted(serviceState) }
     )
 
 }
@@ -449,7 +449,7 @@ private fun ConfigurationListItem(
             .testTag(screen),
         text = { Text(text) },
         secondaryText = { Text(text = secondaryText) },
-        trailing = { EventStateIcon(serviceState) }
+        trailing = { EventStateIconTinted(serviceState) }
     )
 
 }

@@ -63,7 +63,7 @@ private val md_theme_dark_inverseOnSurface = Color(0xFF1C1B1F)
 private val md_theme_dark_inverseSurface = Color(0xFFE6E1E5)
 private val md_theme_dark_inversePrimary = Color(0xFF6750A4)
 
-private val color_warn_dark = Color(0xFFFFC107)
+private val color_warn_dark = Color(0xDCFDCE3E)
 private val color_warn_light = Color(0xFFFCBE7E)
 
 private val on_color_warn_dark = Color(0xFF363438)
