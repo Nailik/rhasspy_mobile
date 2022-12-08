@@ -16,23 +16,34 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     override val testRunner by inject<RemoteHermesHttpConfigurationTest>()
 
     //unsaved data
-    private val _httpServerEndpoint = MutableStateFlow(ConfigurationSettings.httpServerEndpoint.value)
+    private val _httpServerEndpointHost = MutableStateFlow(ConfigurationSettings.httpServerEndpointHost.value)
+    private val _httpServerEndpointPort = MutableStateFlow(ConfigurationSettings.httpServerEndpointPort.value)
+    private val _httpServerEndpointPortText = MutableStateFlow(ConfigurationSettings.mqttPort.value.toString())
     private val _isHttpSSLVerificationDisabled = MutableStateFlow(ConfigurationSettings.isHttpSSLVerificationDisabled.value)
 
     //unsaved ui data
-    val httpServerEndpoint = _httpServerEndpoint.readOnly
+    val httpServerEndpointHost = _httpServerEndpointHost.readOnly
+    val httpServerEndpointPort = _httpServerEndpointPortText.readOnly
     val isHttpSSLVerificationDisabled = _isHttpSSLVerificationDisabled.readOnly
 
     override val isTestingEnabled = MutableStateFlow(false)
 
     override val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(_httpServerEndpoint, ConfigurationSettings.httpServerEndpoint.data),
+        combineStateNotEquals(_httpServerEndpointHost, ConfigurationSettings.httpServerEndpointHost.data),
+        combineStateNotEquals(_httpServerEndpointPort, ConfigurationSettings.httpServerEndpointPort.data),
         combineStateNotEquals(_isHttpSSLVerificationDisabled, ConfigurationSettings.isHttpSSLVerificationDisabled.data)
     )
 
-    //set new http server endpoint
-    fun updateHttpServerEndpoint(endpoint: String) {
-        _httpServerEndpoint.value = endpoint
+    //set new http server endpoint host
+    fun updateHttpServerEndpointHost(endpoint: String) {
+        _httpServerEndpointHost.value = endpoint
+    }
+
+    //set new http server endpoint port
+    fun updateHttpServerEndpointPort(port: String) {
+        val text = port.replace("""[-,. ]""".toRegex(), "")
+        _httpServerEndpointPortText.value = text
+        _httpServerEndpointPort.value = text.toIntOrNull() ?: 0
     }
 
     //set new intent recognition option
@@ -44,7 +55,8 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
      * save data configuration
      */
     override fun onSave() {
-        ConfigurationSettings.httpServerEndpoint.value = _httpServerEndpoint.value
+        ConfigurationSettings.httpServerEndpointHost.value = _httpServerEndpointHost.value
+        ConfigurationSettings.httpServerEndpointPort.value = _httpServerEndpointPort.value
         ConfigurationSettings.isHttpSSLVerificationDisabled.value = _isHttpSSLVerificationDisabled.value
     }
 
@@ -52,7 +64,8 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
      * undo all changes
      */
     override fun discard() {
-        _httpServerEndpoint.value = ConfigurationSettings.httpServerEndpoint.value
+        _httpServerEndpointHost.value = ConfigurationSettings.httpServerEndpointHost.value
+        _httpServerEndpointPort.value = ConfigurationSettings.httpServerEndpointPort.value
         _isHttpSSLVerificationDisabled.value = ConfigurationSettings.isHttpSSLVerificationDisabled.value
     }
 
@@ -61,12 +74,13 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
             parametersOf(
                 HttpClientServiceParams(
                     isHttpSSLVerificationDisabled = _isHttpSSLVerificationDisabled.value,
-                    httpServerEndpoint = _httpServerEndpoint.value
+                    httpServerEndpointHost = _httpServerEndpointHost.value,
+                    httpServerEndpointPort = _httpServerEndpointPort.value
                 )
             )
         }
     }
 
-    override fun runTest() {}
+    override fun runTest() = testRunner.startTest()
 
 }

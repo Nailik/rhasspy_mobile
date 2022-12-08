@@ -32,7 +32,7 @@ class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
             if (useCustomIntentRecognitionHttpEndpoint) {
                 intentRecognitionHttpEndpoint
             } else {
-                "${ConfigurationSettings.httpServerEndpoint.value}${HttpClientPath.TextToIntent}"
+                HttpClientPath.TextToIntent.fromBaseConfiguration()
             }
         }
     val isUseCustomIntentRecognitionHttpEndpoint = _isUseCustomIntentRecognitionHttpEndpoint.readOnly

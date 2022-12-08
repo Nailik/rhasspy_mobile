@@ -24,12 +24,12 @@
     <string name="wakeWord">Wake Word</string>
     <string name="sensitivity">Empfindlichkeit</string>
     <string name="speechToText">Sprache zu Text</string>
-    <string name="speechToTextURL">Sprache zu Text URL (//api/speech-to-text)</string>
+    <string name="speechToTextURL">Sprache zu Text URL (%s)</string>
     <string name="intentRecognition">Intent Erkennung</string>
-    <string name="rhasspyTextToIntentURL">Rhasspy Text-zu-Intent URL (//api/text-to-intent)</string>
+    <string name="rhasspyTextToIntentURL">Rhasspy Text-zu-Intent URL (%s)</string>
     <string name="textToSpeech">Text to Speech</string>
-    <string name="rhasspyTextToSpeechURL">Rhasspy Text-zu-Sprache URL (//api/text-to-speech)</string>
-    <string name="audioOutputURL">Audio Ausgabe URL (//api/play-wav)</string>
+    <string name="rhasspyTextToSpeechURL">Rhasspy Text-zu-Sprache URL (%s)</string>
+    <string name="audioOutputURL">Audio Ausgabe URL (%s)</string>
     <string name="audioPlaying">Audiowiedergabe</string>
     <string name="dialogManagement">Dialog-Verwaltung</string>
     <string name="intentHandling">Intent Handling</string>
@@ -270,4 +270,5 @@
     <string name="serviceStatusLoadingText">Dienste werden gestartet</string>
     <string name="serviceStatusWarningText">Dienste haben mögliche Probleme entdeckt</string>
     <string name="serviceStatusErrorText">Dienstfehler ist aufgetreten</string>
+    <string name="testHttpConnection">Teste Http Verbindung</string>
 </resources>

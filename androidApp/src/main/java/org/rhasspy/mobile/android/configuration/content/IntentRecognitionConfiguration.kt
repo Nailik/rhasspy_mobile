@@ -13,11 +13,13 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
+import org.rhasspy.mobile.android.content.elements.translate
 import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.viewModels.configuration.IntentRecognitionConfigurationViewModel
 
 /**
@@ -73,9 +75,8 @@ private fun IntentRecognitionHTTP(viewModel: IntentRecognitionConfigurationViewM
                 .padding(bottom = 8.dp),
             value = viewModel.intentRecognitionHttpEndpoint.collectAsState().value,
             onValueChange = viewModel::changeIntentRecognitionHttpEndpoint,
-            label = MR.strings.rhasspyTextToIntentURL
+            label = translate(MR.strings.rhasspyTextToIntentURL, HttpClientPath.TextToIntent.path)
         )
-
     }
 
 }

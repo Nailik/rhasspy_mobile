@@ -41,15 +41,14 @@ class HttpClientService : IService() {
         if (params.isUseCustomSpeechToTextHttpEndpoint) {
             params.speechToTextHttpEndpoint
         } else {
-            params.httpServerEndpoint + HttpClientPath.SpeechToText.path
+            HttpClientPath.SpeechToText.path
         } + "?noheader=true"
 
     private val recognizeIntentUrl =
         if (params.isUseCustomIntentRecognitionHttpEndpoint) {
             params.intentRecognitionHttpEndpoint
         } else {
-            params.httpServerEndpoint + HttpClientPath.TextToIntent.path
-
+            HttpClientPath.TextToIntent.path
         } + if (!isHandleIntentDirectly) {
             "?nohass=true"
         } else ""
@@ -57,13 +56,13 @@ class HttpClientService : IService() {
     private val textToSpeechUrl = if (params.isUseCustomTextToSpeechHttpEndpoint) {
         params.textToSpeechHttpEndpoint
     } else {
-        params.httpServerEndpoint + HttpClientPath.TextToSpeech.path
+        HttpClientPath.TextToSpeech.path
     }
 
     private val audioPlayingUrl = if (params.isUseCustomAudioPlayingEndpoint) {
         params.audioPlayingHttpEndpoint
     } else {
-        params.httpServerEndpoint + HttpClientPath.PlayWav.path
+        HttpClientPath.PlayWav.fromBaseConfiguration()
     }
 
     private val hassEventUrl = "${params.intentHandlingHassEndpoint}/api/events/rhasspy_"

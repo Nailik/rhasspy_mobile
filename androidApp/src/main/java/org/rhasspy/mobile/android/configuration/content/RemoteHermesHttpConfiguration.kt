@@ -1,14 +1,18 @@
 package org.rhasspy.mobile.android.configuration.content
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
+import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.testTag
@@ -26,15 +30,24 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
         modifier = Modifier.testTag(ConfigurationScreens.RemoteHermesHttpConfiguration),
         title = MR.strings.remoteHermesHTTP,
         viewModel = viewModel,
-        hasTestButton = false
+        testContent = { TestContent(viewModel) }
     ) {
 
         //base http endpoint
         TextFieldListItem(
             label = MR.strings.baseHost,
             modifier = Modifier.testTag(TestTag.Host),
-            value = viewModel.httpServerEndpoint.collectAsState().value,
-            onValueChange = viewModel::updateHttpServerEndpoint,
+            value = viewModel.httpServerEndpointHost.collectAsState().value,
+            onValueChange = viewModel::updateHttpServerEndpointHost,
+        )
+
+        //port
+        TextFieldListItem(
+            label = MR.strings.port,
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            modifier = Modifier.testTag(TestTag.Port),
+            value = viewModel.httpServerEndpointPort.collectAsState().value,
+            onValueChange = viewModel::updateHttpServerEndpointPort,
         )
 
         //switch to toggle validation of SSL certificate
@@ -48,4 +61,14 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
 
     }
 
+}
+
+@Composable
+private fun TestContent(
+    viewModel: RemoteHermesHttpConfigurationViewModel
+) {
+    FilledTonalButtonListItem(
+        text = MR.strings.testHttpConnection,
+        onClick = viewModel::runTest
+    )
 }

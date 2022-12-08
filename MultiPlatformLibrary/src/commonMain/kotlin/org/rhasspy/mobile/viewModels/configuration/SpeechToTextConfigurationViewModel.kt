@@ -32,7 +32,7 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
         if (useCustomSpeechToTextHttpEndpoint) {
             speechToTextHttpEndpoint
         } else {
-            "${ConfigurationSettings.httpServerEndpoint.value}${HttpClientPath.SpeechToText}"
+            HttpClientPath.SpeechToText.fromBaseConfiguration()
         }
     }
     val isUseCustomSpeechToTextHttpEndpoint = _isUseCustomSpeechToTextHttpEndpoint.readOnly

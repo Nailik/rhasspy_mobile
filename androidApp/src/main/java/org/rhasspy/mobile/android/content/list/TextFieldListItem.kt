@@ -8,10 +8,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -23,7 +20,7 @@ import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.Icon
-import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.elements.translate
 
 
 @Composable
@@ -68,6 +65,33 @@ fun TextFieldListItemVisibility(
 fun TextFieldListItem(
     modifier: Modifier = Modifier,
     label: StringResource,
+    value: String,
+    readOnly: Boolean = false,
+    autoCorrect: Boolean = false,
+    enabled: Boolean = true,
+    onValueChange: ((String) -> Unit)? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+) {
+    TextFieldListItem(
+        modifier = modifier,
+        label = translate(label),
+        value = value,
+        readOnly = readOnly,
+        autoCorrect = autoCorrect,
+        enabled = enabled,
+        onValueChange = onValueChange,
+        keyboardOptions = keyboardOptions,
+        trailingIcon = trailingIcon,
+        visualTransformation = visualTransformation
+    )
+}
+
+@Composable
+fun TextFieldListItem(
+    modifier: Modifier = Modifier,
+    label: String,
     value: String,
     readOnly: Boolean = false,
     autoCorrect: Boolean = false,

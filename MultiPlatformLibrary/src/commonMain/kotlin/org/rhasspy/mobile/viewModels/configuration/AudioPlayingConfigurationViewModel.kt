@@ -40,7 +40,7 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
         if (useCustomAudioPlayingHttpEndpoint) {
             audioPlayingHttpEndpoint
         } else {
-            "${ConfigurationSettings.httpServerEndpoint.value}${HttpClientPath.PlayWav}"
+            HttpClientPath.PlayWav.fromBaseConfiguration()
         }
     }
     val isUseCustomAudioPlayingHttpEndpoint = _isUseCustomAudioPlayingHttpEndpoint.readOnly

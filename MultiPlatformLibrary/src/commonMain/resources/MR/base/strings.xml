@@ -24,12 +24,12 @@
     <string name="wakeWord">Wake Word</string>
     <string name="sensitivity">Sensitivity</string>
     <string name="speechToText">Speech to Text</string>
-    <string name="speechToTextURL">Speech to Text URL (//api/speech-to-text)</string>
+    <string name="speechToTextURL">Speech to Text URL (%s)</string>
     <string name="intentRecognition">Intent Recognition</string>
-    <string name="rhasspyTextToIntentURL">Rhasspy Text-to-Intent URL (//api/text-to-intent)</string>
+    <string name="rhasspyTextToIntentURL">Rhasspy Text-to-Intent URL (%s)</string>
     <string name="textToSpeech">Text to Speech</string>
-    <string name="rhasspyTextToSpeechURL">Rhasspy Text-to-Speech URL (//api/text-to-speech)</string>
-    <string name="audioOutputURL">Audio Output URL (//api/play-wav)</string>
+    <string name="rhasspyTextToSpeechURL">Rhasspy Text-to-Speech URL (%s)</string>
+    <string name="audioOutputURL">Audio Output URL (%s)</string>
     <string name="audioPlaying">Audio Playing</string>
     <string name="dialogManagement">Dialog Management</string>
     <string name="intentHandling">Intent Handling</string>
@@ -267,7 +267,8 @@
     <string name="serviceStatusLoadingText">Services are starting</string>
     <string name="serviceStatusRunningText">Services are running</string>
     <string name="serviceStatusWarningText">Services detected possible problems</string>
-    <string name="serviceStatusErrorText">Service error occured</string>
+    <string name="serviceStatusErrorText">Service error occurred</string>
+    <string name="testHttpConnection">Test Http Connection</string>
     <!-- not translatable -->
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>

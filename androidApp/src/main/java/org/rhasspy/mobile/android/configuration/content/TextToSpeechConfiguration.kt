@@ -12,11 +12,13 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
+import org.rhasspy.mobile.android.content.elements.translate
 import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.viewModels.configuration.TextToSpeechConfigurationViewModel
 
 
@@ -73,7 +75,7 @@ private fun TextToSpeechHTTP(viewModel: TextToSpeechConfigurationViewModel) {
             modifier = Modifier.testTag(TestTag.Endpoint),
             value = viewModel.textToSpeechHttpEndpoint.collectAsState().value,
             onValueChange = viewModel::updateTextToSpeechHttpEndpoint,
-            label = MR.strings.rhasspyTextToSpeechURL
+            label = translate(MR.strings.rhasspyTextToSpeechURL, HttpClientPath.TextToSpeech.path)
         )
 
     }
