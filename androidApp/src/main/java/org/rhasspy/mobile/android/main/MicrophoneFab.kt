@@ -8,7 +8,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
 import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -19,10 +18,10 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.content.elements.FloatingActionButton
+import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.FloatingActionButton
-import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
 /**

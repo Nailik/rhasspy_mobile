@@ -16,12 +16,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.content.EventStateCard
-import org.rhasspy.mobile.android.content.EventStateIcon
+import org.rhasspy.mobile.android.content.elements.FilledTonalButton
+import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.item.EventStateCard
+import org.rhasspy.mobile.android.content.item.EventStateIcon
 import org.rhasspy.mobile.android.navigation.BottomBarScreens
 import org.rhasspy.mobile.android.navigation.NavigationParams
-import org.rhasspy.mobile.android.utils.FilledTonalButton
-import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.middleware.EventState
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 

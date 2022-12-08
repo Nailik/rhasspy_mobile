@@ -14,10 +14,11 @@ import dev.icerock.moko.resources.StringResource
 import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.content.elements.*
+import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.settings.content.*
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.viewModels.SettingsScreenViewModel
 
 enum class SettingsScreens {

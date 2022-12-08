@@ -14,10 +14,15 @@ import androidx.lifecycle.Lifecycle
 import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.content.ComposableLifecycle
+import org.rhasspy.mobile.android.content.elements.Icon
+import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.elements.toText
+import org.rhasspy.mobile.android.content.list.ListElement
+import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.viewModels.settings.BackgroundServiceSettingsViewModel
 
 /**

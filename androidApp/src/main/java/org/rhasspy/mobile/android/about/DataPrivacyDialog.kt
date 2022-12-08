@@ -16,9 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.content.elements.HtmlText
+import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.HtmlText
-import org.rhasspy.mobile.android.utils.Text
 
 /**
  * button to open changelog dialog

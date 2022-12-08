@@ -15,11 +15,11 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
+import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
+import org.rhasspy.mobile.android.content.list.SwitchListItem
+import org.rhasspy.mobile.android.content.list.TextFieldListItem
+import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.FilledTonalButtonListItem
-import org.rhasspy.mobile.android.utils.SwitchListItem
-import org.rhasspy.mobile.android.utils.TextFieldListItem
-import org.rhasspy.mobile.android.utils.TextFieldListItemVisibility
 import org.rhasspy.mobile.viewModels.configuration.MqttConfigurationViewModel
 
 /**

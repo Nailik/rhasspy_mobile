@@ -16,10 +16,10 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.configuration.test.EventListItem
+import org.rhasspy.mobile.android.content.elements.EventListItem
+import org.rhasspy.mobile.android.content.elements.Icon
+import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.Icon
-import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.viewModels.configuration.IConfigurationViewModel
 
 @Composable

@@ -13,11 +13,11 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.combinedTestTag
+import org.rhasspy.mobile.android.content.elements.CustomDivider
+import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.list.ListElement
+import org.rhasspy.mobile.android.content.list.SliderListItem
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.CustomDivider
-import org.rhasspy.mobile.android.utils.ListElement
-import org.rhasspy.mobile.android.utils.SliderListItem
-import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
 

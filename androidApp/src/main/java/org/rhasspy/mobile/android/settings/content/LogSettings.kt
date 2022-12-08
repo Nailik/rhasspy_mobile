@@ -7,11 +7,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
+import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.RadioButtonsEnumSelection
-import org.rhasspy.mobile.android.utils.SwitchListItem
 import org.rhasspy.mobile.viewModels.settings.LogSettingsViewModel
 
 /**

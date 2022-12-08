@@ -21,11 +21,11 @@ import com.mikepenz.aboutlibraries.entity.License
 import com.mikepenz.aboutlibraries.util.withContext
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.content.elements.CustomDivider
+import org.rhasspy.mobile.android.content.elements.HtmlText
+import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.CustomDivider
-import org.rhasspy.mobile.android.utils.HtmlText
-import org.rhasspy.mobile.android.utils.ListElement
-import org.rhasspy.mobile.android.utils.Text
 
 /**
  * displays libraries list with dialog when clicked on it

@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.configuration.test
+package org.rhasspy.mobile.android.content.elements
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,10 +8,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.content.EventStateIcon
+import org.rhasspy.mobile.android.content.item.EventStateIcon
 import org.rhasspy.mobile.android.theme.warn
-import org.rhasspy.mobile.android.utils.Text
-import org.rhasspy.mobile.android.utils.translate
 import org.rhasspy.mobile.middleware.Event
 import org.rhasspy.mobile.middleware.EventState
 import org.rhasspy.mobile.middleware.name

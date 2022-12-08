@@ -17,11 +17,11 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.addConfigurationScreens
+import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.settings.addSettingsScreen
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.android.theme.getIsDarkTheme
-import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.viewModels.settings.LogSettingsViewModel
 
 /**

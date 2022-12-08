@@ -13,9 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.content.elements.Icon
+import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.utils.Icon
-import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 
 /**

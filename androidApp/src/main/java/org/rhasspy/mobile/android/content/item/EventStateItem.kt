@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.content
+package org.rhasspy.mobile.android.content.item
 
 import androidx.compose.animation.core.*
 import androidx.compose.material.icons.Icons
@@ -13,9 +13,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.theme.on_color_warn
 import org.rhasspy.mobile.android.theme.warn
-import org.rhasspy.mobile.android.utils.Icon
 import org.rhasspy.mobile.middleware.EventState
 
 @Composable

@@ -26,12 +26,12 @@ import androidx.navigation.navArgument
 import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.configuration.ConfigurationScreen
+import org.rhasspy.mobile.android.content.elements.Icon
+import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.item.NavigationItem
 import org.rhasspy.mobile.android.navigation.BottomBarScreens
 import org.rhasspy.mobile.android.navigation.NavigationParams
 import org.rhasspy.mobile.android.settings.SettingsScreen
-import org.rhasspy.mobile.android.utils.Icon
-import org.rhasspy.mobile.android.utils.NavigationItem
-import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
 val LocalMainNavController = compositionLocalOf<NavController> {

@@ -16,11 +16,11 @@ import androidx.compose.ui.unit.dp
 import co.touchlab.kermit.Severity
 import org.koin.androidx.compose.getViewModel
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.content.elements.CustomDivider
+import org.rhasspy.mobile.android.content.elements.Icon
+import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.theme.*
-import org.rhasspy.mobile.android.utils.CustomDivider
-import org.rhasspy.mobile.android.utils.Icon
-import org.rhasspy.mobile.android.utils.ListElement
-import org.rhasspy.mobile.android.utils.Text
 import org.rhasspy.mobile.viewModels.LogScreenViewModel
 
 /**
