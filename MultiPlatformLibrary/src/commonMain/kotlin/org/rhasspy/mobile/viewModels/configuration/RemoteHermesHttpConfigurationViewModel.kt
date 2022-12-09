@@ -8,9 +8,7 @@ import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
-import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.viewModels.configuration.test.RemoteHermesHttpConfigurationTest
 
@@ -19,10 +17,10 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     override val testRunner by inject<RemoteHermesHttpConfigurationTest>()
 
     //unsaved data
-    private val _httpServerEndpointHost = MutableStateFlow(ConfigurationSettings.httpServerEndpointHost.value)
-    private val _httpServerEndpointPort = MutableStateFlow(ConfigurationSettings.httpServerEndpointPort.value)
-    private val _httpServerEndpointPortText = MutableStateFlow(ConfigurationSettings.httpServerEndpointPort.value.toString())
-    private val _isHttpSSLVerificationDisabled = MutableStateFlow(ConfigurationSettings.isHttpSSLVerificationDisabled.value)
+    private val _httpServerEndpointHost = MutableStateFlow(ConfigurationSettings.httpClientServerEndpointHost.value)
+    private val _httpServerEndpointPort = MutableStateFlow(ConfigurationSettings.httpClientServerEndpointPort.value)
+    private val _httpServerEndpointPortText = MutableStateFlow(ConfigurationSettings.httpClientServerEndpointPort.value.toString())
+    private val _isHttpSSLVerificationDisabled = MutableStateFlow(ConfigurationSettings.isHttpClientSSLVerificationDisabled.value)
 
     //unsaved ui data
     val httpServerEndpointHost = _httpServerEndpointHost.readOnly
@@ -32,9 +30,9 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     override val isTestingEnabled = _httpServerEndpointHost.mapReadonlyState { it.isNotBlank() }
 
     override val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(_httpServerEndpointHost, ConfigurationSettings.httpServerEndpointHost.data),
-        combineStateNotEquals(_httpServerEndpointPort, ConfigurationSettings.httpServerEndpointPort.data),
-        combineStateNotEquals(_isHttpSSLVerificationDisabled, ConfigurationSettings.isHttpSSLVerificationDisabled.data)
+        combineStateNotEquals(_httpServerEndpointHost, ConfigurationSettings.httpClientServerEndpointHost.data),
+        combineStateNotEquals(_httpServerEndpointPort, ConfigurationSettings.httpClientServerEndpointPort.data),
+        combineStateNotEquals(_isHttpSSLVerificationDisabled, ConfigurationSettings.isHttpClientSSLVerificationDisabled.data)
     )
 
     //set new http server endpoint host
@@ -58,18 +56,18 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
      * save data configuration
      */
     override fun onSave() {
-        ConfigurationSettings.httpServerEndpointHost.value = _httpServerEndpointHost.value
-        ConfigurationSettings.httpServerEndpointPort.value = _httpServerEndpointPort.value
-        ConfigurationSettings.isHttpSSLVerificationDisabled.value = _isHttpSSLVerificationDisabled.value
+        ConfigurationSettings.httpClientServerEndpointHost.value = _httpServerEndpointHost.value
+        ConfigurationSettings.httpClientServerEndpointPort.value = _httpServerEndpointPort.value
+        ConfigurationSettings.isHttpClientSSLVerificationDisabled.value = _isHttpSSLVerificationDisabled.value
     }
 
     /**
      * undo all changes
      */
     override fun discard() {
-        _httpServerEndpointHost.value = ConfigurationSettings.httpServerEndpointHost.value
-        _httpServerEndpointPort.value = ConfigurationSettings.httpServerEndpointPort.value
-        _isHttpSSLVerificationDisabled.value = ConfigurationSettings.isHttpSSLVerificationDisabled.value
+        _httpServerEndpointHost.value = ConfigurationSettings.httpClientServerEndpointHost.value
+        _httpServerEndpointPort.value = ConfigurationSettings.httpClientServerEndpointPort.value
+        _isHttpSSLVerificationDisabled.value = ConfigurationSettings.isHttpClientSSLVerificationDisabled.value
     }
 
     override fun initializeTestParams() {

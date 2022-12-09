@@ -5,9 +5,9 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
 
 data class HttpClientServiceParams(
     val siteId: String = ConfigurationSettings.siteId.value,
-    val isHttpSSLVerificationDisabled: Boolean = ConfigurationSettings.isHttpServerSSLEnabled.value,
-    val httpServerEndpointHost: String = ConfigurationSettings.httpServerEndpointHost.value,
-    val httpServerEndpointPort: Int = ConfigurationSettings.httpServerEndpointPort.value,
+    val isHttpSSLVerificationDisabled: Boolean = ConfigurationSettings.isHttpClientSSLVerificationDisabled.value,
+    val httpServerEndpointHost: String = ConfigurationSettings.httpClientServerEndpointHost.value,
+    val httpServerEndpointPort: Int = ConfigurationSettings.httpClientServerEndpointPort.value,
     val isUseCustomSpeechToTextHttpEndpoint: Boolean = ConfigurationSettings.isUseCustomSpeechToTextHttpEndpoint.value,
     val speechToTextHttpEndpoint: String = ConfigurationSettings.speechToTextHttpEndpoint.value,
     val isUseCustomIntentRecognitionHttpEndpoint: Boolean = ConfigurationSettings.isUseCustomIntentRecognitionHttpEndpoint.value,

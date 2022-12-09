@@ -85,7 +85,7 @@ fun ConfigurationScreenItemContent(
                 ConfigurationScreenTest(
                     viewModel = viewModel,
                     content = testContent,
-                    onOpenPage = viewModel::runTest
+                    onOpenPage = viewModel::onOpenTestPage
                 )
             }
         }

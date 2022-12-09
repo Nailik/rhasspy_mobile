@@ -53,6 +53,10 @@ enum class SettingsEnum {
     HttpServerEnabled,
     HttpServerPort,
     HttpServerSSL,
+    HttpServerSSLKeyStoreFile,
+    HttpServerSSLKeyStorePassword,
+    HttpServerSSLKeyAlias,
+    HttpServerSSLKeyPassword,
 
     MQTT_ENABLED,
     MQTTHost,

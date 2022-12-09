@@ -13,4 +13,6 @@ expect open class NativeApplication() {
     val currentlyAppInBackground: MutableStateFlow<Boolean>
     val isAppInBackground: StateFlow<Boolean>
 
+    //TODO functions to get file for sounds, wakeword, keystore ... (subfolders)
+
 }

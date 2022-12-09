@@ -19,6 +19,7 @@ import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.viewModels.configuration.RemoteHermesHttpConfigurationViewModel
 import org.rhasspy.mobile.viewModels.configuration.WebServerConfigurationViewModel
 
 /**
@@ -34,7 +35,8 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.WebServerConfiguration),
         title = MR.strings.webserver,
-        viewModel = viewModel
+        viewModel = viewModel,
+        testContent = { TestContent(viewModel) }
     ) {
 
         item {
@@ -107,4 +109,14 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
 
     }
 
+}
+
+@Composable
+private fun TestContent(
+    viewModel: WebServerConfigurationViewModel
+) {
+    FilledTonalButtonListItem(
+        text = MR.strings.start,
+        onClick = viewModel::runTest
+    )
 }
