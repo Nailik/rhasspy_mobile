@@ -21,7 +21,9 @@ import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.item.EventStateCard
 import org.rhasspy.mobile.android.content.item.EventStateIcon
+import org.rhasspy.mobile.android.main.LocalConfigurationNavController
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.android.theme.SetSystemColor
 import org.rhasspy.mobile.middleware.EventState
 import org.rhasspy.mobile.viewModels.configuration.IConfigurationViewModel
 
@@ -31,6 +33,7 @@ fun ConfigurationScreenTest(
     content: (@Composable () -> Unit)?,
     onOpenPage: () -> Unit
 ) {
+    SetSystemColor(1.dp)
 
     val navController = LocalConfigurationNavController.current
 
@@ -96,14 +99,7 @@ private fun ConfigurationScreenTestList(
             modifier = Modifier.weight(1f)
         ) {
             stickyHeader {
-                Box(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp))
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                ) {
-                    ServiceState(viewModel.serviceState.collectAsState().value)
-                }
+                ServiceState(viewModel.serviceState.collectAsState().value)
             }
 
             items(eventsList) { item ->
@@ -174,20 +170,26 @@ private fun AppBar(
 }
 
 @Composable
-fun ServiceState(serviceState: EventState) {
-
-    EventStateCard(
-        eventState = serviceState,
-        onClick = null
+private fun ServiceState(serviceState: EventState) {
+    Box(
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp))
+            .padding(16.dp)
+            .fillMaxWidth(),
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        EventStateCard(
+            eventState = serviceState,
+            onClick = null
         ) {
-            EventStateIcon(serviceState)
-            ServiceStateText(serviceState)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                EventStateIcon(serviceState)
+                ServiceStateText(serviceState)
+            }
         }
     }
 }

@@ -41,31 +41,35 @@ fun MqttConfigurationContent(viewModel: MqttConfigurationViewModel = getViewMode
         viewModel = viewModel
     ) {
 
-        //toggle to turn mqtt enabled on or off
-        SwitchListItem(
-            text = MR.strings.externalMQTT,
-            modifier = Modifier.testTag(TestTag.MqttSwitch),
-            isChecked = viewModel.isMqttEnabled.collectAsState().value,
-            onCheckedChange = viewModel::toggleMqttEnabled
-        )
+        item {
+            //toggle to turn mqtt enabled on or off
+            SwitchListItem(
+                text = MR.strings.externalMQTT,
+                modifier = Modifier.testTag(TestTag.MqttSwitch),
+                isChecked = viewModel.isMqttEnabled.collectAsState().value,
+                onCheckedChange = viewModel::toggleMqttEnabled
+            )
+        }
 
-        //visibility of mqtt settings
-        AnimatedVisibility(
-            enter = expandVertically(),
-            exit = shrinkVertically(),
-            visible = viewModel.isMqttSettingsVisible.collectAsState().value
-        ) {
+        item {
+            //visibility of mqtt settings
+            AnimatedVisibility(
+                enter = expandVertically(),
+                exit = shrinkVertically(),
+                visible = viewModel.isMqttSettingsVisible.collectAsState().value
+            ) {
 
-            Column {
+                Column {
 
-                MqttConnectionSettings(viewModel)
+                    MqttConnectionSettings(viewModel)
 
-                MqttSSL(viewModel)
+                    MqttSSL(viewModel)
 
-                MqttConnectionTiming(viewModel)
+                    MqttConnectionTiming(viewModel)
+
+                }
 
             }
-
         }
 
     }

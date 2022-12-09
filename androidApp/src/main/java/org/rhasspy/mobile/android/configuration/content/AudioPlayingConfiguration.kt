@@ -38,22 +38,23 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
         testContent = { TestContent(viewModel) }
     ) {
 
-        val audioPlayingOption by viewModel.audioPlayingOption.collectAsState()
+        item {
+            val audioPlayingOption by viewModel.audioPlayingOption.collectAsState()
+            //radio buttons list of available values
+            RadioButtonsEnumSelection(
+                modifier = Modifier.testTag(TestTag.AudioPlayingOptions),
+                selected = audioPlayingOption,
+                onSelect = viewModel::selectAudioPlayingOption,
+                values = viewModel.audioPlayingOptionsList
+            ) {
 
-        //radio buttons list of available values
-        RadioButtonsEnumSelection(
-            modifier = Modifier.testTag(TestTag.AudioPlayingOptions),
-            selected = audioPlayingOption,
-            onSelect = viewModel::selectAudioPlayingOption,
-            values = viewModel.audioPlayingOptionsList
-        ) {
+                if (viewModel.isAudioPlayingLocalSettingsVisible(it)) {
+                    LocalConfigurationContent(viewModel)
+                }
 
-            if (viewModel.isAudioPlayingLocalSettingsVisible(it)) {
-                LocalConfigurationContent(viewModel)
-            }
-
-            if (viewModel.isAudioPlayingHttpEndpointSettingsVisible(it)) {
-                HttpEndpointConfigurationContent(viewModel)
+                if (viewModel.isAudioPlayingHttpEndpointSettingsVisible(it)) {
+                    HttpEndpointConfigurationContent(viewModel)
+                }
             }
         }
     }

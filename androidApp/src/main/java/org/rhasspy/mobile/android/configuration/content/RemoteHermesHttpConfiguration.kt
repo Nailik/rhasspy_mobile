@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.android.configuration.content
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -33,31 +32,37 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
         testContent = { TestContent(viewModel) }
     ) {
 
-        //base http endpoint
-        TextFieldListItem(
-            label = MR.strings.baseHost,
-            modifier = Modifier.testTag(TestTag.Host),
-            value = viewModel.httpServerEndpointHost.collectAsState().value,
-            onValueChange = viewModel::updateHttpServerEndpointHost,
-        )
+        item {
+            //base http endpoint
+            TextFieldListItem(
+                label = MR.strings.baseHost,
+                modifier = Modifier.testTag(TestTag.Host),
+                value = viewModel.httpServerEndpointHost.collectAsState().value,
+                onValueChange = viewModel::updateHttpServerEndpointHost,
+            )
+        }
 
-        //port
-        TextFieldListItem(
-            label = MR.strings.port,
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            modifier = Modifier.testTag(TestTag.Port),
-            value = viewModel.httpServerEndpointPort.collectAsState().value,
-            onValueChange = viewModel::updateHttpServerEndpointPort,
-        )
+        item {
+            //port
+            TextFieldListItem(
+                label = MR.strings.port,
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                modifier = Modifier.testTag(TestTag.Port),
+                value = viewModel.httpServerEndpointPort.collectAsState().value,
+                onValueChange = viewModel::updateHttpServerEndpointPort,
+            )
+        }
 
-        //switch to toggle validation of SSL certificate
-        SwitchListItem(
-            text = MR.strings.disableSSLValidation,
-            modifier = Modifier.testTag(TestTag.SSLSwitch),
-            secondaryText = MR.strings.disableSSLValidationInformation,
-            isChecked = viewModel.isHttpSSLVerificationDisabled.collectAsState().value,
-            onCheckedChange = viewModel::toggleHttpSSLVerificationDisabled
-        )
+        item {
+            //switch to toggle validation of SSL certificate
+            SwitchListItem(
+                text = MR.strings.disableSSLValidation,
+                modifier = Modifier.testTag(TestTag.SSLSwitch),
+                secondaryText = MR.strings.disableSSLValidationInformation,
+                isChecked = viewModel.isHttpSSLVerificationDisabled.collectAsState().value,
+                onCheckedChange = viewModel::toggleHttpSSLVerificationDisabled
+            )
+        }
 
     }
 

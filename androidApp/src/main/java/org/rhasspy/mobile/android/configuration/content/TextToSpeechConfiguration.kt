@@ -38,18 +38,20 @@ fun TextToSpeechConfigurationContent(viewModel: TextToSpeechConfigurationViewMod
         testContent = { TestContent(viewModel) }
     ) {
 
-        //drop down to select text to speech
-        RadioButtonsEnumSelection(
-            modifier = Modifier.testTag(TestTag.TextToSpeechOptions),
-            selected = viewModel.textToSpeechOption.collectAsState().value,
-            onSelect = viewModel::selectTextToSpeechOption,
-            values = viewModel.textToSpeechOptions
-        ) {
+        item {
+            //drop down to select text to speech
+            RadioButtonsEnumSelection(
+                modifier = Modifier.testTag(TestTag.TextToSpeechOptions),
+                selected = viewModel.textToSpeechOption.collectAsState().value,
+                onSelect = viewModel::selectTextToSpeechOption,
+                values = viewModel.textToSpeechOptions
+            ) {
 
-            if (viewModel.isTextToSpeechHttpSettingsVisible(it)) {
-                TextToSpeechHTTP(viewModel)
+                if (viewModel.isTextToSpeechHttpSettingsVisible(it)) {
+                    TextToSpeechHTTP(viewModel)
+                }
+
             }
-
         }
 
     }

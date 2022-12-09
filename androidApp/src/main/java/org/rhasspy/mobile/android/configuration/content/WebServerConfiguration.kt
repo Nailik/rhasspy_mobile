@@ -37,36 +37,40 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
         viewModel = viewModel
     ) {
 
-        //switch to enable http server
-        SwitchListItem(
-            text = MR.strings.enableHTTPApi,
-            modifier = Modifier.testTag(TestTag.ServerSwitch),
-            isChecked = viewModel.isHttpServerEnabled.collectAsState().value,
-            onCheckedChange = viewModel::toggleHttpServerEnabled
-        )
+        item {
+            //switch to enable http server
+            SwitchListItem(
+                text = MR.strings.enableHTTPApi,
+                modifier = Modifier.testTag(TestTag.ServerSwitch),
+                isChecked = viewModel.isHttpServerEnabled.collectAsState().value,
+                onCheckedChange = viewModel::toggleHttpServerEnabled
+            )
+        }
 
-        //visibility of server settings
-        AnimatedVisibility(
-            enter = expandVertically(),
-            exit = shrinkVertically(),
-            visible = viewModel.isHttpServerSettingsVisible.collectAsState().value
-        ) {
+        item {
+            //visibility of server settings
+            AnimatedVisibility(
+                enter = expandVertically(),
+                exit = shrinkVertically(),
+                visible = viewModel.isHttpServerSettingsVisible.collectAsState().value
+            ) {
 
-            Column {
+                Column {
 
-                //port of server
-                TextFieldListItem(
-                    label = MR.strings.port,
-                    modifier = Modifier.testTag(TestTag.Port),
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    value = viewModel.httpServerPortText.collectAsState().value,
-                    onValueChange = viewModel::changeHttpServerPort
-                )
+                    //port of server
+                    TextFieldListItem(
+                        label = MR.strings.port,
+                        modifier = Modifier.testTag(TestTag.Port),
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                        value = viewModel.httpServerPortText.collectAsState().value,
+                        onValueChange = viewModel::changeHttpServerPort
+                    )
 
-                WebserverSSL(viewModel)
+                    WebserverSSL(viewModel)
+
+                }
 
             }
-
         }
     }
 

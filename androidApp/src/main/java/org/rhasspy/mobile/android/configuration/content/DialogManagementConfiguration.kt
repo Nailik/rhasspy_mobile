@@ -26,13 +26,15 @@ fun DialogManagementConfigurationContent(viewModel: DialogManagementConfiguratio
         viewModel = viewModel
     ) {
 
-        //drop down to select option
-        RadioButtonsEnumSelection(
-            modifier = Modifier.testTag(TestTag.DialogManagementOptions),
-            selected = viewModel.dialogManagementOption.collectAsState().value,
-            onSelect = viewModel::selectDialogManagementOption,
-            values = viewModel.dialogManagementOptionsList
-        )
+        item {
+            //drop down to select option
+            RadioButtonsEnumSelection(
+                modifier = Modifier.testTag(TestTag.DialogManagementOptions),
+                selected = viewModel.dialogManagementOption.collectAsState().value,
+                onSelect = viewModel::selectDialogManagementOption,
+                values = viewModel.dialogManagementOptionsList
+            )
+        }
 
     }
 

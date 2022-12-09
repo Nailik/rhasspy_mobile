@@ -37,22 +37,24 @@ fun IntentHandlingConfigurationContent(viewModel: IntentHandlingConfigurationVie
         testContent = { TestContent(viewModel) }
     ) {
 
-        //drop down to select option
-        RadioButtonsEnumSelection(
-            modifier = Modifier.testTag(TestTag.IntentHandlingOptions),
-            selected = viewModel.intentHandlingOption.collectAsState().value,
-            onSelect = viewModel::selectIntentHandlingOption,
-            values = viewModel.intentHandlingOptionsList
-        ) {
-            if (viewModel.isRemoteHttpSettingsVisible(it)) {
-                //http endpoint
-                RemoteHTTPOption(viewModel)
+        item {
+            //drop down to select option
+            RadioButtonsEnumSelection(
+                modifier = Modifier.testTag(TestTag.IntentHandlingOptions),
+                selected = viewModel.intentHandlingOption.collectAsState().value,
+                onSelect = viewModel::selectIntentHandlingOption,
+                values = viewModel.intentHandlingOptionsList
+            ) {
+                if (viewModel.isRemoteHttpSettingsVisible(it)) {
+                    //http endpoint
+                    RemoteHTTPOption(viewModel)
             }
 
             if (viewModel.isHomeAssistantSettingsVisible(it)) {
                 //home assistant settings
                 HomeAssistantOption(viewModel)
             }
+        }
         }
     }
 

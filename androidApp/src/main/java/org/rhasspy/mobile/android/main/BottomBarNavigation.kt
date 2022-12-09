@@ -34,6 +34,10 @@ import org.rhasspy.mobile.android.navigation.NavigationParams
 import org.rhasspy.mobile.android.settings.SettingsScreen
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
+val LocalConfigurationNavController = compositionLocalOf<NavController> {
+    error("No NavController provided")
+}
+
 val LocalMainNavController = compositionLocalOf<NavController> {
     error("No NavController provided")
 }

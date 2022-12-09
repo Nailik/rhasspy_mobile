@@ -23,6 +23,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.assertTextEquals
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.viewModels.configuration.RemoteHermesHttpConfigurationViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -42,7 +43,6 @@ class ConfigurationScreenItemContentTest {
 
     private val hasUnsavedChanges = MutableStateFlow(false)
     private var onSave = false
-    private var onTest = false
     private var onDiscard = false
 
     private val btnStartTest = "btnStartTest"
@@ -73,10 +73,7 @@ class ConfigurationScreenItemContentTest {
                         ConfigurationScreenItemContent(
                             modifier = Modifier,
                             title = toolbarTitle,
-                            hasUnsavedChanges = hasUnsavedChanges,
-                            onSave = { onSave = true },
-                            onTest = { onTest = true },
-                            onDiscard = { onDiscard = true }
+                            viewModel = RemoteHermesHttpConfigurationViewModel()
                         ) {
 
                         }
