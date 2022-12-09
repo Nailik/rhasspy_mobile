@@ -243,6 +243,7 @@ class HttpClientService : IService() {
 
                 val response = request.body<T>()
 
+                _currentState.value = EventState.Success()
                 postEvent.success()
                 return ServiceResponse.Success(response)
 

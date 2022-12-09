@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.android.configuration
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -19,7 +19,10 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.EventListItem
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.item.EventStateCard
+import org.rhasspy.mobile.android.content.item.EventStateIcon
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.middleware.EventState
 import org.rhasspy.mobile.viewModels.configuration.IConfigurationViewModel
 
 @Composable
@@ -40,23 +43,25 @@ fun ConfigurationScreenTest(
         }
     }
 
-    Surface(tonalElevation = 3.dp) {
-        Scaffold(
-            topBar = {
-                AppBar(
-                    viewModel = viewModel,
-                    title = MR.strings.test,
-                    onBackClick = navController::popBackStack
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = MR.strings.stop,
-                    )
-                }
-            },
-        ) { paddingValues ->
+    Scaffold(
+        topBar = {
+            AppBar(
+                viewModel = viewModel,
+                title = MR.strings.test,
+                onBackClick = navController::popBackStack
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = MR.strings.stop,
+                )
+            }
+        },
+    ) { paddingValues ->
+        Surface(
+            modifier = Modifier.padding(paddingValues),
+            tonalElevation = 3.dp
+        ) {
             ConfigurationScreenTestList(
-                modifier = Modifier.padding(paddingValues),
                 viewModel = viewModel,
                 content = content
             )
@@ -69,7 +74,7 @@ fun ConfigurationScreenTest(
  */
 @Composable
 private fun ConfigurationScreenTestList(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     viewModel: IConfigurationViewModel,
     content: (@Composable () -> Unit)?
 ) {
@@ -90,6 +95,17 @@ private fun ConfigurationScreenTestList(
             state = scrollState,
             modifier = Modifier.weight(1f)
         ) {
+            stickyHeader {
+                Box(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp))
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                ) {
+                    ServiceState(viewModel.serviceState.collectAsState().value)
+                }
+            }
+
             items(eventsList) { item ->
                 EventListItem(item)
             }
@@ -119,8 +135,8 @@ private fun AppBar(
     onBackClick: () -> Unit,
     icon: @Composable () -> Unit
 ) {
-
     TopAppBar(
+        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)),
         title = {
             Text(
                 resource = title,
@@ -155,4 +171,39 @@ private fun AppBar(
             }
         }
     )
+}
+
+@Composable
+fun ServiceState(serviceState: EventState) {
+
+    EventStateCard(
+        eventState = serviceState,
+        onClick = null
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            EventStateIcon(serviceState)
+            ServiceStateText(serviceState)
+        }
+    }
+}
+
+@Composable
+private fun ServiceStateText(serviceState: EventState) {
+
+    Text(
+        resource = when (serviceState) {
+            is EventState.Pending -> MR.strings.pending
+            is EventState.Loading -> MR.strings.loading
+            is EventState.Success -> MR.strings.success
+            is EventState.Warning -> MR.strings.warning
+            is EventState.Error -> MR.strings.error
+            is EventState.Disabled -> MR.strings.disabled
+        }
+    )
+
 }

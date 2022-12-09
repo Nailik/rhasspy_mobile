@@ -9,7 +9,9 @@ import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.data.DialogManagementOptions
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.dialogManager.DialogManagerLocalService
 import org.rhasspy.mobile.services.dialogManager.DialogManagerServiceParams
+import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.viewModels.configuration.test.DialogManagementConfigurationTest
 

@@ -13,6 +13,7 @@ import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 
 class TextToSpeechConfigurationTest : IConfigurationTest() {
 
+    override val serviceState get() = get<RhasspyActionsService>().currentState
     fun startTest(text: String) {
         testScope.launch {
             //await for mqtt

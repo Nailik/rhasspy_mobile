@@ -5,6 +5,7 @@ import org.rhasspy.mobile.services.hotword.HotWordService
 
 class WakeWordConfigurationTest : IConfigurationTest() {
 
+    override val serviceState get() = get<HotWordService>().currentState
     fun runTest() {
         get<HotWordService>().startDetection()
     }

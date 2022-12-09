@@ -10,6 +10,7 @@ abstract class IService : KoinComponent, Closeable {
 
     protected val _currentState = MutableStateFlow<EventState>(EventState.Pending)
     val currentState = _currentState.readOnly
+
     override fun close() {
         onClose()
     }

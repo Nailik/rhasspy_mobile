@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.android.content.item
 
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.outlined.*
@@ -124,10 +125,11 @@ fun EventStateContent(
 @Composable
 fun EventStateCard(
     eventState: EventState,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     Card(
+        modifier = Modifier.let { onClick?.let { it1 -> it.clickable(onClick = it1) } ?: it },
         colors = CardDefaults.outlinedCardColors(
             containerColor = when (eventState) {
                 is EventState.Pending -> MaterialTheme.colorScheme.surfaceVariant
@@ -138,7 +140,6 @@ fun EventStateCard(
                 is EventState.Disabled -> MaterialTheme.colorScheme.surface.copy(alpha = 0.38f)
             }
         ),
-        onClick = onClick,
         content = {
             EventStateContent(
                 eventState = eventState,

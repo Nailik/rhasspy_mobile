@@ -16,6 +16,7 @@ import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 
 class SpeechToTextConfigurationTest : IConfigurationTest() {
 
+    override val serviceState get() = get<RhasspyActionsService>().currentState
     private val _isRecording = MutableStateFlow(false)
     val isRecording = _isRecording.readOnly
 
