@@ -38,18 +38,20 @@ fun IntentRecognitionConfigurationContent(viewModel: IntentRecognitionConfigurat
         testContent = { TestContent(viewModel) }
     ) {
 
-        //drop down to select intent recognition option
-        RadioButtonsEnumSelection(
-            modifier = Modifier.testTag(TestTag.IntentRecognitionOptions),
-            selected = viewModel.intentRecognitionOption.collectAsState().value,
-            onSelect = viewModel::selectIntentRecognitionOption,
-            values = viewModel.intentRecognitionOptionsList
-        ) {
+        item {
+            //drop down to select intent recognition option
+            RadioButtonsEnumSelection(
+                modifier = Modifier.testTag(TestTag.IntentRecognitionOptions),
+                selected = viewModel.intentRecognitionOption.collectAsState().value,
+                onSelect = viewModel::selectIntentRecognitionOption,
+                values = viewModel.intentRecognitionOptionsList
+            ) {
 
-            if (viewModel.isIntentRecognitionHttpSettingsVisible(it)) {
-                IntentRecognitionHTTP(viewModel)
+                if (viewModel.isIntentRecognitionHttpSettingsVisible(it)) {
+                    IntentRecognitionHTTP(viewModel)
+                }
+
             }
-
         }
     }
 }

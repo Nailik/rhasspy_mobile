@@ -16,7 +16,7 @@ class ConfigurationScreenViewModel : ViewModel(), KoinComponent {
     val isHttpServerEnabled = ConfigurationSettings.isHttpServerEnabled.data
     val isHttpServerHasError = MutableStateFlow(EventState.Loading).readOnly //TODO
 
-    val isHttpSSLVerificationEnabled = ConfigurationSettings.isHttpSSLVerificationDisabled.data
+    val isHttpSSLVerificationEnabled = ConfigurationSettings.isHttpClientSSLVerificationDisabled.data
     val isHttpClientHasError = MutableStateFlow(EventState.Error()).readOnly //TODO
 
     val isMQTTConnected get() = get<MqttService>().isConnected

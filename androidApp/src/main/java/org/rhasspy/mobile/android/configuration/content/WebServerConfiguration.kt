@@ -19,6 +19,7 @@ import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.viewModels.configuration.RemoteHermesHttpConfigurationViewModel
 import org.rhasspy.mobile.viewModels.configuration.WebServerConfigurationViewModel
 
 /**
@@ -34,39 +35,44 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.WebServerConfiguration),
         title = MR.strings.webserver,
-        viewModel = viewModel
+        viewModel = viewModel,
+        testContent = { TestContent(viewModel) }
     ) {
 
-        //switch to enable http server
-        SwitchListItem(
-            text = MR.strings.enableHTTPApi,
-            modifier = Modifier.testTag(TestTag.ServerSwitch),
-            isChecked = viewModel.isHttpServerEnabled.collectAsState().value,
-            onCheckedChange = viewModel::toggleHttpServerEnabled
-        )
+        item {
+            //switch to enable http server
+            SwitchListItem(
+                text = MR.strings.enableHTTPApi,
+                modifier = Modifier.testTag(TestTag.ServerSwitch),
+                isChecked = viewModel.isHttpServerEnabled.collectAsState().value,
+                onCheckedChange = viewModel::toggleHttpServerEnabled
+            )
+        }
 
-        //visibility of server settings
-        AnimatedVisibility(
-            enter = expandVertically(),
-            exit = shrinkVertically(),
-            visible = viewModel.isHttpServerSettingsVisible.collectAsState().value
-        ) {
+        item {
+            //visibility of server settings
+            AnimatedVisibility(
+                enter = expandVertically(),
+                exit = shrinkVertically(),
+                visible = viewModel.isHttpServerSettingsVisible.collectAsState().value
+            ) {
 
-            Column {
+                Column {
 
-                //port of server
-                TextFieldListItem(
-                    label = MR.strings.port,
-                    modifier = Modifier.testTag(TestTag.Port),
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    value = viewModel.httpServerPortText.collectAsState().value,
-                    onValueChange = viewModel::changeHttpServerPort
-                )
+                    //port of server
+                    TextFieldListItem(
+                        label = MR.strings.port,
+                        modifier = Modifier.testTag(TestTag.Port),
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                        value = viewModel.httpServerPortText.collectAsState().value,
+                        onValueChange = viewModel::changeHttpServerPort
+                    )
 
-                WebserverSSL(viewModel)
+                    WebserverSSL(viewModel)
+
+                }
 
             }
-
         }
     }
 
@@ -103,4 +109,14 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
 
     }
 
+}
+
+@Composable
+private fun TestContent(
+    viewModel: WebServerConfigurationViewModel
+) {
+    FilledTonalButtonListItem(
+        text = MR.strings.start,
+        onClick = viewModel::runTest
+    )
 }

@@ -3,9 +3,12 @@ package org.rhasspy.mobile.android.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.rhasspy.mobile.data.ThemeOptions
@@ -27,6 +30,24 @@ fun AppTheme(content: @Composable () -> Unit) {
     systemUiController.setStatusBarColor(colorScheme.background, darkIcons = !isDarkTheme)
 
     MaterialTheme(colorScheme = colorScheme, content = content)
+}
+
+@Composable
+fun SetSystemColor(elevation: Dp) {
+    val isDarkTheme = getIsDarkTheme()
+    val systemUiController = rememberSystemUiController()
+    val color = MaterialTheme.colorScheme.surfaceColorAtElevation(elevation)
+
+    systemUiController.setSystemBarsColor(MaterialTheme.colorScheme.background, darkIcons = !isDarkTheme)
+    systemUiController.setNavigationBarColor(MaterialTheme.colorScheme.background, darkIcons = !isDarkTheme)
+    systemUiController.setStatusBarColor(MaterialTheme.colorScheme.background, darkIcons = !isDarkTheme)
+
+    LaunchedEffect(Unit) {
+        systemUiController.setSystemBarsColor(color, darkIcons = !isDarkTheme)
+        systemUiController.setNavigationBarColor(color, darkIcons = !isDarkTheme)
+        systemUiController.setStatusBarColor(color, darkIcons = !isDarkTheme)
+    }
+
 }
 
 /**

@@ -9,7 +9,6 @@ import io.ktor.client.request.*
 import io.ktor.client.utils.*
 import io.ktor.http.*
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.IntentHandlingOptions
 import org.rhasspy.mobile.middleware.ErrorType.HttpClientServiceErrorType
@@ -19,7 +18,6 @@ import org.rhasspy.mobile.middleware.EventType
 import org.rhasspy.mobile.middleware.EventType.HttpClientServiceEventType.*
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.nativeutils.configureEngine
-import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceResponse
 

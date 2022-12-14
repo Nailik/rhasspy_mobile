@@ -1,5 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
+import co.touchlab.faktory.crashlyticsLinkerConfig
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
@@ -64,16 +65,13 @@ kotlin {
                 implementation(Ktor.plugins.network)
                 implementation(Ktor2.Server.core)
                 implementation(Ktor2.Server.cors)
-                implementation(Ktor2.Server.dataConversion)
                 implementation(Ktor2.Server.cio)
+                implementation(Ktor2.Server.dataConversion)
                 implementation(Ktor2.Client.cio)
+                implementation(Ktor.Server.statusPages)
+                implementation(Ktor.Plugins.network)
                 implementation(Benasher.uuid)
                 implementation(Koin.core)
-                implementation(Ktor.Client.cio)
-                implementation(Ktor.Server.core)
-                implementation(Ktor.Server.cio)
-                implementation(Ktor.Server.statusPages)
-                implementation(Ktor.plugins.network)
             }
         }
         val commonTest by getting {
@@ -90,15 +88,17 @@ kotlin {
                 implementation(AndroidX.multidex)
                 implementation(AndroidX.window)
                 implementation(AndroidX.activity)
+                implementation(AndroidX.documentFile)
                 implementation(AndroidX.Compose.ui)
                 implementation(AndroidX.Compose.material3)
                 implementation(Icerock.Resources.resourcesCompose)
                 implementation(Picovoice.porcupineAndroid)
                 implementation(Slf4j.simple)
-                implementation("androidx.documentfile:documentfile:_")
-                implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
                 implementation(Ktor2.Server.compression)
                 implementation(Ktor2.Server.callLogging)
+                implementation(Ktor.Server.netty)
+                implementation(Ktor.Plugins.networkTlsCertificates)
+                implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
             }
         }
         val androidTest by getting {

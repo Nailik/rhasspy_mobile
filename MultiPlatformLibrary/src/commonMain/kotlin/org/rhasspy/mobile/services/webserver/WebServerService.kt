@@ -3,7 +3,6 @@ package org.rhasspy.mobile.services.webserver
 import co.touchlab.kermit.Logger
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.dataconversion.*
@@ -23,8 +22,10 @@ import org.rhasspy.mobile.middleware.EventType.WebServerServiceEventType.Start
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.middleware.action.WebServerAction.*
 import org.rhasspy.mobile.middleware.action.WebServerRequest.PlayRecordingGet
+import org.rhasspy.mobile.nativeutils.getEngine
 import org.rhasspy.mobile.nativeutils.installCallLogging
 import org.rhasspy.mobile.nativeutils.installCompression
+import org.rhasspy.mobile.nativeutils.installConnector
 import org.rhasspy.mobile.services.IService
 
 /**
@@ -47,7 +48,7 @@ class WebServerService : IService() {
     private val scope = CoroutineScope(Dispatchers.Default)
     private val audioContentType = ContentType("audio", "wav")
 
-    private lateinit var server: CIOApplicationEngine
+    private lateinit var server: BaseApplicationEngine
 
     /**
      * starts server when enabled
@@ -58,7 +59,7 @@ class WebServerService : IService() {
             val startEvent = serviceMiddleware.createEvent(Start)
 
             try {
-                server = buildServer(params.httpServerPort)
+                server = buildServer()
                 server.start()
                 //successfully start
                 startEvent.success()
@@ -85,28 +86,40 @@ class WebServerService : IService() {
     /**
      * build server with routing and addons
      */
-    private fun buildServer(port: Int): CIOApplicationEngine {
-        return embeddedServer(factory = CIO, port = port, watchPaths = emptyList()) {
-            //install(WebSockets)
-            installCallLogging()
-            install(DataConversion)
-            //Greatly reduces the amount of data that's needed to be sent to the client by
-            //gzipping outgoing content when applicable.
-            installCompression()
+    private fun buildServer(): BaseApplicationEngine {
+        val environment = applicationEngineEnvironment {
+            installConnector(
+                port = params.httpServerPort,
+                isUseSSL = params.isHttpServerSSLEnabled,
+                keyStoreFile = params.httpServerSSLKeyStoreFile,
+                keyStorePassword = "test1234", //params.httpServerSSLKeyStorePassword,
+                keyAlias = "samplealias", //params.httpServerSSLKeyAlias,
+                keyPassword = "test1234", //params.httpServerSSLKeyPassword
+            ) //TODO incorrect password, file not found, key alias not found, key alias password
+            module {
+                //install(WebSockets)
+                installCallLogging()
+                install(DataConversion)
+                //Greatly reduces the amount of data that's needed to be sent to the client by
+                //gzipping outgoing content when applicable.
+                installCompression()
 
-            // configures Cross-Origin Resource Sharing. CORS is needed to make calls from arbitrary
-            // JavaScript clients, and helps us prevent issues down the line.
-            install(CORS) {
-                methods.add(HttpMethod.Get)
-                methods.add(HttpMethod.Post)
-                methods.add(HttpMethod.Delete)
-                anyHost()
+                // configures Cross-Origin Resource Sharing. CORS is needed to make calls from arbitrary
+                // JavaScript clients, and helps us prevent issues down the line.
+                install(CORS) {
+                    methods.add(HttpMethod.Get)
+                    methods.add(HttpMethod.Post)
+                    methods.add(HttpMethod.Delete)
+                    anyHost()
+                }
+
+                buildStatusPages()
+
+                buildRouting()
             }
-
-            buildStatusPages()
-
-            buildRouting()
         }
+
+        return getEngine(environment = environment)
     }
 
     /**

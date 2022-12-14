@@ -1,9 +1,10 @@
 package org.rhasspy.mobile.android.configuration
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Delete
@@ -18,22 +19,21 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dev.icerock.moko.resources.StringResource
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.FloatingActionButton
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.item.EventStateCard
+import org.rhasspy.mobile.android.content.item.EventStateIcon
+import org.rhasspy.mobile.android.main.LocalConfigurationNavController
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.android.theme.SetSystemColor
+import org.rhasspy.mobile.middleware.EventState
 import org.rhasspy.mobile.viewModels.configuration.IConfigurationViewModel
-
-
-val LocalConfigurationNavController = compositionLocalOf<NavController> {
-    error("No NavController provided")
-}
 
 enum class ConfigurationContentScreens {
     Edit,
@@ -54,9 +54,8 @@ fun ConfigurationScreenItemContent(
     title: StringResource,
     viewModel: IConfigurationViewModel,
     testContent: (@Composable () -> Unit)? = null,
-    content: @Composable ColumnScope.(onNavigate: (route: String) -> Unit) -> Unit
+    content: LazyListScope.(onNavigate: (route: String) -> Unit) -> Unit
 ) {
-
     val navController = rememberNavController()
 
     LaunchedEffect(Unit) {
@@ -78,13 +77,7 @@ fun ConfigurationScreenItemContent(
             composable(ConfigurationContentScreens.Edit.name) {
                 EditConfigurationScreen(
                     title = title,
-                    hasUnsavedChanges = viewModel.hasUnsavedChanges,
-                    testingEnabled = viewModel.isTestingEnabled,
-                    onSave = viewModel::save,
-                    onTest = {
-                        navController.navigate(ConfigurationContentScreens.Test.name)
-                    },
-                    onDiscard = viewModel::discard,
+                    viewModel = viewModel,
                     content = content
                 )
             }
@@ -102,20 +95,20 @@ fun ConfigurationScreenItemContent(
 @Composable
 private fun EditConfigurationScreen(
     title: StringResource,
-    hasUnsavedChanges: StateFlow<Boolean>,
-    testingEnabled: StateFlow<Boolean> = MutableStateFlow(true),
-    onSave: () -> Unit,
-    onTest: () -> Unit,
-    onDiscard: () -> Unit,
-    content: @Composable ColumnScope.(onNavigate: (route: String) -> Unit) -> Unit
+    viewModel: IConfigurationViewModel,
+    content: LazyListScope.(onNavigate: (route: String) -> Unit) -> Unit
 ) {
+    SetSystemColor(0.dp)
+
     val navController = LocalMainNavController.current
     var showBackButtonDialog by rememberSaveable { mutableStateOf(false) }
     var showNavigateDialog by rememberSaveable { mutableStateOf(false) }
     var navigationRoute by rememberSaveable { mutableStateOf("") }
 
+    val hasUnsavedChanges by viewModel.hasUnsavedChanges.collectAsState()
+
     fun onBackPress() {
-        if (hasUnsavedChanges.value) {
+        if (hasUnsavedChanges) {
             showBackButtonDialog = true
         } else {
             navController.popBackStack()
@@ -123,7 +116,7 @@ private fun EditConfigurationScreen(
     }
 
     fun onNavigate(route: String) {
-        if (hasUnsavedChanges.value) {
+        if (hasUnsavedChanges) {
             navigationRoute = route
             showNavigateDialog = true
         } else {
@@ -137,8 +130,8 @@ private fun EditConfigurationScreen(
     //Show unsaved changes dialog back press
     if (showBackButtonDialog) {
         UnsavedBackButtonDialog(
-            onSave = onSave,
-            onDiscard = onDiscard,
+            onSave = viewModel::save,
+            onDiscard = viewModel::discard,
             onClose = {
                 showBackButtonDialog = false
             }
@@ -149,14 +142,13 @@ private fun EditConfigurationScreen(
     if (showNavigateDialog) {
         UnsavedNavigationButtonDialog(
             route = navigationRoute,
-            onSave = onSave,
+            onSave = viewModel::save,
             onClose = {
                 showNavigateDialog = false
             }
         )
     }
 
-    Surface(tonalElevation = 1.dp) {
         Scaffold(
             topBar = {
                 AppBar(
@@ -170,25 +162,24 @@ private fun EditConfigurationScreen(
                 }
             },
             bottomBar = {
-                BottomAppBar(
-                    hasUnsavedChanges = hasUnsavedChanges,
-                    testingEnabled = testingEnabled,
-                    onSave = onSave,
-                    onClick = onTest,
-                    onDiscard = onDiscard
-                )
+                BottomAppBar(viewModel)
             }
         ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                content { route -> onNavigate(route) }
+            Surface(tonalElevation = 1.dp) {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize()
+                ) {
+
+                    stickyHeader {
+                        ServiceState(viewModel.serviceState.collectAsState().value)
+                    }
+
+                    content { route -> onNavigate(route) }
+                }
             }
         }
-    }
 }
 
 private fun NavController.navigateSingle(route: String) {
@@ -290,20 +281,16 @@ private fun UnsavedChangesDialog(
  */
 @Composable
 private fun BottomAppBar(
-    hasUnsavedChanges: StateFlow<Boolean>,
-    testingEnabled: StateFlow<Boolean>,
-    onSave: () -> Unit,
-    onClick: () -> Unit,
-    onDiscard: () -> Unit
+    viewModel: IConfigurationViewModel,
 ) {
-    val isHasUnsavedChanges by hasUnsavedChanges.collectAsState()
-    val isTestingEnabled by testingEnabled.collectAsState()
+    val isHasUnsavedChanges by viewModel.hasUnsavedChanges.collectAsState()
+    val isTestingEnabled by viewModel.isTestingEnabled.collectAsState()
 
     BottomAppBar(
         actions = {
             IconButton(
                 modifier = Modifier.testTag(TestTag.BottomAppBarDiscard),
-                onClick = onDiscard,
+                onClick = viewModel::discard,
                 enabled = isHasUnsavedChanges
             ) {
                 Icon(
@@ -313,7 +300,7 @@ private fun BottomAppBar(
             }
             IconButton(
                 modifier = Modifier.testTag(TestTag.BottomAppBarSave),
-                onClick = onSave,
+                onClick = viewModel::save,
                 enabled = isHasUnsavedChanges
             ) {
                 Icon(
@@ -323,6 +310,7 @@ private fun BottomAppBar(
             }
         },
         floatingActionButton = {
+            val navController = LocalConfigurationNavController.current
             FloatingActionButton(
                 modifier = Modifier
                     .testTag(TestTag.BottomAppBarTest)
@@ -330,7 +318,9 @@ private fun BottomAppBar(
                         minWidth = 56.0.dp,
                         minHeight = 56.0.dp,
                     ),
-                onClick = onClick,
+                onClick = {
+                    navController.navigate(ConfigurationContentScreens.Test.name)
+                },
                 isEnabled = isTestingEnabled,
                 containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
                 contentColor = LocalContentColor.current,
@@ -353,6 +343,7 @@ private fun BottomAppBar(
 private fun AppBar(title: StringResource, onBackClick: () -> Unit, icon: @Composable () -> Unit) {
 
     TopAppBar(
+        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp)),
         title = {
             Text(
                 resource = title,
@@ -367,4 +358,47 @@ private fun AppBar(title: StringResource, onBackClick: () -> Unit, icon: @Compos
             )
         }
     )
+}
+
+@Composable
+private fun ServiceState(serviceState: EventState) {
+
+    Box(
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp))
+            .padding(16.dp)
+            .fillMaxWidth(),
+    ) {
+        EventStateCard(
+            eventState = serviceState,
+            onClick = null
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                EventStateIcon(serviceState)
+                ServiceStateText(serviceState)
+            }
+        }
+    }
+
+}
+
+@Composable
+private fun ServiceStateText(serviceState: EventState) {
+
+    Text(
+        resource = when (serviceState) {
+            is EventState.Pending -> MR.strings.pending
+            is EventState.Loading -> MR.strings.loading
+            is EventState.Success -> MR.strings.success
+            is EventState.Warning -> MR.strings.warning
+            is EventState.Error -> MR.strings.error
+            is EventState.Disabled -> MR.strings.disabled
+        }
+    )
+
 }

@@ -92,22 +92,24 @@ private fun WakeWordConfigurationOverview(viewModel: WakeWordConfigurationViewMo
         testContent = { TestContent(viewModel) }
     ) {
 
-        //drop down list to select option
-        RadioButtonsEnumSelection(
-            modifier = Modifier.testTag(TestTag.WakeWordOptions),
-            selected = viewModel.wakeWordOption.collectAsState().value,
-            onSelect = viewModel::selectWakeWordOption,
-            values = viewModel.wakeWordOptions
-        ) {
+        item {
+            //drop down list to select option
+            RadioButtonsEnumSelection(
+                modifier = Modifier.testTag(TestTag.WakeWordOptions),
+                selected = viewModel.wakeWordOption.collectAsState().value,
+                onSelect = viewModel::selectWakeWordOption,
+                values = viewModel.wakeWordOptions
+            ) {
 
-            if (viewModel.isWakeWordPorcupineSettingsVisible(it)) {
-                PorcupineConfiguration(viewModel)
+                if (viewModel.isWakeWordPorcupineSettingsVisible(it)) {
+                    PorcupineConfiguration(viewModel)
+                }
+
+                if (viewModel.isUdpOutputSettingsVisible(it)) {
+                    UdpSettings(viewModel)
+                }
+
             }
-
-            if (viewModel.isUdpOutputSettingsVisible(it)) {
-                UdpSettings(viewModel)
-            }
-
         }
     }
 
