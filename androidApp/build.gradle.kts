@@ -12,21 +12,27 @@ plugins {
 }
 
 val signingProperties = Properties()
-signingProperties.load(file("../signing.properties").inputStream())
+val singingFile = file("../signing.properties")
+val signingEnabled = singingFile.exists()
+if(signingEnabled) {
+    signingProperties.load(singingFile.inputStream())
+}
 
 android {
     signingConfigs {
-        create("release") {
-            storeFile = file(signingProperties.getProperty("storeFile"))
-            storePassword = signingProperties["storePassword"].toString()
-            keyAlias = signingProperties["keyAlias"].toString()
-            keyPassword = signingProperties["keyPassword"].toString()
-        }
-        getByName("debug") {
-            storeFile = file(signingProperties.getProperty("storeFileDebug"))
-            storePassword = signingProperties["storePasswordDebug"].toString()
-            keyAlias = signingProperties["keyAliasDebug"].toString()
-            keyPassword = signingProperties["keyPasswordDebug"].toString()
+        if(signingEnabled) {
+            create("release") {
+                storeFile = file(signingProperties.getProperty("storeFile"))
+                storePassword = signingProperties["storePassword"].toString()
+                keyAlias = signingProperties["keyAlias"].toString()
+                keyPassword = signingProperties["keyPassword"].toString()
+            }
+            getByName("debug") {
+                storeFile = file(signingProperties.getProperty("storeFileDebug"))
+                storePassword = signingProperties["storePasswordDebug"].toString()
+                keyAlias = signingProperties["keyAliasDebug"].toString()
+                keyPassword = signingProperties["keyPasswordDebug"].toString()
+            }
         }
     }
     compileSdk = 33
@@ -49,12 +55,16 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("release")
+            if(signingEnabled) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
         debug {
             isMinifyEnabled = false
             isShrinkResources = false
-            signingConfig = signingConfigs.getByName("debug")
+            if(signingEnabled) {
+                signingConfig = signingConfigs.getByName("debug")
+            }
         }
     }
 
@@ -146,7 +156,6 @@ kotlin {
 }
 
 dependencies {
-    implementation("androidx.test.uiautomator:uiautomator:2.2.0")
     coreLibraryDesugaring(Android.tools.desugarJdkLibs)
     implementation(project(":MultiPlatformLibrary"))
 
@@ -183,9 +192,10 @@ dependencies {
     implementation(Koin.compose)
 
     androidTestImplementation(project(":MultiPlatformLibrary"))
+    androidTestUtil(AndroidX.Test.orchestrator)
+    androidTestImplementation(AndroidX.Test.uiAutomator)
     androidTestImplementation(AndroidX.Test.runner)
     androidTestImplementation(AndroidX.Test.rules)
-    androidTestUtil(AndroidX.Test.orchestrator)
     androidTestImplementation(Kotlin.test)
     androidTestImplementation(Kotlin.Test.junit)
     androidTestImplementation(AndroidX.Test.coreKtx)

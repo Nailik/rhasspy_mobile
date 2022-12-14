@@ -5,6 +5,7 @@ import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 import co.touchlab.faktory.crashlyticsLinkerConfig
+import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
     kotlin("multiplatform")
@@ -145,6 +146,9 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 android {
     compileSdk = 33
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    if (Os.isFamily(Os.FAMILY_MAC)) {
+        sourceSets.getByName("main").res.srcDir(File(buildDir, "generated/moko/androidMain/res"))
+    }
 
     defaultConfig {
         minSdk = 23
