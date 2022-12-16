@@ -82,7 +82,7 @@ private fun PortraitContent(
 
         ServiceStatusInformation(viewModel)
 
-        Fab(
+        MicrophoneFab(
             modifier = Modifier
                 .weight(1f),
             iconSize = 96.dp,
@@ -116,7 +116,7 @@ fun LandscapeContent(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
 
-        Fab(
+        MicrophoneFab(
             modifier = Modifier
                 .weight(1f),
             iconSize = 96.dp,

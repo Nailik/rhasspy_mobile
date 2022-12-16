@@ -164,6 +164,8 @@ dependencies {
 
     implementation(Google.accompanist.systemUiController)
 
+    implementation(AndroidX.glance.appWidget)
+
     implementation(AndroidX.Activity.compose)
     implementation(AndroidX.Core.splashscreen)
     implementation(AndroidX.ConstraintLayout.compose)

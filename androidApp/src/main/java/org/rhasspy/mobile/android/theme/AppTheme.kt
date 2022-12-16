@@ -56,7 +56,7 @@ fun SetSystemColor(elevation: Dp) {
 @Composable
 fun getIsDarkTheme(): Boolean {
     val themeOption by AppViewModel.themeOption.collectAsState()
-    return (isSystemInDarkTheme() && themeOption == ThemeOptions.System) || themeOption == ThemeOptions.Dark
+    return themeOption == ThemeOptions.Dark || (isSystemInDarkTheme() && themeOption == ThemeOptions.System)
 }
 
 val CardPaddingLevel0 = PaddingValues(8.dp)

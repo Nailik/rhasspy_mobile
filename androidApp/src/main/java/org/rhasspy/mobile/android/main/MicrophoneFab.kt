@@ -28,7 +28,7 @@ import org.rhasspy.mobile.viewModels.HomeScreenViewModel
  * Floating Action Button with microphone
  */
 @Composable
-fun Fab(modifier: Modifier = Modifier, iconSize: Dp, viewModel: HomeScreenViewModel = getViewModel()) {
+fun MicrophoneFab(modifier: Modifier = Modifier, iconSize: Dp, viewModel: HomeScreenViewModel = getViewModel()) {
 
     Box(modifier = modifier) {
 
@@ -76,3 +76,4 @@ fun Fab(modifier: Modifier = Modifier, iconSize: Dp, viewModel: HomeScreenViewMo
         }
     }
 }
+
