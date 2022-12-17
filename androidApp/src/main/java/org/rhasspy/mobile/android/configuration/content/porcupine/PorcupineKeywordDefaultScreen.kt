@@ -42,9 +42,9 @@ fun PorcupineKeywordDefaultScreen(viewModel: WakeWordConfigurationViewModel) {
                 val element = options.elementAt(index)
 
                 DefaultKeywordListItem(element = element,
-                    onClick = { viewModel.clickPorcupineKeywordDefault(index) },
-                    onToggle = { enabled -> viewModel.togglePorcupineKeywordDefault(index, enabled) },
-                    onUpdateSensitivity = { sensitivity -> viewModel.updateWakeWordPorcupineKeywordDefaultSensitivity(index, sensitivity) })
+                    onClick = { viewModel.clickPorcupineKeywordDefault(element.option) },
+                    onToggle = { enabled -> viewModel.togglePorcupineKeywordDefault(element.option, enabled) },
+                    onUpdateSensitivity = { sensitivity -> viewModel.updateWakeWordPorcupineKeywordDefaultSensitivity(element.option, sensitivity) })
 
                 CustomDivider()
             }

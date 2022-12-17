@@ -4,13 +4,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
+import org.rhasspy.mobile.data.PorcupineKeywordOptions
 import org.rhasspy.mobile.data.PorcupineLanguageOptions
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.nativeutils.SettingsUtils
 import org.rhasspy.mobile.nativeutils.openLink
-import org.rhasspy.mobile.services.hotword.HotWordService
 import org.rhasspy.mobile.services.hotword.HotWordServiceParams
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.services.udp.UdpServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
@@ -45,11 +44,22 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
     //unsaved ui data
     val wakeWordOption = _wakeWordOption.readOnly
     val wakeWordPorcupineAccessToken = _wakeWordPorcupineAccessToken.readOnly
-    val wakeWordPorcupineKeywordCount =
-        combineState(_wakeWordPorcupineKeywordDefaultOptions, _wakeWordPorcupineKeywordCustomOptions) { default, custom ->
-            default.filter { it.isEnabled }.size + custom.filter { it.keyword.isEnabled && !it.deleted }.size
-        }
-    val wakeWordPorcupineKeywordDefaultOptions = _wakeWordPorcupineKeywordDefaultOptions.readOnly
+
+    val wakeWordPorcupineKeywordCount = combineState(
+        _wakeWordPorcupineKeywordDefaultOptions,
+        _wakeWordPorcupineKeywordCustomOptions,
+        _wakeWordPorcupineLanguage
+    ) { default, custom, language ->
+        default.filter { it.isEnabled && it.option.language == language }.size + custom.filter { it.keyword.isEnabled && !it.deleted }.size
+    }
+
+    val wakeWordPorcupineKeywordDefaultOptions = combineState(
+        _wakeWordPorcupineKeywordDefaultOptions,
+        _wakeWordPorcupineLanguage
+    ) { options, language ->
+        options.filter { it.option.language == language }
+    }
+
     val wakeWordPorcupineKeywordCustomOptions = _wakeWordPorcupineKeywordCustomOptions.readOnly
     val wakeWordPorcupineLanguage = _wakeWordPorcupineLanguage.readOnly
     val udpOutputHost = _udpOutputHost.readOnly
@@ -100,30 +110,36 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
     }
 
     //update porcupine wake word sensitivity
-    fun updateWakeWordPorcupineKeywordDefaultSensitivity(index: Int, sensitivity: Float) {
-        _wakeWordPorcupineKeywordDefaultOptions.value = _wakeWordPorcupineKeywordDefaultOptions.value
-            .toMutableList()
-            .also {
-                it[index] = it[index].copy(sensitivity = sensitivity)
-            }.toSet()
+    fun updateWakeWordPorcupineKeywordDefaultSensitivity(option: PorcupineKeywordOptions, sensitivity: Float) {
+        _wakeWordPorcupineKeywordDefaultOptions.value = _wakeWordPorcupineKeywordDefaultOptions.value.let { list ->
+            val index = list.indexOf(list.find { it.option == option })
+
+            list.toMutableList()
+                .also { it[index] = it[index].copy(sensitivity = sensitivity) }
+                .toSet()
+        }
     }
 
     //enable/disable default keyword
-    fun clickPorcupineKeywordDefault(index: Int) {
-        _wakeWordPorcupineKeywordDefaultOptions.value = _wakeWordPorcupineKeywordDefaultOptions.value
-            .toMutableList()
-            .also {
-                it[index] = it[index].copy(isEnabled = !it[index].isEnabled)
-            }.toSet()
+    fun clickPorcupineKeywordDefault(option: PorcupineKeywordOptions) {
+        _wakeWordPorcupineKeywordDefaultOptions.value = _wakeWordPorcupineKeywordDefaultOptions.value.let { list ->
+            val index = list.indexOf(list.find { it.option == option })
+
+            list.toMutableList()
+                .also { it[index] = it[index].copy(isEnabled = !it[index].isEnabled) }
+                .toSet()
+        }
     }
 
     //toggle default keyword
-    fun togglePorcupineKeywordDefault(index: Int, enabled: Boolean) {
-        _wakeWordPorcupineKeywordDefaultOptions.value = _wakeWordPorcupineKeywordDefaultOptions.value
-            .toMutableList()
-            .also {
-                it[index] = it[index].copy(isEnabled = enabled)
-            }.toSet()
+    fun togglePorcupineKeywordDefault(option: PorcupineKeywordOptions, enabled: Boolean) {
+        _wakeWordPorcupineKeywordDefaultOptions.value = _wakeWordPorcupineKeywordDefaultOptions.value.let { list ->
+            val index = list.indexOf(list.find { it.option == option })
+
+            list.toMutableList()
+                .also { it[index] = it[index].copy(isEnabled = enabled) }
+                .toSet()
+        }
     }
 
     //update custom keyword sensitivity

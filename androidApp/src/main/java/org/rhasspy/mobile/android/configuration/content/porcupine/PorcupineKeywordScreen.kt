@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.android.configuration.content.porcupine
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -8,6 +9,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -18,8 +20,10 @@ import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.configuration.content.WakeWordConfigurationScreens
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
@@ -43,7 +47,20 @@ fun PorcupineKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
             modifier = Modifier
                 .testTag(TestTag.PorcupineKeywordScreen)
                 .fillMaxSize(),
-            topBar = { AppBar() },
+            topBar = {
+                Column {
+                    AppBar()
+                    val navigation = LocalNavController.current
+                    //opens page for porcupine language selection
+                    ListElement(
+                        modifier = Modifier
+                            .testTag(TestTag.PorcupineLanguage)
+                            .clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineLanguage.name) },
+                        text = { Text(MR.strings.language) },
+                        secondaryText = { Text(viewModel.wakeWordPorcupineLanguage.collectAsState().value.text) }
+                    )
+                }
+            },
             bottomBar = {
                 CompositionLocalProvider(
                     LocalNavController provides navController

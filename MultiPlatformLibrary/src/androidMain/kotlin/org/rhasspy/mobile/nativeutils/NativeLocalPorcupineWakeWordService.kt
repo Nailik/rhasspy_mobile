@@ -41,7 +41,7 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
                 .setAccessKey(wakeWordPorcupineAccessToken)
                 //keyword paths can not be used with keywords, therefore also the built in keywords are copied to a usable file location
                 .setKeywordPaths(
-                    wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled }.map {
+                    wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }.map {
                         copyBuildInKeywordFileIfNecessary(it)
                     }.toMutableList().also { list ->
                         list.addAll(
@@ -52,7 +52,7 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
                     }.toTypedArray()
                 )
                 .setSensitivities(
-                    wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled }.map {
+                    wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }.map {
                         it.sensitivity
                     }.toMutableList().also { list ->
                         list.addAll(
@@ -65,6 +65,7 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
                 .setModelPath(copyModelFileIfNecessary())
                 .setErrorCallback {
                     //TODO
+                    println(it)
                 }
 
 
@@ -74,6 +75,7 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
 
             null//no error
         } catch (e: Exception) {
+            println("porc $e")
             return when (e) {
                 is PorcupineActivationException -> HotWordServiceError.PorcupineActivationException
                 is PorcupineActivationLimitException -> HotWordServiceError.PorcupineActivationLimitException

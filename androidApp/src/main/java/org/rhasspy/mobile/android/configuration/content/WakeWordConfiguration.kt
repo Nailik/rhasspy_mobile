@@ -37,7 +37,7 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
 
-private enum class WakeWordConfigurationScreens {
+enum class WakeWordConfigurationScreens {
     Overview,
     PorcupineKeyword,
     PorcupineLanguage
@@ -64,12 +64,12 @@ fun WakeWordConfigurationContent(viewModel: WakeWordConfigurationViewModel = get
                 WakeWordConfigurationOverview(viewModel)
             }
 
-            composable(WakeWordConfigurationScreens.PorcupineKeyword.name) {
-                PorcupineKeywordScreen(viewModel)
-            }
-
             composable(WakeWordConfigurationScreens.PorcupineLanguage.name) {
                 PorcupineLanguageScreen(viewModel)
+            }
+
+            composable(WakeWordConfigurationScreens.PorcupineKeyword.name) {
+                PorcupineKeywordScreen(viewModel)
             }
 
         }
@@ -154,17 +154,8 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
             secondaryText = { Text(MR.strings.openPicoVoiceConsoleInfo) }
         )
 
-        //opens page for porcupine keyword selection
+        //opens page for porcupine keyword or language selection
         val navigation = LocalNavController.current
-
-        //wake word list
-        ListElement(
-            modifier = Modifier
-                .testTag(TestTag.PorcupineKeyword)
-                .clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineKeyword.name) },
-            text = { Text(MR.strings.wakeWord) },
-            secondaryText = { Text("${viewModel.wakeWordPorcupineKeywordCount.collectAsState().value} ${translate(MR.strings.active)}") }
-        )
 
         //opens page for porcupine language selection
         ListElement(
@@ -173,6 +164,15 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
                 .clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineLanguage.name) },
             text = { Text(MR.strings.language) },
             secondaryText = { Text(viewModel.wakeWordPorcupineLanguage.collectAsState().value.text) }
+        )
+
+        //wake word list
+        ListElement(
+            modifier = Modifier
+                .testTag(TestTag.PorcupineKeyword)
+                .clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineKeyword.name) },
+            text = { Text(MR.strings.wakeWord) },
+            secondaryText = { Text("${viewModel.wakeWordPorcupineKeywordCount.collectAsState().value} ${translate(MR.strings.active)}") }
         )
 
     }
