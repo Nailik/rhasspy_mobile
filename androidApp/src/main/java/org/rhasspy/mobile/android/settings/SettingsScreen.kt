@@ -21,18 +21,6 @@ import org.rhasspy.mobile.android.settings.content.*
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewModels.SettingsScreenViewModel
 
-enum class SettingsScreens {
-    LanguageSettings,
-    ThemeSettings,
-    BackgroundServiceSettings,
-    MicrophoneOverlaySettings,
-    IndicationSettings,
-    DeviceSettings,
-    AutomaticSilenceDetectionSettings,
-    LogSettings,
-    SaveAndRestoreSettings,
-    AboutSettings
-}
 
 @Preview
 @Composable

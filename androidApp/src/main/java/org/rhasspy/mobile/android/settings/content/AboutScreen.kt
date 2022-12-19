@@ -121,6 +121,7 @@ fun AppInformationChips(changelogText: String, onOpenSourceCode: () -> Unit) {
     ) {
         DataPrivacyDialogButton()
         OutlinedButton(onClick = onOpenSourceCode) {
+            //TODO show icon external link
             Text(MR.strings.sourceCode)
         }
         ChangelogDialogButton(changelogText)

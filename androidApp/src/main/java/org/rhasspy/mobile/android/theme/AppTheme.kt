@@ -35,11 +35,8 @@ fun AppTheme(content: @Composable () -> Unit) {
 fun SetSystemColor(elevation: Dp) {
     val isDarkTheme = getIsDarkTheme()
     val systemUiController = rememberSystemUiController()
-    val color = MaterialTheme.colorScheme.surfaceColorAtElevation(elevation)
-
-    systemUiController.setSystemBarsColor(MaterialTheme.colorScheme.background, darkIcons = !isDarkTheme)
-    systemUiController.setNavigationBarColor(MaterialTheme.colorScheme.background, darkIcons = !isDarkTheme)
-    systemUiController.setStatusBarColor(MaterialTheme.colorScheme.background, darkIcons = !isDarkTheme)
+    val colorScheme = if (isDarkTheme) DarkThemeColors else LightThemeColors
+    val color = colorScheme.surfaceColorAtElevation(elevation)
 
     LaunchedEffect(Unit) {
         systemUiController.setSystemBarsColor(color, darkIcons = !isDarkTheme)
@@ -58,4 +55,5 @@ fun getIsDarkTheme(): Boolean {
     return themeOption == ThemeOptions.Dark || (isSystemInDarkTheme() && themeOption == ThemeOptions.System)
 }
 
+val CardPaddingLevel0 = PaddingValues(8.dp)
 val ContentPaddingLevel1 = PaddingValues(vertical = 16.dp)

@@ -25,6 +25,7 @@ import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewModels.settings.BackgroundServiceSettingsViewModel
 
+//TODO information why background service is important
 /**
  * background service
  * toggle on/off

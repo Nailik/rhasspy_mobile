@@ -22,7 +22,9 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
 
-
+/**
+ * content of a settings screen page
+ */
 @Composable
 fun SettingsScreenItemContent(
     modifier: Modifier = Modifier,

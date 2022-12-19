@@ -28,6 +28,9 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.settings.sounds.SoundFile
 import org.rhasspy.mobile.viewModels.settings.sound.IIndicationSoundSettingsViewModel
 
+/**
+ * screen to choose indication sound
+ */
 @Composable
 fun IndicationSoundScreen(viewModel: IIndicationSoundSettingsViewModel, title: StringResource, screen: IndicationSettingsScreens) {
 
@@ -89,6 +92,9 @@ fun IndicationSoundScreen(viewModel: IIndicationSoundSettingsViewModel, title: S
 
 }
 
+/**
+ * list element for sound item
+ */
 @Composable
 private fun ColumnScope.SoundElements(viewModel: IIndicationSoundSettingsViewModel) {
 
@@ -133,9 +139,6 @@ private fun ColumnScope.SoundElements(viewModel: IIndicationSoundSettingsViewMod
 /**
  * list item for sound file
  */
-/**
- * list item for sound file
- */
 @Composable
 private fun SoundListItem(
     soundFile: SoundFile,
@@ -165,9 +168,6 @@ private fun SoundListItem(
 
 }
 
-/**
- * sound action buttons (play and open file)
- */
 /**
  * sound action buttons (play and open file)
  */

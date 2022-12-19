@@ -12,6 +12,9 @@ import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewModels.settings.ThemeSettingsViewModel
 
+/**
+ * to select app theme
+ */
 @Preview
 @Composable
 fun ThemeSettingsScreenItemContent(viewModel: ThemeSettingsViewModel = getViewModel()) {

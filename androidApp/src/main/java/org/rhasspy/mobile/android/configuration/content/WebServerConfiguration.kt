@@ -78,6 +78,7 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
 
 }
 
+//TODO information how to create certificate
 /**
  * SSL Settings
  * ON/OFF

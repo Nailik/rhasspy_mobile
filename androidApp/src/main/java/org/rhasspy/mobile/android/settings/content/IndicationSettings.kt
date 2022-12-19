@@ -35,6 +35,9 @@ import org.rhasspy.mobile.viewModels.settings.sound.ErrorIndicationSoundSettings
 import org.rhasspy.mobile.viewModels.settings.sound.RecordedIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewModels.settings.sound.WakeIndicationSoundSettingsViewModel
 
+/**
+ * indication sounds
+ */
 @Preview
 @Composable
 fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = getViewModel()) {
@@ -130,9 +133,11 @@ fun IndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
     }
 }
 
-
+/**
+ * overview page for indication settings
+ */
 @Composable
-fun SoundIndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
+private fun SoundIndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
 
     //visibility of sounds settings
     SecondaryContent(visible = viewModel.isSoundSettingsVisible.collectAsState().value) {

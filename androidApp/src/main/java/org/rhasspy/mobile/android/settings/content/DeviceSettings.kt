@@ -15,6 +15,7 @@ import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewModels.settings.DeviceSettingsSettingsViewModel
 
+//TODO information that these settings can be changed by calling api (http server enabled) or pushing mqtt topics (mqtt enabled)
 /**
  * Device Settings
  * Volume

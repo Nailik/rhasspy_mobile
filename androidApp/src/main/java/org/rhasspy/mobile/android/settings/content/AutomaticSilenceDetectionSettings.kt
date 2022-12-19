@@ -41,7 +41,9 @@ import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewModels.settings.AutomaticSilenceDetectionSettingsViewModel
 
-
+/**
+ * settings to configure automatic silence detection
+ */
 @Preview
 @Composable
 fun AutomaticSilenceDetectionSettingsContent(viewModel: AutomaticSilenceDetectionSettingsViewModel = getViewModel()) {

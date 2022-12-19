@@ -118,6 +118,7 @@ private fun MqttConnectionSettings(viewModel: MqttConfigurationViewModel) {
     )
 }
 
+//TODO information how to create certificate
 /**
  * switch to enable mqtt ssl
  * button to select certificate
