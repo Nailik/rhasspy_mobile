@@ -15,7 +15,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
  */
 @Composable
 fun AppTheme(content: @Composable () -> Unit) {
-    val colorScheme = if (isSystemInDarkTheme() ) DarkThemeColors else LightThemeColors
+    val colorScheme = if (isSystemInDarkTheme()) DarkThemeColors else LightThemeColors
     SetSystemColor(0.dp)
     MaterialTheme(colorScheme = colorScheme, content = content)
 }

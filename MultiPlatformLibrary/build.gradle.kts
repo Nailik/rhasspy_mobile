@@ -3,10 +3,9 @@
 import co.touchlab.faktory.crashlyticsLinkerConfig
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
-import co.touchlab.faktory.crashlyticsLinkerConfig
-import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
     kotlin("multiplatform")

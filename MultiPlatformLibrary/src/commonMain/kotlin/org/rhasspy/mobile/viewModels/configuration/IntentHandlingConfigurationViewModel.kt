@@ -12,7 +12,6 @@ import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantServiceParams
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.viewModels.configuration.test.IntentHandlingConfigurationTest

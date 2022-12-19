@@ -25,7 +25,7 @@ actual fun Application.installCompression() {
 }
 
 actual fun Application.installCallLogging() {
-    install(CallLogging)  {
+    install(CallLogging) {
         level = org.slf4j.event.Level.INFO
     }
 }
@@ -47,7 +47,7 @@ actual fun ApplicationEngineEnvironmentBuilder.installConnector(
             keyAlias = keyAlias,
             keyStorePassword = { keyStorePassword.toCharArray() },
             privateKeyPassword = { keyPassword.toCharArray() }) {
-           // this.host = "0.0.0.0"
+            // this.host = "0.0.0.0"
             this.port = port
         }
     } else {

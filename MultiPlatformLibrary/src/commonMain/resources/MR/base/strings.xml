@@ -252,7 +252,8 @@
     <string name="crashlytics">Crashlytics</string>
     <string name="crashlyticsText">send crashes to help improve the app</string>
     <string name="crashlyticsDialogText">Please allow to collect crash reports in order to help improve the app.\nThe settings can be changed on the
-    Log Settings page</string>
+        Log Settings page
+    </string>
     <string name="confirm">Confirm</string>
     <string name="deny">Deny</string>
     <string name="serviceStatusPending">Pending</string>

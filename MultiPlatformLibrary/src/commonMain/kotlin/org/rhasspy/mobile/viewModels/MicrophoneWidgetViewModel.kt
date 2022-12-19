@@ -16,7 +16,7 @@ import org.rhasspy.mobile.services.dialogManager.IDialogManagerService
 class MicrophoneWidgetViewModel : ViewModel(), KoinComponent {
 
     private val dialogManagerServiceState = get<IDialogManagerService>().currentDialogState
-    val isShowBorder =  MutableStateFlow(true) // dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.AwaitingHotWord }
+    val isShowBorder = MutableStateFlow(true) // dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.AwaitingHotWord }
     val isShowMicOn: StateFlow<Boolean> = MicrophonePermission.granted
     val isRecording = MutableStateFlow(false) // dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
     val isActionEnabled = dialogManagerServiceState

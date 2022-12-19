@@ -255,7 +255,8 @@
     <string name="crashlyticsText">Senden Sie Abstürze, um die Anwendung zu verbessern</string>
     <string name="crashlyticsDialogText">Bitte erlauben Sie das Sammeln von Absturzberichten, um die App zu verbessern.\nDie Einstellungen können
         geändert werden auf der
-        Log-Einstellungen-Seite geändert werden</string>
+        Log-Einstellungen-Seite geändert werden
+    </string>
     <string name="confirm">Zustimmen</string>
     <string name="deny">Ablehnen</string>
     <string name="serviceStatusPending">Pending</string>

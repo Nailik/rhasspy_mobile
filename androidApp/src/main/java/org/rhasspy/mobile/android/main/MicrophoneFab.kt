@@ -105,8 +105,8 @@ fun getContainerForMicrophoneFabLegacy(isActionEnabled: Boolean, isRecording: Bo
 @ColorRes
 fun getMicrophoneFabIconLegacy(isMicOn: Boolean, isActionEnabled: Boolean, isRecording: Boolean): Int {
     return when {
-        isRecording ->  if(isMicOn) R.drawable.ic_mic_on_error_container else R.drawable.ic_mic_off_on_error_container
-        isActionEnabled -> if(isMicOn) R.drawable.ic_mic_on_primary_container else  R.drawable.ic_mic_off_on_primary_container
-        else -> if(isMicOn) R.drawable.ic_mic_on_primary_container_04  else R.drawable.ic_mic_off_on_primary_container_04
+        isRecording -> if (isMicOn) R.drawable.ic_mic_on_error_container else R.drawable.ic_mic_off_on_error_container
+        isActionEnabled -> if (isMicOn) R.drawable.ic_mic_on_primary_container else R.drawable.ic_mic_off_on_primary_container
+        else -> if (isMicOn) R.drawable.ic_mic_on_primary_container_04 else R.drawable.ic_mic_off_on_primary_container_04
     }
 }

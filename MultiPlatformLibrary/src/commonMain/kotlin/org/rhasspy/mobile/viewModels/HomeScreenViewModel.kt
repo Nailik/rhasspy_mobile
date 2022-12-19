@@ -3,10 +3,8 @@ package org.rhasspy.mobile.viewModels
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.middleware.EventState

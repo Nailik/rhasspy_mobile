@@ -15,7 +15,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.get
-import org.koin.androidx.compose.koinViewModel
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.ServiceState
 import org.rhasspy.mobile.android.content.elements.FilledTonalButton

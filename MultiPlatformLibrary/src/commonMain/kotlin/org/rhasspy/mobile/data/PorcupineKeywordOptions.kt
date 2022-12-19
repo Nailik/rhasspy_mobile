@@ -4,7 +4,8 @@ import dev.icerock.moko.resources.FileResource
 import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 
-enum class PorcupineKeywordOptions(override val text: StringResource, val file: FileResource, val language: PorcupineLanguageOptions) : DataEnum<PorcupineKeywordOptions> {
+enum class PorcupineKeywordOptions(override val text: StringResource, val file: FileResource, val language: PorcupineLanguageOptions) :
+    DataEnum<PorcupineKeywordOptions> {
     ALEXA(MR.strings.alexa, MR.files.porcupine_wakeword_en_alexa_android, PorcupineLanguageOptions.EN),
     AMERICANO(MR.strings.americano, MR.files.porcupine_wakeword_en_americano_android, PorcupineLanguageOptions.EN),
     BLUEBERRY(MR.strings.blueberry, MR.files.porcupine_wakeword_en_blueberry_android, PorcupineLanguageOptions.EN),

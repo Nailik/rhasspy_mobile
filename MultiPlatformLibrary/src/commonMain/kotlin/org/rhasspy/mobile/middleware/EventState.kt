@@ -16,6 +16,6 @@ sealed class EventState(val information: String? = null) {
         }
     }
 
-    object Disabled: EventState()
+    object Disabled : EventState()
 
 }
