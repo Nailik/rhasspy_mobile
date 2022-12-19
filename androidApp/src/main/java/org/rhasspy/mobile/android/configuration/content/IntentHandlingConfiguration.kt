@@ -127,11 +127,15 @@ private fun HomeAssistantOption(viewModel: IntentHandlingConfigurationViewModel)
 
 }
 
+/**
+ * show test inputs
+ */
 @Composable
 private fun TestContent(
     viewModel: IntentHandlingConfigurationViewModel
 ) {
     Column {
+        //TODO
         //textfield to insert intent json??
         //button to execute intent handling
     }

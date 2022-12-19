@@ -11,7 +11,6 @@ import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 
-
 @Composable
 fun FilledTonalButtonListItem(
     modifier: Modifier = Modifier,

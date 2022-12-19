@@ -61,6 +61,9 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
 
 }
 
+/**
+ * show output options for local audio
+ */
 @Composable
 private fun LocalConfigurationContent(viewModel: AudioPlayingConfigurationViewModel) {
 
@@ -78,6 +81,9 @@ private fun LocalConfigurationContent(viewModel: AudioPlayingConfigurationViewMo
 
 }
 
+/**
+ * show http endpoint options
+ */
 @Composable
 private fun HttpEndpointConfigurationContent(viewModel: AudioPlayingConfigurationViewModel) {
 
@@ -105,11 +111,14 @@ private fun HttpEndpointConfigurationContent(viewModel: AudioPlayingConfiguratio
 
 }
 
+/**
+ * test content, play button
+ */
 @Composable
 private fun TestContent(
     viewModel: AudioPlayingConfigurationViewModel
 ) {
     Column {
-        //??
+        //TODO test button to play audio
     }
 }

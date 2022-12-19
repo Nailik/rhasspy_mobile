@@ -1,7 +1,8 @@
 package org.rhasspy.mobile.android.configuration
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -16,17 +17,18 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.content.ServiceState
 import org.rhasspy.mobile.android.content.elements.EventListItem
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
-import org.rhasspy.mobile.android.content.item.EventStateCard
-import org.rhasspy.mobile.android.content.item.EventStateIcon
 import org.rhasspy.mobile.android.main.LocalConfigurationNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.SetSystemColor
-import org.rhasspy.mobile.middleware.EventState
 import org.rhasspy.mobile.viewModels.configuration.IConfigurationViewModel
 
+/**
+ * screen thats shown when a configuration is being tested
+ */
 @Composable
 fun ConfigurationScreenTest(
     viewModel: IConfigurationViewModel,
@@ -99,7 +101,12 @@ private fun ConfigurationScreenTestList(
             modifier = Modifier.weight(1f)
         ) {
             stickyHeader {
-                ServiceState(viewModel.serviceState.collectAsState().value)
+                ServiceState(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp))
+                        .padding(16.dp),
+                    serviceState = viewModel.serviceState.collectAsState().value
+                )
             }
 
             items(eventsList) { item ->
@@ -157,55 +164,14 @@ private fun AppBar(
                 Icon(
                     imageVector = if (viewModel.isListFiltered.collectAsState().value) Icons.Filled.FilterListOff else Icons.Filled.FilterList,
                     contentDescription = MR.strings.share
-                ) //FilterListOff
+                )
             }
             IconButton(onClick = viewModel::toggleListAutoscroll) {
                 Icon(
                     imageVector = if (viewModel.isListAutoscroll.collectAsState().value) Icons.Filled.LowPriority else Icons.Filled.PlaylistRemove,
                     contentDescription = MR.strings.share
-                ) //LowPriority
+                )
             }
         }
     )
-}
-
-@Composable
-private fun ServiceState(serviceState: EventState) {
-    Box(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp))
-            .padding(16.dp)
-            .fillMaxWidth(),
-    ) {
-        EventStateCard(
-            eventState = serviceState,
-            onClick = null
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                EventStateIcon(serviceState)
-                ServiceStateText(serviceState)
-            }
-        }
-    }
-}
-
-@Composable
-private fun ServiceStateText(serviceState: EventState) {
-
-    Text(
-        resource = when (serviceState) {
-            is EventState.Pending -> MR.strings.pending
-            is EventState.Loading -> MR.strings.loading
-            is EventState.Success -> MR.strings.success
-            is EventState.Warning -> MR.strings.warning
-            is EventState.Error -> MR.strings.error
-            is EventState.Disabled -> MR.strings.disabled
-        }
-    )
-
 }

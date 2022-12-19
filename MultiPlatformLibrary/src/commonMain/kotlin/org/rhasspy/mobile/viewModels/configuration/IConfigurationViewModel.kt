@@ -18,9 +18,7 @@ import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.serviceModule
 import org.rhasspy.mobile.viewModels.configuration.test.IConfigurationTest
 
-abstract class IConfigurationViewModel(
-
-) : ViewModel(), KoinComponent {
+abstract class IConfigurationViewModel: ViewModel(), KoinComponent {
 
     private val logger = Logger.withTag("IConfigurationViewModel")
 
@@ -44,6 +42,8 @@ abstract class IConfigurationViewModel(
     val isListAutoscroll = _isListAutoscroll.readOnly
 
     private var testScope = CoroutineScope(Dispatchers.Default)
+
+    //TODO filter test list
 
     fun toggleListExpanded(){
         _isListExpanded.value = !_isListExpanded.value

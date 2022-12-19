@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,11 +20,37 @@ import org.rhasspy.mobile.android.theme.assistant_color_four
 import org.rhasspy.mobile.android.theme.assistant_color_one
 import org.rhasspy.mobile.android.theme.assistant_color_three
 import org.rhasspy.mobile.android.theme.assistant_color_two
+import org.rhasspy.mobile.services.indication.IndicationState
 import kotlin.math.abs
 
+/**
+ * indication animations for overlay
+ */
+@Composable
+fun Indication(indicationState: IndicationState) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(96.dp),
+        contentAlignment = Alignment.Center
+    ) {
+
+        when (indicationState) {
+            IndicationState.Idle -> {}
+            IndicationState.WakeUp -> WakeupIndication()
+            IndicationState.Recording -> RecordingIndication()
+            IndicationState.Thinking -> ThinkingIndication()
+            IndicationState.Speaking -> SpeakingIndication()
+        }
+    }
+}
+
+/**
+ * indication when
+ */
 @Preview
 @Composable
-fun WakeupIndication() {
+private fun WakeupIndication() {
     Row(
         modifier = Modifier
             .height(8.dp)
@@ -38,7 +65,7 @@ fun WakeupIndication() {
 
 @Preview
 @Composable
-fun RecordingIndication() {
+private fun RecordingIndication() {
     val infiniteTransition = rememberInfiniteTransition()
 
     val time = 750
@@ -83,7 +110,7 @@ fun RecordingIndication() {
 
 @Preview
 @Composable
-fun ThinkingIndication() {
+private fun ThinkingIndication() {
     val infiniteTransition = rememberInfiniteTransition()
 
     val rotation by infiniteTransition.animateFloat(
@@ -112,7 +139,7 @@ fun ThinkingIndication() {
 
 @Preview
 @Composable
-fun SpeakingIndication() {
+private fun SpeakingIndication() {
     val infiniteTransition = rememberInfiniteTransition()
 
     val item by infiniteTransition.animateFloat(
@@ -142,7 +169,7 @@ fun SpeakingIndication() {
 }
 
 @Composable
-fun BoxScope.IndicationCircle(alignment: Alignment, color: Color) {
+private fun BoxScope.IndicationCircle(alignment: Alignment, color: Color) {
     Box(
         modifier = Modifier
             .size(16.dp)
@@ -154,7 +181,7 @@ fun BoxScope.IndicationCircle(alignment: Alignment, color: Color) {
 }
 
 @Composable
-fun RowScope.IndicationBar(item: Float, range: Range<Float>, size: Float, color: Color) {
+private fun RowScope.IndicationBar(item: Float, range: Range<Float>, size: Float, color: Color) {
     Box(
         modifier = Modifier
             .fillMaxHeight()
@@ -164,7 +191,7 @@ fun RowScope.IndicationBar(item: Float, range: Range<Float>, size: Float, color:
 }
 
 @Composable
-fun IndicationCircle(color: Color, item: Int, current: Float) {
+private fun IndicationCircle(color: Color, item: Int, current: Float) {
 
     fun getHeight(): Float {
         val height = abs(item - current)

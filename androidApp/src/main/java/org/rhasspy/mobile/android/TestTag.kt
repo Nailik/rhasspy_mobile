@@ -5,6 +5,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import org.rhasspy.mobile.data.DataEnum
 
+/**
+ * test tags to be used in compose
+ */
 enum class TestTag {
     DialogCrashlytics,
     DialogInformationMicrophonePermission,

@@ -56,6 +56,9 @@ fun IntentRecognitionConfigurationContent(viewModel: IntentRecognitionConfigurat
     }
 }
 
+/**
+ * http endpoint settings
+ */
 @Composable
 private fun IntentRecognitionHTTP(viewModel: IntentRecognitionConfigurationViewModel) {
 
@@ -83,6 +86,9 @@ private fun IntentRecognitionHTTP(viewModel: IntentRecognitionConfigurationViewM
 
 }
 
+/**
+ * text input and intent recognition execute button
+ */
 @Composable
 private fun TestContent(
     viewModel: IntentRecognitionConfigurationViewModel

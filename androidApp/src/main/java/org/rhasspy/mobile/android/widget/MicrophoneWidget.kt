@@ -23,6 +23,9 @@ import org.rhasspy.mobile.android.R
 import org.rhasspy.mobile.android.theme.DarkThemeColors
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
+//TODO improve design for older devices
+//TODO check rounded cornder
+//TODO check snackbar
 class MicrophoneWidget : GlanceAppWidget() {
 
     @Composable

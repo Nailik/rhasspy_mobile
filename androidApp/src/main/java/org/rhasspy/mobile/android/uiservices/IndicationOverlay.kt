@@ -5,14 +5,8 @@ import android.graphics.PixelFormat
 import android.os.Build
 import android.view.Gravity
 import android.view.WindowManager
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewTreeLifecycleOwner
@@ -27,7 +21,6 @@ import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.services.indication.IndicationService
-import org.rhasspy.mobile.services.indication.IndicationState
 
 /**
  * Overlay Service
@@ -53,21 +46,7 @@ object IndicationOverlay : KoinComponent {
     private val view = ComposeView(AndroidApplication.Instance).apply {
         setContent {
             AppTheme {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(96.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-
-                    when (indicationService.indicationState.collectAsState().value) {
-                        IndicationState.Idle -> {}
-                        IndicationState.WakeUp -> WakeupIndication()
-                        IndicationState.Recording -> RecordingIndication()
-                        IndicationState.Thinking -> ThinkingIndication()
-                        IndicationState.Speaking -> SpeakingIndication()
-                    }
-                }
+                Indication(indicationService.indicationState.collectAsState().value)
             }
         }
     }

@@ -208,6 +208,9 @@ private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
 
 }
 
+/**
+ * test button to start wakeword detection test
+ */
 @Composable
 private fun TestContent(
     viewModel: WakeWordConfigurationViewModel

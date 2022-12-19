@@ -27,6 +27,7 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
 
+//TODO information, that wake word language has to match setup language
 /**
  * Custom keywords screen
  */
@@ -47,35 +48,7 @@ fun PorcupineKeywordCustomScreen(viewModel: WakeWordConfigurationViewModel) {
             items(
                 count = options.size,
                 itemContent = { index ->
-
-                    val element = options.elementAt(index)
-
-                    if (element.deleted) {
-                        //small item to be deleted
-                        CustomKeywordDeletedListItem(
-                            modifier = Modifier.testTag(element.keyword.fileName),
-                            keyword = element.keyword,
-                            onUndo = { viewModel.undoWakeWordPorcupineCustomKeywordDeleted(index) }
-                        )
-                    } else {
-                        //normal item
-                        CustomKeywordListItem(
-                            modifier = Modifier.testTag(element.keyword.fileName),
-                            keyword = element.keyword,
-                            onClick = {
-                                viewModel.clickPorcupineKeywordCustom(index)
-                            },
-                            onToggle = { enabled ->
-                                viewModel.togglePorcupineKeywordCustom(index, enabled)
-                            },
-                            onDelete = {
-                                viewModel.deletePorcupineKeywordCustom(index)
-                            },
-                            onUpdateSensitivity = { sensitivity ->
-                                viewModel.updateWakeWordPorcupineKeywordCustomSensitivity(index, sensitivity)
-                            }
-                        )
-                    }
+                    KeywordListItem(options.elementAt(index), index, viewModel)
                     CustomDivider()
                 })
         }
@@ -84,6 +57,36 @@ fun PorcupineKeywordCustomScreen(viewModel: WakeWordConfigurationViewModel) {
 
     }
 
+}
+
+@Composable
+private fun KeywordListItem(element: WakeWordConfigurationViewModel.PorcupineCustomKeywordUi, index: Int, viewModel: WakeWordConfigurationViewModel){
+    if (element.deleted) {
+        //small item to be deleted
+        CustomKeywordDeletedListItem(
+            modifier = Modifier.testTag(element.keyword.fileName),
+            keyword = element.keyword,
+            onUndo = { viewModel.undoWakeWordPorcupineCustomKeywordDeleted(index) }
+        )
+    } else {
+        //normal item
+        CustomKeywordListItem(
+            modifier = Modifier.testTag(element.keyword.fileName),
+            keyword = element.keyword,
+            onClick = {
+                viewModel.clickPorcupineKeywordCustom(index)
+            },
+            onToggle = { enabled ->
+                viewModel.togglePorcupineKeywordCustom(index, enabled)
+            },
+            onDelete = {
+                viewModel.deletePorcupineKeywordCustom(index)
+            },
+            onUpdateSensitivity = { sensitivity ->
+                viewModel.updateWakeWordPorcupineKeywordCustomSensitivity(index, sensitivity)
+            }
+        )
+    }
 }
 
 /**

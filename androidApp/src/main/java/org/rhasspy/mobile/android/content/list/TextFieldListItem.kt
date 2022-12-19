@@ -22,7 +22,6 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.translate
 
-
 @Composable
 fun TextFieldListItemVisibility(
     modifier: Modifier = Modifier,

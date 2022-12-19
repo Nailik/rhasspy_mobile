@@ -4,9 +4,6 @@ import androidx.compose.material3.ListItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
-/**
- * Custom list element
- */
 @Composable
 fun ListElement(
     modifier: Modifier = Modifier,

@@ -50,6 +50,9 @@ val LocalSnackbarHostState = compositionLocalOf<SnackbarHostState> {
     error("No SnackbarHostState provided")
 }
 
+/**
+ * navigation holder for bottom navigation bar screens
+ */
 @Composable
 fun BottomBarScreensNavigation(viewModel: HomeScreenViewModel = getViewModel()) {
 
@@ -95,6 +98,9 @@ fun BottomBarScreensNavigation(viewModel: HomeScreenViewModel = getViewModel()) 
     }
 }
 
+/**
+ * navigation bar on bottom
+ */
 @Composable
 fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavController) {
 

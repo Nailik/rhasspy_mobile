@@ -62,6 +62,9 @@ fun SpeechToTextConfigurationContent(viewModel: SpeechToTextConfigurationViewMod
 
 }
 
+/**
+ * http endpoint setings
+ */
 @Composable
 private fun SpeechToTextHTTP(viewModel: SpeechToTextConfigurationViewModel) {
 
@@ -88,6 +91,9 @@ private fun SpeechToTextHTTP(viewModel: SpeechToTextConfigurationViewModel) {
 
 }
 
+/**
+ * mqtt silence detection settings
+ */
 @Composable
 private fun SpeechToTextMqtt(viewModel: SpeechToTextConfigurationViewModel) {
 
@@ -104,6 +110,9 @@ private fun SpeechToTextMqtt(viewModel: SpeechToTextConfigurationViewModel) {
 
 }
 
+/**
+ * microphone button to test speech to text
+ */
 @Composable
 private fun TestContent(
     viewModel: SpeechToTextConfigurationViewModel

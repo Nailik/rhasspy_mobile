@@ -16,13 +16,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.content.ServiceState
 import org.rhasspy.mobile.android.content.elements.FilledTonalButton
 import org.rhasspy.mobile.android.content.elements.Text
-import org.rhasspy.mobile.android.content.item.EventStateCard
-import org.rhasspy.mobile.android.content.item.EventStateIcon
 import org.rhasspy.mobile.android.navigation.BottomBarScreens
 import org.rhasspy.mobile.android.navigation.NavigationParams
-import org.rhasspy.mobile.middleware.EventState
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
 /**
@@ -123,6 +121,7 @@ fun LandscapeContent(
             viewModel = viewModel
         )
 
+
         Column(
             modifier = Modifier
                 .fillMaxHeight()
@@ -149,45 +148,14 @@ private fun ServiceStatusInformation(viewModel: HomeScreenViewModel) {
     val navigate = LocalNavController.current
     val serviceState by viewModel.serviceState.collectAsState()
 
-    EventStateCard(
-        eventState = serviceState,
-        onClick = {
-            if (viewModel.isActionEnabled.value) {
-                navigate.navigate(BottomBarScreens.ConfigurationScreen.appendOptionalParameter(NavigationParams.ScrollToError, true))
-            }
-        }
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            EventStateIcon(serviceState)
-            ServiceStateText(serviceState)
+    ServiceState(serviceState = serviceState) {
+        if (viewModel.isActionEnabled.value) {
+            navigate.navigate(BottomBarScreens.ConfigurationScreen.appendOptionalParameter(NavigationParams.ScrollToError, true))
         }
     }
 
 }
 
-/**
- * Text for service state
- */
-@Composable
-private fun ServiceStateText(serviceState: EventState) {
-
-    Text(
-        resource = when (serviceState) {
-            is EventState.Pending -> MR.strings.serviceStatusPendingText
-            is EventState.Loading -> MR.strings.serviceStatusLoadingText
-            is EventState.Success -> MR.strings.serviceStatusRunningText
-            is EventState.Warning -> MR.strings.serviceStatusWarningText
-            is EventState.Error -> MR.strings.serviceStatusErrorText
-            is EventState.Disabled -> MR.strings.disabled
-        }
-    )
-
-}
 
 /**
  * button to play latest recording

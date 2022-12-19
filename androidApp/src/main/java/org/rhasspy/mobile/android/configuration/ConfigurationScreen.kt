@@ -177,6 +177,9 @@ fun NavGraphBuilder.addConfigurationScreens() {
 
 }
 
+/**
+ * error information for service
+ */
 @Composable
 private fun ServiceErrorInformation(viewModel: ConfigurationScreenViewModel, scrollState: LazyListState) {
 
@@ -454,7 +457,9 @@ private fun ConfigurationListItem(
 
 }
 
-
+/**
+ * function to scroll to the first error
+ */
 private fun scrollToFirstError(
     firstErrorIndex: Int,
     coroutineScope: CoroutineScope,

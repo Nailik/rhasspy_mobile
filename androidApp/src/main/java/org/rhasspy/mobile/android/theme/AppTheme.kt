@@ -23,15 +23,14 @@ fun AppTheme(content: @Composable () -> Unit) {
     val isDarkTheme = getIsDarkTheme()
     val colorScheme = if (isDarkTheme) DarkThemeColors else LightThemeColors
 
-    //may be used inside overlay and then the context is not an activity
-    val systemUiController = rememberSystemUiController()
-    systemUiController.setSystemBarsColor(colorScheme.background, darkIcons = !isDarkTheme)
-    systemUiController.setNavigationBarColor(colorScheme.background, darkIcons = !isDarkTheme)
-    systemUiController.setStatusBarColor(colorScheme.background, darkIcons = !isDarkTheme)
+    SetSystemColor(0.dp)
 
     MaterialTheme(colorScheme = colorScheme, content = content)
 }
 
+/**
+ * can be used to set system ui colors
+ */
 @Composable
 fun SetSystemColor(elevation: Dp) {
     val isDarkTheme = getIsDarkTheme()
@@ -59,5 +58,4 @@ fun getIsDarkTheme(): Boolean {
     return themeOption == ThemeOptions.Dark || (isSystemInDarkTheme() && themeOption == ThemeOptions.System)
 }
 
-val CardPaddingLevel0 = PaddingValues(8.dp)
 val ContentPaddingLevel1 = PaddingValues(vertical = 16.dp)

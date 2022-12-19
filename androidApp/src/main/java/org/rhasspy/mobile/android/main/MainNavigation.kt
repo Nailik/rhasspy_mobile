@@ -82,9 +82,11 @@ fun MainNavigation() {
     }
 }
 
-
+/**
+ * dialog if user wants to enable crashlytics
+ */
 @Composable
-fun CrashlyticsDialog(viewModel: LogSettingsViewModel = getViewModel(), onClose: () -> Unit) {
+private fun CrashlyticsDialog(viewModel: LogSettingsViewModel = getViewModel(), onClose: () -> Unit) {
     AlertDialog(
         modifier = Modifier.testTag(TestTag.DialogCrashlytics),
         onDismissRequest = onClose,

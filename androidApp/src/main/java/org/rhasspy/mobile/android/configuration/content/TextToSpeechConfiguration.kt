@@ -58,6 +58,9 @@ fun TextToSpeechConfigurationContent(viewModel: TextToSpeechConfigurationViewMod
 
 }
 
+/**
+ * http endpoint settings
+ */
 @Composable
 private fun TextToSpeechHTTP(viewModel: TextToSpeechConfigurationViewModel) {
 
@@ -84,6 +87,9 @@ private fun TextToSpeechHTTP(viewModel: TextToSpeechConfigurationViewModel) {
 
 }
 
+/**
+ * input field and execute button
+ */
 @Composable
 private fun TestContent(
     viewModel: TextToSpeechConfigurationViewModel

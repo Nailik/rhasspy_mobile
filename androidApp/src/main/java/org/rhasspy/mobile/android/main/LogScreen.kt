@@ -40,6 +40,9 @@ fun LogScreen(viewModel: LogScreenViewModel = getViewModel()) {
     }
 }
 
+/**
+ * app bar of log screen
+ */
 @Composable
 private fun AppBar(viewModel: LogScreenViewModel) {
     TopAppBar(modifier = Modifier,
@@ -50,8 +53,11 @@ private fun AppBar(viewModel: LogScreenViewModel) {
     )
 }
 
+/**
+ * visible content on log screen
+ */
 @Composable
-fun LogScreenContent(viewModel: LogScreenViewModel) {
+private fun LogScreenContent(viewModel: LogScreenViewModel) {
 
     val items = viewModel.logArr.collectAsState().value
 
@@ -107,7 +113,7 @@ fun LogScreenContent(viewModel: LogScreenViewModel) {
  * log screen actions to save and share log file
  */
 @Composable
-fun LogScreenActions(viewModel: LogScreenViewModel) {
+private fun LogScreenActions(viewModel: LogScreenViewModel) {
 
     Row(
         modifier = Modifier.padding(start = 8.dp),

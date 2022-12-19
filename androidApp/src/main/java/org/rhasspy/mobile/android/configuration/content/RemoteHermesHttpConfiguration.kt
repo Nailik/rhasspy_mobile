@@ -68,6 +68,9 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
 
 }
 
+/**
+ * test http connection button
+ */
 @Composable
 private fun TestContent(
     viewModel: RemoteHermesHttpConfigurationViewModel

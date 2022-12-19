@@ -19,7 +19,9 @@ import org.rhasspy.mobile.viewModels.settings.sound.RecordedIndicationSoundSetti
 import org.rhasspy.mobile.viewModels.settings.sound.WakeIndicationSoundSettingsViewModel
 import kotlin.system.exitProcess
 
-
+/**
+ * holds android application and native functions and provides koin module
+ */
 class AndroidApplication : Application() {
 
     private val logger = Logger.withTag("AndroidApplication")

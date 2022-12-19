@@ -2,7 +2,9 @@ package org.rhasspy.mobile.android.configuration
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
@@ -15,24 +17,20 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.content.ServiceState
 import org.rhasspy.mobile.android.content.elements.FloatingActionButton
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
-import org.rhasspy.mobile.android.content.item.EventStateCard
-import org.rhasspy.mobile.android.content.item.EventStateIcon
 import org.rhasspy.mobile.android.main.LocalConfigurationNavController
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.SetSystemColor
-import org.rhasspy.mobile.middleware.EventState
 import org.rhasspy.mobile.viewModels.configuration.IConfigurationViewModel
 
 enum class ConfigurationContentScreens {
@@ -54,7 +52,7 @@ fun ConfigurationScreenItemContent(
     title: StringResource,
     viewModel: IConfigurationViewModel,
     testContent: (@Composable () -> Unit)? = null,
-    content: LazyListScope.(onNavigate: (route: String) -> Unit) -> Unit
+    content: LazyListScope.() -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -92,18 +90,19 @@ fun ConfigurationScreenItemContent(
     }
 }
 
+/**
+ * configuration screen where settings are edited
+ */
 @Composable
 private fun EditConfigurationScreen(
     title: StringResource,
     viewModel: IConfigurationViewModel,
-    content: LazyListScope.(onNavigate: (route: String) -> Unit) -> Unit
+    content: LazyListScope.() -> Unit
 ) {
     SetSystemColor(0.dp)
 
     val navController = LocalMainNavController.current
     var showBackButtonDialog by rememberSaveable { mutableStateOf(false) }
-    var showNavigateDialog by rememberSaveable { mutableStateOf(false) }
-    var navigationRoute by rememberSaveable { mutableStateOf("") }
 
     val hasUnsavedChanges by viewModel.hasUnsavedChanges.collectAsState()
 
@@ -112,15 +111,6 @@ private fun EditConfigurationScreen(
             showBackButtonDialog = true
         } else {
             navController.popBackStack()
-        }
-    }
-
-    fun onNavigate(route: String) {
-        if (hasUnsavedChanges) {
-            navigationRoute = route
-            showNavigateDialog = true
-        } else {
-            navController.navigateSingle(route)
         }
     }
 
@@ -138,62 +128,47 @@ private fun EditConfigurationScreen(
         )
     }
 
-    //Show unsaved changes dialog navigate
-    if (showNavigateDialog) {
-        UnsavedNavigationButtonDialog(
-            route = navigationRoute,
-            onSave = viewModel::save,
-            onClose = {
-                showNavigateDialog = false
+    Scaffold(
+        topBar = {
+            AppBar(
+                title = title,
+                onBackClick = ::onBackPress
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = MR.strings.back,
+                )
             }
-        )
-    }
+        },
+        bottomBar = {
+            BottomAppBar(viewModel)
+        }
+    ) { paddingValues ->
+        Surface(tonalElevation = 1.dp) {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+            ) {
 
-        Scaffold(
-            topBar = {
-                AppBar(
-                    title = title,
-                    onBackClick = ::onBackPress
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = MR.strings.back,
+                stickyHeader {
+                    ServiceState(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp))
+                            .padding(16.dp),
+                        serviceState = viewModel.serviceState.collectAsState().value,
                     )
                 }
-            },
-            bottomBar = {
-                BottomAppBar(viewModel)
-            }
-        ) { paddingValues ->
-            Surface(tonalElevation = 1.dp) {
-                LazyColumn(
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize()
-                ) {
 
-                    stickyHeader {
-                        ServiceState(viewModel.serviceState.collectAsState().value)
-                    }
-
-                    content { route -> onNavigate(route) }
-                }
+                content()
             }
         }
-}
-
-private fun NavController.navigateSingle(route: String) {
-    if (this.backQueue.lastOrNull { entry -> entry.destination.route == route } != null) {
-        this.popBackStack(
-            route = route,
-            inclusive = false
-        )
-    } else {
-        this.navigate(route)
     }
 }
 
-
+/**
+ * unsaved dialog on back button
+ */
 @Composable
 private fun UnsavedBackButtonDialog(onSave: () -> Unit, onDiscard: () -> Unit, onClose: () -> Unit) {
     val navController = LocalMainNavController.current
@@ -212,23 +187,6 @@ private fun UnsavedBackButtonDialog(onSave: () -> Unit, onDiscard: () -> Unit, o
         },
         dismissButtonText = MR.strings.discard
     )
-}
-
-@Composable
-private fun UnsavedNavigationButtonDialog(route: String, onSave: () -> Unit, onClose: () -> Unit) {
-    val navController = LocalMainNavController.current
-
-    UnsavedChangesDialog(
-        onDismissRequest = onClose,
-        onSave = {
-            onSave.invoke()
-            navController.navigateSingle(route)
-            onClose.invoke()
-        },
-        onDiscard = onClose,
-        dismissButtonText = MR.strings.cancel
-    )
-
 }
 
 /**
@@ -358,47 +316,4 @@ private fun AppBar(title: StringResource, onBackClick: () -> Unit, icon: @Compos
             )
         }
     )
-}
-
-@Composable
-private fun ServiceState(serviceState: EventState) {
-
-    Box(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp))
-            .padding(16.dp)
-            .fillMaxWidth(),
-    ) {
-        EventStateCard(
-            eventState = serviceState,
-            onClick = null
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                EventStateIcon(serviceState)
-                ServiceStateText(serviceState)
-            }
-        }
-    }
-
-}
-
-@Composable
-private fun ServiceStateText(serviceState: EventState) {
-
-    Text(
-        resource = when (serviceState) {
-            is EventState.Pending -> MR.strings.pending
-            is EventState.Loading -> MR.strings.loading
-            is EventState.Success -> MR.strings.success
-            is EventState.Warning -> MR.strings.warning
-            is EventState.Error -> MR.strings.error
-            is EventState.Disabled -> MR.strings.disabled
-        }
-    )
-
 }

@@ -111,6 +111,9 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
 
 }
 
+/**
+ * test button to start webserver test
+ */
 @Composable
 private fun TestContent(
     viewModel: WebServerConfigurationViewModel

@@ -39,7 +39,11 @@ import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.viewModels.MicrophoneOverlayViewModel
 
+/**
+ * show overlay with microphone button
+ */
 object MicrophoneOverlay : KoinComponent {
+
     private val logger = Logger.withTag("MicrophoneOverlay")
 
     private lateinit var mParams: WindowManager.LayoutParams
@@ -54,6 +58,7 @@ object MicrophoneOverlay : KoinComponent {
     /**
      * view that's displayed as overlay to start wake word detection
      */
+    //TODO test snackbar
     private val view: ComposeView = ComposeView(AndroidApplication.Instance).apply {
         setContent {
             AppTheme {

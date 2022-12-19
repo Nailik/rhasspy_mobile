@@ -10,6 +10,9 @@ import androidx.core.view.WindowCompat
 import org.rhasspy.mobile.AppActivity
 import org.rhasspy.mobile.android.main.MainNavigation
 
+/**
+ * simple main activity to start application with splash screen
+ */
 @NoLiveLiterals
 class MainActivity : AppActivity() {
 

@@ -10,7 +10,6 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.android.content.SecondaryContent
 import org.rhasspy.mobile.android.content.list.RadioButtonListItem
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.theme.CardPaddingLevel0
 import org.rhasspy.mobile.data.DataEnum
 
 @Composable
@@ -42,7 +41,7 @@ fun <E : DataEnum<*>> RadioButtonsEnumSelection(
     content: (@Composable (item: E) -> Unit)? = null
 ) {
     Card(
-        modifier = modifier.padding(CardPaddingLevel0),
+        modifier = modifier.padding(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         values().forEach {
