@@ -21,7 +21,6 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.settings.addSettingsScreen
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.AppTheme
-import org.rhasspy.mobile.android.theme.getIsDarkTheme
 import org.rhasspy.mobile.viewModels.settings.LogSettingsViewModel
 
 /**
@@ -40,7 +39,6 @@ enum class MainScreens {
 @Composable
 fun MainNavigation() {
     AppTheme {
-        rememberSystemUiController().setStatusBarColor(MaterialTheme.colorScheme.surfaceVariant, darkIcons = !getIsDarkTheme())
         //fixes bright flashing when navigating between screens
         Surface(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
 

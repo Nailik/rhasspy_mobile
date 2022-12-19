@@ -2,7 +2,6 @@ package org.rhasspy.mobile
 
 import co.touchlab.kermit.ExperimentalKermitApi
 import co.touchlab.kermit.Logger
-import co.touchlab.kermit.Severity
 import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import dev.icerock.moko.resources.desc.StringDesc
 import io.ktor.utils.io.core.*
@@ -46,6 +45,8 @@ import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.services.webserver.WebServerServiceParams
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.viewModels.HomeScreenViewModel
+import org.rhasspy.mobile.viewModels.MicrophoneWidgetViewModel
 import org.rhasspy.mobile.viewModels.configuration.test.*
 
 
@@ -96,6 +97,9 @@ val serviceModule = module {
     closeableSingle { TextToSpeechConfigurationTest() }
     closeableSingle { WakeWordConfigurationTest() }
     closeableSingle { WebServerConfigurationTest() }
+
+    single { HomeScreenViewModel() }
+    single { MicrophoneWidgetViewModel() }
 }
 
 
@@ -136,10 +140,7 @@ abstract class Application : NativeApplication(), KoinComponent {
             modules(serviceModule, viewModelModule)
         }
 
-        Logger.addLogWriter(
-            CrashlyticsLogWriter(
-            )
-        )
+        Logger.addLogWriter(CrashlyticsLogWriter())
         Logger.addLogWriter(FileLogger)
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -162,5 +163,11 @@ abstract class Application : NativeApplication(), KoinComponent {
     abstract val viewModelModule: Module
 
     abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)
+
+    override suspend fun updateWidgetNative() {
+        updateWidget()
+    }
+
+    abstract suspend fun updateWidget()
 
 }

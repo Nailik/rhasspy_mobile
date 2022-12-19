@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 
-actual open class NativeApplication : MultiDexApplication() {
+actual abstract class NativeApplication : MultiDexApplication() {
 
     var currentActivity: AppActivity? = null
         private set
@@ -59,5 +59,7 @@ actual open class NativeApplication : MultiDexApplication() {
     actual val currentlyAppInBackground = MutableStateFlow(false)
     actual val isAppInBackground: StateFlow<Boolean>
         get() = currentlyAppInBackground
+
+    actual abstract suspend fun updateWidgetNative()
 
 }

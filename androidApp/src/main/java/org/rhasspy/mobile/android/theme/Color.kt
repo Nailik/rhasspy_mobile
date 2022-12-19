@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.android.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -85,11 +86,11 @@ private val color_unknown_any = Color(0xFF000000)
 
 val ColorScheme.warn: Color
     @Composable
-    get() = if (getIsDarkTheme()) color_warn_dark else color_warn_light
+    get() = if (isSystemInDarkTheme()) color_warn_dark else color_warn_light
 
 val ColorScheme.on_color_warn: Color
     @Composable
-    get() = if (getIsDarkTheme()) on_color_warn_dark else on_color_warn_light
+    get() = if (isSystemInDarkTheme()) on_color_warn_dark else on_color_warn_light
 
 val ColorScheme.assistant_color_one: Color
     get() = assistant_color_one_any

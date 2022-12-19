@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.android
 
 import android.content.Intent
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import co.touchlab.kermit.Logger
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
@@ -11,6 +12,7 @@ import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.NativeApplication
 import org.rhasspy.mobile.android.uiservices.IndicationOverlay
 import org.rhasspy.mobile.android.uiservices.MicrophoneOverlay
+import org.rhasspy.mobile.android.widget.MicrophoneWidget
 import org.rhasspy.mobile.viewModels.*
 import org.rhasspy.mobile.viewModels.configuration.*
 import org.rhasspy.mobile.viewModels.settings.*
@@ -74,7 +76,6 @@ class AndroidApplication : Application() {
             viewModelOf(::TextToSpeechConfigurationViewModel)
             viewModelOf(::WakeWordConfigurationViewModel)
             viewModelOf(::WebServerConfigurationViewModel)
-            viewModelOf(::HomeScreenViewModel)
             viewModelOf(::LogScreenViewModel)
             viewModelOf(::SettingsScreenViewModel)
             viewModelOf(::AboutScreenViewModel)
@@ -89,12 +90,19 @@ class AndroidApplication : Application() {
             viewModelOf(::LogSettingsViewModel)
             viewModelOf(::MicrophoneOverlaySettingsViewModel)
             viewModelOf(::SaveAndRestoreSettingsViewModel)
-            viewModelOf(::ThemeSettingsViewModel)
             viewModelOf(::MicrophoneOverlayViewModel)
         }
 
     override fun setCrashlyticsCollectionEnabled(enabled: Boolean) {
         Firebase.crashlytics.setCrashlyticsCollectionEnabled(if (BuildConfig.DEBUG) false else enabled)
+    }
+
+    override suspend fun updateWidget() {
+        val glanceId = GlanceAppWidgetManager(this).getGlanceIds(MicrophoneWidget::class.java).firstOrNull()
+
+        if (glanceId != null) {
+            MicrophoneWidget().update(this, glanceId)
+        }
     }
 
 }

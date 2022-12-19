@@ -6,7 +6,6 @@ import org.rhasspy.mobile.settings.AppSettings
 class SettingsScreenViewModel : ViewModel() {
 
     val currentLanguage = AppSettings.languageOption.data
-    val currentTheme = AppSettings.themeOption.data
     val isBackgroundEnabled = AppSettings.isBackgroundServiceEnabled.data
     val microphoneOverlaySizeOption = AppSettings.microphoneOverlaySizeOption.data
     val isSoundIndicationEnabled = AppSettings.isSoundIndicationEnabled.data

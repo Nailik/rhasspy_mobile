@@ -5,7 +5,6 @@ package org.rhasspy.mobile.android.settings
  */
 enum class SettingsScreens {
     LanguageSettings,
-    ThemeSettings,
     BackgroundServiceSettings,
     MicrophoneOverlaySettings,
     IndicationSettings,

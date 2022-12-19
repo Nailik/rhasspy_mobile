@@ -1,5 +1,7 @@
 package org.rhasspy.mobile.android.main
 
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,10 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.R
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.FloatingActionButton
 import org.rhasspy.mobile.android.content.elements.Icon
@@ -28,22 +32,22 @@ import org.rhasspy.mobile.viewModels.HomeScreenViewModel
  * Floating Action Button with microphone
  */
 @Composable
-fun MicrophoneFab(modifier: Modifier = Modifier, iconSize: Dp, viewModel: HomeScreenViewModel = getViewModel()) {
+fun MicrophoneFab(modifier: Modifier = Modifier, iconSize: Dp, viewModel: HomeScreenViewModel = get()) {
 
     Box(modifier = modifier) {
 
         RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::toggleSession) { onClick ->
 
             val isActionEnabled by viewModel.isActionEnabled.collectAsState()
-            val isRecording by viewModel.isActionEnabled.collectAsState()
+            val isRecording by viewModel.isRecording.collectAsState()
 
             FloatingActionButton(
                 modifier = Modifier
                     .fillMaxSize()
                     .testTag(TestTag.MicrophoneFab)
                     .let {
-                        if (viewModel.isHotWordRecording.collectAsState().value) {
-                            return@let it.border(2.dp, MaterialTheme.colorScheme.errorContainer, FloatingActionButtonDefaults.shape)
+                        if (viewModel.isShowBorder.collectAsState().value) {
+                            return@let it.border(8.dp, MaterialTheme.colorScheme.errorContainer, FloatingActionButtonDefaults.shape)
                         }
                         it
                     },
@@ -53,21 +57,13 @@ fun MicrophoneFab(modifier: Modifier = Modifier, iconSize: Dp, viewModel: HomeSc
                     }
                 },
                 isEnabled = isActionEnabled,
-                containerColor = when {
-                    isActionEnabled -> MaterialTheme.colorScheme.primaryContainer
-                    isRecording -> MaterialTheme.colorScheme.errorContainer
-                    else -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
-                },
-                contentColor = when {
-                    isActionEnabled -> MaterialTheme.colorScheme.onPrimaryContainer
-                    isRecording -> MaterialTheme.colorScheme.onErrorContainer
-                    else -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.4f)
-                },
+                containerColor = getContainerColorForMicrophoneFab(isActionEnabled, isRecording),
+                contentColor = getContentColorForMicrophoneFab(isActionEnabled, isRecording),
                 elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
                 icon = {
                     Icon(
                         modifier = Modifier.size(iconSize),
-                        imageVector = if (viewModel.isMicrophonePermissionGranted.collectAsState().value) Icons.Filled.Mic else Icons.Filled.MicOff,
+                        imageVector = if (viewModel.isShowMicOn.collectAsState().value) Icons.Filled.Mic else Icons.Filled.MicOff,
                         contentDescription = MR.strings.wakeUp,
                     )
                 }
@@ -77,3 +73,40 @@ fun MicrophoneFab(modifier: Modifier = Modifier, iconSize: Dp, viewModel: HomeSc
     }
 }
 
+@Composable
+fun getContainerColorForMicrophoneFab(isActionEnabled: Boolean, isRecording: Boolean): Color {
+    return when {
+        isRecording -> MaterialTheme.colorScheme.errorContainer
+        isActionEnabled -> MaterialTheme.colorScheme.primaryContainer
+        else -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+    }
+}
+
+@Composable
+fun getContentColorForMicrophoneFab(isActionEnabled: Boolean, isRecording: Boolean): Color {
+    return when {
+        isRecording -> MaterialTheme.colorScheme.onErrorContainer
+        isActionEnabled -> MaterialTheme.colorScheme.onPrimaryContainer
+        else -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.4f)
+    }
+}
+
+@Composable
+@DrawableRes
+fun getContainerForMicrophoneFabLegacy(isActionEnabled: Boolean, isRecording: Boolean): Int {
+    return when {
+        isRecording -> R.drawable.microphone_widget_background_error
+        isActionEnabled -> R.drawable.microphone_widget_background_primary
+        else -> R.drawable.microphone_widget_background_primary_04
+    }
+}
+
+@Composable
+@ColorRes
+fun getMicrophoneFabIconLegacy(isMicOn: Boolean, isActionEnabled: Boolean, isRecording: Boolean): Int {
+    return when {
+        isRecording ->  if(isMicOn) R.drawable.ic_mic_on_error_container else R.drawable.ic_mic_off_on_error_container
+        isActionEnabled -> if(isMicOn) R.drawable.ic_mic_on_primary_container else  R.drawable.ic_mic_off_on_primary_container
+        else -> if(isMicOn) R.drawable.ic_mic_on_primary_container_04  else R.drawable.ic_mic_off_on_primary_container_04
+    }
+}

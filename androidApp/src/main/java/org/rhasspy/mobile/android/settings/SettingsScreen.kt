@@ -46,11 +46,6 @@ fun SettingsScreen(viewModel: SettingsScreenViewModel = getViewModel()) {
             }
 
             item {
-                Theme(viewModel)
-                CustomDivider()
-            }
-
-            item {
                 BackgroundService(viewModel)
                 CustomDivider()
             }
@@ -104,10 +99,6 @@ fun NavGraphBuilder.addSettingsScreen() {
         LanguageSettingsScreenItemContent()
     }
 
-    composable(SettingsScreens.ThemeSettings.name) {
-        ThemeSettingsScreenItemContent()
-    }
-
     composable(SettingsScreens.BackgroundServiceSettings.name) {
         BackgroundServiceSettingsContent()
     }
@@ -149,17 +140,6 @@ private fun Language(viewModel: SettingsScreenViewModel) {
         text = MR.strings.language,
         secondaryText = viewModel.currentLanguage.collectAsState().value.text,
         screen = SettingsScreens.LanguageSettings
-    )
-
-}
-
-@Composable
-private fun Theme(viewModel: SettingsScreenViewModel) {
-
-    SettingsListItem(
-        text = MR.strings.theme,
-        secondaryText = viewModel.currentTheme.collectAsState().value.text,
-        screen = SettingsScreens.ThemeSettings
     )
 
 }

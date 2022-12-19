@@ -53,9 +53,6 @@
     <string name="homeAssistantEvents">Send *events* to Home Assistant\n(/api/events)</string>
     <string name="homeAssistantIntents">Send *intents* to Home Assistant\n(/api/intent/handle)</string>
     <string name="refresh">Refresh</string>
-    <string name="darkTheme">Dark Theme</string>
-    <string name="lightTheme">Light Theme</string>
-    <string name="systemTheme">System Theme</string>
     <string name="de">Deutsch</string>
     <string name="en">English</string>
     <string name="automaticSilenceDetection">Automatic Silence Detection</string>
@@ -193,7 +190,6 @@
     <string name="test">Test</string>
     <string name="back">Back</string>
     <string name="language">Language</string>
-    <string name="theme">Theme</string>
     <string name="fileOpen">select file</string>
     <string name="useCustomEndpoint">Custom Http Endpoint</string>
     <string name="textDefault">Default</string>

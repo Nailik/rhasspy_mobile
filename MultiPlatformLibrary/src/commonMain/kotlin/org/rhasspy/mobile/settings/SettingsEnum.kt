@@ -4,7 +4,6 @@ enum class SettingsEnum {
     //App Settings
     Crashlytics,
     LanguageOption,
-    ThemeOption,
 
     AutomaticSilenceDetection,
     AutomaticSilenceDetectionAudioLevel,
@@ -45,8 +44,6 @@ enum class SettingsEnum {
     LogAudioFrames,
     LogLevel,
 
-    ForceCancel,
-
     //Configuration Settings
     SiteId,
 
@@ -68,7 +65,6 @@ enum class SettingsEnum {
     MQTTKeepAliveInterval,
     MQTTRetryInterval,
 
-    UDPOutput,
     UDPOutputHost,
     UDPOutputPort,
 

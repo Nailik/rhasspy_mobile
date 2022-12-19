@@ -3,11 +3,12 @@ package org.rhasspy.mobile.viewModels
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.mapReadonlyState
-import org.rhasspy.mobile.middleware.ErrorType
 import org.rhasspy.mobile.middleware.EventState
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.services.dialogManager.DialogManagerServiceState
@@ -22,11 +23,10 @@ class HomeScreenViewModel : ViewModel(), KoinComponent {
         .mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingHotWord }
     val isPlayingRecordingEnabled = isActionEnabled
 
-    val isHotWordRecording = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.AwaitingHotWord }
-    val isRecording = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
+    val isShowBorder = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.AwaitingHotWord }
     val isPlayingRecording = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.PlayingAudio }
-
-    val isMicrophonePermissionGranted: StateFlow<Boolean> = MicrophonePermission.granted
+    val isShowMicOn: StateFlow<Boolean> = MicrophonePermission.granted
+    val isRecording = MutableStateFlow(false) // dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
 
     val isShowLogEnabled = AppSettings.isShowLogEnabled.data
 

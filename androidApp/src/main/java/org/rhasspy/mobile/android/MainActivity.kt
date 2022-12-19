@@ -6,7 +6,11 @@ import androidx.compose.runtime.NoLiveLiterals
 import androidx.core.app.AppLaunchChecker
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.AppActivity
+import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.android.main.MainNavigation
 
 /**
@@ -33,6 +37,10 @@ class MainActivity : AppActivity() {
 
         this.setContent {
             MainNavigation()
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            Application.Instance.updateWidgetNative()
         }
     }
 }
