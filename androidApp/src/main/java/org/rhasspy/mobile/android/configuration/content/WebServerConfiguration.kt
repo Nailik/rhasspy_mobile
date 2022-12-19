@@ -19,7 +19,6 @@ import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.viewModels.configuration.RemoteHermesHttpConfigurationViewModel
 import org.rhasspy.mobile.viewModels.configuration.WebServerConfigurationViewModel
 
 /**

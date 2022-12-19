@@ -6,7 +6,7 @@ import androidx.glance.appwidget.GlanceAppWidgetReceiver
 /**
  * provides microphone widget
  */
-class MicrophoneWidgetReceiver: GlanceAppWidgetReceiver(){
+class MicrophoneWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget
         get() = MicrophoneWidget()
 }

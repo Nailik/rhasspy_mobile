@@ -10,7 +10,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.item.EventStateContent
-import org.rhasspy.mobile.android.content.item.EventStateIcon
 import org.rhasspy.mobile.android.content.item.EventStateIconTinted
 import org.rhasspy.mobile.middleware.Event
 import org.rhasspy.mobile.middleware.EventState

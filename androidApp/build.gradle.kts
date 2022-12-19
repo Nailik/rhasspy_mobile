@@ -14,13 +14,13 @@ plugins {
 val signingProperties = Properties()
 val singingFile = file("../signing.properties")
 val signingEnabled = singingFile.exists()
-if(signingEnabled) {
+if (signingEnabled) {
     signingProperties.load(singingFile.inputStream())
 }
 
 android {
     signingConfigs {
-        if(signingEnabled) {
+        if (signingEnabled) {
             create("release") {
                 storeFile = file(signingProperties.getProperty("storeFile"))
                 storePassword = signingProperties["storePassword"].toString()
@@ -55,14 +55,14 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            if(signingEnabled) {
+            if (signingEnabled) {
                 signingConfig = signingConfigs.getByName("release")
             }
         }
         debug {
             isMinifyEnabled = false
             isShrinkResources = false
-            if(signingEnabled) {
+            if (signingEnabled) {
                 signingConfig = signingConfigs.getByName("debug")
             }
         }

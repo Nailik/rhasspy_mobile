@@ -60,7 +60,7 @@ fun PorcupineKeywordCustomScreen(viewModel: WakeWordConfigurationViewModel) {
 }
 
 @Composable
-private fun KeywordListItem(element: WakeWordConfigurationViewModel.PorcupineCustomKeywordUi, index: Int, viewModel: WakeWordConfigurationViewModel){
+private fun KeywordListItem(element: WakeWordConfigurationViewModel.PorcupineCustomKeywordUi, index: Int, viewModel: WakeWordConfigurationViewModel) {
     if (element.deleted) {
         //small item to be deleted
         CustomKeywordDeletedListItem(

@@ -3,7 +3,6 @@ package org.rhasspy.mobile.android
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.NoLiveLiterals
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.AppLaunchChecker
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
@@ -22,7 +21,7 @@ class MainActivity : AppActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if(!AppLaunchChecker.hasStartedFromLauncher(this)){
+        if (!AppLaunchChecker.hasStartedFromLauncher(this)) {
             isFirstLaunch = true
         }
         AppLaunchChecker.onActivityCreate(this)

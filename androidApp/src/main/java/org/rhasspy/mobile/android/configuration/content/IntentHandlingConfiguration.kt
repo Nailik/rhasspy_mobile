@@ -48,13 +48,13 @@ fun IntentHandlingConfigurationContent(viewModel: IntentHandlingConfigurationVie
                 if (viewModel.isRemoteHttpSettingsVisible(it)) {
                     //http endpoint
                     RemoteHTTPOption(viewModel)
-            }
+                }
 
-            if (viewModel.isHomeAssistantSettingsVisible(it)) {
-                //home assistant settings
-                HomeAssistantOption(viewModel)
+                if (viewModel.isHomeAssistantSettingsVisible(it)) {
+                    //home assistant settings
+                    HomeAssistantOption(viewModel)
+                }
             }
-        }
         }
     }
 
