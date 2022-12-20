@@ -266,6 +266,7 @@
     <string name="serviceStatusWarningText">Services detected possible problems</string>
     <string name="serviceStatusErrorText">Service error occurred</string>
     <string name="testHttpConnection">Test Http Connection</string>
+    <string name="porcupineLanguageInformation">All active Wakewords must match the selected language!</string>
     <!-- not translatable -->
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>

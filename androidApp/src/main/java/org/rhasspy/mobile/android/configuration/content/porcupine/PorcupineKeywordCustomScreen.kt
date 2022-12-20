@@ -21,6 +21,7 @@ import org.rhasspy.mobile.android.combinedTestTag
 import org.rhasspy.mobile.android.content.elements.CustomDivider
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.list.InformationListElement
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.SliderListItem
 import org.rhasspy.mobile.android.testTag
@@ -33,6 +34,7 @@ import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewMode
  */
 @Composable
 fun PorcupineKeywordCustomScreen(viewModel: WakeWordConfigurationViewModel) {
+
     Column(
         modifier = Modifier
             .testTag(TestTag.PorcupineKeywordCustomScreen)
@@ -45,6 +47,10 @@ fun PorcupineKeywordCustomScreen(viewModel: WakeWordConfigurationViewModel) {
             modifier = Modifier
                 .weight(1f)
         ) {
+            stickyHeader {
+                InformationListElement(text = MR.strings.porcupineLanguageInformation)
+            }
+
             items(
                 count = options.size,
                 itemContent = { index ->
