@@ -268,4 +268,5 @@
     <string name="serviceStatusErrorText">Dienstfehler ist aufgetreten</string>
     <string name="testHttpConnection">Teste Http Verbindung</string>
     <string name="porcupineLanguageInformation">Alle aktiven WakeWords müssen mit der ausgewählten Sprache übereinstimmen!</string>
+    <string name="backgroundServiceInformation">Background service ermöglicht es, der App im Hintergrund aktiv zu bleiben und dadurch nicht vom System beendet zu werden.</string>
 </resources>

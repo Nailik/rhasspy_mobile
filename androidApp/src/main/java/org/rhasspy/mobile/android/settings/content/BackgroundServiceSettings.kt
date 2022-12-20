@@ -18,6 +18,7 @@ import org.rhasspy.mobile.android.content.ComposableLifecycle
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.elements.toText
+import org.rhasspy.mobile.android.content.list.InformationListElement
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
@@ -25,7 +26,6 @@ import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewModels.settings.BackgroundServiceSettingsViewModel
 
-//TODO information why background service is important
 /**
  * background service
  * toggle on/off
@@ -39,6 +39,8 @@ fun BackgroundServiceSettingsContent(viewModel: BackgroundServiceSettingsViewMod
         modifier = Modifier.testTag(SettingsScreens.BackgroundServiceSettings),
         title = MR.strings.background
     ) {
+
+        InformationListElement(text = MR.strings.backgroundServiceInformation)
 
         //on oFF
         SwitchListItem(
