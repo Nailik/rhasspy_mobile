@@ -28,7 +28,6 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
 
-//TODO information, that wake word language has to match setup language
 /**
  * Custom keywords screen
  */
