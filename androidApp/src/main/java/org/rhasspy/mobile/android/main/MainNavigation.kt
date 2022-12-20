@@ -29,7 +29,6 @@ enum class MainScreens {
     BoomBarScreen
 }
 
-//TODO display debug banner like in flutter and also on app icon
 /**
  * root layout contains main navigation between the
  * 3 screens in the bottom bar and the about screen

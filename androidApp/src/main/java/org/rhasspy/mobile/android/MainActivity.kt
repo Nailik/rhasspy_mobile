@@ -2,7 +2,16 @@ package org.rhasspy.mobile.android
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.NoLiveLiterals
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.core.app.AppLaunchChecker
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
@@ -36,7 +45,21 @@ class MainActivity : AppActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
         this.setContent {
-            MainNavigation()
+            Box(modifier = Modifier.fillMaxSize()){
+                MainNavigation()
+                if(BuildConfig.DEBUG) {
+                    Text(
+                        text = "DEBUG",
+                        modifier = Modifier
+                            .rotate(45F)
+                            .offset(50.dp)
+                            .background(Color.Red)
+                            .width(150.dp)
+                            .align(Alignment.TopEnd),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
         }
 
         CoroutineScope(Dispatchers.IO).launch {
