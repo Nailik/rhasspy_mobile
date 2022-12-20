@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Cloud
+import androidx.compose.material.icons.filled.Link
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -146,7 +146,7 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
                 .clickable(onClick = viewModel::openPicoVoiceConsole),
             icon = {
                 Icon(
-                    imageVector = Icons.Filled.Cloud,
+                    imageVector = Icons.Filled.Link,
                     contentDescription = MR.strings.openPicoVoiceConsole
                 )
             },

@@ -196,9 +196,7 @@ private fun CustomKeywordsActionButtons(modifier: Modifier, viewModel: WakeWordC
                     imageVector = Icons.Filled.Download,
                     contentDescription = MR.strings.fileOpen
                 )
-                Spacer(
-                    modifier = Modifier.size(ButtonDefaults.IconSpacing)
-                )
+                Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
                 Text(MR.strings.download)
             })
 

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Link
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -121,7 +122,8 @@ fun AppInformationChips(changelogText: String, onOpenSourceCode: () -> Unit) {
     ) {
         DataPrivacyDialogButton()
         OutlinedButton(onClick = onOpenSourceCode) {
-            //TODO show icon external link
+            Icon(Icons.Filled.Link, MR.strings.sourceCode)
+            Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
             Text(MR.strings.sourceCode)
         }
         ChangelogDialogButton(changelogText)
