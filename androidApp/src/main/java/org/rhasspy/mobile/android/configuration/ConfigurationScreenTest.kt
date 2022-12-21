@@ -115,9 +115,9 @@ private fun ConfigurationScreenTestList(
         }
 
         if (content != null) {
-            Card(
-                modifier = Modifier.padding(8.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            Surface(
+                tonalElevation = 8.dp,
+                shadowElevation = 0.dp,
             ) {
                 content()
             }

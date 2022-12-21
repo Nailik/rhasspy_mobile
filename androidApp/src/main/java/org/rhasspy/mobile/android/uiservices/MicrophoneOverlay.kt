@@ -28,6 +28,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.main.MicrophoneFab
+import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.viewModels.MicrophoneOverlayViewModel
 
 /**
@@ -51,24 +52,26 @@ object MicrophoneOverlay : KoinComponent {
      */
     private val view: ComposeView = ComposeView(AndroidApplication.Instance).apply {
         setContent {
-            val size by viewModel.microphoneOverlaySize.collectAsState()
+            AppTheme {
+                val size by viewModel.microphoneOverlaySize.collectAsState()
 
-            MicrophoneFab(
-                modifier = Modifier
-                    .size(size.dp)
-                    .pointerInput(Unit) {
-                        detectDragGestures { change, dragAmount ->
-                            change.consume()
-                            onDrag(dragAmount)
-                        }
-                    },
-                iconSize = (size * 0.4).dp,
-                isActionEnabledStateFlow = viewModel.isActionEnabled,
-                isRecordingStateFlow = viewModel.isRecording,
-                isShowBorderStateFlow = viewModel.isShowBorder,
-                isShowMicOnStateFlow = viewModel.isShowMicOn,
-                onClick = viewModel::onClick
-            )
+                MicrophoneFab(
+                    modifier = Modifier
+                        .size(size.dp)
+                        .pointerInput(Unit) {
+                            detectDragGestures { change, dragAmount ->
+                                change.consume()
+                                onDrag(dragAmount)
+                            }
+                        },
+                    iconSize = (size * 0.4).dp,
+                    isActionEnabledStateFlow = viewModel.isActionEnabled,
+                    isRecordingStateFlow = viewModel.isRecording,
+                    isShowBorderStateFlow = viewModel.isShowBorder,
+                    isShowMicOnStateFlow = viewModel.isShowMicOn,
+                    onClick = viewModel::onClick
+                )
+            }
         }
     }
 
