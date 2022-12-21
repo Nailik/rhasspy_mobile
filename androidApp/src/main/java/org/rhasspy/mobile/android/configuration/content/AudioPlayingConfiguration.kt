@@ -15,6 +15,7 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.android.content.elements.translate
+import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.testTag
@@ -118,7 +119,8 @@ private fun HttpEndpointConfigurationContent(viewModel: AudioPlayingConfiguratio
 private fun TestContent(
     viewModel: AudioPlayingConfigurationViewModel
 ) {
-    Column {
-        //TODO test button to play audio
-    }
+    FilledTonalButtonListItem(
+        text = MR.strings.start,
+        onClick = viewModel::runTest
+    )
 }

@@ -20,6 +20,11 @@ class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
 
     override val testRunner by inject<IntentHandlingConfigurationTest>()
 
+    private val _testIntentNameText = MutableStateFlow("")
+    val testIntentNameText = _testIntentNameText.readOnly
+    private val _testIntentText = MutableStateFlow("")
+    val testIntentText = _testIntentText.readOnly
+
     //unsaved data
     private val _intentHandlingOption = MutableStateFlow(ConfigurationSettings.intentHandlingOption.value)
     private val _intentHandlingHttpEndpoint = MutableStateFlow(ConfigurationSettings.intentHandlingHttpEndpoint.value)
@@ -86,6 +91,14 @@ class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
     //choose hass intent handling as intent
     fun selectIntentHandlingHassIntent() {
         _intentHandlingHomeAssistantOption.value = HomeAssistantIntentHandlingOptions.Intent
+    }
+
+    fun updateTestIntentNameText(text: String) {
+        _testIntentNameText.value = text
+    }
+
+    fun updateTestIntentText(text: String) {
+        _testIntentText.value = text
     }
 
     /**

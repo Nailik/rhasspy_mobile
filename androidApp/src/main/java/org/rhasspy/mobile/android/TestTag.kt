@@ -40,6 +40,8 @@ enum class TestTag {
     AudioRecordingUdpOutput,
     AudioRecordingUdpHost,
     AudioRecordingUdpPort,
+    IntentNameText,
+    IntentText,
 
     ConfigurationScreenItemContent,
     ConfigurationSiteId,

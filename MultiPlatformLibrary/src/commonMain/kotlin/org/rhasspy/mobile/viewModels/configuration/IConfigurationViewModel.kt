@@ -75,7 +75,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
 
     //TODO carefully test this works correctly
     @Suppress("RedundantSuspendModifier")
-    open fun onOpenTestPage() {
+    fun onOpenTestPage() {
         testScope = CoroutineScope(Dispatchers.Default)
         //needs to be suspend, else ui thread is blocked
         logger.e { "************* onOpenTestPage ************" }

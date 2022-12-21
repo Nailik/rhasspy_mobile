@@ -12,13 +12,13 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
+import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.content.list.RadioButtonListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewModels.configuration.IntentHandlingConfigurationViewModel
-
 
 /**
  * content for intent handling configuration
@@ -134,9 +134,28 @@ private fun HomeAssistantOption(viewModel: IntentHandlingConfigurationViewModel)
 private fun TestContent(
     viewModel: IntentHandlingConfigurationViewModel
 ) {
+
     Column {
-        //TODO
-        //textfield to insert intent json??
-        //button to execute intent handling
+
+        TextFieldListItem(
+            modifier = Modifier.testTag(TestTag.IntentNameText),
+            value = viewModel.testIntentNameText.collectAsState().value,
+            onValueChange = viewModel::updateTestIntentNameText,
+            label = MR.strings.intentName
+        )
+
+        TextFieldListItem(
+            modifier = Modifier.testTag(TestTag.IntentText),
+            value = viewModel.testIntentText.collectAsState().value,
+            onValueChange = viewModel::updateTestIntentText,
+            label = MR.strings.intentText
+        )
+
+        FilledTonalButtonListItem(
+            text = MR.strings.start,
+            onClick = viewModel::runTest
+        )
+
     }
+
 }

@@ -27,8 +27,7 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
 
     //unsaved ui data
     val speechToTextOption = _speechToTextOption.readOnly
-    val speechToTextHttpEndpoint = combineState(_isUseCustomSpeechToTextHttpEndpoint, _speechToTextHttpEndpoint) { useCustomSpeechToTextHttpEndpoint,
-                                                                                                                   speechToTextHttpEndpoint ->
+    val speechToTextHttpEndpoint = combineState(_isUseCustomSpeechToTextHttpEndpoint, _speechToTextHttpEndpoint) { useCustomSpeechToTextHttpEndpoint, speechToTextHttpEndpoint ->
         if (useCustomSpeechToTextHttpEndpoint) {
             speechToTextHttpEndpoint
         } else {

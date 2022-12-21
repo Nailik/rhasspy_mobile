@@ -69,6 +69,7 @@ class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
         _textToSpeechHttpEndpoint.value = endpoint
     }
 
+    //update the test text
     fun updateTestTextToSpeechText(text: String) {
         _testTextToSpeechText.value = text
     }

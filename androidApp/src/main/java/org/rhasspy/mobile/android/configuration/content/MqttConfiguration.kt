@@ -38,7 +38,8 @@ fun MqttConfigurationContent(viewModel: MqttConfigurationViewModel = get()) {
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreens.MqttConfiguration),
         title = MR.strings.mqtt,
-        viewModel = viewModel
+        viewModel = viewModel,
+        testContent = { TestContent(viewModel) }
     ) {
 
         item {
@@ -179,4 +180,17 @@ private fun MqttConnectionTiming(viewModel: MqttConfigurationViewModel) {
         onValueChange = viewModel::updateMqttRetryInterval
     )
 
+}
+
+/**
+ * test button to start webserver test
+ */
+@Composable
+private fun TestContent(
+    viewModel: MqttConfigurationViewModel
+) {
+    FilledTonalButtonListItem(
+        text = MR.strings.start,
+        onClick = viewModel::runTest
+    )
 }
