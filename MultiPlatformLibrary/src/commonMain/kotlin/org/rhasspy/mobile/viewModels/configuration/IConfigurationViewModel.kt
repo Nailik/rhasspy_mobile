@@ -101,6 +101,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     }
 
     //TODO carefully test this works correctly
+    //TODO show loading page for loading test and unloading test
     @Suppress("RedundantSuspendModifier")
     fun stopTest() {
         testScope.cancel()

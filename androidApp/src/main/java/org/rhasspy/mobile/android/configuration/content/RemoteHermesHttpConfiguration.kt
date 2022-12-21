@@ -76,7 +76,7 @@ private fun TestContent(
     viewModel: RemoteHermesHttpConfigurationViewModel
 ) {
     FilledTonalButtonListItem(
-        text = MR.strings.testHttpConnection,
+        text = MR.strings.executeTestHttpConnection,
         onClick = viewModel::runTest
     )
 }

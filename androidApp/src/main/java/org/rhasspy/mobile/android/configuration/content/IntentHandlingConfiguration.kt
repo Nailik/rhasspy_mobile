@@ -152,7 +152,7 @@ private fun TestContent(
         )
 
         FilledTonalButtonListItem(
-            text = MR.strings.start,
+            text = MR.strings.executeHandleIntent,
             onClick = viewModel::runTest
         )
 

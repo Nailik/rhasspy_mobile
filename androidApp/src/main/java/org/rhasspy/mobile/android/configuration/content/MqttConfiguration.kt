@@ -190,7 +190,7 @@ private fun TestContent(
     viewModel: MqttConfigurationViewModel
 ) {
     FilledTonalButtonListItem(
-        text = MR.strings.start,
+        text = MR.strings.executeStartMqtt,
         onClick = viewModel::runTest
     )
 }

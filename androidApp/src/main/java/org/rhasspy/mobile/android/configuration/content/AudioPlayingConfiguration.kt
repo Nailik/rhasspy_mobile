@@ -120,7 +120,7 @@ private fun TestContent(
     viewModel: AudioPlayingConfigurationViewModel
 ) {
     FilledTonalButtonListItem(
-        text = MR.strings.start,
+        text = MR.strings.executePlayTestAudio,
         onClick = viewModel::runTest
     )
 }

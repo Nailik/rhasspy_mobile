@@ -246,9 +246,9 @@
     <string name="stopRecordAudio">Stop Record Audio</string>
     <string name="useMqttSilenceDetection">Use Mqtt Silence Detection</string>
     <string name="textToSpeechText">Text To Speech Text</string>
-    <string name="executeTextToSpeechText">Execute Text To Speech</string>
+    <string name="executeTextToSpeechText">Transcribe Text to Speech</string>
     <string name="textIntentRecognitionText">Text To Recognize Intent</string>
-    <string name="executeIntentRecognition">Execute Intent Recognition</string>
+    <string name="executeIntentRecognition">Recognize Intent</string>
     <string name="crashlytics">Crashlytics</string>
     <string name="crashlyticsText">send crashes to help improve the app</string>
     <string name="crashlyticsDialogText">Please allow to collect crash reports in order to help improve the app.\nThe settings can be changed on the
@@ -265,12 +265,16 @@
     <string name="serviceStatusRunningText">Services are running</string>
     <string name="serviceStatusWarningText">Services detected possible problems</string>
     <string name="serviceStatusErrorText">Service error occurred</string>
-    <string name="testHttpConnection">Test Http Connection</string>
+    <string name="executeTestHttpConnection">Test Http Connection</string>
     <string name="porcupineLanguageInformation">All active Wakewords must match the selected language!</string>
     <string name="backgroundServiceInformation">Background service will enable the app to stay active in the background and prevent it from being closed by the system.</string>
     <string name="deviceSettingsLongInformation">This settings can be changed by calling the Webserver (HTTP API) or by publishing MQTT Messages.</string>
     <string name="intentName">Intent Name</string>
     <string name="intentText">Intent Json</string>
+    <string name="executePlayTestAudio">play Test Audio</string>
+    <string name="executeHandleIntent">handle Intent</string>
+    <string name="executeStartMqtt">start MQTT</string>
+    <string name="executeStartWebserver">start Webserver</string>
     <!-- not translatable -->
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>
