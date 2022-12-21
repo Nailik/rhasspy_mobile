@@ -65,7 +65,8 @@ class TextToSpeechConfigurationContentTest {
         val textInputTest = "endpointTestInput"
 
         //option disable is set
-        composeTestRule.onNodeWithTag(TextToSpeechOptions.Disabled, true).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(TextToSpeechOptions.Disabled, true).onChildAt(0)
+            .assertIsSelected()
 
         //User clicks option remote http
         composeTestRule.onNodeWithTag(TextToSpeechOptions.RemoteHTTP).performClick()

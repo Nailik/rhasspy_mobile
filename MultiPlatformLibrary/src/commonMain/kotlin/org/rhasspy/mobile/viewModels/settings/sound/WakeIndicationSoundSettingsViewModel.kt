@@ -12,16 +12,21 @@ import org.rhasspy.mobile.settings.sounds.SoundOptions
 
 class WakeIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel() {
 
-    override val isSoundIndicationDefault: StateFlow<Boolean> = AppSettings.wakeSound.data.mapReadonlyState {
-        it == SoundOptions.Default.name
-    }
+    override val isSoundIndicationDefault: StateFlow<Boolean> =
+        AppSettings.wakeSound.data.mapReadonlyState {
+            it == SoundOptions.Default.name
+        }
 
-    override val isSoundIndicationDisabled: StateFlow<Boolean> = AppSettings.wakeSound.data.mapReadonlyState {
-        it == SoundOptions.Disabled.name
-    }
+    override val isSoundIndicationDisabled: StateFlow<Boolean> =
+        AppSettings.wakeSound.data.mapReadonlyState {
+            it == SoundOptions.Disabled.name
+        }
 
     override val customSoundFiles: StateFlow<List<SoundFile>> =
-        combineState(AppSettings.wakeSound.data, AppSettings.customWakeSounds.data) { selected, set ->
+        combineState(
+            AppSettings.wakeSound.data,
+            AppSettings.customWakeSounds.data
+        ) { selected, set ->
             set.map { fileName ->
                 SoundFile(fileName, selected == fileName, selected != fileName)
             }.toList()

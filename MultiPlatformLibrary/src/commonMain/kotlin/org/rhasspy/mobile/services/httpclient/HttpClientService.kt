@@ -34,9 +34,11 @@ class HttpClientService : IService() {
 
     private val audioContentType = ContentType("audio", "wav")
     private val jsonContentType = ContentType("application", "json")
-    private fun HttpMessageBuilder.hassAuthorization() = this.header("Authorization", "Bearer ${params.intentHandlingHassAccessToken}")
+    private fun HttpMessageBuilder.hassAuthorization() =
+        this.header("Authorization", "Bearer ${params.intentHandlingHassAccessToken}")
 
-    private val isHandleIntentDirectly = params.intentHandlingOption == IntentHandlingOptions.WithRecognition
+    private val isHandleIntentDirectly =
+        params.intentHandlingOption == IntentHandlingOptions.WithRecognition
 
     private val speechToTextUrl =
         if (params.isUseCustomSpeechToTextHttpEndpoint) {

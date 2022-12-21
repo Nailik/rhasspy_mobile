@@ -93,7 +93,8 @@ class OverlayPermissionTest {
         //Cancel clicked
         composeTestRule.onNodeWithTag(TestTag.DialogCancel).performClick()
         //Dialog closed
-        composeTestRule.onNodeWithTag(TestTag.DialogInformationOverlayPermission).assertDoesNotExist()
+        composeTestRule.onNodeWithTag(TestTag.DialogInformationOverlayPermission)
+            .assertDoesNotExist()
 
         //User clicks button
         composeTestRule.onNodeWithText(btnRequestPermission).performClick()
@@ -103,7 +104,8 @@ class OverlayPermissionTest {
         //Ok clicked
         composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
         //Dialog is closed
-        composeTestRule.onNodeWithTag(TestTag.DialogInformationOverlayPermission).assertDoesNotExist()
+        composeTestRule.onNodeWithTag(TestTag.DialogInformationOverlayPermission)
+            .assertDoesNotExist()
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             //on Q app is restarted when allowing overlay permission

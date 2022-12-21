@@ -67,7 +67,8 @@ class AutomaticSilenceDetectionSettingsContentTest {
         //Automatic silence detection disabled
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).assertIsOff()
         //settings not visible
-        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration).assertDoesNotExist()
+        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration)
+            .assertDoesNotExist()
 
         //user clicks automatic silence detection
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).performClick()
@@ -76,14 +77,19 @@ class AutomaticSilenceDetectionSettingsContentTest {
         //Automatic silence detection enabled saved
         assertTrue { AutomaticSilenceDetectionSettingsViewModel().isAutomaticSilenceDetectionEnabled.value }
         //settings visible
-        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration)
+            .assertIsDisplayed()
 
         //user changes silence detection time to 5000
-        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsTime).performTextReplacement(numberInputTest)
+        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsTime)
+            .performTextReplacement(numberInputTest)
         composeTestRule.awaitIdle()
         assertEquals(numberInputTest, viewModel.automaticSilenceDetectionTimeText.value)
         //silence detection time 5000 saved
-        assertEquals(numberInputTest, AutomaticSilenceDetectionSettingsViewModel().automaticSilenceDetectionTimeText.value)
+        assertEquals(
+            numberInputTest,
+            AutomaticSilenceDetectionSettingsViewModel().automaticSilenceDetectionTimeText.value
+        )
     }
 
     /**
@@ -105,13 +111,15 @@ class AutomaticSilenceDetectionSettingsContentTest {
         //Automatic silence detection enabled
         viewModel.toggleAutomaticSilenceDetectionEnabled(true)
         //audio level indication invisible
-        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsAudioLevelTest).assertDoesNotExist()
+        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsAudioLevelTest)
+            .assertDoesNotExist()
 
         //user clicks audio level test
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsTest).performClick()
         composeTestRule.awaitIdle()
         //audio level indication shown
-        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsAudioLevelTest).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsAudioLevelTest)
+            .assertIsDisplayed()
         //audio recording true
         assertTrue { viewModel.isRecording.value }
 
@@ -119,7 +127,8 @@ class AutomaticSilenceDetectionSettingsContentTest {
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsTest).performClick()
         composeTestRule.awaitIdle()
         //audio level indication invisible
-        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsAudioLevelTest).assertDoesNotExist()
+        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsAudioLevelTest)
+            .assertDoesNotExist()
         //audio recording false
         assertFalse { viewModel.isRecording.value }
     }

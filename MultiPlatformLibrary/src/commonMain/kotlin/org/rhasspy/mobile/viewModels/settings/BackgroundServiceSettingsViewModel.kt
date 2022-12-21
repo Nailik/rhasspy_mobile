@@ -15,7 +15,8 @@ import org.rhasspy.mobile.settings.AppSettings
 class BackgroundServiceSettingsViewModel : ViewModel() {
 
     //unsaved data
-    private var _isBatteryOptimizationDisabled = MutableStateFlow(BatteryOptimization.isBatteryOptimizationDisabled())
+    private var _isBatteryOptimizationDisabled =
+        MutableStateFlow(BatteryOptimization.isBatteryOptimizationDisabled())
 
     //unsaved ui data
     val isBackgroundServiceEnabled = AppSettings.isBackgroundServiceEnabled.data

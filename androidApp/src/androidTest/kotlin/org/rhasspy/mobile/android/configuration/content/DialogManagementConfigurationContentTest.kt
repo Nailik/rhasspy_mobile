@@ -54,11 +54,13 @@ class DialogManagementConfigurationContentTest {
         viewModel.save()
 
         //option disable is set
-        composeTestRule.onNodeWithTag(DialogManagementOptions.Disabled, true).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(DialogManagementOptions.Disabled, true).onChildAt(0)
+            .assertIsSelected()
         //User clicks option local
         composeTestRule.onNodeWithTag(DialogManagementOptions.Local).performClick()
         //new option is selected
-        composeTestRule.onNodeWithTag(DialogManagementOptions.Local, true).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(DialogManagementOptions.Local, true).onChildAt(0)
+            .assertIsSelected()
 
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()

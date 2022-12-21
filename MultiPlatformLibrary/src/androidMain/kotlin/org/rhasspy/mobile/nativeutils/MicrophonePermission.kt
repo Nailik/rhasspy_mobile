@@ -31,11 +31,17 @@ actual object MicrophonePermission {
     }
 
     private fun isGranted(): Boolean {
-        return ActivityCompat.checkSelfPermission(Application.Instance, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+        return ActivityCompat.checkSelfPermission(
+            Application.Instance,
+            Manifest.permission.RECORD_AUDIO
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     actual fun shouldShowInformationDialog(): Boolean {
-        return ActivityCompat.shouldShowRequestPermissionRationale(Application.Instance.currentActivity!!, Manifest.permission.RECORD_AUDIO)
+        return ActivityCompat.shouldShowRequestPermissionRationale(
+            Application.Instance.currentActivity!!,
+            Manifest.permission.RECORD_AUDIO
+        )
     }
 
 }

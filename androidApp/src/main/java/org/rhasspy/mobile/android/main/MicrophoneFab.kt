@@ -29,13 +29,15 @@ import org.rhasspy.mobile.android.testTag
  * Floating Action Button with microphone
  */
 @Composable
-fun MicrophoneFab(modifier: Modifier = Modifier,
-                  iconSize: Dp,
-                  isActionEnabledStateFlow: StateFlow<Boolean>,
-                  isRecordingStateFlow: StateFlow<Boolean>,
-                  isShowBorderStateFlow: StateFlow<Boolean>,
-                  isShowMicOnStateFlow: StateFlow<Boolean>,
-                  onClick: () -> Unit) {
+fun MicrophoneFab(
+    modifier: Modifier = Modifier,
+    iconSize: Dp,
+    isActionEnabledStateFlow: StateFlow<Boolean>,
+    isRecordingStateFlow: StateFlow<Boolean>,
+    isShowBorderStateFlow: StateFlow<Boolean>,
+    isShowMicOnStateFlow: StateFlow<Boolean>,
+    onClick: () -> Unit
+) {
 
     val isActionEnabled by isActionEnabledStateFlow.collectAsState()
     val isRecording by isRecordingStateFlow.collectAsState()
@@ -105,7 +107,11 @@ fun getContainerForMicrophoneFabLegacy(isActionEnabled: Boolean, isRecording: Bo
 
 @Composable
 @ColorRes
-fun getMicrophoneFabIconLegacy(isMicOn: Boolean, isActionEnabled: Boolean, isRecording: Boolean): Int {
+fun getMicrophoneFabIconLegacy(
+    isMicOn: Boolean,
+    isActionEnabled: Boolean,
+    isRecording: Boolean
+): Int {
     return when {
         isRecording -> if (isMicOn) R.drawable.ic_mic_on_error_container else R.drawable.ic_mic_off_on_error_container
         isActionEnabled -> if (isMicOn) R.drawable.ic_mic_on_primary_container else R.drawable.ic_mic_off_on_primary_container

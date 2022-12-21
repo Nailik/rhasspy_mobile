@@ -28,7 +28,8 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
         if (maxFileSize != 0L) {
             if (file.length() / 1024 >= maxFileSize) {
                 try {
-                    val oldFile = File("${file.parent}/${file.nameWithoutExtension}_old.${file.extension}")
+                    val oldFile =
+                        File("${file.parent}/${file.nameWithoutExtension}_old.${file.extension}")
                     if (oldFile.exists()) {
                         oldFile.delete()
                     }
@@ -51,7 +52,11 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
     actual fun getFileData() = file.readBytes().toList()
 
     actual fun shareFile() {
-        val fileUri: Uri = FileProvider.getUriForFile(Application.Instance, Application.Instance.packageName.toString() + ".provider", file)
+        val fileUri: Uri = FileProvider.getUriForFile(
+            Application.Instance,
+            Application.Instance.packageName.toString() + ".provider",
+            file
+        )
 
         val intent = ShareCompat.IntentBuilder(Application.Instance)
             .setStream(fileUri) // uri from FileProvider
@@ -68,11 +73,12 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
         Application.Instance.currentActivity?.createDocument(fileName, fileType) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
-                    Application.Instance.contentResolver.openOutputStream(uri)?.also { outputStream ->
-                        outputStream.write(file.readBytes())
-                        outputStream.flush()
-                        outputStream.close()
-                    }
+                    Application.Instance.contentResolver.openOutputStream(uri)
+                        ?.also { outputStream ->
+                            outputStream.write(file.readBytes())
+                            outputStream.flush()
+                            outputStream.close()
+                        }
                 }
             }
         }

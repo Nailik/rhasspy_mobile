@@ -83,14 +83,18 @@ class PorcupineKeywordCustomScreenTest {
     fun testActions() = runBlocking {
         //copy test file to downloads directory
         //jarvis.zip file in download folder exists with ppn file inside
-        val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName)
+        val file = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            fileName
+        )
         if (file.exists()) {
             file.delete()
         }
         withContext(Dispatchers.IO) {
             file.createNewFile()
         }
-        getInstrumentation().context.resources.openRawResource(R.raw.porcupine_test).copyTo(file.outputStream())
+        getInstrumentation().context.resources.openRawResource(R.raw.porcupine_test)
+            .copyTo(file.outputStream())
 
         //Download button exists
         composeTestRule.onNodeWithTag(TestTag.Download).assertIsDisplayed()
@@ -154,14 +158,18 @@ class PorcupineKeywordCustomScreenTest {
     @Test
     fun testList() = runBlocking {
         //one element with ppn exists and selected
-        val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName)
+        val file = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            fileName
+        )
         if (file.exists()) {
             file.delete()
         }
         withContext(Dispatchers.IO) {
             file.createNewFile()
         }
-        getInstrumentation().context.resources.openRawResource(R.raw.porcupine_test).copyTo(file.outputStream())
+        getInstrumentation().context.resources.openRawResource(R.raw.porcupine_test)
+            .copyTo(file.outputStream())
         composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
         composeTestRule.awaitIdle()

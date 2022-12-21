@@ -30,7 +30,8 @@ class MicrophoneOverlaySettingsContentTest {
 
     private val viewModel = MicrophoneOverlaySettingsViewModel()
 
-    private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    private val device: UiDevice =
+        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     private val settingsPage = "com.android.settings"
     private val list = ".*list"
@@ -81,9 +82,13 @@ class MicrophoneOverlaySettingsContentTest {
         viewModel.toggleMicrophoneOverlayWhileAppEnabled(false)
 
         //OverlaySizeOption is disabled
-        assertEquals(MicrophoneOverlaySizeOptions.Disabled, viewModel.microphoneOverlaySizeOption.value)
+        assertEquals(
+            MicrophoneOverlaySizeOptions.Disabled,
+            viewModel.microphoneOverlaySizeOption.value
+        )
         //Disabled is selected
-        composeTestRule.onNodeWithTag(MicrophoneOverlaySizeOptions.Disabled, true).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(MicrophoneOverlaySizeOptions.Disabled, true).onChildAt(0)
+            .assertIsSelected()
         //Visible while app is not visible
         composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).assertDoesNotExist()
 
@@ -106,12 +111,16 @@ class MicrophoneOverlaySettingsContentTest {
         composeTestRule.awaitIdle()
 
         //Medium is selected
-        composeTestRule.onNodeWithTag(MicrophoneOverlaySizeOptions.Medium, true).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(MicrophoneOverlaySizeOptions.Medium, true).onChildAt(0)
+            .assertIsSelected()
         //Visible while app is visible
         composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).assertIsDisplayed()
         //Medium is saved
         var newViewModel = MicrophoneOverlaySettingsViewModel()
-        assertEquals(MicrophoneOverlaySizeOptions.Medium, newViewModel.microphoneOverlaySizeOption.value)
+        assertEquals(
+            MicrophoneOverlaySizeOptions.Medium,
+            newViewModel.microphoneOverlaySizeOption.value
+        )
 
         //Visible while app is disabled
         assertFalse { viewModel.isMicrophoneOverlayWhileAppEnabled.value }

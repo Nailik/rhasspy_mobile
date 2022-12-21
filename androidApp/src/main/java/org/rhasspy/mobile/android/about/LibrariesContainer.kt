@@ -202,7 +202,8 @@ private val Library.correctedName: String
  * get author of library
  */
 private val Library.author: String
-    get() = developers.takeIf { it.isNotEmpty() }?.map { it.name }?.joinToString(", ") ?: organization?.name ?: ""
+    get() = developers.takeIf { it.isNotEmpty() }?.map { it.name }?.joinToString(", ")
+        ?: organization?.name ?: ""
 
 /**
  * read html license content

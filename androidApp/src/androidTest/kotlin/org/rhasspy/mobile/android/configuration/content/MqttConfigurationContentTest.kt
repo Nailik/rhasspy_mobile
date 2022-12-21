@@ -130,11 +130,13 @@ class MqttConfigurationContentTest {
         //username is changed
         composeTestRule.onNodeWithTag(TestTag.UserName).performScrollTo().performClick()
         composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.UserName).performTextReplacement(textInputTestUsername)
+        composeTestRule.onNodeWithTag(TestTag.UserName)
+            .performTextReplacement(textInputTestUsername)
         //password is changed
         composeTestRule.onNodeWithTag(TestTag.Password).performScrollTo().performClick()
         composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.Password).performTextReplacement(textInputTestPassword)
+        composeTestRule.onNodeWithTag(TestTag.Password)
+            .performTextReplacement(textInputTestPassword)
 
         //user click save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
@@ -218,15 +220,18 @@ class MqttConfigurationContentTest {
         //timeout is changed
         composeTestRule.onNodeWithTag(TestTag.ConnectionTimeout).performScrollTo().performClick()
         composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.ConnectionTimeout).performTextReplacement(textInputTestConnectionTimeout)
+        composeTestRule.onNodeWithTag(TestTag.ConnectionTimeout)
+            .performTextReplacement(textInputTestConnectionTimeout)
         //keepAliveInterval is changed
         composeTestRule.onNodeWithTag(TestTag.KeepAliveInterval).performScrollTo().performClick()
         composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.KeepAliveInterval).performTextReplacement(textInputTestKeepAliveInterval)
+        composeTestRule.onNodeWithTag(TestTag.KeepAliveInterval)
+            .performTextReplacement(textInputTestKeepAliveInterval)
         //retry interval is changed
         composeTestRule.onNodeWithTag(TestTag.RetryInterval).performScrollTo().performClick()
         composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.RetryInterval).performTextReplacement(textInputTestRetryInterval)
+        composeTestRule.onNodeWithTag(TestTag.RetryInterval)
+            .performTextReplacement(textInputTestRetryInterval)
 
         //user click save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()

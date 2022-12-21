@@ -12,7 +12,11 @@ import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
 
 @Composable
-fun RowScope.NavigationItem(screen: Enum<*>, icon: @Composable () -> Unit, label: @Composable () -> Unit) {
+fun RowScope.NavigationItem(
+    screen: Enum<*>,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit
+) {
 
     val navController = LocalNavController.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()

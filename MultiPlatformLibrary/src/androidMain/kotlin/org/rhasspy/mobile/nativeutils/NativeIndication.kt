@@ -20,14 +20,15 @@ actual object NativeIndication {
     @SuppressLint("WakelockTimeout")
     @Suppress("DEPRECATION")
     actual fun wakeUpScreen() {
-        wakeLock = (Application.Instance.getSystemService(Context.POWER_SERVICE) as PowerManager).run {
-            newWakeLock(
-                PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
-                "Rhasspy::WakeWordDetected"
-            ).apply {
-                acquire()
+        wakeLock =
+            (Application.Instance.getSystemService(Context.POWER_SERVICE) as PowerManager).run {
+                newWakeLock(
+                    PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
+                    "Rhasspy::WakeWordDetected"
+                ).apply {
+                    acquire()
+                }
             }
-        }
     }
 
 

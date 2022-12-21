@@ -19,10 +19,13 @@ class HomeScreenViewModel : ViewModel(), KoinComponent {
 
     val isActionEnabled = dialogManagerServiceState
         .mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingHotWord }
-    val isShowBorder = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.AwaitingHotWord }
-    val isPlayingRecording = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.PlayingAudio }
+    val isShowBorder =
+        dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.AwaitingHotWord }
+    val isPlayingRecording =
+        dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.PlayingAudio }
     val isShowMicOn: StateFlow<Boolean> = MicrophonePermission.granted
-    val isRecording =  dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
+    val isRecording =
+        dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
 
     val isPlayingRecordingEnabled = isActionEnabled
     val isShowLogEnabled = AppSettings.isShowLogEnabled.data

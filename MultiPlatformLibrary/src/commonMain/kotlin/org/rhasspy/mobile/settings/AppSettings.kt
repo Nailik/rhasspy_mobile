@@ -15,18 +15,22 @@ object AppSettings {
     val languageOption = Setting(SettingsEnum.LanguageOption, LanguageOptions.English)
 
     val isAutomaticSilenceDetectionEnabled = Setting(SettingsEnum.AutomaticSilenceDetection, false)
-    val automaticSilenceDetectionAudioLevel = Setting(SettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
+    val automaticSilenceDetectionAudioLevel =
+        Setting(SettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
     val automaticSilenceDetectionTime = Setting(SettingsEnum.AutomaticSilenceDetectionTime, 2000)
 
     val isBackgroundServiceEnabled = Setting(SettingsEnum.BackgroundEnabled, false)
-    val microphoneOverlaySizeOption = Setting(SettingsEnum.MicrophoneOverlaySize, MicrophoneOverlaySizeOptions.Disabled)
+    val microphoneOverlaySizeOption =
+        Setting(SettingsEnum.MicrophoneOverlaySize, MicrophoneOverlaySizeOptions.Disabled)
     val isMicrophoneOverlayWhileAppEnabled = Setting(SettingsEnum.MicrophoneOverlayWhileApp, false)
     val microphoneOverlayPositionX = Setting(SettingsEnum.MicrophoneOverlayPositionX, 0)
     val microphoneOverlayPositionY = Setting(SettingsEnum.MicrophoneOverlayPositionY, 0)
 
-    val isWakeWordDetectionTurnOnDisplayEnabled = Setting(SettingsEnum.BackgroundWakeWordDetectionTurnOnDisplay, false)
+    val isWakeWordDetectionTurnOnDisplayEnabled =
+        Setting(SettingsEnum.BackgroundWakeWordDetectionTurnOnDisplay, false)
     val isSoundIndicationEnabled = Setting(SettingsEnum.SoundIndication, false)
-    val soundIndicationOutputOption = Setting(SettingsEnum.SoundIndicationOutput, AudioOutputOptions.Notification)
+    val soundIndicationOutputOption =
+        Setting(SettingsEnum.SoundIndicationOutput, AudioOutputOptions.Notification)
     val isWakeWordLightIndicationEnabled = Setting(SettingsEnum.WakeWordLightIndication, false)
 
     val volume = Setting(SettingsEnum.Volume, 0.5F)
@@ -44,7 +48,8 @@ object AppSettings {
 
     //saves sound as pair, first is fileName as String, second is used and indicates if this custom sound file is used
     val customWakeSounds = Setting(SettingsEnum.CustomWakeSounds, setOf(), StringSetSerializer)
-    val customRecordedSounds = Setting(SettingsEnum.CustomRecordedSounds, setOf(), StringSetSerializer)
+    val customRecordedSounds =
+        Setting(SettingsEnum.CustomRecordedSounds, setOf(), StringSetSerializer)
     val customErrorSounds = Setting(SettingsEnum.CustomErrorSounds, setOf(), StringSetSerializer)
 
     val isCrashlyticsEnabled = Setting(SettingsEnum.Crashlytics, false)

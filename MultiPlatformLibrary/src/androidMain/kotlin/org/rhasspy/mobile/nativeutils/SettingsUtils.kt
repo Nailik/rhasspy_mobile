@@ -28,47 +28,50 @@ actual object SettingsUtils {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
 
-                    Application.Instance.contentResolver.openOutputStream(uri)?.also { outputStream ->
+                    Application.Instance.contentResolver.openOutputStream(uri)
+                        ?.also { outputStream ->
 
-                        val zipOutputStream = ZipOutputStream(BufferedOutputStream(outputStream))
+                            val zipOutputStream =
+                                ZipOutputStream(BufferedOutputStream(outputStream))
 
-                        //shared Prefs file
-                        zipOutputStream.putNextEntry(ZipEntry("shared_prefs/"))
+                            //shared Prefs file
+                            zipOutputStream.putNextEntry(ZipEntry("shared_prefs/"))
 
-                        val sharedPreferencesFolder = File(Application.Instance.filesDir.parent, "shared_prefs")
-                        if (sharedPreferencesFolder.exists()) {
-                            sharedPreferencesFolder.listFiles()?.forEach { soundFile ->
-                                zipOutputStream.putNextEntry(ZipEntry("${sharedPreferencesFolder.name}/${soundFile.name}"))
-                                zipOutputStream.write(soundFile.readBytes())
+                            val sharedPreferencesFolder =
+                                File(Application.Instance.filesDir.parent, "shared_prefs")
+                            if (sharedPreferencesFolder.exists()) {
+                                sharedPreferencesFolder.listFiles()?.forEach { soundFile ->
+                                    zipOutputStream.putNextEntry(ZipEntry("${sharedPreferencesFolder.name}/${soundFile.name}"))
+                                    zipOutputStream.write(soundFile.readBytes())
+                                }
                             }
-                        }
 
-                        //all files in sounds
-                        val soundsFolder = File(Application.Instance.filesDir, "sounds")
+                            //all files in sounds
+                            val soundsFolder = File(Application.Instance.filesDir, "sounds")
 
-                        if (soundsFolder.exists()) {
-                            soundsFolder.listFiles()?.forEach { soundFile ->
-                                zipOutputStream.putNextEntry(ZipEntry("files/${soundsFolder.name}/${soundFile.name}"))
-                                zipOutputStream.write(soundFile.readBytes())
+                            if (soundsFolder.exists()) {
+                                soundsFolder.listFiles()?.forEach { soundFile ->
+                                    zipOutputStream.putNextEntry(ZipEntry("files/${soundsFolder.name}/${soundFile.name}"))
+                                    zipOutputStream.write(soundFile.readBytes())
+                                }
                             }
-                        }
 
-                        //all files in porcupine wake words
-                        val porcupineFolder = File(Application.Instance.filesDir, "porcupine")
+                            //all files in porcupine wake words
+                            val porcupineFolder = File(Application.Instance.filesDir, "porcupine")
 
-                        if (porcupineFolder.exists()) {
-                            porcupineFolder.listFiles()?.forEach { porcupineFile ->
-                                zipOutputStream.putNextEntry(ZipEntry("files/${porcupineFolder.name}/${porcupineFile.name}"))
-                                zipOutputStream.write(porcupineFile.readBytes())
+                            if (porcupineFolder.exists()) {
+                                porcupineFolder.listFiles()?.forEach { porcupineFile ->
+                                    zipOutputStream.putNextEntry(ZipEntry("files/${porcupineFolder.name}/${porcupineFile.name}"))
+                                    zipOutputStream.write(porcupineFile.readBytes())
+                                }
                             }
+
+                            zipOutputStream.flush()
+                            outputStream.flush()
+
+                            zipOutputStream.close()
+                            outputStream.close()
                         }
-
-                        zipOutputStream.flush()
-                        outputStream.flush()
-
-                        zipOutputStream.close()
-                        outputStream.close()
-                    }
                 }
             }
         }
@@ -121,23 +124,24 @@ actual object SettingsUtils {
 
                     var fileName = ""
 
-                    Application.Instance.contentResolver.query(uri, null, null, null, null)?.also { cursor ->
-                        if (cursor.moveToFirst()) {
-                            val index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                            if (index != -1) {
-                                fileName = cursor.getString(index)
+                    Application.Instance.contentResolver.query(uri, null, null, null, null)
+                        ?.also { cursor ->
+                            if (cursor.moveToFirst()) {
+                                val index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                                if (index != -1) {
+                                    fileName = cursor.getString(index)
+                                } else {
+                                    callback(null)
+                                    //didn't work
+                                    return@openDocument
+                                }
                             } else {
                                 callback(null)
                                 //didn't work
                                 return@openDocument
                             }
-                        } else {
-                            callback(null)
-                            //didn't work
-                            return@openDocument
+                            cursor.close()
                         }
-                        cursor.close()
-                    }
 
                     fileName = renameFileWhileExists("sounds/$subfolder", fileName)
 
@@ -170,27 +174,33 @@ actual object SettingsUtils {
     actual fun selectPorcupineFile(callback: (String?) -> Unit) {
         File(Application.Instance.filesDir, "porcupine").mkdirs()
 
-        Application.Instance.currentActivity?.openDocument(arrayOf("application/octet-stream", "application/zip")) {
+        Application.Instance.currentActivity?.openDocument(
+            arrayOf(
+                "application/octet-stream",
+                "application/zip"
+            )
+        ) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
 
                     var fileName = ""
 
-                    Application.Instance.contentResolver.query(uri, null, null, null, null)?.also { cursor ->
-                        if (cursor.moveToFirst()) {
-                            val index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                            if (index != -1) {
-                                fileName = cursor.getString(index)
+                    Application.Instance.contentResolver.query(uri, null, null, null, null)
+                        ?.also { cursor ->
+                            if (cursor.moveToFirst()) {
+                                val index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                                if (index != -1) {
+                                    fileName = cursor.getString(index)
+                                } else {
+                                    //didn't work
+                                    return@openDocument
+                                }
                             } else {
                                 //didn't work
                                 return@openDocument
                             }
-                        } else {
-                            //didn't work
-                            return@openDocument
+                            cursor.close()
                         }
-                        cursor.close()
-                    }
 
                     Application.Instance.contentResolver.openInputStream(uri)?.let { inputStream ->
 
@@ -198,7 +208,8 @@ actual object SettingsUtils {
                             fileName.endsWith(".zip") -> {
 
                                 //check if file contains .ppn file
-                                val zipInputStream = ZipInputStream(BufferedInputStream(inputStream))
+                                val zipInputStream =
+                                    ZipInputStream(BufferedInputStream(inputStream))
 
                                 var ze = zipInputStream.nextEntry
 
@@ -208,7 +219,10 @@ actual object SettingsUtils {
                                         if (ze.name.endsWith(".ppn")) {
                                             fileName = renameFileWhileExists("porcupine", ze.name)
 
-                                            File(Application.Instance.filesDir, "porcupine/$fileName").outputStream().apply {
+                                            File(
+                                                Application.Instance.filesDir,
+                                                "porcupine/$fileName"
+                                            ).outputStream().apply {
                                                 zipInputStream.copyTo(this)
                                                 flush()
                                                 close()

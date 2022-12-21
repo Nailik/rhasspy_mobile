@@ -6,7 +6,8 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.DataEnum
 
 
-enum class LogLevel(override val text: StringResource, val severity: Severity) : DataEnum<LogLevel> {
+enum class LogLevel(override val text: StringResource, val severity: Severity) :
+    DataEnum<LogLevel> {
     Verbose(MR.strings.verbose, Severity.Verbose),
     Debug(MR.strings.debug, Severity.Debug),
     Info(MR.strings.info, Severity.Info),

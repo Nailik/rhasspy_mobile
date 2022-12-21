@@ -139,7 +139,11 @@ private fun AppBar(
     icon: @Composable () -> Unit
 ) {
     TopAppBar(
-        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)),
+        colors = TopAppBarDefaults.smallTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                1.dp
+            )
+        ),
         title = {
             Text(
                 resource = title,

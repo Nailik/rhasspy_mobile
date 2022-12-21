@@ -112,7 +112,10 @@ private fun AudioLevel(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
     SliderListItem(
         text = MR.strings.audioLevelThreshold,
         value = viewModel.automaticSilenceDetectionAudioLevelPercentage.collectAsState().value,
-        valueText = "%.0f".format(null, viewModel.automaticSilenceDetectionAudioLevel.collectAsState().value),
+        valueText = "%.0f".format(
+            null,
+            viewModel.automaticSilenceDetectionAudioLevel.collectAsState().value
+        ),
         onValueChange = viewModel::changeAutomaticSilenceDetectionAudioLevelPercentage
     )
 
@@ -173,7 +176,10 @@ private fun CurrentAudioLevel(viewModel: AutomaticSilenceDetectionSettingsViewMo
 @Composable
 private fun StartTestButton(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
 
-    RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::toggleAudioLevelTest) { onClick ->
+    RequiresMicrophonePermission(
+        MR.strings.microphonePermissionInfoRecord,
+        viewModel::toggleAudioLevelTest
+    ) { onClick ->
         ListElement {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Button(
@@ -186,7 +192,10 @@ private fun StartTestButton(viewModel: AutomaticSilenceDetectionSettingsViewMode
 
                     val isRecording by viewModel.isRecording.collectAsState()
 
-                    Icon(if (isRecording) Icons.Filled.MicOff else Icons.Filled.Mic, MR.strings.microphone)
+                    Icon(
+                        if (isRecording) Icons.Filled.MicOff else Icons.Filled.Mic,
+                        MR.strings.microphone
+                    )
 
                     Spacer(modifier = Modifier.width(8.dp))
 

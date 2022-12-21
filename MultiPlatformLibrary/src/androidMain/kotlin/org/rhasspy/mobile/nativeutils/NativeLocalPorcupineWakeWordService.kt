@@ -31,7 +31,11 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
 
 
     actual fun initialize(): HotWordServiceError? {
-        if (ActivityCompat.checkSelfPermission(Application.Instance, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                Application.Instance,
+                Manifest.permission.RECORD_AUDIO
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             logger.e { "missing recording permission" }
             return HotWordServiceError.MicrophonePermissionMissing
         }
@@ -41,20 +45,25 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
                 .setAccessKey(wakeWordPorcupineAccessToken)
                 //keyword paths can not be used with keywords, therefore also the built in keywords are copied to a usable file location
                 .setKeywordPaths(
-                    wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }.map {
-                        copyBuildInKeywordFileIfNecessary(it)
-                    }.toMutableList().also { list ->
+                    wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }
+                        .map {
+                            copyBuildInKeywordFileIfNecessary(it)
+                        }.toMutableList().also { list ->
                         list.addAll(
                             wakeWordPorcupineKeywordCustomOptions.filter { it.isEnabled }.map {
-                                File(Application.Instance.filesDir, "porcupine/${it.fileName}").absolutePath
+                                File(
+                                    Application.Instance.filesDir,
+                                    "porcupine/${it.fileName}"
+                                ).absolutePath
                             }
                         )
                     }.toTypedArray()
                 )
                 .setSensitivities(
-                    wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }.map {
-                        it.sensitivity
-                    }.toMutableList().also { list ->
+                    wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }
+                        .map {
+                            it.sensitivity
+                        }.toMutableList().also { list ->
                         list.addAll(
                             wakeWordPorcupineKeywordCustomOptions.filter { it.isEnabled }.map {
                                 it.sensitivity
@@ -138,20 +147,32 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
     }
 
     private fun copyModelFileIfNecessary(): String {
-        val file = File(Application.Instance.filesDir, "porcupine/model_${wakeWordPorcupineLanguage.name.lowercase()}.pv")
+        val file = File(
+            Application.Instance.filesDir,
+            "porcupine/model_${wakeWordPorcupineLanguage.name.lowercase()}.pv"
+        )
 
         if (!file.exists()) {
-            file.outputStream().write(Application.Instance.resources.openRawResource(wakeWordPorcupineLanguage.file.rawResId).readBytes())
+            file.outputStream().write(
+                Application.Instance.resources.openRawResource(wakeWordPorcupineLanguage.file.rawResId)
+                    .readBytes()
+            )
         }
 
         return file.absolutePath
     }
 
     private fun copyBuildInKeywordFileIfNecessary(defaultKeyword: PorcupineDefaultKeyword): String {
-        val file = File(Application.Instance.filesDir, "porcupine/model_${defaultKeyword.option.name.lowercase()}.ppn")
+        val file = File(
+            Application.Instance.filesDir,
+            "porcupine/model_${defaultKeyword.option.name.lowercase()}.ppn"
+        )
 
         if (!file.exists()) {
-            file.outputStream().write(Application.Instance.resources.openRawResource(defaultKeyword.option.file.rawResId).readBytes())
+            file.outputStream().write(
+                Application.Instance.resources.openRawResource(defaultKeyword.option.file.rawResId)
+                    .readBytes()
+            )
         }
 
         return file.absolutePath

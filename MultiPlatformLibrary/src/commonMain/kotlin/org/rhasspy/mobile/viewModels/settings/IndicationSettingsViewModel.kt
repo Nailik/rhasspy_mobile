@@ -10,7 +10,8 @@ class IndicationSettingsViewModel : ViewModel() {
     //unsaved ui data
     val isSoundIndicationEnabled = AppSettings.isSoundIndicationEnabled.data
     val isWakeWordLightIndicationEnabled = AppSettings.isWakeWordLightIndicationEnabled.data
-    val isWakeWordDetectionTurnOnDisplayEnabled = AppSettings.isWakeWordDetectionTurnOnDisplayEnabled.data
+    val isWakeWordDetectionTurnOnDisplayEnabled =
+        AppSettings.isWakeWordDetectionTurnOnDisplayEnabled.data
     val isSoundSettingsVisible = isSoundIndicationEnabled
     val soundIndicationOutputOption = AppSettings.soundIndicationOutputOption.data
 

@@ -53,7 +53,13 @@ object FileLogger : LogWriter() {
     override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
 
         coroutineScope.launch {
-            val element = LogElement(Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(), severity, tag, message, throwable?.message)
+            val element = LogElement(
+                Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(),
+                severity,
+                tag,
+                message,
+                throwable?.message
+            )
             fileWriter.appendText(",${Json.encodeToString(element)}")
             flow.emit(element)
         }
@@ -63,6 +69,10 @@ object FileLogger : LogWriter() {
 
     fun shareLogFile() = fileWriter.shareFile()
 
-    fun saveLogFile() = fileWriter.saveFile("rhasspy_logfile_${Clock.System.now().toLocalDateTime(TimeZone.UTC)}.txt", "text/txt")
+    fun saveLogFile() = fileWriter.saveFile(
+        "rhasspy_logfile_${
+            Clock.System.now().toLocalDateTime(TimeZone.UTC)
+        }.txt", "text/txt"
+    )
 
 }

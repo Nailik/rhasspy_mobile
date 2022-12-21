@@ -30,7 +30,10 @@ actual class MqttClient actual constructor(
             onDelivered(token.messageId)
         }
 
-        override fun messageArrived(topic: String, message: org.eclipse.paho.client.mqttv3.MqttMessage) {
+        override fun messageArrived(
+            topic: String,
+            message: org.eclipse.paho.client.mqttv3.MqttMessage
+        ) {
             onMessageReceived(topic, message.toMqttMessage())
         }
 
@@ -60,7 +63,10 @@ actual class MqttClient actual constructor(
 
         null
     } catch (mqttPersistenceEx: MqttPersistenceException) {
-        MqttError(mqttPersistenceEx.message ?: "Message persistence failed.", MqttStatus.MSG_PERSISTENCE_FAILED)
+        MqttError(
+            mqttPersistenceEx.message ?: "Message persistence failed.",
+            MqttStatus.MSG_PERSISTENCE_FAILED
+        )
     } catch (mqttEx: MqttException) {
         MqttError(mqttEx.message ?: "Message delivery failed.", MqttStatus.MSG_DELIVERY_FAILED)
     }
@@ -158,7 +164,10 @@ actual class MqttClient actual constructor(
                 client.disconnect()
                 client.setCallback(null)
             } catch (ex: MqttException) {
-                result = MqttError("Cannot disconnect from MQTT Broker.", MqttStatus.MSG_PERSISTENCE_FAILED)
+                result = MqttError(
+                    "Cannot disconnect from MQTT Broker.",
+                    MqttStatus.MSG_PERSISTENCE_FAILED
+                )
             }
         }
         return result

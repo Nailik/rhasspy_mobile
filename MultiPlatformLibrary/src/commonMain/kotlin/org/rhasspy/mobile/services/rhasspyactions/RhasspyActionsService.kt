@@ -67,7 +67,10 @@ open class RhasspyActionsService : IService() {
 
         val result = when (params.intentRecognitionOption) {
             IntentRecognitionOptions.RemoteHTTP -> httpClientService.recognizeIntent(text)
-            IntentRecognitionOptions.RemoteMQTT -> mqttClientService.recognizeIntent(sessionId, text)
+            IntentRecognitionOptions.RemoteMQTT -> mqttClientService.recognizeIntent(
+                sessionId,
+                text
+            )
             IntentRecognitionOptions.Disabled -> ServiceResponse.Disabled
         }
         event.evaluateResult(result)
@@ -180,7 +183,9 @@ open class RhasspyActionsService : IService() {
     private suspend fun audioFrame(data: List<Byte>) {
         when (params.speechToTextOption) {
             SpeechToTextOptions.RemoteHTTP -> speechToTextAudioData.addAll(data)
-            SpeechToTextOptions.RemoteMQTT -> mqttClientService.audioFrame(data.toMutableList().addWavHeader())
+            SpeechToTextOptions.RemoteMQTT -> mqttClientService.audioFrame(
+                data.toMutableList().addWavHeader()
+            )
             SpeechToTextOptions.Disabled -> {}//nothing to do
         }
     }
@@ -204,7 +209,10 @@ open class RhasspyActionsService : IService() {
         val event = serviceMiddleware.createEvent(IntentHandling)
 
         val result = when (params.intentHandlingOption) {
-            IntentHandlingOptions.HomeAssistant -> homeAssistantService.sendIntent(intentName, intent)
+            IntentHandlingOptions.HomeAssistant -> homeAssistantService.sendIntent(
+                intentName,
+                intent
+            )
             IntentHandlingOptions.RemoteHTTP -> httpClientService.intentHandling(intent)
             IntentHandlingOptions.WithRecognition -> ServiceResponse.Nothing
             IntentHandlingOptions.Disabled -> ServiceResponse.Disabled

@@ -15,7 +15,8 @@ internal object StringSetSerializer : KSerializer<Set<String>> {
     private val delegatedSerializer = ListSerializer(String::class.serializer())
 
     @OptIn(ExperimentalSerializationApi::class)
-    override val descriptor = SerialDescriptor("StringSetSerializer", delegatedSerializer.descriptor)
+    override val descriptor =
+        SerialDescriptor("StringSetSerializer", delegatedSerializer.descriptor)
 
     override fun serialize(encoder: Encoder, value: Set<String>) {
         val l = value.toList()

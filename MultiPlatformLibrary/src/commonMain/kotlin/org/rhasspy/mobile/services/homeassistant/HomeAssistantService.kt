@@ -70,7 +70,10 @@ class HomeAssistantService : IService() {
             sendEvent.success()
 
             return when (params.intentHandlingHomeAssistantOption) {
-                HomeAssistantIntentHandlingOptions.Event -> httpClientService.hassEvent(intentRes, intentName)
+                HomeAssistantIntentHandlingOptions.Event -> httpClientService.hassEvent(
+                    intentRes,
+                    intentName
+                )
                 HomeAssistantIntentHandlingOptions.Intent -> httpClientService.hassIntent("{\"name\" : \"$intentName\", \"data\": $intent }")
             }
         } catch (exception: Exception) {

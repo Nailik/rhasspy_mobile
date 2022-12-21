@@ -13,7 +13,8 @@ class RecordedIndicationSoundScreenTest : IndicationSoundScreenTest(
     screen = IndicationSettingsScreens.RecordedIndicationSound
 ) {
 
-    override val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    override val device: UiDevice =
+        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     @Before
     override fun setUp() {

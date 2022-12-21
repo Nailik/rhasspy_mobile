@@ -35,7 +35,10 @@ import org.rhasspy.mobile.viewModels.screens.ConfigurationScreenViewModel
  */
 @Preview
 @Composable
-fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = get(), scrollToError: Boolean = false) {
+fun ConfigurationScreen(
+    viewModel: ConfigurationScreenViewModel = get(),
+    scrollToError: Boolean = false
+) {
 
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberLazyListState()
@@ -181,7 +184,10 @@ fun NavGraphBuilder.addConfigurationScreens() {
  * error information for service
  */
 @Composable
-private fun ServiceErrorInformation(viewModel: ConfigurationScreenViewModel, scrollState: LazyListState) {
+private fun ServiceErrorInformation(
+    viewModel: ConfigurationScreenViewModel,
+    scrollState: LazyListState
+) {
 
     val coroutineScope = rememberCoroutineScope()
     val firstErrorIndex by viewModel.firstErrorIndex.collectAsState()

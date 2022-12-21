@@ -25,12 +25,17 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
     private val _mqttUserName = MutableStateFlow(ConfigurationSettings.mqttUserName.value)
     private val _mqttPassword = MutableStateFlow(ConfigurationSettings.mqttPassword.value)
     private val _isMqttSSLEnabled = MutableStateFlow(ConfigurationSettings.isMqttSSLEnabled.value)
-    private val _mqttConnectionTimeout = MutableStateFlow(ConfigurationSettings.mqttConnectionTimeout.value)
-    private val _mqttConnectionTimeoutText = MutableStateFlow(ConfigurationSettings.mqttConnectionTimeout.value.toString())
-    private val _mqttKeepAliveInterval = MutableStateFlow(ConfigurationSettings.mqttKeepAliveInterval.value)
-    private val _mqttKeepAliveIntervalText = MutableStateFlow(ConfigurationSettings.mqttKeepAliveInterval.value.toString())
+    private val _mqttConnectionTimeout =
+        MutableStateFlow(ConfigurationSettings.mqttConnectionTimeout.value)
+    private val _mqttConnectionTimeoutText =
+        MutableStateFlow(ConfigurationSettings.mqttConnectionTimeout.value.toString())
+    private val _mqttKeepAliveInterval =
+        MutableStateFlow(ConfigurationSettings.mqttKeepAliveInterval.value)
+    private val _mqttKeepAliveIntervalText =
+        MutableStateFlow(ConfigurationSettings.mqttKeepAliveInterval.value.toString())
     private val _mqttRetryInterval = MutableStateFlow(ConfigurationSettings.mqttRetryInterval.value)
-    private val _mqttRetryIntervalText = MutableStateFlow(ConfigurationSettings.mqttRetryInterval.value.toString())
+    private val _mqttRetryIntervalText =
+        MutableStateFlow(ConfigurationSettings.mqttRetryInterval.value.toString())
 
     //unsaved ui data
     val isMqttEnabled = _isMqttEnabled.readOnly
@@ -53,8 +58,14 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
         combineStateNotEquals(_mqttUserName, ConfigurationSettings.mqttUserName.data),
         combineStateNotEquals(_mqttPassword, ConfigurationSettings.mqttPassword.data),
         combineStateNotEquals(_isMqttSSLEnabled, ConfigurationSettings.isMqttSSLEnabled.data),
-        combineStateNotEquals(_mqttConnectionTimeout, ConfigurationSettings.mqttConnectionTimeout.data),
-        combineStateNotEquals(_mqttKeepAliveInterval, ConfigurationSettings.mqttKeepAliveInterval.data),
+        combineStateNotEquals(
+            _mqttConnectionTimeout,
+            ConfigurationSettings.mqttConnectionTimeout.data
+        ),
+        combineStateNotEquals(
+            _mqttKeepAliveInterval,
+            ConfigurationSettings.mqttKeepAliveInterval.data
+        ),
         combineStateNotEquals(_mqttRetryInterval, ConfigurationSettings.mqttRetryInterval.data)
     )
 

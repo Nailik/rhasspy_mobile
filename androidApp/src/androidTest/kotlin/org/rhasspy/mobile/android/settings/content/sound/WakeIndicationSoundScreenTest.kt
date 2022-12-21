@@ -13,7 +13,8 @@ class WakeIndicationSoundScreenTest : IndicationSoundScreenTest(
     screen = IndicationSettingsScreens.WakeIndicationSound
 ) {
 
-    override val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    override val device: UiDevice =
+        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     @Before
     override fun setUp() {

@@ -16,7 +16,8 @@ internal object PorcupineCustomKeywordSerializer : KSerializer<Set<PorcupineCust
     private val delegatedSerializer = ListSerializer(PorcupineCustomKeyword::class.serializer())
 
     @OptIn(ExperimentalSerializationApi::class)
-    override val descriptor = SerialDescriptor("PorcupineCustomKeywordSerializer", delegatedSerializer.descriptor)
+    override val descriptor =
+        SerialDescriptor("PorcupineCustomKeywordSerializer", delegatedSerializer.descriptor)
 
     override fun serialize(encoder: Encoder, value: Set<PorcupineCustomKeyword>) {
         val l = value.toList()

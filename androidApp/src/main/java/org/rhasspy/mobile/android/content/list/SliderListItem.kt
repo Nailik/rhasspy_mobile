@@ -35,7 +35,12 @@ fun SliderListItem(
         Row(
             modifier = Modifier
                 .heightIn(min = 56.0.dp) //ListTokens.ListItemContainerHeight
-                .padding(PaddingValues(16.dp - 8.dp, 8.dp)), //ListItemHorizontalPadding, ListItemVerticalPadding
+                .padding(
+                    PaddingValues(
+                        16.dp - 8.dp,
+                        8.dp
+                    )
+                ), //ListItemHorizontalPadding, ListItemVerticalPadding
             content = {
                 Box(
                     Modifier

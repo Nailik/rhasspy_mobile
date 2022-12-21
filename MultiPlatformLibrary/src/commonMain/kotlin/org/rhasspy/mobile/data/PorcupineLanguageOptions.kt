@@ -4,7 +4,8 @@ import dev.icerock.moko.resources.FileResource
 import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 
-enum class PorcupineLanguageOptions(override val text: StringResource, val file: FileResource) : DataEnum<PorcupineLanguageOptions> {
+enum class PorcupineLanguageOptions(override val text: StringResource, val file: FileResource) :
+    DataEnum<PorcupineLanguageOptions> {
     EN(MR.strings.english, MR.files.porcupine_params),
     DE(MR.strings.german, MR.files.porcupine_params_de),
     ES(MR.strings.spanish, MR.files.porcupine_params_es),

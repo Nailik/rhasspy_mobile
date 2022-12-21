@@ -46,7 +46,10 @@ object ServiceNotification {
         NotificationManagerCompat
             .from(Application.Instance)
             .createNotificationChannel(
-                NotificationChannelCompat.Builder(CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_MIN)
+                NotificationChannelCompat.Builder(
+                    CHANNEL_ID,
+                    NotificationManagerCompat.IMPORTANCE_MIN
+                )
                     .setName("Rhasspy Service Notification Channel")
                     .setDescription("Rhasspy Mobile runs in background for WakeWord detection and other services")
                     .setGroup(GROUP_ID)

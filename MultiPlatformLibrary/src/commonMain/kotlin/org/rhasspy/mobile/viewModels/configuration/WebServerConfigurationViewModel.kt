@@ -35,7 +35,10 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_isHttpServerEnabled, ConfigurationSettings.isHttpServerEnabled.data),
         combineStateNotEquals(_httpServerPort, ConfigurationSettings.httpServerPort.data),
-        combineStateNotEquals(_isHttpServerSSLEnabled, ConfigurationSettings.isHttpServerSSLEnabled.data)
+        combineStateNotEquals(
+            _isHttpServerSSLEnabled,
+            ConfigurationSettings.isHttpServerSSLEnabled.data
+        )
     )
 
     //toggle HTTP Server enabled

@@ -88,7 +88,8 @@ fun Header(viewModel: AboutScreenViewModel) {
 fun AppIcon() {
     Box(modifier = Modifier.fillMaxWidth()) {
 
-        val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+        val onBackPressedDispatcher =
+            LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
         IconButton(
             onClick = { onBackPressedDispatcher?.onBackPressed() },
             modifier = Modifier

@@ -16,7 +16,8 @@ internal object ConfigurationSettings {
     val httpServerPort = Setting(SettingsEnum.HttpServerPort, 12101)
     val isHttpServerSSLEnabled = Setting(SettingsEnum.HttpServerSSL, false)
     val httpServerSSLKeyStoreFile = Setting(SettingsEnum.HttpServerSSLKeyStoreFile, "keystore.jks")
-    val httpServerSSLKeyStorePassword = Setting(SettingsEnum.HttpServerSSLKeyStorePassword, "sampleAlias")
+    val httpServerSSLKeyStorePassword =
+        Setting(SettingsEnum.HttpServerSSLKeyStorePassword, "sampleAlias")
     val httpServerSSLKeyAlias = Setting(SettingsEnum.HttpServerSSLKeyAlias, "test1234")
     val httpServerSSLKeyPassword = Setting(SettingsEnum.HttpServerSSLKeyPassword, "test1234")
 
@@ -49,34 +50,44 @@ internal object ConfigurationSettings {
         setOf(),
         PorcupineCustomKeywordSerializer
     )
-    val wakeWordPorcupineLanguage = Setting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOptions.EN)
+    val wakeWordPorcupineLanguage =
+        Setting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOptions.EN)
 
 
-    val dialogManagementOption = Setting(SettingsEnum.DialogManagementOption, DialogManagementOptions.Local)
+    val dialogManagementOption =
+        Setting(SettingsEnum.DialogManagementOption, DialogManagementOptions.Local)
 
-    val intentRecognitionOption = Setting(SettingsEnum.IntentRecognitionOption, IntentRecognitionOptions.Disabled)
-    val isUseCustomIntentRecognitionHttpEndpoint = Setting(SettingsEnum.CustomIntentRecognitionHttpEndpoint, false)
+    val intentRecognitionOption =
+        Setting(SettingsEnum.IntentRecognitionOption, IntentRecognitionOptions.Disabled)
+    val isUseCustomIntentRecognitionHttpEndpoint =
+        Setting(SettingsEnum.CustomIntentRecognitionHttpEndpoint, false)
     val intentRecognitionHttpEndpoint = Setting(SettingsEnum.IntentRecognitionHttpEndpoint, "")
 
     val textToSpeechOption = Setting(SettingsEnum.TextToSpeechOption, TextToSpeechOptions.Disabled)
-    val isUseCustomTextToSpeechHttpEndpoint = Setting(SettingsEnum.CustomTextToSpeechOptionHttpEndpoint, false)
+    val isUseCustomTextToSpeechHttpEndpoint =
+        Setting(SettingsEnum.CustomTextToSpeechOptionHttpEndpoint, false)
     val textToSpeechHttpEndpoint = Setting(SettingsEnum.TextToSpeechHttpEndpoint, "")
 
     val audioPlayingOption = Setting(SettingsEnum.AudioPlayingOption, AudioPlayingOptions.Disabled)
     val audioOutputOption = Setting(SettingsEnum.AudioOutputOption, AudioOutputOptions.Sound)
-    val isUseCustomAudioPlayingHttpEndpoint = Setting(SettingsEnum.CustomAudioPlayingHttpEndpoint, false)
+    val isUseCustomAudioPlayingHttpEndpoint =
+        Setting(SettingsEnum.CustomAudioPlayingHttpEndpoint, false)
     val audioPlayingHttpEndpoint = Setting(SettingsEnum.AudioPlayingHttpEndpoint, "")
 
     val speechToTextOption = Setting(SettingsEnum.SpeechToTextOption, SpeechToTextOptions.Disabled)
-    val isUseCustomSpeechToTextHttpEndpoint = Setting(SettingsEnum.CustomSpeechToTextEndpoint, false)
-    val isUseSpeechToTextMqttSilenceDetection = Setting(SettingsEnum.SpeechToTextMqttSilenceDetection, true)
+    val isUseCustomSpeechToTextHttpEndpoint =
+        Setting(SettingsEnum.CustomSpeechToTextEndpoint, false)
+    val isUseSpeechToTextMqttSilenceDetection =
+        Setting(SettingsEnum.SpeechToTextMqttSilenceDetection, true)
     val speechToTextHttpEndpoint = Setting(SettingsEnum.SpeechToTextHttpEndpoint, "")
 
-    val intentHandlingOption = Setting(SettingsEnum.IntentHandlingOption, IntentHandlingOptions.Disabled)
+    val intentHandlingOption =
+        Setting(SettingsEnum.IntentHandlingOption, IntentHandlingOptions.Disabled)
     val intentHandlingHttpEndpoint = Setting(SettingsEnum.IntentHandlingEndpoint, "")
 
     val intentHandlingHassEndpoint = Setting(SettingsEnum.IntentHandlingHassUrl, "")
     val intentHandlingHassAccessToken = Setting(SettingsEnum.IntentHandlingHassAccessToken, "")
-    val intentHandlingHomeAssistantOption = Setting(SettingsEnum.IsIntentHandlingHassEvent, HomeAssistantIntentHandlingOptions.Event)
+    val intentHandlingHomeAssistantOption =
+        Setting(SettingsEnum.IsIntentHandlingHassEvent, HomeAssistantIntentHandlingOptions.Event)
 
 }

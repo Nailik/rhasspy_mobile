@@ -80,12 +80,18 @@ fun BottomBarScreensNavigation(viewModel: HomeScreenViewModel = get()) {
                 }
                 composable(
                     BottomBarScreens.ConfigurationScreen
-                        .appendOptionalParameter(NavigationParams.ScrollToError, "{${NavigationParams.ScrollToError.name}}"),
+                        .appendOptionalParameter(
+                            NavigationParams.ScrollToError,
+                            "{${NavigationParams.ScrollToError.name}}"
+                        ),
                     arguments = listOf(navArgument(NavigationParams.ScrollToError.name) {
                         defaultValue = false
                     })
                 ) {
-                    ConfigurationScreen(scrollToError = it.arguments?.getBoolean(NavigationParams.ScrollToError.name) ?: false)
+                    ConfigurationScreen(
+                        scrollToError = it.arguments?.getBoolean(NavigationParams.ScrollToError.name)
+                            ?: false
+                    )
                 }
                 composable(BottomBarScreens.SettingsScreen.name) {
                     SettingsScreen()
@@ -124,7 +130,13 @@ fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavControlle
 
         NavigationItem(
             screen = BottomBarScreens.ConfigurationScreen,
-            icon = { Icon(painterResource(MR.images.ic_launcher.drawableResId), MR.strings.configuration, Modifier.size(24.dp)) },
+            icon = {
+                Icon(
+                    painterResource(MR.images.ic_launcher.drawableResId),
+                    MR.strings.configuration,
+                    Modifier.size(24.dp)
+                )
+            },
             label = { Text(MR.strings.configuration) }
         )
 

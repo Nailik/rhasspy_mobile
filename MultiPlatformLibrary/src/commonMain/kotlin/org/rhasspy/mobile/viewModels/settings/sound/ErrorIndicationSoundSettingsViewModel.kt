@@ -11,16 +11,21 @@ import org.rhasspy.mobile.settings.sounds.SoundOptions
 
 class ErrorIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel() {
 
-    override val isSoundIndicationDefault: StateFlow<Boolean> = AppSettings.errorSound.data.mapReadonlyState {
-        it == SoundOptions.Default.name
-    }
+    override val isSoundIndicationDefault: StateFlow<Boolean> =
+        AppSettings.errorSound.data.mapReadonlyState {
+            it == SoundOptions.Default.name
+        }
 
-    override val isSoundIndicationDisabled: StateFlow<Boolean> = AppSettings.errorSound.data.mapReadonlyState {
-        it == SoundOptions.Disabled.name
-    }
+    override val isSoundIndicationDisabled: StateFlow<Boolean> =
+        AppSettings.errorSound.data.mapReadonlyState {
+            it == SoundOptions.Disabled.name
+        }
 
     override val customSoundFiles: StateFlow<List<SoundFile>> =
-        combineState(AppSettings.errorSound.data, AppSettings.customErrorSounds.data) { selected, set ->
+        combineState(
+            AppSettings.errorSound.data,
+            AppSettings.customErrorSounds.data
+        ) { selected, set ->
             set.map { fileName ->
                 SoundFile(fileName, selected == fileName, selected != fileName)
             }.toList()

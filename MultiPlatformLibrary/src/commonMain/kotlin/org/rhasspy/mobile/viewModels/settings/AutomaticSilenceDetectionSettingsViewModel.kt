@@ -13,7 +13,8 @@ import kotlin.math.pow
 class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
 
     //unsaved data
-    private val _automaticSilenceDetectionTimeText = MutableStateFlow(AppSettings.automaticSilenceDetectionTime.value.toString())
+    private val _automaticSilenceDetectionTimeText =
+        MutableStateFlow(AppSettings.automaticSilenceDetectionTime.value.toString())
     private val maxAudioLevel = AudioRecorder.absoluteMaxVolume
 
     //unsaved ui data
@@ -22,16 +23,20 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
     val isSilenceDetectionSettingsVisible = isAutomaticSilenceDetectionEnabled
     val automaticSilenceDetectionTimeText = _automaticSilenceDetectionTimeText.readOnly
 
-    val automaticSilenceDetectionAudioLevelPercentage = AppSettings.automaticSilenceDetectionAudioLevel.data.mapReadonlyState {
-        (log(it.toDouble(), maxAudioLevel)).toFloat()
-    }
+    val automaticSilenceDetectionAudioLevelPercentage =
+        AppSettings.automaticSilenceDetectionAudioLevel.data.mapReadonlyState {
+            (log(it.toDouble(), maxAudioLevel)).toFloat()
+        }
 
     //testing
     val isRecording = AudioRecorder.isRecording
     val isSilenceDetectionAudioLevelVisible = isRecording
     val automaticSilenceDetectionAudioLevel = AppSettings.automaticSilenceDetectionAudioLevel.data
     val currentAudioLevel = AudioRecorder.maxVolume
-    val isAudioLevelBiggerThanMax = combineState(AudioRecorder.maxVolume, AppSettings.automaticSilenceDetectionAudioLevel.data) { audioLevel, max ->
+    val isAudioLevelBiggerThanMax = combineState(
+        AudioRecorder.maxVolume,
+        AppSettings.automaticSilenceDetectionAudioLevel.data
+    ) { audioLevel, max ->
         audioLevel > max
     }
     val audioLevelPercentage = currentAudioLevel.mapReadonlyState {
@@ -52,7 +57,8 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
 
     //update audio detection level for automatic silence detection
     fun changeAutomaticSilenceDetectionAudioLevelPercentage(value: Float) {
-        AppSettings.automaticSilenceDetectionAudioLevel.value = maxAudioLevel.pow(value.toDouble()).toFloat()
+        AppSettings.automaticSilenceDetectionAudioLevel.value =
+            maxAudioLevel.pow(value.toDouble()).toFloat()
     }
 
 

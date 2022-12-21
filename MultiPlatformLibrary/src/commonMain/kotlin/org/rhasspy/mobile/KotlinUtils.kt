@@ -21,10 +21,50 @@ fun MutableList<Byte>.addWavHeader(): List<Byte> {
     val audioDataSize = this.size.toByteArray()
 
     val header = byteArrayOf(
-        82, 73, 70, 70,
-        dataSize[0], dataSize[1], dataSize[2], dataSize[3], //4-7 overall size
-        87, 65, 86, 69, 102, 109, 116, 32, 16, 0, 0, 0, 1, 0, 1, 0, -128, 62, 0, 0, 0, 125, 0, 0, 2, 0, 16, 0, 100, 97, 116, 97,
-        audioDataSize[0], audioDataSize[1], audioDataSize[2], audioDataSize[3] //40-43 data size of rest
+        82,
+        73,
+        70,
+        70,
+        dataSize[0],
+        dataSize[1],
+        dataSize[2],
+        dataSize[3], //4-7 overall size
+        87,
+        65,
+        86,
+        69,
+        102,
+        109,
+        116,
+        32,
+        16,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        -128,
+        62,
+        0,
+        0,
+        0,
+        125,
+        0,
+        0,
+        2,
+        0,
+        16,
+        0,
+        100,
+        97,
+        116,
+        97,
+        audioDataSize[0],
+        audioDataSize[1],
+        audioDataSize[2],
+        audioDataSize[3] //40-43 data size of rest
     )
     this.addAll(0, header.toList())
     return this
@@ -50,7 +90,11 @@ fun <T1, T2, T3, T4, R> combineState(
     transform: (T1, T2, T3, T4) -> R
 ): StateFlow<R> = combine(flow1, flow2, flow3, flow4) { o1, o2, o3, o4 ->
     transform.invoke(o1, o2, o3, o4)
-}.stateIn(scope, sharingStarted, transform.invoke(flow1.value, flow2.value, flow3.value, flow4.value))
+}.stateIn(
+    scope,
+    sharingStarted,
+    transform.invoke(flow1.value, flow2.value, flow3.value, flow4.value)
+)
 
 fun <T1, T2, T3, T4, T5, R> combineState(
     flow1: StateFlow<T1>,
@@ -63,7 +107,11 @@ fun <T1, T2, T3, T4, T5, R> combineState(
     transform: (T1, T2, T3, T4, T5) -> R
 ): StateFlow<R> = combine(flow1, flow2, flow3, flow4, flow5) { o1, o2, o3, o4, o5 ->
     transform.invoke(o1, o2, o3, o4, o5)
-}.stateIn(scope, sharingStarted, transform.invoke(flow1.value, flow2.value, flow3.value, flow4.value, flow5.value))
+}.stateIn(
+    scope,
+    sharingStarted,
+    transform.invoke(flow1.value, flow2.value, flow3.value, flow4.value, flow5.value)
+)
 
 fun <T1, T2, T3, R> combineState(
     flow1: StateFlow<T1>,

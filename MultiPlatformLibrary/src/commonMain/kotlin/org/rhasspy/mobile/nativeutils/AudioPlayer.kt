@@ -13,9 +13,18 @@ expect class AudioPlayer() {
 
     fun stopPlayingData()
 
-    fun playSoundFileResource(fileResource: FileResource, volume: StateFlow<Float>, audioOutputOptions: AudioOutputOptions)
+    fun playSoundFileResource(
+        fileResource: FileResource,
+        volume: StateFlow<Float>,
+        audioOutputOptions: AudioOutputOptions
+    )
 
-    fun playSoundFile(subfolder: String, filename: String, volume: StateFlow<Float>, audioOutputOptions: AudioOutputOptions)
+    fun playSoundFile(
+        subfolder: String,
+        filename: String,
+        volume: StateFlow<Float>,
+        audioOutputOptions: AudioOutputOptions
+    )
 
 
 }

@@ -68,7 +68,7 @@ fun ConfigurationScreenItemContent(
 
     BackHandler(viewModel.isBackPressDisabled.collectAsState().value) {}
 
-    if(viewModel.isLoading.collectAsState().value) {
+    if (viewModel.isLoading.collectAsState().value) {
         Surface {
             Box(modifier = Modifier.fillMaxSize()) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
@@ -182,7 +182,11 @@ private fun EditConfigurationScreen(
  * unsaved dialog on back button
  */
 @Composable
-private fun UnsavedBackButtonDialog(onSave: () -> Unit, onDiscard: () -> Unit, onClose: () -> Unit) {
+private fun UnsavedBackButtonDialog(
+    onSave: () -> Unit,
+    onDiscard: () -> Unit,
+    onClose: () -> Unit
+) {
     val navController = LocalMainNavController.current
 
     UnsavedChangesDialog(
@@ -313,7 +317,11 @@ private fun BottomAppBar(
 private fun AppBar(title: StringResource, onBackClick: () -> Unit, icon: @Composable () -> Unit) {
 
     TopAppBar(
-        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp)),
+        colors = TopAppBarDefaults.smallTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                0.dp
+            )
+        ),
         title = {
             Text(
                 resource = title,

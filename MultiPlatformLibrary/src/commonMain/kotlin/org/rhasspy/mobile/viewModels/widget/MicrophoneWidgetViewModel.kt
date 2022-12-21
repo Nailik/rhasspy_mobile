@@ -17,9 +17,11 @@ class MicrophoneWidgetViewModel : ViewModel(), KoinComponent {
         get() = getSafe<IDialogManagerService>()?.currentDialogState ?: MutableStateFlow(
             DialogManagerServiceState.Idle
         ).readOnly
-    val isShowBorder = MutableStateFlow(true) // dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.AwaitingHotWord }
+    val isShowBorder =
+        MutableStateFlow(true) // dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.AwaitingHotWord }
     val isShowMicOn: StateFlow<Boolean> = MicrophonePermission.granted
-    val isRecording = MutableStateFlow(false) // dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
+    val isRecording =
+        MutableStateFlow(false) // dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
     val isActionEnabled = dialogManagerServiceState
         .mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingHotWord }
 

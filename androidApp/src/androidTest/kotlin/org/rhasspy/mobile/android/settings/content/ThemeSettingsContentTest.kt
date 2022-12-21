@@ -84,9 +84,11 @@ class ThemeSettingsContentTest {
         //background is system
         composeTestRule.awaitIdle()
         if (isSystemInDarkTheme()) {
-            composeTestRule.onNodeWithTag(TestTag.Background).assertBackgroundColor(DarkThemeColors.surface)
+            composeTestRule.onNodeWithTag(TestTag.Background)
+                .assertBackgroundColor(DarkThemeColors.surface)
         } else {
-            composeTestRule.onNodeWithTag(TestTag.Background).assertBackgroundColor(LightThemeColors.surface)
+            composeTestRule.onNodeWithTag(TestTag.Background)
+                .assertBackgroundColor(LightThemeColors.surface)
         }
 
         //User clicks dark theme
@@ -100,7 +102,8 @@ class ThemeSettingsContentTest {
         assertEquals(ThemeOptions.Dark, newViewModel.themeOption.value)
         //background is dark
         composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.Background).assertBackgroundColor(DarkThemeColors.surface)
+        composeTestRule.onNodeWithTag(TestTag.Background)
+            .assertBackgroundColor(DarkThemeColors.surface)
 
         //User clicks light theme
         composeTestRule.onNodeWithTag(ThemeOptions.Light).performClick()
@@ -113,11 +116,13 @@ class ThemeSettingsContentTest {
         assertEquals(ThemeOptions.Light, newViewModel.themeOption.value)
         //background is light
         composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.Background).assertBackgroundColor(LightThemeColors.surface)
+        composeTestRule.onNodeWithTag(TestTag.Background)
+            .assertBackgroundColor(LightThemeColors.surface)
     }
 
     private fun isSystemInDarkTheme(): Boolean {
-        val uiMode = ApplicationProvider.getApplicationContext<Context>().resources.configuration.uiMode
+        val uiMode =
+            ApplicationProvider.getApplicationContext<Context>().resources.configuration.uiMode
         return (uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
     }
 

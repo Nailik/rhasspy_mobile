@@ -26,28 +26,51 @@ class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
     val testIntentText = _testIntentText.readOnly
 
     //unsaved data
-    private val _intentHandlingOption = MutableStateFlow(ConfigurationSettings.intentHandlingOption.value)
-    private val _intentHandlingHttpEndpoint = MutableStateFlow(ConfigurationSettings.intentHandlingHttpEndpoint.value)
-    private val _intentHandlingHassEndpoint = MutableStateFlow(ConfigurationSettings.intentHandlingHassEndpoint.value)
-    private val _intentHandlingHassAccessToken = MutableStateFlow(ConfigurationSettings.intentHandlingHassAccessToken.value)
-    private val _intentHandlingHomeAssistantOption = MutableStateFlow(ConfigurationSettings.intentHandlingHomeAssistantOption.value)
+    private val _intentHandlingOption =
+        MutableStateFlow(ConfigurationSettings.intentHandlingOption.value)
+    private val _intentHandlingHttpEndpoint =
+        MutableStateFlow(ConfigurationSettings.intentHandlingHttpEndpoint.value)
+    private val _intentHandlingHassEndpoint =
+        MutableStateFlow(ConfigurationSettings.intentHandlingHassEndpoint.value)
+    private val _intentHandlingHassAccessToken =
+        MutableStateFlow(ConfigurationSettings.intentHandlingHassAccessToken.value)
+    private val _intentHandlingHomeAssistantOption =
+        MutableStateFlow(ConfigurationSettings.intentHandlingHomeAssistantOption.value)
 
     //unsaved ui data
     val intentHandlingOption = _intentHandlingOption.readOnly
     val intentHandlingHttpEndpoint = _intentHandlingHttpEndpoint.readOnly
     val intentHandlingHassEndpoint = _intentHandlingHassEndpoint.readOnly
     val intentHandlingHassAccessToken = _intentHandlingHassAccessToken.readOnly
-    val isIntentHandlingHassEvent = _intentHandlingHomeAssistantOption.mapReadonlyState { it == HomeAssistantIntentHandlingOptions.Event }
-    val isIntentHandlingHassIntent = _intentHandlingHomeAssistantOption.mapReadonlyState { it == HomeAssistantIntentHandlingOptions.Intent }
+    val isIntentHandlingHassEvent =
+        _intentHandlingHomeAssistantOption.mapReadonlyState { it == HomeAssistantIntentHandlingOptions.Event }
+    val isIntentHandlingHassIntent =
+        _intentHandlingHomeAssistantOption.mapReadonlyState { it == HomeAssistantIntentHandlingOptions.Intent }
 
-    override val isTestingEnabled = _intentHandlingOption.mapReadonlyState { it != IntentHandlingOptions.Disabled }
+    override val isTestingEnabled =
+        _intentHandlingOption.mapReadonlyState { it != IntentHandlingOptions.Disabled }
 
     override val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(_intentHandlingOption, ConfigurationSettings.intentHandlingOption.data),
-        combineStateNotEquals(_intentHandlingHttpEndpoint, ConfigurationSettings.intentHandlingHttpEndpoint.data),
-        combineStateNotEquals(_intentHandlingHassEndpoint, ConfigurationSettings.intentHandlingHassEndpoint.data),
-        combineStateNotEquals(_intentHandlingHassAccessToken, ConfigurationSettings.intentHandlingHassAccessToken.data),
-        combineStateNotEquals(_intentHandlingHomeAssistantOption, ConfigurationSettings.intentHandlingHomeAssistantOption.data)
+        combineStateNotEquals(
+            _intentHandlingOption,
+            ConfigurationSettings.intentHandlingOption.data
+        ),
+        combineStateNotEquals(
+            _intentHandlingHttpEndpoint,
+            ConfigurationSettings.intentHandlingHttpEndpoint.data
+        ),
+        combineStateNotEquals(
+            _intentHandlingHassEndpoint,
+            ConfigurationSettings.intentHandlingHassEndpoint.data
+        ),
+        combineStateNotEquals(
+            _intentHandlingHassAccessToken,
+            ConfigurationSettings.intentHandlingHassAccessToken.data
+        ),
+        combineStateNotEquals(
+            _intentHandlingHomeAssistantOption,
+            ConfigurationSettings.intentHandlingHomeAssistantOption.data
+        )
     )
 
     //show input field for endpoint
@@ -108,8 +131,10 @@ class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
         ConfigurationSettings.intentHandlingOption.value = _intentHandlingOption.value
         ConfigurationSettings.intentHandlingHttpEndpoint.value = _intentHandlingHttpEndpoint.value
         ConfigurationSettings.intentHandlingHassEndpoint.value = _intentHandlingHassEndpoint.value
-        ConfigurationSettings.intentHandlingHassAccessToken.value = _intentHandlingHassAccessToken.value
-        ConfigurationSettings.intentHandlingHomeAssistantOption.value = _intentHandlingHomeAssistantOption.value
+        ConfigurationSettings.intentHandlingHassAccessToken.value =
+            _intentHandlingHassAccessToken.value
+        ConfigurationSettings.intentHandlingHomeAssistantOption.value =
+            _intentHandlingHomeAssistantOption.value
     }
 
     /**
@@ -119,8 +144,10 @@ class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
         _intentHandlingOption.value = ConfigurationSettings.intentHandlingOption.value
         _intentHandlingHttpEndpoint.value = ConfigurationSettings.intentHandlingHttpEndpoint.value
         _intentHandlingHassEndpoint.value = ConfigurationSettings.intentHandlingHassEndpoint.value
-        _intentHandlingHassAccessToken.value = ConfigurationSettings.intentHandlingHassAccessToken.value
-        _intentHandlingHomeAssistantOption.value = ConfigurationSettings.intentHandlingHomeAssistantOption.value
+        _intentHandlingHassAccessToken.value =
+            ConfigurationSettings.intentHandlingHassAccessToken.value
+        _intentHandlingHomeAssistantOption.value =
+            ConfigurationSettings.intentHandlingHomeAssistantOption.value
     }
 
     override fun initializeTestParams() {

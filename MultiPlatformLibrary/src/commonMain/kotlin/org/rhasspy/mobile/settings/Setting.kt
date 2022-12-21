@@ -14,7 +14,11 @@ import org.rhasspy.mobile.readOnly
 
 private val settings = Settings()
 
-open class Setting<T>(private val key: SettingsEnum, private val initial: T, private val serializer: KSerializer<T>? = null) {
+open class Setting<T>(
+    private val key: SettingsEnum,
+    private val initial: T,
+    private val serializer: KSerializer<T>? = null
+) {
 
     /**
      * data used to get current saved value or to set value for unsaved changes

@@ -9,7 +9,8 @@ class MicrophoneOverlaySettingsViewModel : ViewModel() {
 
     //unsaved ui data
     val microphoneOverlaySizeOption = AppSettings.microphoneOverlaySizeOption.data
-    val isMicrophoneOverlayWhileAppEnabledVisible = microphoneOverlaySizeOption.mapReadonlyState { it != MicrophoneOverlaySizeOptions.Disabled }
+    val isMicrophoneOverlayWhileAppEnabledVisible =
+        microphoneOverlaySizeOption.mapReadonlyState { it != MicrophoneOverlaySizeOptions.Disabled }
     val isMicrophoneOverlayWhileAppEnabled = AppSettings.isMicrophoneOverlayWhileAppEnabled.data
     val microphoneOverlaySizeOptions = MicrophoneOverlaySizeOptions::values
 

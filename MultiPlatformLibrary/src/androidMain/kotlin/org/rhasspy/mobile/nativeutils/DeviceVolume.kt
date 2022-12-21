@@ -18,36 +18,51 @@ import org.rhasspy.mobile.combineState
 actual object DeviceVolume {
 
 
-    private val audioManager = ContextCompat.getSystemService(Application.Instance, AudioManager::class.java)
-    private val _volumeFlowSound = MutableStateFlow(audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC))
-    private val _volumeFlowNotification = MutableStateFlow(audioManager?.getStreamVolume(AudioManager.STREAM_RING))
+    private val audioManager =
+        ContextCompat.getSystemService(Application.Instance, AudioManager::class.java)
+    private val _volumeFlowSound =
+        MutableStateFlow(audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC))
+    private val _volumeFlowNotification =
+        MutableStateFlow(audioManager?.getStreamVolume(AudioManager.STREAM_RING))
 
     actual val volumeFlowSound: StateFlow<Int?>
         get() = _volumeFlowSound
     actual val volumeFlowNotification: StateFlow<Int?>
         get() = _volumeFlowNotification
 
-    private val volumeObserver: ContentObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
-        override fun onChange(selfChange: Boolean) {
-            audioManager?.also {
-                _volumeFlowSound.value = it.getStreamVolume(AudioManager.STREAM_MUSIC)
-                _volumeFlowNotification.value = it.getStreamVolume(AudioManager.STREAM_RING)
+    private val volumeObserver: ContentObserver =
+        object : ContentObserver(Handler(Looper.getMainLooper())) {
+            override fun onChange(selfChange: Boolean) {
+                audioManager?.also {
+                    _volumeFlowSound.value = it.getStreamVolume(AudioManager.STREAM_MUSIC)
+                    _volumeFlowNotification.value = it.getStreamVolume(AudioManager.STREAM_RING)
+                }
+                super.onChange(selfChange)
             }
-            super.onChange(selfChange)
         }
-    }
 
     init {
-        Application.Instance.contentResolver.registerContentObserver(Settings.System.CONTENT_URI, true, volumeObserver)
+        Application.Instance.contentResolver.registerContentObserver(
+            Settings.System.CONTENT_URI,
+            true,
+            volumeObserver
+        )
     }
 
 
     init {
-        combineState(_volumeFlowSound.subscriptionCount, _volumeFlowNotification.subscriptionCount) { c1, c2 ->
+        combineState(
+            _volumeFlowSound.subscriptionCount,
+            _volumeFlowNotification.subscriptionCount
+        ) { c1, c2 ->
             c1 + c2 > 0
         }.onEach { isActive -> // configure an action
             if (isActive) {
-                Application.Instance.contentResolver.registerContentObserver(Settings.System.CONTENT_URI, true, volumeObserver)
+                Application.Instance.contentResolver.registerContentObserver(
+                    Settings.System.CONTENT_URI,
+                    true,
+                    volumeObserver
+                )
             } else {
                 Application.Instance.contentResolver.unregisterContentObserver(volumeObserver)
             }

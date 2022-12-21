@@ -172,7 +172,15 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
                 .testTag(TestTag.PorcupineKeyword)
                 .clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineKeyword.name) },
             text = { Text(MR.strings.wakeWord) },
-            secondaryText = { Text("${viewModel.wakeWordPorcupineKeywordCount.collectAsState().value} ${translate(MR.strings.active)}") }
+            secondaryText = {
+                Text(
+                    "${viewModel.wakeWordPorcupineKeywordCount.collectAsState().value} ${
+                        translate(
+                            MR.strings.active
+                        )
+                    }"
+                )
+            }
         )
 
     }

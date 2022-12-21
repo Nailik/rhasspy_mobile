@@ -55,7 +55,8 @@ class IntentHandlingConfigurationContentTest {
         viewModel.selectIntentHandlingOption(IntentHandlingOptions.Disabled)
         val textInputTest = "endpointTestInput"
         //option disable is set
-        composeTestRule.onNodeWithTag(IntentHandlingOptions.Disabled, true).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(IntentHandlingOptions.Disabled, true).onChildAt(0)
+            .assertIsSelected()
 
         //User clicks option remote http
         composeTestRule.onNodeWithTag(IntentHandlingOptions.RemoteHTTP, true).performClick()
@@ -113,7 +114,8 @@ class IntentHandlingConfigurationContentTest {
         val textInputTestToken = "tokenTestInput"
 
         //option disable is set
-        composeTestRule.onNodeWithTag(IntentHandlingOptions.Disabled, true).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(IntentHandlingOptions.Disabled, true).onChildAt(0)
+            .assertIsSelected()
 
         //User clicks option HomeAssistant
         composeTestRule.onNodeWithTag(IntentHandlingOptions.HomeAssistant).performClick()
@@ -131,13 +133,16 @@ class IntentHandlingConfigurationContentTest {
 
         //endpoint can be changed
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextReplacement(textInputTestEndpoint)
+        composeTestRule.onNodeWithTag(TestTag.Endpoint)
+            .performTextReplacement(textInputTestEndpoint)
         //access token can be changed
         composeTestRule.onNodeWithTag(TestTag.AccessToken).performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(TestTag.AccessToken).performTextReplacement(textInputTestToken)
+        composeTestRule.onNodeWithTag(TestTag.AccessToken)
+            .performTextReplacement(textInputTestToken)
 
         //send intents is set
-        composeTestRule.onNodeWithTag(TestTag.SendIntents, true).performScrollTo().onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(TestTag.SendIntents, true).performScrollTo().onChildAt(0)
+            .assertIsSelected()
         //send events can clicked
         composeTestRule.onNodeWithTag(TestTag.SendEvents).performScrollTo().performClick()
         //send events is set

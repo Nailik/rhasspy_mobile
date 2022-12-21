@@ -32,7 +32,11 @@ import org.rhasspy.mobile.viewModels.settings.sound.IIndicationSoundSettingsView
  * screen to choose indication sound
  */
 @Composable
-fun IndicationSoundScreen(viewModel: IIndicationSoundSettingsViewModel, title: StringResource, screen: IndicationSettingsScreens) {
+fun IndicationSoundScreen(
+    viewModel: IIndicationSoundSettingsViewModel,
+    title: StringResource,
+    screen: IndicationSettingsScreens
+) {
 
     OnPauseEffect(viewModel::onPause)
 
@@ -65,7 +69,12 @@ fun IndicationSoundScreen(viewModel: IIndicationSoundSettingsViewModel, title: S
 
                         ListElement(
                             modifier = Modifier.testTag(TestTag.Warning),
-                            icon = { Icon(Icons.Filled.Info, contentDescription = MR.strings.info) },
+                            icon = {
+                                Icon(
+                                    Icons.Filled.Info,
+                                    contentDescription = MR.strings.info
+                                )
+                            },
                             text = { Text(MR.strings.audioOutputSilentOrDisabled) },
                             secondaryText = { Text(viewModel.audioOutputOption.collectAsState().value.text) }
                         )

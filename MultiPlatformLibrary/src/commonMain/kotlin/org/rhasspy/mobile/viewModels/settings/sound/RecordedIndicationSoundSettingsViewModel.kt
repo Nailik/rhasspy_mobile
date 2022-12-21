@@ -11,16 +11,21 @@ import org.rhasspy.mobile.settings.sounds.SoundOptions
 
 class RecordedIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel() {
 
-    override val isSoundIndicationDefault: StateFlow<Boolean> = AppSettings.recordedSound.data.mapReadonlyState {
-        it == SoundOptions.Default.name
-    }
+    override val isSoundIndicationDefault: StateFlow<Boolean> =
+        AppSettings.recordedSound.data.mapReadonlyState {
+            it == SoundOptions.Default.name
+        }
 
-    override val isSoundIndicationDisabled: StateFlow<Boolean> = AppSettings.recordedSound.data.mapReadonlyState {
-        it == SoundOptions.Disabled.name
-    }
+    override val isSoundIndicationDisabled: StateFlow<Boolean> =
+        AppSettings.recordedSound.data.mapReadonlyState {
+            it == SoundOptions.Disabled.name
+        }
 
     override val customSoundFiles: StateFlow<List<SoundFile>> =
-        combineState(AppSettings.recordedSound.data, AppSettings.customRecordedSounds.data) { selected, set ->
+        combineState(
+            AppSettings.recordedSound.data,
+            AppSettings.customRecordedSounds.data
+        ) { selected, set ->
             set.map { fileName ->
                 SoundFile(fileName, selected == fileName, selected != fileName)
             }.toList()

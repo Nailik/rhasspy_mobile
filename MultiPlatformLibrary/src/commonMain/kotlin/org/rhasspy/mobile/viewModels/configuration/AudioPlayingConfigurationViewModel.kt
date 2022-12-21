@@ -27,16 +27,22 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
     override val testRunner by inject<AudioPlayingConfigurationTest>()
 
     //unsaved data
-    private val _audioPlayingOption = MutableStateFlow(ConfigurationSettings.audioPlayingOption.value)
+    private val _audioPlayingOption =
+        MutableStateFlow(ConfigurationSettings.audioPlayingOption.value)
     private val _audioOutputOption = MutableStateFlow(ConfigurationSettings.audioOutputOption.value)
-    private val _isUseCustomAudioPlayingHttpEndpoint = MutableStateFlow(ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.value)
-    private val _audioPlayingHttpEndpoint = MutableStateFlow(ConfigurationSettings.audioPlayingHttpEndpoint.value)
+    private val _isUseCustomAudioPlayingHttpEndpoint =
+        MutableStateFlow(ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.value)
+    private val _audioPlayingHttpEndpoint =
+        MutableStateFlow(ConfigurationSettings.audioPlayingHttpEndpoint.value)
 
     //unsaved ui data
     val audioPlayingOption = _audioPlayingOption.readOnly
     val audioOutputOption = _audioOutputOption.readOnly
-    val audioPlayingHttpEndpoint = combineState(_isUseCustomAudioPlayingHttpEndpoint, _audioPlayingHttpEndpoint) { useCustomAudioPlayingHttpEndpoint,
-                                                                                                                   audioPlayingHttpEndpoint ->
+    val audioPlayingHttpEndpoint = combineState(
+        _isUseCustomAudioPlayingHttpEndpoint,
+        _audioPlayingHttpEndpoint
+    ) { useCustomAudioPlayingHttpEndpoint,
+        audioPlayingHttpEndpoint ->
         if (useCustomAudioPlayingHttpEndpoint) {
             audioPlayingHttpEndpoint
         } else {
@@ -46,14 +52,21 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
     val isUseCustomAudioPlayingHttpEndpoint = _isUseCustomAudioPlayingHttpEndpoint.readOnly
     val isAudioPlayingHttpEndpointChangeEnabled = isUseCustomAudioPlayingHttpEndpoint
 
-    override val isTestingEnabled = _audioPlayingOption.mapReadonlyState { it != AudioPlayingOptions.Disabled }
+    override val isTestingEnabled =
+        _audioPlayingOption.mapReadonlyState { it != AudioPlayingOptions.Disabled }
 
     //if there are unsaved changes
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_audioPlayingOption, ConfigurationSettings.audioPlayingOption.data),
         combineStateNotEquals(_audioOutputOption, ConfigurationSettings.audioOutputOption.data),
-        combineStateNotEquals(_isUseCustomAudioPlayingHttpEndpoint, ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.data),
-        combineStateNotEquals(_audioPlayingHttpEndpoint, ConfigurationSettings.audioPlayingHttpEndpoint.data)
+        combineStateNotEquals(
+            _isUseCustomAudioPlayingHttpEndpoint,
+            ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.data
+        ),
+        combineStateNotEquals(
+            _audioPlayingHttpEndpoint,
+            ConfigurationSettings.audioPlayingHttpEndpoint.data
+        )
     )
 
     //all options
@@ -97,7 +110,8 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
     override fun onSave() {
         ConfigurationSettings.audioPlayingOption.value = _audioPlayingOption.value
         ConfigurationSettings.audioOutputOption.value = _audioOutputOption.value
-        ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.value = _isUseCustomAudioPlayingHttpEndpoint.value
+        ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.value =
+            _isUseCustomAudioPlayingHttpEndpoint.value
         ConfigurationSettings.audioPlayingHttpEndpoint.value = _audioPlayingHttpEndpoint.value
     }
 
@@ -107,7 +121,8 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
     override fun discard() {
         _audioPlayingOption.value = ConfigurationSettings.audioPlayingOption.value
         _audioOutputOption.value = ConfigurationSettings.audioOutputOption.value
-        _isUseCustomAudioPlayingHttpEndpoint.value = ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.value
+        _isUseCustomAudioPlayingHttpEndpoint.value =
+            ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.value
         _audioPlayingHttpEndpoint.value = ConfigurationSettings.audioPlayingHttpEndpoint.value
     }
 

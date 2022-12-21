@@ -51,7 +51,8 @@
     <string name="textToSpeak">Text zum Sprechen</string>
     <string name="accessToken">Zugriffstoken</string>
     <string name="homeAssistantEvents">Sende *Ereignisse* an Home Assistant\n(/api/events)</string>
-    <string name="homeAssistantIntents">Sende *Intents* an Home Assistant\n(/api/intent/handle)</string>
+    <string name="homeAssistantIntents">Sende *Intents* an Home Assistant\n(/api/intent/handle)
+    </string>
     <string name="refresh">Laden</string>
     <string name="de">Deutsch</string>
     <string name="en">English</string>
@@ -74,7 +75,9 @@
     <string name="httpSSL">HTTP SSL</string>
     <string name="porcupineAccessKey">PicoVoice Console</string>
     <string name="openPicoVoiceConsole">Zugangsschlüssel erstellen</string>
-    <string name="openPicoVoiceConsoleInfo">Klick zum Öffnen des Browsers und Erzeugen des Zugangstokens</string>
+    <string name="openPicoVoiceConsoleInfo">Klick zum Öffnen des Browsers und Erzeugen des
+        Zugangstokens
+    </string>
     <string name="expandListItem">Listenelement erweitern</string>
     <string name="expandDropDown">Ausklappen des Dropdowns</string>
     <string name="visibility">Sichtbarkeit</string>
@@ -101,10 +104,15 @@
     <string name="assert_level">Assert</string>
     <string name="microphone">Mikrofon</string>
     <string name="microphonePermissionDialogTitle">Zugang zum Mikrofon</string>
-    <string name="microphonePermissionInfoRecord">Um Audio aufzunehmen, ist der Zugriff auf das Mikrofon erforderlich.</string>
-    <string name="microphonePermissionInfoWakeWord">Um den Porcupine WakeWord-Dienst zu nutzen, ist der Zugriff auf das Mikrofon erforderlich.
+    <string name="microphonePermissionInfoRecord">Um Audio aufzunehmen, ist der Zugriff auf das
+        Mikrofon erforderlich.
     </string>
-    <string name="microphonePermissionInfoAudioLevel">Um den Audiopegel zu überprüfen, ist der Zugriff auf das Mikrofon erforderlich.</string>
+    <string name="microphonePermissionInfoWakeWord">Um den Porcupine WakeWord-Dienst zu nutzen, ist
+        der Zugriff auf das Mikrofon erforderlich.
+    </string>
+    <string name="microphonePermissionInfoAudioLevel">Um den Audiopegel zu überprüfen, ist der
+        Zugriff auf das Mikrofon erforderlich.
+    </string>
     <string name="microphonePermissionDenied">open settings to allow microphone access</string>
     <string name="settings">Einstellungen</string>
     <string name="cancel">Abbrechen</string>
@@ -115,41 +123,52 @@
     <string name="silenceDetectionTime">Stille-Erkennungszeit (ms)</string>
     <string name="overlayPermissionTitle">Overlay-Erlaubnis</string>
     <string name="overlay">Overlay</string>
-    <string name="overlayPermissionInfo">Die visuelle Anzeige verwendet ein Overlay, um die Anzeige darzustellen.\nKlicken Sie auf "OK", scrollen
+    <string name="overlayPermissionInfo">Die visuelle Anzeige verwendet ein Overlay, um die Anzeige
+        darzustellen.\nKlicken Sie auf "OK", scrollen
         Sie zu Rhasspy und erlauben Sie die Berechtigung.
     </string>
     <string name="save">Speichern</string>
     <string name="saveSettingsText">Einstellungen in einer externen Datei speichern</string>
-    <string name="restoreSettingsText">Wiederherstellung der Einstellungen aus einer externen Datei</string>
+    <string name="restoreSettingsText">Wiederherstellung der Einstellungen aus einer externen
+        Datei
+    </string>
     <string name="shareSettingsText">Einstellungen ohne sensible Daten teilen</string>
     <string name="share">Teilen</string>
     <string name="reset">Zurücksetzen</string>
     <string name="device">Gerät</string>
-    <string name="deviceSettingsInformation">Diese Einstellungen können mit MQTT-Befehlen geändert werden.</string>
+    <string name="deviceSettingsInformation">Diese Einstellungen können mit MQTT-Befehlen geändert
+        werden.
+    </string>
     <string name="volume">Lautstärke</string>
     <string name="hotWord">HotWord (WakeWord)</string>
     <string name="audioOutput">Audioausgabe</string>
     <string name="intentHandling">Intent Handling</string>
     <string name="microphoneOverlay">Mikrofon Overlay</string>
     <string name="showMicrophoneOverlay">Zeige Mikrofon Overlay</string>
-    <string name="showMicrophoneOverlayInfo">Am besten mit Hintergrunddiensten verwenden, da sonst das Overlay geschlossen wird, wenn die App
+    <string name="showMicrophoneOverlayInfo">Am besten mit Hintergrunddiensten verwenden, da sonst
+        das Overlay geschlossen wird, wenn die App
         ausgeblendet wird
     </string>
     <string name="whileAppIsOpened">Sichtbar während App geöffnet ist</string>
     <string name="restore">Laden</string>
     <string name="saveAndRestoreSettings">Einstellungen speichern und laden</string>
     <string name="saveSettings">Einstellungen Speichern</string>
-    <string name="saveSettingsWarningText">Die exportierte Einstellungsdatei enthält sensible Daten! Lesen Sie die Datei und bearbeiten Sie sie
+    <string name="saveSettingsWarningText">Die exportierte Einstellungsdatei enthält sensible Daten!
+        Lesen Sie die Datei und bearbeiten Sie sie
         sorgfältig, vor der Weitergabe.
     </string>
     <string name="restoreSettings">Einstellungen Laden</string>
-    <string name="restoreSettingsWarningText">Ihre aktuellen Einstellungen gehen beim Wiederherstellen aus der Datei verloren!</string>
+    <string name="restoreSettingsWarningText">Ihre aktuellen Einstellungen gehen beim
+        Wiederherstellen aus der Datei verloren!
+    </string>
     <string name="warning">Warnung</string>
     <string name="success">Success</string>
     <string name="aboutTitle">Über Rhasspy Mobile</string>
     <string name="version">Version</string>
     <string name="sounds">Töne</string>
-    <string name="soundsText">WAV-Dateien, die abgespielt werden, wenn Rhasspy aufwacht und die Aufnahme eines Sprachbefehls beendet ist.</string>
+    <string name="soundsText">WAV-Dateien, die abgespielt werden, wenn Rhasspy aufwacht und die
+        Aufnahme eines Sprachbefehls beendet ist.
+    </string>
     <string name="wakeSound">Aufwecken</string>
     <string name="recordedSound">Aufgezeichnet</string>
     <string name="errorSound">Fehler</string>
@@ -158,7 +177,9 @@
     <string name="remoteHermesHTTP">Remote Hermes HTTP</string>
     <string name="sslValidation">SSL Validierung</string>
     <string name="disableSSLValidation">Deaktiviere SSL Zertifikat Validierung</string>
-    <string name="disableSSLValidationInformation">Möglicherweise erforderlich bei der Verwendung von selbstsignierten Zertifikaten</string>
+    <string name="disableSSLValidationInformation">Möglicherweise erforderlich bei der Verwendung
+        von selbstsignierten Zertifikaten
+    </string>
     <string name="webserver">Webserver</string>
     <string name="enableHTTPApi">Aktiviere HTTP Api</string>
     <string name="english">Englisch</string>
@@ -208,8 +229,11 @@
     <string name="play">Abspielen</string>
     <string name="indication">Indikation</string>
     <string name="sounds">Töne</string>
-    <string name="soundsInfo">Benutzerdefinierte Töne können in den Einstellungen ausgewählt werden</string>
-    <string name="audioPlayingInfo">kann in den Konfigurationseinstellungen festgelegt werden</string>
+    <string name="soundsInfo">Benutzerdefinierte Töne können in den Einstellungen ausgewählt
+        werden
+    </string>
+    <string name="audioPlayingInfo">kann in den Konfigurationseinstellungen festgelegt werden
+    </string>
     <string name="notification">Benachrichtigung</string>
     <string name="audioOutputSilentOrDisabled">Ihr Audioausgang ist stumm oder deaktiviert</string>
     <string name="startPorcupine">Start Porcupine</string>
@@ -253,8 +277,9 @@
     <string name="executeIntentRecognition">Intent Ausführen</string>
     <string name="crashlytics">Crashlytics</string>
     <string name="crashlyticsText">Senden Sie Abstürze, um die Anwendung zu verbessern</string>
-    <string name="crashlyticsDialogText">Bitte erlauben Sie das Sammeln von Absturzberichten, um die App zu verbessern.\nDie Einstellungen können
-       auf der Log-Einstellungen-Seite geändert werden
+    <string name="crashlyticsDialogText">Bitte erlauben Sie das Sammeln von Absturzberichten, um die
+        App zu verbessern.\nDie Einstellungen können
+        auf der Log-Einstellungen-Seite geändert werden
     </string>
     <string name="confirm">Zustimmen</string>
     <string name="deny">Ablehnen</string>
@@ -267,9 +292,15 @@
     <string name="serviceStatusWarningText">Dienste haben mögliche Probleme entdeckt</string>
     <string name="serviceStatusErrorText">Dienstfehler ist aufgetreten</string>
     <string name="executeTestHttpConnection">Teste Http Verbindung</string>
-    <string name="porcupineLanguageInformation">Alle aktiven WakeWords müssen mit der ausgewählten Sprache übereinstimmen!</string>
-    <string name="backgroundServiceInformation">Background service ermöglicht es, der App im Hintergrund aktiv zu bleiben und dadurch nicht vom System beendet zu werden.</string>
-    <string name="deviceSettingsLongInformation">Diese Einstellungen können durch das Aufrufen des Webservers (HTTP API) oder MQTT Nachrichten geändert werden.</string>
+    <string name="porcupineLanguageInformation">Alle aktiven WakeWords müssen mit der ausgewählten
+        Sprache übereinstimmen!
+    </string>
+    <string name="backgroundServiceInformation">Background service ermöglicht es, der App im
+        Hintergrund aktiv zu bleiben und dadurch nicht vom System beendet zu werden.
+    </string>
+    <string name="deviceSettingsLongInformation">Diese Einstellungen können durch das Aufrufen des
+        Webservers (HTTP API) oder MQTT Nachrichten geändert werden.
+    </string>
     <string name="intentName">Intent Name</string>
     <string name="intentText">Intent Json</string>
     <string name="executePlayTestAudio">Testaudio abspielen</string>

@@ -105,7 +105,10 @@ fun RequiresMicrophonePermission(
  */
 @NoLiveLiterals
 @Composable
-private fun MicrophonePermissionInfoDialog(message: StringResource, onResult: (result: Boolean) -> Unit) {
+private fun MicrophonePermissionInfoDialog(
+    message: StringResource,
+    onResult: (result: Boolean) -> Unit
+) {
 
     AlertDialog(
         onDismissRequest = {

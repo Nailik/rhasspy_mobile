@@ -53,7 +53,11 @@ actual object AudioRecorder {
         if (recorder == null) {
             logger.v { "initializing recorder" }
 
-            if (ActivityCompat.checkSelfPermission(Application.Instance, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(
+                    Application.Instance,
+                    Manifest.permission.RECORD_AUDIO
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
                 logger.e { "missing recording permission" }
                 return ServiceResponse.Error(Exception("MissingRecordingPermission"))
             }

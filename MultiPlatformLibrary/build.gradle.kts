@@ -199,7 +199,13 @@ fun generateChangelog(): String {
         exec {
             standardOutput = os
             commandLine = listOf("git")
-            args = listOf("log", "$lastTag..develop", "--merges", "--first-parent", "--pretty=format:\"%b\"\\\\")
+            args = listOf(
+                "log",
+                "$lastTag..develop",
+                "--merges",
+                "--first-parent",
+                "--pretty=format:\"%b\"\\\\"
+            )
         }
         val changelog = String(os.toByteArray()).trim()
         os.close()
@@ -240,7 +246,9 @@ tasks.findByPath("preBuild")!!.dependsOn(createVersionTxt)
 val increaseCodeVersion = tasks.register("increaseCodeVersion") {
     doLast {
         File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
-            it.writeText(it.readText().replace("code = ${Version.code}", "code = ${Version.code + 1}"))
+            it.writeText(
+                it.readText().replace("code = ${Version.code}", "code = ${Version.code + 1}")
+            )
         }
     }
 }
@@ -248,7 +256,9 @@ val increaseCodeVersion = tasks.register("increaseCodeVersion") {
 tasks.register("increasePatchCodeVersion") {
     doLast {
         File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
-            it.writeText(it.readText().replace("patch = ${Version.patch}", "patch = ${Version.patch + 1}"))
+            it.writeText(
+                it.readText().replace("patch = ${Version.patch}", "patch = ${Version.patch + 1}")
+            )
         }
     }
 }
@@ -256,7 +266,9 @@ tasks.register("increasePatchCodeVersion") {
 tasks.register("increaseMinorCodeVersion") {
     doLast {
         File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
-            it.writeText(it.readText().replace("minor = ${Version.minor}", "minor = ${Version.minor + 1}"))
+            it.writeText(
+                it.readText().replace("minor = ${Version.minor}", "minor = ${Version.minor + 1}")
+            )
         }
     }
 }
@@ -264,7 +276,9 @@ tasks.register("increaseMinorCodeVersion") {
 tasks.register("increaseMajorCodeVersion") {
     doLast {
         File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
-            it.writeText(it.readText().replace("major = ${Version.major}", "major = ${Version.major + 1}"))
+            it.writeText(
+                it.readText().replace("major = ${Version.major}", "major = ${Version.major + 1}")
+            )
         }
     }
 }

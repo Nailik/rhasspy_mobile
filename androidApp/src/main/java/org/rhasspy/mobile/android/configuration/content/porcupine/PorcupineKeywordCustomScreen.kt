@@ -65,7 +65,11 @@ fun PorcupineKeywordCustomScreen(viewModel: WakeWordConfigurationViewModel) {
 }
 
 @Composable
-private fun KeywordListItem(element: WakeWordConfigurationViewModel.PorcupineCustomKeywordUi, index: Int, viewModel: WakeWordConfigurationViewModel) {
+private fun KeywordListItem(
+    element: WakeWordConfigurationViewModel.PorcupineCustomKeywordUi,
+    index: Int,
+    viewModel: WakeWordConfigurationViewModel
+) {
     if (element.deleted) {
         //small item to be deleted
         CustomKeywordDeletedListItem(
@@ -180,7 +184,10 @@ private fun CustomKeywordDeletedListItem(
  * custom keywords action buttons (download and open file)
  */
 @Composable
-private fun CustomKeywordsActionButtons(modifier: Modifier, viewModel: WakeWordConfigurationViewModel) {
+private fun CustomKeywordsActionButtons(
+    modifier: Modifier,
+    viewModel: WakeWordConfigurationViewModel
+) {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = modifier

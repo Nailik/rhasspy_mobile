@@ -134,9 +134,12 @@ class IndicationSettingsContentTest {
         viewModel.toggleWakeWordSoundIndicationEnabled(false)
         //sound settings invisible
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertDoesNotExist()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.WakeIndicationSound).assertDoesNotExist()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.RecordedIndicationSound).assertDoesNotExist()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.ErrorIndicationSound).assertDoesNotExist()
+        composeTestRule.onNodeWithTag(IndicationSettingsScreens.WakeIndicationSound)
+            .assertDoesNotExist()
+        composeTestRule.onNodeWithTag(IndicationSettingsScreens.RecordedIndicationSound)
+            .assertDoesNotExist()
+        composeTestRule.onNodeWithTag(IndicationSettingsScreens.ErrorIndicationSound)
+            .assertDoesNotExist()
 
         //user clicks sound
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).performClick()
@@ -144,40 +147,52 @@ class IndicationSettingsContentTest {
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).assertIsOn()
         //sound settings visible
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.WakeIndicationSound).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.RecordedIndicationSound).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.ErrorIndicationSound).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(IndicationSettingsScreens.WakeIndicationSound)
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithTag(IndicationSettingsScreens.RecordedIndicationSound)
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithTag(IndicationSettingsScreens.ErrorIndicationSound)
+            .assertIsDisplayed()
 
         //sound output is notification
         assertEquals(AudioOutputOptions.Notification, viewModel.soundIndicationOutputOption.value)
         //sound output notification is selected
-        composeTestRule.onNodeWithTag(AudioOutputOptions.Notification, true).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(AudioOutputOptions.Notification, true).onChildAt(0)
+            .assertIsSelected()
 
         //user clicks sound output sound
         composeTestRule.onNodeWithTag(AudioOutputOptions.Sound).performClick()
         //sound output sound is selected
-        composeTestRule.onNodeWithTag(AudioOutputOptions.Sound, true).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(AudioOutputOptions.Sound, true).onChildAt(0)
+            .assertIsSelected()
         //sound output sound is saved
-        assertEquals(AudioOutputOptions.Sound, IndicationSettingsViewModel().soundIndicationOutputOption.value)
+        assertEquals(
+            AudioOutputOptions.Sound,
+            IndicationSettingsViewModel().soundIndicationOutputOption.value
+        )
 
         //user clicks wake word
         composeTestRule.onNodeWithTag(IndicationSettingsScreens.WakeIndicationSound).performClick()
         //wake word page is opened
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.WakeIndicationSound).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(IndicationSettingsScreens.WakeIndicationSound)
+            .assertIsDisplayed()
         //user clicks back
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
 
         //user clicks recorded
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.RecordedIndicationSound).performClick()
+        composeTestRule.onNodeWithTag(IndicationSettingsScreens.RecordedIndicationSound)
+            .performClick()
         //recorded page is opened
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.RecordedIndicationSound).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(IndicationSettingsScreens.RecordedIndicationSound)
+            .assertIsDisplayed()
         //user clicks back
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
 
         //user click error
         composeTestRule.onNodeWithTag(IndicationSettingsScreens.ErrorIndicationSound).performClick()
         //error page is opened
-        composeTestRule.onNodeWithTag(IndicationSettingsScreens.ErrorIndicationSound).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(IndicationSettingsScreens.ErrorIndicationSound)
+            .assertIsDisplayed()
         //user clicks back
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
     }

@@ -66,7 +66,8 @@ class AudioPlayingConfigurationContentTest {
         val textInputTest = "endpointTestInput"
 
         //option disable is set
-        composeTestRule.onNodeWithTag(AudioPlayingOptions.Disabled, true).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(AudioPlayingOptions.Disabled, true).onChildAt(0)
+            .assertIsSelected()
 
         //User clicks option remote http
         composeTestRule.onNodeWithTag(AudioPlayingOptions.RemoteHTTP).performClick()
@@ -131,7 +132,8 @@ class AudioPlayingConfigurationContentTest {
         assertEquals(AudioOutputOptions.Sound, viewModel.audioOutputOption.value)
 
         //option disable is set
-        composeTestRule.onNodeWithTag(AudioPlayingOptions.Disabled, true).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(AudioPlayingOptions.Disabled, true).onChildAt(0)
+            .assertIsSelected()
         //output options not visible
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertDoesNotExist()
 
@@ -143,12 +145,14 @@ class AudioPlayingConfigurationContentTest {
         //output options visible
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertIsDisplayed()
         //option sound is set
-        composeTestRule.onNodeWithTag(AudioOutputOptions.Sound, true).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(AudioOutputOptions.Sound, true).onChildAt(0)
+            .assertIsSelected()
 
         //user clicks option notification
         composeTestRule.onNodeWithTag(AudioOutputOptions.Notification).performClick()
         //option notification is selected
-        composeTestRule.onNodeWithTag(AudioOutputOptions.Notification, true).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(AudioOutputOptions.Notification, true).onChildAt(0)
+            .assertIsSelected()
 
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()

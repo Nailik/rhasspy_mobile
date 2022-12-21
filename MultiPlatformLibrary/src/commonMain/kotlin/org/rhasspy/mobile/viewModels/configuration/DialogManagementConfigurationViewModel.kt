@@ -24,15 +24,20 @@ class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
     override val testRunner by inject<DialogManagementConfigurationTest>()
 
     //unsaved data
-    private val _dialogManagementOption = MutableStateFlow(ConfigurationSettings.dialogManagementOption.value)
+    private val _dialogManagementOption =
+        MutableStateFlow(ConfigurationSettings.dialogManagementOption.value)
 
     //unsaved ui data
     val dialogManagementOption = _dialogManagementOption.readOnly
 
-    override val isTestingEnabled = _dialogManagementOption.mapReadonlyState { it != DialogManagementOptions.Disabled }
+    override val isTestingEnabled =
+        _dialogManagementOption.mapReadonlyState { it != DialogManagementOptions.Disabled }
 
     override val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(_dialogManagementOption, ConfigurationSettings.dialogManagementOption.data)
+        combineStateNotEquals(
+            _dialogManagementOption,
+            ConfigurationSettings.dialogManagementOption.data
+        )
     )
 
     //all options

@@ -59,7 +59,8 @@ actual class AudioPlayer {
             //Sample rate as a 4 byte (32 bit) integer.
             val sampleRate = ByteBuffer.wrap(byteArray.copyOfRange(24, 28).reversedArray()).int
             //41-44 The number of bytes of the data section below this
-            val audioDataSize = ByteBuffer.wrap(byteArray.copyOfRange(40, 44).reversedArray()).int / 2 //(pcm)
+            val audioDataSize =
+                ByteBuffer.wrap(byteArray.copyOfRange(40, 44).reversedArray()).int / 2 //(pcm)
 
             audioTrack = AudioTrack(
                 AudioAttributes.Builder()
@@ -69,14 +70,16 @@ actual class AudioPlayer {
                 AudioFormat.Builder()
                     .setSampleRate(sampleRate)
                     .setEncoding(formatCode.toInt())
-                    .setChannelMask(if (channels.toInt() == 1) AudioFormat.CHANNEL_OUT_MONO else AudioFormat.CHANNEL_OUT_STEREO).build(),
+                    .setChannelMask(if (channels.toInt() == 1) AudioFormat.CHANNEL_OUT_MONO else AudioFormat.CHANNEL_OUT_STEREO)
+                    .build(),
                 byteArray.size,
                 AudioTrack.MODE_STATIC,
                 AudioManager.AUDIO_SESSION_ID_GENERATE
             ).apply {
                 notificationMarkerPosition = audioDataSize
 
-                setPlaybackPositionUpdateListener(object : AudioTrack.OnPlaybackPositionUpdateListener {
+                setPlaybackPositionUpdateListener(object :
+                    AudioTrack.OnPlaybackPositionUpdateListener {
 
                     override fun onMarkerReached(p0: AudioTrack?) {
                         logger.v { "finished playing audio stream" }
@@ -173,7 +176,11 @@ actual class AudioPlayer {
     /**
      * play audio resource
      */
-    actual fun playSoundFileResource(fileResource: FileResource, volume: StateFlow<Float>, audioOutputOptions: AudioOutputOptions) {
+    actual fun playSoundFileResource(
+        fileResource: FileResource,
+        volume: StateFlow<Float>,
+        audioOutputOptions: AudioOutputOptions
+    ) {
         logger.v { "playSoundFileResource" }
 
         when (audioOutputOptions) {
@@ -200,7 +207,12 @@ actual class AudioPlayer {
     /**
      * play some sound file
      */
-    actual fun playSoundFile(subfolder: String, filename: String, volume: StateFlow<Float>, audioOutputOptions: AudioOutputOptions) {
+    actual fun playSoundFile(
+        subfolder: String,
+        filename: String,
+        volume: StateFlow<Float>,
+        audioOutputOptions: AudioOutputOptions
+    ) {
         logger.v { "playSoundFile $subfolder/$filename" }
 
         val soundFile = File(Application.Instance.filesDir, "sounds/$subfolder/$filename")

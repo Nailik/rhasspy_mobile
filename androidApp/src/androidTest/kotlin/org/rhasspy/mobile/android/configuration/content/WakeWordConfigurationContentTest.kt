@@ -25,7 +25,8 @@ class WakeWordConfigurationContentTest {
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    private val device: UiDevice =
+        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     private val viewModel = WakeWordConfigurationViewModel()
 
@@ -105,7 +106,8 @@ class WakeWordConfigurationContentTest {
         //user changes access token
         composeTestRule.onNodeWithTag(TestTag.PorcupineAccessToken).performScrollTo().performClick()
         //access token change
-        composeTestRule.onNodeWithTag(TestTag.PorcupineAccessToken).performTextReplacement(textInputTest)
+        composeTestRule.onNodeWithTag(TestTag.PorcupineAccessToken)
+            .performTextReplacement(textInputTest)
 
         //user clicks picovoice console
         composeTestRule.onNodeWithTag(TestTag.PorcupineOpenConsole).performScrollTo().performClick()
@@ -153,7 +155,8 @@ class WakeWordConfigurationContentTest {
         //back is clicked
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
         //page is back to wake word settings
-        composeTestRule.onNodeWithTag(ConfigurationScreens.WakeWordConfiguration).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(ConfigurationScreens.WakeWordConfiguration)
+            .assertIsDisplayed()
 
         //language is clicked
         composeTestRule.onNodeWithTag(TestTag.PorcupineLanguage).performScrollTo().performClick()
@@ -163,7 +166,8 @@ class WakeWordConfigurationContentTest {
         //back is clicked
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
         //page is back to wake word settings
-        composeTestRule.onNodeWithTag(ConfigurationScreens.WakeWordConfiguration).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(ConfigurationScreens.WakeWordConfiguration)
+            .assertIsDisplayed()
 
         assertTrue(true)
     }

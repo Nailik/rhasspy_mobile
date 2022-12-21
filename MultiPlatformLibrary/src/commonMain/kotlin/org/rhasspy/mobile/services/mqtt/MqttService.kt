@@ -194,7 +194,8 @@ class MqttService : IService() {
                     return
                 }
                 MqttTopicsSubscription.IntentRecognitionResult.topic.matches(topic) -> {
-                    val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
+                    val jsonObject =
+                        Json.decodeFromString<JsonObject>(message.payload.decodeToString())
                     intentRecognitionResult(jsonObject)
                     receivedEvent.success()
                     return
@@ -214,7 +215,8 @@ class MqttService : IService() {
                 if (!mqttTopic.topic.contains(MqttTopicPlaceholder.SiteId.toString())) {
                     //site id in payload
                     //decode json object
-                    val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
+                    val jsonObject =
+                        Json.decodeFromString<JsonObject>(message.payload.decodeToString())
                     //validate site id
                     if (jsonObject.isThisSiteId()) {
                         when (mqttTopic) {
@@ -228,13 +230,17 @@ class MqttService : IService() {
                             MqttTopicsSubscription.AsrStopListening -> stopListening(jsonObject)
                             MqttTopicsSubscription.AsrTextCaptured -> asrTextCaptured(jsonObject)
                             MqttTopicsSubscription.AsrError -> asrError(jsonObject)
-                            MqttTopicsSubscription.IntentNotRecognized -> intentNotRecognized(jsonObject)
+                            MqttTopicsSubscription.IntentNotRecognized -> intentNotRecognized(
+                                jsonObject
+                            )
                             MqttTopicsSubscription.IntentHandlingToggleOn -> intentHandlingToggleOn()
                             MqttTopicsSubscription.IntentHandlingToggleOff -> intentHandlingToggleOff()
                             MqttTopicsSubscription.AudioOutputToggleOff -> audioOutputToggleOff()
                             MqttTopicsSubscription.AudioOutputToggleOn -> audioOutputToggleOn()
                             MqttTopicsSubscription.HotWordDetected -> hotWordDetectedCalled(topic)
-                            MqttTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(jsonObject)
+                            MqttTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(
+                                jsonObject
+                            )
                             MqttTopicsSubscription.SetVolume -> if (!setVolume(jsonObject)) {
                                 receivedEvent.error(InvalidVolume)
                             }
@@ -286,10 +292,11 @@ class MqttService : IService() {
             val subscribeEvent = serviceMiddleware.createEvent(Subscribing, mqttTopic.topic)
 
             try {
-                client?.subscribe(mqttTopic.topic.set(MqttTopicPlaceholder.SiteId, params.siteId))?.also {
-                    hasError = true
-                    subscribeEvent.error(SubscriptionError(it))
-                } ?: run {
+                client?.subscribe(mqttTopic.topic.set(MqttTopicPlaceholder.SiteId, params.siteId))
+                    ?.also {
+                        hasError = true
+                        subscribeEvent.error(SubscriptionError(it))
+                    } ?: run {
                     hasSuccess = true
                     subscribeEvent.success()
                 }
@@ -334,7 +341,10 @@ class MqttService : IService() {
         }
     }
 
-    private suspend fun publishMessage(mqttTopic: MqttTopicsPublish, message: MqttMessage): ServiceResponse<*> =
+    private suspend fun publishMessage(
+        mqttTopic: MqttTopicsPublish,
+        message: MqttMessage
+    ): ServiceResponse<*> =
         publishMessage(mqttTopic.topic, message)
 
     /**
@@ -841,10 +851,18 @@ class MqttService : IService() {
     private fun JsonObject.getSiteId(): String? =
         this[MqttParams.SiteId.value]?.jsonPrimitive?.content
 
-    private fun JsonObjectBuilder.put(key: MqttParams, element: Boolean): JsonElement? = put(key.value, element)
-    private fun JsonObjectBuilder.put(key: MqttParams, element: JsonElement): JsonElement? = put(key.value, element)
-    private fun JsonObjectBuilder.put(key: MqttParams, value: String?): JsonElement? = put(key.value, value)
-    private fun String.set(key: MqttTopicPlaceholder, value: String): String = this.replace(key.placeholder, value)
+    private fun JsonObjectBuilder.put(key: MqttParams, element: Boolean): JsonElement? =
+        put(key.value, element)
+
+    private fun JsonObjectBuilder.put(key: MqttParams, element: JsonElement): JsonElement? =
+        put(key.value, element)
+
+    private fun JsonObjectBuilder.put(key: MqttParams, value: String?): JsonElement? =
+        put(key.value, value)
+
+    private fun String.set(key: MqttTopicPlaceholder, value: String): String =
+        this.replace(key.placeholder, value)
+
     private fun String.matches(regex: String): Boolean {
         return this
             .replace("/", "\\/") //escape slashes

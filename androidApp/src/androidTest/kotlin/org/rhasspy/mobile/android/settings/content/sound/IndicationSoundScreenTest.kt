@@ -81,14 +81,18 @@ abstract class IndicationSoundScreenTest(
      */
     open fun testAddSoundFile() = runBlocking {
         //copy test file to downloads directory
-        val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName)
+        val file = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            fileName
+        )
         if (file.exists()) {
             file.delete()
         }
         withContext(Dispatchers.IO) {
             file.createNewFile()
         }
-        InstrumentationRegistry.getInstrumentation().context.resources.openRawResource(R.raw.sound).copyTo(file.outputStream())
+        InstrumentationRegistry.getInstrumentation().context.resources.openRawResource(R.raw.sound)
+            .copyTo(file.outputStream())
 
         viewModel.onClickSoundIndicationDisabled()
         composeTestRule.awaitIdle()
@@ -154,14 +158,18 @@ abstract class IndicationSoundScreenTest(
      */
     open fun testPlayback() = runBlocking {
         //copy test file to downloads directory
-        val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName)
+        val file = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            fileName
+        )
         if (file.exists()) {
             file.delete()
         }
         withContext(Dispatchers.IO) {
             file.createNewFile()
         }
-        InstrumentationRegistry.getInstrumentation().context.resources.openRawResource(R.raw.sound).copyTo(file.outputStream())
+        InstrumentationRegistry.getInstrumentation().context.resources.openRawResource(R.raw.sound)
+            .copyTo(file.outputStream())
 
         //output option is sound
         //(play works with silent sound but not silent notification)

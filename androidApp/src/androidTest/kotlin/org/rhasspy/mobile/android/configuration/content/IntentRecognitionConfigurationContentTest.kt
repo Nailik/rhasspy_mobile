@@ -65,7 +65,8 @@ class IntentRecognitionConfigurationContentTest {
         val textInputTest = "endpointTestInput"
 
         //option disable is set
-        composeTestRule.onNodeWithTag(IntentRecognitionOptions.Disabled, true).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(IntentRecognitionOptions.Disabled, true).onChildAt(0)
+            .assertIsSelected()
 
         //User clicks option remote http
         composeTestRule.onNodeWithTag(IntentRecognitionOptions.RemoteHTTP).performClick()
@@ -96,7 +97,10 @@ class IntentRecognitionConfigurationContentTest {
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         val newViewModel = IntentRecognitionConfigurationViewModel()
         //option is saved to remote http
-        assertEquals(IntentRecognitionOptions.RemoteHTTP, newViewModel.intentRecognitionOption.value)
+        assertEquals(
+            IntentRecognitionOptions.RemoteHTTP,
+            newViewModel.intentRecognitionOption.value
+        )
         //endpoint is saved
         assertEquals(textInputTest, newViewModel.intentRecognitionHttpEndpoint.value)
         //use custom endpoint is saved

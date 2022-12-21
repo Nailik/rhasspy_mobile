@@ -18,7 +18,8 @@ actual object BatteryOptimization {
     }
 
     actual fun isBatteryOptimizationDisabled(): Boolean {
-        val powerManager = Application.Instance.applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager
+        val powerManager =
+            Application.Instance.applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager
         return powerManager.isIgnoringBatteryOptimizations(Application.Instance.packageName)
     }
 

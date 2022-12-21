@@ -25,7 +25,8 @@ class BackgroundSettingsContentTest {
     val composeTestRule = createComposeRule()
 
     private val viewModel = BackgroundServiceSettingsViewModel()
-    private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    private val device: UiDevice =
+        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     private val dialog = " com.android.settings"
     private val acceptButton = "android:id/button1"
@@ -89,7 +90,8 @@ class BackgroundSettingsContentTest {
         //user clicks accept
         device.findObject(UiSelector().resourceIdMatches(acceptButton)).click()
         //deactivate battery optimization is shown as enabled
-        composeTestRule.onNodeWithTag(TestTag.BatteryOptimization, true).onChildAt(2).assertTextEquals(MR.strings.enabled)
+        composeTestRule.onNodeWithTag(TestTag.BatteryOptimization, true).onChildAt(2)
+            .assertTextEquals(MR.strings.enabled)
 
     }
 

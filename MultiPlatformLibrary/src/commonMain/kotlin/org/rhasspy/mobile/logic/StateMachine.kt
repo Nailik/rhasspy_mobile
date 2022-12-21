@@ -159,7 +159,11 @@ object StateMachine {
      * hermes/asr/startListening
      * Tell ASR system to start recording/transcribing
      */
-    suspend fun startListening(sessionId: String? = currentSession.sessionId, sendAudioCaptured: Boolean = false, fromMQTT: Boolean = false) {
+    suspend fun startListening(
+        sessionId: String? = currentSession.sessionId,
+        sendAudioCaptured: Boolean = false,
+        fromMQTT: Boolean = false
+    ) {
         logger.v { "startListening id: $sessionId sendAudioCaptured: $sendAudioCaptured fromMQTT: $fromMQTT" }
 
         if (sessionMatches(sessionId, fromMQTT)) {
@@ -247,7 +251,10 @@ object StateMachine {
      *
      * Emits textCaptured if silence was not detected earlier
      */
-    suspend fun stopListening(sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
+    suspend fun stopListening(
+        sessionId: String? = currentSession.sessionId,
+        fromMQTT: Boolean = false
+    ) {
         //stop it if state is recording
         logger.v { "stopListening id: $sessionId fromMQTT: $fromMQTT" }
 
@@ -301,7 +308,11 @@ object StateMachine {
      * hermes/asr/textCaptured
      * Successful transcription, sent either when silence is detected or on stopListening
      */
-    suspend fun intentTranscribed(sessionId: String? = currentSession.sessionId, intent: String, fromMQTT: Boolean = false) {
+    suspend fun intentTranscribed(
+        sessionId: String? = currentSession.sessionId,
+        intent: String,
+        fromMQTT: Boolean = false
+    ) {
         logger.v { "intentTranscribed $intent" }
 
         if (state.value == State.RecordingIntent || state.value == State.TranscribingIntent || state.value == State.RecordingStopped) {
@@ -339,7 +350,10 @@ object StateMachine {
      * hermes/error/asr
      * Sent when an error occurs in the ASR system
      */
-    suspend fun intentTranscriptionError(sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
+    suspend fun intentTranscriptionError(
+        sessionId: String? = currentSession.sessionId,
+        fromMQTT: Boolean = false
+    ) {
         logger.v { "intentTranscriptionError" }
 
         if (state.value == State.TranscribingIntent || state.value == State.RecordingStopped) {
@@ -365,7 +379,12 @@ object StateMachine {
      *
      * intent was recognized will now be handled and session will be ended
      */
-    suspend fun intentRecognized(intentName: String, intent: String, sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
+    suspend fun intentRecognized(
+        intentName: String,
+        intent: String,
+        sessionId: String? = currentSession.sessionId,
+        fromMQTT: Boolean = false
+    ) {
         logger.v { "intentRecognized $intent" }
 
         if (sessionMatches(sessionId, fromMQTT)) {
@@ -394,7 +413,10 @@ object StateMachine {
      *
      * Response to hermes/nlu/query
      */
-    suspend fun intentNotRecognized(sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
+    suspend fun intentNotRecognized(
+        sessionId: String? = currentSession.sessionId,
+        fromMQTT: Boolean = false
+    ) {
         logger.v { "intentNotRecognized" }
 
         if (state.value == State.RecognizingIntent) {
@@ -418,7 +440,10 @@ object StateMachine {
      * hermes/dialogueManager/endSession
      * Requests that a session be terminated nominally
      */
-    suspend fun endSession(sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
+    suspend fun endSession(
+        sessionId: String? = currentSession.sessionId,
+        fromMQTT: Boolean = false
+    ) {
         logger.v { "endSession $sessionId" }
 
         if (sessionMatches(sessionId, fromMQTT)) {
@@ -448,7 +473,10 @@ object StateMachine {
      *
      * Response to hermes/dialogueManager/endSession or other reasons for a session termination
      */
-    suspend fun sessionEnded(sessionId: String? = currentSession.sessionId, fromMQTT: Boolean = false) {
+    suspend fun sessionEnded(
+        sessionId: String? = currentSession.sessionId,
+        fromMQTT: Boolean = false
+    ) {
         logger.v { "sessionEnded" }
 
         if (sessionMatches(sessionId, fromMQTT)) {
@@ -529,7 +557,8 @@ object StateMachine {
         return previousRecordingFile.getFileData()
     }
 
-    private fun isDialogueLocal(): Boolean = ConfigurationSettings.dialogManagementOption.value == DialogManagementOptions.Local
+    private fun isDialogueLocal(): Boolean =
+        ConfigurationSettings.dialogManagementOption.value == DialogManagementOptions.Local
 
     private fun sessionMatches(sessionId: String?, fromMQTT: Boolean): Boolean =
         (sessionId == currentSession.sessionId || (fromMQTT && sessionId == currentSession.mqttSpeechToTextSessionId))

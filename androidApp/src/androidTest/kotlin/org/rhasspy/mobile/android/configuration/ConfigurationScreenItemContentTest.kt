@@ -36,7 +36,8 @@ class ConfigurationScreenItemContentTest {
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    private val device: UiDevice =
+        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     private val configurationScreenItemContentNavigation = "ConfigurationScreenItemContent"
     private val startNavigation = "start"
@@ -63,7 +64,11 @@ class ConfigurationScreenItemContentTest {
 
                     composable(startNavigation) {
                         //button to open config screen in order to test back press
-                        Button(onClick = { navController.navigate(configurationScreenItemContentNavigation) }) {
+                        Button(onClick = {
+                            navController.navigate(
+                                configurationScreenItemContentNavigation
+                            )
+                        }) {
                             Text(btnStartTest)
                         }
                     }
