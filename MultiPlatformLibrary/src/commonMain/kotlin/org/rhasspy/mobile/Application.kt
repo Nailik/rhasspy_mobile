@@ -48,10 +48,13 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.viewModels.*
 import org.rhasspy.mobile.viewModels.configuration.*
 import org.rhasspy.mobile.viewModels.configuration.test.*
+import org.rhasspy.mobile.viewModels.overlay.MicrophoneOverlayViewModel
+import org.rhasspy.mobile.viewModels.screens.*
 import org.rhasspy.mobile.viewModels.settings.*
 import org.rhasspy.mobile.viewModels.settings.sound.ErrorIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewModels.settings.sound.RecordedIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewModels.settings.sound.WakeIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewModels.widget.MicrophoneWidgetViewModel
 
 inline fun <reified T : Closeable> Module.closeableSingle(
     qualifier: Qualifier? = null,

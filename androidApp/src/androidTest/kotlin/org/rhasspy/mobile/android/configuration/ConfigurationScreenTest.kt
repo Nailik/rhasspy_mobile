@@ -10,9 +10,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.main.BottomBarScreens
+import org.rhasspy.mobile.android.navigation.BottomBarScreens
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.viewModels.ConfigurationScreenViewModel
+import org.rhasspy.mobile.viewModels.screens.ConfigurationScreenViewModel
 import kotlin.test.assertEquals
 
 /**

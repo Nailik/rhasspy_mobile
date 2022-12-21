@@ -22,7 +22,7 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.navigation.BottomBarScreens
 import org.rhasspy.mobile.android.navigation.NavigationParams
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
-import org.rhasspy.mobile.viewModels.HomeScreenViewModel
+import org.rhasspy.mobile.viewModels.screens.HomeScreenViewModel
 
 /**
  * Home Screen contains

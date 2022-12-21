@@ -17,7 +17,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.android.R
 import org.rhasspy.mobile.android.main.getContainerForMicrophoneFabLegacy
 import org.rhasspy.mobile.android.main.getMicrophoneFabIconLegacy
-import org.rhasspy.mobile.viewModels.MicrophoneWidgetViewModel
+import org.rhasspy.mobile.viewModels.widget.MicrophoneWidgetViewModel
 
 class MicrophoneWidget : GlanceAppWidget(), KoinComponent {
 

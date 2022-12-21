@@ -21,7 +21,7 @@ import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.theme.*
-import org.rhasspy.mobile.viewModels.LogScreenViewModel
+import org.rhasspy.mobile.viewModels.screens.LogScreenViewModel
 
 /**
  * show log information

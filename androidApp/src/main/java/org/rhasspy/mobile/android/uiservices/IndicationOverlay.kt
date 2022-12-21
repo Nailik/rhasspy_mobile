@@ -22,6 +22,7 @@ import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.services.indication.IndicationService
 
+//TODO view model
 /**
  * Overlay Service
  */

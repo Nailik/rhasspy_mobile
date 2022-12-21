@@ -2,6 +2,7 @@ package org.rhasspy.mobile.android.configuration
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
@@ -64,27 +66,37 @@ fun ConfigurationScreenItemContent(
         }
     }
 
-    CompositionLocalProvider(
-        LocalConfigurationNavController provides navController
-    ) {
-        NavHost(
-            navController = navController,
-            startDestination = ConfigurationContentScreens.Edit.name,
-            modifier = modifier
-        ) {
-            composable(ConfigurationContentScreens.Edit.name) {
-                EditConfigurationScreen(
-                    title = title,
-                    viewModel = viewModel,
-                    content = content
-                )
+    BackHandler(viewModel.isBackPressDisabled.collectAsState().value) {}
+
+    if(viewModel.isLoading.collectAsState().value) {
+        Surface {
+            Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
-            composable(ConfigurationContentScreens.Test.name) {
-                ConfigurationScreenTest(
-                    viewModel = viewModel,
-                    content = testContent,
-                    onOpenPage = viewModel::onOpenTestPage
-                )
+        }
+    } else {
+        CompositionLocalProvider(
+            LocalConfigurationNavController provides navController
+        ) {
+            NavHost(
+                navController = navController,
+                startDestination = ConfigurationContentScreens.Edit.name,
+                modifier = modifier
+            ) {
+                composable(ConfigurationContentScreens.Edit.name) {
+                    EditConfigurationScreen(
+                        title = title,
+                        viewModel = viewModel,
+                        content = content
+                    )
+                }
+                composable(ConfigurationContentScreens.Test.name) {
+                    ConfigurationScreenTest(
+                        viewModel = viewModel,
+                        content = testContent,
+                        onOpenPage = viewModel::onOpenTestPage
+                    )
+                }
             }
         }
     }

@@ -102,5 +102,8 @@ abstract class IServiceMiddleware : KoinComponent, Closeable {
         //TODO("Not yet implemented")
     }
 
+    fun toggleSessionManually(){
+
+    }
 
 }

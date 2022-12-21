@@ -25,7 +25,7 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.elements.translate
 import org.rhasspy.mobile.android.settings.SettingsScreens
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.viewModels.AboutScreenViewModel
+import org.rhasspy.mobile.viewModels.screens.AboutScreenViewModel
 
 /**
  * About Screen contains A Header with Information,

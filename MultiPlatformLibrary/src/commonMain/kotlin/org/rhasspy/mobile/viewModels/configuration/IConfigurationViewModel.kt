@@ -41,6 +41,10 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     private val _isListAutoscroll = MutableStateFlow(false)
     val isListAutoscroll = _isListAutoscroll.readOnly
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.readOnly
+    val isBackPressDisabled = isLoading
+
     private var testScope = CoroutineScope(Dispatchers.Default)
 
     //TODO filter test list
@@ -59,10 +63,16 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
 
 
     fun save() {
-        onSave()
+        _isLoading.value = true
 
-        unloadKoinModules(serviceModule)
-        loadKoinModules(serviceModule)
+        viewModelScope.launch(Dispatchers.Default) {
+            onSave()
+
+            unloadKoinModules(serviceModule)
+            loadKoinModules(serviceModule)
+
+            _isLoading.value = false
+        }
     }
 
     abstract fun discard()
@@ -76,40 +86,48 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     //TODO carefully test this works correctly
     @Suppress("RedundantSuspendModifier")
     fun onOpenTestPage() {
-        testScope = CoroutineScope(Dispatchers.Default)
-        //needs to be suspend, else ui thread is blocked
-        logger.e { "************* onOpenTestPage ************" }
-        Application.reloadServiceModules()
-        initializeTestParams()
+        _isLoading.value = true
 
-        _events.value = emptyList()
-        testRunner.initializeTest()
+        viewModelScope.launch(Dispatchers.Default) {
+            testScope = CoroutineScope(Dispatchers.Default)
+            //needs to be suspend, else ui thread is blocked
+            logger.e { "************* onOpenTestPage ************" }
+            Application.reloadServiceModules()
+            initializeTestParams()
 
-        testScope.launch {
-            testRunner.serviceState.collect {
-                _serviceState.value = it
+            _events.value = emptyList()
+            testRunner.initializeTest()
+
+            testScope.launch {
+                testRunner.serviceState.collect {
+                    _serviceState.value = it
+                }
             }
-        }
 
-        testScope.launch {
-            testRunner.events.collect {
-                _events.value = it
+            testScope.launch {
+                testRunner.events.collect {
+                    _events.value = it
+                }
             }
+
+            _isLoading.value = false
         }
-
-
     }
 
     //TODO carefully test this works correctly
-    //TODO show loading page for loading test and unloading test
     @Suppress("RedundantSuspendModifier")
     fun stopTest() {
-        testScope.cancel()
-        //needs to be suspend, else ui thread is blocked
-        logger.e { "************* stopTest ************" }
-        //reload koin modules when test is stopped
-        Application.reloadServiceModules()
-        Application.startServices()
-    }
+        _isLoading.value = true
 
+        viewModelScope.launch(Dispatchers.Default) {
+            testScope.cancel()
+            //needs to be suspend, else ui thread is blocked
+            logger.e { "************* stopTest ************" }
+            //reload koin modules when test is stopped
+            Application.reloadServiceModules()
+            Application.startServices()
+
+            _isLoading.value = false
+        }
+    }
 }

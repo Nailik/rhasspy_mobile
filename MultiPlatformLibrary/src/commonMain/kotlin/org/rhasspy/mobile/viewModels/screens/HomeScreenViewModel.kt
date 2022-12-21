@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewModels
+package org.rhasspy.mobile.viewModels.screens
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
