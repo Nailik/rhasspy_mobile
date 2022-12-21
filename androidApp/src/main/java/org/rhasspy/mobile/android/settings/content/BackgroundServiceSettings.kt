@@ -11,7 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.ComposableLifecycle
@@ -33,7 +33,7 @@ import org.rhasspy.mobile.viewModels.settings.BackgroundServiceSettingsViewModel
  */
 @Preview
 @Composable
-fun BackgroundServiceSettingsContent(viewModel: BackgroundServiceSettingsViewModel = getViewModel()) {
+fun BackgroundServiceSettingsContent(viewModel: BackgroundServiceSettingsViewModel = get()) {
 
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreens.BackgroundServiceSettings),

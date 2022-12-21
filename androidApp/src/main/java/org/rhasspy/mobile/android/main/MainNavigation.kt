@@ -11,7 +11,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
@@ -82,7 +82,7 @@ fun MainNavigation() {
  * dialog if user wants to enable crashlytics
  */
 @Composable
-private fun CrashlyticsDialog(viewModel: LogSettingsViewModel = getViewModel(), onClose: () -> Unit) {
+private fun CrashlyticsDialog(viewModel: LogSettingsViewModel = get(), onClose: () -> Unit) {
     AlertDialog(
         modifier = Modifier.testTag(TestTag.DialogCrashlytics),
         onDismissRequest = onClose,

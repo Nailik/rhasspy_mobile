@@ -11,7 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import dev.icerock.moko.resources.StringResource
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.get
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.*
@@ -24,7 +24,7 @@ import org.rhasspy.mobile.viewModels.SettingsScreenViewModel
 
 @Preview
 @Composable
-fun SettingsScreen(viewModel: SettingsScreenViewModel = getViewModel()) {
+fun SettingsScreen(viewModel: SettingsScreenViewModel = get()) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),

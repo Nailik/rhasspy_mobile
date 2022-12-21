@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
@@ -48,7 +48,7 @@ enum class WakeWordConfigurationScreens {
  */
 @Preview
 @Composable
-fun WakeWordConfigurationContent(viewModel: WakeWordConfigurationViewModel = getViewModel()) {
+fun WakeWordConfigurationContent(viewModel: WakeWordConfigurationViewModel = get()) {
 
     val navController = rememberNavController()
 

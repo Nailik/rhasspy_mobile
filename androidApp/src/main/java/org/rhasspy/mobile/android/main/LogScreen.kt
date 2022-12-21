@@ -14,7 +14,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import co.touchlab.kermit.Severity
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.CustomDivider
 import org.rhasspy.mobile.android.content.elements.Icon
@@ -28,7 +28,7 @@ import org.rhasspy.mobile.viewModels.LogScreenViewModel
  */
 @Preview
 @Composable
-fun LogScreen(viewModel: LogScreenViewModel = getViewModel()) {
+fun LogScreen(viewModel: LogScreenViewModel = get()) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { AppBar(viewModel) },

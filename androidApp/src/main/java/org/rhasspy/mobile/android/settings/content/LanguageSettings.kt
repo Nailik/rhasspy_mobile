@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
@@ -18,7 +18,7 @@ import org.rhasspy.mobile.viewModels.settings.LanguageSettingsViewModel
  */
 @Preview
 @Composable
-fun LanguageSettingsScreenItemContent(viewModel: LanguageSettingsViewModel = getViewModel()) {
+fun LanguageSettingsScreenItemContent(viewModel: LanguageSettingsViewModel = get()) {
 
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreens.LanguageSettings),

@@ -26,6 +26,7 @@ import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.ResourceFormatted
 import dev.icerock.moko.resources.desc.StringDesc
+import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.viewModels.AppViewModel
 
@@ -111,13 +112,13 @@ fun Text(
 
 @Composable
 fun translate(resource: StringResource): String {
-    AppViewModel.languageOption.collectAsState().value
+    get<AppViewModel>().languageOption.collectAsState().value
     return StringDesc.Resource(resource).toString(LocalContext.current)
 }
 
 @Composable
 fun translate(resource: StringResource, vararg args: Any): String {
-    AppViewModel.languageOption.collectAsState().value
+    get<AppViewModel>().languageOption.collectAsState().value
     return StringDesc.ResourceFormatted(resource, *args).toString(LocalContext.current)
 }
 

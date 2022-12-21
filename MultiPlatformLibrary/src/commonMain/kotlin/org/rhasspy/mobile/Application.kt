@@ -45,10 +45,13 @@ import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.services.webserver.WebServerServiceParams
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
-import org.rhasspy.mobile.viewModels.HomeScreenViewModel
-import org.rhasspy.mobile.viewModels.MicrophoneWidgetViewModel
+import org.rhasspy.mobile.viewModels.*
+import org.rhasspy.mobile.viewModels.configuration.*
 import org.rhasspy.mobile.viewModels.configuration.test.*
-
+import org.rhasspy.mobile.viewModels.settings.*
+import org.rhasspy.mobile.viewModels.settings.sound.ErrorIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewModels.settings.sound.RecordedIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewModels.settings.sound.WakeIndicationSoundSettingsViewModel
 
 inline fun <reified T : Closeable> Module.closeableSingle(
     qualifier: Qualifier? = null,
@@ -56,7 +59,6 @@ inline fun <reified T : Closeable> Module.closeableSingle(
     noinline definition: Definition<T>
 ) {
     single(qualifier, createdAtStart, definition) onClose {
-        // println("onCLose $definition $it")
         it?.close()
     }
 }
@@ -78,14 +80,20 @@ val serviceModule = module {
     closeableSingle { params -> createServiceMiddleware(params.getOrNull() ?: false) }
 
     single { params -> params.getOrNull<LocalAudioServiceParams>() ?: LocalAudioServiceParams() }
-    single { params -> params.getOrNull<RhasspyActionsServiceParams>() ?: RhasspyActionsServiceParams() }
+    single { params ->
+        params.getOrNull<RhasspyActionsServiceParams>() ?: RhasspyActionsServiceParams()
+    }
     single { params -> params.getOrNull<MqttServiceParams>() ?: MqttServiceParams() }
     single { params -> params.getOrNull<HttpClientServiceParams>() ?: HttpClientServiceParams() }
     single { params -> params.getOrNull<WebServerServiceParams>() ?: WebServerServiceParams() }
     single { params -> params.getOrNull<UdpServiceParams>() ?: UdpServiceParams() }
-    single { params -> params.getOrNull<HomeAssistantServiceParams>() ?: HomeAssistantServiceParams() }
+    single { params ->
+        params.getOrNull<HomeAssistantServiceParams>() ?: HomeAssistantServiceParams()
+    }
     single { params -> params.getOrNull<HotWordServiceParams>() ?: HotWordServiceParams() }
-    single { params -> params.getOrNull<DialogManagerServiceParams>() ?: DialogManagerServiceParams() }
+    single { params ->
+        params.getOrNull<DialogManagerServiceParams>() ?: DialogManagerServiceParams()
+    }
 
     closeableSingle { AudioPlayingConfigurationTest() }
     closeableSingle { DialogManagementConfigurationTest() }
@@ -97,9 +105,38 @@ val serviceModule = module {
     closeableSingle { TextToSpeechConfigurationTest() }
     closeableSingle { WakeWordConfigurationTest() }
     closeableSingle { WebServerConfigurationTest() }
+}
 
+val viewModelModule = module {
+    single { AppViewModel() }
     single { HomeScreenViewModel() }
     single { MicrophoneWidgetViewModel() }
+    single { ConfigurationScreenViewModel() }
+    single { AudioPlayingConfigurationViewModel() }
+    single { DialogManagementConfigurationViewModel() }
+    single { IntentHandlingConfigurationViewModel() }
+    single { IntentRecognitionConfigurationViewModel() }
+    single { MqttConfigurationViewModel() }
+    single { RemoteHermesHttpConfigurationViewModel() }
+    single { SpeechToTextConfigurationViewModel() }
+    single { TextToSpeechConfigurationViewModel() }
+    single { WakeWordConfigurationViewModel() }
+    single { WebServerConfigurationViewModel() }
+    single { LogScreenViewModel() }
+    single { SettingsScreenViewModel() }
+    single { AboutScreenViewModel() }
+    single { AutomaticSilenceDetectionSettingsViewModel() }
+    single { BackgroundServiceSettingsViewModel() }
+    single { DeviceSettingsSettingsViewModel() }
+    single { IndicationSettingsViewModel() }
+    single { WakeIndicationSoundSettingsViewModel() }
+    single { RecordedIndicationSoundSettingsViewModel() }
+    single { ErrorIndicationSoundSettingsViewModel() }
+    single { LanguageSettingsViewModel() }
+    single { LogSettingsViewModel() }
+    single { MicrophoneOverlaySettingsViewModel() }
+    single { SaveAndRestoreSettingsViewModel() }
+    single { MicrophoneOverlayViewModel() }
 }
 
 
@@ -159,8 +196,6 @@ abstract class Application : NativeApplication(), KoinComponent {
 
         StringDesc.localeType = StringDesc.LocaleType.Custom(AppSettings.languageOption.value.code)
     }
-
-    abstract val viewModelModule: Module
 
     abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)
 

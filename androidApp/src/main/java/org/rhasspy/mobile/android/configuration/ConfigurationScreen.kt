@@ -17,7 +17,7 @@ import androidx.navigation.compose.composable
 import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.content.*
@@ -35,7 +35,7 @@ import org.rhasspy.mobile.viewModels.ConfigurationScreenViewModel
  */
 @Preview
 @Composable
-fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = getViewModel(), scrollToError: Boolean = false) {
+fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = get(), scrollToError: Boolean = false) {
 
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberLazyListState()

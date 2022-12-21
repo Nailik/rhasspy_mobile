@@ -90,8 +90,6 @@ class MicrophoneWidget : GlanceAppWidget(), KoinComponent {
     }
 }
 
-//TODO do not use viewmodel, use custom -> viewmodel always gets recreated?? because tied to activity
-
 class TestCallback : ActionCallback, KoinComponent {
     override suspend fun onAction(
         context: Context,

@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
@@ -31,7 +31,7 @@ import org.rhasspy.mobile.viewModels.settings.SaveAndRestoreSettingsViewModel
  */
 @Preview
 @Composable
-fun SaveAndRestoreSettingsContent(viewModel: SaveAndRestoreSettingsViewModel = getViewModel()) {
+fun SaveAndRestoreSettingsContent(viewModel: SaveAndRestoreSettingsViewModel = get()) {
 
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreens.SaveAndRestoreSettings),

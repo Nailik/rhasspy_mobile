@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.get
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
@@ -32,7 +32,7 @@ import org.rhasspy.mobile.viewModels.AboutScreenViewModel
  * and list of used dependencies
  */
 @Composable
-fun AboutScreen(viewModel: AboutScreenViewModel = getViewModel()) {
+fun AboutScreen(viewModel: AboutScreenViewModel = get()) {
     Surface(modifier = Modifier.testTag(SettingsScreens.AboutSettings)) {
         val configuration = LocalConfiguration.current
         LibrariesContainer(header = {
