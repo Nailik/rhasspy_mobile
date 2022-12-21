@@ -21,6 +21,7 @@ import org.rhasspy.mobile.android.content.elements.FilledTonalButton
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.navigation.BottomBarScreens
 import org.rhasspy.mobile.android.navigation.NavigationParams
+import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
 /**
@@ -80,12 +81,20 @@ private fun PortraitContent(
 
         ServiceStatusInformation(viewModel)
 
-        MicrophoneFab(
-            modifier = Modifier
-                .weight(1f),
-            iconSize = 96.dp,
-            viewModel = viewModel
-        )
+        RequiresMicrophonePermission(
+            MR.strings.microphonePermissionInfoRecord,
+            viewModel::toggleSession
+        ) { onClick ->
+            MicrophoneFab(
+                modifier = Modifier.weight(1f),
+                iconSize = 96.dp,
+                isActionEnabledStateFlow = viewModel.isActionEnabled,
+                isRecordingStateFlow = viewModel.isRecording,
+                isShowBorderStateFlow = viewModel.isShowBorder,
+                isShowMicOnStateFlow = viewModel.isShowMicOn,
+                onClick = onClick
+            )
+        }
 
         PlayRecording(viewModel)
 
@@ -114,13 +123,20 @@ fun LandscapeContent(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
 
-        MicrophoneFab(
-            modifier = Modifier
-                .weight(1f),
-            iconSize = 96.dp,
-            viewModel = viewModel
-        )
-
+        RequiresMicrophonePermission(
+            MR.strings.microphonePermissionInfoRecord,
+            viewModel::toggleSession
+        ) { onClick ->
+            MicrophoneFab(
+                modifier = Modifier.weight(1f),
+                iconSize = 96.dp,
+                isActionEnabledStateFlow = viewModel.isActionEnabled,
+                isRecordingStateFlow = viewModel.isRecording,
+                isShowBorderStateFlow = viewModel.isShowBorder,
+                isShowMicOnStateFlow = viewModel.isShowMicOn,
+                onClick = onClick
+            )
+        }
 
         Column(
             modifier = Modifier

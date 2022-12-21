@@ -3,7 +3,6 @@ package org.rhasspy.mobile.android.main
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -18,60 +17,63 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.get
+import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.R
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.FloatingActionButton
 import org.rhasspy.mobile.android.content.elements.Icon
-import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.viewModels.HomeScreenViewModel
 
 /**
  * Floating Action Button with microphone
  */
 @Composable
-fun MicrophoneFab(modifier: Modifier = Modifier, iconSize: Dp, viewModel: HomeScreenViewModel = get()) {
+fun MicrophoneFab(modifier: Modifier = Modifier,
+                  iconSize: Dp,
+                  isActionEnabledStateFlow: StateFlow<Boolean>,
+                  isRecordingStateFlow: StateFlow<Boolean>,
+                  isShowBorderStateFlow: StateFlow<Boolean>,
+                  isShowMicOnStateFlow: StateFlow<Boolean>,
+                  onClick: () -> Unit) {
 
-    Box(modifier = modifier) {
+    val isActionEnabled by isActionEnabledStateFlow.collectAsState()
+    val isRecording by isRecordingStateFlow.collectAsState()
 
-        RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::toggleSession) { onClick ->
-
-            val isActionEnabled by viewModel.isActionEnabled.collectAsState()
-            val isRecording by viewModel.isRecording.collectAsState()
-
-            FloatingActionButton(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .testTag(TestTag.MicrophoneFab)
-                    .let {
-                        if (viewModel.isShowBorder.collectAsState().value) {
-                            return@let it.border(8.dp, MaterialTheme.colorScheme.errorContainer, FloatingActionButtonDefaults.shape)
-                        }
-                        it
-                    },
-                onClick = {
-                    if (isActionEnabled) {
-                        onClick()
-                    }
-                },
-                isEnabled = isActionEnabled,
-                containerColor = getContainerColorForMicrophoneFab(isActionEnabled, isRecording),
-                contentColor = getContentColorForMicrophoneFab(isActionEnabled, isRecording),
-                elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
-                icon = {
-                    Icon(
-                        modifier = Modifier.size(iconSize),
-                        imageVector = if (viewModel.isShowMicOn.collectAsState().value) Icons.Filled.Mic else Icons.Filled.MicOff,
-                        contentDescription = MR.strings.wakeUp,
+    FloatingActionButton(
+        modifier = modifier
+            .fillMaxSize()
+            .testTag(TestTag.MicrophoneFab)
+            .let {
+                if (isShowBorderStateFlow.collectAsState().value) {
+                    return@let it.border(
+                        8.dp,
+                        MaterialTheme.colorScheme.errorContainer,
+                        FloatingActionButtonDefaults.shape
                     )
                 }
+                it
+            },
+        onClick = {
+            if (isActionEnabled) {
+                onClick()
+            }
+        },
+        isEnabled = isActionEnabled,
+        containerColor = getContainerColorForMicrophoneFab(isActionEnabled, isRecording),
+        contentColor = getContentColorForMicrophoneFab(isActionEnabled, isRecording),
+        elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
+        icon = {
+            Icon(
+                modifier = Modifier.size(iconSize),
+                imageVector = if (isShowMicOnStateFlow.collectAsState().value) Icons.Filled.Mic else Icons.Filled.MicOff,
+                contentDescription = MR.strings.wakeUp,
             )
-
         }
-    }
+    )
+
 }
+
 
 @Composable
 fun getContainerColorForMicrophoneFab(isActionEnabled: Boolean, isRecording: Boolean): Color {

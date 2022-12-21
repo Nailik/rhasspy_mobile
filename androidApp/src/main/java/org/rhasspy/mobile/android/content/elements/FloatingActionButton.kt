@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.android.content.elements
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.LocalRippleTheme
@@ -37,6 +38,7 @@ fun FloatingActionButton(
             Button(
                 modifier = modifier,
                 shape = RoundedCornerShape(16.0.dp),
+                contentPadding = PaddingValues(),
                 colors = ButtonDefaults.buttonColors(
                     contentColor = contentColor,
                     containerColor = containerColor,

@@ -19,17 +19,15 @@ class HomeScreenViewModel : ViewModel(), KoinComponent {
 
     val isActionEnabled = dialogManagerServiceState
         .mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingHotWord }
-    val isPlayingRecordingEnabled = isActionEnabled
-
     val isShowBorder = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.AwaitingHotWord }
     val isPlayingRecording = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.PlayingAudio }
     val isShowMicOn: StateFlow<Boolean> = MicrophonePermission.granted
-    val isRecording = MutableStateFlow(false) // dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
+    val isRecording =  dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
 
+    val isPlayingRecordingEnabled = isActionEnabled
     val isShowLogEnabled = AppSettings.isShowLogEnabled.data
 
     val serviceState = MutableStateFlow<EventState>(EventState.Pending)
-    val isServiceStateActionEnabled = MutableStateFlow(false)
 
     fun toggleSession() = StateMachine.toggleSessionManually()
 
