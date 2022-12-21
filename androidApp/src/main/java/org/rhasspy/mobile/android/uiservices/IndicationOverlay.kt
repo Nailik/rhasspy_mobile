@@ -20,9 +20,8 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.nativeutils.OverlayPermission
-import org.rhasspy.mobile.services.indication.IndicationService
+import org.rhasspy.mobile.viewModels.overlay.IndicationOverlayViewModel
 
-//TODO view model
 /**
  * Overlay Service
  */
@@ -35,7 +34,7 @@ object IndicationOverlay : KoinComponent {
     private var showVisualIndicationOldValue = false
 
     private var mainScope = CoroutineScope(Dispatchers.Main)
-    private val indicationService by inject<IndicationService>()
+    private val viewModel by inject<IndicationOverlayViewModel>()
 
     private val overlayWindowManager by lazy {
         AndroidApplication.Instance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -47,7 +46,7 @@ object IndicationOverlay : KoinComponent {
     private val view = ComposeView(AndroidApplication.Instance).apply {
         setContent {
             AppTheme {
-                Indication(indicationService.indicationState.collectAsState().value)
+                Indication(viewModel.indicationState.collectAsState().value)
             }
         }
     }
@@ -83,7 +82,7 @@ object IndicationOverlay : KoinComponent {
      */
     fun start() {
         CoroutineScope(Dispatchers.Default).launch {
-            indicationService.showVisualIndication.collect {
+            viewModel.isShowVisualIndication.collect {
                 if (it != showVisualIndicationOldValue) {
                     if (it) {
                         if (OverlayPermission.isGranted()) {

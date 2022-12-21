@@ -48,6 +48,7 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.viewModels.*
 import org.rhasspy.mobile.viewModels.configuration.*
 import org.rhasspy.mobile.viewModels.configuration.test.*
+import org.rhasspy.mobile.viewModels.overlay.IndicationOverlayViewModel
 import org.rhasspy.mobile.viewModels.overlay.MicrophoneOverlayViewModel
 import org.rhasspy.mobile.viewModels.screens.*
 import org.rhasspy.mobile.viewModels.settings.*
@@ -140,6 +141,7 @@ val viewModelModule = module {
     single { MicrophoneOverlaySettingsViewModel() }
     single { SaveAndRestoreSettingsViewModel() }
     single { MicrophoneOverlayViewModel() }
+    single { IndicationOverlayViewModel() }
 }
 
 

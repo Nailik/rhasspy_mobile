@@ -14,11 +14,12 @@ import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.sounds.SoundOptions
 
-object IndicationService : IService() {
+//TODO koin
+internal object IndicationService : IService() {
 
     private val _indicationState = MutableStateFlow(IndicationState.Idle)
-    private val _showVisualIndication = MutableStateFlow(false)
-    val showVisualIndication = _showVisualIndication.readOnly
+    private val _isShowVisualIndication = MutableStateFlow(false)
+    val isShowVisualIndication = _isShowVisualIndication.readOnly
     val indicationState = _indicationState.readOnly
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
@@ -39,7 +40,7 @@ object IndicationService : IService() {
      * called when session ended
      */
     fun onIdle() {
-        _showVisualIndication.value = false
+        _isShowVisualIndication.value = false
         NativeIndication.releaseWakeUp()
     }
 
@@ -48,7 +49,7 @@ object IndicationService : IService() {
             NativeIndication.wakeUpScreen()
         }
         if (AppSettings.isWakeWordLightIndicationEnabled.value) {
-            _showVisualIndication.value = true
+            _isShowVisualIndication.value = true
         }
         _indicationState.value = IndicationState.WakeUp
         playWakeSound()
@@ -56,7 +57,7 @@ object IndicationService : IService() {
 
     fun onRecording() {
         if (AppSettings.isWakeWordLightIndicationEnabled.value) {
-            _showVisualIndication.value = true
+            _isShowVisualIndication.value = true
         }
         _indicationState.value = IndicationState.Recording
     }
@@ -67,14 +68,14 @@ object IndicationService : IService() {
 
     fun onThinking() {
         if (AppSettings.isWakeWordLightIndicationEnabled.value) {
-            _showVisualIndication.value = true
+            _isShowVisualIndication.value = true
         }
         _indicationState.value = IndicationState.Thinking
     }
 
     fun onSpeaking() {
         if (AppSettings.isWakeWordLightIndicationEnabled.value) {
-            _showVisualIndication.value = true
+            _isShowVisualIndication.value = true
         }
         _indicationState.value = IndicationState.Speaking
     }
