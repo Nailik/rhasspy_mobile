@@ -6,6 +6,7 @@ import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
+import org.rhasspy.mobile.nativeutils.openLink
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.webserver.WebServerServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
@@ -56,6 +57,16 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
     //Toggle http server ssl enabled
     fun toggleHttpServerSSLEnabled(enabled: Boolean) {
         _isHttpServerSSLEnabled.value = enabled
+    }
+
+    //open wiki page
+    fun openWebServerSSLWiki() {
+        openLink("https://github.com/Nailik/rhasspy_mobile/wiki/Webserver#enable-ssl")
+    }
+
+    //open file chooser to select certificate
+    fun selectSSLCertificate() {
+        //TODO
     }
 
     /**

@@ -7,6 +7,7 @@ import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.mapReadonlyState
+import org.rhasspy.mobile.nativeutils.openLink
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.services.mqtt.MqttServiceParams
@@ -104,6 +105,11 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
         _isMqttSSLEnabled.value = enabled
     }
 
+    //open file chooser to select certificate
+    fun selectSSLCertificate() {
+        //TODO
+    }
+
     //set connection timeout time
     fun updateMqttConnectionTimeout(connectionTimeout: String) {
         val text = connectionTimeout.replace("""[-,. ]""".toRegex(), "")
@@ -123,6 +129,13 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
         val text = retryInterval.replace("""[-,. ]""".toRegex(), "")
         _mqttRetryIntervalText.value = text
         _mqttRetryInterval.value = text.toLongOrNull() ?: 0
+    }
+
+    /**
+     * open wiki page
+     */
+    fun openMQTTSSLWiki() {
+        openLink("https://github.com/Nailik/rhasspy_mobile/wiki/MQTT#enable-ssl")
     }
 
     /**

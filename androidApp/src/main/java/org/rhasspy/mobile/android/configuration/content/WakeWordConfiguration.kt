@@ -139,7 +139,7 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
             label = MR.strings.porcupineAccessKey
         )
 
-        //button to open picovoice console to generate access token
+        //button to open pico voice console to generate access token
         ListElement(
             modifier = Modifier
                 .testTag(TestTag.PorcupineOpenConsole)
@@ -217,7 +217,7 @@ private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
 }
 
 /**
- * test button to start wakeword detection test
+ * test button to start wake word detection test
  */
 @Composable
 private fun TestContent(

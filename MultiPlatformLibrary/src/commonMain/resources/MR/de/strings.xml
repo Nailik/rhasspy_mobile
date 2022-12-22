@@ -68,7 +68,7 @@
     <string name="sound">Ton</string>
     <string name="_and">und</string>
     <string name="light">Licht</string>
-    <string name="chooseCertificate">Wählen Sie ein Zertifikat</string>
+    <string name="chooseCertificate">Zertifikatdatei öffnen (.bks)</string>
     <string name="showLog">Protokoll anzeigen</string>
     <string name="log">Protokoll</string>
     <string name="audioFramesLogging">Audio Frames protokollieren</string>
@@ -307,4 +307,6 @@
     <string name="executeHandleIntent">Intent ausführen</string>
     <string name="executeStartMqtt">MQTT starten</string>
     <string name="executeStartWebserver">starte Webserver</string>
+    <string name="sslWiki">Erstellen der Zertifikat Datei</string>
+    <string name="sslWikiInfo">öffne GitHub Wiki um zu Erfahren, wie ein Zertifikat erstellt werden kann</string>
 </resources>

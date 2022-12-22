@@ -68,7 +68,7 @@
     <string name="sound">Sound</string>
     <string name="_and">and</string>
     <string name="light">Light</string>
-    <string name="chooseCertificate">Choose Certificate</string>
+    <string name="chooseCertificate">Choose Certificate (.bks)</string>
     <string name="showLog">Show Log</string>
     <string name="log">Log</string>
     <string name="audioFramesLogging">Audio Frames Logging</string>
@@ -299,6 +299,8 @@
     <string name="executeHandleIntent">handle Intent</string>
     <string name="executeStartMqtt">start MQTT</string>
     <string name="executeStartWebserver">start Webserver</string>
+    <string name="sslWiki">Certificate File creation</string>
+    <string name="sslWikiInfo">open GitHub Wiki to see how to create the Certificate</string>
     <!-- not translatable -->
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>

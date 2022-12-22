@@ -80,6 +80,8 @@ enum class TestTag {
     PorcupineKeywordCustomScreen,
     PorcupineKeywordDefaultScreen,
 
+    WebServerSSLWiki,
+    MQTTSSLWiki,
 
     TabDefault,
     TabCustom,

@@ -3,8 +3,11 @@ package org.rhasspy.mobile.android.configuration.content
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -15,10 +18,9 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
-import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
-import org.rhasspy.mobile.android.content.list.SwitchListItem
-import org.rhasspy.mobile.android.content.list.TextFieldListItem
-import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
+import org.rhasspy.mobile.android.content.elements.Icon
+import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.list.*
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewModels.configuration.MqttConfigurationViewModel
 
@@ -119,7 +121,6 @@ private fun MqttConnectionSettings(viewModel: MqttConfigurationViewModel) {
     )
 }
 
-//TODO information how to create certificate
 /**
  * switch to enable mqtt ssl
  * button to select certificate
@@ -140,10 +141,24 @@ private fun MqttSSL(viewModel: MqttConfigurationViewModel) {
         visible = viewModel.isMqttChooseCertificateVisible.collectAsState().value
     ) {
 
+        ListElement(
+            modifier = Modifier
+                .testTag(TestTag.MQTTSSLWiki)
+                .clickable(onClick = viewModel::openMQTTSSLWiki),
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Link,
+                    contentDescription = MR.strings.sslWiki
+                )
+            },
+            text = { Text(MR.strings.sslWiki) },
+            secondaryText = { Text(MR.strings.sslWikiInfo) }
+        )
+
         FilledTonalButtonListItem(
             text = MR.strings.chooseCertificate,
             modifier = Modifier.testTag(TestTag.CertificateButton),
-            onClick = { })
+            onClick = viewModel::selectSSLCertificate)
 
     }
 

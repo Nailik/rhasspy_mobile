@@ -25,7 +25,7 @@ actual class MqttClient actual constructor(
         else -> MqttClient(brokerUrl, clientId)
     }
 
-    private val callback = object : org.eclipse.paho.client.mqttv3.MqttCallback {
+    private val callback = object : MqttCallback {
         override fun deliveryComplete(token: IMqttDeliveryToken) {
             onDelivered(token.messageId)
         }
