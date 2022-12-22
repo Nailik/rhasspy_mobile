@@ -107,27 +107,32 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
         visible = viewModel.isHttpServerSSLCertificateVisible.collectAsState().value
     ) {
 
-        ListElement(
-            modifier = Modifier
-                .testTag(TestTag.WebServerSSLWiki)
-                .clickable(onClick = viewModel::openWebServerSSLWiki),
-            icon = {
-                Icon(
-                    imageVector = Icons.Filled.Link,
-                    contentDescription = MR.strings.openPicoVoiceConsole
-                )
-            },
-            text = { Text(MR.strings.openPicoVoiceConsole) },
-            secondaryText = { Text(MR.strings.openPicoVoiceConsoleInfo) }
-        )
+        Column {
 
-        //button to select ssl certificate
-        FilledTonalButtonListItem(
-            text = MR.strings.chooseCertificate,
-            modifier = Modifier.testTag(TestTag.CertificateButton),
-            onClick = viewModel::selectSSLCertificate)
+            ListElement(
+                modifier = Modifier
+                    .testTag(TestTag.WebServerSSLWiki)
+                    .clickable(onClick = viewModel::openWebServerSSLWiki),
+                icon = {
+                    Icon(
+                        imageVector = Icons.Filled.Link,
+                        contentDescription = MR.strings.sslWiki
+                    )
+                },
+                text = { Text(MR.strings.sslWiki) },
+                secondaryText = { Text(MR.strings.sslWikiInfo) }
+            )
 
-        //TODO textfield for alias, keystore password, private key password (only when an file was selected, from viewmodel)
+            //button to select ssl certificate
+            FilledTonalButtonListItem(
+                text = MR.strings.chooseCertificate,
+                modifier = Modifier.testTag(TestTag.CertificateButton),
+                onClick = viewModel::selectSSLCertificate
+            )
+
+            //TODO textfield for alias, keystore password, private key password (only when an file was selected, from viewmodel)
+
+        }
 
     }
 

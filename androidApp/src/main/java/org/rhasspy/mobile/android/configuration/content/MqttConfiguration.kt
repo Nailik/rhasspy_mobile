@@ -141,25 +141,29 @@ private fun MqttSSL(viewModel: MqttConfigurationViewModel) {
         visible = viewModel.isMqttChooseCertificateVisible.collectAsState().value
     ) {
 
-        ListElement(
-            modifier = Modifier
-                .testTag(TestTag.MQTTSSLWiki)
-                .clickable(onClick = viewModel::openMQTTSSLWiki),
-            icon = {
-                Icon(
-                    imageVector = Icons.Filled.Link,
-                    contentDescription = MR.strings.sslWiki
-                )
-            },
-            text = { Text(MR.strings.sslWiki) },
-            secondaryText = { Text(MR.strings.sslWikiInfo) }
-        )
+        Column {
 
-        FilledTonalButtonListItem(
-            text = MR.strings.chooseCertificate,
-            modifier = Modifier.testTag(TestTag.CertificateButton),
-            onClick = viewModel::selectSSLCertificate)
+            ListElement(
+                modifier = Modifier
+                    .testTag(TestTag.MQTTSSLWiki)
+                    .clickable(onClick = viewModel::openMQTTSSLWiki),
+                icon = {
+                    Icon(
+                        imageVector = Icons.Filled.Link,
+                        contentDescription = MR.strings.sslWiki
+                    )
+                },
+                text = { Text(MR.strings.sslWiki) },
+                secondaryText = { Text(MR.strings.sslWikiInfo) }
+            )
 
+            FilledTonalButtonListItem(
+                text = MR.strings.chooseCertificate,
+                modifier = Modifier.testTag(TestTag.CertificateButton),
+                onClick = viewModel::selectSSLCertificate
+            )
+
+        }
     }
 
 }
