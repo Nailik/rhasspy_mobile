@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -31,7 +32,8 @@ fun TextFieldListItemVisibility(
     autoCorrect: Boolean = false,
     enabled: Boolean = true,
     onValueChange: ((String) -> Unit)? = null,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
     var isShowPassword by rememberSaveable { mutableStateOf(false) }
 
@@ -44,6 +46,7 @@ fun TextFieldListItemVisibility(
         enabled = enabled,
         onValueChange = onValueChange,
         keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
         trailingIcon = {
             IconButton(onClick = { isShowPassword = !isShowPassword }) {
                 Icon(
@@ -70,6 +73,7 @@ fun TextFieldListItem(
     enabled: Boolean = true,
     onValueChange: ((String) -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
@@ -82,6 +86,7 @@ fun TextFieldListItem(
         enabled = enabled,
         onValueChange = onValueChange,
         keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
         trailingIcon = trailingIcon,
         visualTransformation = visualTransformation
     )
@@ -97,6 +102,7 @@ fun TextFieldListItem(
     enabled: Boolean = true,
     onValueChange: ((String) -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
@@ -114,6 +120,7 @@ fun TextFieldListItem(
             enabled = enabled,
             textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colorScheme.onBackground),
             keyboardOptions = keyboardOptions.copy(autoCorrect = autoCorrect),
+            keyboardActions = keyboardActions,
             onValueChange = { onValueChange?.invoke(it) },
             trailingIcon = trailingIcon,
             visualTransformation = visualTransformation,

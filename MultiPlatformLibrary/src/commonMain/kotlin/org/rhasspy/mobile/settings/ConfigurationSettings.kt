@@ -15,11 +15,11 @@ internal object ConfigurationSettings {
     val isHttpServerEnabled = Setting(SettingsEnum.HttpServerEnabled, true)
     val httpServerPort = Setting(SettingsEnum.HttpServerPort, 12101)
     val isHttpServerSSLEnabled = Setting(SettingsEnum.HttpServerSSL, false)
-    val httpServerSSLKeyStoreFile = Setting(SettingsEnum.HttpServerSSLKeyStoreFile, "keystore.jks")
+    val httpServerSSLKeyStoreFile = Setting(SettingsEnum.HttpServerSSLKeyStoreFile, "")
     val httpServerSSLKeyStorePassword =
-        Setting(SettingsEnum.HttpServerSSLKeyStorePassword, "sampleAlias")
-    val httpServerSSLKeyAlias = Setting(SettingsEnum.HttpServerSSLKeyAlias, "test1234")
-    val httpServerSSLKeyPassword = Setting(SettingsEnum.HttpServerSSLKeyPassword, "test1234")
+        Setting(SettingsEnum.HttpServerSSLKeyStorePassword, "")
+    val httpServerSSLKeyAlias = Setting(SettingsEnum.HttpServerSSLKeyAlias, "")
+    val httpServerSSLKeyPassword = Setting(SettingsEnum.HttpServerSSLKeyPassword, "")
 
     val isHttpClientSSLVerificationDisabled = Setting(SettingsEnum.SSLVerificationDisabled, true)
     val httpClientServerEndpointHost = Setting(SettingsEnum.HttpServerEndpointHost, "")

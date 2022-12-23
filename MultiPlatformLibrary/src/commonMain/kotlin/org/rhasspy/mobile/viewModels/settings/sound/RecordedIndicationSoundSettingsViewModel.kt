@@ -1,11 +1,13 @@
 package org.rhasspy.mobile.viewModels.settings.sound
 
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.mapReadonlyState
-import org.rhasspy.mobile.nativeutils.SettingsUtils
+import org.rhasspy.mobile.nativeutils.FileUtils
 import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.FileType
 import org.rhasspy.mobile.settings.sounds.SoundFile
 import org.rhasspy.mobile.settings.sounds.SoundOptions
 
@@ -55,7 +57,7 @@ class RecordedIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewMod
             AppSettings.customRecordedSounds.value = customSounds.value.toMutableSet().apply {
                 remove(file.fileName)
             }
-            SettingsUtils.removeSoundFile(subfolder = "recorded", file.fileName)
+            FileUtils.removeFile(FileType.SOUND, subfolder = "recorded", file.fileName)
         }
     }
 
@@ -81,13 +83,14 @@ class RecordedIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewMod
     }
 
     override fun chooseSoundFile() {
-        SettingsUtils.selectSoundFile(subfolder = "recorded") { fileName ->
-            fileName?.also {
+        viewModelScope.launch {
+            FileUtils.selectFile(FileType.SOUND, subfolder = "recorded")?.also { fileName ->
                 val customSounds = AppSettings.customRecordedSounds.data
-                AppSettings.customRecordedSounds.value = customSounds.value.toMutableSet().apply {
-                    add(it)
-                }
-                AppSettings.recordedSound.value = it
+                AppSettings.customRecordedSounds.value =
+                    customSounds.value.toMutableSet().apply {
+                        add(fileName)
+                    }
+                AppSettings.recordedSound.value = fileName
             }
         }
     }

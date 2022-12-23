@@ -65,6 +65,7 @@ class WebServerService : IService() {
                 startEvent.success()
             } catch (e: Exception) {
                 //start error
+                //TODO error description (no certificate, wrong filetype, wrong keystore password, alias missing, wrong alias password)
                 startEvent.error(e)
             }
         } else {
@@ -91,10 +92,10 @@ class WebServerService : IService() {
             installConnector(
                 port = params.httpServerPort,
                 isUseSSL = params.isHttpServerSSLEnabled,
-                keyStoreFile = params.httpServerSSLKeyStoreFile,
-                keyStorePassword = "test1234", //params.httpServerSSLKeyStorePassword,
-                keyAlias = "samplealias", //params.httpServerSSLKeyAlias,
-                keyPassword = "test1234", //params.httpServerSSLKeyPassword
+                keyStoreFile = "certificates/${params.httpServerSSLKeyStoreFile ?: ""}",
+                keyStorePassword = params.httpServerSSLKeyStorePassword,
+                keyAlias = params.httpServerSSLKeyAlias,
+                keyPassword = params.httpServerSSLKeyPassword
             ) //TODO incorrect password, file not found, key alias not found, key alias password
             module {
                 //install(WebSockets)

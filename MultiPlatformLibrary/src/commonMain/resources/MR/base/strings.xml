@@ -301,6 +301,10 @@
     <string name="executeStartWebserver">start Webserver</string>
     <string name="sslWiki">Certificate File creation</string>
     <string name="sslWikiInfo">open GitHub Wiki to see how to create the Certificate</string>
+    <string name="currentlySelectedCertificate">Currently Selected Certificate: %s</string>
+    <string name="keyStorePassword">KeyStore Password</string>
+    <string name="keyStoreKeyAlias">Key Alias</string>
+    <string name="keyStoreKeyPassword">Key Password</string>
     <!-- not translatable -->
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>

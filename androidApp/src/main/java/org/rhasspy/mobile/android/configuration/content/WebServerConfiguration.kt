@@ -5,12 +5,16 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import org.koin.androidx.compose.get
@@ -20,10 +24,8 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreens
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
-import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
-import org.rhasspy.mobile.android.content.list.ListElement
-import org.rhasspy.mobile.android.content.list.SwitchListItem
-import org.rhasspy.mobile.android.content.list.TextFieldListItem
+import org.rhasspy.mobile.android.content.elements.translate
+import org.rhasspy.mobile.android.content.list.*
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewModels.configuration.WebServerConfigurationViewModel
 
@@ -130,7 +132,55 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
                 onClick = viewModel::selectSSLCertificate
             )
 
-            //TODO textfield for alias, keystore password, private key password (only when an file was selected, from viewmodel)
+            AnimatedVisibility(
+                enter = expandVertically(),
+                exit = shrinkVertically(),
+                visible = viewModel.isHttpServerSSLInputVisible.collectAsState().value
+            ) {
+
+                Column {
+
+                    InformationListElement(
+                        text = translate(
+                            resource = MR.strings.currentlySelectedCertificate,
+                            viewModel.httpServerSSLKeyStoreFileText.collectAsState().value
+                        )
+                    )
+
+                    val focusManager = LocalFocusManager.current
+                    //text field to change key store password
+                    TextFieldListItemVisibility(
+                        label = MR.strings.keyStorePassword,
+                        value = viewModel.httpServerSSLKeyStorePassword.collectAsState().value,
+                        onValueChange = viewModel::changeHttpSSLKeyStorePassword,
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                        keyboardActions = KeyboardActions(
+                            onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                        )
+                    )
+
+                    //textField to change key alias
+                    TextFieldListItemVisibility(
+                        label = MR.strings.keyStoreKeyAlias,
+                        value = viewModel.httpServerSSLKeyAlias.collectAsState().value,
+                        onValueChange = viewModel::changeHttpSSLKeyAlias,
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                        keyboardActions = KeyboardActions(
+                            onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                        )
+                    )
+
+                    //textField to change key password
+                    TextFieldListItemVisibility(
+                        label = MR.strings.keyStoreKeyPassword,
+                        value = viewModel.httpServerSSLKeyPassword.collectAsState().value,
+                        onValueChange = viewModel::changeHttpSSLKeyPassword,
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
+                    )
+
+                }
+
+            }
 
         }
 

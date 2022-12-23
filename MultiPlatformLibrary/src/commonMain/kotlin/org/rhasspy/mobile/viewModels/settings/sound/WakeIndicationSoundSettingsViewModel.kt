@@ -1,11 +1,13 @@
 package org.rhasspy.mobile.viewModels.settings.sound
 
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.mapReadonlyState
-import org.rhasspy.mobile.nativeutils.SettingsUtils
+import org.rhasspy.mobile.nativeutils.FileUtils
 import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.FileType
 import org.rhasspy.mobile.settings.sounds.SoundFile
 import org.rhasspy.mobile.settings.sounds.SoundOptions
 
@@ -56,7 +58,7 @@ class WakeIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel()
             AppSettings.customWakeSounds.value = customSounds.value.toMutableSet().apply {
                 remove(file.fileName)
             }
-            SettingsUtils.removeSoundFile(subfolder = "wake", file.fileName)
+            FileUtils.removeFile(FileType.SOUND, subfolder = "wake", file.fileName)
         }
     }
 
@@ -82,13 +84,14 @@ class WakeIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel()
     }
 
     override fun chooseSoundFile() {
-        SettingsUtils.selectSoundFile(subfolder = "wake") { fileName ->
-            fileName?.also {
+        viewModelScope.launch {
+            FileUtils.selectFile(FileType.SOUND, subfolder = "wake")?.also { fileName ->
                 val customSounds = AppSettings.customWakeSounds.data
-                AppSettings.customWakeSounds.value = customSounds.value.toMutableSet().apply {
-                    add(it)
-                }
-                AppSettings.wakeSound.value = it
+                AppSettings.customWakeSounds.value =
+                    customSounds.value.toMutableSet().apply {
+                        add(fileName)
+                    }
+                AppSettings.wakeSound.value = fileName
             }
         }
     }

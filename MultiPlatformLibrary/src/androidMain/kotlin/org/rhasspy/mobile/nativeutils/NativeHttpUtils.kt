@@ -40,6 +40,7 @@ actual fun ApplicationEngineEnvironmentBuilder.installConnector(
 ) {
     if (isUseSSL) {
         val keystore = KeyStore.getInstance(KeyStore.getDefaultType())
+
         keystore.load(
             File(
                 org.rhasspy.mobile.Application.Instance.filesDir,

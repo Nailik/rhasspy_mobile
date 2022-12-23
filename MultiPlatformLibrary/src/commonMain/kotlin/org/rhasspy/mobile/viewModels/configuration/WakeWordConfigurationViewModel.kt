@@ -1,17 +1,19 @@
 package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.data.PorcupineKeywordOptions
 import org.rhasspy.mobile.data.PorcupineLanguageOptions
 import org.rhasspy.mobile.data.WakeWordOption
-import org.rhasspy.mobile.nativeutils.SettingsUtils
+import org.rhasspy.mobile.nativeutils.FileUtils
 import org.rhasspy.mobile.nativeutils.openLink
 import org.rhasspy.mobile.services.hotword.HotWordServiceParams
 import org.rhasspy.mobile.services.udp.UdpServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.settings.FileType
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.viewModels.configuration.test.WakeWordConfigurationTest
 
@@ -201,8 +203,8 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
      * add a custom keyword
      */
     fun addCustomPorcupineKeyword() {
-        SettingsUtils.selectPorcupineFile { fileName ->
-            fileName?.also { file ->
+        viewModelScope.launch {
+            FileUtils.selectFile(FileType.PORCUPINE)?.also { file ->
                 _wakeWordPorcupineKeywordCustomOptions.value =
                     _wakeWordPorcupineKeywordCustomOptions.value
                         .toMutableList()
@@ -289,7 +291,7 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
         ConfigurationSettings.udpOutputPort.value = _udpOutputPort.value
 
         filesToDelete.forEach {
-            SettingsUtils.removePorcupineFile(it)
+            FileUtils.removeFile(FileType.PORCUPINE, null, it)
         }
         filesToDelete.clear()
         newFiles.clear()
@@ -312,7 +314,7 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
         _udpOutputPort.value = ConfigurationSettings.udpOutputPort.value
 
         newFiles.forEach {
-            SettingsUtils.removePorcupineFile(it)
+            FileUtils.removeFile(FileType.PORCUPINE, null, it)
         }
         filesToDelete.clear()
     }
@@ -345,5 +347,6 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
     override fun runTest() {
         testRunner.runTest()
     }
+
 
 }

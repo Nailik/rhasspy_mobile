@@ -1,11 +1,13 @@
 package org.rhasspy.mobile.viewModels.settings.sound
 
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.mapReadonlyState
-import org.rhasspy.mobile.nativeutils.SettingsUtils
+import org.rhasspy.mobile.nativeutils.FileUtils
 import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.FileType
 import org.rhasspy.mobile.settings.sounds.SoundFile
 import org.rhasspy.mobile.settings.sounds.SoundOptions
 
@@ -55,7 +57,7 @@ class ErrorIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel(
             AppSettings.customErrorSounds.value = customSounds.value.toMutableSet().apply {
                 remove(file.fileName)
             }
-            SettingsUtils.removeSoundFile(subfolder = "error", file.fileName)
+            FileUtils.removeFile(FileType.SOUND, subfolder = "error", file.fileName)
         }
     }
 
@@ -81,13 +83,13 @@ class ErrorIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel(
     }
 
     override fun chooseSoundFile() {
-        SettingsUtils.selectSoundFile(subfolder = "error") { fileName ->
-            fileName?.also {
+        viewModelScope.launch {
+            FileUtils.selectFile(FileType.SOUND, subfolder = "error")?.also { fileName ->
                 val customSounds = AppSettings.customErrorSounds.data
                 AppSettings.customErrorSounds.value = customSounds.value.toMutableSet().apply {
-                    add(it)
+                    add(fileName)
                 }
-                AppSettings.errorSound.value = it
+                AppSettings.errorSound.value = fileName
             }
         }
     }
