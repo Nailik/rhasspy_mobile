@@ -8,6 +8,8 @@ import org.rhasspy.mobile.mqtt.*
 import org.rhasspy.mobile.mqtt.MqttMessage
 import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.settings.AppSettings
+import java.security.KeyStore
+import javax.net.ssl.SSLContext
 
 actual class MqttClient actual constructor(
     brokerUrl: String,
@@ -173,8 +175,26 @@ actual class MqttClient actual constructor(
         return result
     }
 
+    /*
+    private fun createSSLContext(): SSLContext {
+    // SSL/TLS Setup
+// Get the BKS Keystore type required by Android
+val trustStore = KeyStore.getInstance("BKS");
+// Read the BKS file we generated (droidstore.bks)
+InputStream in = getResources().openRawResource(R.raw.droidstore);
+trustStore.load(input, null);
+
+TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+tmf.init(trustStore);
+
+SSLContext sslCtx = SSLContext.getInstance("TLS");
+sslCtx.init(null, tmf.getTrustManagers(), null);
+    }*/
+
+
     private fun MqttServiceConnectionOptions.toPhaoConnectOptions(): MqttConnectOptions {
         return MqttConnectOptions().also {
+            //it.setSocketFactory(sslCtx.getSocketFactory());
             it.isCleanSession = cleanSession
             it.keepAliveInterval = keepAliveInterval
             it.userName = connUsername.ifEmpty { null }
