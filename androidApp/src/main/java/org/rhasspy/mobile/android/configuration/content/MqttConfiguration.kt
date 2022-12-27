@@ -93,6 +93,7 @@ private fun MqttConnectionSettings(viewModel: MqttConfigurationViewModel) {
         modifier = Modifier.testTag(TestTag.Host),
         value = viewModel.mqttHost.collectAsState().value,
         onValueChange = viewModel::updateMqttHost,
+        isLastItem = false
     )
 
     //port
@@ -102,6 +103,7 @@ private fun MqttConnectionSettings(viewModel: MqttConfigurationViewModel) {
         modifier = Modifier.testTag(TestTag.Port),
         value = viewModel.mqttPortText.collectAsState().value,
         onValueChange = viewModel::updateMqttPort,
+        isLastItem = false
     )
 
     //username
@@ -109,7 +111,8 @@ private fun MqttConnectionSettings(viewModel: MqttConfigurationViewModel) {
         value = viewModel.mqttUserName.collectAsState().value,
         onValueChange = viewModel::updateMqttUserName,
         modifier = Modifier.testTag(TestTag.UserName),
-        label = MR.strings.userName
+        label = MR.strings.userName,
+        isLastItem = false
     )
 
     //password
@@ -180,7 +183,8 @@ private fun MqttConnectionTiming(viewModel: MqttConfigurationViewModel) {
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         modifier = Modifier.testTag(TestTag.ConnectionTimeout),
         value = viewModel.mqttConnectionTimeoutText.collectAsState().value,
-        onValueChange = viewModel::updateMqttConnectionTimeout
+        onValueChange = viewModel::updateMqttConnectionTimeout,
+        isLastItem = false
     )
 
     TextFieldListItem(
@@ -188,7 +192,8 @@ private fun MqttConnectionTiming(viewModel: MqttConfigurationViewModel) {
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         modifier = Modifier.testTag(TestTag.KeepAliveInterval),
         value = viewModel.mqttKeepAliveIntervalText.collectAsState().value,
-        onValueChange = viewModel::updateMqttKeepAliveInterval
+        onValueChange = viewModel::updateMqttKeepAliveInterval,
+        isLastItem = false
     )
 
     TextFieldListItem(

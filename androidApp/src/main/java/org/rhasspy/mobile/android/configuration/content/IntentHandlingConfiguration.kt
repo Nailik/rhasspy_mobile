@@ -97,7 +97,8 @@ private fun HomeAssistantOption(viewModel: IntentHandlingConfigurationViewModel)
             modifier = Modifier.testTag(TestTag.Endpoint),
             value = viewModel.intentHandlingHassEndpoint.collectAsState().value,
             onValueChange = viewModel::changeIntentHandlingHassEndpoint,
-            label = MR.strings.hassURL
+            label = MR.strings.hassURL,
+            isLastItem = false
         )
 
         //hass access token

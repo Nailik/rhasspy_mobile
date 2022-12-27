@@ -39,6 +39,7 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
                 modifier = Modifier.testTag(TestTag.Host),
                 value = viewModel.httpServerEndpointHost.collectAsState().value,
                 onValueChange = viewModel::updateHttpServerEndpointHost,
+                isLastItem = false
             )
         }
 

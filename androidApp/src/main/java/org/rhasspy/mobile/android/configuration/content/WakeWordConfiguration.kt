@@ -200,7 +200,8 @@ private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
             modifier = Modifier.testTag(TestTag.AudioRecordingUdpHost),
             label = MR.strings.host,
             value = viewModel.udpOutputHost.collectAsState().value,
-            onValueChange = viewModel::changeUdpOutputHost
+            onValueChange = viewModel::changeUdpOutputHost,
+            isLastItem = false
         )
 
         //udp port

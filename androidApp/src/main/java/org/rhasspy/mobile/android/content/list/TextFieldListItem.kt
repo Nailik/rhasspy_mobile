@@ -13,7 +13,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -31,9 +34,10 @@ fun TextFieldListItemVisibility(
     readOnly: Boolean = false,
     autoCorrect: Boolean = false,
     enabled: Boolean = true,
-    onValueChange: ((String) -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions.Default
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    isLastItem: Boolean = true,
+    onValueChange: ((String) -> Unit)? = null,
 ) {
     var isShowPassword by rememberSaveable { mutableStateOf(false) }
 
@@ -47,6 +51,7 @@ fun TextFieldListItemVisibility(
         onValueChange = onValueChange,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
+        isLastItem = isLastItem,
         trailingIcon = {
             IconButton(onClick = { isShowPassword = !isShowPassword }) {
                 Icon(
@@ -74,6 +79,7 @@ fun TextFieldListItem(
     onValueChange: ((String) -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    isLastItem: Boolean = true,
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
@@ -87,6 +93,7 @@ fun TextFieldListItem(
         onValueChange = onValueChange,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
+        isLastItem = isLastItem,
         trailingIcon = trailingIcon,
         visualTransformation = visualTransformation
     )
@@ -103,6 +110,7 @@ fun TextFieldListItem(
     onValueChange: ((String) -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    isLastItem: Boolean = true,
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
@@ -112,6 +120,7 @@ fun TextFieldListItem(
         modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester)
     ) {
         val coroutineScope = rememberCoroutineScope()
+        val focusManager = LocalFocusManager.current
 
         OutlinedTextField(
             singleLine = true,
@@ -119,8 +128,19 @@ fun TextFieldListItem(
             readOnly = readOnly,
             enabled = enabled,
             textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colorScheme.onBackground),
-            keyboardOptions = keyboardOptions.copy(autoCorrect = autoCorrect),
-            keyboardActions = keyboardActions,
+            keyboardOptions = if (isLastItem) {
+                keyboardOptions
+            } else {
+                KeyboardOptions.Default.copy(imeAction = ImeAction.Next,
+                autoCorrect = autoCorrect)
+            },
+            keyboardActions = if (isLastItem) {
+                keyboardActions
+            } else {
+                KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                )
+            },
             onValueChange = { onValueChange?.invoke(it) },
             trailingIcon = trailingIcon,
             visualTransformation = visualTransformation,
