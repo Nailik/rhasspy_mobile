@@ -10,7 +10,7 @@ import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
-import org.rhasspy.mobile.android.configuration.ConfigurationScreens
+import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.content.elements.translate
 import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
@@ -32,7 +32,7 @@ import org.rhasspy.mobile.viewModels.configuration.TextToSpeechConfigurationView
 fun TextToSpeechConfigurationContent(viewModel: TextToSpeechConfigurationViewModel = get()) {
 
     ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(ConfigurationScreens.TextToSpeechConfiguration),
+        modifier = Modifier.testTag(ConfigurationScreenType.TextToSpeechConfiguration),
         title = MR.strings.textToSpeech,
         viewModel = viewModel,
         testContent = { TestContent(viewModel) }

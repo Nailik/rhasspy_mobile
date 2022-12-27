@@ -138,43 +138,43 @@ fun ConfigurationScreen(
  */
 fun NavGraphBuilder.addConfigurationScreens() {
 
-    composable(ConfigurationScreens.AudioPlayingConfiguration.name) {
+    composable(ConfigurationScreenType.AudioPlayingConfiguration.name) {
         AudioPlayingConfigurationContent()
     }
 
-    composable(ConfigurationScreens.DialogManagementConfiguration.name) {
+    composable(ConfigurationScreenType.DialogManagementConfiguration.name) {
         DialogManagementConfigurationContent()
     }
 
-    composable(ConfigurationScreens.IntentHandlingConfiguration.name) {
+    composable(ConfigurationScreenType.IntentHandlingConfiguration.name) {
         IntentHandlingConfigurationContent()
     }
 
-    composable(ConfigurationScreens.IntentRecognitionConfiguration.name) {
+    composable(ConfigurationScreenType.IntentRecognitionConfiguration.name) {
         IntentRecognitionConfigurationContent()
     }
 
-    composable(ConfigurationScreens.MqttConfiguration.name) {
+    composable(ConfigurationScreenType.MqttConfiguration.name) {
         MqttConfigurationContent()
     }
 
-    composable(ConfigurationScreens.RemoteHermesHttpConfiguration.name) {
+    composable(ConfigurationScreenType.RemoteHermesHttpConfiguration.name) {
         RemoteHermesHttpConfigurationContent()
     }
 
-    composable(ConfigurationScreens.SpeechToTextConfiguration.name) {
+    composable(ConfigurationScreenType.SpeechToTextConfiguration.name) {
         SpeechToTextConfigurationContent()
     }
 
-    composable(ConfigurationScreens.TextToSpeechConfiguration.name) {
+    composable(ConfigurationScreenType.TextToSpeechConfiguration.name) {
         TextToSpeechConfigurationContent()
     }
 
-    composable(ConfigurationScreens.WakeWordConfiguration.name) {
+    composable(ConfigurationScreenType.WakeWordConfiguration.name) {
         WakeWordConfigurationContent()
     }
 
-    composable(ConfigurationScreens.WebServerConfiguration.name) {
+    composable(ConfigurationScreenType.WebServerConfiguration.name) {
         WebServerConfigurationContent()
     }
 
@@ -256,7 +256,7 @@ private fun RemoteHermesHttp(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.remoteHermesHTTP,
         secondaryText = "${translate(MR.strings.sslValidation)} ${translate(viewModel.isHttpSSLVerificationEnabled.collectAsState().value.toText())}",
-        screen = ConfigurationScreens.RemoteHermesHttpConfiguration,
+        screen = ConfigurationScreenType.RemoteHermesHttpConfiguration,
         serviceState = viewModel.isHttpClientHasError.collectAsState().value
     )
 
@@ -272,7 +272,7 @@ private fun Webserver(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.webserver,
         secondaryText = viewModel.isHttpServerEnabled.collectAsState().value.toText(),
-        screen = ConfigurationScreens.WebServerConfiguration,
+        screen = ConfigurationScreenType.WebServerConfiguration,
         serviceState = viewModel.isHttpServerHasError.collectAsState().value
     )
 
@@ -288,7 +288,7 @@ private fun Mqtt(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.mqtt,
         secondaryText = if (viewModel.isMQTTConnected.collectAsState().value) MR.strings.connected else MR.strings.notConnected,
-        screen = ConfigurationScreens.MqttConfiguration,
+        screen = ConfigurationScreenType.MqttConfiguration,
         serviceState = viewModel.isMqttHasError.collectAsState().value
     )
 
@@ -307,7 +307,7 @@ private fun WakeWord(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.wakeWord,
         secondaryText = wakeWordValueOption.text,
-        screen = ConfigurationScreens.WakeWordConfiguration,
+        screen = ConfigurationScreenType.WakeWordConfiguration,
         serviceState = viewModel.isWakeWordServiceHasError.collectAsState().value
     )
 
@@ -323,7 +323,7 @@ private fun SpeechToText(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.speechToText,
         secondaryText = viewModel.speechToTextOption.collectAsState().value.text,
-        screen = ConfigurationScreens.SpeechToTextConfiguration,
+        screen = ConfigurationScreenType.SpeechToTextConfiguration,
         serviceState = viewModel.isSpeechToTextHasError.collectAsState().value
     )
 
@@ -340,7 +340,7 @@ private fun IntentRecognition(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.intentRecognition,
         secondaryText = viewModel.intentRecognitionOption.collectAsState().value.text,
-        screen = ConfigurationScreens.IntentRecognitionConfiguration,
+        screen = ConfigurationScreenType.IntentRecognitionConfiguration,
         serviceState = viewModel.isIntentRecognitionHasError.collectAsState().value
     )
 
@@ -356,7 +356,7 @@ private fun TextToSpeech(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.textToSpeech,
         secondaryText = viewModel.textToSpeechOption.collectAsState().value.text,
-        screen = ConfigurationScreens.TextToSpeechConfiguration,
+        screen = ConfigurationScreenType.TextToSpeechConfiguration,
         serviceState = viewModel.isTextToSpeechHasError.collectAsState().value
     )
 
@@ -372,7 +372,7 @@ private fun AudioPlaying(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.audioPlaying,
         secondaryText = viewModel.audioPlayingOption.collectAsState().value.text,
-        screen = ConfigurationScreens.AudioPlayingConfiguration,
+        screen = ConfigurationScreenType.AudioPlayingConfiguration,
         serviceState = viewModel.isAudioPlayingHasError.collectAsState().value
     )
 
@@ -388,7 +388,7 @@ private fun DialogManagement(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.dialogManagement,
         secondaryText = viewModel.dialogManagementOption.collectAsState().value.text,
-        screen = ConfigurationScreens.DialogManagementConfiguration,
+        screen = ConfigurationScreenType.DialogManagementConfiguration,
         serviceState = viewModel.isDialogManagementHasError.collectAsState().value
     )
 
@@ -404,7 +404,7 @@ private fun IntentHandling(viewModel: ConfigurationScreenViewModel) {
     ConfigurationListItem(
         text = MR.strings.intentHandling,
         secondaryText = viewModel.intentHandlingOption.collectAsState().value.text,
-        screen = ConfigurationScreens.IntentHandlingConfiguration,
+        screen = ConfigurationScreenType.IntentHandlingConfiguration,
         serviceState = viewModel.isIntentHandlingHasError.collectAsState().value
     )
 
@@ -417,7 +417,7 @@ private fun IntentHandling(viewModel: ConfigurationScreenViewModel) {
 private fun ConfigurationListItem(
     text: StringResource,
     secondaryText: StringResource,
-    screen: ConfigurationScreens,
+    screen: ConfigurationScreenType,
     serviceState: EventState
 ) {
 
@@ -444,7 +444,7 @@ private fun ConfigurationListItem(
 private fun ConfigurationListItem(
     text: StringResource,
     secondaryText: String,
-    screen: ConfigurationScreens,
+    screen: ConfigurationScreenType,
     serviceState: EventState
 ) {
 

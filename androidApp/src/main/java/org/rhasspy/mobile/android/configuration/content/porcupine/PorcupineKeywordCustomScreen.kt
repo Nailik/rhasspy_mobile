@@ -64,6 +64,9 @@ fun PorcupineKeywordCustomScreen(viewModel: WakeWordConfigurationViewModel) {
 
 }
 
+/**
+ * one keyword in a list
+ */
 @Composable
 private fun KeywordListItem(
     element: WakeWordConfigurationViewModel.PorcupineCustomKeywordUi,

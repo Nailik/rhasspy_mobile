@@ -17,7 +17,7 @@ import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
-import org.rhasspy.mobile.android.configuration.ConfigurationScreens
+import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.list.*
@@ -38,7 +38,7 @@ import org.rhasspy.mobile.viewModels.configuration.MqttConfigurationViewModel
 fun MqttConfigurationContent(viewModel: MqttConfigurationViewModel = get()) {
 
     ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(ConfigurationScreens.MqttConfiguration),
+        modifier = Modifier.testTag(ConfigurationScreenType.MqttConfiguration),
         title = MR.strings.mqtt,
         viewModel = viewModel,
         testContent = { TestContent(viewModel) }

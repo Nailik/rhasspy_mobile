@@ -29,7 +29,7 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreen
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.item.NavigationItem
-import org.rhasspy.mobile.android.navigation.BottomBarScreens
+import org.rhasspy.mobile.android.navigation.BottomBarScreenType
 import org.rhasspy.mobile.android.navigation.NavigationParams
 import org.rhasspy.mobile.android.settings.SettingsScreen
 import org.rhasspy.mobile.viewModels.screens.HomeScreenViewModel
@@ -72,14 +72,14 @@ fun BottomBarScreensNavigation(viewModel: HomeScreenViewModel = get()) {
 
             NavHost(
                 navController = navController,
-                startDestination = BottomBarScreens.HomeScreen.name,
+                startDestination = BottomBarScreenType.HomeScreen.name,
                 modifier = Modifier.padding(paddingValues)
             ) {
-                composable(BottomBarScreens.HomeScreen.name) {
+                composable(BottomBarScreenType.HomeScreen.name) {
                     HomeScreen()
                 }
                 composable(
-                    BottomBarScreens.ConfigurationScreen
+                    BottomBarScreenType.ConfigurationScreen
                         .appendOptionalParameter(
                             NavigationParams.ScrollToError,
                             "{${NavigationParams.ScrollToError.name}}"
@@ -93,10 +93,10 @@ fun BottomBarScreensNavigation(viewModel: HomeScreenViewModel = get()) {
                             ?: false
                     )
                 }
-                composable(BottomBarScreens.SettingsScreen.name) {
+                composable(BottomBarScreenType.SettingsScreen.name) {
                     SettingsScreen()
                 }
-                composable(BottomBarScreens.LogScreen.name) {
+                composable(BottomBarScreenType.LogScreen.name) {
                     LogScreen()
                 }
             }
@@ -115,10 +115,10 @@ fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavControlle
         val currentBackStackEntry by navController.currentBackStackEntryAsState()
 
         NavigationItem(
-            screen = BottomBarScreens.HomeScreen,
+            screen = BottomBarScreenType.HomeScreen,
             icon = {
                 Icon(
-                    if (currentBackStackEntry?.destination?.route == BottomBarScreens.HomeScreen.name) {
+                    if (currentBackStackEntry?.destination?.route == BottomBarScreenType.HomeScreen.name) {
                         Icons.Filled.Mic
                     } else {
                         Icons.Outlined.Mic
@@ -129,7 +129,7 @@ fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavControlle
         )
 
         NavigationItem(
-            screen = BottomBarScreens.ConfigurationScreen,
+            screen = BottomBarScreenType.ConfigurationScreen,
             icon = {
                 Icon(
                     painterResource(MR.images.ic_launcher.drawableResId),
@@ -141,10 +141,10 @@ fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavControlle
         )
 
         NavigationItem(
-            screen = BottomBarScreens.SettingsScreen,
+            screen = BottomBarScreenType.SettingsScreen,
             icon = {
                 Icon(
-                    if (currentBackStackEntry?.destination?.route == BottomBarScreens.SettingsScreen.name) {
+                    if (currentBackStackEntry?.destination?.route == BottomBarScreenType.SettingsScreen.name) {
                         Icons.Filled.Settings
                     } else {
                         Icons.Outlined.Settings
@@ -155,7 +155,7 @@ fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavControlle
         )
 
         if (viewModel.isShowLogEnabled.collectAsState().value) {
-            NavigationItem(screen = BottomBarScreens.LogScreen,
+            NavigationItem(screen = BottomBarScreenType.LogScreen,
                 icon = { Icon(Icons.Filled.Code, MR.strings.log) },
                 label = { Text(MR.strings.log) }
             )

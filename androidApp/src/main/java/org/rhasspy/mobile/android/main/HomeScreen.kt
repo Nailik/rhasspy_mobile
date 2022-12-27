@@ -19,7 +19,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.ServiceState
 import org.rhasspy.mobile.android.content.elements.FilledTonalButton
 import org.rhasspy.mobile.android.content.elements.Text
-import org.rhasspy.mobile.android.navigation.BottomBarScreens
+import org.rhasspy.mobile.android.navigation.BottomBarScreenType
 import org.rhasspy.mobile.android.navigation.NavigationParams
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.viewModels.screens.HomeScreenViewModel
@@ -167,7 +167,7 @@ private fun ServiceStatusInformation(viewModel: HomeScreenViewModel) {
     ServiceState(serviceState = serviceState) {
         if (viewModel.isActionEnabled.value) {
             navigate.navigate(
-                BottomBarScreens.ConfigurationScreen.appendOptionalParameter(
+                BottomBarScreenType.ConfigurationScreen.appendOptionalParameter(
                     NavigationParams.ScrollToError,
                     true
                 )

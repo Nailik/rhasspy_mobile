@@ -20,7 +20,7 @@ import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
-import org.rhasspy.mobile.android.configuration.ConfigurationScreens
+import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.configuration.content.porcupine.PorcupineKeywordScreen
 import org.rhasspy.mobile.android.configuration.content.porcupine.PorcupineLanguageScreen
 import org.rhasspy.mobile.android.content.elements.Icon
@@ -86,7 +86,7 @@ fun WakeWordConfigurationContent(viewModel: WakeWordConfigurationViewModel = get
 private fun WakeWordConfigurationOverview(viewModel: WakeWordConfigurationViewModel) {
 
     ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(ConfigurationScreens.WakeWordConfiguration),
+        modifier = Modifier.testTag(ConfigurationScreenType.WakeWordConfiguration),
         title = MR.strings.wakeWord,
         viewModel = viewModel,
         testContent = { TestContent(viewModel) }

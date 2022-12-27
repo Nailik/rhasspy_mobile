@@ -10,7 +10,7 @@ import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
-import org.rhasspy.mobile.android.configuration.ConfigurationScreens
+import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
@@ -26,7 +26,7 @@ import org.rhasspy.mobile.viewModels.configuration.RemoteHermesHttpConfiguration
 fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfigurationViewModel = get()) {
 
     ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(ConfigurationScreens.RemoteHermesHttpConfiguration),
+        modifier = Modifier.testTag(ConfigurationScreenType.RemoteHermesHttpConfiguration),
         title = MR.strings.remoteHermesHTTP,
         viewModel = viewModel,
         testContent = { TestContent(viewModel) }

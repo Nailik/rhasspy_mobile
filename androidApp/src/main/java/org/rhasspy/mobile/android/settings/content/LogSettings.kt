@@ -10,7 +10,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
-import org.rhasspy.mobile.android.settings.SettingsScreens
+import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewModels.settings.LogSettingsViewModel
 
@@ -22,7 +22,7 @@ import org.rhasspy.mobile.viewModels.settings.LogSettingsViewModel
 fun LogSettingsContent(viewModel: LogSettingsViewModel = get()) {
 
     SettingsScreenItemContent(
-        modifier = Modifier.testTag(SettingsScreens.LogSettings),
+        modifier = Modifier.testTag(SettingsScreenType.LogSettings),
         title = MR.strings.logSettings
     ) {
 

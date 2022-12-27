@@ -15,7 +15,7 @@ import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.permissions.RequiresOverlayPermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
-import org.rhasspy.mobile.android.settings.SettingsScreens
+import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.MicrophoneOverlaySizeOptions
 import org.rhasspy.mobile.viewModels.settings.MicrophoneOverlaySettingsViewModel
@@ -31,7 +31,7 @@ import org.rhasspy.mobile.viewModels.settings.MicrophoneOverlaySettingsViewModel
 fun MicrophoneOverlaySettingsContent(viewModel: MicrophoneOverlaySettingsViewModel = get()) {
 
     SettingsScreenItemContent(
-        modifier = Modifier.testTag(SettingsScreens.MicrophoneOverlaySettings),
+        modifier = Modifier.testTag(SettingsScreenType.MicrophoneOverlaySettings),
         title = MR.strings.microphoneOverlay
     ) {
 

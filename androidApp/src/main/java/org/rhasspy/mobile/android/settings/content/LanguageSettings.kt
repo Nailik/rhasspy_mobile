@@ -8,7 +8,7 @@ import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
-import org.rhasspy.mobile.android.settings.SettingsScreens
+import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewModels.settings.LanguageSettingsViewModel
 
@@ -21,7 +21,7 @@ import org.rhasspy.mobile.viewModels.settings.LanguageSettingsViewModel
 fun LanguageSettingsScreenItemContent(viewModel: LanguageSettingsViewModel = get()) {
 
     SettingsScreenItemContent(
-        modifier = Modifier.testTag(SettingsScreens.LanguageSettings),
+        modifier = Modifier.testTag(SettingsScreenType.LanguageSettings),
         title = MR.strings.language
     ) {
 

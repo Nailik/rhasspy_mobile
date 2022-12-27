@@ -22,7 +22,7 @@ import org.rhasspy.mobile.android.content.list.InformationListElement
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
-import org.rhasspy.mobile.android.settings.SettingsScreens
+import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewModels.settings.BackgroundServiceSettingsViewModel
 
@@ -36,7 +36,7 @@ import org.rhasspy.mobile.viewModels.settings.BackgroundServiceSettingsViewModel
 fun BackgroundServiceSettingsContent(viewModel: BackgroundServiceSettingsViewModel = get()) {
 
     SettingsScreenItemContent(
-        modifier = Modifier.testTag(SettingsScreens.BackgroundServiceSettings),
+        modifier = Modifier.testTag(SettingsScreenType.BackgroundServiceSettings),
         title = MR.strings.background
     ) {
 

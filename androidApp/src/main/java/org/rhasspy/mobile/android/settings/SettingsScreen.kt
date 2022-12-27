@@ -95,39 +95,39 @@ fun SettingsScreen(viewModel: SettingsScreenViewModel = get()) {
  */
 fun NavGraphBuilder.addSettingsScreen() {
 
-    composable(SettingsScreens.LanguageSettings.name) {
+    composable(SettingsScreenType.LanguageSettings.name) {
         LanguageSettingsScreenItemContent()
     }
 
-    composable(SettingsScreens.BackgroundServiceSettings.name) {
+    composable(SettingsScreenType.BackgroundServiceSettings.name) {
         BackgroundServiceSettingsContent()
     }
 
-    composable(SettingsScreens.MicrophoneOverlaySettings.name) {
+    composable(SettingsScreenType.MicrophoneOverlaySettings.name) {
         MicrophoneOverlaySettingsContent()
     }
 
-    composable(SettingsScreens.IndicationSettings.name) {
+    composable(SettingsScreenType.IndicationSettings.name) {
         WakeWordIndicationSettingsContent()
     }
 
-    composable(SettingsScreens.DeviceSettings.name) {
+    composable(SettingsScreenType.DeviceSettings.name) {
         DeviceSettingsContent()
     }
 
-    composable(SettingsScreens.AutomaticSilenceDetectionSettings.name) {
+    composable(SettingsScreenType.AutomaticSilenceDetectionSettings.name) {
         AutomaticSilenceDetectionSettingsContent()
     }
 
-    composable(SettingsScreens.LogSettings.name) {
+    composable(SettingsScreenType.LogSettings.name) {
         LogSettingsContent()
     }
 
-    composable(SettingsScreens.SaveAndRestoreSettings.name) {
+    composable(SettingsScreenType.SaveAndRestoreSettings.name) {
         SaveAndRestoreSettingsContent()
     }
 
-    composable(SettingsScreens.AboutSettings.name) {
+    composable(SettingsScreenType.AboutSettings.name) {
         AboutScreen()
     }
 
@@ -139,7 +139,7 @@ private fun Language(viewModel: SettingsScreenViewModel) {
     SettingsListItem(
         text = MR.strings.language,
         secondaryText = viewModel.currentLanguage.collectAsState().value.text,
-        screen = SettingsScreens.LanguageSettings
+        screen = SettingsScreenType.LanguageSettings
     )
 
 }
@@ -150,7 +150,7 @@ private fun BackgroundService(viewModel: SettingsScreenViewModel) {
     SettingsListItem(
         text = MR.strings.background,
         secondaryText = viewModel.isBackgroundEnabled.collectAsState().value.toText(),
-        screen = SettingsScreens.BackgroundServiceSettings
+        screen = SettingsScreenType.BackgroundServiceSettings
     )
 
 }
@@ -161,7 +161,7 @@ private fun MicrophoneOverlay(viewModel: SettingsScreenViewModel) {
     SettingsListItem(
         text = MR.strings.microphoneOverlay,
         secondaryText = viewModel.microphoneOverlaySizeOption.collectAsState().value.name,
-        screen = SettingsScreens.MicrophoneOverlaySettings
+        screen = SettingsScreenType.MicrophoneOverlaySettings
     )
 
 }
@@ -186,7 +186,7 @@ private fun Indication(viewModel: SettingsScreenViewModel) {
     SettingsListItem(
         text = MR.strings.indication,
         secondaryText = stateText,
-        screen = SettingsScreens.IndicationSettings
+        screen = SettingsScreenType.IndicationSettings
     )
 
 }
@@ -197,7 +197,7 @@ private fun Device() {
     SettingsListItem(
         text = MR.strings.device,
         secondaryText = MR.strings.deviceSettingsInformation,
-        screen = SettingsScreens.DeviceSettings
+        screen = SettingsScreenType.DeviceSettings
     )
 
 }
@@ -208,7 +208,7 @@ private fun AutomaticSilenceDetection(viewModel: SettingsScreenViewModel) {
     SettingsListItem(
         text = MR.strings.automaticSilenceDetection,
         secondaryText = viewModel.isAutomaticSilenceDetectionEnabled.collectAsState().value.toText(),
-        screen = SettingsScreens.AutomaticSilenceDetectionSettings
+        screen = SettingsScreenType.AutomaticSilenceDetectionSettings
     )
 
 }
@@ -219,7 +219,7 @@ private fun Log(viewModel: SettingsScreenViewModel) {
     SettingsListItem(
         text = MR.strings.logSettings,
         secondaryText = viewModel.logLevel.collectAsState().value.text,
-        screen = SettingsScreens.LogSettings
+        screen = SettingsScreenType.LogSettings
     )
 
 }
@@ -230,7 +230,7 @@ private fun SaveAndRestore() {
     SettingsListItem(
         text = MR.strings.saveAndRestoreSettings,
         secondaryText = MR.strings.backup,
-        screen = SettingsScreens.SaveAndRestoreSettings
+        screen = SettingsScreenType.SaveAndRestoreSettings
     )
 
 }
@@ -241,7 +241,7 @@ private fun About() {
     SettingsListItem(
         text = MR.strings.aboutTitle,
         secondaryText = "${translate(MR.strings.version)} ${BuildKonfig.versionName}",
-        screen = SettingsScreens.AboutSettings
+        screen = SettingsScreenType.AboutSettings
     )
 
 }
@@ -251,7 +251,7 @@ private fun About() {
 private fun SettingsListItem(
     text: StringResource,
     secondaryText: StringResource? = null,
-    screen: SettingsScreens
+    screen: SettingsScreenType
 ) {
     val navController = LocalMainNavController.current
 
@@ -270,7 +270,7 @@ private fun SettingsListItem(
 private fun SettingsListItem(
     text: StringResource,
     secondaryText: String,
-    @Suppress("SameParameterValue") screen: SettingsScreens
+    @Suppress("SameParameterValue") screen: SettingsScreenType
 ) {
     val navController = LocalMainNavController.current
 

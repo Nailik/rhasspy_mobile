@@ -21,7 +21,7 @@ import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
-import org.rhasspy.mobile.android.configuration.ConfigurationScreens
+import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.elements.translate
@@ -40,7 +40,7 @@ import org.rhasspy.mobile.viewModels.configuration.WebServerConfigurationViewMod
 fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = get()) {
 
     ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(ConfigurationScreens.WebServerConfiguration),
+        modifier = Modifier.testTag(ConfigurationScreenType.WebServerConfiguration),
         title = MR.strings.webserver,
         viewModel = viewModel,
         testContent = { TestContent(viewModel) }

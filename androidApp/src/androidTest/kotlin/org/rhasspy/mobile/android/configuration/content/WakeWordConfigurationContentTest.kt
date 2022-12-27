@@ -12,7 +12,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.configuration.ConfigurationScreens
+import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.data.WakeWordOption
@@ -155,7 +155,7 @@ class WakeWordConfigurationContentTest {
         //back is clicked
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
         //page is back to wake word settings
-        composeTestRule.onNodeWithTag(ConfigurationScreens.WakeWordConfiguration)
+        composeTestRule.onNodeWithTag(ConfigurationScreenType.WakeWordConfiguration)
             .assertIsDisplayed()
 
         //language is clicked
@@ -166,7 +166,7 @@ class WakeWordConfigurationContentTest {
         //back is clicked
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
         //page is back to wake word settings
-        composeTestRule.onNodeWithTag(ConfigurationScreens.WakeWordConfiguration)
+        composeTestRule.onNodeWithTag(ConfigurationScreenType.WakeWordConfiguration)
             .assertIsDisplayed()
 
         assertTrue(true)

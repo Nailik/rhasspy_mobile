@@ -22,7 +22,7 @@ import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
-import org.rhasspy.mobile.android.settings.SettingsScreens
+import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewModels.settings.SaveAndRestoreSettingsViewModel
 
@@ -34,7 +34,7 @@ import org.rhasspy.mobile.viewModels.settings.SaveAndRestoreSettingsViewModel
 fun SaveAndRestoreSettingsContent(viewModel: SaveAndRestoreSettingsViewModel = get()) {
 
     SettingsScreenItemContent(
-        modifier = Modifier.testTag(SettingsScreens.SaveAndRestoreSettings),
+        modifier = Modifier.testTag(SettingsScreenType.SaveAndRestoreSettings),
         title = MR.strings.saveAndRestoreSettings
     ) {
 

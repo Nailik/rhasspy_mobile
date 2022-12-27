@@ -37,7 +37,7 @@ import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
-import org.rhasspy.mobile.android.settings.SettingsScreens
+import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewModels.settings.AutomaticSilenceDetectionSettingsViewModel
 
@@ -51,7 +51,7 @@ fun AutomaticSilenceDetectionSettingsContent(viewModel: AutomaticSilenceDetectio
     OnPauseEffect(viewModel::onPause)
 
     SettingsScreenItemContent(
-        modifier = Modifier.testTag(SettingsScreens.AutomaticSilenceDetectionSettings),
+        modifier = Modifier.testTag(SettingsScreenType.AutomaticSilenceDetectionSettings),
         title = MR.strings.automaticSilenceDetection
     ) {
 

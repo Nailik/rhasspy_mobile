@@ -9,7 +9,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.main.BottomBarScreens
+import org.rhasspy.mobile.android.navigation.BottomBarScreenType
 import org.rhasspy.mobile.android.onNodeWithTag
 
 /**
@@ -25,7 +25,7 @@ class SettingsScreenTest {
     @Before
     fun setUp() {
         //open configuration screen
-        composeTestRule.onNodeWithTag(BottomBarScreens.SettingsScreen).performClick()
+        composeTestRule.onNodeWithTag(BottomBarScreenType.SettingsScreen).performClick()
     }
 
     /**
@@ -39,7 +39,7 @@ class SettingsScreenTest {
     @Test
     fun testContent() = runBlocking {
         //each item exists and navigates
-        SettingsScreens.values().forEach { tag ->
+        SettingsScreenType.values().forEach { tag ->
             composeTestRule.onNodeWithTag(tag).performScrollTo().performClick()
             //content exists
             composeTestRule.onNodeWithTag(tag).assertExists()

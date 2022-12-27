@@ -10,7 +10,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.navigation.BottomBarScreens
+import org.rhasspy.mobile.android.navigation.BottomBarScreenType
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.viewModels.screens.ConfigurationScreenViewModel
 import kotlin.test.assertEquals
@@ -28,7 +28,7 @@ class ConfigurationScreenTest {
     @Before
     fun setUp() {
         //open configuration screen
-        composeTestRule.onNodeWithTag(BottomBarScreens.ConfigurationScreen).performClick()
+        composeTestRule.onNodeWithTag(BottomBarScreenType.ConfigurationScreen).performClick()
     }
 
     /**
@@ -44,7 +44,7 @@ class ConfigurationScreenTest {
         //SiteId
         composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId).assertExists()
         //each item exists and navigates
-        ConfigurationScreens.values().forEach { tag ->
+        ConfigurationScreenType.values().forEach { tag ->
             composeTestRule.onNodeWithTag(tag).performScrollTo().performClick()
             //content exists
             composeTestRule.onNodeWithTag(tag).assertExists()

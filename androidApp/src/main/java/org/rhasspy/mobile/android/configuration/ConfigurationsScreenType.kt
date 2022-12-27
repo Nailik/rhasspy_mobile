@@ -3,7 +3,7 @@ package org.rhasspy.mobile.android.configuration
 /**
  * enum to hold all possible configuration screens
  */
-enum class ConfigurationScreens {
+enum class ConfigurationScreenType {
     AudioPlayingConfiguration,
     DialogManagementConfiguration,
     IntentHandlingConfiguration,

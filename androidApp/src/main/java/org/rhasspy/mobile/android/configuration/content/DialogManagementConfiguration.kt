@@ -8,7 +8,7 @@ import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
-import org.rhasspy.mobile.android.configuration.ConfigurationScreens
+import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewModels.configuration.DialogManagementConfigurationViewModel
@@ -21,7 +21,7 @@ import org.rhasspy.mobile.viewModels.configuration.DialogManagementConfiguration
 fun DialogManagementConfigurationContent(viewModel: DialogManagementConfigurationViewModel = get()) {
 
     ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(ConfigurationScreens.DialogManagementConfiguration),
+        modifier = Modifier.testTag(ConfigurationScreenType.DialogManagementConfiguration),
         title = MR.strings.dialogManagement,
         viewModel = viewModel
     ) {

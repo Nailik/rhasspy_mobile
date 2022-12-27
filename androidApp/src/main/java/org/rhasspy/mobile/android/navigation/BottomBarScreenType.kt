@@ -3,7 +3,7 @@ package org.rhasspy.mobile.android.navigation
 /**
  * screens in the bottom bar
  */
-enum class BottomBarScreens {
+enum class BottomBarScreenType {
     HomeScreen,
     ConfigurationScreen,
     SettingsScreen,

@@ -25,7 +25,7 @@ import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
-import org.rhasspy.mobile.android.settings.SettingsScreens
+import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScreens
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSoundScreen
 import org.rhasspy.mobile.android.testTag
@@ -92,7 +92,7 @@ fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = g
 fun IndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
 
     SettingsScreenItemContent(
-        modifier = Modifier.testTag(SettingsScreens.IndicationSettings),
+        modifier = Modifier.testTag(SettingsScreenType.IndicationSettings),
         title = MR.strings.indication
     ) {
 

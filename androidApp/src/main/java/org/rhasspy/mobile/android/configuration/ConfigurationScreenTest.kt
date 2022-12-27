@@ -27,7 +27,7 @@ import org.rhasspy.mobile.android.theme.SetSystemColor
 import org.rhasspy.mobile.viewModels.configuration.IConfigurationViewModel
 
 /**
- * screen thats shown when a configuration is being tested
+ * screen that's shown when a configuration is being tested
  */
 @Composable
 fun ConfigurationScreenTest(
@@ -139,7 +139,7 @@ private fun AppBar(
     icon: @Composable () -> Unit
 ) {
     TopAppBar(
-        colors = TopAppBarDefaults.smallTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
                 1.dp
             )

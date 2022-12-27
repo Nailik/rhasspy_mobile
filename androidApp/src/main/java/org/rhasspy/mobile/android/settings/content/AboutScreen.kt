@@ -23,7 +23,7 @@ import org.rhasspy.mobile.android.about.LibrariesContainer
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.elements.translate
-import org.rhasspy.mobile.android.settings.SettingsScreens
+import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewModels.screens.AboutScreenViewModel
 
@@ -33,7 +33,7 @@ import org.rhasspy.mobile.viewModels.screens.AboutScreenViewModel
  */
 @Composable
 fun AboutScreen(viewModel: AboutScreenViewModel = get()) {
-    Surface(modifier = Modifier.testTag(SettingsScreens.AboutSettings)) {
+    Surface(modifier = Modifier.testTag(SettingsScreenType.AboutSettings)) {
         val configuration = LocalConfiguration.current
         LibrariesContainer(header = {
             if (configuration.screenHeightDp.dp > 600.dp) {
