@@ -9,7 +9,11 @@ expect class AudioPlayer() {
 
     val isPlayingState: StateFlow<Boolean>
 
-    suspend fun playData(data: List<Byte>, onFinished: suspend () -> Unit)
+    fun playData(
+        data: List<Byte>,
+        onFinished: () -> Unit,
+        onError: (exception: Exception) -> Unit
+    )
 
     fun stopPlayingData()
 

@@ -26,19 +26,21 @@ actual class AudioPlayer {
     private var _isPlayingState = MutableStateFlow(false)
     actual val isPlayingState: StateFlow<Boolean> get() = _isPlayingState
     private var audioTrack: AudioTrack? = null
-    private var onFinished: (suspend () -> Unit)? = null
+    private var onFinished: (() -> Unit)? = null
     private var mediaPlayer: MediaPlayer? = null
     private var notification: Ringtone? = null
     private var volumeChange: Job? = null
 
-    actual suspend fun playData(data: List<Byte>, onFinished: suspend () -> Unit) {
+    actual fun playData(data: List<Byte>, onFinished: () -> Unit, onError: (exception: Exception) -> Unit) {
         if (!isEnabled) {
             logger.v { "AudioPlayer NOT enabled" }
+            onFinished()
             return
         }
 
         if (_isPlayingState.value) {
             logger.e { "AudioPlayer playData already playing data" }
+            onFinished()
             return
         }
 
@@ -103,7 +105,7 @@ actual class AudioPlayer {
         } catch (e: Exception) {
             logger.e(e) { "Exception while playing audio data" }
             _isPlayingState.value = false
-            onFinished()
+            onError(e)
         }
     }
 
