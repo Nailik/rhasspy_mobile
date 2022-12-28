@@ -37,6 +37,8 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
     private val _mqttRetryInterval = MutableStateFlow(ConfigurationSettings.mqttRetryInterval.value)
     private val _mqttRetryIntervalText =
         MutableStateFlow(ConfigurationSettings.mqttRetryInterval.value.toString())
+    private val _mqttKeyStoreFile =
+        MutableStateFlow(ConfigurationSettings.mqttKeyStoreFile.value)
 
     //unsaved ui data
     val isMqttEnabled = _isMqttEnabled.readOnly
@@ -45,7 +47,11 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
     val mqttUserName = _mqttUserName.readOnly
     val mqttPassword = _mqttPassword.readOnly
     val isMqttSSLEnabled = _isMqttSSLEnabled.readOnly
+
     val isMqttChooseCertificateVisible = isMqttSSLEnabled
+    val keyStoreFileText = _mqttKeyStoreFile.readOnly
+    val isKeyStoreFileTextVisible = _mqttKeyStoreFile.mapReadonlyState { it.isNotEmpty() }
+
     val mqttConnectionTimeoutText = _mqttConnectionTimeoutText.readOnly
     val mqttKeepAliveIntervalText = _mqttKeepAliveIntervalText.readOnly
     val mqttRetryIntervalText = _mqttRetryIntervalText.readOnly

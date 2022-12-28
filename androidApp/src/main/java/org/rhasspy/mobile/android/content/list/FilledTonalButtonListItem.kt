@@ -26,7 +26,7 @@ fun FilledTonalButtonListItem(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             FilledTonalButton(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
+                modifier = Modifier.fillMaxWidth(),
                 enabled = enabled,
                 onClick = onClick,
                 content = {

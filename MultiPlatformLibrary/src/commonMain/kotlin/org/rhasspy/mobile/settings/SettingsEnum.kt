@@ -64,6 +64,7 @@ enum class SettingsEnum {
     MQTTConnectionTimeout,
     MQTTKeepAliveInterval,
     MQTTRetryInterval,
+    MQTTKeyStoreFile,
 
     UDPOutputHost,
     UDPOutputPort,

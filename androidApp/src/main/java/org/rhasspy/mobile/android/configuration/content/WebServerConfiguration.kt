@@ -128,12 +128,18 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
                 onClick = viewModel::selectSSLCertificate
             )
 
-            InformationListElement(
-                text = translate(
-                    resource = MR.strings.currentlySelectedCertificate,
-                    viewModel.httpServerSSLKeyStoreFileText.collectAsState().value
+            AnimatedVisibility(
+                enter = expandVertically(),
+                exit = shrinkVertically(),
+                visible = viewModel.isHttpServerSSLKeyStoreFileTextVisible.collectAsState().value
+            ) {
+                InformationListElement(
+                    text = translate(
+                        resource = MR.strings.currentlySelectedCertificate,
+                        viewModel.httpServerSSLKeyStoreFileText.collectAsState().value
+                    )
                 )
-            )
+            }
 
             //text field to change key store password
             TextFieldListItemVisibility(

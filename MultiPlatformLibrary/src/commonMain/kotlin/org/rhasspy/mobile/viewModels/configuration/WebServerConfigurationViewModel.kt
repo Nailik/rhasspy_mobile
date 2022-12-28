@@ -45,8 +45,7 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
     val isHttpServerSSLCertificateVisible = _isHttpServerSSLEnabled.readOnly
 
     val httpServerSSLKeyStoreFileText = _httpServerSSLKeyStoreFile.readOnly
-    val isHttpServerSSLInputVisible =
-        _httpServerSSLKeyStoreFile.mapReadonlyState { it.isNotEmpty() }
+    val isHttpServerSSLKeyStoreFileTextVisible = _httpServerSSLKeyStoreFile.mapReadonlyState { it.isNotEmpty() }
     val httpServerSSLKeyStorePassword = _httpServerSSLKeyStorePassword.readOnly
     val httpServerSSLKeyAlias = _httpServerSSLKeyAlias.readOnly
     val httpServerSSLKeyPassword = _httpServerSSLKeyPassword.readOnly

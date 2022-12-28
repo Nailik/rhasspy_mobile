@@ -20,6 +20,7 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.elements.translate
 import org.rhasspy.mobile.android.content.list.*
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewModels.configuration.MqttConfigurationViewModel
@@ -165,6 +166,19 @@ private fun MqttSSL(viewModel: MqttConfigurationViewModel) {
                 modifier = Modifier.testTag(TestTag.CertificateButton),
                 onClick = viewModel::selectSSLCertificate
             )
+
+            AnimatedVisibility(
+                enter = expandVertically(),
+                exit = shrinkVertically(),
+                visible = viewModel.isKeyStoreFileTextVisible.collectAsState().value
+            ) {
+                InformationListElement(
+                    text = translate(
+                        resource = MR.strings.currentlySelectedCertificate,
+                        viewModel.keyStoreFileText.collectAsState().value
+                    )
+                )
+            }
 
         }
     }
