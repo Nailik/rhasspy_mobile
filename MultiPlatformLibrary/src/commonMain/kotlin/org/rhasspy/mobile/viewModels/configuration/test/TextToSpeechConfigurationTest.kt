@@ -24,10 +24,10 @@ class TextToSpeechConfigurationTest : IConfigurationTest() {
                 .first { it }
 
             val middleware = get<IServiceMiddleware>()
-            val result = get<RhasspyActionsService>().textToSpeech(middleware.sessionId, text)
-            if (result is ServiceResponse.Success && result.data is ByteArray) {
-                get<LocalAudioService>().playAudio(result.data.toMutableList())
-            }
+            //TODO val result = get<RhasspyActionsService>().textToSpeech(middleware.sessionId, text)
+            //if (result is ServiceResponse.Success && result.data is ByteArray) {
+            //    get<LocalAudioService>().playAudio(result.data.toMutableList())
+            //}
         }
     }
 

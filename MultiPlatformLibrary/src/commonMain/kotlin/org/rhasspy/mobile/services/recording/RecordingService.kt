@@ -16,6 +16,8 @@ import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.ServiceResponse
+import org.rhasspy.mobile.middleware.Action
+import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.settings.AppSettings
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -26,6 +28,7 @@ import kotlin.time.Duration.Companion.milliseconds
  * recording is started and stopped automatically when output is observed
  */
 class RecordingService : IService() {
+    //TODO save recording in ram
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
 
@@ -37,6 +40,8 @@ class RecordingService : IService() {
 
     private val _output = MutableStateFlow<List<Byte>>(emptyList())
     val output = _output.readOnly
+
+    val recordedData: List<Byte> = listOf()
 
     // when no one observes output then stop recording?
 
@@ -78,7 +83,7 @@ class RecordingService : IService() {
                     //  logger.d { "silenceDetected" }
                     //check if silence was detected for x milliseconds
                     if (it.minus(Clock.System.now()) < -AppSettings.automaticSilenceDetectionTime.value.milliseconds) {
-                        serviceMiddleware.silenceDetected()
+                        serviceMiddleware.action(Action.DialogAction.SilenceDetected(Source.Local))
                     }
                 } ?: run {
                     //  logger.v { "start silence detected" }

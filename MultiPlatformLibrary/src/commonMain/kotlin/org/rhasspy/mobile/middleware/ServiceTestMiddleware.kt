@@ -1,12 +1,7 @@
 package org.rhasspy.mobile.middleware
 
-import kotlinx.coroutines.launch
-import org.rhasspy.mobile.middleware.action.MqttAction
-import org.rhasspy.mobile.middleware.action.WebServerAction
-
 class ServiceTestMiddleware : IServiceMiddleware() {
-
-
+/*
     override fun mqttAction(event: MqttAction) {
         coroutineScope.launch {
             when (event) {
@@ -37,6 +32,6 @@ class ServiceTestMiddleware : IServiceMiddleware() {
                 else -> {}
             }
         }
-    }
+    }*/
 
 }

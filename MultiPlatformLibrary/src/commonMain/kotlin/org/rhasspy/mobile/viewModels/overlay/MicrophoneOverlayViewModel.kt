@@ -10,14 +10,14 @@ import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.services.dialogManager.DialogManagerServiceState
-import org.rhasspy.mobile.services.dialogManager.IDialogManagerService
+import org.rhasspy.mobile.services.dialogManager.DialogManagerService
 import org.rhasspy.mobile.settings.AppSettings
 import kotlin.math.roundToInt
 
 class MicrophoneOverlayViewModel : ViewModel(), KoinComponent {
 
     private val dialogManagerServiceState
-        get() = getSafe<IDialogManagerService>()?.currentDialogState ?: MutableStateFlow(
+        get() = getSafe<DialogManagerService>()?.currentDialogState ?: MutableStateFlow(
             DialogManagerServiceState.Idle
         ).readOnly
 
@@ -52,7 +52,7 @@ class MicrophoneOverlayViewModel : ViewModel(), KoinComponent {
     }
 
     fun onClick() {
-        getSafe<IServiceMiddleware>()?.toggleSessionManually()
+        getSafe<IServiceMiddleware>()?.userSessionClick()
     }
 
 }

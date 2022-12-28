@@ -10,10 +10,11 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.middleware.EventType.HotWordServiceEventType.*
 import org.rhasspy.mobile.middleware.IServiceMiddleware
-import org.rhasspy.mobile.middleware.action.LocalAction
 import org.rhasspy.mobile.nativeutils.NativeLocalPorcupineWakeWordService
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
+import org.rhasspy.mobile.middleware.Action
+import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.recording.RecordingService
 import org.rhasspy.mobile.services.udp.UdpService
@@ -117,7 +118,7 @@ class HotWordService : IService() {
 
     private fun onKeywordDetected(hotWord: String) {
         serviceMiddleware.createEvent(Detected, hotWord).success()
-        serviceMiddleware.localAction(LocalAction.HotWordDetected(hotWord))
+        serviceMiddleware.action(Action.DialogAction.HotWordDetected(Source.Local, hotWord))
     }
 
     override fun onClose() {

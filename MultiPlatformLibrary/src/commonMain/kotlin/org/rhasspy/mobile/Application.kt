@@ -22,8 +22,8 @@ import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.middleware.ServiceMiddleware
 import org.rhasspy.mobile.middleware.ServiceTestMiddleware
 import org.rhasspy.mobile.mqtt.OverlayServices
+import org.rhasspy.mobile.services.dialogManager.DialogManagerService
 import org.rhasspy.mobile.services.dialogManager.DialogManagerServiceParams
-import org.rhasspy.mobile.services.dialogManager.IDialogManagerService
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantServiceParams
 import org.rhasspy.mobile.services.hotword.HotWordService
@@ -77,7 +77,7 @@ val serviceModule = module {
     closeableSingle { HomeAssistantService() }
     closeableSingle { RecordingService() }
     closeableSingle { HotWordService() }
-    closeableSingle { IDialogManagerService.getService() }
+    closeableSingle { DialogManagerService() }
     closeableSingle { AppSettingsService() }
     closeableSingle { IndicationService() }
 

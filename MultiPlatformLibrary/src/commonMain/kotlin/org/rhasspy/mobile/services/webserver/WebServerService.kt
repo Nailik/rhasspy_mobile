@@ -20,13 +20,15 @@ import org.rhasspy.mobile.middleware.Event
 import org.rhasspy.mobile.middleware.EventType.WebServerServiceEventType.Received
 import org.rhasspy.mobile.middleware.EventType.WebServerServiceEventType.Start
 import org.rhasspy.mobile.middleware.IServiceMiddleware
-import org.rhasspy.mobile.middleware.action.WebServerAction.*
-import org.rhasspy.mobile.middleware.action.WebServerRequest.PlayRecordingGet
 import org.rhasspy.mobile.nativeutils.getEngine
 import org.rhasspy.mobile.nativeutils.installCallLogging
 import org.rhasspy.mobile.nativeutils.installCompression
 import org.rhasspy.mobile.nativeutils.installConnector
 import org.rhasspy.mobile.services.IService
+import org.rhasspy.mobile.middleware.Action
+import org.rhasspy.mobile.middleware.Action.AppSettingsAction
+import org.rhasspy.mobile.middleware.Action.DialogAction
+import org.rhasspy.mobile.middleware.Source
 
 /**
  * Web server service holds all routes for WebServerPath values
@@ -205,7 +207,7 @@ class WebServerService : IService() {
      * ?entity=<entity>&value=<value> - set custom entities/values in recognized intent
      */
     private fun listenForCommand(): WebServerResult {
-        serviceMiddleware.webServerAction(ListenForCommand)
+        serviceMiddleware.action(DialogAction.HotWordDetected(Source.HttpApi, ""))
         return WebServerResult.Ok
     }
 
@@ -224,7 +226,7 @@ class WebServerService : IService() {
         }
 
         action?.let {
-            serviceMiddleware.webServerAction(ListenForWake(it))
+            serviceMiddleware.action(AppSettingsAction.HotWordToggle(it))
             return WebServerResult.Accepted(it.toString())
         } ?: run {
             return WebServerResult.Error(WakeOptionInvalid)
@@ -237,7 +239,7 @@ class WebServerService : IService() {
      * POST to play last recorded voice command
      */
     private fun playRecordingPost(): WebServerResult {
-        serviceMiddleware.webServerAction(PlayRecording)
+        serviceMiddleware.action(Action.PlayRecording)
         return WebServerResult.Ok
     }
 
@@ -248,7 +250,7 @@ class WebServerService : IService() {
      */
     private suspend fun playRecordingGet(call: ApplicationCall): WebServerResult? {
         call.respondBytes(
-            bytes = serviceMiddleware.webServerRequest(PlayRecordingGet),
+            bytes = serviceMiddleware.getRecordedData(),
             contentType = audioContentType
         )
         return null
@@ -265,7 +267,7 @@ class WebServerService : IService() {
             event.warning(AudioContentTypeWarning)
         }
         //play even without header
-        serviceMiddleware.webServerAction(PlayWav(call.receive()))
+        serviceMiddleware.action(DialogAction.PlayAudio(Source.HttpApi, call.receive()))
         return WebServerResult.Ok
     }
 
@@ -279,7 +281,7 @@ class WebServerService : IService() {
         //double and float or double not working but string??
         return call.receive<String>().toFloatOrNull()?.let {
             if (it in 0f..1f) {
-                serviceMiddleware.webServerAction(SetVolume(it))
+                serviceMiddleware.action(AppSettingsAction.AudioVolumeChange(it))
                 return WebServerResult.Accepted(it.toString())
             } else {
                 return WebServerResult.Error(VolumeValueOutOfRange)
@@ -295,7 +297,7 @@ class WebServerService : IService() {
      * actually starts a session
      */
     private fun startRecording(): WebServerResult {
-        serviceMiddleware.webServerAction(StartRecording)
+        serviceMiddleware.action(DialogAction.StartListening(Source.HttpApi, null))
         return WebServerResult.Ok
     }
 
@@ -311,7 +313,7 @@ class WebServerService : IService() {
      * ?entity=<entity>&value=<value> - set custom entity/value in recognized intent
      */
     private fun stopRecording(): WebServerResult {
-        serviceMiddleware.webServerAction(StopRecording)
+        serviceMiddleware.action(DialogAction.StopListening(Source.HttpApi))
         return WebServerResult.Ok
     }
 
@@ -324,7 +326,7 @@ class WebServerService : IService() {
      * just like using say in the ui start screen but remote
      */
     private suspend fun say(call: ApplicationCall): WebServerResult {
-        serviceMiddleware.webServerAction(Say(call.receive()))
+        serviceMiddleware.action(DialogAction.PlayAudio(Source.HttpApi, call.receive()))
         return WebServerResult.Ok
     }
 

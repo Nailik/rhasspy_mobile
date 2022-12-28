@@ -9,12 +9,12 @@ import org.rhasspy.mobile.*
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.services.dialogManager.DialogManagerServiceState
-import org.rhasspy.mobile.services.dialogManager.IDialogManagerService
+import org.rhasspy.mobile.services.dialogManager.DialogManagerService
 
 class MicrophoneWidgetViewModel : ViewModel(), KoinComponent {
 
     private val dialogManagerServiceState
-        get() = getSafe<IDialogManagerService>()?.currentDialogState ?: MutableStateFlow(
+        get() = getSafe<DialogManagerService>()?.currentDialogState ?: MutableStateFlow(
             DialogManagerServiceState.Idle
         ).readOnly
     val isShowBorder =
@@ -38,7 +38,7 @@ class MicrophoneWidgetViewModel : ViewModel(), KoinComponent {
     }
 
     fun onTapWidget() {
-        getSafe<IServiceMiddleware>()?.toggleSessionManually()
+        getSafe<IServiceMiddleware>()?.userSessionClick()
     }
 
 }

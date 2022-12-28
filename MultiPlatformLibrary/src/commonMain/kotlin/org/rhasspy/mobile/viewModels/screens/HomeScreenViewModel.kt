@@ -10,12 +10,12 @@ import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.middleware.EventState
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.services.dialogManager.DialogManagerServiceState
-import org.rhasspy.mobile.services.dialogManager.IDialogManagerService
+import org.rhasspy.mobile.services.dialogManager.DialogManagerService
 import org.rhasspy.mobile.settings.AppSettings
 
 class HomeScreenViewModel : ViewModel(), KoinComponent {
 
-    private val dialogManagerServiceState = get<IDialogManagerService>().currentDialogState
+    private val dialogManagerServiceState = get<DialogManagerService>().currentDialogState
 
     val isActionEnabled = dialogManagerServiceState
         .mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingHotWord }

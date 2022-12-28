@@ -509,7 +509,7 @@ object StateMachine {
      * plays indication audio and calls finished to do whatever is needed
      */
     suspend fun playAudio(data: List<Byte>, fromMQTT: Boolean = false) {
-        logger.v { "playAudio" }
+      /*  logger.v { "playAudio" }
         if (state.value != State.RecordingIntent) {
             audioPlayer.playData(data) {
                 if (fromMQTT) {
@@ -517,7 +517,7 @@ object StateMachine {
                     //      MqttService.playFinished()
                 }
             }
-        }
+        }*/
     }
 
     //only start recording, do not stop it
@@ -528,7 +528,7 @@ object StateMachine {
     }
 
     fun togglePlayRecording() {
-        scope.launch {
+       /* scope.launch {
             if (state.value == State.AwaitingHotWord) {
                 logger.d { "playRecording" }
                 state.value = State.PlayingRecording
@@ -538,7 +538,7 @@ object StateMachine {
                 audioPlayer.stopPlayingData()
                 state.value = State.AwaitingHotWord
             }
-        }
+        }*/
     }
 
     fun toggleSessionManually() {
