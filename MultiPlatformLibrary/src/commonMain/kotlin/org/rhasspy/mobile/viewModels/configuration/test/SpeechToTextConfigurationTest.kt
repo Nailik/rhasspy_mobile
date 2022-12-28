@@ -44,7 +44,7 @@ class SpeechToTextConfigurationTest : IConfigurationTest() {
                 _isRecording.value = false
                 //execute
                 testScope.launch {
-                    val response = rhasspyActionsService.endSpeechToText(middleware.sessionId)
+                    val response = rhasspyActionsService.endSpeechToText(middleware.sessionId, false)
 
                     if (response is ServiceResponse.Success) {
                         println(response.data)

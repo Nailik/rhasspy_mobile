@@ -12,12 +12,12 @@ class ServiceTestMiddleware : IServiceMiddleware() {
             when (event) {
                 is MqttAction.AsrError -> {
                     if (event.sessionId == sessionId) {
-                        rhasspyActionsService.endSpeechToText(event.sessionId)
+                        rhasspyActionsService.endSpeechToText(event.sessionId, true)
                     }
                 }
                 is MqttAction.AsrTextCaptured -> {
                     if (event.sessionId == sessionId) {
-                        rhasspyActionsService.endSpeechToText(event.sessionId)
+                        rhasspyActionsService.endSpeechToText(event.sessionId, true)
                     }
                 }
                 is MqttAction.PlayAudio -> {

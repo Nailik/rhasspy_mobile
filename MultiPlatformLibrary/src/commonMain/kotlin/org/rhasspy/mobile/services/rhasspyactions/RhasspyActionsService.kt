@@ -138,8 +138,10 @@ open class RhasspyActionsService : IService() {
      *
      * RemoteMQTT
      * - audio was already send to mqtt while recording in audioFrame
+     *
+     * fromMqtt is used to check if silence was detected by remote mqtt device
      */
-    suspend fun endSpeechToText(sessionId: String): ServiceResponse<*> {
+    suspend fun endSpeechToText(sessionId: String, fromMqtt: Boolean): ServiceResponse<*> {
         val event = serviceMiddleware.createEvent(SpeechToText)
         //stop collection
         collector?.cancel()
@@ -147,7 +149,7 @@ open class RhasspyActionsService : IService() {
         //evaluate result
         val result = when (params.speechToTextOption) {
             SpeechToTextOptions.RemoteHTTP -> httpClientService.speechToText(speechToTextAudioData.addWavHeader())
-            SpeechToTextOptions.RemoteMQTT -> mqttClientService.stopListening(sessionId) //TODO do not send when end was triggered my mqtt silence detected
+            SpeechToTextOptions.RemoteMQTT -> if (!fromMqtt) mqttClientService.stopListening(sessionId) else ServiceResponse.Nothing
             SpeechToTextOptions.Disabled -> ServiceResponse.Disabled
         }
 
