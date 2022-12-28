@@ -14,8 +14,7 @@ import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.sounds.SoundOptions
 
-//TODO koin
-internal object IndicationService : IService() {
+class IndicationService : IService() {
 
     private val _indicationState = MutableStateFlow(IndicationState.Idle)
     private val _isShowVisualIndication = MutableStateFlow(false)

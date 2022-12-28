@@ -79,7 +79,7 @@ val serviceModule = module {
     closeableSingle { HotWordService() }
     closeableSingle { IDialogManagerService.getService() }
     closeableSingle { AppSettingsService() }
-    closeableSingle { IndicationService }
+    closeableSingle { IndicationService() }
 
     closeableSingle { params -> createServiceMiddleware(params.getOrNull() ?: false) }
 
