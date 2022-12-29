@@ -4,13 +4,10 @@ import kotlinx.coroutines.*
 import org.koin.core.component.inject
 import org.rhasspy.mobile.addWavHeader
 import org.rhasspy.mobile.data.*
-import org.rhasspy.mobile.middleware.ErrorType.RhasspyActionsServiceErrorType.Disabled
-import org.rhasspy.mobile.middleware.ErrorType.RhasspyActionsServiceErrorType.NotInitialized
-import org.rhasspy.mobile.middleware.Event
-import org.rhasspy.mobile.middleware.EventType.RhasspyActionServiceEventType.*
+import org.rhasspy.mobile.middleware.Action.DialogAction
 import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.ServiceResponse
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.localaudio.LocalAudioService
@@ -62,19 +59,19 @@ open class RhasspyActionsService : IService() {
      * - calls default site to recognize intent
      * - later eventually intentRecognized or intentNotRecognized will be called with received data
      */
-    suspend fun recognizeIntent(sessionId: String, text: String): ServiceResponse<*> {
-        val event = serviceMiddleware.createEvent(RecognizeIntent)
-
-        val result = when (params.intentRecognitionOption) {
-            IntentRecognitionOptions.RemoteHTTP -> httpClientService.recognizeIntent(text)
-            IntentRecognitionOptions.RemoteMQTT -> mqttClientService.recognizeIntent(
-                sessionId,
-                text
-            )
-            IntentRecognitionOptions.Disabled -> ServiceResponse.Disabled
+    suspend fun recognizeIntent(sessionId: String, text: String) {
+        when (params.intentRecognitionOption) {
+            IntentRecognitionOptions.RemoteHTTP -> {
+                val action = httpClientService.recognizeIntent(text)?.let { intentJson ->
+                    DialogAction.IntentRecognitionResult(Source.HttpApi, null, intentJson)
+                } ?: run {
+                    DialogAction.IntentRecognitionError(Source.HttpApi)
+                }
+                serviceMiddleware.action(action)
+            }
+            IntentRecognitionOptions.RemoteMQTT -> mqttClientService.recognizeIntent(sessionId, text)
+            IntentRecognitionOptions.Disabled -> {}
         }
-        event.evaluateResult(result)
-        return result
     }
 
     /**
@@ -86,16 +83,16 @@ open class RhasspyActionsService : IService() {
      * hermes/tts/sayFinished (JSON)
      * is called when playing audio is finished
      */
-    suspend fun textToSpeech(sessionId: String, text: String): ServiceResponse<*> {
-        val event = serviceMiddleware.createEvent(Say)
-
-        val result = when (params.textToSpeechOption) {
-            TextToSpeechOptions.RemoteHTTP -> httpClientService.textToSpeech(text)
+    suspend fun textToSpeech(sessionId: String, text: String) {
+        when (params.textToSpeechOption) {
+            TextToSpeechOptions.RemoteHTTP -> {
+                httpClientService.textToSpeech(text)?.also {
+                    serviceMiddleware.action(DialogAction.PlayAudio(Source.HttpApi, it))
+                }
+            }
             TextToSpeechOptions.RemoteMQTT -> mqttClientService.say(sessionId, text)
-            TextToSpeechOptions.Disabled -> ServiceResponse.Disabled
+            TextToSpeechOptions.Disabled -> {}
         }
-        event.evaluateResult(result)
-        return result
     }
 
     /**
@@ -116,17 +113,19 @@ open class RhasspyActionsService : IService() {
      * MQTT:
      * - calls default site to play audio
      */
-    suspend fun playAudio(data: List<Byte>): ServiceResponse<*> {
-        val event = serviceMiddleware.createEvent(PlayAudio)
-
-        val result = when (params.audioPlayingOption) {
-            AudioPlayingOptions.Local -> localAudioService.playAudio(data)
-            AudioPlayingOptions.RemoteHTTP -> httpClientService.playWav(data)
+    suspend fun playAudio(data: List<Byte>) {
+        when (params.audioPlayingOption) {
+            AudioPlayingOptions.Local -> {
+                localAudioService.playAudio(data)
+                serviceMiddleware.action(DialogAction.PlayFinished(Source.Local))
+            }
+            AudioPlayingOptions.RemoteHTTP -> {
+                httpClientService.playWav(data)
+                serviceMiddleware.action(DialogAction.PlayFinished(Source.HttpApi))
+            }
             AudioPlayingOptions.RemoteMQTT -> mqttClientService.playBytes(data)
-            AudioPlayingOptions.Disabled -> ServiceResponse.Disabled
+            AudioPlayingOptions.Disabled -> {}
         }
-        event.evaluateResult(result)
-        return result
     }
 
     /**
@@ -141,26 +140,29 @@ open class RhasspyActionsService : IService() {
      *
      * fromMqtt is used to check if silence was detected by remote mqtt device
      */
-    suspend fun endSpeechToText(sessionId: String, fromMqtt: Boolean): ServiceResponse<*> {
-        val event = serviceMiddleware.createEvent(SpeechToText)
+    suspend fun endSpeechToText(sessionId: String, fromMqtt: Boolean) {
         //stop collection
         collector?.cancel()
 
         //evaluate result
-        val result = when (params.speechToTextOption) {
-            SpeechToTextOptions.RemoteHTTP -> httpClientService.speechToText(speechToTextAudioData.addWavHeader())
-            SpeechToTextOptions.RemoteMQTT -> if (!fromMqtt) mqttClientService.stopListening(sessionId) else ServiceResponse.Nothing
-            SpeechToTextOptions.Disabled -> ServiceResponse.Disabled
+        when (params.speechToTextOption) {
+            SpeechToTextOptions.RemoteHTTP -> {
+                val action = httpClientService.speechToText(speechToTextAudioData.addWavHeader())?.let { text ->
+                    DialogAction.AsrTextCaptured(Source.HttpApi, text)
+                } ?: run {
+                    DialogAction.AsrError(Source.HttpApi)
+                }
+                serviceMiddleware.action(action)
+            }
+            SpeechToTextOptions.RemoteMQTT -> if (!fromMqtt) mqttClientService.stopListening(sessionId)
+            SpeechToTextOptions.Disabled -> {}
         }
 
         //clear data
         speechToTextAudioData.clear()
-        event.evaluateResult(result)
-        return result
     }
 
-    suspend fun startSpeechToText(sessionId: String): ServiceResponse<*> {
-        val event = serviceMiddleware.createEvent(SpeechToText)
+    suspend fun startSpeechToText(sessionId: String) {
         //clear data and start recording
         collector?.cancel()
         speechToTextAudioData.clear()
@@ -172,14 +174,11 @@ open class RhasspyActionsService : IService() {
             }
         }
 
-        val result = when (params.speechToTextOption) {
-            SpeechToTextOptions.RemoteHTTP -> ServiceResponse.Nothing
+        when (params.speechToTextOption) {
+            SpeechToTextOptions.RemoteHTTP -> {}
             SpeechToTextOptions.RemoteMQTT -> mqttClientService.startListening(sessionId)
-            SpeechToTextOptions.Disabled -> ServiceResponse.Nothing
+            SpeechToTextOptions.Disabled -> {}
         }
-
-        event.evaluateResult(result)
-        return result
     }
 
     private suspend fun audioFrame(data: List<Byte>) {
@@ -207,32 +206,13 @@ open class RhasspyActionsService : IService() {
      *
      * if local dialogue management it will end the session
      */
-    suspend fun intentHandling(intentName: String, intent: String): ServiceResponse<*> {
-        val event = serviceMiddleware.createEvent(IntentHandling)
-
-        val result = when (params.intentHandlingOption) {
-            IntentHandlingOptions.HomeAssistant -> homeAssistantService.sendIntent(
-                intentName,
-                intent
-            )
+    suspend fun intentHandling(intentName: String, intent: String) {
+        when (params.intentHandlingOption) {
+            IntentHandlingOptions.HomeAssistant -> homeAssistantService.sendIntent(intentName, intent)
             IntentHandlingOptions.RemoteHTTP -> httpClientService.intentHandling(intent)
-            IntentHandlingOptions.WithRecognition -> ServiceResponse.Nothing
-            IntentHandlingOptions.Disabled -> ServiceResponse.Disabled
+            IntentHandlingOptions.WithRecognition -> {}
+            IntentHandlingOptions.Disabled -> {}
         }
-        event.evaluateResult(result)
-        return result
     }
 
-    /**
-     * update event depending on result of action
-     */
-    private fun Event.evaluateResult(result: ServiceResponse<*>) {
-        when (result) {
-            is ServiceResponse.Success -> this.success(result.data.toString())
-            is ServiceResponse.Nothing -> this.success()
-            is ServiceResponse.Disabled -> this.warning(Disabled)
-            is ServiceResponse.Error -> this.error(result.error)
-            is ServiceResponse.NotInitialized -> this.error(NotInitialized)
-        }
-    }
 }

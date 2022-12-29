@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.readOnly
-import org.rhasspy.mobile.services.ServiceResponse
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -47,7 +46,7 @@ actual object AudioRecorder {
         CHANNEL_CONFIG, AUDIO_FORMAT
     ) * BUFFER_SIZE_FACTOR
 
-    actual fun startRecording(): ServiceResponse<*> {
+    actual fun startRecording() {
         logger.v { "startRecording" }
 
         if (recorder == null) {
@@ -59,7 +58,6 @@ actual object AudioRecorder {
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 logger.e { "missing recording permission" }
-                return ServiceResponse.Error(Exception("MissingRecordingPermission"))
             }
 
             recorder = AudioRecord.Builder()
@@ -81,10 +79,8 @@ actual object AudioRecorder {
             recorder?.startRecording()
             read()
         } catch (e: Exception) {
-            return ServiceResponse.Error(e)
-        }
 
-        return ServiceResponse.Success(Unit)
+        }
     }
 
     private fun read() {

@@ -11,7 +11,6 @@ import org.rhasspy.mobile.middleware.EventType.UdpServiceEventType.Start
 import org.rhasspy.mobile.middleware.EventType.UdpServiceEventType.StreamAudio
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.ServiceResponse
 
 class UdpService : IService() {
 
@@ -49,25 +48,25 @@ class UdpService : IService() {
         socketAddress = null
     }
 
-    suspend fun streamAudio(byteData: List<Byte>): ServiceResponse<*> {
+    suspend fun streamAudio(byteData: List<Byte>) {
         val streamAudioEvent = serviceMiddleware.createEvent(StreamAudio)
 
         socketAddress?.also {
             try {
                 sendChannel?.send(Datagram(ByteReadPacket(byteData.toByteArray()), it)) ?: run {
                     streamAudioEvent.error(NotInitialized)
-                    return ServiceResponse.NotInitialized
+
                 }
             } catch (exception: Exception) {
                 streamAudioEvent.error(exception)
-                return ServiceResponse.Error(exception)
+
             }
         } ?: run {
             streamAudioEvent.error(NotInitialized)
-            return ServiceResponse.NotInitialized
+
         }
         streamAudioEvent.success()
-        return ServiceResponse.Success(Unit)
+
     }
 
 }

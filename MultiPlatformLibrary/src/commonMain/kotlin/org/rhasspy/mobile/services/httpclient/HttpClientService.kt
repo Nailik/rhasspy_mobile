@@ -19,7 +19,6 @@ import org.rhasspy.mobile.middleware.EventType.HttpClientServiceEventType.*
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.ServiceResponse
 
 /**
  * contains client to send data to http endpoints
@@ -123,7 +122,7 @@ class HttpClientService : IService() {
      * Set Accept: application/json to receive JSON with more details
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
-    suspend fun speechToText(data: List<Byte>): ServiceResponse<*> {
+    suspend fun speechToText(data: List<Byte>): String? {
         return post<String>(EventType.HttpClientServiceEventType.SpeechToText, speechToTextUrl) {
             setBody(data.toByteArray())
         }
@@ -138,7 +137,7 @@ class HttpClientService : IService() {
      *
      * returns null if the intent is not found
      */
-    suspend fun recognizeIntent(text: String): ServiceResponse<*> {
+    suspend fun recognizeIntent(text: String): String? {
         return post<String>(RecognizeIntent, recognizeIntentUrl) {
             setBody(text)
         }
@@ -153,7 +152,7 @@ class HttpClientService : IService() {
      * ?volume=<volume> - volume level to speak at (0 = off, 1 = full volume)
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun textToSpeech(text: String): ServiceResponse<*> {
+    suspend fun textToSpeech(text: String): ByteArray? {
         return post<ByteArray>(TextToSpeech, textToSpeechUrl) {
             setBody(text)
         }
@@ -165,7 +164,7 @@ class HttpClientService : IService() {
      * Make sure to set Content-Type to audio/wav
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun playWav(data: List<Byte>): ServiceResponse<*> {
+    suspend fun playWav(data: List<Byte>): String? {
         return post<String>(PlayWav, audioPlayingUrl) {
             setAttributes {
                 contentType(audioContentType)
@@ -190,7 +189,7 @@ class HttpClientService : IService() {
      *
      * Implemented by rhasspy-remote-http-hermes
      */
-    suspend fun intentHandling(intent: String): ServiceResponse<*> {
+    suspend fun intentHandling(intent: String): String? {
         return post<String>(IntentHandling, params.intentHandlingHttpEndpoint) {
             setBody(intent)
         }
@@ -199,7 +198,7 @@ class HttpClientService : IService() {
     /**
      * send intent as Event to Home Assistant
      */
-    suspend fun hassEvent(json: String, intentName: String): ServiceResponse<*> {
+    suspend fun hassEvent(json: String, intentName: String): String? {
         return post<String>(HassEvent, "$hassEventUrl$intentName") {
             buildHeaders {
                 hassAuthorization()
@@ -213,7 +212,7 @@ class HttpClientService : IService() {
     /**
      * send intent as Intent to Home Assistant
      */
-    suspend fun hassIntent(intentJson: String): ServiceResponse<*> {
+    suspend fun hassIntent(intentJson: String): String? {
         return post<String>(HassIntent, hassIntentUrl) {
             buildHeaders {
                 hassAuthorization()
@@ -232,11 +231,8 @@ class HttpClientService : IService() {
         eventType: EventType,
         url: String,
         block: HttpRequestBuilder.() -> Unit
-    ): ServiceResponse<*> {
-        val postEvent = serviceMiddleware.createEvent(eventType)
-
+    ): T? {
         return httpClient?.let { client ->
-            postEvent.loading()
             try {
 
                 val request = client.post(url, block)
@@ -244,24 +240,16 @@ class HttpClientService : IService() {
                 val response = request.body<T>()
 
                 _currentState.value = EventState.Success()
-                postEvent.success()
-                return ServiceResponse.Success(response)
+
+                return response
 
             } catch (e: Exception) {
                 _currentState.value = EventState.Error()
-
-                mapError(e)?.also { description ->
-                    postEvent.error(description)
-                } ?: run {
-                    postEvent.error(e)
-                }
-                return ServiceResponse.Error(e)
-
+                return null
             }
         } ?: run {
             _currentState.value = EventState.Error()
-            postEvent.error(NotInitialized)
-            return ServiceResponse.NotInitialized
+            return null
         }
     }
 

@@ -9,7 +9,6 @@ import org.rhasspy.mobile.data.HomeAssistantIntentHandlingOptions
 import org.rhasspy.mobile.middleware.EventType.HomeAssistantServiceEventType.SendIntent
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.ServiceResponse
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 
 /**
@@ -20,7 +19,7 @@ import org.rhasspy.mobile.services.httpclient.HttpClientService
  */
 class HomeAssistantService : IService() {
 
-    val logger = Logger.withTag("HomeAssistantInterface")
+    private val logger = Logger.withTag("HomeAssistantInterface")
 
     private val params by inject<HomeAssistantServiceParams>()
     private val httpClientService by inject<HttpClientService>()
@@ -34,7 +33,7 @@ class HomeAssistantService : IService() {
     /**
      * simplified conversion from intent to hass event or hass intent
      */
-    suspend fun sendIntent(intentName: String, intent: String): ServiceResponse<*> {
+    suspend fun sendIntent(intentName: String, intent: String) {
         val sendEvent = serviceMiddleware.createEvent(SendIntent)
 
         try {
@@ -69,7 +68,7 @@ class HomeAssistantService : IService() {
 
             sendEvent.success()
 
-            return when (params.intentHandlingHomeAssistantOption) {
+            when (params.intentHandlingHomeAssistantOption) {
                 HomeAssistantIntentHandlingOptions.Event -> httpClientService.hassEvent(
                     intentRes,
                     intentName
@@ -77,8 +76,7 @@ class HomeAssistantService : IService() {
                 HomeAssistantIntentHandlingOptions.Intent -> httpClientService.hassIntent("{\"name\" : \"$intentName\", \"data\": $intent }")
             }
         } catch (exception: Exception) {
-            sendEvent.error(exception)
-            return ServiceResponse.Error(exception)
+            logger.e(exception) { "" }
         }
     }
 }

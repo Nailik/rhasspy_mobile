@@ -2,7 +2,6 @@ package org.rhasspy.mobile.services.localaudio
 
 import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.ServiceResponse
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -13,14 +12,14 @@ class LocalAudioService : IService() {
         audioPlayer.stopPlayingData()
     }
 
-    suspend fun playAudio(data: List<Byte>): ServiceResponse<*> = suspendCoroutine { continuation ->
+    suspend fun playAudio(data: List<Byte>): Unit = suspendCoroutine { continuation ->
         audioPlayer.playData(
             data = data,
             onFinished = {
-                continuation.resume(ServiceResponse.Success(null))
+                continuation.resume(Unit)
             },
             onError = {
-                continuation.resume(ServiceResponse.Error(it))
+                continuation.resume(Unit)
             }
         )
     }

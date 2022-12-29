@@ -15,7 +15,6 @@ import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.ServiceResponse
 import org.rhasspy.mobile.middleware.Action
 import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.settings.AppSettings
@@ -95,23 +94,11 @@ class RecordingService : IService() {
     }
 
     private fun startRecording() {
-        val event = serviceMiddleware.createEvent(Start)
-        if (!AudioRecorder.isRecording.value) {
-            when (val result = AudioRecorder.startRecording()) {
-                is ServiceResponse.Error -> event.error(result.error)
-                ServiceResponse.NotInitialized -> event.error(NotInitialized)
-                is ServiceResponse.Success -> event.success()
-                else -> _isRecording.value = true
-            }
-        }
-        event.success()
+        AudioRecorder.startRecording()
     }
 
     private fun stopRecording() {
-        val event = serviceMiddleware.createEvent(Stop)
         AudioRecorder.stopRecording()
-        _isRecording.value = false
-        event.success()
     }
 
 }

@@ -79,7 +79,7 @@ class IndicationService : IService() {
         _indicationState.value = IndicationState.Speaking
     }
 
-    fun onErrorIntent() {
+    fun onError() {
         playErrorSound()
     }
 
