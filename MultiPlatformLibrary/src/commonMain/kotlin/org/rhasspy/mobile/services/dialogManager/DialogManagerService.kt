@@ -15,22 +15,6 @@ import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.middleware.Action.DialogAction
 import org.rhasspy.mobile.middleware.Source
 
-/**
- * idle
- * startedsession
- *
- */
-
-enum class DialogManagerServiceState {
-    Idle,                   //doing nothing, hotword from externally awaited
-    AwaitingHotWord,        //recording HotWord
-    RecordingIntent,        //recording the intent
-    TranscribingIntent,     //transcribe the recorded sound to text
-    RecognizingIntent,      //recognize the intent from the recorded text
-    HandlingIntent,          //doing intent action
-    PlayingAudio
-}
-
 class DialogManagerService : IService() {
 
     val params by inject<DialogManagerServiceParams>()
