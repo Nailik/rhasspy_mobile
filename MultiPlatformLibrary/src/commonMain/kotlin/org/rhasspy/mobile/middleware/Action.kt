@@ -11,7 +11,7 @@ sealed class Action {
         class IntentHandlingToggle(val enabled: Boolean) : AppSettingsAction()
     }
 
-    sealed class DialogAction(val source: Source) : Action(){
+    sealed class DialogAction(val source: Source) : Action() {
 
         class HotWordDetected(source: Source, val hotWord: String) : DialogAction(source)
 

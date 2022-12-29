@@ -322,10 +322,10 @@ class DialogManagerService : IService() {
     /**
      * sends status updates to mqtt if necessary and if source is not from mqtt
      */
-    private suspend fun informMqtt(action: DialogAction){
+    private suspend fun informMqtt(action: DialogAction) {
         val safeSessionId = sessionId ?: "null"
-        if(action.source !is Source.Mqtt){
-            when(action) {
+        if (action.source !is Source.Mqtt) {
+            when (action) {
                 is DialogAction.AsrError -> mqttService.asrError(safeSessionId)
                 is DialogAction.AsrTextCaptured -> mqttService.asrTextCaptured(safeSessionId, action.text)
                 is DialogAction.HotWordDetected -> mqttService.hotWordDetected(action.hotWord)

@@ -26,7 +26,7 @@ class IntentRecognitionConfigurationTest : IConfigurationTest() {
             }
 
             val middleware = get<IServiceMiddleware>()
-       //TODO     get<RhasspyActionsService>().recognizeIntent(middleware.sessionId, text)
+            //TODO     get<RhasspyActionsService>().recognizeIntent(middleware.sessionId, text)
         }
     }
 

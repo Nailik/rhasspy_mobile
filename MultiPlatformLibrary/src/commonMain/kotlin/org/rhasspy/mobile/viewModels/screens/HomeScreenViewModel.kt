@@ -9,8 +9,8 @@ import org.rhasspy.mobile.logic.StateMachine
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.middleware.EventState
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
-import org.rhasspy.mobile.services.dialogManager.DialogManagerServiceState
 import org.rhasspy.mobile.services.dialogManager.DialogManagerService
+import org.rhasspy.mobile.services.dialogManager.DialogManagerServiceState
 import org.rhasspy.mobile.settings.AppSettings
 
 class HomeScreenViewModel : ViewModel(), KoinComponent {

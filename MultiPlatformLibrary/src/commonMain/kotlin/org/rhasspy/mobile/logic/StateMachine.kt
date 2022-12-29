@@ -509,15 +509,15 @@ object StateMachine {
      * plays indication audio and calls finished to do whatever is needed
      */
     suspend fun playAudio(data: List<Byte>, fromMQTT: Boolean = false) {
-      /*  logger.v { "playAudio" }
-        if (state.value != State.RecordingIntent) {
-            audioPlayer.playData(data) {
-                if (fromMQTT) {
-                    //if call was from mqtt, send message when play has finished
-                    //      MqttService.playFinished()
-                }
-            }
-        }*/
+        /*  logger.v { "playAudio" }
+          if (state.value != State.RecordingIntent) {
+              audioPlayer.playData(data) {
+                  if (fromMQTT) {
+                      //if call was from mqtt, send message when play has finished
+                      //      MqttService.playFinished()
+                  }
+              }
+          }*/
     }
 
     //only start recording, do not stop it
@@ -528,17 +528,17 @@ object StateMachine {
     }
 
     fun togglePlayRecording() {
-       /* scope.launch {
-            if (state.value == State.AwaitingHotWord) {
-                logger.d { "playRecording" }
-                state.value = State.PlayingRecording
-                audioPlayer.playData(getPreviousRecording()) { state.value = State.AwaitingHotWord }
-            } else if (state.value == State.PlayingRecording) {
-                logger.d { "stopPlayingRecording" }
-                audioPlayer.stopPlayingData()
-                state.value = State.AwaitingHotWord
-            }
-        }*/
+        /* scope.launch {
+             if (state.value == State.AwaitingHotWord) {
+                 logger.d { "playRecording" }
+                 state.value = State.PlayingRecording
+                 audioPlayer.playData(getPreviousRecording()) { state.value = State.AwaitingHotWord }
+             } else if (state.value == State.PlayingRecording) {
+                 logger.d { "stopPlayingRecording" }
+                 audioPlayer.stopPlayingData()
+                 state.value = State.AwaitingHotWord
+             }
+         }*/
     }
 
     fun toggleSessionManually() {

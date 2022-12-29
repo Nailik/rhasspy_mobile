@@ -8,8 +8,6 @@ import org.rhasspy.mobile.mqtt.*
 import org.rhasspy.mobile.mqtt.MqttMessage
 import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.settings.AppSettings
-import java.security.KeyStore
-import javax.net.ssl.SSLContext
 
 actual class MqttClient actual constructor(
     brokerUrl: String,

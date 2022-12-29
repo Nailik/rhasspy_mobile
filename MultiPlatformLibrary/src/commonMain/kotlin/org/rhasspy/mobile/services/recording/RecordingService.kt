@@ -8,15 +8,12 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.component.inject
-import org.rhasspy.mobile.middleware.ErrorType.RecordingServiceErrorType.NotInitialized
-import org.rhasspy.mobile.middleware.EventType.RecordingServiceEventType.Start
-import org.rhasspy.mobile.middleware.EventType.RecordingServiceEventType.Stop
+import org.rhasspy.mobile.middleware.Action
 import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.middleware.Action
-import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.settings.AppSettings
 import kotlin.time.Duration.Companion.milliseconds
 

@@ -9,8 +9,8 @@ import org.rhasspy.mobile.data.MicrophoneOverlaySizeOptions
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.nativeutils.OverlayPermission
-import org.rhasspy.mobile.services.dialogManager.DialogManagerServiceState
 import org.rhasspy.mobile.services.dialogManager.DialogManagerService
+import org.rhasspy.mobile.services.dialogManager.DialogManagerServiceState
 import org.rhasspy.mobile.settings.AppSettings
 import kotlin.math.roundToInt
 

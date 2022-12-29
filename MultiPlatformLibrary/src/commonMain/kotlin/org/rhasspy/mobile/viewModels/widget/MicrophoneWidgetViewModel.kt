@@ -8,8 +8,8 @@ import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
-import org.rhasspy.mobile.services.dialogManager.DialogManagerServiceState
 import org.rhasspy.mobile.services.dialogManager.DialogManagerService
+import org.rhasspy.mobile.services.dialogManager.DialogManagerServiceState
 
 class MicrophoneWidgetViewModel : ViewModel(), KoinComponent {
 

@@ -37,17 +37,17 @@ class SpeechToTextConfigurationTest : IConfigurationTest() {
             if (!isRecording.value) {
                 _isRecording.value = true
                 testScope.launch {
-                   //TODO rhasspyActionsService.startSpeechToText(middleware.sessionId)
+                    //TODO rhasspyActionsService.startSpeechToText(middleware.sessionId)
                 }
             } else {
                 _isRecording.value = false
                 //execute
                 testScope.launch {
-                  //TODO  val response = rhasspyActionsService.endSpeechToText(middleware.sessionId, false)
+                    //TODO  val response = rhasspyActionsService.endSpeechToText(middleware.sessionId, false)
 
-                //    if (response is ServiceResponse.Success) {
-                  //      println(response.data)
-                  //  }
+                    //    if (response is ServiceResponse.Success) {
+                    //      println(response.data)
+                    //  }
                 }
             }
         }

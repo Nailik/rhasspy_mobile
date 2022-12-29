@@ -49,27 +49,27 @@ actual class NativeLocalPorcupineWakeWordService actual constructor(
                         .map {
                             copyBuildInKeywordFileIfNecessary(it)
                         }.toMutableList().also { list ->
-                        list.addAll(
-                            wakeWordPorcupineKeywordCustomOptions.filter { it.isEnabled }.map {
-                                File(
-                                    Application.Instance.filesDir,
-                                    "porcupine/${it.fileName}"
-                                ).absolutePath
-                            }
-                        )
-                    }.toTypedArray()
+                            list.addAll(
+                                wakeWordPorcupineKeywordCustomOptions.filter { it.isEnabled }.map {
+                                    File(
+                                        Application.Instance.filesDir,
+                                        "porcupine/${it.fileName}"
+                                    ).absolutePath
+                                }
+                            )
+                        }.toTypedArray()
                 )
                 .setSensitivities(
                     wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }
                         .map {
                             it.sensitivity
                         }.toMutableList().also { list ->
-                        list.addAll(
-                            wakeWordPorcupineKeywordCustomOptions.filter { it.isEnabled }.map {
-                                it.sensitivity
-                            }
-                        )
-                    }.toTypedArray().toFloatArray()
+                            list.addAll(
+                                wakeWordPorcupineKeywordCustomOptions.filter { it.isEnabled }.map {
+                                    it.sensitivity
+                                }
+                            )
+                        }.toTypedArray().toFloatArray()
                 )
                 .setModelPath(copyModelFileIfNecessary())
                 .setErrorCallback {
