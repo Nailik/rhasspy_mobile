@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.nativeutils
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.PowerManager
 import co.touchlab.kermit.Logger
@@ -15,9 +14,8 @@ actual object NativeIndication {
     private var wakeLock: PowerManager.WakeLock? = null
 
     /**
-     * wake up screen as long as possible
+     * wake up screen if possible
      */
-    @SuppressLint("WakelockTimeout")
     @Suppress("DEPRECATION")
     actual fun wakeUpScreen() {
         wakeLock =
@@ -26,14 +24,14 @@ actual object NativeIndication {
                     PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
                     "Rhasspy::WakeWordDetected"
                 ).apply {
-                    acquire()
+                    acquire(10 * 60 * 1000L /*10 minutes*/)
                 }
             }
     }
 
 
     /**
-     * remote wake up and let screen go off
+     * remove wake lock and let screen go off
      */
     actual fun releaseWakeUp() {
         try {
@@ -42,7 +40,5 @@ actual object NativeIndication {
             logger.w(e) { "wakelock release exception" }
         }
     }
-
-    actual fun checkPermission(): Boolean = OverlayPermission.isGranted()
 
 }
