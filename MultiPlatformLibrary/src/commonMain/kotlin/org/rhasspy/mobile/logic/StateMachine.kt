@@ -268,7 +268,7 @@ private object StateMachine {
 
                     //save recording to previous recording
                     currentSession.currentRecording.addWavHeader()
-                    previousRecordingFile.writeData(currentSession.currentRecording)
+                   // previousRecordingFile.writeData(currentSession.currentRecording)
 
                     //send audio to mqtt
                     if (currentSession.isSendAudioCaptured) {
@@ -554,7 +554,7 @@ private object StateMachine {
     }
 
     fun getPreviousRecording(): List<Byte> {
-        return previousRecordingFile.getFileData()
+        TODO()
     }
 
     private fun isDialogueLocal(): Boolean =
