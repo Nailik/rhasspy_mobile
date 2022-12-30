@@ -2,10 +2,15 @@ package org.rhasspy.mobile.nativeutils
 
 import kotlinx.coroutines.flow.StateFlow
 
-@Suppress("NO_ACTUAL_FOR_EXPECT")
+/**
+ * used to observe device settings for sound or notification volume
+ */
 expect object DeviceVolume {
 
+    //sound output volume
     val volumeFlowSound: StateFlow<Int?>
+
+    //notification output volume
     val volumeFlowNotification: StateFlow<Int?>
 
 }

@@ -15,20 +15,20 @@ import kotlinx.coroutines.flow.onEach
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.combineState
 
+/**
+ * used to observe device settings for sound or notification volume
+ */
 actual object DeviceVolume {
 
+    private val audioManager = ContextCompat.getSystemService(Application.Instance, AudioManager::class.java)
 
-    private val audioManager =
-        ContextCompat.getSystemService(Application.Instance, AudioManager::class.java)
-    private val _volumeFlowSound =
-        MutableStateFlow(audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC))
-    private val _volumeFlowNotification =
-        MutableStateFlow(audioManager?.getStreamVolume(AudioManager.STREAM_RING))
+    //sound output volume
+    private val _volumeFlowSound = MutableStateFlow(audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC))
+    actual val volumeFlowSound: StateFlow<Int?> get() = _volumeFlowSound
 
-    actual val volumeFlowSound: StateFlow<Int?>
-        get() = _volumeFlowSound
-    actual val volumeFlowNotification: StateFlow<Int?>
-        get() = _volumeFlowNotification
+    //notification output volume
+    private val _volumeFlowNotification = MutableStateFlow(audioManager?.getStreamVolume(AudioManager.STREAM_RING))
+    actual val volumeFlowNotification: StateFlow<Int?> get() = _volumeFlowNotification
 
     private val volumeObserver: ContentObserver =
         object : ContentObserver(Handler(Looper.getMainLooper())) {
@@ -41,15 +41,9 @@ actual object DeviceVolume {
             }
         }
 
-    init {
-        Application.Instance.contentResolver.registerContentObserver(
-            Settings.System.CONTENT_URI,
-            true,
-            volumeObserver
-        )
-    }
-
-
+    /**
+     * observe content volume when sound of notification flow has subscribers
+     */
     init {
         combineState(
             _volumeFlowSound.subscriptionCount,
