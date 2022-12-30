@@ -1,14 +1,24 @@
 package org.rhasspy.mobile.nativeutils
 
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.eclipse.paho.client.mqttv3.*
+import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence
 import org.rhasspy.mobile.mqtt.*
 import org.rhasspy.mobile.mqtt.MqttMessage
+import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
-import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.FileType
+import java.io.File
+import java.security.KeyStore
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManagerFactory
 
+/**
+ * Represents a MQTT client which can connect to the MQTT Broker.
+ */
 actual class MqttClient actual constructor(
     brokerUrl: String,
     clientId: String,
@@ -25,35 +35,36 @@ actual class MqttClient actual constructor(
         else -> MqttClient(brokerUrl, clientId)
     }
 
+    /**
+     * If *true* then there is a connection to the MQTT Broker.
+     **/
+    private val _isConnected = MutableStateFlow(false)
+    actual val isConnected = _isConnected.readOnly
+
+    /**
+     * callback for connection, and message delivery and arriving
+     */
     private val callback = object : MqttCallback {
         override fun deliveryComplete(token: IMqttDeliveryToken) {
             onDelivered(token.messageId)
         }
 
-        override fun messageArrived(
-            topic: String,
-            message: org.eclipse.paho.client.mqttv3.MqttMessage
-        ) {
+        override fun messageArrived(topic: String, message: org.eclipse.paho.client.mqttv3.MqttMessage) {
             onMessageReceived(topic, message.toMqttMessage())
         }
 
         override fun connectionLost(error: Throwable) {
+            _isConnected.value = false
             onDisconnect(error)
             client.setCallback(null)
         }
     }
 
-    actual val isConnected: Boolean
-        get() = client.isConnected
-
-
+    /**
+     * to publish and audio frame
+     */
     actual suspend fun publish(topic: String, msg: MqttMessage, timeout: Long): MqttError? = try {
-        if (!topic.contains("audioFrame") || AppSettings.isLogAudioFramesEnabled.value) {
-            //logging every audio frame really fills up the logs
-            logger.v {
-                "publish $topic $msg"
-            }
-        }
+        logger.v { "publish $topic $msg" }
 
         client.publish(topic, org.eclipse.paho.client.mqttv3.MqttMessage(msg.payload).apply {
             id = msg.msgId
@@ -63,10 +74,7 @@ actual class MqttClient actual constructor(
 
         null
     } catch (mqttPersistenceEx: MqttPersistenceException) {
-        MqttError(
-            mqttPersistenceEx.message ?: "Message persistence failed.",
-            MqttStatus.MSG_PERSISTENCE_FAILED
-        )
+        MqttError(mqttPersistenceEx.message ?: "Message persistence failed.", MqttStatus.MSG_PERSISTENCE_FAILED)
     } catch (mqttEx: MqttException) {
         MqttError(mqttEx.message ?: "Message delivery failed.", MqttStatus.MSG_DELIVERY_FAILED)
     }
@@ -86,21 +94,6 @@ actual class MqttClient actual constructor(
         MqttError(ex.message ?: "Subscription failed.", MqttStatus.SUBSCRIBE_FAILED)
     }
 
-    @Suppress("unused")
-    /**
-     * Will unsubscribe from one or more topics.
-     * @param topics One or more topics to unsubscribe from. Can include topic filter(s).
-     * @return Will return a error if a problem has occurred. If a [error][MqttError] is returned then the
-     * [unsubscribe failed][MqttStatus.UNSUBSCRIBE_FAILED] status (via [MqttError.statusCode]) is used.
-     */
-    actual suspend fun unsubscribe(vararg topics: String): MqttError? = try {
-        logger.v { "unsubscribe" }
-        client.unsubscribe(topics)
-        null
-    } catch (ex: MqttException) {
-        MqttError(ex.message ?: "", MqttStatus.UNSUBSCRIBE_FAILED)
-    }
-
     /**
      * Connects to the MQTT Broker.
      * @param connOptions The connection options to use.
@@ -116,14 +109,18 @@ actual class MqttClient actual constructor(
     actual suspend fun connect(connOptions: MqttServiceConnectionOptions): MqttError? {
         logger.v { "connect" }
 
-        return if (!isConnected) {
-            connectToBroker(connOptions.toPhaoConnectOptions())
+        val result = if (!client.isConnected) {
+            connectToBroker(connOptions.toPahoConnectOptions())
         } else {
             MqttError("Cannot connect to MQTT Broker.", MqttStatus.ALREADY_CONNECTED)
         }
+        _isConnected.value = client.isConnected
+        return result
     }
 
-    /** Makes a attempt to establish a connection to the MQTT broker. */
+    /**
+     * Makes a attempt to establish a connection to the MQTT broker.
+     **/
     private fun connectToBroker(connOptions: MqttConnectOptions): MqttError? {
         logger.v { "connectToBroker" }
         var result: MqttError? = null
@@ -161,6 +158,7 @@ actual class MqttClient actual constructor(
         var result: MqttError? = null
         if (client.isConnected) {
             try {
+                _isConnected.value = false
                 client.disconnect()
                 client.setCallback(null)
             } catch (ex: MqttException) {
@@ -173,34 +171,25 @@ actual class MqttClient actual constructor(
         return result
     }
 
-    /*
-    private fun createSSLContext(): SSLContext {
-    // SSL/TLS Setup
-// Get the BKS Keystore type required by Android
-val trustStore = KeyStore.getInstance("BKS");
-// Read the BKS file we generated (droidstore.bks)
-InputStream in = getResources().openRawResource(R.raw.droidstore);
-trustStore.load(input, null);
-
-TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-tmf.init(trustStore);
-
-SSLContext sslCtx = SSLContext.getInstance("TLS");
-sslCtx.init(null, tmf.getTrustManagers(), null);
-    }*/
-
-
-    private fun MqttServiceConnectionOptions.toPhaoConnectOptions(): MqttConnectOptions {
+    /**
+     * convert service connection options to paho connection option
+     */
+    private fun MqttServiceConnectionOptions.toPahoConnectOptions(): MqttConnectOptions {
         return MqttConnectOptions().also {
-            //it.setSocketFactory(sslCtx.getSocketFactory());
-            it.isCleanSession = cleanSession
-            it.keepAliveInterval = keepAliveInterval
-            it.userName = connUsername.ifEmpty { null }
-            it.password = connPassword.toCharArray()
-            it.connectionTimeout = connectionTimeout
+            if (this.isSSLEnabled) {
+                it.socketFactory = createSSLContext(this.keyStoreFile).socketFactory
+            }
+            it.isCleanSession = this.cleanSession
+            it.keepAliveInterval = this.keepAliveInterval
+            it.userName = this.connUsername.ifEmpty { null }
+            it.password = this.connPassword.toCharArray()
+            it.connectionTimeout = this.connectionTimeout
         }
     }
 
+    /**
+     * convert paho MqttMessage to common MqttMessage
+     */
     private fun org.eclipse.paho.client.mqttv3.MqttMessage.toMqttMessage(): MqttMessage {
         return MqttMessage(
             msgId = id,
@@ -209,4 +198,18 @@ sslCtx.init(null, tmf.getTrustManagers(), null);
             retained = isRetained
         )
     }
+
+    /**
+     * create ssl context by reading keystore file
+     */
+    private fun createSSLContext(keyStoreFileName: String): SSLContext {
+        val keyStore = KeyStore.getInstance("BKS")
+        keyStore.load(File("${FileType.CERTIFICATE.folderName}/$keyStoreFileName").inputStream(), null)
+        val factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+        factory.init(keyStore)
+        val sslContext = SSLContext.getInstance("TLS")
+        sslContext.init(null, factory.trustManagers, null)
+        return sslContext
+    }
+
 }

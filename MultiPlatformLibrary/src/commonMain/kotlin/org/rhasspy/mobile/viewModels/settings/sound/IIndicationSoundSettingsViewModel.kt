@@ -41,7 +41,7 @@ abstract class IIndicationSoundSettingsViewModel : ViewModel(), KoinComponent {
     abstract fun deleteSoundFile(file: SoundFile)
 
     //play/stop sound file
-    abstract fun roggleAudioPlayer()
+    abstract fun toggleAudioPlayer()
 
     //choose sound file from files
     abstract fun chooseSoundFile()

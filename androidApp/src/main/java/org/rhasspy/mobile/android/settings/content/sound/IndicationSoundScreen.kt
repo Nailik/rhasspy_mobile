@@ -88,7 +88,7 @@ fun IndicationSoundScreen(
                     )
 
                     SoundActionButtons(
-                        onPlay = viewModel::roggleAudioPlayer,
+                        onPlay = viewModel::toggleAudioPlayer,
                         isPlaying = viewModel.isAudioPlaying.collectAsState().value,
                         onChooseFile = viewModel::chooseSoundFile
                     )

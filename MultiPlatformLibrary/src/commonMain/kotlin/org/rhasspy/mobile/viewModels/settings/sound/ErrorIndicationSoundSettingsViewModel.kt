@@ -60,7 +60,7 @@ class ErrorIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel(
         }
     }
 
-    override fun roggleAudioPlayer() {
+    override fun toggleAudioPlayer() {
         if (isAudioPlaying.value) {
             localAudioService.stop()
         } else {

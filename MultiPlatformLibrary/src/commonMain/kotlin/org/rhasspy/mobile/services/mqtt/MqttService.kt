@@ -114,7 +114,7 @@ class MqttService : IService() {
         val connectEvent = serviceMiddleware.createEvent(Connecting)
 
         client?.also {
-            if (!it.isConnected) {
+            if (!it.isConnected.value) {
                 //connect to server
                 it.connect(params.mqttServiceConnectionOptions)?.also { error ->
                     connectEvent.error(ConnectionError(error))
@@ -125,7 +125,7 @@ class MqttService : IService() {
                 connectEvent.error(AlreadyConnected)
             }
             //update value, may be used from reconnect
-            _isConnected.value = it.isConnected == true
+            _isConnected.value = it.isConnected.value == true
         } ?: run {
             connectEvent.error(NotInitialized)
         }
@@ -140,8 +140,7 @@ class MqttService : IService() {
     private fun onDisconnect(error: Throwable) {
         serviceMiddleware.createEvent(Disconnect).error(error)
 
-
-        _isConnected.value = client?.isConnected == true
+        _isConnected.value = client?.isConnected?.value == true
 
         if (retryJob?.isActive != true) {
             retryJob = scope.launch {
@@ -149,7 +148,7 @@ class MqttService : IService() {
                 val reconnectEvent = serviceMiddleware.createEvent(Reconnect)
 
                 client?.also {
-                    while (!it.isConnected) {
+                    while (!it.isConnected.value) {
                         connectClient()
                         delay(params.retryInterval)
                     }

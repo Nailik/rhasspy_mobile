@@ -1,17 +1,20 @@
 package org.rhasspy.mobile.viewModels.configuration
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.mapReadonlyState
+import org.rhasspy.mobile.nativeutils.FileUtils
 import org.rhasspy.mobile.nativeutils.openLink
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.services.mqtt.MqttServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.settings.FileType
 import org.rhasspy.mobile.viewModels.configuration.test.MqttConfigurationTest
 
 class MqttConfigurationViewModel : IConfigurationViewModel() {
@@ -113,7 +116,11 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
 
     //open file chooser to select certificate
     fun selectSSLCertificate() {
-        //TODO
+        viewModelScope.launch {
+            FileUtils.selectFile(FileType.CERTIFICATE)?.also { fileName ->
+                _mqttKeyStoreFile.value = fileName
+            }
+        }
     }
 
     //set connection timeout time
@@ -148,12 +155,17 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
      * save data configuration
      */
     override fun onSave() {
+        if (ConfigurationSettings.mqttKeyStoreFile.value != _mqttKeyStoreFile.value) {
+            FileUtils.removeFile(FileType.CERTIFICATE, null, ConfigurationSettings.mqttKeyStoreFile.value)
+        }
+
         ConfigurationSettings.isMqttEnabled.value = _isMqttEnabled.value
         ConfigurationSettings.mqttHost.value = _mqttHost.value
         ConfigurationSettings.mqttPort.value = _mqttPort.value
         ConfigurationSettings.mqttUserName.value = _mqttUserName.value
         ConfigurationSettings.mqttPassword.value = _mqttPassword.value
         ConfigurationSettings.isMqttSSLEnabled.value = _isMqttSSLEnabled.value
+        ConfigurationSettings.mqttKeyStoreFile.value = _mqttKeyStoreFile.value
         ConfigurationSettings.mqttConnectionTimeout.value = _mqttConnectionTimeout.value
         ConfigurationSettings.mqttKeepAliveInterval.value = _mqttKeepAliveInterval.value
         ConfigurationSettings.mqttRetryInterval.value = _mqttRetryInterval.value
@@ -163,6 +175,10 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
      * undo all changes
      */
     override fun discard() {
+        if (ConfigurationSettings.mqttKeyStoreFile.value != _mqttKeyStoreFile.value) {
+            FileUtils.removeFile(FileType.CERTIFICATE, null, _mqttKeyStoreFile.value)
+        }
+
         _isMqttEnabled.value = ConfigurationSettings.isMqttEnabled.value
         _mqttHost.value = ConfigurationSettings.mqttHost.value
         _mqttPort.value = ConfigurationSettings.mqttPort.value
@@ -188,7 +204,8 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
                     mqttPort = _mqttPort.value,
                     retryInterval = _mqttRetryInterval.value,
                     mqttServiceConnectionOptions = MqttServiceConnectionOptions(
-                        ssl = _isMqttSSLEnabled.value,
+                        isSSLEnabled = _isMqttSSLEnabled.value,
+                        keyStoreFile = _mqttKeyStoreFile.value,
                         connUsername = _mqttUserName.value,
                         connPassword = _mqttPassword.value,
                         connectionTimeout = _mqttConnectionTimeout.value,

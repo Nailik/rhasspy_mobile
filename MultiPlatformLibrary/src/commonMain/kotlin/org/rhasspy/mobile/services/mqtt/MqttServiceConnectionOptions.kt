@@ -8,7 +8,8 @@ data class MqttServiceConnectionOptions(
      */
     val cleanSession: Boolean = false,
     val cleanStart: Boolean = true,
-    val ssl: Boolean,
+    val isSSLEnabled: Boolean,
+    val keyStoreFile: String,
     /** Connection timeout in seconds. */
     val connectionTimeout: Int,
     /** Keep alive interval in seconds. */
