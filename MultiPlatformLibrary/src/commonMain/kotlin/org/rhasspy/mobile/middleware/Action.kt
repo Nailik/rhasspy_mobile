@@ -4,6 +4,8 @@ sealed class Action {
 
     object PlayRecording : Action()
 
+    data class WakeWordError(val description: String) : Action()
+
     sealed class AppSettingsAction : Action() {
         class AudioOutputToggle(val enabled: Boolean) : AppSettingsAction()
         class AudioVolumeChange(val volume: Float) : AppSettingsAction()
@@ -25,7 +27,7 @@ sealed class Action {
 
         class SessionEnded(source: Source) : DialogAction(source)
 
-        class StartListening(source: Source, val sendAudioCaptured: Boolean?) : DialogAction(source)
+        class StartListening(source: Source, val sendAudioCaptured: Boolean) : DialogAction(source)
 
         class StopListening(source: Source) : DialogAction(source)
 

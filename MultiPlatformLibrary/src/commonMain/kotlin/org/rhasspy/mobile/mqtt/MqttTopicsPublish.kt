@@ -15,7 +15,7 @@ enum class MqttTopicsPublish(override val topic: String) : MqttTopic {
     AudioCaptured("rhasspy/asr/${MqttTopicPlaceholder.SiteId}/${MqttTopicPlaceholder.SessionId}/audioCaptured"),
     AsrAudioFrame("hermes/audioServer/${MqttTopicPlaceholder.SiteId}/audioFrame"),
     HotWordDetected("hermes/hotword/${MqttTopicPlaceholder.WakeWord}/detected"),
-    HotWordError("hermes/error/hotword"),
+    WakeWordError("hermes/error/hotword"),
     Query("hermes/nlu/query"),
     Say("hermes/tts/say"),
     AudioOutputPlayBytes("hermes/audioServer/${MqttTopicPlaceholder.SiteId}/playBytes/<requestId>"),

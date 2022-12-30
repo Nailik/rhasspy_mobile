@@ -30,7 +30,9 @@ class DialogManagerService : IService() {
     private val rhasspyActionsService by inject<RhasspyActionsService>()
     private val indicationService by inject<IndicationService>()
     private val mqttService by inject<MqttService>()
+
     private var sessionId: String? = null
+    private var sendAudioCaptured = false
     private var coroutineScope = CoroutineScope(Dispatchers.Default)
 
     private val _currentDialogState = MutableStateFlow(DialogManagerServiceState.Idle)
@@ -241,6 +243,8 @@ class DialogManagerService : IService() {
     private suspend fun startListening(action: DialogAction.StartListening) {
         if (isInCorrectState(action, DialogManagerServiceState.Idle)) {
 
+            sendAudioCaptured = action.sendAudioCaptured
+
             hotWordService.stopDetection()
             indicationService.onListening()
             rhasspyActionsService.startSpeechToText(sessionId ?: "") //TODO error
@@ -269,12 +273,16 @@ class DialogManagerService : IService() {
      * stop listening
      *
      * stops recording by ending speech to text
+     * sends speech to mqtt if requested
      */
     private suspend fun stopListening(action: DialogAction.StopListening) {
         if (isInCorrectState(action, DialogManagerServiceState.RecordingIntent)) {
 
             _currentDialogState.value = DialogManagerServiceState.TranscribingIntent
             rhasspyActionsService.endSpeechToText(sessionId ?: "", action.source is Source.Mqtt)
+            if (sendAudioCaptured) {
+                mqttService.audioCaptured(sessionId ?: "", rhasspyActionsService.speechToTextAudioData)
+            }
 
         }
     }

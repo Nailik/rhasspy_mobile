@@ -22,7 +22,7 @@ import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 
 class MqttService : IService() {
-    //TODO use say finished
+
     private val params by inject<MqttServiceParams>()
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
@@ -183,108 +183,114 @@ class MqttService : IService() {
             return
         }
 
-        //TODO session id to be checked by dialog manager
-        //TODO events when should be ignored not nice (like wrong site id but used for AsrTextCaptured duo to session id)
-        val receivedEvent = serviceMiddleware.createEvent(Received, topic)
-
         try {
             //regex topic
-            when {
-                MqttTopicsSubscription.HotWordDetected.topic.matches(topic) -> {
-                    hotWordDetectedCalled(topic)
-                    receivedEvent.success()
-                    return
-                }
-                MqttTopicsSubscription.IntentRecognitionResult.topic.matches(topic) -> {
-                    val jsonObject =
-                        Json.decodeFromString<JsonObject>(message.payload.decodeToString())
-                    intentRecognitionResult(jsonObject)
-                    receivedEvent.success()
-                    return
-                }
-                MqttTopicsSubscription.PlayBytes.topic
-                    .set(MqttTopicPlaceholder.SiteId, params.siteId)
-                    .matches(topic) -> {
-                    playBytes(message.payload)
-                    receivedEvent.success()
-                    return
-                }
+            if (!regexTopic(topic, message)) {
+                compareTopic(topic, message)
             }
 
-            //topic matches enum
-            getMqttTopic(topic)?.also { mqttTopic ->
-
-                if (!mqttTopic.topic.contains(MqttTopicPlaceholder.SiteId.toString())) {
-                    //site id in payload
-                    //decode json object
-                    val jsonObject =
-                        Json.decodeFromString<JsonObject>(message.payload.decodeToString())
-                    //validate site id
-                    if (jsonObject.isThisSiteId()) {
-                        when (mqttTopic) {
-                            MqttTopicsSubscription.StartSession -> startSession(jsonObject)
-                            MqttTopicsSubscription.EndSession -> endSession(jsonObject)
-                            MqttTopicsSubscription.SessionStarted -> sessionStarted(jsonObject)
-                            MqttTopicsSubscription.SessionEnded -> sessionEnded(jsonObject)
-                            MqttTopicsSubscription.HotWordToggleOn -> hotWordToggleOn()
-                            MqttTopicsSubscription.HotWordToggleOff -> hotWordToggleOff()
-                            MqttTopicsSubscription.AsrStartListening -> startListening(jsonObject)
-                            MqttTopicsSubscription.AsrStopListening -> stopListening(jsonObject)
-                            MqttTopicsSubscription.AsrTextCaptured -> asrTextCaptured(jsonObject)
-                            MqttTopicsSubscription.AsrError -> asrError(jsonObject)
-                            MqttTopicsSubscription.IntentNotRecognized -> intentNotRecognized(
-                                jsonObject
-                            )
-                            MqttTopicsSubscription.IntentHandlingToggleOn -> intentHandlingToggleOn()
-                            MqttTopicsSubscription.IntentHandlingToggleOff -> intentHandlingToggleOff()
-                            MqttTopicsSubscription.AudioOutputToggleOff -> audioOutputToggleOff()
-                            MqttTopicsSubscription.AudioOutputToggleOn -> audioOutputToggleOn()
-                            MqttTopicsSubscription.HotWordDetected -> hotWordDetectedCalled(topic)
-                            MqttTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(
-                                jsonObject
-                            )
-                            MqttTopicsSubscription.SetVolume -> if (!setVolume(jsonObject)) {
-                                receivedEvent.error(InvalidVolume)
-                            }
-                            else -> receivedEvent.error(InvalidTopic)
-                        }
-                        receivedEvent.success(jsonObject.toString())
-                    } else {
-                        when (mqttTopic) {
-                            MqttTopicsSubscription.AsrTextCaptured -> asrTextCaptured(jsonObject)
-                            MqttTopicsSubscription.AsrError -> asrError(jsonObject)
-                            else -> {
-                                logger.v { "message ignored, different side id $jsonObject" }
-                                receivedEvent.warning()
-                            }
-                        }
-                    }
-                } else {
-                    //site id in topic
-                    when {
-                        MqttTopicsSubscription.PlayBytes.topic
-                            .set(MqttTopicPlaceholder.SiteId, params.siteId)
-                            .matches(topic) -> {
-                            playBytes(message.payload)
-                            receivedEvent.success()
-                        }
-                        MqttTopicsSubscription.PlayFinished.topic
-                            .set(MqttTopicPlaceholder.SiteId, params.siteId)
-                            .matches(topic) -> {
-                            playFinishedCall()
-                            receivedEvent.success()
-                        }
-                        else -> receivedEvent.error(InvalidTopic)
-                    }
-                }
-            } ?: run {
-                //no topic found
-                receivedEvent.warning()
-            }
         } catch (e: Exception) {
-            receivedEvent.error(e)
+            logger.e(e) { "received message on $topic error " }
         }
     }
+
+
+    /**
+     * consumes messages that match by regex
+     *
+     * returns true when message was consumed
+     */
+    private fun regexTopic(topic: String, message: MqttMessage): Boolean {
+        when {
+            MqttTopicsSubscription.HotWordDetected.topic.matches(topic) -> {
+                hotWordDetectedCalled(topic)
+            }
+            MqttTopicsSubscription.IntentRecognitionResult.topic.matches(topic) -> {
+                val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
+                intentRecognitionResult(jsonObject)
+            }
+            MqttTopicsSubscription.PlayBytes.topic
+                .set(MqttTopicPlaceholder.SiteId, params.siteId)
+                .matches(topic) -> {
+                playBytes(message.payload)
+            }
+            else -> return false
+        }
+        return true
+    }
+
+    /**
+     * checks topics that are equal, compared to enum name
+     *
+     * returns true when message was consumed
+     */
+    private fun compareTopic(topic: String, message: MqttMessage) {
+
+        //topic matches enum
+        getMqttTopic(topic)?.also { mqttTopic ->
+
+            if (!mqttTopic.topic.contains(MqttTopicPlaceholder.SiteId.toString())) {
+                //site id in payload
+                //decode json object
+                val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
+                //validate site id
+                if (jsonObject.isThisSiteId()) {
+                    when (mqttTopic) {
+                        MqttTopicsSubscription.StartSession -> startSession(jsonObject)
+                        MqttTopicsSubscription.EndSession -> endSession(jsonObject)
+                        MqttTopicsSubscription.SessionStarted -> sessionStarted(jsonObject)
+                        MqttTopicsSubscription.SessionEnded -> sessionEnded(jsonObject)
+                        MqttTopicsSubscription.HotWordToggleOn -> hotWordToggleOn()
+                        MqttTopicsSubscription.HotWordToggleOff -> hotWordToggleOff()
+                        MqttTopicsSubscription.AsrStartListening -> startListening(jsonObject)
+                        MqttTopicsSubscription.AsrStopListening -> stopListening(jsonObject)
+                        MqttTopicsSubscription.AsrTextCaptured -> asrTextCaptured(jsonObject)
+                        MqttTopicsSubscription.AsrError -> asrError(jsonObject)
+                        MqttTopicsSubscription.IntentNotRecognized -> intentNotRecognized(
+                            jsonObject
+                        )
+                        MqttTopicsSubscription.IntentHandlingToggleOn -> intentHandlingToggleOn()
+                        MqttTopicsSubscription.IntentHandlingToggleOff -> intentHandlingToggleOff()
+                        MqttTopicsSubscription.AudioOutputToggleOff -> audioOutputToggleOff()
+                        MqttTopicsSubscription.AudioOutputToggleOn -> audioOutputToggleOn()
+                        MqttTopicsSubscription.HotWordDetected -> hotWordDetectedCalled(topic)
+                        MqttTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(
+                            jsonObject
+                        )
+                        MqttTopicsSubscription.SetVolume -> setVolume(jsonObject)
+                        else -> {}
+                    }
+                } else {
+                    when (mqttTopic) {
+                        MqttTopicsSubscription.AsrTextCaptured -> asrTextCaptured(jsonObject)
+                        MqttTopicsSubscription.AsrError -> asrError(jsonObject)
+                        else -> {
+                            logger.v { "message ignored, different side id $jsonObject" }
+                        }
+                    }
+                }
+            } else {
+                //site id in topic
+                when {
+                    MqttTopicsSubscription.PlayBytes.topic
+                        .set(MqttTopicPlaceholder.SiteId, params.siteId)
+                        .matches(topic) -> {
+                        playBytes(message.payload)
+                    }
+                    MqttTopicsSubscription.PlayFinished.topic
+                        .set(MqttTopicPlaceholder.SiteId, params.siteId)
+                        .matches(topic) -> {
+                        playFinishedCall()
+                    }
+                    else -> {}
+                }
+            }
+        } ?: run {
+            //no topic found
+
+        }
+    }
+
 
     /**
      * Subscribes to topics that are necessary
@@ -536,9 +542,9 @@ class MqttService : IService() {
      *
      * siteId: string = "default" - Hermes site ID
      */
-    suspend fun hotWordError(description: String) =
+    suspend fun wakeWordError(description: String) =
         publishMessage(
-            MqttTopicsPublish.HotWordError,
+            MqttTopicsPublish.WakeWordError,
             createMqttMessage {
                 put(MqttParams.SiteId, params.siteId)
                 put(MqttParams.Error, description)
@@ -850,11 +856,10 @@ class MqttService : IService() {
      * volume: float - volume level to set (0 = off, 1 = full volume)
      * siteId: string = "default" - Hermes site ID
      */
-    private fun setVolume(jsonObject: JsonObject): Boolean =
+    private fun setVolume(jsonObject: JsonObject) =
         jsonObject[MqttParams.Volume.value]?.jsonPrimitive?.floatOrNull?.let {
             serviceMiddleware.action(AppSettingsAction.AudioVolumeChange(it))
-            true
-        } ?: false
+        }
 
 
     private fun JsonObject.getSource() = Source.Mqtt(jsonObject.getSessionId())

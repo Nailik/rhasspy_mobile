@@ -9,8 +9,8 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.dialogManager.*
 import org.rhasspy.mobile.services.localaudio.LocalAudioService
+import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.recording.RecordingService
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.services.settings.AppSettingsService
 
 /**
@@ -26,15 +26,11 @@ abstract class IServiceMiddleware : KoinComponent, Closeable {
     )
     val event = _event.readOnly
 
-    private val _serviceErrors = MutableSharedFlow<EventState.Error>()
-    val serviceErrors = _serviceErrors.readOnly
-
     private val dialogManagerService by inject<DialogManagerService>()
     private val appSettingsService by inject<AppSettingsService>()
     private val recordingService by inject<RecordingService>()
     private val localAudioService by inject<LocalAudioService>()
-
-    val rhasspyActionsService by inject<RhasspyActionsService>()
+    private val mqttService by inject<MqttService>()
     val coroutineScope = CoroutineScope(Dispatchers.Default)
 
 
@@ -42,6 +38,7 @@ abstract class IServiceMiddleware : KoinComponent, Closeable {
         coroutineScope.launch {
             when (action) {
                 is Action.PlayRecording -> localAudioService.playAudio(recordingService.recordedData)
+                is Action.WakeWordError -> mqttService.wakeWordError(action.description)
                 is Action.AppSettingsAction -> {
                     when (action) {
                         is Action.AppSettingsAction.AudioOutputToggle -> appSettingsService.audioOutputToggle(action.enabled)

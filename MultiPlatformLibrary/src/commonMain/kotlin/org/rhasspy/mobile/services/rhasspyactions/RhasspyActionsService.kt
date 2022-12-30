@@ -31,7 +31,8 @@ open class RhasspyActionsService : IService() {
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
 
-    private val speechToTextAudioData = mutableListOf<Byte>()
+    private val _speechToTextAudioData = mutableListOf<Byte>()
+    val speechToTextAudioData: List<Byte> get() = _speechToTextAudioData
 
     private val scope = CoroutineScope(Dispatchers.Default)
     private var collector: Job? = null
@@ -147,7 +148,7 @@ open class RhasspyActionsService : IService() {
         //evaluate result
         when (params.speechToTextOption) {
             SpeechToTextOptions.RemoteHTTP -> {
-                val action = httpClientService.speechToText(speechToTextAudioData.addWavHeader())?.let { text ->
+                val action = httpClientService.speechToText(_speechToTextAudioData.addWavHeader())?.let { text ->
                     DialogAction.AsrTextCaptured(Source.HttpApi, text)
                 } ?: run {
                     DialogAction.AsrError(Source.HttpApi)
@@ -159,13 +160,13 @@ open class RhasspyActionsService : IService() {
         }
 
         //clear data
-        speechToTextAudioData.clear()
+        _speechToTextAudioData.clear()
     }
 
     suspend fun startSpeechToText(sessionId: String) {
         //clear data and start recording
         collector?.cancel()
-        speechToTextAudioData.clear()
+        _speechToTextAudioData.clear()
 
         if (params.speechToTextOption != SpeechToTextOptions.Disabled) {
             //start collection
@@ -183,7 +184,7 @@ open class RhasspyActionsService : IService() {
 
     private suspend fun audioFrame(data: List<Byte>) {
         when (params.speechToTextOption) {
-            SpeechToTextOptions.RemoteHTTP -> speechToTextAudioData.addAll(data)
+            SpeechToTextOptions.RemoteHTTP -> _speechToTextAudioData.addAll(data)
             SpeechToTextOptions.RemoteMQTT -> mqttClientService.audioFrame(
                 data.toMutableList().addWavHeader()
             )
