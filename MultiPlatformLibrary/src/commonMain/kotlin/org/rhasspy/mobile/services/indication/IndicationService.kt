@@ -1,49 +1,39 @@
 package org.rhasspy.mobile.services.indication
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.logic.StateMachine
-import org.rhasspy.mobile.middleware.ErrorType.IndicationServiceErrorType.OverlayPermissionMissing
-import org.rhasspy.mobile.middleware.EventType.IndicationServiceEventType.Start
-import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.nativeutils.NativeIndication
-import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
+import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.settings.AppSettings
-import org.rhasspy.mobile.settings.sounds.SoundOptions
 
-class IndicationService : IService() {
+class IndicationService : IService(), KoinComponent {
 
+    private val localAudioService by inject<LocalAudioService>()
     private val _indicationState = MutableStateFlow(IndicationState.Idle)
     private val _isShowVisualIndication = MutableStateFlow(false)
+
+    //states are used by overlay
     val isShowVisualIndication = _isShowVisualIndication.readOnly
     val indicationState = _indicationState.readOnly
 
-    private val serviceMiddleware by inject<IServiceMiddleware>()
-
-    init {
-        if (AppSettings.isWakeWordLightIndicationEnabled.value) {
-            if (!OverlayPermission.isGranted()) {
-                serviceMiddleware.createEvent(Start).error(OverlayPermissionMissing)
-            }
-        }
-    }
-
     override fun onClose() {
-        //nothing to do
     }
 
     /**
-     * called when session ended
+     * idle shows no indication and stops screen wakeup
      */
     fun onIdle() {
         _isShowVisualIndication.value = false
         NativeIndication.releaseWakeUp()
     }
 
-    fun onWakeUp() {
+    /**
+     * wake up screen when hotword is detected and play sound eventually
+     */
+    fun onWakeWordDetected() {
         if (AppSettings.isWakeWordDetectionTurnOnDisplayEnabled.value) {
             NativeIndication.wakeUpScreen()
         }
@@ -51,92 +41,56 @@ class IndicationService : IService() {
             _isShowVisualIndication.value = true
         }
         _indicationState.value = IndicationState.WakeUp
-        playWakeSound()
+        if (AppSettings.isSoundIndicationEnabled.value) {
+            localAudioService.playWakeSound()
+        }
     }
 
-    fun onRecording() {
+    /**
+     * update indication state
+     */
+    fun onListening() {
         if (AppSettings.isWakeWordLightIndicationEnabled.value) {
             _isShowVisualIndication.value = true
         }
         _indicationState.value = IndicationState.Recording
     }
 
-    fun onRecordingFinished() {
-        playRecordedSound()
+    /**
+     * play sound that speech was recorded
+     */
+    fun onSilenceDetected() {
+        if (AppSettings.isSoundIndicationEnabled.value) {
+            localAudioService.playRecordedSound()
+        }
     }
 
-    fun onThinking() {
+    /**
+     * when intent is recognized show thinking animation
+     */
+    fun onRecognizingIntent() {
         if (AppSettings.isWakeWordLightIndicationEnabled.value) {
             _isShowVisualIndication.value = true
         }
         _indicationState.value = IndicationState.Thinking
     }
 
-    fun onSpeaking() {
+    /**
+     * show animation that audio is playing
+     */
+    fun onPlayAudio() {
         if (AppSettings.isWakeWordLightIndicationEnabled.value) {
             _isShowVisualIndication.value = true
         }
         _indicationState.value = IndicationState.Speaking
     }
 
+    /**
+     * play error sound on error
+     */
     fun onError() {
-        playErrorSound()
-    }
-
-    private fun playWakeSound() {
         if (AppSettings.isSoundIndicationEnabled.value) {
-            when (AppSettings.wakeSound.value) {
-                SoundOptions.Disabled.name -> {}
-                SoundOptions.Default.name -> StateMachine.audioPlayer.playSoundFileResource(
-                    MR.files.etc_wav_beep_hi,
-                    AppSettings.wakeSoundVolume.data,
-                    AppSettings.soundIndicationOutputOption.value
-                )
-                else -> StateMachine.audioPlayer.playSoundFile(
-                    "wake",
-                    AppSettings.wakeSound.value,
-                    AppSettings.wakeSoundVolume.data,
-                    AppSettings.soundIndicationOutputOption.value
-                )
-            }
-        }
-    }
-
-    private fun playRecordedSound() {
-        if (AppSettings.isSoundIndicationEnabled.value) {
-            when (AppSettings.recordedSound.value) {
-                SoundOptions.Disabled.name -> {}
-                SoundOptions.Default.name -> StateMachine.audioPlayer.playSoundFileResource(
-                    MR.files.etc_wav_beep_lo,
-                    AppSettings.recordedSoundVolume.data,
-                    AppSettings.soundIndicationOutputOption.value
-                )
-                else -> StateMachine.audioPlayer.playSoundFile(
-                    "recorded",
-                    AppSettings.recordedSound.value,
-                    AppSettings.recordedSoundVolume.data,
-                    AppSettings.soundIndicationOutputOption.value
-                )
-            }
-        }
-    }
-
-    private fun playErrorSound() {
-        if (AppSettings.isSoundIndicationEnabled.value) {
-            when (AppSettings.errorSound.value) {
-                SoundOptions.Disabled.name -> {}
-                SoundOptions.Default.name -> StateMachine.audioPlayer.playSoundFileResource(
-                    MR.files.etc_wav_beep_error,
-                    AppSettings.errorSoundVolume.data,
-                    AppSettings.soundIndicationOutputOption.value
-                )
-                else -> StateMachine.audioPlayer.playSoundFile(
-                    "error",
-                    AppSettings.errorSound.value,
-                    AppSettings.errorSoundVolume.data,
-                    AppSettings.soundIndicationOutputOption.value
-                )
-            }
+            localAudioService.playErrorSound()
         }
     }
 

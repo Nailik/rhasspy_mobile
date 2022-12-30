@@ -23,7 +23,7 @@ class MicrophoneWidgetViewModel : ViewModel(), KoinComponent {
     val isRecording =
         MutableStateFlow(false) // dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
     val isActionEnabled = dialogManagerServiceState
-        .mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingHotWord }
+        .mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingWakeWord }
 
     init {
         viewModelScope.launch {

@@ -48,7 +48,7 @@ class DialogManagerService : IService() {
                 is DialogAction.AsrError -> asrError(action)
                 is DialogAction.AsrTextCaptured -> asrTextCaptured(action)
                 is DialogAction.EndSession -> endSession(action)
-                is DialogAction.HotWordDetected -> hotWordDetected(action)
+                is DialogAction.WakeWordDetected -> wakeWordDetected(action)
                 is DialogAction.IntentRecognitionResult -> intentRecognitionResult(action)
                 is DialogAction.IntentRecognitionError -> intentRecognitionError(action)
                 is DialogAction.PlayAudio -> playAudio(action)
@@ -90,6 +90,7 @@ class DialogManagerService : IService() {
         if (isInCorrectState(action, DialogManagerServiceState.TranscribingIntent)) {
 
             _currentDialogState.value = DialogManagerServiceState.RecognizingIntent
+            indicationService.onRecognizingIntent()
             informMqtt(action)
             rhasspyActionsService.recognizeIntent(sessionId ?: "", action.text ?: "")
 
@@ -115,9 +116,10 @@ class DialogManagerService : IService() {
      *
      * starts a session
      */
-    private suspend fun hotWordDetected(action: DialogAction.HotWordDetected) {
-        if (isInCorrectState(action, DialogManagerServiceState.AwaitingHotWord)) {
+    private suspend fun wakeWordDetected(action: DialogAction.WakeWordDetected) {
+        if (isInCorrectState(action, DialogManagerServiceState.AwaitingWakeWord)) {
 
+            indicationService.onWakeWordDetected()
             _currentDialogState.value = DialogManagerServiceState.Idle
             informMqtt(action)
             startSession(DialogAction.StartSession(Source.Local))
@@ -156,9 +158,10 @@ class DialogManagerService : IService() {
      * play the audio
      */
     private suspend fun playAudio(action: DialogAction.PlayAudio) {
-        if (isInCorrectState(action, DialogManagerServiceState.HandlingIntent, DialogManagerServiceState.Idle, DialogManagerServiceState.AwaitingHotWord)) {
+        if (isInCorrectState(action, DialogManagerServiceState.HandlingIntent, DialogManagerServiceState.Idle, DialogManagerServiceState.AwaitingWakeWord)) {
 
             hotWordService.stopDetection()
+            indicationService.onPlayAudio()
             rhasspyActionsService.playAudio(action.byteArray.toList())
 
         }
@@ -174,7 +177,7 @@ class DialogManagerService : IService() {
     private suspend fun playFinished(action: DialogAction.PlayFinished) {
         if (isInCorrectState(action, DialogManagerServiceState.PlayingAudio)) {
 
-            _currentDialogState.value = DialogManagerServiceState.AwaitingHotWord
+            _currentDialogState.value = DialogManagerServiceState.AwaitingWakeWord
             informMqtt(action)
             hotWordService.stopDetection()
 
@@ -191,8 +194,9 @@ class DialogManagerService : IService() {
     private suspend fun sessionEnded(action: DialogAction.SessionEnded) {
         if (isInCorrectState(action, DialogManagerServiceState.TranscribingIntent, DialogManagerServiceState.HandlingIntent)) {
 
+            indicationService.onIdle()
             sessionId = null
-            _currentDialogState.value = DialogManagerServiceState.AwaitingHotWord
+            _currentDialogState.value = DialogManagerServiceState.AwaitingWakeWord
             informMqtt(action)
             hotWordService.startDetection()
 
@@ -228,6 +232,7 @@ class DialogManagerService : IService() {
     private fun silenceDetected(action: DialogAction.SilenceDetected) {
         if (isInCorrectState(action, DialogManagerServiceState.RecordingIntent)) {
 
+            indicationService.onSilenceDetected()
             onAction(DialogAction.StopListening(Source.Local))
 
         }
@@ -237,7 +242,7 @@ class DialogManagerService : IService() {
         if (isInCorrectState(action, DialogManagerServiceState.Idle)) {
 
             hotWordService.stopDetection()
-            indicationService.onRecording()
+            indicationService.onListening()
             rhasspyActionsService.startSpeechToText(sessionId ?: "") //TODO error
 
         }
@@ -255,7 +260,6 @@ class DialogManagerService : IService() {
         if (isInCorrectState(action, DialogManagerServiceState.Idle)) {
 
             hotWordService.stopDetection()
-            indicationService.onWakeUp()
             onAction(DialogAction.SessionStarted(Source.Local))
 
         }
@@ -269,6 +273,7 @@ class DialogManagerService : IService() {
     private suspend fun stopListening(action: DialogAction.StopListening) {
         if (isInCorrectState(action, DialogManagerServiceState.RecordingIntent)) {
 
+            _currentDialogState.value = DialogManagerServiceState.TranscribingIntent
             rhasspyActionsService.endSpeechToText(sessionId ?: "", action.source is Source.Mqtt)
 
         }
@@ -328,7 +333,7 @@ class DialogManagerService : IService() {
             when (action) {
                 is DialogAction.AsrError -> mqttService.asrError(safeSessionId)
                 is DialogAction.AsrTextCaptured -> mqttService.asrTextCaptured(safeSessionId, action.text)
-                is DialogAction.HotWordDetected -> mqttService.hotWordDetected(action.hotWord)
+                is DialogAction.WakeWordDetected -> mqttService.hotWordDetected(action.hotWord)
                 is DialogAction.IntentRecognitionError -> mqttService.intentNotRecognized(safeSessionId)
                 is DialogAction.PlayFinished -> mqttService.playFinished()
                 is DialogAction.SessionEnded -> mqttService.sessionEnded(safeSessionId)

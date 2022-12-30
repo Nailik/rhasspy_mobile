@@ -58,8 +58,8 @@ abstract class IServiceMiddleware : KoinComponent, Closeable {
     }
 
     fun userSessionClick() {
-        if (dialogManagerService.currentDialogState.value == DialogManagerServiceState.AwaitingHotWord) {
-            action(Action.DialogAction.HotWordDetected(Source.Local, "manual"))
+        if (dialogManagerService.currentDialogState.value == DialogManagerServiceState.AwaitingWakeWord) {
+            action(Action.DialogAction.WakeWordDetected(Source.Local, "manual"))
         } else {
             action(Action.DialogAction.StopListening(Source.Local))
         }

@@ -503,7 +503,7 @@ class MqttService : IService() {
         topic.split("/").let {
             if (it.size > 2) {
                 scope.launch {
-                    serviceMiddleware.action(DialogAction.HotWordDetected(Source.Mqtt(null), it[2]))
+                    serviceMiddleware.action(DialogAction.WakeWordDetected(Source.Mqtt(null), it[2]))
                 }
                 true
             } else {

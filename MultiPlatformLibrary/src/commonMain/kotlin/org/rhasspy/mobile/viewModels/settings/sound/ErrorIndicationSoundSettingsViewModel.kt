@@ -2,10 +2,13 @@ package org.rhasspy.mobile.viewModels.settings.sound
 
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.nativeutils.FileUtils
+import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.FileType
 import org.rhasspy.mobile.settings.sounds.SoundFile
@@ -57,34 +60,21 @@ class ErrorIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel(
             AppSettings.customErrorSounds.value = customSounds.value.toMutableSet().apply {
                 remove(file.fileName)
             }
-            FileUtils.removeFile(FileType.SOUND, subfolder = "error", file.fileName)
+            FileUtils.removeFile(FileType.SOUND, subfolder = SoundFileFolder.Error.toString(), file.fileName)
         }
     }
 
-    override fun clickAudioPlayer() {
+    override fun roggleAudioPlayer() {
         if (isAudioPlaying.value) {
-            audioPlayer.stopPlayingData()
+            localAudioService.stop()
         } else {
-            when (AppSettings.errorSound.value) {
-                SoundOptions.Disabled.name -> {}
-                SoundOptions.Default.name -> audioPlayer.playSoundFileResource(
-                    MR.files.etc_wav_beep_error,
-                    AppSettings.errorSoundVolume.data,
-                    AppSettings.soundIndicationOutputOption.value
-                )
-                else -> audioPlayer.playSoundFile(
-                    "error",
-                    AppSettings.errorSound.value,
-                    AppSettings.errorSoundVolume.data,
-                    AppSettings.soundIndicationOutputOption.value
-                )
-            }
+            localAudioService.playErrorSound()
         }
     }
 
     override fun chooseSoundFile() {
         viewModelScope.launch {
-            FileUtils.selectFile(FileType.SOUND, subfolder = "error")?.also { fileName ->
+            FileUtils.selectFile(FileType.SOUND, subfolder = SoundFileFolder.Error.toString())?.also { fileName ->
                 val customSounds = AppSettings.customErrorSounds.data
                 AppSettings.customErrorSounds.value = customSounds.value.toMutableSet().apply {
                     add(fileName)

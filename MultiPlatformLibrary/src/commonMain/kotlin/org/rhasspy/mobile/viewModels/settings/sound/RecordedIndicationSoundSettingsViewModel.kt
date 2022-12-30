@@ -57,34 +57,21 @@ class RecordedIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewMod
             AppSettings.customRecordedSounds.value = customSounds.value.toMutableSet().apply {
                 remove(file.fileName)
             }
-            FileUtils.removeFile(FileType.SOUND, subfolder = "recorded", file.fileName)
+            FileUtils.removeFile(FileType.SOUND, subfolder = SoundFileFolder.Recorded.toString(), file.fileName)
         }
     }
 
-    override fun clickAudioPlayer() {
+    override fun roggleAudioPlayer() {
         if (isAudioPlaying.value) {
-            audioPlayer.stopPlayingData()
+            localAudioService.stop()
         } else {
-            when (AppSettings.recordedSound.value) {
-                SoundOptions.Disabled.name -> {}
-                SoundOptions.Default.name -> audioPlayer.playSoundFileResource(
-                    MR.files.etc_wav_beep_lo,
-                    AppSettings.recordedSoundVolume.data,
-                    AppSettings.soundIndicationOutputOption.value
-                )
-                else -> audioPlayer.playSoundFile(
-                    "recorded",
-                    AppSettings.recordedSound.value,
-                    AppSettings.recordedSoundVolume.data,
-                    AppSettings.soundIndicationOutputOption.value
-                )
-            }
+            localAudioService.playRecordedSound()
         }
     }
 
     override fun chooseSoundFile() {
         viewModelScope.launch {
-            FileUtils.selectFile(FileType.SOUND, subfolder = "recorded")?.also { fileName ->
+            FileUtils.selectFile(FileType.SOUND, subfolder = SoundFileFolder.Recorded.toString())?.also { fileName ->
                 val customSounds = AppSettings.customRecordedSounds.data
                 AppSettings.customRecordedSounds.value =
                     customSounds.value.toMutableSet().apply {

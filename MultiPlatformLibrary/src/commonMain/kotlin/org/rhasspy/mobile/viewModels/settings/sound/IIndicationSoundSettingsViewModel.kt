@@ -2,23 +2,25 @@ package org.rhasspy.mobile.viewModels.settings.sound
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.rhasspy.mobile.data.AudioOutputOptions
 import org.rhasspy.mobile.mapReadonlyState
-import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.nativeutils.DeviceVolume
+import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.sounds.SoundFile
 
-abstract class IIndicationSoundSettingsViewModel : ViewModel() {
+abstract class IIndicationSoundSettingsViewModel : ViewModel(), KoinComponent {
 
+    val localAudioService by inject<LocalAudioService>()
 
     abstract val isSoundIndicationDefault: StateFlow<Boolean>
     abstract val isSoundIndicationDisabled: StateFlow<Boolean>
     abstract val customSoundFiles: StateFlow<List<SoundFile>>
     abstract val soundVolume: StateFlow<Float>
 
-    internal val audioPlayer = AudioPlayer()
-    val isAudioPlaying: StateFlow<Boolean> = audioPlayer.isPlayingState
+    val isAudioPlaying: StateFlow<Boolean> = localAudioService.isPlayingState
     val audioOutputOption = AppSettings.soundIndicationOutputOption.data
     val isNoSoundInformationBoxVisible = when (AppSettings.soundIndicationOutputOption.value) {
         AudioOutputOptions.Sound -> DeviceVolume.volumeFlowSound.mapReadonlyState { it == 0 }
@@ -39,13 +41,13 @@ abstract class IIndicationSoundSettingsViewModel : ViewModel() {
     abstract fun deleteSoundFile(file: SoundFile)
 
     //play/stop sound file
-    abstract fun clickAudioPlayer()
+    abstract fun roggleAudioPlayer()
 
     //choose sound file from files
     abstract fun chooseSoundFile()
 
     fun onPause() {
-        audioPlayer.stopPlayingData()
+        localAudioService.stop()
     }
 
 }

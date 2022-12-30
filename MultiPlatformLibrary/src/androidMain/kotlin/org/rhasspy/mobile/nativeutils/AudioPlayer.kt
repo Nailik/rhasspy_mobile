@@ -7,6 +7,7 @@ import android.net.Uri
 import androidx.annotation.AnyRes
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.resources.FileResource
+import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.flow.*
@@ -17,7 +18,7 @@ import java.io.File
 import java.nio.ByteBuffer
 
 
-actual class AudioPlayer {
+actual class AudioPlayer: Closeable {
 
 
     private val logger = Logger.withTag("AudioPlayer")
@@ -31,16 +32,24 @@ actual class AudioPlayer {
     private var notification: Ringtone? = null
     private var volumeChange: Job? = null
 
-    actual fun playData(data: List<Byte>, onFinished: () -> Unit, onError: (exception: Exception) -> Unit) {
+    actual fun playData(
+        data: List<Byte>,
+        onFinished: (() -> Unit)?,
+        onError: ((exception: Exception) -> Unit)?
+    ) {
         if (!isEnabled) {
             logger.v { "AudioPlayer NOT enabled" }
-            onFinished()
+            if (onFinished != null) {
+                onFinished()
+            }
             return
         }
 
         if (_isPlayingState.value) {
             logger.e { "AudioPlayer playData already playing data" }
-            onFinished()
+            if (onFinished != null) {
+                onFinished()
+            }
             return
         }
 
@@ -87,7 +96,9 @@ actual class AudioPlayer {
                         logger.v { "finished playing audio stream" }
                         _isPlayingState.value = false
                         CoroutineScope(Dispatchers.Default).launch {
-                            onFinished()
+                            if (onFinished != null) {
+                                onFinished()
+                            }
                         }
                     }
 
@@ -105,14 +116,14 @@ actual class AudioPlayer {
         } catch (e: Exception) {
             logger.e(e) { "Exception while playing audio data" }
             _isPlayingState.value = false
-            onError(e)
+            if (onError != null) {
+                onError(e)
+            }
         }
     }
 
-    actual fun stopPlayingData() {
-        CoroutineScope(Dispatchers.Default).launch {
-            onFinished?.invoke()
-        }
+    actual fun stop() {
+        onFinished?.invoke()
         audioTrack?.stop()
         mediaPlayer?.stop()
         notification?.stop()
@@ -181,7 +192,9 @@ actual class AudioPlayer {
     actual fun playSoundFileResource(
         fileResource: FileResource,
         volume: StateFlow<Float>,
-        audioOutputOptions: AudioOutputOptions
+        audioOutputOptions: AudioOutputOptions,
+        onFinished: (() -> Unit)?,
+        onError: ((exception: Exception) -> Unit)?
     ) {
         logger.v { "playSoundFileResource" }
 
@@ -210,14 +223,15 @@ actual class AudioPlayer {
      * play some sound file
      */
     actual fun playSoundFile(
-        subfolder: String,
         filename: String,
         volume: StateFlow<Float>,
-        audioOutputOptions: AudioOutputOptions
+        audioOutputOptions: AudioOutputOptions,
+        onFinished: (() -> Unit)?,
+        onError: ((exception: Exception) -> Unit)?
     ) {
-        logger.v { "playSoundFile $subfolder/$filename" }
+        logger.v { "playSoundFile $filename" }
 
-        val soundFile = File(Application.Instance.filesDir, "sounds/$subfolder/$filename")
+        val soundFile = File(Application.Instance.filesDir, "sounds/$filename")
 
         when (audioOutputOptions) {
             AudioOutputOptions.Sound -> {
@@ -227,6 +241,10 @@ actual class AudioPlayer {
                 playNotification(Uri.fromFile(soundFile), volume)
             }
         }
+    }
+
+    override fun close() {
+        //TODO
     }
 
 }

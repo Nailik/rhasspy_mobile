@@ -207,7 +207,7 @@ class WebServerService : IService() {
      * ?entity=<entity>&value=<value> - set custom entities/values in recognized intent
      */
     private fun listenForCommand(): WebServerResult {
-        serviceMiddleware.action(DialogAction.HotWordDetected(Source.HttpApi, ""))
+        serviceMiddleware.action(DialogAction.WakeWordDetected(Source.HttpApi, ""))
         return WebServerResult.Ok
     }
 

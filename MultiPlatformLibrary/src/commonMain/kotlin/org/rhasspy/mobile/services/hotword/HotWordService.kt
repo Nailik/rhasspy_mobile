@@ -118,7 +118,7 @@ class HotWordService : IService() {
 
     private fun onKeywordDetected(hotWord: String) {
         serviceMiddleware.createEvent(Detected, hotWord).success()
-        serviceMiddleware.action(Action.DialogAction.HotWordDetected(Source.Local, hotWord))
+        serviceMiddleware.action(Action.DialogAction.WakeWordDetected(Source.Local, hotWord))
     }
 
     override fun onClose() {

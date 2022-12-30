@@ -5,6 +5,7 @@ import org.rhasspy.mobile.settings.AppSettings
 
 class SettingsScreenViewModel : ViewModel() {
 
+    //TODO overlay permission for indication warning
     val currentLanguage = AppSettings.languageOption.data
     val isBackgroundEnabled = AppSettings.isBackgroundServiceEnabled.data
     val microphoneOverlaySizeOption = AppSettings.microphoneOverlaySizeOption.data

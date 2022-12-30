@@ -13,7 +13,7 @@ sealed class Action {
 
     sealed class DialogAction(val source: Source) : Action() {
 
-        class HotWordDetected(source: Source, val hotWord: String) : DialogAction(source)
+        class WakeWordDetected(source: Source, val hotWord: String) : DialogAction(source)
 
         class SilenceDetected(source: Source) : DialogAction(source)
 

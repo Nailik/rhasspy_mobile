@@ -37,9 +37,9 @@ class MicrophoneOverlayViewModel : ViewModel(), KoinComponent {
         AppSettings.microphoneOverlaySizeOption.data.mapReadonlyState { it.size }
 
     val isActionEnabled = dialogManagerServiceState
-        .mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingHotWord }
+        .mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingWakeWord }
     val isShowBorder =
-        dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.AwaitingHotWord }
+        dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.AwaitingWakeWord }
     val isShowMicOn: StateFlow<Boolean> = MicrophonePermission.granted
     val isRecording =
         dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }

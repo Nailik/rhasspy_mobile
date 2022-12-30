@@ -18,7 +18,7 @@ import org.rhasspy.mobile.settings.ConfigurationSettings
 import kotlin.native.concurrent.ThreadLocal
 
 @ThreadLocal
-object StateMachine {
+private object StateMachine {
 
     private val scope = CoroutineScope(Dispatchers.Default)
     private val logger = Logger.withTag("StateMachine")

@@ -2,7 +2,6 @@ package org.rhasspy.mobile.viewModels.settings.sound
 
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.nativeutils.FileUtils
@@ -58,34 +57,21 @@ class WakeIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel()
             AppSettings.customWakeSounds.value = customSounds.value.toMutableSet().apply {
                 remove(file.fileName)
             }
-            FileUtils.removeFile(FileType.SOUND, subfolder = "wake", file.fileName)
+            FileUtils.removeFile(FileType.SOUND, subfolder = SoundFileFolder.Wake.toString(), file.fileName)
         }
     }
 
-    override fun clickAudioPlayer() {
+    override fun roggleAudioPlayer() {
         if (isAudioPlaying.value) {
-            audioPlayer.stopPlayingData()
+            localAudioService.stop()
         } else {
-            when (AppSettings.wakeSound.value) {
-                SoundOptions.Disabled.name -> {}
-                SoundOptions.Default.name -> audioPlayer.playSoundFileResource(
-                    MR.files.etc_wav_beep_hi,
-                    AppSettings.wakeSoundVolume.data,
-                    AppSettings.soundIndicationOutputOption.value
-                )
-                else -> audioPlayer.playSoundFile(
-                    "wake",
-                    AppSettings.wakeSound.value,
-                    AppSettings.wakeSoundVolume.data,
-                    AppSettings.soundIndicationOutputOption.value
-                )
-            }
+            localAudioService.playWakeSound()
         }
     }
 
     override fun chooseSoundFile() {
         viewModelScope.launch {
-            FileUtils.selectFile(FileType.SOUND, subfolder = "wake")?.also { fileName ->
+            FileUtils.selectFile(FileType.SOUND, subfolder = SoundFileFolder.Error.toString())?.also { fileName ->
                 val customSounds = AppSettings.customWakeSounds.data
                 AppSettings.customWakeSounds.value =
                     customSounds.value.toMutableSet().apply {
