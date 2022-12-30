@@ -18,18 +18,27 @@ import java.security.cert.X509Certificate
 import javax.net.ssl.X509TrustManager
 import kotlin.text.toCharArray
 
+/**
+ * adds call logging to web server
+ */
 actual fun Application.installCompression() {
     install(Compression) {
         gzip()
     }
 }
 
+/**
+ * enables compression for web server
+ */
 actual fun Application.installCallLogging() {
     install(CallLogging) {
         level = org.slf4j.event.Level.INFO
     }
 }
 
+/**
+ * create connector for webserver with ssl settings if enabled
+ */
 actual fun ApplicationEngineEnvironmentBuilder.installConnector(
     port: Int,
     isUseSSL: Boolean,
@@ -63,10 +72,16 @@ actual fun ApplicationEngineEnvironmentBuilder.installConnector(
     }
 }
 
+/**
+ * get server engine
+ */
 actual fun getEngine(environment: ApplicationEngineEnvironment): BaseApplicationEngine {
     return embeddedServer(factory = Netty, environment = environment)
 }
 
+/**
+ * configure client engine
+ */
 actual fun CIOEngineConfig.configureEngine(isHttpVerificationDisabled: Boolean) {
     https {
         if (isHttpVerificationDisabled) {

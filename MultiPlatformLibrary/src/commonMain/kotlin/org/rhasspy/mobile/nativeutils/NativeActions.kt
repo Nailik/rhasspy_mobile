@@ -1,4 +1,6 @@
 package org.rhasspy.mobile.nativeutils
 
-@Suppress("NO_ACTUAL_FOR_EXPECT")
+/**
+ * opens the link in browser
+ */
 expect fun openLink(link: String)

@@ -4,13 +4,19 @@ import io.ktor.client.engine.cio.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 
-@Suppress("NO_ACTUAL_FOR_EXPECT")
-expect fun Application.installCompression()
-
-@Suppress("NO_ACTUAL_FOR_EXPECT")
+/**
+ * adds call logging to web server
+ */
 expect fun Application.installCallLogging()
 
-@Suppress("NO_ACTUAL_FOR_EXPECT")
+/**
+ * enables compression for web server
+ */
+expect fun Application.installCompression()
+
+/**
+ * create connector for webserver with ssl settings if enabled
+ */
 expect fun ApplicationEngineEnvironmentBuilder.installConnector(
     port: Int,
     isUseSSL: Boolean,
@@ -20,9 +26,12 @@ expect fun ApplicationEngineEnvironmentBuilder.installConnector(
     keyPassword: String
 )
 
-
-@Suppress("NO_ACTUAL_FOR_EXPECT")
+/**
+ * get server engine
+ */
 expect fun getEngine(environment: ApplicationEngineEnvironment): BaseApplicationEngine
 
-@Suppress("NO_ACTUAL_FOR_EXPECT")
+/**
+ * configure client engine
+ */
 expect fun CIOEngineConfig.configureEngine(isHttpVerificationDisabled: Boolean)
