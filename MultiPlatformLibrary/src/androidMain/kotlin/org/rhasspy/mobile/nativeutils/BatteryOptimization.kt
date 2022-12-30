@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.nativeutils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
@@ -9,6 +10,11 @@ import android.provider.Settings
 import org.rhasspy.mobile.Application
 
 actual object BatteryOptimization {
+
+    /**
+     * open battery optimization settings in system
+     */
+    @SuppressLint("BatteryLife")
     actual fun openOptimizationSettings() {
         Application.Instance.startActivity(Intent().apply {
             this.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
@@ -17,6 +23,9 @@ actual object BatteryOptimization {
         })
     }
 
+    /**
+     * check if battery optimization is disabled
+     */
     actual fun isBatteryOptimizationDisabled(): Boolean {
         val powerManager =
             Application.Instance.applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager
