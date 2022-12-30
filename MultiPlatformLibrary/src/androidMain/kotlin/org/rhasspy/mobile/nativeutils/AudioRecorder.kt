@@ -8,8 +8,10 @@ import android.media.AudioRecord.RECORDSTATE_RECORDING
 import android.media.MediaRecorder
 import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
+import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.Application
@@ -17,72 +19,110 @@ import org.rhasspy.mobile.readOnly
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-actual object AudioRecorder {
+actual class AudioRecorder : Closeable {
     private val logger = Logger.withTag("AudioRecorder")
+
+    /**
+     * output data as flow
+     */
+    private val _output = MutableSharedFlow<List<Byte>>()
+    actual val output = _output.readOnly
+
+    /**
+     * max volume since start recording
+     */
+    private val _maxVolume = MutableStateFlow<Short>(0)
+    actual val maxVolume = _maxVolume.readOnly
+
+    //state if currently recording
+    private val _isRecording = MutableStateFlow(false)
+    actual val isRecording = _isRecording.readOnly
+
+    //maximum audio level that can happen
+    //https://developer.android.com/reference/android/media/AudioFormat#encoding
+    actual val absoluteMaxVolume = 32767.0
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     private var recorder: AudioRecord? = null
 
-    private val _output = MutableStateFlow<List<Byte>>(listOf())
-    private val _maxVolume = MutableStateFlow<Short>(0)
-    private val _isRecording = MutableStateFlow(false)
+    companion object {
+        private const val SAMPLING_RATE_IN_HZ = 16000
+        private const val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
+        private const val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT
+        private const val BUFFER_SIZE_FACTOR = 2
+        private val BUFFER_SIZE = AudioRecord.getMinBufferSize(
+            SAMPLING_RATE_IN_HZ,
+            CHANNEL_CONFIG, AUDIO_FORMAT
+        ) * BUFFER_SIZE_FACTOR
+    }
 
-    actual val output = _output.readOnly
-    actual val maxVolume = _maxVolume.readOnly
-    actual val isRecording = _isRecording.readOnly
-
-    //https://developer.android.com/reference/android/media/AudioFormat#encoding
-    actual val absoluteMaxVolume = 32767.0
-
-    private const val SAMPLING_RATE_IN_HZ = 16000
-    private const val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
-    private const val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT
-
-    private val BUFFER_SIZE_FACTOR = 2
-
-    private val BUFFER_SIZE: Int = AudioRecord.getMinBufferSize(
-        SAMPLING_RATE_IN_HZ,
-        CHANNEL_CONFIG, AUDIO_FORMAT
-    ) * BUFFER_SIZE_FACTOR
-
+    /**
+     * start recording
+     *
+     * creates audio recorder if null
+     */
     actual fun startRecording() {
         logger.v { "startRecording" }
 
-        if (recorder == null) {
-            logger.v { "initializing recorder" }
+        try {
+            if (recorder == null) {
+                logger.v { "initializing recorder" }
 
-            if (ActivityCompat.checkSelfPermission(
-                    Application.Instance,
-                    Manifest.permission.RECORD_AUDIO
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                logger.e { "missing recording permission" }
+                if (ActivityCompat.checkSelfPermission(
+                        Application.Instance,
+                        Manifest.permission.RECORD_AUDIO
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    logger.e { "missing recording permission" }
+                }
+
+                recorder = AudioRecord.Builder()
+                    .setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION)
+                    .setAudioFormat(
+                        AudioFormat.Builder()
+                            .setSampleRate(SAMPLING_RATE_IN_HZ)
+                            .setChannelMask(CHANNEL_CONFIG)
+                            .setEncoding(AUDIO_FORMAT)
+                            .build()
+                    )
+                    .setBufferSizeInBytes(BUFFER_SIZE) //8000
+                    .build()
             }
 
-            recorder = AudioRecord.Builder()
-                .setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION)
-                .setAudioFormat(
-                    AudioFormat.Builder()
-                        .setSampleRate(SAMPLING_RATE_IN_HZ)
-                        .setChannelMask(CHANNEL_CONFIG)
-                        .setEncoding(AUDIO_FORMAT)
-                        .build()
-                )
-                .setBufferSizeInBytes(BUFFER_SIZE) //8000
-                .build()
-        }
-
-        _isRecording.value = true
-
-        try {
+            _isRecording.value = true
             recorder?.startRecording()
             read()
         } catch (e: Exception) {
-
+            _isRecording.value = false
+            logger.e(e) { "native start recording error" }
         }
     }
 
+    /**
+     * stop recording
+     */
+    actual fun stopRecording() {
+        _isRecording.value = false
+        logger.v { "stopRecording" }
+        recorder?.stop()
+        recorder?.release()
+        recorder = null
+    }
+
+    /**
+     * close audio recorder, releases recorder
+     */
+    override fun close() {
+        _isRecording.value = false
+        recorder?.stop()
+        recorder?.release()
+        recorder = null
+    }
+
+    /**
+     * reads from audio and emits buffer onto output
+     */
     private fun read() {
         coroutineScope.launch {
             recorder?.also {
@@ -106,18 +146,10 @@ actual object AudioRecorder {
                         _maxVolume.value = max
                     }
 
-                    _output.value = byteArray.toList()
+                    _output.emit(byteArray.toList())
                 }
             }
         }
     }
 
-
-    actual fun stopRecording() {
-        _isRecording.value = false
-        logger.v { "stopRecording" }
-        recorder?.stop()  //TODO simplify do not always create new recorder
-        recorder?.release()
-        recorder = null
-    }
 }

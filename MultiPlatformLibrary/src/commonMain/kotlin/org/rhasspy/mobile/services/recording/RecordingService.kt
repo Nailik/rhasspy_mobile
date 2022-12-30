@@ -27,13 +27,16 @@ class RecordingService : IService() {
     //TODO save recording in ram
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
+    private val audioRecorder by inject<AudioRecorder>()
 
     private var scope = CoroutineScope(Dispatchers.Default)
     private var silenceStartTime: Instant? = null
 
+    private val _maxVolume = MutableStateFlow<Short>(0)
     private val _isRecording = MutableStateFlow(false)
     val isRecording = _isRecording.readOnly
 
+    //TODO collect audio frames (more than one byte
     private val _output = MutableStateFlow<List<Byte>>(emptyList())
     val output = _output.readOnly
 
@@ -54,20 +57,20 @@ class RecordingService : IService() {
 
         scope.launch {
             //collect from audio recorder
-            AudioRecorder.output.collect { value ->
+            audioRecorder.output.collect { value ->
                 _output.value = value
             }
         }
 
         scope.launch {
-            AudioRecorder.maxVolume.collect {
+            audioRecorder.maxVolume.collect {
                 silenceDetection(it)
             }
         }
     }
 
     override fun onClose() {
-        AudioRecorder.stopRecording()
+        audioRecorder.stopRecording()
         scope.cancel()
     }
 
@@ -91,11 +94,11 @@ class RecordingService : IService() {
     }
 
     private fun startRecording() {
-        AudioRecorder.startRecording()
+        audioRecorder.startRecording()
     }
 
     private fun stopRecording() {
-        AudioRecorder.stopRecording()
+        audioRecorder.stopRecording()
     }
 
 }

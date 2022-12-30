@@ -22,6 +22,7 @@ import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.middleware.ServiceMiddleware
 import org.rhasspy.mobile.middleware.ServiceTestMiddleware
 import org.rhasspy.mobile.mqtt.OverlayServices
+import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.services.dialogManager.DialogManagerService
 import org.rhasspy.mobile.services.dialogManager.DialogManagerServiceParams
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
@@ -144,6 +145,10 @@ val viewModelModule = module {
     single { IndicationOverlayViewModel() }
 }
 
+val nativeModule = module {
+    closeableSingle { AudioRecorder() }
+}
+
 
 fun createServiceMiddleware(isTest: Boolean): IServiceMiddleware {
     return when (isTest) {
@@ -179,7 +184,7 @@ abstract class Application : NativeApplication(), KoinComponent {
         // start a KoinApplication in Global context
         startKoin {
             // declare used modules
-            modules(serviceModule, viewModelModule)
+            modules(serviceModule, viewModelModule, nativeModule)
         }
 
         Logger.addLogWriter(CrashlyticsLogWriter())

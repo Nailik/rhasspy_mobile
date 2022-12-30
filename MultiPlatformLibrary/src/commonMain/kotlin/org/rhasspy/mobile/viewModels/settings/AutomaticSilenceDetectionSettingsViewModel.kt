@@ -2,6 +2,8 @@ package org.rhasspy.mobile.viewModels.settings
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.nativeutils.AudioRecorder
@@ -10,12 +12,14 @@ import org.rhasspy.mobile.settings.AppSettings
 import kotlin.math.log
 import kotlin.math.pow
 
-class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
+class AutomaticSilenceDetectionSettingsViewModel : ViewModel(), KoinComponent {
+
+    private val audioRecorder by inject<AudioRecorder>()
 
     //unsaved data
     private val _automaticSilenceDetectionTimeText =
         MutableStateFlow(AppSettings.automaticSilenceDetectionTime.value.toString())
-    private val maxAudioLevel = AudioRecorder.absoluteMaxVolume
+    private val maxAudioLevel = audioRecorder.absoluteMaxVolume
 
     //unsaved ui data
     val isAutomaticSilenceDetectionEnabled = AppSettings.isAutomaticSilenceDetectionEnabled.data
@@ -29,12 +33,12 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
         }
 
     //testing
-    val isRecording = AudioRecorder.isRecording
+    val isRecording = audioRecorder.isRecording
     val isSilenceDetectionAudioLevelVisible = isRecording
     val automaticSilenceDetectionAudioLevel = AppSettings.automaticSilenceDetectionAudioLevel.data
-    val currentAudioLevel = AudioRecorder.maxVolume
+    val currentAudioLevel = audioRecorder.maxVolume
     val isAudioLevelBiggerThanMax = combineState(
-        AudioRecorder.maxVolume,
+        audioRecorder.maxVolume,
         AppSettings.automaticSilenceDetectionAudioLevel.data
     ) { audioLevel, max ->
         audioLevel > max
@@ -80,14 +84,14 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel() {
      * start the audio level test will launch a job that listens to the audio recorder
      */
     private fun startAudioLevelTest() {
-        AudioRecorder.startRecording()
+        audioRecorder.startRecording()
     }
 
     /**
      * stop audio level test stops recording and removes the job
      */
     private fun stopAudioLevelTest() {
-        AudioRecorder.stopRecording()
+        audioRecorder.stopRecording()
     }
 
 }

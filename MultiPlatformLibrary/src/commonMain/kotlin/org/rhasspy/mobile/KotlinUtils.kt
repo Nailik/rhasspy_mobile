@@ -151,4 +151,4 @@ fun <T, R> StateFlow<T>.mapReadonlyState(
 
 val <T> MutableStateFlow<T>.readOnly get(): StateFlow<T> = this
 
-val <T> MutableSharedFlow<T>.readOnly get(): SharedFlow<T> = this
+val <T> MutableSharedFlow<T>.readOnly get(): Flow<T> = this
