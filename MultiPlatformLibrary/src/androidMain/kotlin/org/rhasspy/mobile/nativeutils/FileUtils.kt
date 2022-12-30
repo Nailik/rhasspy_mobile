@@ -10,8 +10,14 @@ import java.util.zip.ZipInputStream
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+/**
+ * to open file selection or delete file from local app storage
+ */
 actual object FileUtils {
 
+    /**
+     * open file selection and copy file to specific folder and return selected file name
+     */
     actual suspend fun selectFile(
         fileType: FileType,
         subfolder: String?
@@ -30,14 +36,18 @@ actual object FileUtils {
     }
 
 
-    //delete file
+    /**
+     * delete file from local app storage
+     */
     actual fun removeFile(fileType: FileType, subfolder: String?, fileName: String) {
         val folderName = "${fileType.folderName}${subfolder?.let { "/$it" } ?: ""}"
         File(Application.Instance.filesDir, "$folderName/$fileName").delete()
     }
 
 
-    //read file from system
+    /**
+     * read file from system
+     */
     private suspend fun queryFile(uri: Uri): String? = suspendCoroutine { continuation ->
         Application.Instance.contentResolver.query(uri, null, null, null, null)?.also { cursor ->
             if (cursor.moveToFirst()) {
@@ -57,14 +67,18 @@ actual object FileUtils {
         }
     }
 
-    //open the file
+    /**
+     * open document
+     */
     private suspend fun openDocument(fileType: FileType): Uri? = suspendCoroutine { continuation ->
         Application.Instance.currentActivity?.openDocument(fileType.fileTypes) {
             continuation.resume(it.data?.data)
         }
     }
 
-    //copy file to destination folder
+    /**
+     * copy file to destination folder
+     */
     private suspend fun copyFile(
         fileType: FileType,
         uri: Uri,
@@ -76,6 +90,9 @@ actual object FileUtils {
             else -> copyNormalFile(uri, folderName, fileName)
         }
 
+    /**
+     * open normal file and copy
+     */
     private suspend fun copyNormalFile(uri: Uri, folderName: String, fileName: String): String? =
         suspendCoroutine { continuation ->
             Application.Instance.contentResolver.openInputStream(uri)?.also { inputStream ->
@@ -95,6 +112,9 @@ actual object FileUtils {
             }
         }
 
+    /**
+     * open porcupine file and copy
+     */
     private suspend fun copyPorcupineFile(
         uri: Uri,
         folderName: String,
@@ -158,7 +178,9 @@ actual object FileUtils {
             continuation.resume(null)
         }
 
-    //rename file while it already exists
+    /**
+     *  rename file while it already exists
+     */
     private fun renameFileWhileExists(folder: String, file: String): String {
         var fileName = file
         var index = 0
