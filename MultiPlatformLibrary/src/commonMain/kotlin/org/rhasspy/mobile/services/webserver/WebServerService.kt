@@ -297,7 +297,7 @@ class WebServerService : IService() {
      * actually starts a session
      */
     private fun startRecording(): WebServerResult {
-        serviceMiddleware.action(DialogAction.StartListening(Source.HttpApi, null))
+        serviceMiddleware.action(DialogAction.StartListening(Source.HttpApi, false))
         return WebServerResult.Ok
     }
 

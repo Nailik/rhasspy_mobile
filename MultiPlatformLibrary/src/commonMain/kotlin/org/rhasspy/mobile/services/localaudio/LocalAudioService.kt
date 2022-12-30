@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.services.localaudio
 
-import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.services.IService
@@ -22,6 +21,7 @@ class LocalAudioService : IService() {
     suspend fun playAudio(data: List<Byte>): Unit = suspendCoroutine { continuation ->
         audioPlayer.playData(
             data = data,
+            volume = AppSettings.volume.value,
             onFinished = {
                 continuation.resume(Unit)
             },
@@ -34,7 +34,7 @@ class LocalAudioService : IService() {
     fun playWakeSound() {
         when (AppSettings.wakeSound.value) {
             SoundOptions.Disabled.name -> {}
-            SoundOptions.Default.name -> audioPlayer.playSoundFileResource(
+            SoundOptions.Default.name -> audioPlayer.playFileResource(
                 MR.files.etc_wav_beep_hi,
                 AppSettings.wakeSoundVolume.data,
                 AppSettings.soundIndicationOutputOption.value
@@ -50,7 +50,7 @@ class LocalAudioService : IService() {
     fun playRecordedSound() {
         when (AppSettings.recordedSound.value) {
             SoundOptions.Disabled.name -> {}
-            SoundOptions.Default.name -> audioPlayer.playSoundFileResource(
+            SoundOptions.Default.name -> audioPlayer.playFileResource(
                 MR.files.etc_wav_beep_lo,
                 AppSettings.recordedSoundVolume.data,
                 AppSettings.soundIndicationOutputOption.value
@@ -66,7 +66,7 @@ class LocalAudioService : IService() {
     fun playErrorSound() {
         when (AppSettings.errorSound.value) {
             SoundOptions.Disabled.name -> {}
-            SoundOptions.Default.name -> audioPlayer.playSoundFileResource(
+            SoundOptions.Default.name -> audioPlayer.playFileResource(
                 MR.files.etc_wav_beep_error,
                 AppSettings.errorSoundVolume.data,
                 AppSettings.soundIndicationOutputOption.value
