@@ -19,7 +19,7 @@ import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
-import org.rhasspy.mobile.viewModels.configuration.TextToSpeechConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.TextToSpeechConfigurationViewModel
 
 
 /**

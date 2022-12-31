@@ -6,7 +6,7 @@ import androidx.navigation.compose.rememberNavController
 import org.junit.Before
 import org.junit.Rule
 import org.rhasspy.mobile.android.main.LocalNavController
-import org.rhasspy.mobile.viewModels.settings.SaveAndRestoreSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.SaveAndRestoreSettingsViewModel
 
 class SaveAndRestoreSettingsContentTest {
 

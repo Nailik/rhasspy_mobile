@@ -25,7 +25,7 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.DarkThemeColors
 import org.rhasspy.mobile.android.theme.LightThemeColors
 import org.rhasspy.mobile.data.ThemeOptions
-import org.rhasspy.mobile.viewModels.settings.ThemeSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.ThemeSettingsViewModel
 import kotlin.test.assertEquals
 
 class ThemeSettingsContentTest {

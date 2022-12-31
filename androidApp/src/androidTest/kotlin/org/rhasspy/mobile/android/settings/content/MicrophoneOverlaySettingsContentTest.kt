@@ -18,7 +18,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.data.MicrophoneOverlaySizeOptions
-import org.rhasspy.mobile.viewModels.settings.MicrophoneOverlaySettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.MicrophoneOverlaySettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

@@ -39,7 +39,7 @@ import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.viewModels.settings.AutomaticSilenceDetectionSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.AutomaticSilenceDetectionSettingsViewModel
 
 /**
  * settings to configure automatic silence detection

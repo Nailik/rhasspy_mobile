@@ -28,7 +28,7 @@ import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.middleware.EventState
-import org.rhasspy.mobile.viewModels.screens.ConfigurationScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.ConfigurationScreenViewModel
 
 /**
  * configuration screens with list items that open bottom sheet

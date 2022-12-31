@@ -5,7 +5,7 @@ import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.sounds.SoundOptions
-import org.rhasspy.mobile.viewModels.settings.sound.SoundFileFolder
+import org.rhasspy.mobile.viewmodel.settings.sound.SoundFileFolder
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 

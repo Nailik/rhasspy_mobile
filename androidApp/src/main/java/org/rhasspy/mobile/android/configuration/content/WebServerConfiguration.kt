@@ -23,7 +23,7 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.elements.translate
 import org.rhasspy.mobile.android.content.list.*
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.viewModels.configuration.WebServerConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.WebServerConfigurationViewModel
 
 /**
  * Content to configure text to speech

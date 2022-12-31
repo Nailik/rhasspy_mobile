@@ -17,7 +17,7 @@ import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScreens
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.AudioOutputOptions
-import org.rhasspy.mobile.viewModels.settings.IndicationSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.IndicationSettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

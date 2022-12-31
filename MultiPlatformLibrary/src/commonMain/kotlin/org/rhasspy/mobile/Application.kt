@@ -23,12 +23,12 @@ import org.rhasspy.mobile.middleware.ServiceMiddleware
 import org.rhasspy.mobile.middleware.ServiceTestMiddleware
 import org.rhasspy.mobile.mqtt.OverlayServices
 import org.rhasspy.mobile.nativeutils.AudioRecorder
-import org.rhasspy.mobile.services.dialogManager.DialogManagerService
-import org.rhasspy.mobile.services.dialogManager.DialogManagerServiceParams
+import org.rhasspy.mobile.services.dialog.DialogManagerService
+import org.rhasspy.mobile.services.dialog.DialogManagerServiceParams
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantServiceParams
-import org.rhasspy.mobile.services.hotword.HotWordService
-import org.rhasspy.mobile.services.hotword.HotWordServiceParams
+import org.rhasspy.mobile.services.wakeword.WakeWordService
+import org.rhasspy.mobile.services.wakeword.WakeWordServiceParams
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.services.indication.IndicationService
@@ -46,17 +46,17 @@ import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.services.webserver.WebServerServiceParams
 import org.rhasspy.mobile.settings.AppSettings
 import org.rhasspy.mobile.settings.ConfigurationSettings
-import org.rhasspy.mobile.viewModels.*
-import org.rhasspy.mobile.viewModels.configuration.*
-import org.rhasspy.mobile.viewModels.configuration.test.*
-import org.rhasspy.mobile.viewModels.overlay.IndicationOverlayViewModel
-import org.rhasspy.mobile.viewModels.overlay.MicrophoneOverlayViewModel
-import org.rhasspy.mobile.viewModels.screens.*
-import org.rhasspy.mobile.viewModels.settings.*
-import org.rhasspy.mobile.viewModels.settings.sound.ErrorIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewModels.settings.sound.RecordedIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewModels.settings.sound.WakeIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewModels.widget.MicrophoneWidgetViewModel
+import org.rhasspy.mobile.viewmodel.*
+import org.rhasspy.mobile.viewmodel.configuration.*
+import org.rhasspy.mobile.viewmodel.configuration.test.*
+import org.rhasspy.mobile.viewmodel.overlay.IndicationOverlayViewModel
+import org.rhasspy.mobile.viewmodel.overlay.MicrophoneOverlayViewModel
+import org.rhasspy.mobile.viewmodel.screens.*
+import org.rhasspy.mobile.viewmodel.settings.*
+import org.rhasspy.mobile.viewmodel.settings.sound.ErrorIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.sound.RecordedIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.sound.WakeIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.widget.MicrophoneWidgetViewModel
 
 inline fun <reified T : Closeable> Module.closeableSingle(
     qualifier: Qualifier? = null,
@@ -77,7 +77,7 @@ val serviceModule = module {
     closeableSingle { UdpService() }
     closeableSingle { HomeAssistantService() }
     closeableSingle { RecordingService() }
-    closeableSingle { HotWordService() }
+    closeableSingle { WakeWordService() }
     closeableSingle { DialogManagerService() }
     closeableSingle { AppSettingsService() }
     closeableSingle { IndicationService() }
@@ -95,7 +95,7 @@ val serviceModule = module {
     single { params ->
         params.getOrNull<HomeAssistantServiceParams>() ?: HomeAssistantServiceParams()
     }
-    single { params -> params.getOrNull<HotWordServiceParams>() ?: HotWordServiceParams() }
+    single { params -> params.getOrNull<WakeWordServiceParams>() ?: WakeWordServiceParams() }
     single { params ->
         params.getOrNull<DialogManagerServiceParams>() ?: DialogManagerServiceParams()
     }

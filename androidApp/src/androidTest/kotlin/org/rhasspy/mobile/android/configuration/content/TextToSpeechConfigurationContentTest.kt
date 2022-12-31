@@ -12,7 +12,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.data.TextToSpeechOptions
-import org.rhasspy.mobile.viewModels.configuration.TextToSpeechConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.TextToSpeechConfigurationViewModel
 import kotlin.test.assertEquals
 
 class TextToSpeechConfigurationContentTest {

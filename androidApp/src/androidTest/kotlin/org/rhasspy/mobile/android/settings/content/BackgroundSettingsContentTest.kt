@@ -15,7 +15,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.assertTextEquals
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.viewModels.settings.BackgroundServiceSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.BackgroundServiceSettingsViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 

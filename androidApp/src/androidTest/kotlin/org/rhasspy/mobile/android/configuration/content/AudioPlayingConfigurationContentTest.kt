@@ -13,7 +13,7 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.data.AudioOutputOptions
 import org.rhasspy.mobile.data.AudioPlayingOptions
-import org.rhasspy.mobile.viewModels.configuration.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.AudioPlayingConfigurationViewModel
 import kotlin.test.assertEquals
 
 class AudioPlayingConfigurationContentTest {

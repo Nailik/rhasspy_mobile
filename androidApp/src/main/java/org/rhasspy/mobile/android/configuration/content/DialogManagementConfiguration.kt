@@ -11,7 +11,7 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.viewModels.configuration.DialogManagementConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.DialogManagementConfigurationViewModel
 
 /**
  * DropDown to select dialog management option

@@ -44,21 +44,21 @@ sealed interface ErrorType {
         }
     }
 
-    enum class HotWordServiceError : ErrorType {
-        MicrophonePermissionMissing,
-        PorcupineActivationException,
-        PorcupineActivationLimitException,
-        PorcupineActivationRefusedException,
-        PorcupineActivationThrottledException,
-        PorcupineInvalidArgumentException,
-        PorcupineInvalidStateException,
-        PorcupineIOException,
-        PorcupineKeyException,
-        PorcupineMemoryException,
-        PorcupineRuntimeException,
-        PorcupineStopIterationException,
-        Unknown,
-        NotInitialized
+    sealed class WakeWordServiceError(val exception: Exception?) : ErrorType {
+        class MicrophonePermissionMissing(exception: Exception) : WakeWordServiceError(exception)
+        class PorcupineActivationException(exception: Exception) : WakeWordServiceError(exception)
+        class PorcupineActivationLimitException(exception: Exception) : WakeWordServiceError(exception)
+        class PorcupineActivationRefusedException(exception: Exception) : WakeWordServiceError(exception)
+        class PorcupineActivationThrottledException(exception: Exception) : WakeWordServiceError(exception)
+        class PorcupineInvalidArgumentException(exception: Exception) : WakeWordServiceError(exception)
+        class PorcupineInvalidStateException(exception: Exception) : WakeWordServiceError(exception)
+        class PorcupineIOException(exception: Exception) : WakeWordServiceError(exception)
+        class PorcupineKeyException(exception: Exception) : WakeWordServiceError(exception)
+        class PorcupineMemoryException(exception: Exception) : WakeWordServiceError(exception)
+        class PorcupineRuntimeException(exception: Exception) : WakeWordServiceError(exception)
+        class PorcupineStopIterationException(exception: Exception) : WakeWordServiceError(exception)
+        class Other(exception: Exception) : WakeWordServiceError(exception)
+        object NotInitialized : WakeWordServiceError(null)
     }
 
     enum class IndicationServiceErrorType : ErrorType {

@@ -30,10 +30,10 @@ import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScree
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSoundScreen
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewModels.settings.IndicationSettingsViewModel
-import org.rhasspy.mobile.viewModels.settings.sound.ErrorIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewModels.settings.sound.RecordedIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewModels.settings.sound.WakeIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.IndicationSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.sound.ErrorIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.sound.RecordedIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.sound.WakeIndicationSoundSettingsViewModel
 
 /**
  * indication sounds

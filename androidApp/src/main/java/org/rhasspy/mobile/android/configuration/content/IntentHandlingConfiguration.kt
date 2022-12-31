@@ -18,7 +18,7 @@ import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewModels.configuration.IntentHandlingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.IntentHandlingConfigurationViewModel
 
 /**
  * content for intent handling configuration

@@ -35,7 +35,7 @@ import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 
 enum class WakeWordConfigurationScreens {
     Overview,

@@ -22,8 +22,8 @@ import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.test.R
 import org.rhasspy.mobile.data.AudioOutputOptions
-import org.rhasspy.mobile.viewModels.settings.IndicationSettingsViewModel
-import org.rhasspy.mobile.viewModels.settings.sound.IIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.IndicationSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.sound.IIndicationSoundSettingsViewModel
 import java.io.File
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

@@ -24,7 +24,7 @@ import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.viewModels.settings.BackgroundServiceSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.BackgroundServiceSettingsViewModel
 
 /**
  * background service

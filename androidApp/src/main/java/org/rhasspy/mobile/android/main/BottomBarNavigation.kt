@@ -32,7 +32,7 @@ import org.rhasspy.mobile.android.content.item.NavigationItem
 import org.rhasspy.mobile.android.navigation.BottomBarScreenType
 import org.rhasspy.mobile.android.navigation.NavigationParams
 import org.rhasspy.mobile.android.settings.SettingsScreen
-import org.rhasspy.mobile.viewModels.screens.HomeScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
 
 val LocalConfigurationNavController = compositionLocalOf<NavController> {
     error("No NavController provided")

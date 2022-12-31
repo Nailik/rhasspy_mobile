@@ -13,7 +13,7 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithCombinedTag
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.data.PorcupineKeywordOptions
-import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 

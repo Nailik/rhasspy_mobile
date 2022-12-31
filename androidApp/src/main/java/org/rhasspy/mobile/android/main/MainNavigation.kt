@@ -20,7 +20,7 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.settings.addSettingsScreen
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.AppTheme
-import org.rhasspy.mobile.viewModels.settings.LogSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.LogSettingsViewModel
 
 /**
  * main screens, full size

@@ -20,7 +20,7 @@ import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
-import org.rhasspy.mobile.viewModels.configuration.SpeechToTextConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.SpeechToTextConfigurationViewModel
 
 /**
  * Content to configure speech to text

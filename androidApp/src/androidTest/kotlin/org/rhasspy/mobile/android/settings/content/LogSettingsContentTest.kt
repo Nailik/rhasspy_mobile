@@ -11,7 +11,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.logger.LogLevel
-import org.rhasspy.mobile.viewModels.settings.LogSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.LogSettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

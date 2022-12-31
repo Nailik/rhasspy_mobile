@@ -27,7 +27,7 @@ import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.data.LanguageOptions
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
-import org.rhasspy.mobile.viewModels.settings.LanguageSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.LanguageSettingsViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 

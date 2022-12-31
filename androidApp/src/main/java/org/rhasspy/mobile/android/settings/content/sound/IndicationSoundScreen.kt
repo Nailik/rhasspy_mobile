@@ -26,7 +26,7 @@ import org.rhasspy.mobile.android.content.list.SliderListItem
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.settings.sounds.SoundFile
-import org.rhasspy.mobile.viewModels.settings.sound.IIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.sound.IIndicationSoundSettingsViewModel
 
 /**
  * screen to choose indication sound

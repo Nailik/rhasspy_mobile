@@ -19,7 +19,7 @@ import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.SliderListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
-import org.rhasspy.mobile.viewModels.configuration.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 
 /**
  * default keywords screen

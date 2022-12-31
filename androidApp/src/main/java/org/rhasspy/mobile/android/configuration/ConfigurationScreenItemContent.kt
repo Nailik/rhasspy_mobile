@@ -33,7 +33,7 @@ import org.rhasspy.mobile.android.main.LocalConfigurationNavController
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.SetSystemColor
-import org.rhasspy.mobile.viewModels.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 
 enum class ConfigurationContentScreens {
     Edit,

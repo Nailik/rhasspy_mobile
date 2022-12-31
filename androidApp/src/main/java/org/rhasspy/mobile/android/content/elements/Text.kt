@@ -28,7 +28,7 @@ import dev.icerock.moko.resources.desc.ResourceFormatted
 import dev.icerock.moko.resources.desc.StringDesc
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.viewModels.AppViewModel
+import org.rhasspy.mobile.viewmodel.AppViewModel
 
 
 @Composable

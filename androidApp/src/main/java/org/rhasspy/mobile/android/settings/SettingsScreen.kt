@@ -19,7 +19,7 @@ import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.settings.content.*
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.viewModels.screens.SettingsScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.SettingsScreenViewModel
 
 
 @Preview

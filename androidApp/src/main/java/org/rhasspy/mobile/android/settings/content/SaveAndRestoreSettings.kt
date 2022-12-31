@@ -24,7 +24,7 @@ import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.viewModels.settings.SaveAndRestoreSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.SaveAndRestoreSettingsViewModel
 
 /**
  * to save and restore settings
