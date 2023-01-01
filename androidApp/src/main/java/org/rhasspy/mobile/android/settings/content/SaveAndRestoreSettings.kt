@@ -81,7 +81,7 @@ private fun SaveSettings(viewModel: SaveAndRestoreSettingsViewModel) {
         SaveSettingsDialog(
             onConfirm = {
                 openSaveSettingsDialog = false
-                viewModel.saveSettingsFile()
+                viewModel.exportSettingsFile()
             },
             onDismiss = {
                 openSaveSettingsDialog = false

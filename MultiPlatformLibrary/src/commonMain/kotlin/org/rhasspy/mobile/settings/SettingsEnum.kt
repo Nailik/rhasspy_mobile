@@ -49,17 +49,17 @@ enum class SettingsEnum {
 
     HttpServerEnabled,
     HttpServerPort,
-    HttpServerSSL,
+    HttpServerSSLEnabled,
     HttpServerSSLKeyStoreFile,
     HttpServerSSLKeyStorePassword,
     HttpServerSSLKeyAlias,
     HttpServerSSLKeyPassword,
 
-    MQTT_ENABLED,
+    MQTTEnabled,
     MQTTHost,
     MQTTPort,
     MQTTUserName,
-    MQTT_SSL,
+    MQTTSSLEnabled,
     MQTTPassword,
     MQTTConnectionTimeout,
     MQTTKeepAliveInterval,
@@ -99,5 +99,6 @@ enum class SettingsEnum {
     IntentHandlingEndpoint,
     IntentHandlingHassUrl,
     IntentHandlingHassAccessToken,
-    IsIntentHandlingHassEvent
+    IsIntentHandlingHassEvent;
+
 }

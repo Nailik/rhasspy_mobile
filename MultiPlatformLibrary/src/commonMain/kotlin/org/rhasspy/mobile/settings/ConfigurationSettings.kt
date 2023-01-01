@@ -14,10 +14,9 @@ internal object ConfigurationSettings {
 
     val isHttpServerEnabled = Setting(SettingsEnum.HttpServerEnabled, true)
     val httpServerPort = Setting(SettingsEnum.HttpServerPort, 12101)
-    val isHttpServerSSLEnabled = Setting(SettingsEnum.HttpServerSSL, false)
+    val isHttpServerSSLEnabledEnabled = Setting(SettingsEnum.HttpServerSSLEnabled, false)
     val httpServerSSLKeyStoreFile = Setting(SettingsEnum.HttpServerSSLKeyStoreFile, "")
-    val httpServerSSLKeyStorePassword =
-        Setting(SettingsEnum.HttpServerSSLKeyStorePassword, "")
+    val httpServerSSLKeyStorePassword = Setting(SettingsEnum.HttpServerSSLKeyStorePassword, "")
     val httpServerSSLKeyAlias = Setting(SettingsEnum.HttpServerSSLKeyAlias, "")
     val httpServerSSLKeyPassword = Setting(SettingsEnum.HttpServerSSLKeyPassword, "")
 
@@ -25,12 +24,12 @@ internal object ConfigurationSettings {
     val httpClientServerEndpointHost = Setting(SettingsEnum.HttpServerEndpointHost, "")
     val httpClientServerEndpointPort = Setting(SettingsEnum.HttpServerEndpointPort, 12101)
 
-    val isMqttEnabled = Setting(SettingsEnum.MQTT_ENABLED, false)
+    val isMqttEnabled = Setting(SettingsEnum.MQTTEnabled, false)
     val mqttHost = Setting(SettingsEnum.MQTTHost, "")
     val mqttPort = Setting(SettingsEnum.MQTTPort, 1883)
     val mqttUserName = Setting(SettingsEnum.MQTTUserName, "")
     val mqttPassword = Setting(SettingsEnum.MQTTPassword, "")
-    val isMqttSSLEnabled = Setting(SettingsEnum.MQTT_SSL, false)
+    val isMqttSSLEnabled = Setting(SettingsEnum.MQTTSSLEnabled, false)
     val mqttConnectionTimeout = Setting(SettingsEnum.MQTTConnectionTimeout, 5)
     val mqttKeepAliveInterval = Setting(SettingsEnum.MQTTKeepAliveInterval, 30)
     val mqttRetryInterval = Setting(SettingsEnum.MQTTRetryInterval, 10L)

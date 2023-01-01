@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.viewmodel.settings.sound
 
-enum class SoundFileFolder {
-    Wake,
-    Recorded,
-    Error
+enum class SoundFileFolder(val folderName: String) {
+    Wake("wake"),
+    Recorded("recorded"),
+    Error("error")
 }

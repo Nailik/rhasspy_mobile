@@ -5,10 +5,19 @@ import org.rhasspy.mobile.nativeutils.SettingsUtils
 
 class SaveAndRestoreSettingsViewModel : ViewModel() {
 
-    fun saveSettingsFile() = SettingsUtils.saveSettingsFile()
+    /**
+     * export settings to a zip file and save on device
+     */
+    fun exportSettingsFile() = SettingsUtils.exportSettingsFile()
 
+    /**
+     * restore all settings from zip file
+     */
     fun restoreSettingsFromFile() = SettingsUtils.restoreSettingsFromFile()
 
-    fun shareSettingsFile() = SettingsUtils.saveSettingsFile() //TODO
+    /**
+     * share settings file without sensitive data
+     */
+    fun shareSettingsFile() = SettingsUtils.shareSettingsFile()
 
 }

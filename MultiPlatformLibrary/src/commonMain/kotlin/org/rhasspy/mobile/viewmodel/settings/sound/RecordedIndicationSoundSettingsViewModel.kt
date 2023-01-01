@@ -70,7 +70,7 @@ class RecordedIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewMod
 
     override fun chooseSoundFile() {
         viewModelScope.launch {
-            FileUtils.selectFile(FileType.SOUND, subfolder = SoundFileFolder.Recorded.toString())?.also { fileName ->
+            FileUtils.selectFile(FileType.SOUND, subfolder = SoundFileFolder.Recorded.folderName)?.also { fileName ->
                 val customSounds = AppSettings.customRecordedSounds.data
                 AppSettings.customRecordedSounds.value =
                     customSounds.value.toMutableSet().apply {

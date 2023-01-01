@@ -70,7 +70,7 @@ class ErrorIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel(
 
     override fun chooseSoundFile() {
         viewModelScope.launch {
-            FileUtils.selectFile(FileType.SOUND, subfolder = SoundFileFolder.Error.toString())?.also { fileName ->
+            FileUtils.selectFile(FileType.SOUND, subfolder = SoundFileFolder.Error.folderName)?.also { fileName ->
                 val customSounds = AppSettings.customErrorSounds.data
                 AppSettings.customErrorSounds.value = customSounds.value.toMutableSet().apply {
                     add(fileName)

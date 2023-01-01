@@ -3,7 +3,6 @@ package org.rhasspy.mobile.nativeutils
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import org.rhasspy.mobile.Application
 import java.io.File
@@ -70,15 +69,14 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
             file
         )
 
-        val intent = ShareCompat.IntentBuilder(Application.Instance)
-            .setStream(fileUri) // uri from FileProvider
-            .setType("text/html")
-            .intent
-            .setAction(Intent.ACTION_SEND) //Change if needed
-            .setDataAndType(fileUri, "text/*")
-            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        Application.Instance.startActivity(intent)
+        val shareIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_STREAM, fileUri)
+            type = "text/html"
+        }
+        Application.Instance.startActivity(Intent.createChooser(shareIntent, null).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        })
     }
 
     /**
