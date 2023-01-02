@@ -4,7 +4,18 @@ import co.touchlab.kermit.Logger
 
 enum class LogType {
 
-    Test;
+    DialogManagerService,
+    HomeAssistanceService,
+    HttpClientService,
+    IndicationService,
+    LocalAudioService,
+    MqttService,
+    RecordingService,
+    RhasspyActionsService,
+    AppSettingsService,
+    UdpService,
+    WakeWordService,
+    WebServerService;
 
     fun logger(): Logger {
         return Logger.withTag(this.name)

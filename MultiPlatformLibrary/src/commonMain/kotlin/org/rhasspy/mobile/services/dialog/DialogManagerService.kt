@@ -1,30 +1,28 @@
 package org.rhasspy.mobile.services.dialog
 
-import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import org.koin.core.component.inject
-import org.rhasspy.mobile.settings.option.DialogManagementOption
+import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action.DialogAction
 import org.rhasspy.mobile.middleware.Source
+import org.rhasspy.mobile.notNull
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.indication.IndicationService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.services.wakeword.WakeWordService
+import org.rhasspy.mobile.settings.option.DialogManagementOption
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
-//TODO logging
 /**
  * The Dialog Manager handles the various states and goes to the next state according to the function that is called
  */
 class DialogManagerService : IService() {
-
-    private val logger = Logger.withTag("DialogManagerService")
+    private val logger = LogType.DialogManagerService.logger()
 
     private val params by inject<DialogManagerServiceParams>()
     private val wakeWordService by inject<WakeWordService>()
@@ -36,16 +34,24 @@ class DialogManagerService : IService() {
     private var sendAudioCaptured = false
     private var coroutineScope = CoroutineScope(Dispatchers.Default)
 
+    private var timeoutJob: Job? = null
+
+    private val textAsrTimeout = 10000.toDuration(DurationUnit.MILLISECONDS)
+    private val intentRecognitionTimeout = 10000.toDuration(DurationUnit.MILLISECONDS)
+    private val recordingTimeout = 100000.toDuration(DurationUnit.MILLISECONDS)
+
     private val _currentDialogState = MutableStateFlow(DialogManagerServiceState.Idle)
     val currentDialogState = _currentDialogState.readOnly
 
-    //TODO timeout awaiting next state
     override fun onClose() {
+        logger.d { "onClose" }
+        timeoutJob?.cancel()
+        timeoutJob = null
         coroutineScope.cancel()
     }
 
-
     fun onAction(action: DialogAction) {
+        logger.d { "onAction $action" }
         coroutineScope.launch {
             when (action) {
                 is DialogAction.AsrError -> asrError(action)
@@ -65,7 +71,6 @@ class DialogManagerService : IService() {
             }
         }
     }
-    //TODO do things when rhasspy action finished, had error etc
 
     /**
      * Asr Error occurs, when the speech could not be translated to text, this will result in a failed dialog
@@ -76,6 +81,7 @@ class DialogManagerService : IService() {
     private suspend fun asrError(action: DialogAction.AsrError) {
         if (isInCorrectState(action, DialogManagerServiceState.TranscribingIntent)) {
 
+            timeoutJob?.cancel()
             indicationService.onError()
             informMqtt(action)
             sessionEnded(DialogAction.SessionEnded(Source.Local))
@@ -92,10 +98,23 @@ class DialogManagerService : IService() {
     private suspend fun asrTextCaptured(action: DialogAction.AsrTextCaptured) {
         if (isInCorrectState(action, DialogManagerServiceState.TranscribingIntent)) {
 
+            timeoutJob?.cancel()
             _currentDialogState.value = DialogManagerServiceState.RecognizingIntent
             indicationService.onRecognizingIntent()
             informMqtt(action)
-            rhasspyActionsService.recognizeIntent(sessionId ?: "", action.text ?: "")
+
+            notNull(sessionId, action.text, { id, text ->
+                rhasspyActionsService.recognizeIntent(id, text)
+                //await intent recognition
+                timeoutJob = coroutineScope.launch {
+                    delay(intentRecognitionTimeout)
+                    logger.d { "intentRecognitionTimeout" }
+                    onAction(DialogAction.IntentRecognitionError(Source.Local))
+                }
+            }, {
+                logger.d { "asrTextCaptured parameter issue sessionId: $sessionId action.text: ${action.text}" }
+                onAction(DialogAction.IntentRecognitionError(Source.Local))
+            })
 
         }
     }
@@ -138,7 +157,8 @@ class DialogManagerService : IService() {
     private suspend fun intentRecognitionResult(action: DialogAction.IntentRecognitionResult) {
         if (isInCorrectState(action, DialogManagerServiceState.RecognizingIntent)) {
 
-            rhasspyActionsService.intentHandling(action.intentName ?: "", action.intent)
+            timeoutJob?.cancel()
+            rhasspyActionsService.intentHandling(action.intentName, action.intent)
             endSession(DialogAction.EndSession(Source.Local))
 
         }
@@ -147,6 +167,7 @@ class DialogManagerService : IService() {
     private suspend fun intentRecognitionError(action: DialogAction.IntentRecognitionError) {
         if (isInCorrectState(action, DialogManagerServiceState.RecognizingIntent)) {
 
+            timeoutJob?.cancel()
             informMqtt(action)
             indicationService.onError()
             sessionEnded(DialogAction.SessionEnded(Source.Local))
@@ -216,13 +237,18 @@ class DialogManagerService : IService() {
     private suspend fun sessionStarted(action: DialogAction.SessionStarted) {
         if (isInCorrectState(action, DialogManagerServiceState.Idle)) {
 
-            sessionId = when (action.source) {
-                Source.HttpApi -> "" //TODO error??
+            val newSessionId = when (action.source) {
+                Source.HttpApi -> null
                 Source.Local -> uuid4().toString()
-                is Source.Mqtt -> action.source.sessionId ?: "" //TODO error
+                is Source.Mqtt -> action.source.sessionId
             }
-            informMqtt(action)
-            onAction(DialogAction.StartListening(Source.Local, false))
+
+            if (newSessionId != null) {
+                informMqtt(action)
+                onAction(DialogAction.StartListening(Source.Local, false))
+            } else {
+                logger.d { "sessionStarted parameter issue sessionId: $sessionId" }
+            }
 
         }
     }
@@ -235,6 +261,7 @@ class DialogManagerService : IService() {
     private fun silenceDetected(action: DialogAction.SilenceDetected) {
         if (isInCorrectState(action, DialogManagerServiceState.RecordingIntent)) {
 
+            timeoutJob?.cancel()
             indicationService.onSilenceDetected()
             onAction(DialogAction.StopListening(Source.Local))
 
@@ -244,11 +271,21 @@ class DialogManagerService : IService() {
     private suspend fun startListening(action: DialogAction.StartListening) {
         if (isInCorrectState(action, DialogManagerServiceState.Idle)) {
 
-            sendAudioCaptured = action.sendAudioCaptured
+            sessionId?.also { id ->
+                sendAudioCaptured = action.sendAudioCaptured
 
-            wakeWordService.stopDetection()
-            indicationService.onListening()
-            rhasspyActionsService.startSpeechToText(sessionId ?: "") //TODO error
+                wakeWordService.stopDetection()
+                indicationService.onListening()
+                rhasspyActionsService.startSpeechToText(id)
+                //await silence to stop recording
+                timeoutJob = coroutineScope.launch {
+                    delay(recordingTimeout)
+                    logger.d { "recordingTimeout" }
+                    onAction(DialogAction.AsrError(Source.Local))
+                }
+            } ?: run {
+                logger.d { "startListening parameter issue sessionId: $sessionId" }
+            }
 
         }
     }
@@ -279,10 +316,21 @@ class DialogManagerService : IService() {
     private suspend fun stopListening(action: DialogAction.StopListening) {
         if (isInCorrectState(action, DialogManagerServiceState.RecordingIntent)) {
 
-            _currentDialogState.value = DialogManagerServiceState.TranscribingIntent
-            rhasspyActionsService.endSpeechToText(sessionId ?: "", action.source is Source.Mqtt)
-            if (sendAudioCaptured) {
-                mqttService.audioCaptured(sessionId ?: "", rhasspyActionsService.speechToTextAudioData)
+            sessionId?.also { id ->
+                timeoutJob?.cancel()
+                _currentDialogState.value = DialogManagerServiceState.TranscribingIntent
+                rhasspyActionsService.endSpeechToText(id, action.source is Source.Mqtt)
+                if (sendAudioCaptured) {
+                    mqttService.audioCaptured(id, rhasspyActionsService.speechToTextAudioData)
+                }
+                //await for text recognition
+                timeoutJob = coroutineScope.launch {
+                    delay(textAsrTimeout)
+                    logger.d { "textAsrTimeout" }
+                    onAction(DialogAction.AsrError(Source.Local))
+                }
+            } ?: run {
+                logger.d { "stopListening parameter issue sessionId: $sessionId" }
             }
 
         }
@@ -292,19 +340,18 @@ class DialogManagerService : IService() {
      * checks if dialog is in the correct state and logs output
      */
     private fun isInCorrectState(action: DialogAction, vararg states: DialogManagerServiceState): Boolean {
-        return when (params.option) {
+        val result = when (params.option) {
             //on local option check that state is correct and when from mqtt check session id as well
             DialogManagementOption.Local -> {
                 if (action.source is Source.Mqtt && sessionId != action.source.sessionId) {
                     //from mqtt but session id doesn't match
+                    logger.d { "from mqtt but session id doesn't match $sessionId != ${action.source.sessionId}" }
                     return false
                 }
 
                 val result = states.contains(_currentDialogState.value)
-                if (result) {
-                    logger.d { action.toString() }
-                } else {
-                    logger.w { "$action called in wrong state ${_currentDialogState.value} expected one of ${states.joinToString()}" }
+                if (!result) {
+                    logger.d { "$action called in wrong state ${_currentDialogState.value} expected one of ${states.joinToString()}" }
                 }
                 return result
             }
@@ -313,7 +360,10 @@ class DialogManagerService : IService() {
                 when (action.source) {
                     //from webserver or local always ignore for now
                     Source.HttpApi,
-                    Source.Local -> false
+                    Source.Local -> {
+                        logger.d { "dialog management RemoteMQTT doesn't match source ${action.source}" }
+                        false
+                    }
                     //from mqtt check session id
                     is Source.Mqtt -> {
                         if (sessionId == null) {
@@ -322,7 +372,11 @@ class DialogManagerService : IService() {
                             return true
                         } else {
                             //compare session id if one is set
-                            return sessionId == action.source.sessionId
+                            val matches = sessionId == action.source.sessionId
+                            if (!matches) {
+                                logger.d { "from mqtt but session id doesn't match $sessionId != ${action.source.sessionId}" }
+                            }
+                            return matches
                         }
                     }
                 }
@@ -330,6 +384,10 @@ class DialogManagerService : IService() {
             //when dialog is disabled just do and ignore state
             DialogManagementOption.Disabled -> true
         }
+        if (result) {
+            logger.d { action.toString() }
+        }
+        return result
     }
 
 

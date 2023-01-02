@@ -8,12 +8,6 @@ import kotlinx.coroutines.flow.*
 fun Number.toByteArray(size: Int = 4): ByteArray =
     ByteArray(size) { i -> (this.toLong() shr (i * 8)).toByte() }
 
-//https://stackoverflow.com/questions/19145213/android-audio-capture-silence-detection
-//check if any byte is above the threshold
-fun List<Byte>.isNotAboveThreshold(threshold: Float): Boolean {
-    return find { it >= threshold || it <= -threshold } == null
-}
-
 //https://stackoverflow.com/questions/13039846/what-do-the-bytes-in-a-wav-file-represent
 //adds wav header in front of data
 fun MutableList<Byte>.addWavHeader(): List<Byte> {
@@ -152,3 +146,7 @@ fun <T, R> StateFlow<T>.mapReadonlyState(
 val <T> MutableStateFlow<T>.readOnly get(): StateFlow<T> = this
 
 val <T> MutableSharedFlow<T>.readOnly get(): Flow<T> = this
+
+inline fun <T1 : Any, T2 : Any> notNull(p1: T1?, p2: T2?, block: (T1, T2) -> Unit, run: () -> Unit) {
+    return if (p1 != null && p2 != null) block(p1, p2) else run()
+}

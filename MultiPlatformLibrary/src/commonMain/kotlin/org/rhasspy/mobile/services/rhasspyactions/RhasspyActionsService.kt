@@ -65,7 +65,7 @@ open class RhasspyActionsService : IService() {
         when (params.intentRecognitionOption) {
             IntentRecognitionOption.RemoteHTTP -> {
                 val action = httpClientService.recognizeIntent(text)?.let { intentJson ->
-                    DialogAction.IntentRecognitionResult(Source.HttpApi, null, intentJson)
+                    DialogAction.IntentRecognitionResult(Source.HttpApi, "", intentJson)
                 } ?: run {
                     DialogAction.IntentRecognitionError(Source.HttpApi)
                 }

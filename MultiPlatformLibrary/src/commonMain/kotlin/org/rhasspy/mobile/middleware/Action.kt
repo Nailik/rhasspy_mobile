@@ -35,7 +35,7 @@ sealed class Action {
 
         class AsrError(source: Source) : DialogAction(source)
 
-        class IntentRecognitionResult(source: Source, val intentName: String?, val intent: String) : DialogAction(source)
+        class IntentRecognitionResult(source: Source, val intentName: String, val intent: String) : DialogAction(source)
 
         class IntentRecognitionError(source: Source) : DialogAction(source)
 

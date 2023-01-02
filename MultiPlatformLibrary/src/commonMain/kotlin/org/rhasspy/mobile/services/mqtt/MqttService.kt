@@ -691,7 +691,7 @@ class MqttService : IService() {
         serviceMiddleware.action(
             DialogAction.IntentRecognitionResult(
                 source = jsonObject.getSource(),
-                intentName = jsonObject[MqttParams.Intent.value]?.jsonObject?.get(MqttParams.IntentName.value)?.jsonPrimitive?.content,
+                intentName = jsonObject[MqttParams.Intent.value]?.jsonObject?.get(MqttParams.IntentName.value)?.jsonPrimitive?.content ?: "",
                 intent = jsonObject.toString()
             )
         )
