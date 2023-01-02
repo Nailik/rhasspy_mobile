@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.component.inject
+import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.middleware.Source
@@ -25,6 +26,8 @@ import kotlin.time.Duration.Companion.milliseconds
  * recording is started and stopped automatically when output is observed
  */
 class RecordingService : IService() {
+    private val logger = LogType.RecordingService.logger()
+
     private val serviceMiddleware by inject<IServiceMiddleware>()
     private val audioRecorder by inject<AudioRecorder>()
 
@@ -37,9 +40,11 @@ class RecordingService : IService() {
     private val _output = MutableStateFlow<List<Byte>>(emptyList())
     val output = _output.readOnly
 
-    val recordedData: List<Byte> = listOf()
+    private val _recordedData = mutableListOf<Byte>()
+    val recordedData: List<Byte> = _recordedData.readOnly
 
     init {
+        logger.d { "initialize" }
         scope = CoroutineScope(Dispatchers.Default)
 
         _output.subscriptionCount
@@ -65,6 +70,7 @@ class RecordingService : IService() {
     }
 
     override fun onClose() {
+        logger.d { "onClose" }
         audioRecorder.stopRecording()
         scope.cancel()
     }
@@ -77,6 +83,7 @@ class RecordingService : IService() {
                     //  logger.d { "silenceDetected" }
                     //check if silence was detected for x milliseconds
                     if (it.minus(Clock.System.now()) < -AppSetting.automaticSilenceDetectionTime.value.milliseconds) {
+                        logger.d { "silenceDetected" }
                         serviceMiddleware.action(Action.DialogAction.SilenceDetected(Source.Local))
                     }
                 } ?: run {
@@ -89,10 +96,12 @@ class RecordingService : IService() {
     }
 
     private fun startRecording() {
+        logger.d { "startRecording" }
         audioRecorder.startRecording()
     }
 
     private fun stopRecording() {
+        logger.d { "stopRecording" }
         audioRecorder.stopRecording()
     }
 
