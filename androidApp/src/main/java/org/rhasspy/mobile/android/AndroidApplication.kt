@@ -6,7 +6,7 @@ import co.touchlab.kermit.Logger
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import org.rhasspy.mobile.Application
-import org.rhasspy.mobile.NativeApplication
+import org.rhasspy.mobile.nativeutils.NativeApplication
 import org.rhasspy.mobile.android.uiservices.IndicationOverlay
 import org.rhasspy.mobile.android.uiservices.MicrophoneOverlay
 import org.rhasspy.mobile.android.widget.MicrophoneWidget
@@ -43,7 +43,7 @@ class AndroidApplication : Application() {
         onCreated()
     }
 
-    override fun startNativeServices() {
+    override fun setupOverlay() {
         IndicationOverlay.start()
         MicrophoneOverlay.start()
     }

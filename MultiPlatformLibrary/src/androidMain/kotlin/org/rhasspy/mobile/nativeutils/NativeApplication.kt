@@ -1,4 +1,4 @@
-package org.rhasspy.mobile
+package org.rhasspy.mobile.nativeutils
 
 import android.app.Activity
 import android.os.Bundle
@@ -9,15 +9,12 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.nativeutils.MicrophonePermission
-import org.rhasspy.mobile.nativeutils.OverlayPermission
+import org.rhasspy.mobile.AppActivity
 
 actual abstract class NativeApplication : MultiDexApplication() {
 
     var currentActivity: AppActivity? = null
         private set
-
-    actual open fun startNativeServices() {}
 
     init {
         ProcessLifecycleOwner.get().lifecycle.addObserver(object : LifecycleEventObserver {

@@ -1,11 +1,9 @@
-package org.rhasspy.mobile
+package org.rhasspy.mobile.nativeutils
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 expect abstract class NativeApplication() {
-
-    fun startNativeServices()
 
     fun restart()
 

@@ -12,9 +12,9 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
 import org.rhasspy.mobile.Application
+import org.rhasspy.mobile.koin.serviceModule
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.readOnly
-import org.rhasspy.mobile.serviceModule
 import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTest
 
 abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
@@ -88,7 +88,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
             testScope = CoroutineScope(Dispatchers.Default)
             //needs to be suspend, else ui thread is blocked
             logger.e { "************* onOpenTestPage ************" }
-            Application.reloadServiceModules()
+            Application.instance.startTest()
             initializeTestParams()
 
             testRunner.initializeTest()
@@ -106,9 +106,9 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
             testScope.cancel()
             //needs to be suspend, else ui thread is blocked
             logger.e { "************* stopTest ************" }
+
             //reload koin modules when test is stopped
-            Application.reloadServiceModules()
-            Application.startServices()
+            Application.instance.stopTest()
 
             _isLoading.value = false
         }

@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.*
+import org.rhasspy.mobile.koin.getSafe
 import org.rhasspy.mobile.settings.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
