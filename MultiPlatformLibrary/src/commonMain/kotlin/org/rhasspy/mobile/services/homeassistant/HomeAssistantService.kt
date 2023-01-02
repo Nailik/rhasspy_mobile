@@ -1,16 +1,14 @@
 package org.rhasspy.mobile.services.homeassistant
 
-import co.touchlab.kermit.Logger
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.koin.core.component.inject
-import org.rhasspy.mobile.settings.option.HomeAssistantIntentHandlingOption
-import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.httpclient.HttpClientService
+import org.rhasspy.mobile.settings.option.HomeAssistantIntentHandlingOption
 
-//TODO logging
 /**
  * send data to home assistant
  *
@@ -18,20 +16,16 @@ import org.rhasspy.mobile.services.httpclient.HttpClientService
  * intent
  */
 class HomeAssistantService : IService() {
-
-    private val logger = Logger.withTag("HomeAssistantInterface")
+    private val logger = LogType.HomeAssistanceService.logger()
 
     private val params by inject<HomeAssistantServiceParams>()
     private val httpClientService by inject<HttpClientService>()
-
-    override fun onClose() {
-        //nothing to close
-    }
 
     /**
      * simplified conversion from intent to hass event or hass intent
      */
     suspend fun sendIntent(intentName: String, intent: String) {
+        logger.d { "sendIntent name: $intentName json: $intent" }
         try {
             val slots = mutableMapOf<String, JsonElement?>()
 
@@ -67,7 +61,7 @@ class HomeAssistantService : IService() {
                 HomeAssistantIntentHandlingOption.Intent -> httpClientService.hassIntent("{\"name\" : \"$intentName\", \"data\": $intent }")
             }
         } catch (exception: Exception) {
-            logger.e(exception) { "" }
+            logger.e(exception) { "sendIntent error" }
         }
     }
 }

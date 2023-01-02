@@ -3,7 +3,7 @@ package org.rhasspy.mobile.services.httpclient
 import org.rhasspy.mobile.settings.option.IntentHandlingOption
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
-//TODO custom timeout
+//TODO custom timeout for every service?
 data class HttpClientServiceParams(
     val siteId: String = ConfigurationSetting.siteId.value,
     val isHttpSSLVerificationDisabled: Boolean = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value,

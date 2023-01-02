@@ -15,6 +15,6 @@ abstract class IService : KoinComponent, Closeable {
         onClose()
     }
 
-    abstract fun onClose()
+    open fun onClose() {}
 
 }
