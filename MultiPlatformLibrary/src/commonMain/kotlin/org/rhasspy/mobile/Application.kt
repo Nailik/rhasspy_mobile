@@ -23,12 +23,11 @@ import org.rhasspy.mobile.middleware.ServiceMiddleware
 import org.rhasspy.mobile.middleware.ServiceTestMiddleware
 import org.rhasspy.mobile.mqtt.OverlayServices
 import org.rhasspy.mobile.nativeutils.AudioRecorder
+import org.rhasspy.mobile.nativeutils.BackgroundService
 import org.rhasspy.mobile.services.dialog.DialogManagerService
 import org.rhasspy.mobile.services.dialog.DialogManagerServiceParams
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantServiceParams
-import org.rhasspy.mobile.services.wakeword.WakeWordService
-import org.rhasspy.mobile.services.wakeword.WakeWordServiceParams
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.services.indication.IndicationService
@@ -42,6 +41,8 @@ import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.services.settings.AppSettingsService
 import org.rhasspy.mobile.services.udp.UdpService
 import org.rhasspy.mobile.services.udp.UdpServiceParams
+import org.rhasspy.mobile.services.wakeword.WakeWordService
+import org.rhasspy.mobile.services.wakeword.WakeWordServiceParams
 import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.services.webserver.WebServerServiceParams
 import org.rhasspy.mobile.settings.AppSettings
@@ -205,6 +206,11 @@ abstract class Application : NativeApplication(), KoinComponent {
         startNativeServices()
 
         StringDesc.localeType = StringDesc.LocaleType.Custom(AppSettings.languageOption.value.code)
+
+        //start foreground service if enabled
+        if (AppSettings.isBackgroundServiceEnabled.value) {
+            BackgroundService.start()
+        }
     }
 
     abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)

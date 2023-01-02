@@ -5,19 +5,15 @@ import kotlin.native.concurrent.ThreadLocal
 /**
  * Native Service to run continuously in background
  */
-@Suppress("NO_ACTUAL_FOR_EXPECT")
-expect class NativeServiceInterop() {
+expect class BackgroundService() {
 
     @ThreadLocal
     companion object {
 
-        //stores if services is currently running
-        var isRunning: Boolean
-
         /**
-         * When there is an action to be done by the services
+         * start background service
          */
-        fun doAction(/*serviceAction: ServiceAction*/)
+        fun start()
 
         /**
          * stop background work

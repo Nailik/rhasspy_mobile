@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.settings
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.rhasspy.mobile.nativeutils.BackgroundService
 import org.rhasspy.mobile.nativeutils.BatteryOptimization
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.AppSettings
@@ -26,6 +27,11 @@ class BackgroundServiceSettingsViewModel : ViewModel() {
     //set new intent background option
     fun toggleBackgroundServiceEnabled(enabled: Boolean) {
         AppSettings.isBackgroundServiceEnabled.value = enabled
+        if (enabled) {
+            BackgroundService.start()
+        } else {
+            BackgroundService.stop()
+        }
     }
 
     //update battery optimization enabled when resume
