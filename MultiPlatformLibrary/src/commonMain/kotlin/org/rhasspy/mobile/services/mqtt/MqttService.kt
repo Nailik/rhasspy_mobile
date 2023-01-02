@@ -19,6 +19,7 @@ import org.rhasspy.mobile.nativeutils.MqttClient
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 
+//TODO logging
 class MqttService : IService() {
 
     private val params by inject<MqttServiceParams>()

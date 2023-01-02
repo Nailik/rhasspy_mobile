@@ -18,6 +18,7 @@ import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.recording.RecordingService
 import org.rhasspy.mobile.services.udp.UdpService
 
+//TODO logging
 /**
  * hot word services listens for hot word, evaluates configuration settings but no states
  *

@@ -9,6 +9,7 @@ import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.settings.AppSetting
 
+//TODO logging
 class IndicationService : IService(), KoinComponent {
 
     private val localAudioService by inject<LocalAudioService>()

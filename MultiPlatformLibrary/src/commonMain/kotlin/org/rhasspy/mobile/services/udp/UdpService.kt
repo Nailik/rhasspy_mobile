@@ -10,6 +10,7 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.services.IService
 
+//TODO logging
 class UdpService : IService() {
     private val logger = Logger.withTag("UdpService")
 

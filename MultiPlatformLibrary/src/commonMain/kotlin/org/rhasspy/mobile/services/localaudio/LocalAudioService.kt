@@ -9,6 +9,7 @@ import org.rhasspy.mobile.viewmodel.settings.sound.SoundFileFolder
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+//TODO logging
 class LocalAudioService : IService() {
 
     private val audioPlayer = AudioPlayer()

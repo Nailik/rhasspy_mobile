@@ -3,6 +3,7 @@ package org.rhasspy.mobile.services.settings
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.settings.AppSetting
 
+//TODO logging
 /**
  * handles changes of app settings that are called remotely
  */

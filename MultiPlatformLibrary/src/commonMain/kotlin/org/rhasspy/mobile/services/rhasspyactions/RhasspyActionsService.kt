@@ -14,6 +14,7 @@ import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.recording.RecordingService
 import org.rhasspy.mobile.settings.option.*
 
+//TODO logging
 /**
  * calls actions and returns result
  *

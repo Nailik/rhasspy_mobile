@@ -10,6 +10,7 @@ import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 
+//TODO logging
 /**
  * send data to home assistant
  *
@@ -22,8 +23,6 @@ class HomeAssistantService : IService() {
 
     private val params by inject<HomeAssistantServiceParams>()
     private val httpClientService by inject<HttpClientService>()
-
-    private val serviceMiddleware by inject<IServiceMiddleware>()
 
     override fun onClose() {
         //nothing to close

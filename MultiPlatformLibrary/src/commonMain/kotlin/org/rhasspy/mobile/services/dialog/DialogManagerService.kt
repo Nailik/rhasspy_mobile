@@ -18,6 +18,7 @@ import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.services.wakeword.WakeWordService
 
+//TODO logging
 /**
  * The Dialog Manager handles the various states and goes to the next state according to the function that is called
  */

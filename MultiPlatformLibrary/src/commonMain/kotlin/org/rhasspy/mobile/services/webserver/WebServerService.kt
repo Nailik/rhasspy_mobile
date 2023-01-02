@@ -25,6 +25,7 @@ import org.rhasspy.mobile.nativeutils.installCompression
 import org.rhasspy.mobile.nativeutils.installConnector
 import org.rhasspy.mobile.services.IService
 
+//TODO logging
 /**
  * Web server service holds all routes for WebServerPath values
  *
@@ -317,16 +318,6 @@ class WebServerService : IService() {
     private suspend fun say(call: ApplicationCall): WebServerResult {
         serviceMiddleware.action(DialogAction.PlayAudio(Source.HttpApi, call.receive()))
         return WebServerResult.Ok
-    }
-
-    sealed interface WebServerResult {
-
-        object Ok : WebServerResult
-
-        class Accepted(val data: String) : WebServerResult
-
-        class Error(val errorType: WebServerServiceErrorType) : WebServerResult
-
     }
 
 }

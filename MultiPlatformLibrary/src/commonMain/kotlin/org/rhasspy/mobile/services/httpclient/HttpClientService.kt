@@ -16,6 +16,7 @@ import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceErrorType.*
 
+//TODO logging
 /**
  * contains client to send data to http endpoints
  *
