@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.services.mqtt
 
-import co.touchlab.kermit.Logger
 import com.benasher44.uuid.uuid4
 import com.benasher44.uuid.variant
 import io.ktor.utils.io.core.*
@@ -10,6 +9,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.koin.core.component.inject
+import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action.AppSettingsAction
 import org.rhasspy.mobile.middleware.Action.DialogAction
 import org.rhasspy.mobile.middleware.IServiceMiddleware
@@ -19,14 +19,12 @@ import org.rhasspy.mobile.nativeutils.MqttClient
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 
-//TODO logging
 class MqttService : IService() {
+    private val logger = LogType.MqttService.logger()
 
     private val params by inject<MqttServiceParams>()
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
-
-    private val logger = Logger.withTag("MqttService")
 
     private var scope = CoroutineScope(Dispatchers.Default)
     private val url = "tcp://${params.mqttHost}:${params.mqttPort}"
@@ -52,6 +50,7 @@ class MqttService : IService() {
      * sets connected value
      */
     init {
+        logger.d { "initialize" }
         if (params.isMqttEnabled) {
             try {
                 client = buildClient()
@@ -60,20 +59,19 @@ class MqttService : IService() {
                         subscribeTopics()
                         _isHasStarted.value = true
                     } else {
-                        //TODO service state log
+                        logger.e { "client could not connect" }
                     }
                 }
 
             } catch (exception: Exception) {
                 //start error
-                //TODO log
+                logger.e(exception) { "client initialization error" }
             }
-        } else {
-            logger.v { "mqtt not enabled" }
         }
     }
 
     private fun buildClient(): MqttClient {
+        logger.d { "buildClient" }
         return MqttClient(
             brokerUrl = url,
             clientId = params.siteId,
@@ -94,6 +92,7 @@ class MqttService : IService() {
      * disconnects, resets connected value and deletes client object
      */
     override fun onClose() {
+        logger.d { "onClose" }
         _isHasStarted.value = false
         _isConnected.value = false
         client?.disconnect()
@@ -106,21 +105,18 @@ class MqttService : IService() {
      * connects client to server and returns if client is now connected
      */
     private suspend fun connectClient(): Boolean {
+        logger.d { "connectClient" }
         client?.also {
             if (!it.isConnected.value) {
                 //connect to server
                 it.connect(params.mqttServiceConnectionOptions)?.also { error ->
-                    //TODO servcie state
-                } ?: run {
-                    //TODO servcie state
+                    logger.e { "connectClient error $error" }
                 }
-            } else {
-                //TODO servcie state
             }
             //update value, may be used from reconnect
             _isConnected.value = it.isConnected.value == true
         } ?: run {
-            //TODO servcie state
+            logger.d { "connectClient not initialized" }
         }
 
         return _isConnected.value
@@ -130,11 +126,13 @@ class MqttService : IService() {
     /**
      * try to reconnect after disconnect
      */
-    private fun onDisconnect(error: Throwable) {
+    private fun onDisconnect(throwable: Throwable) {
+        logger.e(throwable) { "onDisconnect" }
         _isConnected.value = client?.isConnected?.value == true
 
         if (retryJob?.isActive != true) {
             retryJob = scope.launch {
+                logger.e(throwable) { "start retryJob" }
                 client?.also {
                     while (!it.isConnected.value) {
                         connectClient()
@@ -147,24 +145,12 @@ class MqttService : IService() {
         }
     }
 
-
-    private fun getMqttTopic(topic: String): MqttTopicsSubscription? {
-        return when {
-            MqttTopicsSubscription.HotWordDetected.topic.matches(topic) -> MqttTopicsSubscription.HotWordDetected
-            MqttTopicsSubscription.IntentRecognitionResult.topic.matches(topic) -> MqttTopicsSubscription.IntentRecognitionResult
-            MqttTopicsSubscription.PlayBytes.topic
-                .set(MqttTopicPlaceholder.SiteId, params.siteId)
-                .matches(topic) -> MqttTopicsSubscription.IntentRecognitionResult
-            else -> MqttTopicsSubscription.fromTopic(topic)
-        }
-    }
-
     private fun onMessageReceived(topic: String, message: MqttMessage) {
-        logger.v { "onMessageReceived id ${message.msgId} $topic" }
+        logger.d { "onMessageReceived id ${message.msgId} $topic" }
 
         if (message.msgId == id) {
             //ignore all messages that i have send
-            logger.v { "message ignored, was same id as send by myself" }
+            logger.d { "message ignored, was same id as send by myself" }
             return
         }
 
@@ -175,7 +161,7 @@ class MqttService : IService() {
             }
 
         } catch (e: Exception) {
-            logger.e(e) { "received message on $topic error " }
+            logger.e(e) { "received message on $topic error" }
         }
     }
 
@@ -186,6 +172,7 @@ class MqttService : IService() {
      * returns true when message was consumed
      */
     private fun regexTopic(topic: String, message: MqttMessage): Boolean {
+        logger.d { "regexTopic $topic" }
         when {
             MqttTopicsSubscription.HotWordDetected.topic.matches(topic) -> {
                 hotWordDetectedCalled(topic)
@@ -210,6 +197,7 @@ class MqttService : IService() {
      * returns true when message was consumed
      */
     private fun compareTopic(topic: String, message: MqttMessage) {
+        logger.d { "compareTopic $topic" }
 
         //topic matches enum
         getMqttTopic(topic)?.also { mqttTopic ->
@@ -231,26 +219,24 @@ class MqttService : IService() {
                         MqttTopicsSubscription.AsrStopListening -> stopListening(jsonObject)
                         MqttTopicsSubscription.AsrTextCaptured -> asrTextCaptured(jsonObject)
                         MqttTopicsSubscription.AsrError -> asrError(jsonObject)
-                        MqttTopicsSubscription.IntentNotRecognized -> intentNotRecognized(
-                            jsonObject
-                        )
+                        MqttTopicsSubscription.IntentNotRecognized -> intentNotRecognized(jsonObject)
                         MqttTopicsSubscription.IntentHandlingToggleOn -> intentHandlingToggleOn()
                         MqttTopicsSubscription.IntentHandlingToggleOff -> intentHandlingToggleOff()
                         MqttTopicsSubscription.AudioOutputToggleOff -> audioOutputToggleOff()
                         MqttTopicsSubscription.AudioOutputToggleOn -> audioOutputToggleOn()
                         MqttTopicsSubscription.HotWordDetected -> hotWordDetectedCalled(topic)
-                        MqttTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(
-                            jsonObject
-                        )
+                        MqttTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(jsonObject)
                         MqttTopicsSubscription.SetVolume -> setVolume(jsonObject)
-                        else -> {}
+                        else -> {
+                            logger.d { "isThisSiteId mqttTopic notFound $topic" }
+                        }
                     }
                 } else {
                     when (mqttTopic) {
                         MqttTopicsSubscription.AsrTextCaptured -> asrTextCaptured(jsonObject)
                         MqttTopicsSubscription.AsrError -> asrError(jsonObject)
                         else -> {
-                            logger.v { "message ignored, different side id $jsonObject" }
+                            logger.d { "isNotThisSiteId mqttTopic notFound $topic" }
                         }
                     }
                 }
@@ -267,12 +253,14 @@ class MqttService : IService() {
                         .matches(topic) -> {
                         playFinishedCall()
                     }
-                    else -> {}
+                    else -> {
+                        logger.d { "siteId in Topic mqttTopic notFound $topic" }
+                    }
                 }
             }
         } ?: run {
             //no topic found
-
+            logger.d { "getMqttTopic notFound $topic" }
         }
     }
 
@@ -281,6 +269,7 @@ class MqttService : IService() {
      * Subscribes to topics that are necessary
      */
     private suspend fun subscribeTopics() {
+        logger.d { "subscribeTopics" }
         var hasError = false
 
         //subscribe to topics with this site id (if contained in topic, currently only in PlayBytes)
@@ -290,7 +279,7 @@ class MqttService : IService() {
                     hasError = true
                 }
             } catch (exception: Exception) {
-                logger.e(exception) { "" }
+                logger.e(exception) { "subscribeTopics error" }
             }
         }
 
@@ -861,6 +850,17 @@ class MqttService : IService() {
             .replace("+", ".*") //replace wildcard with regex text
             .toRegex()
             .matches(regex)
+    }
+
+    private fun getMqttTopic(topic: String): MqttTopicsSubscription? {
+        return when {
+            MqttTopicsSubscription.HotWordDetected.topic.matches(topic) -> MqttTopicsSubscription.HotWordDetected
+            MqttTopicsSubscription.IntentRecognitionResult.topic.matches(topic) -> MqttTopicsSubscription.IntentRecognitionResult
+            MqttTopicsSubscription.PlayBytes.topic
+                .set(MqttTopicPlaceholder.SiteId, params.siteId)
+                .matches(topic) -> MqttTopicsSubscription.IntentRecognitionResult
+            else -> MqttTopicsSubscription.fromTopic(topic)
+        }
     }
 
 }

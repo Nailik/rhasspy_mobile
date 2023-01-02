@@ -32,7 +32,11 @@ class LocalAudioService : IService() {
                 continuation.resume(Unit)
             },
             onError = { exception ->
-                logger.e(exception ?: Throwable()) { "onError" }
+                exception?.also {
+                    logger.e(it) { "onError" }
+                } ?: run {
+                    logger.e { "onError" }
+                }
                 continuation.resume(Unit)
             }
         )
