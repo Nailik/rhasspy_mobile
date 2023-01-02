@@ -12,13 +12,13 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 
 fun UiDevice.resetOverlayPermission() {
-    if (!Settings.canDrawOverlays(Application.Instance)) {
+    if (!Settings.canDrawOverlays(Application.nativeInstance)) {
         return
     }
 
     val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    Application.Instance.startActivity(intent)
+    Application.nativeInstance.startActivity(intent)
 
     val settingsPage = "com.android.settings"
     val list = ".*list"

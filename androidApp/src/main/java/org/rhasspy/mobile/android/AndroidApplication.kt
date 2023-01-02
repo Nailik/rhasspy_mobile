@@ -59,8 +59,7 @@ class AndroidApplication : Application() {
     }
 
     override suspend fun updateWidget() {
-        val glanceId =
-            GlanceAppWidgetManager(this).getGlanceIds(MicrophoneWidget::class.java).firstOrNull()
+        val glanceId = GlanceAppWidgetManager(this).getGlanceIds(MicrophoneWidget::class.java).firstOrNull()
 
         if (glanceId != null) {
             MicrophoneWidget().update(this, glanceId)

@@ -22,7 +22,7 @@ class MicrophoneOverlayViewModel : ViewModel(), KoinComponent {
     val shouldOverlayBeShown = combineState(
         OverlayPermission.granted,
         AppSetting.microphoneOverlaySizeOption.data,
-        Application.Instance.isAppInBackground,
+        Application.nativeInstance.isAppInBackground,
         AppSetting.isMicrophoneOverlayWhileAppEnabled.data
     ) { permissionGranted, microphoneOverlaySizeOption, isAppInBackground, isMicrophoneOverlayWhileApp ->
         permissionGranted && microphoneOverlaySizeOption != MicrophoneOverlaySizeOption.Disabled && (isAppInBackground || isMicrophoneOverlayWhileApp)

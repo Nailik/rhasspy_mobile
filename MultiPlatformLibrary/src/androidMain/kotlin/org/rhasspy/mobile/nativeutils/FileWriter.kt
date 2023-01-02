@@ -12,7 +12,7 @@ import java.io.File
  */
 actual class FileWriter actual constructor(filename: String, actual val maxFileSize: Long) {
     //file to write to
-    private val file = File(Application.Instance.filesDir, filename)
+    private val file = File(Application.nativeInstance.filesDir, filename)
 
     /**
      * create file and return if it was successfully
@@ -64,8 +64,8 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
      */
     actual fun shareFile() {
         val fileUri: Uri = FileProvider.getUriForFile(
-            Application.Instance,
-            Application.Instance.packageName.toString() + ".provider",
+            Application.nativeInstance,
+            Application.nativeInstance.packageName.toString() + ".provider",
             file
         )
 
@@ -74,7 +74,7 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
             putExtra(Intent.EXTRA_STREAM, fileUri)
             type = "text/html"
         }
-        Application.Instance.startActivity(Intent.createChooser(shareIntent, null).apply {
+        Application.nativeInstance.startActivity(Intent.createChooser(shareIntent, null).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         })
     }
@@ -83,10 +83,10 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
      * copy file to specific new file
      */
     actual fun copyFile(fileName: String, fileType: String) {
-        Application.Instance.currentActivity?.createDocument(fileName, fileType) {
+        Application.nativeInstance.currentActivity?.createDocument(fileName, fileType) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
-                    Application.Instance.contentResolver.openOutputStream(uri)
+                    Application.nativeInstance.contentResolver.openOutputStream(uri)
                         ?.also { outputStream ->
                             outputStream.write(file.readBytes())
                             outputStream.flush()

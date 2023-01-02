@@ -66,7 +66,7 @@ class MainActivity : AppActivity() {
         }
 
         CoroutineScope(Dispatchers.IO).launch {
-            Application.Instance.updateWidgetNative()
+            Application.nativeInstance.updateWidgetNative()
         }
     }
 }

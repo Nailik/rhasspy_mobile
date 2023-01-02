@@ -32,7 +32,7 @@ actual object MicrophonePermission {
      * to check if the information dialog should be shown
      */
     actual fun requestPermissionExternally() {
-        Application.Instance.startActivity(
+        Application.nativeInstance.startActivity(
             Intent(
                 Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                 Uri.parse("package:org.rhasspy.mobile.android")
@@ -46,7 +46,7 @@ actual object MicrophonePermission {
      * to request the permission externally, redirect user to settings
      */
     actual fun shouldShowInformationDialog(): Boolean {
-        return Application.Instance.currentActivity?.let {
+        return Application.nativeInstance.currentActivity?.let {
             ActivityCompat.shouldShowRequestPermissionRationale(
                 it,
                 Manifest.permission.RECORD_AUDIO
@@ -61,7 +61,7 @@ actual object MicrophonePermission {
      */
     private fun isGranted(): Boolean {
         return ActivityCompat.checkSelfPermission(
-            Application.Instance,
+            Application.nativeInstance,
             Manifest.permission.RECORD_AUDIO
         ) == PackageManager.PERMISSION_GRANTED
     }

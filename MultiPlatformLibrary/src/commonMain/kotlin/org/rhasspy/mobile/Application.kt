@@ -5,9 +5,6 @@ import co.touchlab.kermit.Logger
 import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import dev.icerock.moko.resources.desc.StringDesc
 import io.ktor.utils.io.core.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
@@ -171,13 +168,17 @@ abstract class Application : NativeApplication(), KoinComponent {
             loadKoinModules(serviceModule)
         }
 
-        lateinit var Instance: NativeApplication
+        lateinit var nativeInstance: NativeApplication
             private set
+        lateinit var instance: Application
+            private set
+
     }
 
     init {
         @Suppress("LeakingThis")
-        Instance = this
+        nativeInstance = this
+        instance = this
     }
 
     @OptIn(ExperimentalKermitApi::class)
@@ -191,11 +192,7 @@ abstract class Application : NativeApplication(), KoinComponent {
         Logger.addLogWriter(CrashlyticsLogWriter())
         Logger.addLogWriter(FileLogger)
 
-        CoroutineScope(Dispatchers.Default).launch {
-            AppSetting.isCrashlyticsEnabled.data.collect {
-                setCrashlyticsCollectionEnabled(it)
-            }
-        }
+        setCrashlyticsCollectionEnabled(AppSetting.isCrashlyticsEnabled.value)
 
         logger.a { "######## Application started ########" }
 
@@ -213,12 +210,12 @@ abstract class Application : NativeApplication(), KoinComponent {
         }
     }
 
-    abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)
-
     override suspend fun updateWidgetNative() {
         updateWidget()
     }
 
     abstract suspend fun updateWidget()
+
+    abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)
 
 }

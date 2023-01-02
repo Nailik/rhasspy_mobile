@@ -29,7 +29,7 @@ class MicrophoneWidgetViewModel : ViewModel(), KoinComponent {
         viewModelScope.launch {
             combineState(isShowBorder, isShowMicOn, isRecording, isActionEnabled) { _, _, _, _ ->
                 viewModelScope.launch {
-                    Application.Instance.updateWidgetNative()
+                    Application.nativeInstance.updateWidgetNative()
                 }
             }.collect {
 

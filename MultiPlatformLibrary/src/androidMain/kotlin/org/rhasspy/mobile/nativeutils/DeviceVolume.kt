@@ -20,7 +20,7 @@ import org.rhasspy.mobile.combineState
  */
 actual object DeviceVolume {
 
-    private val audioManager = ContextCompat.getSystemService(Application.Instance, AudioManager::class.java)
+    private val audioManager = ContextCompat.getSystemService(Application.nativeInstance, AudioManager::class.java)
 
     //sound output volume
     private val _volumeFlowSound = MutableStateFlow(audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC))
@@ -52,13 +52,13 @@ actual object DeviceVolume {
             c1 + c2 > 0
         }.onEach { isActive -> // configure an action
             if (isActive) {
-                Application.Instance.contentResolver.registerContentObserver(
+                Application.nativeInstance.contentResolver.registerContentObserver(
                     Settings.System.CONTENT_URI,
                     true,
                     volumeObserver
                 )
             } else {
-                Application.Instance.contentResolver.unregisterContentObserver(volumeObserver)
+                Application.nativeInstance.contentResolver.unregisterContentObserver(volumeObserver)
             }
         }.launchIn(CoroutineScope(Dispatchers.IO))
     }

@@ -52,7 +52,7 @@ actual fun ApplicationEngineEnvironmentBuilder.installConnector(
 
         keystore.load(
             File(
-                org.rhasspy.mobile.Application.Instance.filesDir,
+                org.rhasspy.mobile.Application.nativeInstance.filesDir,
                 keyStoreFile
             ).inputStream(), keyStorePassword.toCharArray()
         )

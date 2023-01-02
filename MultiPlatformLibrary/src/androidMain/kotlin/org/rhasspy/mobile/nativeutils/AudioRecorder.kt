@@ -70,7 +70,7 @@ actual class AudioRecorder : Closeable {
                 logger.v { "initializing recorder" }
 
                 if (ActivityCompat.checkSelfPermission(
-                        Application.Instance,
+                        Application.nativeInstance,
                         Manifest.permission.RECORD_AUDIO
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {

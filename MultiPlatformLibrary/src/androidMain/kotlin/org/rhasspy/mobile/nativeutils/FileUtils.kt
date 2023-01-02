@@ -24,7 +24,7 @@ actual object FileUtils {
     ): String? {
         //create folder if it doesn't exist yet
         val folderName = "${fileType.folderName}${subfolder?.let { "/$it" } ?: ""}"
-        File(Application.Instance.filesDir, folderName).mkdirs()
+        File(Application.nativeInstance.filesDir, folderName).mkdirs()
 
         openDocument(fileType)?.also { uri ->
             queryFile(uri)?.also { fileName ->
@@ -41,7 +41,7 @@ actual object FileUtils {
      */
     actual fun removeFile(fileType: FileType, subfolder: String?, fileName: String) {
         val folderName = "${fileType.folderName}${subfolder?.let { "/$it" } ?: ""}"
-        File(Application.Instance.filesDir, "$folderName/$fileName").delete()
+        File(Application.nativeInstance.filesDir, "$folderName/$fileName").delete()
     }
 
 
@@ -49,7 +49,7 @@ actual object FileUtils {
      * read file from system
      */
     private suspend fun queryFile(uri: Uri): String? = suspendCoroutine { continuation ->
-        Application.Instance.contentResolver.query(uri, null, null, null, null)?.also { cursor ->
+        Application.nativeInstance.contentResolver.query(uri, null, null, null, null)?.also { cursor ->
             if (cursor.moveToFirst()) {
                 val index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
                 if (index != -1) {
@@ -71,7 +71,7 @@ actual object FileUtils {
      * open document
      */
     private suspend fun openDocument(fileType: FileType): Uri? = suspendCoroutine { continuation ->
-        Application.Instance.currentActivity?.openDocument(fileType.fileTypes) {
+        Application.nativeInstance.currentActivity?.openDocument(fileType.fileTypes) {
             continuation.resume(it.data?.data)
         }
     }
@@ -95,8 +95,8 @@ actual object FileUtils {
      */
     private suspend fun copyNormalFile(uri: Uri, folderName: String, fileName: String): String? =
         suspendCoroutine { continuation ->
-            Application.Instance.contentResolver.openInputStream(uri)?.also { inputStream ->
-                File(Application.Instance.filesDir, "$folderName/$fileName").apply {
+            Application.nativeInstance.contentResolver.openInputStream(uri)?.also { inputStream ->
+                File(Application.nativeInstance.filesDir, "$folderName/$fileName").apply {
                     this.outputStream().apply {
                         inputStream.copyTo(this)
 
@@ -121,7 +121,7 @@ actual object FileUtils {
         selectedFileName: String
     ): String? =
         suspendCoroutine { continuation ->
-            Application.Instance.contentResolver.openInputStream(uri)?.also { inputStream ->
+            Application.nativeInstance.contentResolver.openInputStream(uri)?.also { inputStream ->
 
                 when {
                     selectedFileName.endsWith(".zip") -> {
@@ -139,7 +139,7 @@ actual object FileUtils {
                                     val fileName = renameFileWhileExists(folderName, ze.name)
 
                                     File(
-                                        Application.Instance.filesDir,
+                                        Application.nativeInstance.filesDir,
                                         "$folderName/$fileName"
                                     ).outputStream().apply {
                                         zipInputStream.copyTo(this)
@@ -160,7 +160,7 @@ actual object FileUtils {
                         //use this file
                         val fileName = renameFileWhileExists(folderName, selectedFileName)
 
-                        File(Application.Instance.filesDir, "$folderName/$fileName").apply {
+                        File(Application.nativeInstance.filesDir, "$folderName/$fileName").apply {
                             this.outputStream().apply {
                                 inputStream.copyTo(this)
                                 this.flush()
@@ -184,7 +184,7 @@ actual object FileUtils {
     private fun renameFileWhileExists(folder: String, file: String): String {
         var fileName = file
         var index = 0
-        while (File(Application.Instance.filesDir, "$folder/$fileName").exists()) {
+        while (File(Application.nativeInstance.filesDir, "$folder/$fileName").exists()) {
             index++
             fileName = if (fileName.contains(Regex("\\([1-9]+\\)."))) {
                 fileName.replace(Regex("\\([1-9]+\\)."), "($index).")

@@ -26,17 +26,17 @@ actual object SettingsUtils {
      */
     actual fun exportSettingsFile() {
         //create folder for sounds and porcupine
-        File(Application.Instance.filesDir, "sounds").mkdirs()
-        File(Application.Instance.filesDir, "porcupine").mkdirs()
+        File(Application.nativeInstance.filesDir, "sounds").mkdirs()
+        File(Application.nativeInstance.filesDir, "porcupine").mkdirs()
 
         //to load zip export file
-        Application.Instance.currentActivity?.createDocument(
+        Application.nativeInstance.currentActivity?.createDocument(
             "rhasspy_settings_${Clock.System.now().toLocalDateTime(TimeZone.UTC)}.zip",
             "application/zip"
         ) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
-                    Application.Instance.contentResolver.openOutputStream(uri)
+                    Application.nativeInstance.contentResolver.openOutputStream(uri)
                         ?.also { outputStream ->
 
                             //create output for zip file
@@ -46,7 +46,7 @@ actual object SettingsUtils {
                             zipOutputStream.putNextEntry(ZipEntry("shared_prefs/"))
 
                             //copy org.rhasspy.mobile.android_prefenrences.xml
-                            val sharedPreferencesFile = File(Application.Instance.filesDir.parent, "shared_prefs/org.rhasspy.mobile.android_preferences.xml")
+                            val sharedPreferencesFile = File(Application.nativeInstance.filesDir.parent, "shared_prefs/org.rhasspy.mobile.android_preferences.xml")
                             if (sharedPreferencesFile.exists()) {
                                 sharedPreferencesFile.listFiles()?.forEach { soundFile ->
                                     zipOutputStream.putNextEntry(ZipEntry("${sharedPreferencesFile.name}/${soundFile.name}"))
@@ -55,7 +55,7 @@ actual object SettingsUtils {
                             }
 
                             //all custom files
-                            val files = File(Application.Instance.filesDir, "files")
+                            val files = File(Application.nativeInstance.filesDir, "files")
                             FileType.values().forEach { fileType ->
                                 val fileTypeFolder = File(files, fileType.folderName)
                                 copyFolderIntoZipRecursive(fileTypeFolder, zipOutputStream)
@@ -92,10 +92,10 @@ actual object SettingsUtils {
      * restore all settings from a file
      */
     actual fun restoreSettingsFromFile() {
-        Application.Instance.currentActivity?.openDocument(arrayOf("application/zip")) {
+        Application.nativeInstance.currentActivity?.openDocument(arrayOf("application/zip")) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
-                    Application.Instance.contentResolver.openInputStream(uri)?.also { inputStream ->
+                    Application.nativeInstance.contentResolver.openInputStream(uri)?.also { inputStream ->
                         //read input data
                         val zipInputStream = ZipInputStream(BufferedInputStream(inputStream))
 
@@ -104,10 +104,10 @@ actual object SettingsUtils {
                         while (entry != null) {
                             if (entry.isDirectory) {
                                 //when it's a directory create new directory
-                                File(Application.Instance.filesDir.parent, entry.name).mkdirs()
+                                File(Application.nativeInstance.filesDir.parent, entry.name).mkdirs()
                             } else {
                                 //when it's a file copy file
-                                val file = File(Application.Instance.filesDir.parent, entry.name)
+                                val file = File(Application.nativeInstance.filesDir.parent, entry.name)
                                 file.parent?.also { parentFile -> File(parentFile).mkdirs() }
                                 file.createNewFile()
                                 file.outputStream().apply {
@@ -122,7 +122,7 @@ actual object SettingsUtils {
 
                         inputStream.close()
 
-                        Application.Instance.restart()
+                        Application.nativeInstance.restart()
                     }
                 }
             }
@@ -160,8 +160,8 @@ actual object SettingsUtils {
         )
 
         //copy org.rhasspy.mobile.android_prefenrences.xml
-        val sharedPreferencesFile = File(Application.Instance.filesDir.parent, "shared_prefs/org.rhasspy.mobile.android_preferences.xml")
-        val exportFile = File(Application.Instance.filesDir, "org.rhasspy.mobile.android_preferences_export.xml")
+        val sharedPreferencesFile = File(Application.nativeInstance.filesDir.parent, "shared_prefs/org.rhasspy.mobile.android_preferences.xml")
+        val exportFile = File(Application.nativeInstance.filesDir, "org.rhasspy.mobile.android_preferences_export.xml")
         //create new empty file
         if (!exportFile.exists()) {
             exportFile.createNewFile()
@@ -189,8 +189,8 @@ actual object SettingsUtils {
         }
         //share file
         val fileUri: Uri = FileProvider.getUriForFile(
-            Application.Instance,
-            Application.Instance.packageName.toString() + ".provider",
+            Application.nativeInstance,
+            Application.nativeInstance.packageName.toString() + ".provider",
             exportFile
         )
         val shareIntent: Intent = Intent().apply {
@@ -198,7 +198,7 @@ actual object SettingsUtils {
             putExtra(Intent.EXTRA_STREAM, fileUri)
             type = "application/xml"
         }
-        Application.Instance.startActivity(Intent.createChooser(shareIntent, null).apply {
+        Application.nativeInstance.startActivity(Intent.createChooser(shareIntent, null).apply {
             addFlags(FLAG_ACTIVITY_NEW_TASK)
         })
     }

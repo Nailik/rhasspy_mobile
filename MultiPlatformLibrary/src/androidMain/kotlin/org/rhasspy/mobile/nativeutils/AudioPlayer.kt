@@ -157,7 +157,7 @@ actual class AudioPlayer : Closeable {
     ) {
         logger.v { "playSoundFile $filename" }
 
-        val soundFile = File(Application.Instance.filesDir, "sounds/$filename")
+        val soundFile = File(Application.nativeInstance.filesDir, "sounds/$filename")
 
         when (audioOutputOption) {
             AudioOutputOption.Sound -> {
@@ -199,7 +199,7 @@ actual class AudioPlayer : Closeable {
         }
 
         try {
-            mediaPlayer = MediaPlayer.create(Application.Instance, uri).apply {
+            mediaPlayer = MediaPlayer.create(Application.nativeInstance, uri).apply {
                 setAudioAttributes(
                     AudioAttributes.Builder()
                         .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
@@ -243,7 +243,7 @@ actual class AudioPlayer : Closeable {
         onError: ((exception: Exception?) -> Unit)?
     ) {
         try {
-            notification = RingtoneManager.getRingtone(Application.Instance, uri).apply {
+            notification = RingtoneManager.getRingtone(Application.nativeInstance, uri).apply {
                 play()
                 CoroutineScope(Dispatchers.IO).launch {
                     while (isPlaying) {
@@ -275,7 +275,7 @@ actual class AudioPlayer : Closeable {
 
     @Throws(Resources.NotFoundException::class)
     fun getUriFromResource(@AnyRes resId: Int): Uri {
-        val res: Resources = Application.Instance.resources
+        val res: Resources = Application.nativeInstance.resources
         return Uri.parse(
             ContentResolver.SCHEME_ANDROID_RESOURCE +
                     "://" + res.getResourcePackageName(resId)

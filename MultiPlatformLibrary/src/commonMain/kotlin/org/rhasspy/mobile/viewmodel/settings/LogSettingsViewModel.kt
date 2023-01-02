@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.viewmodel.settings
 
+import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.logger.LogLevel
 import org.rhasspy.mobile.settings.AppSetting
 
@@ -18,6 +20,7 @@ class LogSettingsViewModel : ViewModel() {
     //select log level
     fun selectLogLevel(logLevel: LogLevel) {
         AppSetting.logLevel.value = logLevel
+        Logger.setMinSeverity(AppSetting.logLevel.value.severity)
     }
 
     /**
@@ -26,6 +29,7 @@ class LogSettingsViewModel : ViewModel() {
      */
     fun toggleCrashlyticsEnabled(enabled: Boolean) {
         AppSetting.isCrashlyticsEnabled.value = enabled
+        Application.instance.setCrashlyticsCollectionEnabled(AppSetting.isCrashlyticsEnabled.value)
     }
 
     //toggle show log enabled

@@ -41,7 +41,7 @@ fun ConfigurationScreenTest(
 
     LaunchedEffect(Unit) {
         onOpenPage.invoke()
-        Application.Instance.isAppInBackground.collect {
+        Application.nativeInstance.isAppInBackground.collect {
             if (it) {
                 navController.popBackStack()
             }

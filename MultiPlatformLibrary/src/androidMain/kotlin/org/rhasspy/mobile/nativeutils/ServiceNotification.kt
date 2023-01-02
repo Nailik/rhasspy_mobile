@@ -24,7 +24,7 @@ object ServiceNotification {
     fun create(): Notification {
         createGroup()
         createChannel()
-        return NotificationCompat.Builder(Application.Instance, CHANNEL_ID)
+        return NotificationCompat.Builder(Application.nativeInstance, CHANNEL_ID)
             .setSmallIcon(MR.images.ic_launcher.drawableResId)
             .setContentTitle("Rhasspy Services Running")
             .setContentIntent(createPendingIntent())
@@ -35,7 +35,7 @@ object ServiceNotification {
 
     private fun createGroup() {
         NotificationManagerCompat
-            .from(Application.Instance).createNotificationChannelGroup(
+            .from(Application.nativeInstance).createNotificationChannelGroup(
                 NotificationChannelGroupCompat.Builder(GROUP_ID)
                     .setName("Rhasspy Service Notification Group")
                     .build()
@@ -44,7 +44,7 @@ object ServiceNotification {
 
     private fun createChannel() {
         NotificationManagerCompat
-            .from(Application.Instance)
+            .from(Application.nativeInstance)
             .createNotificationChannel(
                 NotificationChannelCompat.Builder(
                     CHANNEL_ID,
@@ -60,7 +60,7 @@ object ServiceNotification {
 
     private fun createPendingIntent(): PendingIntent {
         val launchIntent: Intent =
-            Application.Instance.packageManager.getLaunchIntentForPackage(Application.Instance.packageName)!!
+            Application.nativeInstance.packageManager.getLaunchIntentForPackage(Application.nativeInstance.packageName)!!
 
         val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
@@ -68,7 +68,7 @@ object ServiceNotification {
             PendingIntent.FLAG_UPDATE_CURRENT
         }
 
-        return PendingIntent.getActivity(Application.Instance, 0, launchIntent, flags)
+        return PendingIntent.getActivity(Application.nativeInstance, 0, launchIntent, flags)
     }
 
 

@@ -36,7 +36,7 @@ actual class PorcupineWakeWordClient actual constructor(
      */
     actual fun initialize(): PorcupineError? {
         if (ActivityCompat.checkSelfPermission(
-                Application.Instance,
+                Application.nativeInstance,
                 Manifest.permission.RECORD_AUDIO
             ) != PackageManager.PERMISSION_GRANTED
         ) {
@@ -56,7 +56,7 @@ actual class PorcupineWakeWordClient actual constructor(
                             list.addAll(
                                 wakeWordPorcupineKeywordCustomOptions.filter { it.isEnabled }.map {
                                     File(
-                                        Application.Instance.filesDir,
+                                        Application.nativeInstance.filesDir,
                                         "porcupine/${it.fileName}"
                                     ).absolutePath
                                 }
@@ -81,9 +81,9 @@ actual class PorcupineWakeWordClient actual constructor(
                 }
 
 
-            File(Application.Instance.filesDir, "sounds").mkdirs()
+            File(Application.nativeInstance.filesDir, "sounds").mkdirs()
 
-            porcupineManager = porcupineBuilder.build(Application.Instance, this)
+            porcupineManager = porcupineBuilder.build(Application.nativeInstance, this)
 
             null//no error
         } catch (e: Exception) {
@@ -144,13 +144,13 @@ actual class PorcupineWakeWordClient actual constructor(
      */
     private fun copyModelFileIfNecessary(): String {
         val file = File(
-            Application.Instance.filesDir,
+            Application.nativeInstance.filesDir,
             "porcupine/model_${wakeWordPorcupineLanguage.name.lowercase()}.pv"
         )
 
         if (!file.exists()) {
             file.outputStream().write(
-                Application.Instance.resources.openRawResource(wakeWordPorcupineLanguage.file.rawResId)
+                Application.nativeInstance.resources.openRawResource(wakeWordPorcupineLanguage.file.rawResId)
                     .readBytes()
             )
         }
@@ -163,12 +163,12 @@ actual class PorcupineWakeWordClient actual constructor(
      */
     private fun copyBuildInKeywordFileIfNecessary(defaultKeyword: PorcupineDefaultKeyword): String {
         val file = File(
-            Application.Instance.filesDir,
+            Application.nativeInstance.filesDir,
             "porcupine/model_${defaultKeyword.option.name.lowercase()}.ppn"
         )
 
         if (!file.exists()) {
-            file.outputStream().write(Application.Instance.resources.openRawResource(defaultKeyword.option.file.rawResId).readBytes())
+            file.outputStream().write(Application.nativeInstance.resources.openRawResource(defaultKeyword.option.file.rawResId).readBytes())
         }
 
         return file.absolutePath
