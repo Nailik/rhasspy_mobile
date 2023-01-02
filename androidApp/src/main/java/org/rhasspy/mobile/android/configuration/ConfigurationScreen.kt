@@ -27,7 +27,7 @@ import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.middleware.EventState
+import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.viewmodel.screens.ConfigurationScreenViewModel
 
 /**
@@ -418,7 +418,7 @@ private fun ConfigurationListItem(
     text: StringResource,
     secondaryText: StringResource,
     screen: ConfigurationScreenType,
-    serviceState: EventState
+    serviceState: ServiceState
 ) {
 
     val navController = LocalMainNavController.current
@@ -445,7 +445,7 @@ private fun ConfigurationListItem(
     text: StringResource,
     secondaryText: String,
     screen: ConfigurationScreenType,
-    serviceState: EventState
+    serviceState: ServiceState
 ) {
 
     val navController = LocalMainNavController.current

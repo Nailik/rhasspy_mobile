@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.android.content.elements
 
+/*
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.ListItem
@@ -11,9 +12,7 @@ import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.item.EventStateContent
 import org.rhasspy.mobile.android.content.item.EventStateIconTinted
-import org.rhasspy.mobile.middleware.Event
-import org.rhasspy.mobile.middleware.EventState
-import org.rhasspy.mobile.middleware.name
+import org.rhasspy.mobile.middleware.ServiceState
 
 @Composable
 fun EventListItem(event: Event) {
@@ -30,12 +29,12 @@ fun EventListItem(event: Event) {
             },
             supportingText = {
                 val text = when (state) {
-                    is EventState.Pending -> translate(MR.strings.pending)
-                    is EventState.Loading -> translate(MR.strings.loading)
-                    is EventState.Success -> state.information
-                    is EventState.Warning -> state.information
-                    is EventState.Disabled -> translate(MR.strings.disabled)
-                    is EventState.Error -> state.toString()
+                    is ServiceState.Pending -> translate(MR.strings.pending)
+                    is ServiceState.Loading -> translate(MR.strings.loading)
+                    is ServiceState.Success -> state.information
+                    is ServiceState.Warning -> state.information
+                    is ServiceState.Disabled -> translate(MR.strings.disabled)
+                    is ServiceState.Error -> state.toString()
                 }
 
                 Text(text ?: translate(MR.strings.noDetails))
@@ -50,4 +49,4 @@ fun EventListItem(event: Event) {
                 }
             })
     }
-}
+}*/

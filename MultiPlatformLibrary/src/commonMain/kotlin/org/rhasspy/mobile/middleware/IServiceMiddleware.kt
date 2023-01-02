@@ -2,11 +2,8 @@ package org.rhasspy.mobile.middleware
 
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.dialog.*
 import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.services.mqtt.MqttService
@@ -16,15 +13,7 @@ import org.rhasspy.mobile.services.settings.AppSettingsService
 /**
  * handles ALL INCOMING events
  */
-@OptIn(ExperimentalCoroutinesApi::class)
 abstract class IServiceMiddleware : KoinComponent, Closeable {
-
-    //replay because maybe the test starts a little bit earlier than subscription to the shared flow
-    private val _event = MutableSharedFlow<Event>(
-        replay = 10,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
-    val event = _event.readOnly
 
     private val dialogManagerService by inject<DialogManagerService>()
     private val appSettingsService by inject<AppSettingsService>()
@@ -64,18 +53,8 @@ abstract class IServiceMiddleware : KoinComponent, Closeable {
 
     fun getRecordedData(): ByteArray = recordingService.recordedData.toByteArray()
 
-    /**
-     * eventually when testing update an existing(pending) event with event type
-     */
-    fun createEvent(eventType: EventType, description: String? = null): Event {
-        val event = Event(eventType, description).loading()
-        _event.tryEmit(event)
-        return event
-    }
-
     override fun close() {
         coroutineScope.cancel()
-        _event.resetReplayCache()
     }
 
 }

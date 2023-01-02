@@ -17,11 +17,6 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.middleware.Action
 import org.rhasspy.mobile.middleware.Action.AppSettingsAction
 import org.rhasspy.mobile.middleware.Action.DialogAction
-import org.rhasspy.mobile.middleware.ErrorType.WebServerServiceErrorType
-import org.rhasspy.mobile.middleware.ErrorType.WebServerServiceErrorType.*
-import org.rhasspy.mobile.middleware.Event
-import org.rhasspy.mobile.middleware.EventType.WebServerServiceEventType.Received
-import org.rhasspy.mobile.middleware.EventType.WebServerServiceEventType.Start
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.nativeutils.getEngine
@@ -58,17 +53,13 @@ class WebServerService : IService() {
      */
     init {
         if (params.isHttpServerEnabled) {
-            val startEvent = serviceMiddleware.createEvent(Start)
-
             try {
                 server = buildServer()
                 server.start()
-                //successfully start
-                startEvent.success()
-            } catch (e: Exception) {
+            } catch (exception: Exception) {
                 //start error
                 //TODO error description (no certificate, wrong filetype, wrong keystore password, alias missing, wrong alias password)
-                startEvent.error(e)
+                logger.e(exception) { "" }
             }
         } else {
             //server disabled
@@ -163,14 +154,13 @@ class WebServerService : IService() {
      * evaluates any call
      */
     private suspend fun evaluateCall(path: WebServerPath, call: ApplicationCall) {
-        val callEvent = serviceMiddleware.createEvent(Received, path.path)
         try {
             val result = when (path) {
                 WebServerPath.ListenForCommand -> listenForCommand()
                 WebServerPath.ListenForWake -> listenForWake(call)
                 WebServerPath.PlayRecordingPost -> playRecordingPost()
                 WebServerPath.PlayRecordingGet -> playRecordingGet(call)
-                WebServerPath.PlayWav -> playWav(call, callEvent)
+                WebServerPath.PlayWav -> playWav(call)
                 WebServerPath.SetVolume -> setVolume(call)
                 WebServerPath.StartRecording -> startRecording()
                 WebServerPath.StopRecording -> stopRecording()
@@ -180,21 +170,20 @@ class WebServerService : IService() {
             when (result) {
                 is WebServerResult.Accepted -> {
                     call.respond(HttpStatusCode.Accepted)
-                    callEvent.success(result.data)
                 }
                 is WebServerResult.Error -> {
                     call.respond(HttpStatusCode.BadRequest, result.errorType.description)
-                    callEvent.error(result.errorType)
                 }
                 WebServerResult.Ok -> {
                     call.respond(HttpStatusCode.OK)
-                    callEvent.success()
                 }
-                else -> callEvent.success()
+                else -> {
+
+                }
             }
 
         } catch (exception: Exception) {
-            callEvent.error(exception)
+            logger.e(exception) { "" }
         }
     }
 
@@ -229,7 +218,7 @@ class WebServerService : IService() {
             serviceMiddleware.action(AppSettingsAction.HotWordToggle(it))
             return WebServerResult.Accepted(it.toString())
         } ?: run {
-            return WebServerResult.Error(WakeOptionInvalid)
+            return WebServerResult.Error(WebServerServiceErrorType.WakeOptionInvalid)
         }
     }
 
@@ -262,9 +251,9 @@ class WebServerService : IService() {
      * Make sure to set Content-Type to audio/wav
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    private suspend fun playWav(call: ApplicationCall, event: Event): WebServerResult {
+    private suspend fun playWav(call: ApplicationCall): WebServerResult {
         if (call.request.contentType() != audioContentType) {
-            event.warning(AudioContentTypeWarning)
+            //TODO log
         }
         //play even without header
         serviceMiddleware.action(DialogAction.PlayAudio(Source.HttpApi, call.receive()))
@@ -284,10 +273,10 @@ class WebServerService : IService() {
                 serviceMiddleware.action(AppSettingsAction.AudioVolumeChange(it))
                 return WebServerResult.Accepted(it.toString())
             } else {
-                return WebServerResult.Error(VolumeValueOutOfRange)
+                return WebServerResult.Error(WebServerServiceErrorType.VolumeValueOutOfRange)
             }
         } ?: run {
-            return WebServerResult.Error(VolumeValueInvalid)
+            return WebServerResult.Error(WebServerServiceErrorType.VolumeValueInvalid)
         }
     }
 

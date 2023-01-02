@@ -33,7 +33,6 @@ class LogScreenViewModel : ViewModel() {
         }
     }
 
-
     fun shareLogFile() = FileLogger.shareLogFile()
 
     fun saveLogFile() = FileLogger.saveLogFile()

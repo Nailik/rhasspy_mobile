@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.services.httpclient
 
+import co.touchlab.kermit.Logger
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
@@ -11,14 +12,10 @@ import io.ktor.http.*
 import kotlinx.coroutines.cancel
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.IntentHandlingOptions
-import org.rhasspy.mobile.middleware.ErrorType.HttpClientServiceErrorType
-import org.rhasspy.mobile.middleware.ErrorType.HttpClientServiceErrorType.*
-import org.rhasspy.mobile.middleware.EventState
-import org.rhasspy.mobile.middleware.EventType
-import org.rhasspy.mobile.middleware.EventType.HttpClientServiceEventType.*
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.services.IService
+import org.rhasspy.mobile.services.httpclient.HttpClientServiceErrorType.*
 
 /**
  * contains client to send data to http endpoints
@@ -26,10 +23,9 @@ import org.rhasspy.mobile.services.IService
  * functions return the result or an exception
  */
 class HttpClientService : IService() {
+    private val logger = Logger.withTag("HttpClientService")
 
     private val params by inject<HttpClientServiceParams>()
-
-    private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private val audioContentType = ContentType("audio", "wav")
     private val jsonContentType = ContentType("application", "json")
@@ -76,19 +72,12 @@ class HttpClientService : IService() {
      * starts client and updates event
      */
     init {
-        _currentState.value = EventState.Loading
-        val startEvent = serviceMiddleware.createEvent(Start)
-
         try {
             //starting
             httpClient = buildClient()
-            //successfully start
-            _currentState.value = EventState.Success()
-            startEvent.success()
-        } catch (e: Exception) {
+        } catch (exception: Exception) {
             //start error
-            _currentState.value = EventState.Error()
-            startEvent.error(e)
+            logger.e(exception) { "" }
         }
     }
 
@@ -123,7 +112,7 @@ class HttpClientService : IService() {
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
     suspend fun speechToText(data: List<Byte>): String? {
-        return post<String>(EventType.HttpClientServiceEventType.SpeechToText, speechToTextUrl) {
+        return post<String>(speechToTextUrl) {
             setBody(data.toByteArray())
         }
     }
@@ -138,7 +127,7 @@ class HttpClientService : IService() {
      * returns null if the intent is not found
      */
     suspend fun recognizeIntent(text: String): String? {
-        return post<String>(RecognizeIntent, recognizeIntentUrl) {
+        return post<String>(recognizeIntentUrl) {
             setBody(text)
         }
     }
@@ -153,7 +142,7 @@ class HttpClientService : IService() {
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     suspend fun textToSpeech(text: String): ByteArray? {
-        return post<ByteArray>(TextToSpeech, textToSpeechUrl) {
+        return post<ByteArray>(textToSpeechUrl) {
             setBody(text)
         }
     }
@@ -165,7 +154,7 @@ class HttpClientService : IService() {
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     suspend fun playWav(data: List<Byte>): String? {
-        return post<String>(PlayWav, audioPlayingUrl) {
+        return post<String>(audioPlayingUrl) {
             setAttributes {
                 contentType(audioContentType)
             }
@@ -190,7 +179,7 @@ class HttpClientService : IService() {
      * Implemented by rhasspy-remote-http-hermes
      */
     suspend fun intentHandling(intent: String): String? {
-        return post<String>(IntentHandling, params.intentHandlingHttpEndpoint) {
+        return post<String>(params.intentHandlingHttpEndpoint) {
             setBody(intent)
         }
     }
@@ -199,7 +188,7 @@ class HttpClientService : IService() {
      * send intent as Event to Home Assistant
      */
     suspend fun hassEvent(json: String, intentName: String): String? {
-        return post<String>(HassEvent, "$hassEventUrl$intentName") {
+        return post<String>("$hassEventUrl$intentName") {
             buildHeaders {
                 hassAuthorization()
                 contentType(jsonContentType)
@@ -213,7 +202,7 @@ class HttpClientService : IService() {
      * send intent as Intent to Home Assistant
      */
     suspend fun hassIntent(intentJson: String): String? {
-        return post<String>(HassIntent, hassIntentUrl) {
+        return post<String>(hassIntentUrl) {
             buildHeaders {
                 hassAuthorization()
                 contentType(jsonContentType)
@@ -227,28 +216,15 @@ class HttpClientService : IService() {
      * post data to endpoint
      * handles even in event logger
      */
-    private suspend inline fun <reified T> post(
-        eventType: EventType,
-        url: String,
-        block: HttpRequestBuilder.() -> Unit
-    ): T? {
+    private suspend inline fun <reified T> post(url: String, block: HttpRequestBuilder.() -> Unit): T? {
         return httpClient?.let { client ->
             try {
-
                 val request = client.post(url, block)
-
-                val response = request.body<T>()
-
-                _currentState.value = EventState.Success()
-
-                return response
-
+                return request.body<T>()
             } catch (e: Exception) {
-                _currentState.value = EventState.Error()
                 return null
             }
         } ?: run {
-            _currentState.value = EventState.Error()
             return null
         }
     }
@@ -259,7 +235,7 @@ class HttpClientService : IService() {
     private fun mapError(e: Exception): HttpClientServiceErrorType? {
         return if (e::class.simpleName == IllegalArgumentException.description) {
             if (e.message == InvalidTLSRecordType.description) {
-                InvalidTLSRecordType
+                HttpClientServiceErrorType.InvalidTLSRecordType
             } else {
                 IllegalArgumentException
             }

@@ -8,8 +8,8 @@ import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.middleware.Action
-import org.rhasspy.mobile.middleware.EventState
 import org.rhasspy.mobile.middleware.ServiceMiddleware
+import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.services.dialog.DialogManagerService
 import org.rhasspy.mobile.services.dialog.DialogManagerServiceState
@@ -29,7 +29,7 @@ class HomeScreenViewModel : ViewModel(), KoinComponent {
     val isPlayingRecordingEnabled = isActionEnabled
     val isShowLogEnabled = AppSettings.isShowLogEnabled.data
 
-    val serviceState = MutableStateFlow<EventState>(EventState.Pending)
+    val serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
 
     fun toggleSession() = serviceMiddleware.userSessionClick()
 

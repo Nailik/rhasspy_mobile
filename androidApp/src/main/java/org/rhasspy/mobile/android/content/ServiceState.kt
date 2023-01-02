@@ -8,7 +8,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.item.EventStateCard
 import org.rhasspy.mobile.android.content.item.EventStateIcon
-import org.rhasspy.mobile.middleware.EventState
+import org.rhasspy.mobile.middleware.ServiceState
 
 /**
  * service state information
@@ -16,7 +16,7 @@ import org.rhasspy.mobile.middleware.EventState
 @Composable
 fun ServiceState(
     modifier: Modifier = Modifier,
-    serviceState: EventState,
+    serviceState: ServiceState,
     onClick: (() -> Unit)? = null
 ) {
     Box(
@@ -24,7 +24,7 @@ fun ServiceState(
             .fillMaxWidth(),
     ) {
         EventStateCard(
-            eventState = serviceState,
+            serviceState = serviceState,
             onClick = onClick
         ) {
             Row(
@@ -44,16 +44,16 @@ fun ServiceState(
  * text of service state
  */
 @Composable
-private fun ServiceStateText(serviceState: EventState) {
+private fun ServiceStateText(serviceState: ServiceState) {
 
     Text(
         resource = when (serviceState) {
-            is EventState.Pending -> MR.strings.pending
-            is EventState.Loading -> MR.strings.loading
-            is EventState.Success -> MR.strings.success
-            is EventState.Warning -> MR.strings.warning
-            is EventState.Error -> MR.strings.error
-            is EventState.Disabled -> MR.strings.disabled
+            is ServiceState.Pending -> MR.strings.pending
+            is ServiceState.Loading -> MR.strings.loading
+            is ServiceState.Success -> MR.strings.success
+            is ServiceState.Warning -> MR.strings.warning
+            is ServiceState.Error -> MR.strings.error
+            is ServiceState.Disabled -> MR.strings.disabled
         }
     )
 

@@ -1,18 +1,17 @@
 package org.rhasspy.mobile.services.udp
 
+import co.touchlab.kermit.Logger
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
 import org.koin.core.component.inject
-import org.rhasspy.mobile.middleware.ErrorType.UdpServiceErrorType.NotInitialized
-import org.rhasspy.mobile.middleware.EventType.UdpServiceEventType.Start
-import org.rhasspy.mobile.middleware.EventType.UdpServiceEventType.StreamAudio
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.services.IService
 
 class UdpService : IService() {
+    private val logger = Logger.withTag("UdpService")
 
     private var socketAddress: SocketAddress? = null
     private var sendChannel: SendChannel<Datagram>? = null
@@ -27,8 +26,6 @@ class UdpService : IService() {
      * suspend is necessary else there is an network on main thread error at least on android
      */
     init {
-        val startEvent = serviceMiddleware.createEvent(Start)
-
         try {
             sendChannel = aSocket(SelectorManager(Dispatchers.Default)).udp().bind().outgoing
 
@@ -36,10 +33,8 @@ class UdpService : IService() {
                 params.udpOutputHost,
                 params.udpOutputPort
             )
-
-            startEvent.success()
-        } catch (e: Exception) {
-            startEvent.error(e)
+        } catch (exception: Exception) {
+            logger.e(exception) { "" }
         }
     }
 
@@ -49,24 +44,16 @@ class UdpService : IService() {
     }
 
     suspend fun streamAudio(byteData: List<Byte>) {
-        val streamAudioEvent = serviceMiddleware.createEvent(StreamAudio)
-
         socketAddress?.also {
             try {
-                sendChannel?.send(Datagram(ByteReadPacket(byteData.toByteArray()), it)) ?: run {
-                    streamAudioEvent.error(NotInitialized)
-
-                }
+                sendChannel?.send(Datagram(ByteReadPacket(byteData.toByteArray()), it))
+                //TODO log if it returns error
             } catch (exception: Exception) {
-                streamAudioEvent.error(exception)
-
+                logger.e(exception) { "" }
             }
         } ?: run {
-            streamAudioEvent.error(NotInitialized)
-
+            //TODO log
         }
-        streamAudioEvent.success()
-
     }
 
 }

@@ -17,9 +17,7 @@ import kotlin.math.roundToInt
 class MicrophoneOverlayViewModel : ViewModel(), KoinComponent {
 
     private val dialogManagerServiceState
-        get() = getSafe<DialogManagerService>()?.currentDialogState ?: MutableStateFlow(
-            DialogManagerServiceState.Idle
-        ).readOnly
+        get() = getSafe<DialogManagerService>()?.currentDialogState ?: MutableStateFlow(DialogManagerServiceState.Idle).readOnly
 
     val shouldOverlayBeShown = combineState(
         OverlayPermission.granted,
@@ -33,22 +31,16 @@ class MicrophoneOverlayViewModel : ViewModel(), KoinComponent {
     val microphoneOverlayPositionX: Int get() = AppSettings.microphoneOverlayPositionX.value
     val microphoneOverlayPositionY: Int get() = AppSettings.microphoneOverlayPositionY.value
 
-    val microphoneOverlaySize =
-        AppSettings.microphoneOverlaySizeOption.data.mapReadonlyState { it.size }
+    val microphoneOverlaySize = AppSettings.microphoneOverlaySizeOption.data.mapReadonlyState { it.size }
 
-    val isActionEnabled = dialogManagerServiceState
-        .mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingWakeWord }
-    val isShowBorder =
-        dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.AwaitingWakeWord }
+    val isActionEnabled = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingWakeWord }
+    val isShowBorder = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.AwaitingWakeWord }
     val isShowMicOn: StateFlow<Boolean> = MicrophonePermission.granted
-    val isRecording =
-        dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
+    val isRecording = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
 
     fun updateMicrophoneOverlayPosition(offsetX: Float, offsetY: Float) {
-        AppSettings.microphoneOverlayPositionX.value =
-            (((AppSettings.microphoneOverlayPositionX.value + offsetX).roundToInt()))
-        AppSettings.microphoneOverlayPositionY.value =
-            (((AppSettings.microphoneOverlayPositionY.value + offsetY).roundToInt()))
+        AppSettings.microphoneOverlayPositionX.value = (((AppSettings.microphoneOverlayPositionX.value + offsetX).roundToInt()))
+        AppSettings.microphoneOverlayPositionY.value = (((AppSettings.microphoneOverlayPositionY.value + offsetY).roundToInt()))
     }
 
     fun onClick() {

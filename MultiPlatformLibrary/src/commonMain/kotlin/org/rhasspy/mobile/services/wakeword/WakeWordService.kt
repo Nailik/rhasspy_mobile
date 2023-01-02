@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.middleware.Action
-import org.rhasspy.mobile.middleware.EventType.HotWordServiceEventType.Detected
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.nativeutils.PorcupineWakeWordClient
@@ -110,7 +109,6 @@ class WakeWordService : IService() {
     }
 
     private fun onKeywordDetected(hotWord: String) {
-        serviceMiddleware.createEvent(Detected, hotWord).success()
         serviceMiddleware.action(Action.DialogAction.WakeWordDetected(Source.Local, hotWord))
     }
 

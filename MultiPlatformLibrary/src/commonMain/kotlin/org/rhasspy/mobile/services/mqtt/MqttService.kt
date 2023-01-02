@@ -12,8 +12,6 @@ import kotlinx.serialization.json.*
 import org.koin.core.component.inject
 import org.rhasspy.mobile.middleware.Action.AppSettingsAction
 import org.rhasspy.mobile.middleware.Action.DialogAction
-import org.rhasspy.mobile.middleware.ErrorType.MqttServiceErrorType.*
-import org.rhasspy.mobile.middleware.EventType.MqttServiceEventType.*
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.mqtt.*
@@ -54,24 +52,20 @@ class MqttService : IService() {
      */
     init {
         if (params.isMqttEnabled) {
-            val startEvent = serviceMiddleware.createEvent(Start)
-
             try {
                 client = buildClient()
                 scope.launch {
                     if (connectClient()) {
-                        startEvent.success()
-
                         subscribeTopics()
                         _isHasStarted.value = true
                     } else {
-                        startEvent.error()
+                        //TODO service state log
                     }
                 }
 
             } catch (exception: Exception) {
                 //start error
-                startEvent.error(exception)
+                //TODO log
             }
         } else {
             logger.v { "mqtt not enabled" }
@@ -111,23 +105,21 @@ class MqttService : IService() {
      * connects client to server and returns if client is now connected
      */
     private suspend fun connectClient(): Boolean {
-        val connectEvent = serviceMiddleware.createEvent(Connecting)
-
         client?.also {
             if (!it.isConnected.value) {
                 //connect to server
                 it.connect(params.mqttServiceConnectionOptions)?.also { error ->
-                    connectEvent.error(ConnectionError(error))
+                    //TODO servcie state
                 } ?: run {
-                    connectEvent.success()
+                    //TODO servcie state
                 }
             } else {
-                connectEvent.error(AlreadyConnected)
+                //TODO servcie state
             }
             //update value, may be used from reconnect
             _isConnected.value = it.isConnected.value == true
         } ?: run {
-            connectEvent.error(NotInitialized)
+            //TODO servcie state
         }
 
         return _isConnected.value
@@ -138,22 +130,15 @@ class MqttService : IService() {
      * try to reconnect after disconnect
      */
     private fun onDisconnect(error: Throwable) {
-        serviceMiddleware.createEvent(Disconnect).error(error)
-
         _isConnected.value = client?.isConnected?.value == true
 
         if (retryJob?.isActive != true) {
             retryJob = scope.launch {
-
-                val reconnectEvent = serviceMiddleware.createEvent(Reconnect)
-
                 client?.also {
                     while (!it.isConnected.value) {
                         connectClient()
                         delay(params.retryInterval)
                     }
-                    reconnectEvent.success()
-
                     retryJob?.cancel()
                     retryJob = null
                 }
@@ -295,39 +280,21 @@ class MqttService : IService() {
      * Subscribes to topics that are necessary
      */
     private suspend fun subscribeTopics() {
-        val subscribeTopicsEvent = serviceMiddleware.createEvent(SubscribeTopic)
-
         var hasError = false
-        var hasSuccess = false
 
         //subscribe to topics with this site id (if contained in topic, currently only in PlayBytes)
         MqttTopicsSubscription.values().forEach { mqttTopic ->
-            val subscribeEvent = serviceMiddleware.createEvent(Subscribing, mqttTopic.topic)
-
             try {
-                client?.subscribe(mqttTopic.topic.set(MqttTopicPlaceholder.SiteId, params.siteId))
-                    ?.also {
-                        hasError = true
-                        subscribeEvent.error(SubscriptionError(it))
-                    } ?: run {
-                    hasSuccess = true
-                    subscribeEvent.success()
+                client?.subscribe(mqttTopic.topic.set(MqttTopicPlaceholder.SiteId, params.siteId))?.also {
+                    hasError = true
                 }
-            } catch (e: Exception) {
-                subscribeEvent.error(e)
+            } catch (exception: Exception) {
+                logger.e(exception) { "" }
             }
         }
 
         if (hasError) {
-            if (hasSuccess) {
-                //some worked
-                subscribeTopicsEvent.warning()
-            } else {
-                //none worked
-                subscribeTopicsEvent.error()
-            }
-        } else {
-            subscribeTopicsEvent.success()
+            //TODO service state warning
         }
     }
 
