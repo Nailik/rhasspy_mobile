@@ -18,7 +18,6 @@ import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.ServiceState
-import org.rhasspy.mobile.android.content.elements.EventListItem
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.main.LocalConfigurationNavController
@@ -84,17 +83,17 @@ private fun ConfigurationScreenTestList(
     content: (@Composable () -> Unit)?
 ) {
     Column(modifier = modifier) {
-        val eventsList by viewModel.events.collectAsState()
         val coroutineScope = rememberCoroutineScope()
         val scrollState = rememberLazyListState()
 
+        /* todo log output
         LaunchedEffect(eventsList.size) {
             coroutineScope.launch {
                 if (eventsList.isNotEmpty()) {
                     scrollState.animateScrollToItem(eventsList.size - 1)
                 }
             }
-        }
+        }*/
 
         LazyColumn(
             state = scrollState,
@@ -109,9 +108,11 @@ private fun ConfigurationScreenTestList(
                 )
             }
 
+            /*
             items(eventsList) { item ->
                 EventListItem(item)
             }
+             */
         }
 
         if (content != null) {
