@@ -40,9 +40,6 @@ class RecordingService : IService() {
     private val _output = MutableStateFlow<List<Byte>>(emptyList())
     val output = _output.readOnly
 
-    private val _recordedData = mutableListOf<Byte>()
-    val recordedData: List<Byte> = _recordedData.readOnly
-
     init {
         logger.d { "initialize" }
         scope = CoroutineScope(Dispatchers.Default)

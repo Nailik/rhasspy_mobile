@@ -11,7 +11,7 @@ import org.rhasspy.mobile.services.dialog.DialogManagerService
 import org.rhasspy.mobile.services.dialog.DialogManagerServiceState
 import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.services.mqtt.MqttService
-import org.rhasspy.mobile.services.recording.RecordingService
+import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.services.settings.AppSettingsService
 
 /**
@@ -20,8 +20,8 @@ import org.rhasspy.mobile.services.settings.AppSettingsService
 abstract class IServiceMiddleware : KoinComponent, Closeable {
 
     private val dialogManagerService by inject<DialogManagerService>()
+    private val rhasspyAudioService by inject<RhasspyActionsService>()
     private val appSettingsService by inject<AppSettingsService>()
-    private val recordingService by inject<RecordingService>()
     private val localAudioService by inject<LocalAudioService>()
     private val mqttService by inject<MqttService>()
     val coroutineScope = CoroutineScope(Dispatchers.Default)
@@ -30,7 +30,7 @@ abstract class IServiceMiddleware : KoinComponent, Closeable {
     fun action(action: Action) {
         coroutineScope.launch {
             when (action) {
-                is Action.PlayRecording -> localAudioService.playAudio(recordingService.recordedData)
+                is Action.PlayRecording -> localAudioService.playAudio(rhasspyAudioService.speechToTextAudioData)
                 is Action.WakeWordError -> mqttService.wakeWordError(action.description)
                 is Action.AppSettingsAction -> {
                     when (action) {
@@ -55,7 +55,7 @@ abstract class IServiceMiddleware : KoinComponent, Closeable {
         }
     }
 
-    fun getRecordedData(): ByteArray = recordingService.recordedData.toByteArray()
+    fun getRecordedData(): ByteArray = rhasspyAudioService.speechToTextAudioData.toByteArray()
 
     override fun close() {
         coroutineScope.cancel()

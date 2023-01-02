@@ -3,9 +3,11 @@ package org.rhasspy.mobile.services.rhasspyactions
 import kotlinx.coroutines.*
 import org.koin.core.component.inject
 import org.rhasspy.mobile.addWavHeader
+import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action.DialogAction
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.middleware.Source
+import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantService
 import org.rhasspy.mobile.services.httpclient.HttpClientService
@@ -14,13 +16,13 @@ import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.recording.RecordingService
 import org.rhasspy.mobile.settings.option.*
 
-//TODO logging
 /**
  * calls actions and returns result
  *
  * when data is null the service was most probably mqtt and will return result in a call function
  */
 open class RhasspyActionsService : IService() {
+    private val logger = LogType.RhasspyActionsService.logger()
 
     private val params by inject<RhasspyActionsServiceParams>()
 
@@ -33,15 +35,17 @@ open class RhasspyActionsService : IService() {
     private val serviceMiddleware by inject<IServiceMiddleware>()
 
     private val _speechToTextAudioData = mutableListOf<Byte>()
-    val speechToTextAudioData: List<Byte> get() = _speechToTextAudioData
+    val speechToTextAudioData = _speechToTextAudioData.readOnly
 
     private val scope = CoroutineScope(Dispatchers.Default)
     private var collector: Job? = null
 
     override fun onClose() {
+        logger.d { "onClose" }
         //nothing to do
         scope.cancel()
         collector?.cancel()
+        collector = null
     }
 
     /**
@@ -62,6 +66,7 @@ open class RhasspyActionsService : IService() {
      * - later eventually intentRecognized or intentNotRecognized will be called with received data
      */
     suspend fun recognizeIntent(sessionId: String, text: String) {
+        logger.d { "recognizeIntent sessionId: $sessionId text: $text" }
         when (params.intentRecognitionOption) {
             IntentRecognitionOption.RemoteHTTP -> {
                 val action = httpClientService.recognizeIntent(text)?.let { intentJson ->
@@ -86,6 +91,7 @@ open class RhasspyActionsService : IService() {
      * is called when playing audio is finished
      */
     suspend fun textToSpeech(sessionId: String, text: String) {
+        logger.d { "textToSpeech sessionId: $sessionId text: $text" }
         when (params.textToSpeechOption) {
             TextToSpeechOption.RemoteHTTP -> {
                 httpClientService.textToSpeech(text)?.also {
@@ -116,6 +122,7 @@ open class RhasspyActionsService : IService() {
      * - calls default site to play audio
      */
     suspend fun playAudio(data: List<Byte>) {
+        logger.d { "playAudio dataSize: ${data.size}" }
         when (params.audioPlayingOption) {
             AudioPlayingOption.Local -> {
                 localAudioService.playAudio(data)
@@ -143,6 +150,7 @@ open class RhasspyActionsService : IService() {
      * fromMqtt is used to check if silence was detected by remote mqtt device
      */
     suspend fun endSpeechToText(sessionId: String, fromMqtt: Boolean) {
+        logger.d { "endSpeechToText sessionId: $sessionId fromMqtt $fromMqtt" }
         //stop collection
         collector?.cancel()
 
@@ -165,6 +173,7 @@ open class RhasspyActionsService : IService() {
     }
 
     suspend fun startSpeechToText(sessionId: String) {
+        logger.d { "startSpeechToText sessionId: $sessionId" }
         //clear data and start recording
         collector?.cancel()
         _speechToTextAudioData.clear()
@@ -184,6 +193,7 @@ open class RhasspyActionsService : IService() {
     }
 
     private suspend fun audioFrame(data: List<Byte>) {
+        logger.d { "audioFrame dataSize: ${data.size}" }
         when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> _speechToTextAudioData.addAll(data)
             SpeechToTextOption.RemoteMQTT -> mqttClientService.audioFrame(
@@ -209,6 +219,7 @@ open class RhasspyActionsService : IService() {
      * if local dialogue management it will end the session
      */
     suspend fun intentHandling(intentName: String, intent: String) {
+        logger.d { "intentHandling intentName: $intentName intent: $intent" }
         when (params.intentHandlingOption) {
             IntentHandlingOption.HomeAssistant -> homeAssistantService.sendIntent(intentName, intent)
             IntentHandlingOption.RemoteHTTP -> httpClientService.intentHandling(intent)
