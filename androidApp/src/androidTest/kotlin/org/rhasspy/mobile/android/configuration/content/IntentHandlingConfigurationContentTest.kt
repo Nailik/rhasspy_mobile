@@ -11,7 +11,7 @@ import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.data.IntentHandlingOptions
+import org.rhasspy.mobile.settings.option.IntentHandlingOption
 import org.rhasspy.mobile.viewmodel.configuration.IntentHandlingConfigurationViewModel
 import kotlin.test.assertEquals
 
@@ -52,16 +52,16 @@ class IntentHandlingConfigurationContentTest {
      */
     @Test
     fun testEndpoint() = runBlocking {
-        viewModel.selectIntentHandlingOption(IntentHandlingOptions.Disabled)
+        viewModel.selectIntentHandlingOption(IntentHandlingOption.Disabled)
         val textInputTest = "endpointTestInput"
         //option disable is set
-        composeTestRule.onNodeWithTag(IntentHandlingOptions.Disabled, true).onChildAt(0)
+        composeTestRule.onNodeWithTag(IntentHandlingOption.Disabled, true).onChildAt(0)
             .assertIsSelected()
 
         //User clicks option remote http
-        composeTestRule.onNodeWithTag(IntentHandlingOptions.RemoteHTTP, true).performClick()
+        composeTestRule.onNodeWithTag(IntentHandlingOption.RemoteHTTP, true).performClick()
         //new option is selected
-        assertEquals(IntentHandlingOptions.RemoteHTTP, viewModel.intentHandlingOption.value)
+        assertEquals(IntentHandlingOption.RemoteHTTP, viewModel.intentHandlingOption.value)
 
         //Endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint, true).assertExists()
@@ -75,7 +75,7 @@ class IntentHandlingConfigurationContentTest {
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         val newViewModel = IntentHandlingConfigurationViewModel()
         //option is saved to remote http
-        assertEquals(IntentHandlingOptions.RemoteHTTP, newViewModel.intentHandlingOption.value)
+        assertEquals(IntentHandlingOption.RemoteHTTP, newViewModel.intentHandlingOption.value)
         //endpoint is saved
         assertEquals(textInputTest, newViewModel.intentHandlingHttpEndpoint.value)
     }
@@ -106,21 +106,21 @@ class IntentHandlingConfigurationContentTest {
     @Test
     fun testHomeAssistant() = runBlocking {
 
-        viewModel.selectIntentHandlingOption(IntentHandlingOptions.Disabled)
-        viewModel.selectIntentHandlingOption(IntentHandlingOptions.Disabled)
+        viewModel.selectIntentHandlingOption(IntentHandlingOption.Disabled)
+        viewModel.selectIntentHandlingOption(IntentHandlingOption.Disabled)
         viewModel.save()
 
         val textInputTestEndpoint = "endpointTestInput"
         val textInputTestToken = "tokenTestInput"
 
         //option disable is set
-        composeTestRule.onNodeWithTag(IntentHandlingOptions.Disabled, true).onChildAt(0)
+        composeTestRule.onNodeWithTag(IntentHandlingOption.Disabled, true).onChildAt(0)
             .assertIsSelected()
 
         //User clicks option HomeAssistant
-        composeTestRule.onNodeWithTag(IntentHandlingOptions.HomeAssistant).performClick()
+        composeTestRule.onNodeWithTag(IntentHandlingOption.HomeAssistant).performClick()
         //new option is selected
-        assertEquals(IntentHandlingOptions.HomeAssistant, viewModel.intentHandlingOption.value)
+        assertEquals(IntentHandlingOption.HomeAssistant, viewModel.intentHandlingOption.value)
 
         //endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
@@ -151,7 +151,7 @@ class IntentHandlingConfigurationContentTest {
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         val newViewModel = IntentHandlingConfigurationViewModel()
         //option is saved to HomeAssistant
-        assertEquals(IntentHandlingOptions.HomeAssistant, newViewModel.intentHandlingOption.value)
+        assertEquals(IntentHandlingOption.HomeAssistant, newViewModel.intentHandlingOption.value)
         //endpoint is saved
         assertEquals(textInputTestEndpoint, newViewModel.intentHandlingHassEndpoint.value)
         //access token is saved

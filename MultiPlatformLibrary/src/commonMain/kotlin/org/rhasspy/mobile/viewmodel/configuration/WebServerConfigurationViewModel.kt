@@ -12,8 +12,8 @@ import org.rhasspy.mobile.nativeutils.FileUtils
 import org.rhasspy.mobile.nativeutils.openLink
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.webserver.WebServerServiceParams
-import org.rhasspy.mobile.settings.ConfigurationSettings
-import org.rhasspy.mobile.settings.FileType
+import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.types.FileType
 import org.rhasspy.mobile.viewmodel.configuration.test.WebServerConfigurationTest
 
 class WebServerConfigurationViewModel : IConfigurationViewModel() {
@@ -22,20 +22,20 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
 
     //unsaved data
     private val _isHttpServerEnabled =
-        MutableStateFlow(ConfigurationSettings.isHttpServerEnabled.value)
-    private val _httpServerPort = MutableStateFlow(ConfigurationSettings.httpServerPort.value)
+        MutableStateFlow(ConfigurationSetting.isHttpServerEnabled.value)
+    private val _httpServerPort = MutableStateFlow(ConfigurationSetting.httpServerPort.value)
     private val _httpServerPortText =
-        MutableStateFlow(ConfigurationSettings.httpServerPort.value.toString())
+        MutableStateFlow(ConfigurationSetting.httpServerPort.value.toString())
     private val _isHttpServerSSLEnabled =
-        MutableStateFlow(ConfigurationSettings.isHttpServerSSLEnabledEnabled.value)
+        MutableStateFlow(ConfigurationSetting.isHttpServerSSLEnabledEnabled.value)
     private val _httpServerSSLKeyStoreFile =
-        MutableStateFlow(ConfigurationSettings.httpServerSSLKeyStoreFile.value)
+        MutableStateFlow(ConfigurationSetting.httpServerSSLKeyStoreFile.value)
     private val _httpServerSSLKeyStorePassword =
-        MutableStateFlow(ConfigurationSettings.httpServerSSLKeyStorePassword.value)
+        MutableStateFlow(ConfigurationSetting.httpServerSSLKeyStorePassword.value)
     private val _httpServerSSLKeyAlias =
-        MutableStateFlow(ConfigurationSettings.httpServerSSLKeyAlias.value)
+        MutableStateFlow(ConfigurationSetting.httpServerSSLKeyAlias.value)
     private val _httpServerSSLKeyPassword =
-        MutableStateFlow(ConfigurationSettings.httpServerSSLKeyPassword.value)
+        MutableStateFlow(ConfigurationSetting.httpServerSSLKeyPassword.value)
 
     //unsaved ui data
     val isHttpServerEnabled = _isHttpServerEnabled.readOnly
@@ -53,13 +53,13 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
     override val isTestingEnabled = _isHttpServerEnabled.readOnly
 
     override val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(_isHttpServerEnabled, ConfigurationSettings.isHttpServerEnabled.data),
-        combineStateNotEquals(_httpServerPort, ConfigurationSettings.httpServerPort.data),
-        combineStateNotEquals(_isHttpServerSSLEnabled, ConfigurationSettings.isHttpServerSSLEnabledEnabled.data),
-        combineStateNotEquals(_httpServerSSLKeyStoreFile, ConfigurationSettings.httpServerSSLKeyStoreFile.data),
-        combineStateNotEquals(_httpServerSSLKeyStorePassword, ConfigurationSettings.httpServerSSLKeyStorePassword.data),
-        combineStateNotEquals(_httpServerSSLKeyAlias, ConfigurationSettings.httpServerSSLKeyAlias.data),
-        combineStateNotEquals(_httpServerSSLKeyPassword, ConfigurationSettings.httpServerSSLKeyPassword.data)
+        combineStateNotEquals(_isHttpServerEnabled, ConfigurationSetting.isHttpServerEnabled.data),
+        combineStateNotEquals(_httpServerPort, ConfigurationSetting.httpServerPort.data),
+        combineStateNotEquals(_isHttpServerSSLEnabled, ConfigurationSetting.isHttpServerSSLEnabledEnabled.data),
+        combineStateNotEquals(_httpServerSSLKeyStoreFile, ConfigurationSetting.httpServerSSLKeyStoreFile.data),
+        combineStateNotEquals(_httpServerSSLKeyStorePassword, ConfigurationSetting.httpServerSSLKeyStorePassword.data),
+        combineStateNotEquals(_httpServerSSLKeyAlias, ConfigurationSetting.httpServerSSLKeyAlias.data),
+        combineStateNotEquals(_httpServerSSLKeyPassword, ConfigurationSetting.httpServerSSLKeyPassword.data)
     )
 
     //toggle HTTP Server enabled
@@ -113,8 +113,8 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
      */
     override fun onSave() {
         //delete old keystore file if changed
-        if (_httpServerSSLKeyStoreFile.value != ConfigurationSettings.httpServerSSLKeyStoreFile.value) {
-            ConfigurationSettings.httpServerSSLKeyStoreFile.value.also {
+        if (_httpServerSSLKeyStoreFile.value != ConfigurationSetting.httpServerSSLKeyStoreFile.value) {
+            ConfigurationSetting.httpServerSSLKeyStoreFile.value.also {
                 FileUtils.removeFile(
                     fileType = FileType.CERTIFICATE,
                     fileName = it
@@ -122,13 +122,13 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
             }
         }
 
-        ConfigurationSettings.isHttpServerEnabled.value = _isHttpServerEnabled.value
-        ConfigurationSettings.httpServerPort.value = _httpServerPort.value
-        ConfigurationSettings.isHttpServerSSLEnabledEnabled.value = _isHttpServerSSLEnabled.value
-        ConfigurationSettings.httpServerSSLKeyStoreFile.value = _httpServerSSLKeyStoreFile.value
-        ConfigurationSettings.httpServerSSLKeyStorePassword.value = _httpServerSSLKeyStorePassword.value
-        ConfigurationSettings.httpServerSSLKeyAlias.value = _httpServerSSLKeyAlias.value
-        ConfigurationSettings.httpServerSSLKeyPassword.value = _httpServerSSLKeyPassword.value
+        ConfigurationSetting.isHttpServerEnabled.value = _isHttpServerEnabled.value
+        ConfigurationSetting.httpServerPort.value = _httpServerPort.value
+        ConfigurationSetting.isHttpServerSSLEnabledEnabled.value = _isHttpServerSSLEnabled.value
+        ConfigurationSetting.httpServerSSLKeyStoreFile.value = _httpServerSSLKeyStoreFile.value
+        ConfigurationSetting.httpServerSSLKeyStorePassword.value = _httpServerSSLKeyStorePassword.value
+        ConfigurationSetting.httpServerSSLKeyAlias.value = _httpServerSSLKeyAlias.value
+        ConfigurationSetting.httpServerSSLKeyPassword.value = _httpServerSSLKeyPassword.value
     }
 
     /**
@@ -136,7 +136,7 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
      */
     override fun discard() {
         //delete new keystore file if changed
-        if (_httpServerSSLKeyStoreFile.value != ConfigurationSettings.httpServerSSLKeyStoreFile.value) {
+        if (_httpServerSSLKeyStoreFile.value != ConfigurationSetting.httpServerSSLKeyStoreFile.value) {
             _httpServerSSLKeyStoreFile.value.also {
                 FileUtils.removeFile(
                     fileType = FileType.CERTIFICATE,
@@ -145,13 +145,13 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
             }
         }
 
-        _isHttpServerEnabled.value = ConfigurationSettings.isHttpServerEnabled.value
-        _httpServerPort.value = ConfigurationSettings.httpServerPort.value
-        _isHttpServerSSLEnabled.value = ConfigurationSettings.isHttpServerSSLEnabledEnabled.value
-        _httpServerSSLKeyStoreFile.value = ConfigurationSettings.httpServerSSLKeyStoreFile.value
-        _httpServerSSLKeyStorePassword.value = ConfigurationSettings.httpServerSSLKeyStorePassword.value
-        _httpServerSSLKeyAlias.value = ConfigurationSettings.httpServerSSLKeyAlias.value
-        _httpServerSSLKeyPassword.value = ConfigurationSettings.httpServerSSLKeyPassword.value
+        _isHttpServerEnabled.value = ConfigurationSetting.isHttpServerEnabled.value
+        _httpServerPort.value = ConfigurationSetting.httpServerPort.value
+        _isHttpServerSSLEnabled.value = ConfigurationSetting.isHttpServerSSLEnabledEnabled.value
+        _httpServerSSLKeyStoreFile.value = ConfigurationSetting.httpServerSSLKeyStoreFile.value
+        _httpServerSSLKeyStorePassword.value = ConfigurationSetting.httpServerSSLKeyStorePassword.value
+        _httpServerSSLKeyAlias.value = ConfigurationSetting.httpServerSSLKeyAlias.value
+        _httpServerSSLKeyPassword.value = ConfigurationSetting.httpServerSSLKeyPassword.value
     }
 
     override fun initializeTestParams() {

@@ -13,7 +13,7 @@ import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.services.dialog.DialogManagerService
 import org.rhasspy.mobile.services.dialog.DialogManagerServiceState
-import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.AppSetting
 
 class HomeScreenViewModel : ViewModel(), KoinComponent {
 
@@ -27,7 +27,7 @@ class HomeScreenViewModel : ViewModel(), KoinComponent {
     val isRecording = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
 
     val isPlayingRecordingEnabled = isActionEnabled
-    val isShowLogEnabled = AppSettings.isShowLogEnabled.data
+    val isShowLogEnabled = AppSetting.isShowLogEnabled.data
 
     val serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
 

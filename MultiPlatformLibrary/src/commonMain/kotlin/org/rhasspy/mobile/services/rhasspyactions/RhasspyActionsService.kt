@@ -3,7 +3,6 @@ package org.rhasspy.mobile.services.rhasspyactions
 import kotlinx.coroutines.*
 import org.koin.core.component.inject
 import org.rhasspy.mobile.addWavHeader
-import org.rhasspy.mobile.data.*
 import org.rhasspy.mobile.middleware.Action.DialogAction
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.middleware.Source
@@ -13,6 +12,7 @@ import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.recording.RecordingService
+import org.rhasspy.mobile.settings.option.*
 
 /**
  * calls actions and returns result
@@ -62,7 +62,7 @@ open class RhasspyActionsService : IService() {
      */
     suspend fun recognizeIntent(sessionId: String, text: String) {
         when (params.intentRecognitionOption) {
-            IntentRecognitionOptions.RemoteHTTP -> {
+            IntentRecognitionOption.RemoteHTTP -> {
                 val action = httpClientService.recognizeIntent(text)?.let { intentJson ->
                     DialogAction.IntentRecognitionResult(Source.HttpApi, null, intentJson)
                 } ?: run {
@@ -70,8 +70,8 @@ open class RhasspyActionsService : IService() {
                 }
                 serviceMiddleware.action(action)
             }
-            IntentRecognitionOptions.RemoteMQTT -> mqttClientService.recognizeIntent(sessionId, text)
-            IntentRecognitionOptions.Disabled -> {}
+            IntentRecognitionOption.RemoteMQTT -> mqttClientService.recognizeIntent(sessionId, text)
+            IntentRecognitionOption.Disabled -> {}
         }
     }
 
@@ -86,13 +86,13 @@ open class RhasspyActionsService : IService() {
      */
     suspend fun textToSpeech(sessionId: String, text: String) {
         when (params.textToSpeechOption) {
-            TextToSpeechOptions.RemoteHTTP -> {
+            TextToSpeechOption.RemoteHTTP -> {
                 httpClientService.textToSpeech(text)?.also {
                     serviceMiddleware.action(DialogAction.PlayAudio(Source.HttpApi, it))
                 }
             }
-            TextToSpeechOptions.RemoteMQTT -> mqttClientService.say(sessionId, text)
-            TextToSpeechOptions.Disabled -> {}
+            TextToSpeechOption.RemoteMQTT -> mqttClientService.say(sessionId, text)
+            TextToSpeechOption.Disabled -> {}
         }
     }
 
@@ -116,16 +116,16 @@ open class RhasspyActionsService : IService() {
      */
     suspend fun playAudio(data: List<Byte>) {
         when (params.audioPlayingOption) {
-            AudioPlayingOptions.Local -> {
+            AudioPlayingOption.Local -> {
                 localAudioService.playAudio(data)
                 serviceMiddleware.action(DialogAction.PlayFinished(Source.Local))
             }
-            AudioPlayingOptions.RemoteHTTP -> {
+            AudioPlayingOption.RemoteHTTP -> {
                 httpClientService.playWav(data)
                 serviceMiddleware.action(DialogAction.PlayFinished(Source.HttpApi))
             }
-            AudioPlayingOptions.RemoteMQTT -> mqttClientService.playBytes(data)
-            AudioPlayingOptions.Disabled -> {}
+            AudioPlayingOption.RemoteMQTT -> mqttClientService.playBytes(data)
+            AudioPlayingOption.Disabled -> {}
         }
     }
 
@@ -147,7 +147,7 @@ open class RhasspyActionsService : IService() {
 
         //evaluate result
         when (params.speechToTextOption) {
-            SpeechToTextOptions.RemoteHTTP -> {
+            SpeechToTextOption.RemoteHTTP -> {
                 val action = httpClientService.speechToText(_speechToTextAudioData.addWavHeader())?.let { text ->
                     DialogAction.AsrTextCaptured(Source.HttpApi, text)
                 } ?: run {
@@ -155,8 +155,8 @@ open class RhasspyActionsService : IService() {
                 }
                 serviceMiddleware.action(action)
             }
-            SpeechToTextOptions.RemoteMQTT -> if (!fromMqtt) mqttClientService.stopListening(sessionId)
-            SpeechToTextOptions.Disabled -> {}
+            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) mqttClientService.stopListening(sessionId)
+            SpeechToTextOption.Disabled -> {}
         }
 
         //clear data
@@ -168,7 +168,7 @@ open class RhasspyActionsService : IService() {
         collector?.cancel()
         _speechToTextAudioData.clear()
 
-        if (params.speechToTextOption != SpeechToTextOptions.Disabled) {
+        if (params.speechToTextOption != SpeechToTextOption.Disabled) {
             //start collection
             collector = scope.launch {
                 recordingService.output.collect(::audioFrame)
@@ -176,19 +176,19 @@ open class RhasspyActionsService : IService() {
         }
 
         when (params.speechToTextOption) {
-            SpeechToTextOptions.RemoteHTTP -> {}
-            SpeechToTextOptions.RemoteMQTT -> mqttClientService.startListening(sessionId)
-            SpeechToTextOptions.Disabled -> {}
+            SpeechToTextOption.RemoteHTTP -> {}
+            SpeechToTextOption.RemoteMQTT -> mqttClientService.startListening(sessionId)
+            SpeechToTextOption.Disabled -> {}
         }
     }
 
     private suspend fun audioFrame(data: List<Byte>) {
         when (params.speechToTextOption) {
-            SpeechToTextOptions.RemoteHTTP -> _speechToTextAudioData.addAll(data)
-            SpeechToTextOptions.RemoteMQTT -> mqttClientService.audioFrame(
+            SpeechToTextOption.RemoteHTTP -> _speechToTextAudioData.addAll(data)
+            SpeechToTextOption.RemoteMQTT -> mqttClientService.audioFrame(
                 data.toMutableList().addWavHeader()
             )
-            SpeechToTextOptions.Disabled -> {}//nothing to do
+            SpeechToTextOption.Disabled -> {}//nothing to do
         }
     }
 
@@ -209,10 +209,10 @@ open class RhasspyActionsService : IService() {
      */
     suspend fun intentHandling(intentName: String, intent: String) {
         when (params.intentHandlingOption) {
-            IntentHandlingOptions.HomeAssistant -> homeAssistantService.sendIntent(intentName, intent)
-            IntentHandlingOptions.RemoteHTTP -> httpClientService.intentHandling(intent)
-            IntentHandlingOptions.WithRecognition -> {}
-            IntentHandlingOptions.Disabled -> {}
+            IntentHandlingOption.HomeAssistant -> homeAssistantService.sendIntent(intentName, intent)
+            IntentHandlingOption.RemoteHTTP -> httpClientService.intentHandling(intent)
+            IntentHandlingOption.WithRecognition -> {}
+            IntentHandlingOption.Disabled -> {}
         }
     }
 

@@ -11,7 +11,7 @@ import io.ktor.client.utils.*
 import io.ktor.http.*
 import kotlinx.coroutines.cancel
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.IntentHandlingOptions
+import org.rhasspy.mobile.settings.option.IntentHandlingOption
 import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceErrorType.*
@@ -32,7 +32,7 @@ class HttpClientService : IService() {
         this.header("Authorization", "Bearer ${params.intentHandlingHassAccessToken}")
 
     private val isHandleIntentDirectly =
-        params.intentHandlingOption == IntentHandlingOptions.WithRecognition
+        params.intentHandlingOption == IntentHandlingOption.WithRecognition
 
     private val speechToTextUrl =
         if (params.isUseCustomSpeechToTextHttpEndpoint) {

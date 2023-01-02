@@ -1,9 +1,9 @@
-package org.rhasspy.mobile.data
+package org.rhasspy.mobile.settings.option
 
 import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 
-enum class WakeWordOption(override val text: StringResource) : DataEnum<WakeWordOption> {
+enum class WakeWordOption(override val text: StringResource) : IOption<WakeWordOption> {
     Porcupine(MR.strings.localPorcupine),
     MQTT(MR.strings.mqtt),
     Udp(MR.strings.udpAudioOutput),

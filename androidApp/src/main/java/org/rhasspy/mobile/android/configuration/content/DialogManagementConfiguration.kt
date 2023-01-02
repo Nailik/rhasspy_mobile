@@ -32,7 +32,7 @@ fun DialogManagementConfigurationContent(viewModel: DialogManagementConfiguratio
                 modifier = Modifier.testTag(TestTag.DialogManagementOptions),
                 selected = viewModel.dialogManagementOption.collectAsState().value,
                 onSelect = viewModel::selectDialogManagementOption,
-                values = viewModel.dialogManagementOptionsList
+                values = viewModel.dialogManagementOptionList
             )
         }
 

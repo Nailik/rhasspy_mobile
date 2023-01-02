@@ -9,12 +9,12 @@ import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
-import org.rhasspy.mobile.data.DataEnum
+import org.rhasspy.mobile.settings.option.IOption
 import org.rhasspy.mobile.readOnly
 
 private val settings = Settings()
 
-open class Setting<T>(
+open class ISetting<T>(
     private val key: SettingsEnum,
     private val initial: T,
     private val serializer: KSerializer<T>? = null
@@ -47,7 +47,7 @@ open class Setting<T>(
             is Int -> settings[key.name] = newValue as Int
             is Float -> settings[key.name] = newValue as Float
             is Boolean -> settings[key.name] = newValue as Boolean
-            is DataEnum<*> -> settings[key.name] = (newValue as DataEnum<*>).name
+            is IOption<*> -> settings[key.name] = (newValue as IOption<*>).name
             else -> serializer?.let {
                 settings.encodeValue(serializer, key.name, newValue)
             } ?: run {
@@ -67,7 +67,7 @@ open class Setting<T>(
             is Int -> settings[key.name, initial]
             is Float -> settings[key.name, initial]
             is Boolean -> settings[key.name, initial]
-            is DataEnum<*> -> initial.findValue(settings[key.name, initial.name])
+            is IOption<*> -> initial.findValue(settings[key.name, initial.name])
             else -> serializer?.let {
                 settings.decodeValue(serializer, key.name, initial)
             } ?: run {

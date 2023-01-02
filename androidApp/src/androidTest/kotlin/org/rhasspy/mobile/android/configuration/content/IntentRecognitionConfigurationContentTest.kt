@@ -11,7 +11,7 @@ import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.data.IntentRecognitionOptions
+import org.rhasspy.mobile.settings.option.IntentRecognitionOption
 import org.rhasspy.mobile.viewmodel.configuration.IntentRecognitionConfigurationViewModel
 import kotlin.test.assertEquals
 
@@ -59,19 +59,19 @@ class IntentRecognitionConfigurationContentTest {
      */
     @Test
     fun testEndpoint() = runBlocking {
-        viewModel.selectIntentRecognitionOption(IntentRecognitionOptions.Disabled)
+        viewModel.selectIntentRecognitionOption(IntentRecognitionOption.Disabled)
         viewModel.save()
 
         val textInputTest = "endpointTestInput"
 
         //option disable is set
-        composeTestRule.onNodeWithTag(IntentRecognitionOptions.Disabled, true).onChildAt(0)
+        composeTestRule.onNodeWithTag(IntentRecognitionOption.Disabled, true).onChildAt(0)
             .assertIsSelected()
 
         //User clicks option remote http
-        composeTestRule.onNodeWithTag(IntentRecognitionOptions.RemoteHTTP).performClick()
+        composeTestRule.onNodeWithTag(IntentRecognitionOption.RemoteHTTP).performClick()
         //new option is selected
-        assertEquals(IntentRecognitionOptions.RemoteHTTP, viewModel.intentRecognitionOption.value)
+        assertEquals(IntentRecognitionOption.RemoteHTTP, viewModel.intentRecognitionOption.value)
 
         //Endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
@@ -98,7 +98,7 @@ class IntentRecognitionConfigurationContentTest {
         val newViewModel = IntentRecognitionConfigurationViewModel()
         //option is saved to remote http
         assertEquals(
-            IntentRecognitionOptions.RemoteHTTP,
+            IntentRecognitionOption.RemoteHTTP,
             newViewModel.intentRecognitionOption.value
         )
         //endpoint is saved

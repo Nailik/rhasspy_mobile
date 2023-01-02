@@ -5,13 +5,13 @@ import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
-import org.rhasspy.mobile.data.AudioOutputOptions
-import org.rhasspy.mobile.data.AudioPlayingOptions
+import org.rhasspy.mobile.settings.option.AudioOutputOption
+import org.rhasspy.mobile.settings.option.AudioPlayingOption
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.services.localaudio.LocalAudioServiceParams
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
-import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.test.AudioPlayingConfigurationTest
 
 /**
@@ -28,12 +28,12 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
 
     //unsaved data
     private val _audioPlayingOption =
-        MutableStateFlow(ConfigurationSettings.audioPlayingOption.value)
-    private val _audioOutputOption = MutableStateFlow(ConfigurationSettings.audioOutputOption.value)
+        MutableStateFlow(ConfigurationSetting.audioPlayingOption.value)
+    private val _audioOutputOption = MutableStateFlow(ConfigurationSetting.audioOutputOption.value)
     private val _isUseCustomAudioPlayingHttpEndpoint =
-        MutableStateFlow(ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.value)
+        MutableStateFlow(ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value)
     private val _audioPlayingHttpEndpoint =
-        MutableStateFlow(ConfigurationSettings.audioPlayingHttpEndpoint.value)
+        MutableStateFlow(ConfigurationSetting.audioPlayingHttpEndpoint.value)
 
     //unsaved ui data
     val audioPlayingOption = _audioPlayingOption.readOnly
@@ -53,33 +53,33 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
     val isAudioPlayingHttpEndpointChangeEnabled = isUseCustomAudioPlayingHttpEndpoint
 
     override val isTestingEnabled =
-        _audioPlayingOption.mapReadonlyState { it != AudioPlayingOptions.Disabled }
+        _audioPlayingOption.mapReadonlyState { it != AudioPlayingOption.Disabled }
 
     //if there are unsaved changes
     override val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(_audioPlayingOption, ConfigurationSettings.audioPlayingOption.data),
-        combineStateNotEquals(_audioOutputOption, ConfigurationSettings.audioOutputOption.data),
+        combineStateNotEquals(_audioPlayingOption, ConfigurationSetting.audioPlayingOption.data),
+        combineStateNotEquals(_audioOutputOption, ConfigurationSetting.audioOutputOption.data),
         combineStateNotEquals(
             _isUseCustomAudioPlayingHttpEndpoint,
-            ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.data
+            ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.data
         ),
         combineStateNotEquals(
             _audioPlayingHttpEndpoint,
-            ConfigurationSettings.audioPlayingHttpEndpoint.data
+            ConfigurationSetting.audioPlayingHttpEndpoint.data
         )
     )
 
     //all options
-    val audioPlayingOptionsList = AudioPlayingOptions::values
-    val audioOutputOptionsList = AudioOutputOptions::values
+    val audioPlayingOptionList = AudioPlayingOption::values
+    val audioOutputOptionList = AudioOutputOption::values
 
     //set new audio playing option
-    fun selectAudioPlayingOption(option: AudioPlayingOptions) {
+    fun selectAudioPlayingOption(option: AudioPlayingOption) {
         _audioPlayingOption.value = option
     }
 
     //set new audio output option
-    fun selectAudioOutputOption(option: AudioOutputOptions) {
+    fun selectAudioOutputOption(option: AudioOutputOption) {
         _audioOutputOption.value = option
     }
 
@@ -94,13 +94,13 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
     }
 
     //show audio playing local settings
-    fun isAudioPlayingLocalSettingsVisible(option: AudioPlayingOptions): Boolean {
-        return option == AudioPlayingOptions.Local
+    fun isAudioPlayingLocalSettingsVisible(option: AudioPlayingOption): Boolean {
+        return option == AudioPlayingOption.Local
     }
 
     //show audio playing http endpoint settings
-    fun isAudioPlayingHttpEndpointSettingsVisible(option: AudioPlayingOptions): Boolean {
-        return option == AudioPlayingOptions.RemoteHTTP
+    fun isAudioPlayingHttpEndpointSettingsVisible(option: AudioPlayingOption): Boolean {
+        return option == AudioPlayingOption.RemoteHTTP
     }
 
 
@@ -108,22 +108,22 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
      * save data configuration
      */
     override fun onSave() {
-        ConfigurationSettings.audioPlayingOption.value = _audioPlayingOption.value
-        ConfigurationSettings.audioOutputOption.value = _audioOutputOption.value
-        ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.value =
+        ConfigurationSetting.audioPlayingOption.value = _audioPlayingOption.value
+        ConfigurationSetting.audioOutputOption.value = _audioOutputOption.value
+        ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value =
             _isUseCustomAudioPlayingHttpEndpoint.value
-        ConfigurationSettings.audioPlayingHttpEndpoint.value = _audioPlayingHttpEndpoint.value
+        ConfigurationSetting.audioPlayingHttpEndpoint.value = _audioPlayingHttpEndpoint.value
     }
 
     /**
      * undo all changes
      */
     override fun discard() {
-        _audioPlayingOption.value = ConfigurationSettings.audioPlayingOption.value
-        _audioOutputOption.value = ConfigurationSettings.audioOutputOption.value
+        _audioPlayingOption.value = ConfigurationSetting.audioPlayingOption.value
+        _audioOutputOption.value = ConfigurationSetting.audioOutputOption.value
         _isUseCustomAudioPlayingHttpEndpoint.value =
-            ConfigurationSettings.isUseCustomAudioPlayingHttpEndpoint.value
-        _audioPlayingHttpEndpoint.value = ConfigurationSettings.audioPlayingHttpEndpoint.value
+            ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value
+        _audioPlayingHttpEndpoint.value = ConfigurationSetting.audioPlayingHttpEndpoint.value
     }
 
     override fun initializeTestParams() {

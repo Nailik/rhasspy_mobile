@@ -3,7 +3,7 @@ package org.rhasspy.mobile.android
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
-import org.rhasspy.mobile.data.DataEnum
+import org.rhasspy.mobile.settings.option.IOption
 
 /**
  * test tags to be used in compose
@@ -118,9 +118,9 @@ enum class TestTag {
     AudioFramesEnabled
 }
 
-fun Modifier.combinedTestTag(dataEnum: DataEnum<*>, tag: TestTag) = semantics(
+fun Modifier.combinedTestTag(IOption: IOption<*>, tag: TestTag) = semantics(
     properties = {
-        testTag = "${dataEnum.name}${tag.name}"
+        testTag = "${IOption.name}${tag.name}"
     }
 )
 
@@ -137,9 +137,9 @@ fun Modifier.testTag(enum: Enum<*>) = semantics(
     }
 )
 
-fun Modifier.testTag(dataEnum: DataEnum<*>) = semantics(
+fun Modifier.testTag(IOption: IOption<*>) = semantics(
     properties = {
-        testTag = dataEnum.name
+        testTag = IOption.name
     }
 )
 

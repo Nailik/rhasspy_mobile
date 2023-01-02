@@ -16,7 +16,7 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScreens
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.data.AudioOutputOptions
+import org.rhasspy.mobile.settings.option.AudioOutputOption
 import org.rhasspy.mobile.viewmodel.settings.IndicationSettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -155,19 +155,19 @@ class IndicationSettingsContentTest {
             .assertIsDisplayed()
 
         //sound output is notification
-        assertEquals(AudioOutputOptions.Notification, viewModel.soundIndicationOutputOption.value)
+        assertEquals(AudioOutputOption.Notification, viewModel.soundIndicationOutputOption.value)
         //sound output notification is selected
-        composeTestRule.onNodeWithTag(AudioOutputOptions.Notification, true).onChildAt(0)
+        composeTestRule.onNodeWithTag(AudioOutputOption.Notification, true).onChildAt(0)
             .assertIsSelected()
 
         //user clicks sound output sound
-        composeTestRule.onNodeWithTag(AudioOutputOptions.Sound).performClick()
+        composeTestRule.onNodeWithTag(AudioOutputOption.Sound).performClick()
         //sound output sound is selected
-        composeTestRule.onNodeWithTag(AudioOutputOptions.Sound, true).onChildAt(0)
+        composeTestRule.onNodeWithTag(AudioOutputOption.Sound, true).onChildAt(0)
             .assertIsSelected()
         //sound output sound is saved
         assertEquals(
-            AudioOutputOptions.Sound,
+            AudioOutputOption.Sound,
             IndicationSettingsViewModel().soundIndicationOutputOption.value
         )
 

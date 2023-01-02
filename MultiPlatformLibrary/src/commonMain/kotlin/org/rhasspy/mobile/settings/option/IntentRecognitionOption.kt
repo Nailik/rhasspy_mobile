@@ -1,15 +1,15 @@
-package org.rhasspy.mobile.data
+package org.rhasspy.mobile.settings.option
 
 import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 
-enum class IntentRecognitionOptions(override val text: StringResource) :
-    DataEnum<IntentRecognitionOptions> {
+enum class IntentRecognitionOption(override val text: StringResource) :
+    IOption<IntentRecognitionOption> {
     RemoteHTTP(MR.strings.remoteHTTP),
     RemoteMQTT(MR.strings.remoteMQTT),
     Disabled(MR.strings.disabled);
 
-    override fun findValue(value: String): IntentRecognitionOptions {
+    override fun findValue(value: String): IntentRecognitionOption {
         return valueOf(value)
     }
 }

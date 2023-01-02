@@ -12,7 +12,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.Application
-import org.rhasspy.mobile.data.AudioOutputOptions
+import org.rhasspy.mobile.settings.option.AudioOutputOption
 import java.io.File
 import java.nio.ByteBuffer
 
@@ -124,17 +124,17 @@ actual class AudioPlayer : Closeable {
     actual fun playFileResource(
         fileResource: FileResource,
         volume: StateFlow<Float>,
-        audioOutputOptions: AudioOutputOptions,
+        audioOutputOption: AudioOutputOption,
         onFinished: (() -> Unit)?,
         onError: ((exception: Exception?) -> Unit)?
     ) {
         logger.v { "playSoundFileResource" }
 
-        when (audioOutputOptions) {
-            AudioOutputOptions.Sound -> {
+        when (audioOutputOption) {
+            AudioOutputOption.Sound -> {
                 playSound(getUriFromResource(fileResource.rawResId), volume, onFinished, onError)
             }
-            AudioOutputOptions.Notification -> {
+            AudioOutputOption.Notification -> {
                 playNotification(getUriFromResource(fileResource.rawResId), volume, onFinished, onError)
             }
         }
@@ -151,7 +151,7 @@ actual class AudioPlayer : Closeable {
     actual fun playSoundFile(
         filename: String,
         volume: StateFlow<Float>,
-        audioOutputOptions: AudioOutputOptions,
+        audioOutputOption: AudioOutputOption,
         onFinished: (() -> Unit)?,
         onError: ((exception: Exception?) -> Unit)?
     ) {
@@ -159,11 +159,11 @@ actual class AudioPlayer : Closeable {
 
         val soundFile = File(Application.Instance.filesDir, "sounds/$filename")
 
-        when (audioOutputOptions) {
-            AudioOutputOptions.Sound -> {
+        when (audioOutputOption) {
+            AudioOutputOption.Sound -> {
                 playSound(Uri.fromFile(soundFile), volume, onFinished, onError)
             }
-            AudioOutputOptions.Notification -> {
+            AudioOutputOption.Notification -> {
                 playNotification(Uri.fromFile(soundFile), volume, onFinished, onError)
             }
         }

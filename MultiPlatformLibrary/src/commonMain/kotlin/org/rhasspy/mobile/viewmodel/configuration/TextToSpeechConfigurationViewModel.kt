@@ -5,11 +5,11 @@ import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
-import org.rhasspy.mobile.data.TextToSpeechOptions
+import org.rhasspy.mobile.settings.option.TextToSpeechOption
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
-import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.test.TextToSpeechConfigurationTest
 
 class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
@@ -21,11 +21,11 @@ class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
 
     //unsaved data
     private val _textToSpeechOption =
-        MutableStateFlow(ConfigurationSettings.textToSpeechOption.value)
+        MutableStateFlow(ConfigurationSetting.textToSpeechOption.value)
     private val _isUseCustomTextToSpeechHttpEndpoint =
-        MutableStateFlow(ConfigurationSettings.isUseCustomTextToSpeechHttpEndpoint.value)
+        MutableStateFlow(ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value)
     private val _textToSpeechHttpEndpoint =
-        MutableStateFlow(ConfigurationSettings.textToSpeechHttpEndpoint.value)
+        MutableStateFlow(ConfigurationSetting.textToSpeechHttpEndpoint.value)
 
     //unsaved ui data
     val textToSpeechOption = _textToSpeechOption.readOnly
@@ -45,30 +45,30 @@ class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
     val isTextToSpeechHttpEndpointChangeEnabled = isUseCustomTextToSpeechHttpEndpoint
 
     override val isTestingEnabled =
-        _textToSpeechOption.mapReadonlyState { it != TextToSpeechOptions.Disabled }
+        _textToSpeechOption.mapReadonlyState { it != TextToSpeechOption.Disabled }
 
     override val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(_textToSpeechOption, ConfigurationSettings.textToSpeechOption.data),
+        combineStateNotEquals(_textToSpeechOption, ConfigurationSetting.textToSpeechOption.data),
         combineStateNotEquals(
             _isUseCustomTextToSpeechHttpEndpoint,
-            ConfigurationSettings.isUseCustomTextToSpeechHttpEndpoint.data
+            ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.data
         ),
         combineStateNotEquals(
             _textToSpeechHttpEndpoint,
-            ConfigurationSettings.textToSpeechHttpEndpoint.data
+            ConfigurationSetting.textToSpeechHttpEndpoint.data
         )
     )
 
     //show endpoint settings
-    fun isTextToSpeechHttpSettingsVisible(option: TextToSpeechOptions): Boolean {
-        return option == TextToSpeechOptions.RemoteHTTP
+    fun isTextToSpeechHttpSettingsVisible(option: TextToSpeechOption): Boolean {
+        return option == TextToSpeechOption.RemoteHTTP
     }
 
     //all options
-    val textToSpeechOptions = TextToSpeechOptions::values
+    val textToSpeechOptions = TextToSpeechOption::values
 
     //set new text to speech option
-    fun selectTextToSpeechOption(option: TextToSpeechOptions) {
+    fun selectTextToSpeechOption(option: TextToSpeechOption) {
         _textToSpeechOption.value = option
     }
 
@@ -91,20 +91,20 @@ class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
      * save data configuration
      */
     override fun onSave() {
-        ConfigurationSettings.textToSpeechOption.value = _textToSpeechOption.value
-        ConfigurationSettings.isUseCustomTextToSpeechHttpEndpoint.value =
+        ConfigurationSetting.textToSpeechOption.value = _textToSpeechOption.value
+        ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value =
             _isUseCustomTextToSpeechHttpEndpoint.value
-        ConfigurationSettings.textToSpeechHttpEndpoint.value = _textToSpeechHttpEndpoint.value
+        ConfigurationSetting.textToSpeechHttpEndpoint.value = _textToSpeechHttpEndpoint.value
     }
 
     /**
      * undo all changes
      */
     override fun discard() {
-        _textToSpeechOption.value = ConfigurationSettings.textToSpeechOption.value
+        _textToSpeechOption.value = ConfigurationSetting.textToSpeechOption.value
         _isUseCustomTextToSpeechHttpEndpoint.value =
-            ConfigurationSettings.isUseCustomTextToSpeechHttpEndpoint.value
-        _textToSpeechHttpEndpoint.value = ConfigurationSettings.textToSpeechHttpEndpoint.value
+            ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value
+        _textToSpeechHttpEndpoint.value = ConfigurationSetting.textToSpeechHttpEndpoint.value
     }
 
     override fun initializeTestParams() {

@@ -12,7 +12,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithCombinedTag
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.data.PorcupineKeywordOptions
+import org.rhasspy.mobile.settings.option.PorcupineKeywordOption
 import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -80,14 +80,14 @@ class PorcupineKeywordDefaultScreenTest {
         //user clicks americano
         composeTestRule
             .onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen)
-            .performScrollToKey(PorcupineKeywordOptions.AMERICANO)
-        composeTestRule.onNodeWithTag(PorcupineKeywordOptions.AMERICANO).performClick()
+            .performScrollToKey(PorcupineKeywordOption.AMERICANO)
+        composeTestRule.onNodeWithTag(PorcupineKeywordOption.AMERICANO).performClick()
         composeTestRule.awaitIdle()
         //americano is selected
-        composeTestRule.onNodeWithTag(PorcupineKeywordOptions.AMERICANO).onChildAt(0).assertIsOn()
+        composeTestRule.onNodeWithTag(PorcupineKeywordOption.AMERICANO).onChildAt(0).assertIsOn()
         //sensitivity is shown
         composeTestRule.onNodeWithCombinedTag(
-            PorcupineKeywordOptions.AMERICANO,
+            PorcupineKeywordOption.AMERICANO,
             TestTag.Sensitivity
         ).assertIsDisplayed()
 
@@ -95,28 +95,28 @@ class PorcupineKeywordDefaultScreenTest {
 
         composeTestRule
             .onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen)
-            .performScrollToKey(PorcupineKeywordOptions.PORCUPINE)
-        composeTestRule.onNodeWithTag(PorcupineKeywordOptions.PORCUPINE).performClick()
+            .performScrollToKey(PorcupineKeywordOption.PORCUPINE)
+        composeTestRule.onNodeWithTag(PorcupineKeywordOption.PORCUPINE).performClick()
         composeTestRule.awaitIdle()
         //porcupine is selected
-        composeTestRule.onNodeWithTag(PorcupineKeywordOptions.PORCUPINE).onChildAt(0).assertIsOn()
+        composeTestRule.onNodeWithTag(PorcupineKeywordOption.PORCUPINE).onChildAt(0).assertIsOn()
         //sensitivity is shown
         composeTestRule.onNodeWithCombinedTag(
-            PorcupineKeywordOptions.PORCUPINE,
+            PorcupineKeywordOption.PORCUPINE,
             TestTag.Sensitivity
         ).assertIsDisplayed()
 
         //user clicks porcupine
         composeTestRule
             .onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen)
-            .performScrollToKey(PorcupineKeywordOptions.PORCUPINE)
-        composeTestRule.onNodeWithTag(PorcupineKeywordOptions.PORCUPINE).performClick()
+            .performScrollToKey(PorcupineKeywordOption.PORCUPINE)
+        composeTestRule.onNodeWithTag(PorcupineKeywordOption.PORCUPINE).performClick()
         composeTestRule.awaitIdle()
         //porcupine is unselected
-        composeTestRule.onNodeWithTag(PorcupineKeywordOptions.PORCUPINE).onChildAt(0).assertIsOff()
+        composeTestRule.onNodeWithTag(PorcupineKeywordOption.PORCUPINE).onChildAt(0).assertIsOff()
         //sensitivity is not shown
         composeTestRule.onNodeWithCombinedTag(
-            PorcupineKeywordOptions.PORCUPINE,
+            PorcupineKeywordOption.PORCUPINE,
             TestTag.Sensitivity
         ).assertDoesNotExist()
 
@@ -127,7 +127,7 @@ class PorcupineKeywordDefaultScreenTest {
             //americano is saved with enabled
             //porcupine is saved with not enabled
             //everything else is saved with not enabled
-            if (it.option == PorcupineKeywordOptions.AMERICANO) {
+            if (it.option == PorcupineKeywordOption.AMERICANO) {
                 assertTrue(it.isEnabled)
             } else {
                 assertFalse(it.isEnabled)

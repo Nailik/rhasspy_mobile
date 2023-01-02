@@ -43,7 +43,7 @@ fun IntentHandlingConfigurationContent(viewModel: IntentHandlingConfigurationVie
                 modifier = Modifier.testTag(TestTag.IntentHandlingOptions),
                 selected = viewModel.intentHandlingOption.collectAsState().value,
                 onSelect = viewModel::selectIntentHandlingOption,
-                values = viewModel.intentHandlingOptionsList
+                values = viewModel.intentHandlingOptionList
             ) {
                 if (viewModel.isRemoteHttpSettingsVisible(it)) {
                     //http endpoint

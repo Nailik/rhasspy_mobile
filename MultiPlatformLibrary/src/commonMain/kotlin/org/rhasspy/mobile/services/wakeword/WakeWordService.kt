@@ -7,7 +7,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.WakeWordOption
+import org.rhasspy.mobile.settings.option.WakeWordOption
 import org.rhasspy.mobile.middleware.Action
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.middleware.Source

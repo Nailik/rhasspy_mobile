@@ -15,7 +15,7 @@ import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.data.LanguageOptions
+import org.rhasspy.mobile.settings.types.LanguageType
 import org.rhasspy.mobile.viewmodel.settings.LanguageSettingsViewModel
 import kotlin.test.assertEquals
 
@@ -63,44 +63,44 @@ class LanguageSettingsContentTest {
      */
     @Test
     fun testLanguage() = runBlocking {
-        viewModel.selectLanguageOption(LanguageOptions.English)
+        viewModel.selectLanguageOption(LanguageType.English)
 
         //language is english
-        assertEquals(LanguageOptions.English, viewModel.languageOption.value)
+        assertEquals(LanguageType.English, viewModel.languageOption.value)
         //english is selected
-        composeTestRule.onNodeWithTag(LanguageOptions.English, true).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(LanguageType.English, true).onChildAt(0).assertIsSelected()
         //title is "Language"
         composeTestRule.onNodeWithTag(TestTag.AppBarTitle).assertTextEquals("Language")
         //StringDesc is English
-        assertEquals(LanguageOptions.English.code, StringDesc.localeType.systemLocale!!.language)
+        assertEquals(LanguageType.English.code, StringDesc.localeType.systemLocale!!.language)
 
         //User clicks german
-        composeTestRule.onNodeWithTag(LanguageOptions.German).performClick()
+        composeTestRule.onNodeWithTag(LanguageType.German).performClick()
         //language is german
-        assertEquals(LanguageOptions.German, viewModel.languageOption.value)
+        assertEquals(LanguageType.German, viewModel.languageOption.value)
         //german is selected
-        composeTestRule.onNodeWithTag(LanguageOptions.German, true).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(LanguageType.German, true).onChildAt(0).assertIsSelected()
         //title is "Sprache"
         composeTestRule.onNodeWithTag(TestTag.AppBarTitle).assertTextEquals("Sprache")
         //StringDesc is German
-        assertEquals(LanguageOptions.German.code, StringDesc.localeType.systemLocale!!.language)
+        assertEquals(LanguageType.German.code, StringDesc.localeType.systemLocale!!.language)
         //language german is saved
         var newViewModel = LanguageSettingsViewModel()
-        assertEquals(LanguageOptions.German, newViewModel.languageOption.value)
+        assertEquals(LanguageType.German, newViewModel.languageOption.value)
 
         //User clicks english
-        composeTestRule.onNodeWithTag(LanguageOptions.English).performClick()
+        composeTestRule.onNodeWithTag(LanguageType.English).performClick()
         //language is english
-        assertEquals(LanguageOptions.English, viewModel.languageOption.value)
+        assertEquals(LanguageType.English, viewModel.languageOption.value)
         //english is selected
-        composeTestRule.onNodeWithTag(LanguageOptions.English, true).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(LanguageType.English, true).onChildAt(0).assertIsSelected()
         //title is "Language"
         composeTestRule.onNodeWithTag(TestTag.AppBarTitle).assertTextEquals("Language")
         //StringDesc is English
-        assertEquals(LanguageOptions.English.code, StringDesc.localeType.systemLocale!!.language)
+        assertEquals(LanguageType.English.code, StringDesc.localeType.systemLocale!!.language)
         //language english is saved
         newViewModel = LanguageSettingsViewModel()
-        assertEquals(LanguageOptions.English, newViewModel.languageOption.value)
+        assertEquals(LanguageType.English, newViewModel.languageOption.value)
     }
 
 }

@@ -13,8 +13,8 @@ import org.rhasspy.mobile.nativeutils.openLink
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.services.mqtt.MqttServiceParams
-import org.rhasspy.mobile.settings.ConfigurationSettings
-import org.rhasspy.mobile.settings.FileType
+import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.types.FileType
 import org.rhasspy.mobile.viewmodel.configuration.test.MqttConfigurationTest
 
 class MqttConfigurationViewModel : IConfigurationViewModel() {
@@ -22,26 +22,26 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
     override val testRunner by inject<MqttConfigurationTest>()
 
     //unsaved data
-    private val _isMqttEnabled = MutableStateFlow(ConfigurationSettings.isMqttEnabled.value)
-    private val _mqttHost = MutableStateFlow(ConfigurationSettings.mqttHost.value)
-    private val _mqttPort = MutableStateFlow(ConfigurationSettings.mqttPort.value)
-    private val _mqttPortText = MutableStateFlow(ConfigurationSettings.mqttPort.value.toString())
-    private val _mqttUserName = MutableStateFlow(ConfigurationSettings.mqttUserName.value)
-    private val _mqttPassword = MutableStateFlow(ConfigurationSettings.mqttPassword.value)
-    private val _isMqttSSLEnabled = MutableStateFlow(ConfigurationSettings.isMqttSSLEnabled.value)
+    private val _isMqttEnabled = MutableStateFlow(ConfigurationSetting.isMqttEnabled.value)
+    private val _mqttHost = MutableStateFlow(ConfigurationSetting.mqttHost.value)
+    private val _mqttPort = MutableStateFlow(ConfigurationSetting.mqttPort.value)
+    private val _mqttPortText = MutableStateFlow(ConfigurationSetting.mqttPort.value.toString())
+    private val _mqttUserName = MutableStateFlow(ConfigurationSetting.mqttUserName.value)
+    private val _mqttPassword = MutableStateFlow(ConfigurationSetting.mqttPassword.value)
+    private val _isMqttSSLEnabled = MutableStateFlow(ConfigurationSetting.isMqttSSLEnabled.value)
     private val _mqttConnectionTimeout =
-        MutableStateFlow(ConfigurationSettings.mqttConnectionTimeout.value)
+        MutableStateFlow(ConfigurationSetting.mqttConnectionTimeout.value)
     private val _mqttConnectionTimeoutText =
-        MutableStateFlow(ConfigurationSettings.mqttConnectionTimeout.value.toString())
+        MutableStateFlow(ConfigurationSetting.mqttConnectionTimeout.value.toString())
     private val _mqttKeepAliveInterval =
-        MutableStateFlow(ConfigurationSettings.mqttKeepAliveInterval.value)
+        MutableStateFlow(ConfigurationSetting.mqttKeepAliveInterval.value)
     private val _mqttKeepAliveIntervalText =
-        MutableStateFlow(ConfigurationSettings.mqttKeepAliveInterval.value.toString())
-    private val _mqttRetryInterval = MutableStateFlow(ConfigurationSettings.mqttRetryInterval.value)
+        MutableStateFlow(ConfigurationSetting.mqttKeepAliveInterval.value.toString())
+    private val _mqttRetryInterval = MutableStateFlow(ConfigurationSetting.mqttRetryInterval.value)
     private val _mqttRetryIntervalText =
-        MutableStateFlow(ConfigurationSettings.mqttRetryInterval.value.toString())
+        MutableStateFlow(ConfigurationSetting.mqttRetryInterval.value.toString())
     private val _mqttKeyStoreFile =
-        MutableStateFlow(ConfigurationSettings.mqttKeyStoreFile.value)
+        MutableStateFlow(ConfigurationSetting.mqttKeyStoreFile.value)
 
     //unsaved ui data
     val isMqttEnabled = _isMqttEnabled.readOnly
@@ -62,21 +62,21 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
     override val isTestingEnabled = _isMqttEnabled.readOnly
 
     override val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(_isMqttEnabled, ConfigurationSettings.isMqttEnabled.data),
-        combineStateNotEquals(_mqttHost, ConfigurationSettings.mqttHost.data),
-        combineStateNotEquals(_mqttPort, ConfigurationSettings.mqttPort.data),
-        combineStateNotEquals(_mqttUserName, ConfigurationSettings.mqttUserName.data),
-        combineStateNotEquals(_mqttPassword, ConfigurationSettings.mqttPassword.data),
-        combineStateNotEquals(_isMqttSSLEnabled, ConfigurationSettings.isMqttSSLEnabled.data),
+        combineStateNotEquals(_isMqttEnabled, ConfigurationSetting.isMqttEnabled.data),
+        combineStateNotEquals(_mqttHost, ConfigurationSetting.mqttHost.data),
+        combineStateNotEquals(_mqttPort, ConfigurationSetting.mqttPort.data),
+        combineStateNotEquals(_mqttUserName, ConfigurationSetting.mqttUserName.data),
+        combineStateNotEquals(_mqttPassword, ConfigurationSetting.mqttPassword.data),
+        combineStateNotEquals(_isMqttSSLEnabled, ConfigurationSetting.isMqttSSLEnabled.data),
         combineStateNotEquals(
             _mqttConnectionTimeout,
-            ConfigurationSettings.mqttConnectionTimeout.data
+            ConfigurationSetting.mqttConnectionTimeout.data
         ),
         combineStateNotEquals(
             _mqttKeepAliveInterval,
-            ConfigurationSettings.mqttKeepAliveInterval.data
+            ConfigurationSetting.mqttKeepAliveInterval.data
         ),
-        combineStateNotEquals(_mqttRetryInterval, ConfigurationSettings.mqttRetryInterval.data)
+        combineStateNotEquals(_mqttRetryInterval, ConfigurationSetting.mqttRetryInterval.data)
     )
 
     //show input field for endpoint
@@ -155,39 +155,39 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
      * save data configuration
      */
     override fun onSave() {
-        if (ConfigurationSettings.mqttKeyStoreFile.value != _mqttKeyStoreFile.value) {
-            FileUtils.removeFile(FileType.CERTIFICATE, null, ConfigurationSettings.mqttKeyStoreFile.value)
+        if (ConfigurationSetting.mqttKeyStoreFile.value != _mqttKeyStoreFile.value) {
+            FileUtils.removeFile(FileType.CERTIFICATE, null, ConfigurationSetting.mqttKeyStoreFile.value)
         }
 
-        ConfigurationSettings.isMqttEnabled.value = _isMqttEnabled.value
-        ConfigurationSettings.mqttHost.value = _mqttHost.value
-        ConfigurationSettings.mqttPort.value = _mqttPort.value
-        ConfigurationSettings.mqttUserName.value = _mqttUserName.value
-        ConfigurationSettings.mqttPassword.value = _mqttPassword.value
-        ConfigurationSettings.isMqttSSLEnabled.value = _isMqttSSLEnabled.value
-        ConfigurationSettings.mqttKeyStoreFile.value = _mqttKeyStoreFile.value
-        ConfigurationSettings.mqttConnectionTimeout.value = _mqttConnectionTimeout.value
-        ConfigurationSettings.mqttKeepAliveInterval.value = _mqttKeepAliveInterval.value
-        ConfigurationSettings.mqttRetryInterval.value = _mqttRetryInterval.value
+        ConfigurationSetting.isMqttEnabled.value = _isMqttEnabled.value
+        ConfigurationSetting.mqttHost.value = _mqttHost.value
+        ConfigurationSetting.mqttPort.value = _mqttPort.value
+        ConfigurationSetting.mqttUserName.value = _mqttUserName.value
+        ConfigurationSetting.mqttPassword.value = _mqttPassword.value
+        ConfigurationSetting.isMqttSSLEnabled.value = _isMqttSSLEnabled.value
+        ConfigurationSetting.mqttKeyStoreFile.value = _mqttKeyStoreFile.value
+        ConfigurationSetting.mqttConnectionTimeout.value = _mqttConnectionTimeout.value
+        ConfigurationSetting.mqttKeepAliveInterval.value = _mqttKeepAliveInterval.value
+        ConfigurationSetting.mqttRetryInterval.value = _mqttRetryInterval.value
     }
 
     /**
      * undo all changes
      */
     override fun discard() {
-        if (ConfigurationSettings.mqttKeyStoreFile.value != _mqttKeyStoreFile.value) {
+        if (ConfigurationSetting.mqttKeyStoreFile.value != _mqttKeyStoreFile.value) {
             FileUtils.removeFile(FileType.CERTIFICATE, null, _mqttKeyStoreFile.value)
         }
 
-        _isMqttEnabled.value = ConfigurationSettings.isMqttEnabled.value
-        _mqttHost.value = ConfigurationSettings.mqttHost.value
-        _mqttPort.value = ConfigurationSettings.mqttPort.value
-        _mqttUserName.value = ConfigurationSettings.mqttUserName.value
-        _mqttPassword.value = ConfigurationSettings.mqttPassword.value
-        _isMqttSSLEnabled.value = ConfigurationSettings.isMqttSSLEnabled.value
-        _mqttConnectionTimeout.value = ConfigurationSettings.mqttConnectionTimeout.value
-        _mqttKeepAliveInterval.value = ConfigurationSettings.mqttKeepAliveInterval.value
-        _mqttRetryInterval.value = ConfigurationSettings.mqttRetryInterval.value
+        _isMqttEnabled.value = ConfigurationSetting.isMqttEnabled.value
+        _mqttHost.value = ConfigurationSetting.mqttHost.value
+        _mqttPort.value = ConfigurationSetting.mqttPort.value
+        _mqttUserName.value = ConfigurationSetting.mqttUserName.value
+        _mqttPassword.value = ConfigurationSetting.mqttPassword.value
+        _isMqttSSLEnabled.value = ConfigurationSetting.isMqttSSLEnabled.value
+        _mqttConnectionTimeout.value = ConfigurationSetting.mqttConnectionTimeout.value
+        _mqttKeepAliveInterval.value = ConfigurationSetting.mqttKeepAliveInterval.value
+        _mqttRetryInterval.value = ConfigurationSetting.mqttRetryInterval.value
     }
 
 

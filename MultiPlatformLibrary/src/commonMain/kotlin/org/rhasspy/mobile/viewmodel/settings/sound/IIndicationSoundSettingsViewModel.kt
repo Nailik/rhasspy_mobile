@@ -4,11 +4,11 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.AudioOutputOptions
+import org.rhasspy.mobile.settings.option.AudioOutputOption
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.nativeutils.DeviceVolume
 import org.rhasspy.mobile.services.localaudio.LocalAudioService
-import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.sounds.SoundFile
 
 abstract class IIndicationSoundSettingsViewModel : ViewModel(), KoinComponent {
@@ -21,10 +21,10 @@ abstract class IIndicationSoundSettingsViewModel : ViewModel(), KoinComponent {
     abstract val soundVolume: StateFlow<Float>
 
     val isAudioPlaying: StateFlow<Boolean> = localAudioService.isPlayingState
-    val audioOutputOption = AppSettings.soundIndicationOutputOption.data
-    val isNoSoundInformationBoxVisible = when (AppSettings.soundIndicationOutputOption.value) {
-        AudioOutputOptions.Sound -> DeviceVolume.volumeFlowSound.mapReadonlyState { it == 0 }
-        AudioOutputOptions.Notification -> DeviceVolume.volumeFlowNotification.mapReadonlyState { it == 0 }
+    val audioOutputOption = AppSetting.soundIndicationOutputOption.data
+    val isNoSoundInformationBoxVisible = when (AppSetting.soundIndicationOutputOption.value) {
+        AudioOutputOption.Sound -> DeviceVolume.volumeFlowSound.mapReadonlyState { it == 0 }
+        AudioOutputOption.Notification -> DeviceVolume.volumeFlowNotification.mapReadonlyState { it == 0 }
     }
 
     abstract fun onClickSoundIndicationDefault()

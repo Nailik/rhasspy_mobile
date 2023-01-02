@@ -46,7 +46,7 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
                 modifier = Modifier.testTag(TestTag.AudioPlayingOptions),
                 selected = audioPlayingOption,
                 onSelect = viewModel::selectAudioPlayingOption,
-                values = viewModel.audioPlayingOptionsList
+                values = viewModel.audioPlayingOptionList
             ) {
 
                 if (viewModel.isAudioPlayingLocalSettingsVisible(it)) {
@@ -75,7 +75,7 @@ private fun LocalConfigurationContent(viewModel: AudioPlayingConfigurationViewMo
             modifier = Modifier.testTag(TestTag.AudioOutputOptions),
             selected = viewModel.audioOutputOption.collectAsState().value,
             onSelect = viewModel::selectAudioOutputOption,
-            values = viewModel.audioOutputOptionsList
+            values = viewModel.audioOutputOptionList
         )
 
     }

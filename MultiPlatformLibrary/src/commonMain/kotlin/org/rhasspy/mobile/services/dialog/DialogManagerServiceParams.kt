@@ -1,14 +1,14 @@
 package org.rhasspy.mobile.services.dialog
 
-import org.rhasspy.mobile.data.DialogManagementOptions
-import org.rhasspy.mobile.data.IntentRecognitionOptions
-import org.rhasspy.mobile.data.SpeechToTextOptions
-import org.rhasspy.mobile.data.WakeWordOption
-import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.settings.option.DialogManagementOption
+import org.rhasspy.mobile.settings.option.IntentRecognitionOption
+import org.rhasspy.mobile.settings.option.SpeechToTextOption
+import org.rhasspy.mobile.settings.option.WakeWordOption
+import org.rhasspy.mobile.settings.ConfigurationSetting
 
 data class DialogManagerServiceParams(
-    val option: DialogManagementOptions = ConfigurationSettings.dialogManagementOption.value,
-    val wakeWordOption: WakeWordOption = ConfigurationSettings.wakeWordOption.value,
-    val speechToTextOption: SpeechToTextOptions = ConfigurationSettings.speechToTextOption.value,
-    val intentRecognitionOption: IntentRecognitionOptions = ConfigurationSettings.intentRecognitionOption.value,
+    val option: DialogManagementOption = ConfigurationSetting.dialogManagementOption.value,
+    val wakeWordOption: WakeWordOption = ConfigurationSetting.wakeWordOption.value,
+    val speechToTextOption: SpeechToTextOption = ConfigurationSetting.speechToTextOption.value,
+    val intentRecognitionOption: IntentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value,
 )

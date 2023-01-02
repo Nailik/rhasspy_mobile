@@ -1,14 +1,14 @@
 package org.rhasspy.mobile.viewmodel
 
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.LanguageOptions
-import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.types.LanguageType
+import org.rhasspy.mobile.settings.AppSetting
 
 /**
  * holds information used by various ui items
  */
 class AppViewModel {
 
-    val languageOption: StateFlow<LanguageOptions> get() = AppSettings.languageOption.data
+    val languageType: StateFlow<LanguageType> get() = AppSetting.languageType.data
 
 }

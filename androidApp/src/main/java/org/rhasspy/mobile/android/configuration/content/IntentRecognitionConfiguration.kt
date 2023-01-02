@@ -44,7 +44,7 @@ fun IntentRecognitionConfigurationContent(viewModel: IntentRecognitionConfigurat
                 modifier = Modifier.testTag(TestTag.IntentRecognitionOptions),
                 selected = viewModel.intentRecognitionOption.collectAsState().value,
                 onSelect = viewModel::selectIntentRecognitionOption,
-                values = viewModel.intentRecognitionOptionsList
+                values = viewModel.intentRecognitionOptionList
             ) {
 
                 if (viewModel.isIntentRecognitionHttpSettingsVisible(it)) {

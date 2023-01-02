@@ -5,12 +5,12 @@ import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
-import org.rhasspy.mobile.data.SpeechToTextOptions
+import org.rhasspy.mobile.settings.option.SpeechToTextOption
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.services.mqtt.MqttServiceParams
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
-import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.test.SpeechToTextConfigurationTest
 
 class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
@@ -21,13 +21,13 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
 
     //unsaved data
     private val _speechToTextOption =
-        MutableStateFlow(ConfigurationSettings.speechToTextOption.value)
+        MutableStateFlow(ConfigurationSetting.speechToTextOption.value)
     private val _isUseCustomSpeechToTextHttpEndpoint =
-        MutableStateFlow(ConfigurationSettings.isUseCustomSpeechToTextHttpEndpoint.value)
+        MutableStateFlow(ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value)
     private val _isUseSpeechToTextMqttSilenceDetection =
-        MutableStateFlow(ConfigurationSettings.isUseSpeechToTextMqttSilenceDetection.value)
+        MutableStateFlow(ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value)
     private val _speechToTextHttpEndpoint =
-        MutableStateFlow(ConfigurationSettings.speechToTextHttpEndpoint.value)
+        MutableStateFlow(ConfigurationSetting.speechToTextHttpEndpoint.value)
 
     //unsaved ui data
     val speechToTextOption = _speechToTextOption.readOnly
@@ -46,39 +46,39 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
     val isSpeechToTextHttpEndpointChangeEnabled = isUseCustomSpeechToTextHttpEndpoint
 
     override val isTestingEnabled =
-        _speechToTextOption.mapReadonlyState { it != SpeechToTextOptions.Disabled }
+        _speechToTextOption.mapReadonlyState { it != SpeechToTextOption.Disabled }
 
     override val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(_speechToTextOption, ConfigurationSettings.speechToTextOption.data),
+        combineStateNotEquals(_speechToTextOption, ConfigurationSetting.speechToTextOption.data),
         combineStateNotEquals(
             _isUseCustomSpeechToTextHttpEndpoint,
-            ConfigurationSettings.isUseCustomSpeechToTextHttpEndpoint.data
+            ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.data
         ),
         combineStateNotEquals(
             _isUseSpeechToTextMqttSilenceDetection,
-            ConfigurationSettings.isUseSpeechToTextMqttSilenceDetection.data
+            ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.data
         ),
         combineStateNotEquals(
             _speechToTextHttpEndpoint,
-            ConfigurationSettings.speechToTextHttpEndpoint.data
+            ConfigurationSetting.speechToTextHttpEndpoint.data
         )
     )
 
     //show endpoint settings
-    fun isSpeechToTextHttpSettingsVisible(option: SpeechToTextOptions): Boolean {
-        return option == SpeechToTextOptions.RemoteHTTP
+    fun isSpeechToTextHttpSettingsVisible(option: SpeechToTextOption): Boolean {
+        return option == SpeechToTextOption.RemoteHTTP
     }
 
     //show mqtt settings
-    fun isSpeechToTextMqttSettingsVisible(option: SpeechToTextOptions): Boolean {
-        return option == SpeechToTextOptions.RemoteMQTT
+    fun isSpeechToTextMqttSettingsVisible(option: SpeechToTextOption): Boolean {
+        return option == SpeechToTextOption.RemoteMQTT
     }
 
     //all options
-    val speechToTextOptions = SpeechToTextOptions::values
+    val speechToTextOptions = SpeechToTextOption::values
 
     //set new speech to text option
-    fun selectSpeechToTextOption(option: SpeechToTextOptions) {
+    fun selectSpeechToTextOption(option: SpeechToTextOption) {
         _speechToTextOption.value = option
     }
 
@@ -101,24 +101,24 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
      * save data configuration
      */
     override fun onSave() {
-        ConfigurationSettings.speechToTextOption.value = _speechToTextOption.value
-        ConfigurationSettings.isUseCustomSpeechToTextHttpEndpoint.value =
+        ConfigurationSetting.speechToTextOption.value = _speechToTextOption.value
+        ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value =
             _isUseCustomSpeechToTextHttpEndpoint.value
-        ConfigurationSettings.isUseSpeechToTextMqttSilenceDetection.value =
+        ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value =
             _isUseSpeechToTextMqttSilenceDetection.value
-        ConfigurationSettings.speechToTextHttpEndpoint.value = _speechToTextHttpEndpoint.value
+        ConfigurationSetting.speechToTextHttpEndpoint.value = _speechToTextHttpEndpoint.value
     }
 
     /**
      * undo all changes
      */
     override fun discard() {
-        _speechToTextOption.value = ConfigurationSettings.speechToTextOption.value
+        _speechToTextOption.value = ConfigurationSetting.speechToTextOption.value
         _isUseCustomSpeechToTextHttpEndpoint.value =
-            ConfigurationSettings.isUseCustomSpeechToTextHttpEndpoint.value
+            ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value
         _isUseSpeechToTextMqttSilenceDetection.value =
-            ConfigurationSettings.isUseSpeechToTextMqttSilenceDetection.value
-        _speechToTextHttpEndpoint.value = ConfigurationSettings.speechToTextHttpEndpoint.value
+            ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value
+        _speechToTextHttpEndpoint.value = ConfigurationSetting.speechToTextHttpEndpoint.value
     }
 
     override fun initializeTestParams() {

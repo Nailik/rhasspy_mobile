@@ -14,7 +14,7 @@ import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.AppSetting
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
@@ -69,13 +69,13 @@ class RecordingService : IService() {
     }
 
     private fun silenceDetection(volume: Short) {
-        if (AppSettings.isAutomaticSilenceDetectionEnabled.value) {
-            if (volume < AppSettings.automaticSilenceDetectionAudioLevel.value) {
+        if (AppSetting.isAutomaticSilenceDetectionEnabled.value) {
+            if (volume < AppSetting.automaticSilenceDetectionAudioLevel.value) {
                 //no data was above threshold, there is silence
                 silenceStartTime?.also {
                     //  logger.d { "silenceDetected" }
                     //check if silence was detected for x milliseconds
-                    if (it.minus(Clock.System.now()) < -AppSettings.automaticSilenceDetectionTime.value.milliseconds) {
+                    if (it.minus(Clock.System.now()) < -AppSetting.automaticSilenceDetectionTime.value.milliseconds) {
                         serviceMiddleware.action(Action.DialogAction.SilenceDetected(Source.Local))
                     }
                 } ?: run {

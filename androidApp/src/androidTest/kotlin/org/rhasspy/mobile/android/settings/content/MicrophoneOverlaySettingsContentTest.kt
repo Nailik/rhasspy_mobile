@@ -17,7 +17,7 @@ import org.junit.Test
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.data.MicrophoneOverlaySizeOptions
+import org.rhasspy.mobile.settings.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.viewmodel.settings.MicrophoneOverlaySettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -78,22 +78,22 @@ class MicrophoneOverlaySettingsContentTest {
     fun testContent() = runBlocking {
         device.resetOverlayPermission()
 
-        viewModel.selectMicrophoneOverlayOptionSize(MicrophoneOverlaySizeOptions.Disabled)
+        viewModel.selectMicrophoneOverlayOptionSize(MicrophoneOverlaySizeOption.Disabled)
         viewModel.toggleMicrophoneOverlayWhileAppEnabled(false)
 
         //OverlaySizeOption is disabled
         assertEquals(
-            MicrophoneOverlaySizeOptions.Disabled,
+            MicrophoneOverlaySizeOption.Disabled,
             viewModel.microphoneOverlaySizeOption.value
         )
         //Disabled is selected
-        composeTestRule.onNodeWithTag(MicrophoneOverlaySizeOptions.Disabled, true).onChildAt(0)
+        composeTestRule.onNodeWithTag(MicrophoneOverlaySizeOption.Disabled, true).onChildAt(0)
             .assertIsSelected()
         //Visible while app is not visible
         composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).assertDoesNotExist()
 
         //User clicks medium
-        composeTestRule.onNodeWithTag(MicrophoneOverlaySizeOptions.Medium).performClick()
+        composeTestRule.onNodeWithTag(MicrophoneOverlaySizeOption.Medium).performClick()
 
         //Overlay permission info is displayed
         composeTestRule.awaitIdle()
@@ -111,14 +111,14 @@ class MicrophoneOverlaySettingsContentTest {
         composeTestRule.awaitIdle()
 
         //Medium is selected
-        composeTestRule.onNodeWithTag(MicrophoneOverlaySizeOptions.Medium, true).onChildAt(0)
+        composeTestRule.onNodeWithTag(MicrophoneOverlaySizeOption.Medium, true).onChildAt(0)
             .assertIsSelected()
         //Visible while app is visible
         composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).assertIsDisplayed()
         //Medium is saved
         var newViewModel = MicrophoneOverlaySettingsViewModel()
         assertEquals(
-            MicrophoneOverlaySizeOptions.Medium,
+            MicrophoneOverlaySizeOption.Medium,
             newViewModel.microphoneOverlaySizeOption.value
         )
 

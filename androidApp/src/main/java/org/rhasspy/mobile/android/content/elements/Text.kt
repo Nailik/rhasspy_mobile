@@ -116,13 +116,13 @@ fun Text(
 
 @Composable
 fun translate(resource: StringResource): String {
-    get<AppViewModel>().languageOption.collectAsState().value
+    get<AppViewModel>().languageType.collectAsState().value
     return StringDesc.Resource(resource).toString(LocalContext.current)
 }
 
 @Composable
 fun translate(resource: StringResource, vararg args: Any): String {
-    get<AppViewModel>().languageOption.collectAsState().value
+    get<AppViewModel>().languageType.collectAsState().value
     return StringDesc.ResourceFormatted(resource, *args).toString(LocalContext.current)
 }
 

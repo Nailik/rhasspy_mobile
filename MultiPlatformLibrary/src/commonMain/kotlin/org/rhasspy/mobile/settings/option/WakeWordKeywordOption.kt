@@ -1,10 +1,10 @@
-package org.rhasspy.mobile.data
+package org.rhasspy.mobile.settings.option
 
 import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 
 enum class WakeWordKeywordOption(override val text: StringResource) :
-    DataEnum<WakeWordKeywordOption> {
+    IOption<WakeWordKeywordOption> {
     ALEXA(MR.strings.alexa),
     AMERICANO(MR.strings.americano),
     BLUEBERRY(MR.strings.blueberry),

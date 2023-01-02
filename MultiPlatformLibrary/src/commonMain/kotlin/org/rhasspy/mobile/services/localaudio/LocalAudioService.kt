@@ -3,8 +3,8 @@ package org.rhasspy.mobile.services.localaudio
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.settings.AppSettings
-import org.rhasspy.mobile.settings.sounds.SoundOptions
+import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.sounds.SoundOption
 import org.rhasspy.mobile.viewmodel.settings.sound.SoundFileFolder
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -21,7 +21,7 @@ class LocalAudioService : IService() {
     suspend fun playAudio(data: List<Byte>): Unit = suspendCoroutine { continuation ->
         audioPlayer.playData(
             data = data,
-            volume = AppSettings.volume.value,
+            volume = AppSetting.volume.value,
             onFinished = {
                 continuation.resume(Unit)
             },
@@ -32,49 +32,49 @@ class LocalAudioService : IService() {
     }
 
     fun playWakeSound() {
-        when (AppSettings.wakeSound.value) {
-            SoundOptions.Disabled.name -> {}
-            SoundOptions.Default.name -> audioPlayer.playFileResource(
+        when (AppSetting.wakeSound.value) {
+            SoundOption.Disabled.name -> {}
+            SoundOption.Default.name -> audioPlayer.playFileResource(
                 MR.files.etc_wav_beep_hi,
-                AppSettings.wakeSoundVolume.data,
-                AppSettings.soundIndicationOutputOption.value
+                AppSetting.wakeSoundVolume.data,
+                AppSetting.soundIndicationOutputOption.value
             )
             else -> audioPlayer.playSoundFile(
-                "${SoundFileFolder.Wake}/${AppSettings.wakeSound.value}",
-                AppSettings.wakeSoundVolume.data,
-                AppSettings.soundIndicationOutputOption.value
+                "${SoundFileFolder.Wake}/${AppSetting.wakeSound.value}",
+                AppSetting.wakeSoundVolume.data,
+                AppSetting.soundIndicationOutputOption.value
             )
         }
     }
 
     fun playRecordedSound() {
-        when (AppSettings.recordedSound.value) {
-            SoundOptions.Disabled.name -> {}
-            SoundOptions.Default.name -> audioPlayer.playFileResource(
+        when (AppSetting.recordedSound.value) {
+            SoundOption.Disabled.name -> {}
+            SoundOption.Default.name -> audioPlayer.playFileResource(
                 MR.files.etc_wav_beep_lo,
-                AppSettings.recordedSoundVolume.data,
-                AppSettings.soundIndicationOutputOption.value
+                AppSetting.recordedSoundVolume.data,
+                AppSetting.soundIndicationOutputOption.value
             )
             else -> audioPlayer.playSoundFile(
-                "${SoundFileFolder.Wake}/${AppSettings.recordedSound.value}",
-                AppSettings.recordedSoundVolume.data,
-                AppSettings.soundIndicationOutputOption.value
+                "${SoundFileFolder.Wake}/${AppSetting.recordedSound.value}",
+                AppSetting.recordedSoundVolume.data,
+                AppSetting.soundIndicationOutputOption.value
             )
         }
     }
 
     fun playErrorSound() {
-        when (AppSettings.errorSound.value) {
-            SoundOptions.Disabled.name -> {}
-            SoundOptions.Default.name -> audioPlayer.playFileResource(
+        when (AppSetting.errorSound.value) {
+            SoundOption.Disabled.name -> {}
+            SoundOption.Default.name -> audioPlayer.playFileResource(
                 MR.files.etc_wav_beep_error,
-                AppSettings.errorSoundVolume.data,
-                AppSettings.soundIndicationOutputOption.value
+                AppSetting.errorSoundVolume.data,
+                AppSetting.soundIndicationOutputOption.value
             )
             else -> audioPlayer.playSoundFile(
-                "${SoundFileFolder.Error}/${AppSettings.errorSound.value}",
-                AppSettings.errorSoundVolume.data,
-                AppSettings.soundIndicationOutputOption.value
+                "${SoundFileFolder.Error}/${AppSetting.errorSound.value}",
+                AppSetting.errorSoundVolume.data,
+                AppSetting.soundIndicationOutputOption.value
             )
         }
     }

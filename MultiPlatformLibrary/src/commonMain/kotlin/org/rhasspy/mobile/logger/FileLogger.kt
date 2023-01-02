@@ -14,7 +14,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.rhasspy.mobile.nativeutils.FileWriter
-import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.AppSetting
 
 object FileLogger : LogWriter() {
     private val logger = Logger.withTag("FileLogger")
@@ -41,7 +41,7 @@ object FileLogger : LogWriter() {
                 )
             }
 
-            AppSettings.logLevel.data.collect {
+            AppSetting.logLevel.data.collect {
                 if (Logger.config.minSeverity != it.severity) {
                     Logger.setMinSeverity(it.severity)
                     logger.a { "changed log level to ${it.severity}" }

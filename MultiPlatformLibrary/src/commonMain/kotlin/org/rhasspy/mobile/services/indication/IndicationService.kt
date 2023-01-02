@@ -7,7 +7,7 @@ import org.rhasspy.mobile.nativeutils.NativeIndication
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.localaudio.LocalAudioService
-import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.AppSetting
 
 class IndicationService : IService(), KoinComponent {
 
@@ -34,14 +34,14 @@ class IndicationService : IService(), KoinComponent {
      * wake up screen when hotword is detected and play sound eventually
      */
     fun onWakeWordDetected() {
-        if (AppSettings.isWakeWordDetectionTurnOnDisplayEnabled.value) {
+        if (AppSetting.isWakeWordDetectionTurnOnDisplayEnabled.value) {
             NativeIndication.wakeUpScreen()
         }
-        if (AppSettings.isWakeWordLightIndicationEnabled.value) {
+        if (AppSetting.isWakeWordLightIndicationEnabled.value) {
             _isShowVisualIndication.value = true
         }
         _indicationState.value = IndicationState.WakeUp
-        if (AppSettings.isSoundIndicationEnabled.value) {
+        if (AppSetting.isSoundIndicationEnabled.value) {
             localAudioService.playWakeSound()
         }
     }
@@ -50,7 +50,7 @@ class IndicationService : IService(), KoinComponent {
      * update indication state
      */
     fun onListening() {
-        if (AppSettings.isWakeWordLightIndicationEnabled.value) {
+        if (AppSetting.isWakeWordLightIndicationEnabled.value) {
             _isShowVisualIndication.value = true
         }
         _indicationState.value = IndicationState.Recording
@@ -60,7 +60,7 @@ class IndicationService : IService(), KoinComponent {
      * play sound that speech was recorded
      */
     fun onSilenceDetected() {
-        if (AppSettings.isSoundIndicationEnabled.value) {
+        if (AppSetting.isSoundIndicationEnabled.value) {
             localAudioService.playRecordedSound()
         }
     }
@@ -69,7 +69,7 @@ class IndicationService : IService(), KoinComponent {
      * when intent is recognized show thinking animation
      */
     fun onRecognizingIntent() {
-        if (AppSettings.isWakeWordLightIndicationEnabled.value) {
+        if (AppSetting.isWakeWordLightIndicationEnabled.value) {
             _isShowVisualIndication.value = true
         }
         _indicationState.value = IndicationState.Thinking
@@ -79,7 +79,7 @@ class IndicationService : IService(), KoinComponent {
      * show animation that audio is playing
      */
     fun onPlayAudio() {
-        if (AppSettings.isWakeWordLightIndicationEnabled.value) {
+        if (AppSetting.isWakeWordLightIndicationEnabled.value) {
             _isShowVisualIndication.value = true
         }
         _indicationState.value = IndicationState.Speaking
@@ -89,7 +89,7 @@ class IndicationService : IService(), KoinComponent {
      * play error sound on error
      */
     fun onError() {
-        if (AppSettings.isSoundIndicationEnabled.value) {
+        if (AppSetting.isSoundIndicationEnabled.value) {
             localAudioService.playErrorSound()
         }
     }

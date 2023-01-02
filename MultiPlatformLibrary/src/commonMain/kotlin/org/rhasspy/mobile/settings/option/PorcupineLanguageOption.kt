@@ -1,11 +1,11 @@
-package org.rhasspy.mobile.data
+package org.rhasspy.mobile.settings.option
 
 import dev.icerock.moko.resources.FileResource
 import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 
-enum class PorcupineLanguageOptions(override val text: StringResource, val file: FileResource) :
-    DataEnum<PorcupineLanguageOptions> {
+enum class PorcupineLanguageOption(override val text: StringResource, val file: FileResource) :
+    IOption<PorcupineLanguageOption> {
     EN(MR.strings.english, MR.files.porcupine_params),
     DE(MR.strings.german, MR.files.porcupine_params_de),
     ES(MR.strings.spanish, MR.files.porcupine_params_es),
@@ -15,7 +15,7 @@ enum class PorcupineLanguageOptions(override val text: StringResource, val file:
     KO(MR.strings.korean, MR.files.porcupine_params_ko),
     PT(MR.strings.portuguese, MR.files.porcupine_params_pt);
 
-    override fun findValue(value: String): PorcupineLanguageOptions {
+    override fun findValue(value: String): PorcupineLanguageOption {
         return valueOf(value)
     }
 }

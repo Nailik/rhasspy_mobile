@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.nativeutils
 
-import org.rhasspy.mobile.settings.FileType
+import org.rhasspy.mobile.settings.types.FileType
 
 /**
  * to open file selection or delete file from local app storage

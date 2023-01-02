@@ -17,7 +17,7 @@ import org.rhasspy.mobile.android.permissions.RequiresOverlayPermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.data.MicrophoneOverlaySizeOptions
+import org.rhasspy.mobile.settings.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.viewmodel.settings.MicrophoneOverlaySettingsViewModel
 
 /**
@@ -51,7 +51,7 @@ fun MicrophoneOverlaySettingsContent(viewModel: MicrophoneOverlaySettingsViewMod
                     modifier = Modifier.testTag(TestTag.MicrophoneOverlaySizeOptions),
                     selected = viewModel.microphoneOverlaySizeOption.collectAsState().value,
                     onSelect = { option ->
-                        if (option != MicrophoneOverlaySizeOptions.Disabled) {
+                        if (option != MicrophoneOverlaySizeOption.Disabled) {
                             onClick.invoke(option)
                         } else {
                             viewModel.selectMicrophoneOverlayOptionSize(option)

@@ -3,11 +3,11 @@ package org.rhasspy.mobile.logger
 import co.touchlab.kermit.Severity
 import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.data.DataEnum
+import org.rhasspy.mobile.settings.option.IOption
 
 
 enum class LogLevel(override val text: StringResource, val severity: Severity) :
-    DataEnum<LogLevel> {
+    IOption<LogLevel> {
     Verbose(MR.strings.verbose, Severity.Verbose),
     Debug(MR.strings.debug, Severity.Debug),
     Info(MR.strings.info, Severity.Info),

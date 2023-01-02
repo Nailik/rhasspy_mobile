@@ -41,13 +41,13 @@ fun PorcupineLanguageScreen(viewModel: WakeWordConfigurationViewModel) {
 
             val selectedOption by viewModel.wakeWordPorcupineLanguage.collectAsState()
 
-            val options = viewModel.porcupineLanguageOptions()
+            val options = viewModel.porcupineLanguageOption()
 
             Column {
                 options.forEach { option ->
 
                     RadioButtonListItem(
-                        modifier = Modifier.testTag(dataEnum = option),
+                        modifier = Modifier.testTag(IOption = option),
                         text = option.text,
                         isChecked = selectedOption == option,
                         onClick = { viewModel.selectWakeWordPorcupineLanguage(option) }

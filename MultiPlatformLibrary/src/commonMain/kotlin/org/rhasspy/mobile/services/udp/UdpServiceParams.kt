@@ -1,8 +1,8 @@
 package org.rhasspy.mobile.services.udp
 
-import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.settings.ConfigurationSetting
 
 data class UdpServiceParams(
-    val udpOutputHost: String = ConfigurationSettings.udpOutputHost.value,
-    val udpOutputPort: Int = ConfigurationSettings.udpOutputPort.value
+    val udpOutputHost: String = ConfigurationSetting.udpOutputHost.value,
+    val udpOutputPort: Int = ConfigurationSetting.udpOutputPort.value
 )

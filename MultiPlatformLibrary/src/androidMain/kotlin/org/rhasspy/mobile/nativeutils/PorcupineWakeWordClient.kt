@@ -7,7 +7,7 @@ import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
 import io.ktor.utils.io.core.*
 import org.rhasspy.mobile.Application
-import org.rhasspy.mobile.data.PorcupineLanguageOptions
+import org.rhasspy.mobile.settings.option.PorcupineLanguageOption
 import org.rhasspy.mobile.services.wakeword.PorcupineError
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
@@ -22,7 +22,7 @@ actual class PorcupineWakeWordClient actual constructor(
     private val wakeWordPorcupineAccessToken: String,
     private val wakeWordPorcupineKeywordDefaultOptions: Set<PorcupineDefaultKeyword>,
     private val wakeWordPorcupineKeywordCustomOptions: Set<PorcupineCustomKeyword>,
-    private val wakeWordPorcupineLanguage: PorcupineLanguageOptions,
+    private val wakeWordPorcupineLanguage: PorcupineLanguageOption,
     private val onKeywordDetected: (hotWord: String) -> Unit,
     private val onError: (PorcupineError) -> Unit
 ) : PorcupineManagerCallback, Closeable {

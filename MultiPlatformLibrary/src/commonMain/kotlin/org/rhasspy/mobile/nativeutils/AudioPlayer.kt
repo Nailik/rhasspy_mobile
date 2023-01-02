@@ -3,7 +3,7 @@ package org.rhasspy.mobile.nativeutils
 import dev.icerock.moko.resources.FileResource
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.AudioOutputOptions
+import org.rhasspy.mobile.settings.option.AudioOutputOption
 
 /**
  * plays audio on the device
@@ -43,7 +43,7 @@ expect class AudioPlayer() : Closeable {
     fun playFileResource(
         fileResource: FileResource,
         volume: StateFlow<Float>,
-        audioOutputOptions: AudioOutputOptions,
+        audioOutputOption: AudioOutputOption,
         onFinished: (() -> Unit)? = null,
         onError: ((exception: Exception?) -> Unit)? = null
     )
@@ -59,7 +59,7 @@ expect class AudioPlayer() : Closeable {
     fun playSoundFile(
         filename: String,
         volume: StateFlow<Float>,
-        audioOutputOptions: AudioOutputOptions,
+        audioOutputOption: AudioOutputOption,
         onFinished: (() -> Unit)? = null,
         onError: ((exception: Exception?) -> Unit)? = null
     )

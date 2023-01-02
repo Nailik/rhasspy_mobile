@@ -14,7 +14,7 @@ import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.data.DialogManagementOptions
+import org.rhasspy.mobile.settings.option.DialogManagementOption
 import org.rhasspy.mobile.viewmodel.configuration.DialogManagementConfigurationViewModel
 import kotlin.test.assertEquals
 
@@ -50,23 +50,23 @@ class DialogManagementConfigurationContentTest {
      */
     @Test
     fun testEndpoint() = runBlocking {
-        viewModel.selectDialogManagementOption(DialogManagementOptions.Disabled)
+        viewModel.selectDialogManagementOption(DialogManagementOption.Disabled)
         viewModel.save()
 
         //option disable is set
-        composeTestRule.onNodeWithTag(DialogManagementOptions.Disabled, true).onChildAt(0)
+        composeTestRule.onNodeWithTag(DialogManagementOption.Disabled, true).onChildAt(0)
             .assertIsSelected()
         //User clicks option local
-        composeTestRule.onNodeWithTag(DialogManagementOptions.Local).performClick()
+        composeTestRule.onNodeWithTag(DialogManagementOption.Local).performClick()
         //new option is selected
-        composeTestRule.onNodeWithTag(DialogManagementOptions.Local, true).onChildAt(0)
+        composeTestRule.onNodeWithTag(DialogManagementOption.Local, true).onChildAt(0)
             .assertIsSelected()
 
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         val newViewModel = DialogManagementConfigurationViewModel()
         //option is saved to local
-        assertEquals(DialogManagementOptions.Local, newViewModel.dialogManagementOption.value)
+        assertEquals(DialogManagementOption.Local, newViewModel.dialogManagementOption.value)
     }
 
 }

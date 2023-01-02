@@ -1,8 +1,8 @@
 package org.rhasspy.mobile.services.localaudio
 
-import org.rhasspy.mobile.data.AudioOutputOptions
-import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.settings.option.AudioOutputOption
+import org.rhasspy.mobile.settings.ConfigurationSetting
 
 data class LocalAudioServiceParams(
-    val audioOutputOption: AudioOutputOptions = ConfigurationSettings.audioOutputOption.value
+    val audioOutputOption: AudioOutputOption = ConfigurationSetting.audioOutputOption.value
 )

@@ -1,9 +1,9 @@
 package org.rhasspy.mobile.services.homeassistant
 
-import org.rhasspy.mobile.data.HomeAssistantIntentHandlingOptions
-import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.settings.option.HomeAssistantIntentHandlingOption
+import org.rhasspy.mobile.settings.ConfigurationSetting
 
 data class HomeAssistantServiceParams(
-    val siteId: String = ConfigurationSettings.siteId.value,
-    val intentHandlingHomeAssistantOption: HomeAssistantIntentHandlingOptions = ConfigurationSettings.intentHandlingHomeAssistantOption.value
+    val siteId: String = ConfigurationSetting.siteId.value,
+    val intentHandlingHomeAssistantOption: HomeAssistantIntentHandlingOption = ConfigurationSetting.intentHandlingHomeAssistantOption.value
 )

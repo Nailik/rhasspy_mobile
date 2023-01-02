@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.settings.sounds
 
-enum class SoundOptions {
+enum class SoundOption {
     Disabled,
     Default
 }

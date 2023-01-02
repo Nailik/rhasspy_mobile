@@ -10,10 +10,10 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.android.content.SecondaryContent
 import org.rhasspy.mobile.android.content.list.RadioButtonListItem
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.data.DataEnum
+import org.rhasspy.mobile.settings.option.IOption
 
 @Composable
-fun <E : DataEnum<*>> RadioButtonsEnumSelectionList(
+fun <E : IOption<*>> RadioButtonsEnumSelectionList(
     modifier: Modifier = Modifier,
     selected: E,
     onSelect: (item: E) -> Unit,
@@ -33,7 +33,7 @@ fun <E : DataEnum<*>> RadioButtonsEnumSelectionList(
 }
 
 @Composable
-fun <E : DataEnum<*>> RadioButtonsEnumSelection(
+fun <E : IOption<*>> RadioButtonsEnumSelection(
     modifier: Modifier = Modifier,
     selected: E,
     onSelect: (item: E) -> Unit,

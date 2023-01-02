@@ -12,7 +12,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.data.PorcupineLanguageOptions
+import org.rhasspy.mobile.settings.option.PorcupineLanguageOption
 import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 import kotlin.test.assertEquals
 
@@ -52,22 +52,22 @@ class PorcupineLanguageScreenTest {
     @Test
     fun testContent() = runBlocking {
         //English is saved
-        viewModel.selectWakeWordPorcupineLanguage(PorcupineLanguageOptions.EN)
+        viewModel.selectWakeWordPorcupineLanguage(PorcupineLanguageOption.EN)
         viewModel.save()
-        assertEquals(PorcupineLanguageOptions.EN, viewModel.wakeWordPorcupineLanguage.value)
+        assertEquals(PorcupineLanguageOption.EN, viewModel.wakeWordPorcupineLanguage.value)
 
         //english is selected
-        composeTestRule.onNodeWithTag(PorcupineLanguageOptions.EN).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(PorcupineLanguageOption.EN).onChildAt(0).assertIsSelected()
 
         //user clicks german
-        composeTestRule.onNodeWithTag(PorcupineLanguageOptions.DE).performClick()
+        composeTestRule.onNodeWithTag(PorcupineLanguageOption.DE).performClick()
         //german is selected
-        composeTestRule.onNodeWithTag(PorcupineLanguageOptions.DE).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(PorcupineLanguageOption.DE).onChildAt(0).assertIsSelected()
 
         //save is invoked
         viewModel.save()
         val newViewModel = WakeWordConfigurationViewModel()
         //german is saved
-        assertEquals(PorcupineLanguageOptions.DE, newViewModel.wakeWordPorcupineLanguage.value)
+        assertEquals(PorcupineLanguageOption.DE, newViewModel.wakeWordPorcupineLanguage.value)
     }
 }

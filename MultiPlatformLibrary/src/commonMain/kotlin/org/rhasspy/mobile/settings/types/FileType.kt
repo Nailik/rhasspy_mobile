@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.settings
+package org.rhasspy.mobile.settings.types
 
 enum class FileType(val folderName: String, val fileTypes: Array<String>) {
     SOUND("sounds", arrayOf("audio/x-wav")),

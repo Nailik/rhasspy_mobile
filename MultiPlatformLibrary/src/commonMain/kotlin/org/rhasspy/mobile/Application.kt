@@ -45,8 +45,8 @@ import org.rhasspy.mobile.services.wakeword.WakeWordService
 import org.rhasspy.mobile.services.wakeword.WakeWordServiceParams
 import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.services.webserver.WebServerServiceParams
-import org.rhasspy.mobile.settings.AppSettings
-import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.*
 import org.rhasspy.mobile.viewmodel.configuration.*
 import org.rhasspy.mobile.viewmodel.configuration.test.*
@@ -192,7 +192,7 @@ abstract class Application : NativeApplication(), KoinComponent {
         Logger.addLogWriter(FileLogger)
 
         CoroutineScope(Dispatchers.Default).launch {
-            AppSettings.isCrashlyticsEnabled.data.collect {
+            AppSetting.isCrashlyticsEnabled.data.collect {
                 setCrashlyticsCollectionEnabled(it)
             }
         }
@@ -200,15 +200,15 @@ abstract class Application : NativeApplication(), KoinComponent {
         logger.a { "######## Application started ########" }
 
         //initialize/load the settings, generate the MutableStateFlow
-        AppSettings
-        ConfigurationSettings
+        AppSetting
+        ConfigurationSetting
         OverlayServices.checkPermission()
         startNativeServices()
 
-        StringDesc.localeType = StringDesc.LocaleType.Custom(AppSettings.languageOption.value.code)
+        StringDesc.localeType = StringDesc.LocaleType.Custom(AppSetting.languageType.value.code)
 
         //start foreground service if enabled
-        if (AppSettings.isBackgroundServiceEnabled.value) {
+        if (AppSetting.isBackgroundServiceEnabled.value) {
             BackgroundService.start()
         }
     }

@@ -1,44 +1,44 @@
 package org.rhasspy.mobile.viewmodel.settings
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import org.rhasspy.mobile.data.AudioOutputOptions
-import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.option.AudioOutputOption
+import org.rhasspy.mobile.settings.AppSetting
 
 
 class IndicationSettingsViewModel : ViewModel() {
 
     //unsaved ui data
-    val isSoundIndicationEnabled = AppSettings.isSoundIndicationEnabled.data
-    val isWakeWordLightIndicationEnabled = AppSettings.isWakeWordLightIndicationEnabled.data
-    val isWakeWordDetectionTurnOnDisplayEnabled = AppSettings.isWakeWordDetectionTurnOnDisplayEnabled.data
+    val isSoundIndicationEnabled = AppSetting.isSoundIndicationEnabled.data
+    val isWakeWordLightIndicationEnabled = AppSetting.isWakeWordLightIndicationEnabled.data
+    val isWakeWordDetectionTurnOnDisplayEnabled = AppSetting.isWakeWordDetectionTurnOnDisplayEnabled.data
     val isSoundSettingsVisible = isSoundIndicationEnabled
-    val soundIndicationOutputOption = AppSettings.soundIndicationOutputOption.data
+    val soundIndicationOutputOption = AppSetting.soundIndicationOutputOption.data
 
-    val wakeSound = AppSettings.wakeSound.data
-    val recordedSound = AppSettings.recordedSound.data
-    val errorSound = AppSettings.errorSound.data
+    val wakeSound = AppSetting.wakeSound.data
+    val recordedSound = AppSetting.recordedSound.data
+    val errorSound = AppSetting.errorSound.data
 
     //all audio output options
-    val audioOutputOptionsList = AudioOutputOptions::values
+    val audioOutputOptionList = AudioOutputOption::values
 
     //toggle wake word light indication
     fun toggleWakeWordLightIndicationEnabled(enabled: Boolean) {
-        AppSettings.isWakeWordLightIndicationEnabled.value = enabled
+        AppSetting.isWakeWordLightIndicationEnabled.value = enabled
     }
 
     //toggle wake word turn on display
     fun toggleWakeWordDetectionTurnOnDisplay(enabled: Boolean) {
-        AppSettings.isWakeWordDetectionTurnOnDisplayEnabled.value = enabled
+        AppSetting.isWakeWordDetectionTurnOnDisplayEnabled.value = enabled
     }
 
     //toggle wake word sound indication
     fun toggleWakeWordSoundIndicationEnabled(enabled: Boolean) {
-        AppSettings.isSoundIndicationEnabled.value = enabled
+        AppSetting.isSoundIndicationEnabled.value = enabled
     }
 
     //set sound output option for indication
-    fun selectSoundIndicationOutputOption(option: AudioOutputOptions) {
-        AppSettings.soundIndicationOutputOption.value = option
+    fun selectSoundIndicationOutputOption(option: AudioOutputOption) {
+        AppSetting.soundIndicationOutputOption.value = option
     }
 
 }

@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.nativeutils
 
 import io.ktor.utils.io.core.*
-import org.rhasspy.mobile.data.PorcupineLanguageOptions
+import org.rhasspy.mobile.settings.option.PorcupineLanguageOption
 import org.rhasspy.mobile.services.wakeword.PorcupineError
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
@@ -16,7 +16,7 @@ expect class PorcupineWakeWordClient(
     wakeWordPorcupineAccessToken: String,
     wakeWordPorcupineKeywordDefaultOptions: Set<PorcupineDefaultKeyword>,
     wakeWordPorcupineKeywordCustomOptions: Set<PorcupineCustomKeyword>,
-    wakeWordPorcupineLanguage: PorcupineLanguageOptions,
+    wakeWordPorcupineLanguage: PorcupineLanguageOption,
     onKeywordDetected: (hotWord: String) -> Unit,
     onError: (PorcupineError) -> Unit
 ) : Closeable {

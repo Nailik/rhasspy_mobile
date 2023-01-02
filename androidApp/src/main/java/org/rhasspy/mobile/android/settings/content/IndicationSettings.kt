@@ -148,7 +148,7 @@ private fun SoundIndicationSettingsOverview(viewModel: IndicationSettingsViewMod
                 modifier = Modifier.testTag(TestTag.AudioOutputOptions),
                 selected = viewModel.soundIndicationOutputOption.collectAsState().value,
                 onSelect = viewModel::selectSoundIndicationOutputOption,
-                values = viewModel.audioOutputOptionsList
+                values = viewModel.audioOutputOptionList
             )
 
             //opens page for sounds

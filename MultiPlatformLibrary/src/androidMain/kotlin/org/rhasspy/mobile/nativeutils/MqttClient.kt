@@ -10,7 +10,7 @@ import org.rhasspy.mobile.mqtt.*
 import org.rhasspy.mobile.mqtt.MqttMessage
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
-import org.rhasspy.mobile.settings.FileType
+import org.rhasspy.mobile.settings.types.FileType
 import java.io.File
 import java.security.KeyStore
 import javax.net.ssl.SSLContext

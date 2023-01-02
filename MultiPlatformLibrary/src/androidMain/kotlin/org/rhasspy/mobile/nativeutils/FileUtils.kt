@@ -3,7 +3,7 @@ package org.rhasspy.mobile.nativeutils
 import android.net.Uri
 import android.provider.OpenableColumns
 import org.rhasspy.mobile.Application
-import org.rhasspy.mobile.settings.FileType
+import org.rhasspy.mobile.settings.types.FileType
 import java.io.BufferedInputStream
 import java.io.File
 import java.util.zip.ZipInputStream

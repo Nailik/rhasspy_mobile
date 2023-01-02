@@ -1,20 +1,20 @@
 package org.rhasspy.mobile.services.mqtt
 
-import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.settings.ConfigurationSetting
 
 data class MqttServiceParams(
-    val siteId: String = ConfigurationSettings.siteId.value,
-    val isMqttEnabled: Boolean = ConfigurationSettings.isMqttEnabled.value,
-    val mqttHost: String = ConfigurationSettings.mqttHost.value,
-    val mqttPort: Int = ConfigurationSettings.mqttPort.value,
-    val retryInterval: Long = ConfigurationSettings.mqttRetryInterval.value,
+    val siteId: String = ConfigurationSetting.siteId.value,
+    val isMqttEnabled: Boolean = ConfigurationSetting.isMqttEnabled.value,
+    val mqttHost: String = ConfigurationSetting.mqttHost.value,
+    val mqttPort: Int = ConfigurationSetting.mqttPort.value,
+    val retryInterval: Long = ConfigurationSetting.mqttRetryInterval.value,
     val mqttServiceConnectionOptions: MqttServiceConnectionOptions = MqttServiceConnectionOptions(
-        isSSLEnabled = ConfigurationSettings.isMqttSSLEnabled.value,
-        keyStoreFile = ConfigurationSettings.mqttKeyStoreFile.value,
-        connUsername = ConfigurationSettings.mqttUserName.value,
-        connPassword = ConfigurationSettings.mqttPassword.value,
-        connectionTimeout = ConfigurationSettings.mqttConnectionTimeout.value,
-        keepAliveInterval = ConfigurationSettings.mqttKeepAliveInterval.value
+        isSSLEnabled = ConfigurationSetting.isMqttSSLEnabled.value,
+        keyStoreFile = ConfigurationSetting.mqttKeyStoreFile.value,
+        connUsername = ConfigurationSetting.mqttUserName.value,
+        connPassword = ConfigurationSetting.mqttPassword.value,
+        connectionTimeout = ConfigurationSetting.mqttConnectionTimeout.value,
+        keepAliveInterval = ConfigurationSetting.mqttKeepAliveInterval.value
     ),
-    val isUseSpeechToTextMqttSilenceDetection: Boolean = ConfigurationSettings.isUseSpeechToTextMqttSilenceDetection.value
+    val isUseSpeechToTextMqttSilenceDetection: Boolean = ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value
 )

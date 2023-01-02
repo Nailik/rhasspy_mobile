@@ -1,238 +1,238 @@
-package org.rhasspy.mobile.data
+package org.rhasspy.mobile.settings.option
 
 import dev.icerock.moko.resources.FileResource
 import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 
-enum class PorcupineKeywordOptions(
+enum class PorcupineKeywordOption(
     override val text: StringResource,
     val file: FileResource,
-    val language: PorcupineLanguageOptions
+    val language: PorcupineLanguageOption
 ) :
-    DataEnum<PorcupineKeywordOptions> {
+    IOption<PorcupineKeywordOption> {
     ALEXA(
         MR.strings.alexa,
         MR.files.porcupine_wakeword_en_alexa_android,
-        PorcupineLanguageOptions.EN
+        PorcupineLanguageOption.EN
     ),
     AMERICANO(
         MR.strings.americano,
         MR.files.porcupine_wakeword_en_americano_android,
-        PorcupineLanguageOptions.EN
+        PorcupineLanguageOption.EN
     ),
     BLUEBERRY(
         MR.strings.blueberry,
         MR.files.porcupine_wakeword_en_blueberry_android,
-        PorcupineLanguageOptions.EN
+        PorcupineLanguageOption.EN
     ),
     BUMBLEBEE(
         MR.strings.bumblebee,
         MR.files.porcupine_wakeword_en_bumblebee_android,
-        PorcupineLanguageOptions.EN
+        PorcupineLanguageOption.EN
     ),
     COMPUTER(
         MR.strings.computer,
         MR.files.porcupine_wakeword_en_computer_android,
-        PorcupineLanguageOptions.EN
+        PorcupineLanguageOption.EN
     ),
     GRAPEFRUIT(
         MR.strings.grapefruit,
         MR.files.porcupine_wakeword_en_grapefruit_android,
-        PorcupineLanguageOptions.EN
+        PorcupineLanguageOption.EN
     ),
     GRASSHOPPER(
         MR.strings.grasshopper,
         MR.files.porcupine_wakeword_en_grasshopper_android,
-        PorcupineLanguageOptions.EN
+        PorcupineLanguageOption.EN
     ),
     HEY_BARISTA(
         MR.strings.hey_barista,
         MR.files.porcupine_wakeword_en_hey_barista_android,
-        PorcupineLanguageOptions.EN
+        PorcupineLanguageOption.EN
     ),
     HEY_GOOGLE(
         MR.strings.hey_google,
         MR.files.porcupine_wakeword_en_hey_google_android,
-        PorcupineLanguageOptions.EN
+        PorcupineLanguageOption.EN
     ),
     HEY_SIRI(
         MR.strings.hey_siri,
         MR.files.porcupine_wakeword_en_hey_siri_android,
-        PorcupineLanguageOptions.EN
+        PorcupineLanguageOption.EN
     ),
     JARVIS(
         MR.strings.jarvis,
         MR.files.porcupine_wakeword_en_jarvis_android,
-        PorcupineLanguageOptions.EN
+        PorcupineLanguageOption.EN
     ),
     OK_GOOGLE(
         MR.strings.ok_google,
         MR.files.porcupine_wakeword_en_ok_google_android,
-        PorcupineLanguageOptions.EN
+        PorcupineLanguageOption.EN
     ),
     PICO_CLOCK(
         MR.strings.pico_clock,
         MR.files.porcupine_wakeword_en_pico_clock_android,
-        PorcupineLanguageOptions.EN
+        PorcupineLanguageOption.EN
     ),
     PICOVOICE(
         MR.strings.picovoice,
         MR.files.porcupine_wakeword_en_picovoice_android,
-        PorcupineLanguageOptions.EN
+        PorcupineLanguageOption.EN
     ),
     PORCUPINE(
         MR.strings.porcupine,
         MR.files.porcupine_wakeword_en_porcupine_android,
-        PorcupineLanguageOptions.EN
+        PorcupineLanguageOption.EN
     ),
     TERMINATOR(
         MR.strings.terminator,
         MR.files.porcupine_wakeword_en_terminator_android,
-        PorcupineLanguageOptions.EN
+        PorcupineLanguageOption.EN
     ),
     ANANAS(
         MR.strings.ananas,
         MR.files.porcupine_wakeword_de_ananas_android,
-        PorcupineLanguageOptions.DE
+        PorcupineLanguageOption.DE
     ),
     HEUSCHRECKE(
         MR.strings.heuschrecke,
         MR.files.porcupine_wakeword_de_heuschrecke_android,
-        PorcupineLanguageOptions.DE
+        PorcupineLanguageOption.DE
     ),
     HIMBEERE(
         MR.strings.himbeere,
         MR.files.porcupine_wakeword_de_himbeere_android,
-        PorcupineLanguageOptions.DE
+        PorcupineLanguageOption.DE
     ),
     LEGUAN(
         MR.strings.leguan,
         MR.files.porcupine_wakeword_de_leguan_android,
-        PorcupineLanguageOptions.DE
+        PorcupineLanguageOption.DE
     ),
     STACHELSCHWEIN(
         MR.strings.stachelschwein,
         MR.files.porcupine_wakeword_de_stachelschwein_android,
-        PorcupineLanguageOptions.DE
+        PorcupineLanguageOption.DE
     ),
     EMPAREDADO(
         MR.strings.emparedado,
         MR.files.porcupine_wakeword_es_emparedado_android,
-        PorcupineLanguageOptions.ES
+        PorcupineLanguageOption.ES
     ),
     LEOPARDO(
         MR.strings.leopardo,
         MR.files.porcupine_wakeword_es_leopardo_android,
-        PorcupineLanguageOptions.ES
+        PorcupineLanguageOption.ES
     ),
     MANZANA(
         MR.strings.manzana,
         MR.files.porcupine_wakeword_es_manzana_android,
-        PorcupineLanguageOptions.ES
+        PorcupineLanguageOption.ES
     ),
     MURCIELAGO(
         MR.strings.murcielago,
         MR.files.porcupine_wakeword_es_murcielago_android,
-        PorcupineLanguageOptions.ES
+        PorcupineLanguageOption.ES
     ),
     FRAMBOISE(
         MR.strings.framboise,
         MR.files.porcupine_wakeword_fr_framboise_android,
-        PorcupineLanguageOptions.FR
+        PorcupineLanguageOption.FR
     ),
     MON_CHOUCHOU(
         MR.strings.monChouchou,
         MR.files.porcupine_wakeword_fr_mon_chouchou_android,
-        PorcupineLanguageOptions.FR
+        PorcupineLanguageOption.FR
     ),
     PARAPLUIE(
         MR.strings.parapluie,
         MR.files.porcupine_wakeword_fr_parapluie_android,
-        PorcupineLanguageOptions.FR
+        PorcupineLanguageOption.FR
     ),
     PERROQUET(
         MR.strings.perroquet,
         MR.files.porcupine_wakeword_fr_perroquet_android,
-        PorcupineLanguageOptions.FR
+        PorcupineLanguageOption.FR
     ),
     TOURNESOL(
         MR.strings.tournesol,
         MR.files.porcupine_wakeword_fr_tournesol_android,
-        PorcupineLanguageOptions.FR
+        PorcupineLanguageOption.FR
     ),
     CAMERIERE(
         MR.strings.cameriere,
         MR.files.porcupine_wakeword_it_cameriere_android,
-        PorcupineLanguageOptions.IT
+        PorcupineLanguageOption.IT
     ),
     ESPRESSO(
         MR.strings.espresso,
         MR.files.porcupine_wakeword_it_espresso_android,
-        PorcupineLanguageOptions.IT
+        PorcupineLanguageOption.IT
     ),
     PORCOSPINO(
         MR.strings.porcospino,
         MR.files.porcupine_wakeword_it_porcospino_android,
-        PorcupineLanguageOptions.IT
+        PorcupineLanguageOption.IT
     ),
     SILENZIO_BRUNO(
         MR.strings.silencioBruno,
         MR.files.porcupine_wakeword_it_silenzio_bruno_android,
-        PorcupineLanguageOptions.IT
+        PorcupineLanguageOption.IT
     ),
     BUSHI(
         MR.strings.bushi,
         MR.files.porcupine_wakeword_ja_bushi_android,
-        PorcupineLanguageOptions.JA
+        PorcupineLanguageOption.JA
     ),
     NINJA(
         MR.strings.ninja,
         MR.files.porcupine_wakeword_ja_ninja_android,
-        PorcupineLanguageOptions.JA
+        PorcupineLanguageOption.JA
     ),
     RINGO(
         MR.strings.ringo,
         MR.files.porcupine_wakeword_ja_ringo_android,
-        PorcupineLanguageOptions.JA
+        PorcupineLanguageOption.JA
     ),
     AISEUKEULIM(
         MR.strings.aieseukeulim,
         MR.files.porcupine_wakeword_ko_aiseukeulim_android,
-        PorcupineLanguageOptions.KO
+        PorcupineLanguageOption.KO
     ),
     BIGSEUBI(
         MR.strings.bigseubi,
         MR.files.porcupine_wakeword_ko_bigseubi_android,
-        PorcupineLanguageOptions.KO
+        PorcupineLanguageOption.KO
     ),
     KOPPULSO(
         MR.strings.koppulso,
         MR.files.porcupine_wakeword_ko_koppulso_android,
-        PorcupineLanguageOptions.KO
+        PorcupineLanguageOption.KO
     ),
     ABACAXI(
         MR.strings.abacaxi,
         MR.files.porcupine_wakeword_pt_abacaxi_android,
-        PorcupineLanguageOptions.PT
+        PorcupineLanguageOption.PT
     ),
     FENOMENO(
         MR.strings.fenomeno,
         MR.files.porcupine_wakeword_pt_fenomeno_android,
-        PorcupineLanguageOptions.PT
+        PorcupineLanguageOption.PT
     ),
     FORMIGA(
         MR.strings.formiga,
         MR.files.porcupine_wakeword_pt_formiga_android,
-        PorcupineLanguageOptions.PT
+        PorcupineLanguageOption.PT
     ),
     PORCO_ESPINHO(
         MR.strings.porcoEspinho,
         MR.files.porcupine_wakeword_pt_porco_espinho_android,
-        PorcupineLanguageOptions.PT
+        PorcupineLanguageOption.PT
     );
 
-    override fun findValue(value: String): PorcupineKeywordOptions {
-        return PorcupineKeywordOptions.valueOf(value)
+    override fun findValue(value: String): PorcupineKeywordOption {
+        return PorcupineKeywordOption.valueOf(value)
     }
 }
 /*

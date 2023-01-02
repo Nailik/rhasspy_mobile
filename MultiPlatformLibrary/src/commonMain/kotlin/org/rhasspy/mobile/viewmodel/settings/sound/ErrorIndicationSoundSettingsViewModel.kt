@@ -5,55 +5,55 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.nativeutils.FileUtils
-import org.rhasspy.mobile.settings.AppSettings
-import org.rhasspy.mobile.settings.FileType
+import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.types.FileType
 import org.rhasspy.mobile.settings.sounds.SoundFile
-import org.rhasspy.mobile.settings.sounds.SoundOptions
+import org.rhasspy.mobile.settings.sounds.SoundOption
 
 class ErrorIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel() {
 
     override val isSoundIndicationDefault: StateFlow<Boolean> =
-        AppSettings.errorSound.data.mapReadonlyState {
-            it == SoundOptions.Default.name
+        AppSetting.errorSound.data.mapReadonlyState {
+            it == SoundOption.Default.name
         }
 
     override val isSoundIndicationDisabled: StateFlow<Boolean> =
-        AppSettings.errorSound.data.mapReadonlyState {
-            it == SoundOptions.Disabled.name
+        AppSetting.errorSound.data.mapReadonlyState {
+            it == SoundOption.Disabled.name
         }
 
     override val customSoundFiles: StateFlow<List<SoundFile>> =
         combineState(
-            AppSettings.errorSound.data,
-            AppSettings.customErrorSounds.data
+            AppSetting.errorSound.data,
+            AppSetting.customErrorSounds.data
         ) { selected, set ->
             set.map { fileName ->
                 SoundFile(fileName, selected == fileName, selected != fileName)
             }.toList()
         }
 
-    override val soundVolume: StateFlow<Float> = AppSettings.errorSoundVolume.data
+    override val soundVolume: StateFlow<Float> = AppSetting.errorSoundVolume.data
 
     override fun onClickSoundIndicationDefault() {
-        AppSettings.errorSound.value = SoundOptions.Default.name
+        AppSetting.errorSound.value = SoundOption.Default.name
     }
 
     override fun onClickSoundIndicationDisabled() {
-        AppSettings.errorSound.value = SoundOptions.Disabled.name
+        AppSetting.errorSound.value = SoundOption.Disabled.name
     }
 
     override fun updateSoundVolume(volume: Float) {
-        AppSettings.errorSoundVolume.value = volume
+        AppSetting.errorSoundVolume.value = volume
     }
 
     override fun selectSoundFile(file: SoundFile) {
-        AppSettings.errorSound.value = file.fileName
+        AppSetting.errorSound.value = file.fileName
     }
 
     override fun deleteSoundFile(file: SoundFile) {
         if (file.canBeDeleted && !file.selected) {
-            val customSounds = AppSettings.customErrorSounds.data
-            AppSettings.customErrorSounds.value = customSounds.value.toMutableSet().apply {
+            val customSounds = AppSetting.customErrorSounds.data
+            AppSetting.customErrorSounds.value = customSounds.value.toMutableSet().apply {
                 remove(file.fileName)
             }
             FileUtils.removeFile(FileType.SOUND, subfolder = SoundFileFolder.Error.toString(), file.fileName)
@@ -71,11 +71,11 @@ class ErrorIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel(
     override fun chooseSoundFile() {
         viewModelScope.launch {
             FileUtils.selectFile(FileType.SOUND, subfolder = SoundFileFolder.Error.folderName)?.also { fileName ->
-                val customSounds = AppSettings.customErrorSounds.data
-                AppSettings.customErrorSounds.value = customSounds.value.toMutableSet().apply {
+                val customSounds = AppSetting.customErrorSounds.data
+                AppSetting.customErrorSounds.value = customSounds.value.toMutableSet().apply {
                     add(fileName)
                 }
-                AppSettings.errorSound.value = fileName
+                AppSetting.errorSound.value = fileName
             }
         }
     }

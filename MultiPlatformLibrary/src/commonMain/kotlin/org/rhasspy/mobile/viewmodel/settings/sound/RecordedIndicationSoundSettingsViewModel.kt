@@ -5,55 +5,55 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.nativeutils.FileUtils
-import org.rhasspy.mobile.settings.AppSettings
-import org.rhasspy.mobile.settings.FileType
+import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.types.FileType
 import org.rhasspy.mobile.settings.sounds.SoundFile
-import org.rhasspy.mobile.settings.sounds.SoundOptions
+import org.rhasspy.mobile.settings.sounds.SoundOption
 
 class RecordedIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel() {
 
     override val isSoundIndicationDefault: StateFlow<Boolean> =
-        AppSettings.recordedSound.data.mapReadonlyState {
-            it == SoundOptions.Default.name
+        AppSetting.recordedSound.data.mapReadonlyState {
+            it == SoundOption.Default.name
         }
 
     override val isSoundIndicationDisabled: StateFlow<Boolean> =
-        AppSettings.recordedSound.data.mapReadonlyState {
-            it == SoundOptions.Disabled.name
+        AppSetting.recordedSound.data.mapReadonlyState {
+            it == SoundOption.Disabled.name
         }
 
     override val customSoundFiles: StateFlow<List<SoundFile>> =
         combineState(
-            AppSettings.recordedSound.data,
-            AppSettings.customRecordedSounds.data
+            AppSetting.recordedSound.data,
+            AppSetting.customRecordedSounds.data
         ) { selected, set ->
             set.map { fileName ->
                 SoundFile(fileName, selected == fileName, selected != fileName)
             }.toList()
         }
 
-    override val soundVolume: StateFlow<Float> = AppSettings.recordedSoundVolume.data
+    override val soundVolume: StateFlow<Float> = AppSetting.recordedSoundVolume.data
 
     override fun onClickSoundIndicationDefault() {
-        AppSettings.recordedSound.value = SoundOptions.Default.name
+        AppSetting.recordedSound.value = SoundOption.Default.name
     }
 
     override fun onClickSoundIndicationDisabled() {
-        AppSettings.recordedSound.value = SoundOptions.Disabled.name
+        AppSetting.recordedSound.value = SoundOption.Disabled.name
     }
 
     override fun updateSoundVolume(volume: Float) {
-        AppSettings.recordedSoundVolume.value = volume
+        AppSetting.recordedSoundVolume.value = volume
     }
 
     override fun selectSoundFile(file: SoundFile) {
-        AppSettings.recordedSound.value = file.fileName
+        AppSetting.recordedSound.value = file.fileName
     }
 
     override fun deleteSoundFile(file: SoundFile) {
         if (file.canBeDeleted && !file.selected) {
-            val customSounds = AppSettings.customRecordedSounds.data
-            AppSettings.customRecordedSounds.value = customSounds.value.toMutableSet().apply {
+            val customSounds = AppSetting.customRecordedSounds.data
+            AppSetting.customRecordedSounds.value = customSounds.value.toMutableSet().apply {
                 remove(file.fileName)
             }
             FileUtils.removeFile(FileType.SOUND, subfolder = SoundFileFolder.Recorded.toString(), file.fileName)
@@ -71,12 +71,12 @@ class RecordedIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewMod
     override fun chooseSoundFile() {
         viewModelScope.launch {
             FileUtils.selectFile(FileType.SOUND, subfolder = SoundFileFolder.Recorded.folderName)?.also { fileName ->
-                val customSounds = AppSettings.customRecordedSounds.data
-                AppSettings.customRecordedSounds.value =
+                val customSounds = AppSetting.customRecordedSounds.data
+                AppSetting.customRecordedSounds.value =
                     customSounds.value.toMutableSet().apply {
                         add(fileName)
                     }
-                AppSettings.recordedSound.value = fileName
+                AppSetting.recordedSound.value = fileName
             }
         }
     }

@@ -11,7 +11,7 @@ import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.data.TextToSpeechOptions
+import org.rhasspy.mobile.settings.option.TextToSpeechOption
 import org.rhasspy.mobile.viewmodel.configuration.TextToSpeechConfigurationViewModel
 import kotlin.test.assertEquals
 
@@ -59,19 +59,19 @@ class TextToSpeechConfigurationContentTest {
      */
     @Test
     fun testEndpoint() = runBlocking {
-        viewModel.selectTextToSpeechOption(TextToSpeechOptions.Disabled)
+        viewModel.selectTextToSpeechOption(TextToSpeechOption.Disabled)
         viewModel.save()
 
         val textInputTest = "endpointTestInput"
 
         //option disable is set
-        composeTestRule.onNodeWithTag(TextToSpeechOptions.Disabled, true).onChildAt(0)
+        composeTestRule.onNodeWithTag(TextToSpeechOption.Disabled, true).onChildAt(0)
             .assertIsSelected()
 
         //User clicks option remote http
-        composeTestRule.onNodeWithTag(TextToSpeechOptions.RemoteHTTP).performClick()
+        composeTestRule.onNodeWithTag(TextToSpeechOption.RemoteHTTP).performClick()
         //new option is selected
-        assertEquals(TextToSpeechOptions.RemoteHTTP, viewModel.textToSpeechOption.value)
+        assertEquals(TextToSpeechOption.RemoteHTTP, viewModel.textToSpeechOption.value)
 
         //Endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
@@ -97,7 +97,7 @@ class TextToSpeechConfigurationContentTest {
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         val newViewModel = TextToSpeechConfigurationViewModel()
         //option is saved to remote http
-        assertEquals(TextToSpeechOptions.RemoteHTTP, newViewModel.textToSpeechOption.value)
+        assertEquals(TextToSpeechOption.RemoteHTTP, newViewModel.textToSpeechOption.value)
         //endpoint is saved
         assertEquals(textInputTest, newViewModel.textToSpeechHttpEndpoint.value)
         //use custom endpoint is saved

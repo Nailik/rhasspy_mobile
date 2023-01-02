@@ -21,7 +21,7 @@ import org.junit.Rule
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.test.R
-import org.rhasspy.mobile.data.AudioOutputOptions
+import org.rhasspy.mobile.settings.option.AudioOutputOption
 import org.rhasspy.mobile.viewmodel.settings.IndicationSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.sound.IIndicationSoundSettingsViewModel
 import java.io.File
@@ -173,7 +173,7 @@ abstract class IndicationSoundScreenTest(
 
         //output option is sound
         //(play works with silent sound but not silent notification)
-        IndicationSettingsViewModel().selectSoundIndicationOutputOption(AudioOutputOptions.Sound)
+        IndicationSettingsViewModel().selectSoundIndicationOutputOption(AudioOutputOption.Sound)
 
         viewModel.onClickSoundIndicationDisabled()
         composeTestRule.awaitIdle()

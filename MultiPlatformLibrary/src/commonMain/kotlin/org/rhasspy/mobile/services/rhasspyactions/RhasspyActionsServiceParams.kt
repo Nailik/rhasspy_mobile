@@ -1,12 +1,12 @@
 package org.rhasspy.mobile.services.rhasspyactions
 
-import org.rhasspy.mobile.data.*
-import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.option.*
 
 data class RhasspyActionsServiceParams(
-    val intentRecognitionOption: IntentRecognitionOptions = ConfigurationSettings.intentRecognitionOption.value,
-    val textToSpeechOption: TextToSpeechOptions = ConfigurationSettings.textToSpeechOption.value,
-    val audioPlayingOption: AudioPlayingOptions = ConfigurationSettings.audioPlayingOption.value,
-    val speechToTextOption: SpeechToTextOptions = ConfigurationSettings.speechToTextOption.value,
-    val intentHandlingOption: IntentHandlingOptions = ConfigurationSettings.intentHandlingOption.value
+    val intentRecognitionOption: IntentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value,
+    val textToSpeechOption: TextToSpeechOption = ConfigurationSetting.textToSpeechOption.value,
+    val audioPlayingOption: AudioPlayingOption = ConfigurationSetting.audioPlayingOption.value,
+    val speechToTextOption: SpeechToTextOption = ConfigurationSetting.speechToTextOption.value,
+    val intentHandlingOption: IntentHandlingOption = ConfigurationSetting.intentHandlingOption.value
 )

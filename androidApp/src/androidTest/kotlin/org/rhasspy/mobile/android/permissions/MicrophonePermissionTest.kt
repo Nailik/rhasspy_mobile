@@ -25,7 +25,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.theme.AppTheme
-import org.rhasspy.mobile.data.LanguageOptions
+import org.rhasspy.mobile.settings.types.LanguageType
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.viewmodel.settings.LanguageSettingsViewModel
 import kotlin.test.assertFalse
@@ -88,7 +88,7 @@ class MicrophonePermissionTest {
     @Before
     fun setUp() {
         //set english
-        LanguageSettingsViewModel().selectLanguageOption(LanguageOptions.English)
+        LanguageSettingsViewModel().selectLanguageOption(LanguageType.English)
 
         //set content
         composeTestRule.activity.setContent {

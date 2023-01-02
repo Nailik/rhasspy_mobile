@@ -15,7 +15,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.data.WakeWordOption
+import org.rhasspy.mobile.settings.option.WakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

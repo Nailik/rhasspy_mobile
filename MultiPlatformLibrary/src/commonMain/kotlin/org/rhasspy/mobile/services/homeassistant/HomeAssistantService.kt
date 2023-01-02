@@ -5,7 +5,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.HomeAssistantIntentHandlingOptions
+import org.rhasspy.mobile.settings.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.httpclient.HttpClientService
@@ -64,8 +64,8 @@ class HomeAssistantService : IService() {
             val intentRes = Json.encodeToString(slots)
 
             when (params.intentHandlingHomeAssistantOption) {
-                HomeAssistantIntentHandlingOptions.Event -> httpClientService.hassEvent(intentRes, intentName)
-                HomeAssistantIntentHandlingOptions.Intent -> httpClientService.hassIntent("{\"name\" : \"$intentName\", \"data\": $intent }")
+                HomeAssistantIntentHandlingOption.Event -> httpClientService.hassEvent(intentRes, intentName)
+                HomeAssistantIntentHandlingOption.Intent -> httpClientService.hassIntent("{\"name\" : \"$intentName\", \"data\": $intent }")
             }
         } catch (exception: Exception) {
             logger.e(exception) { "" }

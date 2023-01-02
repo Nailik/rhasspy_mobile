@@ -9,7 +9,7 @@ import org.rhasspy.mobile.combineStateNotEquals
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
-import org.rhasspy.mobile.settings.ConfigurationSettings
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.test.RemoteHermesHttpConfigurationTest
 
 class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
@@ -18,13 +18,13 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
 
     //unsaved data
     private val _httpServerEndpointHost =
-        MutableStateFlow(ConfigurationSettings.httpClientServerEndpointHost.value)
+        MutableStateFlow(ConfigurationSetting.httpClientServerEndpointHost.value)
     private val _httpServerEndpointPort =
-        MutableStateFlow(ConfigurationSettings.httpClientServerEndpointPort.value)
+        MutableStateFlow(ConfigurationSetting.httpClientServerEndpointPort.value)
     private val _httpServerEndpointPortText =
-        MutableStateFlow(ConfigurationSettings.httpClientServerEndpointPort.value.toString())
+        MutableStateFlow(ConfigurationSetting.httpClientServerEndpointPort.value.toString())
     private val _isHttpSSLVerificationDisabled =
-        MutableStateFlow(ConfigurationSettings.isHttpClientSSLVerificationDisabled.value)
+        MutableStateFlow(ConfigurationSetting.isHttpClientSSLVerificationDisabled.value)
 
     //unsaved ui data
     val httpServerEndpointHost = _httpServerEndpointHost.readOnly
@@ -36,15 +36,15 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(
             _httpServerEndpointHost,
-            ConfigurationSettings.httpClientServerEndpointHost.data
+            ConfigurationSetting.httpClientServerEndpointHost.data
         ),
         combineStateNotEquals(
             _httpServerEndpointPort,
-            ConfigurationSettings.httpClientServerEndpointPort.data
+            ConfigurationSetting.httpClientServerEndpointPort.data
         ),
         combineStateNotEquals(
             _isHttpSSLVerificationDisabled,
-            ConfigurationSettings.isHttpClientSSLVerificationDisabled.data
+            ConfigurationSetting.isHttpClientSSLVerificationDisabled.data
         )
     )
 
@@ -69,9 +69,9 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
      * save data configuration
      */
     override fun onSave() {
-        ConfigurationSettings.httpClientServerEndpointHost.value = _httpServerEndpointHost.value
-        ConfigurationSettings.httpClientServerEndpointPort.value = _httpServerEndpointPort.value
-        ConfigurationSettings.isHttpClientSSLVerificationDisabled.value =
+        ConfigurationSetting.httpClientServerEndpointHost.value = _httpServerEndpointHost.value
+        ConfigurationSetting.httpClientServerEndpointPort.value = _httpServerEndpointPort.value
+        ConfigurationSetting.isHttpClientSSLVerificationDisabled.value =
             _isHttpSSLVerificationDisabled.value
     }
 
@@ -79,10 +79,10 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
      * undo all changes
      */
     override fun discard() {
-        _httpServerEndpointHost.value = ConfigurationSettings.httpClientServerEndpointHost.value
-        _httpServerEndpointPort.value = ConfigurationSettings.httpClientServerEndpointPort.value
+        _httpServerEndpointHost.value = ConfigurationSetting.httpClientServerEndpointHost.value
+        _httpServerEndpointPort.value = ConfigurationSetting.httpClientServerEndpointPort.value
         _isHttpSSLVerificationDisabled.value =
-            ConfigurationSettings.isHttpClientSSLVerificationDisabled.value
+            ConfigurationSetting.isHttpClientSSLVerificationDisabled.value
     }
 
     override fun initializeTestParams() {

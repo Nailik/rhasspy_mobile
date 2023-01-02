@@ -8,7 +8,7 @@ import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.readOnly
-import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.AppSetting
 import kotlin.math.log
 import kotlin.math.pow
 
@@ -18,28 +18,28 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel(), KoinComponent {
 
     //unsaved data
     private val _automaticSilenceDetectionTimeText =
-        MutableStateFlow(AppSettings.automaticSilenceDetectionTime.value.toString())
+        MutableStateFlow(AppSetting.automaticSilenceDetectionTime.value.toString())
     private val maxAudioLevel = audioRecorder.absoluteMaxVolume
 
     //unsaved ui data
-    val isAutomaticSilenceDetectionEnabled = AppSettings.isAutomaticSilenceDetectionEnabled.data
+    val isAutomaticSilenceDetectionEnabled = AppSetting.isAutomaticSilenceDetectionEnabled.data
 
     val isSilenceDetectionSettingsVisible = isAutomaticSilenceDetectionEnabled
     val automaticSilenceDetectionTimeText = _automaticSilenceDetectionTimeText.readOnly
 
     val automaticSilenceDetectionAudioLevelPercentage =
-        AppSettings.automaticSilenceDetectionAudioLevel.data.mapReadonlyState {
+        AppSetting.automaticSilenceDetectionAudioLevel.data.mapReadonlyState {
             (log(it.toDouble(), maxAudioLevel)).toFloat()
         }
 
     //testing
     val isRecording = audioRecorder.isRecording
     val isSilenceDetectionAudioLevelVisible = isRecording
-    val automaticSilenceDetectionAudioLevel = AppSettings.automaticSilenceDetectionAudioLevel.data
+    val automaticSilenceDetectionAudioLevel = AppSetting.automaticSilenceDetectionAudioLevel.data
     val currentAudioLevel = audioRecorder.maxVolume
     val isAudioLevelBiggerThanMax = combineState(
         audioRecorder.maxVolume,
-        AppSettings.automaticSilenceDetectionAudioLevel.data
+        AppSetting.automaticSilenceDetectionAudioLevel.data
     ) { audioLevel, max ->
         audioLevel > max
     }
@@ -49,19 +49,19 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel(), KoinComponent {
 
     //set new intent recognition option
     fun toggleAutomaticSilenceDetectionEnabled(enabled: Boolean) {
-        AppSettings.isAutomaticSilenceDetectionEnabled.value = enabled
+        AppSetting.isAutomaticSilenceDetectionEnabled.value = enabled
     }
 
     //update time for automatic silence detection
     fun updateAutomaticSilenceDetectionTime(time: String) {
         val text = time.replace("""[-,. ]""".toRegex(), "")
         _automaticSilenceDetectionTimeText.value = text
-        AppSettings.automaticSilenceDetectionTime.value = text.toIntOrNull() ?: 0
+        AppSetting.automaticSilenceDetectionTime.value = text.toIntOrNull() ?: 0
     }
 
     //update audio detection level for automatic silence detection
     fun changeAutomaticSilenceDetectionAudioLevelPercentage(value: Float) {
-        AppSettings.automaticSilenceDetectionAudioLevel.value =
+        AppSetting.automaticSilenceDetectionAudioLevel.value =
             maxAudioLevel.pow(value.toDouble()).toFloat()
     }
 

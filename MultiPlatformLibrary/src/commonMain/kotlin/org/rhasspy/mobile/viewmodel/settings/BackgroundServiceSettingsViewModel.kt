@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.nativeutils.BackgroundService
 import org.rhasspy.mobile.nativeutils.BatteryOptimization
 import org.rhasspy.mobile.readOnly
-import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.settings.AppSetting
 
 /**
  * background service settings
@@ -20,13 +20,13 @@ class BackgroundServiceSettingsViewModel : ViewModel() {
         MutableStateFlow(BatteryOptimization.isBatteryOptimizationDisabled())
 
     //unsaved ui data
-    val isBackgroundServiceEnabled = AppSettings.isBackgroundServiceEnabled.data
+    val isBackgroundServiceEnabled = AppSetting.isBackgroundServiceEnabled.data
     val isBatteryOptimizationVisible = isBackgroundServiceEnabled
     val isBatteryOptimizationDisabled = _isBatteryOptimizationDisabled.readOnly
 
     //set new intent background option
     fun toggleBackgroundServiceEnabled(enabled: Boolean) {
-        AppSettings.isBackgroundServiceEnabled.value = enabled
+        AppSetting.isBackgroundServiceEnabled.value = enabled
         if (enabled) {
             BackgroundService.start()
         } else {

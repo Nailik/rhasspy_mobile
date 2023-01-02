@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
-import org.rhasspy.mobile.data.SpeechToTextOptions
+import org.rhasspy.mobile.settings.option.SpeechToTextOption
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.mqtt.MqttService
@@ -21,7 +21,7 @@ class SpeechToTextConfigurationTest : IConfigurationTest() {
 
     fun toggleRecording() {
         testScope.launch {
-            if (get<RhasspyActionsServiceParams>().speechToTextOption == SpeechToTextOptions.RemoteMQTT) {
+            if (get<RhasspyActionsServiceParams>().speechToTextOption == SpeechToTextOption.RemoteMQTT) {
                 //await for mqtt service to start if necessary
                 get<MqttService>()
                     .isHasStarted

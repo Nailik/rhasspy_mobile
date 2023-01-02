@@ -8,7 +8,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.DialogManagementOptions
+import org.rhasspy.mobile.settings.option.DialogManagementOption
 import org.rhasspy.mobile.middleware.Action.DialogAction
 import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.readOnly
@@ -293,7 +293,7 @@ class DialogManagerService : IService() {
     private fun isInCorrectState(action: DialogAction, vararg states: DialogManagerServiceState): Boolean {
         return when (params.option) {
             //on local option check that state is correct and when from mqtt check session id as well
-            DialogManagementOptions.Local -> {
+            DialogManagementOption.Local -> {
                 if (action.source is Source.Mqtt && sessionId != action.source.sessionId) {
                     //from mqtt but session id doesn't match
                     return false
@@ -308,7 +308,7 @@ class DialogManagerService : IService() {
                 return result
             }
             //when option is remote http depends on source
-            DialogManagementOptions.RemoteMQTT -> {
+            DialogManagementOption.RemoteMQTT -> {
                 when (action.source) {
                     //from webserver or local always ignore for now
                     Source.HttpApi,
@@ -327,7 +327,7 @@ class DialogManagerService : IService() {
                 }
             }
             //when dialog is disabled just do and ignore state
-            DialogManagementOptions.Disabled -> true
+            DialogManagementOption.Disabled -> true
         }
     }
 
