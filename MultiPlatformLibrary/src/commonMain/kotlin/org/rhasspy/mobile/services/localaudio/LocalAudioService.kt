@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.services.localaudio
 
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.settings.AppSetting
@@ -9,30 +10,36 @@ import org.rhasspy.mobile.viewmodel.settings.sound.SoundFileFolder
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-//TODO logging
 class LocalAudioService : IService() {
+    private val logger = LogType.LocalAudioService.logger()
 
     private val audioPlayer = AudioPlayer()
     val isPlayingState = audioPlayer.isPlayingState
+
     override fun onClose() {
+        logger.d { "onClose" }
         audioPlayer.stop()
         audioPlayer.close()
     }
 
     suspend fun playAudio(data: List<Byte>): Unit = suspendCoroutine { continuation ->
+        logger.d { "playAudio ${data.size}" }
         audioPlayer.playData(
             data = data,
             volume = AppSetting.volume.value,
             onFinished = {
+                logger.d { "onFinished" }
                 continuation.resume(Unit)
             },
-            onError = {
+            onError = { exception ->
+                logger.e(exception ?: Throwable()) { "onError" }
                 continuation.resume(Unit)
             }
         )
     }
 
     fun playWakeSound() {
+        logger.d { "playWakeSound" }
         when (AppSetting.wakeSound.value) {
             SoundOption.Disabled.name -> {}
             SoundOption.Default.name -> audioPlayer.playFileResource(
@@ -49,6 +56,7 @@ class LocalAudioService : IService() {
     }
 
     fun playRecordedSound() {
+        logger.d { "playRecordedSound" }
         when (AppSetting.recordedSound.value) {
             SoundOption.Disabled.name -> {}
             SoundOption.Default.name -> audioPlayer.playFileResource(
@@ -65,6 +73,7 @@ class LocalAudioService : IService() {
     }
 
     fun playErrorSound() {
+        logger.d { "playErrorSound" }
         when (AppSetting.errorSound.value) {
             SoundOption.Disabled.name -> {}
             SoundOption.Default.name -> audioPlayer.playFileResource(
@@ -81,6 +90,7 @@ class LocalAudioService : IService() {
     }
 
     fun stop() {
+        logger.d { "stop" }
         audioPlayer.stop()
     }
 
