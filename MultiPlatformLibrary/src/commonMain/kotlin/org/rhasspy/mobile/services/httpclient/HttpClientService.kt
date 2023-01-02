@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.services.httpclient
 
-import co.touchlab.kermit.Logger
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
@@ -11,19 +10,19 @@ import io.ktor.client.utils.*
 import io.ktor.http.*
 import kotlinx.coroutines.cancel
 import org.koin.core.component.inject
-import org.rhasspy.mobile.settings.option.IntentHandlingOption
+import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceErrorType.*
+import org.rhasspy.mobile.settings.option.IntentHandlingOption
 
-//TODO logging
 /**
  * contains client to send data to http endpoints
  *
  * functions return the result or an exception
  */
 class HttpClientService : IService() {
-    private val logger = Logger.withTag("HttpClientService")
+    private val logger = LogType.HttpClientService.logger()
 
     private val params by inject<HttpClientServiceParams>()
 
@@ -72,12 +71,13 @@ class HttpClientService : IService() {
      * starts client and updates event
      */
     init {
+        logger.d { "initialize" }
         try {
             //starting
             httpClient = buildClient()
         } catch (exception: Exception) {
             //start error
-            logger.e(exception) { "" }
+            logger.e(exception) { "error on building client" }
         }
     }
 
@@ -85,6 +85,7 @@ class HttpClientService : IService() {
      * stops client
      */
     override fun onClose() {
+        logger.d { "onClose" }
         httpClient?.cancel()
     }
 
@@ -112,6 +113,7 @@ class HttpClientService : IService() {
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
     suspend fun speechToText(data: List<Byte>): String? {
+        logger.d { "speechToText dataSize: ${data.size}" }
         return post<String>(speechToTextUrl) {
             setBody(data.toByteArray())
         }
@@ -127,6 +129,7 @@ class HttpClientService : IService() {
      * returns null if the intent is not found
      */
     suspend fun recognizeIntent(text: String): String? {
+        logger.d { "recognizeIntent text: $text" }
         return post<String>(recognizeIntentUrl) {
             setBody(text)
         }
@@ -142,6 +145,7 @@ class HttpClientService : IService() {
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     suspend fun textToSpeech(text: String): ByteArray? {
+        logger.d { "textToSpeech text: $text" }
         return post<ByteArray>(textToSpeechUrl) {
             setBody(text)
         }
@@ -154,6 +158,7 @@ class HttpClientService : IService() {
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     suspend fun playWav(data: List<Byte>): String? {
+        logger.d { "playWav dataSize: ${data.size}" }
         return post<String>(audioPlayingUrl) {
             setAttributes {
                 contentType(audioContentType)
@@ -179,6 +184,7 @@ class HttpClientService : IService() {
      * Implemented by rhasspy-remote-http-hermes
      */
     suspend fun intentHandling(intent: String): String? {
+        logger.d { "intentHandling intent: $intent" }
         return post<String>(params.intentHandlingHttpEndpoint) {
             setBody(intent)
         }
@@ -188,6 +194,7 @@ class HttpClientService : IService() {
      * send intent as Event to Home Assistant
      */
     suspend fun hassEvent(json: String, intentName: String): String? {
+        logger.d { "hassEvent json: $json intentName: $intentName" }
         return post<String>("$hassEventUrl$intentName") {
             buildHeaders {
                 hassAuthorization()
@@ -202,6 +209,7 @@ class HttpClientService : IService() {
      * send intent as Intent to Home Assistant
      */
     suspend fun hassIntent(intentJson: String): String? {
+        logger.d { "hassIntent json: $intentJson" }
         return post<String>(hassIntentUrl) {
             buildHeaders {
                 hassAuthorization()
@@ -220,11 +228,19 @@ class HttpClientService : IService() {
         return httpClient?.let { client ->
             try {
                 val request = client.post(url, block)
-                return request.body<T>()
-            } catch (e: Exception) {
+                val result = request.body<T>()
+                if (result is ByteArray) {
+                    logger.d { "post result size: ${result.size}" }
+                } else {
+                    logger.d { "post result data: $result" }
+                }
+                return result
+            } catch (exception: Exception) {
+                logger.e(exception) { "post result error" }
                 return null
             }
         } ?: run {
+            logger.a { "post client not initialized" }
             return null
         }
     }
@@ -235,7 +251,7 @@ class HttpClientService : IService() {
     private fun mapError(e: Exception): HttpClientServiceErrorType? {
         return if (e::class.simpleName == IllegalArgumentException.description) {
             if (e.message == InvalidTLSRecordType.description) {
-                HttpClientServiceErrorType.InvalidTLSRecordType
+                InvalidTLSRecordType
             } else {
                 IllegalArgumentException
             }
