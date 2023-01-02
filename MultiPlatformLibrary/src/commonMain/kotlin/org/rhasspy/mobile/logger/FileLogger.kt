@@ -18,8 +18,6 @@ import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 
 object FileLogger : LogWriter() {
-    private val logger = Logger.withTag("FileLogger")
-
     //create new file when logfile is 2 MB
     private val fileWriter = FileWriter("logfile.txt", 2000)
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
@@ -30,27 +28,19 @@ object FileLogger : LogWriter() {
     init {
         Logger.setMinSeverity(AppSetting.logLevel.value.severity)
 
-        coroutineScope.launch {
-            if (fileWriter.createFile()) {
-                fileWriter.appendText(
-                    Json.encodeToString(
-                        LogElement(
-                            Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(),
-                            Severity.Verbose,
-                            "NativeFileWriter",
-                            "createdLogFile",
-                            null
-                        )
+        //create initial log file
+        if (fileWriter.createFile()) {
+            fileWriter.appendText(
+                Json.encodeToString(
+                    LogElement(
+                        Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(),
+                        Severity.Verbose,
+                        "NativeFileWriter",
+                        "createdLogFile",
+                        null
                     )
                 )
-            }
-
-            AppSetting.logLevel.data.collect {
-                if (Logger.config.minSeverity != it.severity) {
-                    Logger.setMinSeverity(it.severity)
-                    logger.a { "changed log level to ${it.severity}" }
-                }
-            }
+            )
         }
     }
 
@@ -58,7 +48,6 @@ object FileLogger : LogWriter() {
      * override log function to append text to file
      */
     override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
-
         coroutineScope.launch {
             val element = LogElement(
                 Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(),
