@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.services.webserver
 
-import co.touchlab.kermit.Logger
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -14,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import org.koin.core.component.inject
+import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action
 import org.rhasspy.mobile.middleware.Action.AppSettingsAction
 import org.rhasspy.mobile.middleware.Action.DialogAction
@@ -25,7 +25,6 @@ import org.rhasspy.mobile.nativeutils.installCompression
 import org.rhasspy.mobile.nativeutils.installConnector
 import org.rhasspy.mobile.services.IService
 
-//TODO logging
 /**
  * Web server service holds all routes for WebServerPath values
  *
@@ -36,12 +35,11 @@ import org.rhasspy.mobile.services.IService
  * - else: determined by Ktor
  */
 class WebServerService : IService() {
+    private val logger = LogType.WebServerService.logger()
 
     private val params by inject<WebServerServiceParams>()
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
-
-    private val logger = Logger.withTag("WebServerService")
 
     private val scope = CoroutineScope(Dispatchers.Default)
     private val audioContentType = ContentType("audio", "wav")
@@ -53,18 +51,15 @@ class WebServerService : IService() {
      * logs start event
      */
     init {
+        logger.d { "initialization" }
         if (params.isHttpServerEnabled) {
             try {
                 server = buildServer()
                 server.start()
             } catch (exception: Exception) {
                 //start error
-                //TODO error description (no certificate, wrong filetype, wrong keystore password, alias missing, wrong alias password)
-                logger.e(exception) { "" }
+                logger.e(exception) { "initialization error" }
             }
-        } else {
-            //server disabled
-            logger.v { "Server disabled" }
         }
     }
 
@@ -72,6 +67,7 @@ class WebServerService : IService() {
      * closes server and scope
      */
     override fun onClose() {
+        logger.d { "onClose" }
         if (::server.isInitialized) {
             server.stop()
         }
@@ -82,6 +78,7 @@ class WebServerService : IService() {
      * build server with routing and addons
      */
     private fun buildServer(): BaseApplicationEngine {
+        logger.d { "buildServer" }
         val environment = applicationEngineEnvironment {
             installConnector(
                 port = params.httpServerPort,
@@ -90,7 +87,7 @@ class WebServerService : IService() {
                 keyStorePassword = params.httpServerSSLKeyStorePassword,
                 keyAlias = params.httpServerSSLKeyAlias,
                 keyPassword = params.httpServerSSLKeyPassword
-            ) //TODO incorrect password, file not found, key alias not found, key alias password
+            )
             module {
                 //install(WebSockets)
                 installCallLogging()
@@ -155,6 +152,7 @@ class WebServerService : IService() {
      * evaluates any call
      */
     private suspend fun evaluateCall(path: WebServerPath, call: ApplicationCall) {
+        logger.d { "evaluateCall ${path.path} ${call.request}" }
         try {
             val result = when (path) {
                 WebServerPath.ListenForCommand -> listenForCommand()
@@ -173,6 +171,7 @@ class WebServerService : IService() {
                     call.respond(HttpStatusCode.Accepted)
                 }
                 is WebServerResult.Error -> {
+                    logger.d { "evaluateCall BadRequest ${result.errorType.description}" }
                     call.respond(HttpStatusCode.BadRequest, result.errorType.description)
                 }
                 WebServerResult.Ok -> {
@@ -184,7 +183,7 @@ class WebServerService : IService() {
             }
 
         } catch (exception: Exception) {
-            logger.e(exception) { "" }
+            logger.e(exception) { "evaluateCall error" }
         }
     }
 
@@ -197,7 +196,7 @@ class WebServerService : IService() {
      * ?entity=<entity>&value=<value> - set custom entities/values in recognized intent
      */
     private fun listenForCommand(): WebServerResult {
-        serviceMiddleware.action(DialogAction.WakeWordDetected(Source.HttpApi, ""))
+        serviceMiddleware.action(DialogAction.WakeWordDetected(Source.HttpApi, "remote"))
         return WebServerResult.Ok
     }
 
@@ -253,12 +252,13 @@ class WebServerService : IService() {
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
     private suspend fun playWav(call: ApplicationCall): WebServerResult {
-        if (call.request.contentType() != audioContentType) {
-            //TODO log
-        }
+        val result = if (call.request.contentType() != audioContentType) {
+            logger.w { "playWav wrong content type ${call.request.contentType()}" }
+            WebServerResult.Error(WebServerServiceErrorType.AudioContentTypeWarning)
+        } else WebServerResult.Ok
         //play even without header
         serviceMiddleware.action(DialogAction.PlayAudio(Source.HttpApi, call.receive()))
-        return WebServerResult.Ok
+        return result
     }
 
     /**
@@ -269,14 +269,17 @@ class WebServerService : IService() {
      */
     private suspend fun setVolume(call: ApplicationCall): WebServerResult {
         //double and float or double not working but string??
-        return call.receive<String>().toFloatOrNull()?.let {
+        val result = call.receive<String>()
+        return result.toFloatOrNull()?.let {
             if (it in 0f..1f) {
                 serviceMiddleware.action(AppSettingsAction.AudioVolumeChange(it))
                 return WebServerResult.Accepted(it.toString())
             } else {
+                logger.w { "setVolume VolumeValueOutOfRange $it" }
                 return WebServerResult.Error(WebServerServiceErrorType.VolumeValueOutOfRange)
             }
         } ?: run {
+            logger.w { "setVolume VolumeValueInvalid $result" }
             return WebServerResult.Error(WebServerServiceErrorType.VolumeValueInvalid)
         }
     }
