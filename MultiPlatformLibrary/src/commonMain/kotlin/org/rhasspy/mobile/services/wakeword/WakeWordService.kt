@@ -1,13 +1,12 @@
 package org.rhasspy.mobile.services.wakeword
 
-import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
-import org.rhasspy.mobile.settings.option.WakeWordOption
+import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.middleware.Source
@@ -17,6 +16,8 @@ import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.recording.RecordingService
 import org.rhasspy.mobile.services.udp.UdpService
+import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.option.WakeWordOption
 
 //TODO logging
 /**
@@ -25,7 +26,7 @@ import org.rhasspy.mobile.services.udp.UdpService
  * calls stateMachineService when hot word was detected
  */
 class WakeWordService : IService() {
-    private val logger = Logger.withTag("HotWordService")
+    private val logger = LogType.WakeWordService.logger()
 
     private val params by inject<WakeWordServiceParams>()
     private val udpService by inject<UdpService>()
@@ -45,7 +46,7 @@ class WakeWordService : IService() {
      * starts the service
      */
     init {
-        logger.d { "startHotWord" }
+        logger.d { "initialization" }
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {
                 //when porcupine is used for hotWord then start local service
@@ -58,16 +59,25 @@ class WakeWordService : IService() {
                     ::onClientError
                 )
                 val error = porcupineWakeWordClient?.initialize()
+                if (error?.exception != null) {
+                    logger.e(error.exception) { "porcupine error $error" }
+                } else if (error != null) {
+                    logger.e { "porcupine error $error" }
+                }
             }
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
             WakeWordOption.MQTT -> {} //nothing to do
             WakeWordOption.Udp -> {} //nothing to do
-            WakeWordOption.Disabled -> logger.v { "hotWordDisabled" }
+            WakeWordOption.Disabled -> {}
         }
     }
 
     private fun onClientError(porcupineError: PorcupineError) {
-
+        if (porcupineError.exception != null) {
+            logger.e(porcupineError.exception) { "porcupineError $porcupineError" }
+        } else {
+            logger.e { "porcupineError $porcupineError" }
+        }
     }
 
     fun startDetection() {
@@ -75,6 +85,11 @@ class WakeWordService : IService() {
             WakeWordOption.Porcupine -> {
                 _isRecording.value = true
                 val error = porcupineWakeWordClient?.start()
+                if (error?.exception != null) {
+                    logger.e(error.exception) { "porcupineError $error" }
+                } else if (error != null) {
+                    logger.e { "porcupineError $error" }
+                }
             }
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
             WakeWordOption.MQTT,
@@ -87,21 +102,25 @@ class WakeWordService : IService() {
                     }
                 }
             }
-            WakeWordOption.Disabled -> logger.v { "hotWordDisabled" }
+            WakeWordOption.Disabled -> {}
         }
     }
 
-    private suspend fun hotWordAudioFrame(byteData: List<Byte>) {
+    private suspend fun hotWordAudioFrame(data: List<Byte>) {
+        if (AppSetting.isLogAudioFramesEnabled.value) {
+            logger.d { "hotWordAudioFrame dataSize: ${data.size}" }
+        }
         when (params.wakeWordOption) {
-            WakeWordOption.Porcupine -> porcupineWakeWordClient?.start()
+            WakeWordOption.Porcupine -> {}
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
-            WakeWordOption.MQTT -> mqttService.audioFrame(byteData)
-            WakeWordOption.Udp -> udpService.streamAudio(byteData)
-            WakeWordOption.Disabled -> logger.v { "hotWordDisabled" }
+            WakeWordOption.MQTT -> mqttService.audioFrame(data)
+            WakeWordOption.Udp -> udpService.streamAudio(data)
+            WakeWordOption.Disabled -> {}
         }
     }
 
     fun stopDetection() {
+        logger.d { "stopDetection" }
         _isRecording.value = false
         recording?.cancel()
         recording = null
@@ -110,10 +129,12 @@ class WakeWordService : IService() {
     }
 
     private fun onKeywordDetected(hotWord: String) {
+        logger.d { "onKeywordDetected $hotWord" }
         serviceMiddleware.action(Action.DialogAction.WakeWordDetected(Source.Local, hotWord))
     }
 
     override fun onClose() {
+        logger.d { "onClose" }
         stopDetection()
         porcupineWakeWordClient?.close()
     }
