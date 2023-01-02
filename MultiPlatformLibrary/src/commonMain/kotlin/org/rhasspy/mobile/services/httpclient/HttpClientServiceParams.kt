@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.services.httpclient
 
-import org.rhasspy.mobile.settings.option.IntentHandlingOption
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.option.IntentHandlingOption
 
 //TODO custom timeout for every service?
 data class HttpClientServiceParams(

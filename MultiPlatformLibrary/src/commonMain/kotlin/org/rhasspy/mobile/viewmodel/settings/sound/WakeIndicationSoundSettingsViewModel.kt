@@ -6,9 +6,9 @@ import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.nativeutils.FileUtils
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.settings.types.FileType
 import org.rhasspy.mobile.settings.sounds.SoundFile
 import org.rhasspy.mobile.settings.sounds.SoundOption
+import org.rhasspy.mobile.settings.types.FileType
 
 
 class WakeIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel() {

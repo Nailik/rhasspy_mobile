@@ -5,11 +5,11 @@ import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
-import org.rhasspy.mobile.settings.option.TextToSpeechOption
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.option.TextToSpeechOption
 import org.rhasspy.mobile.viewmodel.configuration.test.TextToSpeechConfigurationTest
 
 class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {

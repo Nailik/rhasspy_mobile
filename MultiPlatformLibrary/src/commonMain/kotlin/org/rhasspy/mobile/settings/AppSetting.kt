@@ -1,11 +1,11 @@
 package org.rhasspy.mobile.settings
 
-import org.rhasspy.mobile.settings.option.AudioOutputOption
-import org.rhasspy.mobile.settings.types.LanguageType
-import org.rhasspy.mobile.settings.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.logger.LogLevel
+import org.rhasspy.mobile.settings.option.AudioOutputOption
+import org.rhasspy.mobile.settings.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.settings.serializer.StringSetSerializer
 import org.rhasspy.mobile.settings.sounds.SoundOption
+import org.rhasspy.mobile.settings.types.LanguageType
 
 /**
  * directly consumed

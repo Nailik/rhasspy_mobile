@@ -4,11 +4,11 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import org.rhasspy.mobile.settings.option.AudioOutputOption
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.nativeutils.DeviceVolume
 import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.option.AudioOutputOption
 import org.rhasspy.mobile.settings.sounds.SoundFile
 
 abstract class IIndicationSoundSettingsViewModel : ViewModel(), KoinComponent {

@@ -6,14 +6,14 @@ import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
-import org.rhasspy.mobile.settings.option.HomeAssistantIntentHandlingOption
-import org.rhasspy.mobile.settings.option.IntentHandlingOption
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantServiceParams
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.option.HomeAssistantIntentHandlingOption
+import org.rhasspy.mobile.settings.option.IntentHandlingOption
 import org.rhasspy.mobile.viewmodel.configuration.test.IntentHandlingConfigurationTest
 
 class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {

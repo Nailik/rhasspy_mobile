@@ -6,11 +6,11 @@ import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
-import org.rhasspy.mobile.settings.option.DialogManagementOption
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.dialog.DialogManagerServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.option.DialogManagementOption
 import org.rhasspy.mobile.viewmodel.configuration.test.DialogManagementConfigurationTest
 
 /**

@@ -5,16 +5,16 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
-import org.rhasspy.mobile.settings.option.PorcupineKeywordOption
-import org.rhasspy.mobile.settings.option.PorcupineLanguageOption
-import org.rhasspy.mobile.settings.option.WakeWordOption
 import org.rhasspy.mobile.nativeutils.FileUtils
 import org.rhasspy.mobile.nativeutils.openLink
 import org.rhasspy.mobile.services.udp.UdpServiceParams
 import org.rhasspy.mobile.services.wakeword.WakeWordServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.settings.types.FileType
+import org.rhasspy.mobile.settings.option.PorcupineKeywordOption
+import org.rhasspy.mobile.settings.option.PorcupineLanguageOption
+import org.rhasspy.mobile.settings.option.WakeWordOption
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
+import org.rhasspy.mobile.settings.types.FileType
 import org.rhasspy.mobile.viewmodel.configuration.test.WakeWordConfigurationTest
 
 class WakeWordConfigurationViewModel : IConfigurationViewModel() {

@@ -1,8 +1,8 @@
 package org.rhasspy.mobile.services.wakeword
 
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.option.PorcupineLanguageOption
 import org.rhasspy.mobile.settings.option.WakeWordOption
-import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
 

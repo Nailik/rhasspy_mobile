@@ -1,8 +1,8 @@
 package org.rhasspy.mobile.nativeutils
 
 import io.ktor.utils.io.core.*
-import org.rhasspy.mobile.settings.option.PorcupineLanguageOption
 import org.rhasspy.mobile.services.wakeword.PorcupineError
+import org.rhasspy.mobile.settings.option.PorcupineLanguageOption
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
 

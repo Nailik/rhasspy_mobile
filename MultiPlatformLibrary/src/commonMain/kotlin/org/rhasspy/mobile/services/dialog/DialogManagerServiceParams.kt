@@ -1,10 +1,10 @@
 package org.rhasspy.mobile.services.dialog
 
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.option.DialogManagementOption
 import org.rhasspy.mobile.settings.option.IntentRecognitionOption
 import org.rhasspy.mobile.settings.option.SpeechToTextOption
 import org.rhasspy.mobile.settings.option.WakeWordOption
-import org.rhasspy.mobile.settings.ConfigurationSetting
 
 data class DialogManagerServiceParams(
     val option: DialogManagementOption = ConfigurationSetting.dialogManagementOption.value,

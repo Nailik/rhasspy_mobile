@@ -2,11 +2,11 @@ package org.rhasspy.mobile.viewmodel.configuration.test
 
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
+import org.rhasspy.mobile.services.httpclient.HttpClientService
+import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.settings.option.IntentRecognitionOption
 import org.rhasspy.mobile.settings.option.SpeechToTextOption
 import org.rhasspy.mobile.settings.option.TextToSpeechOption
-import org.rhasspy.mobile.services.httpclient.HttpClientService
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 
 class RemoteHermesHttpConfigurationTest : IConfigurationTest() {
 

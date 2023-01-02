@@ -7,8 +7,8 @@ import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
 import io.ktor.utils.io.core.*
 import org.rhasspy.mobile.Application
-import org.rhasspy.mobile.settings.option.PorcupineLanguageOption
 import org.rhasspy.mobile.services.wakeword.PorcupineError
+import org.rhasspy.mobile.settings.option.PorcupineLanguageOption
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
 import java.io.File

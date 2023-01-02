@@ -2,8 +2,8 @@ package org.rhasspy.mobile.viewmodel.settings
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import dev.icerock.moko.resources.desc.StringDesc
-import org.rhasspy.mobile.settings.types.LanguageType
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.types.LanguageType
 
 class LanguageSettingsViewModel : ViewModel() {
 

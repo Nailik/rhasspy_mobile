@@ -1,8 +1,8 @@
 package org.rhasspy.mobile.viewmodel.settings
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import org.rhasspy.mobile.settings.option.AudioOutputOption
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.option.AudioOutputOption
 
 
 class IndicationSettingsViewModel : ViewModel() {

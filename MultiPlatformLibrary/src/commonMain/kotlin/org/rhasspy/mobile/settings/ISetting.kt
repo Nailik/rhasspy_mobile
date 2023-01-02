@@ -9,8 +9,8 @@ import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
-import org.rhasspy.mobile.settings.option.IOption
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.settings.option.IOption
 
 private val settings = Settings()
 
