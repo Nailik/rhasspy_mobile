@@ -10,8 +10,8 @@ import org.rhasspy.mobile.data.PorcupineLanguageOptions
 import org.rhasspy.mobile.data.WakeWordOption
 import org.rhasspy.mobile.nativeutils.FileUtils
 import org.rhasspy.mobile.nativeutils.openLink
-import org.rhasspy.mobile.services.wakeword.WakeWordServiceParams
 import org.rhasspy.mobile.services.udp.UdpServiceParams
+import org.rhasspy.mobile.services.wakeword.WakeWordServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSettings
 import org.rhasspy.mobile.settings.FileType
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword

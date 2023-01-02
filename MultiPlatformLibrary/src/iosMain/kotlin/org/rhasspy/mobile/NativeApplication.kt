@@ -1,13 +1,21 @@
 package org.rhasspy.mobile
 
-actual open class NativeApplication {
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
+actual abstract class NativeApplication {
     actual fun startNativeServices() {
-        TODO("Not yet implemented")
     }
 
     actual fun restart() {
-        TODO("Not yet implemented")
     }
+
+    actual val currentlyAppInBackground: MutableStateFlow<Boolean>
+        get() = TODO("Not yet implemented")
+    actual val isAppInBackground: StateFlow<Boolean>
+        get() = TODO("Not yet implemented")
+
+    actual abstract suspend fun updateWidgetNative()
+
 
 }

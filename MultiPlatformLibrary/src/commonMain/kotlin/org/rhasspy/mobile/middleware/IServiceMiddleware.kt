@@ -1,10 +1,14 @@
 package org.rhasspy.mobile.middleware
 
 import io.ktor.utils.io.core.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import org.rhasspy.mobile.services.dialog.*
+import org.rhasspy.mobile.services.dialog.DialogManagerService
+import org.rhasspy.mobile.services.dialog.DialogManagerServiceState
 import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.recording.RecordingService

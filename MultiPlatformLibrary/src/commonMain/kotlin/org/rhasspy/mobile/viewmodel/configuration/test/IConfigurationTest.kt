@@ -4,15 +4,9 @@ import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
-import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.middleware.ServiceState
-import org.rhasspy.mobile.middleware.IServiceMiddleware
-import org.rhasspy.mobile.readOnly
 
 abstract class IConfigurationTest : Closeable, KoinComponent {
 

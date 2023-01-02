@@ -13,10 +13,10 @@ import org.rhasspy.mobile.middleware.Action.DialogAction
 import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.wakeword.WakeWordService
 import org.rhasspy.mobile.services.indication.IndicationService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
+import org.rhasspy.mobile.services.wakeword.WakeWordService
 
 /**
  * The Dialog Manager handles the various states and goes to the next state according to the function that is called

@@ -12,7 +12,6 @@ import io.ktor.http.*
 import kotlinx.coroutines.cancel
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.IntentHandlingOptions
-import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceErrorType.*

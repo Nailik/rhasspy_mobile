@@ -51,7 +51,7 @@ open class Setting<T>(
             else -> serializer?.let {
                 settings.encodeValue(serializer, key.name, newValue)
             } ?: run {
-                //TODO  throw RuntimeException()
+                //TODO log error throw RuntimeException()
             }
         }
     }
