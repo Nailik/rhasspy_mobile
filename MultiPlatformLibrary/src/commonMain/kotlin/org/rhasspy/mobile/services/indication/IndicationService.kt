@@ -3,30 +3,29 @@ package org.rhasspy.mobile.services.indication
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.nativeutils.NativeIndication
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.settings.AppSetting
 
-//TODO logging
 class IndicationService : IService(), KoinComponent {
+    private val logger = LogType.IndicationService.logger()
 
     private val localAudioService by inject<LocalAudioService>()
-    private val _indicationState = MutableStateFlow(IndicationState.Idle)
-    private val _isShowVisualIndication = MutableStateFlow(false)
 
     //states are used by overlay
+    private val _isShowVisualIndication = MutableStateFlow(false)
     val isShowVisualIndication = _isShowVisualIndication.readOnly
+    private val _indicationState = MutableStateFlow(IndicationState.Idle)
     val indicationState = _indicationState.readOnly
-
-    override fun onClose() {
-    }
 
     /**
      * idle shows no indication and stops screen wakeup
      */
     fun onIdle() {
+        logger.d { "onIdle" }
         _isShowVisualIndication.value = false
         NativeIndication.releaseWakeUp()
     }
@@ -35,6 +34,7 @@ class IndicationService : IService(), KoinComponent {
      * wake up screen when hotword is detected and play sound eventually
      */
     fun onWakeWordDetected() {
+        logger.d { "onWakeWordDetected" }
         if (AppSetting.isWakeWordDetectionTurnOnDisplayEnabled.value) {
             NativeIndication.wakeUpScreen()
         }
@@ -51,6 +51,7 @@ class IndicationService : IService(), KoinComponent {
      * update indication state
      */
     fun onListening() {
+        logger.d { "onListening" }
         if (AppSetting.isWakeWordLightIndicationEnabled.value) {
             _isShowVisualIndication.value = true
         }
@@ -61,6 +62,7 @@ class IndicationService : IService(), KoinComponent {
      * play sound that speech was recorded
      */
     fun onSilenceDetected() {
+        logger.d { "onSilenceDetected" }
         if (AppSetting.isSoundIndicationEnabled.value) {
             localAudioService.playRecordedSound()
         }
@@ -70,6 +72,7 @@ class IndicationService : IService(), KoinComponent {
      * when intent is recognized show thinking animation
      */
     fun onRecognizingIntent() {
+        logger.d { "onRecognizingIntent" }
         if (AppSetting.isWakeWordLightIndicationEnabled.value) {
             _isShowVisualIndication.value = true
         }
@@ -80,6 +83,7 @@ class IndicationService : IService(), KoinComponent {
      * show animation that audio is playing
      */
     fun onPlayAudio() {
+        logger.d { "onPlayAudio" }
         if (AppSetting.isWakeWordLightIndicationEnabled.value) {
             _isShowVisualIndication.value = true
         }
@@ -90,6 +94,7 @@ class IndicationService : IService(), KoinComponent {
      * play error sound on error
      */
     fun onError() {
+        logger.d { "onError" }
         if (AppSetting.isSoundIndicationEnabled.value) {
             localAudioService.playErrorSound()
         }
