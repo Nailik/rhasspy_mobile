@@ -67,8 +67,7 @@ actual class AudioPlayer : Closeable {
             //Sample rate as a 4 byte (32 bit) integer.
             val sampleRate = ByteBuffer.wrap(byteArray.copyOfRange(24, 28).reversedArray()).int
             //41-44 The number of bytes of the data section below this
-            val audioDataSize =
-                ByteBuffer.wrap(byteArray.copyOfRange(40, 44).reversedArray()).int / 2 //(pcm)
+            val audioDataSize = ByteBuffer.wrap(byteArray.copyOfRange(40, 44).reversedArray()).int / 2 //(pcm)
 
             audioTrack = AudioTrack(
                 AudioAttributes.Builder()
@@ -84,7 +83,7 @@ actual class AudioPlayer : Closeable {
                 AudioTrack.MODE_STATIC,
                 AudioManager.AUDIO_SESSION_ID_GENERATE
             ).apply {
-                notificationMarkerPosition = audioDataSize
+                notificationMarkerPosition = audioDataSize / channels.toInt() //TODO returns error evaluate?
 
                 setPlaybackPositionUpdateListener(object :
                     AudioTrack.OnPlaybackPositionUpdateListener {
@@ -95,7 +94,10 @@ actual class AudioPlayer : Closeable {
                         onFinished?.invoke()
                     }
 
-                    override fun onPeriodicNotification(p0: AudioTrack?) {}
+                    override fun onPeriodicNotification(p0: AudioTrack?) {
+                        println(p0?.playbackHeadPosition)
+                        //TODO when playback position doesn't update it's finished
+                    }
                 })
 
                 setVolume(volume)

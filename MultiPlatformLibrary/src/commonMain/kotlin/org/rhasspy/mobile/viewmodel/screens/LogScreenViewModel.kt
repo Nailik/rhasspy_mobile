@@ -37,6 +37,7 @@ class LogScreenViewModel : ViewModel() {
     }
 
     fun toggleListAutoscroll() {
+        //TODO save to settings
         _isListAutoscroll.value = !_isListAutoscroll.value
     }
 
