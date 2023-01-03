@@ -23,6 +23,7 @@ import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -35,17 +36,18 @@ import org.rhasspy.mobile.viewmodel.overlay.MicrophoneOverlayViewModel
  * show overlay with microphone button
  */
 object MicrophoneOverlay : KoinComponent {
-
     private val logger = Logger.withTag("MicrophoneOverlay")
 
     private lateinit var mParams: WindowManager.LayoutParams
     private val lifecycleOwner = CustomLifecycleOwner()
 
+    private val viewModel by inject<MicrophoneOverlayViewModel>()
+
+    private var job: Job? = null
+
     private val overlayWindowManager by lazy {
         AndroidApplication.Instance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     }
-
-    private val viewModel by inject<MicrophoneOverlayViewModel>()
 
     /**
      * view that's displayed as overlay to start wake word detection
@@ -124,9 +126,12 @@ object MicrophoneOverlay : KoinComponent {
      * start service, listen to showVisualIndication and show the overlay or remove it when necessary
      */
     fun start() {
+        if (job?.isActive == true) {
+            return
+        }
         logger.d { "start" }
 
-        CoroutineScope(Dispatchers.Default).launch {
+        job = CoroutineScope(Dispatchers.Default).launch {
             viewModel.shouldOverlayBeShown.collect {
                 if (it != shouldBeShownOldValue) {
                     if (it) {
@@ -147,6 +152,13 @@ object MicrophoneOverlay : KoinComponent {
                 }
             }
         }
+    }
 
+    /**
+     * stop overlay service
+     */
+    fun stop() {
+        job?.cancel()
+        job = null
     }
 }

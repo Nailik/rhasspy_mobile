@@ -82,7 +82,9 @@ abstract class Application : NativeApplication(), KoinComponent {
         updateWidget()
     }
 
-    abstract fun setupOverlay()
+    abstract fun startOverlay()
+
+    abstract fun stopOverlay()
 
     abstract suspend fun updateWidget()
 
@@ -90,14 +92,14 @@ abstract class Application : NativeApplication(), KoinComponent {
 
     fun startTest() {
         BackgroundService.stop()
-        //TODO stop overlay and indication
+        stopOverlay()
         reloadServiceModules()
     }
 
     fun stopTest() {
         reloadServiceModules()
         BackgroundService.start()
-        //TODO start overlay and indication
+        startOverlay()
     }
 
     private fun reloadServiceModules() {

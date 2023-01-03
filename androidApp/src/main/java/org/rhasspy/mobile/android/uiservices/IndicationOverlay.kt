@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -35,6 +36,8 @@ object IndicationOverlay : KoinComponent {
 
     private var mainScope = CoroutineScope(Dispatchers.Main)
     private val viewModel by inject<IndicationOverlayViewModel>()
+
+    private var job: Job? = null
 
     private val overlayWindowManager by lazy {
         AndroidApplication.Instance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -81,7 +84,10 @@ object IndicationOverlay : KoinComponent {
      * start service, listen to showVisualIndication and show the overlay or remove it when necessary
      */
     fun start() {
-        CoroutineScope(Dispatchers.Default).launch {
+        if (job?.isActive == true) {
+            return
+        }
+        job = CoroutineScope(Dispatchers.Default).launch {
             viewModel.isShowVisualIndication.collect {
                 if (it != showVisualIndicationOldValue) {
                     if (it) {
@@ -103,6 +109,14 @@ object IndicationOverlay : KoinComponent {
                 }
             }
         }
+    }
+
+    /**
+     * stop overlay service
+     */
+    fun stop() {
+        job?.cancel()
+        job = null
     }
 }
 

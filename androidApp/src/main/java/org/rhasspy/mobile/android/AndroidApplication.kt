@@ -42,9 +42,14 @@ class AndroidApplication : Application() {
         onCreated()
     }
 
-    override fun setupOverlay() {
+    override fun startOverlay() {
         IndicationOverlay.start()
         MicrophoneOverlay.start()
+    }
+
+    override fun stopOverlay() {
+        IndicationOverlay.stop()
+        MicrophoneOverlay.stop()
     }
 
     override fun restart() {
