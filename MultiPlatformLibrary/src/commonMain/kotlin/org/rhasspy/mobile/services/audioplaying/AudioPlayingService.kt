@@ -9,6 +9,7 @@ import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
+import org.rhasspy.mobile.services.httpclient.HttpClientResult
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.services.mqtt.MqttService
@@ -55,14 +56,28 @@ open class AudioPlayingService : IService() {
         logger.d { "playAudio dataSize: ${data.size}" }
         when (params.audioPlayingOption) {
             AudioPlayingOption.Local -> {
-                localAudioService.playAudio(data)
+                _serviceState.value = localAudioService.playAudio(data)?.let {
+                    ServiceState.Error
+                } ?: run {
+                    ServiceState.Success()
+                }
                 serviceMiddleware.action(DialogAction.PlayFinished(Source.Local))
             }
             AudioPlayingOption.RemoteHTTP -> {
-                httpClientService.playWav(data)
+                val result = httpClientService.playWav(data)
+                _serviceState.value = when (result) {
+                    is HttpClientResult.Error -> ServiceState.Error
+                    is HttpClientResult.Success -> ServiceState.Success()
+                }
                 serviceMiddleware.action(DialogAction.PlayFinished(Source.HttpApi))
             }
-            AudioPlayingOption.RemoteMQTT -> mqttClientService.playBytes(data)
+            AudioPlayingOption.RemoteMQTT -> {
+                _serviceState.value = mqttClientService.playBytes(data)?.let {
+                    ServiceState.Error
+                } ?: run {
+                    ServiceState.Success()
+                }
+            }
             AudioPlayingOption.Disabled -> {}
         }
     }

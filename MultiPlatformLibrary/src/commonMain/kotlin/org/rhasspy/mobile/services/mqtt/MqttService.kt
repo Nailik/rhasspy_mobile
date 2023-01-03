@@ -298,18 +298,21 @@ class MqttService : IService() {
      *
      * boolean if message was published
      */
-    private suspend fun publishMessage(topic: String, message: MqttMessage) {
+    private suspend fun publishMessage(topic: String, message: MqttMessage): MqttError? {
         message.msgId = id
 
-        client?.let { mqttClient ->
-            mqttClient.publish(topic, message)?.let {
+        client?.also { mqttClient ->
+            return mqttClient.publish(topic, message)?.let {
                 logger.e { "mqtt publish error $it" }
+                it
             } ?: run {
                 logger.v { "mqtt message published" }
+                null
             }
-        } ?: run {
-            //TODO log
         }
+
+        logger.a { "mqttClient not initialized" }
+        return MqttError("", MqttStatus.UNKNOWN)
     }
 
     private suspend fun publishMessage(mqttTopic: MqttTopicsPublish, message: MqttMessage) =

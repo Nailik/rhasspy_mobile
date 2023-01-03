@@ -22,14 +22,14 @@ class LocalAudioService : IService() {
         audioPlayer.close()
     }
 
-    suspend fun playAudio(data: List<Byte>): Unit = suspendCoroutine { continuation ->
+    suspend fun playAudio(data: List<Byte>): Exception? = suspendCoroutine { continuation ->
         logger.d { "playAudio ${data.size}" }
         audioPlayer.playData(
             data = data,
             volume = AppSetting.volume.value,
             onFinished = {
                 logger.d { "onFinished" }
-                continuation.resume(Unit)
+                continuation.resume(null)
             },
             onError = { exception ->
                 exception?.also {
@@ -37,7 +37,7 @@ class LocalAudioService : IService() {
                 } ?: run {
                     logger.e { "onError" }
                 }
-                continuation.resume(Unit)
+                continuation.resume(exception ?: Exception())
             }
         )
     }

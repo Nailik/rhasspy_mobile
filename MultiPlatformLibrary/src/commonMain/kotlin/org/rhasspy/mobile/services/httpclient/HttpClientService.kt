@@ -118,7 +118,7 @@ class HttpClientService : IService() {
      * Set Accept: application/json to receive JSON with more details
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
-    suspend fun speechToText(data: List<Byte>): String? {
+    suspend fun speechToText(data: List<Byte>): HttpClientResult<String> {
         logger.d { "speechToText dataSize: ${data.size}" }
         return post<String>(speechToTextUrl) {
             setBody(data.toByteArray())
@@ -134,7 +134,7 @@ class HttpClientService : IService() {
      *
      * returns null if the intent is not found
      */
-    suspend fun recognizeIntent(text: String): String? {
+    suspend fun recognizeIntent(text: String): HttpClientResult<String> {
         logger.d { "recognizeIntent text: $text" }
         return post<String>(recognizeIntentUrl) {
             setBody(text)
@@ -150,7 +150,7 @@ class HttpClientService : IService() {
      * ?volume=<volume> - volume level to speak at (0 = off, 1 = full volume)
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun textToSpeech(text: String): ByteArray? {
+    suspend fun textToSpeech(text: String): HttpClientResult<ByteArray> {
         logger.d { "textToSpeech text: $text" }
         return post<ByteArray>(textToSpeechUrl) {
             setBody(text)
@@ -163,7 +163,7 @@ class HttpClientService : IService() {
      * Make sure to set Content-Type to audio/wav
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun playWav(data: List<Byte>): String? {
+    suspend fun playWav(data: List<Byte>): HttpClientResult<String> {
         logger.d { "playWav dataSize: ${data.size}" }
         return post<String>(audioPlayingUrl) {
             setAttributes {
@@ -189,7 +189,7 @@ class HttpClientService : IService() {
      *
      * Implemented by rhasspy-remote-http-hermes
      */
-    suspend fun intentHandling(intent: String): String? {
+    suspend fun intentHandling(intent: String): HttpClientResult<String> {
         logger.d { "intentHandling intent: $intent" }
         return post<String>(params.intentHandlingHttpEndpoint) {
             setBody(intent)
@@ -199,7 +199,7 @@ class HttpClientService : IService() {
     /**
      * send intent as Event to Home Assistant
      */
-    suspend fun hassEvent(json: String, intentName: String): String? {
+    suspend fun hassEvent(json: String, intentName: String): HttpClientResult<String> {
         logger.d { "hassEvent json: $json intentName: $intentName" }
         return post<String>("$hassEventUrl$intentName") {
             buildHeaders {
@@ -214,7 +214,7 @@ class HttpClientService : IService() {
     /**
      * send intent as Intent to Home Assistant
      */
-    suspend fun hassIntent(intentJson: String): String? {
+    suspend fun hassIntent(intentJson: String): HttpClientResult<String> {
         logger.d { "hassIntent json: $intentJson" }
         return post<String>(hassIntentUrl) {
             buildHeaders {
@@ -230,7 +230,7 @@ class HttpClientService : IService() {
      * post data to endpoint
      * handles even in event logger
      */
-    private suspend inline fun <reified T> post(url: String, block: HttpRequestBuilder.() -> Unit): T? {
+    private suspend inline fun <reified T> post(url: String, block: HttpRequestBuilder.() -> Unit): HttpClientResult<T> {
         return httpClient?.let { client ->
             try {
                 val request = client.post(url, block)
@@ -240,14 +240,14 @@ class HttpClientService : IService() {
                 } else {
                     logger.d { "post result data: $result" }
                 }
-                return result
+                return HttpClientResult.Success(result)
             } catch (exception: Exception) {
                 logger.e(exception) { "post result error" }
-                return null
+                return HttpClientResult.Error(exception)
             }
         } ?: run {
             logger.a { "post client not initialized" }
-            return null
+            return HttpClientResult.Error(Exception())
         }
     }
 

@@ -10,7 +10,7 @@ sealed class ServiceState(val information: String? = null) {
 
     class Warning(information: String? = null) : ServiceState(information)
 
-    class Error : ServiceState()
+    object Error : ServiceState()
 
     object Disabled : ServiceState()
 
