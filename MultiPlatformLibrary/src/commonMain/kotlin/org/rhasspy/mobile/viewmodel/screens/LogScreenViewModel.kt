@@ -19,7 +19,7 @@ class LogScreenViewModel : ViewModel() {
     init {
         //load file into list
         CoroutineScope(Dispatchers.Default).launch {
-            val lines = FileLogger.getLines().reversed()
+            val lines = FileLogger.getLines()
             viewModelScope.launch {
                 logArr.value = lines
             }
