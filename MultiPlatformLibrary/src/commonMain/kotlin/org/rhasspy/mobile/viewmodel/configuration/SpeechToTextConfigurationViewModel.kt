@@ -9,8 +9,8 @@ import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.services.mqtt.MqttServiceParams
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
+import org.rhasspy.mobile.services.speechtotext.SpeechToTextService
+import org.rhasspy.mobile.services.speechtotext.SpeechToTextServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.option.SpeechToTextOption
 import org.rhasspy.mobile.viewmodel.configuration.test.SpeechToTextConfigurationTest
@@ -19,8 +19,8 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
 
     //for testing
     override val testRunner by inject<SpeechToTextConfigurationTest>()
-    override val logType = LogType.RhasspyActionsService
-    override val serviceState = get<RhasspyActionsService>().serviceState
+    override val logType = LogType.SpeechToTextService
+    override val serviceState = get<SpeechToTextService>().serviceState
 
     val isRecordingAudio = testRunner.isRecording
 
@@ -117,9 +117,9 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
             )
         }
 
-        get<RhasspyActionsServiceParams> {
+        get<SpeechToTextServiceParams> {
             parametersOf(
-                RhasspyActionsServiceParams(
+                SpeechToTextServiceParams(
                     speechToTextOption = _speechToTextOption.value
                 )
             )

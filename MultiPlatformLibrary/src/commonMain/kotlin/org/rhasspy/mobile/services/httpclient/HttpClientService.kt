@@ -9,9 +9,12 @@ import io.ktor.client.request.*
 import io.ktor.client.utils.*
 import io.ktor.http.*
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.inject
 import org.rhasspy.mobile.logger.LogType
+import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.nativeutils.configureEngine
+import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceErrorType.*
 import org.rhasspy.mobile.settings.option.IntentHandlingOption
@@ -23,6 +26,9 @@ import org.rhasspy.mobile.settings.option.IntentHandlingOption
  */
 class HttpClientService : IService() {
     private val logger = LogType.HttpClientService.logger()
+
+    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
+    val serviceState = _serviceState.readOnly
 
     private val params by inject<HttpClientServiceParams>()
 

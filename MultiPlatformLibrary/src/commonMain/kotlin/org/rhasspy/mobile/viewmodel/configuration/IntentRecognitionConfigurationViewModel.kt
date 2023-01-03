@@ -8,8 +8,8 @@ import org.rhasspy.mobile.*
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
+import org.rhasspy.mobile.services.intentrecognition.IntentRecognitionService
+import org.rhasspy.mobile.services.intentrecognition.IntentRecognitionServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.option.IntentRecognitionOption
 import org.rhasspy.mobile.viewmodel.configuration.test.IntentRecognitionConfigurationTest
@@ -18,8 +18,8 @@ class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
 
     //test data
     override val testRunner by inject<IntentRecognitionConfigurationTest>()
-    override val logType = LogType.RhasspyActionsService
-    override val serviceState = get<RhasspyActionsService>().serviceState
+    override val logType = LogType.IntentRecognitionService
+    override val serviceState = get<IntentRecognitionService>().serviceState
 
     private val _testIntentRecognitionText = MutableStateFlow("")
     val testIntentRecognitionText = _testIntentRecognitionText.readOnly
@@ -100,9 +100,9 @@ class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
     }
 
     override fun initializeTestParams() {
-        get<RhasspyActionsServiceParams> {
+        get<IntentRecognitionServiceParams> {
             parametersOf(
-                RhasspyActionsServiceParams(
+                IntentRecognitionServiceParams(
                     intentRecognitionOption = _intentRecognitionOption.value
                 )
             )

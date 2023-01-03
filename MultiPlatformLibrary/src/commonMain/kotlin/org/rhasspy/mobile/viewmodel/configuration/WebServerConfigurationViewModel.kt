@@ -19,8 +19,8 @@ import org.rhasspy.mobile.settings.types.FileType
 import org.rhasspy.mobile.viewmodel.configuration.test.WebServerConfigurationTest
 
 class WebServerConfigurationViewModel : IConfigurationViewModel() {
-
     override val testRunner by inject<WebServerConfigurationTest>()
+
     override val logType = LogType.WebServerService
     override val serviceState = get<WebServerService>().serviceState
 

@@ -9,19 +9,19 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.mqtt.MqttService
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
+import org.rhasspy.mobile.services.speechtotext.SpeechToTextService
+import org.rhasspy.mobile.services.speechtotext.SpeechToTextServiceParams
 import org.rhasspy.mobile.settings.option.SpeechToTextOption
 
 class SpeechToTextConfigurationTest : IConfigurationTest() {
 
-    override val serviceState get() = get<RhasspyActionsService>().serviceState
+    override val serviceState get() = get<SpeechToTextService>().serviceState
     private val _isRecording = MutableStateFlow(false)
     val isRecording = _isRecording.readOnly
 
     fun toggleRecording() {
         testScope.launch {
-            if (get<RhasspyActionsServiceParams>().speechToTextOption == SpeechToTextOption.RemoteMQTT) {
+            if (get<SpeechToTextServiceParams>().speechToTextOption == SpeechToTextOption.RemoteMQTT) {
                 //await for mqtt service to start if necessary
                 get<MqttService>()
                     .isHasStarted
@@ -31,7 +31,7 @@ class SpeechToTextConfigurationTest : IConfigurationTest() {
             }
 
             //await for mqtt to be started
-            val rhasspyActionsService = get<RhasspyActionsService>()
+            val speechToTextService = get<SpeechToTextService>()
             val middleware = get<IServiceMiddleware>()
 
             if (!isRecording.value) {

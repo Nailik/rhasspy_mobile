@@ -6,18 +6,18 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.services.intentrecognition.IntentRecognitionService
+import org.rhasspy.mobile.services.intentrecognition.IntentRecognitionServiceParams
 import org.rhasspy.mobile.services.mqtt.MqttService
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.settings.option.IntentRecognitionOption
 
 class IntentRecognitionConfigurationTest : IConfigurationTest() {
 
-    override val serviceState get() = get<RhasspyActionsService>().serviceState
+    override val serviceState get() = get<IntentRecognitionService>().serviceState
     fun runTest(text: String) {
         testScope.launch {
             //await for mqtt
-            if (get<RhasspyActionsServiceParams>().intentRecognitionOption == IntentRecognitionOption.RemoteMQTT) {
+            if (get<IntentRecognitionServiceParams>().intentRecognitionOption == IntentRecognitionOption.RemoteMQTT) {
                 get<MqttService>()
                     .isHasStarted
                     .map { it }

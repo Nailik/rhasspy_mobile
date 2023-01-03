@@ -11,8 +11,8 @@ import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.homeassistant.HomeAssistantServiceParams
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
+import org.rhasspy.mobile.services.intenthandling.IntentHandlingService
+import org.rhasspy.mobile.services.intenthandling.IntentHandlingServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.settings.option.IntentHandlingOption
@@ -21,8 +21,8 @@ import org.rhasspy.mobile.viewmodel.configuration.test.IntentHandlingConfigurati
 class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
 
     override val testRunner by inject<IntentHandlingConfigurationTest>()
-    override val logType = LogType.RhasspyActionsService
-    override val serviceState = get<RhasspyActionsService>().serviceState
+    override val logType = LogType.IntentHandlingService
+    override val serviceState = get<IntentHandlingService>().serviceState
 
     private val _testIntentNameText = MutableStateFlow("")
     val testIntentNameText = _testIntentNameText.readOnly
@@ -128,9 +128,9 @@ class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
     }
 
     override fun initializeTestParams() {
-        get<RhasspyActionsServiceParams> {
+        get<IntentHandlingServiceParams> {
             parametersOf(
-                RhasspyActionsServiceParams(
+                IntentHandlingServiceParams(
                     intentHandlingOption = _intentHandlingOption.value
                 )
             )

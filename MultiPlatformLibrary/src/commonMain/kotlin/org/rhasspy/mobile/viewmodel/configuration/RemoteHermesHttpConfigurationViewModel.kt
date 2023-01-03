@@ -15,9 +15,9 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.test.RemoteHermesHttpConfigurationTest
 
 class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
-
     override val testRunner by inject<RemoteHermesHttpConfigurationTest>()
     override val logType = LogType.HttpClientService
+
     override val serviceState = get<HttpClientService>().serviceState
 
     //unsaved data

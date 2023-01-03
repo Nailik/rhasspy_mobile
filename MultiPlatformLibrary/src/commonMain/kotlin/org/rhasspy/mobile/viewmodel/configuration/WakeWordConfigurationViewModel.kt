@@ -23,6 +23,7 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
 
     //use get to fix issues where instance dies because udp socket causes thread exception
     override val testRunner get() = get<WakeWordConfigurationTest>()
+
     override val logType = LogType.WakeWordService
     override val serviceState = get<WakeWordService>().serviceState
     data class PorcupineCustomKeywordUi(

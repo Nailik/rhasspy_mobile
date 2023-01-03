@@ -12,17 +12,20 @@ import io.ktor.server.routing.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.inject
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action
 import org.rhasspy.mobile.middleware.Action.AppSettingsAction
 import org.rhasspy.mobile.middleware.Action.DialogAction
 import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.nativeutils.getEngine
 import org.rhasspy.mobile.nativeutils.installCallLogging
 import org.rhasspy.mobile.nativeutils.installCompression
 import org.rhasspy.mobile.nativeutils.installConnector
+import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 
 /**
@@ -36,6 +39,9 @@ import org.rhasspy.mobile.services.IService
  */
 class WebServerService : IService() {
     private val logger = LogType.WebServerService.logger()
+
+    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
+    val serviceState = _serviceState.readOnly
 
     private val params by inject<WebServerServiceParams>()
 

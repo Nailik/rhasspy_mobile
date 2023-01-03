@@ -7,11 +7,11 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.services.mqtt.MqttService
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
+import org.rhasspy.mobile.services.texttospeech.TextToSpeechService
 
 class TextToSpeechConfigurationTest : IConfigurationTest() {
 
-    override val serviceState get() = get<RhasspyActionsService>().serviceState
+    override val serviceState get() = get<TextToSpeechService>().serviceState
     fun startTest(text: String) {
         testScope.launch {
             //await for mqtt

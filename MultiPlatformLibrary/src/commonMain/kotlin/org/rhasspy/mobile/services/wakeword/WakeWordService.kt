@@ -9,6 +9,7 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action
 import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.nativeutils.PorcupineWakeWordClient
 import org.rhasspy.mobile.readOnly
@@ -27,6 +28,9 @@ import org.rhasspy.mobile.settings.option.WakeWordOption
  */
 class WakeWordService : IService() {
     private val logger = LogType.WakeWordService.logger()
+
+    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
+    val serviceState = _serviceState.readOnly
 
     private val params by inject<WakeWordServiceParams>()
     private val udpService by inject<UdpService>()

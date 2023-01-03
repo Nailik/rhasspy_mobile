@@ -6,13 +6,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.inject
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action.DialogAction
+import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.notNull
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
+import org.rhasspy.mobile.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.services.indication.IndicationService
+import org.rhasspy.mobile.services.intenthandling.IntentHandlingService
+import org.rhasspy.mobile.services.intentrecognition.IntentRecognitionService
 import org.rhasspy.mobile.services.mqtt.MqttService
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
+import org.rhasspy.mobile.services.speechtotext.SpeechToTextService
 import org.rhasspy.mobile.services.wakeword.WakeWordService
 import org.rhasspy.mobile.settings.option.DialogManagementOption
 import kotlin.time.DurationUnit
@@ -24,9 +28,15 @@ import kotlin.time.toDuration
 class DialogManagerService : IService() {
     private val logger = LogType.DialogManagerService.logger()
 
+    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
+    val serviceState = _serviceState.readOnly
+
     private val params by inject<DialogManagerServiceParams>()
     private val wakeWordService by inject<WakeWordService>()
-    private val rhasspyActionsService by inject<RhasspyActionsService>()
+    private val intentRecognitionService by inject<IntentRecognitionService>()
+    private val intentHandlingService by inject<IntentHandlingService>()
+    private val audioPlayingService by inject<AudioPlayingService>()
+    private val speechToTextService by inject<SpeechToTextService>()
     private val indicationService by inject<IndicationService>()
     private val mqttService by inject<MqttService>()
 
@@ -104,7 +114,7 @@ class DialogManagerService : IService() {
             informMqtt(action)
 
             notNull(sessionId, action.text, { id, text ->
-                rhasspyActionsService.recognizeIntent(id, text)
+                intentRecognitionService.recognizeIntent(id, text)
                 //await intent recognition
                 timeoutJob = coroutineScope.launch {
                     delay(intentRecognitionTimeout)
@@ -158,7 +168,7 @@ class DialogManagerService : IService() {
         if (isInCorrectState(action, DialogManagerServiceState.RecognizingIntent)) {
 
             timeoutJob?.cancel()
-            rhasspyActionsService.intentHandling(action.intentName, action.intent)
+            intentHandlingService.intentHandling(action.intentName, action.intent)
             endSession(DialogAction.EndSession(Source.Local))
 
         }
@@ -186,7 +196,7 @@ class DialogManagerService : IService() {
 
             wakeWordService.stopDetection()
             indicationService.onPlayAudio()
-            rhasspyActionsService.playAudio(action.byteArray.toList())
+            audioPlayingService.playAudio(action.byteArray.toList())
 
         }
     }
@@ -276,7 +286,7 @@ class DialogManagerService : IService() {
 
                 wakeWordService.stopDetection()
                 indicationService.onListening()
-                rhasspyActionsService.startSpeechToText(id)
+                speechToTextService.startSpeechToText(id)
                 //await silence to stop recording
                 timeoutJob = coroutineScope.launch {
                     delay(recordingTimeout)
@@ -319,9 +329,9 @@ class DialogManagerService : IService() {
             sessionId?.also { id ->
                 timeoutJob?.cancel()
                 _currentDialogState.value = DialogManagerServiceState.TranscribingIntent
-                rhasspyActionsService.endSpeechToText(id, action.source is Source.Mqtt)
+                speechToTextService.endSpeechToText(id, action.source is Source.Mqtt)
                 if (sendAudioCaptured) {
-                    mqttService.audioCaptured(id, rhasspyActionsService.speechToTextAudioData)
+                    mqttService.audioCaptured(id, speechToTextService.speechToTextAudioData)
                 }
                 //await for text recognition
                 timeoutJob = coroutineScope.launch {

@@ -8,18 +8,17 @@ import org.rhasspy.mobile.*
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
+import org.rhasspy.mobile.services.texttospeech.TextToSpeechService
+import org.rhasspy.mobile.services.texttospeech.TextToSpeechServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.option.TextToSpeechOption
 import org.rhasspy.mobile.viewmodel.configuration.test.TextToSpeechConfigurationTest
 
 class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
-
-    //test data
     override val testRunner by inject<TextToSpeechConfigurationTest>()
-    override val logType = LogType.RhasspyActionsService
-    override val serviceState = get<RhasspyActionsService>().serviceState
+
+    override val logType = LogType.TextToSpeechService
+    override val serviceState = get<TextToSpeechService>().serviceState
 
     private val _testTextToSpeechText = MutableStateFlow("")
     val testTextToSpeechText = _testTextToSpeechText.readOnly
@@ -101,9 +100,9 @@ class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
     }
 
     override fun initializeTestParams() {
-        get<RhasspyActionsServiceParams> {
+        get<TextToSpeechServiceParams> {
             parametersOf(
-                RhasspyActionsServiceParams(
+                TextToSpeechServiceParams(
                     textToSpeechOption = _textToSpeechOption.value
                 )
             )

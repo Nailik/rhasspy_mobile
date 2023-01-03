@@ -20,8 +20,8 @@ import org.rhasspy.mobile.settings.types.FileType
 import org.rhasspy.mobile.viewmodel.configuration.test.MqttConfigurationTest
 
 class MqttConfigurationViewModel : IConfigurationViewModel() {
-
     override val testRunner by inject<MqttConfigurationTest>()
+
     override val logType = LogType.MqttService
     override val serviceState = get<MqttService>().serviceState
 

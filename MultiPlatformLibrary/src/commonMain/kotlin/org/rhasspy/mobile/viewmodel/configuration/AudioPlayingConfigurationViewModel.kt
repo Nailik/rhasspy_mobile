@@ -6,11 +6,11 @@ import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.logger.LogType
+import org.rhasspy.mobile.services.audioplaying.AudioPlayingService
+import org.rhasspy.mobile.services.audioplaying.AudioPlayingServiceParams
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
-import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.services.localaudio.LocalAudioServiceParams
-import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.option.AudioOutputOption
 import org.rhasspy.mobile.settings.option.AudioPlayingOption
@@ -27,8 +27,8 @@ import org.rhasspy.mobile.viewmodel.configuration.test.AudioPlayingConfiguration
 class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
 
     override val testRunner by inject<AudioPlayingConfigurationTest>()
-    override val logType = LogType.LocalAudioService
-    override val serviceState = get<LocalAudioService>().serviceState
+    override val logType = LogType.AudioPlayingService
+    override val serviceState = get<AudioPlayingService>().serviceState
 
     //unsaved data
     private val _audioPlayingOption = MutableStateFlow(ConfigurationSetting.audioPlayingOption.value)
@@ -125,9 +125,9 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
     }
 
     override fun initializeTestParams() {
-        get<RhasspyActionsServiceParams> {
+        get<AudioPlayingServiceParams> {
             parametersOf(
-                RhasspyActionsServiceParams(
+                AudioPlayingServiceParams(
                     audioPlayingOption = _audioPlayingOption.value
                 )
             )

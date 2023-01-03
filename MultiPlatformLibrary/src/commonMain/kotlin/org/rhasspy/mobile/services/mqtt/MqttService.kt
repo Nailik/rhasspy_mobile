@@ -13,6 +13,7 @@ import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action.AppSettingsAction
 import org.rhasspy.mobile.middleware.Action.DialogAction
 import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.mqtt.*
 import org.rhasspy.mobile.nativeutils.MqttClient
@@ -21,6 +22,9 @@ import org.rhasspy.mobile.services.IService
 
 class MqttService : IService() {
     private val logger = LogType.MqttService.logger()
+
+    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
+    val serviceState = _serviceState.readOnly
 
     private val params by inject<MqttServiceParams>()
 
