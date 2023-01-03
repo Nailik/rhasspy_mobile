@@ -307,6 +307,7 @@
     <string name="keyStoreKeyPassword">Key Password</string>
     <string name="filterList">filter List</string>
     <string name="autoscrollList">autoscroll List</string>
+    <string name="requestTimeout">request Timeout (MS)</string>
     <!-- not translatable -->
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>

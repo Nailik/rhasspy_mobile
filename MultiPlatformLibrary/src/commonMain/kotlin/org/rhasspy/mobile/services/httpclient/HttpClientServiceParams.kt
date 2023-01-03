@@ -3,12 +3,12 @@ package org.rhasspy.mobile.services.httpclient
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.option.IntentHandlingOption
 
-//TODO custom timeout for every service?
 data class HttpClientServiceParams(
     val siteId: String = ConfigurationSetting.siteId.value,
     val isHttpSSLVerificationDisabled: Boolean = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value,
-    val httpServerEndpointHost: String = ConfigurationSetting.httpClientServerEndpointHost.value,
-    val httpServerEndpointPort: Int = ConfigurationSetting.httpClientServerEndpointPort.value,
+    val httpClientServerEndpointHost: String = ConfigurationSetting.httpClientServerEndpointHost.value,
+    val httpClientServerEndpointPort: Int = ConfigurationSetting.httpClientServerEndpointPort.value,
+    val httpClientTimeout: Long? = ConfigurationSetting.httpClientTimeout.value,
     val isUseCustomSpeechToTextHttpEndpoint: Boolean = ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value,
     val speechToTextHttpEndpoint: String = ConfigurationSetting.speechToTextHttpEndpoint.value,
     val isUseCustomIntentRecognitionHttpEndpoint: Boolean = ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value,

@@ -311,4 +311,5 @@
     <string name="sslWikiInfo">öffne GitHub Wiki um zu Erfahren, wie ein Zertifikat erstellt werden kann</string>
     <string name="filterList">Liste filtern</string>
     <string name="autoscrollList">Liste automatisch scrollen</string>
+    <string name="requestTimeout">Anfrage Timeout (MS)</string>
 </resources>

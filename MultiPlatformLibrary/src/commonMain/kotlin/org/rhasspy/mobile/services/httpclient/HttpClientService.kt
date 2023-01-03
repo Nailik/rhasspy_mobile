@@ -97,7 +97,7 @@ class HttpClientService : IService() {
             expectSuccess = true
             install(WebSockets)
             install(HttpTimeout) {
-                requestTimeoutMillis = 30000
+                requestTimeoutMillis = params.httpClientTimeout
             }
             engine {
                 configureEngine(params.isHttpSSLVerificationDisabled)
@@ -248,17 +248,17 @@ class HttpClientService : IService() {
     /**
      * Evaluate if the Error is a know exception to help the user
      */
-    private fun mapError(e: Exception): HttpClientServiceErrorType? {
-        return if (e::class.simpleName == IllegalArgumentException.description) {
-            if (e.message == InvalidTLSRecordType.description) {
+    private fun mapError(exception: Exception): HttpClientServiceErrorType? {
+        return if (exception::class.simpleName == IllegalArgumentException.description) {
+            if (exception.message == InvalidTLSRecordType.description) {
                 InvalidTLSRecordType
             } else {
                 IllegalArgumentException
             }
-        } else if (e::class.simpleName == UnresolvedAddressException.description) {
+        } else if (exception::class.simpleName == UnresolvedAddressException.description) {
             UnresolvedAddressException
-        } else if (e::class.simpleName == ConnectException.description) {
-            if (e.message == ConnectionRefused.description) {
+        } else if (exception::class.simpleName == ConnectException.description) {
+            if (exception.message == ConnectionRefused.description) {
                 ConnectionRefused
             } else {
                 ConnectException

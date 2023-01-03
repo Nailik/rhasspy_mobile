@@ -37,8 +37,8 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
             TextFieldListItem(
                 label = MR.strings.baseHost,
                 modifier = Modifier.testTag(TestTag.Host),
-                value = viewModel.httpServerEndpointHost.collectAsState().value,
-                onValueChange = viewModel::updateHttpServerEndpointHost,
+                value = viewModel.httpClientServerEndpointHost.collectAsState().value,
+                onValueChange = viewModel::updateHttpClientServerEndpointHost,
                 isLastItem = false
             )
         }
@@ -49,8 +49,19 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
                 label = MR.strings.port,
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 modifier = Modifier.testTag(TestTag.Port),
-                value = viewModel.httpServerEndpointPort.collectAsState().value,
-                onValueChange = viewModel::updateHttpServerEndpointPort,
+                value = viewModel.httpClientServerEndpointPort.collectAsState().value,
+                onValueChange = viewModel::updateHttpClientServerEndpointPort,
+            )
+        }
+
+        item {
+            //timeout
+            TextFieldListItem(
+                label = MR.strings.requestTimeout,
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                modifier = Modifier.testTag(TestTag.Timeout),
+                value = viewModel.httpClientTimeoutText.collectAsState().value,
+                onValueChange = viewModel::updateHttpClientTimeout,
             )
         }
 

@@ -134,8 +134,8 @@ actual object SettingsUtils {
      */
     actual fun shareSettingsFile() {
         val toRemove = arrayOf(
-            SettingsEnum.HttpServerEndpointHost.name,
-            SettingsEnum.HttpServerEndpointPort.name,
+            SettingsEnum.HttpClientServerEndpointHost.name,
+            SettingsEnum.HttpClientServerEndpointPort.name,
             SettingsEnum.HttpServerPort.name,
             SettingsEnum.HttpServerSSLKeyStoreFile.name,
             SettingsEnum.HttpServerSSLKeyStorePassword.name,

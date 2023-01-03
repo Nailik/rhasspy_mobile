@@ -15,6 +15,6 @@ enum class HttpClientPath(val path: String) : KoinComponent {
 
     fun fromBaseConfiguration(): String {
         val params = get<HttpClientServiceParams>()
-        return "${params.httpServerEndpointHost}:${params.httpServerEndpointPort}/$path"
+        return "${params.httpClientServerEndpointHost}:${params.httpClientServerEndpointPort}/$path"
     }
 }

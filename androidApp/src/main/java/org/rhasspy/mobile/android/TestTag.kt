@@ -62,6 +62,7 @@ enum class TestTag {
     MqttSwitch,
     Host,
     Port,
+    Timeout,
     UserName,
     Password,
     SSLSwitch,
