@@ -48,6 +48,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     private val _isListAutoscroll = MutableStateFlow(false)
     val isListAutoscroll = _isListAutoscroll.readOnly
 
+    private val isTestRunning = MutableStateFlow(false)
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.readOnly
     val isBackPressDisabled = isLoading
@@ -87,7 +88,10 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     //TODO carefully test this works correctly
     @Suppress("RedundantSuspendModifier")
     fun onOpenTestPage() {
-
+        if (isTestRunning.value) {
+            return
+        }
+        isTestRunning.value = true
         _isLoading.value = true
 
         viewModelScope.launch(Dispatchers.Default) {
@@ -128,6 +132,9 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     //TODO carefully test this works correctly
     @Suppress("RedundantSuspendModifier")
     fun stopTest() {
+        if (!isTestRunning.value) {
+            return
+        }
         _isLoading.value = true
 
         viewModelScope.launch(Dispatchers.Default) {
@@ -139,6 +146,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
             Application.instance.stopTest()
 
             _isLoading.value = false
+            isTestRunning.value = false
         }
     }
 }

@@ -79,6 +79,6 @@ class RemoteHermesHttpConfigurationContentTest {
         //disable ssl validation off is saved
         assertEquals(false, newViewModel.isHttpSSLVerificationDisabled.value)
         //host is saved
-        assertEquals(textInputTest, newViewModel.httpServerEndpoint.value)
+        assertEquals(textInputTest, newViewModel.httpClientServerEndpointHost.value)
     }
 }
