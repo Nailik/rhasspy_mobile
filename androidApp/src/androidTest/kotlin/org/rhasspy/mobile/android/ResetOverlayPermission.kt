@@ -20,11 +20,9 @@ fun UiDevice.resetOverlayPermission() {
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     Application.nativeInstance.startActivity(intent)
 
-    val settingsPage = "com.android.settings"
     val list = ".*list"
 
     InstrumentationRegistry.getInstrumentation().waitForIdleSync()
-    //not true on api 33 assertTrue { this.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
     UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName))
     this.findObject(UiSelector().text(MR.strings.appName)).click()
     this.findObject(UiSelector().className(Switch::class.java)).click()

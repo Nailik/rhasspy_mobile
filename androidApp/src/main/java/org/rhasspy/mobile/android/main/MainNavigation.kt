@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.BuildConfig
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.addConfigurationScreens
@@ -55,7 +56,7 @@ fun MainNavigation() {
 
                     var shouldShowCrashlyticsDialog by remember { mutableStateOf(MainActivity.isFirstLaunch) }
 
-                    if (shouldShowCrashlyticsDialog) {
+                    if (shouldShowCrashlyticsDialog && !BuildConfig.DEBUG) {
                         CrashlyticsDialog {
                             shouldShowCrashlyticsDialog = false
                         }
