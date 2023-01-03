@@ -11,6 +11,7 @@ import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
+import org.rhasspy.mobile.services.httpclient.HttpClientResult
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.recording.RecordingService
@@ -69,10 +70,9 @@ open class SpeechToTextService : IService() {
         //evaluate result
         when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> {
-                val action = httpClientService.speechToText(_speechToTextAudioData.addWavHeader())?.let { text ->
-                    DialogAction.AsrTextCaptured(Source.HttpApi, text)
-                } ?: run {
-                    DialogAction.AsrError(Source.HttpApi)
+                val action = when (val result = httpClientService.speechToText(_speechToTextAudioData.addWavHeader())) {
+                    is HttpClientResult.Error -> DialogAction.AsrError(Source.HttpApi)
+                    is HttpClientResult.Success -> DialogAction.AsrTextCaptured(Source.HttpApi, result.data)
                 }
                 serviceMiddleware.action(action)
             }

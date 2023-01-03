@@ -9,6 +9,7 @@ import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
+import org.rhasspy.mobile.services.httpclient.HttpClientResult
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.settings.option.IntentRecognitionOption
@@ -52,10 +53,9 @@ open class IntentRecognitionService : IService() {
         logger.d { "recognizeIntent sessionId: $sessionId text: $text" }
         when (params.intentRecognitionOption) {
             IntentRecognitionOption.RemoteHTTP -> {
-                val action = httpClientService.recognizeIntent(text)?.let { intentJson ->
-                    DialogAction.IntentRecognitionResult(Source.HttpApi, "", intentJson)
-                } ?: run {
-                    DialogAction.IntentRecognitionError(Source.HttpApi)
+                val action = when (val result = httpClientService.recognizeIntent(text)) {
+                    is HttpClientResult.Error -> DialogAction.IntentRecognitionError(Source.HttpApi)
+                    is HttpClientResult.Success -> DialogAction.IntentRecognitionResult(Source.HttpApi, "", result.data)
                 }
                 serviceMiddleware.action(action)
             }

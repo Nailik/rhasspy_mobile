@@ -136,7 +136,7 @@ class HttpClientService : IService() {
      */
     suspend fun recognizeIntent(text: String): HttpClientResult<String> {
         logger.d { "recognizeIntent text: $text" }
-        return post<String>(recognizeIntentUrl) {
+        return post(recognizeIntentUrl) {
             setBody(text)
         }
     }
@@ -152,7 +152,7 @@ class HttpClientService : IService() {
      */
     suspend fun textToSpeech(text: String): HttpClientResult<ByteArray> {
         logger.d { "textToSpeech text: $text" }
-        return post<ByteArray>(textToSpeechUrl) {
+        return post(textToSpeechUrl) {
             setBody(text)
         }
     }
@@ -165,7 +165,7 @@ class HttpClientService : IService() {
      */
     suspend fun playWav(data: List<Byte>): HttpClientResult<String> {
         logger.d { "playWav dataSize: ${data.size}" }
-        return post<String>(audioPlayingUrl) {
+        return post(audioPlayingUrl) {
             setAttributes {
                 contentType(audioContentType)
             }
@@ -191,7 +191,7 @@ class HttpClientService : IService() {
      */
     suspend fun intentHandling(intent: String): HttpClientResult<String> {
         logger.d { "intentHandling intent: $intent" }
-        return post<String>(params.intentHandlingHttpEndpoint) {
+        return post(params.intentHandlingHttpEndpoint) {
             setBody(intent)
         }
     }
@@ -201,7 +201,7 @@ class HttpClientService : IService() {
      */
     suspend fun hassEvent(json: String, intentName: String): HttpClientResult<String> {
         logger.d { "hassEvent json: $json intentName: $intentName" }
-        return post<String>("$hassEventUrl$intentName") {
+        return post("$hassEventUrl$intentName") {
             buildHeaders {
                 hassAuthorization()
                 contentType(jsonContentType)
@@ -216,7 +216,7 @@ class HttpClientService : IService() {
      */
     suspend fun hassIntent(intentJson: String): HttpClientResult<String> {
         logger.d { "hassIntent json: $intentJson" }
-        return post<String>(hassIntentUrl) {
+        return post(hassIntentUrl) {
             buildHeaders {
                 hassAuthorization()
                 contentType(jsonContentType)

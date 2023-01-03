@@ -9,6 +9,7 @@ import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
+import org.rhasspy.mobile.services.httpclient.HttpClientResult
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.settings.option.TextToSpeechOption
@@ -43,9 +44,16 @@ open class TextToSpeechService : IService() {
         logger.d { "textToSpeech sessionId: $sessionId text: $text" }
         when (params.textToSpeechOption) {
             TextToSpeechOption.RemoteHTTP -> {
-                httpClientService.textToSpeech(text)?.also {
-                    serviceMiddleware.action(DialogAction.PlayAudio(Source.HttpApi, it))
+                val result = httpClientService.textToSpeech(text)
+                _serviceState.value = when (result) {
+                    is HttpClientResult.Error -> ServiceState.Error
+                    is HttpClientResult.Success -> ServiceState.Success()
                 }
+                val action = when (result) {
+                    is HttpClientResult.Error -> DialogAction.AsrError(Source.HttpApi)
+                    is HttpClientResult.Success -> DialogAction.PlayAudio(Source.HttpApi, result.data)
+                }
+                serviceMiddleware.action(action)
             }
             TextToSpeechOption.RemoteMQTT -> mqttClientService.say(sessionId, text)
             TextToSpeechOption.Disabled -> {}
