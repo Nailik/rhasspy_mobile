@@ -54,6 +54,8 @@ fun ConfigurationScreen(
         }
     }
 
+    val hasError by viewModel.hasError.collectAsState()
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -69,8 +71,10 @@ fun ConfigurationScreen(
             state = scrollState
         ) {
 
-            stickyHeader {
-                ServiceErrorInformation(viewModel, scrollState)
+            if (hasError) {
+                stickyHeader {
+                    ServiceErrorInformation(viewModel, scrollState)
+                }
             }
 
             item {
@@ -257,7 +261,7 @@ private fun RemoteHermesHttp(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.remoteHermesHTTP,
         secondaryText = "${translate(MR.strings.sslValidation)} ${translate(viewModel.isHttpSSLVerificationEnabled.collectAsState().value.toText())}",
         screen = ConfigurationScreenType.RemoteHermesHttpConfiguration,
-        serviceState = viewModel.isHttpClientHasError.collectAsState().value
+        serviceState = viewModel.httpClientServiceState.collectAsState().value
     )
 
 }
@@ -273,7 +277,7 @@ private fun Webserver(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.webserver,
         secondaryText = viewModel.isHttpServerEnabled.collectAsState().value.toText(),
         screen = ConfigurationScreenType.WebServerConfiguration,
-        serviceState = viewModel.isHttpServerHasError.collectAsState().value
+        serviceState = viewModel.httpServerServiceState.collectAsState().value
     )
 
 }
@@ -289,7 +293,7 @@ private fun Mqtt(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.mqtt,
         secondaryText = if (viewModel.isMQTTConnected.collectAsState().value) MR.strings.connected else MR.strings.notConnected,
         screen = ConfigurationScreenType.MqttConfiguration,
-        serviceState = viewModel.isMqttHasError.collectAsState().value
+        serviceState = viewModel.mqttServiceState.collectAsState().value
     )
 
 }
@@ -308,7 +312,7 @@ private fun WakeWord(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.wakeWord,
         secondaryText = wakeWordValueOption.text,
         screen = ConfigurationScreenType.WakeWordConfiguration,
-        serviceState = viewModel.isWakeWordServiceHasError.collectAsState().value
+        serviceState = viewModel.wakeWordServiceState.collectAsState().value
     )
 
 }
@@ -324,7 +328,7 @@ private fun SpeechToText(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.speechToText,
         secondaryText = viewModel.speechToTextOption.collectAsState().value.text,
         screen = ConfigurationScreenType.SpeechToTextConfiguration,
-        serviceState = viewModel.isSpeechToTextHasError.collectAsState().value
+        serviceState = viewModel.speechToTextServiceState.collectAsState().value
     )
 
 }
@@ -341,7 +345,7 @@ private fun IntentRecognition(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.intentRecognition,
         secondaryText = viewModel.intentRecognitionOption.collectAsState().value.text,
         screen = ConfigurationScreenType.IntentRecognitionConfiguration,
-        serviceState = viewModel.isIntentRecognitionHasError.collectAsState().value
+        serviceState = viewModel.intentRecognitionServiceState.collectAsState().value
     )
 
 }
@@ -357,7 +361,7 @@ private fun TextToSpeech(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.textToSpeech,
         secondaryText = viewModel.textToSpeechOption.collectAsState().value.text,
         screen = ConfigurationScreenType.TextToSpeechConfiguration,
-        serviceState = viewModel.isTextToSpeechHasError.collectAsState().value
+        serviceState = viewModel.textToSpeechServiceState.collectAsState().value
     )
 
 }
@@ -373,7 +377,7 @@ private fun AudioPlaying(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.audioPlaying,
         secondaryText = viewModel.audioPlayingOption.collectAsState().value.text,
         screen = ConfigurationScreenType.AudioPlayingConfiguration,
-        serviceState = viewModel.isAudioPlayingHasError.collectAsState().value
+        serviceState = viewModel.audioPlayingServiceState.collectAsState().value
     )
 
 }
@@ -389,7 +393,7 @@ private fun DialogManagement(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.dialogManagement,
         secondaryText = viewModel.dialogManagementOption.collectAsState().value.text,
         screen = ConfigurationScreenType.DialogManagementConfiguration,
-        serviceState = viewModel.isDialogManagementHasError.collectAsState().value
+        serviceState = viewModel.dialogManagementServiceState.collectAsState().value
     )
 
 }
@@ -405,7 +409,7 @@ private fun IntentHandling(viewModel: ConfigurationScreenViewModel) {
         text = MR.strings.intentHandling,
         secondaryText = viewModel.intentHandlingOption.collectAsState().value.text,
         screen = ConfigurationScreenType.IntentHandlingConfiguration,
-        serviceState = viewModel.isIntentHandlingHasError.collectAsState().value
+        serviceState = viewModel.intentHandlingServiceState.collectAsState().value
     )
 
 }
