@@ -50,9 +50,12 @@ abstract class Application : NativeApplication(), KoinComponent {
             modules(serviceModule, viewModelModule, nativeModule)
         }
 
-        Logger.addLogWriter(CrashlyticsLogWriter(
-            minSeverity = Severity.Info,
-            minCrashSeverity = Severity.Assert))
+        Logger.addLogWriter(
+            CrashlyticsLogWriter(
+                minSeverity = Severity.Info,
+                minCrashSeverity = Severity.Assert
+            )
+        )
         Logger.addLogWriter(FileLogger)
 
         logger.i { "######## Application started ########" }
