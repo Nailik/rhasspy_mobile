@@ -3,19 +3,21 @@ package org.rhasspy.mobile.android.main
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LowPriority
+import androidx.compose.material.icons.filled.PlaylistRemove
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.CustomDivider
@@ -34,6 +36,7 @@ fun LogScreen(viewModel: LogScreenViewModel = get()) {
         modifier = Modifier.fillMaxSize(),
         topBar = { AppBar(viewModel) },
     ) { paddingValues ->
+
         Surface(Modifier.padding(paddingValues)) {
             LogScreenContent(viewModel)
         }
@@ -59,9 +62,24 @@ private fun AppBar(viewModel: LogScreenViewModel) {
  */
 @Composable
 private fun LogScreenContent(viewModel: LogScreenViewModel) {
+    val coroutineScope = rememberCoroutineScope()
+    val scrollState = rememberLazyListState()
     val items by viewModel.logArr.collectAsState()
 
-    LazyColumn(modifier = Modifier.fillMaxHeight()) {
+    if (viewModel.isListAutoscroll.collectAsState().value) {
+        LaunchedEffect(items.size) {
+            coroutineScope.launch {
+                if (items.isNotEmpty()) {
+                    scrollState.animateScrollToItem(items.size - 1)
+                }
+            }
+        }
+    }
+
+    LazyColumn(
+        state = scrollState,
+        modifier = Modifier.fillMaxHeight()
+    ) {
         items(items) { item ->
             LogListElement(item)
             CustomDivider()
@@ -80,6 +98,12 @@ private fun LogScreenActions(viewModel: LogScreenViewModel) {
         modifier = Modifier.padding(start = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        IconButton(onClick = viewModel::toggleListAutoscroll) {
+            Icon(
+                imageVector = if (viewModel.isListAutoscroll.collectAsState().value) Icons.Filled.LowPriority else Icons.Filled.PlaylistRemove,
+                contentDescription = MR.strings.autoscrollList
+            )
+        }
 
         IconButton(onClick = viewModel::shareLogFile) {
             Icon(imageVector = Icons.Filled.Share, contentDescription = MR.strings.share)
@@ -88,7 +112,6 @@ private fun LogScreenActions(viewModel: LogScreenViewModel) {
         IconButton(onClick = viewModel::saveLogFile) {
             Icon(imageVector = Icons.Filled.Save, contentDescription = MR.strings.save)
         }
-
     }
 
 }

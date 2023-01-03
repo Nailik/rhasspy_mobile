@@ -8,9 +8,13 @@ import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.logger.LogElement
+import org.rhasspy.mobile.readOnly
 
 class LogScreenViewModel : ViewModel() {
     val logArr = MutableStateFlow(listOf<LogElement>())
+
+    private val _isListAutoscroll = MutableStateFlow(false)
+    val isListAutoscroll = _isListAutoscroll.readOnly
 
     init {
         //load file into list
@@ -25,11 +29,15 @@ class LogScreenViewModel : ViewModel() {
                 viewModelScope.launch {
                     val list = mutableListOf<LogElement>()
                     list.addAll(logArr.value)
-                    list.add(0, value)
+                    list.add(value)
                     logArr.value = list
                 }
             }
         }
+    }
+
+    fun toggleListAutoscroll() {
+        _isListAutoscroll.value = !_isListAutoscroll.value
     }
 
     fun shareLogFile() = FileLogger.shareLogFile()

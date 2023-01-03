@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.settings
 
+import co.touchlab.kermit.Logger
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.get
@@ -13,6 +14,7 @@ import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.option.IOption
 
 private val settings = Settings()
+private val logger = Logger.withTag("ISetting")
 
 open class ISetting<T>(
     private val key: SettingsEnum,
@@ -51,7 +53,7 @@ open class ISetting<T>(
             else -> serializer?.let {
                 settings.encodeValue(serializer, key.name, newValue)
             } ?: run {
-                //TODO log error throw RuntimeException()
+                logger.a { "save value unsupported type initial: $initial key: ${key.name}" }
             }
         }
     }

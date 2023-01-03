@@ -16,7 +16,6 @@ import kotlin.system.exitProcess
  * holds android application and native functions and provides koin module
  */
 class AndroidApplication : Application() {
-
     private val logger = Logger.withTag("AndroidApplication")
 
     init {
@@ -31,7 +30,7 @@ class AndroidApplication : Application() {
     init {
         //catches all exceptions
         Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
-            logger.e(exception) {
+            logger.a(exception) {
                 "uncaught exception in Thread $thread"
             }
             exitProcess(2)
@@ -59,11 +58,12 @@ class AndroidApplication : Application() {
     }
 
     override suspend fun updateWidget() {
-        val glanceId = GlanceAppWidgetManager(this).getGlanceIds(MicrophoneWidget::class.java).firstOrNull()
+        GlanceAppWidgetManager(this).getGlanceIds(MicrophoneWidget::class.java)
+            .firstOrNull()
+            ?.also {
+                MicrophoneWidget().update(this, it)
 
-        if (glanceId != null) {
-            MicrophoneWidget().update(this, glanceId)
-        }
+            }
     }
 
 }

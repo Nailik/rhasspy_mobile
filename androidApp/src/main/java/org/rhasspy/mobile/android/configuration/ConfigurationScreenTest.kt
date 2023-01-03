@@ -89,10 +89,12 @@ private fun ConfigurationScreenTestList(
         val scrollState = rememberLazyListState()
         val logEventsList by viewModel.logEvents.collectAsState()
 
-        LaunchedEffect(logEventsList.size) {
-            coroutineScope.launch {
-                if (logEventsList.isNotEmpty()) {
-                    scrollState.animateScrollToItem(logEventsList.size - 1)
+        if (viewModel.isListAutoscroll.collectAsState().value) {
+            LaunchedEffect(logEventsList.size) {
+                coroutineScope.launch {
+                    if (logEventsList.isNotEmpty()) {
+                        scrollState.animateScrollToItem(logEventsList.size - 1)
+                    }
                 }
             }
         }

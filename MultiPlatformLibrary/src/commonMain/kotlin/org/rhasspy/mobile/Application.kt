@@ -2,6 +2,7 @@ package org.rhasspy.mobile
 
 import co.touchlab.kermit.ExperimentalKermitApi
 import co.touchlab.kermit.Logger
+import co.touchlab.kermit.Severity
 import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import dev.icerock.moko.resources.desc.StringDesc
 import io.ktor.utils.io.core.*
@@ -29,19 +30,16 @@ import org.rhasspy.mobile.viewmodel.settings.*
 abstract class Application : NativeApplication(), KoinComponent {
     private val logger = Logger.withTag("Application")
 
-    companion object {
+    init {
+        nativeInstance = this
+        instance = this
+    }
 
+    companion object {
         lateinit var nativeInstance: NativeApplication
             private set
         lateinit var instance: Application
             private set
-
-    }
-
-
-    init {
-        nativeInstance = this
-        instance = this
     }
 
     @OptIn(ExperimentalKermitApi::class)
@@ -52,10 +50,12 @@ abstract class Application : NativeApplication(), KoinComponent {
             modules(serviceModule, viewModelModule, nativeModule)
         }
 
-        Logger.addLogWriter(CrashlyticsLogWriter())
+        Logger.addLogWriter(CrashlyticsLogWriter(
+            minSeverity = Severity.Info,
+            minCrashSeverity = Severity.Assert))
         Logger.addLogWriter(FileLogger)
 
-        logger.a { "######## Application started ########" }
+        logger.i { "######## Application started ########" }
 
         setCrashlyticsCollectionEnabled(AppSetting.isCrashlyticsEnabled.value)
 

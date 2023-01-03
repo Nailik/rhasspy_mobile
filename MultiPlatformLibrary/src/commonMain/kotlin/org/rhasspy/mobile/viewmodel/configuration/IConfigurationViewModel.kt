@@ -109,7 +109,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
                     viewModelScope.launch {
                         val list = mutableListOf<LogElement>()
                         list.addAll(_logEvents.value)
-                        list.add(0, value)
+                        list.add(value)
                         _logEvents.value = list
                     }
                 }
