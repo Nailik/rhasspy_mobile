@@ -5,8 +5,8 @@ import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 
 class IntentHandlingConfigurationTest : IConfigurationTest() {
 
-    override val serviceState get() = get<RhasspyActionsService>().currentState
-    public fun startTest() {
+    override val serviceState get() = get<RhasspyActionsService>().serviceState
+    fun startTest() {
 
     }
 

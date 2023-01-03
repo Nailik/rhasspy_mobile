@@ -5,8 +5,10 @@ import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
+import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
+import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsService
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.option.TextToSpeechOption
@@ -16,16 +18,16 @@ class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
 
     //test data
     override val testRunner by inject<TextToSpeechConfigurationTest>()
+    override val logType = LogType.RhasspyActionsService
+    override val serviceState = get<RhasspyActionsService>().serviceState
+
     private val _testTextToSpeechText = MutableStateFlow("")
     val testTextToSpeechText = _testTextToSpeechText.readOnly
 
     //unsaved data
-    private val _textToSpeechOption =
-        MutableStateFlow(ConfigurationSetting.textToSpeechOption.value)
-    private val _isUseCustomTextToSpeechHttpEndpoint =
-        MutableStateFlow(ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value)
-    private val _textToSpeechHttpEndpoint =
-        MutableStateFlow(ConfigurationSetting.textToSpeechHttpEndpoint.value)
+    private val _textToSpeechOption = MutableStateFlow(ConfigurationSetting.textToSpeechOption.value)
+    private val _isUseCustomTextToSpeechHttpEndpoint = MutableStateFlow(ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value)
+    private val _textToSpeechHttpEndpoint = MutableStateFlow(ConfigurationSetting.textToSpeechHttpEndpoint.value)
 
     //unsaved ui data
     val textToSpeechOption = _textToSpeechOption.readOnly
@@ -44,19 +46,12 @@ class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
     val isUseCustomTextToSpeechHttpEndpoint = _isUseCustomTextToSpeechHttpEndpoint.readOnly
     val isTextToSpeechHttpEndpointChangeEnabled = isUseCustomTextToSpeechHttpEndpoint
 
-    override val isTestingEnabled =
-        _textToSpeechOption.mapReadonlyState { it != TextToSpeechOption.Disabled }
+    override val isTestingEnabled = _textToSpeechOption.mapReadonlyState { it != TextToSpeechOption.Disabled }
 
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_textToSpeechOption, ConfigurationSetting.textToSpeechOption.data),
-        combineStateNotEquals(
-            _isUseCustomTextToSpeechHttpEndpoint,
-            ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.data
-        ),
-        combineStateNotEquals(
-            _textToSpeechHttpEndpoint,
-            ConfigurationSetting.textToSpeechHttpEndpoint.data
-        )
+        combineStateNotEquals(_isUseCustomTextToSpeechHttpEndpoint, ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.data),
+        combineStateNotEquals(_textToSpeechHttpEndpoint, ConfigurationSetting.textToSpeechHttpEndpoint.data)
     )
 
     //show endpoint settings
@@ -92,8 +87,7 @@ class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
      */
     override fun onSave() {
         ConfigurationSetting.textToSpeechOption.value = _textToSpeechOption.value
-        ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value =
-            _isUseCustomTextToSpeechHttpEndpoint.value
+        ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value = _isUseCustomTextToSpeechHttpEndpoint.value
         ConfigurationSetting.textToSpeechHttpEndpoint.value = _textToSpeechHttpEndpoint.value
     }
 
@@ -102,8 +96,7 @@ class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
      */
     override fun discard() {
         _textToSpeechOption.value = ConfigurationSetting.textToSpeechOption.value
-        _isUseCustomTextToSpeechHttpEndpoint.value =
-            ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value
+        _isUseCustomTextToSpeechHttpEndpoint.value = ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value
         _textToSpeechHttpEndpoint.value = ConfigurationSetting.textToSpeechHttpEndpoint.value
     }
 

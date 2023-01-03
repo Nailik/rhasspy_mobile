@@ -8,8 +8,8 @@ import org.rhasspy.mobile.readOnly
 
 abstract class IService : KoinComponent, Closeable {
 
-    private val _currentState = MutableStateFlow<ServiceState>(ServiceState.Pending)
-    val currentState = _currentState.readOnly
+    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
+    val serviceState = _serviceState.readOnly
 
     override fun close() {
         onClose()

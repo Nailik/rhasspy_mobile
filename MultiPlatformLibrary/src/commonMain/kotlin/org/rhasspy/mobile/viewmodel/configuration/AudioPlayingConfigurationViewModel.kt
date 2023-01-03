@@ -5,8 +5,10 @@ import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
+import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
+import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.services.localaudio.LocalAudioServiceParams
 import org.rhasspy.mobile.services.rhasspyactions.RhasspyActionsServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -25,15 +27,14 @@ import org.rhasspy.mobile.viewmodel.configuration.test.AudioPlayingConfiguration
 class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
 
     override val testRunner by inject<AudioPlayingConfigurationTest>()
+    override val logType = LogType.LocalAudioService
+    override val serviceState = get<LocalAudioService>().serviceState
 
     //unsaved data
-    private val _audioPlayingOption =
-        MutableStateFlow(ConfigurationSetting.audioPlayingOption.value)
+    private val _audioPlayingOption = MutableStateFlow(ConfigurationSetting.audioPlayingOption.value)
     private val _audioOutputOption = MutableStateFlow(ConfigurationSetting.audioOutputOption.value)
-    private val _isUseCustomAudioPlayingHttpEndpoint =
-        MutableStateFlow(ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value)
-    private val _audioPlayingHttpEndpoint =
-        MutableStateFlow(ConfigurationSetting.audioPlayingHttpEndpoint.value)
+    private val _isUseCustomAudioPlayingHttpEndpoint = MutableStateFlow(ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value)
+    private val _audioPlayingHttpEndpoint = MutableStateFlow(ConfigurationSetting.audioPlayingHttpEndpoint.value)
 
     //unsaved ui data
     val audioPlayingOption = _audioPlayingOption.readOnly
@@ -52,8 +53,7 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
     val isUseCustomAudioPlayingHttpEndpoint = _isUseCustomAudioPlayingHttpEndpoint.readOnly
     val isAudioPlayingHttpEndpointChangeEnabled = isUseCustomAudioPlayingHttpEndpoint
 
-    override val isTestingEnabled =
-        _audioPlayingOption.mapReadonlyState { it != AudioPlayingOption.Disabled }
+    override val isTestingEnabled = _audioPlayingOption.mapReadonlyState { it != AudioPlayingOption.Disabled }
 
     //if there are unsaved changes
     override val hasUnsavedChanges = combineAny(
@@ -110,8 +110,7 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
     override fun onSave() {
         ConfigurationSetting.audioPlayingOption.value = _audioPlayingOption.value
         ConfigurationSetting.audioOutputOption.value = _audioOutputOption.value
-        ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value =
-            _isUseCustomAudioPlayingHttpEndpoint.value
+        ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value = _isUseCustomAudioPlayingHttpEndpoint.value
         ConfigurationSetting.audioPlayingHttpEndpoint.value = _audioPlayingHttpEndpoint.value
     }
 
@@ -121,8 +120,7 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
     override fun discard() {
         _audioPlayingOption.value = ConfigurationSetting.audioPlayingOption.value
         _audioOutputOption.value = ConfigurationSetting.audioOutputOption.value
-        _isUseCustomAudioPlayingHttpEndpoint.value =
-            ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value
+        _isUseCustomAudioPlayingHttpEndpoint.value = ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value
         _audioPlayingHttpEndpoint.value = ConfigurationSetting.audioPlayingHttpEndpoint.value
     }
 

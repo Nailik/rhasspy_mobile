@@ -6,8 +6,10 @@ import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
+import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.dialog.DialogManagerService
 import org.rhasspy.mobile.services.dialog.DialogManagerServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.option.DialogManagementOption
@@ -22,16 +24,16 @@ import org.rhasspy.mobile.viewmodel.configuration.test.DialogManagementConfigura
 class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
 
     override val testRunner by inject<DialogManagementConfigurationTest>()
+    override val logType = LogType.DialogManagerService
+    override val serviceState = get<DialogManagerService>().serviceState
 
     //unsaved data
-    private val _dialogManagementOption =
-        MutableStateFlow(ConfigurationSetting.dialogManagementOption.value)
+    private val _dialogManagementOption = MutableStateFlow(ConfigurationSetting.dialogManagementOption.value)
 
     //unsaved ui data
     val dialogManagementOption = _dialogManagementOption.readOnly
 
-    override val isTestingEnabled =
-        _dialogManagementOption.mapReadonlyState { it != DialogManagementOption.Disabled }
+    override val isTestingEnabled = _dialogManagementOption.mapReadonlyState { it != DialogManagementOption.Disabled }
 
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(

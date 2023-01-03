@@ -7,10 +7,12 @@ import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
+import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.nativeutils.FileUtils
 import org.rhasspy.mobile.nativeutils.openLink
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.services.mqtt.MqttServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -20,6 +22,8 @@ import org.rhasspy.mobile.viewmodel.configuration.test.MqttConfigurationTest
 class MqttConfigurationViewModel : IConfigurationViewModel() {
 
     override val testRunner by inject<MqttConfigurationTest>()
+    override val logType = LogType.MqttService
+    override val serviceState = get<MqttService>().serviceState
 
     //unsaved data
     private val _isMqttEnabled = MutableStateFlow(ConfigurationSetting.isMqttEnabled.value)
@@ -29,19 +33,13 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
     private val _mqttUserName = MutableStateFlow(ConfigurationSetting.mqttUserName.value)
     private val _mqttPassword = MutableStateFlow(ConfigurationSetting.mqttPassword.value)
     private val _isMqttSSLEnabled = MutableStateFlow(ConfigurationSetting.isMqttSSLEnabled.value)
-    private val _mqttConnectionTimeout =
-        MutableStateFlow(ConfigurationSetting.mqttConnectionTimeout.value)
-    private val _mqttConnectionTimeoutText =
-        MutableStateFlow(ConfigurationSetting.mqttConnectionTimeout.value.toString())
-    private val _mqttKeepAliveInterval =
-        MutableStateFlow(ConfigurationSetting.mqttKeepAliveInterval.value)
-    private val _mqttKeepAliveIntervalText =
-        MutableStateFlow(ConfigurationSetting.mqttKeepAliveInterval.value.toString())
+    private val _mqttConnectionTimeout = MutableStateFlow(ConfigurationSetting.mqttConnectionTimeout.value)
+    private val _mqttConnectionTimeoutText = MutableStateFlow(ConfigurationSetting.mqttConnectionTimeout.value.toString())
+    private val _mqttKeepAliveInterval = MutableStateFlow(ConfigurationSetting.mqttKeepAliveInterval.value)
+    private val _mqttKeepAliveIntervalText = MutableStateFlow(ConfigurationSetting.mqttKeepAliveInterval.value.toString())
     private val _mqttRetryInterval = MutableStateFlow(ConfigurationSetting.mqttRetryInterval.value)
-    private val _mqttRetryIntervalText =
-        MutableStateFlow(ConfigurationSetting.mqttRetryInterval.value.toString())
-    private val _mqttKeyStoreFile =
-        MutableStateFlow(ConfigurationSetting.mqttKeyStoreFile.value)
+    private val _mqttRetryIntervalText = MutableStateFlow(ConfigurationSetting.mqttRetryInterval.value.toString())
+    private val _mqttKeyStoreFile = MutableStateFlow(ConfigurationSetting.mqttKeyStoreFile.value)
 
     //unsaved ui data
     val isMqttEnabled = _isMqttEnabled.readOnly
@@ -68,14 +66,8 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
         combineStateNotEquals(_mqttUserName, ConfigurationSetting.mqttUserName.data),
         combineStateNotEquals(_mqttPassword, ConfigurationSetting.mqttPassword.data),
         combineStateNotEquals(_isMqttSSLEnabled, ConfigurationSetting.isMqttSSLEnabled.data),
-        combineStateNotEquals(
-            _mqttConnectionTimeout,
-            ConfigurationSetting.mqttConnectionTimeout.data
-        ),
-        combineStateNotEquals(
-            _mqttKeepAliveInterval,
-            ConfigurationSetting.mqttKeepAliveInterval.data
-        ),
+        combineStateNotEquals(_mqttConnectionTimeout, ConfigurationSetting.mqttConnectionTimeout.data),
+        combineStateNotEquals(_mqttKeepAliveInterval, ConfigurationSetting.mqttKeepAliveInterval.data),
         combineStateNotEquals(_mqttRetryInterval, ConfigurationSetting.mqttRetryInterval.data)
     )
 

@@ -305,6 +305,8 @@
     <string name="keyStorePassword">KeyStore Password</string>
     <string name="keyStoreKeyAlias">Key Alias</string>
     <string name="keyStoreKeyPassword">Key Password</string>
+    <string name="filterList">filter List</string>
+    <string name="autoscrollList">autoscroll List</string>
     <!-- not translatable -->
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>

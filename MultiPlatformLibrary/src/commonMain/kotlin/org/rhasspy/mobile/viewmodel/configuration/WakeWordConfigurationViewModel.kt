@@ -5,9 +5,11 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
+import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.nativeutils.FileUtils
 import org.rhasspy.mobile.nativeutils.openLink
 import org.rhasspy.mobile.services.udp.UdpServiceParams
+import org.rhasspy.mobile.services.wakeword.WakeWordService
 import org.rhasspy.mobile.services.wakeword.WakeWordServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.option.PorcupineKeywordOption
@@ -21,7 +23,8 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
 
     //use get to fix issues where instance dies because udp socket causes thread exception
     override val testRunner get() = get<WakeWordConfigurationTest>()
-
+    override val logType = LogType.WakeWordService
+    override val serviceState = get<WakeWordService>().serviceState
     data class PorcupineCustomKeywordUi(
         val keyword: PorcupineCustomKeyword,
         val deleted: Boolean = false
@@ -29,25 +32,20 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
 
     //unsaved data
     private val _wakeWordOption = MutableStateFlow(ConfigurationSetting.wakeWordOption.value)
-    private val _wakeWordPorcupineAccessToken =
-        MutableStateFlow(ConfigurationSetting.wakeWordPorcupineAccessToken.value)
-    private val _wakeWordPorcupineKeywordDefaultOptions =
-        MutableStateFlow(ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value)
-    private val _wakeWordPorcupineKeywordCustomOptions =
-        MutableStateFlow(ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value
-            .map { PorcupineCustomKeywordUi(it) })
-    private val _wakeWordPorcupineKeywordCustomOptionsNormal =
-        _wakeWordPorcupineKeywordCustomOptions.mapReadonlyState { options ->
+    private val _wakeWordPorcupineAccessToken = MutableStateFlow(ConfigurationSetting.wakeWordPorcupineAccessToken.value)
+    private val _wakeWordPorcupineKeywordDefaultOptions = MutableStateFlow(ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value)
+    private val _wakeWordPorcupineKeywordCustomOptions = MutableStateFlow(ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value
+        .map { PorcupineCustomKeywordUi(it) })
+    private val _wakeWordPorcupineKeywordCustomOptionsNormal = _wakeWordPorcupineKeywordCustomOptions
+        .mapReadonlyState { options ->
             options.map { it.keyword }.toSet()
         }
 
-    private val _wakeWordPorcupineLanguage =
-        MutableStateFlow(ConfigurationSetting.wakeWordPorcupineLanguage.value)
+    private val _wakeWordPorcupineLanguage = MutableStateFlow(ConfigurationSetting.wakeWordPorcupineLanguage.value)
 
     private val _udpOutputHost = MutableStateFlow(ConfigurationSetting.udpOutputHost.value)
     private val _udpOutputPort = MutableStateFlow(ConfigurationSetting.udpOutputPort.value)
-    private val _udpOutputPortText =
-        MutableStateFlow(ConfigurationSetting.udpOutputPort.value.toString())
+    private val _udpOutputPortText = MutableStateFlow(ConfigurationSetting.udpOutputPort.value.toString())
 
     //unsaved ui data
     val wakeWordOption = _wakeWordOption.readOnly
@@ -87,22 +85,10 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
 
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_wakeWordOption, ConfigurationSetting.wakeWordOption.data),
-        combineStateNotEquals(
-            _wakeWordPorcupineAccessToken,
-            ConfigurationSetting.wakeWordPorcupineAccessToken.data
-        ),
-        combineStateNotEquals(
-            _wakeWordPorcupineKeywordDefaultOptions,
-            ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.data
-        ),
-        combineStateNotEquals(
-            _wakeWordPorcupineKeywordCustomOptionsNormal,
-            ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.data
-        ),
-        combineStateNotEquals(
-            _wakeWordPorcupineLanguage,
-            ConfigurationSetting.wakeWordPorcupineLanguage.data
-        ),
+        combineStateNotEquals(_wakeWordPorcupineAccessToken,ConfigurationSetting.wakeWordPorcupineAccessToken.data),
+        combineStateNotEquals(_wakeWordPorcupineKeywordDefaultOptions, ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.data),
+        combineStateNotEquals(_wakeWordPorcupineKeywordCustomOptionsNormal, ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.data),
+        combineStateNotEquals(_wakeWordPorcupineLanguage, ConfigurationSetting.wakeWordPorcupineLanguage.data),
         combineStateNotEquals(_udpOutputHost, ConfigurationSetting.udpOutputHost.data),
         combineStateNotEquals(_udpOutputPort, ConfigurationSetting.udpOutputPort.data)
     )
@@ -279,12 +265,9 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
      */
     override fun onSave() {
         ConfigurationSetting.wakeWordOption.value = _wakeWordOption.value
-        ConfigurationSetting.wakeWordPorcupineAccessToken.value =
-            _wakeWordPorcupineAccessToken.value
-        ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value =
-            _wakeWordPorcupineKeywordDefaultOptions.value
-        ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value =
-            _wakeWordPorcupineKeywordCustomOptions.value
+        ConfigurationSetting.wakeWordPorcupineAccessToken.value = _wakeWordPorcupineAccessToken.value
+        ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value = _wakeWordPorcupineKeywordDefaultOptions.value
+        ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value = _wakeWordPorcupineKeywordCustomOptions.value
                 .filter { !it.deleted }.map { it.keyword }.toSet()
         ConfigurationSetting.wakeWordPorcupineLanguage.value = _wakeWordPorcupineLanguage.value
         ConfigurationSetting.udpOutputHost.value = _udpOutputHost.value
@@ -302,12 +285,9 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
      */
     override fun discard() {
         _wakeWordOption.value = ConfigurationSetting.wakeWordOption.value
-        _wakeWordPorcupineAccessToken.value =
-            ConfigurationSetting.wakeWordPorcupineAccessToken.value
-        _wakeWordPorcupineKeywordDefaultOptions.value =
-            ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value
-        _wakeWordPorcupineKeywordCustomOptions.value =
-            ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value
+        _wakeWordPorcupineAccessToken.value = ConfigurationSetting.wakeWordPorcupineAccessToken.value
+        _wakeWordPorcupineKeywordDefaultOptions.value = ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value
+        _wakeWordPorcupineKeywordCustomOptions.value = ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value
                 .map { PorcupineCustomKeywordUi(it) }
         _wakeWordPorcupineLanguage.value = ConfigurationSetting.wakeWordPorcupineLanguage.value
         _udpOutputHost.value = ConfigurationSetting.udpOutputHost.value
@@ -347,6 +327,5 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
     override fun runTest() {
         testRunner.runTest()
     }
-
 
 }

@@ -6,21 +6,22 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.*
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import co.touchlab.kermit.Severity
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.CustomDivider
 import org.rhasspy.mobile.android.content.elements.Icon
+import org.rhasspy.mobile.android.content.elements.LogListElement
 import org.rhasspy.mobile.android.content.elements.Text
-import org.rhasspy.mobile.android.content.list.ListElement
-import org.rhasspy.mobile.android.theme.*
 import org.rhasspy.mobile.viewmodel.screens.LogScreenViewModel
 
 /**
@@ -58,51 +59,11 @@ private fun AppBar(viewModel: LogScreenViewModel) {
  */
 @Composable
 private fun LogScreenContent(viewModel: LogScreenViewModel) {
-
-    val items = viewModel.logArr.collectAsState().value
+    val items by viewModel.logArr.collectAsState()
 
     LazyColumn(modifier = Modifier.fillMaxHeight()) {
         items(items) { item ->
-            ListElement(
-                overlineText = {
-                    Row {
-                        Text(
-                            text = item.tag,
-                            modifier = Modifier.weight(1f)
-                        )
-
-                        val color = when (item.severity) {
-                            Severity.Verbose -> MaterialTheme.colorScheme.color_verbose
-                            Severity.Debug -> MaterialTheme.colorScheme.color_debug
-                            Severity.Info -> MaterialTheme.colorScheme.color_info
-                            Severity.Warn -> MaterialTheme.colorScheme.color_warn
-                            Severity.Error -> MaterialTheme.colorScheme.color_error
-                            Severity.Assert -> MaterialTheme.colorScheme.color_assert
-                            else -> MaterialTheme.colorScheme.color_unknown
-                        }
-
-                        Badge(
-                            contentColor = MaterialTheme.colorScheme.inverseOnSurface,
-                            containerColor = color,
-                            modifier = Modifier.wrapContentSize()
-                        ) {
-                            Text(
-                                text = item.severity.name,
-                                modifier = Modifier
-                                    .wrapContentSize()
-                                    .padding(4.dp),
-                                textAlign = TextAlign.End
-                            )
-                        }
-                    }
-                },
-                text = {
-                    Text(text = "${item.message}${item.throwable?.let { "\n$it" } ?: run { "" }}")
-                },
-                secondaryText = {
-                    Text(item.time)
-                }
-            )
+            LogListElement(item)
             CustomDivider()
         }
     }

@@ -15,7 +15,6 @@ class LogScreenViewModel : ViewModel() {
     init {
         //load file into list
         CoroutineScope(Dispatchers.Default).launch {
-            //TODO try catch if not readable
             val lines = FileLogger.getLines().reversed()
             viewModelScope.launch {
                 logArr.value = lines

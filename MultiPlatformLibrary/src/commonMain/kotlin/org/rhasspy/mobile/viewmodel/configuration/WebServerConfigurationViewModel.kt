@@ -7,10 +7,12 @@ import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
+import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.nativeutils.FileUtils
 import org.rhasspy.mobile.nativeutils.openLink
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.services.webserver.WebServerServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.types.FileType
@@ -19,23 +21,18 @@ import org.rhasspy.mobile.viewmodel.configuration.test.WebServerConfigurationTes
 class WebServerConfigurationViewModel : IConfigurationViewModel() {
 
     override val testRunner by inject<WebServerConfigurationTest>()
+    override val logType = LogType.WebServerService
+    override val serviceState = get<WebServerService>().serviceState
 
     //unsaved data
-    private val _isHttpServerEnabled =
-        MutableStateFlow(ConfigurationSetting.isHttpServerEnabled.value)
+    private val _isHttpServerEnabled = MutableStateFlow(ConfigurationSetting.isHttpServerEnabled.value)
     private val _httpServerPort = MutableStateFlow(ConfigurationSetting.httpServerPort.value)
-    private val _httpServerPortText =
-        MutableStateFlow(ConfigurationSetting.httpServerPort.value.toString())
-    private val _isHttpServerSSLEnabled =
-        MutableStateFlow(ConfigurationSetting.isHttpServerSSLEnabledEnabled.value)
-    private val _httpServerSSLKeyStoreFile =
-        MutableStateFlow(ConfigurationSetting.httpServerSSLKeyStoreFile.value)
-    private val _httpServerSSLKeyStorePassword =
-        MutableStateFlow(ConfigurationSetting.httpServerSSLKeyStorePassword.value)
-    private val _httpServerSSLKeyAlias =
-        MutableStateFlow(ConfigurationSetting.httpServerSSLKeyAlias.value)
-    private val _httpServerSSLKeyPassword =
-        MutableStateFlow(ConfigurationSetting.httpServerSSLKeyPassword.value)
+    private val _httpServerPortText = MutableStateFlow(ConfigurationSetting.httpServerPort.value.toString())
+    private val _isHttpServerSSLEnabled = MutableStateFlow(ConfigurationSetting.isHttpServerSSLEnabledEnabled.value)
+    private val _httpServerSSLKeyStoreFile = MutableStateFlow(ConfigurationSetting.httpServerSSLKeyStoreFile.value)
+    private val _httpServerSSLKeyStorePassword = MutableStateFlow(ConfigurationSetting.httpServerSSLKeyStorePassword.value)
+    private val _httpServerSSLKeyAlias = MutableStateFlow(ConfigurationSetting.httpServerSSLKeyAlias.value)
+    private val _httpServerSSLKeyPassword = MutableStateFlow(ConfigurationSetting.httpServerSSLKeyPassword.value)
 
     //unsaved ui data
     val isHttpServerEnabled = _isHttpServerEnabled.readOnly

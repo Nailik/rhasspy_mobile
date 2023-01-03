@@ -7,29 +7,40 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
 import org.rhasspy.mobile.Application
+import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.koin.serviceModule
+import org.rhasspy.mobile.logger.FileLogger
+import org.rhasspy.mobile.logger.LogElement
+import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTest
 
 abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
-
     private val logger = Logger.withTag("IConfigurationViewModel")
 
     protected abstract val testRunner: IConfigurationTest
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
-    val serviceState = _serviceState.readOnly
+    protected abstract val logType: LogType
 
+    abstract val serviceState: StateFlow<ServiceState>
     abstract val hasUnsavedChanges: StateFlow<Boolean>
     abstract val isTestingEnabled: StateFlow<Boolean>
 
-    private val _isListExpanded = MutableStateFlow(false)
-    val isListExpanded = _isListExpanded.readOnly
+    private val _logEvents = MutableStateFlow(listOf<LogElement>())
+    val logEvents: StateFlow<List<LogElement>>
+        get() = combineState(_logEvents, _isListFiltered) { events, filtered ->
+            if (filtered) {
+                events.filter { it.tag == logType.name }
+            } else {
+                events
+            }
+        }
 
     private val _isListFiltered = MutableStateFlow(false)
     val isListFiltered = _isListFiltered.readOnly
@@ -42,12 +53,6 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     val isBackPressDisabled = isLoading
 
     private var testScope = CoroutineScope(Dispatchers.Default)
-
-    //TODO filter test list
-
-    fun toggleListExpanded() {
-        _isListExpanded.value = !_isListExpanded.value
-    }
 
     fun toggleListFiltered() {
         _isListFiltered.value = !_isListFiltered.value
@@ -82,12 +87,35 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     //TODO carefully test this works correctly
     @Suppress("RedundantSuspendModifier")
     fun onOpenTestPage() {
+
         _isLoading.value = true
 
         viewModelScope.launch(Dispatchers.Default) {
             testScope = CoroutineScope(Dispatchers.Default)
             //needs to be suspend, else ui thread is blocked
             logger.e { "************* onOpenTestPage ************" }
+
+
+            //load file into list
+            testScope.launch(Dispatchers.Default) {
+                val lines = FileLogger.getLines().reversed()
+                viewModelScope.launch {
+                    _logEvents.value = lines
+                }
+
+                //TODO stop collection?
+                //collect new log
+                FileLogger.flow.collectIndexed { _, value ->
+                    viewModelScope.launch {
+                        val list = mutableListOf<LogElement>()
+                        list.addAll(_logEvents.value)
+                        list.add(0, value)
+                        _logEvents.value = list
+                    }
+                }
+            }
+
+
             Application.instance.startTest()
             initializeTestParams()
 

@@ -10,7 +10,7 @@ import org.rhasspy.mobile.settings.option.TextToSpeechOption
 
 class RemoteHermesHttpConfigurationTest : IConfigurationTest() {
 
-    override val serviceState get() = get<HttpClientService>().currentState
+    override val serviceState get() = get<HttpClientService>().serviceState
 
     fun startTest() {
         val client = get<HttpClientService>()

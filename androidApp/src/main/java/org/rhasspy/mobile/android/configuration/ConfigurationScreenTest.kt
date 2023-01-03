@@ -4,22 +4,23 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.StringResource
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.ServiceState
+import org.rhasspy.mobile.android.content.elements.CustomDivider
 import org.rhasspy.mobile.android.content.elements.Icon
+import org.rhasspy.mobile.android.content.elements.LogListElement
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.main.LocalConfigurationNavController
 import org.rhasspy.mobile.android.testTag
@@ -86,15 +87,15 @@ private fun ConfigurationScreenTestList(
     Column(modifier = modifier) {
         val coroutineScope = rememberCoroutineScope()
         val scrollState = rememberLazyListState()
+        val logEventsList by viewModel.logEvents.collectAsState()
 
-        /* todo log output
-        LaunchedEffect(eventsList.size) {
+        LaunchedEffect(logEventsList.size) {
             coroutineScope.launch {
-                if (eventsList.isNotEmpty()) {
-                    scrollState.animateScrollToItem(eventsList.size - 1)
+                if (logEventsList.isNotEmpty()) {
+                    scrollState.animateScrollToItem(logEventsList.size - 1)
                 }
             }
-        }*/
+        }
 
         LazyColumn(
             state = scrollState,
@@ -109,11 +110,10 @@ private fun ConfigurationScreenTestList(
                 )
             }
 
-            /*
-            items(eventsList) { item ->
-                EventListItem(item)
+            items(logEventsList) { item ->
+                LogListElement(item)
+                CustomDivider()
             }
-             */
         }
 
         if (content != null) {
@@ -160,22 +160,16 @@ private fun AppBar(
             )
         },
         actions = {
-            IconButton(onClick = viewModel::toggleListExpanded) {
-                Icon(
-                    imageVector = if (viewModel.isListExpanded.collectAsState().value) Icons.Filled.Compress else Icons.Filled.Expand,
-                    contentDescription = MR.strings.share
-                )
-            }
             IconButton(onClick = viewModel::toggleListFiltered) {
                 Icon(
                     imageVector = if (viewModel.isListFiltered.collectAsState().value) Icons.Filled.FilterListOff else Icons.Filled.FilterList,
-                    contentDescription = MR.strings.share
+                    contentDescription = MR.strings.filterList
                 )
             }
             IconButton(onClick = viewModel::toggleListAutoscroll) {
                 Icon(
                     imageVector = if (viewModel.isListAutoscroll.collectAsState().value) Icons.Filled.LowPriority else Icons.Filled.PlaylistRemove,
-                    contentDescription = MR.strings.share
+                    contentDescription = MR.strings.autoscrollList
                 )
             }
         }

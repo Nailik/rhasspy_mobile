@@ -5,7 +5,7 @@ import org.rhasspy.mobile.services.mqtt.MqttService
 
 class MqttConfigurationTest : IConfigurationTest() {
 
-    override val serviceState get() = get<MqttService>().currentState
+    override val serviceState get() = get<MqttService>().serviceState
     fun startTest() {
         get<MqttService>()
     }

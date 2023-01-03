@@ -5,8 +5,8 @@ import org.rhasspy.mobile.services.dialog.DialogManagerService
 
 class DialogManagementConfigurationTest : IConfigurationTest() {
 
-    override val serviceState get() = get<DialogManagerService>().currentState
-    public fun startTest() {
+    override val serviceState get() = get<DialogManagerService>().serviceState
+    fun startTest() {
 
     }
 

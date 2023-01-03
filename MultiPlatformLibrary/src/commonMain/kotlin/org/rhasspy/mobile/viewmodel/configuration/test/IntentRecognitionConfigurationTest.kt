@@ -13,8 +13,8 @@ import org.rhasspy.mobile.settings.option.IntentRecognitionOption
 
 class IntentRecognitionConfigurationTest : IConfigurationTest() {
 
-    override val serviceState get() = get<RhasspyActionsService>().currentState
-    public fun runTest(text: String) {
+    override val serviceState get() = get<RhasspyActionsService>().serviceState
+    fun runTest(text: String) {
         testScope.launch {
             //await for mqtt
             if (get<RhasspyActionsServiceParams>().intentRecognitionOption == IntentRecognitionOption.RemoteMQTT) {
