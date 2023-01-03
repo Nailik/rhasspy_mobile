@@ -33,6 +33,6 @@ class HomeScreenViewModel : ViewModel(), KoinComponent {
 
     fun toggleSession() = serviceMiddleware.userSessionClick()
 
-    fun togglePlayRecording() = serviceMiddleware.action(Action.PlayRecording) //TODO stop or pause?
+    fun togglePlayRecording() = serviceMiddleware.action(Action.PlayStopRecording)
 
 }

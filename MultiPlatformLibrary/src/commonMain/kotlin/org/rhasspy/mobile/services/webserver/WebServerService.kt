@@ -234,7 +234,7 @@ class WebServerService : IService() {
      * POST to play last recorded voice command
      */
     private fun playRecordingPost(): WebServerResult {
-        serviceMiddleware.action(Action.PlayRecording)
+        serviceMiddleware.action(Action.PlayStopRecording)
         return WebServerResult.Ok
     }
 

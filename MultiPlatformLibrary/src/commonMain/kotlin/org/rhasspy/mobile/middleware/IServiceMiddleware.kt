@@ -30,7 +30,13 @@ abstract class IServiceMiddleware : KoinComponent, Closeable {
     fun action(action: Action) {
         coroutineScope.launch {
             when (action) {
-                is Action.PlayRecording -> localAudioService.playAudio(speechToTextService.speechToTextAudioData)
+                is Action.PlayStopRecording -> {
+                    if (localAudioService.isPlayingState.value) {
+                        localAudioService.stop()
+                    } else {
+                        localAudioService.playAudio(speechToTextService.speechToTextAudioData)
+                    }
+                }
                 is Action.WakeWordError -> mqttService.wakeWordError(action.description)
                 is Action.AppSettingsAction -> {
                     when (action) {

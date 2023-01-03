@@ -2,7 +2,7 @@ package org.rhasspy.mobile.middleware
 
 sealed class Action {
 
-    object PlayRecording : Action()
+    object PlayStopRecording : Action()
 
     data class WakeWordError(val description: String) : Action()
 
