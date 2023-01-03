@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action
@@ -37,7 +38,7 @@ class WakeWordService : IService() {
     private val mqttService by inject<MqttService>()
     private var porcupineWakeWordClient: PorcupineWakeWordClient? = null
 
-    private val recordingService by inject<RecordingService>()
+    private val recordingService = get<RecordingService>() //TODO why does "inject" crash here
 
     private val serviceMiddleware by inject<IServiceMiddleware>()
 
