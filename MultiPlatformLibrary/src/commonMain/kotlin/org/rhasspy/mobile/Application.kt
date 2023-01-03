@@ -7,6 +7,7 @@ import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import dev.icerock.moko.resources.desc.StringDesc
 import io.ktor.utils.io.core.*
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
 import org.koin.core.context.unloadKoinModules
@@ -17,6 +18,8 @@ import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.nativeutils.BackgroundService
 import org.rhasspy.mobile.nativeutils.NativeApplication
 import org.rhasspy.mobile.nativeutils.OverlayPermission
+import org.rhasspy.mobile.services.mqtt.MqttService
+import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.option.MicrophoneOverlaySizeOption
@@ -76,6 +79,7 @@ abstract class Application : NativeApplication(), KoinComponent {
 
         //check if overlay permission is granted
         checkOverlayPermission()
+        startServices()
     }
 
     override suspend fun updateWidgetNative() {
@@ -99,6 +103,7 @@ abstract class Application : NativeApplication(), KoinComponent {
     fun stopTest() {
         reloadServiceModules()
         BackgroundService.start()
+        startServices()
         startOverlay()
     }
 
@@ -118,6 +123,11 @@ abstract class Application : NativeApplication(), KoinComponent {
                 AppSetting.isWakeWordLightIndicationEnabled.value = false
             }
         }
+    }
+
+    private fun startServices() {
+        get<WebServerService>()
+        get<MqttService>()
     }
 
 }
