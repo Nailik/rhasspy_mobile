@@ -19,7 +19,11 @@ actual class AudioPlayer : Closeable {
      * on Finished is called when playing has been finished
      * on Error is called when an playback error occurs
      */
-    actual fun playData(data: List<Byte>, volume: Float, onFinished: (() -> Unit)?, onError: ((exception: Exception?) -> Unit)?) {
+    actual fun playData(data: List<Byte>,
+                        volume: Float,
+                        audioOutputOption: AudioOutputOption,
+                        onFinished: (() -> Unit)?,
+                        onError: ((exception: Exception?) -> Unit)?) {
     }
 
     /**

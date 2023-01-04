@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.settings.option.AudioOutputOption
 import java.io.File
-import java.nio.ByteBuffer
+import java.io.FileOutputStream
 
 
 actual class AudioPlayer : Closeable {
@@ -41,77 +41,28 @@ actual class AudioPlayer : Closeable {
     actual fun playData(
         data: List<Byte>,
         volume: Float,
+        audioOutputOption: AudioOutputOption,
         onFinished: (() -> Unit)?,
         onError: ((exception: Exception?) -> Unit)?
     ) {
-        if (_isPlayingState.value) {
-            logger.e { "AudioPlayer playData already playing data" }
-            onError?.invoke(null)
-            return
-        }
+        val soundFile = File(Application.nativeInstance.cacheDir, "/playData.wav")
+        soundFile.deleteOnExit()
+        val fos = FileOutputStream(soundFile)
+        fos.write(data.toByteArray())
+        fos.close()
 
-        this.onFinished = onFinished
-        _isPlayingState.value = true
-
-        try {
-            logger.v { "start audio stream" }
-
-            //https://stackoverflow.com/questions/13039846/what-do-the-bytes-in-a-wav-file-represent
-            val byteArray = data.toByteArray()
-            //copyOfRange end is exclusive
-
-            //21-22 Audio format code, a 2 byte (16 bit) integer (short in kotlin). 1 = PCM (pulse code modulation).
-            val formatCode = ByteBuffer.wrap(byteArray.copyOfRange(20, 22).reversedArray()).short
-            //23-24 Number of channels as a 2 byte (16 bit) integer (short in kotlin). 1 = mono, 2 = stereo, etc.
-            val channels = ByteBuffer.wrap(byteArray.copyOfRange(22, 24).reversedArray()).short
-            //Sample rate as a 4 byte (32 bit) integer.
-            val sampleRate = ByteBuffer.wrap(byteArray.copyOfRange(24, 28).reversedArray()).int
-            //41-44 The number of bytes of the data section below this
-            val audioDataSize = ByteBuffer.wrap(byteArray.copyOfRange(40, 44).reversedArray()).int / 2 //(pcm)
-
-            audioTrack = AudioTrack(
-                AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_MEDIA)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .build(),
-                AudioFormat.Builder()
-                    .setSampleRate(sampleRate)
-                    .setEncoding(formatCode.toInt())
-                    .setChannelMask(if (channels.toInt() == 1) AudioFormat.CHANNEL_OUT_MONO else AudioFormat.CHANNEL_OUT_STEREO)
-                    .build(),
-                byteArray.size,
-                AudioTrack.MODE_STATIC,
-                AudioManager.AUDIO_SESSION_ID_GENERATE
-            ).apply {
-                notificationMarkerPosition = audioDataSize / channels.toInt() //TODO returns error evaluate?
-
-                setPlaybackPositionUpdateListener(object :
-                    AudioTrack.OnPlaybackPositionUpdateListener {
-
-                    override fun onMarkerReached(p0: AudioTrack?) {
-                        logger.v { "finished playing audio stream" }
-                        _isPlayingState.value = false
-                        onFinished?.invoke()
-                    }
-
-                    override fun onPeriodicNotification(p0: AudioTrack?) {
-                        println(p0?.playbackHeadPosition)
-                        //TODO when playback position doesn't update it's finished
-                    }
-                })
-
-                setVolume(volume)
-
-                write(byteArray, 0, byteArray.size)
-                play()
-                flush()
+        when (audioOutputOption) {
+            AudioOutputOption.Sound -> {
+                playSound(Uri.fromFile(soundFile), MutableStateFlow(volume), onFinished, onError)
             }
-
-
-        } catch (e: Exception) {
-            logger.e(e) { "Exception while playing audio data" }
-            _isPlayingState.value = false
-            onError?.invoke(e)
+            AudioOutputOption.Notification -> {
+                playNotification(
+                    Uri.fromFile(soundFile),
+                    MutableStateFlow(volume),
+                    onFinished,
+                    onError
+                )
+            }
         }
     }
 

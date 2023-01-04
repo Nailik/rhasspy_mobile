@@ -28,6 +28,7 @@ expect class AudioPlayer() : Closeable {
     fun playData(
         data: List<Byte>,
         volume: Float,
+        audioOutputOption: AudioOutputOption,
         onFinished: (() -> Unit)? = null,
         onError: ((exception: Exception?) -> Unit)? = null
     )

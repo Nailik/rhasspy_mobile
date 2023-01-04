@@ -17,13 +17,14 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.ServiceState
-import org.rhasspy.mobile.android.content.elements.FilledTonalButton
 import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.navigation.BottomBarScreenType
 import org.rhasspy.mobile.android.navigation.NavigationParams
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
 
+//TODO fix layout (play recording hidden, landscape shows only microphone button)
 /**
  * Home Screen contains
  *
@@ -186,8 +187,7 @@ private fun PlayRecording(viewModel: HomeScreenViewModel) {
 
     val isPlaying by viewModel.isPlayingRecording.collectAsState()
 
-    FilledTonalButton(
-        modifier = Modifier.fillMaxWidth(),
+    FilledTonalButtonListItem(
         onClick = viewModel::togglePlayRecording,
         enabled = viewModel.isPlayingRecordingEnabled.collectAsState().value,
         icon = if (isPlaying) Icons.Filled.Stop else Icons.Filled.PlayArrow,

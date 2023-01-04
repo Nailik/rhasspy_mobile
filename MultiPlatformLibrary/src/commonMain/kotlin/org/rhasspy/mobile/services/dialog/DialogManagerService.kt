@@ -194,6 +194,7 @@ class DialogManagerService : IService() {
     private suspend fun playAudio(action: DialogAction.PlayAudio) {
         if (isInCorrectState(action, DialogManagerServiceState.HandlingIntent, DialogManagerServiceState.Idle, DialogManagerServiceState.AwaitingWakeWord)) {
 
+            _currentDialogState.value = DialogManagerServiceState.PlayingAudio
             wakeWordService.stopDetection()
             indicationService.onPlayAudio()
             audioPlayingService.playAudio(action.byteArray.toList())

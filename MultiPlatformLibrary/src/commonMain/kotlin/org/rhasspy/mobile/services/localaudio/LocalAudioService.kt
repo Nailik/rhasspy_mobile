@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.services.localaudio
 
+import org.koin.core.component.inject
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.nativeutils.AudioPlayer
@@ -13,6 +14,8 @@ import kotlin.coroutines.suspendCoroutine
 class LocalAudioService : IService() {
     private val logger = LogType.LocalAudioService.logger()
 
+    private val params by inject<LocalAudioServiceParams>()
+
     private val audioPlayer = AudioPlayer()
     val isPlayingState = audioPlayer.isPlayingState
 
@@ -23,23 +26,28 @@ class LocalAudioService : IService() {
     }
 
     suspend fun playAudio(data: List<Byte>): Exception? = suspendCoroutine { continuation ->
-        logger.d { "playAudio ${data.size}" }
-        audioPlayer.playData(
-            data = data,
-            volume = AppSetting.volume.value,
-            onFinished = {
-                logger.d { "onFinished" }
-                continuation.resume(null)
-            },
-            onError = { exception ->
-                exception?.also {
-                    logger.e(it) { "onError" }
-                } ?: run {
-                    logger.e { "onError" }
+        if(AppSetting.isAudioOutputEnabled.value) {
+            logger.d { "playAudio ${data.size}" }
+            audioPlayer.playData(
+                data = data,
+                volume = AppSetting.volume.value,
+                audioOutputOption = params.audioOutputOption,
+                onFinished = {
+                    logger.d { "onFinished" }
+                    continuation.resume(null)
+                },
+                onError = { exception ->
+                    exception?.also {
+                        logger.e(it) { "onError" }
+                    } ?: run {
+                        logger.e { "onError" }
+                    }
+                    continuation.resume(exception ?: Exception())
                 }
-                continuation.resume(exception ?: Exception())
-            }
-        )
+            )
+        } else {
+            continuation.resume(null)
+        }
     }
 
     fun playWakeSound() {
