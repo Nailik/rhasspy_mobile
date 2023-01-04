@@ -214,7 +214,7 @@ class DialogManagerService : IService() {
 
             _currentDialogState.value = DialogManagerServiceState.AwaitingWakeWord
             informMqtt(action)
-            wakeWordService.stopDetection()
+            wakeWordService.startDetection()
 
         }
     }
