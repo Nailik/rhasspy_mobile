@@ -224,7 +224,7 @@ private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
 private fun TestContent(
     viewModel: WakeWordConfigurationViewModel
 ) {
-    RequiresMicrophonePermission(MR.strings.defaultText, viewModel::runTest) { onClick ->
+    RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::runTest) { onClick ->
         FilledTonalButtonListItem(
             text = MR.strings.startRecordAudio,
             onClick = onClick

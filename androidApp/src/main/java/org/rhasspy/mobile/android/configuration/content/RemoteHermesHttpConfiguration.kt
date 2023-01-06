@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.android.configuration.content
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -14,6 +15,7 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
+import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewmodel.configuration.RemoteHermesHttpConfigurationViewModel
 
@@ -84,11 +86,47 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
  * test http connection button
  */
 @Composable
-private fun TestContent(
-    viewModel: RemoteHermesHttpConfigurationViewModel
-) {
-    FilledTonalButtonListItem(
-        text = MR.strings.executeTestHttpConnection,
-        onClick = viewModel::runTest
-    )
+private fun TestContent(viewModel: RemoteHermesHttpConfigurationViewModel) {
+
+    Column {
+
+        if(viewModel.isSpeechToTextTestVisible.collectAsState().value) {
+            RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::runSpeechToTextTest) { onClick ->
+                FilledTonalButtonListItem(
+                    text = if (viewModel.isRecordingAudio.collectAsState().value) MR.strings.stopRecordAudio else MR.strings.startRecordAudio,
+                    onClick = onClick
+                )
+            }
+        }
+
+        if(viewModel.isIntentRecognitionTestVisible.collectAsState().value) {
+            TextFieldListItem(
+                modifier = Modifier.testTag(TestTag.TextToSpeechText),
+                value = viewModel.testIntentRecognitionText.collectAsState().value,
+                onValueChange = viewModel::updateTestIntentRecognitionText,
+                label = MR.strings.textIntentRecognitionText
+            )
+
+            FilledTonalButtonListItem(
+                text = MR.strings.executeIntentRecognition,
+                enabled = viewModel.isIntentRecognitionTestEnabled.collectAsState().value,
+                onClick = viewModel::runIntentRecognitionTest
+            )
+        }
+
+        if(viewModel.isTextToSpeechTestVisible.collectAsState().value){
+            TextFieldListItem(
+                modifier = Modifier.testTag(TestTag.TextToSpeechText),
+                value = viewModel.testTextToSpeechText.collectAsState().value,
+                onValueChange = viewModel::updateTestTextToSpeechText,
+                label = MR.strings.textToSpeechText
+            )
+
+            FilledTonalButtonListItem(
+                text = MR.strings.executeTextToSpeechText,
+                enabled = viewModel.isTextToSpeechTestEnabled.collectAsState().value,
+                onClick = viewModel::runTextToSpeechTest
+            )
+        }
+    }
 }

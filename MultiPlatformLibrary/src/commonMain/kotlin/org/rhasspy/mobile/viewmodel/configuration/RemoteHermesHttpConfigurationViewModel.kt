@@ -4,21 +4,22 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.combineAny
-import org.rhasspy.mobile.combineStateNotEquals
+import org.rhasspy.mobile.*
 import org.rhasspy.mobile.logger.LogType
-import org.rhasspy.mobile.mapReadonlyState
-import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.option.IntentRecognitionOption
+import org.rhasspy.mobile.settings.option.SpeechToTextOption
+import org.rhasspy.mobile.settings.option.TextToSpeechOption
 import org.rhasspy.mobile.viewmodel.configuration.test.RemoteHermesHttpConfigurationTest
 
 class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     override val testRunner by inject<RemoteHermesHttpConfigurationTest>()
     override val logType = LogType.HttpClientService
-
     override val serviceState = get<HttpClientService>().serviceState
+
+    val isRecordingAudio = testRunner.isRecording
 
     //unsaved data
     private val _httpClientServerEndpointHost = MutableStateFlow(ConfigurationSetting.httpClientServerEndpointHost.value)
@@ -34,7 +35,45 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     val httpClientTimeoutText = _httpClientTimeoutText.readOnly
     val isHttpSSLVerificationDisabled = _isHttpSSLVerificationDisabled.readOnly
 
-    override val isTestingEnabled = _httpClientServerEndpointHost.mapReadonlyState { it.isNotBlank() }
+    //test
+    val isSpeechToTextTestVisible = combineState(
+        ConfigurationSetting.speechToTextOption.data,
+        ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.data
+    ) { option, isUseCustomEndpoint ->
+        option == SpeechToTextOption.RemoteHTTP && !isUseCustomEndpoint
+    }
+    val isIntentRecognitionTestVisible = combineState(
+        ConfigurationSetting.intentRecognitionOption.data,
+        ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.data
+    ) { option, isUseCustomEndpoint ->
+        option == IntentRecognitionOption.RemoteHTTP && !isUseCustomEndpoint
+    }
+    val isTextToSpeechTestVisible = combineState(
+        ConfigurationSetting.textToSpeechOption.data,
+        ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.data
+    ) { option, isUseCustomEndpoint ->
+        option == TextToSpeechOption.RemoteHTTP && !isUseCustomEndpoint
+    }
+
+    private val _testIntentRecognitionText = MutableStateFlow("")
+    val testIntentRecognitionText = _testIntentRecognitionText.readOnly
+    val isIntentRecognitionTestEnabled = _testIntentRecognitionText.mapReadonlyState { it.isNotEmpty() }
+
+    private val _testTextToSpeechText = MutableStateFlow("")
+    val testTextToSpeechText = _testTextToSpeechText.readOnly
+    val isTextToSpeechTestEnabled = _testTextToSpeechText.mapReadonlyState { it.isNotEmpty() }
+
+    override val isTestingEnabled = combineState(
+        ConfigurationSetting.speechToTextOption.data,
+        ConfigurationSetting.intentRecognitionOption.data,
+        ConfigurationSetting.textToSpeechOption.data,
+        _httpClientServerEndpointHost
+    ) { speechToTextOption, intentRecognitionOption, textToSpeechOption, host ->
+        host.isNotBlank() &&
+                (speechToTextOption == SpeechToTextOption.RemoteHTTP ||
+                        intentRecognitionOption == IntentRecognitionOption.RemoteHTTP ||
+                        textToSpeechOption == TextToSpeechOption.RemoteHTTP)
+    }
 
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_httpClientServerEndpointHost, ConfigurationSetting.httpClientServerEndpointHost.data),
@@ -67,6 +106,16 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
         _isHttpSSLVerificationDisabled.value = disabled
     }
 
+    //update intent test text
+    fun updateTestIntentRecognitionText(text: String) {
+        _testIntentRecognitionText.value = text
+    }
+
+    //update the test text
+    fun updateTestTextToSpeechText(text: String) {
+        _testTextToSpeechText.value = text
+    }
+
     /**
      * save data configuration
      */
@@ -97,6 +146,10 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
         }
     }
 
-    override fun runTest() = testRunner.startTest()
+    fun runSpeechToTextTest() = testRunner.startSpeechToTextTest()
+
+    fun runIntentRecognitionTest() = testRunner.startIntentRecognitionTest(_testIntentRecognitionText.value)
+
+    fun runTextToSpeechTest() = testRunner.startTextToSpeechTest(_testTextToSpeechText.value)
 
 }

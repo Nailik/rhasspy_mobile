@@ -89,7 +89,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
 
     abstract fun onSave()
 
-    abstract fun runTest()
+    open fun runTest() {}
 
     abstract fun initializeTestParams()
 

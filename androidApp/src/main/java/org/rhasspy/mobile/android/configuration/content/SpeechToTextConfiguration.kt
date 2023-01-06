@@ -116,7 +116,7 @@ private fun SpeechToTextMqtt(viewModel: SpeechToTextConfigurationViewModel) {
 private fun TestContent(
     viewModel: SpeechToTextConfigurationViewModel
 ) {
-    RequiresMicrophonePermission(MR.strings.defaultText, viewModel::runTest) { onClick ->
+    RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::runTest) { onClick ->
         FilledTonalButtonListItem(
             text = if (viewModel.isRecordingAudio.collectAsState().value) MR.strings.stopRecordAudio else MR.strings.startRecordAudio,
             onClick = onClick
