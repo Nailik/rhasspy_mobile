@@ -162,7 +162,7 @@ class WebServerService : IService() {
      * evaluates any call
      */
     private suspend fun evaluateCall(path: WebServerPath, call: ApplicationCall) {
-        logger.d { "evaluateCall ${path.path} ${call.request}" }
+        logger.d { "evaluateCall ${path.path} ${call.parameters}" }
         try {
             val result = when (path) {
                 WebServerPath.ListenForCommand -> listenForCommand()
