@@ -57,7 +57,7 @@ open class AudioPlayingService : IService() {
         when (params.audioPlayingOption) {
             AudioPlayingOption.Local -> {
                 _serviceState.value = localAudioService.playAudio(data)?.let {
-                    ServiceState.Error(it)
+                    ServiceState.Error.Unknown(it)
                 } ?: run {
                     ServiceState.Success()
                 }
@@ -66,14 +66,14 @@ open class AudioPlayingService : IService() {
             AudioPlayingOption.RemoteHTTP -> {
                 val result = httpClientService.playWav(data)
                 _serviceState.value = when (result) {
-                    is HttpClientResult.Error -> ServiceState.Error(result.exception)
+                    is HttpClientResult.Error -> ServiceState.Error.Unknown(result.exception)
                     is HttpClientResult.Success -> ServiceState.Success()
                 }
                 serviceMiddleware.action(DialogAction.PlayFinished(Source.HttpApi))
             }
             AudioPlayingOption.RemoteMQTT -> {
                 _serviceState.value = mqttClientService.playBytes(data)?.let {
-                    ServiceState.Error(Throwable(it.msg))
+                    ServiceState.Error.Unknown(Throwable(it.msg))
                 } ?: run {
                     ServiceState.Success()
                 }
