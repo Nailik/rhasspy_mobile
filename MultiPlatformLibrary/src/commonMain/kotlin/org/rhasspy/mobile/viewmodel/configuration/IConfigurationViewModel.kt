@@ -9,6 +9,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.context.loadKoinModules
@@ -29,6 +32,7 @@ import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTest
 
 abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     private val logger = Logger.withTag("IConfigurationViewModel")
+    private var testStartDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).toString()
 
     protected abstract val testRunner: IConfigurationTest
     protected abstract val logType: LogType
@@ -41,7 +45,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     val logEvents: StateFlow<List<LogElement>>
         get() = combineState(_logEvents, _isListFiltered) { events, filtered ->
             if (filtered) {
-                events.filter { it.tag == logType.name }
+                events.filter { it.tag == logType.name }.filter { it.time >= testStartDate }
             } else {
                 events
             }
@@ -68,7 +72,6 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
         _isListAutoscroll.value = !_isListAutoscroll.value
     }
 
-
     fun save() {
         _isLoading.value = true
 
@@ -90,23 +93,23 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
 
     abstract fun initializeTestParams()
 
-    //TODO carefully test this works correctly
     fun onOpenTestPage() {
         if (isTestRunning.value) {
             return
         }
+        logger.d { "************* start Test ************" }
+
         isTestRunning.value = true
         _isLoading.value = true
+
+        testStartDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).toString()
         //set log type to debug minimum
-        if(AppSetting.logLevel.value > LogLevel.Debug) {
+        if (AppSetting.logLevel.value > LogLevel.Debug) {
             Logger.setMinSeverity(LogLevel.Debug.severity)
         }
 
         viewModelScope.launch(Dispatchers.Default) {
             testScope = CoroutineScope(Dispatchers.Default)
-            //needs to be suspend, else ui thread is blocked
-            logger.d { "************* start Test ************" }
-
 
             //load file into list
             testScope.launch(Dispatchers.Default) {
@@ -115,7 +118,6 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
                     _logEvents.value = lines
                 }
 
-                //TODO stop collection?
                 //collect new log
                 FileLogger.flow.collectIndexed { _, value ->
                     viewModelScope.launch {
@@ -127,7 +129,6 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
                 }
             }
 
-
             Application.instance.startTest()
             get<DialogManagerService> { parametersOf(true) }
             initializeTestParams()
@@ -138,19 +139,18 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    //TODO carefully test this works correctly
     fun stopTest() {
         if (!isTestRunning.value) {
             return
         }
+        logger.d { "************* stopTest ************" }
+
         //reset log level
         Logger.setMinSeverity(AppSetting.logLevel.value.severity)
         _isLoading.value = true
 
         viewModelScope.launch(Dispatchers.Default) {
             testScope.cancel()
-            //needs to be suspend, else ui thread is blocked
-            logger.d { "************* stopTest ************" }
 
             //reload koin modules when test is stopped
             Application.instance.stopTest()
@@ -159,4 +159,5 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
             isTestRunning.value = false
         }
     }
+
 }
