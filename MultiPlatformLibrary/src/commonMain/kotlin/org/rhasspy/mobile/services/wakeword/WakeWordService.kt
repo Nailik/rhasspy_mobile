@@ -9,7 +9,7 @@ import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action
-import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.middleware.ServiceMiddleware
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.nativeutils.PorcupineWakeWordClient
@@ -40,7 +40,7 @@ class WakeWordService : IService() {
 
     private val recordingService = get<RecordingService>() //TODO why does "inject" crash here
 
-    private val serviceMiddleware by inject<IServiceMiddleware>()
+    private val serviceMiddleware by inject<ServiceMiddleware>()
 
     private val _isRecording = MutableStateFlow(false)
     val isRecording = _isRecording.readOnly

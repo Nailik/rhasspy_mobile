@@ -10,7 +10,7 @@ import kotlinx.datetime.Instant
 import org.koin.core.component.inject
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action
-import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.middleware.ServiceMiddleware
 import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.readOnly
@@ -28,7 +28,7 @@ import kotlin.time.Duration.Companion.milliseconds
 class RecordingService : IService() {
     private val logger = LogType.RecordingService.logger()
 
-    private val serviceMiddleware by inject<IServiceMiddleware>()
+    private val serviceMiddleware by inject<ServiceMiddleware>()
     private val audioRecorder by inject<AudioRecorder>()
 
     private var scope = CoroutineScope(Dispatchers.Default)

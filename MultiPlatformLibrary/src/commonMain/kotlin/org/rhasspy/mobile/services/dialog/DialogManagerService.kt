@@ -25,7 +25,7 @@ import kotlin.time.toDuration
 /**
  * The Dialog Manager handles the various states and goes to the next state according to the function that is called
  */
-class DialogManagerService : IService() {
+class DialogManagerService(private val isTestMode: Boolean = false) : IService() {
     private val logger = LogType.DialogManagerService.logger()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
@@ -351,6 +351,11 @@ class DialogManagerService : IService() {
      * checks if dialog is in the correct state and logs output
      */
     private fun isInCorrectState(action: DialogAction, vararg states: DialogManagerServiceState): Boolean {
+        if (isTestMode) {
+            //ignore any state in test mode
+            return true
+        }
+
         val result = when (params.option) {
             //on local option check that state is correct and when from mqtt check session id as well
             DialogManagementOption.Local -> {

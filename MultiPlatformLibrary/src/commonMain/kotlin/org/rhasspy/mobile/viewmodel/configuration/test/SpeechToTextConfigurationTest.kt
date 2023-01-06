@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
-import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.middleware.ServiceMiddleware
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.speechtotext.SpeechToTextService
@@ -32,7 +32,7 @@ class SpeechToTextConfigurationTest : IConfigurationTest() {
 
             //await for mqtt to be started
             val speechToTextService = get<SpeechToTextService>()
-            val middleware = get<IServiceMiddleware>()
+            val middleware = get<ServiceMiddleware>()
 
             if (!isRecording.value) {
                 _isRecording.value = true

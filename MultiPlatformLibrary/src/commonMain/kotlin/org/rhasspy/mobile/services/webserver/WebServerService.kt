@@ -18,7 +18,7 @@ import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action
 import org.rhasspy.mobile.middleware.Action.AppSettingsAction
 import org.rhasspy.mobile.middleware.Action.DialogAction
-import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.middleware.ServiceMiddleware
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.nativeutils.getEngine
@@ -45,7 +45,7 @@ class WebServerService : IService() {
 
     private val params by inject<WebServerServiceParams>()
 
-    private val serviceMiddleware by inject<IServiceMiddleware>()
+    private val serviceMiddleware by inject<ServiceMiddleware>()
 
     private val scope = CoroutineScope(Dispatchers.Default)
     private val audioContentType = ContentType("audio", "wav")

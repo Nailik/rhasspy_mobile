@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
-import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.middleware.ServiceMiddleware
 import org.rhasspy.mobile.services.intentrecognition.IntentRecognitionService
 import org.rhasspy.mobile.services.intentrecognition.IntentRecognitionServiceParams
 import org.rhasspy.mobile.services.mqtt.MqttService
@@ -25,7 +25,7 @@ class IntentRecognitionConfigurationTest : IConfigurationTest() {
                     .first { it }
             }
 
-            val middleware = get<IServiceMiddleware>()
+            val middleware = get<ServiceMiddleware>()
             //TODO     get<RhasspyActionsService>().recognizeIntent(middleware.sessionId, text)
         }
     }

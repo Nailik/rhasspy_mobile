@@ -1,9 +1,7 @@
 package org.rhasspy.mobile.koin
 
 import org.koin.dsl.module
-import org.rhasspy.mobile.middleware.IServiceMiddleware
 import org.rhasspy.mobile.middleware.ServiceMiddleware
-import org.rhasspy.mobile.middleware.ServiceTestMiddleware
 import org.rhasspy.mobile.nativeutils.AudioRecorder
 import org.rhasspy.mobile.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.services.audioplaying.AudioPlayingServiceParams
@@ -65,7 +63,7 @@ val serviceModule = module {
     closeableSingle { AppSettingsService() }
     closeableSingle { IndicationService() }
 
-    closeableSingle { params -> createServiceMiddleware(params.getOrNull() ?: false) }
+    closeableSingle { ServiceMiddleware() }
 
     single { params -> params.getOrNull<LocalAudioServiceParams>() ?: LocalAudioServiceParams() }
     single { params -> params.getOrNull<AudioPlayingServiceParams>() ?: AudioPlayingServiceParams() }
@@ -128,11 +126,4 @@ val viewModelModule = module {
 
 val nativeModule = module {
     closeableSingle { AudioRecorder() }
-}
-
-fun createServiceMiddleware(isTest: Boolean): IServiceMiddleware {
-    return when (isTest) {
-        true -> ServiceTestMiddleware()
-        false -> ServiceMiddleware()
-    }
 }

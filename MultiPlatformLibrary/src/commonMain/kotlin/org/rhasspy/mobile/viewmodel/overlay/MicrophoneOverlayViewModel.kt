@@ -8,7 +8,7 @@ import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.koin.getSafe
 import org.rhasspy.mobile.mapReadonlyState
-import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.middleware.ServiceMiddleware
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.readOnly
@@ -48,7 +48,7 @@ class MicrophoneOverlayViewModel : ViewModel(), KoinComponent {
     }
 
     fun onClick() {
-        getSafe<IServiceMiddleware>()?.userSessionClick()
+        getSafe<ServiceMiddleware>()?.userSessionClick()
     }
 
 }

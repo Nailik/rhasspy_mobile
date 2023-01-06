@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.inject
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action.DialogAction
-import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.middleware.ServiceMiddleware
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.readOnly
@@ -32,7 +32,7 @@ open class AudioPlayingService : IService() {
     private val httpClientService by inject<HttpClientService>()
     private val mqttClientService by inject<MqttService>()
 
-    private val serviceMiddleware by inject<IServiceMiddleware>()
+    private val serviceMiddleware by inject<ServiceMiddleware>()
 
     /**
      * hermes/audioServer/<siteId>/playBytes/<requestId>

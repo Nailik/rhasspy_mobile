@@ -12,7 +12,7 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action.AppSettingsAction
 import org.rhasspy.mobile.middleware.Action.DialogAction
-import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.middleware.ServiceMiddleware
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.mqtt.*
@@ -28,7 +28,7 @@ class MqttService : IService() {
 
     private val params by inject<MqttServiceParams>()
 
-    private val serviceMiddleware by inject<IServiceMiddleware>()
+    private val serviceMiddleware by inject<ServiceMiddleware>()
 
     private var scope = CoroutineScope(Dispatchers.Default)
     private val url = "tcp://${params.mqttHost}:${params.mqttPort}"

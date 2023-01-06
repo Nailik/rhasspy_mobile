@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
-import org.rhasspy.mobile.middleware.IServiceMiddleware
+import org.rhasspy.mobile.middleware.ServiceMiddleware
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.texttospeech.TextToSpeechService
 
@@ -21,7 +21,7 @@ class TextToSpeechConfigurationTest : IConfigurationTest() {
                 .distinctUntilChanged()
                 .first { it }
 
-            val middleware = get<IServiceMiddleware>()
+            val middleware = get<ServiceMiddleware>()
             //TODO val result = get<RhasspyActionsService>().textToSpeech(middleware.sessionId, text)
             //if (result is ServiceResponse.Success && result.data is ByteArray) {
             //    get<LocalAudioService>().playAudio(result.data.toMutableList())
