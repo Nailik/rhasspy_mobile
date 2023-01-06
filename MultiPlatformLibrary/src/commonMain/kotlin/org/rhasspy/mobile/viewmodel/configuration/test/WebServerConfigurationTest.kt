@@ -7,7 +7,7 @@ import org.rhasspy.mobile.services.webserver.WebServerService
 class WebServerConfigurationTest : IConfigurationTest() {
 
     override val serviceState get() = get<WebServerService>().serviceState
-    fun runTest() {
+    fun runWebServerTest() {
         testScope.launch {
             //start web server
             get<WebServerService>()

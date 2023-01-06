@@ -178,6 +178,6 @@ private fun TestContent(
 ) {
     FilledTonalButtonListItem(
         text = MR.strings.executeStartWebserver,
-        onClick = viewModel::runTest
+        onClick = viewModel::runWebServerTest
     )
 }

@@ -167,6 +167,6 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
         }
     }
 
-    override fun runTest() = testRunner.runTest()
+    fun runWebServerTest() = testRunner.runWebServerTest()
 
 }
