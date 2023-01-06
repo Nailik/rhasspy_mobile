@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.settings
 
+import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.logger.LogLevel
 import org.rhasspy.mobile.settings.option.AudioOutputOption
 import org.rhasspy.mobile.settings.option.MicrophoneOverlaySizeOption
@@ -48,8 +49,9 @@ object AppSetting {
     val customErrorSounds = ISetting(SettingsEnum.CustomErrorSounds, setOf(), StringSetSerializer)
 
     val isCrashlyticsEnabled = ISetting(SettingsEnum.Crashlytics, false)
-    val isShowLogEnabled = ISetting(SettingsEnum.ShowLog, false)
+    val isShowLogEnabled = ISetting(SettingsEnum.ShowLog, Application.instance.isDebug())
     val isLogAudioFramesEnabled = ISetting(SettingsEnum.LogAudioFrames, false)
     val logLevel = ISetting(SettingsEnum.LogLevel, LogLevel.Debug)
+    val isLogAutoscroll = ISetting(SettingsEnum.LogAutoscroll, true)
 
 }

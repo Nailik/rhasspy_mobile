@@ -91,6 +91,8 @@ abstract class Application : NativeApplication(), KoinComponent {
 
     abstract fun stopOverlay()
 
+    abstract fun isDebug(): Boolean
+
     abstract suspend fun updateWidget()
 
     abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)

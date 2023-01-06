@@ -44,6 +44,7 @@ enum class SettingsEnum {
     ShowLog,
     LogAudioFrames,
     LogLevel,
+    LogAutoscroll,
 
     //Configuration Settings
     SiteId,

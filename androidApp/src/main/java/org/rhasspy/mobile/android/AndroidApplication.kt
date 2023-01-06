@@ -70,4 +70,8 @@ class AndroidApplication : Application() {
             }
     }
 
+    override fun isDebug(): Boolean {
+        return BuildConfig.DEBUG
+    }
+
 }

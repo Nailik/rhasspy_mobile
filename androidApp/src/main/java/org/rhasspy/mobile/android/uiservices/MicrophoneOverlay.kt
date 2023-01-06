@@ -140,8 +140,12 @@ object MicrophoneOverlay : KoinComponent {
                     }
                 } else {
                     CoroutineScope(Dispatchers.Main).launch {
-                        overlayWindowManager.removeView(view)
-                        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+                        try {
+                            overlayWindowManager.removeView(view)
+                            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+                        } catch (exception: Exception) {
+                            //remove view may throw not attached to window manager
+                        }
                     }
                 }
             }
