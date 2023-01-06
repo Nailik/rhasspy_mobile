@@ -24,7 +24,6 @@ import org.rhasspy.mobile.android.navigation.NavigationParams
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
 
-//TODO fix layout (play recording hidden, landscape shows only microphone button)
 /**
  * Home Screen contains
  *
@@ -82,12 +81,17 @@ private fun PortraitContent(
 
         ServiceStatusInformation(viewModel)
 
+        Box(
+            modifier = Modifier.weight(1f),){
+
+        }
+
         RequiresMicrophonePermission(
             MR.strings.microphonePermissionInfoRecord,
             viewModel::toggleSession
         ) { onClick ->
             MicrophoneFab(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.fillMaxSize().weight(1f),
                 iconSize = 96.dp,
                 isActionEnabledStateFlow = viewModel.isActionEnabled,
                 isRecordingStateFlow = viewModel.isRecording,

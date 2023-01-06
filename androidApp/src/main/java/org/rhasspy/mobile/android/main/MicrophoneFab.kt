@@ -3,7 +3,6 @@ package org.rhasspy.mobile.android.main
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
@@ -44,7 +43,6 @@ fun MicrophoneFab(
 
     FloatingActionButton(
         modifier = modifier
-            .fillMaxSize()
             .testTag(TestTag.MicrophoneFab)
             .let {
                 if (isShowBorderStateFlow.collectAsState().value) {
