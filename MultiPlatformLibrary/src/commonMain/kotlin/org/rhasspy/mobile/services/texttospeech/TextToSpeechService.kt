@@ -46,7 +46,7 @@ open class TextToSpeechService : IService() {
             TextToSpeechOption.RemoteHTTP -> {
                 val result = httpClientService.textToSpeech(text)
                 _serviceState.value = when (result) {
-                    is HttpClientResult.Error -> ServiceState.Error
+                    is HttpClientResult.Error -> ServiceState.Error(result.exception)
                     is HttpClientResult.Success -> ServiceState.Success()
                 }
                 val action = when (result) {

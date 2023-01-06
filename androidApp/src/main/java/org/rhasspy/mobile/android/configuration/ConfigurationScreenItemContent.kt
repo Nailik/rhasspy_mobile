@@ -163,6 +163,7 @@ private fun EditConfigurationScreen(
                     .fillMaxSize()
             ) {
 
+                //TODO show any information about error?
                 stickyHeader {
                     ServiceState(
                         modifier = Modifier
@@ -317,10 +318,8 @@ private fun BottomAppBar(
 private fun AppBar(title: StringResource, onBackClick: () -> Unit, icon: @Composable () -> Unit) {
 
     TopAppBar(
-        colors = TopAppBarDefaults.smallTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
-                0.dp
-            )
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp)
         ),
         title = {
             Text(

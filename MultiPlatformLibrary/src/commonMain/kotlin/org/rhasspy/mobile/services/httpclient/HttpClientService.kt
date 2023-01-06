@@ -34,11 +34,9 @@ class HttpClientService : IService() {
 
     private val audioContentType = ContentType("audio", "wav")
     private val jsonContentType = ContentType("application", "json")
-    private fun HttpMessageBuilder.hassAuthorization() =
-        this.header("Authorization", "Bearer ${params.intentHandlingHassAccessToken}")
+    private fun HttpMessageBuilder.hassAuthorization() = this.header("Authorization", "Bearer ${params.intentHandlingHassAccessToken}")
 
-    private val isHandleIntentDirectly =
-        params.intentHandlingOption == IntentHandlingOption.WithRecognition
+    private val isHandleIntentDirectly = params.intentHandlingOption == IntentHandlingOption.WithRecognition
 
     private val speechToTextUrl =
         if (params.isUseCustomSpeechToTextHttpEndpoint) {
@@ -78,12 +76,16 @@ class HttpClientService : IService() {
      */
     init {
         logger.d { "initialize" }
+        _serviceState.value = ServiceState.Loading
+
         try {
             //starting
             httpClient = buildClient()
+            _serviceState.value = ServiceState.Success()
         } catch (exception: Exception) {
             //start error
             logger.e(exception) { "error on building client" }
+            _serviceState.value = ServiceState.Error(exception)
         }
     }
 
