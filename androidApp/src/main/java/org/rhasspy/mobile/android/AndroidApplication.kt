@@ -67,7 +67,6 @@ class AndroidApplication : Application() {
             .firstOrNull()
             ?.also {
                 MicrophoneWidget().update(this, it)
-
             }
     }
 

@@ -18,16 +18,11 @@ import org.rhasspy.mobile.services.dialog.DialogManagerServiceState
 class MicrophoneWidgetViewModel : ViewModel(), KoinComponent {
 
     private val dialogManagerServiceState
-        get() = getSafe<DialogManagerService>()?.currentDialogState ?: MutableStateFlow(
-            DialogManagerServiceState.Idle
-        ).readOnly
-    val isShowBorder =
-        MutableStateFlow(true) // dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.AwaitingHotWord }
+        get() = getSafe<DialogManagerService>()?.currentDialogState ?: MutableStateFlow(DialogManagerServiceState.Idle).readOnly
+    val isShowBorder = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.AwaitingWakeWord }
     val isShowMicOn: StateFlow<Boolean> = MicrophonePermission.granted
-    val isRecording =
-        MutableStateFlow(false) // dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
-    val isActionEnabled = dialogManagerServiceState
-        .mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingWakeWord }
+    val isRecording =  dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
+    val isActionEnabled = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingWakeWord }
 
     init {
         viewModelScope.launch {
@@ -35,9 +30,7 @@ class MicrophoneWidgetViewModel : ViewModel(), KoinComponent {
                 viewModelScope.launch {
                     Application.nativeInstance.updateWidgetNative()
                 }
-            }.collect {
-
-            }
+            }.collect {}
         }
     }
 

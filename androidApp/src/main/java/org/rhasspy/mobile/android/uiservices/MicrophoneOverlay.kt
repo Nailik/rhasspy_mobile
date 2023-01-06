@@ -119,9 +119,6 @@ object MicrophoneOverlay : KoinComponent {
         return this
     }
 
-    //stores old value to only react to changes
-    private var shouldBeShownOldValue = false
-
     /**
      * start service, listen to showVisualIndication and show the overlay or remove it when necessary
      */
@@ -133,22 +130,19 @@ object MicrophoneOverlay : KoinComponent {
 
         job = CoroutineScope(Dispatchers.Default).launch {
             viewModel.shouldOverlayBeShown.collect {
-                if (it != shouldBeShownOldValue) {
-                    if (it) {
-                        if (Looper.myLooper() == null) {
-                            Looper.prepare()
-                        }
-                        CoroutineScope(Dispatchers.Main).launch {
-                            overlayWindowManager.addView(view, mParams)
-                            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
-                        }
-                    } else {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            overlayWindowManager.removeView(view)
-                            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-                        }
+                if (it) {
+                    if (Looper.myLooper() == null) {
+                        Looper.prepare()
                     }
-                    shouldBeShownOldValue = it
+                    CoroutineScope(Dispatchers.Main).launch {
+                        overlayWindowManager.addView(view, mParams)
+                        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                    }
+                } else {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        overlayWindowManager.removeView(view)
+                        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+                    }
                 }
             }
         }

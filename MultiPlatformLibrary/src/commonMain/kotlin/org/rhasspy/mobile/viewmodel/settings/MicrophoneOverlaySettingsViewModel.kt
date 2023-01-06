@@ -17,6 +17,7 @@ class MicrophoneOverlaySettingsViewModel : ViewModel() {
     //microphone overlay on/off
     fun selectMicrophoneOverlayOptionSize(option: MicrophoneOverlaySizeOption) {
         AppSetting.microphoneOverlaySizeOption.value = option
+
     }
 
     //microphone overlay in background on/off

@@ -80,6 +80,7 @@ abstract class Application : NativeApplication(), KoinComponent {
         //check if overlay permission is granted
         checkOverlayPermission()
         startServices()
+        startOverlay()
     }
 
     override suspend fun updateWidgetNative() {
