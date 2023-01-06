@@ -13,10 +13,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.inject
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.ServiceState
+import org.rhasspy.mobile.middleware.ServiceState.Error
+import org.rhasspy.mobile.middleware.ServiceState.Error.HttpClientServiceErrorType
+import org.rhasspy.mobile.middleware.ServiceState.Success
 import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.httpclient.HttpClientServiceErrorType.*
 import org.rhasspy.mobile.settings.option.IntentHandlingOption
 
 /**
@@ -81,11 +83,11 @@ class HttpClientService : IService() {
         try {
             //starting
             httpClient = buildClient()
-            _serviceState.value = ServiceState.Success()
+            _serviceState.value = Success()
         } catch (exception: Exception) {
             //start error
             logger.e(exception) { "error on building client" }
-            _serviceState.value = ServiceState.Error(exception)
+            _serviceState.value = Error.Unknown(exception)
         }
     }
 
@@ -243,20 +245,20 @@ class HttpClientService : IService() {
                     logger.d { "post result data: $result" }
                 }
 
-                _serviceState.value = ServiceState.Success(result.toString())
+                _serviceState.value = Success(result.toString())
                 return HttpClientResult.Success(result)
 
             } catch (exception: Exception) {
 
                 logger.e(exception) { "post result error" }
-                _serviceState.value = ServiceState.Error(exception)
+                _serviceState.value = mapError(exception)
                 return HttpClientResult.Error(exception)
 
             }
         } ?: run {
 
             logger.a { "post client not initialized" }
-            _serviceState.value = ServiceState.Error(Throwable())
+            _serviceState.value = Error.Unknown(Throwable())
             return HttpClientResult.Error(Exception())
 
         }
@@ -265,24 +267,24 @@ class HttpClientService : IService() {
     /**
      * Evaluate if the Error is a know exception to help the user
      */
-    private fun mapError(exception: Exception): HttpClientServiceErrorType? {
-        return if (exception::class.simpleName == IllegalArgumentException.description) {
-            if (exception.message == InvalidTLSRecordType.description) {
-                InvalidTLSRecordType
+    private fun mapError(exception: Exception): HttpClientServiceErrorType {
+        return if (exception::class.simpleName == "IllegalArgumentException") {
+            if (exception.message == "Invalid TLS record type code: 72") {
+                HttpClientServiceErrorType.InvalidTLSRecordType(exception)
             } else {
-                IllegalArgumentException
+                HttpClientServiceErrorType.IllegalArgumentException(exception)
             }
-        } else if (exception::class.simpleName == UnresolvedAddressException.description) {
-            UnresolvedAddressException
-        } else if (exception::class.simpleName == ConnectException.description) {
-            if (exception.message == ConnectionRefused.description) {
-                ConnectionRefused
+        } else if (exception::class.simpleName == "UnresolvedAddressException") {
+            HttpClientServiceErrorType.UnresolvedAddressException(exception)
+        } else if (exception::class.simpleName == "ConnectException") {
+            if (exception.message == "Connection refused") {
+                HttpClientServiceErrorType.ConnectionRefused(exception)
             } else {
-                ConnectException
+                HttpClientServiceErrorType.ConnectException(exception)
             }
-            UnresolvedAddressException
+            HttpClientServiceErrorType.UnresolvedAddressException(exception)
         } else {
-            null
+            HttpClientServiceErrorType.Unknown(exception)
         }
     }
 
