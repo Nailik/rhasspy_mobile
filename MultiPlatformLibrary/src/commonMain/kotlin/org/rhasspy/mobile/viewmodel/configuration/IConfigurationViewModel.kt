@@ -10,16 +10,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.koin.serviceModule
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.logger.LogElement
+import org.rhasspy.mobile.logger.LogLevel
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.services.dialog.DialogManagerService
+import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTest
 
 abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
@@ -42,10 +47,10 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
             }
         }
 
-    private val _isListFiltered = MutableStateFlow(false)
+    private val _isListFiltered = MutableStateFlow(true)
     val isListFiltered = _isListFiltered.readOnly
 
-    private val _isListAutoscroll = MutableStateFlow(false)
+    private val _isListAutoscroll = MutableStateFlow(true)
     val isListAutoscroll = _isListAutoscroll.readOnly
 
     private val isTestRunning = MutableStateFlow(false)
@@ -86,18 +91,21 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     abstract fun initializeTestParams()
 
     //TODO carefully test this works correctly
-    @Suppress("RedundantSuspendModifier")
     fun onOpenTestPage() {
         if (isTestRunning.value) {
             return
         }
         isTestRunning.value = true
         _isLoading.value = true
+        //set log type to debug minimum
+        if(AppSetting.logLevel.value > LogLevel.Debug) {
+            Logger.setMinSeverity(LogLevel.Debug.severity)
+        }
 
         viewModelScope.launch(Dispatchers.Default) {
             testScope = CoroutineScope(Dispatchers.Default)
             //needs to be suspend, else ui thread is blocked
-            logger.e { "************* onOpenTestPage ************" }
+            logger.d { "************* start Test ************" }
 
 
             //load file into list
@@ -121,6 +129,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
 
 
             Application.instance.startTest()
+            get<DialogManagerService> { parametersOf(true) }
             initializeTestParams()
 
             testRunner.initializeTest()
@@ -130,17 +139,18 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     }
 
     //TODO carefully test this works correctly
-    @Suppress("RedundantSuspendModifier")
     fun stopTest() {
         if (!isTestRunning.value) {
             return
         }
+        //reset log level
+        Logger.setMinSeverity(AppSetting.logLevel.value.severity)
         _isLoading.value = true
 
         viewModelScope.launch(Dispatchers.Default) {
             testScope.cancel()
             //needs to be suspend, else ui thread is blocked
-            logger.e { "************* stopTest ************" }
+            logger.d { "************* stopTest ************" }
 
             //reload koin modules when test is stopped
             Application.instance.stopTest()
