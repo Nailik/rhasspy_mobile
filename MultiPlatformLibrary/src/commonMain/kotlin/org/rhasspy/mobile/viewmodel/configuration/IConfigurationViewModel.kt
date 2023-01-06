@@ -35,7 +35,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     protected abstract val logType: LogType
 
     abstract val serviceState: StateFlow<ServiceState>
-    
+
     abstract val hasUnsavedChanges: StateFlow<Boolean>
     abstract val isTestingEnabled: StateFlow<Boolean>
 
@@ -111,7 +111,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
 
             //load file into list
             testScope.launch(Dispatchers.Default) {
-                val lines = FileLogger.getLines().reversed()
+                val lines = FileLogger.getLines()
                 viewModelScope.launch {
                     _logEvents.value = lines
                 }

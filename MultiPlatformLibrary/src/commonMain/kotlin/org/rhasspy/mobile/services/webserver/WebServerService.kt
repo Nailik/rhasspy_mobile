@@ -57,14 +57,18 @@ class WebServerService : IService() {
      * logs start event
      */
     init {
+        _serviceState.value = ServiceState.Loading
         logger.d { "initialization" }
+
         if (params.isHttpServerEnabled) {
             try {
                 server = buildServer()
                 server.start()
+                _serviceState.value = ServiceState.Success()
             } catch (exception: Exception) {
                 //start error
                 logger.e(exception) { "initialization error" }
+                _serviceState.value = ServiceState.Error.Unknown(exception)
             }
         }
     }
@@ -187,9 +191,11 @@ class WebServerService : IService() {
 
                 }
             }
+            _serviceState.value = ServiceState.Success()
 
         } catch (exception: Exception) {
             logger.e(exception) { "evaluateCall error" }
+            _serviceState.value = ServiceState.Error.Unknown(exception)
         }
     }
 
