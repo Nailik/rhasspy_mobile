@@ -17,7 +17,7 @@ import org.rhasspy.mobile.viewmodel.configuration.test.RemoteHermesHttpConfigura
 class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     override val testRunner by inject<RemoteHermesHttpConfigurationTest>()
     override val logType = LogType.HttpClientService
-    override val serviceState = get<HttpClientService>().serviceState
+    override val serviceState get() = get<HttpClientService>().serviceState
 
     val isRecordingAudio = testRunner.isRecording
 

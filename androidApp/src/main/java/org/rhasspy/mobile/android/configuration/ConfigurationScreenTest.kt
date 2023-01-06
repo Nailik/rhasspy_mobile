@@ -33,15 +33,13 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 @Composable
 fun ConfigurationScreenTest(
     viewModel: IConfigurationViewModel,
-    content: (@Composable () -> Unit)?,
-    onOpenPage: () -> Unit
+    content: (@Composable () -> Unit)?
 ) {
     SetSystemColor(1.dp)
 
     val navController = LocalConfigurationNavController.current
 
     LaunchedEffect(Unit) {
-        onOpenPage.invoke()
         Application.nativeInstance.isAppInBackground.collect {
             if (it) {
                 navController.popBackStack()

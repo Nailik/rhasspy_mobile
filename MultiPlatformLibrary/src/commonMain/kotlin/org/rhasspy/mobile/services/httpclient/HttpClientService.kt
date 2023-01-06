@@ -122,7 +122,7 @@ class HttpClientService : IService() {
      */
     suspend fun speechToText(data: List<Byte>): HttpClientResult<String> {
         logger.d { "speechToText dataSize: ${data.size}" }
-        return post<String>(speechToTextUrl) {
+        return post(speechToTextUrl) {
             setBody(data.toByteArray())
         }
     }
@@ -242,14 +242,23 @@ class HttpClientService : IService() {
                 } else {
                     logger.d { "post result data: $result" }
                 }
+
+                _serviceState.value = ServiceState.Success(result.toString())
                 return HttpClientResult.Success(result)
+
             } catch (exception: Exception) {
+
                 logger.e(exception) { "post result error" }
+                _serviceState.value = ServiceState.Error(exception)
                 return HttpClientResult.Error(exception)
+
             }
         } ?: run {
+
             logger.a { "post client not initialized" }
+            _serviceState.value = ServiceState.Error(Throwable())
             return HttpClientResult.Error(Exception())
+
         }
     }
 

@@ -13,10 +13,8 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
-import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.koin.serviceModule
@@ -26,7 +24,6 @@ import org.rhasspy.mobile.logger.LogLevel
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.readOnly
-import org.rhasspy.mobile.services.dialog.DialogManagerService
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTest
 
@@ -38,6 +35,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     protected abstract val logType: LogType
 
     abstract val serviceState: StateFlow<ServiceState>
+    
     abstract val hasUnsavedChanges: StateFlow<Boolean>
     abstract val isTestingEnabled: StateFlow<Boolean>
 
@@ -93,7 +91,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
 
     abstract fun initializeTestParams()
 
-    fun onOpenTestPage() {
+    fun startTest() {
         if (isTestRunning.value) {
             return
         }
@@ -130,7 +128,6 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
             }
 
             Application.instance.startTest()
-            get<DialogManagerService> { parametersOf(true) }
             initializeTestParams()
 
             testRunner.initializeTest()

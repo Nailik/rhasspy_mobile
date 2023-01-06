@@ -93,8 +93,7 @@ fun ConfigurationScreenItemContent(
                 composable(ConfigurationContentScreens.Test.name) {
                     ConfigurationScreenTest(
                         viewModel = viewModel,
-                        content = testContent,
-                        onOpenPage = viewModel::onOpenTestPage
+                        content = testContent
                     )
                 }
             }
@@ -294,6 +293,7 @@ private fun BottomAppBar(
                         minHeight = 56.0.dp,
                     ),
                 onClick = {
+                    viewModel.startTest()
                     navController.navigate(ConfigurationContentScreens.Test.name)
                 },
                 isEnabled = isTestingEnabled,
