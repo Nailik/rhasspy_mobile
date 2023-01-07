@@ -15,7 +15,11 @@ sealed class Action {
 
     sealed class DialogAction(val source: Source) : Action() {
 
-        class WakeWordDetected(source: Source, val hotWord: String) : DialogAction(source)
+        class WakeWordDetected(source: Source, val wakeWord: String) : DialogAction(source) {
+            override fun toString(): String {
+                return "${super.toString()} wakeWord: $wakeWord"
+            }
+        }
 
         class SilenceDetected(source: Source) : DialogAction(source)
 
@@ -27,19 +31,35 @@ sealed class Action {
 
         class SessionEnded(source: Source) : DialogAction(source)
 
-        class StartListening(source: Source, val sendAudioCaptured: Boolean) : DialogAction(source)
+        class StartListening(source: Source, val sendAudioCaptured: Boolean) : DialogAction(source) {
+            override fun toString(): String {
+                return "${super.toString()} sendAudioCaptured: $sendAudioCaptured"
+            }
+        }
 
         class StopListening(source: Source) : DialogAction(source)
 
-        class AsrTextCaptured(source: Source, val text: String?) : DialogAction(source)
+        class AsrTextCaptured(source: Source, val text: String?) : DialogAction(source) {
+            override fun toString(): String {
+                return "${super.toString()} text: $text"
+            }
+        }
 
         class AsrError(source: Source) : DialogAction(source)
 
-        class IntentRecognitionResult(source: Source, val intentName: String, val intent: String) : DialogAction(source)
+        class IntentRecognitionResult(source: Source, val intentName: String, val intent: String) : DialogAction(source) {
+            override fun toString(): String {
+                return "${super.toString()} intentName: $intentName intent: $intent"
+            }
+        }
 
         class IntentRecognitionError(source: Source) : DialogAction(source)
 
-        class PlayAudio(source: Source, val byteArray: ByteArray) : DialogAction(source)
+        class PlayAudio(source: Source, val byteArray: ByteArray) : DialogAction(source) {
+            override fun toString(): String {
+                return "${super.toString()} byteArray: ${byteArray.size}"
+            }
+        }
 
         class PlayFinished(source: Source) : DialogAction(source)
 

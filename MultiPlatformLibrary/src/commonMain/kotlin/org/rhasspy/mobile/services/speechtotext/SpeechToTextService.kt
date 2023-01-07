@@ -71,6 +71,7 @@ open class SpeechToTextService : IService() {
         logger.d { "endSpeechToText sessionId: $sessionId fromMqtt $fromMqtt" }
         //stop collection
         collector?.cancel()
+        collector = null
         recordingService.toggleSilenceDetectionEnabled(false)
 
         //evaluate result
@@ -98,6 +99,7 @@ open class SpeechToTextService : IService() {
 
         //clear data and start recording
         collector?.cancel()
+        collector = null
         _speechToTextAudioData.clear()
 
         if (params.speechToTextOption != SpeechToTextOption.Disabled) {

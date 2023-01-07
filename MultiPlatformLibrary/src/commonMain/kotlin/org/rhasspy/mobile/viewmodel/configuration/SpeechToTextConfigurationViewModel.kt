@@ -22,7 +22,7 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
     override val logType = LogType.SpeechToTextService
     override val serviceState get() = get<SpeechToTextService>().serviceState
 
-    val isRecordingAudio = testRunner.isRecording
+    val isRecordingAudio get() = testRunner.isRecording
 
     //unsaved data
     private val _speechToTextOption = MutableStateFlow(ConfigurationSetting.speechToTextOption.value)

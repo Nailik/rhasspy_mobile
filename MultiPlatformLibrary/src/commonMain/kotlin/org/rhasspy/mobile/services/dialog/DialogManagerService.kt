@@ -421,7 +421,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
             when (action) {
                 is DialogAction.AsrError -> mqttService.asrError(safeSessionId)
                 is DialogAction.AsrTextCaptured -> mqttService.asrTextCaptured(safeSessionId, action.text)
-                is DialogAction.WakeWordDetected -> mqttService.hotWordDetected(action.hotWord)
+                is DialogAction.WakeWordDetected -> mqttService.hotWordDetected(action.wakeWord)
                 is DialogAction.IntentRecognitionError -> mqttService.intentNotRecognized(safeSessionId)
                 is DialogAction.PlayFinished -> mqttService.playFinished()
                 is DialogAction.SessionEnded -> mqttService.sessionEnded(safeSessionId)
