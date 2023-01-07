@@ -20,8 +20,6 @@ import org.rhasspy.mobile.services.udp.UdpService
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.option.WakeWordOption
 
-//TODO mqtt does not send audio but awaits for message
-//TODO udp should be running always
 /**
  * hot word services listens for hot word, evaluates configuration settings but no states
  *
@@ -96,8 +94,7 @@ class WakeWordService : IService() {
                     logger.a { "start detection but not initialized" }
                 }
             }
-            //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
-            WakeWordOption.MQTT,
+            WakeWordOption.MQTT -> {} //nothing will wait for mqtt message
             WakeWordOption.Udp -> {
                 _isRecording.value = true
                 //collect audio from recorder
@@ -117,8 +114,7 @@ class WakeWordService : IService() {
         }
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {}
-            //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
-            WakeWordOption.MQTT -> { mqttService.audioFrame(data) }
+            WakeWordOption.MQTT -> {} //nothing will wait for mqtt message
             WakeWordOption.Udp -> udpService.streamAudio(data)
             WakeWordOption.Disabled -> {}
         }
