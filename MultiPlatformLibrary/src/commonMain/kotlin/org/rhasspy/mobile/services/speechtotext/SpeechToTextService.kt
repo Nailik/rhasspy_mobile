@@ -19,7 +19,6 @@ import org.rhasspy.mobile.services.recording.RecordingService
 import org.rhasspy.mobile.services.udp.UdpService
 import org.rhasspy.mobile.settings.option.SpeechToTextOption
 
-//TODO add udp audio streaming option
 /**
  * calls actions and returns result
  *

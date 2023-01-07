@@ -43,7 +43,6 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
         }
 
     private val _wakeWordPorcupineLanguage = MutableStateFlow(ConfigurationSetting.wakeWordPorcupineLanguage.value)
-
     private val _wakeWordUdpOutputHost = MutableStateFlow(ConfigurationSetting.wakeWordUdpOutputHost.value)
     private val _wakeWordUdpOutputPort = MutableStateFlow(ConfigurationSetting.wakeWordUdpOutputPort.value)
     private val _wakeWordUdpOutputPortText = MutableStateFlow(ConfigurationSetting.wakeWordUdpOutputPort.value.toString())
