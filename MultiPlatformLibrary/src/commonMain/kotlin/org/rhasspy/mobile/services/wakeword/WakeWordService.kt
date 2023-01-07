@@ -14,7 +14,6 @@ import org.rhasspy.mobile.middleware.Source
 import org.rhasspy.mobile.nativeutils.PorcupineWakeWordClient
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.recording.RecordingService
 import org.rhasspy.mobile.services.udp.UdpService
 import org.rhasspy.mobile.settings.AppSetting
@@ -33,7 +32,6 @@ class WakeWordService : IService() {
 
     private val params by inject<WakeWordServiceParams>()
     private val udpService by inject<UdpService>()
-    private val mqttService by inject<MqttService>()
     private var porcupineWakeWordClient: PorcupineWakeWordClient? = null
 
     private val recordingService by inject<RecordingService>()
