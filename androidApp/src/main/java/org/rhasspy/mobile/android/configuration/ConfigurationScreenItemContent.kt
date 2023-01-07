@@ -23,8 +23,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.icerock.moko.resources.StringResource
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
@@ -186,7 +184,7 @@ private fun EditConfigurationScreen(
  */
 @Composable
 private fun UnsavedBackButtonDialog(
-    onSave: suspend () -> Unit,
+    onSave: (onComplete: () -> Unit) -> Unit,
     onDiscard: () -> Unit,
     onClose: () -> Unit
 ) {
@@ -196,11 +194,8 @@ private fun UnsavedBackButtonDialog(
         onDismissRequest = onClose,
         onSave = {
             onClose.invoke()
-            CoroutineScope(Dispatchers.IO).launch {
-                onSave.invoke()
-                CoroutineScope(Dispatchers.Main).launch {
-                    navController.popBackStack()
-                }
+            onSave.invoke {
+                navController.popBackStack()
             }
         },
         onDiscard = {

@@ -29,9 +29,9 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
     private val _isUseCustomSpeechToTextHttpEndpoint = MutableStateFlow(ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value)
     private val _isUseSpeechToTextMqttSilenceDetection = MutableStateFlow(ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value)
     private val _speechToTextHttpEndpoint = MutableStateFlow(ConfigurationSetting.speechToTextHttpEndpoint.value)
-    private val _speechToTextUdpOutputHost = MutableStateFlow(ConfigurationSetting.wakeWordUdpOutputHost.value)
-    private val _speechToTextUdpOutputPort = MutableStateFlow(ConfigurationSetting.wakeWordUdpOutputPort.value)
-    private val _speechToTextUdpOutputPortText = MutableStateFlow(ConfigurationSetting.wakeWordUdpOutputPort.value.toString())
+    private val _speechToTextUdpOutputHost = MutableStateFlow(ConfigurationSetting.speechToTextUdpOutputHost.value)
+    private val _speechToTextUdpOutputPort = MutableStateFlow(ConfigurationSetting.speechToTextUdpOutputPort.value)
+    private val _speechToTextUdpOutputPortText = MutableStateFlow(ConfigurationSetting.speechToTextUdpOutputPort.value.toString())
 
     //unsaved ui data
     val speechToTextOption = _speechToTextOption.readOnly
