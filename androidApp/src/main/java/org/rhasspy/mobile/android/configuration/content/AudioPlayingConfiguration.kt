@@ -116,11 +116,9 @@ private fun HttpEndpointConfigurationContent(viewModel: AudioPlayingConfiguratio
  * test content, play button
  */
 @Composable
-private fun TestContent(
-    viewModel: AudioPlayingConfigurationViewModel
-) {
+private fun TestContent(viewModel: AudioPlayingConfigurationViewModel) {
     FilledTonalButtonListItem(
         text = MR.strings.executePlayTestAudio,
-        onClick = viewModel::runTest
+        onClick = viewModel::playTestAudio
     )
 }

@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.nativeutils
 
+import dev.icerock.moko.resources.FileResource
 import org.rhasspy.mobile.settings.types.FileType
 
 /**
@@ -11,6 +12,11 @@ expect object FileUtils {
      * open file selection and copy file to specific folder and return selected file name
      */
     suspend fun selectFile(fileType: FileType, subfolder: String? = null): String?
+
+    /**
+     * read data from file
+     */
+    fun readDataFromFile(fileResource: FileResource): ByteArray
 
     /**
      * delete file from local app storage

@@ -171,7 +171,7 @@ class HttpClientService : IService() {
             setAttributes {
                 contentType(audioContentType)
             }
-            setBody(data.toByteArray())
+            setBody(data.toMutableList().toByteArray())
         }
     }
 

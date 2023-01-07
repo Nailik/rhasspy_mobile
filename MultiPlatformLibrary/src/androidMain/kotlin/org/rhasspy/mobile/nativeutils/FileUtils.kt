@@ -2,6 +2,7 @@ package org.rhasspy.mobile.nativeutils
 
 import android.net.Uri
 import android.provider.OpenableColumns
+import dev.icerock.moko.resources.FileResource
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.settings.types.FileType
 import java.io.BufferedInputStream
@@ -35,6 +36,12 @@ actual object FileUtils {
         return null
     }
 
+    /**
+     * read data from file
+     */
+    actual fun readDataFromFile(fileResource: FileResource): ByteArray {
+        return Application.nativeInstance.resources.openRawResource(fileResource.rawResId).readBytes()
+    }
 
     /**
      * delete file from local app storage

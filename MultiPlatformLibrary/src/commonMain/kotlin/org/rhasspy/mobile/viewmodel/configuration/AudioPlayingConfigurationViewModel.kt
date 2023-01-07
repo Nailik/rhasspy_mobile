@@ -151,6 +151,6 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
         }
     }
 
-    override fun runTest() = testRunner.startTest()
+    fun playTestAudio() = testRunner.playTestAudio()
 
 }

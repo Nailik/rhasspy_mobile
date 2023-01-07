@@ -21,7 +21,6 @@ import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.viewmodel.configuration.TextToSpeechConfigurationViewModel
 
-
 /**
  * Content to configure text to speech
  * Drop Down of state
