@@ -113,8 +113,8 @@ abstract class Application : NativeApplication(), KoinComponent {
     }
 
     private fun reloadServiceModules() {
-        unloadKoinModules(serviceModule)
-        loadKoinModules(serviceModule)
+        unloadKoinModules(listOf(serviceModule, viewModelModule))
+        loadKoinModules(listOf(serviceModule, viewModelModule))
     }
 
     private fun checkOverlayPermission() {
