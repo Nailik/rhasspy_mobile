@@ -103,7 +103,7 @@ private fun TestContent(
 
         FilledTonalButtonListItem(
             text = MR.strings.executeIntentRecognition,
-            onClick = viewModel::runTest
+            onClick = viewModel::runIntentRecognition
         )
     }
 }

@@ -74,6 +74,4 @@ class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
         }
     }
 
-    override fun runTest() = testRunner.startTest()
-
 }

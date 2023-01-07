@@ -118,6 +118,6 @@ class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
         }
     }
 
-    override fun runTest() = testRunner.runTest(_testIntentRecognitionText.value)
+    fun runIntentRecognition() = testRunner.runIntentRecognition(_testIntentRecognitionText.value)
 
 }
