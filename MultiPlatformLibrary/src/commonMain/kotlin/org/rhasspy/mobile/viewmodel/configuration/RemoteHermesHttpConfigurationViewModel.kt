@@ -147,7 +147,7 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
         }
     }
 
-    fun runSpeechToTextTest() = testRunner.startSpeechToTextTest()
+    fun toggleRecording() = testRunner.toggleRecording()
 
     fun runIntentRecognitionTest() = testRunner.startIntentRecognitionTest(_testIntentRecognitionText.value)
 

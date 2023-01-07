@@ -20,12 +20,7 @@ abstract class IConfigurationTest : Closeable, KoinComponent {
     }
 
     override fun close() {
-        onClose()
         testScope.cancel()
-    }
-
-    protected open fun onClose() {
-
     }
 
 }

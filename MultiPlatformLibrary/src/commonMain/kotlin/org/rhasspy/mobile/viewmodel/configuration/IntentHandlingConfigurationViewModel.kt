@@ -44,7 +44,7 @@ class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
     val isIntentHandlingHassEvent = _intentHandlingHomeAssistantOption.mapReadonlyState { it == HomeAssistantIntentHandlingOption.Event }
     val isIntentHandlingHassIntent = _intentHandlingHomeAssistantOption.mapReadonlyState { it == HomeAssistantIntentHandlingOption.Intent }
 
-    override val isTestingEnabled = _intentHandlingOption.mapReadonlyState { it != IntentHandlingOption.Disabled }
+    override val isTestingEnabled = _intentHandlingOption.mapReadonlyState { it != IntentHandlingOption.Disabled && it != IntentHandlingOption.WithRecognition }
 
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_intentHandlingOption, ConfigurationSetting.intentHandlingOption.data),
@@ -156,6 +156,6 @@ class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
         }
     }
 
-    override fun runTest() = testRunner.startTest()
+    fun testIntentHandling() = testRunner.handleIntent(_testIntentNameText.value, _testIntentText.value)
 
 }
