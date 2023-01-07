@@ -292,6 +292,7 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
         _wakeWordPorcupineLanguage.value = ConfigurationSetting.wakeWordPorcupineLanguage.value
         _wakeWordUdpOutputHost.value = ConfigurationSetting.wakeWordUdpOutputHost.value
         _wakeWordUdpOutputPort.value = ConfigurationSetting.wakeWordUdpOutputPort.value
+        _wakeWordUdpOutputPortText.value = ConfigurationSetting.wakeWordUdpOutputPort.value.toString()
 
         newFiles.forEach {
             FileUtils.removeFile(FileType.PORCUPINE, null, it)

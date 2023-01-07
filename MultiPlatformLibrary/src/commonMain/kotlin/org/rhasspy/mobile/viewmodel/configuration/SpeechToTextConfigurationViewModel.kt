@@ -119,6 +119,8 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
         ConfigurationSetting.speechToTextOption.value = _speechToTextOption.value
         ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value = _isUseCustomSpeechToTextHttpEndpoint.value
         ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value = _isUseSpeechToTextMqttSilenceDetection.value
+        ConfigurationSetting.speechToTextUdpOutputHost.value = _speechToTextUdpOutputHost.value
+        ConfigurationSetting.speechToTextUdpOutputPort.value = _speechToTextUdpOutputPort.value
     }
 
     /**
@@ -131,6 +133,7 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
         _speechToTextHttpEndpoint.value = ConfigurationSetting.speechToTextHttpEndpoint.value
         _speechToTextUdpOutputHost.value = ConfigurationSetting.speechToTextUdpOutputHost.value
         _speechToTextUdpOutputPort.value = ConfigurationSetting.speechToTextUdpOutputPort.value
+        _speechToTextUdpOutputPortText.value = ConfigurationSetting.speechToTextUdpOutputPort.value.toString()
     }
 
     override fun initializeTestParams() {

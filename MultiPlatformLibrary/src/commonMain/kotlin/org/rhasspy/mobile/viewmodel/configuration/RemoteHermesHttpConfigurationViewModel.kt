@@ -131,6 +131,7 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     override fun discard() {
         _httpClientServerEndpointHost.value = ConfigurationSetting.httpClientServerEndpointHost.value
         _httpClientServerEndpointPort.value = ConfigurationSetting.httpClientServerEndpointPort.value
+        _httpClientServerEndpointPortText.value = ConfigurationSetting.httpClientServerEndpointPort.value.toString()
         _isHttpSSLVerificationDisabled.value = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value
     }
 

@@ -174,6 +174,7 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
         _isMqttEnabled.value = ConfigurationSetting.isMqttEnabled.value
         _mqttHost.value = ConfigurationSetting.mqttHost.value
         _mqttPort.value = ConfigurationSetting.mqttPort.value
+        _mqttPortText.value = ConfigurationSetting.mqttPort.value.toString()
         _mqttUserName.value = ConfigurationSetting.mqttUserName.value
         _mqttPassword.value = ConfigurationSetting.mqttPassword.value
         _isMqttSSLEnabled.value = ConfigurationSetting.isMqttSSLEnabled.value

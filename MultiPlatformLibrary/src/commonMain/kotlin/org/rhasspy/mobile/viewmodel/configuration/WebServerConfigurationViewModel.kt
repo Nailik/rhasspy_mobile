@@ -144,6 +144,7 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
 
         _isHttpServerEnabled.value = ConfigurationSetting.isHttpServerEnabled.value
         _httpServerPort.value = ConfigurationSetting.httpServerPort.value
+        _httpServerPortText.value = ConfigurationSetting.httpServerPort.value.toString()
         _isHttpServerSSLEnabled.value = ConfigurationSetting.isHttpServerSSLEnabledEnabled.value
         _httpServerSSLKeyStoreFile.value = ConfigurationSetting.httpServerSSLKeyStoreFile.value
         _httpServerSSLKeyStorePassword.value = ConfigurationSetting.httpServerSSLKeyStorePassword.value
