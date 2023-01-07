@@ -5,14 +5,13 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
-import org.rhasspy.mobile.middleware.ServiceMiddleware
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.texttospeech.TextToSpeechService
 
 class TextToSpeechConfigurationTest : IConfigurationTest() {
 
     override val serviceState get() = get<TextToSpeechService>().serviceState
-    fun startTest(text: String) {
+    fun startTextToSpeech(text: String) {
         testScope.launch {
             //await for mqtt
             get<MqttService>()
@@ -21,14 +20,8 @@ class TextToSpeechConfigurationTest : IConfigurationTest() {
                 .distinctUntilChanged()
                 .first { it }
 
-            val middleware = get<ServiceMiddleware>()
-            //TODO val result = get<RhasspyActionsService>().textToSpeech(middleware.sessionId, text)
-            //if (result is ServiceResponse.Success && result.data is ByteArray) {
-            //    get<LocalAudioService>().playAudio(result.data.toMutableList())
-            //}
+            get<TextToSpeechService>().textToSpeech("", text)
         }
     }
-
-    override fun onClose() {}
 
 }

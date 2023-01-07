@@ -104,7 +104,7 @@ private fun TestContent(
 
         FilledTonalButtonListItem(
             text = MR.strings.executeTextToSpeechText,
-            onClick = viewModel::runTest
+            onClick = viewModel::startTextToSpeech
         )
     }
 }
