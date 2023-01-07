@@ -90,9 +90,8 @@ private fun IntentRecognitionHTTP(viewModel: IntentRecognitionConfigurationViewM
  * text input and intent recognition execute button
  */
 @Composable
-private fun TestContent(
-    viewModel: IntentRecognitionConfigurationViewModel
-) {
+private fun TestContent(viewModel: IntentRecognitionConfigurationViewModel) {
+
     Column {
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.TextToSpeechText),
@@ -106,4 +105,5 @@ private fun TestContent(
             onClick = viewModel::runIntentRecognition
         )
     }
+
 }

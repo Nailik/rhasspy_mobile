@@ -90,9 +90,8 @@ private fun TextToSpeechHTTP(viewModel: TextToSpeechConfigurationViewModel) {
  * input field and execute button
  */
 @Composable
-private fun TestContent(
-    viewModel: TextToSpeechConfigurationViewModel
-) {
+private fun TestContent(viewModel: TextToSpeechConfigurationViewModel) {
+
     Column {
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.TextToSpeechText),
@@ -106,4 +105,5 @@ private fun TestContent(
             onClick = viewModel::startTextToSpeech
         )
     }
+
 }
