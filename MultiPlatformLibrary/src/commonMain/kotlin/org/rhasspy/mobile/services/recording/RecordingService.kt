@@ -102,12 +102,14 @@ class RecordingService : IService() {
 
     private fun startRecording() {
         logger.d { "startRecording" }
+        _isRecording.value = true
         audioRecorder.startRecording()
     }
 
     private fun stopRecording() {
         isSilenceDetectionEnabled = false
         logger.d { "stopRecording" }
+        _isRecording.value = false
         audioRecorder.stopRecording()
     }
 

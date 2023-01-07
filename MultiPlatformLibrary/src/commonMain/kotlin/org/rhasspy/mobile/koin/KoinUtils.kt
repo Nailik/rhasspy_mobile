@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.koin
 
+import co.touchlab.kermit.Logger
 import io.ktor.utils.io.core.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -36,6 +37,10 @@ inline fun <reified T : Closeable> Module.closeableSingle(
     noinline definition: Definition<T>
 ) {
     single(qualifier, createdAtStart, definition) onClose {
-        it?.close()
+        try {
+            it?.close()
+        } catch (exception: Exception) {
+            Logger.withTag("KoinUtils").a(exception) { "Koin close exception" }
+        }
     }
 }

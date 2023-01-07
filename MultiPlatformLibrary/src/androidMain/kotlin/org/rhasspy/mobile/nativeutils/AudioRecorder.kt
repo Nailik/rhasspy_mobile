@@ -103,19 +103,18 @@ actual class AudioRecorder : Closeable {
      * stop recording
      */
     actual fun stopRecording() {
-        _isRecording.value = false
         logger.v { "stopRecording" }
-        recorder?.stop()
-        recorder?.release()
-        recorder = null
+        if(_isRecording.value) {
+            _isRecording.value = false
+            recorder?.stop()
+        }
     }
 
     /**
      * close audio recorder, releases recorder
      */
     override fun close() {
-        _isRecording.value = false
-        recorder?.stop()
+        stopRecording()
         recorder?.release()
         recorder = null
     }

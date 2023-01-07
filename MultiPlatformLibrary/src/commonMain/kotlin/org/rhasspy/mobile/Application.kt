@@ -113,7 +113,7 @@ abstract class Application : NativeApplication(), KoinComponent {
     }
 
     private fun reloadServiceModules() {
-        unloadKoinModules(listOf(serviceModule, viewModelModule))
+        unloadKoinModules(listOf(viewModelModule, serviceModule))
         loadKoinModules(listOf(serviceModule, viewModelModule))
     }
 

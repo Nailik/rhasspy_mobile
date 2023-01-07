@@ -30,9 +30,11 @@ class SpeechToTextConfigurationTest : IConfigurationTest() {
             }
 
             if (!isRecording.value) {
+                println("not yet recording start")
                 //start recording
                 speechToTextService.startSpeechToText("")
             } else {
+                println("is recording, stop")
                 //stop recording
                 speechToTextService.endSpeechToText("", false)
             }
