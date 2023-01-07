@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
-import org.koin.core.component.inject
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.recording.RecordingService
 import org.rhasspy.mobile.services.speechtotext.SpeechToTextService
@@ -16,7 +15,6 @@ class SpeechToTextConfigurationTest : IConfigurationTest() {
 
     override val serviceState get() = get<SpeechToTextService>().serviceState
     val isRecording get() = get<RecordingService>().isRecording
-    private val speechToTextService by inject<SpeechToTextService>()
 
     fun toggleRecording() {
         testScope.launch {
@@ -32,11 +30,11 @@ class SpeechToTextConfigurationTest : IConfigurationTest() {
             if (!isRecording.value) {
                 println("not yet recording start")
                 //start recording
-                speechToTextService.startSpeechToText("")
+                get<SpeechToTextService>().startSpeechToText("")
             } else {
                 println("is recording, stop")
                 //stop recording
-                speechToTextService.endSpeechToText("", false)
+                get<SpeechToTextService>().endSpeechToText("", false)
             }
         }
     }

@@ -107,6 +107,9 @@ actual class AudioRecorder : Closeable {
         if(_isRecording.value) {
             _isRecording.value = false
             recorder?.stop()
+            //without release audio output sometimes doesn't work after calling start
+            recorder?.release()
+            recorder = null
         }
     }
 
@@ -115,8 +118,6 @@ actual class AudioRecorder : Closeable {
      */
     override fun close() {
         stopRecording()
-        recorder?.release()
-        recorder = null
     }
 
     /**

@@ -1,10 +1,7 @@
 package org.rhasspy.mobile.services.wakeword
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.logger.LogType
@@ -42,6 +39,7 @@ class WakeWordService : IService() {
     private val _isRecording = MutableStateFlow(false)
     val isRecording = _isRecording.readOnly
 
+    private val scope = CoroutineScope(Dispatchers.Default)
     private var recording: Job? = null
 
     /**
@@ -98,7 +96,7 @@ class WakeWordService : IService() {
                 _isRecording.value = true
                 //collect audio from recorder
                 if (recording == null) {
-                    recording = CoroutineScope(Dispatchers.Default).launch {
+                    recording = scope.launch {
                         recordingService.output.collect(::hotWordAudioFrame)
                     }
                 }
@@ -114,7 +112,10 @@ class WakeWordService : IService() {
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {}
             WakeWordOption.MQTT -> {} //nothing will wait for mqtt message
-            WakeWordOption.Udp -> udpService.streamAudio(data)
+            WakeWordOption.Udp -> scope.launch {
+                //needs to be called async else native Audio Recorder stops working
+                udpService.streamAudio(data)
+            }
             WakeWordOption.Disabled -> {}
         }
     }
@@ -135,6 +136,9 @@ class WakeWordService : IService() {
 
     override fun onClose() {
         logger.d { "onClose" }
+        scope.cancel()
+        recording?.cancel()
+        recording = null
         porcupineWakeWordClient?.close()
         porcupineWakeWordClient = null
         udpService.close()

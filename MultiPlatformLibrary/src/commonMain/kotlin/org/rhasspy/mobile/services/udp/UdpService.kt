@@ -44,7 +44,7 @@ class UdpService(host: String, port: Int) : IService() {
         socketAddress = null
     }
 
-    suspend fun streamAudio(data: List<Byte>) {
+    suspend fun streamAudio(data: List<Byte>): Exception? {
         if (AppSetting.isLogAudioFramesEnabled.value) {
             logger.d { "stream audio dataSize: ${data.size}" }
         }
@@ -52,11 +52,17 @@ class UdpService(host: String, port: Int) : IService() {
             try {
                 sendChannel?.send(Datagram(ByteReadPacket(data.toByteArray()), it))
             } catch (exception: Exception) {
+                if (exception::class.simpleName == "JobCancellationException") {
+                    //no error, can happen
+                    return null
+                }
                 logger.e(exception) { "streamAudio error" }
+                return exception
             }
         } ?: run {
-            logger.e { "stream audio socketAddress not initialized" }
+            logger.a { "stream audio socketAddress not initialized" }
         }
+        return null
     }
 
 }

@@ -50,7 +50,7 @@ internal object ConfigurationSetting {
     )
     val wakeWordPorcupineLanguage = ISetting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOption.EN)
     val wakeWordUdpOutputHost = ISetting(SettingsEnum.WakeWordUDPOutputHost, "")
-    val wakeWordUdpOutputPort = ISetting(SettingsEnum.WakeWordUDPOutputPort, 12101)
+    val wakeWordUdpOutputPort = ISetting(SettingsEnum.WakeWordUDPOutputPort, 12333)
 
 
     val dialogManagementOption = ISetting(SettingsEnum.DialogManagementOption, DialogManagementOption.Local)
@@ -72,8 +72,6 @@ internal object ConfigurationSetting {
     val isUseCustomSpeechToTextHttpEndpoint = ISetting(SettingsEnum.CustomSpeechToTextEndpoint, false)
     val isUseSpeechToTextMqttSilenceDetection = ISetting(SettingsEnum.SpeechToTextMqttSilenceDetection, true)
     val speechToTextHttpEndpoint = ISetting(SettingsEnum.SpeechToTextHttpEndpoint, "")
-    val speechToTextUdpOutputHost = ISetting(SettingsEnum.SpeechToTextUDPOutputHost, "")
-    val speechToTextUdpOutputPort = ISetting(SettingsEnum.SpeechToTextUDPOutputPort, 12101)
 
     val intentHandlingOption = ISetting(SettingsEnum.IntentHandlingOption, IntentHandlingOption.Disabled)
     val intentHandlingHttpEndpoint = ISetting(SettingsEnum.IntentHandlingEndpoint, "")

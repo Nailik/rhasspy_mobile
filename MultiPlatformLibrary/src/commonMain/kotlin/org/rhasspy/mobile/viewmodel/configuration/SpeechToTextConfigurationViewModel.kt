@@ -29,9 +29,6 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
     private val _isUseCustomSpeechToTextHttpEndpoint = MutableStateFlow(ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value)
     private val _isUseSpeechToTextMqttSilenceDetection = MutableStateFlow(ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value)
     private val _speechToTextHttpEndpoint = MutableStateFlow(ConfigurationSetting.speechToTextHttpEndpoint.value)
-    private val _speechToTextUdpOutputHost = MutableStateFlow(ConfigurationSetting.speechToTextUdpOutputHost.value)
-    private val _speechToTextUdpOutputPort = MutableStateFlow(ConfigurationSetting.speechToTextUdpOutputPort.value)
-    private val _speechToTextUdpOutputPortText = MutableStateFlow(ConfigurationSetting.speechToTextUdpOutputPort.value.toString())
 
     //unsaved ui data
     val speechToTextOption = _speechToTextOption.readOnly
@@ -48,8 +45,6 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
     val isUseCustomSpeechToTextHttpEndpoint = _isUseCustomSpeechToTextHttpEndpoint.readOnly
     val isUseSpeechToTextMqttSilenceDetection = _isUseSpeechToTextMqttSilenceDetection.readOnly
     val isSpeechToTextHttpEndpointChangeEnabled = isUseCustomSpeechToTextHttpEndpoint
-    val speechToTextUdpOutputHost = _speechToTextUdpOutputHost.readOnly
-    val speechToTextUdpOutputPortText = _speechToTextUdpOutputPortText.readOnly
 
     override val isTestingEnabled = _speechToTextOption.mapReadonlyState { it != SpeechToTextOption.Disabled }
 
@@ -57,9 +52,7 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
         combineStateNotEquals(_speechToTextOption, ConfigurationSetting.speechToTextOption.data),
         combineStateNotEquals(_isUseCustomSpeechToTextHttpEndpoint, ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.data),
         combineStateNotEquals(_isUseSpeechToTextMqttSilenceDetection, ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.data),
-        combineStateNotEquals(_speechToTextHttpEndpoint, ConfigurationSetting.speechToTextHttpEndpoint.data),
-        combineStateNotEquals(_speechToTextUdpOutputHost, ConfigurationSetting.speechToTextUdpOutputHost.data),
-        combineStateNotEquals(_speechToTextUdpOutputPort, ConfigurationSetting.speechToTextUdpOutputPort.data)
+        combineStateNotEquals(_speechToTextHttpEndpoint, ConfigurationSetting.speechToTextHttpEndpoint.data)
     )
 
     //show endpoint settings
@@ -70,11 +63,6 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
     //show mqtt settings
     fun isSpeechToTextMqttSettingsVisible(option: SpeechToTextOption): Boolean {
         return option == SpeechToTextOption.RemoteMQTT
-    }
-
-    //show udp settings
-    fun isSpeechToTextUdpSettingsVisible(option: SpeechToTextOption): Boolean {
-        return option == SpeechToTextOption.Udp
     }
 
     //all options
@@ -100,18 +88,6 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
         _speechToTextHttpEndpoint.value = endpoint
     }
 
-    //edit udp port
-    fun changeUdpOutputPort(port: String) {
-        val text = port.replace("""[-,. ]""".toRegex(), "")
-        _speechToTextUdpOutputPortText.value = text
-        _speechToTextUdpOutputPort.value = text.toIntOrNull() ?: 0
-    }
-
-    //edit udp host
-    fun changeUdpOutputHost(host: String) {
-        _speechToTextUdpOutputHost.value = host
-    }
-
     /**
      * save data configuration
      */
@@ -119,8 +95,6 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
         ConfigurationSetting.speechToTextOption.value = _speechToTextOption.value
         ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value = _isUseCustomSpeechToTextHttpEndpoint.value
         ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value = _isUseSpeechToTextMqttSilenceDetection.value
-        ConfigurationSetting.speechToTextUdpOutputHost.value = _speechToTextUdpOutputHost.value
-        ConfigurationSetting.speechToTextUdpOutputPort.value = _speechToTextUdpOutputPort.value
     }
 
     /**
@@ -131,9 +105,6 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
         _isUseCustomSpeechToTextHttpEndpoint.value = ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value
         _isUseSpeechToTextMqttSilenceDetection.value = ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value
         _speechToTextHttpEndpoint.value = ConfigurationSetting.speechToTextHttpEndpoint.value
-        _speechToTextUdpOutputHost.value = ConfigurationSetting.speechToTextUdpOutputHost.value
-        _speechToTextUdpOutputPort.value = ConfigurationSetting.speechToTextUdpOutputPort.value
-        _speechToTextUdpOutputPortText.value = ConfigurationSetting.speechToTextUdpOutputPort.value.toString()
     }
 
     override fun initializeTestParams() {
@@ -149,8 +120,6 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
             parametersOf(
                 SpeechToTextServiceParams(
                     speechToTextOption = _speechToTextOption.value,
-                    speechToTextUdpOutputHost = _speechToTextUdpOutputHost.value,
-                    speechToTextUdpOutputPort = _speechToTextUdpOutputPort.value
                 )
             )
         }

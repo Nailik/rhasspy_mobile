@@ -3,7 +3,6 @@ package org.rhasspy.mobile.services.speechtotext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.inject
-import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.addWavHeader
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action.DialogAction
@@ -16,7 +15,6 @@ import org.rhasspy.mobile.services.httpclient.HttpClientResult
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.recording.RecordingService
-import org.rhasspy.mobile.services.udp.UdpService
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.option.SpeechToTextOption
 
@@ -29,7 +27,6 @@ open class SpeechToTextService : IService() {
     private val logger = LogType.SpeechToTextService.logger()
 
     private val params by inject<SpeechToTextServiceParams>()
-    private val udpService by inject<UdpService> { parametersOf(params.speechToTextUdpOutputHost, params.speechToTextUdpOutputPort) }
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
     val serviceState = _serviceState.readOnly
@@ -52,7 +49,6 @@ open class SpeechToTextService : IService() {
         scope.cancel()
         collector?.cancel()
         collector = null
-        udpService.close()
     }
 
     /**
@@ -86,7 +82,6 @@ open class SpeechToTextService : IService() {
                 serviceMiddleware.action(action)
             }
             SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) _serviceState.value = mqttClientService.stopListening(sessionId)
-            SpeechToTextOption.Udp -> {}
             SpeechToTextOption.Disabled -> {}
         }
 
@@ -113,7 +108,6 @@ open class SpeechToTextService : IService() {
         _serviceState.value = when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> ServiceState.Success
             SpeechToTextOption.RemoteMQTT -> mqttClientService.startListening(sessionId)
-            SpeechToTextOption.Udp -> ServiceState.Success
             SpeechToTextOption.Disabled -> ServiceState.Disabled
         }
     }
@@ -129,10 +123,6 @@ open class SpeechToTextService : IService() {
                 ServiceState.Success
             }
             SpeechToTextOption.RemoteMQTT -> mqttClientService.audioFrame(data.toMutableList().addWavHeader())
-            SpeechToTextOption.Udp -> {
-                udpService.streamAudio(data.toList())
-                ServiceState.Success
-            }
             SpeechToTextOption.Disabled -> ServiceState.Disabled
         }
     }

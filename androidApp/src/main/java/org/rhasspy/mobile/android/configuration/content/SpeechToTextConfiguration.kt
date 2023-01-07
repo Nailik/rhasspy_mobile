@@ -2,11 +2,9 @@ package org.rhasspy.mobile.android.configuration.content
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
@@ -55,10 +53,6 @@ fun SpeechToTextConfigurationContent(viewModel: SpeechToTextConfigurationViewMod
 
                 if (viewModel.isSpeechToTextMqttSettingsVisible(it)) {
                     SpeechToTextMqtt(viewModel)
-                }
-
-                if (viewModel.isSpeechToTextUdpSettingsVisible(it)) {
-                    UdpSettings(viewModel)
                 }
             }
         }
@@ -114,38 +108,6 @@ private fun SpeechToTextMqtt(viewModel: SpeechToTextConfigurationViewModel) {
     }
 
 }
-
-
-/**
- *  udp host and port
- */
-@Composable
-private fun UdpSettings(viewModel: SpeechToTextConfigurationViewModel) {
-
-    Column {
-
-        //udp host
-        TextFieldListItem(
-            modifier = Modifier.testTag(TestTag.AudioRecordingUdpHost),
-            label = MR.strings.host,
-            value = viewModel.speechToTextUdpOutputHost.collectAsState().value,
-            onValueChange = viewModel::changeUdpOutputHost,
-            isLastItem = false
-        )
-
-        //udp port
-        TextFieldListItem(
-            modifier = Modifier.testTag(TestTag.AudioRecordingUdpPort),
-            label = MR.strings.port,
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            value = viewModel.speechToTextUdpOutputPortText.collectAsState().value,
-            onValueChange = viewModel::changeUdpOutputPort
-        )
-
-    }
-
-}
-
 
 /**
  * microphone button to test speech to text
