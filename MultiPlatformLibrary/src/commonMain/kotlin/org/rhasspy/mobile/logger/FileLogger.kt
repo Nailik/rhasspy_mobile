@@ -72,7 +72,7 @@ object FileLogger : LogWriter() {
             listOf()
         }
     }
-//TODO delete content when corrupted (JsonDecodingException)
+
     /**
      * share the log file
      */
