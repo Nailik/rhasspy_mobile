@@ -1,14 +1,13 @@
 package org.rhasspy.mobile.viewmodel.configuration.test
 
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
-import org.rhasspy.mobile.middleware.ServiceMiddleware
-import org.rhasspy.mobile.readOnly
+import org.koin.core.component.inject
 import org.rhasspy.mobile.services.mqtt.MqttService
+import org.rhasspy.mobile.services.recording.RecordingService
 import org.rhasspy.mobile.services.speechtotext.SpeechToTextService
 import org.rhasspy.mobile.services.speechtotext.SpeechToTextServiceParams
 import org.rhasspy.mobile.settings.option.SpeechToTextOption
@@ -16,8 +15,8 @@ import org.rhasspy.mobile.settings.option.SpeechToTextOption
 class SpeechToTextConfigurationTest : IConfigurationTest() {
 
     override val serviceState get() = get<SpeechToTextService>().serviceState
-    private val _isRecording = MutableStateFlow(false)
-    val isRecording = _isRecording.readOnly
+    val isRecording get() = get<RecordingService>().isRecording
+    val speechToTextService by inject<SpeechToTextService>()
 
     fun toggleRecording() {
         testScope.launch {
@@ -30,29 +29,17 @@ class SpeechToTextConfigurationTest : IConfigurationTest() {
                     .first { it }
             }
 
-            //await for mqtt to be started
-            val speechToTextService = get<SpeechToTextService>()
-            val middleware = get<ServiceMiddleware>()
-
             if (!isRecording.value) {
-                _isRecording.value = true
+                //start recording
                 testScope.launch {
-                    //TODO rhasspyActionsService.startSpeechToText(middleware.sessionId)
+
+                    speechToTextService.startSpeechToText("")
                 }
             } else {
-                _isRecording.value = false
-                //execute
-                testScope.launch {
-                    //TODO  val response = rhasspyActionsService.endSpeechToText(middleware.sessionId, false)
-
-                    //    if (response is ServiceResponse.Success) {
-                    //      println(response.data)
-                    //  }
-                }
+                //stop recording
+                speechToTextService.endSpeechToText("", false)
             }
         }
     }
-
-    override fun onClose() {}
 
 }

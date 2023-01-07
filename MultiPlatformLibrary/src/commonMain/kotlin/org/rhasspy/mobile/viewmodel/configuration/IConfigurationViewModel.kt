@@ -26,6 +26,8 @@ import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTest
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     private val logger = Logger.withTag("IConfigurationViewModel")
@@ -70,17 +72,16 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
         _isListAutoscroll.value = !_isListAutoscroll.value
     }
 
-    fun save() {
+    suspend fun save() = suspendCoroutine { continuation ->
         _isLoading.value = true
 
-        viewModelScope.launch(Dispatchers.Default) {
-            onSave()
+        onSave()
 
-            unloadKoinModules(serviceModule)
-            loadKoinModules(serviceModule)
+        unloadKoinModules(serviceModule)
+        loadKoinModules(serviceModule)
 
-            _isLoading.value = false
-        }
+        continuation.resume(Unit)
+        _isLoading.value = false
     }
 
     abstract fun discard()

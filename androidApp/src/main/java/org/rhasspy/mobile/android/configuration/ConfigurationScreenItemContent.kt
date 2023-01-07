@@ -23,6 +23,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.icerock.moko.resources.StringResource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.ServiceState
@@ -183,7 +186,7 @@ private fun EditConfigurationScreen(
  */
 @Composable
 private fun UnsavedBackButtonDialog(
-    onSave: () -> Unit,
+    onSave: suspend () -> Unit,
     onDiscard: () -> Unit,
     onClose: () -> Unit
 ) {
@@ -192,9 +195,13 @@ private fun UnsavedBackButtonDialog(
     UnsavedChangesDialog(
         onDismissRequest = onClose,
         onSave = {
-            onSave.invoke()
-            navController.popBackStack()
             onClose.invoke()
+            CoroutineScope(Dispatchers.IO).launch {
+                onSave.invoke()
+                CoroutineScope(Dispatchers.Main).launch {
+                    navController.popBackStack()
+                }
+            }
         },
         onDiscard = {
             onDiscard.invoke()
@@ -259,6 +266,7 @@ private fun BottomAppBar(
 ) {
     val isHasUnsavedChanges by viewModel.hasUnsavedChanges.collectAsState()
     val isTestingEnabled by viewModel.isTestingEnabled.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
 
     BottomAppBar(
         actions = {
@@ -274,7 +282,11 @@ private fun BottomAppBar(
             }
             IconButton(
                 modifier = Modifier.testTag(TestTag.BottomAppBarSave),
-                onClick = viewModel::save,
+                onClick = {
+                    coroutineScope.launch {
+                        viewModel.save()
+                    }
+                },
                 enabled = isHasUnsavedChanges
             ) {
                 Icon(
