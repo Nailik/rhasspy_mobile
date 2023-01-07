@@ -5,6 +5,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.koin.core.component.inject
 import org.rhasspy.mobile.logger.LogType
+import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.settings.option.HomeAssistantIntentHandlingOption
@@ -24,7 +25,7 @@ class HomeAssistantService : IService() {
     /**
      * simplified conversion from intent to hass event or hass intent
      */
-    suspend fun sendIntent(intentName: String, intent: String) {
+    suspend fun sendIntent(intentName: String, intent: String): ServiceState {
         logger.d { "sendIntent name: $intentName json: $intent" }
         try {
             val slots = mutableMapOf<String, JsonElement?>()
@@ -56,12 +57,14 @@ class HomeAssistantService : IService() {
 
             val intentRes = Json.encodeToString(slots)
 
-            when (params.intentHandlingHomeAssistantOption) {
+            val result = when (params.intentHandlingHomeAssistantOption) {
                 HomeAssistantIntentHandlingOption.Event -> httpClientService.hassEvent(intentRes, intentName)
                 HomeAssistantIntentHandlingOption.Intent -> httpClientService.hassIntent("{\"name\" : \"$intentName\", \"data\": $intent }")
             }
+            return result.toServiceState()
         } catch (exception: Exception) {
             logger.e(exception) { "sendIntent error" }
+            return ServiceState.Exception(exception)
         }
     }
 }

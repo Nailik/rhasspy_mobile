@@ -55,9 +55,12 @@ class MqttService : IService() {
      */
     init {
         logger.d { "initialize" }
+        _serviceState.value = ServiceState.Loading
+
         if (params.isMqttEnabled) {
             try {
                 client = buildClient()
+                _serviceState.value = ServiceState.Loading
                 scope.launch {
                     if (connectClient()) {
                         subscribeTopics()
@@ -66,10 +69,10 @@ class MqttService : IService() {
                         logger.e { "client could not connect" }
                     }
                 }
-
             } catch (exception: Exception) {
                 //start error
                 logger.e(exception) { "client initialization error" }
+                _serviceState.value = ServiceState.Exception(exception)
             }
         }
     }
@@ -115,12 +118,13 @@ class MqttService : IService() {
                 //connect to server
                 it.connect(params.mqttServiceConnectionOptions)?.also { error ->
                     logger.e { "connectClient error $error" }
+                    _serviceState.value = MqttServiceStateType.fromMqttStatus(error.statusCode).serviceState
                 }
             }
             //update value, may be used from reconnect
             _isConnected.value = it.isConnected.value == true
         } ?: run {
-            logger.d { "connectClient not initialized" }
+            logger.a { "connect but Client not initialized" }
         }
 
         return _isConnected.value
@@ -283,12 +287,13 @@ class MqttService : IService() {
                     hasError = true
                 }
             } catch (exception: Exception) {
+                hasError = true
                 logger.e(exception) { "subscribeTopics error" }
             }
         }
 
         if (hasError) {
-            //TODO service state warning
+            _serviceState.value = MqttServiceStateType.TopicSubscriptionFailed.serviceState
         }
     }
 
@@ -298,24 +303,27 @@ class MqttService : IService() {
      *
      * boolean if message was published
      */
-    private suspend fun publishMessage(topic: String, message: MqttMessage): MqttError? {
-        if (params.isMqttEnabled) {
+    private suspend fun publishMessage(topic: String, message: MqttMessage): ServiceState {
+        val status = if (params.isMqttEnabled) {
             message.msgId = id
 
-            client?.also { mqttClient ->
-                return mqttClient.publish(topic, message)?.let {
+            client?.let { mqttClient ->
+                mqttClient.publish(topic, message)?.let {
                     logger.e { "mqtt publish error $it" }
-                    it
+                    MqttServiceStateType.fromMqttStatus(it.statusCode).serviceState
                 } ?: run {
                     logger.v { "mqtt message published" }
-                    null
+                    ServiceState.Success
                 }
             }
 
             logger.a { "mqttClient not initialized" }
-            return MqttError("", MqttStatus.UNKNOWN)
+            ServiceState.Exception()
+        } else {
+            ServiceState.Success
         }
-        return null
+        _serviceState.value = status
+        return status
     }
 
     private suspend fun publishMessage(mqttTopic: MqttTopicsPublish, message: MqttMessage) =

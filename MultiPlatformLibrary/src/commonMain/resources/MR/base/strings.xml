@@ -308,6 +308,23 @@
     <string name="filterList">filter List</string>
     <string name="autoscrollList">autoscroll List</string>
     <string name="requestTimeout">request Timeout (MS)</string>
+    <!-- http client service error -->
+    <string name="illegal_argument_exception">illegal argument exception</string>
+    <string name="invalid_tls_record_type">invalid tls record type</string>
+    <string name="unresolved_address_exception">unresolved address exception</string>
+    <string name="connection_exception">connection exception</string>
+    <string name="connection_refused">connection refused</string>
+    <!-- mqtt service error -->
+    <string name="unacceptable_protocol">unacceptable protocol</string>
+    <string name="identifier_rejected">identifier rejected</string>
+    <string name="server_unavailable">server unavailable</string>
+    <string name="invalid_credentials">invalid credentials</string>
+    <string name="not_authorized">not authorized</string>
+    <string name="already_connected">already connected</string>
+    <string name="msg_delivery_failed">message delivery failed</string>
+    <string name="msg_persistence_failed">message persistence failed</string>
+    <string name="subscribe_failed">subscription failed</string>
+    <string name="topic_subscription_failed">topic subscription failed</string>
     <!-- not translatable -->
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>

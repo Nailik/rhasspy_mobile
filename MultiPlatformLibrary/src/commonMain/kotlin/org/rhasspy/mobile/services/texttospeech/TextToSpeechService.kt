@@ -24,7 +24,7 @@ open class TextToSpeechService : IService() {
 
     private val params by inject<TextToSpeechServiceParams>()
 
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success())
+    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
     val serviceState = _serviceState.readOnly
 
     private val httpClientService by inject<HttpClientService>()
@@ -46,8 +46,8 @@ open class TextToSpeechService : IService() {
             TextToSpeechOption.RemoteHTTP -> {
                 val result = httpClientService.textToSpeech(text)
                 _serviceState.value = when (result) {
-                    is HttpClientResult.Error -> ServiceState.Error.Unknown(result.exception)
-                    is HttpClientResult.Success -> ServiceState.Success()
+                    is HttpClientResult.Error -> ServiceState.Exception(result.exception)
+                    is HttpClientResult.Success -> ServiceState.Success
                 }
                 val action = when (result) {
                     is HttpClientResult.Error -> DialogAction.AsrError(Source.HttpApi)
@@ -55,7 +55,7 @@ open class TextToSpeechService : IService() {
                 }
                 serviceMiddleware.action(action)
             }
-            TextToSpeechOption.RemoteMQTT -> mqttClientService.say(sessionId, text)
+            TextToSpeechOption.RemoteMQTT -> _serviceState.value = mqttClientService.say(sessionId, text)
             TextToSpeechOption.Disabled -> {}
         }
     }

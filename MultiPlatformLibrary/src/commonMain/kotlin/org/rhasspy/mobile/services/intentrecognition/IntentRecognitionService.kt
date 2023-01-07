@@ -24,7 +24,7 @@ open class IntentRecognitionService : IService() {
 
     private val params by inject<IntentRecognitionServiceParams>()
 
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success())
+    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
     val serviceState = _serviceState.readOnly
 
     private val httpClientService by inject<HttpClientService>()
@@ -53,13 +53,15 @@ open class IntentRecognitionService : IService() {
         logger.d { "recognizeIntent sessionId: $sessionId text: $text" }
         when (params.intentRecognitionOption) {
             IntentRecognitionOption.RemoteHTTP -> {
-                val action = when (val result = httpClientService.recognizeIntent(text)) {
+                val result = httpClientService.recognizeIntent(text)
+                _serviceState.value = result.toServiceState()
+                val action = when (result) {
                     is HttpClientResult.Error -> DialogAction.IntentRecognitionError(Source.HttpApi)
                     is HttpClientResult.Success -> DialogAction.IntentRecognitionResult(Source.HttpApi, "", result.data)
                 }
                 serviceMiddleware.action(action)
             }
-            IntentRecognitionOption.RemoteMQTT -> mqttClientService.recognizeIntent(sessionId, text)
+            IntentRecognitionOption.RemoteMQTT -> _serviceState.value = mqttClientService.recognizeIntent(sessionId, text)
             IntentRecognitionOption.Disabled -> {}
         }
     }

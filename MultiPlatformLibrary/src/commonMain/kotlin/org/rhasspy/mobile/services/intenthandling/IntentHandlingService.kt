@@ -20,7 +20,7 @@ open class IntentHandlingService : IService() {
 
     private val params by inject<IntentHandlingServiceParams>()
 
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success())
+    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
     val serviceState = _serviceState.readOnly
 
     private val httpClientService by inject<HttpClientService>()
@@ -44,8 +44,8 @@ open class IntentHandlingService : IService() {
     suspend fun intentHandling(intentName: String, intent: String) {
         logger.d { "intentHandling intentName: $intentName intent: $intent" }
         when (params.intentHandlingOption) {
-            IntentHandlingOption.HomeAssistant -> homeAssistantService.sendIntent(intentName, intent)
-            IntentHandlingOption.RemoteHTTP -> httpClientService.intentHandling(intent)
+            IntentHandlingOption.HomeAssistant -> _serviceState.value = homeAssistantService.sendIntent(intentName, intent)
+            IntentHandlingOption.RemoteHTTP -> _serviceState.value = httpClientService.intentHandling(intent).toServiceState()
             IntentHandlingOption.WithRecognition -> {}
             IntentHandlingOption.Disabled -> {}
         }

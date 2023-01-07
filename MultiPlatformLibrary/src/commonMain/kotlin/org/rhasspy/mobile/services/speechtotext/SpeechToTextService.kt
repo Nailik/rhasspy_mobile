@@ -27,7 +27,7 @@ open class SpeechToTextService : IService() {
 
     private val params by inject<SpeechToTextServiceParams>()
 
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success())
+    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
     val serviceState = _serviceState.readOnly
 
     private val httpClientService by inject<HttpClientService>()
@@ -70,13 +70,15 @@ open class SpeechToTextService : IService() {
         //evaluate result
         when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> {
-                val action = when (val result = httpClientService.speechToText(_speechToTextAudioData.addWavHeader())) {
+                val result = httpClientService.speechToText(_speechToTextAudioData.addWavHeader())
+                _serviceState.value = result.toServiceState()
+                val action = when (result) {
                     is HttpClientResult.Error -> DialogAction.AsrError(Source.HttpApi)
                     is HttpClientResult.Success -> DialogAction.AsrTextCaptured(Source.HttpApi, result.data)
                 }
                 serviceMiddleware.action(action)
             }
-            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) mqttClientService.stopListening(sessionId)
+            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) _serviceState.value = mqttClientService.stopListening(sessionId)
             SpeechToTextOption.Disabled -> {}
         }
 
@@ -97,21 +99,22 @@ open class SpeechToTextService : IService() {
             }
         }
 
-        when (params.speechToTextOption) {
-            SpeechToTextOption.RemoteHTTP -> {}
+        _serviceState.value = when (params.speechToTextOption) {
+            SpeechToTextOption.RemoteHTTP -> ServiceState.Success
             SpeechToTextOption.RemoteMQTT -> mqttClientService.startListening(sessionId)
-            SpeechToTextOption.Disabled -> {}
+            SpeechToTextOption.Disabled -> ServiceState.Success
         }
     }
 
     private suspend fun audioFrame(data: List<Byte>) {
         logger.d { "audioFrame dataSize: ${data.size}" }
-        when (params.speechToTextOption) {
-            SpeechToTextOption.RemoteHTTP -> _speechToTextAudioData.addAll(data)
-            SpeechToTextOption.RemoteMQTT -> mqttClientService.audioFrame(
-                data.toMutableList().addWavHeader()
-            )
-            SpeechToTextOption.Disabled -> {}//nothing to do
+        _serviceState.value = when (params.speechToTextOption) {
+            SpeechToTextOption.RemoteHTTP -> {
+                _speechToTextAudioData.addAll(data)
+                ServiceState.Success
+            }
+            SpeechToTextOption.RemoteMQTT -> mqttClientService.audioFrame(data.toMutableList().addWavHeader())
+            SpeechToTextOption.Disabled -> ServiceState.Success
         }
     }
 

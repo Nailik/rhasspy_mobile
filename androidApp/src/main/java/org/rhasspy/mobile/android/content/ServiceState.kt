@@ -53,6 +53,7 @@ private fun ServiceStateText(serviceState: ServiceState) {
             is ServiceState.Success -> MR.strings.success
             is ServiceState.Warning -> MR.strings.warning
             is ServiceState.Error -> MR.strings.error
+            is ServiceState.Exception -> MR.strings.error
             is ServiceState.Disabled -> MR.strings.disabled
         }
     )

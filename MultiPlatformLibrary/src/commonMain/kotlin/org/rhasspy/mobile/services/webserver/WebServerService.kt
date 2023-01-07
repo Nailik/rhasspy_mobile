@@ -64,11 +64,11 @@ class WebServerService : IService() {
             try {
                 server = buildServer()
                 server.start()
-                _serviceState.value = ServiceState.Success()
+                _serviceState.value = ServiceState.Success
             } catch (exception: Exception) {
                 //start error
                 logger.e(exception) { "initialization error" }
-                _serviceState.value = ServiceState.Error.Unknown(exception)
+                _serviceState.value = ServiceState.Exception(exception)
             }
         }
     }
@@ -191,11 +191,11 @@ class WebServerService : IService() {
 
                 }
             }
-            _serviceState.value = ServiceState.Success()
+            _serviceState.value = ServiceState.Success
 
         } catch (exception: Exception) {
             logger.e(exception) { "evaluateCall error" }
-            _serviceState.value = ServiceState.Error.Unknown(exception)
+            _serviceState.value = ServiceState.Exception(exception)
         }
     }
 

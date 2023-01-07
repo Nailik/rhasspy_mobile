@@ -13,8 +13,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.inject
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.ServiceState
-import org.rhasspy.mobile.middleware.ServiceState.Error
-import org.rhasspy.mobile.middleware.ServiceState.Error.HttpClientServiceErrorType
 import org.rhasspy.mobile.middleware.ServiceState.Success
 import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.readOnly
@@ -83,11 +81,11 @@ class HttpClientService : IService() {
         try {
             //starting
             httpClient = buildClient()
-            _serviceState.value = Success()
+            _serviceState.value = Success
         } catch (exception: Exception) {
             //start error
             logger.e(exception) { "error on building client" }
-            _serviceState.value = Error.Unknown(exception)
+            _serviceState.value = ServiceState.Exception(exception)
         }
     }
 
@@ -245,7 +243,7 @@ class HttpClientService : IService() {
                     logger.d { "post result data: $result" }
                 }
 
-                _serviceState.value = Success(result.toString())
+                _serviceState.value = Success
                 return HttpClientResult.Success(result)
 
             } catch (exception: Exception) {
@@ -258,7 +256,7 @@ class HttpClientService : IService() {
         } ?: run {
 
             logger.a { "post client not initialized" }
-            _serviceState.value = Error.Unknown(Throwable())
+            _serviceState.value = ServiceState.Exception()
             return HttpClientResult.Error(Exception())
 
         }
@@ -267,24 +265,28 @@ class HttpClientService : IService() {
     /**
      * Evaluate if the Error is a know exception to help the user
      */
-    private fun mapError(exception: Exception): HttpClientServiceErrorType {
-        return if (exception::class.simpleName == "IllegalArgumentException") {
+    private fun mapError(exception: Exception): ServiceState {
+        val type = if (exception::class.simpleName == "IllegalArgumentException") {
             if (exception.message == "Invalid TLS record type code: 72") {
-                HttpClientServiceErrorType.InvalidTLSRecordType(exception)
+                HttpClientServiceStateType.InvalidTLSRecordType
             } else {
-                HttpClientServiceErrorType.IllegalArgumentException(exception)
+                HttpClientServiceStateType.IllegalArgumentException
             }
         } else if (exception::class.simpleName == "UnresolvedAddressException") {
-            HttpClientServiceErrorType.UnresolvedAddressException(exception)
+            HttpClientServiceStateType.UnresolvedAddressException
         } else if (exception::class.simpleName == "ConnectException") {
             if (exception.message == "Connection refused") {
-                HttpClientServiceErrorType.ConnectionRefused(exception)
+                HttpClientServiceStateType.ConnectionRefused
             } else {
-                HttpClientServiceErrorType.ConnectException(exception)
+                HttpClientServiceStateType.ConnectException
             }
-            HttpClientServiceErrorType.UnresolvedAddressException(exception)
+            HttpClientServiceStateType.UnresolvedAddressException
         } else {
-            HttpClientServiceErrorType.Unknown(exception)
+            null
+        }
+
+        return type?.serviceState ?: run {
+            ServiceState.Exception(exception)
         }
     }
 

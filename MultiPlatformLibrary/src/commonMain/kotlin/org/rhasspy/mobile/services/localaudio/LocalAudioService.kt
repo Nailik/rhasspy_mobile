@@ -3,6 +3,7 @@ package org.rhasspy.mobile.services.localaudio
 import org.koin.core.component.inject
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.logger.LogType
+import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.settings.AppSetting
@@ -25,8 +26,8 @@ class LocalAudioService : IService() {
         audioPlayer.close()
     }
 
-    suspend fun playAudio(data: List<Byte>): Exception? = suspendCoroutine { continuation ->
-        if(AppSetting.isAudioOutputEnabled.value) {
+    suspend fun playAudio(data: List<Byte>): ServiceState = suspendCoroutine { continuation ->
+        if (AppSetting.isAudioOutputEnabled.value) {
             logger.d { "playAudio ${data.size}" }
             audioPlayer.playData(
                 data = data,
@@ -34,7 +35,7 @@ class LocalAudioService : IService() {
                 audioOutputOption = params.audioOutputOption,
                 onFinished = {
                     logger.d { "onFinished" }
-                    continuation.resume(null)
+                    continuation.resume(ServiceState.Success)
                 },
                 onError = { exception ->
                     exception?.also {
@@ -42,11 +43,11 @@ class LocalAudioService : IService() {
                     } ?: run {
                         logger.e { "onError" }
                     }
-                    continuation.resume(exception ?: Exception())
+                    continuation.resume(ServiceState.Exception(exception))
                 }
             )
         } else {
-            continuation.resume(null)
+            continuation.resume(ServiceState.Success)
         }
     }
 

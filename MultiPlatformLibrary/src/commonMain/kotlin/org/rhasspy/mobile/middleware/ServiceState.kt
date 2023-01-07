@@ -1,19 +1,22 @@
 package org.rhasspy.mobile.middleware
 
 import dev.icerock.moko.resources.StringResource
-import org.rhasspy.mobile.MR
-//TODO better human readable information
-sealed class ServiceState(val information: String? = null) {
+
+sealed class ServiceState() {
 
     object Pending : ServiceState()
 
     object Loading : ServiceState()
 
-    class Success(information: String? = null) : ServiceState(information)
+    object Success : ServiceState()
 
-    class Warning(information: String? = null) : ServiceState(information)
+    class Warning(val information: StringResource) : ServiceState()
 
-    sealed class Error(val exception: Throwable) : ServiceState() {
+    class Exception(val exception: kotlin.Exception? = null) : ServiceState()
+
+    class Error(val information: StringResource) : ServiceState()
+
+    /*
         sealed class HttpClientServiceErrorType(exception: Throwable, val humanReadable: StringResource) : Error(exception) {
             class IllegalArgumentException(exception: Throwable) : HttpClientServiceErrorType(exception, MR.strings.defaultText)
             class InvalidTLSRecordType(exception: Throwable) : HttpClientServiceErrorType(exception, MR.strings.defaultText) // Invalid TLS record type code: 72)
@@ -23,8 +26,10 @@ sealed class ServiceState(val information: String? = null) {
             class Unknown(exception: Throwable) : HttpClientServiceErrorType(exception, MR.strings.defaultText)
         }
 
+        class MqttServiceError(val mqttError: MqttError) : Error(Throwable())
+
         class Unknown(exception: Throwable) : Error(exception)
-    }
+    }*/
 
     object Disabled : ServiceState()
 

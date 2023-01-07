@@ -43,7 +43,8 @@ fun EventStateIcon(serviceState: ServiceState) {
             is ServiceState.Loading -> Icons.Outlined.RotateRight
             is ServiceState.Success -> Icons.Outlined.Done
             is ServiceState.Warning -> Icons.Outlined.Warning
-            is ServiceState.Error -> Icons.Filled.Error
+            is ServiceState.Error,
+            is ServiceState.Exception -> Icons.Filled.Error
             is ServiceState.Disabled -> Icons.Outlined.Circle
         },
         contentDescription = when (serviceState) {
@@ -51,7 +52,8 @@ fun EventStateIcon(serviceState: ServiceState) {
             is ServiceState.Loading -> MR.strings.loading
             is ServiceState.Success -> MR.strings.success
             is ServiceState.Warning -> MR.strings.warning
-            is ServiceState.Error -> MR.strings.error
+            is ServiceState.Error,
+            is ServiceState.Exception -> MR.strings.error
             is ServiceState.Disabled -> MR.strings.disabled
         }
     )
@@ -80,7 +82,8 @@ fun EventStateIconTinted(serviceState: ServiceState) {
             is ServiceState.Loading -> Icons.Outlined.RotateRight
             is ServiceState.Success -> Icons.Outlined.Done
             is ServiceState.Warning -> Icons.Outlined.Warning
-            is ServiceState.Error -> Icons.Filled.Error
+            is ServiceState.Error,
+            is ServiceState.Exception -> Icons.Filled.Error
             is ServiceState.Disabled -> Icons.Outlined.Circle
         },
         contentDescription = when (serviceState) {
@@ -88,7 +91,8 @@ fun EventStateIconTinted(serviceState: ServiceState) {
             is ServiceState.Loading -> MR.strings.loading
             is ServiceState.Success -> MR.strings.success
             is ServiceState.Warning -> MR.strings.warning
-            is ServiceState.Error -> MR.strings.error
+            is ServiceState.Error,
+            is ServiceState.Exception -> MR.strings.error
             is ServiceState.Disabled -> MR.strings.disabled
         },
         tint = when (serviceState) {
@@ -96,7 +100,8 @@ fun EventStateIconTinted(serviceState: ServiceState) {
             is ServiceState.Loading -> MaterialTheme.colorScheme.secondary
             is ServiceState.Success -> MaterialTheme.colorScheme.primary
             is ServiceState.Warning -> MaterialTheme.colorScheme.warn
-            is ServiceState.Error -> MaterialTheme.colorScheme.errorContainer
+            is ServiceState.Error,
+            is ServiceState.Exception -> MaterialTheme.colorScheme.errorContainer
             is ServiceState.Disabled -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
         }
     )
@@ -112,7 +117,8 @@ fun EventStateContent(
         is ServiceState.Loading -> MaterialTheme.colorScheme.onSecondaryContainer
         is ServiceState.Success -> MaterialTheme.colorScheme.onPrimaryContainer
         is ServiceState.Warning -> MaterialTheme.colorScheme.on_color_warn
-        is ServiceState.Error -> MaterialTheme.colorScheme.onErrorContainer
+        is ServiceState.Error,
+        is ServiceState.Exception -> MaterialTheme.colorScheme.onErrorContainer
         is ServiceState.Disabled -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
     }
 
@@ -136,7 +142,8 @@ fun EventStateCard(
                 is ServiceState.Loading -> MaterialTheme.colorScheme.secondaryContainer
                 is ServiceState.Success -> MaterialTheme.colorScheme.primaryContainer
                 is ServiceState.Warning -> MaterialTheme.colorScheme.warn
-                is ServiceState.Error -> MaterialTheme.colorScheme.errorContainer
+                is ServiceState.Error,
+                is ServiceState.Exception -> MaterialTheme.colorScheme.errorContainer
                 is ServiceState.Disabled -> MaterialTheme.colorScheme.surface.copy(alpha = 0.38f)
             }
         ),
