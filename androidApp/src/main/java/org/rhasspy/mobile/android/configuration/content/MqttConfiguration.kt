@@ -42,7 +42,7 @@ fun MqttConfigurationContent(viewModel: MqttConfigurationViewModel = get()) {
         modifier = Modifier.testTag(ConfigurationScreenType.MqttConfiguration),
         title = MR.strings.mqtt,
         viewModel = viewModel,
-        testContent = {  }
+        testContent = { }
     ) {
 
         item {

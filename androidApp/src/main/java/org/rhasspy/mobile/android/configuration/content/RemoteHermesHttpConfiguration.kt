@@ -90,7 +90,7 @@ private fun TestContent(viewModel: RemoteHermesHttpConfigurationViewModel) {
 
     Column {
 
-        if(viewModel.isSpeechToTextTestVisible.collectAsState().value) {
+        if (viewModel.isSpeechToTextTestVisible.collectAsState().value) {
             RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::runSpeechToTextTest) { onClick ->
                 FilledTonalButtonListItem(
                     text = if (viewModel.isRecordingAudio.collectAsState().value) MR.strings.stopRecordAudio else MR.strings.startRecordAudio,
@@ -99,7 +99,7 @@ private fun TestContent(viewModel: RemoteHermesHttpConfigurationViewModel) {
             }
         }
 
-        if(viewModel.isIntentRecognitionTestVisible.collectAsState().value) {
+        if (viewModel.isIntentRecognitionTestVisible.collectAsState().value) {
             TextFieldListItem(
                 modifier = Modifier.testTag(TestTag.TextToSpeechText),
                 value = viewModel.testIntentRecognitionText.collectAsState().value,
@@ -114,7 +114,7 @@ private fun TestContent(viewModel: RemoteHermesHttpConfigurationViewModel) {
             )
         }
 
-        if(viewModel.isTextToSpeechTestVisible.collectAsState().value){
+        if (viewModel.isTextToSpeechTestVisible.collectAsState().value) {
             TextFieldListItem(
                 modifier = Modifier.testTag(TestTag.TextToSpeechText),
                 value = viewModel.testTextToSpeechText.collectAsState().value,

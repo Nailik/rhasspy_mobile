@@ -8,5 +8,5 @@ enum class HttpClientServiceStateType(val serviceState: ServiceState) {
     InvalidTLSRecordType(ServiceState.Error(MR.strings.invalid_tls_record_type)), // Invalid TLS record type code: 72)
     UnresolvedAddressException(ServiceState.Error(MR.strings.unresolved_address_exception)), //server cannot be reached
     ConnectException(ServiceState.Error(MR.strings.connection_exception)),
-    ConnectionRefused(ServiceState.Error( MR.strings.connection_refused))
+    ConnectionRefused(ServiceState.Error(MR.strings.connection_refused))
 }

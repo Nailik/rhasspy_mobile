@@ -82,7 +82,8 @@ private fun PortraitContent(
         ServiceStatusInformation(viewModel)
 
         Box(
-            modifier = Modifier.weight(1f),){
+            modifier = Modifier.weight(1f),
+        ) {
 
         }
 
@@ -91,7 +92,9 @@ private fun PortraitContent(
             viewModel::toggleSession
         ) { onClick ->
             MicrophoneFab(
-                modifier = Modifier.fillMaxSize().weight(1f),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f),
                 iconSize = 96.dp,
                 isActionEnabledStateFlow = viewModel.isActionEnabled,
                 isRecordingStateFlow = viewModel.isRecording,
