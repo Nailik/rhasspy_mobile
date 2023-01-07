@@ -57,12 +57,11 @@ val serviceModule = module {
     closeableSingle { WebServerService() }
     closeableSingle { UdpService() }
     closeableSingle { HomeAssistantService() }
-    closeableSingle { RecordingService() }
     closeableSingle { WakeWordService() }
+    closeableSingle { RecordingService() }
     closeableSingle { DialogManagerService() }
     closeableSingle { AppSettingsService() }
     closeableSingle { IndicationService() }
-
     closeableSingle { ServiceMiddleware() }
 
     single { params -> params.getOrNull<LocalAudioServiceParams>() ?: LocalAudioServiceParams() }

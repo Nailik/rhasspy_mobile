@@ -29,6 +29,7 @@ class HomeScreenViewModel : ViewModel(), KoinComponent {
     val isPlayingRecordingEnabled = isActionEnabled
     val isShowLogEnabled = AppSetting.isShowLogEnabled.data
 
+    val isServiceStateVisible = MutableStateFlow(false) //TODO
     val serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
 
     fun toggleSession() = serviceMiddleware.userSessionClick()

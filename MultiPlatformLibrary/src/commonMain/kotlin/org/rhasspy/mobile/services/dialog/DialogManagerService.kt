@@ -60,6 +60,10 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
         coroutineScope.cancel()
     }
 
+    init {
+        _serviceState.value = ServiceState.Success
+    }
+
     fun onAction(action: DialogAction) {
         logger.d { "onAction $action" }
         coroutineScope.launch {

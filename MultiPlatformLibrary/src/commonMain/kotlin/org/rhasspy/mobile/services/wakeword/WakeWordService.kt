@@ -5,7 +5,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action
@@ -37,7 +36,7 @@ class WakeWordService : IService() {
     private val mqttService by inject<MqttService>()
     private var porcupineWakeWordClient: PorcupineWakeWordClient? = null
 
-    private val recordingService get() = get<RecordingService>()
+    private val recordingService by inject<RecordingService>()
 
     private val serviceMiddleware by inject<ServiceMiddleware>()
 
@@ -51,7 +50,7 @@ class WakeWordService : IService() {
      */
     init {
         logger.d { "initialization" }
-        when (params.wakeWordOption) {
+        _serviceState.value = when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {
                 _serviceState.value = ServiceState.Loading
                 //when porcupine is used for hotWord then start local service
@@ -64,13 +63,13 @@ class WakeWordService : IService() {
                     ::onClientError
                 )
                 val error = porcupineWakeWordClient?.initialize()
-                _serviceState.value = error?.errorType?.serviceState ?: ServiceState.Success
                 logger.e(error?.exception ?: Throwable()) { "porcupine error ${error?.exception}" }
+                error?.errorType?.serviceState ?: ServiceState.Success
             }
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
-            WakeWordOption.MQTT -> {} //nothing to do
-            WakeWordOption.Udp -> {} //nothing to do
-            WakeWordOption.Disabled -> {}
+            WakeWordOption.MQTT -> ServiceState.Success
+            WakeWordOption.Udp -> ServiceState.Success
+            WakeWordOption.Disabled -> ServiceState.Disabled
         }
     }
 
@@ -138,7 +137,6 @@ class WakeWordService : IService() {
 
     override fun onClose() {
         logger.d { "onClose" }
-        stopDetection()
         porcupineWakeWordClient?.close()
     }
 

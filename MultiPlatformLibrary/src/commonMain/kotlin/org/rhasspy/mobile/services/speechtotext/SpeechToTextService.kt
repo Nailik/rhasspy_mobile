@@ -102,7 +102,7 @@ open class SpeechToTextService : IService() {
         _serviceState.value = when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> ServiceState.Success
             SpeechToTextOption.RemoteMQTT -> mqttClientService.startListening(sessionId)
-            SpeechToTextOption.Disabled -> ServiceState.Success
+            SpeechToTextOption.Disabled -> ServiceState.Disabled
         }
     }
 
@@ -114,7 +114,7 @@ open class SpeechToTextService : IService() {
                 ServiceState.Success
             }
             SpeechToTextOption.RemoteMQTT -> mqttClientService.audioFrame(data.toMutableList().addWavHeader())
-            SpeechToTextOption.Disabled -> ServiceState.Success
+            SpeechToTextOption.Disabled -> ServiceState.Disabled
         }
     }
 

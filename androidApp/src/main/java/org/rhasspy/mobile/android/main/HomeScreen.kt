@@ -1,6 +1,9 @@
 package org.rhasspy.mobile.android.main
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
@@ -81,27 +84,21 @@ private fun PortraitContent(
 
         ServiceStatusInformation(viewModel)
 
-        Box(
-            modifier = Modifier.weight(1f),
-        ) {
-
-        }
-
-        RequiresMicrophonePermission(
-            MR.strings.microphonePermissionInfoRecord,
-            viewModel::toggleSession
-        ) { onClick ->
-            MicrophoneFab(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f),
-                iconSize = 96.dp,
-                isActionEnabledStateFlow = viewModel.isActionEnabled,
-                isRecordingStateFlow = viewModel.isRecording,
-                isShowBorderStateFlow = viewModel.isShowBorder,
-                isShowMicOnStateFlow = viewModel.isShowMicOn,
-                onClick = onClick
-            )
+        Box(modifier = Modifier.weight(1f)) {
+            RequiresMicrophonePermission(
+                MR.strings.microphonePermissionInfoRecord,
+                viewModel::toggleSession
+            ) { onClick ->
+                MicrophoneFab(
+                    modifier = Modifier.fillMaxSize(),
+                    iconSize = 96.dp,
+                    isActionEnabledStateFlow = viewModel.isActionEnabled,
+                    isRecordingStateFlow = viewModel.isRecording,
+                    isShowBorderStateFlow = viewModel.isShowBorder,
+                    isShowMicOnStateFlow = viewModel.isShowMicOn,
+                    onClick = onClick
+                )
+            }
         }
 
         PlayRecording(viewModel)
@@ -123,27 +120,27 @@ fun LandscapeContent(
     viewModel: HomeScreenViewModel
 ) {
 
-    Row(
-        modifier = Modifier
+    Row(modifier = Modifier
             .padding(paddingValues)
             .fillMaxSize()
             .padding(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-
-        RequiresMicrophonePermission(
-            MR.strings.microphonePermissionInfoRecord,
-            viewModel::toggleSession
-        ) { onClick ->
-            MicrophoneFab(
-                modifier = Modifier.weight(1f),
-                iconSize = 96.dp,
-                isActionEnabledStateFlow = viewModel.isActionEnabled,
-                isRecordingStateFlow = viewModel.isRecording,
-                isShowBorderStateFlow = viewModel.isShowBorder,
-                isShowMicOnStateFlow = viewModel.isShowMicOn,
-                onClick = onClick
-            )
+        Box(modifier = Modifier.weight(1f)) {
+            RequiresMicrophonePermission(
+                MR.strings.microphonePermissionInfoRecord,
+                viewModel::toggleSession
+            ) { onClick ->
+                MicrophoneFab(
+                    modifier = Modifier.fillMaxSize(),
+                    iconSize = 96.dp,
+                    isActionEnabledStateFlow = viewModel.isActionEnabled,
+                    isRecordingStateFlow = viewModel.isRecording,
+                    isShowBorderStateFlow = viewModel.isShowBorder,
+                    isShowMicOnStateFlow = viewModel.isShowMicOn,
+                    onClick = onClick
+                )
+            }
         }
 
         Column(
@@ -169,18 +166,26 @@ fun LandscapeContent(
 @Composable
 private fun ServiceStatusInformation(viewModel: HomeScreenViewModel) {
 
-    val navigate = LocalNavController.current
-    val serviceState by viewModel.serviceState.collectAsState()
+    AnimatedVisibility(
+        enter = expandVertically(),
+        exit = shrinkVertically(),
+        visible = viewModel.isServiceStateVisible.collectAsState().value
+    ) {
 
-    ServiceState(serviceState = serviceState) {
-        if (viewModel.isActionEnabled.value) {
-            navigate.navigate(
-                BottomBarScreenType.ConfigurationScreen.appendOptionalParameter(
-                    NavigationParams.ScrollToError,
-                    true
+        val navigate = LocalNavController.current
+        val serviceState by viewModel.serviceState.collectAsState()
+
+        ServiceState(serviceState = serviceState) {
+            if (viewModel.isActionEnabled.value) {
+                navigate.navigate(
+                    BottomBarScreenType.ConfigurationScreen.appendOptionalParameter(
+                        NavigationParams.ScrollToError,
+                        true
+                    )
                 )
-            )
+            }
         }
+
     }
 
 }
