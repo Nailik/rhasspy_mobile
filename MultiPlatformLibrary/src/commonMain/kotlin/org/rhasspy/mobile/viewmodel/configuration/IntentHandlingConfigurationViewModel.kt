@@ -22,7 +22,7 @@ class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
 
     override val testRunner by inject<IntentHandlingConfigurationTest>()
     override val logType = LogType.IntentHandlingService
-    override val serviceState = get<IntentHandlingService>().serviceState
+    override val serviceState get() = get<IntentHandlingService>().serviceState
 
     private val _testIntentNameText = MutableStateFlow("")
     val testIntentNameText = _testIntentNameText.readOnly

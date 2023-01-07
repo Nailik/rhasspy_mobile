@@ -39,7 +39,7 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
         modifier = Modifier.testTag(ConfigurationScreenType.WebServerConfiguration),
         title = MR.strings.webserver,
         viewModel = viewModel,
-        testContent = { TestContent(viewModel) }
+        testContent = { }
     ) {
 
         item {
@@ -167,17 +167,4 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
         }
     }
 
-}
-
-/**
- * test button to start webserver test
- */
-@Composable
-private fun TestContent(
-    viewModel: WebServerConfigurationViewModel
-) {
-    FilledTonalButtonListItem(
-        text = MR.strings.executeStartWebserver,
-        onClick = viewModel::runWebServerTest
-    )
 }

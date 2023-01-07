@@ -25,7 +25,7 @@ class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
 
     override val testRunner by inject<DialogManagementConfigurationTest>()
     override val logType = LogType.DialogManagerService
-    override val serviceState = get<DialogManagerService>().serviceState
+    override val serviceState get() = get<DialogManagerService>().serviceState
 
     //unsaved data
     private val _dialogManagementOption = MutableStateFlow(ConfigurationSetting.dialogManagementOption.value)

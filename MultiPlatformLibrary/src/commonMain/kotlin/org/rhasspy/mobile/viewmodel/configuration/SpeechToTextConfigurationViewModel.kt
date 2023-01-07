@@ -20,7 +20,7 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
     //for testing
     override val testRunner by inject<SpeechToTextConfigurationTest>()
     override val logType = LogType.SpeechToTextService
-    override val serviceState = get<SpeechToTextService>().serviceState
+    override val serviceState get() = get<SpeechToTextService>().serviceState
 
     val isRecordingAudio = testRunner.isRecording
 

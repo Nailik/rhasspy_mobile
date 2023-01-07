@@ -28,7 +28,7 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
 
     override val testRunner by inject<AudioPlayingConfigurationTest>()
     override val logType = LogType.AudioPlayingService
-    override val serviceState = get<AudioPlayingService>().serviceState
+    override val serviceState get() = get<AudioPlayingService>().serviceState
 
     //unsaved data
     private val _audioPlayingOption = MutableStateFlow(ConfigurationSetting.audioPlayingOption.value)

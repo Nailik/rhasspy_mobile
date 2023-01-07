@@ -19,7 +19,7 @@ class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
     //test data
     override val testRunner by inject<IntentRecognitionConfigurationTest>()
     override val logType = LogType.IntentRecognitionService
-    override val serviceState = get<IntentRecognitionService>().serviceState
+    override val serviceState get() = get<IntentRecognitionService>().serviceState
 
     private val _testIntentRecognitionText = MutableStateFlow("")
     val testIntentRecognitionText = _testIntentRecognitionText.readOnly

@@ -3,6 +3,7 @@ package org.rhasspy.mobile.viewmodel.configuration
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
+import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.logger.LogType
@@ -22,10 +23,9 @@ import org.rhasspy.mobile.viewmodel.configuration.test.WakeWordConfigurationTest
 class WakeWordConfigurationViewModel : IConfigurationViewModel() {
 
     //use get to fix issues where instance dies because udp socket causes thread exception
-    override val testRunner get() = get<WakeWordConfigurationTest>()
-
+    override val testRunner by inject<WakeWordConfigurationTest>()
     override val logType = LogType.WakeWordService
-    override val serviceState = get<WakeWordService>().serviceState
+    override val serviceState get() = get<WakeWordService>().serviceState
 
     data class PorcupineCustomKeywordUi(
         val keyword: PorcupineCustomKeyword,

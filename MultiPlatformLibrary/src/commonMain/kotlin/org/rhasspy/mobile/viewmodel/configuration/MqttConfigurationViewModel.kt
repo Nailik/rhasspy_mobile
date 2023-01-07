@@ -20,10 +20,10 @@ import org.rhasspy.mobile.settings.types.FileType
 import org.rhasspy.mobile.viewmodel.configuration.test.MqttConfigurationTest
 
 class MqttConfigurationViewModel : IConfigurationViewModel() {
-    override val testRunner by inject<MqttConfigurationTest>()
 
+    override val testRunner by inject<MqttConfigurationTest>()
     override val logType = LogType.MqttService
-    override val serviceState = get<MqttService>().serviceState
+    override val serviceState get() = get<MqttService>().serviceState
 
     //unsaved data
     private val _isMqttEnabled = MutableStateFlow(ConfigurationSetting.isMqttEnabled.value)
@@ -207,7 +207,5 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
             )
         }
     }
-
-    override fun runTest() = testRunner.startTest()
 
 }

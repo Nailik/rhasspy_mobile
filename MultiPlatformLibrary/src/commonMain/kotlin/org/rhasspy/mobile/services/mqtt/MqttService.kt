@@ -9,6 +9,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.koin.core.component.inject
+import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action.AppSettingsAction
 import org.rhasspy.mobile.middleware.Action.DialogAction
@@ -54,18 +55,18 @@ class MqttService : IService() {
      * sets connected value
      */
     init {
-        logger.d { "initialize" }
-        _serviceState.value = ServiceState.Loading
-
         if (params.isMqttEnabled) {
+            logger.d { "initialize" }
+            _serviceState.value = ServiceState.Loading
+
             try {
                 client = buildClient()
-                _serviceState.value = ServiceState.Loading
                 scope.launch {
                     if (connectClient()) {
-                        subscribeTopics()
+                        _serviceState.value = subscribeTopics()
                         _isHasStarted.value = true
                     } else {
+                        _serviceState.value = ServiceState.Warning(MR.strings.notConnected)
                         logger.e { "client could not connect" }
                     }
                 }
@@ -276,7 +277,7 @@ class MqttService : IService() {
     /**
      * Subscribes to topics that are necessary
      */
-    private suspend fun subscribeTopics() {
+    private suspend fun subscribeTopics(): ServiceState {
         logger.d { "subscribeTopics" }
         var hasError = false
 
@@ -292,8 +293,10 @@ class MqttService : IService() {
             }
         }
 
-        if (hasError) {
-            _serviceState.value = MqttServiceStateType.TopicSubscriptionFailed.serviceState
+        return if (hasError) {
+            MqttServiceStateType.TopicSubscriptionFailed.serviceState
+        } else {
+            ServiceState.Success
         }
     }
 

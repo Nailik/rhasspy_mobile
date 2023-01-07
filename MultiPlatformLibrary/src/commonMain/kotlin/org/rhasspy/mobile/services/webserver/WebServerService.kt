@@ -57,10 +57,10 @@ class WebServerService : IService() {
      * logs start event
      */
     init {
-        _serviceState.value = ServiceState.Loading
-        logger.d { "initialization" }
-
         if (params.isHttpServerEnabled) {
+            logger.d { "initialization" }
+            _serviceState.value = ServiceState.Loading
+
             try {
                 server = buildServer()
                 server.start()
