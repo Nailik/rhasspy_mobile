@@ -6,18 +6,15 @@ import io.ktor.server.engine.internal.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
-import org.koin.core.component.inject
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.settings.AppSetting
 
-class UdpService : IService() {
+class UdpService(host: String, port: Int) : IService() {
     private val logger = LogType.UdpService.logger()
 
     private var socketAddress: SocketAddress? = null
     private var sendChannel: SendChannel<Datagram>? = null
-
-    private val params by inject<UdpServiceParams>()
 
     /**
      * makes sure the address is up to date
@@ -29,10 +26,7 @@ class UdpService : IService() {
         try {
             sendChannel = aSocket(SelectorManager(Dispatchers.Default)).udp().bind().outgoing
 
-            socketAddress = InetSocketAddress(
-                params.udpOutputHost,
-                params.udpOutputPort
-            )
+            socketAddress = InetSocketAddress(host, port)
         } catch (exception: Exception) {
             logger.e(exception) { "initialization error" }
         }

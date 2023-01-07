@@ -199,7 +199,7 @@ private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.AudioRecordingUdpHost),
             label = MR.strings.host,
-            value = viewModel.udpOutputHost.collectAsState().value,
+            value = viewModel.wakeWordUdpOutputHost.collectAsState().value,
             onValueChange = viewModel::changeUdpOutputHost,
             isLastItem = false
         )
@@ -209,7 +209,7 @@ private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
             modifier = Modifier.testTag(TestTag.AudioRecordingUdpPort),
             label = MR.strings.port,
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            value = viewModel.udpOutputPortText.collectAsState().value,
+            value = viewModel.wakeWordUdpOutputPortText.collectAsState().value,
             onValueChange = viewModel::changeUdpOutputPort
         )
 

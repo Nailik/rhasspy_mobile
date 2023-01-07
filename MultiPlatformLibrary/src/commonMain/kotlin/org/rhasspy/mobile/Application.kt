@@ -11,6 +11,7 @@ import org.koin.core.component.get
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
 import org.koin.core.context.unloadKoinModules
+import org.rhasspy.mobile.koin.factoryModule
 import org.rhasspy.mobile.koin.nativeModule
 import org.rhasspy.mobile.koin.serviceModule
 import org.rhasspy.mobile.koin.viewModelModule
@@ -51,7 +52,7 @@ abstract class Application : NativeApplication(), KoinComponent {
         // start a KoinApplication in Global context
         startKoin {
             // declare used modules
-            modules(serviceModule, viewModelModule, nativeModule)
+            modules(serviceModule, viewModelModule, factoryModule, nativeModule)
         }
 
         Logger.addLogWriter(

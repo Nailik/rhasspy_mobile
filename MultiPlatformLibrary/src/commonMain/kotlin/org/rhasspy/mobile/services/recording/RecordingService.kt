@@ -80,7 +80,7 @@ class RecordingService : IService() {
         if (AppSetting.isAutomaticSilenceDetectionEnabled.value) {
             if (volume < AppSetting.automaticSilenceDetectionAudioLevel.value) {
                 //no data was above threshold, there is silence
-                silenceStartTime?.also { //TODO silence detected should not be called when recording wake word
+                silenceStartTime?.also {
                     //  logger.d { "silenceDetected" }
                     //check if silence was detected for x milliseconds
                     if (it.minus(Clock.System.now()) < -AppSetting.automaticSilenceDetectionTime.value.milliseconds) {

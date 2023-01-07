@@ -9,7 +9,6 @@ import org.rhasspy.mobile.*
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.nativeutils.FileUtils
 import org.rhasspy.mobile.nativeutils.openLink
-import org.rhasspy.mobile.services.udp.UdpServiceParams
 import org.rhasspy.mobile.services.wakeword.WakeWordService
 import org.rhasspy.mobile.services.wakeword.WakeWordServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -45,9 +44,9 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
 
     private val _wakeWordPorcupineLanguage = MutableStateFlow(ConfigurationSetting.wakeWordPorcupineLanguage.value)
 
-    private val _udpOutputHost = MutableStateFlow(ConfigurationSetting.udpOutputHost.value)
-    private val _udpOutputPort = MutableStateFlow(ConfigurationSetting.udpOutputPort.value)
-    private val _udpOutputPortText = MutableStateFlow(ConfigurationSetting.udpOutputPort.value.toString())
+    private val _wakeWordUdpOutputHost = MutableStateFlow(ConfigurationSetting.wakeWordUdpOutputHost.value)
+    private val _wakeWordUdpOutputPort = MutableStateFlow(ConfigurationSetting.wakeWordUdpOutputPort.value)
+    private val _wakeWordUdpOutputPortText = MutableStateFlow(ConfigurationSetting.wakeWordUdpOutputPort.value.toString())
 
     //unsaved ui data
     val wakeWordOption = _wakeWordOption.readOnly
@@ -70,8 +69,8 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
 
     val wakeWordPorcupineKeywordCustomOptions = _wakeWordPorcupineKeywordCustomOptions.readOnly
     val wakeWordPorcupineLanguage = _wakeWordPorcupineLanguage.readOnly
-    val udpOutputHost = _udpOutputHost.readOnly
-    val udpOutputPortText = _udpOutputPortText.readOnly
+    val wakeWordUdpOutputHost = _wakeWordUdpOutputHost.readOnly
+    val wakeWordUdpOutputPortText = _wakeWordUdpOutputPortText.readOnly
 
 
     fun isWakeWordPorcupineSettingsVisible(option: WakeWordOption): Boolean {
@@ -91,8 +90,8 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
         combineStateNotEquals(_wakeWordPorcupineKeywordDefaultOptions, ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.data),
         combineStateNotEquals(_wakeWordPorcupineKeywordCustomOptionsNormal, ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.data),
         combineStateNotEquals(_wakeWordPorcupineLanguage, ConfigurationSetting.wakeWordPorcupineLanguage.data),
-        combineStateNotEquals(_udpOutputHost, ConfigurationSetting.udpOutputHost.data),
-        combineStateNotEquals(_udpOutputPort, ConfigurationSetting.udpOutputPort.data)
+        combineStateNotEquals(_wakeWordUdpOutputHost, ConfigurationSetting.wakeWordUdpOutputHost.data),
+        combineStateNotEquals(_wakeWordUdpOutputPort, ConfigurationSetting.wakeWordUdpOutputPort.data)
     )
 
     //for custom wake word
@@ -253,13 +252,13 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
     //edit udp port
     fun changeUdpOutputPort(port: String) {
         val text = port.replace("""[-,. ]""".toRegex(), "")
-        _udpOutputPortText.value = text
-        _udpOutputPort.value = text.toIntOrNull() ?: 0
+        _wakeWordUdpOutputPortText.value = text
+        _wakeWordUdpOutputPort.value = text.toIntOrNull() ?: 0
     }
 
     //edit udp host
     fun changeUdpOutputHost(host: String) {
-        _udpOutputHost.value = host
+        _wakeWordUdpOutputHost.value = host
     }
 
     /**
@@ -272,8 +271,8 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
         ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value = _wakeWordPorcupineKeywordCustomOptions.value
             .filter { !it.deleted }.map { it.keyword }.toSet()
         ConfigurationSetting.wakeWordPorcupineLanguage.value = _wakeWordPorcupineLanguage.value
-        ConfigurationSetting.udpOutputHost.value = _udpOutputHost.value
-        ConfigurationSetting.udpOutputPort.value = _udpOutputPort.value
+        ConfigurationSetting.wakeWordUdpOutputHost.value = _wakeWordUdpOutputHost.value
+        ConfigurationSetting.wakeWordUdpOutputPort.value = _wakeWordUdpOutputPort.value
 
         filesToDelete.forEach {
             FileUtils.removeFile(FileType.PORCUPINE, null, it)
@@ -292,8 +291,8 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
         _wakeWordPorcupineKeywordCustomOptions.value = ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value
             .map { PorcupineCustomKeywordUi(it) }
         _wakeWordPorcupineLanguage.value = ConfigurationSetting.wakeWordPorcupineLanguage.value
-        _udpOutputHost.value = ConfigurationSetting.udpOutputHost.value
-        _udpOutputPort.value = ConfigurationSetting.udpOutputPort.value
+        _wakeWordUdpOutputHost.value = ConfigurationSetting.wakeWordUdpOutputHost.value
+        _wakeWordUdpOutputPort.value = ConfigurationSetting.wakeWordUdpOutputPort.value
 
         newFiles.forEach {
             FileUtils.removeFile(FileType.PORCUPINE, null, it)
@@ -311,16 +310,9 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
                     wakeWordPorcupineKeywordDefaultOptions = _wakeWordPorcupineKeywordDefaultOptions.value,
                     wakeWordPorcupineKeywordCustomOptions = _wakeWordPorcupineKeywordCustomOptions.value
                         .filter { !it.deleted }.map { it.keyword }.toSet(),
-                    wakeWordPorcupineLanguage = _wakeWordPorcupineLanguage.value
-                )
-            )
-        }
-
-        get<UdpServiceParams> {
-            parametersOf(
-                UdpServiceParams(
-                    udpOutputHost = _udpOutputHost.value,
-                    udpOutputPort = _udpOutputPort.value
+                    wakeWordPorcupineLanguage = _wakeWordPorcupineLanguage.value,
+                    wakeWordUdpOutputHost = _wakeWordUdpOutputHost.value,
+                    wakeWordUdpOutputPort = _wakeWordUdpOutputPort.value
                 )
             )
         }

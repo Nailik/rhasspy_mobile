@@ -36,9 +36,6 @@ internal object ConfigurationSetting {
     val mqttRetryInterval = ISetting(SettingsEnum.MQTTRetryInterval, 10L)
     val mqttKeyStoreFile = ISetting(SettingsEnum.MQTTKeyStoreFile, "")
 
-    val udpOutputHost = ISetting(SettingsEnum.UDPOutputHost, "")
-    val udpOutputPort = ISetting(SettingsEnum.UDPOutputPort, 12101)
-
     val wakeWordOption = ISetting(SettingsEnum.WakeWordOption, WakeWordOption.Disabled)
     val wakeWordPorcupineAccessToken = ISetting(SettingsEnum.WakeWordPorcupineAccessToken, "")
     val wakeWordPorcupineKeywordDefaultOptions = ISetting(
@@ -52,6 +49,8 @@ internal object ConfigurationSetting {
         PorcupineCustomKeywordSerializer
     )
     val wakeWordPorcupineLanguage = ISetting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOption.EN)
+    val wakeWordUdpOutputHost = ISetting(SettingsEnum.WakeWordUDPOutputHost, "")
+    val wakeWordUdpOutputPort = ISetting(SettingsEnum.WakeWordUDPOutputPort, 12101)
 
 
     val dialogManagementOption = ISetting(SettingsEnum.DialogManagementOption, DialogManagementOption.Local)
@@ -73,6 +72,8 @@ internal object ConfigurationSetting {
     val isUseCustomSpeechToTextHttpEndpoint = ISetting(SettingsEnum.CustomSpeechToTextEndpoint, false)
     val isUseSpeechToTextMqttSilenceDetection = ISetting(SettingsEnum.SpeechToTextMqttSilenceDetection, true)
     val speechToTextHttpEndpoint = ISetting(SettingsEnum.SpeechToTextHttpEndpoint, "")
+    val speechToTextUdpOutputHost = ISetting(SettingsEnum.SpeechToTextUDPOutputHost, "")
+    val speechToTextUdpOutputPort = ISetting(SettingsEnum.SpeechToTextUDPOutputPort, 12101)
 
     val intentHandlingOption = ISetting(SettingsEnum.IntentHandlingOption, IntentHandlingOption.Disabled)
     val intentHandlingHttpEndpoint = ISetting(SettingsEnum.IntentHandlingEndpoint, "")

@@ -11,5 +11,7 @@ class WakeWordServiceParams(
     val wakeWordPorcupineAccessToken: String = ConfigurationSetting.wakeWordPorcupineAccessToken.value,
     val wakeWordPorcupineKeywordDefaultOptions: Set<PorcupineDefaultKeyword> = ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value,
     val wakeWordPorcupineKeywordCustomOptions: Set<PorcupineCustomKeyword> = ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value,
-    val wakeWordPorcupineLanguage: PorcupineLanguageOption = ConfigurationSetting.wakeWordPorcupineLanguage.value
+    val wakeWordPorcupineLanguage: PorcupineLanguageOption = ConfigurationSetting.wakeWordPorcupineLanguage.value,
+    val wakeWordUdpOutputHost: String = ConfigurationSetting.wakeWordUdpOutputHost.value,
+    val wakeWordUdpOutputPort: Int = ConfigurationSetting.wakeWordUdpOutputPort.value
 )

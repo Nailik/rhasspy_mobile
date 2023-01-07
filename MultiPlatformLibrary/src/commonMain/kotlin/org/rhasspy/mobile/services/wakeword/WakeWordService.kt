@@ -6,6 +6,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action
 import org.rhasspy.mobile.middleware.ServiceMiddleware
@@ -31,7 +32,7 @@ class WakeWordService : IService() {
     val serviceState = _serviceState.readOnly
 
     private val params by inject<WakeWordServiceParams>()
-    private val udpService by inject<UdpService>()
+    private val udpService by inject<UdpService> { parametersOf(params.wakeWordUdpOutputHost, params.wakeWordUdpOutputPort) }
     private var porcupineWakeWordClient: PorcupineWakeWordClient? = null
 
     private val recordingService by inject<RecordingService>()
@@ -135,6 +136,7 @@ class WakeWordService : IService() {
     override fun onClose() {
         logger.d { "onClose" }
         porcupineWakeWordClient?.close()
+        udpService.close()
     }
 
 }

@@ -27,7 +27,6 @@ import org.rhasspy.mobile.services.speechtotext.SpeechToTextServiceParams
 import org.rhasspy.mobile.services.texttospeech.TextToSpeechService
 import org.rhasspy.mobile.services.texttospeech.TextToSpeechServiceParams
 import org.rhasspy.mobile.services.udp.UdpService
-import org.rhasspy.mobile.services.udp.UdpServiceParams
 import org.rhasspy.mobile.services.wakeword.WakeWordService
 import org.rhasspy.mobile.services.wakeword.WakeWordServiceParams
 import org.rhasspy.mobile.services.webserver.WebServerService
@@ -55,7 +54,6 @@ val serviceModule = module {
     closeableSingle { MqttService() }
     closeableSingle { HttpClientService() }
     closeableSingle { WebServerService() }
-    closeableSingle { UdpService() }
     closeableSingle { HomeAssistantService() }
     closeableSingle { WakeWordService() }
     closeableSingle { RecordingService() }
@@ -73,7 +71,6 @@ val serviceModule = module {
     single { params -> params.getOrNull<MqttServiceParams>() ?: MqttServiceParams() }
     single { params -> params.getOrNull<HttpClientServiceParams>() ?: HttpClientServiceParams() }
     single { params -> params.getOrNull<WebServerServiceParams>() ?: WebServerServiceParams() }
-    single { params -> params.getOrNull<UdpServiceParams>() ?: UdpServiceParams() }
     single { params -> params.getOrNull<HomeAssistantServiceParams>() ?: HomeAssistantServiceParams() }
     single { params -> params.getOrNull<WakeWordServiceParams>() ?: WakeWordServiceParams() }
     single { params -> params.getOrNull<DialogManagerServiceParams>() ?: DialogManagerServiceParams() }
@@ -121,6 +118,10 @@ val viewModelModule = module {
     single { SaveAndRestoreSettingsViewModel() }
     single { MicrophoneOverlayViewModel() }
     single { IndicationOverlayViewModel() }
+}
+
+val factoryModule = module {
+    factory { params -> UdpService(params[0], params[1]) }
 }
 
 val nativeModule = module {

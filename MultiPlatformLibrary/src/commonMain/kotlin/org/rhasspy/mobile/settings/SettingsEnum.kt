@@ -68,8 +68,8 @@ enum class SettingsEnum {
     MQTTRetryInterval,
     MQTTKeyStoreFile,
 
-    UDPOutputHost,
-    UDPOutputPort,
+    WakeWordUDPOutputHost,
+    WakeWordUDPOutputPort,
 
     WakeWordOption,
     WakeWordPorcupineAccessToken,
@@ -81,6 +81,8 @@ enum class SettingsEnum {
     CustomSpeechToTextEndpoint,
     SpeechToTextHttpEndpoint,
     SpeechToTextMqttSilenceDetection,
+    SpeechToTextUDPOutputHost,
+    SpeechToTextUDPOutputPort,
 
     IntentRecognitionOption,
     CustomIntentRecognitionHttpEndpoint,
