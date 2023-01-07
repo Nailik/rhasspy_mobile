@@ -21,7 +21,6 @@ import org.rhasspy.mobile.services.udp.UdpService
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.option.WakeWordOption
 
-//TODO logging
 /**
  * hot word services listens for hot word, evaluates configuration settings but no states
  *
@@ -38,7 +37,7 @@ class WakeWordService : IService() {
     private val mqttService by inject<MqttService>()
     private var porcupineWakeWordClient: PorcupineWakeWordClient? = null
 
-    private val recordingService = get<RecordingService>() //TODO why does "inject" crash here
+    private val recordingService get() = get<RecordingService>()
 
     private val serviceMiddleware by inject<ServiceMiddleware>()
 
