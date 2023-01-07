@@ -20,6 +20,11 @@ expect class FileWriter(filename: String, maxFileSize: Long) {
     fun appendText(element: String)
 
     /**
+     * clears file content
+     */
+    fun clearFile()
+
+    /**
      * read all file contents
      */
     fun getFileContent(): String

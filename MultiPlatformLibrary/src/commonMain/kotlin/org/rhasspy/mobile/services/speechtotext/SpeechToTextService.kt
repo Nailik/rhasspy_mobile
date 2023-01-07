@@ -17,6 +17,7 @@ import org.rhasspy.mobile.services.httpclient.HttpClientService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.recording.RecordingService
 import org.rhasspy.mobile.services.udp.UdpService
+import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.option.SpeechToTextOption
 
 /**
@@ -94,6 +95,7 @@ open class SpeechToTextService : IService() {
 
     suspend fun startSpeechToText(sessionId: String) {
         logger.d { "startSpeechToText sessionId: $sessionId" }
+
         //clear data and start recording
         collector?.cancel()
         _speechToTextAudioData.clear()
@@ -115,7 +117,10 @@ open class SpeechToTextService : IService() {
     }
 
     private suspend fun audioFrame(data: List<Byte>) {
-        logger.d { "audioFrame dataSize: ${data.size}" }
+        if (AppSetting.isLogAudioFramesEnabled.value) {
+            logger.d { "audioFrame dataSize: ${data.size}" }
+        }
+
         _serviceState.value = when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> {
                 _speechToTextAudioData.addAll(data)

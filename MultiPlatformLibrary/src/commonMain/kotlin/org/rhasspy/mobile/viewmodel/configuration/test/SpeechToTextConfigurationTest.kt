@@ -16,7 +16,7 @@ class SpeechToTextConfigurationTest : IConfigurationTest() {
 
     override val serviceState get() = get<SpeechToTextService>().serviceState
     val isRecording get() = get<RecordingService>().isRecording
-    val speechToTextService by inject<SpeechToTextService>()
+    private val speechToTextService by inject<SpeechToTextService>()
 
     fun toggleRecording() {
         testScope.launch {
@@ -31,10 +31,7 @@ class SpeechToTextConfigurationTest : IConfigurationTest() {
 
             if (!isRecording.value) {
                 //start recording
-                testScope.launch {
-
-                    speechToTextService.startSpeechToText("")
-                }
+                speechToTextService.startSpeechToText("")
             } else {
                 //stop recording
                 speechToTextService.endSpeechToText("", false)

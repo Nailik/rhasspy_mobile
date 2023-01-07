@@ -21,6 +21,12 @@ actual class FileWriter actual constructor(filename: String, maxFileSize: Long) 
     }
 
     /**
+     * clears file content
+     */
+    actual fun clearFile() {
+    }
+
+    /**
      * read all file contents
      */
     actual fun getFileContent(): String {

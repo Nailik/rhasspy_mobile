@@ -55,6 +55,13 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
     }
 
     /**
+     * clears file content
+     */
+    actual fun clearFile() {
+        file.writeText("")
+    }
+
+    /**
      * read all file contents
      */
     actual fun getFileContent() = file.readText()

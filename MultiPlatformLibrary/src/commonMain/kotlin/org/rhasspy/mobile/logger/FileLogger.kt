@@ -64,8 +64,15 @@ object FileLogger : LogWriter() {
     /**
      * read all lines from file
      */
-    fun getLines(): List<LogElement> = Json.decodeFromString("[${fileWriter.getFileContent()}]")
-
+    fun getLines(): List<LogElement> {
+        return try {
+            Json.decodeFromString("[${fileWriter.getFileContent()}]")
+        } catch (exception: Exception) {
+            fileWriter.clearFile()
+            listOf()
+        }
+    }
+//TODO delete content when corrupted (JsonDecodingException)
     /**
      * share the log file
      */
