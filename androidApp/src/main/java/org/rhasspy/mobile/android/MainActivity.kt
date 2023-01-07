@@ -50,7 +50,7 @@ class MainActivity : AppActivity() {
         this.setContent {
             Box(modifier = Modifier.fillMaxSize()) {
                 MainNavigation()
-              /*  if (BuildConfig.DEBUG) {
+                if (BuildConfig.DEBUG) {
                     Text(
                         text = "DEBUG",
                         modifier = Modifier
@@ -61,7 +61,7 @@ class MainActivity : AppActivity() {
                             .align(Alignment.TopEnd),
                         textAlign = TextAlign.Center
                     )
-                }*/
+                }
             }
         }
 
