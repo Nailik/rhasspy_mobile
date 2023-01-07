@@ -177,6 +177,7 @@ actual class PorcupineWakeWordClient actual constructor(
      * deletes the porcupine manager
      */
     override fun close() {
+        porcupineManager?.stop()
         porcupineManager?.delete()
         porcupineManager = null
     }

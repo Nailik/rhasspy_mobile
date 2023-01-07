@@ -136,6 +136,7 @@ class WakeWordService : IService() {
     override fun onClose() {
         logger.d { "onClose" }
         porcupineWakeWordClient?.close()
+        porcupineWakeWordClient = null
         udpService.close()
     }
 
