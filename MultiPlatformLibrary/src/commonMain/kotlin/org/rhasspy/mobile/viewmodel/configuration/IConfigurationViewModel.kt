@@ -13,11 +13,8 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.koin.core.component.KoinComponent
-import org.koin.core.context.loadKoinModules
-import org.koin.core.context.unloadKoinModules
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.combineState
-import org.rhasspy.mobile.koin.serviceModule
 import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.logger.LogElement
 import org.rhasspy.mobile.logger.LogLevel
@@ -76,8 +73,7 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
         viewModelScope.launch(Dispatchers.Default) {
             onSave()
 
-            unloadKoinModules(serviceModule)
-            loadKoinModules(serviceModule)
+            Application.instance.reloadServiceModules()
 
             _isLoading.value = false
 

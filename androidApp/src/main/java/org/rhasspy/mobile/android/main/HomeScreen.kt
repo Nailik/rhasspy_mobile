@@ -120,7 +120,8 @@ fun LandscapeContent(
     viewModel: HomeScreenViewModel
 ) {
 
-    Row(modifier = Modifier
+    Row(
+        modifier = Modifier
             .padding(paddingValues)
             .fillMaxSize()
             .padding(16.dp),

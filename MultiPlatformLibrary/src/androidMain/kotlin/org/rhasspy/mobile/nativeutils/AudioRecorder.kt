@@ -104,7 +104,7 @@ actual class AudioRecorder : Closeable {
      */
     actual fun stopRecording() {
         logger.v { "stopRecording" }
-        if(_isRecording.value) {
+        if (_isRecording.value) {
             _isRecording.value = false
             recorder?.stop()
             //without release audio output sometimes doesn't work after calling start
