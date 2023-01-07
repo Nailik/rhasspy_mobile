@@ -20,6 +20,8 @@ import org.rhasspy.mobile.services.udp.UdpService
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.option.WakeWordOption
 
+//TODO mqtt does not send audio but awaits for message
+//TODO udp should be running always
 /**
  * hot word services listens for hot word, evaluates configuration settings but no states
  *
@@ -63,7 +65,9 @@ class WakeWordService : IService() {
                     ::onClientError
                 )
                 val error = porcupineWakeWordClient?.initialize()
-                logger.e(error?.exception ?: Throwable()) { "porcupine error ${error?.exception}" }
+                error?.also {
+                    logger.e(it.exception ?: Throwable()) { "porcupine error" }
+                }
                 error?.errorType?.serviceState ?: ServiceState.Success
             }
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
@@ -75,7 +79,7 @@ class WakeWordService : IService() {
 
     private fun onClientError(porcupineError: PorcupineError) {
         _serviceState.value = porcupineError.errorType.serviceState
-        logger.e(porcupineError.exception ?: Throwable()) { "porcupineError $porcupineError" }
+        logger.e(porcupineError.exception ?: Throwable()) { "porcupineError" }
     }
 
     fun startDetection() {
@@ -84,11 +88,10 @@ class WakeWordService : IService() {
                 porcupineWakeWordClient?.also {
                     _isRecording.value = true
                     val error = porcupineWakeWordClient?.start()
-                    if (error?.exception != null) {
-                        logger.e(error.exception) { "porcupineError $error" }
-                    } else if (error != null) {
-                        logger.e { "porcupineError $error" }
+                    error?.also {
+                        logger.e(it.exception ?: Throwable()) { "porcupineError" }
                     }
+                    _serviceState.value = error?.errorType?.serviceState ?: ServiceState.Success
                 } ?: run {
                     logger.a { "start detection but not initialized" }
                 }
@@ -115,7 +118,7 @@ class WakeWordService : IService() {
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {}
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
-            WakeWordOption.MQTT -> mqttService.audioFrame(data)
+            WakeWordOption.MQTT -> { mqttService.audioFrame(data) }
             WakeWordOption.Udp -> udpService.streamAudio(data)
             WakeWordOption.Disabled -> {}
         }

@@ -6,7 +6,7 @@ import org.rhasspy.mobile.services.wakeword.WakeWordService
 class WakeWordConfigurationTest : IConfigurationTest() {
 
     override val serviceState get() = get<WakeWordService>().serviceState
-    fun runTest() {
+    fun startWakeWordDetection() {
         get<WakeWordService>().startDetection()
     }
 

@@ -326,8 +326,8 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
         }
     }
 
-    override fun runTest() {
-        testRunner.runTest()
+    fun startWakeWordDetection() {
+        testRunner.startWakeWordDetection()
     }
 
 }

@@ -40,6 +40,8 @@ class RecordingService : IService() {
     private val _output = MutableStateFlow<List<Byte>>(emptyList())
     val output = _output.readOnly
 
+    private var isSilenceDetectionEnabled = false
+
     init {
         logger.d { "initialize" }
         scope = CoroutineScope(Dispatchers.Default)
@@ -61,7 +63,9 @@ class RecordingService : IService() {
 
         scope.launch {
             audioRecorder.maxVolume.collect {
-                silenceDetection(it)
+                if (isSilenceDetectionEnabled) {
+                    silenceDetection(it)
+                }
             }
         }
     }
@@ -76,7 +80,7 @@ class RecordingService : IService() {
         if (AppSetting.isAutomaticSilenceDetectionEnabled.value) {
             if (volume < AppSetting.automaticSilenceDetectionAudioLevel.value) {
                 //no data was above threshold, there is silence
-                silenceStartTime?.also {
+                silenceStartTime?.also { //TODO silence detected should not be called when recording wake word
                     //  logger.d { "silenceDetected" }
                     //check if silence was detected for x milliseconds
                     if (it.minus(Clock.System.now()) < -AppSetting.automaticSilenceDetectionTime.value.milliseconds) {
@@ -92,12 +96,17 @@ class RecordingService : IService() {
         }
     }
 
+    fun toggleSilenceDetectionEnabled(enabled: Boolean) {
+        isSilenceDetectionEnabled = enabled
+    }
+
     private fun startRecording() {
         logger.d { "startRecording" }
         audioRecorder.startRecording()
     }
 
     private fun stopRecording() {
+        isSilenceDetectionEnabled = false
         logger.d { "stopRecording" }
         audioRecorder.stopRecording()
     }

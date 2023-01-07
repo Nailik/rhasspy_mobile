@@ -17,6 +17,7 @@ import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.recording.RecordingService
 import org.rhasspy.mobile.settings.option.SpeechToTextOption
 
+//TODO add udp audio streaming option
 /**
  * calls actions and returns result
  *
@@ -66,6 +67,7 @@ open class SpeechToTextService : IService() {
         logger.d { "endSpeechToText sessionId: $sessionId fromMqtt $fromMqtt" }
         //stop collection
         collector?.cancel()
+        recordingService.toggleSilenceDetectionEnabled(false)
 
         //evaluate result
         when (params.speechToTextOption) {
@@ -93,6 +95,7 @@ open class SpeechToTextService : IService() {
         _speechToTextAudioData.clear()
 
         if (params.speechToTextOption != SpeechToTextOption.Disabled) {
+            recordingService.toggleSilenceDetectionEnabled(true)
             //start collection
             collector = scope.launch {
                 recordingService.output.collect(::audioFrame)

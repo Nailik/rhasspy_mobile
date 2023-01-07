@@ -2,6 +2,7 @@ package org.rhasspy.mobile.services.udp
 
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
+import io.ktor.server.engine.internal.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
@@ -39,7 +40,13 @@ class UdpService : IService() {
 
     override fun onClose() {
         logger.d { "onClose" }
-        sendChannel?.close()
+        try {
+            sendChannel?.close()
+        } catch (exception: ClosedChannelException) {
+            //nothing to important
+        } catch (exception: Exception) {
+            logger.a(exception) { "UdpService close exception" }
+        }
         socketAddress = null
     }
 

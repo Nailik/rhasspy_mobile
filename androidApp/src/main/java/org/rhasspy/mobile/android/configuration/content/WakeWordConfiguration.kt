@@ -221,13 +221,13 @@ private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
  * test button to start wake word detection test
  */
 @Composable
-private fun TestContent(
-    viewModel: WakeWordConfigurationViewModel
-) {
-    RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::runTest) { onClick ->
+private fun TestContent(viewModel: WakeWordConfigurationViewModel) {
+
+    RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::startWakeWordDetection) { onClick ->
         FilledTonalButtonListItem(
             text = MR.strings.startRecordAudio,
             onClick = onClick
         )
     }
+
 }

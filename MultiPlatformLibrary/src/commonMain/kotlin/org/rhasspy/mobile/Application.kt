@@ -18,6 +18,7 @@ import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.nativeutils.BackgroundService
 import org.rhasspy.mobile.nativeutils.NativeApplication
 import org.rhasspy.mobile.nativeutils.OverlayPermission
+import org.rhasspy.mobile.services.dialog.DialogManagerService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.settings.AppSetting
@@ -131,6 +132,7 @@ abstract class Application : NativeApplication(), KoinComponent {
     private fun startServices() {
         get<WebServerService>()
         get<MqttService>()
+        get<DialogManagerService>()
     }
 
 }

@@ -144,8 +144,9 @@ actual class PorcupineWakeWordClient actual constructor(
      * copies a model file from the file resources to app storage directory, else cannot be used by porcupine
      */
     private fun copyModelFileIfNecessary(): String {
-        val file = File(Application.nativeInstance.filesDir, "porcupine/model_${wakeWordPorcupineLanguage.name.lowercase()}.pv")
-        file.mkdirs()
+        val folder = File(Application.nativeInstance.filesDir, "porcupine")
+        folder.mkdirs()
+        val file = File(folder, "model_${wakeWordPorcupineLanguage.name.lowercase()}.pv")
 
         if (!file.exists()) {
             file.outputStream().write(
@@ -161,10 +162,9 @@ actual class PorcupineWakeWordClient actual constructor(
      * copies a keyword file from the file resources to app storage directory, else cannot be used by porcupine
      */
     private fun copyBuildInKeywordFileIfNecessary(defaultKeyword: PorcupineDefaultKeyword): String {
-        val file = File(
-            Application.nativeInstance.filesDir,
-            "porcupine/model_${defaultKeyword.option.name.lowercase()}.ppn"
-        )
+        val folder = File(Application.nativeInstance.filesDir, "porcupine")
+        folder.mkdirs()
+        val file = File(folder, "model_${defaultKeyword.option.name.lowercase()}.ppn")
 
         if (!file.exists()) {
             file.outputStream().write(Application.nativeInstance.resources.openRawResource(defaultKeyword.option.file.rawResId).readBytes())

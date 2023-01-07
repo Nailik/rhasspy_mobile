@@ -318,10 +318,11 @@ class MqttService : IService() {
                     logger.v { "mqtt message published" }
                     ServiceState.Success
                 }
+            } ?: run {
+                logger.a { "mqttClient not initialized" }
+                ServiceState.Exception()
             }
 
-            logger.a { "mqttClient not initialized" }
-            ServiceState.Exception()
         } else {
             ServiceState.Success
         }
