@@ -8,6 +8,7 @@ import co.touchlab.kermit.Logger
 import io.ktor.utils.io.core.*
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.services.wakeword.PorcupineError
+import org.rhasspy.mobile.services.wakeword.PorcupineErrorType
 import org.rhasspy.mobile.settings.option.PorcupineLanguageOption
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
@@ -41,7 +42,7 @@ actual class PorcupineWakeWordClient actual constructor(
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             logger.e { "missing recording permission" }
-            return PorcupineError.MicrophonePermissionMissing
+            return PorcupineError(null, PorcupineErrorType.MicrophonePermissionMissing)
         }
 
         return try {
@@ -87,7 +88,6 @@ actual class PorcupineWakeWordClient actual constructor(
 
             null//no error
         } catch (e: Exception) {
-
             return e.toPorcupineError()
         }
     }
@@ -107,7 +107,8 @@ actual class PorcupineWakeWordClient actual constructor(
             it.start()
             return null
         } ?: run {
-            return PorcupineError.NotInitialized
+            logger.a { "Porcupine start but porcupineManager not initialized" }
+            return PorcupineError(null, PorcupineErrorType.NotInitialized)
         }
     }
 
@@ -143,10 +144,8 @@ actual class PorcupineWakeWordClient actual constructor(
      * copies a model file from the file resources to app storage directory, else cannot be used by porcupine
      */
     private fun copyModelFileIfNecessary(): String {
-        val file = File(
-            Application.nativeInstance.filesDir,
-            "porcupine/model_${wakeWordPorcupineLanguage.name.lowercase()}.pv"
-        )
+        val file = File(Application.nativeInstance.filesDir, "porcupine/model_${wakeWordPorcupineLanguage.name.lowercase()}.pv")
+        file.mkdirs()
 
         if (!file.exists()) {
             file.outputStream().write(
@@ -187,18 +186,18 @@ actual class PorcupineWakeWordClient actual constructor(
      */
     private fun Exception.toPorcupineError(): PorcupineError {
         return when (this) {
-            is PorcupineActivationException -> PorcupineError.ActivationException(this)
-            is PorcupineActivationLimitException -> PorcupineError.ActivationLimitException(this)
-            is PorcupineActivationRefusedException -> PorcupineError.ActivationRefusedException(this)
-            is PorcupineActivationThrottledException -> PorcupineError.ActivationThrottledException(this)
-            is PorcupineInvalidArgumentException -> PorcupineError.InvalidArgumentException(this)
-            is PorcupineInvalidStateException -> PorcupineError.InvalidStateException(this)
-            is PorcupineIOException -> PorcupineError.IOException(this)
-            is PorcupineKeyException -> PorcupineError.KeyException(this)
-            is PorcupineMemoryException -> PorcupineError.MemoryException(this)
-            is PorcupineRuntimeException -> PorcupineError.RuntimeException(this)
-            is PorcupineStopIterationException -> PorcupineError.StopIterationException(this)
-            else -> PorcupineError.Other(this)
+            is PorcupineActivationException -> PorcupineError(this, PorcupineErrorType.ActivationException)
+            is PorcupineActivationLimitException -> PorcupineError(this, PorcupineErrorType.ActivationLimitException)
+            is PorcupineActivationRefusedException -> PorcupineError(this, PorcupineErrorType.ActivationRefusedException)
+            is PorcupineActivationThrottledException -> PorcupineError(this, PorcupineErrorType.ActivationThrottledException)
+            is PorcupineInvalidArgumentException -> PorcupineError(this, PorcupineErrorType.InvalidArgumentException)
+            is PorcupineInvalidStateException -> PorcupineError(this, PorcupineErrorType.InvalidStateException)
+            is PorcupineIOException -> PorcupineError(this, PorcupineErrorType.IOException)
+            is PorcupineKeyException -> PorcupineError(this, PorcupineErrorType.KeyException)
+            is PorcupineMemoryException -> PorcupineError(this, PorcupineErrorType.MemoryException)
+            is PorcupineRuntimeException -> PorcupineError(this, PorcupineErrorType.RuntimeException)
+            is PorcupineStopIterationException -> PorcupineError(this, PorcupineErrorType.StopIterationException)
+            else -> PorcupineError(this, PorcupineErrorType.Other)
         }
     }
 }

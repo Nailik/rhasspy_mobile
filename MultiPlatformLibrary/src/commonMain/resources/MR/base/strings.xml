@@ -308,6 +308,19 @@
     <string name="filterList">filter List</string>
     <string name="autoscrollList">autoscroll List</string>
     <string name="requestTimeout">request Timeout (MS)</string>
+    <!-- porcupine error -->
+    <string name="activation_exception">activation exception</string>
+    <string name="activation_limit_exception">activation limit exception</string>
+    <string name="activation_refused_exception">activation refused exception</string>
+    <string name="activation_throttled_exception">activation throttled exception</string>
+    <string name="invalid_argument_exception">invalid argument exception</string>
+    <string name="invalid_state_exception">invalid state exception</string>
+    <string name="io_exception">io exception</string>
+    <string name="key_exception">key exception</string>
+    <string name="memory_exception">memory exception</string>
+    <string name="runtime_exception">runtime exception</string>
+    <string name="stop_iteration_exception">activation</string>
+    <string name="microphone_permission_missing">microphone permission missing</string>
     <!-- http client service error -->
     <string name="illegal_argument_exception">illegal argument exception</string>
     <string name="invalid_tls_record_type">invalid tls record type</string>

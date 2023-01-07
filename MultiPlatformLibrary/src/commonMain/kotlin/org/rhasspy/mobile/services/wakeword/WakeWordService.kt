@@ -54,6 +54,7 @@ class WakeWordService : IService() {
         logger.d { "initialization" }
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {
+                _serviceState.value = ServiceState.Loading
                 //when porcupine is used for hotWord then start local service
                 porcupineWakeWordClient = PorcupineWakeWordClient(
                     params.wakeWordPorcupineAccessToken,
@@ -64,11 +65,8 @@ class WakeWordService : IService() {
                     ::onClientError
                 )
                 val error = porcupineWakeWordClient?.initialize()
-                if (error?.exception != null) {
-                    logger.e(error.exception) { "porcupine error $error" }
-                } else if (error != null) {
-                    logger.e { "porcupine error $error" }
-                }
+                _serviceState.value = error?.errorType?.serviceState ?: ServiceState.Success
+                logger.e(error?.exception ?: Throwable()) { "porcupine error ${error?.exception}" }
             }
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
             WakeWordOption.MQTT -> {} //nothing to do
@@ -78,22 +76,23 @@ class WakeWordService : IService() {
     }
 
     private fun onClientError(porcupineError: PorcupineError) {
-        if (porcupineError.exception != null) {
-            logger.e(porcupineError.exception) { "porcupineError $porcupineError" }
-        } else {
-            logger.e { "porcupineError $porcupineError" }
-        }
+        _serviceState.value = porcupineError.errorType.serviceState
+        logger.e(porcupineError.exception ?: Throwable()) { "porcupineError $porcupineError" }
     }
 
     fun startDetection() {
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {
-                _isRecording.value = true
-                val error = porcupineWakeWordClient?.start()
-                if (error?.exception != null) {
-                    logger.e(error.exception) { "porcupineError $error" }
-                } else if (error != null) {
-                    logger.e { "porcupineError $error" }
+                porcupineWakeWordClient?.also {
+                    _isRecording.value = true
+                    val error = porcupineWakeWordClient?.start()
+                    if (error?.exception != null) {
+                        logger.e(error.exception) { "porcupineError $error" }
+                    } else if (error != null) {
+                        logger.e { "porcupineError $error" }
+                    }
+                } ?: run {
+                    logger.a { "start detection but not initialized" }
                 }
             }
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored

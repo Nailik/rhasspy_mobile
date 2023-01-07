@@ -6,7 +6,7 @@ import org.rhasspy.mobile.MR
 
 enum class PorcupineLanguageOption(override val text: StringResource, val file: FileResource) :
     IOption<PorcupineLanguageOption> {
-    EN(MR.strings.english, MR.files.porcupine_params),
+    EN(MR.strings.english, MR.files.porcupine_params_en),
     DE(MR.strings.german, MR.files.porcupine_params_de),
     ES(MR.strings.spanish, MR.files.porcupine_params_es),
     FR(MR.strings.french, MR.files.porcupine_params_fr),

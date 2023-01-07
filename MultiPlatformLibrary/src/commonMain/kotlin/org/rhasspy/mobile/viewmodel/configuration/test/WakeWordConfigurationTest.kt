@@ -10,12 +10,4 @@ class WakeWordConfigurationTest : IConfigurationTest() {
         get<WakeWordService>().startDetection()
     }
 
-    override fun onClose() {
-        //TODO does not release microphone??
-        get<WakeWordService>().stopDetection()
-    }
-
-    override fun close() {
-        super.close()
-    }
 }
