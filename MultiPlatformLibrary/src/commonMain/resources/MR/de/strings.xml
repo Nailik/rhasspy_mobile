@@ -286,7 +286,6 @@
     <string name="serviceStatusPending">Pending</string>
     <string name="serviceStatusLoading">Ladend</string>
     <string name="serviceStatusWarning">Warnung</string>
-    <string name="serviceStatusFehler">Fehler</string>
     <string name="serviceStatusPendingText">Dienste warten</string>
     <string name="serviceStatusLoadingText">Dienste werden gestartet</string>
     <string name="serviceStatusWarningText">Dienste haben mögliche Probleme entdeckt</string>
