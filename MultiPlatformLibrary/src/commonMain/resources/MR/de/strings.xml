@@ -311,4 +311,5 @@
     <string name="filterList">Liste filtern</string>
     <string name="autoscrollList">Liste automatisch scrollen</string>
     <string name="requestTimeout">Anfrage Timeout (MS)</string>
+    <string name="allowMicrophonePermission">Mikrofon zugriff erlauben</string>
 </resources>

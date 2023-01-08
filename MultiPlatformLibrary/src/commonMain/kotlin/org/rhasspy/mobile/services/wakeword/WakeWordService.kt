@@ -46,6 +46,10 @@ class WakeWordService : IService() {
      * starts the service
      */
     init {
+        initialize()
+    }
+
+    fun initialize() {
         logger.d { "initialization" }
         _serviceState.value = when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {
@@ -62,6 +66,7 @@ class WakeWordService : IService() {
                 val error = porcupineWakeWordClient?.initialize()
                 error?.also {
                     logger.e(it.exception ?: Throwable()) { "porcupine error" }
+                    porcupineWakeWordClient = null
                 }
                 error?.errorType?.serviceState ?: ServiceState.Success
             }
@@ -80,6 +85,9 @@ class WakeWordService : IService() {
     fun startDetection() {
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {
+                if (porcupineWakeWordClient == null) {
+                    initialize()
+                }
                 porcupineWakeWordClient?.also {
                     _isRecording.value = true
                     val error = porcupineWakeWordClient?.start()

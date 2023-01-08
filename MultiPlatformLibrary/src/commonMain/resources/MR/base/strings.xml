@@ -308,6 +308,7 @@
     <string name="filterList">filter List</string>
     <string name="autoscrollList">autoscroll List</string>
     <string name="requestTimeout">request Timeout (MS)</string>
+    <string name="allowMicrophonePermission">allow microphone permission</string>
     <!-- porcupine error -->
     <string name="activation_exception">activation exception</string>
     <string name="activation_limit_exception">activation limit exception</string>

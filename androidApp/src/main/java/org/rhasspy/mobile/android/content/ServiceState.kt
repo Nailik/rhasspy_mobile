@@ -6,16 +6,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.item.EventStateCard
 import org.rhasspy.mobile.android.content.item.EventStateIcon
+import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 
@@ -54,10 +57,15 @@ fun ServiceStateHeader(viewModel: IConfigurationViewModel) {
             icon = {
                 Icon(imageVector = Icons.Filled.Info, contentDescription = MR.strings.info)
             },
-            confirmButton = {},
-            dismissButton = {
-                isShowDialog = false
+            confirmButton = {
+                TextButton(
+                    onClick = { isShowDialog = false },
+                    modifier = Modifier.testTag(TestTag.DialogOk)
+                ) {
+                    Text(MR.strings.close)
+                }
             },
+            dismissButton = { },
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()

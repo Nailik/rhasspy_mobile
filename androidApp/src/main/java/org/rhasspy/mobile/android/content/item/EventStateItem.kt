@@ -2,6 +2,7 @@ package org.rhasspy.mobile.android.content.item
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.outlined.*
@@ -13,7 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.theme.on_color_warn
@@ -136,7 +139,7 @@ fun EventStateCard(
     content: @Composable () -> Unit
 ) {
     Card(
-        modifier = Modifier.let { onClick?.let { it1 -> it.clickable(enabled = enabled, onClick = it1) } ?: it },
+        modifier = Modifier.clip(RoundedCornerShape(12.dp)).let { onClick?.let { it1 -> it.clickable(enabled = enabled, onClick = it1) } ?: it },
         colors = CardDefaults.outlinedCardColors(
             containerColor = when (serviceState) {
                 is ServiceState.Pending -> MaterialTheme.colorScheme.surfaceVariant

@@ -1,5 +1,8 @@
 package org.rhasspy.mobile.android.configuration.content
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -183,6 +186,20 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
             }
         )
 
+        //button to enabled microphone
+        AnimatedVisibility(
+            enter = expandVertically(),
+            exit = shrinkVertically(),
+            visible = viewModel.isMicrophonePermissionRequestVisible.collectAsState().value
+        ) {
+            RequiresMicrophonePermission(
+                MR.strings.microphonePermissionInfoRecord,
+                viewModel::microphonePermissionAllowed
+            ) { onClick ->
+                FilledTonalButtonListItem(text = MR.strings.allowMicrophonePermission, onClick = onClick)
+            }
+        }
+
     }
 
 }
@@ -212,6 +229,20 @@ private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
             value = viewModel.wakeWordUdpOutputPortText.collectAsState().value,
             onValueChange = viewModel::changeUdpOutputPort
         )
+
+        //button to enabled microphone
+        AnimatedVisibility(
+            enter = expandVertically(),
+            exit = shrinkVertically(),
+            visible = viewModel.isMicrophonePermissionRequestVisible.collectAsState().value
+        ) {
+            RequiresMicrophonePermission(
+                MR.strings.microphonePermissionInfoRecord,
+                viewModel::microphonePermissionAllowed
+            ) { onClick ->
+                FilledTonalButtonListItem(text = MR.strings.allowMicrophonePermission, onClick = onClick)
+            }
+        }
 
     }
 

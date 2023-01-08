@@ -8,6 +8,7 @@ import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.nativeutils.FileUtils
+import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.nativeutils.openLink
 import org.rhasspy.mobile.services.wakeword.WakeWordService
 import org.rhasspy.mobile.services.wakeword.WakeWordServiceParams
@@ -71,6 +72,7 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
     val wakeWordUdpOutputHost = _wakeWordUdpOutputHost.readOnly
     val wakeWordUdpOutputPortText = _wakeWordUdpOutputPortText.readOnly
 
+    val isMicrophonePermissionRequestVisible = MicrophonePermission.granted.mapReadonlyState { !it }
 
     fun isWakeWordPorcupineSettingsVisible(option: WakeWordOption): Boolean {
         return option == WakeWordOption.Porcupine
@@ -258,6 +260,11 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
     //edit udp host
     fun changeUdpOutputHost(host: String) {
         _wakeWordUdpOutputHost.value = host
+    }
+
+    //restart wakeword service after microphone permission was allowed
+    fun microphonePermissionAllowed() {
+        get<WakeWordService>().initialize()
     }
 
     /**
