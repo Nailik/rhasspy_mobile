@@ -237,6 +237,7 @@
     <string name="notification">Benachrichtigung</string>
     <string name="audioOutputSilentOrDisabled">Ihr Audioausgang ist stumm oder deaktiviert</string>
     <string name="startPorcupine">Start Porcupine</string>
+    <string name="initializePorcupine">Initialisiere Porcupine</string>
     <string name="hotWordDetected">HotWord Erkannt</string>
     <string name="start">Start</string>
     <string name="speechToText">Sprache zu Text</string>
