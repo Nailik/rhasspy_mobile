@@ -15,6 +15,7 @@ class UdpService(host: String, port: Int) : IService() {
 
     private var socketAddress: SocketAddress? = null
     private var sendChannel: SendChannel<Datagram>? = null
+    private var hasLoggedError = false
 
     /**
      * makes sure the address is up to date
@@ -52,15 +53,20 @@ class UdpService(host: String, port: Int) : IService() {
             try {
                 sendChannel?.send(Datagram(ByteReadPacket(data.toByteArray()), it))
             } catch (exception: Exception) {
-                if (exception::class.simpleName == "JobCancellationException") {
-                    //no error, can happen
-                    return null
+                if (AppSetting.isLogAudioFramesEnabled.value) {
+                    if (exception::class.simpleName == "JobCancellationException") {
+                        //no error, can happen
+                        return null
+                    }
+                    logger.e(exception) { "streamAudio error" }
                 }
-                logger.e(exception) { "streamAudio error" }
                 return exception
             }
         } ?: run {
-            logger.a { "stream audio socketAddress not initialized" }
+            if(!hasLoggedError) {
+                hasLoggedError = true
+                logger.a { "stream audio socketAddress not initialized" }
+            }
         }
         return null
     }

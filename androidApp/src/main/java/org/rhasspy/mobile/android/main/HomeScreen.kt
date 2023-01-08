@@ -1,9 +1,6 @@
 package org.rhasspy.mobile.android.main
 
 import android.content.res.Configuration
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
@@ -19,12 +16,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.content.ServiceState
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
-import org.rhasspy.mobile.android.navigation.BottomBarScreenType
-import org.rhasspy.mobile.android.navigation.NavigationParams
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
+import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
 
 /**
@@ -82,20 +77,18 @@ private fun PortraitContent(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
 
-        ServiceStatusInformation(viewModel)
-
         Box(modifier = Modifier.weight(1f)) {
+
+            val microphoneViewModel = get<MicrophoneFabViewModel>()
+
             RequiresMicrophonePermission(
                 MR.strings.microphonePermissionInfoRecord,
-                viewModel::toggleSession
+                microphoneViewModel::onClick
             ) { onClick ->
                 MicrophoneFab(
                     modifier = Modifier.fillMaxSize(),
                     iconSize = 96.dp,
-                    isActionEnabledStateFlow = viewModel.isActionEnabled,
-                    isRecordingStateFlow = viewModel.isRecording,
-                    isShowBorderStateFlow = viewModel.isShowBorder,
-                    isShowMicOnStateFlow = viewModel.isShowMicOn,
+                    viewModel = microphoneViewModel,
                     onClick = onClick
                 )
             }
@@ -128,17 +121,17 @@ fun LandscapeContent(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Box(modifier = Modifier.weight(1f)) {
+
+            val microphoneViewModel = get<MicrophoneFabViewModel>()
+
             RequiresMicrophonePermission(
                 MR.strings.microphonePermissionInfoRecord,
-                viewModel::toggleSession
+                microphoneViewModel::onClick
             ) { onClick ->
                 MicrophoneFab(
                     modifier = Modifier.fillMaxSize(),
                     iconSize = 96.dp,
-                    isActionEnabledStateFlow = viewModel.isActionEnabled,
-                    isRecordingStateFlow = viewModel.isRecording,
-                    isShowBorderStateFlow = viewModel.isShowBorder,
-                    isShowMicOnStateFlow = viewModel.isShowMicOn,
+                    viewModel = microphoneViewModel,
                     onClick = onClick
                 )
             }
@@ -150,43 +143,8 @@ fun LandscapeContent(
                 .weight(1f),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            ServiceStatusInformation(viewModel)
-
             PlayRecording(viewModel)
         }
-    }
-
-}
-
-
-/**
- * Service status with text and icon, colored
- *
- * Links to Configuration page, with scrolling to service that contains issue
- */
-@Composable
-private fun ServiceStatusInformation(viewModel: HomeScreenViewModel) {
-
-    AnimatedVisibility(
-        enter = expandVertically(),
-        exit = shrinkVertically(),
-        visible = viewModel.isServiceStateVisible.collectAsState().value
-    ) {
-
-        val navigate = LocalNavController.current
-        val serviceState by viewModel.serviceState.collectAsState()
-
-        ServiceState(serviceState = serviceState) {
-            if (viewModel.isActionEnabled.value) {
-                navigate.navigate(
-                    BottomBarScreenType.ConfigurationScreen.appendOptionalParameter(
-                        NavigationParams.ScrollToError,
-                        true
-                    )
-                )
-            }
-        }
-
     }
 
 }

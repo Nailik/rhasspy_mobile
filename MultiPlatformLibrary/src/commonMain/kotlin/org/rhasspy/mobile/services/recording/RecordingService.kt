@@ -18,7 +18,6 @@ import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.settings.AppSetting
 import kotlin.time.Duration.Companion.milliseconds
 
-//TODO logging
 /**
  * records audio and sends data to state machine service
  * also records for wake word

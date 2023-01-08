@@ -62,7 +62,8 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
 
     init {
         _serviceState.value = ServiceState.Success
-        //TODO start wake word detection
+        _currentDialogState.value = DialogManagerServiceState.AwaitingWakeWord
+        wakeWordService.startDetection()
     }
 
     fun onAction(action: DialogAction) {

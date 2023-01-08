@@ -16,13 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.R
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.FloatingActionButton
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 
 /**
  * Floating Action Button with microphone
@@ -31,21 +31,18 @@ import org.rhasspy.mobile.android.testTag
 fun MicrophoneFab(
     modifier: Modifier = Modifier,
     iconSize: Dp,
-    isActionEnabledStateFlow: StateFlow<Boolean>,
-    isRecordingStateFlow: StateFlow<Boolean>,
-    isShowBorderStateFlow: StateFlow<Boolean>,
-    isShowMicOnStateFlow: StateFlow<Boolean>,
+    viewModel: MicrophoneFabViewModel,
     onClick: () -> Unit
 ) {
 
-    val isActionEnabled by isActionEnabledStateFlow.collectAsState()
-    val isRecording by isRecordingStateFlow.collectAsState()
+    val isActionEnabled by viewModel.isActionEnabled.collectAsState()
+    val isRecording by viewModel.isRecording.collectAsState()
 
     FloatingActionButton(
         modifier = modifier
             .testTag(TestTag.MicrophoneFab)
             .let {
-                if (isShowBorderStateFlow.collectAsState().value) {
+                if (viewModel.isShowBorder.collectAsState().value) {
                     return@let it.border(
                         8.dp,
                         MaterialTheme.colorScheme.errorContainer,
@@ -66,7 +63,7 @@ fun MicrophoneFab(
         icon = {
             Icon(
                 modifier = Modifier.size(iconSize),
-                imageVector = if (isShowMicOnStateFlow.collectAsState().value) Icons.Filled.Mic else Icons.Filled.MicOff,
+                imageVector = if (viewModel.isShowMicOn.collectAsState().value) Icons.Filled.Mic else Icons.Filled.MicOff,
                 contentDescription = MR.strings.wakeUp,
             )
         }

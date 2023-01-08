@@ -17,7 +17,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.android.R
 import org.rhasspy.mobile.android.main.getContainerForMicrophoneFabLegacy
 import org.rhasspy.mobile.android.main.getMicrophoneFabIconLegacy
-import org.rhasspy.mobile.viewmodel.widget.MicrophoneWidgetViewModel
+import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 
 class MicrophoneWidget : GlanceAppWidget(), KoinComponent {
 
@@ -26,7 +26,7 @@ class MicrophoneWidget : GlanceAppWidget(), KoinComponent {
     @Composable
     @GlanceComposable
     override fun Content() {
-        val viewModel = get<MicrophoneWidgetViewModel>()
+        val viewModel = get<MicrophoneFabViewModel>()
 
         //used to mimic border, drawable necessary for rounded corner on older devices
         Box(
@@ -96,7 +96,7 @@ class TestCallback : ActionCallback, KoinComponent {
         glanceId: GlanceId,
         parameters: ActionParameters
     ) {
-        get<MicrophoneWidgetViewModel>().onTapWidget()
+        get<MicrophoneFabViewModel>().onClick()
     }
 }
 

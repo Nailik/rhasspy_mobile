@@ -1,10 +1,11 @@
-package org.rhasspy.mobile.viewmodel.widget
+package org.rhasspy.mobile.viewmodel.element
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.koin.getSafe
@@ -14,12 +15,13 @@ import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.dialog.DialogManagerService
 import org.rhasspy.mobile.services.dialog.DialogManagerServiceState
+import org.rhasspy.mobile.services.wakeword.WakeWordService
 
-class MicrophoneWidgetViewModel : ViewModel(), KoinComponent {
+class MicrophoneFabViewModel : ViewModel(), KoinComponent {
 
     private val dialogManagerServiceState
-        get() = getSafe<DialogManagerService>()?.currentDialogState ?: MutableStateFlow(DialogManagerServiceState.Idle).readOnly
-    val isShowBorder = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.AwaitingWakeWord }
+    get() = getSafe<DialogManagerService>()?.currentDialogState ?: MutableStateFlow(DialogManagerServiceState.Idle).readOnly
+    val isShowBorder = get<WakeWordService>().isRecording
     val isShowMicOn: StateFlow<Boolean> = MicrophonePermission.granted
     val isRecording = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
     val isActionEnabled = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingWakeWord }
@@ -27,14 +29,16 @@ class MicrophoneWidgetViewModel : ViewModel(), KoinComponent {
     init {
         viewModelScope.launch {
             combineState(isShowBorder, isShowMicOn, isRecording, isActionEnabled) { _, _, _, _ ->
+                listOf(isShowBorder, isShowMicOn, isRecording, isActionEnabled)
+            }.collect {
                 viewModelScope.launch {
                     Application.nativeInstance.updateWidgetNative()
                 }
-            }.collect {}
+            }
         }
     }
 
-    fun onTapWidget() {
+    fun onClick() {
         getSafe<ServiceMiddleware>()?.userSessionClick()
     }
 

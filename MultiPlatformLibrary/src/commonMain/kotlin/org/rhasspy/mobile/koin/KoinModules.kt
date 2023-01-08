@@ -34,6 +34,7 @@ import org.rhasspy.mobile.services.webserver.WebServerServiceParams
 import org.rhasspy.mobile.viewmodel.AppViewModel
 import org.rhasspy.mobile.viewmodel.configuration.*
 import org.rhasspy.mobile.viewmodel.configuration.test.*
+import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.overlay.IndicationOverlayViewModel
 import org.rhasspy.mobile.viewmodel.overlay.MicrophoneOverlayViewModel
 import org.rhasspy.mobile.viewmodel.screens.*
@@ -41,7 +42,6 @@ import org.rhasspy.mobile.viewmodel.settings.*
 import org.rhasspy.mobile.viewmodel.settings.sound.ErrorIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.sound.RecordedIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.sound.WakeIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewmodel.widget.MicrophoneWidgetViewModel
 
 
 val serviceModule = module {
@@ -90,7 +90,7 @@ val serviceModule = module {
 val viewModelModule = module {
     single { AppViewModel() }
     single { HomeScreenViewModel() }
-    single { MicrophoneWidgetViewModel() }
+    single { MicrophoneFabViewModel() }
     single { ConfigurationScreenViewModel() }
     single { AudioPlayingConfigurationViewModel() }
     single { DialogManagementConfigurationViewModel() }

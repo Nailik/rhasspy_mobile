@@ -25,11 +25,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.get
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.main.MicrophoneFab
 import org.rhasspy.mobile.android.theme.AppTheme
+import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.overlay.MicrophoneOverlayViewModel
 
 /**
@@ -57,6 +59,8 @@ object MicrophoneOverlay : KoinComponent {
             AppTheme {
                 val size by viewModel.microphoneOverlaySize.collectAsState()
 
+                val microphoneViewModel = get<MicrophoneFabViewModel>()
+
                 MicrophoneFab(
                     modifier = Modifier
                         .size(size.dp)
@@ -67,11 +71,8 @@ object MicrophoneOverlay : KoinComponent {
                             }
                         },
                     iconSize = (size * 0.4).dp,
-                    isActionEnabledStateFlow = viewModel.isActionEnabled,
-                    isRecordingStateFlow = viewModel.isRecording,
-                    isShowBorderStateFlow = viewModel.isShowBorder,
-                    isShowMicOnStateFlow = viewModel.isShowMicOn,
-                    onClick = viewModel::onClick
+                    viewModel = microphoneViewModel,
+                    onClick = microphoneViewModel::onClick
                 )
             }
         }
