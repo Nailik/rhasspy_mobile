@@ -9,12 +9,11 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set Up JDK 18.0.2
+      - name: Set Up JDK 18
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
-          java-version: '18.0.2'
-          cache: gradle
+          java-version: '18'
       # necessary for linux/macos but doesn't work on windows
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
