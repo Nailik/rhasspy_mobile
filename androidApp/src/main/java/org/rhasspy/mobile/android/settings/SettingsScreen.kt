@@ -95,39 +95,39 @@ fun SettingsScreen(viewModel: SettingsScreenViewModel = get()) {
  */
 fun NavGraphBuilder.addSettingsScreen() {
 
-    composable(SettingsScreenType.LanguageSettings.name) {
+    composable(SettingsScreenType.LanguageSettings.route) {
         LanguageSettingsScreenItemContent()
     }
 
-    composable(SettingsScreenType.BackgroundServiceSettings.name) {
+    composable(SettingsScreenType.BackgroundServiceSettings.route) {
         BackgroundServiceSettingsContent()
     }
 
-    composable(SettingsScreenType.MicrophoneOverlaySettings.name) {
+    composable(SettingsScreenType.MicrophoneOverlaySettings.route) {
         MicrophoneOverlaySettingsContent()
     }
 
-    composable(SettingsScreenType.IndicationSettings.name) {
+    composable(SettingsScreenType.IndicationSettings.route) {
         WakeWordIndicationSettingsContent()
     }
 
-    composable(SettingsScreenType.DeviceSettings.name) {
+    composable(SettingsScreenType.DeviceSettings.route) {
         DeviceSettingsContent()
     }
 
-    composable(SettingsScreenType.AutomaticSilenceDetectionSettings.name) {
+    composable(SettingsScreenType.AutomaticSilenceDetectionSettings.route) {
         AutomaticSilenceDetectionSettingsContent()
     }
 
-    composable(SettingsScreenType.LogSettings.name) {
+    composable(SettingsScreenType.LogSettings.route) {
         LogSettingsContent()
     }
 
-    composable(SettingsScreenType.SaveAndRestoreSettings.name) {
+    composable(SettingsScreenType.SaveAndRestoreSettings.route) {
         SaveAndRestoreSettingsContent()
     }
 
-    composable(SettingsScreenType.AboutSettings.name) {
+    composable(SettingsScreenType.AboutSettings.route) {
         AboutScreen()
     }
 

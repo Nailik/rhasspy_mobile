@@ -72,19 +72,19 @@ fun BottomBarScreensNavigation(viewModel: HomeScreenViewModel = get()) {
 
             NavHost(
                 navController = navController,
-                startDestination = BottomBarScreenType.HomeScreen.name,
+                startDestination = BottomBarScreenType.HomeScreen.route,
                 modifier = Modifier.padding(paddingValues)
             ) {
-                composable(BottomBarScreenType.HomeScreen.name) {
+                composable(BottomBarScreenType.HomeScreen.route) {
                     HomeScreen()
                 }
                 composable(
                     BottomBarScreenType.ConfigurationScreen
                         .appendOptionalParameter(
                             NavigationParams.ScrollToError,
-                            "{${NavigationParams.ScrollToError.name}}"
+                            "{${NavigationParams.ScrollToError.paramName}}"
                         ),
-                    arguments = listOf(navArgument(NavigationParams.ScrollToError.name) {
+                    arguments = listOf(navArgument(NavigationParams.ScrollToError.paramName) {
                         defaultValue = false
                     })
                 ) {
@@ -93,10 +93,10 @@ fun BottomBarScreensNavigation(viewModel: HomeScreenViewModel = get()) {
                             ?: false
                     )
                 }
-                composable(BottomBarScreenType.SettingsScreen.name) {
+                composable(BottomBarScreenType.SettingsScreen.route) {
                     SettingsScreen()
                 }
-                composable(BottomBarScreenType.LogScreen.name) {
+                composable(BottomBarScreenType.LogScreen.route) {
                     LogScreen()
                 }
             }
@@ -118,7 +118,7 @@ fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavControlle
             screen = BottomBarScreenType.HomeScreen,
             icon = {
                 Icon(
-                    if (currentBackStackEntry?.destination?.route == BottomBarScreenType.HomeScreen.name) {
+                    if (currentBackStackEntry?.destination?.route == BottomBarScreenType.HomeScreen.route) {
                         Icons.Filled.Mic
                     } else {
                         Icons.Outlined.Mic
@@ -144,7 +144,7 @@ fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavControlle
             screen = BottomBarScreenType.SettingsScreen,
             icon = {
                 Icon(
-                    if (currentBackStackEntry?.destination?.route == BottomBarScreenType.SettingsScreen.name) {
+                    if (currentBackStackEntry?.destination?.route == BottomBarScreenType.SettingsScreen.route) {
                         Icons.Filled.Settings
                     } else {
                         Icons.Outlined.Settings

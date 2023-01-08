@@ -142,43 +142,43 @@ fun ConfigurationScreen(
  */
 fun NavGraphBuilder.addConfigurationScreens() {
 
-    composable(ConfigurationScreenType.AudioPlayingConfiguration.name) {
+    composable(ConfigurationScreenType.AudioPlayingConfiguration.route) {
         AudioPlayingConfigurationContent()
     }
 
-    composable(ConfigurationScreenType.DialogManagementConfiguration.name) {
+    composable(ConfigurationScreenType.DialogManagementConfiguration.route) {
         DialogManagementConfigurationContent()
     }
 
-    composable(ConfigurationScreenType.IntentHandlingConfiguration.name) {
+    composable(ConfigurationScreenType.IntentHandlingConfiguration.route) {
         IntentHandlingConfigurationContent()
     }
 
-    composable(ConfigurationScreenType.IntentRecognitionConfiguration.name) {
+    composable(ConfigurationScreenType.IntentRecognitionConfiguration.route) {
         IntentRecognitionConfigurationContent()
     }
 
-    composable(ConfigurationScreenType.MqttConfiguration.name) {
+    composable(ConfigurationScreenType.MqttConfiguration.route) {
         MqttConfigurationContent()
     }
 
-    composable(ConfigurationScreenType.RemoteHermesHttpConfiguration.name) {
+    composable(ConfigurationScreenType.RemoteHermesHttpConfiguration.route) {
         RemoteHermesHttpConfigurationContent()
     }
 
-    composable(ConfigurationScreenType.SpeechToTextConfiguration.name) {
+    composable(ConfigurationScreenType.SpeechToTextConfiguration.route) {
         SpeechToTextConfigurationContent()
     }
 
-    composable(ConfigurationScreenType.TextToSpeechConfiguration.name) {
+    composable(ConfigurationScreenType.TextToSpeechConfiguration.route) {
         TextToSpeechConfigurationContent()
     }
 
-    composable(ConfigurationScreenType.WakeWordConfiguration.name) {
+    composable(ConfigurationScreenType.WakeWordConfiguration.route) {
         WakeWordConfigurationContent()
     }
 
-    composable(ConfigurationScreenType.WebServerConfiguration.name) {
+    composable(ConfigurationScreenType.WebServerConfiguration.route) {
         WebServerConfigurationContent()
     }
 

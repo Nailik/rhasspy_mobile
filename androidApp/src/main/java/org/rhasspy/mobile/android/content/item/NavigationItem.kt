@@ -9,11 +9,12 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import org.rhasspy.mobile.android.main.LocalNavController
+import org.rhasspy.mobile.android.navigation.BottomBarScreenType
 import org.rhasspy.mobile.android.testTag
 
 @Composable
 fun RowScope.NavigationItem(
-    screen: Enum<*>,
+    screen: BottomBarScreenType,
     icon: @Composable () -> Unit,
     label: @Composable () -> Unit
 ) {
@@ -22,10 +23,10 @@ fun RowScope.NavigationItem(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     NavigationBarItem(
-        modifier = Modifier.testTag(screen),
-        selected = currentDestination?.hierarchy?.any { it.route?.startsWith(screen.name) == true } == true,
+        modifier = Modifier.testTag(screen.route),
+        selected = currentDestination?.hierarchy?.any { it.route?.startsWith(screen.route) == true } == true,
         onClick = {
-            navController.navigate(screen.name) {
+            navController.navigate(screen.route) {
                 popUpTo(navController.graph.findStartDestination().id)
                 launchSingleTop = true
                 restoreState = true

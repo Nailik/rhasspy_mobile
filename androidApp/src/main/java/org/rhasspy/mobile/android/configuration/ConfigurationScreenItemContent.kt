@@ -35,9 +35,9 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.SetSystemColor
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 
-enum class ConfigurationContentScreens {
-    Edit,
-    Test
+enum class ConfigurationContentScreens(val route: String) {
+    Edit("ConfigurationContentScreens_Edit"),
+    Test("ConfigurationContentScreens_Test")
 }
 
 /**
@@ -60,7 +60,7 @@ fun ConfigurationScreenItemContent(
 
     LaunchedEffect(Unit) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.route == ConfigurationContentScreens.Edit.name) {
+            if (destination.route == ConfigurationContentScreens.Edit.route) {
                 viewModel.stopTest()
             }
         }
@@ -80,17 +80,17 @@ fun ConfigurationScreenItemContent(
         ) {
             NavHost(
                 navController = navController,
-                startDestination = ConfigurationContentScreens.Edit.name,
+                startDestination = ConfigurationContentScreens.Edit.route,
                 modifier = modifier
             ) {
-                composable(ConfigurationContentScreens.Edit.name) {
+                composable(ConfigurationContentScreens.Edit.route) {
                     EditConfigurationScreen(
                         title = title,
                         viewModel = viewModel,
                         content = content
                     )
                 }
-                composable(ConfigurationContentScreens.Test.name) {
+                composable(ConfigurationContentScreens.Test.route) {
                     ConfigurationScreenTest(
                         viewModel = viewModel,
                         content = testContent

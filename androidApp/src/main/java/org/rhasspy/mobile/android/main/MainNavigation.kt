@@ -26,8 +26,8 @@ import org.rhasspy.mobile.viewmodel.settings.LogSettingsViewModel
 /**
  * main screens, full size
  */
-enum class MainScreens {
-    BoomBarScreen
+enum class MainScreens(val route: String) {
+    BoomBarScreen("MainScreens_BoomBarScreen")
 }
 
 /**
@@ -63,10 +63,10 @@ fun MainNavigation() {
 
                     NavHost(
                         navController = navController,
-                        startDestination = MainScreens.BoomBarScreen.name,
+                        startDestination = MainScreens.BoomBarScreen.route,
                         modifier = Modifier.padding(paddingValues)
                     ) {
-                        composable(MainScreens.BoomBarScreen.name) {
+                        composable(MainScreens.BoomBarScreen.route) {
                             BottomBarScreensNavigation()
                         }
                         addConfigurationScreens()

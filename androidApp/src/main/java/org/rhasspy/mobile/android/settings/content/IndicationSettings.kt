@@ -52,11 +52,11 @@ fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = g
             startDestination = IndicationSettingsScreens.Overview.name
         ) {
 
-            composable(IndicationSettingsScreens.Overview.name) {
+            composable(IndicationSettingsScreens.Overview.route) {
                 IndicationSettingsOverview(viewModel)
             }
 
-            composable(IndicationSettingsScreens.WakeIndicationSound.name) {
+            composable(IndicationSettingsScreens.WakeIndicationSound.route) {
                 IndicationSoundScreen(
                     viewModel = get<WakeIndicationSoundSettingsViewModel>(),
                     title = MR.strings.wakeSound,
@@ -64,7 +64,7 @@ fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = g
                 )
             }
 
-            composable(IndicationSettingsScreens.RecordedIndicationSound.name) {
+            composable(IndicationSettingsScreens.RecordedIndicationSound.route) {
                 IndicationSoundScreen(
                     viewModel = get<RecordedIndicationSoundSettingsViewModel>(),
                     title = MR.strings.recordedSound,
@@ -72,7 +72,7 @@ fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = g
                 )
             }
 
-            composable(IndicationSettingsScreens.ErrorIndicationSound.name) {
+            composable(IndicationSettingsScreens.ErrorIndicationSound.route) {
                 IndicationSoundScreen(
                     viewModel = get<ErrorIndicationSoundSettingsViewModel>(),
                     title = MR.strings.errorSound,

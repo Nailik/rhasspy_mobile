@@ -40,10 +40,10 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 
-enum class WakeWordConfigurationScreens {
-    Overview,
-    PorcupineKeyword,
-    PorcupineLanguage
+enum class WakeWordConfigurationScreens(val route: String) {
+    Overview("WakeWordConfigurationScreens_Overview"),
+    PorcupineKeyword("WakeWordConfigurationScreens_PorcupineKeyword"),
+    PorcupineLanguage("WakeWordConfigurationScreens_PorcupineLanguage")
 }
 
 /**
@@ -60,18 +60,18 @@ fun WakeWordConfigurationContent(viewModel: WakeWordConfigurationViewModel = get
     ) {
         NavHost(
             navController = navController,
-            startDestination = WakeWordConfigurationScreens.Overview.name
+            startDestination = WakeWordConfigurationScreens.Overview.route
         ) {
 
-            composable(WakeWordConfigurationScreens.Overview.name) {
+            composable(WakeWordConfigurationScreens.Overview.route) {
                 WakeWordConfigurationOverview(viewModel)
             }
 
-            composable(WakeWordConfigurationScreens.PorcupineLanguage.name) {
+            composable(WakeWordConfigurationScreens.PorcupineLanguage.route) {
                 PorcupineLanguageScreen(viewModel)
             }
 
-            composable(WakeWordConfigurationScreens.PorcupineKeyword.name) {
+            composable(WakeWordConfigurationScreens.PorcupineKeyword.route) {
                 PorcupineKeywordScreen(viewModel)
             }
 
