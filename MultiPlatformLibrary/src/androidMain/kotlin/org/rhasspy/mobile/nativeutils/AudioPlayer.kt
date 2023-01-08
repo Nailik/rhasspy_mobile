@@ -4,6 +4,7 @@ import android.content.ContentResolver
 import android.content.res.Resources
 import android.media.*
 import android.net.Uri
+import android.os.Build
 import androidx.annotation.AnyRes
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.resources.FileResource
@@ -211,9 +212,12 @@ actual class AudioPlayer : Closeable {
                 }
             }
 
-            volumeChange = CoroutineScope(Dispatchers.IO).launch {
-                volume.collect {
-                    notification?.volume = volume.value
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                //notification set volume was added in api 28
+                volumeChange = CoroutineScope(Dispatchers.IO).launch {
+                    volume.collect {
+                        notification?.volume = volume.value
+                    }
                 }
             }
         } catch (e: Exception) {
