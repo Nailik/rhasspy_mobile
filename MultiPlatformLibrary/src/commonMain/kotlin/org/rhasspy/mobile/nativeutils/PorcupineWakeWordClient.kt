@@ -12,6 +12,7 @@ import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
  * start listening to wake words
  * requires internet to activate porcupine the very first time
  */
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect class PorcupineWakeWordClient(
     wakeWordPorcupineAccessToken: String,
     wakeWordPorcupineKeywordDefaultOptions: Set<PorcupineDefaultKeyword>,

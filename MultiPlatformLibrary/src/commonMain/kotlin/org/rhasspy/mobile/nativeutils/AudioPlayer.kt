@@ -12,6 +12,7 @@ import org.rhasspy.mobile.settings.option.AudioOutputOption
  * File resource
  * specific file
  */
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect class AudioPlayer() : Closeable {
 
     /**

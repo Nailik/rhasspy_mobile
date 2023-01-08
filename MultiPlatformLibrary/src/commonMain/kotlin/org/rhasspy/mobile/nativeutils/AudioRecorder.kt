@@ -4,6 +4,7 @@ import io.ktor.utils.io.core.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect class AudioRecorder() : Closeable {
 
     /**

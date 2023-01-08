@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.StateFlow
 /**
  * used to observe device settings for sound or notification volume
  */
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect object DeviceVolume {
 
     //sound output volume

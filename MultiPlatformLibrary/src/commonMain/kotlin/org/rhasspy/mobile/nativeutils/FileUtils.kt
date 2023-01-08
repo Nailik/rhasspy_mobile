@@ -6,6 +6,7 @@ import org.rhasspy.mobile.settings.types.FileType
 /**
  * to open file selection or delete file from local app storage
  */
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect object FileUtils {
 
     /**

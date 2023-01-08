@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.StateFlow
 /**
  * to check microphone permission
  */
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect object MicrophonePermission {
 
     /**

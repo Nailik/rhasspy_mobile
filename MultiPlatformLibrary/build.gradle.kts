@@ -101,6 +101,7 @@ kotlin {
             }
         }
         val androidTest by getting {
+            dependsOn(commonMain)
             dependencies {
                 implementation(Kotlin.Test.junit)
                 implementation(Kotlin.test)

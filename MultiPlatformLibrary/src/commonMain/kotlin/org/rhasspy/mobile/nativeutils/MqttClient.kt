@@ -10,6 +10,7 @@ import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
 /**
  * Represents a MQTT client which can connect to the MQTT Broker.
  */
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect class MqttClient(
     //The MQTT Broker address which is comprised of a protocol, IPv4 address/FQDN, and port. Here is a example:`tcp://192.168.1.1:1883`
     brokerUrl: String,
