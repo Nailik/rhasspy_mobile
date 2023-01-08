@@ -430,7 +430,7 @@ private fun ConfigurationListItem(
     ListElement(
         modifier = Modifier
             .clickable {
-                navController.navigate(screen.name)
+                navController.navigate(screen.route)
             }
             .testTag(screen),
         text = { Text(text) },
@@ -457,7 +457,7 @@ private fun ConfigurationListItem(
     ListElement(
         modifier = Modifier
             .clickable {
-                navController.navigate(screen.name)
+                navController.navigate(screen.route)
             }
             .testTag(screen),
         text = { Text(text) },
