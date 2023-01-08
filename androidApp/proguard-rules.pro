@@ -38,6 +38,10 @@
 #    static <1>$$serializer INSTANCE;
 #}
 
+#keep enum name
+-keepclassmembers enum * {
+    public *;
+}
 
 # Ktor
 -keep class io.ktor.** { *; }
