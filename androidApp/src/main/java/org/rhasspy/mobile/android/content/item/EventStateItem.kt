@@ -102,7 +102,7 @@ fun EventStateIconTinted(serviceState: ServiceState) {
             is ServiceState.Warning -> MaterialTheme.colorScheme.warn
             is ServiceState.Error,
             is ServiceState.Exception -> MaterialTheme.colorScheme.errorContainer
-            is ServiceState.Disabled -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+            is ServiceState.Disabled -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
         }
     )
 }
@@ -119,7 +119,7 @@ fun EventStateContent(
         is ServiceState.Warning -> MaterialTheme.colorScheme.on_color_warn
         is ServiceState.Error,
         is ServiceState.Exception -> MaterialTheme.colorScheme.onErrorContainer
-        is ServiceState.Disabled -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+        is ServiceState.Disabled -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
     }
 
     CompositionLocalProvider(
@@ -145,7 +145,7 @@ fun EventStateCard(
                 is ServiceState.Warning -> MaterialTheme.colorScheme.warn
                 is ServiceState.Error,
                 is ServiceState.Exception -> MaterialTheme.colorScheme.errorContainer
-                is ServiceState.Disabled -> MaterialTheme.colorScheme.surface.copy(alpha = 0.38f)
+                is ServiceState.Disabled -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f)
             }
         ),
         content = {
