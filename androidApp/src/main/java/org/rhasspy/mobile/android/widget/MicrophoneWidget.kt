@@ -25,6 +25,7 @@ class MicrophoneWidget : GlanceAppWidget(), KoinComponent {
 
     @Composable
     @GlanceComposable
+    @Suppress("StateFlowValueCalledInComposition") //suppress because it doesn't work in glance
     override fun Content() {
         val viewModel = get<MicrophoneFabViewModel>()
 
