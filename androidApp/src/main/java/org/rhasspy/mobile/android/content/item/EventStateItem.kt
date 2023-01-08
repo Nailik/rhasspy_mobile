@@ -131,11 +131,12 @@ fun EventStateContent(
 @Composable
 fun EventStateCard(
     serviceState: ServiceState,
+    enabled: Boolean = true,
     onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     Card(
-        modifier = Modifier.let { onClick?.let { it1 -> it.clickable(onClick = it1) } ?: it },
+        modifier = Modifier.let { onClick?.let { it1 -> it.clickable(enabled = enabled, onClick = it1) } ?: it },
         colors = CardDefaults.outlinedCardColors(
             containerColor = when (serviceState) {
                 is ServiceState.Pending -> MaterialTheme.colorScheme.surfaceVariant

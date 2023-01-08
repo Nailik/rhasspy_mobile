@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.android.configuration
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,7 +16,7 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.content.ServiceState
+import org.rhasspy.mobile.android.content.ServiceStateHeader
 import org.rhasspy.mobile.android.content.elements.CustomDivider
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.LogListElement
@@ -102,12 +101,7 @@ private fun ConfigurationScreenTestList(
             modifier = Modifier.weight(1f)
         ) {
             stickyHeader {
-                ServiceState(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp))
-                        .padding(16.dp),
-                    serviceState = viewModel.serviceState.collectAsState().value
-                )
+                ServiceStateHeader(viewModel)
             }
 
             items(logEventsList) { item ->

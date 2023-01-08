@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.android.configuration
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,7 +25,7 @@ import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.content.ServiceState
+import org.rhasspy.mobile.android.content.ServiceStateHeader
 import org.rhasspy.mobile.android.content.elements.FloatingActionButton
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
@@ -163,14 +162,8 @@ private fun EditConfigurationScreen(
                     .fillMaxSize()
             ) {
 
-                //TODO show any information about error?
                 stickyHeader {
-                    ServiceState(
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp))
-                            .padding(16.dp),
-                        serviceState = viewModel.serviceState.collectAsState().value,
-                    )
+                    ServiceStateHeader(viewModel)
                 }
 
                 content()
@@ -178,6 +171,7 @@ private fun EditConfigurationScreen(
         }
     }
 }
+
 
 /**
  * unsaved dialog on back button

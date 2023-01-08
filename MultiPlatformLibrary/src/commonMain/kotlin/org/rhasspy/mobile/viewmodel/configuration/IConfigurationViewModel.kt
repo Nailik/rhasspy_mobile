@@ -19,6 +19,7 @@ import org.rhasspy.mobile.logger.FileLogger
 import org.rhasspy.mobile.logger.LogElement
 import org.rhasspy.mobile.logger.LogLevel
 import org.rhasspy.mobile.logger.LogType
+import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.AppSetting
@@ -32,6 +33,14 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     protected abstract val logType: LogType
 
     abstract val serviceState: StateFlow<ServiceState>
+    val isOpenServiceDialogEnabled get() = serviceState.mapReadonlyState { it is ServiceState.Exception || it is ServiceState.Error }
+    val serviceStateDialogText get() = serviceState.mapReadonlyState {
+        when(it){
+            is ServiceState.Error -> it.information
+            is ServiceState.Exception -> it.exception?.toString() ?: ""
+            else -> ""
+        }
+    }
 
     abstract val hasUnsavedChanges: StateFlow<Boolean>
     abstract val isTestingEnabled: StateFlow<Boolean>
