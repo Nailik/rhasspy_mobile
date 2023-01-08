@@ -20,7 +20,7 @@ import org.rhasspy.mobile.services.wakeword.WakeWordService
 class MicrophoneFabViewModel : ViewModel(), KoinComponent {
 
     private val dialogManagerServiceState
-    get() = getSafe<DialogManagerService>()?.currentDialogState ?: MutableStateFlow(DialogManagerServiceState.Idle).readOnly
+        get() = getSafe<DialogManagerService>()?.currentDialogState ?: MutableStateFlow(DialogManagerServiceState.Idle).readOnly
     val isShowBorder = get<WakeWordService>().isRecording
     val isShowMicOn: StateFlow<Boolean> = MicrophonePermission.granted
     val isRecording = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }

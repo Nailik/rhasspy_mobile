@@ -17,7 +17,7 @@ class HomeScreenViewModel : ViewModel(), KoinComponent {
     private val serviceMiddleware by inject<ServiceMiddleware>()
 
     val isPlayingRecording = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.PlayingAudio }
-    val isPlayingRecordingEnabled =  dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingWakeWord }
+    val isPlayingRecordingEnabled = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingWakeWord }
     val isShowLogEnabled = AppSetting.isShowLogEnabled.data
 
     fun togglePlayRecording() = serviceMiddleware.action(Action.PlayStopRecording)

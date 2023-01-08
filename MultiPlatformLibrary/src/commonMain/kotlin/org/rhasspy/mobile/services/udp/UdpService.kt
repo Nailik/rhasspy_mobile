@@ -63,7 +63,7 @@ class UdpService(host: String, port: Int) : IService() {
                 return exception
             }
         } ?: run {
-            if(!hasLoggedError) {
+            if (!hasLoggedError) {
                 hasLoggedError = true
                 logger.a { "stream audio socketAddress not initialized" }
             }

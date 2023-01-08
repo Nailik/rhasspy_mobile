@@ -21,9 +21,9 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 
 
 @Composable
-fun ServiceStateHeader(viewModel: IConfigurationViewModel){
+fun ServiceStateHeader(viewModel: IConfigurationViewModel) {
 
-    var isShowDialog by remember {  mutableStateOf(false) }
+    var isShowDialog by remember { mutableStateOf(false) }
 
     ServiceState(
         modifier = Modifier
@@ -36,7 +36,7 @@ fun ServiceStateHeader(viewModel: IConfigurationViewModel){
         }
     )
 
-    if(isShowDialog) {
+    if (isShowDialog) {
         AlertDialog(
             onDismissRequest = {
                 isShowDialog = false
@@ -45,7 +45,7 @@ fun ServiceStateHeader(viewModel: IConfigurationViewModel){
                 Text(MR.strings.error)
             },
             text = {
-                when(val informationText = viewModel.serviceStateDialogText.collectAsState().value) {
+                when (val informationText = viewModel.serviceStateDialogText.collectAsState().value) {
                     is StringResource -> Text(informationText)
                     is String -> androidx.compose.material3.Text(informationText)
                     else -> {}

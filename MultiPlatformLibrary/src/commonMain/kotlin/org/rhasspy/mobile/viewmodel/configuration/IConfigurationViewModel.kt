@@ -34,13 +34,14 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
 
     abstract val serviceState: StateFlow<ServiceState>
     val isOpenServiceDialogEnabled get() = serviceState.mapReadonlyState { it is ServiceState.Exception || it is ServiceState.Error }
-    val serviceStateDialogText get() = serviceState.mapReadonlyState {
-        when(it){
-            is ServiceState.Error -> it.information
-            is ServiceState.Exception -> it.exception?.toString() ?: ""
-            else -> ""
+    val serviceStateDialogText
+        get() = serviceState.mapReadonlyState {
+            when (it) {
+                is ServiceState.Error -> it.information
+                is ServiceState.Exception -> it.exception?.toString() ?: ""
+                else -> ""
+            }
         }
-    }
 
     abstract val hasUnsavedChanges: StateFlow<Boolean>
     abstract val isTestingEnabled: StateFlow<Boolean>
