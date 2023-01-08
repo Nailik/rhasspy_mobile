@@ -52,7 +52,7 @@ jobs:
         with:
           api-level: 29
           target: default
-          arch: x86
+          arch: arm64-v8a
           profile: Nexus 6
           script: ./gradlew androidApp:connectedCheck
       # better looking test report inside github
