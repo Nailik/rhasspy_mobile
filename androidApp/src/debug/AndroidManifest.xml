@@ -20,5 +20,5 @@
 
     <application
         android:requestLegacyExternalStorage="true"
-        tools:ignore="MissingApplicationIcon"></application>
+        tools:ignore="MissingApplicationIcon" />
 </manifest> 
