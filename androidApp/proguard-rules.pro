@@ -171,3 +171,5 @@
 -dontwarn org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder
 -dontwarn org.bouncycastle.operator.InputDecryptorProvider
 -dontwarn org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo
+-dontwarn org.bouncycastle.operator.OperatorCreationException
+-dontwarn org.bouncycastle.pkcs.PKCSException
