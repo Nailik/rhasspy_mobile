@@ -46,7 +46,7 @@ class ServiceMiddleware : KoinComponent, Closeable {
                         is Action.AppSettingsAction.IntentHandlingToggle -> appSettingsService.intentHandlingToggle(action.enabled)
                     }
                 }
-                is Action.DialogAction -> {                //change settings
+                is Action.DialogAction -> {
                     dialogManagerService.onAction(action)
                 }
             }

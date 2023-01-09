@@ -100,7 +100,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
             timeoutJob?.cancel()
             indicationService.onError()
             informMqtt(action)
-            sessionEnded(DialogAction.SessionEnded(Source.Local))
+            onAction(DialogAction.SessionEnded(Source.Local))
 
         }
     }
@@ -140,11 +140,10 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
      *
      * next step is to invoke ended session which will start a new one
      */
-    private suspend fun endSession(action: DialogAction.EndSession) {
-        if (isInCorrectState(action, DialogManagerServiceState.HandlingIntent)) {
+    private fun endSession(action: DialogAction.EndSession) {
+        if (isInCorrectState(action, DialogManagerServiceState.HandlingIntent, DialogManagerServiceState.TranscribingIntent)) {
 
-            _currentDialogState.value = DialogManagerServiceState.Idle
-            sessionEnded(DialogAction.SessionEnded(Source.Local))
+            onAction(DialogAction.SessionEnded(Source.Local))
 
         }
     }
@@ -160,7 +159,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
             indicationService.onWakeWordDetected()
             _currentDialogState.value = DialogManagerServiceState.Idle
             informMqtt(action)
-            startSession(DialogAction.StartSession(Source.Local))
+            onAction(DialogAction.StartSession(Source.Local))
 
         }
     }
@@ -175,7 +174,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
 
             timeoutJob?.cancel()
             intentHandlingService.intentHandling(action.intentName, action.intent)
-            endSession(DialogAction.EndSession(Source.Local))
+            onAction(DialogAction.EndSession(Source.Local))
 
         }
     }
@@ -186,7 +185,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
             timeoutJob?.cancel()
             informMqtt(action)
             indicationService.onError()
-            sessionEnded(DialogAction.SessionEnded(Source.Local))
+            onAction(DialogAction.SessionEnded(Source.Local))
 
         }
     }
@@ -261,6 +260,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
             }
 
             if (newSessionId != null) {
+                sessionId = newSessionId
                 informMqtt(action)
                 onAction(DialogAction.StartListening(Source.Local, false))
             } else {
