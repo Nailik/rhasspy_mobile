@@ -392,25 +392,33 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
         val result = when (params.option) {
             //on local option check that state is correct and when from mqtt check session id as well
             DialogManagementOption.Local -> {
-                if (action.source is Source.Mqtt && sessionId != action.source.sessionId) {
-
-                    //exception
-                    if((action is DialogAction.StartListening || action is DialogAction.StopListening || action is DialogAction.IntentRecognitionResult) &&
-                        get<SpeechToTextServiceParams>().speechToTextOption == SpeechToTextOption.RemoteMQTT) {
-                        //don't ignore
-                        return true
+                when (action.source) {
+                    Source.HttpApi,
+                    Source.Local -> {
+                        val result = states.contains(_currentDialogState.value)
+                        if (!result) {
+                            logger.d { "$action from ${action.source} called in wrong state ${_currentDialogState.value} expected one of ${states.joinToString()}" }
+                        }
+                        return result
                     }
+                    is Source.Mqtt -> {
 
-                    //from mqtt but session id doesn't match
-                    logger.d { "$action from mqtt but session id doesn't match $sessionId != ${action.source.sessionId}" }
-                    return false
-                }
+                        //exception
+                        if ((action is DialogAction.StopListening || action is DialogAction.IntentRecognitionResult) &&
+                            get<SpeechToTextServiceParams>().speechToTextOption == SpeechToTextOption.RemoteMQTT) {
+                            //don't ignore
+                            val result = states.contains(_currentDialogState.value)
+                            if (!result) {
+                                logger.d { "$action from ${action.source} called in wrong state ${_currentDialogState.value} expected one of ${states.joinToString()}" }
+                            }
+                            return result
+                        }
 
-                val result = states.contains(_currentDialogState.value)
-                if (!result) {
-                    logger.d { "$action called in wrong state ${_currentDialogState.value} expected one of ${states.joinToString()}" }
+                        //from mqtt but session id doesn't match
+                        logger.d { "$action from ${action.source} but local dialog management" }
+                        return false
+                    }
                 }
-                return result
             }
             //when option is remote http depends on source
             DialogManagementOption.RemoteMQTT -> {
@@ -419,7 +427,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
                     Source.HttpApi,
                     Source.Local -> {
                         logger.d { "$action dialog management RemoteMQTT doesn't match source ${action.source}" }
-                        false
+                        return false
                     }
                     //from mqtt check session id
                     is Source.Mqtt -> {

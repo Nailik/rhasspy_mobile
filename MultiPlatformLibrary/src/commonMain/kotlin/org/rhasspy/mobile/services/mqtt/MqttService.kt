@@ -559,7 +559,7 @@ class MqttService : IService() {
                 put(MqttParams.SiteId, params.siteId)
                 put(MqttParams.SessionId, sessionId)
                 put(MqttParams.StopOnSilence, params.isUseSpeechToTextMqttSilenceDetection)
-                put(MqttParams.SendAudioCaptured, true)
+                put(MqttParams.SendAudioCaptured, false)
             }
         )
 
