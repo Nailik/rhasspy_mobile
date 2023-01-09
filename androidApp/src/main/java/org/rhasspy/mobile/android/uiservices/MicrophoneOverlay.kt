@@ -5,6 +5,7 @@ import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Looper
 import android.view.Gravity
+import android.view.View
 import android.view.WindowManager
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.size
@@ -25,9 +26,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.get
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.main.MicrophoneFab
 import org.rhasspy.mobile.android.theme.AppTheme
@@ -43,7 +43,7 @@ object MicrophoneOverlay : KoinComponent {
     private lateinit var mParams: WindowManager.LayoutParams
     private val lifecycleOwner = CustomLifecycleOwner()
 
-    private val viewModel by inject<MicrophoneOverlayViewModel>()
+    private var viewModel = get<MicrophoneOverlayViewModel>()
 
     private var job: Job? = null
 
@@ -54,32 +54,34 @@ object MicrophoneOverlay : KoinComponent {
     /**
      * view that's displayed as overlay to start wake word detection
      */
-    private val view: ComposeView = ComposeView(AndroidApplication.Instance).apply {
-        setContent {
-            AppTheme {
-                val size by viewModel.microphoneOverlaySize.collectAsState()
+    private fun getView(): ComposeView {
+        return ComposeView(AndroidApplication.Instance).apply {
+            setContent {
+                AppTheme {
+                    val size by viewModel.microphoneOverlaySize.collectAsState()
 
-                val microphoneViewModel = get<MicrophoneFabViewModel>()
+                    val microphoneViewModel = get<MicrophoneFabViewModel>()
 
-                MicrophoneFab(
-                    modifier = Modifier
-                        .size(size.dp)
-                        .pointerInput(Unit) {
-                            detectDragGestures { change, dragAmount ->
-                                change.consume()
-                                onDrag(dragAmount)
-                            }
-                        },
-                    iconSize = (size * 0.4).dp,
-                    viewModel = microphoneViewModel,
-                    onClick = microphoneViewModel::onClick
-                )
+                    MicrophoneFab(
+                        modifier = Modifier
+                            .size(size.dp)
+                            .pointerInput(Unit) {
+                                detectDragGestures { change, dragAmount ->
+                                    change.consume()
+                                    onDrag(dragAmount, this@apply)
+                                }
+                            },
+                        iconSize = (size * 0.4).dp,
+                        viewModel = microphoneViewModel,
+                        onClick = microphoneViewModel::onClick
+                    )
+                }
             }
         }
     }
 
 
-    private fun onDrag(delta: Offset) {
+    private fun onDrag(delta: Offset, view: View) {
         viewModel.updateMicrophoneOverlayPosition(delta.x, delta.y)
         mParams.applySettings()
         overlayWindowManager.updateViewLayout(view, mParams)
@@ -100,14 +102,8 @@ object MicrophoneOverlay : KoinComponent {
                 PixelFormat.TRANSLUCENT
             ).applySettings()
         }
-
         lifecycleOwner.performRestore(null)
         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
-        view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
-        ViewTreeLifecycleOwner.set(view, lifecycleOwner)
-
-        val viewModelStore = ViewModelStore()
-        ViewTreeViewModelStoreOwner.set(view) { viewModelStore }
     }
 
 
@@ -124,6 +120,16 @@ object MicrophoneOverlay : KoinComponent {
      * start service, listen to showVisualIndication and show the overlay or remove it when necessary
      */
     fun start() {
+        viewModel = get()
+
+        val view = getView()
+
+        view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
+        ViewTreeLifecycleOwner.set(view, lifecycleOwner)
+
+        val viewModelStore = ViewModelStore()
+        ViewTreeViewModelStoreOwner.set(view) { viewModelStore }
+
         if (job?.isActive == true) {
             return
         }

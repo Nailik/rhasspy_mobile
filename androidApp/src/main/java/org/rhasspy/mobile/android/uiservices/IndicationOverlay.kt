@@ -17,7 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.nativeutils.OverlayPermission
@@ -29,13 +29,13 @@ import org.rhasspy.mobile.viewmodel.overlay.IndicationOverlayViewModel
 object IndicationOverlay : KoinComponent {
 
     private lateinit var mParams: WindowManager.LayoutParams
-    private val lifecycleOwner = CustomLifecycleOwner()
+    private var lifecycleOwner = CustomLifecycleOwner()
 
     //stores old value to only react to changes
     private var showVisualIndicationOldValue = false
 
     private var mainScope = CoroutineScope(Dispatchers.Main)
-    private val viewModel by inject<IndicationOverlayViewModel>()
+    private var viewModel = get<IndicationOverlayViewModel>()
 
     private var job: Job? = null
 
@@ -46,10 +46,12 @@ object IndicationOverlay : KoinComponent {
     /**
      * view that's displayed when a wake word is detected
      */
-    private val view = ComposeView(AndroidApplication.Instance).apply {
-        setContent {
-            AppTheme {
-                Indication(viewModel.indicationState.collectAsState().value)
+    private fun getView() : ComposeView {
+        return ComposeView(AndroidApplication.Instance).apply {
+            setContent {
+                AppTheme {
+                    Indication(viewModel.indicationState.collectAsState().value)
+                }
             }
         }
     }
@@ -70,20 +72,26 @@ object IndicationOverlay : KoinComponent {
                 gravity = Gravity.BOTTOM
             }
         }
-
         lifecycleOwner.performRestore(null)
         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
-        ViewTreeLifecycleOwner.set(view, lifecycleOwner)
-        view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
-
-        val viewModelStore = ViewModelStore()
-        ViewTreeViewModelStoreOwner.set(view) { viewModelStore }
     }
+
+
 
     /**
      * start service, listen to showVisualIndication and show the overlay or remove it when necessary
      */
     fun start() {
+        viewModel = get()
+
+        val view = getView()
+
+        ViewTreeLifecycleOwner.set(view, lifecycleOwner)
+        view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
+
+        val viewModelStore = ViewModelStore()
+        ViewTreeViewModelStoreOwner.set(view) { viewModelStore }
+
         if (job?.isActive == true) {
             return
         }

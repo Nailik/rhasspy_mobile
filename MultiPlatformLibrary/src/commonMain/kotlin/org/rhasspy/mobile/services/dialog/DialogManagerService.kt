@@ -3,6 +3,7 @@ package org.rhasspy.mobile.services.dialog
 import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.addWavHeader
 import org.rhasspy.mobile.logger.LogType
@@ -18,8 +19,10 @@ import org.rhasspy.mobile.services.intenthandling.IntentHandlingService
 import org.rhasspy.mobile.services.intentrecognition.IntentRecognitionService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.speechtotext.SpeechToTextService
+import org.rhasspy.mobile.services.speechtotext.SpeechToTextServiceParams
 import org.rhasspy.mobile.services.wakeword.WakeWordService
 import org.rhasspy.mobile.settings.option.DialogManagementOption
+import org.rhasspy.mobile.settings.option.SpeechToTextOption
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
@@ -316,7 +319,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
                 timeoutJob = coroutineScope.launch {
                     delay(recordingTimeout)
                     logger.d { "recordingTimeout" }
-                    onAction(DialogAction.AsrError(Source.Local))
+                    onAction(DialogAction.StopListening(Source.Local))
                 }
             } ?: run {
                 logger.d { "startListening parameter issue sessionId: $sessionId" }
@@ -381,12 +384,25 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
             return true
         }
 
+        //session id irrelevant
+        if(action is DialogAction.PlayAudio && states.contains(_currentDialogState.value)) {
+            return true
+        }
+
         val result = when (params.option) {
             //on local option check that state is correct and when from mqtt check session id as well
             DialogManagementOption.Local -> {
                 if (action.source is Source.Mqtt && sessionId != action.source.sessionId) {
+
+                    //exception
+                    if((action is DialogAction.StartListening || action is DialogAction.StopListening || action is DialogAction.IntentRecognitionResult) &&
+                        get<SpeechToTextServiceParams>().speechToTextOption == SpeechToTextOption.RemoteMQTT) {
+                        //don't ignore
+                        return true
+                    }
+
                     //from mqtt but session id doesn't match
-                    logger.d { "from mqtt but session id doesn't match $sessionId != ${action.source.sessionId}" }
+                    logger.d { "$action from mqtt but session id doesn't match $sessionId != ${action.source.sessionId}" }
                     return false
                 }
 
@@ -402,7 +418,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
                     //from webserver or local always ignore for now
                     Source.HttpApi,
                     Source.Local -> {
-                        logger.d { "dialog management RemoteMQTT doesn't match source ${action.source}" }
+                        logger.d { "$action dialog management RemoteMQTT doesn't match source ${action.source}" }
                         false
                     }
                     //from mqtt check session id
@@ -415,7 +431,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
                             //compare session id if one is set
                             val matches = sessionId == action.source.sessionId
                             if (!matches) {
-                                logger.d { "from mqtt but session id doesn't match $sessionId != ${action.source.sessionId}" }
+                                logger.d { "$action from mqtt but session id doesn't match $sessionId != ${action.source.sessionId}" }
                             }
                             return matches
                         }

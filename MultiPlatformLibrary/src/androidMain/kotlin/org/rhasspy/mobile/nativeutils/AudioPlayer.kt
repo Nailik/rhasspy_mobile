@@ -47,7 +47,7 @@ actual class AudioPlayer : Closeable {
         onError: ((exception: Exception?) -> Unit)?
     ) {
         val soundFile = File(Application.nativeInstance.cacheDir, "/playData.wav")
-        soundFile.deleteOnExit()
+        //soundFile.deleteOnExit()
         val fos = FileOutputStream(soundFile)
         fos.write(data.toByteArray())
         fos.close()

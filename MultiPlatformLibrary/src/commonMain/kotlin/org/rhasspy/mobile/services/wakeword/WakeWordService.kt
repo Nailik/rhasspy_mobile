@@ -146,10 +146,8 @@ class WakeWordService : IService() {
         scope.cancel()
         recording?.cancel()
         recording = null
-        recordingService.close()
         porcupineWakeWordClient?.close()
         porcupineWakeWordClient = null
-        udpService.close()
     }
 
 }

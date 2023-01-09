@@ -65,6 +65,7 @@ open class SpeechToTextService : IService() {
      */
     suspend fun endSpeechToText(sessionId: String, fromMqtt: Boolean) {
         logger.d { "endSpeechToText sessionId: $sessionId fromMqtt $fromMqtt" }
+
         //stop collection
         collector?.cancel()
         collector = null
@@ -89,6 +90,10 @@ open class SpeechToTextService : IService() {
     suspend fun startSpeechToText(sessionId: String) {
         logger.d { "startSpeechToText sessionId: $sessionId" }
 
+        if(collector?.isActive == true) {
+            return
+        }
+
         //clear data and start recording
         collector?.cancel()
         collector = null
@@ -100,7 +105,6 @@ open class SpeechToTextService : IService() {
             collector = scope.launch {
                 recordingService.output.collect(::audioFrame)
             }
-            println("test")
         }
 
         _serviceState.value = when (params.speechToTextOption) {
@@ -114,12 +118,10 @@ open class SpeechToTextService : IService() {
         if (AppSetting.isLogAudioFramesEnabled.value) {
             logger.d { "audioFrame dataSize: ${data.size}" }
         }
+        _speechToTextAudioData.addAll(data)
 
         _serviceState.value = when (params.speechToTextOption) {
-            SpeechToTextOption.RemoteHTTP -> {
-                _speechToTextAudioData.addAll(data)
-                ServiceState.Success
-            }
+            SpeechToTextOption.RemoteHTTP -> ServiceState.Success
             SpeechToTextOption.RemoteMQTT -> mqttClientService.audioFrame(data.toMutableList().addWavHeader())
             SpeechToTextOption.Disabled -> ServiceState.Disabled
         }

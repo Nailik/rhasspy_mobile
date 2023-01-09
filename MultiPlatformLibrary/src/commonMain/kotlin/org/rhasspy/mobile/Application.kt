@@ -102,19 +102,20 @@ abstract class Application : NativeApplication(), KoinComponent {
     fun startTest() {
         BackgroundService.stop()
         stopOverlay()
-        reloadServiceModules()
+        unloadKoinModules(listOf(viewModelModule, serviceModule))
+        loadKoinModules(listOf(serviceModule, viewModelModule))
     }
 
     fun stopTest() {
         reloadServiceModules()
-        BackgroundService.start()
-        startServices()
-        startOverlay()
     }
 
     fun reloadServiceModules() {
+        stopOverlay()
         unloadKoinModules(listOf(viewModelModule, serviceModule))
         loadKoinModules(listOf(serviceModule, viewModelModule))
+        startServices()
+        startOverlay()
     }
 
     private fun checkOverlayPermission() {
