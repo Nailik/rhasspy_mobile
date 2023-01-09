@@ -71,7 +71,7 @@ class IndicationService : IService(), KoinComponent {
     /**
      * when intent is recognized show thinking animation
      */
-    fun onRecognizingIntent() {
+    fun onThinking() {
         logger.d { "onRecognizingIntent" }
         if (AppSetting.isWakeWordLightIndicationEnabled.value) {
             _isShowVisualIndication.value = true

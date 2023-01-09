@@ -4,6 +4,7 @@ import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.inject
+import org.rhasspy.mobile.addWavHeader
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action.DialogAction
 import org.rhasspy.mobile.middleware.ServiceState
@@ -77,6 +78,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
                 is DialogAction.IntentRecognitionResult -> intentRecognitionResult(action)
                 is DialogAction.IntentRecognitionError -> intentRecognitionError(action)
                 is DialogAction.PlayAudio -> playAudio(action)
+                is DialogAction.StopAudioPlaying -> stopPlayAudio(action)
                 is DialogAction.PlayFinished -> playFinished(action)
                 is DialogAction.SessionEnded -> sessionEnded(action)
                 is DialogAction.SessionStarted -> sessionStarted(action)
@@ -116,7 +118,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
 
             timeoutJob?.cancel()
             _currentDialogState.value = DialogManagerServiceState.RecognizingIntent
-            indicationService.onRecognizingIntent()
+            indicationService.onThinking()
             informMqtt(action)
 
             notNull(sessionId, action.text, { id, text ->
@@ -202,7 +204,19 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
             _currentDialogState.value = DialogManagerServiceState.PlayingAudio
             wakeWordService.stopDetection()
             indicationService.onPlayAudio()
-            audioPlayingService.playAudio(action.byteArray.toList())
+            audioPlayingService.playAudio(action.byteArray.toMutableList().addWavHeader().toList())
+
+        }
+    }
+
+    /**
+     * stops to play the current audio
+     */
+    private fun stopPlayAudio(action: DialogAction.StopAudioPlaying) {
+        if (isInCorrectState(action, DialogManagerServiceState.PlayingAudio)) {
+
+            audioPlayingService.stopPlayAudio()
+            onAction(DialogAction.PlayFinished(Source.Local))
 
         }
     }
@@ -217,6 +231,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
     private suspend fun playFinished(action: DialogAction.PlayFinished) {
         if (isInCorrectState(action, DialogManagerServiceState.PlayingAudio)) {
 
+            indicationService.onIdle()
             _currentDialogState.value = DialogManagerServiceState.AwaitingWakeWord
             informMqtt(action)
             wakeWordService.startDetection()
@@ -294,7 +309,9 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
                 wakeWordService.stopDetection()
                 indicationService.onListening()
                 _currentDialogState.value = DialogManagerServiceState.RecordingIntent
-                speechToTextService.startSpeechToText(id)
+                CoroutineScope(Dispatchers.Default).launch {
+                    speechToTextService.startSpeechToText(id)
+                }
                 //await silence to stop recording
                 timeoutJob = coroutineScope.launch {
                     delay(recordingTimeout)
@@ -337,6 +354,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
             sessionId?.also { id ->
                 timeoutJob?.cancel()
                 _currentDialogState.value = DialogManagerServiceState.TranscribingIntent
+                indicationService.onThinking()
                 speechToTextService.endSpeechToText(id, action.source is Source.Mqtt)
                 if (sendAudioCaptured) {
                     mqttService.audioCaptured(id, speechToTextService.speechToTextAudioData)

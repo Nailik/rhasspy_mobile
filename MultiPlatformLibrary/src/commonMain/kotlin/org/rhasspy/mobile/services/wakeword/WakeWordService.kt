@@ -133,7 +133,6 @@ class WakeWordService : IService() {
         _isRecording.value = false
         recording?.cancel()
         recording = null
-        recordingService.close()
         porcupineWakeWordClient?.stop()
     }
 
@@ -147,6 +146,7 @@ class WakeWordService : IService() {
         scope.cancel()
         recording?.cancel()
         recording = null
+        recordingService.close()
         porcupineWakeWordClient?.close()
         porcupineWakeWordClient = null
         udpService.close()

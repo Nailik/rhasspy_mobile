@@ -32,9 +32,9 @@ class ServiceMiddleware : KoinComponent, Closeable {
             when (action) {
                 is Action.PlayStopRecording -> {
                     if (localAudioService.isPlayingState.value) {
-                        localAudioService.stop()
+                        action(Action.DialogAction.StopAudioPlaying(Source.Local))
                     } else {
-                        localAudioService.playAudio(speechToTextService.speechToTextAudioData)
+                        action(Action.DialogAction.PlayAudio(Source.Local, speechToTextService.speechToTextAudioData.toByteArray()))
                     }
                 }
                 is Action.WakeWordError -> mqttService.wakeWordError(action.description)

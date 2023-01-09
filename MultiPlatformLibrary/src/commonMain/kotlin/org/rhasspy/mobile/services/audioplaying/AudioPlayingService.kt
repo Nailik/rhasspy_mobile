@@ -69,4 +69,14 @@ open class AudioPlayingService : IService() {
         }
     }
 
+    /**
+     * stops playing audio when aduio is played locally
+     */
+    fun stopPlayAudio() {
+        when(params.audioPlayingOption) {
+            AudioPlayingOption.Local -> localAudioService.stop()
+            else -> {}
+        }
+    }
+
 }

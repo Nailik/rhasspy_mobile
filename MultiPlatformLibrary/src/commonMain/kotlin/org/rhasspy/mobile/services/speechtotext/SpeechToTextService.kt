@@ -84,9 +84,6 @@ open class SpeechToTextService : IService() {
             SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) _serviceState.value = mqttClientService.stopListening(sessionId)
             SpeechToTextOption.Disabled -> {}
         }
-
-        //clear data
-        _speechToTextAudioData.clear()
     }
 
     suspend fun startSpeechToText(sessionId: String) {
@@ -103,6 +100,7 @@ open class SpeechToTextService : IService() {
             collector = scope.launch {
                 recordingService.output.collect(::audioFrame)
             }
+            println("test")
         }
 
         _serviceState.value = when (params.speechToTextOption) {

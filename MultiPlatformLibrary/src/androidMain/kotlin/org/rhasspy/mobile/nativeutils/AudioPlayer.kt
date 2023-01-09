@@ -153,7 +153,7 @@ actual class AudioPlayer : Closeable {
         }
 
         try {
-            mediaPlayer = MediaPlayer.create(Application.nativeInstance, uri).apply {
+            mediaPlayer = MediaPlayer().apply {
                 setAudioAttributes(
                     AudioAttributes.Builder()
                         .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
@@ -170,15 +170,22 @@ actual class AudioPlayer : Closeable {
                     volumeChange = null
                     onFinished?.invoke()
                 }
+                setOnPreparedListener {
+                    if(!it.isPlaying) {
+                        volumeChange = CoroutineScope(Dispatchers.IO).launch {
+                            volume.collect {
+                                mediaPlayer?.setVolume(volume.value, volume.value)
+                            }
+                        }
+
+                        start()
+                    }
+                }
 
                 _isPlayingState.value = true
-                start()
-            }
+                setDataSource(Application.nativeInstance, uri)
 
-            volumeChange = CoroutineScope(Dispatchers.IO).launch {
-                volume.collect {
-                    mediaPlayer?.setVolume(volume.value, volume.value)
-                }
+                prepareAsync()
             }
         } catch (e: Exception) {
             mediaPlayer = null

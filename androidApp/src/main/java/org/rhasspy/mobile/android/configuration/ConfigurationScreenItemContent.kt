@@ -295,7 +295,7 @@ private fun BottomAppBar(
                     ),
                 onClick = {
                     viewModel.startTest()
-                    navController.navigate(ConfigurationContentScreens.Test.name)
+                    navController.navigate(ConfigurationContentScreens.Test.route)
                 },
                 isEnabled = isTestingEnabled,
                 containerColor = BottomAppBarDefaults.bottomAppBarFabColor,

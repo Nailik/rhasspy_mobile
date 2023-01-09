@@ -31,7 +31,8 @@ sealed class Action {
 
         class SessionEnded(source: Source) : DialogAction(source)
 
-        class StartListening(source: Source, val sendAudioCaptured: Boolean) : DialogAction(source) {
+        class StartListening(source: Source, val sendAudioCaptured: Boolean) :
+            DialogAction(source) {
             override fun toString(): String {
                 return "${super.toString()} sendAudioCaptured: $sendAudioCaptured"
             }
@@ -47,7 +48,8 @@ sealed class Action {
 
         class AsrError(source: Source) : DialogAction(source)
 
-        class IntentRecognitionResult(source: Source, val intentName: String, val intent: String) : DialogAction(source) {
+        class IntentRecognitionResult(source: Source, val intentName: String, val intent: String) :
+            DialogAction(source) {
             override fun toString(): String {
                 return "${super.toString()} intentName: $intentName intent: $intent"
             }
@@ -60,6 +62,8 @@ sealed class Action {
                 return "${super.toString()} byteArray: ${byteArray.size}"
             }
         }
+
+        class StopAudioPlaying(source: Source) : DialogAction(source)
 
         class PlayFinished(source: Source) : DialogAction(source)
 
