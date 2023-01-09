@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.combineState
 import org.rhasspy.mobile.koin.getSafe
@@ -21,10 +20,15 @@ class MicrophoneFabViewModel : ViewModel(), KoinComponent {
 
     private val dialogManagerServiceState
         get() = getSafe<DialogManagerService>()?.currentDialogState ?: MutableStateFlow(DialogManagerServiceState.Idle).readOnly
-    val isShowBorder = get<WakeWordService>().isRecording
+    val isShowBorder
+        get() = getSafe<WakeWordService>()?.isRecording ?: MutableStateFlow(false)
     val isShowMicOn: StateFlow<Boolean> = MicrophonePermission.granted
-    val isRecording = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
-    val isActionEnabled = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingWakeWord }
+    val isRecording get() = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
+    val isActionEnabled get() = dialogManagerServiceState.mapReadonlyState {
+        it == DialogManagerServiceState.Idle ||
+                it == DialogManagerServiceState.AwaitingWakeWord ||
+                it == DialogManagerServiceState.RecordingIntent
+    }
 
     init {
         viewModelScope.launch {
