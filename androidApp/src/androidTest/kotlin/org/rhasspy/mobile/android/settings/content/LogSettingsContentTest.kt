@@ -10,6 +10,7 @@ import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.android.onSwitch
 import org.rhasspy.mobile.logger.LogLevel
 import org.rhasspy.mobile.viewmodel.settings.LogSettingsViewModel
 import kotlin.test.assertEquals
@@ -74,22 +75,22 @@ class LogSettingsContentTest {
         //show log is false
         viewModel.toggleShowLogEnabled(false)
         //show log false is shown
-        composeTestRule.onNodeWithTag(TestTag.ShowLogEnabled).assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.ShowLogEnabled).onSwitch().assertIsOff()
         //user clicks show log
         composeTestRule.onNodeWithTag(TestTag.ShowLogEnabled).performClick()
         //show log true is shown
-        composeTestRule.onNodeWithTag(TestTag.ShowLogEnabled).assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.ShowLogEnabled).onSwitch().assertIsOn()
         //show log true is saved
         assertTrue { LogSettingsViewModel().isShowLogEnabled.value }
 
         //audio frame logging is false
         viewModel.toggleLogAudioFramesEnabled(false)
         //audio frame logging false is shown
-        composeTestRule.onNodeWithTag(TestTag.AudioFramesEnabled).assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.AudioFramesEnabled).onSwitch().assertIsOff()
         //user clicks audio frame logging
         composeTestRule.onNodeWithTag(TestTag.AudioFramesEnabled).performClick()
         //audio frame logging true is shown
-        composeTestRule.onNodeWithTag(TestTag.AudioFramesEnabled).assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.AudioFramesEnabled).onSwitch().assertIsOn()
         //audio frame logging true is saved
         assertTrue { LogSettingsViewModel().isLogAudioFramesEnabled.value }
     }

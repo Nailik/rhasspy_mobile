@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.android.settings.content
 
+import android.widget.Switch
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -8,14 +9,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.navigation.compose.rememberNavController
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiScrollable
+import androidx.test.uiautomator.UiSelector
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScreens
-import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.option.AudioOutputOption
 import org.rhasspy.mobile.viewmodel.settings.IndicationSettingsViewModel
@@ -28,6 +34,12 @@ class IndicationSettingsContentTest {
     val composeTestRule = createComposeRule()
 
     private val viewModel = IndicationSettingsViewModel()
+
+    private val device: UiDevice =
+        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+
+    private val settingsPage = "com.android.settings"
+    private val list = ".*list"
 
     @Before
     fun setUp() {
@@ -68,7 +80,7 @@ class IndicationSettingsContentTest {
      * sound is saved
      */
     @Test
-    fun testIndicationSettings() {
+    fun testIndicationSettings() = runBlocking {
         viewModel.toggleWakeWordDetectionTurnOnDisplay(false)
         if(AppSetting.isWakeWordLightIndicationEnabled.value) {
             viewModel.toggleWakeWordLightIndicationEnabled()
@@ -76,30 +88,43 @@ class IndicationSettingsContentTest {
         viewModel.toggleWakeWordSoundIndicationEnabled(false)
 
         //wake up display disabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onSwitch().assertIsOff()
         //visual disabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onSwitch().assertIsOff()
         //sound disabled
-        composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).onSwitch().assertIsOff()
 
         //user clicks wake up display
         composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).performClick()
         //wake up display is enabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onSwitch().assertIsOn()
         //wake up display is saved
         assertTrue { IndicationSettingsViewModel().isWakeWordDetectionTurnOnDisplayEnabled.value }
 
+
         //user clicks visual
         composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).performClick()
+        //user accepts permission
+        if(!OverlayPermission.isGranted()) {
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+            assertTrue { device.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
+            UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName))
+            device.findObject(UiSelector().text(MR.strings.appName)).click()
+            device.findObject(UiSelector().className(Switch::class.java)).click()
+            //User clicks back
+            device.pressBack()
+            device.pressBack()
+            composeTestRule.awaitIdle()
+        }
         //visual is enabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onSwitch().assertIsOn()
         //visual is saved
         assertTrue { IndicationSettingsViewModel().isWakeWordLightIndicationEnabled.value }
 
         //user clicks sound
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).performClick()
         //sound is enabled
-        composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).onSwitch().assertIsOn()
         //sound is saved
         assertTrue { IndicationSettingsViewModel().isSoundIndicationEnabled.value }
     }
@@ -147,7 +172,7 @@ class IndicationSettingsContentTest {
         //user clicks sound
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).performClick()
         //sound is enabled
-        composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).onSwitch().assertIsOn()
         //sound settings visible
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertIsDisplayed()
         composeTestRule.onNodeWithTag(IndicationSettingsScreens.WakeIndicationSound)

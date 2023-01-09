@@ -125,12 +125,12 @@ class MicrophoneOverlaySettingsContentTest {
         //Visible while app is disabled
         assertFalse { viewModel.isMicrophoneOverlayWhileAppEnabled.value }
         //element is turned off
-        composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).onSwitch().assertIsOff()
 
         //user clicks visible while app
         composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).performClick()
         //element is turned on
-        composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).onSwitch().assertIsOn()
         //visible while app is saved
         newViewModel = MicrophoneOverlaySettingsViewModel()
         assertTrue { newViewModel.isMicrophoneOverlayWhileAppEnabled.value }
