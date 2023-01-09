@@ -62,12 +62,18 @@ class MqttService : IService() {
             try {
                 client = buildClient()
                 scope.launch {
-                    if (connectClient()) {
-                        _serviceState.value = subscribeTopics()
-                        _isHasStarted.value = true
-                    } else {
-                        _serviceState.value = ServiceState.Warning(MR.strings.notConnected)
-                        logger.e { "client could not connect" }
+                    try {
+                        if (connectClient()) {
+                            _serviceState.value = subscribeTopics()
+                            _isHasStarted.value = true
+                        } else {
+                            _serviceState.value = ServiceState.Warning(MR.strings.notConnected)
+                            logger.e { "client could not connect" }
+                        }
+                    } catch (exception: Exception) {
+                        //start error
+                        logger.e(exception) { "client connect error" }
+                        _serviceState.value = ServiceState.Exception(exception)
                     }
                 }
             } catch (exception: Exception) {

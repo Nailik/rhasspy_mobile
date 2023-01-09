@@ -66,6 +66,7 @@ fun ConfigurationScreen(
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
+                .testTag(TestTag.List)
                 .padding(paddingValues)
                 .fillMaxSize(),
             state = scrollState

@@ -9,6 +9,7 @@ import org.rhasspy.mobile.settings.option.IOption
  * test tags to be used in compose
  */
 enum class TestTag {
+    List,
     DialogCrashlytics,
     DialogInformationMicrophonePermission,
     DialogInformationOverlayPermission,

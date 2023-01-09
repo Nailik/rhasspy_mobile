@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.android
 
 import android.os.Build
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.test.platform.app.InstrumentationRegistry
@@ -16,6 +17,9 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 fun SemanticsNodeInteraction.onSwitch(): SemanticsNodeInteraction {
     return this.onChildren().filter(isToggleable()).onFirst()
 }
+
+fun hasTestTag(testTag: Enum<*>): SemanticsMatcher =
+    SemanticsMatcher.expectValue(SemanticsProperties.TestTag, testTag.name)
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     testTag: Enum<*>,
     useUnmergedTree: Boolean = false

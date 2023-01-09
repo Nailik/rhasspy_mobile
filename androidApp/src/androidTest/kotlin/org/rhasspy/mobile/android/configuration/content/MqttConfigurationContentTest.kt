@@ -12,6 +12,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.android.onSwitch
 import org.rhasspy.mobile.viewmodel.configuration.MqttConfigurationViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -60,7 +61,7 @@ class MqttConfigurationContentTest {
         //MQTT disabled
         assertFalse { viewModel.isMqttEnabled.value }
         //switch is off
-        composeTestRule.onNodeWithTag(TestTag.MqttSwitch).assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.MqttSwitch).onSwitch().assertIsOff()
         //MQTT Settings not visible
         composeTestRule.onNodeWithTag(TestTag.Host).assertDoesNotExist()
         composeTestRule.onNodeWithTag(TestTag.Port).assertDoesNotExist()
@@ -77,7 +78,7 @@ class MqttConfigurationContentTest {
         //mqtt enabled
         assertTrue { viewModel.isMqttEnabled.value }
         //switch is on
-        composeTestRule.onNodeWithTag(TestTag.MqttSwitch).assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.MqttSwitch).onSwitch().assertIsOn()
         //settings visible
         composeTestRule.onNodeWithTag(TestTag.Host).assertExists()
         composeTestRule.onNodeWithTag(TestTag.Port).assertExists()
@@ -115,7 +116,7 @@ class MqttConfigurationContentTest {
         viewModel.onSave()
 
         val textInputTestHost = "hostTestInput"
-        val textInputTestPort = "portTestInput"
+        val textInputTestPort = "1672"
         val textInputTestUsername = "usernameTestInput"
         val textInputTestPassword = "passwordTestInput"
 
@@ -179,14 +180,14 @@ class MqttConfigurationContentTest {
         //ssl is disabled
         assertFalse { viewModel.isMqttSSLEnabled.value }
         //ssl is off
-        composeTestRule.onNodeWithTag(TestTag.SSLSwitch).assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onSwitch().assertIsOff()
 
         //user clicks ssl
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).performClick()
         //ssl is enabled
         assertTrue { viewModel.isMqttSSLEnabled.value }
         //ssl is on
-        composeTestRule.onNodeWithTag(TestTag.SSLSwitch).assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onSwitch().assertIsOn()
 
         //certificate button is shown
         composeTestRule.onNodeWithTag(TestTag.CertificateButton).assertExists()

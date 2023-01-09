@@ -142,11 +142,13 @@ class IntentHandlingConfigurationContentTest {
             .performTextReplacement(textInputTestToken)
 
         //send intents is set
-        composeTestRule.onNodeWithTag(TestTag.SendIntents, true).performScrollTo().onChildAt(0)
-            .assertIsSelected()
+        composeTestRule.onNodeWithTag(TestTag.SendIntents, true)
+            .performScrollTo().performClick().onChildAt(0).assertIsSelected()
         //send events can clicked
         composeTestRule.onNodeWithTag(TestTag.SendEvents).performScrollTo().performClick()
         //send events is set
+        composeTestRule.onNodeWithTag(TestTag.SendEvents, true)
+            .performScrollTo().onChildAt(0).assertIsSelected()
 
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()

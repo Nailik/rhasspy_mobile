@@ -12,6 +12,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.android.onSwitch
 import org.rhasspy.mobile.settings.option.AudioOutputOption
 import org.rhasspy.mobile.settings.option.AudioPlayingOption
 import org.rhasspy.mobile.viewmodel.configuration.AudioPlayingConfigurationViewModel
@@ -62,13 +63,13 @@ class AudioPlayingConfigurationContentTest {
     @Test
     fun testEndpoint() = runBlocking {
         viewModel.selectAudioPlayingOption(AudioPlayingOption.Disabled)
-        viewModel.save()
+        viewModel.onSave()
 
         val textInputTest = "endpointTestInput"
 
         //option disable is set
-        composeTestRule.onNodeWithTag(AudioPlayingOption.Disabled, true).onChildAt(0)
-            .assertIsOn()
+        composeTestRule.onNodeWithTag(AudioPlayingOption.Disabled).onChildAt(0)
+            .assertIsSelected()
 
         //User clicks option remote http
         composeTestRule.onNodeWithTag(AudioPlayingOption.RemoteHTTP).performClick()
@@ -81,14 +82,14 @@ class AudioPlayingConfigurationContentTest {
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
 
         //switch is off
-        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performScrollTo().assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performScrollTo().onSwitch().assertIsOff()
         //endpoint cannot be changed
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsNotEnabled()
 
         //user clicks switch
         composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performClick()
         //switch is on
-        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).onSwitch().assertIsOn()
         //endpoint can be changed
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsEnabled()
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextReplacement(textInputTest)
