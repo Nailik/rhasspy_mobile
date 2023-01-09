@@ -141,7 +141,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
      * next step is to invoke ended session which will start a new one
      */
     private fun endSession(action: DialogAction.EndSession) {
-        if (isInCorrectState(action, DialogManagerServiceState.HandlingIntent, DialogManagerServiceState.TranscribingIntent)) {
+        if (isInCorrectState(action, DialogManagerServiceState.HandlingIntent, DialogManagerServiceState.TranscribingIntent, DialogManagerServiceState.RecognizingIntent)) {
 
             onAction(DialogAction.SessionEnded(Source.Local))
 
@@ -232,7 +232,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
      * tell mqtt
      */
     private suspend fun sessionEnded(action: DialogAction.SessionEnded) {
-        if (isInCorrectState(action, DialogManagerServiceState.TranscribingIntent, DialogManagerServiceState.HandlingIntent)) {
+        if (isInCorrectState(action, DialogManagerServiceState.TranscribingIntent, DialogManagerServiceState.HandlingIntent, DialogManagerServiceState.RecognizingIntent)) {
 
             indicationService.onIdle()
             sessionId = null
@@ -293,6 +293,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
 
                 wakeWordService.stopDetection()
                 indicationService.onListening()
+                _currentDialogState.value = DialogManagerServiceState.RecordingIntent
                 speechToTextService.startSpeechToText(id)
                 //await silence to stop recording
                 timeoutJob = coroutineScope.launch {

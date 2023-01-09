@@ -54,10 +54,14 @@ class ServiceMiddleware : KoinComponent, Closeable {
     }
 
     fun userSessionClick() {
-        if (dialogManagerService.currentDialogState.value == DialogManagerServiceState.AwaitingWakeWord) {
-            action(Action.DialogAction.WakeWordDetected(Source.Local, "manual"))
-        } else {
-            action(Action.DialogAction.StopListening(Source.Local))
+        when (dialogManagerService.currentDialogState.value) {
+            DialogManagerServiceState.AwaitingWakeWord -> {
+                action(Action.DialogAction.WakeWordDetected(Source.Local, "manual"))
+            }
+            DialogManagerServiceState.RecordingIntent -> {
+                action(Action.DialogAction.StopListening(Source.Local))
+            }
+            else -> {}
         }
     }
 

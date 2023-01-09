@@ -22,8 +22,8 @@ class IndicationSettingsViewModel : ViewModel() {
     val audioOutputOptionList = AudioOutputOption::values
 
     //toggle wake word light indication
-    fun toggleWakeWordLightIndicationEnabled(enabled: Boolean) {
-        AppSetting.isWakeWordLightIndicationEnabled.value = enabled
+    fun toggleWakeWordLightIndicationEnabled() {
+        AppSetting.isWakeWordLightIndicationEnabled.value = !AppSetting.isWakeWordLightIndicationEnabled.value
     }
 
     //toggle wake word turn on display
