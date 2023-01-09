@@ -48,17 +48,18 @@ actual object SettingsUtils {
                             //copy org.rhasspy.mobile.android_prefenrences.xml
                             val sharedPreferencesFile = File(Application.nativeInstance.filesDir.parent, "shared_prefs/org.rhasspy.mobile.android_preferences.xml")
                             if (sharedPreferencesFile.exists()) {
-                                sharedPreferencesFile.listFiles()?.forEach { soundFile ->
-                                    zipOutputStream.putNextEntry(ZipEntry("${sharedPreferencesFile.name}/${soundFile.name}"))
-                                    zipOutputStream.write(soundFile.readBytes())
-                                }
+                                zipOutputStream.putNextEntry(ZipEntry("shared_prefs/${sharedPreferencesFile.name}"))
+                                zipOutputStream.write(sharedPreferencesFile.readBytes())
                             }
 
+                            zipOutputStream.closeEntry()
+                            zipOutputStream.putNextEntry(ZipEntry("files/"))
+
                             //all custom files
-                            val files = File(Application.nativeInstance.filesDir, "files")
+                            val files = Application.nativeInstance.filesDir
                             FileType.values().forEach { fileType ->
                                 val fileTypeFolder = File(files, fileType.folderName)
-                                copyFolderIntoZipRecursive(fileTypeFolder, zipOutputStream)
+                                copyFolderIntoZipRecursive("files", fileTypeFolder, zipOutputStream)
                             }
 
                             zipOutputStream.flush()
@@ -75,14 +76,18 @@ actual object SettingsUtils {
     /**
      * copy this folder with all its content into zip
      */
-    private fun copyFolderIntoZipRecursive(parentFolder: File, zipOutputStream: ZipOutputStream) {
+    private fun copyFolderIntoZipRecursive(path: String, parentFolder: File, zipOutputStream: ZipOutputStream) {
         if (parentFolder.exists()) {
+
+            //TODO list files doesn't work
             parentFolder.listFiles()?.forEach { file ->
                 if (file.isDirectory) {
-                    copyFolderIntoZipRecursive(file, zipOutputStream)
+                    zipOutputStream.putNextEntry(ZipEntry("$path/${file.name}/"))
+                    copyFolderIntoZipRecursive("$path/${file.name}", file, zipOutputStream)
                 } else {
-                    zipOutputStream.putNextEntry(ZipEntry("${parentFolder.absolutePath}/${file.name}"))
+                    zipOutputStream.putNextEntry(ZipEntry("$path/${file.name}"))
                     zipOutputStream.write(file.readBytes())
+                    zipOutputStream.closeEntry()
                 }
             }
         }
