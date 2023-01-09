@@ -67,7 +67,7 @@ class AudioPlayingConfigurationContentTest {
 
         //option disable is set
         composeTestRule.onNodeWithTag(AudioPlayingOption.Disabled, true).onChildAt(0)
-            .assertIsSelected()
+            .assertIsOn()
 
         //User clicks option remote http
         composeTestRule.onNodeWithTag(AudioPlayingOption.RemoteHTTP).performClick()

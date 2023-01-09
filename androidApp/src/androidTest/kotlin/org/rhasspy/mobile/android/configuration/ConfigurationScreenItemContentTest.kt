@@ -14,16 +14,16 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.assertTextEquals
+import org.rhasspy.mobile.android.data.TestViewModel
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.viewmodel.configuration.RemoteHermesHttpConfigurationViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -42,9 +42,7 @@ class ConfigurationScreenItemContentTest {
     private val configurationScreenItemContentNavigation = "ConfigurationScreenItemContent"
     private val startNavigation = "start"
 
-    private val hasUnsavedChanges = MutableStateFlow(false)
-    private var onSave = false
-    private var onDiscard = false
+    private val viewModel = TestViewModel()
 
     private val btnStartTest = "btnStartTest"
     private val toolbarTitle = MR.strings.defaultText
@@ -65,9 +63,7 @@ class ConfigurationScreenItemContentTest {
                     composable(startNavigation) {
                         //button to open config screen in order to test back press
                         Button(onClick = {
-                            navController.navigate(
-                                configurationScreenItemContentNavigation
-                            )
+                            navController.navigate(configurationScreenItemContentNavigation)
                         }) {
                             Text(btnStartTest)
                         }
@@ -78,7 +74,7 @@ class ConfigurationScreenItemContentTest {
                         ConfigurationScreenItemContent(
                             modifier = Modifier,
                             title = toolbarTitle,
-                            viewModel = RemoteHermesHttpConfigurationViewModel()
+                            viewModel = viewModel
                         ) {
 
                         }
@@ -132,63 +128,67 @@ class ConfigurationScreenItemContentTest {
      * save click invokes save and navigate back
      */
     @Test
-    fun testUnsavedChanges() {
+    fun testUnsavedChanges() = runBlocking {
         //open screen
         composeTestRule.onNodeWithText(btnStartTest).performClick()
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertExists()
 
         //hasUnsavedChanges false
-        hasUnsavedChanges.value = false
+        viewModel.isHasUnsavedChanges.value = false
         //save and discard disabled
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarDiscard).assertIsNotEnabled()
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsNotEnabled()
 
         //hasUnsavedChanges true
-        hasUnsavedChanges.value = true
+        viewModel.isHasUnsavedChanges.value = true
         //save and discard enabled
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarDiscard).assertIsEnabled()
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled()
 
         //discard click invokes discard
-        assertFalse { onDiscard }
+        assertFalse { viewModel.onDiscard }
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarDiscard).performClick()
-        assertTrue { onDiscard }
+        assertTrue { viewModel.onDiscard }
         //save click invokes save
-        assertFalse { onSave }
+        assertFalse { viewModel.onSave }
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).performClick()
-        assertTrue { onSave }
+        composeTestRule.waitUntil(
+            condition = { viewModel.onSave && !viewModel.isLoading.value },
+            timeoutMillis = 5000
+        )
+        assertTrue { viewModel.onSave }
 
         //app bar back click shows dialog
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
         composeTestRule.onNodeWithTag(TestTag.DialogUnsavedChanges).assertExists()
         //outside click closes dialog
-        device.click(100, 100)
+        device.click(300, 300)
         composeTestRule.onNodeWithTag(TestTag.DialogUnsavedChanges).assertDoesNotExist()
 
         //back click shows dialog
         device.pressBack()
         composeTestRule.onNodeWithTag(TestTag.DialogUnsavedChanges).assertExists()
-        onDiscard = false
+        viewModel.onDiscard = false
         //discard click invokes discard and navigate back
-        assertFalse { onDiscard }
+        assertFalse { viewModel.onDiscard }
         composeTestRule.onNodeWithTag(TestTag.DialogCancel).performClick()
-        assertTrue { onDiscard }
+        assertTrue { viewModel.onDiscard }
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertDoesNotExist()
 
 
         //open screen
         composeTestRule.onNodeWithText(btnStartTest).performClick()
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertExists()
-        hasUnsavedChanges.value = true
+        viewModel.isHasUnsavedChanges.value = true
 
         //back click shows dialog
         device.pressBack()
         composeTestRule.onNodeWithTag(TestTag.DialogUnsavedChanges).assertExists()
-        onSave = false
+        viewModel.onSave = false
         //save click invokes save and navigate back
-        assertFalse { onSave }
+        assertFalse { viewModel.onSave }
         composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
-        assertTrue { onSave }
+        assertTrue { viewModel.onSave }
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertDoesNotExist()
     }
 

@@ -16,6 +16,7 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScreens
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.option.AudioOutputOption
 import org.rhasspy.mobile.viewmodel.settings.IndicationSettingsViewModel
 import kotlin.test.assertEquals
@@ -69,7 +70,9 @@ class IndicationSettingsContentTest {
     @Test
     fun testIndicationSettings() {
         viewModel.toggleWakeWordDetectionTurnOnDisplay(false)
-        viewModel.toggleWakeWordLightIndicationEnabled(false)
+        if(AppSetting.isWakeWordLightIndicationEnabled.value) {
+            viewModel.toggleWakeWordLightIndicationEnabled()
+        }
         viewModel.toggleWakeWordSoundIndicationEnabled(false)
 
         //wake up display disabled

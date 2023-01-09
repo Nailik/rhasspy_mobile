@@ -81,7 +81,7 @@ fun ConfigurationScreenItemContent(
             NavHost(
                 navController = navController,
                 startDestination = ConfigurationContentScreens.Edit.route,
-                modifier = modifier
+                modifier = modifier.testTag(TestTag.ConfigurationScreenItemContent),
             ) {
                 composable(ConfigurationContentScreens.Edit.route) {
                     EditConfigurationScreen(

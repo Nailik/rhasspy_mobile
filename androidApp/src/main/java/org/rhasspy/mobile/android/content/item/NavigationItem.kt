@@ -23,7 +23,7 @@ fun RowScope.NavigationItem(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     NavigationBarItem(
-        modifier = Modifier.testTag(screen.route),
+        modifier = Modifier.testTag(screen.name),
         selected = currentDestination?.hierarchy?.any { it.route?.startsWith(screen.route) == true } == true,
         onClick = {
             navController.navigate(screen.route) {
