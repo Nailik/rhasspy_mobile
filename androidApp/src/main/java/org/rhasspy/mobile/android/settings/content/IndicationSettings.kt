@@ -24,6 +24,7 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.main.LocalNavController
+import org.rhasspy.mobile.android.permissions.RequiresOverlayPermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScreens
@@ -49,7 +50,7 @@ fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = g
     ) {
         NavHost(
             navController = navController,
-            startDestination = IndicationSettingsScreens.Overview.name
+            startDestination = IndicationSettingsScreens.Overview.route
         ) {
 
             composable(IndicationSettingsScreens.Overview.route) {
@@ -110,12 +111,14 @@ fun IndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
             )
 
             //light indication
-            SwitchListItem(
-                modifier = Modifier.testTag(TestTag.WakeWordLightIndicationEnabled),
-                text = MR.strings.wakeWordLightIndication,
-                isChecked = viewModel.isWakeWordLightIndicationEnabled.collectAsState().value,
-                onCheckedChange = viewModel::toggleWakeWordLightIndicationEnabled
-            )
+            RequiresOverlayPermission({ viewModel.toggleWakeWordLightIndicationEnabled() }) { onClick ->
+                SwitchListItem(
+                    modifier = Modifier.testTag(TestTag.WakeWordLightIndicationEnabled),
+                    text = MR.strings.wakeWordLightIndication,
+                    isChecked = viewModel.isWakeWordLightIndicationEnabled.collectAsState().value,
+                    onCheckedChange = onClick
+                )
+            }
 
             //sound indication
             SwitchListItem(
