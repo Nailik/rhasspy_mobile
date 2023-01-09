@@ -38,7 +38,6 @@ enum class TestTag {
     AccessToken,
     SendEvents,
     SendIntents,
-    AudioRecordingUdpOutput,
     AudioRecordingUdpHost,
     AudioRecordingUdpPort,
     IntentNameText,
