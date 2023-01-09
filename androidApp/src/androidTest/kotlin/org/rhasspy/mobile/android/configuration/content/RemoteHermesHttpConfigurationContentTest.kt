@@ -9,6 +9,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.viewmodel.configuration.RemoteHermesHttpConfigurationViewModel
@@ -54,7 +55,7 @@ class RemoteHermesHttpConfigurationContentTest {
     @Test
     fun testHttpContent() = runBlocking {
         viewModel.toggleHttpSSLVerificationDisabled(true)
-        viewModel.save()
+        viewModel.onSave()
 
         val textInputTest = "textTestInput"
 
@@ -75,6 +76,7 @@ class RemoteHermesHttpConfigurationContentTest {
 
         //user click save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
+        composeTestRule.awaitSaved(viewModel)
         val newViewModel = RemoteHermesHttpConfigurationViewModel()
         //disable ssl validation off is saved
         assertEquals(false, newViewModel.isHttpSSLVerificationDisabled.value)

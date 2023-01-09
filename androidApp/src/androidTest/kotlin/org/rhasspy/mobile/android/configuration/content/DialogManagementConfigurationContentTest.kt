@@ -12,6 +12,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.settings.option.DialogManagementOption
@@ -51,7 +52,7 @@ class DialogManagementConfigurationContentTest {
     @Test
     fun testEndpoint() = runBlocking {
         viewModel.selectDialogManagementOption(DialogManagementOption.Disabled)
-        viewModel.save()
+        viewModel.onSave()
 
         //option disable is set
         composeTestRule.onNodeWithTag(DialogManagementOption.Disabled, true).onChildAt(0)
@@ -64,6 +65,7 @@ class DialogManagementConfigurationContentTest {
 
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
+        composeTestRule.awaitSaved(viewModel)
         val newViewModel = DialogManagementConfigurationViewModel()
         //option is saved to local
         assertEquals(DialogManagementOption.Local, newViewModel.dialogManagementOption.value)

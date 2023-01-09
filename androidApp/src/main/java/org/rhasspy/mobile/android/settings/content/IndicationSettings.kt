@@ -161,7 +161,7 @@ private fun SoundIndicationSettingsOverview(viewModel: IndicationSettingsViewMod
             ListElement(
                 modifier = Modifier
                     .testTag(IndicationSettingsScreens.WakeIndicationSound)
-                    .clickable { navigation.navigate(IndicationSettingsScreens.WakeIndicationSound.name) },
+                    .clickable { navigation.navigate(IndicationSettingsScreens.WakeIndicationSound.route) },
                 text = { Text(MR.strings.wakeWord) },
                 secondaryText = { Text(text = viewModel.wakeSound.collectAsState().value) }
             )
@@ -170,7 +170,7 @@ private fun SoundIndicationSettingsOverview(viewModel: IndicationSettingsViewMod
             ListElement(
                 modifier = Modifier
                     .testTag(IndicationSettingsScreens.RecordedIndicationSound)
-                    .clickable { navigation.navigate(IndicationSettingsScreens.RecordedIndicationSound.name) },
+                    .clickable { navigation.navigate(IndicationSettingsScreens.RecordedIndicationSound.route) },
                 text = { Text(MR.strings.recordedSound) },
                 secondaryText = { Text(text = viewModel.recordedSound.collectAsState().value) }
             )
@@ -179,7 +179,7 @@ private fun SoundIndicationSettingsOverview(viewModel: IndicationSettingsViewMod
             ListElement(
                 modifier = Modifier
                     .testTag(IndicationSettingsScreens.ErrorIndicationSound)
-                    .clickable { navigation.navigate(IndicationSettingsScreens.ErrorIndicationSound.name) },
+                    .clickable { navigation.navigate(IndicationSettingsScreens.ErrorIndicationSound.route) },
                 text = { Text(MR.strings.errorSound) },
                 secondaryText = { Text(text = viewModel.errorSound.collectAsState().value) }
             )

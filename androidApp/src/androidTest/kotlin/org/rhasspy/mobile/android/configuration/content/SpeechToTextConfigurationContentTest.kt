@@ -9,6 +9,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.settings.option.SpeechToTextOption
@@ -60,7 +61,7 @@ class SpeechToTextConfigurationContentTest {
     @Test
     fun testEndpoint() = runBlocking {
         viewModel.selectSpeechToTextOption(SpeechToTextOption.Disabled)
-        viewModel.save()
+        viewModel.onSave()
 
         val textInputTest = "endpointTestInput"
 
@@ -95,6 +96,7 @@ class SpeechToTextConfigurationContentTest {
 
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
+        composeTestRule.awaitSaved(viewModel)
         val newViewModel = SpeechToTextConfigurationViewModel()
         //option is saved to remote http
         assertEquals(SpeechToTextOption.RemoteHTTP, newViewModel.speechToTextOption.value)

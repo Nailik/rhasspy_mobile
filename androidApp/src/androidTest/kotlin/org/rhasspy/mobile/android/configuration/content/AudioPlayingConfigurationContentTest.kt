@@ -9,6 +9,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.settings.option.AudioOutputOption
@@ -96,6 +97,7 @@ class AudioPlayingConfigurationContentTest {
 
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
+        composeTestRule.awaitSaved(viewModel)
         val newViewModel = AudioPlayingConfigurationViewModel()
         //option is saved to remote http
         assertEquals(AudioPlayingOption.RemoteHTTP, newViewModel.audioPlayingOption.value)
@@ -126,7 +128,7 @@ class AudioPlayingConfigurationContentTest {
     @Test
     fun testLocalOutput() = runBlocking {
         viewModel.selectAudioPlayingOption(AudioPlayingOption.Disabled)
-        viewModel.save()
+        viewModel.onSave()
 
         //output is set to sound
         assertEquals(AudioOutputOption.Sound, viewModel.audioOutputOption.value)
@@ -156,6 +158,7 @@ class AudioPlayingConfigurationContentTest {
 
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
+        composeTestRule.awaitSaved(viewModel)
         val newViewModel = AudioPlayingConfigurationViewModel()
         //option is saved to local
         assertEquals(AudioPlayingOption.Local, newViewModel.audioPlayingOption.value)

@@ -71,7 +71,7 @@ class WakeIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel()
 
     override fun chooseSoundFile() {
         viewModelScope.launch {
-            FileUtils.selectFile(FileType.SOUND, subfolder = SoundFileFolder.Error.folderName)?.also { fileName ->
+            FileUtils.selectFile(FileType.SOUND, subfolder = SoundFileFolder.Wake.folderName)?.also { fileName ->
                 val customSounds = AppSetting.customWakeSounds.data
                 AppSetting.customWakeSounds.value =
                     customSounds.value.toMutableSet().apply {

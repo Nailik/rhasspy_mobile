@@ -9,6 +9,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.viewmodel.configuration.MqttConfigurationViewModel
@@ -54,7 +55,7 @@ class MqttConfigurationContentTest {
     @Test
     fun testMqttContent() = runBlocking {
         viewModel.toggleMqttEnabled(false)
-        viewModel.save()
+        viewModel.onSave()
 
         //MQTT disabled
         assertFalse { viewModel.isMqttEnabled.value }
@@ -89,6 +90,7 @@ class MqttConfigurationContentTest {
 
         //user click save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
+        composeTestRule.awaitSaved(viewModel)
         val newViewModel = MqttConfigurationViewModel()
         //mqtt enabled saved
         assertEquals(true, newViewModel.isMqttEnabled.value)
@@ -110,7 +112,7 @@ class MqttConfigurationContentTest {
     @Test
     fun testMqttConnectionSettings() = runBlocking {
         viewModel.toggleMqttEnabled(true)
-        viewModel.save()
+        viewModel.onSave()
 
         val textInputTestHost = "hostTestInput"
         val textInputTestPort = "portTestInput"
@@ -140,6 +142,7 @@ class MqttConfigurationContentTest {
 
         //user click save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
+        composeTestRule.awaitSaved(viewModel)
         val newViewModel = MqttConfigurationViewModel()
         //host is saved
         assertEquals(textInputTestHost, newViewModel.mqttHost.value)
@@ -169,7 +172,7 @@ class MqttConfigurationContentTest {
     fun testMqttSSL() = runBlocking {
         viewModel.toggleMqttEnabled(true)
         viewModel.toggleMqttSSLEnabled(false)
-        viewModel.save()
+        viewModel.onSave()
 
         //mqtt is enabled
         assertTrue { viewModel.isMqttEnabled.value }
@@ -190,6 +193,7 @@ class MqttConfigurationContentTest {
 
         //user clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
+        composeTestRule.awaitSaved(viewModel)
         val newViewModel = MqttConfigurationViewModel()
         //ssl on is saved
         assertEquals(true, newViewModel.isMqttSSLEnabled.value)
@@ -209,7 +213,7 @@ class MqttConfigurationContentTest {
     @Test
     fun testMqttConnectionTiming() = runBlocking {
         viewModel.toggleMqttEnabled(true)
-        viewModel.save()
+        viewModel.onSave()
 
         val textInputTestConnectionTimeout = "498"
         val textInputTestKeepAliveInterval = "120"
@@ -235,6 +239,7 @@ class MqttConfigurationContentTest {
 
         //user click save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
+        composeTestRule.awaitSaved(viewModel)
         val newViewModel = MqttConfigurationViewModel()
         //timeout is saved
         assertEquals(textInputTestConnectionTimeout, newViewModel.mqttConnectionTimeoutText.value)

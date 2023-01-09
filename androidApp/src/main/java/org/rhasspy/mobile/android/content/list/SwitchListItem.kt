@@ -22,7 +22,7 @@ fun SwitchListItem(
         trailing = {
             Switch(
                 checked = isChecked,
-                onCheckedChange = null
+                onCheckedChange = onCheckedChange
             )
         })
 }

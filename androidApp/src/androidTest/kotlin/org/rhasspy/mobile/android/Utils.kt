@@ -1,8 +1,8 @@
 package org.rhasspy.mobile.android
 
 import android.os.Build
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.*
+import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.permission.PermissionRequester
 import androidx.test.uiautomator.UiDevice
@@ -10,8 +10,12 @@ import androidx.test.uiautomator.UiSelector
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
-import kotlin.test.assertEquals
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 
+
+fun SemanticsNodeInteraction.onSwitch(): SemanticsNodeInteraction {
+    return this.onChildren().filter(isToggleable()).onFirst()
+}
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     testTag: Enum<*>,
     useUnmergedTree: Boolean = false
@@ -31,11 +35,6 @@ fun SemanticsNodeInteractionsProvider.onNodeWithCombinedTag(
     name: String, tag: TestTag,
     useUnmergedTree: Boolean = false
 ): SemanticsNodeInteraction = onNode(hasTestTag("$name${tag.name}"), useUnmergedTree)
-
-fun SemanticsNodeInteraction.assertBackgroundColor(expectedBackground: Color) {
-    val capturedName = captureToImage().colorSpace.name
-    assertEquals(expectedBackground.colorSpace.name, capturedName)
-}
 
 fun UiSelector.text(text: StringResource): UiSelector {
     return this.textMatches(
@@ -102,3 +101,10 @@ fun SemanticsNodeInteractionsProvider.onNodeWithText(
         ), substring, ignoreCase
     ), useUnmergedTree
 )
+
+fun ComposeContentTestRule.awaitSaved(viewModel: IConfigurationViewModel) {
+    this.waitUntil(
+        condition = { !viewModel.isLoading.value },
+        timeoutMillis = 5000
+    )
+}

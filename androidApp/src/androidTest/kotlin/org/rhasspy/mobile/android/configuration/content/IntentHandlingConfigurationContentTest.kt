@@ -9,6 +9,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.settings.option.IntentHandlingOption
@@ -73,6 +74,7 @@ class IntentHandlingConfigurationContentTest {
 
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
+        composeTestRule.awaitSaved(viewModel)
         val newViewModel = IntentHandlingConfigurationViewModel()
         //option is saved to remote http
         assertEquals(IntentHandlingOption.RemoteHTTP, newViewModel.intentHandlingOption.value)
@@ -107,8 +109,7 @@ class IntentHandlingConfigurationContentTest {
     fun testHomeAssistant() = runBlocking {
 
         viewModel.selectIntentHandlingOption(IntentHandlingOption.Disabled)
-        viewModel.selectIntentHandlingOption(IntentHandlingOption.Disabled)
-        viewModel.save()
+        viewModel.onSave()
 
         val textInputTestEndpoint = "endpointTestInput"
         val textInputTestToken = "tokenTestInput"
@@ -149,6 +150,7 @@ class IntentHandlingConfigurationContentTest {
 
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
+        composeTestRule.awaitSaved(viewModel)
         val newViewModel = IntentHandlingConfigurationViewModel()
         //option is saved to HomeAssistant
         assertEquals(IntentHandlingOption.HomeAssistant, newViewModel.intentHandlingOption.value)

@@ -53,7 +53,7 @@ class PorcupineLanguageScreenTest {
     fun testContent() = runBlocking {
         //English is saved
         viewModel.selectWakeWordPorcupineLanguage(PorcupineLanguageOption.EN)
-        viewModel.save()
+        viewModel.onSave()
         assertEquals(PorcupineLanguageOption.EN, viewModel.wakeWordPorcupineLanguage.value)
 
         //english is selected
@@ -65,7 +65,7 @@ class PorcupineLanguageScreenTest {
         composeTestRule.onNodeWithTag(PorcupineLanguageOption.DE).onChildAt(0).assertIsSelected()
 
         //save is invoked
-        viewModel.save()
+        viewModel.onSave()
         val newViewModel = WakeWordConfigurationViewModel()
         //german is saved
         assertEquals(PorcupineLanguageOption.DE, newViewModel.wakeWordPorcupineLanguage.value)

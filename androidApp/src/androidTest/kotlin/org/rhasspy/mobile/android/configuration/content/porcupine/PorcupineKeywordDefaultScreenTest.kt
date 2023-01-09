@@ -9,6 +9,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithCombinedTag
 import org.rhasspy.mobile.android.onNodeWithTag
@@ -122,6 +123,7 @@ class PorcupineKeywordDefaultScreenTest {
 
         //viewModel save is invoked
         viewModel.save()
+        composeTestRule.awaitSaved(viewModel)
         val newViewModel = WakeWordConfigurationViewModel()
         newViewModel.wakeWordPorcupineKeywordDefaultOptions.value.forEach {
             //americano is saved with enabled

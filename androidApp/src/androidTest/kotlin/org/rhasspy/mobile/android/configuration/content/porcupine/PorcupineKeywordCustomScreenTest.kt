@@ -139,7 +139,7 @@ class PorcupineKeywordCustomScreenTest {
         composeTestRule.onNodeWithTag(ppn).onChildAt(0).assertIsOn()
 
         //viewModel save is invoked
-        viewModel.save()
+        viewModel.onSave()
         val newViewModel = WakeWordConfigurationViewModel()
         //jarvis is saved with enabled
         assertTrue { newViewModel.wakeWordPorcupineKeywordCustomOptions.value.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null }
@@ -173,7 +173,7 @@ class PorcupineKeywordCustomScreenTest {
         composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
         composeTestRule.awaitIdle()
-        viewModel.save()
+        viewModel.onSave()
         assertTrue { viewModel.wakeWordPorcupineKeywordCustomOptions.value.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null }
 
         //user clicks delete on ppn
@@ -185,7 +185,7 @@ class PorcupineKeywordCustomScreenTest {
         composeTestRule.onNodeWithCombinedTag(ppn, TestTag.Undo).performClick()
 
         //viewModel save is invoked
-        viewModel.save()
+        viewModel.onSave()
         val newViewModel = WakeWordConfigurationViewModel()
         //ppn is saved with ppn.ppn and enabled
         assertTrue { newViewModel.wakeWordPorcupineKeywordCustomOptions.value.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null }

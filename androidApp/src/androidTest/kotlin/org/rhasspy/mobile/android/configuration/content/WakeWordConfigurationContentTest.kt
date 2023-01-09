@@ -12,6 +12,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
@@ -62,7 +63,7 @@ class WakeWordConfigurationContentTest {
     fun testWakeWordContent() = runBlocking {
         //option is disable
         viewModel.selectWakeWordOption(WakeWordOption.Disabled)
-        viewModel.save()
+        viewModel.onSave()
         assertEquals(WakeWordOption.Disabled, viewModel.wakeWordOption.value)
 
         //porcupine options not visible
@@ -74,6 +75,7 @@ class WakeWordConfigurationContentTest {
 
         //user clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
+        composeTestRule.awaitSaved(viewModel)
         val newViewModel = WakeWordConfigurationViewModel()
         //new option is saved
         assertEquals(WakeWordOption.Porcupine, newViewModel.wakeWordOption.value)
@@ -96,7 +98,7 @@ class WakeWordConfigurationContentTest {
     fun testPorcupineOptions() = runBlocking {
         //option is porcupine
         viewModel.selectWakeWordOption(WakeWordOption.Porcupine)
-        viewModel.save()
+        viewModel.onSave()
         assertEquals(WakeWordOption.Porcupine, viewModel.wakeWordOption.value)
 
         val textInputTest = "fghfghhrtrtzh34ß639254´1´90!$/%(&$("
@@ -120,6 +122,7 @@ class WakeWordConfigurationContentTest {
 
         //user clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
+        composeTestRule.awaitSaved(viewModel)
         val newViewModel = WakeWordConfigurationViewModel()
         //access token is saved
         assertEquals(WakeWordOption.Porcupine, newViewModel.wakeWordOption.value)
@@ -144,7 +147,7 @@ class WakeWordConfigurationContentTest {
     fun testPorcupineWakeWordOptions() = runBlocking {
         //option is porcupine
         viewModel.selectWakeWordOption(WakeWordOption.Porcupine)
-        viewModel.save()
+        viewModel.onSave()
         assertEquals(WakeWordOption.Porcupine, viewModel.wakeWordOption.value)
 
         //wake word is clicked,

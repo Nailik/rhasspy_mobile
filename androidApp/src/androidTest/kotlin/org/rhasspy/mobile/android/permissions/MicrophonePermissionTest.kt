@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.android.permissions
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.activity.compose.setContent
@@ -12,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.core.app.ActivityCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.UiDevice
@@ -415,48 +417,56 @@ class MicrophonePermissionTest {
         //User clicks button
         composeTestRule.onNodeWithText(btnRequestPermission).performClick()
         composeTestRule.awaitIdle()
-        //InformationDialog is shown
-        composeTestRule.onNodeWithTag(TestTag.DialogInformationMicrophonePermission).assertExists()
-        //Cancel clicked
-        composeTestRule.onNodeWithTag(TestTag.DialogCancel).performClick()
-        //Dialog closed
-        composeTestRule.onNodeWithTag(TestTag.DialogInformationMicrophonePermission)
-            .assertDoesNotExist()
+
+        //on some devices it may not be required to show dialog
+        if (ActivityCompat.shouldShowRequestPermissionRationale(composeTestRule.activity, Manifest.permission.RECORD_AUDIO)) {
+
+            //InformationDialog is shown
+            composeTestRule.onNodeWithTag(TestTag.DialogInformationMicrophonePermission)
+                .assertExists()
+            //Cancel clicked
+            composeTestRule.onNodeWithTag(TestTag.DialogCancel).performClick()
+            //Dialog closed
+            composeTestRule.onNodeWithTag(TestTag.DialogInformationMicrophonePermission)
+                .assertDoesNotExist()
 
 
-        //User clicks button
-        composeTestRule.onNodeWithText(btnRequestPermission).performClick()
-        composeTestRule.awaitIdle()
-        //InformationDialog is shown
-        composeTestRule.onNodeWithTag(TestTag.DialogInformationMicrophonePermission).assertExists()
-        //ok clicked
-        composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
-        //Dialog closed
-        composeTestRule.onNodeWithTag(TestTag.DialogInformationMicrophonePermission)
-            .assertDoesNotExist()
-        //System Dialog is shown
-        getInstrumentation().waitForIdleSync()
-        assertTrue {
-            device.findObject(
-                UiSelector().packageNameMatches(
-                    permissionDialogPackageNameRegex
-                )
-            ).exists()
-        }
-        //user selects deny
-        //deny always
-        if (Build.VERSION.SDK_INT < 29) {
-            //check do not ask again
-            device.findObject(UiSelector().resourceId(cbhDoNotAsk)).click()
+            //User clicks button
+            composeTestRule.onNodeWithText(btnRequestPermission).performClick()
+            composeTestRule.awaitIdle()
+            //InformationDialog is shown
+            composeTestRule.onNodeWithTag(TestTag.DialogInformationMicrophonePermission)
+                .assertExists()
+            //ok clicked
+            composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
+            //Dialog closed
+            composeTestRule.onNodeWithTag(TestTag.DialogInformationMicrophonePermission)
+                .assertDoesNotExist()
+            //System Dialog is shown
+            getInstrumentation().waitForIdleSync()
+            assertTrue {
+                device.findObject(
+                    UiSelector().packageNameMatches(
+                        permissionDialogPackageNameRegex
+                    )
+                ).exists()
+            }
+            //user selects deny
             //deny always
-            device.findObject(UiSelector().resourceIdMatches(denyPermissionRegex))
-                .clickAndWaitForNewWindow()
-        } else {
-            //directly click do not ask again
-            device.findObject(UiSelector().resourceId(btnDoNotAskAgain)).clickAndWaitForNewWindow()
-        }
-        getInstrumentation().waitForIdleSync()
+            if (Build.VERSION.SDK_INT < 29) {
+                //check do not ask again
+                device.findObject(UiSelector().resourceId(cbhDoNotAsk)).click()
+                //deny always
+                device.findObject(UiSelector().resourceIdMatches(denyPermissionRegex))
+                    .clickAndWaitForNewWindow()
+            } else {
+                //directly click do not ask again
+                device.findObject(UiSelector().resourceId(btnDoNotAskAgain))
+                    .clickAndWaitForNewWindow()
+            }
+            getInstrumentation().waitForIdleSync()
 
+        }
 
         //User clicks button
         composeTestRule.onNodeWithText(btnRequestPermission).performClick()

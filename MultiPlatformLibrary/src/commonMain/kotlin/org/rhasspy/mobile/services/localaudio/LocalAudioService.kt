@@ -61,7 +61,7 @@ class LocalAudioService : IService() {
                 AppSetting.soundIndicationOutputOption.value
             )
             else -> audioPlayer.playSoundFile(
-                "${SoundFileFolder.Wake}/${AppSetting.wakeSound.value}",
+                "${SoundFileFolder.Wake.folderName}/${AppSetting.wakeSound.value}",
                 AppSetting.wakeSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
             )
@@ -78,7 +78,7 @@ class LocalAudioService : IService() {
                 AppSetting.soundIndicationOutputOption.value
             )
             else -> audioPlayer.playSoundFile(
-                "${SoundFileFolder.Wake}/${AppSetting.recordedSound.value}",
+                "${SoundFileFolder.Recorded.folderName}/${AppSetting.recordedSound.value}",
                 AppSetting.recordedSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
             )
@@ -95,7 +95,7 @@ class LocalAudioService : IService() {
                 AppSetting.soundIndicationOutputOption.value
             )
             else -> audioPlayer.playSoundFile(
-                "${SoundFileFolder.Error}/${AppSetting.errorSound.value}",
+                "${SoundFileFolder.Error.folderName}/${AppSetting.errorSound.value}",
                 AppSetting.errorSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
             )

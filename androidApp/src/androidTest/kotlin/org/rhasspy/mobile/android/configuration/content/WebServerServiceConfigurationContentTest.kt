@@ -9,6 +9,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.viewmodel.configuration.WebServerConfigurationViewModel
@@ -68,7 +69,7 @@ class WebServerServiceConfigurationContentTest {
     fun testHttpContent() = runBlocking {
         viewModel.toggleHttpServerEnabled(false)
         viewModel.toggleHttpServerSSLEnabled(false)
-        viewModel.save()
+        viewModel.onSave()
 
         val textInputTest = "6541"
 
@@ -113,6 +114,7 @@ class WebServerServiceConfigurationContentTest {
 
         //user click save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
+        composeTestRule.awaitSaved(viewModel)
         val newViewModel = WebServerConfigurationViewModel()
         //enable http api is saved
         assertEquals(true, newViewModel.isHttpServerEnabled.value)
