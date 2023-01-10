@@ -116,7 +116,7 @@ actual class AudioPlayer : Closeable {
     ) {
         logger.v { "playSoundFile $filename" }
 
-        val soundFile = File(Application.nativeInstance.filesDir, "sounds/$filename")
+        val soundFile = File(Application.nativeInstance.filesDir, filename)
 
         when (audioOutputOption) {
             AudioOutputOption.Sound -> {
