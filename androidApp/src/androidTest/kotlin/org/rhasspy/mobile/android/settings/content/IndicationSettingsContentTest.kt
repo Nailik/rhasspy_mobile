@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.android.settings.content
 
-import android.os.Build
 import android.widget.Switch
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
@@ -82,6 +81,8 @@ class IndicationSettingsContentTest {
      */
     @Test
     fun testIndicationSettings() = runBlocking {
+        device.resetOverlayPermission()
+
         viewModel.toggleWakeWordDetectionTurnOnDisplay(false)
         if (AppSetting.isWakeWordLightIndicationEnabled.value) {
             viewModel.toggleWakeWordLightIndicationEnabled()
@@ -109,29 +110,28 @@ class IndicationSettingsContentTest {
         //user clicks visual
         composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).performClick()
         //user accepts permission
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-            //Ok clicked
-            composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
-            //on Q app is restarted when allowing overlay permission
+        //Ok clicked
+        composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
+        //on Q app is restarted when allowing overlay permission
 
-            //Redirected to settings
-            InstrumentationRegistry.getInstrumentation().waitForIdleSync()
-            assertTrue { device.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
-            UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName))
-            device.findObject(UiSelector().text(MR.strings.appName)).click()
-            device.findObject(UiSelector().className(Switch::class.java)).click()
-            //User clicks back
-            device.pressBack()
-            device.pressBack()
+        //Redirected to settings
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        assertTrue { device.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
+        UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName))
+        device.findObject(UiSelector().text(MR.strings.appName)).click()
+        device.findObject(UiSelector().className(Switch::class.java)).click()
+        //User clicks back
+        device.pressBack()
+        device.pressBack()
 
-            //app will be closed when pressing one more back
-            OverlayPermission.update()
-            //Dialog is closed and permission granted
-            assertTrue { OverlayPermission.granted.value }
-        }
+        //app will be closed when pressing one more back
+        OverlayPermission.update()
+        //Dialog is closed and permission granted
+        assertTrue { OverlayPermission.granted.value }
 
         //visual is enabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onSwitch().assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onSwitch()
+            .assertIsOn()
         //visual is saved
         assertTrue { IndicationSettingsViewModel().isWakeWordLightIndicationEnabled.value }
 

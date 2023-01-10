@@ -500,7 +500,7 @@ class MicrophonePermissionTest {
                 .click()
         } else {
             device.findObject(UiSelector().resourceIdMatches(systemSettingsListRegex))
-                .getChild(UiSelector().index((if (Build.VERSION.SDK_INT == 29) 2 else if (Build.VERSION.SDK_INT == 33) 3 else 4) + indexOffset))
+                .getChild(UiSelector().index((if (Build.VERSION.SDK_INT == 29) 2 else 3) + indexOffset))
                 .clickAndWaitForNewWindow()
             if (Build.VERSION.SDK_INT < 30) {
                 device.findObject(UiSelector().resourceId(radioBtnAllow)).click()
