@@ -1,14 +1,11 @@
 package org.rhasspy.mobile.android.widget
 
-import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.glance.*
-import androidx.glance.action.ActionParameters
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
-import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.appWidgetBackground
 import androidx.glance.layout.*
@@ -82,22 +79,12 @@ class MicrophoneWidget : GlanceAppWidget(), KoinComponent {
             Box(
                 modifier = GlanceModifier
                     .fillMaxSize()
-                    .clickable(onClick = actionRunCallback<TestCallback>()),
+                    .clickable(onClick = actionRunCallback<MicrophoneWidgetAction>()),
                 contentAlignment = Alignment.Center
             ) {
 
             }
         }
-    }
-}
-
-class TestCallback : ActionCallback, KoinComponent {
-    override suspend fun onAction(
-        context: Context,
-        glanceId: GlanceId,
-        parameters: ActionParameters
-    ) {
-        get<MicrophoneFabViewModel>().onClick()
     }
 }
 
