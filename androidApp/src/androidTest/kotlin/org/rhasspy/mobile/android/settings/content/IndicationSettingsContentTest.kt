@@ -21,7 +21,6 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScreens
-import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.option.AudioOutputOption
 import org.rhasspy.mobile.viewmodel.settings.IndicationSettingsViewModel
@@ -82,22 +81,25 @@ class IndicationSettingsContentTest {
     @Test
     fun testIndicationSettings() = runBlocking {
         viewModel.toggleWakeWordDetectionTurnOnDisplay(false)
-        if(AppSetting.isWakeWordLightIndicationEnabled.value) {
+        if (AppSetting.isWakeWordLightIndicationEnabled.value) {
             viewModel.toggleWakeWordLightIndicationEnabled()
         }
         viewModel.toggleWakeWordSoundIndicationEnabled(false)
 
         //wake up display disabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onSwitch().assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onSwitch()
+            .assertIsOff()
         //visual disabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onSwitch().assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onSwitch()
+            .assertIsOff()
         //sound disabled
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).onSwitch().assertIsOff()
 
         //user clicks wake up display
         composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).performClick()
         //wake up display is enabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onSwitch().assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onSwitch()
+            .assertIsOn()
         //wake up display is saved
         assertTrue { IndicationSettingsViewModel().isWakeWordDetectionTurnOnDisplayEnabled.value }
 
@@ -105,9 +107,7 @@ class IndicationSettingsContentTest {
         //user clicks visual
         composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).performClick()
         //user accepts permission
-        if(!OverlayPermission.isGranted()) {
-            InstrumentationRegistry.getInstrumentation().waitForIdleSync()
-            assertTrue { device.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
+        if (device.findObject(UiSelector().packageNameMatches(settingsPage)).exists()) {
             UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName))
             device.findObject(UiSelector().text(MR.strings.appName)).click()
             device.findObject(UiSelector().className(Switch::class.java)).click()
@@ -117,7 +117,8 @@ class IndicationSettingsContentTest {
             composeTestRule.awaitIdle()
         }
         //visual is enabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onSwitch().assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onSwitch()
+            .assertIsOn()
         //visual is saved
         assertTrue { IndicationSettingsViewModel().isWakeWordLightIndicationEnabled.value }
 

@@ -12,6 +12,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.android.onSwitch
 import org.rhasspy.mobile.settings.option.SpeechToTextOption
 import org.rhasspy.mobile.viewmodel.configuration.SpeechToTextConfigurationViewModel
 import kotlin.test.assertEquals
@@ -80,14 +81,14 @@ class SpeechToTextConfigurationContentTest {
         composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).assertExists()
 
         //switch is off
-        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performScrollTo().assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performScrollTo().onSwitch().assertIsOff()
         //endpoint cannot be changed
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsNotEnabled()
 
         //user clicks switch
         composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performClick()
         //switch is on
-        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).onSwitch().assertIsOn()
         //endpoint can be changed
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsEnabled()
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextReplacement(textInputTest)

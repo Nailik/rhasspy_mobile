@@ -260,7 +260,7 @@ private fun RemoteHermesHttp(viewModel: ConfigurationScreenViewModel) {
 
     ConfigurationListItem(
         text = MR.strings.remoteHermesHTTP,
-        secondaryText = "${translate(MR.strings.sslValidation)} ${translate(viewModel.isHttpSSLVerificationEnabled.collectAsState().value.toText())}",
+        secondaryText = "${translate(MR.strings.sslValidation)} ${translate((!viewModel.isHttpSSLVerificationEnabled.collectAsState().value).toText())}",
         screen = ConfigurationScreenType.RemoteHermesHttpConfiguration,
         serviceState = viewModel.httpClientServiceState.collectAsState().value
     )

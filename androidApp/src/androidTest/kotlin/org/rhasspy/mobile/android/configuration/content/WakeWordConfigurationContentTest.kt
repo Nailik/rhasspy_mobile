@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.android.configuration.content
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.navigation.compose.rememberNavController
@@ -15,6 +17,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.main.LocalMainNavController
+import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.settings.option.WakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
@@ -36,8 +39,10 @@ class WakeWordConfigurationContentTest {
 
         composeTestRule.setContent {
             val navController = rememberNavController()
+            val snackbarHostState = remember { SnackbarHostState() }
 
             CompositionLocalProvider(
+                LocalSnackbarHostState provides snackbarHostState,
                 LocalMainNavController provides navController
             ) {
                 WakeWordConfigurationContent(viewModel)

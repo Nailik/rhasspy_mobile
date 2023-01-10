@@ -95,6 +95,7 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
         ConfigurationSetting.speechToTextOption.value = _speechToTextOption.value
         ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value = _isUseCustomSpeechToTextHttpEndpoint.value
         ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value = _isUseSpeechToTextMqttSilenceDetection.value
+        ConfigurationSetting.speechToTextHttpEndpoint.value = _speechToTextHttpEndpoint.value
     }
 
     /**

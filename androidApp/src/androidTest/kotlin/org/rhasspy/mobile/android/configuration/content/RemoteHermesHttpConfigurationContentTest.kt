@@ -12,6 +12,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.android.onSwitch
 import org.rhasspy.mobile.viewmodel.configuration.RemoteHermesHttpConfigurationViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -65,14 +66,14 @@ class RemoteHermesHttpConfigurationContentTest {
         //disable ssl validation is on
         assertTrue { viewModel.isHttpSSLVerificationDisabled.value }
         //switch is on
-        composeTestRule.onNodeWithTag(TestTag.SSLSwitch).assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onSwitch().assertIsOn()
 
         //user clicks switch
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).performClick()
         //disable ssl validation is off
         assertFalse { viewModel.isHttpSSLVerificationDisabled.value }
         //switch is off
-        composeTestRule.onNodeWithTag(TestTag.SSLSwitch).assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onSwitch().assertIsOff()
 
         //user click save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()

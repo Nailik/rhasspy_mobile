@@ -12,6 +12,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.android.onSwitch
 import org.rhasspy.mobile.viewmodel.configuration.WebServerConfigurationViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -76,7 +77,7 @@ class WebServerServiceConfigurationContentTest {
         //http api is disabled
         assertFalse { viewModel.isHttpServerEnabled.value }
         //switch is off
-        composeTestRule.onNodeWithTag(TestTag.ServerSwitch).assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.ServerSwitch).onSwitch().assertIsOff()
         //settings not visible
         composeTestRule.onNodeWithTag(TestTag.Port).assertDoesNotExist()
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).assertDoesNotExist()
@@ -87,7 +88,7 @@ class WebServerServiceConfigurationContentTest {
         //http api is enabled
         assertTrue { viewModel.isHttpServerEnabled.value }
         //switch is on
-        composeTestRule.onNodeWithTag(TestTag.ServerSwitch).assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.ServerSwitch).onSwitch().assertIsOn()
         //settings visible
         composeTestRule.onNodeWithTag(TestTag.Port).assertExists()
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).assertExists()
@@ -99,7 +100,7 @@ class WebServerServiceConfigurationContentTest {
         //enable ssl is off
         assertFalse { viewModel.isHttpServerSSLEnabled.value }
         //enable ssl switch is off
-        composeTestRule.onNodeWithTag(TestTag.SSLSwitch).assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onSwitch().assertIsOff()
         //certificate button not visible
         composeTestRule.onNodeWithTag(TestTag.CertificateButton).assertDoesNotExist()
 
@@ -108,7 +109,7 @@ class WebServerServiceConfigurationContentTest {
         //ssl is on
         assertTrue { viewModel.isHttpServerSSLEnabled.value }
         //enable ssl switch is on
-        composeTestRule.onNodeWithTag(TestTag.SSLSwitch).assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onSwitch().assertIsOn()
         //certificate button visible
         composeTestRule.onNodeWithTag(TestTag.CertificateButton).assertExists()
 
