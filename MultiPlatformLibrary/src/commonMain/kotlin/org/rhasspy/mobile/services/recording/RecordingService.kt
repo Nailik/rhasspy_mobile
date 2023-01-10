@@ -1,7 +1,10 @@
 package org.rhasspy.mobile.services.recording
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.component.inject
@@ -77,14 +80,14 @@ class RecordingService : IService() {
             if (volume < AppSetting.automaticSilenceDetectionAudioLevel.value) {
                 //no data was above threshold, there is silence
                 silenceStartTime?.also {
-                      logger.d { "silenceDetected" }
+                    logger.d { "silenceDetected" }
                     //check if silence was detected for x milliseconds
                     if (it.minus(Clock.System.now()) < -AppSetting.automaticSilenceDetectionTime.value.milliseconds) {
                         logger.d { "silenceDetected" }
                         serviceMiddleware.action(Action.DialogAction.SilenceDetected(Source.Local))
                     }
                 } ?: run {
-                      logger.v { "start silence detected" }
+                    logger.v { "start silence detected" }
                     //first time silence was detected
                     silenceStartTime = Clock.System.now()
                 }

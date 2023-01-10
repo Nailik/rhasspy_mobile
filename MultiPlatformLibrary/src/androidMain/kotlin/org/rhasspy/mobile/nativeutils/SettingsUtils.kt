@@ -40,13 +40,17 @@ actual object SettingsUtils {
                         ?.also { outputStream ->
 
                             //create output for zip file
-                            val zipOutputStream = ZipOutputStream(BufferedOutputStream(outputStream))
+                            val zipOutputStream =
+                                ZipOutputStream(BufferedOutputStream(outputStream))
 
                             //shared Prefs file
                             zipOutputStream.putNextEntry(ZipEntry("shared_prefs/"))
 
                             //copy org.rhasspy.mobile.android_prefenrences.xml
-                            val sharedPreferencesFile = File(Application.nativeInstance.filesDir.parent, "shared_prefs/org.rhasspy.mobile.android_preferences.xml")
+                            val sharedPreferencesFile = File(
+                                Application.nativeInstance.filesDir.parent,
+                                "shared_prefs/org.rhasspy.mobile.android_preferences.xml"
+                            )
                             if (sharedPreferencesFile.exists()) {
                                 zipOutputStream.putNextEntry(ZipEntry("shared_prefs/${sharedPreferencesFile.name}"))
                                 zipOutputStream.write(sharedPreferencesFile.readBytes())
@@ -76,7 +80,11 @@ actual object SettingsUtils {
     /**
      * copy this folder with all its content into zip
      */
-    private fun copyFolderIntoZipRecursive(path: String, parentFolder: File, zipOutputStream: ZipOutputStream) {
+    private fun copyFolderIntoZipRecursive(
+        path: String,
+        parentFolder: File,
+        zipOutputStream: ZipOutputStream
+    ) {
         if (parentFolder.exists()) {
 
             //TODO list files doesn't work
@@ -100,35 +108,40 @@ actual object SettingsUtils {
         Application.nativeInstance.currentActivity?.openDocument(arrayOf("application/zip")) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
-                    Application.nativeInstance.contentResolver.openInputStream(uri)?.also { inputStream ->
-                        //read input data
-                        val zipInputStream = ZipInputStream(BufferedInputStream(inputStream))
+                    Application.nativeInstance.contentResolver.openInputStream(uri)
+                        ?.also { inputStream ->
+                            //read input data
+                            val zipInputStream = ZipInputStream(BufferedInputStream(inputStream))
 
-                        var entry = zipInputStream.nextEntry
+                            var entry = zipInputStream.nextEntry
 
-                        while (entry != null) {
-                            if (entry.isDirectory) {
-                                //when it's a directory create new directory
-                                File(Application.nativeInstance.filesDir.parent, entry.name).mkdirs()
-                            } else {
-                                //when it's a file copy file
-                                val file = File(Application.nativeInstance.filesDir.parent, entry.name)
-                                file.parent?.also { parentFile -> File(parentFile).mkdirs() }
-                                file.createNewFile()
-                                file.outputStream().apply {
-                                    zipInputStream.copyTo(this)
-                                    flush()
-                                    close()
+                            while (entry != null) {
+                                if (entry.isDirectory) {
+                                    //when it's a directory create new directory
+                                    File(
+                                        Application.nativeInstance.filesDir.parent,
+                                        entry.name
+                                    ).mkdirs()
+                                } else {
+                                    //when it's a file copy file
+                                    val file =
+                                        File(Application.nativeInstance.filesDir.parent, entry.name)
+                                    file.parent?.also { parentFile -> File(parentFile).mkdirs() }
+                                    file.createNewFile()
+                                    file.outputStream().apply {
+                                        zipInputStream.copyTo(this)
+                                        flush()
+                                        close()
+                                    }
                                 }
+                                //go to next entry
+                                entry = zipInputStream.nextEntry
                             }
-                            //go to next entry
-                            entry = zipInputStream.nextEntry
+
+                            inputStream.close()
+
+                            Application.nativeInstance.restart()
                         }
-
-                        inputStream.close()
-
-                        Application.nativeInstance.restart()
-                    }
                 }
             }
         }
@@ -165,8 +178,14 @@ actual object SettingsUtils {
         )
 
         //copy org.rhasspy.mobile.android_prefenrences.xml
-        val sharedPreferencesFile = File(Application.nativeInstance.filesDir.parent, "shared_prefs/org.rhasspy.mobile.android_preferences.xml")
-        val exportFile = File(Application.nativeInstance.filesDir, "org.rhasspy.mobile.android_preferences_export.xml")
+        val sharedPreferencesFile = File(
+            Application.nativeInstance.filesDir.parent,
+            "shared_prefs/org.rhasspy.mobile.android_preferences.xml"
+        )
+        val exportFile = File(
+            Application.nativeInstance.filesDir,
+            "org.rhasspy.mobile.android_preferences_export.xml"
+        )
         //create new empty file
         if (!exportFile.exists()) {
             exportFile.createNewFile()

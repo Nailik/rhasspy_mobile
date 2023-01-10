@@ -196,7 +196,10 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
                 MR.strings.microphonePermissionInfoRecord,
                 viewModel::microphonePermissionAllowed
             ) { onClick ->
-                FilledTonalButtonListItem(text = MR.strings.allowMicrophonePermission, onClick = onClick)
+                FilledTonalButtonListItem(
+                    text = MR.strings.allowMicrophonePermission,
+                    onClick = onClick
+                )
             }
         }
 
@@ -240,7 +243,10 @@ private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
                 MR.strings.microphonePermissionInfoRecord,
                 viewModel::microphonePermissionAllowed
             ) { onClick ->
-                FilledTonalButtonListItem(text = MR.strings.allowMicrophonePermission, onClick = onClick)
+                FilledTonalButtonListItem(
+                    text = MR.strings.allowMicrophonePermission,
+                    onClick = onClick
+                )
             }
         }
 
@@ -254,7 +260,10 @@ private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
 @Composable
 private fun TestContent(viewModel: WakeWordConfigurationViewModel) {
 
-    RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::startWakeWordDetection) { onClick ->
+    RequiresMicrophonePermission(
+        MR.strings.microphonePermissionInfoRecord,
+        viewModel::startWakeWordDetection
+    ) { onClick ->
         FilledTonalButtonListItem(
             text = MR.strings.startRecordAudio,
             onClick = onClick

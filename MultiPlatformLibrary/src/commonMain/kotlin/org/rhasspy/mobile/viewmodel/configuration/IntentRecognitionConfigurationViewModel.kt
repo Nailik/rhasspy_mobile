@@ -25,9 +25,12 @@ class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
     val testIntentRecognitionText = _testIntentRecognitionText.readOnly
 
     //unsaved data
-    private val _intentRecognitionOption = MutableStateFlow(ConfigurationSetting.intentRecognitionOption.value)
-    private val _isUseCustomIntentRecognitionHttpEndpoint = MutableStateFlow(ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value)
-    private val _intentRecognitionHttpEndpoint = MutableStateFlow(ConfigurationSetting.intentRecognitionHttpEndpoint.value)
+    private val _intentRecognitionOption =
+        MutableStateFlow(ConfigurationSetting.intentRecognitionOption.value)
+    private val _isUseCustomIntentRecognitionHttpEndpoint =
+        MutableStateFlow(ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value)
+    private val _intentRecognitionHttpEndpoint =
+        MutableStateFlow(ConfigurationSetting.intentRecognitionHttpEndpoint.value)
 
     //unsaved ui data
     val intentRecognitionOption = _intentRecognitionOption.readOnly
@@ -43,15 +46,26 @@ class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
                 HttpClientPath.TextToIntent.fromBaseConfiguration()
             }
         }
-    val isUseCustomIntentRecognitionHttpEndpoint = _isUseCustomIntentRecognitionHttpEndpoint.readOnly
+    val isUseCustomIntentRecognitionHttpEndpoint =
+        _isUseCustomIntentRecognitionHttpEndpoint.readOnly
     val isIntentRecognitionHttpEndpointChangeEnabled = isUseCustomIntentRecognitionHttpEndpoint
 
-    override val isTestingEnabled = _intentRecognitionOption.mapReadonlyState { it != IntentRecognitionOption.Disabled }
+    override val isTestingEnabled =
+        _intentRecognitionOption.mapReadonlyState { it != IntentRecognitionOption.Disabled }
 
     override val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(_intentRecognitionOption, ConfigurationSetting.intentRecognitionOption.data),
-        combineStateNotEquals(_isUseCustomIntentRecognitionHttpEndpoint, ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.data),
-        combineStateNotEquals(_intentRecognitionHttpEndpoint, ConfigurationSetting.intentRecognitionHttpEndpoint.data)
+        combineStateNotEquals(
+            _intentRecognitionOption,
+            ConfigurationSetting.intentRecognitionOption.data
+        ),
+        combineStateNotEquals(
+            _isUseCustomIntentRecognitionHttpEndpoint,
+            ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.data
+        ),
+        combineStateNotEquals(
+            _intentRecognitionHttpEndpoint,
+            ConfigurationSetting.intentRecognitionHttpEndpoint.data
+        )
     )
 
     //show endpoint settings
@@ -86,8 +100,10 @@ class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
      */
     override fun onSave() {
         ConfigurationSetting.intentRecognitionOption.value = _intentRecognitionOption.value
-        ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value = _isUseCustomIntentRecognitionHttpEndpoint.value
-        ConfigurationSetting.intentRecognitionHttpEndpoint.value = _intentRecognitionHttpEndpoint.value
+        ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value =
+            _isUseCustomIntentRecognitionHttpEndpoint.value
+        ConfigurationSetting.intentRecognitionHttpEndpoint.value =
+            _intentRecognitionHttpEndpoint.value
     }
 
     /**
@@ -95,8 +111,10 @@ class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
      */
     override fun discard() {
         _intentRecognitionOption.value = ConfigurationSetting.intentRecognitionOption.value
-        _isUseCustomIntentRecognitionHttpEndpoint.value = ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value
-        _intentRecognitionHttpEndpoint.value = ConfigurationSetting.intentRecognitionHttpEndpoint.value
+        _isUseCustomIntentRecognitionHttpEndpoint.value =
+            ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value
+        _intentRecognitionHttpEndpoint.value =
+            ConfigurationSetting.intentRecognitionHttpEndpoint.value
     }
 
     override fun initializeTestParams() {

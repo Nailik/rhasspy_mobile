@@ -56,7 +56,11 @@ class RecordedIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewMod
             AppSetting.customRecordedSounds.value = customSounds.value.toMutableSet().apply {
                 remove(file.fileName)
             }
-            FileUtils.removeFile(FileType.SOUND, subfolder = SoundFileFolder.Recorded.toString(), file.fileName)
+            FileUtils.removeFile(
+                FileType.SOUND,
+                subfolder = SoundFileFolder.Recorded.toString(),
+                file.fileName
+            )
         }
     }
 
@@ -70,14 +74,15 @@ class RecordedIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewMod
 
     override fun chooseSoundFile() {
         viewModelScope.launch {
-            FileUtils.selectFile(FileType.SOUND, subfolder = SoundFileFolder.Recorded.folderName)?.also { fileName ->
-                val customSounds = AppSetting.customRecordedSounds.data
-                AppSetting.customRecordedSounds.value =
-                    customSounds.value.toMutableSet().apply {
-                        add(fileName)
-                    }
-                AppSetting.recordedSound.value = fileName
-            }
+            FileUtils.selectFile(FileType.SOUND, subfolder = SoundFileFolder.Recorded.folderName)
+                ?.also { fileName ->
+                    val customSounds = AppSetting.customRecordedSounds.data
+                    AppSetting.customRecordedSounds.value =
+                        customSounds.value.toMutableSet().apply {
+                            add(fileName)
+                        }
+                    AppSetting.recordedSound.value = fileName
+                }
         }
     }
 

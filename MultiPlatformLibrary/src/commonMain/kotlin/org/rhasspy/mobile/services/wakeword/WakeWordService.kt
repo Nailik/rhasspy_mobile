@@ -29,7 +29,12 @@ class WakeWordService : IService() {
     val serviceState = _serviceState.readOnly
 
     private val params by inject<WakeWordServiceParams>()
-    private val udpService by inject<UdpService> { parametersOf(params.wakeWordUdpOutputHost, params.wakeWordUdpOutputPort) }
+    private val udpService by inject<UdpService> {
+        parametersOf(
+            params.wakeWordUdpOutputHost,
+            params.wakeWordUdpOutputPort
+        )
+    }
     private var porcupineWakeWordClient: PorcupineWakeWordClient? = null
 
     private val recordingService by inject<RecordingService>()

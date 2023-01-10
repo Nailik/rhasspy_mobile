@@ -64,7 +64,8 @@ class AutomaticSilenceDetectionSettingsContentTest {
         //Automatic silence detection disabled
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onSwitch().assertIsOff()
         //settings not visible
-        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration).assertDoesNotExist()
+        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration)
+            .assertDoesNotExist()
 
         //user clicks automatic silence detection
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).performClick()

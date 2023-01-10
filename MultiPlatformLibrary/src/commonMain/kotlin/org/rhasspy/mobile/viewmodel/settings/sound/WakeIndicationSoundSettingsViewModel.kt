@@ -57,7 +57,11 @@ class WakeIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel()
             AppSetting.customWakeSounds.value = customSounds.value.toMutableSet().apply {
                 remove(file.fileName)
             }
-            FileUtils.removeFile(FileType.SOUND, subfolder = SoundFileFolder.Wake.toString(), file.fileName)
+            FileUtils.removeFile(
+                FileType.SOUND,
+                subfolder = SoundFileFolder.Wake.toString(),
+                file.fileName
+            )
         }
     }
 
@@ -71,14 +75,15 @@ class WakeIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel()
 
     override fun chooseSoundFile() {
         viewModelScope.launch {
-            FileUtils.selectFile(FileType.SOUND, subfolder = SoundFileFolder.Wake.folderName)?.also { fileName ->
-                val customSounds = AppSetting.customWakeSounds.data
-                AppSetting.customWakeSounds.value =
-                    customSounds.value.toMutableSet().apply {
-                        add(fileName)
-                    }
-                AppSetting.wakeSound.value = fileName
-            }
+            FileUtils.selectFile(FileType.SOUND, subfolder = SoundFileFolder.Wake.folderName)
+                ?.also { fileName ->
+                    val customSounds = AppSetting.customWakeSounds.data
+                    AppSetting.customWakeSounds.value =
+                        customSounds.value.toMutableSet().apply {
+                            add(fileName)
+                        }
+                    AppSetting.wakeSound.value = fileName
+                }
         }
     }
 

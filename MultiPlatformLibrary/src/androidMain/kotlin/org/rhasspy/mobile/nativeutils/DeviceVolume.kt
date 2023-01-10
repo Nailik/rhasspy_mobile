@@ -20,14 +20,17 @@ import org.rhasspy.mobile.combineState
  */
 actual object DeviceVolume {
 
-    private val audioManager = ContextCompat.getSystemService(Application.nativeInstance, AudioManager::class.java)
+    private val audioManager =
+        ContextCompat.getSystemService(Application.nativeInstance, AudioManager::class.java)
 
     //sound output volume
-    private val _volumeFlowSound = MutableStateFlow(audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC))
+    private val _volumeFlowSound =
+        MutableStateFlow(audioManager?.getStreamVolume(AudioManager.STREAM_MUSIC))
     actual val volumeFlowSound: StateFlow<Int?> get() = _volumeFlowSound
 
     //notification output volume
-    private val _volumeFlowNotification = MutableStateFlow(audioManager?.getStreamVolume(AudioManager.STREAM_RING))
+    private val _volumeFlowNotification =
+        MutableStateFlow(audioManager?.getStreamVolume(AudioManager.STREAM_RING))
     actual val volumeFlowNotification: StateFlow<Int?> get() = _volumeFlowNotification
 
     private val volumeObserver: ContentObserver =

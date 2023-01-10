@@ -34,9 +34,11 @@ class HttpClientService : IService() {
 
     private val audioContentType = ContentType("audio", "wav")
     private val jsonContentType = ContentType("application", "json")
-    private fun HttpMessageBuilder.hassAuthorization() = this.header("Authorization", "Bearer ${params.intentHandlingHassAccessToken}")
+    private fun HttpMessageBuilder.hassAuthorization() =
+        this.header("Authorization", "Bearer ${params.intentHandlingHassAccessToken}")
 
-    private val isHandleIntentDirectly = params.intentHandlingOption == IntentHandlingOption.WithRecognition
+    private val isHandleIntentDirectly =
+        params.intentHandlingOption == IntentHandlingOption.WithRecognition
 
     private val speechToTextUrl =
         if (params.isUseCustomSpeechToTextHttpEndpoint) {
@@ -232,7 +234,10 @@ class HttpClientService : IService() {
      * post data to endpoint
      * handles even in event logger
      */
-    private suspend inline fun <reified T> post(url: String, block: HttpRequestBuilder.() -> Unit): HttpClientResult<T> {
+    private suspend inline fun <reified T> post(
+        url: String,
+        block: HttpRequestBuilder.() -> Unit
+    ): HttpClientResult<T> {
         return httpClient?.let { client ->
             try {
                 val request = client.post(url, block)

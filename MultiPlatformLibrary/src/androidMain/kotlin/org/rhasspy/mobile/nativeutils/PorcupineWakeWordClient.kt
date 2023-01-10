@@ -167,7 +167,10 @@ actual class PorcupineWakeWordClient actual constructor(
         val file = File(folder, "model_${defaultKeyword.option.name.lowercase()}.ppn")
 
         if (!file.exists()) {
-            file.outputStream().write(Application.nativeInstance.resources.openRawResource(defaultKeyword.option.file.rawResId).readBytes())
+            file.outputStream().write(
+                Application.nativeInstance.resources.openRawResource(defaultKeyword.option.file.rawResId)
+                    .readBytes()
+            )
         }
 
         return file.absolutePath
@@ -187,17 +190,41 @@ actual class PorcupineWakeWordClient actual constructor(
      */
     private fun Exception.toPorcupineError(): PorcupineError {
         return when (this) {
-            is PorcupineActivationException -> PorcupineError(this, PorcupineErrorType.ActivationException)
-            is PorcupineActivationLimitException -> PorcupineError(this, PorcupineErrorType.ActivationLimitException)
-            is PorcupineActivationRefusedException -> PorcupineError(this, PorcupineErrorType.ActivationRefusedException)
-            is PorcupineActivationThrottledException -> PorcupineError(this, PorcupineErrorType.ActivationThrottledException)
-            is PorcupineInvalidArgumentException -> PorcupineError(this, PorcupineErrorType.InvalidArgumentException)
-            is PorcupineInvalidStateException -> PorcupineError(this, PorcupineErrorType.InvalidStateException)
+            is PorcupineActivationException -> PorcupineError(
+                this,
+                PorcupineErrorType.ActivationException
+            )
+            is PorcupineActivationLimitException -> PorcupineError(
+                this,
+                PorcupineErrorType.ActivationLimitException
+            )
+            is PorcupineActivationRefusedException -> PorcupineError(
+                this,
+                PorcupineErrorType.ActivationRefusedException
+            )
+            is PorcupineActivationThrottledException -> PorcupineError(
+                this,
+                PorcupineErrorType.ActivationThrottledException
+            )
+            is PorcupineInvalidArgumentException -> PorcupineError(
+                this,
+                PorcupineErrorType.InvalidArgumentException
+            )
+            is PorcupineInvalidStateException -> PorcupineError(
+                this,
+                PorcupineErrorType.InvalidStateException
+            )
             is PorcupineIOException -> PorcupineError(this, PorcupineErrorType.IOException)
             is PorcupineKeyException -> PorcupineError(this, PorcupineErrorType.KeyException)
             is PorcupineMemoryException -> PorcupineError(this, PorcupineErrorType.MemoryException)
-            is PorcupineRuntimeException -> PorcupineError(this, PorcupineErrorType.RuntimeException)
-            is PorcupineStopIterationException -> PorcupineError(this, PorcupineErrorType.StopIterationException)
+            is PorcupineRuntimeException -> PorcupineError(
+                this,
+                PorcupineErrorType.RuntimeException
+            )
+            is PorcupineStopIterationException -> PorcupineError(
+                this,
+                PorcupineErrorType.StopIterationException
+            )
             else -> PorcupineError(this, PorcupineErrorType.Other)
         }
     }

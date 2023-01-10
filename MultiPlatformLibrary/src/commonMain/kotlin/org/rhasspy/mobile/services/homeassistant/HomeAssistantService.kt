@@ -58,7 +58,10 @@ class HomeAssistantService : IService() {
             val intentRes = Json.encodeToString(slots)
 
             val result = when (params.intentHandlingHomeAssistantOption) {
-                HomeAssistantIntentHandlingOption.Event -> httpClientService.hassEvent(intentRes, intentName)
+                HomeAssistantIntentHandlingOption.Event -> httpClientService.hassEvent(
+                    intentRes,
+                    intentName
+                )
                 HomeAssistantIntentHandlingOption.Intent -> httpClientService.hassIntent("{\"name\" : \"$intentName\", \"data\": $intent }")
             }
             return result.toServiceState()

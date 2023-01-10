@@ -125,7 +125,8 @@ class MqttService : IService() {
                 //connect to server
                 it.connect(params.mqttServiceConnectionOptions)?.also { error ->
                     logger.e { "connectClient error $error" }
-                    _serviceState.value = MqttServiceStateType.fromMqttStatus(error.statusCode).serviceState
+                    _serviceState.value =
+                        MqttServiceStateType.fromMqttStatus(error.statusCode).serviceState
                 }
             }
             //update value, may be used from reconnect
@@ -240,7 +241,9 @@ class MqttService : IService() {
                         MqttTopicsSubscription.AudioOutputToggleOff -> audioOutputToggleOff()
                         MqttTopicsSubscription.AudioOutputToggleOn -> audioOutputToggleOn()
                         MqttTopicsSubscription.HotWordDetected -> hotWordDetectedCalled(topic)
-                        MqttTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(jsonObject)
+                        MqttTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(
+                            jsonObject
+                        )
                         MqttTopicsSubscription.SetVolume -> setVolume(jsonObject)
                         else -> {
                             logger.d { "isThisSiteId mqttTopic notFound $topic" }
@@ -290,9 +293,10 @@ class MqttService : IService() {
         //subscribe to topics with this site id (if contained in topic, currently only in PlayBytes)
         MqttTopicsSubscription.values().forEach { mqttTopic ->
             try {
-                client?.subscribe(mqttTopic.topic.set(MqttTopicPlaceholder.SiteId, params.siteId))?.also {
-                    hasError = true
-                }
+                client?.subscribe(mqttTopic.topic.set(MqttTopicPlaceholder.SiteId, params.siteId))
+                    ?.also {
+                        hasError = true
+                    }
             } catch (exception: Exception) {
                 hasError = true
                 logger.e(exception) { "subscribeTopics error" }
@@ -493,7 +497,12 @@ class MqttService : IService() {
         topic.split("/").let {
             if (it.size > 2) {
                 scope.launch {
-                    serviceMiddleware.action(DialogAction.WakeWordDetected(Source.Mqtt(null), it[2]))
+                    serviceMiddleware.action(
+                        DialogAction.WakeWordDetected(
+                            Source.Mqtt(null),
+                            it[2]
+                        )
+                    )
                 }
                 true
             } else {
@@ -708,7 +717,8 @@ class MqttService : IService() {
         serviceMiddleware.action(
             DialogAction.IntentRecognitionResult(
                 source = jsonObject.getSource(),
-                intentName = jsonObject[MqttParams.Intent.value]?.jsonObject?.get(MqttParams.IntentName.value)?.jsonPrimitive?.content ?: "",
+                intentName = jsonObject[MqttParams.Intent.value]?.jsonObject?.get(MqttParams.IntentName.value)?.jsonPrimitive?.content
+                    ?: "",
                 intent = jsonObject.toString()
             )
         )

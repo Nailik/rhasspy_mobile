@@ -89,7 +89,12 @@ actual class AudioPlayer : Closeable {
                 playSound(getUriFromResource(fileResource.rawResId), volume, onFinished, onError)
             }
             AudioOutputOption.Notification -> {
-                playNotification(getUriFromResource(fileResource.rawResId), volume, onFinished, onError)
+                playNotification(
+                    getUriFromResource(fileResource.rawResId),
+                    volume,
+                    onFinished,
+                    onError
+                )
             }
         }
     }
@@ -171,7 +176,7 @@ actual class AudioPlayer : Closeable {
                     onFinished?.invoke()
                 }
                 setOnPreparedListener {
-                    if(!it.isPlaying) {
+                    if (!it.isPlaying) {
                         volumeChange = CoroutineScope(Dispatchers.IO).launch {
                             volume.collect {
                                 mediaPlayer?.setVolume(volume.value, volume.value)

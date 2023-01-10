@@ -1,7 +1,10 @@
 package org.rhasspy.mobile.nativeutils
 
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.mqtt.*
+import org.rhasspy.mobile.mqtt.MqttError
+import org.rhasspy.mobile.mqtt.MqttMessage
+import org.rhasspy.mobile.mqtt.MqttPersistence
+import org.rhasspy.mobile.mqtt.MqttQos
 import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
 
 actual class MqttClient actual constructor(

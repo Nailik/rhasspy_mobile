@@ -146,7 +146,13 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
      * next step is to invoke ended session which will start a new one
      */
     private fun endSession(action: DialogAction.EndSession) {
-        if (isInCorrectState(action, DialogManagerServiceState.HandlingIntent, DialogManagerServiceState.TranscribingIntent, DialogManagerServiceState.RecognizingIntent)) {
+        if (isInCorrectState(
+                action,
+                DialogManagerServiceState.HandlingIntent,
+                DialogManagerServiceState.TranscribingIntent,
+                DialogManagerServiceState.RecognizingIntent
+            )
+        ) {
 
             onAction(DialogAction.SessionEnded(Source.Local))
 
@@ -202,7 +208,13 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
      * play the audio
      */
     private suspend fun playAudio(action: DialogAction.PlayAudio) {
-        if (isInCorrectState(action, DialogManagerServiceState.HandlingIntent, DialogManagerServiceState.Idle, DialogManagerServiceState.AwaitingWakeWord)) {
+        if (isInCorrectState(
+                action,
+                DialogManagerServiceState.HandlingIntent,
+                DialogManagerServiceState.Idle,
+                DialogManagerServiceState.AwaitingWakeWord
+            )
+        ) {
 
             _currentDialogState.value = DialogManagerServiceState.PlayingAudio
             wakeWordService.stopDetection()
@@ -250,7 +262,13 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
      * tell mqtt
      */
     private suspend fun sessionEnded(action: DialogAction.SessionEnded) {
-        if (isInCorrectState(action, DialogManagerServiceState.TranscribingIntent, DialogManagerServiceState.HandlingIntent, DialogManagerServiceState.RecognizingIntent)) {
+        if (isInCorrectState(
+                action,
+                DialogManagerServiceState.TranscribingIntent,
+                DialogManagerServiceState.HandlingIntent,
+                DialogManagerServiceState.RecognizingIntent
+            )
+        ) {
 
             indicationService.onIdle()
             sessionId = null
@@ -378,14 +396,17 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
     /**
      * checks if dialog is in the correct state and logs output
      */
-    private fun isInCorrectState(action: DialogAction, vararg states: DialogManagerServiceState): Boolean {
+    private fun isInCorrectState(
+        action: DialogAction,
+        vararg states: DialogManagerServiceState
+    ): Boolean {
         if (isTestMode) {
             //ignore any state in test mode
             return true
         }
 
         //session id irrelevant
-        if(action is DialogAction.PlayAudio && states.contains(_currentDialogState.value)) {
+        if (action is DialogAction.PlayAudio && states.contains(_currentDialogState.value)) {
             return true
         }
 
@@ -405,7 +426,8 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
 
                         //exception
                         if ((action is DialogAction.StopListening || action is DialogAction.IntentRecognitionResult) &&
-                            get<SpeechToTextServiceParams>().speechToTextOption == SpeechToTextOption.RemoteMQTT) {
+                            get<SpeechToTextServiceParams>().speechToTextOption == SpeechToTextOption.RemoteMQTT
+                        ) {
                             //don't ignore
                             val result = states.contains(_currentDialogState.value)
                             if (!result) {
@@ -464,9 +486,14 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
         if (action.source !is Source.Mqtt) {
             when (action) {
                 is DialogAction.AsrError -> mqttService.asrError(safeSessionId)
-                is DialogAction.AsrTextCaptured -> mqttService.asrTextCaptured(safeSessionId, action.text)
+                is DialogAction.AsrTextCaptured -> mqttService.asrTextCaptured(
+                    safeSessionId,
+                    action.text
+                )
                 is DialogAction.WakeWordDetected -> mqttService.hotWordDetected(action.wakeWord)
-                is DialogAction.IntentRecognitionError -> mqttService.intentNotRecognized(safeSessionId)
+                is DialogAction.IntentRecognitionError -> mqttService.intentNotRecognized(
+                    safeSessionId
+                )
                 is DialogAction.PlayFinished -> mqttService.playFinished()
                 is DialogAction.SessionEnded -> mqttService.sessionEnded(safeSessionId)
                 is DialogAction.SessionStarted -> mqttService.sessionStarted(safeSessionId)

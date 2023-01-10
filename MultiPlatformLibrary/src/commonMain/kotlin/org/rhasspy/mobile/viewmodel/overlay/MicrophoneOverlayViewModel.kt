@@ -24,11 +24,14 @@ class MicrophoneOverlayViewModel : ViewModel(), KoinComponent {
     val microphoneOverlayPositionX: Int get() = AppSetting.microphoneOverlayPositionX.value
     val microphoneOverlayPositionY: Int get() = AppSetting.microphoneOverlayPositionY.value
 
-    val microphoneOverlaySize = AppSetting.microphoneOverlaySizeOption.data.mapReadonlyState { it.size }
+    val microphoneOverlaySize =
+        AppSetting.microphoneOverlaySizeOption.data.mapReadonlyState { it.size }
 
     fun updateMicrophoneOverlayPosition(offsetX: Float, offsetY: Float) {
-        AppSetting.microphoneOverlayPositionX.value = (((AppSetting.microphoneOverlayPositionX.value + offsetX).roundToInt()))
-        AppSetting.microphoneOverlayPositionY.value = (((AppSetting.microphoneOverlayPositionY.value + offsetY).roundToInt()))
+        AppSetting.microphoneOverlayPositionX.value =
+            (((AppSetting.microphoneOverlayPositionX.value + offsetX).roundToInt()))
+        AppSetting.microphoneOverlayPositionY.value =
+            (((AppSetting.microphoneOverlayPositionY.value + offsetY).roundToInt()))
     }
 
 }

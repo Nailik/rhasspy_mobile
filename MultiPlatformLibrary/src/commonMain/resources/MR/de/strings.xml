@@ -311,7 +311,9 @@
     <string name="executeStartMqtt">MQTT starten</string>
     <string name="executeStartWebserver">starte Webserver</string>
     <string name="sslWiki">Erstellen der Zertifikat Datei</string>
-    <string name="sslWikiInfo">öffne GitHub Wiki um zu Erfahren, wie ein Zertifikat erstellt werden kann</string>
+    <string name="sslWikiInfo">öffne GitHub Wiki um zu Erfahren, wie ein Zertifikat erstellt werden
+        kann
+    </string>
     <string name="currentlySelectedCertificate">Aktuell ausgewähltes Zertifikat: %s</string>
     <string name="keyStorePassword">KeyStore Passwort</string>
     <string name="keyStoreKeyAlias">Key Alias</string>

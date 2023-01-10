@@ -419,7 +419,11 @@ class MicrophonePermissionTest {
         composeTestRule.awaitIdle()
 
         //on some devices it may not be required to show dialog
-        if (ActivityCompat.shouldShowRequestPermissionRationale(composeTestRule.activity, Manifest.permission.RECORD_AUDIO)) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(
+                composeTestRule.activity,
+                Manifest.permission.RECORD_AUDIO
+            )
+        ) {
 
             //InformationDialog is shown
             composeTestRule.onNodeWithTag(TestTag.DialogInformationMicrophonePermission)

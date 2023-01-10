@@ -36,7 +36,8 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
         if (maxFileSize != 0L) {
             if (file.length() / 1024 >= maxFileSize) {
                 try {
-                    val oldFile = File("${file.parent}/${file.nameWithoutExtension}_old.${file.extension}")
+                    val oldFile =
+                        File("${file.parent}/${file.nameWithoutExtension}_old.${file.extension}")
                     if (oldFile.exists()) {
                         //overwrite old file content
                         oldFile.writeText(file.readText())

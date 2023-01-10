@@ -78,11 +78,15 @@ open class SpeechToTextService : IService() {
                 _serviceState.value = result.toServiceState()
                 val action = when (result) {
                     is HttpClientResult.Error -> DialogAction.AsrError(Source.HttpApi)
-                    is HttpClientResult.Success -> DialogAction.AsrTextCaptured(Source.HttpApi, result.data)
+                    is HttpClientResult.Success -> DialogAction.AsrTextCaptured(
+                        Source.HttpApi,
+                        result.data
+                    )
                 }
                 serviceMiddleware.action(action)
             }
-            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) _serviceState.value = mqttClientService.stopListening(sessionId)
+            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) _serviceState.value =
+                mqttClientService.stopListening(sessionId)
             SpeechToTextOption.Disabled -> {}
         }
     }
@@ -90,7 +94,7 @@ open class SpeechToTextService : IService() {
     suspend fun startSpeechToText(sessionId: String) {
         logger.d { "startSpeechToText sessionId: $sessionId" }
 
-        if(collector?.isActive == true) {
+        if (collector?.isActive == true) {
             return
         }
 
@@ -122,7 +126,9 @@ open class SpeechToTextService : IService() {
 
         _serviceState.value = when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> ServiceState.Success
-            SpeechToTextOption.RemoteMQTT -> mqttClientService.audioFrame(data.toMutableList().addWavHeader())
+            SpeechToTextOption.RemoteMQTT -> mqttClientService.audioFrame(
+                data.toMutableList().addWavHeader()
+            )
             SpeechToTextOption.Disabled -> ServiceState.Disabled
         }
     }

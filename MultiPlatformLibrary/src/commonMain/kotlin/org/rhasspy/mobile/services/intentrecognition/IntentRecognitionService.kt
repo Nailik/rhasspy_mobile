@@ -57,11 +57,16 @@ open class IntentRecognitionService : IService() {
                 _serviceState.value = result.toServiceState()
                 val action = when (result) {
                     is HttpClientResult.Error -> DialogAction.IntentRecognitionError(Source.HttpApi)
-                    is HttpClientResult.Success -> DialogAction.IntentRecognitionResult(Source.HttpApi, "", result.data)
+                    is HttpClientResult.Success -> DialogAction.IntentRecognitionResult(
+                        Source.HttpApi,
+                        "",
+                        result.data
+                    )
                 }
                 serviceMiddleware.action(action)
             }
-            IntentRecognitionOption.RemoteMQTT -> _serviceState.value = mqttClientService.recognizeIntent(sessionId, text)
+            IntentRecognitionOption.RemoteMQTT -> _serviceState.value =
+                mqttClientService.recognizeIntent(sessionId, text)
             IntentRecognitionOption.Disabled -> {}
         }
     }

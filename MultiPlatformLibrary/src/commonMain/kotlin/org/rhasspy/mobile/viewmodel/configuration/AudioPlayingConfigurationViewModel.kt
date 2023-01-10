@@ -31,10 +31,13 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
     override val serviceState get() = get<AudioPlayingService>().serviceState
 
     //unsaved data
-    private val _audioPlayingOption = MutableStateFlow(ConfigurationSetting.audioPlayingOption.value)
+    private val _audioPlayingOption =
+        MutableStateFlow(ConfigurationSetting.audioPlayingOption.value)
     private val _audioOutputOption = MutableStateFlow(ConfigurationSetting.audioOutputOption.value)
-    private val _isUseCustomAudioPlayingHttpEndpoint = MutableStateFlow(ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value)
-    private val _audioPlayingHttpEndpoint = MutableStateFlow(ConfigurationSetting.audioPlayingHttpEndpoint.value)
+    private val _isUseCustomAudioPlayingHttpEndpoint =
+        MutableStateFlow(ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value)
+    private val _audioPlayingHttpEndpoint =
+        MutableStateFlow(ConfigurationSetting.audioPlayingHttpEndpoint.value)
 
     //unsaved ui data
     val audioPlayingOption = _audioPlayingOption.readOnly
@@ -53,7 +56,8 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
     val isUseCustomAudioPlayingHttpEndpoint = _isUseCustomAudioPlayingHttpEndpoint.readOnly
     val isAudioPlayingHttpEndpointChangeEnabled = isUseCustomAudioPlayingHttpEndpoint
 
-    override val isTestingEnabled = _audioPlayingOption.mapReadonlyState { it != AudioPlayingOption.Disabled }
+    override val isTestingEnabled =
+        _audioPlayingOption.mapReadonlyState { it != AudioPlayingOption.Disabled }
 
     //if there are unsaved changes
     override val hasUnsavedChanges = combineAny(
@@ -110,7 +114,8 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
     override fun onSave() {
         ConfigurationSetting.audioPlayingOption.value = _audioPlayingOption.value
         ConfigurationSetting.audioOutputOption.value = _audioOutputOption.value
-        ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value = _isUseCustomAudioPlayingHttpEndpoint.value
+        ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value =
+            _isUseCustomAudioPlayingHttpEndpoint.value
         ConfigurationSetting.audioPlayingHttpEndpoint.value = _audioPlayingHttpEndpoint.value
     }
 
@@ -120,7 +125,8 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
     override fun discard() {
         _audioPlayingOption.value = ConfigurationSetting.audioPlayingOption.value
         _audioOutputOption.value = ConfigurationSetting.audioOutputOption.value
-        _isUseCustomAudioPlayingHttpEndpoint.value = ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value
+        _isUseCustomAudioPlayingHttpEndpoint.value =
+            ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value
         _audioPlayingHttpEndpoint.value = ConfigurationSetting.audioPlayingHttpEndpoint.value
     }
 

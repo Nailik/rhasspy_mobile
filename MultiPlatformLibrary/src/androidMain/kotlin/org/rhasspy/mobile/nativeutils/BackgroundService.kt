@@ -41,7 +41,12 @@ actual class BackgroundService : android.app.Service() {
          */
         actual fun start() {
             logger.d { "start" }
-            Application.nativeInstance.startService(Intent(Application.nativeInstance, BackgroundService::class.java))
+            Application.nativeInstance.startService(
+                Intent(
+                    Application.nativeInstance,
+                    BackgroundService::class.java
+                )
+            )
         }
 
         /**
@@ -49,7 +54,12 @@ actual class BackgroundService : android.app.Service() {
          */
         actual fun stop() {
             logger.d { "stop" }
-            Application.nativeInstance.stopService(Intent(Application.nativeInstance, BackgroundService::class.java))
+            Application.nativeInstance.stopService(
+                Intent(
+                    Application.nativeInstance,
+                    BackgroundService::class.java
+                )
+            )
         }
     }
 

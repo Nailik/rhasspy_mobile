@@ -46,7 +46,7 @@ object IndicationOverlay : KoinComponent {
     /**
      * view that's displayed when a wake word is detected
      */
-    private fun getView() : ComposeView {
+    private fun getView(): ComposeView {
         return ComposeView(AndroidApplication.Instance).apply {
             setContent {
                 AppTheme {
@@ -75,7 +75,6 @@ object IndicationOverlay : KoinComponent {
         lifecycleOwner.performRestore(null)
         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
     }
-
 
 
     /**

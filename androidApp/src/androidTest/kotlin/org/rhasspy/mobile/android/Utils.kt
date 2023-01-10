@@ -20,6 +20,7 @@ fun SemanticsNodeInteraction.onSwitch(): SemanticsNodeInteraction {
 
 fun hasTestTag(testTag: Enum<*>): SemanticsMatcher =
     SemanticsMatcher.expectValue(SemanticsProperties.TestTag, testTag.name)
+
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     testTag: Enum<*>,
     useUnmergedTree: Boolean = false

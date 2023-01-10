@@ -63,17 +63,31 @@ val serviceModule = module {
     closeableSingle { ServiceMiddleware() }
 
     single { params -> params.getOrNull<LocalAudioServiceParams>() ?: LocalAudioServiceParams() }
-    single { params -> params.getOrNull<AudioPlayingServiceParams>() ?: AudioPlayingServiceParams() }
-    single { params -> params.getOrNull<IntentHandlingServiceParams>() ?: IntentHandlingServiceParams() }
-    single { params -> params.getOrNull<IntentRecognitionServiceParams>() ?: IntentRecognitionServiceParams() }
-    single { params -> params.getOrNull<SpeechToTextServiceParams>() ?: SpeechToTextServiceParams() }
-    single { params -> params.getOrNull<TextToSpeechServiceParams>() ?: TextToSpeechServiceParams() }
+    single { params ->
+        params.getOrNull<AudioPlayingServiceParams>() ?: AudioPlayingServiceParams()
+    }
+    single { params ->
+        params.getOrNull<IntentHandlingServiceParams>() ?: IntentHandlingServiceParams()
+    }
+    single { params ->
+        params.getOrNull<IntentRecognitionServiceParams>() ?: IntentRecognitionServiceParams()
+    }
+    single { params ->
+        params.getOrNull<SpeechToTextServiceParams>() ?: SpeechToTextServiceParams()
+    }
+    single { params ->
+        params.getOrNull<TextToSpeechServiceParams>() ?: TextToSpeechServiceParams()
+    }
     single { params -> params.getOrNull<MqttServiceParams>() ?: MqttServiceParams() }
     single { params -> params.getOrNull<HttpClientServiceParams>() ?: HttpClientServiceParams() }
     single { params -> params.getOrNull<WebServerServiceParams>() ?: WebServerServiceParams() }
-    single { params -> params.getOrNull<HomeAssistantServiceParams>() ?: HomeAssistantServiceParams() }
+    single { params ->
+        params.getOrNull<HomeAssistantServiceParams>() ?: HomeAssistantServiceParams()
+    }
     single { params -> params.getOrNull<WakeWordServiceParams>() ?: WakeWordServiceParams() }
-    single { params -> params.getOrNull<DialogManagerServiceParams>() ?: DialogManagerServiceParams() }
+    single { params ->
+        params.getOrNull<DialogManagerServiceParams>() ?: DialogManagerServiceParams()
+    }
 
     closeableSingle { AudioPlayingConfigurationTest() }
     closeableSingle { DialogManagementConfigurationTest() }

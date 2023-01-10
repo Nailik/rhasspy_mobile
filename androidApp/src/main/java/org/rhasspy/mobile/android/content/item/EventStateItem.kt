@@ -139,7 +139,8 @@ fun EventStateCard(
     content: @Composable () -> Unit
 ) {
     Card(
-        modifier = Modifier.clip(RoundedCornerShape(12.dp)).let { onClick?.let { it1 -> it.clickable(enabled = enabled, onClick = it1) } ?: it },
+        modifier = Modifier.clip(RoundedCornerShape(12.dp))
+            .let { onClick?.let { it1 -> it.clickable(enabled = enabled, onClick = it1) } ?: it },
         colors = CardDefaults.outlinedCardColors(
             containerColor = when (serviceState) {
                 is ServiceState.Pending -> MaterialTheme.colorScheme.surfaceVariant

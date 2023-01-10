@@ -91,7 +91,10 @@ private fun TestContent(viewModel: RemoteHermesHttpConfigurationViewModel) {
     Column {
 
         if (viewModel.isSpeechToTextTestVisible.collectAsState().value) {
-            RequiresMicrophonePermission(MR.strings.microphonePermissionInfoRecord, viewModel::toggleRecording) { onClick ->
+            RequiresMicrophonePermission(
+                MR.strings.microphonePermissionInfoRecord,
+                viewModel::toggleRecording
+            ) { onClick ->
                 FilledTonalButtonListItem(
                     text = if (viewModel.isRecordingAudio.collectAsState().value) MR.strings.stopRecordAudio else MR.strings.startRecordAudio,
                     onClick = onClick

@@ -40,7 +40,8 @@ actual object FileUtils {
      * read data from file
      */
     actual fun readDataFromFile(fileResource: FileResource): ByteArray {
-        return Application.nativeInstance.resources.openRawResource(fileResource.rawResId).readBytes()
+        return Application.nativeInstance.resources.openRawResource(fileResource.rawResId)
+            .readBytes()
     }
 
     /**
@@ -56,22 +57,23 @@ actual object FileUtils {
      * read file from system
      */
     private suspend fun queryFile(uri: Uri): String? = suspendCoroutine { continuation ->
-        Application.nativeInstance.contentResolver.query(uri, null, null, null, null)?.also { cursor ->
-            if (cursor.moveToFirst()) {
-                val index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                if (index != -1) {
-                    //file found
-                    val fileName = cursor.getString(index)
-                    cursor.close()
-                    continuation.resume(fileName)
-                    return@suspendCoroutine
+        Application.nativeInstance.contentResolver.query(uri, null, null, null, null)
+            ?.also { cursor ->
+                if (cursor.moveToFirst()) {
+                    val index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    if (index != -1) {
+                        //file found
+                        val fileName = cursor.getString(index)
+                        cursor.close()
+                        continuation.resume(fileName)
+                        return@suspendCoroutine
+                    }
                 }
+                //didn't work
+                cursor.close()
+                continuation.resume(null)
+                return@suspendCoroutine
             }
-            //didn't work
-            cursor.close()
-            continuation.resume(null)
-            return@suspendCoroutine
-        }
     }
 
     /**

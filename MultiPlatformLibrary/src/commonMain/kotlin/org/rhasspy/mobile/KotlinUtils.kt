@@ -147,6 +147,11 @@ val <T> MutableSharedFlow<T>.readOnly get(): Flow<T> = this
 
 val <T> MutableList<T>.readOnly get(): List<T> = this
 
-inline fun <T1 : Any, T2 : Any> notNull(p1: T1?, p2: T2?, block: (T1, T2) -> Unit, run: () -> Unit) {
+inline fun <T1 : Any, T2 : Any> notNull(
+    p1: T1?,
+    p2: T2?,
+    block: (T1, T2) -> Unit,
+    run: () -> Unit
+) {
     return if (p1 != null && p2 != null) block(p1, p2) else run()
 }

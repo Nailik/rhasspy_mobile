@@ -48,7 +48,8 @@ fun ServiceStateHeader(viewModel: IConfigurationViewModel) {
                 Text(MR.strings.error)
             },
             text = {
-                when (val informationText = viewModel.serviceStateDialogText.collectAsState().value) {
+                when (val informationText =
+                    viewModel.serviceStateDialogText.collectAsState().value) {
                     is StringResource -> Text(informationText)
                     is String -> androidx.compose.material3.Text(informationText)
                     else -> {}

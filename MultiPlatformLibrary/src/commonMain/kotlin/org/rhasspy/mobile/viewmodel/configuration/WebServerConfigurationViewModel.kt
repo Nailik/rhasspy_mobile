@@ -25,14 +25,21 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
     override val serviceState get() = get<WebServerService>().serviceState
 
     //unsaved data
-    private val _isHttpServerEnabled = MutableStateFlow(ConfigurationSetting.isHttpServerEnabled.value)
+    private val _isHttpServerEnabled =
+        MutableStateFlow(ConfigurationSetting.isHttpServerEnabled.value)
     private val _httpServerPort = MutableStateFlow(ConfigurationSetting.httpServerPort.value)
-    private val _httpServerPortText = MutableStateFlow(ConfigurationSetting.httpServerPort.value.toString())
-    private val _isHttpServerSSLEnabled = MutableStateFlow(ConfigurationSetting.isHttpServerSSLEnabledEnabled.value)
-    private val _httpServerSSLKeyStoreFile = MutableStateFlow(ConfigurationSetting.httpServerSSLKeyStoreFile.value)
-    private val _httpServerSSLKeyStorePassword = MutableStateFlow(ConfigurationSetting.httpServerSSLKeyStorePassword.value)
-    private val _httpServerSSLKeyAlias = MutableStateFlow(ConfigurationSetting.httpServerSSLKeyAlias.value)
-    private val _httpServerSSLKeyPassword = MutableStateFlow(ConfigurationSetting.httpServerSSLKeyPassword.value)
+    private val _httpServerPortText =
+        MutableStateFlow(ConfigurationSetting.httpServerPort.value.toString())
+    private val _isHttpServerSSLEnabled =
+        MutableStateFlow(ConfigurationSetting.isHttpServerSSLEnabledEnabled.value)
+    private val _httpServerSSLKeyStoreFile =
+        MutableStateFlow(ConfigurationSetting.httpServerSSLKeyStoreFile.value)
+    private val _httpServerSSLKeyStorePassword =
+        MutableStateFlow(ConfigurationSetting.httpServerSSLKeyStorePassword.value)
+    private val _httpServerSSLKeyAlias =
+        MutableStateFlow(ConfigurationSetting.httpServerSSLKeyAlias.value)
+    private val _httpServerSSLKeyPassword =
+        MutableStateFlow(ConfigurationSetting.httpServerSSLKeyPassword.value)
 
     //unsaved ui data
     val isHttpServerEnabled = _isHttpServerEnabled.readOnly
@@ -42,7 +49,8 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
     val isHttpServerSSLCertificateVisible = _isHttpServerSSLEnabled.readOnly
 
     val httpServerSSLKeyStoreFileText = _httpServerSSLKeyStoreFile.readOnly
-    val isHttpServerSSLKeyStoreFileTextVisible = _httpServerSSLKeyStoreFile.mapReadonlyState { it.isNotEmpty() }
+    val isHttpServerSSLKeyStoreFileTextVisible =
+        _httpServerSSLKeyStoreFile.mapReadonlyState { it.isNotEmpty() }
     val httpServerSSLKeyStorePassword = _httpServerSSLKeyStorePassword.readOnly
     val httpServerSSLKeyAlias = _httpServerSSLKeyAlias.readOnly
     val httpServerSSLKeyPassword = _httpServerSSLKeyPassword.readOnly
@@ -52,11 +60,26 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_isHttpServerEnabled, ConfigurationSetting.isHttpServerEnabled.data),
         combineStateNotEquals(_httpServerPort, ConfigurationSetting.httpServerPort.data),
-        combineStateNotEquals(_isHttpServerSSLEnabled, ConfigurationSetting.isHttpServerSSLEnabledEnabled.data),
-        combineStateNotEquals(_httpServerSSLKeyStoreFile, ConfigurationSetting.httpServerSSLKeyStoreFile.data),
-        combineStateNotEquals(_httpServerSSLKeyStorePassword, ConfigurationSetting.httpServerSSLKeyStorePassword.data),
-        combineStateNotEquals(_httpServerSSLKeyAlias, ConfigurationSetting.httpServerSSLKeyAlias.data),
-        combineStateNotEquals(_httpServerSSLKeyPassword, ConfigurationSetting.httpServerSSLKeyPassword.data)
+        combineStateNotEquals(
+            _isHttpServerSSLEnabled,
+            ConfigurationSetting.isHttpServerSSLEnabledEnabled.data
+        ),
+        combineStateNotEquals(
+            _httpServerSSLKeyStoreFile,
+            ConfigurationSetting.httpServerSSLKeyStoreFile.data
+        ),
+        combineStateNotEquals(
+            _httpServerSSLKeyStorePassword,
+            ConfigurationSetting.httpServerSSLKeyStorePassword.data
+        ),
+        combineStateNotEquals(
+            _httpServerSSLKeyAlias,
+            ConfigurationSetting.httpServerSSLKeyAlias.data
+        ),
+        combineStateNotEquals(
+            _httpServerSSLKeyPassword,
+            ConfigurationSetting.httpServerSSLKeyPassword.data
+        )
     )
 
     //toggle HTTP Server enabled
@@ -123,7 +146,8 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
         ConfigurationSetting.httpServerPort.value = _httpServerPort.value
         ConfigurationSetting.isHttpServerSSLEnabledEnabled.value = _isHttpServerSSLEnabled.value
         ConfigurationSetting.httpServerSSLKeyStoreFile.value = _httpServerSSLKeyStoreFile.value
-        ConfigurationSetting.httpServerSSLKeyStorePassword.value = _httpServerSSLKeyStorePassword.value
+        ConfigurationSetting.httpServerSSLKeyStorePassword.value =
+            _httpServerSSLKeyStorePassword.value
         ConfigurationSetting.httpServerSSLKeyAlias.value = _httpServerSSLKeyAlias.value
         ConfigurationSetting.httpServerSSLKeyPassword.value = _httpServerSSLKeyPassword.value
     }
@@ -147,7 +171,8 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
         _httpServerPortText.value = ConfigurationSetting.httpServerPort.value.toString()
         _isHttpServerSSLEnabled.value = ConfigurationSetting.isHttpServerSSLEnabledEnabled.value
         _httpServerSSLKeyStoreFile.value = ConfigurationSetting.httpServerSSLKeyStoreFile.value
-        _httpServerSSLKeyStorePassword.value = ConfigurationSetting.httpServerSSLKeyStorePassword.value
+        _httpServerSSLKeyStorePassword.value =
+            ConfigurationSetting.httpServerSSLKeyStorePassword.value
         _httpServerSSLKeyAlias.value = ConfigurationSetting.httpServerSSLKeyAlias.value
         _httpServerSSLKeyPassword.value = ConfigurationSetting.httpServerSSLKeyPassword.value
     }

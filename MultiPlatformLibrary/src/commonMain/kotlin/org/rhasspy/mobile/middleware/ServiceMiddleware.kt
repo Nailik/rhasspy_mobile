@@ -34,16 +34,29 @@ class ServiceMiddleware : KoinComponent, Closeable {
                     if (localAudioService.isPlayingState.value) {
                         action(Action.DialogAction.StopAudioPlaying(Source.Local))
                     } else {
-                        action(Action.DialogAction.PlayAudio(Source.Local, speechToTextService.speechToTextAudioData.toByteArray()))
+                        action(
+                            Action.DialogAction.PlayAudio(
+                                Source.Local,
+                                speechToTextService.speechToTextAudioData.toByteArray()
+                            )
+                        )
                     }
                 }
                 is Action.WakeWordError -> mqttService.wakeWordError(action.description)
                 is Action.AppSettingsAction -> {
                     when (action) {
-                        is Action.AppSettingsAction.AudioOutputToggle -> appSettingsService.audioOutputToggle(action.enabled)
-                        is Action.AppSettingsAction.AudioVolumeChange -> appSettingsService.setAudioVolume(action.volume)
-                        is Action.AppSettingsAction.HotWordToggle -> appSettingsService.hotWordToggle(action.enabled)
-                        is Action.AppSettingsAction.IntentHandlingToggle -> appSettingsService.intentHandlingToggle(action.enabled)
+                        is Action.AppSettingsAction.AudioOutputToggle -> appSettingsService.audioOutputToggle(
+                            action.enabled
+                        )
+                        is Action.AppSettingsAction.AudioVolumeChange -> appSettingsService.setAudioVolume(
+                            action.volume
+                        )
+                        is Action.AppSettingsAction.HotWordToggle -> appSettingsService.hotWordToggle(
+                            action.enabled
+                        )
+                        is Action.AppSettingsAction.IntentHandlingToggle -> appSettingsService.intentHandlingToggle(
+                            action.enabled
+                        )
                     }
                 }
                 is Action.DialogAction -> {

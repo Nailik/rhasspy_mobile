@@ -1,7 +1,10 @@
 package org.rhasspy.mobile.android.configuration
 
-import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.performTextReplacement
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
@@ -44,7 +47,8 @@ class ConfigurationScreenTest {
         composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId).assertExists()
         //each item exists and navigates
         ConfigurationScreenType.values().forEach { tag ->
-            composeTestRule.onNodeWithTag(TestTag.List).performScrollToNode(hasTestTag(tag)).assertExists()
+            composeTestRule.onNodeWithTag(TestTag.List).performScrollToNode(hasTestTag(tag))
+                .assertExists()
             composeTestRule.onNodeWithTag(tag).performClick()
             //content exists
             composeTestRule.onNodeWithTag(tag).assertExists()

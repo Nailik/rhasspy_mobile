@@ -33,12 +33,17 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
     private val _mqttUserName = MutableStateFlow(ConfigurationSetting.mqttUserName.value)
     private val _mqttPassword = MutableStateFlow(ConfigurationSetting.mqttPassword.value)
     private val _isMqttSSLEnabled = MutableStateFlow(ConfigurationSetting.isMqttSSLEnabled.value)
-    private val _mqttConnectionTimeout = MutableStateFlow(ConfigurationSetting.mqttConnectionTimeout.value)
-    private val _mqttConnectionTimeoutText = MutableStateFlow(ConfigurationSetting.mqttConnectionTimeout.value.toString())
-    private val _mqttKeepAliveInterval = MutableStateFlow(ConfigurationSetting.mqttKeepAliveInterval.value)
-    private val _mqttKeepAliveIntervalText = MutableStateFlow(ConfigurationSetting.mqttKeepAliveInterval.value.toString())
+    private val _mqttConnectionTimeout =
+        MutableStateFlow(ConfigurationSetting.mqttConnectionTimeout.value)
+    private val _mqttConnectionTimeoutText =
+        MutableStateFlow(ConfigurationSetting.mqttConnectionTimeout.value.toString())
+    private val _mqttKeepAliveInterval =
+        MutableStateFlow(ConfigurationSetting.mqttKeepAliveInterval.value)
+    private val _mqttKeepAliveIntervalText =
+        MutableStateFlow(ConfigurationSetting.mqttKeepAliveInterval.value.toString())
     private val _mqttRetryInterval = MutableStateFlow(ConfigurationSetting.mqttRetryInterval.value)
-    private val _mqttRetryIntervalText = MutableStateFlow(ConfigurationSetting.mqttRetryInterval.value.toString())
+    private val _mqttRetryIntervalText =
+        MutableStateFlow(ConfigurationSetting.mqttRetryInterval.value.toString())
     private val _mqttKeyStoreFile = MutableStateFlow(ConfigurationSetting.mqttKeyStoreFile.value)
 
     //unsaved ui data
@@ -66,8 +71,14 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
         combineStateNotEquals(_mqttUserName, ConfigurationSetting.mqttUserName.data),
         combineStateNotEquals(_mqttPassword, ConfigurationSetting.mqttPassword.data),
         combineStateNotEquals(_isMqttSSLEnabled, ConfigurationSetting.isMqttSSLEnabled.data),
-        combineStateNotEquals(_mqttConnectionTimeout, ConfigurationSetting.mqttConnectionTimeout.data),
-        combineStateNotEquals(_mqttKeepAliveInterval, ConfigurationSetting.mqttKeepAliveInterval.data),
+        combineStateNotEquals(
+            _mqttConnectionTimeout,
+            ConfigurationSetting.mqttConnectionTimeout.data
+        ),
+        combineStateNotEquals(
+            _mqttKeepAliveInterval,
+            ConfigurationSetting.mqttKeepAliveInterval.data
+        ),
         combineStateNotEquals(_mqttRetryInterval, ConfigurationSetting.mqttRetryInterval.data)
     )
 
@@ -148,7 +159,11 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
      */
     override fun onSave() {
         if (ConfigurationSetting.mqttKeyStoreFile.value != _mqttKeyStoreFile.value) {
-            FileUtils.removeFile(FileType.CERTIFICATE, null, ConfigurationSetting.mqttKeyStoreFile.value)
+            FileUtils.removeFile(
+                FileType.CERTIFICATE,
+                null,
+                ConfigurationSetting.mqttKeyStoreFile.value
+            )
         }
 
         ConfigurationSetting.isMqttEnabled.value = _isMqttEnabled.value
