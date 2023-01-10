@@ -5,8 +5,6 @@ import kotlinx.coroutines.flow.StateFlow
 
 actual abstract class NativeApplication {
 
-    actual fun restart() {
-    }
 
     actual val currentlyAppInBackground: MutableStateFlow<Boolean>
         get() = TODO("Not yet implemented")

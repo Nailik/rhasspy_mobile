@@ -52,7 +52,6 @@ actual abstract class NativeApplication : MultiDexApplication() {
         })
     }
 
-    actual open fun restart() {}
     actual val currentlyAppInBackground = MutableStateFlow(false)
     actual val isAppInBackground: StateFlow<Boolean>
         get() = currentlyAppInBackground

@@ -4,7 +4,7 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import dev.icerock.moko.resources.FileResource
 import org.rhasspy.mobile.Application
-import org.rhasspy.mobile.settings.types.FileType
+import org.rhasspy.mobile.fileutils.FolderType
 import java.io.BufferedInputStream
 import java.io.File
 import java.util.zip.ZipInputStream
@@ -19,18 +19,14 @@ actual object FileUtils {
     /**
      * open file selection and copy file to specific folder and return selected file name
      */
-    actual suspend fun selectFile(
-        fileType: FileType,
-        subfolder: String?
-    ): String? {
+    actual suspend fun selectFile(folderType: FolderType): String? {
         //create folder if it doesn't exist yet
-        val folderName = "${fileType.folderName}${subfolder?.let { "/$it" } ?: ""}"
-        File(Application.nativeInstance.filesDir, folderName).mkdirs()
+        File(Application.nativeInstance.filesDir, folderType.toString()).mkdirs()
 
-        openDocument(fileType)?.also { uri ->
+        openDocument(folderType)?.also { uri ->
             queryFile(uri)?.also { fileName ->
-                val finalFileName = renameFileWhileExists(folderName, fileName)
-                return copyFile(fileType, uri, folderName, finalFileName)
+                val finalFileName = renameFileWhileExists(folderType.toString(), fileName)
+                return copyFile(folderType, uri, folderType.toString(), finalFileName)
             }
         }
         return null
@@ -47,9 +43,8 @@ actual object FileUtils {
     /**
      * delete file from local app storage
      */
-    actual fun removeFile(fileType: FileType, subfolder: String?, fileName: String) {
-        val folderName = "${fileType.folderName}${subfolder?.let { "/$it" } ?: ""}"
-        File(Application.nativeInstance.filesDir, "$folderName/$fileName").delete()
+    actual fun removeFile(folderType: FolderType, fileName: String) {
+        File(Application.nativeInstance.filesDir, "$folderType/$fileName").delete()
     }
 
 
@@ -79,8 +74,8 @@ actual object FileUtils {
     /**
      * open document
      */
-    private suspend fun openDocument(fileType: FileType): Uri? = suspendCoroutine { continuation ->
-        Application.nativeInstance.currentActivity?.openDocument(fileType.fileTypes) {
+    private suspend fun openDocument(folderType: FolderType): Uri? = suspendCoroutine { continuation ->
+        Application.nativeInstance.currentActivity?.openDocument(folderType.fileTypes) {
             continuation.resume(it.data?.data)
         }
     }
@@ -89,13 +84,13 @@ actual object FileUtils {
      * copy file to destination folder
      */
     private suspend fun copyFile(
-        fileType: FileType,
+        folderType: FolderType,
         uri: Uri,
         folderName: String,
         fileName: String
     ): String? =
-        when (fileType) {
-            FileType.PORCUPINE -> copyPorcupineFile(uri, folderName, fileName)
+        when (folderType) {
+            FolderType.PorcupineFolder -> copyPorcupineFile(uri, folderName, fileName)
             else -> copyNormalFile(uri, folderName, fileName)
         }
 

@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
@@ -186,14 +187,21 @@ private fun SoundActionButtons(
     isPlaying: Boolean,
     onChooseFile: () -> Unit
 ) {
-
-    ListElement {
+    Surface(
+        shape = RectangleShape, //ListItemDefaults.shape,
+        color = MaterialTheme.colorScheme.surface, //ListItemDefaults.containerColor,
+        contentColor = MaterialTheme.colorScheme.onSurface, //ListItemDefaults.contentColor,
+        tonalElevation = 0.0.dp, //ListItemDefaults.Elevation,
+        shadowElevation = 0.0.dp, //ListItemDefaults.Elevation,
+    ) {
         Row(
-            modifier = Modifier.padding(vertical = 8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            Spacer(modifier = Modifier.weight(0.15f))
 
-            Button(
+            FilledTonalButton(
                 modifier = Modifier
                     .weight(1f)
                     .testTag(TestTag.PlayPause),
@@ -208,8 +216,6 @@ private fun SoundActionButtons(
                     )
                     Text(if (isPlaying) MR.strings.stop else MR.strings.play)
                 })
-
-            Spacer(modifier = Modifier.weight(0.3f))
 
             //visibility of mqtt settings
             FilledTonalButton(
@@ -226,9 +232,7 @@ private fun SoundActionButtons(
                     Text(MR.strings.fileOpen)
                 })
 
-            Spacer(modifier = Modifier.weight(0.15f))
         }
-
     }
 }
 

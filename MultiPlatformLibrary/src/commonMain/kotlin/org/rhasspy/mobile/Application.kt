@@ -55,12 +55,14 @@ abstract class Application : NativeApplication(), KoinComponent {
             modules(serviceModule, viewModelModule, factoryModule, nativeModule)
         }
 
-        Logger.addLogWriter(
-            CrashlyticsLogWriter(
-                minSeverity = Severity.Info,
-                minCrashSeverity = Severity.Assert
+        if(!isDebug()) {
+            Logger.addLogWriter(
+                CrashlyticsLogWriter(
+                    minSeverity = Severity.Info,
+                    minCrashSeverity = Severity.Assert
+                )
             )
-        )
+        }
         Logger.addLogWriter(FileLogger)
 
         logger.i { "######## Application started ########" }
@@ -99,6 +101,8 @@ abstract class Application : NativeApplication(), KoinComponent {
 
     abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)
 
+    abstract fun restart()
+
     fun startTest() {
         BackgroundService.stop()
         stopOverlay()
@@ -136,5 +140,6 @@ abstract class Application : NativeApplication(), KoinComponent {
         get<MqttService>()
         get<DialogManagerService>()
     }
+
 
 }

@@ -15,7 +15,7 @@ import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.services.webserver.WebServerServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.settings.types.FileType
+import org.rhasspy.mobile.fileutils.FolderType
 import org.rhasspy.mobile.viewmodel.configuration.test.WebServerConfigurationTest
 
 class WebServerConfigurationViewModel : IConfigurationViewModel() {
@@ -107,7 +107,7 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
     //open file chooser to select certificate
     fun selectSSLCertificate() {
         viewModelScope.launch {
-            FileUtils.selectFile(FileType.CERTIFICATE)?.also { fileName ->
+            FileUtils.selectFile(FolderType.CertificateFolder.WebServer)?.also { fileName ->
                 _httpServerSSLKeyStoreFile.value = fileName
             }
         }
@@ -136,7 +136,7 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
         if (_httpServerSSLKeyStoreFile.value != ConfigurationSetting.httpServerSSLKeyStoreFile.value) {
             ConfigurationSetting.httpServerSSLKeyStoreFile.value.also {
                 FileUtils.removeFile(
-                    fileType = FileType.CERTIFICATE,
+                    folderType = FolderType.CertificateFolder.WebServer,
                     fileName = it
                 )
             }
@@ -160,7 +160,7 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
         if (_httpServerSSLKeyStoreFile.value != ConfigurationSetting.httpServerSSLKeyStoreFile.value) {
             _httpServerSSLKeyStoreFile.value.also {
                 FileUtils.removeFile(
-                    fileType = FileType.CERTIFICATE,
+                    folderType = FolderType.CertificateFolder.WebServer,
                     fileName = it
                 )
             }

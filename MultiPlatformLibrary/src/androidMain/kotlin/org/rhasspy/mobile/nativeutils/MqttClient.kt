@@ -10,7 +10,7 @@ import org.rhasspy.mobile.mqtt.*
 import org.rhasspy.mobile.mqtt.MqttMessage
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
-import org.rhasspy.mobile.settings.types.FileType
+import org.rhasspy.mobile.fileutils.FolderType
 import java.io.File
 import java.security.KeyStore
 import javax.net.ssl.SSLContext
@@ -211,7 +211,7 @@ actual class MqttClient actual constructor(
     private fun createSSLContext(keyStoreFileName: String): SSLContext {
         val keyStore = KeyStore.getInstance("BKS")
         keyStore.load(
-            File("${FileType.CERTIFICATE.folderName}/$keyStoreFileName").inputStream(),
+            File("${FolderType.CertificateFolder.Mqtt}/$keyStoreFileName").inputStream(),
             null
         )
         val factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())

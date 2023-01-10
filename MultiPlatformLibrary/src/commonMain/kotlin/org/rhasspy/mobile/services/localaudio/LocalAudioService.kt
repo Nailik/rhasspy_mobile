@@ -2,13 +2,13 @@ package org.rhasspy.mobile.services.localaudio
 
 import org.koin.core.component.inject
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.fileutils.FolderType
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.nativeutils.AudioPlayer
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.sounds.SoundOption
-import org.rhasspy.mobile.viewmodel.settings.sound.SoundFileFolder
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -61,7 +61,7 @@ class LocalAudioService : IService() {
                 AppSetting.soundIndicationOutputOption.value
             )
             else -> audioPlayer.playSoundFile(
-                "${SoundFileFolder.Wake.folderName}/${AppSetting.wakeSound.value}",
+                "${FolderType.SoundFolder.Wake}/${AppSetting.wakeSound.value}",
                 AppSetting.wakeSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
             )
@@ -78,7 +78,7 @@ class LocalAudioService : IService() {
                 AppSetting.soundIndicationOutputOption.value
             )
             else -> audioPlayer.playSoundFile(
-                "${SoundFileFolder.Recorded.folderName}/${AppSetting.recordedSound.value}",
+                "${FolderType.SoundFolder.Recorded}/${AppSetting.recordedSound.value}",
                 AppSetting.recordedSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
             )
@@ -95,7 +95,7 @@ class LocalAudioService : IService() {
                 AppSetting.soundIndicationOutputOption.value
             )
             else -> audioPlayer.playSoundFile(
-                "${SoundFileFolder.Error.folderName}/${AppSetting.errorSound.value}",
+                "${FolderType.SoundFolder.Error}/${AppSetting.errorSound.value}",
                 AppSetting.errorSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
             )

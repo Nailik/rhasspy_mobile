@@ -17,7 +17,7 @@ import org.rhasspy.mobile.settings.option.PorcupineKeywordOption
 import org.rhasspy.mobile.settings.option.PorcupineLanguageOption
 import org.rhasspy.mobile.settings.option.WakeWordOption
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
-import org.rhasspy.mobile.settings.types.FileType
+import org.rhasspy.mobile.fileutils.FolderType
 import org.rhasspy.mobile.viewmodel.configuration.test.WakeWordConfigurationTest
 
 class WakeWordConfigurationViewModel : IConfigurationViewModel() {
@@ -218,7 +218,7 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
      */
     fun addCustomPorcupineKeyword() {
         viewModelScope.launch {
-            FileUtils.selectFile(FileType.PORCUPINE)?.also { file ->
+            FileUtils.selectFile(FolderType.PorcupineFolder)?.also { file ->
                 _wakeWordPorcupineKeywordCustomOptions.value =
                     _wakeWordPorcupineKeywordCustomOptions.value
                         .toMutableList()
@@ -310,7 +310,7 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
         ConfigurationSetting.wakeWordUdpOutputPort.value = _wakeWordUdpOutputPort.value
 
         filesToDelete.forEach {
-            FileUtils.removeFile(FileType.PORCUPINE, null, it)
+            FileUtils.removeFile(FolderType.PorcupineFolder, it)
         }
         filesToDelete.clear()
         newFiles.clear()
@@ -335,7 +335,7 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
             ConfigurationSetting.wakeWordUdpOutputPort.value.toString()
 
         newFiles.forEach {
-            FileUtils.removeFile(FileType.PORCUPINE, null, it)
+            FileUtils.removeFile(FolderType.PorcupineFolder, it)
         }
         filesToDelete.clear()
     }

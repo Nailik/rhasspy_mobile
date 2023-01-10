@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.android
 
+import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import co.touchlab.kermit.Logger
 import com.google.firebase.crashlytics.ktx.crashlytics
@@ -53,13 +55,22 @@ class AndroidApplication : Application() {
     }
 
     override fun restart() {
-        startActivity(Intent(this, MainActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-        })
+        try {
+            val packageManager: PackageManager = this.packageManager
+            val intent: Intent = packageManager.getLaunchIntentForPackage(this.packageName)!!
+            val componentName: ComponentName = intent.component!!
+            val restartIntent: Intent = Intent.makeRestartActivityTask(componentName)
+            this.startActivity(restartIntent)
+            Runtime.getRuntime().exit(0)
+        }catch (e: Exception){
+            Runtime.getRuntime().exit(0)
+        }
     }
 
     override fun setCrashlyticsCollectionEnabled(enabled: Boolean) {
-        Firebase.crashlytics.setCrashlyticsCollectionEnabled(if (BuildConfig.DEBUG) false else enabled)
+        if (!BuildConfig.DEBUG) {
+            Firebase.crashlytics.setCrashlyticsCollectionEnabled(enabled)
+        }
     }
 
     override suspend fun updateWidget() {

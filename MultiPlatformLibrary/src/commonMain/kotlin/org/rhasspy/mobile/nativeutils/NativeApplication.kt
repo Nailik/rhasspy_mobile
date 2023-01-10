@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.StateFlow
 @Suppress("NO_ACTUAL_FOR_EXPECT")
 expect abstract class NativeApplication() {
 
-    fun restart()
 
     val currentlyAppInBackground: MutableStateFlow<Boolean>
     val isAppInBackground: StateFlow<Boolean>

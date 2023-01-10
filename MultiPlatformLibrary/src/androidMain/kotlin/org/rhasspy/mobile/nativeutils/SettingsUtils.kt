@@ -10,7 +10,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.settings.SettingsEnum
-import org.rhasspy.mobile.settings.types.FileType
+import org.rhasspy.mobile.fileutils.FolderType
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
@@ -25,10 +25,6 @@ actual object SettingsUtils {
      * export the settings file
      */
     actual fun exportSettingsFile() {
-        //create folder for sounds and porcupine
-        File(Application.nativeInstance.filesDir, "sounds").mkdirs()
-        File(Application.nativeInstance.filesDir, "porcupine").mkdirs()
-
         //to load zip export file
         Application.nativeInstance.currentActivity?.createDocument(
             "rhasspy_settings_${Clock.System.now().toLocalDateTime(TimeZone.UTC)}.zip",
@@ -61,9 +57,19 @@ actual object SettingsUtils {
 
                             //all custom files
                             val files = Application.nativeInstance.filesDir
-                            FileType.values().forEach { fileType ->
-                                val fileTypeFolder = File(files, fileType.folderName)
-                                copyFolderIntoZipRecursive("files", fileTypeFolder, zipOutputStream)
+                            FolderType.values().forEach { folderType ->
+                                File(files, folderType.toString()).walkTopDown().forEach { file ->
+                                    if(file.exists()) {
+                                        if (file.isDirectory) {
+                                            zipOutputStream.putNextEntry(ZipEntry("files/${folderType}/"))
+                                            zipOutputStream.closeEntry()
+                                        } else {
+                                            zipOutputStream.putNextEntry(ZipEntry("files/${folderType}/${file.name}"))
+                                            zipOutputStream.write(file.readBytes())
+                                            zipOutputStream.closeEntry()
+                                        }
+                                    }
+                                }
                             }
 
                             zipOutputStream.flush()
@@ -72,30 +78,6 @@ actual object SettingsUtils {
                             zipOutputStream.close()
                             outputStream.close()
                         }
-                }
-            }
-        }
-    }
-
-    /**
-     * copy this folder with all its content into zip
-     */
-    private fun copyFolderIntoZipRecursive(
-        path: String,
-        parentFolder: File,
-        zipOutputStream: ZipOutputStream
-    ) {
-        if (parentFolder.exists()) {
-
-            //TODO list files doesn't work
-            parentFolder.listFiles()?.forEach { file ->
-                if (file.isDirectory) {
-                    zipOutputStream.putNextEntry(ZipEntry("$path/${file.name}/"))
-                    copyFolderIntoZipRecursive("$path/${file.name}", file, zipOutputStream)
-                } else {
-                    zipOutputStream.putNextEntry(ZipEntry("$path/${file.name}"))
-                    zipOutputStream.write(file.readBytes())
-                    zipOutputStream.closeEntry()
                 }
             }
         }
@@ -140,7 +122,7 @@ actual object SettingsUtils {
 
                             inputStream.close()
 
-                            Application.nativeInstance.restart()
+                            Application.instance.restart()
                         }
                 }
             }
@@ -206,9 +188,9 @@ actual object SettingsUtils {
                         ""
                     }
                 } else {
-                    "$line\n"
+                    line
                 }
-                exportFile.appendText(text)
+                exportFile.appendText("$text\r\n")
             }
         }
         //share file

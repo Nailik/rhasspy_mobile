@@ -16,7 +16,7 @@ import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.services.mqtt.MqttServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.settings.types.FileType
+import org.rhasspy.mobile.fileutils.FolderType
 import org.rhasspy.mobile.viewmodel.configuration.test.MqttConfigurationTest
 
 class MqttConfigurationViewModel : IConfigurationViewModel() {
@@ -120,7 +120,7 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
     //open file chooser to select certificate
     fun selectSSLCertificate() {
         viewModelScope.launch {
-            FileUtils.selectFile(FileType.CERTIFICATE)?.also { fileName ->
+            FileUtils.selectFile(FolderType.CertificateFolder.Mqtt)?.also { fileName ->
                 _mqttKeyStoreFile.value = fileName
             }
         }
@@ -160,8 +160,7 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
     override fun onSave() {
         if (ConfigurationSetting.mqttKeyStoreFile.value != _mqttKeyStoreFile.value) {
             FileUtils.removeFile(
-                FileType.CERTIFICATE,
-                null,
+                FolderType.CertificateFolder.Mqtt,
                 ConfigurationSetting.mqttKeyStoreFile.value
             )
         }
@@ -183,7 +182,7 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
      */
     override fun discard() {
         if (ConfigurationSetting.mqttKeyStoreFile.value != _mqttKeyStoreFile.value) {
-            FileUtils.removeFile(FileType.CERTIFICATE, null, _mqttKeyStoreFile.value)
+            FileUtils.removeFile(FolderType.CertificateFolder.Mqtt, _mqttKeyStoreFile.value)
         }
 
         _isMqttEnabled.value = ConfigurationSetting.isMqttEnabled.value

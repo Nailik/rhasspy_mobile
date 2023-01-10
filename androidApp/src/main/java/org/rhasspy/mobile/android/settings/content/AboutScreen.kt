@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Link
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -118,13 +117,11 @@ fun AppIcon() {
 @Composable
 fun AppInformationChips(changelogText: String, onOpenSourceCode: () -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         DataPrivacyDialogButton()
         OutlinedButton(onClick = onOpenSourceCode) {
-            Icon(Icons.Filled.Link, MR.strings.sourceCode)
-            Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
             Text(MR.strings.sourceCode)
         }
         ChangelogDialogButton(changelogText)

@@ -12,7 +12,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
@@ -58,7 +57,7 @@ fun PorcupineKeywordCustomScreen(viewModel: WakeWordConfigurationViewModel) {
                 })
         }
 
-        CustomKeywordsActionButtons(modifier = Modifier.align(Alignment.End), viewModel = viewModel)
+        CustomKeywordsActionButtons(viewModel = viewModel)
 
     }
 
@@ -187,19 +186,18 @@ private fun CustomKeywordDeletedListItem(
  * custom keywords action buttons (download and open file)
  */
 @Composable
-private fun CustomKeywordsActionButtons(
-    modifier: Modifier,
-    viewModel: WakeWordConfigurationViewModel
-) {
+private fun CustomKeywordsActionButtons(viewModel: WakeWordConfigurationViewModel) {
     Row(
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = modifier
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
 
         FilledTonalButton(
-            modifier = Modifier.testTag(TestTag.Download),
+            modifier = Modifier
+                .weight(1f)
+                .testTag(TestTag.Download),
             onClick = viewModel::downloadCustomPorcupineKeyword,
             content = {
                 Icon(
@@ -211,7 +209,9 @@ private fun CustomKeywordsActionButtons(
             })
 
         FilledTonalButton(
-            modifier = Modifier.testTag(TestTag.SelectFile),
+            modifier = Modifier
+                .weight(1f)
+                .testTag(TestTag.SelectFile),
             onClick = viewModel::addCustomPorcupineKeyword,
             content = {
                 Icon(

@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.inject
+import org.rhasspy.mobile.fileutils.FolderType
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action
 import org.rhasspy.mobile.middleware.Action.AppSettingsAction
@@ -93,7 +94,7 @@ class WebServerService : IService() {
             installConnector(
                 port = params.httpServerPort,
                 isUseSSL = params.isHttpServerSSLEnabled,
-                keyStoreFile = "certificates/${params.httpServerSSLKeyStoreFile ?: ""}",
+                keyStoreFile = "${FolderType.CertificateFolder.WebServer}/${params.httpServerSSLKeyStoreFile ?: ""}",
                 keyStorePassword = params.httpServerSSLKeyStorePassword,
                 keyAlias = params.httpServerSSLKeyAlias,
                 keyPassword = params.httpServerSSLKeyPassword

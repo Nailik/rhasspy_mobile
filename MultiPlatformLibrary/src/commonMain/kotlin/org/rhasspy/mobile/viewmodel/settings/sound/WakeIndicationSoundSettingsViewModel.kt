@@ -8,8 +8,7 @@ import org.rhasspy.mobile.nativeutils.FileUtils
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.sounds.SoundFile
 import org.rhasspy.mobile.settings.sounds.SoundOption
-import org.rhasspy.mobile.settings.types.FileType
-
+import org.rhasspy.mobile.fileutils.FolderType
 
 class WakeIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel() {
 
@@ -58,8 +57,7 @@ class WakeIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel()
                 remove(file.fileName)
             }
             FileUtils.removeFile(
-                FileType.SOUND,
-                subfolder = SoundFileFolder.Wake.toString(),
+                FolderType.SoundFolder.Wake,
                 file.fileName
             )
         }
@@ -75,7 +73,7 @@ class WakeIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel()
 
     override fun chooseSoundFile() {
         viewModelScope.launch {
-            FileUtils.selectFile(FileType.SOUND, subfolder = SoundFileFolder.Wake.folderName)
+            FileUtils.selectFile(FolderType.SoundFolder.Wake)
                 ?.also { fileName ->
                     val customSounds = AppSetting.customWakeSounds.data
                     AppSetting.customWakeSounds.value =
