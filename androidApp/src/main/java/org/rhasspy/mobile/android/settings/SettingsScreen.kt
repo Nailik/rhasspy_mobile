@@ -14,6 +14,7 @@ import dev.icerock.moko.resources.StringResource
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.*
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.main.LocalMainNavController
@@ -36,6 +37,7 @@ fun SettingsScreen(viewModel: SettingsScreenViewModel = get()) {
     ) { paddingValues ->
         LazyColumn(
             Modifier
+                .testTag(TestTag.List)
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {

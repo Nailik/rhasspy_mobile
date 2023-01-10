@@ -183,7 +183,7 @@ class MqttConfigurationContentTest {
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onSwitch().assertIsOff()
 
         //user clicks ssl
-        composeTestRule.onNodeWithTag(TestTag.SSLSwitch).performClick()
+        composeTestRule.onNodeWithTag(TestTag.SSLSwitch).performScrollTo().performClick()
         //ssl is enabled
         assertTrue { viewModel.isMqttSSLEnabled.value }
         //ssl is on

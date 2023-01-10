@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.android.settings.content
 
+import android.os.Build
 import android.widget.Switch
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +22,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScreens
+import org.rhasspy.mobile.nativeutils.OverlayPermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.option.AudioOutputOption
 import org.rhasspy.mobile.viewmodel.settings.IndicationSettingsViewModel
@@ -107,18 +109,29 @@ class IndicationSettingsContentTest {
         //user clicks visual
         composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).performClick()
         //user accepts permission
-        if (device.findObject(UiSelector().packageNameMatches(settingsPage)).exists()) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            //Ok clicked
+            composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
+            //on Q app is restarted when allowing overlay permission
+
+            //Redirected to settings
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+            assertTrue { device.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
             UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName))
             device.findObject(UiSelector().text(MR.strings.appName)).click()
             device.findObject(UiSelector().className(Switch::class.java)).click()
             //User clicks back
             device.pressBack()
             device.pressBack()
-            composeTestRule.awaitIdle()
+
+            //app will be closed when pressing one more back
+            OverlayPermission.update()
+            //Dialog is closed and permission granted
+            assertTrue { OverlayPermission.granted.value }
         }
+
         //visual is enabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onSwitch()
-            .assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onSwitch().assertIsOn()
         //visual is saved
         assertTrue { IndicationSettingsViewModel().isWakeWordLightIndicationEnabled.value }
 

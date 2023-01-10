@@ -2,13 +2,14 @@ package org.rhasspy.mobile.android.settings
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToNode
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.hasTestTag
 import org.rhasspy.mobile.android.navigation.BottomBarScreenType
 import org.rhasspy.mobile.android.onNodeWithTag
 
@@ -40,7 +41,9 @@ class SettingsScreenTest {
     fun testContent() = runBlocking {
         //each item exists and navigates
         SettingsScreenType.values().forEach { tag ->
-            composeTestRule.onNodeWithTag(tag).performScrollTo().performClick()
+            composeTestRule.onNodeWithTag(TestTag.List).performScrollToNode(hasTestTag(tag))
+                .assertExists()
+            composeTestRule.onNodeWithTag(tag).performClick()
             //content exists
             composeTestRule.onNodeWithTag(tag).assertExists()
             //press toolbar back button
