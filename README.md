@@ -4,7 +4,6 @@ This will be a Rhasspy satellite on a mobile phone. The original idea is
 from [rhasspy-mobile-app](https://github.com/razzo04/rhasspy-mobile-app). The latest Version can be found on the [PlayStore](https://play.google.com/store/apps/details?id=org.rhasspy.mobile.android) or in [Releases](https://github.com/Nailik/rhasspy_mobile/releases).
 
 [<img src="documentation/images/google-play-badge.png" height="75">](https://play.google.com/store/apps/details?id=org.rhasspy.mobile.android)
-<!---[<img src="documentation/images/f-droid-badge.png" height="75">](https://play.google.com/store/apps/details?id=org.rhasspy.mobile.android)-->
 
 ### Contribution
 
