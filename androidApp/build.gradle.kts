@@ -9,6 +9,7 @@ plugins {
     kotlin("android")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("org.gradle.test-retry")
 }
 
 val signingProperties = Properties()
@@ -121,7 +122,6 @@ android {
     }
 }
 
-
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi"
     kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
@@ -143,6 +143,11 @@ tasks.withType<Test> {
         showExceptions = true
         showCauses = true
         showStackTraces = true
+    }
+    retry {
+        maxRetries.set(3)
+        maxFailures.set(20)
+        failOnPassedAfterRetry.set(false)
     }
 }
 

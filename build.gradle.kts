@@ -16,6 +16,7 @@ buildscript {
         classpath("com.google.firebase:firebase-crashlytics-gradle:_")
         classpath("co.touchlab.crashkios:utils:_")
         classpath("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:_")
+        classpath("org.gradle:test-retry-gradle-plugin:_")
     }
 }
 
