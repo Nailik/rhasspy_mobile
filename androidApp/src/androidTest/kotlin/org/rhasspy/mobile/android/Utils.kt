@@ -54,15 +54,12 @@ fun UiSelector.text(text: StringResource): UiSelector {
 //https://github.com/SergKhram/allure-kotlin/blob/081c7d39ee440b82ca490ce91d34ce1a1421670c/allure-kotlin-android/src/main/kotlin/io/qameta/allure/android/internal/TestUtils.kt
 fun requestExternalStoragePermissions(device: UiDevice) {
     when {
-        Build.VERSION.SDK_INT > Build.VERSION_CODES.M && Build.VERSION.SDK_INT <= Build.VERSION_CODES.P -> {
+        Build.VERSION.SDK_INT > Build.VERSION_CODES.M && Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q -> {
             with(PermissionRequester()) {
                 addPermissions("android.permission.WRITE_EXTERNAL_STORAGE")
                 addPermissions("android.permission.READ_EXTERNAL_STORAGE")
                 requestPermissions()
             }
-        }
-        Build.VERSION.SDK_INT == Build.VERSION_CODES.Q -> {
-            device.executeShellCommand("appops set --uid ${InstrumentationRegistry.getInstrumentation().targetContext.packageName} LEGACY_STORAGE allow")
         }
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
             device.executeShellCommand("appops set --uid ${InstrumentationRegistry.getInstrumentation().targetContext.packageName} MANAGE_EXTERNAL_STORAGE allow")
