@@ -5,6 +5,17 @@ from [rhasspy-mobile-app](https://github.com/razzo04/rhasspy-mobile-app). The la
 
 [<img src="documentation/images/google-play-badge.png" height="75">](https://play.google.com/store/apps/details?id=org.rhasspy.mobile.android)
 
+### Supported Devices
+
+The project uses Kotlin Multiplatform Mobile which supports a lot of platforms but is not implemented on each platform yet.
+
+| Platform | Support                             |
+|----------|-------------------------------------|
+| Android  | Android 6.0 (API level 23)          |
+| iOS      | Not yet planned                     |
+| Other    | Open a discussion if your interesed |
+
+
 ### Contribution
 
 Check out the project [Board](https://github.com/users/Nailik/projects/1) for open tasks, open a discussion or create your own pull-request. 
