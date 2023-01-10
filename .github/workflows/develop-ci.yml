@@ -40,6 +40,15 @@ jobs:
       #r un all unit tests (debug and debug)
       - name: Unit Tests
         run: ./gradlew testDebug
+      # create emulator
+      - name: Android UI Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: default
+          arch: arm64-v8a
+          profile: Nexus 6
+          script: adb shell pm grant org.rhasspy.mobile.test android.permission.WRITE_EXTERNAL_STORAGE
       # android UI Test
       - name: Android UI Tests
         uses: reactivecircus/android-emulator-runner@v2
