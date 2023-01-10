@@ -1,41 +1,54 @@
 # Rhasspy mobile
 
 This will be a Rhasspy satellite on a mobile phone. The original idea is
-from [rhasspy-mobile-app](https://github.com/razzo04/rhasspy-mobile-app).
+from [rhasspy-mobile-app](https://github.com/razzo04/rhasspy-mobile-app). The latest Version can be found on the [PlayStore](https://play.google.com/store/apps/details?id=org.rhasspy.mobile.android) or in [Releases](https://github.com/Nailik/rhasspy_mobile/releases).
+
+[<img src="documentation/images/google-play-badge.png" height="75">](https://play.google.com/store/apps/details?id=org.rhasspy.mobile.android)
+<!---[<img src="documentation/images/f-droid-badge.png" height="75">](https://play.google.com/store/apps/details?id=org.rhasspy.mobile.android)-->
+
+### Contribution
+
+Check out the project [Board](https://github.com/users/Nailik/projects/1) for open tasks, open a discussion or create your own pull-request. 
+I am also happy for any feedback.
 
 ## Getting Started
 
 For setup of server and satellite configuration check the official documentation
 of [Rhasspy](https://rhasspy.readthedocs.io/en/latest/tutorials/#server-with-satellites).
 
-## Planned features
+<img src="documentation/images/header.png" height="250" style="border-radius:25px">
 
-| Feature  | Android | iOS | Web |
-| ------------- | ------------- | ------------- | ------------- |
-| Audio Recording | :white_check_mark: | :x: | :x: |
-| Silence Detection | :white_check_mark: | :x: | :x: |
-| Remote HTTP(s)  | :white_check_mark: | :x: | :x: |
-| Local (incoming) HTTP(s)  | :white_check_mark: | :x: | :x: |
-| Remote SSL (MQTT, HTTP Server)  | :x: | :x: | :x: |
-| WakeWord Remote (MQTT/UDP) | :white_check_mark: | :x: | :x: |
-| WakeWord Local (Porcupine) | :white_check_mark: | :x: | :x: |
-| WakeWord Indication (Sound, Visual)  | :white_check_mark: | :x: | :x: |
+## Main features
 
-# Information About current status
+| Feature                           | Description                                                                                                                                                        |
+|-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Local wake-word                   | Uses [Porcupine](https://picovoice.ai/platform/porcupine/) to enable local wake-word processing                                                                    |
+| Background Service                | Allows to run the app continuously in Background, listening for wake word and processing audio.                                                                    |
+| Microphone Overlay and Widget     | Quick access to voice commands without using a wake-word.                                                                                                          |
+| Indication                        | Indicate different Rhasspy states<br/><ul><li>Wake up display when wake-word is detected</li><li>Sound indication like Rhasspy</li><li>Overlay animation</li></ul> |
+| Automatic local silence detection | Stop recording audio when silence is detected with custom audio level.                                                                                             |
+| Test configuration                | Test Rhasspy configuration while editing to simpler setup everything correctly.                                                                                    |
+| Save and restore settings         | Don't loose the Satellite configuration.                                                                                                                           |
+| Local Webserver                   | Hosts Hermes api to send commands to Rhasspy Satellite.                                                                                                            |
 
-Local WakeWord, Background Service and Indications are in develop, microphone permission needs to be
-accepted manually for now via app settings.
+## Rhasspy configuration
+
+| Item               | Options                                                                                                 |
+|--------------------|---------------------------------------------------------------------------------------------------------|
+| Site ID            | Setup the siteId, used for MQTT Messages to interact with Rhasspy Base.                                 |
+| Remote Hermes HTTP | Path for HTTP Services, SSL Certification validation can be disabled to allow self signed certificates. |
+| Webserver          | Hosts Hermes api to send commands to Rhasspy Satellite.                                                 |
+| MQTT               | Connects to your MQTT broker to use the Rhasspy MQTT API or Services via MQTT.                          |
+| Wake-word          | Enables to listen for wake-word locally or with a Rhasspy service.                                      |
+| Speech to Text     | Translate Speech to Text via Rhasspy.                                                                   |
+| Intent Recognition | Recognize an Intent from the Text via Rhasspy.                                                          |
+| Text to Speech     | Convert Text to Speech via Rhasspy and play it locally.                                                 |
+| Audio Playing      | Play audio locally as media or notification or remote.                                                  |
+| Dialog Management  | Manage Dialog Handling locally or via MQTT.                                                             |
+| Intent Handling    | Send Intents to Home Assistant or Rhasspy.                                                              |
 
 # About
 
-While developing i switched from Flutter to Kotlin Multiplatform Mobile for the following reason:
-
-For the WakeWord detection / whole app to run in background continuously a foreground service is
-necessary. Flutter and all plugins i found use an
-isolate for this, but therefore execution of the Porcupine Plugin is not possible anymore because
-there are several issues calling a MethodChannel
-from within an isolate. Using Porcupine Android would require to start multiple service (WakeWord
-detection and the other, shared code like mqtt). On
-Kotlin Multiplatform one can create an "expect" WakeWord detection class and implement it "actual"
-native on both platforms, but simply call it from
-the shared code which will host the Foreground Service.
+This idea was born because [rhasspy-mobile-app](https://github.com/razzo04/rhasspy-mobile-app) seems 
+abandoned and not easy maintainable. It's for the many smart home users that have their Android Tablet 
+to control their home and want to be able to use Rhasspy voice assistant.
