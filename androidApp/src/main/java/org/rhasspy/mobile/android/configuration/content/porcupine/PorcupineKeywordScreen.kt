@@ -55,7 +55,7 @@ fun PorcupineKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
                     ListElement(
                         modifier = Modifier
                             .testTag(TestTag.PorcupineLanguage)
-                            .clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineLanguage.name) },
+                            .clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineLanguage.route) },
                         text = { Text(MR.strings.language) },
                         secondaryText = { Text(viewModel.wakeWordPorcupineLanguage.collectAsState().value.text) }
                     )
