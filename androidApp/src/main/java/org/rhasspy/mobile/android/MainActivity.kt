@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.android
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -21,19 +22,39 @@ import androidx.core.view.WindowCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.AppActivity
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.android.main.MainNavigation
+import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
 
 /**
  * simple main activity to start application with splash screen
  */
 @NoLiveLiterals
-class MainActivity : AppActivity() {
+class MainActivity : KoinComponent, AppActivity() {
 
     companion object {
         var isFirstLaunch = false
             private set
+
+        fun startRecordingAction() {
+            AndroidApplication.nativeInstance.currentActivity?.also {
+                it.startActivity(
+                    Intent(AndroidApplication.nativeInstance, MainActivity::class.java).apply {
+                        putExtra(IntentAction.StartRecording.param, true)
+                    }
+                )
+            } ?: run {
+                AndroidApplication.nativeInstance.startActivity(
+                    Intent(AndroidApplication.nativeInstance, MainActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        putExtra(IntentAction.StartRecording.param, true)
+                    }
+                )
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +67,9 @@ class MainActivity : AppActivity() {
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
+
+        val value = intent.getBooleanExtra(IntentAction.StartRecording.param, false)
+        get<HomeScreenViewModel>().startRecordingAction(value)
 
         this.setContent {
             Box(modifier = Modifier.fillMaxSize()) {

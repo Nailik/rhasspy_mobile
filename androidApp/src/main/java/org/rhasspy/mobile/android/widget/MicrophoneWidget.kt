@@ -81,9 +81,7 @@ class MicrophoneWidget : GlanceAppWidget(), KoinComponent {
                     .fillMaxSize()
                     .clickable(onClick = actionRunCallback<MicrophoneWidgetAction>()),
                 contentAlignment = Alignment.Center
-            ) {
-
-            }
+            ) {}
         }
     }
 }

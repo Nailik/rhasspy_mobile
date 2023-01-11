@@ -22,6 +22,17 @@ class HomeScreenViewModel : ViewModel(), KoinComponent {
         dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.Idle || it == DialogManagerServiceState.AwaitingWakeWord }
     val isShowLogEnabled = AppSetting.isShowLogEnabled.data
 
+    var isStartRecordingAction: Boolean = false
+        private set
+
     fun togglePlayRecording() = serviceMiddleware.action(Action.PlayStopRecording)
+
+    fun startRecordingAction(value: Boolean) {
+        isStartRecordingAction = value
+    }
+
+    fun consumedStartRecordingAction() {
+        isStartRecordingAction = false
+    }
 
 }

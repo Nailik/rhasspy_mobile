@@ -42,15 +42,15 @@ fun MainNavigation() {
         Surface(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
 
             val navController = rememberNavController()
-            val snackbarHostState = remember { SnackbarHostState() }
+            val snackBarHostState = remember { SnackbarHostState() }
 
             CompositionLocalProvider(
                 LocalMainNavController provides navController,
-                LocalSnackbarHostState provides snackbarHostState
+                LocalSnackbarHostState provides snackBarHostState
             ) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    snackbarHost = { SnackbarHost(snackbarHostState) },
+                    snackbarHost = { SnackbarHost(snackBarHostState) },
                 ) { paddingValues ->
 
                     var shouldShowCrashlyticsDialog by remember { mutableStateOf(MainActivity.isFirstLaunch) }

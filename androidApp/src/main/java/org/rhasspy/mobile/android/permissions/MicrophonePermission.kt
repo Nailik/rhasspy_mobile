@@ -39,7 +39,7 @@ fun RequiresMicrophonePermission(
     onClick: () -> Unit,
     content: @Composable (onClick: () -> Unit) -> Unit
 ) {
-    val snackbarHostState = LocalSnackbarHostState.current
+    val snackBarHostState = LocalSnackbarHostState.current
     val coroutineScope = rememberCoroutineScope()
 
     val snackBarMessage = translate(MR.strings.microphonePermissionDenied)
@@ -52,16 +52,16 @@ fun RequiresMicrophonePermission(
         if (isGranted) {
             onClick.invoke()
         } else {
-            //snackbar to open app system settings
+            //snackBar to open app system settings
             coroutineScope.launch {
 
-                val snackbarResult = snackbarHostState.showSnackbar(
+                val snackBarResult = snackBarHostState.showSnackbar(
                     message = snackBarMessage,
                     actionLabel = snackBarActionLabel,
                     duration = SnackbarDuration.Short,
                 )
 
-                if (snackbarResult == SnackbarResult.ActionPerformed) {
+                if (snackBarResult == SnackbarResult.ActionPerformed) {
                     MicrophonePermission.requestPermissionExternally()
                 }
             }

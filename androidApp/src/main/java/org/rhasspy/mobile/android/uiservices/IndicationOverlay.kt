@@ -40,14 +40,14 @@ object IndicationOverlay : KoinComponent {
     private var job: Job? = null
 
     private val overlayWindowManager by lazy {
-        AndroidApplication.Instance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        AndroidApplication.nativeInstance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     }
 
     /**
      * view that's displayed when a wake word is detected
      */
     private fun getView(): ComposeView {
-        return ComposeView(AndroidApplication.Instance).apply {
+        return ComposeView(AndroidApplication.nativeInstance).apply {
             setContent {
                 AppTheme {
                     Indication(viewModel.indicationState.collectAsState().value)

@@ -43,6 +43,7 @@ of [Rhasspy](https://rhasspy.readthedocs.io/en/latest/tutorials/#server-with-sat
 | Test configuration                | Test Rhasspy configuration while editing to simpler setup everything correctly.                                                                                    |
 | Save and restore settings         | Don't loose the Satellite configuration.                                                                                                                           |
 | Local Webserver                   | Hosts Hermes api to send commands to Rhasspy Satellite.                                                                                                            |
+| Intent                            | Start Recording via Intent<br/>`adb shell am start -a android.intent.action.MAIN -n org.rhasspy.mobile.android/.MainActivity --ez START_RECORDING 1`               |
 
 ## Rhasspy configuration
 

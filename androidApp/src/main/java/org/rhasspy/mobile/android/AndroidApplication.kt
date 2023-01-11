@@ -21,11 +21,11 @@ class AndroidApplication : Application() {
     private val logger = Logger.withTag("AndroidApplication")
 
     init {
-        Instance = this
+        nativeInstance = this
     }
 
     companion object {
-        lateinit var Instance: NativeApplication
+        lateinit var nativeInstance: NativeApplication
             private set
     }
 

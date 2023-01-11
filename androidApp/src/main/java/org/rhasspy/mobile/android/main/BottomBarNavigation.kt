@@ -58,15 +58,15 @@ fun BottomBarScreensNavigation(viewModel: HomeScreenViewModel = get()) {
 
     val navController = rememberNavController()
 
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackBarHostState = remember { SnackbarHostState() }
 
     CompositionLocalProvider(
         LocalNavController provides navController,
-        LocalSnackbarHostState provides snackbarHostState
+        LocalSnackbarHostState provides snackBarHostState
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            snackbarHost = { SnackbarHost(snackbarHostState) },
+            snackbarHost = { SnackbarHost(snackBarHostState) },
             bottomBar = { BottomNavigation(viewModel, navController) }
         ) { paddingValues ->
 

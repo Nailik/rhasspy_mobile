@@ -29,8 +29,10 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.AndroidApplication
+import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.main.MicrophoneFab
 import org.rhasspy.mobile.android.theme.AppTheme
+import org.rhasspy.mobile.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.overlay.MicrophoneOverlayViewModel
 
@@ -48,14 +50,22 @@ object MicrophoneOverlay : KoinComponent {
     private var job: Job? = null
 
     private val overlayWindowManager by lazy {
-        AndroidApplication.Instance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        AndroidApplication.nativeInstance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    }
+
+    private fun onClick() {
+        if(MicrophonePermission.granted.value) {
+            get<MicrophoneFabViewModel>().onClick()
+        } else {
+            MainActivity.startRecordingAction()
+        }
     }
 
     /**
      * view that's displayed as overlay to start wake word detection
      */
     private fun getView(): ComposeView {
-        return ComposeView(AndroidApplication.Instance).apply {
+        return ComposeView(AndroidApplication.nativeInstance).apply {
             setContent {
                 AppTheme {
                     val size by viewModel.microphoneOverlaySize.collectAsState()
@@ -73,7 +83,7 @@ object MicrophoneOverlay : KoinComponent {
                             },
                         iconSize = (size * 0.4).dp,
                         viewModel = microphoneViewModel,
-                        onClick = microphoneViewModel::onClick
+                        onClick = ::onClick
                     )
                 }
             }
