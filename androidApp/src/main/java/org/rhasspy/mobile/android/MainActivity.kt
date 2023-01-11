@@ -29,6 +29,7 @@ import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.android.main.MainNavigation
 import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
 
+
 /**
  * simple main activity to start application with splash screen
  */

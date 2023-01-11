@@ -38,6 +38,14 @@
             </intent-filter>
         </activity>
 
+        <receiver
+            android:name=".StartRecordingReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter android:priority="100">
+                <action android:name="org.rhasspy.mobile.android.action.START_RECORDING" />
+            </intent-filter>
+        </receiver>
 
         <provider
             android:name="androidx.core.content.FileProvider"
