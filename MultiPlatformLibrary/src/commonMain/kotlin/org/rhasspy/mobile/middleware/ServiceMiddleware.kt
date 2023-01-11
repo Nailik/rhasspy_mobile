@@ -57,7 +57,12 @@ class ServiceMiddleware : KoinComponent, Closeable {
                             _isPlayingRecording.value = true
                             shouldResumeHotWordService = AppSetting.isHotWordEnabled.value
                             appSettingsService.hotWordToggle(false)
+                            //suspend coroutine
                             localAudioService.playAudio(speechToTextService.speechToTextAudioData.toMutableList().addWavHeader())
+                            //resumes when play finished
+                            if(_isPlayingRecording.value) {
+                                action(Action.PlayStopRecording)
+                            }
                         }
                     }
                 }

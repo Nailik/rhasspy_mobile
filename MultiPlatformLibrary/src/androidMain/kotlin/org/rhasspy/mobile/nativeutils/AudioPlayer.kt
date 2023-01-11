@@ -129,7 +129,6 @@ actual class AudioPlayer : Closeable {
     }
 
     actual fun stop() {
-        onFinished?.invoke()
         audioTrack?.stop()
         mediaPlayer?.stop()
         notification?.stop()
@@ -137,6 +136,8 @@ actual class AudioPlayer : Closeable {
         mediaPlayer = null
         notification = null
         _isPlayingState.value = false
+        onFinished?.invoke()
+        onFinished = null
     }
 
     override fun close() {

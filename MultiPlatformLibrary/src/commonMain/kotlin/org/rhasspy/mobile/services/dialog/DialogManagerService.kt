@@ -99,7 +99,11 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
      * ends session
      */
     private suspend fun asrError(action: DialogAction.AsrError) {
-        if (isInCorrectState(action, DialogManagerServiceState.TranscribingIntent)) {
+        if (isInCorrectState(action, DialogManagerServiceState.TranscribingIntent, DialogManagerServiceState.RecordingIntent)) {
+
+            if(_currentDialogState.value == DialogManagerServiceState.RecordingIntent){
+                speechToTextService.endSpeechToText(sessionId ?: "", action.source is Source.Mqtt)
+            }
 
             timeoutJob?.cancel()
             indicationService.onError()
@@ -117,6 +121,10 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
      */
     private suspend fun asrTextCaptured(action: DialogAction.AsrTextCaptured) {
         if (isInCorrectState(action, DialogManagerServiceState.TranscribingIntent, DialogManagerServiceState.RecordingIntent)) {
+
+            if(_currentDialogState.value == DialogManagerServiceState.RecordingIntent){
+                speechToTextService.endSpeechToText(sessionId ?: "", action.source is Source.Mqtt)
+            }
 
             timeoutJob?.cancel()
             _currentDialogState.value = DialogManagerServiceState.RecognizingIntent
@@ -144,14 +152,19 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
      *
      * next step is to invoke ended session which will start a new one
      */
-    private fun endSession(action: DialogAction.EndSession) {
+    private suspend fun endSession(action: DialogAction.EndSession) {
         if (isInCorrectState(
                 action,
+                DialogManagerServiceState.RecordingIntent,
                 DialogManagerServiceState.HandlingIntent,
                 DialogManagerServiceState.TranscribingIntent,
                 DialogManagerServiceState.RecognizingIntent
             )
         ) {
+
+            if(_currentDialogState.value == DialogManagerServiceState.RecordingIntent){
+                speechToTextService.endSpeechToText(sessionId ?: "", action.source is Source.Mqtt)
+            }
 
             onAction(DialogAction.SessionEnded(Source.Local))
 
@@ -221,7 +234,8 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
     /**
      * stops to play the current audio
      */
-    private fun stopPlayAudio(action: DialogAction.StopAudioPlaying) {
+    @Suppress("UNUSED_PARAMETER")
+    private fun stopPlayAudio( action: DialogAction.StopAudioPlaying) {
 
         audioPlayingService.stopPlayAudio()
         onAction(DialogAction.PlayFinished(Source.Local))
