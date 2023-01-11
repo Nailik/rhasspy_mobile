@@ -116,7 +116,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
      * next step is to translate the text to an intent
      */
     private suspend fun asrTextCaptured(action: DialogAction.AsrTextCaptured) {
-        if (isInCorrectState(action, DialogManagerServiceState.TranscribingIntent)) {
+        if (isInCorrectState(action, DialogManagerServiceState.TranscribingIntent, DialogManagerServiceState.RecordingIntent)) {
 
             timeoutJob?.cancel()
             _currentDialogState.value = DialogManagerServiceState.RecognizingIntent
@@ -166,10 +166,14 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
     private suspend fun wakeWordDetected(action: DialogAction.WakeWordDetected) {
         if (isInCorrectState(action, DialogManagerServiceState.AwaitingWakeWord)) {
 
-            indicationService.onWakeWordDetected()
-            _currentDialogState.value = DialogManagerServiceState.Idle
-            informMqtt(action)
-            onAction(DialogAction.StartSession(Source.Local))
+            indicationService.onWakeWordDetected {
+
+                _currentDialogState.value = DialogManagerServiceState.Idle
+                coroutineScope.launch {
+                    informMqtt(action)
+                }
+                onAction(DialogAction.StartSession(Source.Local))
+            }
 
         }
     }
@@ -416,7 +420,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
                     is Source.Mqtt -> {
 
                         //exception
-                        if ((action is DialogAction.StopListening || action is DialogAction.IntentRecognitionResult) &&
+                        if ((action is DialogAction.AsrError || action is DialogAction.AsrTextCaptured) &&
                             get<SpeechToTextServiceParams>().speechToTextOption == SpeechToTextOption.RemoteMQTT
                         ) {
                             //don't ignore

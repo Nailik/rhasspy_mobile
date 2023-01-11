@@ -33,7 +33,7 @@ class IndicationService : IService(), KoinComponent {
     /**
      * wake up screen when hotword is detected and play sound eventually
      */
-    fun onWakeWordDetected() {
+    fun onWakeWordDetected(onFinished: () -> Unit) {
         logger.d { "onWakeWordDetected" }
         if (AppSetting.isWakeWordDetectionTurnOnDisplayEnabled.value) {
             NativeIndication.wakeUpScreen()
@@ -43,7 +43,9 @@ class IndicationService : IService(), KoinComponent {
         }
         _indicationState.value = IndicationState.WakeUp
         if (AppSetting.isSoundIndicationEnabled.value) {
-            localAudioService.playWakeSound()
+            localAudioService.playWakeSound(onFinished)
+        } else {
+            onFinished()
         }
     }
 

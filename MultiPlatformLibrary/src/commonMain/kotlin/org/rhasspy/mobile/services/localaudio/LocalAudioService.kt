@@ -51,20 +51,22 @@ class LocalAudioService : IService() {
         }
     }
 
-    fun playWakeSound() {
+    fun playWakeSound(onFinished: () -> Unit) {
         logger.d { "playWakeSound" }
         when (AppSetting.wakeSound.value) {
-            SoundOption.Disabled.name -> {}
+            SoundOption.Disabled.name -> { onFinished() }
             SoundOption.Default.name -> audioPlayer.playFileResource(
                 MR.files.etc_wav_beep_hi,
                 AppSetting.wakeSoundVolume.data,
-                AppSetting.soundIndicationOutputOption.value
-            )
+                AppSetting.soundIndicationOutputOption.value,
+                onFinished
+            ) { onFinished() }
             else -> audioPlayer.playSoundFile(
                 "${FolderType.SoundFolder.Wake}/${AppSetting.wakeSound.value}",
                 AppSetting.wakeSoundVolume.data,
-                AppSetting.soundIndicationOutputOption.value
-            )
+                AppSetting.soundIndicationOutputOption.value,
+                onFinished
+            ) { onFinished() }
         }
     }
 

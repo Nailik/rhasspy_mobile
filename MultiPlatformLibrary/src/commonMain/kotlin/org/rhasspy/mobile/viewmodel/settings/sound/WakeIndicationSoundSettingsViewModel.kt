@@ -67,7 +67,7 @@ class WakeIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel()
         if (isAudioPlaying.value) {
             localAudioService.stop()
         } else {
-            localAudioService.playWakeSound()
+            localAudioService.playWakeSound {}
         }
     }
 
