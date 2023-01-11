@@ -74,11 +74,12 @@ actual object FileUtils {
     /**
      * open document
      */
-    private suspend fun openDocument(folderType: FolderType): Uri? = suspendCoroutine { continuation ->
-        Application.nativeInstance.currentActivity?.openDocument(folderType.fileTypes) {
-            continuation.resume(it.data?.data)
+    private suspend fun openDocument(folderType: FolderType): Uri? =
+        suspendCoroutine { continuation ->
+            Application.nativeInstance.currentActivity?.openDocument(folderType.fileTypes) {
+                continuation.resume(it.data?.data)
+            }
         }
-    }
 
     /**
      * copy file to destination folder

@@ -117,7 +117,9 @@ fun AppIcon() {
 @Composable
 fun AppInformationChips(changelogText: String, onOpenSourceCode: () -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         DataPrivacyDialogButton()

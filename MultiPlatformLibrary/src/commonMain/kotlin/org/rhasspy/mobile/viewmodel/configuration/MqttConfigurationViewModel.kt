@@ -7,6 +7,7 @@ import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.combineAny
 import org.rhasspy.mobile.combineStateNotEquals
+import org.rhasspy.mobile.fileutils.FolderType
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.nativeutils.FileUtils
@@ -16,7 +17,6 @@ import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.services.mqtt.MqttServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.fileutils.FolderType
 import org.rhasspy.mobile.viewmodel.configuration.test.MqttConfigurationTest
 
 class MqttConfigurationViewModel : IConfigurationViewModel() {

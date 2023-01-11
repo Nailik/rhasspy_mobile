@@ -35,7 +35,8 @@ abstract class AppActivity : ComponentActivity() {
         resultCallback = onResult
         val intent = ActivityResultContracts.OpenDocument().createIntent(this, types)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val uriDownload: Uri = Uri.parse("content://com.android.externalstorage.documents/document/primary:Download")
+            val uriDownload: Uri =
+                Uri.parse("content://com.android.externalstorage.documents/document/primary:Download")
             intent.putExtra(EXTRA_INITIAL_URI, uriDownload)
         }
         someActivityResultLauncher.launch(intent)

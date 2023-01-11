@@ -6,6 +6,7 @@ import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.*
+import org.rhasspy.mobile.fileutils.FolderType
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.nativeutils.FileUtils
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
@@ -17,7 +18,6 @@ import org.rhasspy.mobile.settings.option.PorcupineKeywordOption
 import org.rhasspy.mobile.settings.option.PorcupineLanguageOption
 import org.rhasspy.mobile.settings.option.WakeWordOption
 import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
-import org.rhasspy.mobile.fileutils.FolderType
 import org.rhasspy.mobile.viewmodel.configuration.test.WakeWordConfigurationTest
 
 class WakeWordConfigurationViewModel : IConfigurationViewModel() {

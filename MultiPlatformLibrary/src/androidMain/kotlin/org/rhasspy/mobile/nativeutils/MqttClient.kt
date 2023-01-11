@@ -6,11 +6,11 @@ import org.eclipse.paho.client.mqttv3.*
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence
+import org.rhasspy.mobile.fileutils.FolderType
 import org.rhasspy.mobile.mqtt.*
 import org.rhasspy.mobile.mqtt.MqttMessage
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
-import org.rhasspy.mobile.fileutils.FolderType
 import java.io.File
 import java.security.KeyStore
 import javax.net.ssl.SSLContext

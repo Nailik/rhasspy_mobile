@@ -3,12 +3,12 @@ package org.rhasspy.mobile.viewmodel.settings.sound
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.combineState
+import org.rhasspy.mobile.fileutils.FolderType
 import org.rhasspy.mobile.mapReadonlyState
 import org.rhasspy.mobile.nativeutils.FileUtils
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.sounds.SoundFile
 import org.rhasspy.mobile.settings.sounds.SoundOption
-import org.rhasspy.mobile.fileutils.FolderType
 
 class RecordedIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel() {
 

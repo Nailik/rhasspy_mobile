@@ -62,7 +62,7 @@ class AndroidApplication : Application() {
             val restartIntent: Intent = Intent.makeRestartActivityTask(componentName)
             this.startActivity(restartIntent)
             Runtime.getRuntime().exit(0)
-        }catch (e: Exception){
+        } catch (e: Exception) {
             Runtime.getRuntime().exit(0)
         }
     }

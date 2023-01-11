@@ -9,8 +9,8 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.rhasspy.mobile.Application
-import org.rhasspy.mobile.settings.SettingsEnum
 import org.rhasspy.mobile.fileutils.FolderType
+import org.rhasspy.mobile.settings.SettingsEnum
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
@@ -59,7 +59,7 @@ actual object SettingsUtils {
                             val files = Application.nativeInstance.filesDir
                             FolderType.values().forEach { folderType ->
                                 File(files, folderType.toString()).walkTopDown().forEach { file ->
-                                    if(file.exists()) {
+                                    if (file.exists()) {
                                         if (file.isDirectory) {
                                             zipOutputStream.putNextEntry(ZipEntry("files/${folderType}/"))
                                             zipOutputStream.closeEntry()

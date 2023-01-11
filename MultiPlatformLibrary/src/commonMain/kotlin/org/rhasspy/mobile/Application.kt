@@ -55,7 +55,7 @@ abstract class Application : NativeApplication(), KoinComponent {
             modules(serviceModule, viewModelModule, factoryModule, nativeModule)
         }
 
-        if(!isDebug()) {
+        if (!isDebug()) {
             Logger.addLogWriter(
                 CrashlyticsLogWriter(
                     minSeverity = Severity.Info,

@@ -1,13 +1,16 @@
 # Rhasspy mobile
 
 This will be a Rhasspy satellite on a mobile phone. The original idea is
-from [rhasspy-mobile-app](https://github.com/razzo04/rhasspy-mobile-app). The latest Version can be found on the [PlayStore](https://play.google.com/store/apps/details?id=org.rhasspy.mobile.android) or in [Releases](https://github.com/Nailik/rhasspy_mobile/releases).
+from [rhasspy-mobile-app](https://github.com/razzo04/rhasspy-mobile-app). The latest Version can be
+found on the [PlayStore](https://play.google.com/store/apps/details?id=org.rhasspy.mobile.android)
+or in [Releases](https://github.com/Nailik/rhasspy_mobile/releases).
 
 [<img src="documentation/images/google-play-badge.png" height="75">](https://play.google.com/store/apps/details?id=org.rhasspy.mobile.android)
 
 ### Supported Devices
 
-The project uses Kotlin Multiplatform Mobile which supports a lot of platforms but is not implemented on each platform yet.
+The project uses Kotlin Multiplatform Mobile which supports a lot of platforms but is not
+implemented on each platform yet.
 
 | Platform | Support                              |
 |----------|--------------------------------------|
@@ -15,10 +18,10 @@ The project uses Kotlin Multiplatform Mobile which supports a lot of platforms b
 | iOS      | Not yet planned                      |
 | Other    | Open a discussion if your interested |
 
-
 ### Contribution
 
-Check out the project [Board](https://github.com/users/Nailik/projects/1) for open tasks, open a discussion or create your own pull-request. 
+Check out the project [Board](https://github.com/users/Nailik/projects/1) for open tasks, open a
+discussion or create your own pull-request.
 I am also happy for any feedback.
 
 ## Getting Started
@@ -59,6 +62,7 @@ of [Rhasspy](https://rhasspy.readthedocs.io/en/latest/tutorials/#server-with-sat
 
 # About
 
-This idea was born because [rhasspy-mobile-app](https://github.com/razzo04/rhasspy-mobile-app) seems 
-abandoned and not easy maintainable. It's for the many smart home users that have their Android Tablet 
+This idea was born because [rhasspy-mobile-app](https://github.com/razzo04/rhasspy-mobile-app) seems
+abandoned and not easy maintainable. It's for the many smart home users that have their Android
+Tablet
 to control their home and want to be able to use Rhasspy voice assistant.

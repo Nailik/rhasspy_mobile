@@ -89,7 +89,8 @@ fun BottomBarScreensNavigation(viewModel: HomeScreenViewModel = get()) {
                     })
                 ) {
                     ConfigurationScreen(
-                        scrollToError = it.arguments?.getBoolean(NavigationParams.ScrollToError.paramName) ?: false
+                        scrollToError = it.arguments?.getBoolean(NavigationParams.ScrollToError.paramName)
+                            ?: false
                     )
                 }
                 composable(BottomBarScreenType.SettingsScreen.route) {
