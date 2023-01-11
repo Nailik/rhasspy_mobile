@@ -124,7 +124,6 @@ object MicrophoneOverlay : KoinComponent {
 
         val view = getView()
 
-        overlayWindowManager.updateViewLayout(view, mParams.applySettings())
         view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
         ViewTreeLifecycleOwner.set(view, lifecycleOwner)
 
