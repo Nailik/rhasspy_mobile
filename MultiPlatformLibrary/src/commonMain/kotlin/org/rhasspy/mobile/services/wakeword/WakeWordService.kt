@@ -100,8 +100,6 @@ class WakeWordService : IService() {
                         logger.e(it.exception ?: Throwable()) { "porcupineError" }
                     }
                     _serviceState.value = error?.errorType?.serviceState ?: ServiceState.Success
-                } ?: run {
-                    logger.a { "start detection but not initialized" }
                 }
             }
             WakeWordOption.MQTT -> {} //nothing will wait for mqtt message

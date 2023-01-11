@@ -22,7 +22,6 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 
-
 @Composable
 fun ServiceStateHeader(viewModel: IConfigurationViewModel) {
 
@@ -118,7 +117,6 @@ private fun ServiceStateText(serviceState: ServiceState) {
             is ServiceState.Pending -> MR.strings.pending
             is ServiceState.Loading -> MR.strings.loading
             is ServiceState.Success -> MR.strings.success
-            is ServiceState.Warning -> MR.strings.warning
             is ServiceState.Error -> MR.strings.error
             is ServiceState.Exception -> MR.strings.error
             is ServiceState.Disabled -> MR.strings.disabled

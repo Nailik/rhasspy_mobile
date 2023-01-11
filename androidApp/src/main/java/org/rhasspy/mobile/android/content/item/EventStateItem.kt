@@ -19,8 +19,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.Icon
-import org.rhasspy.mobile.android.theme.on_color_warn
-import org.rhasspy.mobile.android.theme.warn
 import org.rhasspy.mobile.middleware.ServiceState
 
 @Composable
@@ -45,7 +43,6 @@ fun EventStateIcon(serviceState: ServiceState) {
             is ServiceState.Pending -> Icons.Outlined.Pending
             is ServiceState.Loading -> Icons.Outlined.RotateRight
             is ServiceState.Success -> Icons.Outlined.Done
-            is ServiceState.Warning -> Icons.Outlined.Warning
             is ServiceState.Error,
             is ServiceState.Exception -> Icons.Filled.Error
             is ServiceState.Disabled -> Icons.Outlined.Circle
@@ -54,7 +51,6 @@ fun EventStateIcon(serviceState: ServiceState) {
             is ServiceState.Pending -> MR.strings.pending
             is ServiceState.Loading -> MR.strings.loading
             is ServiceState.Success -> MR.strings.success
-            is ServiceState.Warning -> MR.strings.warning
             is ServiceState.Error,
             is ServiceState.Exception -> MR.strings.error
             is ServiceState.Disabled -> MR.strings.disabled
@@ -84,7 +80,6 @@ fun EventStateIconTinted(serviceState: ServiceState) {
             is ServiceState.Pending -> Icons.Outlined.Pending
             is ServiceState.Loading -> Icons.Outlined.RotateRight
             is ServiceState.Success -> Icons.Outlined.Done
-            is ServiceState.Warning -> Icons.Outlined.Warning
             is ServiceState.Error,
             is ServiceState.Exception -> Icons.Filled.Error
             is ServiceState.Disabled -> Icons.Outlined.Circle
@@ -93,7 +88,6 @@ fun EventStateIconTinted(serviceState: ServiceState) {
             is ServiceState.Pending -> MR.strings.pending
             is ServiceState.Loading -> MR.strings.loading
             is ServiceState.Success -> MR.strings.success
-            is ServiceState.Warning -> MR.strings.warning
             is ServiceState.Error,
             is ServiceState.Exception -> MR.strings.error
             is ServiceState.Disabled -> MR.strings.disabled
@@ -102,7 +96,6 @@ fun EventStateIconTinted(serviceState: ServiceState) {
             is ServiceState.Pending -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
             is ServiceState.Loading -> MaterialTheme.colorScheme.secondary
             is ServiceState.Success -> MaterialTheme.colorScheme.primary
-            is ServiceState.Warning -> MaterialTheme.colorScheme.warn
             is ServiceState.Error,
             is ServiceState.Exception -> MaterialTheme.colorScheme.errorContainer
             is ServiceState.Disabled -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
@@ -119,7 +112,6 @@ fun EventStateContent(
         is ServiceState.Pending -> MaterialTheme.colorScheme.onSurfaceVariant
         is ServiceState.Loading -> MaterialTheme.colorScheme.onSecondaryContainer
         is ServiceState.Success -> MaterialTheme.colorScheme.onPrimaryContainer
-        is ServiceState.Warning -> MaterialTheme.colorScheme.on_color_warn
         is ServiceState.Error,
         is ServiceState.Exception -> MaterialTheme.colorScheme.onErrorContainer
         is ServiceState.Disabled -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
@@ -146,7 +138,6 @@ fun EventStateCard(
                 is ServiceState.Pending -> MaterialTheme.colorScheme.surfaceVariant
                 is ServiceState.Loading -> MaterialTheme.colorScheme.secondaryContainer
                 is ServiceState.Success -> MaterialTheme.colorScheme.primaryContainer
-                is ServiceState.Warning -> MaterialTheme.colorScheme.warn
                 is ServiceState.Error,
                 is ServiceState.Exception -> MaterialTheme.colorScheme.errorContainer
                 is ServiceState.Disabled -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f)

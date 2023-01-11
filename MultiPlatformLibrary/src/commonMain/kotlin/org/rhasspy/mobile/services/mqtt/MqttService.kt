@@ -67,7 +67,7 @@ class MqttService : IService() {
                             _serviceState.value = subscribeTopics()
                             _isHasStarted.value = true
                         } else {
-                            _serviceState.value = ServiceState.Warning(MR.strings.notConnected)
+                            _serviceState.value = ServiceState.Error(MR.strings.notConnected)
                             logger.e { "client could not connect" }
                         }
                     } catch (exception: Exception) {
@@ -131,8 +131,6 @@ class MqttService : IService() {
             }
             //update value, may be used from reconnect
             _isConnected.value = it.isConnected.value == true
-        } ?: run {
-            logger.a { "connect but Client not initialized" }
         }
 
         return _isConnected.value

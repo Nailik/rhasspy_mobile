@@ -10,8 +10,6 @@ sealed class ServiceState {
 
     object Success : ServiceState()
 
-    class Warning(val information: StringResource) : ServiceState()
-
     class Exception(val exception: kotlin.Exception? = null) : ServiceState()
 
     class Error(val information: StringResource) : ServiceState()
