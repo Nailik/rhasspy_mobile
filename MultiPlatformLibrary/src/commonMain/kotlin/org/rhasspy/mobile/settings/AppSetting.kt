@@ -29,7 +29,7 @@ object AppSetting {
 
     val isWakeWordDetectionTurnOnDisplayEnabled =
         ISetting(SettingsEnum.BackgroundWakeWordDetectionTurnOnDisplay, false)
-    val isSoundIndicationEnabled = ISetting(SettingsEnum.SoundIndication, false)
+    val isSoundIndicationEnabled = ISetting(SettingsEnum.SoundIndication, true)
     val soundIndicationOutputOption =
         ISetting(SettingsEnum.SoundIndicationOutput, AudioOutputOption.Notification)
     val isWakeWordLightIndicationEnabled = ISetting(SettingsEnum.WakeWordLightIndication, false)
