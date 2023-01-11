@@ -4,15 +4,20 @@ import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.rhasspy.mobile.addWavHeader
+import org.rhasspy.mobile.combineState
+import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.dialog.DialogManagerService
 import org.rhasspy.mobile.services.dialog.DialogManagerServiceState
 import org.rhasspy.mobile.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.settings.AppSettingsService
 import org.rhasspy.mobile.services.speechtotext.SpeechToTextService
+import org.rhasspy.mobile.settings.AppSetting
 
 /**
  * handles ALL INCOMING events
@@ -26,20 +31,34 @@ class ServiceMiddleware : KoinComponent, Closeable {
     private val mqttService by inject<MqttService>()
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
+    private val _isPlayingRecording = MutableStateFlow(false)
+    val isPlayingRecording = _isPlayingRecording.readOnly
+    val isPlayingRecordingEnabled = combineState(_isPlayingRecording, dialogManagerService.currentDialogState) { playing, state ->
+        playing || (state == DialogManagerServiceState.Idle || state == DialogManagerServiceState.AwaitingWakeWord)
+    }
+
+    private var shouldResumeHotWordService = false
 
     fun action(action: Action) {
         coroutineScope.launch {
             when (action) {
                 is Action.PlayStopRecording -> {
-                    if (localAudioService.isPlayingState.value) {
-                        action(Action.DialogAction.StopAudioPlaying(Source.Local))
+                    if (_isPlayingRecording.value) {
+                        _isPlayingRecording.value = false
+                        if (shouldResumeHotWordService) {
+                            appSettingsService.hotWordToggle(true)
+                        }
+                        action(Action.DialogAction.PlayFinished(Source.Local))
                     } else {
-                        action(
-                            Action.DialogAction.PlayAudio(
-                                Source.Local,
-                                speechToTextService.speechToTextAudioData.toByteArray()
-                            )
-                        )
+                        if (dialogManagerService.currentDialogState.value == DialogManagerServiceState.Idle ||
+                            dialogManagerService.currentDialogState.value == DialogManagerServiceState.AwaitingWakeWord &&
+                            speechToTextService.speechToTextAudioData.isNotEmpty()
+                        ) {
+                            _isPlayingRecording.value = true
+                            shouldResumeHotWordService = AppSetting.isHotWordEnabled.value
+                            appSettingsService.hotWordToggle(false)
+                            localAudioService.playAudio(speechToTextService.speechToTextAudioData.toMutableList().addWavHeader())
+                        }
                     }
                 }
                 is Action.WakeWordError -> mqttService.wakeWordError(action.description)

@@ -68,7 +68,7 @@ sealed class Action {
         class PlayFinished(source: Source) : DialogAction(source)
 
         override fun toString(): String {
-            return "${this::class.simpleName} from ${source::class.simpleName}"
+            return "${this::class.simpleName ?: super.toString()} from $source"
         }
     }
 }

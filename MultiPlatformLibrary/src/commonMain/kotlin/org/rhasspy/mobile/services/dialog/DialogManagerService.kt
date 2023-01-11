@@ -5,7 +5,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
 import org.koin.core.component.inject
-import org.rhasspy.mobile.addWavHeader
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action.DialogAction
 import org.rhasspy.mobile.middleware.ServiceState
@@ -208,32 +207,21 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
      * play the audio
      */
     private suspend fun playAudio(action: DialogAction.PlayAudio) {
-        if (isInCorrectState(
-                action,
-                DialogManagerServiceState.HandlingIntent,
-                DialogManagerServiceState.Idle,
-                DialogManagerServiceState.AwaitingWakeWord
-            )
-        ) {
 
-            _currentDialogState.value = DialogManagerServiceState.PlayingAudio
-            wakeWordService.stopDetection()
-            indicationService.onPlayAudio()
-            audioPlayingService.playAudio(action.byteArray.toMutableList().addWavHeader().toList())
+        indicationService.onPlayAudio()
+        audioPlayingService.stopPlayAudio()
+        audioPlayingService.playAudio(action.byteArray.toMutableList())
 
-        }
     }
 
     /**
      * stops to play the current audio
      */
     private fun stopPlayAudio(action: DialogAction.StopAudioPlaying) {
-        if (isInCorrectState(action, DialogManagerServiceState.PlayingAudio)) {
 
-            audioPlayingService.stopPlayAudio()
-            onAction(DialogAction.PlayFinished(Source.Local))
+        audioPlayingService.stopPlayAudio()
+        onAction(DialogAction.PlayFinished(Source.Local))
 
-        }
     }
 
     /**
@@ -244,14 +232,17 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
      * tell mqtt (if source is not mqtt)
      */
     private suspend fun playFinished(action: DialogAction.PlayFinished) {
-        if (isInCorrectState(action, DialogManagerServiceState.PlayingAudio)) {
 
-            indicationService.onIdle()
-            _currentDialogState.value = DialogManagerServiceState.AwaitingWakeWord
-            informMqtt(action)
-            wakeWordService.startDetection()
-
+        when(_currentDialogState.value){
+            DialogManagerServiceState.Idle,
+            DialogManagerServiceState.AwaitingWakeWord -> indicationService.onIdle()
+            DialogManagerServiceState.RecordingIntent -> indicationService.onListening()
+            DialogManagerServiceState.TranscribingIntent,
+            DialogManagerServiceState.RecognizingIntent,
+            DialogManagerServiceState.HandlingIntent -> indicationService.onThinking()
         }
+        informMqtt(action)
+
     }
 
     /**
