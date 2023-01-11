@@ -6,6 +6,7 @@ import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 plugins {
     kotlin("multiplatform")
@@ -35,7 +36,7 @@ kotlin {
         podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "MultiPlatformLibrary"
-            isStatic = true
+            isStatic = false
         }
     }
 
@@ -100,8 +101,10 @@ kotlin {
                 implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
             }
         }
+        val androidAndroidTestRelease by getting
         val androidTest by getting {
             dependsOn(commonMain)
+            dependsOn(androidAndroidTestRelease)
             dependencies {
                 implementation(Kotlin.Test.junit)
                 implementation(Kotlin.test)
@@ -132,6 +135,25 @@ kotlin {
     }
 
     crashlyticsLinkerConfig()
+
+    afterEvaluate {
+        project.extensions.findByType<KotlinMultiplatformExtension>()?.let { ext ->
+            ext.sourceSets {
+                // Workaround for:
+                //
+                // The Kotlin source set androidXXXXX was configured but not added to any
+                // Kotlin compilation. You can add a source set to a target's compilation by connecting it
+                // with the compilation's default source set using 'dependsOn'.
+                // See https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#connecting-source-sets
+                sequenceOf("TestFixtures").forEach { artifact ->
+                    sequenceOf("", "Release", "Debug").forEach { variant ->
+                        findByName("android$artifact$variant")
+                            ?.let(::remove)
+                    }
+                }
+            }
+        }
+    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
