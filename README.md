@@ -9,11 +9,11 @@ from [rhasspy-mobile-app](https://github.com/razzo04/rhasspy-mobile-app). The la
 
 The project uses Kotlin Multiplatform Mobile which supports a lot of platforms but is not implemented on each platform yet.
 
-| Platform | Support                             |
-|----------|-------------------------------------|
-| Android  | Android 6.0 (API level 23)          |
-| iOS      | Not yet planned                     |
-| Other    | Open a discussion if your interesed |
+| Platform | Support                              |
+|----------|--------------------------------------|
+| Android  | Android 6.0 (API level 23)           |
+| iOS      | Not yet planned                      |
+| Other    | Open a discussion if your interested |
 
 
 ### Contribution
