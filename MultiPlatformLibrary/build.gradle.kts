@@ -6,7 +6,6 @@ import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 plugins {
     kotlin("multiplatform")
@@ -101,7 +100,6 @@ kotlin {
                 implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
             }
         }
-        val androidAndroidTestRelease by getting
         val androidTest by getting {
             dependsOn(commonMain)
             dependencies {
@@ -135,18 +133,7 @@ kotlin {
 
     crashlyticsLinkerConfig()
 
-    afterEvaluate {
-        // Remove log pollution until Android support in KMP improves.
-        project.extensions.findByType<KotlinMultiplatformExtension>()?.let { kmpExt ->
-            kmpExt.sourceSets.removeAll {
-                setOf(
-                    "androidTestFixtures",
-                    "androidTestFixturesDebug",
-                    "androidTestFixturesRelease",
-                ).contains(it.name)
-            }
-        }
-    }
+
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
