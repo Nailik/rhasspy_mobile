@@ -127,6 +127,7 @@ abstract class IndicationSoundScreenTest(
         composeTestRule.onNodeWithCombinedTag(fileName, TestTag.Delete).performClick()
         composeTestRule.awaitIdle()
         awaitFrame()
+        composeTestRule.awaitIdle()
 
         //file is removed
         composeTestRule.onNodeWithTag(fileName).assertDoesNotExist()
