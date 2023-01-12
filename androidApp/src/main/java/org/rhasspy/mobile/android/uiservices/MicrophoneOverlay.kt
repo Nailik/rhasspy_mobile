@@ -3,11 +3,14 @@ package org.rhasspy.mobile.android.uiservices
 import android.content.Context
 import android.graphics.PixelFormat
 import android.os.Build
+import android.os.Looper
 import android.view.Gravity
+import android.view.View
 import android.view.WindowManager
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
@@ -17,65 +20,83 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import co.touchlab.kermit.Logger
-import dev.icerock.moko.mvvm.livedata.MediatorLiveData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.AndroidApplication
-import org.rhasspy.mobile.android.bottomBarScreens.Fab
+import org.rhasspy.mobile.android.MainActivity
+import org.rhasspy.mobile.android.main.MicrophoneFab
 import org.rhasspy.mobile.android.theme.AppTheme
-import org.rhasspy.mobile.nativeutils.OverlayPermission
-import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.nativeutils.MicrophonePermission
+import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
+import org.rhasspy.mobile.viewmodel.overlay.MicrophoneOverlayViewModel
 
-object MicrophoneOverlay {
+/**
+ * show overlay with microphone button
+ */
+object MicrophoneOverlay : KoinComponent {
     private val logger = Logger.withTag("MicrophoneOverlay")
 
     private lateinit var mParams: WindowManager.LayoutParams
     private val lifecycleOwner = CustomLifecycleOwner()
 
+    private var viewModel = get<MicrophoneOverlayViewModel>()
+
+    private var job: Job? = null
+
     private val overlayWindowManager by lazy {
-        AndroidApplication.Instance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        AndroidApplication.nativeInstance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     }
 
+    private fun onClick() {
+        if(MicrophonePermission.granted.value) {
+            get<MicrophoneFabViewModel>().onClick()
+        } else {
+            MainActivity.startRecordingAction()
+        }
+    }
 
     /**
      * view that's displayed as overlay to start wake word detection
      */
-    private val view: ComposeView = ComposeView(AndroidApplication.Instance).apply {
-        setContent {
-            AppTheme(false) {
-                val size = 96.dp
+    private fun getView(): ComposeView {
+        return ComposeView(AndroidApplication.nativeInstance).apply {
+            setContent {
+                AppTheme {
+                    val size by viewModel.microphoneOverlaySize.collectAsState()
 
-                Fab(
-                    modifier = Modifier
-                        .size(96.dp)
-                        .padding(10.dp)
-                        .pointerInput(Unit) {
-                            detectDragGestures { change, dragAmount ->
-                                change.consume()
-                                onDragVertical(dragAmount)
-                            }
-                        },
-                    iconSize = (size.value * 0.4).dp,
-                    snackbarHostState = null,
-                    viewModel = viewModel()
-                )
+                    val microphoneViewModel = get<MicrophoneFabViewModel>()
+
+                    MicrophoneFab(
+                        modifier = Modifier
+                            .size(size.dp)
+                            .pointerInput(Unit) {
+                                detectDragGestures { change, dragAmount ->
+                                    change.consume()
+                                    onDrag(dragAmount, this@apply)
+                                }
+                            },
+                        iconSize = (size * 0.4).dp,
+                        viewModel = microphoneViewModel,
+                        onClick = ::onClick
+                    )
+                }
             }
         }
     }
 
-    private fun onDragVertical(delta: Offset) {
-        mParams.apply {
-            //apply
-            x = (x + delta.x).toInt()
-            y = (y + delta.y).toInt()
-            gravity = Gravity.NO_GRAVITY
-            //save
-            AppSettings.isMicrophoneOverlayPositionX.value = x
-            AppSettings.isMicrophoneOverlayPositionY.value = y
-        }
+
+    private fun onDrag(delta: Offset, view: View) {
+        viewModel.updateMicrophoneOverlayPosition(delta.x, delta.y)
+        mParams.applySettings()
         overlayWindowManager.updateViewLayout(view, mParams)
     }
+
 
     init {
         @Suppress("DEPRECATION")
@@ -89,64 +110,70 @@ object MicrophoneOverlay {
                         or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
                         or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
-            ).apply {
-                x = AppSettings.isMicrophoneOverlayPositionX.value
-                y = AppSettings.isMicrophoneOverlayPositionY.value
-                gravity = Gravity.NO_GRAVITY
-            }
+            ).applySettings()
         }
-
         lifecycleOwner.performRestore(null)
         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
-        ViewTreeLifecycleOwner.set(view, lifecycleOwner)
-        view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
-
-        val viewModelStore = ViewModelStore()
-        ViewTreeViewModelStoreOwner.set(view) { viewModelStore }
     }
 
-    //stores old value to only react to changes
-    private var shouldBeShownOldValue = false
 
-
-    private val shouldBeShown = MediatorLiveData(false)
+    private fun WindowManager.LayoutParams.applySettings(): WindowManager.LayoutParams {
+        //apply
+        x = viewModel.microphoneOverlayPositionX
+        y = viewModel.microphoneOverlayPositionY
+        gravity = Gravity.NO_GRAVITY
+        //save
+        return this
+    }
 
     /**
      * start service, listen to showVisualIndication and show the overlay or remove it when necessary
      */
     fun start() {
+        viewModel = get()
+
+        val view = getView()
+
+        view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
+        ViewTreeLifecycleOwner.set(view, lifecycleOwner)
+
+        val viewModelStore = ViewModelStore()
+        ViewTreeViewModelStoreOwner.set(view) { viewModelStore }
+
+        if (job?.isActive == true) {
+            return
+        }
         logger.d { "start" }
 
-        shouldBeShown.addSource(OverlayPermission.granted) {
-            shouldBeShown.value = getShouldBeShown()
-        }
-        shouldBeShown.addSource(AppSettings.isMicrophoneOverlayEnabled.data.toLiveData()) {
-            shouldBeShown.value = getShouldBeShown()
-        }
-        shouldBeShown.addSource(AndroidApplication.isAppInBackground) {
-            shouldBeShown.value = getShouldBeShown()
-        }
-        shouldBeShown.addSource(AppSettings.isMicrophoneOverlayWhileApp.data.toLiveData()) {
-            shouldBeShown.value = getShouldBeShown()
-        }
-
-        shouldBeShown.addObserver {
-            if (it != shouldBeShownOldValue) {
+        job = CoroutineScope(Dispatchers.Default).launch {
+            viewModel.shouldOverlayBeShown.collect {
                 if (it) {
-                    overlayWindowManager.addView(view, mParams)
-                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                    if (Looper.myLooper() == null) {
+                        Looper.prepare()
+                    }
+                    CoroutineScope(Dispatchers.Main).launch {
+                        overlayWindowManager.addView(view, mParams)
+                        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                    }
                 } else {
-                    overlayWindowManager.removeView(view)
-                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+                    CoroutineScope(Dispatchers.Main).launch {
+                        try {
+                            overlayWindowManager.removeView(view)
+                            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+                        } catch (exception: Exception) {
+                            //remove view may throw not attached to window manager
+                        }
+                    }
                 }
-                shouldBeShownOldValue = it
             }
         }
-
     }
 
-    private fun getShouldBeShown(): Boolean {
-        return OverlayPermission.granted.value && AppSettings.isMicrophoneOverlayEnabled.value &&
-                (AndroidApplication.isAppInBackground.value || AppSettings.isMicrophoneOverlayWhileApp.value)
+    /**
+     * stop overlay service
+     */
+    fun stop() {
+        job?.cancel()
+        job = null
     }
 }

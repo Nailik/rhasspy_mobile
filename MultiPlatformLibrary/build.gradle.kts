@@ -1,7 +1,12 @@
+@file:Suppress("UnstableApiUsage")
+
+import co.touchlab.faktory.crashlyticsLinkerConfig
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 plugins {
     kotlin("multiplatform")
@@ -11,7 +16,7 @@ plugins {
     id("dev.icerock.mobile.multiplatform-resources")
     id("com.mikepenz.aboutlibraries.plugin")
     id("com.codingfeline.buildkonfig")
-    id("org.sonarqube") version "3.3"
+    id("org.sonarqube")
 }
 
 version = Version.toString()
@@ -31,6 +36,7 @@ kotlin {
         podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "MultiPlatformLibrary"
+            isStatic = false
         }
     }
 
@@ -47,11 +53,8 @@ kotlin {
                 implementation(kotlin("stdlib-common"))
                 implementation(kotlin("stdlib"))
                 implementation(Touchlab.kermit)
+                implementation(Touchlab.Kermit.crashlytics)
                 implementation(Icerock.Mvvm.core)
-                implementation(Icerock.Mvvm.state)
-                implementation(Icerock.Mvvm.livedata)
-                implementation(Icerock.Mvvm.livedataResources)
-                runtimeOnly(Icerock.permissions)
                 implementation(Icerock.Resources)
                 implementation(Russhwolf.multiplatformSettings)
                 implementation(Russhwolf.multiplatformSettingsNoArg)
@@ -59,14 +62,16 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Ktor.Client.core)
-                implementation(Ktor.Client.websockets)
-                implementation(Ktor.Network.network)
+                implementation(Ktor.plugins.network)
                 implementation(Ktor2.Server.core)
                 implementation(Ktor2.Server.cors)
-                implementation(Ktor2.Server.dataConversion)
                 implementation(Ktor2.Server.cio)
+                implementation(Ktor2.Server.dataConversion)
                 implementation(Ktor2.Client.cio)
+                implementation(Ktor.Server.statusPages)
+                implementation(Ktor.Plugins.network)
                 implementation(Benasher.uuid)
+                implementation(Koin.core)
             }
         }
         val commonTest by getting {
@@ -77,31 +82,31 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                implementation(AndroidX.lifecycle.process)
                 implementation(AndroidX.Fragment.ktx)
                 implementation(AndroidX.Compose.foundation)
                 implementation(AndroidX.multidex)
                 implementation(AndroidX.window)
                 implementation(AndroidX.activity)
+                implementation(AndroidX.documentFile)
                 implementation(AndroidX.Compose.ui)
                 implementation(AndroidX.Compose.material3)
                 implementation(Icerock.Resources.resourcesCompose)
                 implementation(Picovoice.porcupineAndroid)
-                implementation(Ktor.Client.cio)
-                implementation(Ktor.Server.core)
-                implementation(Ktor.Server.netty)
-                implementation(Ktor.Network.network)
                 implementation(Slf4j.simple)
                 implementation(Ktor2.Server.compression)
                 implementation(Ktor2.Server.callLogging)
+                implementation(Ktor.Server.netty)
+                implementation(Ktor.Plugins.networkTlsCertificates)
                 implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
             }
         }
         val androidTest by getting {
+            dependsOn(commonMain)
             dependencies {
                 implementation(Kotlin.Test.junit)
                 implementation(Kotlin.test)
                 implementation(Kotlin.Test.junit)
-                implementation(AndroidX.Test.Espresso.core)
                 implementation(AndroidX.Compose.Ui.testJunit4)
                 implementation(AndroidX.Compose.Ui.testManifest)
             }
@@ -126,18 +131,46 @@ kotlin {
             iosSimulatorArm64Test.dependsOn(this)
         }
     }
+
+    crashlyticsLinkerConfig()
+
+    afterEvaluate {
+        // Remove log pollution until Android support in KMP improves.
+        project.extensions.findByType<KotlinMultiplatformExtension>()?.let { kmpExt ->
+            kmpExt.sourceSets.removeAll {
+                setOf(
+                    "androidTestFixtures",
+                    "androidTestFixturesDebug",
+                    "androidTestFixturesRelease",
+                ).contains(it.name)
+            }
+        }
+    }
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions.freeCompilerArgs += "-opt-in=co.touchlab.kermit.ExperimentalKermitApi"
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+
 android {
-    compileSdk = 32
+    compileSdk = 33
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    if (Os.isFamily(Os.FAMILY_MAC)) {
+        sourceSets.getByName("main").res.srcDir(File(buildDir, "generated/moko/androidMain/res"))
+    }
+
     defaultConfig {
         minSdk = 23
-        targetSdk = 32
     }
     packagingOptions {
         resources.pickFirsts.add("META-INF/*")
     }
+    namespace = "org.rhasspy.mobile"
 }
 
 multiplatformResources {
@@ -181,7 +214,13 @@ fun generateChangelog(): String {
         exec {
             standardOutput = os
             commandLine = listOf("git")
-            args = listOf("log", "$lastTag..develop", "--merges", "--first-parent", "--pretty=format:\"%b\"\\\\")
+            args = listOf(
+                "log",
+                "$lastTag..develop",
+                "--merges",
+                "--first-parent",
+                "--pretty=format:\"%b\"\\\\"
+            )
         }
         val changelog = String(os.toByteArray()).trim()
         os.close()
@@ -202,13 +241,6 @@ tasks.withType<Test> {
         showStackTraces = true
     }
 }
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
-
 sonarqube {
     properties {
         property("sonar.projectKey", "Nailik_rhasspy_mobile")
@@ -229,7 +261,9 @@ tasks.findByPath("preBuild")!!.dependsOn(createVersionTxt)
 val increaseCodeVersion = tasks.register("increaseCodeVersion") {
     doLast {
         File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
-            it.writeText(it.readText().replace("code = ${Version.code}", "code = ${Version.code + 1}"))
+            it.writeText(
+                it.readText().replace("code = ${Version.code}", "code = ${Version.code + 1}")
+            )
         }
     }
 }
@@ -237,7 +271,9 @@ val increaseCodeVersion = tasks.register("increaseCodeVersion") {
 tasks.register("increasePatchCodeVersion") {
     doLast {
         File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
-            it.writeText(it.readText().replace("patch = ${Version.patch}", "patch = ${Version.patch + 1}"))
+            it.writeText(
+                it.readText().replace("patch = ${Version.patch}", "patch = ${Version.patch + 1}")
+            )
         }
     }
 }
@@ -245,7 +281,9 @@ tasks.register("increasePatchCodeVersion") {
 tasks.register("increaseMinorCodeVersion") {
     doLast {
         File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
-            it.writeText(it.readText().replace("minor = ${Version.minor}", "minor = ${Version.minor + 1}"))
+            it.writeText(
+                it.readText().replace("minor = ${Version.minor}", "minor = ${Version.minor + 1}")
+            )
         }
     }
 }
@@ -253,7 +291,9 @@ tasks.register("increaseMinorCodeVersion") {
 tasks.register("increaseMajorCodeVersion") {
     doLast {
         File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
-            it.writeText(it.readText().replace("major = ${Version.major}", "major = ${Version.major + 1}"))
+            it.writeText(
+                it.readText().replace("major = ${Version.major}", "major = ${Version.major + 1}")
+            )
         }
     }
 }

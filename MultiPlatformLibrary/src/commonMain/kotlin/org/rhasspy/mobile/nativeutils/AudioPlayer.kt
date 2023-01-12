@@ -1,20 +1,74 @@
 package org.rhasspy.mobile.nativeutils
 
 import dev.icerock.moko.resources.FileResource
-import org.rhasspy.mobile.observer.Observable
+import io.ktor.utils.io.core.*
+import kotlinx.coroutines.flow.StateFlow
+import org.rhasspy.mobile.settings.option.AudioOutputOption
 
+/**
+ * plays audio on the device
+ *
+ * some data (Byte list)
+ * File resource
+ * specific file
+ */
 @Suppress("NO_ACTUAL_FOR_EXPECT")
-expect object AudioPlayer {
+expect class AudioPlayer() : Closeable {
 
-    val isPlayingState: Observable<Boolean>
+    /**
+     * represents if audio player is currently playing
+     */
+    val isPlayingState: StateFlow<Boolean>
 
-    fun playData(data: List<Byte>, onFinished: () -> Unit)
+    /**
+     * play byte list
+     *
+     * on Finished is called when playing has been finished
+     * on Error is called when an playback error occurs
+     */
+    fun playData(
+        data: List<Byte>,
+        volume: Float,
+        audioOutputOption: AudioOutputOption,
+        onFinished: (() -> Unit)? = null,
+        onError: ((exception: Exception?) -> Unit)? = null
+    )
 
-    fun stopPlayingData()
+    /**
+     * play file from resources
+     *
+     * volume is the playback volume, can be changed live
+     * audio output option defines the channel (sound or notification)
+     * on Finished is called when playing has been finished
+     * on Error is called when an playback error occurs
+     */
+    fun playFileResource(
+        fileResource: FileResource,
+        volume: StateFlow<Float>,
+        audioOutputOption: AudioOutputOption,
+        onFinished: (() -> Unit)? = null,
+        onError: ((exception: Exception?) -> Unit)? = null
+    )
 
-    fun playSoundFileResource(fileResource: FileResource)
+    /**
+     * play file from storage
+     *
+     * volume is the playback volume, can be changed live
+     * audio output option defines the channel (sound or notification)
+     * on Finished is called when playing has been finished
+     * on Error is called when an playback error occurs
+     */
+    fun playSoundFile(
+        filename: String,
+        volume: StateFlow<Float>,
+        audioOutputOption: AudioOutputOption,
+        onFinished: (() -> Unit)? = null,
+        onError: ((exception: Exception?) -> Unit)? = null
+    )
 
-    fun playSoundFile(filename: String)
-
+    /**
+     * stop playback
+     */
+    fun stop()
 
 }

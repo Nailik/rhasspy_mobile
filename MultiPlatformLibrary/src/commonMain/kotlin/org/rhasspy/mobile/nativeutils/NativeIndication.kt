@@ -7,12 +7,12 @@ package org.rhasspy.mobile.nativeutils
 expect object NativeIndication {
 
     /**
-     * wake up screen as long as possible
+     * wake up screen if possible
      */
     fun wakeUpScreen()
 
     /**
-     * remote wake up and let screen go off
+     * remove wake lock and let screen go off
      */
     fun releaseWakeUp()
 

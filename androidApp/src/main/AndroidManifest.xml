@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="org.rhasspy.mobile.android">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -10,29 +9,43 @@
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
     <uses-permission-sdk-23 android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+    <uses-permission
+        android:name="com.google.android.gms.permission.AD_ID"
+        tools:node="remove" />
 
     <application
         android:name="org.rhasspy.mobile.android.AndroidApplication"
+        android:enableOnBackInvokedCallback="true"
+        android:exported="true"
         android:icon="@drawable/ic_launcher"
         android:label="Rhasspy Mobile"
         android:supportsRtl="true"
-        tools:ignore="Instantiatable">
+        tools:ignore="Instantiatable,UnusedAttribute">
         <service
-            android:name="org.rhasspy.mobile.nativeutils.NativeServiceInterop"
+            android:name="org.rhasspy.mobile.nativeutils.BackgroundService"
             android:foregroundServiceType="microphone" />
 
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/AppTheme.AppSplash"
-            android:windowSoftInputMode="adjustResize">
+            android:theme="@style/AppTheme.AppSplash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <receiver
+            android:name=".StartRecordingReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter android:priority="100">
+                <action android:name="org.rhasspy.mobile.android.action.START_RECORDING" />
+            </intent-filter>
+        </receiver>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -43,6 +56,19 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/share_file_paths" />
         </provider>
+
+        <receiver
+            android:name=".widget.MicrophoneWidgetReceiver"
+            android:enabled="@bool/glance_appwidget_available"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/microphone_widget" />
+        </receiver>
 
     </application>
 </manifest> 

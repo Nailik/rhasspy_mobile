@@ -1,30 +1,33 @@
 package org.rhasspy.mobile.nativeutils
 
-import org.rhasspy.mobile.mqtt.*
+import kotlinx.coroutines.flow.StateFlow
+import org.rhasspy.mobile.mqtt.MqttError
+import org.rhasspy.mobile.mqtt.MqttMessage
+import org.rhasspy.mobile.mqtt.MqttPersistence
+import org.rhasspy.mobile.mqtt.MqttQos
+import org.rhasspy.mobile.services.mqtt.MqttServiceConnectionOptions
 
-/** Represents a MQTT client which can connect to the MQTT Broker. */
+/**
+ * Represents a MQTT client which can connect to the MQTT Broker.
+ */
 @Suppress("NO_ACTUAL_FOR_EXPECT")
 expect class MqttClient(
-    /**
-     * The MQTT Broker address which is comprised of a protocol, IPv4 address/FQDN, and port. Here is a example:
-     * `tcp://192.168.1.1:1883`
-     */
+    //The MQTT Broker address which is comprised of a protocol, IPv4 address/FQDN, and port. Here is a example:`tcp://192.168.1.1:1883`
     brokerUrl: String,
-    /** Unique MQTT client identifier. */
-    clientId: String = "Default",
+    //unique MQTT client identifier.
+    clientId: String,
     persistenceType: MqttPersistence = MqttPersistence.NONE,
-    /** Handles the deliveryComplete event. First argument is the delivery token. */
+    //Handles the deliveryComplete event. First argument is the delivery token.
     onDelivered: (token: Int) -> Unit,
-    /**
-     * Handles the messageArrived event. First argument is the topic. Second argument is the
-     * [message][MqttMessage].
-     */
+    //Handles the messageArrived event. First argument is the topic. Second argument is the [message][MqttMessage].
     onMessageReceived: (topic: String, message: MqttMessage) -> Unit,
-    /** Handles the connectionLost event. First argument is the cause. */
+    //Handles the connectionLost event. First argument is the cause.
     onDisconnect: (error: Throwable) -> Unit
 ) {
-    /** If *true* then there is a connection to the MQTT Broker. */
-    val isConnected: Boolean
+    /**
+     * If *true* then there is a connection to the MQTT Broker.
+     **/
+    val isConnected: StateFlow<Boolean>
 
     /**
      * Publishes a message to the MQTT Broker.
@@ -46,22 +49,15 @@ expect class MqttClient(
     suspend fun subscribe(topic: String, qos: MqttQos = MqttQos.AT_MOST_ONCE): MqttError?
 
     /**
-     * Will unsubscribe from one or more topics.
-     * @param topics One or more topics to unsubscribe from. Can include topic filter(s).
-     * @return Will return a error if a problem has occurred.
-     */
-    suspend fun unsubscribe(vararg topics: String): MqttError?
-
-    /**
      * Connects to the MQTT Broker.
      * @param connOptions The connection options to use.
      * @return Will return a [error][MqttError] if a problem has occurred.
      */
-    suspend fun connect(connOptions: MqttConnectionOptions): MqttError?
+    suspend fun connect(connOptions: MqttServiceConnectionOptions): MqttError?
 
     /**
      * Disconnects from the MQTT Broker.
      * @return Will return a [error][MqttError] if a problem has occurred.
      */
-    suspend fun disconnect(): MqttError?
+    fun disconnect(): MqttError?
 }

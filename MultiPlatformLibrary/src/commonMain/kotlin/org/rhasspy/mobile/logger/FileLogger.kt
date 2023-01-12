@@ -14,18 +14,21 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.rhasspy.mobile.nativeutils.FileWriter
-import org.rhasspy.mobile.settings.AppSettings
+import org.rhasspy.mobile.readOnly
+import org.rhasspy.mobile.settings.AppSetting
 
 object FileLogger : LogWriter() {
-    private val logger = Logger.withTag("FileLogger")
-
-    val flow = MutableSharedFlow<LogElement>()
-
     //create new file when logfile is 2 MB
     private val fileWriter = FileWriter("logfile.txt", 2000)
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
+    private val _flow = MutableSharedFlow<LogElement>()
+    val flow = _flow.readOnly
+
     init {
+        Logger.setMinSeverity(AppSetting.logLevel.value.severity)
+
+        //create initial log file
         if (fileWriter.createFile()) {
             fileWriter.appendText(
                 Json.encodeToString(
@@ -39,28 +42,49 @@ object FileLogger : LogWriter() {
                 )
             )
         }
-
-        AppSettings.logLevel.data.observe {
-            if (Logger.config.minSeverity != it.severity) {
-                Logger.setMinSeverity(it.severity)
-                logger.a { "changed log level to ${it.severity}" }
-            }
-        }
     }
 
+    /**
+     * override log function to append text to file
+     */
     override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
-
         coroutineScope.launch {
-            val element = LogElement(Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(), severity, tag, message, throwable?.message)
+            val element = LogElement(
+                Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(),
+                severity,
+                tag,
+                message,
+                throwable?.message
+            )
             fileWriter.appendText(",${Json.encodeToString(element)}")
-            flow.emit(element)
+            _flow.emit(element)
         }
     }
 
-    fun getLines(): List<LogElement> = Json.decodeFromString("[${fileWriter.getFileContent()}]")
+    /**
+     * read all lines from file
+     */
+    fun getLines(): List<LogElement> {
+        return try {
+            Json.decodeFromString("[${fileWriter.getFileContent()}]")
+        } catch (exception: Exception) {
+            fileWriter.clearFile()
+            listOf()
+        }
+    }
 
+    /**
+     * share the log file
+     */
     fun shareLogFile() = fileWriter.shareFile()
 
-    fun saveLogFile() = fileWriter.saveFile("rhasspy_logfile_${Clock.System.now().toLocalDateTime(TimeZone.UTC)}.txt")
+    /**
+     * save log to external file
+     */
+    fun saveLogFile() = fileWriter.copyFile(
+        "rhasspy_logfile_${
+            Clock.System.now().toLocalDateTime(TimeZone.UTC)
+        }.txt", "text/txt"
+    )
 
 }
