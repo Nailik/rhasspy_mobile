@@ -80,14 +80,11 @@ class RecordingService : IService() {
             if (volume < AppSetting.automaticSilenceDetectionAudioLevel.value) {
                 //no data was above threshold, there is silence
                 silenceStartTime?.also {
-                    logger.d { "silenceDetected" }
                     //check if silence was detected for x milliseconds
                     if (it.minus(Clock.System.now()) < -AppSetting.automaticSilenceDetectionTime.value.milliseconds) {
-                        logger.d { "silenceDetected" }
                         serviceMiddleware.action(Action.DialogAction.SilenceDetected(Source.Local))
                     }
                 } ?: run {
-                    logger.v { "start silence detected" }
                     //first time silence was detected
                     silenceStartTime = Clock.System.now()
                 }

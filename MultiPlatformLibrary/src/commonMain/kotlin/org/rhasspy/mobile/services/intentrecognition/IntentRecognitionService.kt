@@ -1,6 +1,11 @@
 package org.rhasspy.mobile.services.intentrecognition
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.koin.core.component.inject
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action.DialogAction
@@ -59,7 +64,7 @@ open class IntentRecognitionService : IService() {
                     is HttpClientResult.Error -> DialogAction.IntentRecognitionError(Source.HttpApi)
                     is HttpClientResult.Success -> DialogAction.IntentRecognitionResult(
                         Source.HttpApi,
-                        "",
+                        readIntentNameFromJson(result.data),
                         result.data
                     )
                 }
@@ -71,6 +76,17 @@ open class IntentRecognitionService : IService() {
                 } else ServiceState.Success
             }
             IntentRecognitionOption.Disabled -> {}
+        }
+    }
+
+    /**
+     * read the intent name from json
+     */
+    private fun readIntentNameFromJson(intent: String): String {
+        return try {
+            Json.decodeFromString<JsonObject>(intent).jsonObject["intent"]?.jsonObject?.get("name")?.jsonPrimitive?.content ?: ""
+        } catch (e: Exception) {
+            ""
         }
     }
 
