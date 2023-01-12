@@ -159,6 +159,7 @@ class ConfigurationScreenItemContentTest {
         assertTrue { viewModel.onSave }
 
         //app bar back click shows dialog
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
         composeTestRule.onNodeWithTag(TestTag.DialogUnsavedChanges).assertExists()
         //outside click closes dialog
