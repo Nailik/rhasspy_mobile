@@ -13,7 +13,10 @@ class TestViewModel : IConfigurationViewModel() {
     var onDiscard = false
 
     override val testRunner: IConfigurationTest
-        get() = TODO("Not yet implemented")
+        get() = object: IConfigurationTest() {
+            override val serviceState: StateFlow<ServiceState>
+                get() = MutableStateFlow(ServiceState.Success)
+        }
     override val logType: LogType
         get() = LogType.HttpClientService
     override val serviceState: StateFlow<ServiceState>
