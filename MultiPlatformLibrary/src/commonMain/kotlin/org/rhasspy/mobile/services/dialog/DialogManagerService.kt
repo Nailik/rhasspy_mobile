@@ -231,7 +231,7 @@ class DialogManagerService : IService() {
 
         indicationService.onPlayAudio()
         audioPlayingService.stopPlayAudio()
-        audioPlayingService.playAudio(action.byteArray.toMutableList())
+        audioPlayingService.playAudio(action.byteArray.toMutableList(), action.source is Source.Mqtt)
 
     }
 
@@ -465,6 +465,7 @@ class DialogManagerService : IService() {
                     Source.Local -> {
                         val doNotIgnore = when(action){
                             is DialogAction.WakeWordDetected -> true
+                            is DialogAction.PlayFinished -> true
                             else -> false
                         }
 
