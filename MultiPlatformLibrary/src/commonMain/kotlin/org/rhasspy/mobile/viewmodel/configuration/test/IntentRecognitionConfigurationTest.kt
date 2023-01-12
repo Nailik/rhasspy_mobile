@@ -24,7 +24,7 @@ class IntentRecognitionConfigurationTest : IConfigurationTest() {
                     .first { it }
             }
 
-            get<IntentRecognitionService>().recognizeIntent("", text)
+            get<IntentRecognitionService>().recognizeIntent("", text, false)
         }
     }
 

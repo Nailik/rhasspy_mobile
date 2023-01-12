@@ -256,27 +256,24 @@ class MqttService : IService() {
                         }
                     }
                 }
-            } else {
-                //site id in topic
-                when {
-                    MqttTopicsSubscription.PlayBytes.topic
-                        .set(MqttTopicPlaceholder.SiteId, params.siteId)
-                        .matches(topic) -> {
-                        playBytes(message.payload)
-                    }
-                    MqttTopicsSubscription.PlayFinished.topic
-                        .set(MqttTopicPlaceholder.SiteId, params.siteId)
-                        .matches(topic) -> {
-                        playFinishedCall()
-                    }
-                    else -> {
-                        logger.d { "siteId in Topic mqttTopic notFound $topic" }
-                    }
-                }
             }
         } ?: run {
-            //no topic found
-            logger.d { "getMqttTopic notFound $topic" }
+            //site id in topic
+            when {
+                MqttTopicsSubscription.PlayBytes.topic
+                    .set(MqttTopicPlaceholder.SiteId, params.siteId)
+                    .matches(topic) -> {
+                    playBytes(message.payload)
+                }
+                MqttTopicsSubscription.PlayFinished.topic
+                    .set(MqttTopicPlaceholder.SiteId, params.siteId)
+                    .matches(topic) -> {
+                    playFinishedCall()
+                }
+                else -> {
+                    logger.d { "siteId in Topic mqttTopic notFound $topic" }
+                }
+            }
         }
     }
 
@@ -453,14 +450,16 @@ class MqttService : IService() {
         )
 
     /**
-     * Chunk of WAV audio data for site
+     * Chunk of WAV audio data for session
      * wav_bytes: bytes - WAV data to play (message payload)
      * siteId: string - Hermes site ID (part of topic)
+     * sessionId: string - session ID (part of topic)
      */
-    suspend fun audioFrame(byteArray: List<Byte>) =
+    suspend fun asrAudioFrame(sessionId: String, byteArray: List<Byte>) =
         publishMessage(
             MqttTopicsPublish.AsrAudioFrame.topic
-                .set(MqttTopicPlaceholder.SiteId, params.siteId),
+                .set(MqttTopicPlaceholder.SiteId, params.siteId)
+                .set(MqttTopicPlaceholder.SessionId, sessionId),
             MqttMessage(byteArray.toByteArray())
         )
 

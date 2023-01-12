@@ -16,11 +16,13 @@ import org.rhasspy.mobile.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.services.indication.IndicationService
 import org.rhasspy.mobile.services.intenthandling.IntentHandlingService
 import org.rhasspy.mobile.services.intentrecognition.IntentRecognitionService
+import org.rhasspy.mobile.services.intentrecognition.IntentRecognitionServiceParams
 import org.rhasspy.mobile.services.mqtt.MqttService
 import org.rhasspy.mobile.services.speechtotext.SpeechToTextService
 import org.rhasspy.mobile.services.speechtotext.SpeechToTextServiceParams
 import org.rhasspy.mobile.services.wakeword.WakeWordService
 import org.rhasspy.mobile.settings.option.DialogManagementOption
+import org.rhasspy.mobile.settings.option.IntentRecognitionOption
 import org.rhasspy.mobile.settings.option.SpeechToTextOption
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
@@ -28,7 +30,7 @@ import kotlin.time.toDuration
 /**
  * The Dialog Manager handles the various states and goes to the next state according to the function that is called
  */
-class DialogManagerService(private val isTestMode: Boolean = false) : IService() {
+class DialogManagerService : IService() {
     private val logger = LogType.DialogManagerService.logger()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
@@ -132,12 +134,14 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
             informMqtt(action)
 
             notNull(sessionId, action.text, { id, text ->
-                intentRecognitionService.recognizeIntent(id, text)
+                intentRecognitionService.recognizeIntent(id, text, action.source is Source.Mqtt)
                 //await intent recognition
                 timeoutJob = coroutineScope.launch {
                     delay(intentRecognitionTimeout)
-                    logger.d { "intentRecognitionTimeout" }
-                    onAction(DialogAction.IntentRecognitionError(Source.Local))
+                    if(_currentDialogState.value == DialogManagerServiceState.RecognizingIntent) {
+                        logger.d { "intentRecognitionTimeout" }
+                        onAction(DialogAction.IntentRecognitionError(Source.Local))
+                    }
                 }
             }, {
                 logger.d { "asrTextCaptured parameter issue sessionId: $sessionId action.text: ${action.text}" }
@@ -340,7 +344,7 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
                 indicationService.onListening()
                 _currentDialogState.value = DialogManagerServiceState.RecordingIntent
                 CoroutineScope(Dispatchers.Default).launch {
-                    speechToTextService.startSpeechToText(id)
+                    speechToTextService.startSpeechToText(id, action.source is Source.Mqtt)
                 }
                 //await silence to stop recording
                 timeoutJob = coroutineScope.launch {
@@ -409,11 +413,6 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
         action: DialogAction,
         vararg states: DialogManagerServiceState
     ): Boolean {
-        if (isTestMode) {
-            //ignore any state in test mode
-            return true
-        }
-
         //session id irrelevant
         if (action is DialogAction.PlayAudio && states.contains(_currentDialogState.value)) {
             return true
@@ -427,27 +426,34 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
                     Source.Local -> {
                         val result = states.contains(_currentDialogState.value)
                         if (!result) {
-                            logger.d { "$action from ${action.source} called in wrong state ${_currentDialogState.value} expected one of ${states.joinToString()}" }
+                            logger.d { "$action called in wrong state ${_currentDialogState.value} expected one of ${states.joinToString()}" }
                         }
                         return result
                     }
                     is Source.Mqtt -> {
 
+                        //exceptions where calls form mqtt are ok
+                        val doNotIgnore = when(action){
+                            is DialogAction.AsrError,
+                            is DialogAction.AsrTextCaptured -> get<SpeechToTextServiceParams>().speechToTextOption == SpeechToTextOption.RemoteMQTT
+                            is DialogAction.IntentRecognitionError,
+                            is DialogAction.IntentRecognitionResult -> get<IntentRecognitionServiceParams>().intentRecognitionOption == IntentRecognitionOption.RemoteMQTT
+                            else -> false
+                        }
+
                         //exception
-                        if ((action is DialogAction.AsrError || action is DialogAction.AsrTextCaptured) &&
-                            get<SpeechToTextServiceParams>().speechToTextOption == SpeechToTextOption.RemoteMQTT
-                        ) {
+                        if (doNotIgnore) {
                             //don't ignore
                             val result = states.contains(_currentDialogState.value)
                             if (!result) {
-                                logger.d { "$action from ${action.source} called in wrong state ${_currentDialogState.value} expected one of ${states.joinToString()}" }
+                                logger.d { "$action called in wrong state ${_currentDialogState.value} expected one of ${states.joinToString()}" }
                             }
                             return result
+                        } else {
+                            //from mqtt but session id doesn't match
+                            logger.d { "$action but local dialog management" }
+                            return false
                         }
-
-                        //from mqtt but session id doesn't match
-                        logger.d { "$action from ${action.source} but local dialog management" }
-                        return false
                     }
                 }
             }
@@ -457,8 +463,23 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
                     //from webserver or local always ignore for now
                     Source.HttpApi,
                     Source.Local -> {
-                        logger.d { "$action dialog management RemoteMQTT doesn't match source ${action.source}" }
-                        return false
+                        val doNotIgnore = when(action){
+                            is DialogAction.WakeWordDetected -> true
+                            else -> false
+                        }
+
+                        if (doNotIgnore) {
+                            //don't ignore
+                            val result = states.contains(_currentDialogState.value)
+                            if (!result) {
+                                logger.d { "$action called in wrong state ${_currentDialogState.value} expected one of ${states.joinToString()}" }
+                            }
+                            return result
+                        } else {
+                            //from mqtt but session id doesn't match
+                            logger.d { "$action but mqtt dialog management" }
+                            return false
+                        }
                     }
                     //from mqtt check session id
                     is Source.Mqtt -> {
@@ -470,9 +491,14 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
                             //compare session id if one is set
                             val matches = sessionId == action.source.sessionId
                             if (!matches) {
-                                logger.d { "$action from mqtt but session id doesn't match $sessionId != ${action.source.sessionId}" }
+                                logger.d { "$action but session id doesn't match $sessionId != ${action.source.sessionId}" }
+                                return false
                             }
-                            return matches
+                            val result = states.contains(_currentDialogState.value)
+                            if (!result) {
+                                logger.d { "$action called in wrong state ${_currentDialogState.value} expected one of ${states.joinToString()}" }
+                            }
+                            return result
                         }
                     }
                 }
@@ -495,14 +521,9 @@ class DialogManagerService(private val isTestMode: Boolean = false) : IService()
         if (action.source !is Source.Mqtt) {
             when (action) {
                 is DialogAction.AsrError -> mqttService.asrError(safeSessionId)
-                is DialogAction.AsrTextCaptured -> mqttService.asrTextCaptured(
-                    safeSessionId,
-                    action.text
-                )
+                is DialogAction.AsrTextCaptured -> mqttService.asrTextCaptured(safeSessionId, action.text)
                 is DialogAction.WakeWordDetected -> mqttService.hotWordDetected(action.wakeWord)
-                is DialogAction.IntentRecognitionError -> mqttService.intentNotRecognized(
-                    safeSessionId
-                )
+                is DialogAction.IntentRecognitionError -> mqttService.intentNotRecognized(safeSessionId)
                 is DialogAction.PlayFinished -> mqttService.playFinished()
                 is DialogAction.SessionEnded -> mqttService.sessionEnded(safeSessionId)
                 is DialogAction.SessionStarted -> mqttService.sessionStarted(safeSessionId)

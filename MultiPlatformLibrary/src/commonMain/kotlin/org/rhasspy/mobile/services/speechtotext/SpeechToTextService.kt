@@ -91,8 +91,8 @@ open class SpeechToTextService : IService() {
         }
     }
 
-    suspend fun startSpeechToText(sessionId: String) {
-        logger.d { "startSpeechToText sessionId: $sessionId" }
+    suspend fun startSpeechToText(sessionId: String, fromMqtt: Boolean) {
+        logger.d { "startSpeechToText sessionId: $sessionId fromMqtt $fromMqtt" }
 
         if (collector?.isActive == true) {
             return
@@ -107,18 +107,22 @@ open class SpeechToTextService : IService() {
             recordingService.toggleSilenceDetectionEnabled(true)
             //start collection
             collector = scope.launch {
-                recordingService.output.collect(::audioFrame)
+                recordingService.output.collect {
+                    audioFrame(sessionId, it)
+                }
             }
         }
 
         _serviceState.value = when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> ServiceState.Success
-            SpeechToTextOption.RemoteMQTT -> mqttClientService.startListening(sessionId)
+            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) {
+                mqttClientService.startListening(sessionId)
+            } else ServiceState.Success
             SpeechToTextOption.Disabled -> ServiceState.Disabled
         }
     }
 
-    private suspend fun audioFrame(data: List<Byte>) {
+    private suspend fun audioFrame(sessionId: String, data: List<Byte>) {
         if (AppSetting.isLogAudioFramesEnabled.value) {
             logger.d { "audioFrame dataSize: ${data.size}" }
         }
@@ -126,9 +130,7 @@ open class SpeechToTextService : IService() {
 
         _serviceState.value = when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> ServiceState.Success
-            SpeechToTextOption.RemoteMQTT -> mqttClientService.audioFrame(
-                data.toMutableList().addWavHeader()
-            )
+            SpeechToTextOption.RemoteMQTT -> mqttClientService.asrAudioFrame(sessionId, data.toMutableList().addWavHeader())
             SpeechToTextOption.Disabled -> ServiceState.Disabled
         }
     }

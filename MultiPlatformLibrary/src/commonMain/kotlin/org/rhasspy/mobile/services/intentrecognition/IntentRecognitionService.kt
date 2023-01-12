@@ -49,7 +49,7 @@ open class IntentRecognitionService : IService() {
      * - calls default site to recognize intent
      * - later eventually intentRecognized or intentNotRecognized will be called with received data
      */
-    suspend fun recognizeIntent(sessionId: String, text: String) {
+    suspend fun recognizeIntent(sessionId: String, text: String, fromMqtt: Boolean) {
         logger.d { "recognizeIntent sessionId: $sessionId text: $text" }
         when (params.intentRecognitionOption) {
             IntentRecognitionOption.RemoteHTTP -> {
@@ -65,8 +65,11 @@ open class IntentRecognitionService : IService() {
                 }
                 serviceMiddleware.action(action)
             }
-            IntentRecognitionOption.RemoteMQTT -> _serviceState.value =
-                mqttClientService.recognizeIntent(sessionId, text)
+            IntentRecognitionOption.RemoteMQTT -> {
+                _serviceState.value = if (!fromMqtt) {
+                    mqttClientService.recognizeIntent(sessionId, text)
+                } else ServiceState.Success
+            }
             IntentRecognitionOption.Disabled -> {}
         }
     }
