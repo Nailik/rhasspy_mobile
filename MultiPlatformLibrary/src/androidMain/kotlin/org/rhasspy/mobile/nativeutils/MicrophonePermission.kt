@@ -5,64 +5,65 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
-import androidx.activity.ComponentActivity
-import androidx.activity.result.ActivityResultCallback
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import dev.icerock.moko.mvvm.livedata.LiveData
-import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.readOnly
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.Application
+import org.rhasspy.mobile.readOnly
 
+/**
+ * to check microphone permission
+ */
 actual object MicrophonePermission {
 
-    private val status = MutableLiveData(isGranted())
+    /**
+     * to observe if microphone permission is granted
+     */
+    private val _granted = MutableStateFlow(isGranted())
+    actual val granted = _granted.readOnly
 
-    private var launcher: ActivityResultLauncher<String>? = null
-
-    actual val granted: LiveData<Boolean> = status.readOnly()
-
-    private var onResultCallback: ((Boolean) -> Unit)? = null
-
-    fun init(activity: ComponentActivity) {
-        launcher = activity.registerForActivityResult(ActivityResultContracts.RequestPermission(), callback)
+    /**
+     * update the permission on initialization of app
+     */
+    fun update() {
+        _granted.value = isGranted()
     }
 
-    private val callback = ActivityResultCallback<Boolean> {
-        //not using boolean because it doesn't tell us if permission may be always denied
-        status.value = it
-        onResultCallback?.invoke(it)
-        onResultCallback = null
+    /**
+     * to check if the information dialog should be shown
+     */
+    actual fun requestPermissionExternally() {
+        Application.nativeInstance.startActivity(
+            Intent(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                Uri.parse("package:org.rhasspy.mobile.android")
+            ).also {
+                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        )
     }
 
-    fun requestPermission(redirect: Boolean, onResult: (granted: Boolean) -> Unit) {
-        if (status.value) {
-            onResult.invoke(true)
-            return
-        }
-
-        onResultCallback = onResult
-        if (redirect) {
-            Application.Instance.startActivity(
-                Intent(
-                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                    Uri.parse("package:org.rhasspy.mobile.android")
-                ).also {
-                    it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
+    /**
+     * to request the permission externally, redirect user to settings
+     */
+    actual fun shouldShowInformationDialog(): Boolean {
+        return Application.nativeInstance.currentActivity?.let {
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                it,
+                Manifest.permission.RECORD_AUDIO
             )
-        } else {
-            launcher?.launch(Manifest.permission.RECORD_AUDIO)
+        } ?: run {
+            true
         }
     }
 
-    fun shouldShowInfoDialog(activity: ComponentActivity): Boolean {
-        return ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.RECORD_AUDIO)
-    }
-
+    /**
+     * check if permission is granted
+     */
     private fun isGranted(): Boolean {
-        return ActivityCompat.checkSelfPermission(Application.Instance, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+        return ActivityCompat.checkSelfPermission(
+            Application.nativeInstance,
+            Manifest.permission.RECORD_AUDIO
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
 }

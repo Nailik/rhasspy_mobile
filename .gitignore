@@ -11,3 +11,7 @@
 local.properties
 version
 /androidApp/release/
+signing.properties
+*/xcuserdata
+/iosApp/Pods/Pods.xcodeproj/xcuserdata/KIEller.xcuserdatad/xcschemes/MultiPlatformLibrary.xcscheme
+/iosApp/Pods/Pods.xcodeproj/xcuserdata/KIEller.xcuserdatad/xcschemes/Pods-iosApp.xcscheme

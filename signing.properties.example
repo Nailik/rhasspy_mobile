@@ -1,0 +1,9 @@
+#Rename this file to signing.properties and fill in the information to enable custom signing
+storeFile=
+storePassword=
+keyAlias=
+keyPassword=
+storeFileDebug=
+storePasswordDebug=
+keyAliasDebug=
+keyPasswordDebug=

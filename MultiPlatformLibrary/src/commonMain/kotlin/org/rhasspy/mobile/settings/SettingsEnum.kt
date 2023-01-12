@@ -2,8 +2,8 @@ package org.rhasspy.mobile.settings
 
 enum class SettingsEnum {
     //App Settings
+    Crashlytics,
     LanguageOption,
-    ThemeOption,
 
     AutomaticSilenceDetection,
     AutomaticSilenceDetectionAudioLevel,
@@ -11,77 +11,96 @@ enum class SettingsEnum {
 
     BackgroundEnabled,
     SSLVerificationDisabled,
+    HttpClientServerEndpointHost,
+    HttpClientServerEndpointPort,
+    HttpClientTimeout,
 
-    MicrophoneOverlay,
+    MicrophoneOverlaySize,
     MicrophoneOverlayWhileApp,
     MicrophoneOverlayPositionX,
     MicrophoneOverlayPositionY,
 
     BackgroundWakeWordDetectionTurnOnDisplay,
-    WakeWordSoundIndication,
+    SoundIndication,
     WakeWordLightIndication,
+    SoundIndicationOutput,
 
     HotWordEnabled,
     AudioOutputEnabled,
     IntentHandlingEnabled,
     Volume,
 
-    SoundVolume,
+    WakeSoundVolume,
+    RecordedSoundVolume,
+    ErrorSoundVolume,
     WakeSound,
     RecordedSound,
     ErrorSound,
-    CustomSounds,
+    CustomWakeSounds,
+    CustomRecordedSounds,
+    CustomErrorSounds,
+
 
     ShowLog,
     LogAudioFrames,
     LogLevel,
+    LogAutoscroll,
 
-    ForceCancel,
     //Configuration Settings
     SiteId,
 
     HttpServerEnabled,
     HttpServerPort,
-    HttpServerSSL,
+    HttpServerSSLEnabled,
+    HttpServerSSLKeyStoreFile,
+    HttpServerSSLKeyStorePassword,
+    HttpServerSSLKeyAlias,
+    HttpServerSSLKeyPassword,
 
-    MQTT_ENABLED,
+    MQTTEnabled,
     MQTTHost,
     MQTTPort,
     MQTTUserName,
-    MQTT_SSL,
+    MQTTSSLEnabled,
     MQTTPassword,
     MQTTConnectionTimeout,
     MQTTKeepAliveInterval,
     MQTTRetryInterval,
+    MQTTKeyStoreFile,
 
-    UDPOutput,
-    UDPOutputHost,
-    UDPOutputPort,
+    WakeWordUDPOutputHost,
+    WakeWordUDPOutputPort,
 
     WakeWordOption,
     WakeWordPorcupineAccessToken,
-    WakeWordPorcupineKeywordOption,
-    WakeWordPorcupineKeywordOptions,
+    WakeWordPorcupineKeywordDefaultSelectedOptions,
+    WakeWordPorcupineKeywordCustomOptions,
     WakeWordPorcupineLanguage,
-    WakeWordPorcupineKeywordSensitivity,
 
     SpeechToTextOption,
+    CustomSpeechToTextEndpoint,
     SpeechToTextHttpEndpoint,
+    SpeechToTextMqttSilenceDetection,
 
     IntentRecognitionOption,
-    IntentRecognitionEndpoint,
+    CustomIntentRecognitionHttpEndpoint,
+    IntentRecognitionHttpEndpoint,
 
     TextToSpeechOption,
-    TextToSpeechEndpoint,
+    CustomTextToSpeechOptionHttpEndpoint,
+    TextToSpeechHttpEndpoint,
 
     AudioPlayingOption,
-    AudioPlayingEndpoint,
+    AudioOutputOption,
+    CustomAudioPlayingHttpEndpoint,
+    AudioPlayingHttpEndpoint,
 
-    DialogueManagementOption,
+    DialogManagementOption,
 
     IntentHandlingOption,
     IntentHandlingEndpoint,
     IntentHandlingHassUrl,
     IntentHandlingHassAccessToken,
-    IsIntentHandlingHassEvent
+    IsIntentHandlingHassEvent;
+
 }

@@ -1,52 +1,42 @@
 package org.rhasspy.mobile.android
 
+import android.content.ComponentName
 import android.content.Intent
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ProcessLifecycleOwner
+import android.content.pm.PackageManager
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import co.touchlab.kermit.Logger
-import dev.icerock.moko.mvvm.livedata.MutableLiveData
-import dev.icerock.moko.mvvm.livedata.postValue
-import dev.icerock.moko.mvvm.livedata.readOnly
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import org.rhasspy.mobile.Application
-import org.rhasspy.mobile.NativeApplication
 import org.rhasspy.mobile.android.uiservices.IndicationOverlay
 import org.rhasspy.mobile.android.uiservices.MicrophoneOverlay
+import org.rhasspy.mobile.android.widget.MicrophoneWidget
+import org.rhasspy.mobile.nativeutils.NativeApplication
+import kotlin.system.exitProcess
 
-
+/**
+ * holds android application and native functions and provides koin module
+ */
 class AndroidApplication : Application() {
+    private val logger = Logger.withTag("AndroidApplication")
 
     init {
-        Instance = this
+        nativeInstance = this
     }
 
     companion object {
-        lateinit var Instance: NativeApplication
+        lateinit var nativeInstance: NativeApplication
             private set
-
-        private val currentlyAppInBackground = MutableLiveData(false)
-        val isAppInBackground = currentlyAppInBackground.readOnly()
     }
 
     init {
         //catches all exceptions
         Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
-            Logger.withTag("AndroidApplication").e(exception) {
+            logger.a(exception) {
                 "uncaught exception in Thread $thread"
             }
+            exitProcess(2)
         }
-
-        ProcessLifecycleOwner.get().lifecycle.addObserver(object : LifecycleEventObserver {
-            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                when (event) {
-                    Lifecycle.Event.ON_START -> currentlyAppInBackground.postValue(false)
-                    Lifecycle.Event.ON_STOP -> currentlyAppInBackground.postValue(true)
-                    else -> {}
-                }
-            }
-        })
-
     }
 
     override fun onCreate() {
@@ -54,15 +44,45 @@ class AndroidApplication : Application() {
         onCreated()
     }
 
-    override fun startNativeServices() {
+    override fun startOverlay() {
         IndicationOverlay.start()
         MicrophoneOverlay.start()
     }
 
+    override fun stopOverlay() {
+        IndicationOverlay.stop()
+        MicrophoneOverlay.stop()
+    }
+
     override fun restart() {
-        startActivity(Intent(this, MainActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-        })
+        try {
+            val packageManager: PackageManager = this.packageManager
+            val intent: Intent = packageManager.getLaunchIntentForPackage(this.packageName)!!
+            val componentName: ComponentName = intent.component!!
+            val restartIntent: Intent = Intent.makeRestartActivityTask(componentName)
+            this.startActivity(restartIntent)
+            Runtime.getRuntime().exit(0)
+        } catch (e: Exception) {
+            Runtime.getRuntime().exit(0)
+        }
+    }
+
+    override fun setCrashlyticsCollectionEnabled(enabled: Boolean) {
+        if (!BuildConfig.DEBUG) {
+            Firebase.crashlytics.setCrashlyticsCollectionEnabled(enabled)
+        }
+    }
+
+    override suspend fun updateWidget() {
+        GlanceAppWidgetManager(this).getGlanceIds(MicrophoneWidget::class.java)
+            .firstOrNull()
+            ?.also {
+                MicrophoneWidget().update(this, it)
+            }
+    }
+
+    override fun isDebug(): Boolean {
+        return BuildConfig.DEBUG
     }
 
 }

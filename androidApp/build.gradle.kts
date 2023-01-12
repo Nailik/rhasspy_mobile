@@ -2,14 +2,40 @@
 
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
+import java.util.*
 
 plugins {
     id("com.android.application")
     kotlin("android")
-    id("kotlin-android")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
+    id("org.gradle.test-retry")
+}
+
+val signingProperties = Properties()
+val singingFile = file("../signing.properties")
+val signingEnabled = singingFile.exists()
+if (signingEnabled) {
+    signingProperties.load(singingFile.inputStream())
 }
 
 android {
+    signingConfigs {
+        if (signingEnabled) {
+            create("release") {
+                storeFile = file(signingProperties.getProperty("storeFile"))
+                storePassword = signingProperties["storePassword"].toString()
+                keyAlias = signingProperties["keyAlias"].toString()
+                keyPassword = signingProperties["keyPassword"].toString()
+            }
+            getByName("debug") {
+                storeFile = file(signingProperties.getProperty("storeFileDebug"))
+                storePassword = signingProperties["storePasswordDebug"].toString()
+                keyAlias = signingProperties["keyAliasDebug"].toString()
+                keyPassword = signingProperties["keyPasswordDebug"].toString()
+            }
+        }
+    }
     compileSdk = 33
 
     defaultConfig {
@@ -19,6 +45,7 @@ android {
         versionCode = Version.code
         versionName = Version.toString()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments["clearPackageData"] = "true"
     }
 
     buildTypes {
@@ -29,6 +56,16 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            if (signingEnabled) {
+                signingConfig = signingConfigs.getByName("release")
+            }
+        }
+        debug {
+            isMinifyEnabled = false
+            isShrinkResources = false
+            if (signingEnabled) {
+                signingConfig = signingConfigs.getByName("debug")
+            }
         }
     }
 
@@ -64,6 +101,7 @@ android {
     testOptions {
         unitTests.isIncludeAndroidResources = true
         testOptions.animationsDisabled = true
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
 
     lint {
@@ -84,8 +122,13 @@ android {
     }
 }
 
-
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi"
+    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
+    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi"
+    kotlinOptions.freeCompilerArgs += "-opt-in=com.google.accompanist.pager.ExperimentalPagerApi"
+    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi"
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -99,6 +142,11 @@ tasks.withType<Test> {
         showExceptions = true
         showCauses = true
         showStackTraces = true
+    }
+    retry {
+        maxRetries.set(3)
+        maxFailures.set(20)
+        failOnPassedAfterRetry.set(false)
     }
 }
 
@@ -120,6 +168,8 @@ dependencies {
 
     implementation(Google.accompanist.systemUiController)
 
+    implementation(AndroidX.glance.appWidget)
+
     implementation(AndroidX.Activity.compose)
     implementation(AndroidX.Core.splashscreen)
     implementation(AndroidX.ConstraintLayout.compose)
@@ -134,23 +184,32 @@ dependencies {
     implementation(AndroidX.Compose.ui)
     implementation(AndroidX.Compose.ui.util)
     implementation(AndroidX.Compose.ui.tooling)
+    implementation(Google.Accompanist.pager)
 
     implementation(AndroidX.multidex)
     implementation(AndroidX.window)
 
-    implementation(Icerock.Mvvm.core)
-    implementation(Icerock.Mvvm.state)
-    implementation(Icerock.Mvvm.livedata)
-    implementation(Icerock.Mvvm.livedataResources)
-
     implementation(Touchlab.kermit)
-    implementation(AndroidX.lifecycle.process)
     implementation(Devsrsouza.fontAwesome)
     implementation(Mikepenz.aboutLibrariesCore)
+    implementation(Icerock.Resources)
+    implementation(Icerock.Mvvm.core)
+    implementation(Koin.core)
+    implementation(Koin.compose)
 
+    androidTestImplementation(project(":MultiPlatformLibrary"))
+    androidTestUtil(AndroidX.Test.orchestrator)
+    androidTestImplementation(AndroidX.Test.uiAutomator)
+    androidTestImplementation(AndroidX.Test.runner)
+    androidTestImplementation(AndroidX.Test.rules)
     androidTestImplementation(Kotlin.test)
     androidTestImplementation(Kotlin.Test.junit)
-    androidTestImplementation(AndroidX.Test.Espresso.core)
+    androidTestImplementation(AndroidX.Test.coreKtx)
     androidTestImplementation(AndroidX.Compose.Ui.testJunit4)
     debugImplementation(AndroidX.Compose.Ui.testManifest)
+
+    implementation(platform(Firebase.bom))
+
+    implementation(Firebase.analyticsKtx)
+    implementation(Firebase.crashlyticsKtx)
 }

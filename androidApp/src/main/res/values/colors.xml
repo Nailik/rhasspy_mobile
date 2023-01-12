@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primaryContainer">#FFEADDFF</color>
+    <color name="errorContainer">#FFFA473F</color>
+    <color name="primaryContainer04">#66EADDFF</color>
+    <color name="onPrimaryContainer">#FF21005D</color>
+    <color name="onErrorContainer">#FFFFFFFF</color>
+    <color name="onPrimaryContainer04">#6621005D</color>
+</resources>

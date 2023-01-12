@@ -1,3 +1,5 @@
+-dontobfuscate
+
 # Keep `Companion` object fields of serializable classes.
 # This avoids serializer lookup through `getDeclaredClasses` as done for named companion objects.
 -if @kotlinx.serialization.Serializable class **
@@ -38,6 +40,10 @@
 #    static <1>$$serializer INSTANCE;
 #}
 
+#keep enum name
+-keepclassmembers enum * {
+    public *;
+}
 
 # Ktor
 -keep class io.ktor.** { *; }
@@ -153,3 +159,17 @@
 -dontwarn sun.security.x509.X500Name
 -dontwarn sun.security.x509.X509CertImpl
 -dontwarn sun.security.x509.X509CertInfo
+-dontwarn com.aayushatharva.brotli4j.encoder.BrotliEncoderChannel
+-dontwarn com.aayushatharva.brotli4j.encoder.Encoder
+-dontwarn org.bouncycastle.asn1.pkcs.PrivateKeyInfo
+-dontwarn org.bouncycastle.openssl.PEMDecryptorProvider
+-dontwarn org.bouncycastle.openssl.PEMEncryptedKeyPair
+-dontwarn org.bouncycastle.openssl.PEMKeyPair
+-dontwarn org.bouncycastle.openssl.PEMParser
+-dontwarn org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
+-dontwarn org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder
+-dontwarn org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder
+-dontwarn org.bouncycastle.operator.InputDecryptorProvider
+-dontwarn org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo
+-dontwarn org.bouncycastle.operator.OperatorCreationException
+-dontwarn org.bouncycastle.pkcs.PKCSException

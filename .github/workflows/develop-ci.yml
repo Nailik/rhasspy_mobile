@@ -37,7 +37,7 @@ jobs:
         with:
           name: AndroidLintRelease
           path: androidApp/build/reports/lint-results-debug.html
-      #r un all unit tests (debug and debug)
+      # run all unit tests (debug and debug)
       - name: Unit Tests
         run: ./gradlew testDebug
       # android UI Test

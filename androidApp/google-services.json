@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1096986193522",
+    "project_id": "rhasspy-mobile",
+    "storage_bucket": "rhasspy-mobile.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1096986193522:android:85bf1d5bdd87aedfe8dceb",
+        "android_client_info": {
+          "package_name": "org.rhasspy.mobile.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1096986193522-di1e0k4k4m87eaap8e2023s02579o8o4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAv8KIC8h-HqnnWEknWv-ABPrsKF4iOiGM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1096986193522-di1e0k4k4m87eaap8e2023s02579o8o4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

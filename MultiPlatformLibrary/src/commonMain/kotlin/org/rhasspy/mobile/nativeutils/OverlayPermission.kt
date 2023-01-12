@@ -1,11 +1,13 @@
 package org.rhasspy.mobile.nativeutils
 
-import dev.icerock.moko.mvvm.livedata.LiveData
+import kotlinx.coroutines.flow.StateFlow
 
 @Suppress("NO_ACTUAL_FOR_EXPECT")
 expect object OverlayPermission {
 
-    val granted: LiveData<Boolean>
+    val granted: StateFlow<Boolean>
+
+    fun requestPermission(onGranted: () -> Unit)
 
     fun isGranted(): Boolean
 

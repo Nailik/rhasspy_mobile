@@ -12,6 +12,11 @@ buildscript {
         classpath("dev.icerock.moko:resources-generator:_")
         classpath("com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:_")
         classpath("com.codingfeline.buildkonfig:buildkonfig-gradle-plugin:_")
+        classpath("com.google.gms:google-services:_")
+        classpath("com.google.firebase:firebase-crashlytics-gradle:_")
+        classpath("co.touchlab.crashkios:utils:_")
+        classpath("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:_")
+        classpath("org.gradle:test-retry-gradle-plugin:_")
     }
 }
 
