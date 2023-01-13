@@ -20,8 +20,9 @@ jobs:
       # run sonar cloud
       - name: SonarCloud action
         uses: kitabisa/sonarqube-action@v1.2.0
-        host: ${{ secrets.SONARQUBE_HOST }}
-        login: ${{ secrets.SONARQUBE_TOKEN }}
+        with:
+          host: ${{ secrets.SONARQUBE_HOST }}
+          login: ${{ secrets.SONARQUBE_TOKEN }}
   #runs checks
   analyze:
     runs-on: self-hosted
