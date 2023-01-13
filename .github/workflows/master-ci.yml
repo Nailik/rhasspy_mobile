@@ -5,6 +5,7 @@ on:
     branches: [ "master" ]
     types:
       - created
+      - edited
       - labeled
 
 jobs:

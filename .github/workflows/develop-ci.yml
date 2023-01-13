@@ -5,6 +5,7 @@ on:
     branches: [ "develop" ]
     types:
       - created
+      - edited
       - labeled
 
 jobs:
