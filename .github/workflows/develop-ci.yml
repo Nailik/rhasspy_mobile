@@ -1,14 +1,13 @@
-name: Develop CI
+name: Debug CI
 
 on:
   pull_request:
-    branches: [ "debug" ]
+    branches: [ "develop" ]
     types:
       - labeled
 
 jobs:
-  merge:
-    if: ${{ github.event.label.name == 'automerge' }}
-    uses: Nailik/rhasspy_mobile/.github/workflows/merge-ci.yml
+  check:
+    uses: Nailik/rhasspy_mobile/.github/workflows/pullrequest-ci.yml
     with:
       buildType: Debug
