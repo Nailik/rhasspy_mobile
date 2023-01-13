@@ -30,7 +30,7 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-      # android lint debug
+      # run sonar check
       - name: SonarCloud Check
         run: ./gradlew sonar
   #runs checks
