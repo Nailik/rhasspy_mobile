@@ -17,14 +17,17 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
-      # necessary for linux/macos but doesn't work on windows
-      # cache sonar cloud
-      - uses: mathrix-education/sonar-scanner@master
+       # cache sonar cloud
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
         with:
-          version: 4.2.0.1873 # required
-          typescript: true
-          scan: true
-          args: --debug -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Sonar analyze
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew sonar
   #runs checks
   analyze:
     runs-on: self-hosted
