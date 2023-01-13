@@ -1,10 +1,8 @@
-name: Debug CI
+name: Develop CI
 
 on:
   pull_request:
     branches: [ "develop" ]
-    types:
-      - labeled
 
 jobs:
   check:
