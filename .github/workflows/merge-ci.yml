@@ -6,29 +6,15 @@ on:
       BUILD_TYPE:
         required: true
         type: string
-      GITHUB_TOKEN:
-        required: true
-        type: string
-      SIGNING_KEY:
-        required: true
-        type: string
-      ALIAS:
-        required: true
-        type: string
-      KEY_STORE_PASSWORD:
-        required: true
-        type: string
-      KEY_PASSWORD:
-        required: true
-        type: string
 
 jobs:
   check:
     uses: ./.github/workflows/pullrequest-ci.yml
     with:
       BUILD_TYPE: Release
-      GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-      SONAR_TOKEN: ${{ inputs.SONAR_TOKEN }}
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   uiTest:
     runs-on: self-hosted
     steps:
@@ -89,10 +75,10 @@ jobs:
         id: sign_app
         with:
           releaseDirectory: androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE }}
-          signingKeyBase64: ${{ inputs.SIGNING_KEY }}
-          alias: ${{ inputs.ALIAS }}
-          keyStorePassword: ${{ inputs.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ inputs.KEY_PASSWORD }}
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
           BUILD_TOOLS_VERSION: "33.0.1"
       # sign the generated apks
@@ -101,10 +87,10 @@ jobs:
         id: sign_app
         with:
           releaseDirectory: androidApp/build/outputs/bundle/${{ inputs.BUILD_TYPE }}
-          signingKeyBase64: ${{ inputs.SIGNING_KEY }}
-          alias: ${{ inputs.ALIAS }}
-          keyStorePassword: ${{ inputs.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ inputs.KEY_PASSWORD }}
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
           BUILD_TOOLS_VERSION: "33.0.1"
       # upload apks to action

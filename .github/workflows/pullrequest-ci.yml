@@ -6,12 +6,6 @@ on:
       BUILD_TYPE:
         required: true
         type: string
-      GITHUB_TOKEN:
-        required: true
-        type: string
-      SONAR_TOKEN:
-        required: true
-        type: string
 
 jobs:
   #runs sonar
@@ -36,8 +30,8 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar
       - name: Sonar analyze
         env:
-          GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ inputs.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew sonar
   #runs checks
   analyze:
