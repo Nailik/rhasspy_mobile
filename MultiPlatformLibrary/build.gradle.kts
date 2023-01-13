@@ -241,6 +241,7 @@ tasks.withType<Test> {
         showStackTraces = true
     }
 }
+
 sonarqube {
     properties {
         property("sonar.projectKey", "Nailik_rhasspy_mobile")
