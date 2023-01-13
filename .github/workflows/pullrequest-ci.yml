@@ -19,11 +19,12 @@ jobs:
           fetch-depth: 0
       # necessary for linux/macos but doesn't work on windows
       # cache sonar cloud
-      - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      - uses: mathrix-education/sonar-scanner@master
+        with:
+          version: 4.2.0.1873 # required
+          typescript: true
+          scan: true
+          args: --debug -Dsonar.login=${{ secrets.SONAR_TOKEN }}
   #runs checks
   analyze:
     runs-on: self-hosted
