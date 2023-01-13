@@ -247,6 +247,7 @@ sonarqube {
         property("sonar.organization", "nailik")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.sources", "src,../androidApp/src")
+        property("sonar.verbose", "true")
     }
 }
 
