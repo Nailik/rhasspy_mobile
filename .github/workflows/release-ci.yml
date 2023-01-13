@@ -9,8 +9,7 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-    #has label automerge and contains one of the labels patch, major or minor
-    if: ${{ (github.event.label.name == 'automerge') && (contains(github.event.pull_request.labels.*.name, 'patch') ||  contains(github.event.pull_request.labels.*.name, 'minor') || contains(github.event.pull_request.labels.*.name, 'major')) }}
+    if: ${{ github.event.label.name == 'automerge' }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -60,38 +59,25 @@ jobs:
           name: Test Report
           path: androidApp/build/outputs/androidTest-results/connected/TEST-*.xml,MultiPlatformLibrary/build/test-results/test*UnitTest/TEST-*.xml
           reporter: java-junit
-      # code version is increased before build
-      - name: Increase Code Minor Version
-        run: ./gradlew increaseCodeVersion
-      # increase release version
-      - if: contains( github.event.pull_request.labels.*.name, 'patch')
-        run: ./gradlew increasePatchCodeVersion
-      - if: contains( github.event.pull_request.labels.*.name, 'minor')
-        run: ./gradlew increaseMinorCodeVersion
-      - if: contains ( github.event.pull_request.labels.*.name, 'major')
-        run: ./gradlew increaseMajorCodeVersion
-      # commit new version
-      - name: Commit changes
-        run: |
-          git config --local user.name github-actions[bot]
-          git config --local user.email github-actions[bot]@users.noreply.github.com
-          git commit -m "Automatically increased Version.code" -a
-      #push changes
-      - name: Push changes # push the output folder to your repo
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.head_ref }}
-          force_with_lease: true
       # run project build
-      - name: Project Build
+      - name: Project APK Build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew androidApp:build sonarqube
-      # sign the generated apks
+      # run project build
+      - name: Project Bundle Build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew androidApp:bundle
+      - name: Set variables
+        run: |
+          VER=$(cat version)
+          echo "version=$VER" >> $GITHUB_ENV
+      # sign the generated apks and bundle
       - uses: r0adkll/sign-android-release@v1
-        name: Sign App APK
+        name: Sign App
         id: sign_app
         with:
           releaseDirectory: androidApp/build/outputs/apk/release
@@ -106,10 +92,11 @@ jobs:
         with:
           name: Upload Artifact of signed apks
           path: androidApp/build/outputs/apk/release/rhasspy_mobile_*.apk
-      - name: Set variables
-        run: |
-          VER=$(cat version)
-          echo "version=$VER" >> $GITHUB_ENV
+      # upload bundle to action
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Upload Artifact of bundle
+          path: androidApp/build/outputs/bundle/release/androidApp-release.aab
       # upload release apk
       - name: Create Release
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -119,6 +106,7 @@ jobs:
           prerelease: true
           title: Release ${{ env.version }}
           files: |
+            androidApp/build/outputs/bundle/release/androidApp-release.aab
             androidApp/build/outputs/apk/release/rhasspy_mobile_*-arm64-v8a-signed.apk
             androidApp/build/outputs/apk/release/rhasspy_mobile_*-armeabi-v7a-signed.apk
             androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86-signed.apk

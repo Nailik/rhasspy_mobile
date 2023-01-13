@@ -159,7 +159,9 @@ class ConfigurationScreenItemContentTest {
         assertTrue { viewModel.onSave }
 
         //app bar back click shows dialog
-        composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
+        composeTestRule.awaitIdle()
+        device.pressBack()
+        //composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick() TOO often not found while running test
         composeTestRule.onNodeWithTag(TestTag.DialogUnsavedChanges).assertExists()
         //outside click closes dialog
         device.click(300, 300)

@@ -246,6 +246,7 @@ sonarqube {
         property("sonar.projectKey", "Nailik_rhasspy_mobile")
         property("sonar.organization", "nailik")
         property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.sources", "src")
     }
 }
 
@@ -263,36 +264,6 @@ val increaseCodeVersion = tasks.register("increaseCodeVersion") {
         File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
             it.writeText(
                 it.readText().replace("code = ${Version.code}", "code = ${Version.code + 1}")
-            )
-        }
-    }
-}
-
-tasks.register("increasePatchCodeVersion") {
-    doLast {
-        File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
-            it.writeText(
-                it.readText().replace("patch = ${Version.patch}", "patch = ${Version.patch + 1}")
-            )
-        }
-    }
-}
-
-tasks.register("increaseMinorCodeVersion") {
-    doLast {
-        File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
-            it.writeText(
-                it.readText().replace("minor = ${Version.minor}", "minor = ${Version.minor + 1}")
-            )
-        }
-    }
-}
-
-tasks.register("increaseMajorCodeVersion") {
-    doLast {
-        File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
-            it.writeText(
-                it.readText().replace("major = ${Version.major}", "major = ${Version.major + 1}")
             )
         }
     }
