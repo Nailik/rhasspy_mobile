@@ -65,14 +65,22 @@ jobs:
       # necessary for linux/macos but doesn't work on windows
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+      # cache sonar cloud
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
       # run project build
       - name: Project APK Build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          ./gradlew androidApp:build{{ inputs.buildType }}
+          ./gradlew androidApp:build{{ inputs.buildType }} sonar
           ./gradlew androidApp:assemble{{ inputs.buildType }}
+
       # sign the generated apks
       - uses: r0adkll/sign-android-release@v1
         name: Sign App APK

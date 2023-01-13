@@ -26,16 +26,7 @@ jobs:
       # necessary for linux/macos but doesn't work on windows
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      # cache sonar cloud
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      - name: Sonar analyze and Android lint
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Android lint
         run: ./gradlew androidApp:lint${{ inputs.buildType }} sonar
       # android lint debug upload
       - uses: actions/upload-artifact@v3
