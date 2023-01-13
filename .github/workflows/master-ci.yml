@@ -4,10 +4,6 @@ on:
   pull_request:
     branches:
       - master
-    types:
-      - created
-      - edited
-      - labeled
 
 jobs:
   check:
