@@ -2,7 +2,8 @@ name: Master CI
 
 on:
   pull_request:
-    branches: [ "master" ]
+    branches:
+      - master
     types:
       - created
       - edited

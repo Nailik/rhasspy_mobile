@@ -2,7 +2,8 @@ name: Develop CI
 
 on:
   pull_request:
-    branches: [ "develop" ]
+    branches:
+      - develop
     types:
       - created
       - edited
