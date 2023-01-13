@@ -124,7 +124,7 @@ class DialogManagerService : IService() {
     private suspend fun asrTextCaptured(action: DialogAction.AsrTextCaptured) {
         if (isInCorrectState(action, DialogManagerServiceState.TranscribingIntent, DialogManagerServiceState.RecordingIntent)) {
 
-            if(_currentDialogState.value == DialogManagerServiceState.RecordingIntent){
+            if (_currentDialogState.value == DialogManagerServiceState.RecordingIntent) {
                 speechToTextService.endSpeechToText(sessionId ?: "", action.source is Source.Mqtt)
             }
 
@@ -134,13 +134,16 @@ class DialogManagerService : IService() {
             informMqtt(action)
 
             notNull(sessionId, action.text, { id, text ->
-                intentRecognitionService.recognizeIntent(id, text, action.source is Source.Mqtt)
-                //await intent recognition
-                timeoutJob = coroutineScope.launch {
-                    delay(intentRecognitionTimeout)
-                    if(_currentDialogState.value == DialogManagerServiceState.RecognizingIntent) {
-                        logger.d { "intentRecognitionTimeout" }
-                        onAction(DialogAction.IntentRecognitionError(Source.Local))
+                if (params.option == DialogManagementOption.Local) {
+                    //only do action on local dialog management
+                    intentRecognitionService.recognizeIntent(id, text)
+                    //await intent recognition
+                    timeoutJob = coroutineScope.launch {
+                        delay(intentRecognitionTimeout)
+                        if (_currentDialogState.value == DialogManagerServiceState.RecognizingIntent) {
+                            logger.d { "intentRecognitionTimeout" }
+                            onAction(DialogAction.IntentRecognitionError(Source.Local))
+                        }
                     }
                 }
             }, {
@@ -466,6 +469,7 @@ class DialogManagerService : IService() {
                         val doNotIgnore = when(action){
                             is DialogAction.WakeWordDetected -> true
                             is DialogAction.PlayFinished -> true
+                            is DialogAction.StopListening -> true //maybe called by user clicking button
                             else -> false
                         }
 
