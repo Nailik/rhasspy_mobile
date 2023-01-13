@@ -9,7 +9,7 @@ on:
 jobs:
   merge:
     if: ${{ github.event.label.name == 'automerge' }}
-    uses: Nailik/rhasspy_mobile/.github/workflows/merge-ci.yml
+    uses: ./.github/workflows/merge-ci.yml
     with:
       buildType: Release
   release:

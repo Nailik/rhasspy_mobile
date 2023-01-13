@@ -6,6 +6,6 @@ on:
 
 jobs:
   check:
-    uses: Nailik/rhasspy_mobile/.github/workflows/pullrequest-ci.yml
+    uses: ./.github/workflows/pullrequest-ci.yml
     with:
       buildType: Debug
