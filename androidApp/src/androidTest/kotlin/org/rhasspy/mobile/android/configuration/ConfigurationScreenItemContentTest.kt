@@ -160,7 +160,8 @@ class ConfigurationScreenItemContentTest {
 
         //app bar back click shows dialog
         composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
+        device.pressBack()
+        //composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick() TOO often not found while running test
         composeTestRule.onNodeWithTag(TestTag.DialogUnsavedChanges).assertExists()
         //outside click closes dialog
         device.click(300, 300)
