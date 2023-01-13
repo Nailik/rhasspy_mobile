@@ -6,6 +6,9 @@ on:
 
 jobs:
   check:
+    runs-on: self-hosted
     uses: ./.github/workflows/pullrequest-ci.yml
     with:
-      buildType: Debug
+      BUILD_TYPE: Release
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

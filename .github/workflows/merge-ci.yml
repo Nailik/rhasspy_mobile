@@ -3,18 +3,33 @@ name: Merge CI
 on:
   workflow_call:
     inputs:
-      buildType:
+      BUILD_TYPE:
+        required: true
+        type: string
+      GITHUB_TOKEN:
+        required: true
+        type: string
+      SIGNING_KEY:
+        required: true
+        type: string
+      ALIAS:
+        required: true
+        type: string
+      KEY_STORE_PASSWORD:
+        required: true
+        type: string
+      KEY_PASSWORD:
         required: true
         type: string
 
 jobs:
-  checks:
+  check:
     runs-on: self-hosted
-    uses: octo-org/example-repo/.github/workflows/reusable-workflow.yml@main
+    uses: ./.github/workflows/pullrequest-ci.yml
     with:
-      config-path: .github/labeler.yml
-    secrets:
-      buildType: ${{ inputs.buildType }}
+      BUILD_TYPE: Release
+      GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+      SONAR_TOKEN: ${{ inputs.SONAR_TOKEN }}
   uiTest:
     runs-on: self-hosted
     steps:
@@ -67,18 +82,18 @@ jobs:
       # run project build
       - name: Project APK Build
         run: |
-          ./gradlew androidApp:build{{ inputs.buildType }}
-          ./gradlew androidApp:assemble{{ inputs.buildType }}
+          ./gradlew androidApp:build{{ inputs.BUILD_TYPE }}
+          ./gradlew androidApp:assemble{{ inputs.BUILD_TYPE }}
       # sign the generated apks
       - uses: r0adkll/sign-android-release@v1
         name: Sign App APK
         id: sign_app
         with:
-          releaseDirectory: androidApp/build/outputs/apk/${{ inputs.buildType }}
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
+          releaseDirectory: androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE }}
+          signingKeyBase64: ${{ inputs.SIGNING_KEY }}
+          alias: ${{ inputs.ALIAS }}
+          keyStorePassword: ${{ inputs.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ inputs.KEY_PASSWORD }}
         env:
           BUILD_TOOLS_VERSION: "33.0.1"
       # sign the generated apks
@@ -86,11 +101,11 @@ jobs:
         name: Sign App Bundle
         id: sign_app
         with:
-          releaseDirectory: androidApp/build/outputs/bundle/${{ inputs.buildType }}
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
+          releaseDirectory: androidApp/build/outputs/bundle/${{ inputs.BUILD_TYPE }}
+          signingKeyBase64: ${{ inputs.SIGNING_KEY }}
+          alias: ${{ inputs.ALIAS }}
+          keyStorePassword: ${{ inputs.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ inputs.KEY_PASSWORD }}
         env:
           BUILD_TOOLS_VERSION: "33.0.1"
       # upload apks to action

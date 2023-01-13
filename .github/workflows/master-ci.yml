@@ -8,4 +8,6 @@ jobs:
   check:
     uses: ./.github/workflows/pullrequest-ci.yml
     with:
-      buildType: Release
+      BUILD_TYPE: Release
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

@@ -8,10 +8,17 @@ on:
 
 jobs:
   merge:
+    runs-on: self-hosted
     if: ${{ github.event.label.name == 'automerge' }}
     uses: ./.github/workflows/merge-ci.yml
     with:
-      buildType: Release
+      BUILD_TYPE: Release
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+      ALIAS: ${{ secrets.ALIAS }}
+      KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
   release:
     runs-on: self-hosted
     needs: merge

@@ -3,7 +3,13 @@ name: PullRequest CI
 on:
   workflow_call:
     inputs:
-      buildType:
+      BUILD_TYPE:
+        required: true
+        type: string
+      GITHUB_TOKEN:
+        required: true
+        type: string
+      SONAR_TOKEN:
         required: true
         type: string
 
@@ -15,7 +21,7 @@ jobs:
       #checkout project
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.head_ref }}
+          fetch-depth: 0
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       # necessary for linux/macos but doesn't work on windows
@@ -30,8 +36,8 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar
       - name: Sonar analyze
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ inputs.SONAR_TOKEN }}
         run: ./gradlew sonar
   #runs checks
   analyze:
@@ -53,12 +59,12 @@ jobs:
         run: chmod +x gradlew
       # android lint debug
       - name: Analyze Lint Check
-        run: ./gradlew lint${{ inputs.buildType }}
+        run: ./gradlew lint${{ inputs.BUILD_TYPE }}
       # android lint debug upload
       - uses: actions/upload-artifact@v3
         with:
           name: AndroidLintRelease
-          path: androidApp/build/reports/lint-results-debug.html
+          path: androidApp/build/reports/lint-results-${{ inputs.BUILD_TYPE }}.html
   unitTest:
     runs-on: self-hosted
     steps:
@@ -75,5 +81,5 @@ jobs:
         if: success() || failure()
         with:
           name: Test Report
-          path: MultiPlatformLibrary/build/test-results/test*UnitTest/TEST-*.xml
+          path: MultiPlatformLibrary/build/test-results/test${{ inputs.BUILD_TYPE }}UnitTest/TEST-*.xml
           reporter: java-junit
