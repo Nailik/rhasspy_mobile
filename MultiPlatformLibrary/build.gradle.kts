@@ -258,3 +258,13 @@ val createVersionTxt = tasks.register("createVersionTxt") {
     }
 }
 tasks.findByPath("preBuild")!!.dependsOn(createVersionTxt)
+
+val increaseCodeVersion = tasks.register("increaseCodeVersion") {
+    doLast {
+        File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
+            it.writeText(
+                it.readText().replace("code = ${Version.code}", "code = ${Version.code + 1}")
+            )
+        }
+    }
+}

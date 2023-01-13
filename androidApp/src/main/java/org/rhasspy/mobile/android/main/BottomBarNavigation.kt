@@ -16,6 +16,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -125,7 +126,13 @@ fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavControlle
                     }, MR.strings.home
                 )
             },
-            label = { Text(MR.strings.home) }
+            label = {
+                Text(
+                    resource = MR.strings.home,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
+            }
         )
 
         NavigationItem(
@@ -137,7 +144,13 @@ fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavControlle
                     Modifier.size(24.dp)
                 )
             },
-            label = { Text(MR.strings.configuration) }
+            label = {
+                Text(
+                    resource = MR.strings.configuration,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
+            }
         )
 
         NavigationItem(
@@ -151,7 +164,13 @@ fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavControlle
                     }, MR.strings.settings
                 )
             },
-            label = { Text(MR.strings.settings) }
+            label = {
+                Text(
+                    resource = MR.strings.settings,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
+            }
         )
 
         if (viewModel.isShowLogEnabled.collectAsState().value) {
