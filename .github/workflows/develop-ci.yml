@@ -3,6 +3,8 @@ name: Develop CI
 on:
   pull_request:
     branches: [ "develop" ]
+    types:
+      - labeled
 
 jobs:
   check:
@@ -11,3 +13,15 @@ jobs:
       BUILD_TYPE: Release
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  merge:
+    needs: check
+    if: ${{ github.event.label.name == 'automerge' }}
+    uses: ./.github/workflows/merge-ci.yml
+    with:
+      BUILD_TYPE: Release
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+      ALIAS: ${{ secrets.ALIAS }}
+      KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
