@@ -32,7 +32,7 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar
       # run sonar check
       - name: SonarCloud Check
-        run: ./gradlew sonar
+        run: ./gradlew :MultiPlatformLibrary:sonar
   #runs checks
   analyze:
     runs-on: self-hosted
