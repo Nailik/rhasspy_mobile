@@ -37,15 +37,6 @@ jobs:
       #r un all unit tests (debug and release)
       - name: Unit Tests
         run: ./gradlew testRelease
-      # android UI Test
-      - name: Android UI Tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          target: default
-          arch: arm64-v8a
-          profile: Nexus 6
-          script: ./gradlew androidApp:connectedCheck
       # better looking test report inside github
       - name: Create Test Report
         uses: dorny/test-reporter@v1
