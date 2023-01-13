@@ -17,14 +17,22 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
-      # run sonar cloud
-      - name: SonarCloud action
-        uses: kitabisa/sonarqube-action@v1.2.0
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      # necessary for linux/macos but doesn't work on windows
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      # necessary for linux/macos but doesn't work on windows
+      # cache sonar cloud
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
         with:
-          host: ${{ secrets.SONARQUBE_HOST }}
-          login: ${{ secrets.SONARQUBE_TOKEN }}
-          projectBaseDir: "src/"
-          projectKey: "Nailik_rhasspy_mobile"
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      # android lint debug
+      - name: SonarCloud Check
+        run: ./gradlew sonar
   #runs checks
   analyze:
     runs-on: self-hosted
