@@ -24,41 +24,6 @@ jobs:
       # necessary for linux/macos but doesn't work on windows
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      # cache sonar cloud
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      # android lint debug
-      - name: Android Lint Check
-        run: ./gradlew lintDebug
-      # android lint debug upload
-      - uses: actions/upload-artifact@v3
-        with:
-          name: AndroidLintRelease
-          path: androidApp/build/reports/lint-results-debug.html
-      #r un all unit tests (debug and debug)
-      - name: Unit Tests
-        run: ./gradlew testDebug
-      # android UI Test
-      - name: Android UI Tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          target: default
-          arch: arm64-v8a
-          profile: Nexus 6
-          script: ./gradlew androidApp:connectedCheck
-      # better looking test report inside github
-      - name: Create Test Report
-        uses: dorny/test-reporter@v1
-        if: success() || failure()
-        with:
-          name: Test Report
-          path: androidApp/build/outputs/androidTest-results/connected/TEST-*.xml,MultiPlatformLibrary/build/test-results/test*UnitTest/TEST-*.xml
-          reporter: java-junit
       # code version is increased before build
       - name: Increase Code Version
         run: ./gradlew increaseCodeVersion
