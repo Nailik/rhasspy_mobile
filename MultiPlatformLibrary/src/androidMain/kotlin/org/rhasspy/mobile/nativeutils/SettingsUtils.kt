@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import androidx.core.content.FileProvider
+import co.touchlab.kermit.Logger
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -21,10 +22,13 @@ import java.util.zip.ZipOutputStream
 
 actual object SettingsUtils {
 
+    private val logger = Logger.withTag("SettingsUtils")
+
     /**
      * export the settings file
      */
     actual fun exportSettingsFile() {
+        logger.d { "exportSettingsFile" }
         //to load zip export file
         Application.nativeInstance.currentActivity?.createDocument(
             "rhasspy_settings_${Clock.System.now().toLocalDateTime(TimeZone.UTC)}.zip",
@@ -32,6 +36,7 @@ actual object SettingsUtils {
         ) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
+                    logger.d { "exportSettingsFile $uri" }
                     Application.nativeInstance.contentResolver.openOutputStream(uri)
                         ?.also { outputStream ->
 
@@ -87,9 +92,12 @@ actual object SettingsUtils {
      * restore all settings from a file
      */
     actual fun restoreSettingsFromFile() {
+        logger.d { "restoreSettingsFromFile" }
+
         Application.nativeInstance.currentActivity?.openDocument(arrayOf("application/zip")) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
+                    logger.d { "restoreSettingsFromFile $uri" }
                     Application.nativeInstance.contentResolver.openInputStream(uri)
                         ?.also { inputStream ->
                             //read input data
@@ -100,14 +108,25 @@ actual object SettingsUtils {
                             while (entry != null) {
                                 if (entry.isDirectory) {
                                     //when it's a directory create new directory
-                                    File(
-                                        Application.nativeInstance.filesDir.parent,
-                                        entry.name
-                                    ).mkdirs()
+                                    val dir: String? = Application.nativeInstance.filesDir.parent
+                                    dir?.also {
+                                        val file = File(dir, entry.name)
+
+                                        if (!file.canonicalPath.startsWith(dir)) {
+                                            logger.e(Throwable()) { "Path Traversal Vulnerability" }
+                                            inputStream.close()
+                                            Application.instance.restart()
+                                        } else {
+                                            file.mkdirs()
+                                        }
+                                    } ?: run {
+                                        logger.a(Throwable()) { "Parent directory didn't exist" }
+                                        inputStream.close()
+                                        Application.instance.restart()
+                                    }
                                 } else {
                                     //when it's a file copy file
-                                    val file =
-                                        File(Application.nativeInstance.filesDir.parent, entry.name)
+                                    val file = File(Application.nativeInstance.filesDir.parent, entry.name)
                                     file.parent?.also { parentFile -> File(parentFile).mkdirs() }
                                     file.createNewFile()
                                     file.outputStream().apply {
@@ -133,6 +152,8 @@ actual object SettingsUtils {
      * share settings file but without sensitive data
      */
     actual fun shareSettingsFile() {
+        logger.d { "shareSettingsFile" }
+
         val toRemove = arrayOf(
             SettingsEnum.HttpClientServerEndpointHost.name,
             SettingsEnum.HttpClientServerEndpointPort.name,
