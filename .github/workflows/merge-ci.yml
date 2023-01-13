@@ -24,13 +24,11 @@ on:
 
 jobs:
   check:
-    runs-on: self-hosted
-    steps:
-      - uses: ./.github/workflows/pullrequest-ci.yml
-        with:
-          BUILD_TYPE: Release
-          GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ inputs.SONAR_TOKEN }}
+    uses: ./.github/workflows/pullrequest-ci.yml
+    with:
+      BUILD_TYPE: Release
+      GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+      SONAR_TOKEN: ${{ inputs.SONAR_TOKEN }}
   uiTest:
     runs-on: self-hosted
     steps:
