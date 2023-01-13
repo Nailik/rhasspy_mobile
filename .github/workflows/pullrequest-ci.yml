@@ -37,7 +37,7 @@ jobs:
       - name: Sonar analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew androidApp:build sonar
+        run: ./gradlew androidApp:build sonarqube
   #runs checks
   analyze:
     runs-on: self-hosted
