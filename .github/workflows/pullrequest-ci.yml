@@ -6,6 +6,13 @@ on:
       BUILD_TYPE:
         required: true
         type: string
+    secrets:
+      GITHUB_TOKEN:
+        required: true
+        type: string
+      SONAR_TOKEN:
+        required: true
+        type: string
 
 jobs:
   #runs sonar

@@ -6,6 +6,25 @@ on:
       BUILD_TYPE:
         required: true
         type: string
+    secrets:
+      GITHUB_TOKEN:
+        required: true
+        type: string
+      SONAR_TOKEN:
+        required: true
+        type: string
+      SIGNING_KEY:
+        required: true
+        type: string
+      ALIAS:
+        required: true
+        type: string
+      KEY_STORE_PASSWORD:
+        required: true
+        type: string
+      KEY_PASSWORD:
+        required: true
+        type: string
 
 jobs:
   check:
