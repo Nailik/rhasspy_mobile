@@ -83,7 +83,7 @@ jobs:
       # sign the generated apks
       - uses: r0adkll/sign-android-release@v1
         name: Sign App APK
-        id: sign_app
+        id: sign_app_apk
         with:
           releaseDirectory: androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE }}
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
@@ -95,7 +95,7 @@ jobs:
       # sign the generated apks
       - uses: r0adkll/sign-android-release@v1
         name: Sign App Bundle
-        id: sign_app
+        id: sign_app_bundle
         with:
           releaseDirectory: androidApp/build/outputs/bundle/${{ inputs.BUILD_TYPE }}
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
