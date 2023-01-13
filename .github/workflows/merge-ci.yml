@@ -46,9 +46,7 @@ jobs:
         if: success() || failure()
         with:
           name: Test Report
-          path: |
-            androidApp/build/outputs/androidTest-results/connected/TEST-*.xml
-            MultiPlatformLibrary/build/test-results/test*UnitTest/TEST-*.xml
+          path: androidApp/build/outputs/androidTest-results/connected/TEST-*.xml
           reporter: java-junit
   build:
     runs-on: self-hosted
