@@ -29,15 +29,11 @@ jobs:
         run: chmod +x gradlew
       # necessary for linux/macos but doesn't work on windows
       # cache sonar cloud
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      # run sonar check
-      - name: SonarCloud Check
-        run: ./gradlew sonar
+      - name: SonarQube Scan
+          uses: sonarsource/sonarqube-scan-action@master
+          env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
   #runs checks
   analyze:
     runs-on: self-hosted
