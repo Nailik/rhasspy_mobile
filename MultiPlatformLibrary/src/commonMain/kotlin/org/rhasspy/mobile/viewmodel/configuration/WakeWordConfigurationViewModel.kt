@@ -288,9 +288,9 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
         _wakeWordUdpOutputHost.value = host
     }
 
-    //restart wakeword service after microphone permission was allowed
+    //restart wake word service after microphone permission was allowed
     fun microphonePermissionAllowed() {
-        get<WakeWordService>().initialize()
+        save()
     }
 
     /**
