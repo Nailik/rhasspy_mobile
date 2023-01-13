@@ -8,26 +8,6 @@ on:
         type: string
 
 jobs:
-  #runs sonar
-  sonar:
-    runs-on: self-hosted
-    steps:
-      #checkout project
-      - uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-          fetch-depth: 0
-       # cache sonar cloud
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      - name: Sonar analyze
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonar
   #runs checks
   analyze:
     runs-on: self-hosted
@@ -48,7 +28,18 @@ jobs:
         run: chmod +x gradlew
       # android lint debug
       - name: Android Lint Check
-        run: ./gradlew lint${{ inputs.buildType }}
+        run: ./gradlew
+      # cache sonar cloud
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Sonar analyze
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew build${{ inputs.buildType }} sonar
       # android lint debug upload
       - uses: actions/upload-artifact@v3
         with:
