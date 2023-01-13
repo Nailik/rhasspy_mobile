@@ -65,9 +65,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew androidApp:build sonarqube
-      # sign the generated apks
+      # run project build
+      - name: Project Bundle Build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew androidApp:bundle
+      - name: Set variables
+        run: |
+          VER=$(cat version)
+          echo "version=$VER" >> $GITHUB_ENV
+      # sign the generated apks and bundle
       - uses: r0adkll/sign-android-release@v1
-        name: Sign App APK
+        name: Sign App
         id: sign_app
         with:
           releaseDirectory: androidApp/build/outputs/apk/release
@@ -82,21 +92,11 @@ jobs:
         with:
           name: Upload Artifact of signed apks
           path: androidApp/build/outputs/apk/release/rhasspy_mobile_*.apk
-      # run project build
-      - name: Project Bundle Build
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew androidApp:bundle
       # upload bundle to action
       - uses: actions/upload-artifact@v3
         with:
-          name: Upload Artifact of signed apks
+          name: Upload Artifact of bundle
           path: androidApp/build/outputs/bundle/release/androidApp-release.aab
-      - name: Set variables
-        run: |
-          VER=$(cat version)
-          echo "version=$VER" >> $GITHUB_ENV
       # upload release apk
       - name: Create Release
         uses: "marvinpinto/action-automatic-releases@latest"
