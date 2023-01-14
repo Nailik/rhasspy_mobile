@@ -6,6 +6,9 @@ on:
       BUILD_TYPE:
         required: true
         type: string
+      BUILD_TYPE_LOWERCASE:
+        required: true
+        type: string
     secrets:
       SONAR_TOKEN:
         required: true
@@ -62,7 +65,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: AndroidLintRelease
-          path: androidApp/build/reports/lint-results-${{ inputs.BUILD_TYPE.toLowerCase() }}.html
+          path: androidApp/build/reports/lint-results-${{ inputs.BUILD_TYPE_LOWERCASE }}.html
   unitTest:
     needs: analyze
     runs-on: self-hosted
