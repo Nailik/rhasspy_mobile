@@ -31,11 +31,6 @@ jobs:
     runs-on: self-hosted
     needs: merge
     steps:
-      #download artifacts from build
-      - uses: actions/download-artifact@master
-        with:
-          name: CompiledProject
-          path: androidApp/build/outputs/bundle/release/
       # upload release apk
       - name: Create Release
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -50,10 +45,3 @@ jobs:
             androidApp/build/outputs/apk/release/rhasspy_mobile_*-armeabi-v7a-signed.apk
             androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86-signed.apk
             androidApp/build/outputs/apk/release/rhasspy_mobile_*-x86_64-signed.apk
-      # auto approve pr
-      - name: Approve Pull Request
-        uses: juliangruber/merge-pull-request-action@v1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          method: merge
-          number: ${{ github.event.pull_request.number }}
