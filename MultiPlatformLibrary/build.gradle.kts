@@ -241,12 +241,14 @@ tasks.withType<Test> {
         showStackTraces = true
     }
 }
+
 sonarqube {
     properties {
         property("sonar.projectKey", "Nailik_rhasspy_mobile")
         property("sonar.organization", "nailik")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.sources", "src")
+        property("sonar.sources", "src,../androidApp/src")
+        property("sonar.verbose", "true")
     }
 }
 
