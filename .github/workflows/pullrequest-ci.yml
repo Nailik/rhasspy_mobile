@@ -78,5 +78,5 @@ jobs:
         if: always()
         with:
           name: Test Report
-          path: MultiPlatformLibrary/build/test-results/test${{ inputs.BUILD_TYPE }}UnitTest/TEST-*.xml
+          path: MultiPlatformLibrary/build/test-results/test${{ inputs.BUILD_TYPE }}UnitTest/TEST-${{ inputs.BUILD_TYPE }}.xml
           reporter: java-junit

@@ -56,7 +56,7 @@ jobs:
         if: always()
         with:
           name: Test Report
-          path: androidApp/build/outputs/androidTest-results/connected/TEST-*.xml
+          path: androidApp/build/outputs/androidTest-results/connected/TEST-${{ inputs.BUILD_TYPE }}.xml
           reporter: java-junit
   build:
     runs-on: self-hosted
@@ -78,14 +78,14 @@ jobs:
       # run project build
       - name: Project APK Build
         run: |
-          ./gradlew androidApp:build{{ inputs.BUILD_TYPE }}
-          ./gradlew androidApp:assemble{{ inputs.BUILD_TYPE }}
+          ./gradlew androidApp:build${{ inputs.BUILD_TYPE }}
+          ./gradlew androidApp:assemble${{ inputs.BUILD_TYPE }}
       # sign the generated apks
       - uses: r0adkll/sign-android-release@v1
         name: Sign App APK
         id: sign_app_apk
         with:
-          releaseDirectory: androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE }}
+          releaseDirectory: androidApp/build/outputs/apk/${{ lowercase(inputs.BUILD_TYPE) }}
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
@@ -97,7 +97,7 @@ jobs:
         name: Sign App Bundle
         id: sign_app_bundle
         with:
-          releaseDirectory: androidApp/build/outputs/bundle/${{ inputs.BUILD_TYPE }}
+          releaseDirectory: androidApp/build/outputs/bundle/${{ lowercase(inputs.BUILD_TYPE) }}
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
@@ -109,10 +109,10 @@ jobs:
         with:
           name: Upload Artifact of signed apks
           path: |
-            androidApp/build/outputs/bundle/${{ inputs.buildType }}/androidApp-release.aab
-            androidApp/build/outputs/apk/${{ inputs.buildType }}/rhasspy_mobile_*-arm64-v8a-signed.apk
-            androidApp/build/outputs/apk/${{ inputs.buildType }}/rhasspy_mobile_*-armeabi-v7a-signed.apk
-            androidApp/build/outputs/apk/${{ inputs.buildType }}/rhasspy_mobile_*-x86-signed.apk
-            androidApp/build/outputs/apk/${{ inputs.buildType }}/rhasspy_mobile_*-x86_64-signed.apk
+            androidApp/build/outputs/bundle/${{ lowercase(inputs.BUILD_TYPE) }}/androidApp-release.aab
+            androidApp/build/outputs/apk/${{ lowercase(inputs.BUILD_TYPE) }}/rhasspy_mobile_*-arm64-v8a-signed.apk
+            androidApp/build/outputs/apk/${{ lowercase(inputs.BUILD_TYPE) }}/rhasspy_mobile_*-armeabi-v7a-signed.apk
+            androidApp/build/outputs/apk/${{ lowercase(inputs.BUILD_TYPE) }}/rhasspy_mobile_*-x86-signed.apk
+            androidApp/build/outputs/apk/${{ lowercase(inputs.BUILD_TYPE) }}/rhasspy_mobile_*-x86_64-signed.apk
 
 
