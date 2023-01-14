@@ -27,7 +27,7 @@ jobs:
       # necessary for linux/macos but doesn't work on windows
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-       # cache sonar cloud
+      # cache sonar cloud
       - name: Cache SonarCloud packages
         uses: actions/cache@v3
         with:

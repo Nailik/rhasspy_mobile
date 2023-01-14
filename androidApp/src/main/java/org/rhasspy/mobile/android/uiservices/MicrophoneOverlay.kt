@@ -54,7 +54,7 @@ object MicrophoneOverlay : KoinComponent {
     }
 
     private fun onClick() {
-        if(MicrophonePermission.granted.value) {
+        if (MicrophonePermission.granted.value) {
             get<MicrophoneFabViewModel>().onClick()
         } else {
             MainActivity.startRecordingAction()
