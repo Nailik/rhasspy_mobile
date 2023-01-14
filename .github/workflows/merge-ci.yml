@@ -26,6 +26,7 @@ jobs:
     uses: ./.github/workflows/pullrequest-ci.yml
     with:
       BUILD_TYPE: ${{ inputs.BUILD_TYPE }}
+      BUILD_TYPE_LOWERCASE: ${{ inputs.BUILD_TYPE_LOWERCASE }}
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   uiTest:
