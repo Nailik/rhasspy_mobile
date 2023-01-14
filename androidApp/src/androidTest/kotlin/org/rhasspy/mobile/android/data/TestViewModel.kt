@@ -13,7 +13,7 @@ class TestViewModel : IConfigurationViewModel() {
     var onDiscard = false
 
     override val testRunner: IConfigurationTest
-        get() = object: IConfigurationTest() {
+        get() = object : IConfigurationTest() {
             override val serviceState: StateFlow<ServiceState>
                 get() = MutableStateFlow(ServiceState.Success)
         }

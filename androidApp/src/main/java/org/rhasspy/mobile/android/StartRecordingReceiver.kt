@@ -11,10 +11,10 @@ import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 /**
  * Start Recording Receiver to not launch Main Activity when Permission is given
  */
-class StartRecordingReceiver: KoinComponent, BroadcastReceiver() {
+class StartRecordingReceiver : KoinComponent, BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         println("StartRecordingReceiver StartRecordingReceiver StartRecordingReceiver")
-        if(MicrophonePermission.granted.value) {
+        if (MicrophonePermission.granted.value) {
             get<MicrophoneFabViewModel>().onClick()
         } else {
             MainActivity.startRecordingAction()

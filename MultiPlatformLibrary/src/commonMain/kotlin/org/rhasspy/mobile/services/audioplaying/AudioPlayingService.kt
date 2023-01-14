@@ -63,8 +63,12 @@ open class AudioPlayingService : IService() {
                 serviceMiddleware.action(DialogAction.PlayFinished(Source.HttpApi))
             }
             AudioPlayingOption.RemoteMQTT -> {
-                _serviceState.value = if(!fromMqtt) { mqttClientService.playBytes(data) } else ServiceState.Success
-                if(fromMqtt) {  serviceMiddleware.action(DialogAction.PlayFinished(Source.Local)) }
+                _serviceState.value = if (!fromMqtt) {
+                    mqttClientService.playBytes(data)
+                } else ServiceState.Success
+                if (fromMqtt) {
+                    serviceMiddleware.action(DialogAction.PlayFinished(Source.Local))
+                }
             }
             AudioPlayingOption.Disabled -> {}
         }

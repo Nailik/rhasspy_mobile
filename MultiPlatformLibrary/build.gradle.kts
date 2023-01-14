@@ -241,12 +241,14 @@ tasks.withType<Test> {
         showStackTraces = true
     }
 }
+
 sonarqube {
     properties {
         property("sonar.projectKey", "Nailik_rhasspy_mobile")
         property("sonar.organization", "nailik")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.sources", "src")
+        property("sonar.sources", "src,../androidApp/src")
+        property("sonar.verbose", "true")
     }
 }
 
@@ -258,3 +260,13 @@ val createVersionTxt = tasks.register("createVersionTxt") {
     }
 }
 tasks.findByPath("preBuild")!!.dependsOn(createVersionTxt)
+
+val increaseCodeVersion = tasks.register("increaseCodeVersion") {
+    doLast {
+        File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
+            it.writeText(
+                it.readText().replace("code = ${Version.code}", "code = ${Version.code + 1}")
+            )
+        }
+    }
+}
