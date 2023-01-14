@@ -190,6 +190,11 @@ class ConfigurationScreenItemContentTest {
         //save click invokes save and navigate back
         assertFalse { viewModel.onSave }
         composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
+        composeTestRule.waitUntil(
+            condition = { viewModel.onSave && !viewModel.isLoading.value },
+            timeoutMillis = 5000
+        )
+        composeTestRule.awaitIdle()
         assertTrue { viewModel.onSave }
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertDoesNotExist()
     }
