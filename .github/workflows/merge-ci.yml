@@ -82,9 +82,10 @@ jobs:
         run: chmod +x gradlew
       # run project build
       - name: Project APK Build
-        run: |
-          ./gradlew androidApp:build${{ inputs.BUILD_TYPE }}
-          ./gradlew androidApp:assemble${{ inputs.BUILD_TYPE }}
+        run: ./gradlew androidApp:assemble${{ inputs.BUILD_TYPE }}
+      # run project build
+      - name: Project Bundle Build
+        run: ./gradlew androidApp:bundle${{ inputs.BUILD_TYPE }}
       # sign the generated apks
       - uses: r0adkll/sign-android-release@v1
         name: Sign App APK
@@ -114,7 +115,7 @@ jobs:
         with:
           name: Upload Artifact of signed apks
           path: |
-            androidApp/build/outputs/bundle/${{ inputs.BUILD_TYPE_LOWERCASE }}/androidApp-release.aab
+            androidApp/build/outputs/bundle/${{ inputs.BUILD_TYPE_LOWERCASE }}/androidApp-${{ inputs.BUILD_TYPE_LOWERCASE }}.aab
             androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE_LOWERCASE }}/rhasspy_mobile_*-arm64-v8a-signed.apk
             androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE_LOWERCASE }}/rhasspy_mobile_*-armeabi-v7a-signed.apk
             androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE_LOWERCASE }}/rhasspy_mobile_*-x86-signed.apk
