@@ -61,7 +61,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: AndroidLintRelease
-          path: androidApp/build/reports/lint-results-${{ inputs.BUILD_TYPE }}.html
+          path: androidApp/build/reports/lint-results-${{ inputs.BUILD_TYPE.lowercase }}.html
   unitTest:
     runs-on: self-hosted
     steps:
@@ -78,5 +78,5 @@ jobs:
         if: always()
         with:
           name: Test Report
-          path: MultiPlatformLibrary/build/test-results/test${{ inputs.BUILD_TYPE }}UnitTest/TEST-${{ inputs.BUILD_TYPE }}.xml
+          path: MultiPlatformLibrary/build/test-results/test${{ inputs.BUILD_TYPE }}UnitTest/TEST-*.xml
           reporter: java-junit
