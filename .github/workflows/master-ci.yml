@@ -8,14 +8,14 @@ on:
 
 jobs:
   check:
+    if: !contains(github.event.pull_request.labels.*.name, 'automerge')
     uses: ./.github/workflows/pullrequest-ci.yml
     with:
       BUILD_TYPE: Debug
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   merge:
-    needs: check
-    if: ${{ github.event.label.name == 'automerge' }}
+    if: contains(github.event.pull_request.labels.*.name, 'automerge')
     uses: ./.github/workflows/merge-ci.yml
     with:
       BUILD_TYPE: Release
