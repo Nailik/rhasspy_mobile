@@ -60,7 +60,7 @@ class ServiceMiddleware : KoinComponent, Closeable {
                             //suspend coroutine
                             localAudioService.playAudio(speechToTextService.speechToTextAudioData.toMutableList().addWavHeader())
                             //resumes when play finished
-                            if(_isPlayingRecording.value) {
+                            if (_isPlayingRecording.value) {
                                 action(Action.PlayStopRecording)
                             }
                         }

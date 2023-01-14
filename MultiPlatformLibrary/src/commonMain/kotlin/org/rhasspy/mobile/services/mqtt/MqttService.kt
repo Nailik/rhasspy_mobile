@@ -125,9 +125,10 @@ class MqttService : IService() {
                 //connect to server
                 it.connect(params.mqttServiceConnectionOptions)?.also { error ->
                     logger.e { "connectClient error $error" }
-                    _serviceState.value =
-                        MqttServiceStateType.fromMqttStatus(error.statusCode).serviceState
+                    _serviceState.value = MqttServiceStateType.fromMqttStatus(error.statusCode).serviceState
                 }
+            } else {
+                _serviceState.value = ServiceState.Success
             }
             //update value, may be used from reconnect
             _isConnected.value = it.isConnected.value == true

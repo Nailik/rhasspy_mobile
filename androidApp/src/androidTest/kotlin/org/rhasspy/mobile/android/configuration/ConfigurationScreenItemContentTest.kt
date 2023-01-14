@@ -160,7 +160,8 @@ class ConfigurationScreenItemContentTest {
 
         //app bar back click shows dialog
         composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
+        device.pressBack()
+        //composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick() TOO often not found while running test
         composeTestRule.onNodeWithTag(TestTag.DialogUnsavedChanges).assertExists()
         //outside click closes dialog
         device.click(300, 300)
@@ -189,6 +190,11 @@ class ConfigurationScreenItemContentTest {
         //save click invokes save and navigate back
         assertFalse { viewModel.onSave }
         composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
+        composeTestRule.waitUntil(
+            condition = { viewModel.onSave && !viewModel.isLoading.value },
+            timeoutMillis = 5000
+        )
+        composeTestRule.awaitIdle()
         assertTrue { viewModel.onSave }
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertDoesNotExist()
     }

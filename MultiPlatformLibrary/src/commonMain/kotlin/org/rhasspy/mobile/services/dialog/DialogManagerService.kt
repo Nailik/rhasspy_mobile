@@ -103,7 +103,7 @@ class DialogManagerService : IService() {
     private suspend fun asrError(action: DialogAction.AsrError) {
         if (isInCorrectState(action, DialogManagerServiceState.TranscribingIntent, DialogManagerServiceState.RecordingIntent)) {
 
-            if(_currentDialogState.value == DialogManagerServiceState.RecordingIntent){
+            if (_currentDialogState.value == DialogManagerServiceState.RecordingIntent) {
                 speechToTextService.endSpeechToText(sessionId ?: "", action.source is Source.Mqtt)
             }
 
@@ -124,7 +124,7 @@ class DialogManagerService : IService() {
     private suspend fun asrTextCaptured(action: DialogAction.AsrTextCaptured) {
         if (isInCorrectState(action, DialogManagerServiceState.TranscribingIntent, DialogManagerServiceState.RecordingIntent)) {
 
-            if(_currentDialogState.value == DialogManagerServiceState.RecordingIntent){
+            if (_currentDialogState.value == DialogManagerServiceState.RecordingIntent) {
                 speechToTextService.endSpeechToText(sessionId ?: "", action.source is Source.Mqtt)
             }
 
@@ -134,13 +134,16 @@ class DialogManagerService : IService() {
             informMqtt(action)
 
             notNull(sessionId, action.text, { id, text ->
-                intentRecognitionService.recognizeIntent(id, text, action.source is Source.Mqtt)
-                //await intent recognition
-                timeoutJob = coroutineScope.launch {
-                    delay(intentRecognitionTimeout)
-                    if(_currentDialogState.value == DialogManagerServiceState.RecognizingIntent) {
-                        logger.d { "intentRecognitionTimeout" }
-                        onAction(DialogAction.IntentRecognitionError(Source.Local))
+                if (params.option == DialogManagementOption.Local) {
+                    //only do action on local dialog management
+                    intentRecognitionService.recognizeIntent(id, text)
+                    //await intent recognition
+                    timeoutJob = coroutineScope.launch {
+                        delay(intentRecognitionTimeout)
+                        if (_currentDialogState.value == DialogManagerServiceState.RecognizingIntent) {
+                            logger.d { "intentRecognitionTimeout" }
+                            onAction(DialogAction.IntentRecognitionError(Source.Local))
+                        }
                     }
                 }
             }, {
@@ -166,7 +169,7 @@ class DialogManagerService : IService() {
             )
         ) {
 
-            if(_currentDialogState.value == DialogManagerServiceState.RecordingIntent){
+            if (_currentDialogState.value == DialogManagerServiceState.RecordingIntent) {
                 speechToTextService.endSpeechToText(sessionId ?: "", action.source is Source.Mqtt)
             }
 
@@ -239,7 +242,7 @@ class DialogManagerService : IService() {
      * stops to play the current audio
      */
     @Suppress("UNUSED_PARAMETER")
-    private fun stopPlayAudio( action: DialogAction.StopAudioPlaying) {
+    private fun stopPlayAudio(action: DialogAction.StopAudioPlaying) {
 
         audioPlayingService.stopPlayAudio()
         onAction(DialogAction.PlayFinished(Source.Local))
@@ -255,7 +258,7 @@ class DialogManagerService : IService() {
      */
     private suspend fun playFinished(action: DialogAction.PlayFinished) {
 
-        when(_currentDialogState.value){
+        when (_currentDialogState.value) {
             DialogManagerServiceState.Idle,
             DialogManagerServiceState.AwaitingWakeWord -> indicationService.onIdle()
             DialogManagerServiceState.RecordingIntent -> indicationService.onListening()
@@ -433,7 +436,7 @@ class DialogManagerService : IService() {
                     is Source.Mqtt -> {
 
                         //exceptions where calls form mqtt are ok
-                        val doNotIgnore = when(action){
+                        val doNotIgnore = when (action) {
                             is DialogAction.AsrError,
                             is DialogAction.AsrTextCaptured -> get<SpeechToTextServiceParams>().speechToTextOption == SpeechToTextOption.RemoteMQTT
                             is DialogAction.IntentRecognitionError,
@@ -463,9 +466,10 @@ class DialogManagerService : IService() {
                     //from webserver or local always ignore for now
                     Source.HttpApi,
                     Source.Local -> {
-                        val doNotIgnore = when(action){
+                        val doNotIgnore = when (action) {
                             is DialogAction.WakeWordDetected -> true
                             is DialogAction.PlayFinished -> true
+                            is DialogAction.StopListening -> true //maybe called by user clicking button
                             else -> false
                         }
 
