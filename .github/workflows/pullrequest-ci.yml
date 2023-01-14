@@ -62,7 +62,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: AndroidLintRelease
-          path: androidApp/build/reports/lint-results-${{ inputs.BUILD_TYPE.lowercase }}.html
+          path: ../androidApp/build/reports/lint-results-${{ inputs.BUILD_TYPE.lowercase }}.html
   unitTest:
     needs: analyze
     runs-on: self-hosted
