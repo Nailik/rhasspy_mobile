@@ -63,7 +63,7 @@ jobs:
           reporter: java-junit
   build:
     runs-on: self-hosted
-    needs: [check, uiTest]
+    needs: uiTest
     steps:
       - uses: actions/checkout@v3
         with:
