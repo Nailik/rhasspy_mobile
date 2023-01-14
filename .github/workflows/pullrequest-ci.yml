@@ -75,7 +75,7 @@ jobs:
       # better looking test report inside github
       - name: Create Test Report
         uses: dorny/test-reporter@v1
-        if: success() || failure()
+        if: always()
         with:
           name: Test Report
           path: MultiPlatformLibrary/build/test-results/test${{ inputs.BUILD_TYPE }}UnitTest/TEST-*.xml
