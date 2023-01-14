@@ -38,6 +38,7 @@ jobs:
         run: ./gradlew sonar
   #runs checks
   analyze:
+    needs: sonar
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
@@ -63,6 +64,7 @@ jobs:
           name: AndroidLintRelease
           path: androidApp/build/reports/lint-results-${{ inputs.BUILD_TYPE.lowercase }}.html
   unitTest:
+    needs: analyze
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3

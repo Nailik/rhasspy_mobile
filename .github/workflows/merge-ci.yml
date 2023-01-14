@@ -26,6 +26,7 @@ jobs:
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   uiTest:
+    needs: check
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
