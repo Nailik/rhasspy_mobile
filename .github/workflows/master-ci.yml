@@ -33,7 +33,7 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: CompiledProject
-          path: androidApp/build/outputs/bundle/${{ inputs.BUILD_TYPE.lowercase }}/
+          path: androidApp/build/outputs/bundle/${{ inputs.BUILD_TYPE.toLowerCase() }}/
       # upload release apk
       - name: Create Release
         uses: "marvinpinto/action-automatic-releases@latest"
