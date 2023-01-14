@@ -22,7 +22,7 @@ jobs:
   check:
     uses: ./.github/workflows/pullrequest-ci.yml
     with:
-      BUILD_TYPE: Release
+      BUILD_TYPE: ${{ inputs.BUILD_TYPE }}
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   uiTest:
