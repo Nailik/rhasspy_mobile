@@ -55,7 +55,7 @@ jobs:
           arch: arm64-v8a
           profile: Nexus 6
           script: ./gradlew androidApp:connectedCheck
-       # better looking test report inside github
+      # better looking test report inside github
       - name: Create Test Report
         uses: dorny/test-reporter@v1
         if: always()
@@ -113,7 +113,7 @@ jobs:
       # upload apks to action
       - uses: actions/upload-artifact@v3
         with:
-          name: Upload Artifact of signed apks
+          name: Artifact of signed apks
           path: |
             androidApp/build/outputs/bundle/${{ inputs.BUILD_TYPE_LOWERCASE }}/androidApp-${{ inputs.BUILD_TYPE_LOWERCASE }}.aab
             androidApp/build/outputs/apk/${{ inputs.BUILD_TYPE_LOWERCASE }}/rhasspy_mobile_*-arm64-v8a-signed.apk

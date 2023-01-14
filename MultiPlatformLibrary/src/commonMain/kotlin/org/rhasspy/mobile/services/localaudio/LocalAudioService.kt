@@ -54,7 +54,9 @@ class LocalAudioService : IService() {
     fun playWakeSound(onFinished: () -> Unit) {
         logger.d { "playWakeSound" }
         when (AppSetting.wakeSound.value) {
-            SoundOption.Disabled.name -> { onFinished() }
+            SoundOption.Disabled.name -> {
+                onFinished()
+            }
             SoundOption.Default.name -> audioPlayer.playFileResource(
                 MR.files.etc_wav_beep_hi,
                 AppSetting.wakeSoundVolume.data,

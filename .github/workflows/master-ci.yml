@@ -4,7 +4,7 @@ on:
   pull_request:
     branches:
       - master
-    types: [labeled, edited, synchronize]
+    types: [ labeled, edited, synchronize ]
 
 jobs:
   check:
@@ -31,11 +31,10 @@ jobs:
     runs-on: self-hosted
     needs: merge
     steps:
-      #download artifacts from build
-      - uses: actions/download-artifact@master
-        with:
-          name: CompiledProject
-          path: androidApp/build/outputs/bundle/release/
+      - name: Set variables
+        run: |
+          VER=$(cat version)
+          echo "version=$VER" >> $GITHUB_ENV
       # upload release apk
       - name: Create Release
         uses: "marvinpinto/action-automatic-releases@latest"

@@ -45,6 +45,7 @@ of [Rhasspy](https://rhasspy.readthedocs.io/en/latest/tutorials/#server-with-sat
 | Local Webserver                   | Hosts Hermes api to send commands to Rhasspy Satellite.                                                                                                                           |
 | Intent                            | Start Recording via Intent.<br/>`adb shell am start -a android.intent.action.MAIN -n org.rhasspy.mobile.android/.MainActivity --ez START_RECORDING 1`                             |
 | Broadcast                         | To Start Recording without launching app.<br/>`adb shell am broadcast -a org.rhasspy.mobile.android.action.START_RECORDING -n org.rhasspy.mobile.android/.StartRecordingReceiver` |
+
 ## Rhasspy configuration
 
 | Item               | Options                                                                                                 |
