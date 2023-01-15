@@ -300,7 +300,6 @@ private fun BottomAppBar(
                 isEnabled = isTestingEnabled,
                 containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
                 contentColor = LocalContentColor.current,
-                elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
                 icon = {
                     Icon(
                         imageVector = if (isTestingEnabled) Icons.Filled.PlayArrow else Icons.Outlined.PlayArrow,
