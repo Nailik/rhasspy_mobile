@@ -59,7 +59,6 @@ fun MicrophoneFab(
         isEnabled = isActionEnabled,
         containerColor = getContainerColorForMicrophoneFab(isActionEnabled, isRecording),
         contentColor = getContentColorForMicrophoneFab(isActionEnabled, isRecording),
-        elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
         icon = {
             Icon(
                 modifier = Modifier.size(iconSize),
