@@ -64,7 +64,7 @@ fun MutableList<Byte>.addWavHeader(): List<Byte> {
             audioDataSize[3] //40-43 data size of rest
         )
         this.addAll(0, header)
-    }catch (exception: Exception) {
+    } catch (exception: Exception) {
         Logger.withTag("addWavHeader").a(exception) { "byteListSize: $byteListSize dataSize: $dataSize audioDataSize: $audioDataSize" }
         return listOf()
     }
