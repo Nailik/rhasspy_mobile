@@ -104,29 +104,21 @@ actual object SettingsUtils {
                             val zipInputStream = ZipInputStream(BufferedInputStream(inputStream))
 
                             var entry = zipInputStream.nextEntry
+                            val dir = Application.nativeInstance.filesDir.parent ?: ""
 
                             while (entry != null) {
+                                val file = File(dir, entry.name)
+                                val canonicalPath: String = file.canonicalPath
+                                if (!canonicalPath.startsWith(dir)) {
+                                    // SecurityException
+                                    throw SecurityException("Path Traversal Vulnerability")
+                                }
+                                // Finish unzipping…
                                 if (entry.isDirectory) {
                                     //when it's a directory create new directory
-                                    val dir: String? = Application.nativeInstance.filesDir.parent
-                                    dir?.also {
-                                        val file = File(dir, entry.name)
-
-                                        if (!file.canonicalPath.startsWith(dir)) {
-                                            logger.e(Throwable()) { "Path Traversal Vulnerability" }
-                                            inputStream.close()
-                                            Application.instance.restart()
-                                        } else {
-                                            file.mkdirs()
-                                        }
-                                    } ?: run {
-                                        logger.a(Throwable()) { "Parent directory didn't exist" }
-                                        inputStream.close()
-                                        Application.instance.restart()
-                                    }
+                                    file.mkdirs()
                                 } else {
                                     //when it's a file copy file
-                                    val file = File(Application.nativeInstance.filesDir.parent, entry.name)
                                     file.parent?.also { parentFile -> File(parentFile).mkdirs() }
                                     file.createNewFile()
                                     file.outputStream().apply {
@@ -140,7 +132,6 @@ actual object SettingsUtils {
                             }
 
                             inputStream.close()
-
                             Application.instance.restart()
                         }
                 }

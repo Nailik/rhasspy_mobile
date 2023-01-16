@@ -7,6 +7,9 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import co.touchlab.kermit.Logger
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.android.uiservices.IndicationOverlay
 import org.rhasspy.mobile.android.uiservices.MicrophoneOverlay
@@ -32,9 +35,7 @@ class AndroidApplication : Application() {
     init {
         //catches all exceptions
         Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
-            logger.a(exception) {
-                "uncaught exception in Thread $thread"
-            }
+            logger.a(exception) { "uncaught exception in Thread $thread" }
             exitProcess(2)
         }
     }
@@ -45,13 +46,18 @@ class AndroidApplication : Application() {
     }
 
     override fun startOverlay() {
-        IndicationOverlay.start()
-        MicrophoneOverlay.start()
+        CoroutineScope(Dispatchers.Main).launch {
+            //lifecycle must be called on main thread
+            IndicationOverlay.start()
+            MicrophoneOverlay.start()
+        }
     }
 
     override fun stopOverlay() {
-        IndicationOverlay.stop()
-        MicrophoneOverlay.stop()
+        CoroutineScope(Dispatchers.Main).launch {
+            IndicationOverlay.stop()
+            MicrophoneOverlay.stop()
+        }
     }
 
     override fun restart() {

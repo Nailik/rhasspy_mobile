@@ -8,8 +8,6 @@ import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FloatingActionButtonElevation
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -23,32 +21,31 @@ fun FloatingActionButton(
     isEnabled: Boolean,
     containerColor: Color,
     contentColor: Color,
-    elevation: FloatingActionButtonElevation,
     icon: @Composable RowScope.() -> Unit
 ) {
-    androidx.compose.material3.FloatingActionButton(
-        onClick = { },
-        containerColor = MaterialTheme.colorScheme.surface,
-        elevation = elevation
+    CompositionLocalProvider(
+        LocalRippleTheme provides if (isEnabled) LocalRippleTheme.current else NoRippleTheme
     ) {
-
-        CompositionLocalProvider(
-            LocalRippleTheme provides if (isEnabled) LocalRippleTheme.current else NoRippleTheme
+        Button(
+            modifier = modifier,
+            shape = RoundedCornerShape(16.0.dp),
+            contentPadding = PaddingValues(),
+            colors = ButtonDefaults.buttonColors(
+                contentColor = contentColor,
+                containerColor = containerColor,
+                disabledContainerColor = containerColor.copy(alpha = 0.12f)
+            ),
+            onClick = onClick,
+            enabled = isEnabled,
+            elevation = ButtonDefaults.buttonElevation(
+                defaultElevation = 0.dp,
+                pressedElevation = 0.dp,
+                focusedElevation = 0.dp,
+                hoveredElevation = 0.dp,
+                disabledElevation = 0.dp
+            )
         ) {
-            Button(
-                modifier = modifier,
-                shape = RoundedCornerShape(16.0.dp),
-                contentPadding = PaddingValues(),
-                colors = ButtonDefaults.buttonColors(
-                    contentColor = contentColor,
-                    containerColor = containerColor,
-                    disabledContainerColor = containerColor.copy(alpha = 0.12f)
-                ),
-                onClick = onClick,
-                enabled = isEnabled
-            ) {
-                icon()
-            }
+            icon()
         }
     }
 }
