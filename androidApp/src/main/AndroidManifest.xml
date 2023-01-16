@@ -23,7 +23,9 @@
         android:icon="@drawable/ic_launcher"
         android:label="Rhasspy Mobile"
         android:supportsRtl="true"
-        tools:ignore="Instantiatable,UnusedAttribute">
+        tools:ignore="Instantiatable,UnusedAttribute"
+        android:hardwareAccelerated="false"
+        android:largeHeap="true">
         <service
             android:name="org.rhasspy.mobile.nativeutils.BackgroundService"
             android:foregroundServiceType="microphone" />
