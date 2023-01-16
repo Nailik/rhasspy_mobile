@@ -20,8 +20,10 @@
         android:name="org.rhasspy.mobile.android.AndroidApplication"
         android:enableOnBackInvokedCallback="true"
         android:exported="true"
+        android:hardwareAccelerated="false"
         android:icon="@drawable/ic_launcher"
         android:label="Rhasspy Mobile"
+        android:largeHeap="true"
         android:supportsRtl="true"
         tools:ignore="Instantiatable,UnusedAttribute">
         <service

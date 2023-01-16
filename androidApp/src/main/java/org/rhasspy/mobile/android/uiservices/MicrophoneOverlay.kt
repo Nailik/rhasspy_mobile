@@ -2,7 +2,6 @@ package org.rhasspy.mobile.android.uiservices
 
 import android.content.Context
 import android.graphics.PixelFormat
-import android.os.Build
 import android.os.Looper
 import android.view.Gravity
 import android.view.View
@@ -42,7 +41,7 @@ import org.rhasspy.mobile.viewmodel.overlay.MicrophoneOverlayViewModel
 object MicrophoneOverlay : KoinComponent {
     private val logger = Logger.withTag("MicrophoneOverlay")
 
-    private lateinit var mParams: WindowManager.LayoutParams
+    private var mParams: WindowManager.LayoutParams
     private val lifecycleOwner = CustomLifecycleOwner()
 
     private var viewModel = get<MicrophoneOverlayViewModel>()
@@ -100,18 +99,16 @@ object MicrophoneOverlay : KoinComponent {
 
     init {
         @Suppress("DEPRECATION")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // set the layout parameters of the window
-            mParams = WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                        or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-                        or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSLUCENT
-            ).applySettings()
-        }
+        // set the layout parameters of the window
+        mParams = WindowManager.LayoutParams(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                    or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                    or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            PixelFormat.TRANSLUCENT
+        ).applySettings()
         lifecycleOwner.performRestore(null)
         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
     }
