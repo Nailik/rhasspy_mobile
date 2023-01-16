@@ -6,6 +6,10 @@ import co.touchlab.kermit.Severity
 import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import dev.icerock.moko.resources.desc.StringDesc
 import io.ktor.utils.io.core.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.context.loadKoinModules
@@ -34,8 +38,11 @@ import org.rhasspy.mobile.viewmodel.settings.*
 @Suppress("LeakingThis")
 abstract class Application : NativeApplication(), KoinComponent {
     private val logger = Logger.withTag("Application")
+    private val _isHasStarted = MutableStateFlow(false)
+    val isHasStarted = _isHasStarted.readOnly
 
     init {
+        println("init Application init")
         nativeInstance = this
         instance = this
     }
@@ -49,42 +56,44 @@ abstract class Application : NativeApplication(), KoinComponent {
 
     @OptIn(ExperimentalKermitApi::class)
     fun onCreated() {
-        // start a KoinApplication in Global context
         startKoin {
             // declare used modules
             modules(serviceModule, viewModelModule, factoryModule, nativeModule)
         }
 
-        if (!isDebug()) {
-            Logger.addLogWriter(
-                CrashlyticsLogWriter(
-                    minSeverity = Severity.Info,
-                    minCrashSeverity = Severity.Assert
+        CoroutineScope(Dispatchers.Default).launch {
+            if (!isDebug()) {
+                Logger.addLogWriter(
+                    CrashlyticsLogWriter(
+                        minSeverity = Severity.Info,
+                        minCrashSeverity = Severity.Assert
+                    )
                 )
-            )
+            }
+            Logger.addLogWriter(FileLogger)
+
+            logger.i { "######## Application started ########" }
+
+            setCrashlyticsCollectionEnabled(AppSetting.isCrashlyticsEnabled.value)
+
+            //initialize/load the settings, generate the MutableStateFlow
+            AppSetting
+            ConfigurationSetting
+
+            //setup language
+            StringDesc.localeType = StringDesc.LocaleType.Custom(AppSetting.languageType.value.code)
+
+            //start foreground service if enabled
+            if (AppSetting.isBackgroundServiceEnabled.value) {
+                BackgroundService.start()
+            }
+
+            //check if overlay permission is granted
+            checkOverlayPermission()
+            startServices()
+            startOverlay()
+            _isHasStarted.value = true
         }
-        Logger.addLogWriter(FileLogger)
-
-        logger.i { "######## Application started ########" }
-
-        setCrashlyticsCollectionEnabled(AppSetting.isCrashlyticsEnabled.value)
-
-        //initialize/load the settings, generate the MutableStateFlow
-        AppSetting
-        ConfigurationSetting
-
-        //setup language
-        StringDesc.localeType = StringDesc.LocaleType.Custom(AppSetting.languageType.value.code)
-
-        //start foreground service if enabled
-        if (AppSetting.isBackgroundServiceEnabled.value) {
-            BackgroundService.start()
-        }
-
-        //check if overlay permission is granted
-        checkOverlayPermission()
-        startServices()
-        startOverlay()
     }
 
     override suspend fun updateWidgetNative() {

@@ -80,6 +80,20 @@ jobs:
       # necessary for linux/macos but doesn't work on windows
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+      # code version is increased before build
+      - name: Increase Code Version
+        run: ./gradlew increaseCodeVersion
+      # run project build
+      - name: Commit and push changes
+        run: |
+          git config --local user.name github-actions[bot]
+          git config --local user.email github-actions[bot]@users.noreply.github.com
+          git commit -m "Automatically increased Version.code" -a
+      - name: Push changes # push the output folder to your repo
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.head_ref }}
       # run project build
       - name: Project APK Build
         run: ./gradlew androidApp:assemble${{ inputs.BUILD_TYPE }}

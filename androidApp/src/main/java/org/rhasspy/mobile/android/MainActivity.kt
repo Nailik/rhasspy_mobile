@@ -64,7 +64,10 @@ class MainActivity : KoinComponent, AppActivity() {
         }
         AppLaunchChecker.onActivityCreate(this)
 
-        installSplashScreen()
+        installSplashScreen().setKeepOnScreenCondition {
+            //splash screen should be visible until the app has started
+            !Application.instance.isHasStarted.value
+        }
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
@@ -90,7 +93,7 @@ class MainActivity : KoinComponent, AppActivity() {
             }
         }
 
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             Application.nativeInstance.updateWidgetNative()
         }
     }
