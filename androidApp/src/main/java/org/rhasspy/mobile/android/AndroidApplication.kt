@@ -74,9 +74,7 @@ class AndroidApplication : Application() {
     }
 
     override fun setCrashlyticsCollectionEnabled(enabled: Boolean) {
-        if (!BuildConfig.DEBUG) {
-            Firebase.crashlytics.setCrashlyticsCollectionEnabled(enabled)
-        }
+        Firebase.crashlytics.setCrashlyticsCollectionEnabled(enabled)
     }
 
     override suspend fun updateWidget() {

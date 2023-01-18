@@ -74,7 +74,12 @@ abstract class Application : NativeApplication(), KoinComponent {
 
             logger.i { "######## Application started ########" }
 
-            setCrashlyticsCollectionEnabled(AppSetting.isCrashlyticsEnabled.value)
+
+            setCrashlyticsCollectionEnabled(
+                if (!isDebug()) {
+                    AppSetting.isCrashlyticsEnabled.value
+                } else false
+            )
 
             //initialize/load the settings, generate the MutableStateFlow
             AppSetting
