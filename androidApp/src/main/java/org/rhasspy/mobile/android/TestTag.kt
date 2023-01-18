@@ -30,6 +30,8 @@ enum class TestTag {
     LibrariesContainer,
     MicrophoneOverlaySizeOptions,
     MicrophoneFab,
+    Indication,
+    Overlay,
 
     AudioPlayingOptions,
     AudioOutputOptions,
@@ -131,6 +133,13 @@ fun Modifier.combinedTestTag(name: String, tag: TestTag) = semantics(
         testTag = "$name${tag.name}"
     }
 )
+
+fun Modifier.combinedTestTag(name: TestTag, tag: TestTag) = semantics(
+    properties = {
+        testTag = "${name.name}${tag.name}"
+    }
+)
+
 
 fun Modifier.testTag(enum: Enum<*>) = semantics(
     properties = {

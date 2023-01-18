@@ -31,3 +31,24 @@ fun UiDevice.resetOverlayPermission() {
     this.pressBack()
     OverlayPermission.update()
 }
+
+fun UiDevice.requestOverlayPermissionLegacy() {
+    if (Settings.canDrawOverlays(Application.nativeInstance)) {
+        return
+    }
+
+    val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    Application.nativeInstance.startActivity(intent)
+
+    val list = ".*list"
+
+    InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+    UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName))
+    this.findObject(UiSelector().text(MR.strings.appName)).click()
+    this.findObject(UiSelector().className(Switch::class.java)).click()
+
+    this.pressBack()
+    this.pressBack()
+    OverlayPermission.update()
+}
