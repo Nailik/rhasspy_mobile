@@ -129,9 +129,12 @@ actual class AudioPlayer : Closeable {
     }
 
     actual fun stop() {
-        audioTrack?.stop()
-        mediaPlayer?.stop()
-        notification?.stop()
+        try {
+            //notification may throw an internal error
+            audioTrack?.stop()
+            mediaPlayer?.stop()
+            notification?.stop()
+        } catch (_: Exception) { }
         audioTrack = null
         mediaPlayer = null
         notification = null
