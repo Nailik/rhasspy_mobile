@@ -19,7 +19,7 @@ import org.rhasspy.mobile.settings.option.MicrophoneOverlaySizeOption
 import kotlin.test.assertNotEquals
 
 @RunWith(AndroidJUnit4::class)
-class MicrophoneOverlayTest: KoinComponent {
+class MicrophoneOverlayTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()

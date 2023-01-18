@@ -103,8 +103,6 @@ fun UiDevice.requestOverlayPermissions() {
 }
 
 
-
-
 fun SemanticsNodeInteraction.assertTextEquals(
     text: StringResource,
     includeEditableText: Boolean = true
