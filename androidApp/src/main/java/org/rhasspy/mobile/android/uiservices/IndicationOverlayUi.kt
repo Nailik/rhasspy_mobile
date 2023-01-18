@@ -15,6 +15,8 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.combinedTestTag
 import org.rhasspy.mobile.android.theme.assistant_color_four
 import org.rhasspy.mobile.android.theme.assistant_color_one
 import org.rhasspy.mobile.android.theme.assistant_color_three
@@ -29,6 +31,7 @@ import kotlin.math.abs
 fun Indication(indicationState: IndicationState) {
     Box(
         modifier = Modifier
+            .combinedTestTag(TestTag.Indication, TestTag.Overlay)
             .fillMaxWidth()
             .height(96.dp),
         contentAlignment = Alignment.Center

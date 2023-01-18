@@ -213,9 +213,14 @@ actual class AudioPlayer : Closeable {
             notification = RingtoneManager.getRingtone(Application.nativeInstance, uri).apply {
                 play()
                 CoroutineScope(Dispatchers.IO).launch {
-                    while (isPlaying) {
-                        _isPlayingState.value = true
-                        awaitFrame()
+                    try {
+                        while (isPlaying) {
+                            _isPlayingState.value = true
+                            awaitFrame()
+                        }
+                    } catch (e: IllegalStateException) {
+                        //can happen when isPlaying is request because ringtone doesn't check if media player is initialized and not released yet
+                        _isPlayingState.value = false
                     }
                     _isPlayingState.value = false
                     notification = null
