@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.services.localaudio
 
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.inject
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.fileutils.FolderType
@@ -10,7 +11,6 @@ import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.sounds.SoundOption
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class LocalAudioService : IService() {
     private val logger = LogType.LocalAudioService.logger()
@@ -26,7 +26,7 @@ class LocalAudioService : IService() {
         audioPlayer.close()
     }
 
-    suspend fun playAudio(data: List<Byte>): ServiceState = suspendCoroutine { continuation ->
+    suspend fun playAudio(data: List<Byte>): ServiceState = suspendCancellableCoroutine { continuation ->
         if (AppSetting.isAudioOutputEnabled.value) {
             logger.d { "playAudio ${data.size}" }
             audioPlayer.playData(
@@ -35,7 +35,9 @@ class LocalAudioService : IService() {
                 audioOutputOption = params.audioOutputOption,
                 onFinished = {
                     logger.d { "onFinished" }
-                    continuation.resume(ServiceState.Success)
+                    if (!continuation.isCompleted) {
+                        continuation.resume(ServiceState.Success)
+                    }
                 },
                 onError = { exception ->
                     exception?.also {
@@ -43,11 +45,15 @@ class LocalAudioService : IService() {
                     } ?: run {
                         logger.e { "onError" }
                     }
-                    continuation.resume(ServiceState.Exception(exception))
+                    if (!continuation.isCompleted) {
+                        continuation.resume(ServiceState.Exception(exception))
+                    }
                 }
             )
         } else {
-            continuation.resume(ServiceState.Success)
+            if (!continuation.isCompleted) {
+                continuation.resume(ServiceState.Success)
+            }
         }
     }
 
