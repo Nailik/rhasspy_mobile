@@ -4,19 +4,16 @@ import android.content.ContentResolver
 import android.content.res.Resources
 import android.media.*
 import android.net.Uri
-import android.os.Build
 import androidx.annotation.AnyRes
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.resources.FileResource
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.settings.option.AudioOutputOption
 import java.io.File
 import java.io.FileOutputStream
-
 
 actual class AudioPlayer : Closeable {
 
@@ -40,31 +37,19 @@ actual class AudioPlayer : Closeable {
      * on Error is called when an playback error occurs
      */
     actual fun playData(
-        data: List<Byte>,
+        data: FileStream,
         volume: Float,
         audioOutputOption: AudioOutputOption,
         onFinished: (() -> Unit)?,
         onError: ((exception: Exception?) -> Unit)?
     ) {
         val soundFile = File(Application.nativeInstance.cacheDir, "/playData.wav")
-        //soundFile.deleteOnExit()
+
         val fos = FileOutputStream(soundFile)
-        fos.write(data.toByteArray())
+        data.copyTo(fos)
         fos.close()
 
-        when (audioOutputOption) {
-            AudioOutputOption.Sound -> {
-                playSound(Uri.fromFile(soundFile), MutableStateFlow(volume), onFinished, onError)
-            }
-            AudioOutputOption.Notification -> {
-                playNotification(
-                    Uri.fromFile(soundFile),
-                    MutableStateFlow(volume),
-                    onFinished,
-                    onError
-                )
-            }
-        }
+        playAudio(Uri.fromFile(soundFile), MutableStateFlow(volume), audioOutputOption, onFinished, onError)
     }
 
     /**
@@ -83,20 +68,7 @@ actual class AudioPlayer : Closeable {
         onError: ((exception: Exception?) -> Unit)?
     ) {
         logger.v { "playSoundFileResource" }
-
-        when (audioOutputOption) {
-            AudioOutputOption.Sound -> {
-                playSound(getUriFromResource(fileResource.rawResId), volume, onFinished, onError)
-            }
-            AudioOutputOption.Notification -> {
-                playNotification(
-                    getUriFromResource(fileResource.rawResId),
-                    volume,
-                    onFinished,
-                    onError
-                )
-            }
-        }
+        playAudio(getUriFromResource(fileResource.rawResId), volume,audioOutputOption, onFinished, onError)
     }
 
     /**
@@ -115,17 +87,8 @@ actual class AudioPlayer : Closeable {
         onError: ((exception: Exception?) -> Unit)?
     ) {
         logger.v { "playSoundFile $filename" }
-
         val soundFile = File(Application.nativeInstance.filesDir, filename)
-
-        when (audioOutputOption) {
-            AudioOutputOption.Sound -> {
-                playSound(Uri.fromFile(soundFile), volume, onFinished, onError)
-            }
-            AudioOutputOption.Notification -> {
-                playNotification(Uri.fromFile(soundFile), volume, onFinished, onError)
-            }
-        }
+        playAudio(Uri.fromFile(soundFile), volume, audioOutputOption, onFinished, onError)
     }
 
     actual fun stop() {
@@ -144,9 +107,10 @@ actual class AudioPlayer : Closeable {
         stop()
     }
 
-    private fun playSound(
+    private fun playAudio(
         uri: Uri,
         volume: StateFlow<Float>,
+        audioOutputOption: AudioOutputOption,
         onFinished: (() -> Unit)?,
         onError: ((exception: Exception?) -> Unit)?
     ) {
@@ -161,10 +125,18 @@ actual class AudioPlayer : Closeable {
         try {
             mediaPlayer = MediaPlayer().apply {
                 setAudioAttributes(
-                    AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .build()
+                    AudioAttributes.Builder().apply {
+                        when (audioOutputOption) {
+                            AudioOutputOption.Sound -> {
+                                this.setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                this.setUsage(AudioAttributes.USAGE_MEDIA)
+                            }
+                            AudioOutputOption.Notification -> {
+                                this.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                                this.setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                            }
+                        }
+                    }.build()
                 )
 
                 setVolume(volume.value, volume.value)
@@ -201,47 +173,6 @@ actual class AudioPlayer : Closeable {
             onError?.invoke(e)
         }
     }
-
-
-    private fun playNotification(
-        uri: Uri,
-        volume: StateFlow<Float>,
-        onFinished: (() -> Unit)?,
-        onError: ((exception: Exception?) -> Unit)?
-    ) {
-        try {
-            notification = RingtoneManager.getRingtone(Application.nativeInstance, uri).apply {
-                play()
-                CoroutineScope(Dispatchers.IO).launch {
-                    while (isPlaying) {
-                        _isPlayingState.value = true
-                        awaitFrame()
-                    }
-                    _isPlayingState.value = false
-                    notification = null
-                    volumeChange?.cancel()
-                    volumeChange = null
-                    onFinished?.invoke()
-                }
-            }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                //notification set volume was added in api 28
-                volumeChange = CoroutineScope(Dispatchers.IO).launch {
-                    volume.collect {
-                        notification?.volume = volume.value
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            _isPlayingState.value = false
-            notification = null
-            volumeChange?.cancel()
-            volumeChange = null
-            onError?.invoke(e)
-        }
-    }
-
 
     @Throws(Resources.NotFoundException::class)
     fun getUriFromResource(@AnyRes resId: Int): Uri {
