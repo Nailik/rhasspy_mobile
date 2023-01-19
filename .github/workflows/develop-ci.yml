@@ -4,7 +4,7 @@ on:
   pull_request:
     branches:
       - develop
-    types: [ created, labeled, synchronize ]
+    types: [ opened, labeled, synchronize ]
 
 jobs:
   check:
@@ -27,3 +27,13 @@ jobs:
       ALIAS: ${{ secrets.ALIAS }}
       KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
       KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+  approve:
+    needs: merge
+    steps:
+      # auto approve pr
+      - name: Approve Pull Request
+        uses: juliangruber/merge-pull-request-action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          method: merge
+          number: ${{ github.event.pull_request.number }}
