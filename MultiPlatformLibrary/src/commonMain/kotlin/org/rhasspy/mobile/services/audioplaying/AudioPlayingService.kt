@@ -7,6 +7,7 @@ import org.rhasspy.mobile.middleware.Action.DialogAction
 import org.rhasspy.mobile.middleware.ServiceMiddleware
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.middleware.Source
+import org.rhasspy.mobile.nativeutils.FileWriterWav
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.httpclient.HttpClientService
@@ -51,20 +52,20 @@ open class AudioPlayingService : IService() {
      * MQTT:
      * - calls default site to play audio
      */
-    suspend fun playAudio(data: List<Byte>, fromMqtt: Boolean) {
-        logger.d { "playAudio dataSize: ${data.size}" }
+    suspend fun playAudio(fileWriterWav: FileWriterWav, fromMqtt: Boolean) {
+        logger.d { "playAudio dataSize: ${fileWriterWav.length()}" }
         when (params.audioPlayingOption) {
             AudioPlayingOption.Local -> {
-                _serviceState.value = localAudioService.playAudio(data)
+                _serviceState.value = localAudioService.playAudio(fileWriterWav.getFileContentStream())
                 serviceMiddleware.action(DialogAction.PlayFinished(Source.Local))
             }
             AudioPlayingOption.RemoteHTTP -> {
-                _serviceState.value = httpClientService.playWav(data).toServiceState()
+                _serviceState.value = httpClientService.playWav(fileWriterWav.getFileContentStream()).toServiceState()
                 serviceMiddleware.action(DialogAction.PlayFinished(Source.HttpApi))
             }
             AudioPlayingOption.RemoteMQTT -> {
                 _serviceState.value = if (!fromMqtt) {
-                    mqttClientService.playBytes(data)
+                    mqttClientService.playBytesRemote(fileWriterWav.getContent())
                 } else ServiceState.Success
                 if (fromMqtt) {
                     serviceMiddleware.action(DialogAction.PlayFinished(Source.Local))

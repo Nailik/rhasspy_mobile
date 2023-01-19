@@ -36,7 +36,7 @@ class RecordingService : IService() {
     private val _isRecording = MutableStateFlow(false)
     val isRecording = _isRecording.readOnly
 
-    private val _output = MutableStateFlow<List<Byte>>(emptyList())
+    private val _output = MutableStateFlow<ByteArray>(ByteArray(0))
     val output = _output.readOnly
 
     private var isSilenceDetectionEnabled = false

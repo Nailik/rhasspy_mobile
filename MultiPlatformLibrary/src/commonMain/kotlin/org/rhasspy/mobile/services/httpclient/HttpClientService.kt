@@ -1,19 +1,27 @@
 package org.rhasspy.mobile.services.httpclient
 
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.websocket.*
-import io.ktor.client.request.*
-import io.ktor.client.utils.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.websocket.WebSockets
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsChannel
+import io.ktor.client.utils.buildHeaders
+import io.ktor.http.ContentType
+import io.ktor.http.HttpMessageBuilder
+import io.ktor.http.contentType
+import io.ktor.utils.io.ByteWriteChannel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.inject
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.middleware.ServiceState.Success
+import org.rhasspy.mobile.nativeutils.FileStream
 import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
@@ -122,10 +130,11 @@ class HttpClientService : IService() {
      * Set Accept: application/json to receive JSON with more details
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
-    suspend fun speechToText(data: List<Byte>): HttpClientResult<String> {
-        logger.d { "speechToText dataSize: ${data.size}" }
+    suspend fun speechToText(fileStream: FileStream): HttpClientResult<String> {
+        logger.d { "speechToText dataSize: ${fileStream.length}" }
+
         return post(speechToTextUrl) {
-            setBody(data.toByteArray())
+            setBody(StreamContent(fileStream))
         }
     }
 
@@ -154,9 +163,9 @@ class HttpClientService : IService() {
      * ?volume=<volume> - volume level to speak at (0 = off, 1 = full volume)
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun textToSpeech(text: String): HttpClientResult<ByteArray> {
+    suspend fun textToSpeech(text: String): HttpClientResult<ByteWriteChannel> {
         logger.d { "textToSpeech text: $text" }
-        return post(textToSpeechUrl) {
+         return post(textToSpeechUrl, true) {
             setBody(text)
         }
     }
@@ -167,14 +176,16 @@ class HttpClientService : IService() {
      * Make sure to set Content-Type to audio/wav
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun playWav(data: List<Byte>): HttpClientResult<String> {
-        logger.d { "playWav dataSize: ${data.size}" }
-        return post(audioPlayingUrl) {
+    suspend fun playWav(fileStream: FileStream): HttpClientResult<String> {
+        logger.d { "playWav dataSize: ${fileStream.length}" }
+        val result: HttpClientResult<String> = post(audioPlayingUrl) {
             setAttributes {
                 contentType(audioContentType)
             }
-            setBody(data.toMutableList().toByteArray())
+            setBody(StreamContent(fileStream))
         }
+        fileStream.close()
+        return result
     }
 
     /**
@@ -236,11 +247,18 @@ class HttpClientService : IService() {
      */
     private suspend inline fun <reified T> post(
         url: String,
+        readContent: Boolean = false,
         block: HttpRequestBuilder.() -> Unit
     ): HttpClientResult<T> {
         return httpClient?.let { client ->
             try {
                 val request = client.post(url, block)
+
+                if(readContent) {
+                    @Suppress("UNCHECKED_CAST")
+                    return HttpClientResult.Success(request.bodyAsChannel()) as HttpClientResult<T>
+                }
+
                 val result = request.body<T>()
                 if (result is ByteArray) {
                     logger.d { "post result size: ${result.size}" }

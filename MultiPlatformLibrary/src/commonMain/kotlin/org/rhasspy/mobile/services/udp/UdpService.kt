@@ -45,13 +45,13 @@ class UdpService(host: String, port: Int) : IService() {
         socketAddress = null
     }
 
-    suspend fun streamAudio(data: List<Byte>): Exception? {
+    suspend fun streamAudio(data: ByteArray): Exception? {
         if (AppSetting.isLogAudioFramesEnabled.value) {
             logger.d { "stream audio dataSize: ${data.size}" }
         }
         socketAddress?.also {
             try {
-                sendChannel?.send(Datagram(ByteReadPacket(data.toByteArray()), it))
+                sendChannel?.send(Datagram(ByteReadPacket(data), it))
             } catch (exception: Exception) {
                 if (AppSetting.isLogAudioFramesEnabled.value) {
                     if (exception::class.simpleName == "JobCancellationException") {

@@ -25,7 +25,7 @@ actual class AudioRecorder : Closeable {
     /**
      * output data as flow
      */
-    private val _output = MutableSharedFlow<List<Byte>>()
+    private val _output = MutableSharedFlow<ByteArray>()
     actual val output = _output.readOnly
 
     /**
@@ -146,7 +146,7 @@ actual class AudioRecorder : Closeable {
                         _maxVolume.value = max
                     }
 
-                    _output.emit(byteArray.toList())
+                    _output.emit(byteArray)
                 }
             }
         }

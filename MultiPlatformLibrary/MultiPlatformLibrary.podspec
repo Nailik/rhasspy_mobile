@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'MultiPlatformLibrary'
-    spec.version                  = '0.4.1-30'
+    spec.version                  = '0.4.3-34'
     spec.homepage                 = 'Link to the Shared Module homepage'
     spec.source                   = { :http=> ''}
     spec.authors                  = ''

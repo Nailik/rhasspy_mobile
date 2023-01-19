@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import org.rhasspy.mobile.addWavHeader
 import org.rhasspy.mobile.combineState
+import org.rhasspy.mobile.nativeutils.FileStream
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.dialog.DialogManagerService
 import org.rhasspy.mobile.services.dialog.DialogManagerServiceState
@@ -52,13 +52,13 @@ class ServiceMiddleware : KoinComponent, Closeable {
                     } else {
                         if (dialogManagerService.currentDialogState.value == DialogManagerServiceState.Idle ||
                             dialogManagerService.currentDialogState.value == DialogManagerServiceState.AwaitingWakeWord &&
-                            speechToTextService.speechToTextAudioData.isNotEmpty()
+                            speechToTextService.getSpeechToTextAudioStream().length > 0
                         ) {
                             _isPlayingRecording.value = true
                             shouldResumeHotWordService = AppSetting.isHotWordEnabled.value
                             appSettingsService.hotWordToggle(false)
                             //suspend coroutine
-                            localAudioService.playAudio(speechToTextService.speechToTextAudioData.toMutableList().addWavHeader())
+                            localAudioService.playAudio(speechToTextService.getSpeechToTextAudioStream())
                             //resumes when play finished
                             if (_isPlayingRecording.value) {
                                 action(Action.PlayStopRecording)
@@ -102,7 +102,7 @@ class ServiceMiddleware : KoinComponent, Closeable {
         }
     }
 
-    fun getRecordedData(): ByteArray = speechToTextService.speechToTextAudioData.toByteArray()
+    fun getRecordedData(): FileStream = speechToTextService.getSpeechToTextAudioStream()
 
     override fun close() {
         coroutineScope.cancel()

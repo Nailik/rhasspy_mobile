@@ -234,7 +234,7 @@ class DialogManagerService : IService() {
 
         indicationService.onPlayAudio()
         audioPlayingService.stopPlayAudio()
-        audioPlayingService.playAudio(action.byteArray.toMutableList(), action.source is Source.Mqtt)
+        audioPlayingService.playAudio(action.fileWriterWav, action.source is Source.Mqtt)
 
     }
 
@@ -394,7 +394,7 @@ class DialogManagerService : IService() {
                 indicationService.onThinking()
                 speechToTextService.endSpeechToText(id, action.source is Source.Mqtt)
                 if (sendAudioCaptured) {
-                    mqttService.audioCaptured(id, speechToTextService.speechToTextAudioData)
+                    mqttService.audioCaptured(id, speechToTextService.getSpeechToTextContent())
                 }
                 //await for text recognition
                 timeoutJob = coroutineScope.launch {

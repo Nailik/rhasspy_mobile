@@ -1,5 +1,7 @@
 package org.rhasspy.mobile.middleware
 
+import org.rhasspy.mobile.nativeutils.FileWriterWav
+
 sealed class Action {
 
     object PlayStopRecording : Action()
@@ -57,9 +59,9 @@ sealed class Action {
 
         class IntentRecognitionError(source: Source) : DialogAction(source)
 
-        class PlayAudio(source: Source, val byteArray: ByteArray) : DialogAction(source) {
+        class PlayAudio(source: Source, val fileWriterWav: FileWriterWav) : DialogAction(source) {
             override fun toString(): String {
-                return "${super.toString()} byteArray: ${byteArray.size}"
+                return "${super.toString()} file: ${fileWriterWav.length()}"
             }
         }
 

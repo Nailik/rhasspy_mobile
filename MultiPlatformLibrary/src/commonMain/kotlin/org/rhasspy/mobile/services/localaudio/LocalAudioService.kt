@@ -6,6 +6,7 @@ import org.rhasspy.mobile.fileutils.FolderType
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.nativeutils.AudioPlayer
+import org.rhasspy.mobile.nativeutils.FileStream
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.sounds.SoundOption
@@ -26,18 +27,20 @@ class LocalAudioService : IService() {
         audioPlayer.close()
     }
 
-    suspend fun playAudio(data: List<Byte>): ServiceState = suspendCoroutine { continuation ->
+    suspend fun playAudio(data: FileStream): ServiceState = suspendCoroutine { continuation ->
         if (AppSetting.isAudioOutputEnabled.value) {
-            logger.d { "playAudio ${data.size}" }
+            logger.d { "playAudio ${data.length}" }
             audioPlayer.playData(
                 data = data,
                 volume = AppSetting.volume.value,
                 audioOutputOption = params.audioOutputOption,
                 onFinished = {
+                    data.close()
                     logger.d { "onFinished" }
                     continuation.resume(ServiceState.Success)
                 },
                 onError = { exception ->
+                    data.close()
                     exception?.also {
                         logger.e(it) { "onError" }
                     } ?: run {
@@ -47,6 +50,7 @@ class LocalAudioService : IService() {
                 }
             )
         } else {
+            data.close()
             continuation.resume(ServiceState.Success)
         }
     }

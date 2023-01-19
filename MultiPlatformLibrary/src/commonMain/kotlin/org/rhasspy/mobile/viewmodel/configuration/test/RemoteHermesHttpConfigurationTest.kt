@@ -2,6 +2,8 @@ package org.rhasspy.mobile.viewmodel.configuration.test
 
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
+import org.rhasspy.mobile.fileutils.SoundCacheFileType
+import org.rhasspy.mobile.fileutils.SoundCacheFileWriterFactory
 import org.rhasspy.mobile.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.services.httpclient.HttpClientResult
 import org.rhasspy.mobile.services.httpclient.HttpClientService
@@ -27,7 +29,9 @@ class RemoteHermesHttpConfigurationTest : IConfigurationTest() {
         testScope.launch {
             val result = get<HttpClientService>().textToSpeech(text)
             if (result is HttpClientResult.Success) {
-                get<AudioPlayingService>().playAudio(result.data.toList(), false)
+                val fileWriterWav = SoundCacheFileWriterFactory.getFileWriter(SoundCacheFileType.startTextToSpeechTest)
+                fileWriterWav.writeData(result.data)
+                get<AudioPlayingService>().playAudio(fileWriterWav, false)
             }
         }
     }

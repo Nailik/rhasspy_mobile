@@ -116,7 +116,7 @@ class WakeWordService : IService() {
         }
     }
 
-    private suspend fun hotWordAudioFrame(data: List<Byte>) {
+    private suspend fun hotWordAudioFrame(data: ByteArray) {
         if (AppSetting.isLogAudioFramesEnabled.value) {
             logger.d { "hotWordAudioFrame dataSize: ${data.size}" }
         }

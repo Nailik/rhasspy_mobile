@@ -2,6 +2,8 @@ package org.rhasspy.mobile.services.texttospeech
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.inject
+import org.rhasspy.mobile.fileutils.SoundCacheFileType
+import org.rhasspy.mobile.fileutils.SoundCacheFileWriterFactory
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action.DialogAction
 import org.rhasspy.mobile.middleware.ServiceMiddleware
@@ -51,10 +53,11 @@ open class TextToSpeechService : IService() {
                 }
                 val action = when (result) {
                     is HttpClientResult.Error -> DialogAction.AsrError(Source.HttpApi)
-                    is HttpClientResult.Success -> DialogAction.PlayAudio(
-                        Source.HttpApi,
-                        result.data
-                    )
+                    is HttpClientResult.Success -> {
+                        val fileWriterWav = SoundCacheFileWriterFactory.getFileWriter(SoundCacheFileType.textToSpeech)
+                        fileWriterWav.writeData(result.data)
+                        DialogAction.PlayAudio(Source.HttpApi, fileWriterWav)
+                    }
                 }
                 serviceMiddleware.action(action)
             }

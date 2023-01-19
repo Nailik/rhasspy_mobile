@@ -10,7 +10,7 @@ expect class AudioRecorder() : Closeable {
     /**
      * output data as flow
      */
-    val output: Flow<List<Byte>>
+    val output: Flow<ByteArray>
 
     /**
      * max volume since start recording

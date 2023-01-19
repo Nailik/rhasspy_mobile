@@ -13,13 +13,13 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.rhasspy.mobile.nativeutils.FileWriter
+import org.rhasspy.mobile.nativeutils.FileWriterText
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 
 object FileLogger : LogWriter() {
     //create new file when logfile is 2 MB
-    private val fileWriter = FileWriter("logfile.txt", 2000)
+    private val fileWriterText = FileWriterText("logfile.txt", 2000)
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     private val _flow = MutableSharedFlow<LogElement>()
@@ -29,8 +29,8 @@ object FileLogger : LogWriter() {
         Logger.setMinSeverity(AppSetting.logLevel.value.severity)
 
         //create initial log file
-        if (fileWriter.createFile()) {
-            fileWriter.appendText(
+        if (fileWriterText.createFile()) {
+            fileWriterText.appendText(
                 Json.encodeToString(
                     LogElement(
                         Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(),
@@ -56,7 +56,7 @@ object FileLogger : LogWriter() {
                 message,
                 throwable?.message
             )
-            fileWriter.appendText(",${Json.encodeToString(element)}")
+            fileWriterText.appendText(",${Json.encodeToString(element)}")
             _flow.emit(element)
         }
     }
@@ -66,9 +66,9 @@ object FileLogger : LogWriter() {
      */
     fun getLines(): List<LogElement> {
         return try {
-            Json.decodeFromString("[${fileWriter.getFileContent()}]")
+            Json.decodeFromString("[${fileWriterText.getFileContent()}]")
         } catch (exception: Exception) {
-            fileWriter.clearFile()
+            fileWriterText.clearFile()
             listOf()
         }
     }
@@ -76,12 +76,12 @@ object FileLogger : LogWriter() {
     /**
      * share the log file
      */
-    fun shareLogFile() = fileWriter.shareFile()
+    fun shareLogFile() = fileWriterText.shareFile()
 
     /**
      * save log to external file
      */
-    fun saveLogFile() = fileWriter.copyFile(
+    fun saveLogFile() = fileWriterText.copyFile(
         "rhasspy_logfile_${
             Clock.System.now().toLocalDateTime(TimeZone.UTC)
         }.txt", "text/txt"

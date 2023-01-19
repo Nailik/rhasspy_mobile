@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.fileutils.SoundCacheFileType
+import org.rhasspy.mobile.fileutils.SoundCacheFileWriterFactory
 import org.rhasspy.mobile.nativeutils.FileUtils
 import org.rhasspy.mobile.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.services.audioplaying.AudioPlayingServiceParams
@@ -27,7 +29,9 @@ class AudioPlayingConfigurationTest : IConfigurationTest() {
                     .first { it }
             }
 
-            get<AudioPlayingService>().playAudio(FileUtils.readDataFromFile(MR.files.etc_wav_beep_hi).toList(), false)
+            val fileWriterWav = SoundCacheFileWriterFactory.getFileWriter(SoundCacheFileType.playTestAudio)
+            fileWriterWav.writeData(FileUtils.readDataFromFile(MR.files.etc_wav_beep_hi))
+            get<AudioPlayingService>().playAudio(fileWriterWav, false)
         }
     }
 
