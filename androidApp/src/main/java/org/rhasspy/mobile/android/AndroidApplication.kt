@@ -3,6 +3,7 @@ package org.rhasspy.mobile.android
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.provider.Settings
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import co.touchlab.kermit.Logger
 import com.google.firebase.crashlytics.ktx.crashlytics
@@ -66,7 +67,7 @@ class AndroidApplication : Application() {
             val intent: Intent = packageManager.getLaunchIntentForPackage(this.packageName)!!
             val componentName: ComponentName = intent.component!!
             val restartIntent: Intent = Intent.makeRestartActivityTask(componentName)
-            this.startActivity(restartIntent)
+            nativeInstance.startActivity(restartIntent)
             Runtime.getRuntime().exit(0)
         } catch (e: Exception) {
             Runtime.getRuntime().exit(0)
@@ -78,15 +79,17 @@ class AndroidApplication : Application() {
     }
 
     override suspend fun updateWidget() {
-        GlanceAppWidgetManager(this).getGlanceIds(MicrophoneWidget::class.java)
+        GlanceAppWidgetManager(nativeInstance).getGlanceIds(MicrophoneWidget::class.java)
             .firstOrNull()
-            ?.also {
-                MicrophoneWidget().update(this, it)
-            }
+            ?.also { MicrophoneWidget().update(nativeInstance, it) }
     }
 
     override fun isDebug(): Boolean {
         return BuildConfig.DEBUG
+    }
+
+    override fun isInstrumentedTest(): Boolean {
+        return Settings.System.getString(contentResolver, "firebase.test.lab") == "true"
     }
 
 }
