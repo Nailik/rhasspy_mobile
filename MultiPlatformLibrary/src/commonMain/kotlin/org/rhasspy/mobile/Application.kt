@@ -62,7 +62,7 @@ abstract class Application : NativeApplication(), KoinComponent {
         }
 
         CoroutineScope(Dispatchers.Default).launch {
-            if (!isDebug()) {
+            if (!isDebug() && !isInstrumentedTest()) {
                 Logger.addLogWriter(
                     CrashlyticsLogWriter(
                         minSeverity = Severity.Info,
@@ -76,7 +76,7 @@ abstract class Application : NativeApplication(), KoinComponent {
 
 
             setCrashlyticsCollectionEnabled(
-                if (!isDebug()) {
+                if (!isDebug() && !isInstrumentedTest()) {
                     AppSetting.isCrashlyticsEnabled.value
                 } else false
             )
@@ -110,6 +110,8 @@ abstract class Application : NativeApplication(), KoinComponent {
     abstract fun stopOverlay()
 
     abstract fun isDebug(): Boolean
+
+    abstract fun isInstrumentedTest(): Boolean
 
     abstract suspend fun updateWidget()
 
@@ -154,6 +156,5 @@ abstract class Application : NativeApplication(), KoinComponent {
         get<MqttService>()
         get<DialogManagerService>()
     }
-
 
 }
