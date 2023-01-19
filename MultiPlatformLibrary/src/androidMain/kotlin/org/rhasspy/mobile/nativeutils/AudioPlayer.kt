@@ -37,7 +37,7 @@ actual class AudioPlayer : Closeable {
      * on Error is called when an playback error occurs
      */
     actual fun playData(
-        data: FileStream,
+        data: FileWavStream,
         volume: Float,
         audioOutputOption: AudioOutputOption,
         onFinished: (() -> Unit)?,

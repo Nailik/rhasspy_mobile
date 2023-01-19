@@ -11,7 +11,7 @@ import org.rhasspy.mobile.middleware.Action.DialogAction
 import org.rhasspy.mobile.middleware.ServiceMiddleware
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.middleware.Source
-import org.rhasspy.mobile.nativeutils.FileStream
+import org.rhasspy.mobile.nativeutils.FileWavStream
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.services.httpclient.HttpClientResult
@@ -42,7 +42,7 @@ open class SpeechToTextService : IService() {
 
     private val speechToTextAudioDataFileWriter = SoundCacheFileWriterFactory.getFileWriter(SoundCacheFileType.speechToTextAudioData)
 
-    fun getSpeechToTextAudioStream(): FileStream = speechToTextAudioDataFileWriter.getFileContentStream()
+    fun getSpeechToTextAudioStream(): FileWavStream = speechToTextAudioDataFileWriter.getFileContentStream()
 
     fun getSpeechToTextContent(): ByteArray = speechToTextAudioDataFileWriter.getContent()
 

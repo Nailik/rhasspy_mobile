@@ -71,8 +71,8 @@ actual class FileWriterWav actual constructor(actual val filename: String) : Fil
     /**
      * get file content as stream
      */
-    actual fun getFileContentStream(): FileStream {
-        return FileStream(file)
+    actual fun getFileContentStream(): FileWavStream {
+        return FileWavStream(file)
     }
 
 }

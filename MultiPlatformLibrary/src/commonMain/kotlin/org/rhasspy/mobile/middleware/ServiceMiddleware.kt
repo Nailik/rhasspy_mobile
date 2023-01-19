@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.rhasspy.mobile.combineState
-import org.rhasspy.mobile.nativeutils.FileStream
+import org.rhasspy.mobile.nativeutils.FileWavStream
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.dialog.DialogManagerService
 import org.rhasspy.mobile.services.dialog.DialogManagerServiceState
@@ -102,7 +102,7 @@ class ServiceMiddleware : KoinComponent, Closeable {
         }
     }
 
-    fun getRecordedData(): FileStream = speechToTextService.getSpeechToTextAudioStream()
+    fun getRecordedData(): FileWavStream = speechToTextService.getSpeechToTextAudioStream()
 
     override fun close() {
         coroutineScope.cancel()

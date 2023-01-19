@@ -21,7 +21,7 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.middleware.ServiceState.Success
-import org.rhasspy.mobile.nativeutils.FileStream
+import org.rhasspy.mobile.nativeutils.FileWavStream
 import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
@@ -130,11 +130,11 @@ class HttpClientService : IService() {
      * Set Accept: application/json to receive JSON with more details
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
-    suspend fun speechToText(fileStream: FileStream): HttpClientResult<String> {
-        logger.d { "speechToText dataSize: ${fileStream.length}" }
+    suspend fun speechToText(fileWavStream: FileWavStream): HttpClientResult<String> {
+        logger.d { "speechToText dataSize: ${fileWavStream.length}" }
 
         return post(speechToTextUrl) {
-            setBody(StreamContent(fileStream))
+            setBody(StreamContent(fileWavStream))
         }
     }
 
@@ -176,15 +176,15 @@ class HttpClientService : IService() {
      * Make sure to set Content-Type to audio/wav
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun playWav(fileStream: FileStream): HttpClientResult<String> {
-        logger.d { "playWav dataSize: ${fileStream.length}" }
+    suspend fun playWav(fileWavStream: FileWavStream): HttpClientResult<String> {
+        logger.d { "playWav dataSize: ${fileWavStream.length}" }
         val result: HttpClientResult<String> = post(audioPlayingUrl) {
             setAttributes {
                 contentType(audioContentType)
             }
-            setBody(StreamContent(fileStream))
+            setBody(StreamContent(fileWavStream))
         }
-        fileStream.close()
+        fileWavStream.close()
         return result
     }
 

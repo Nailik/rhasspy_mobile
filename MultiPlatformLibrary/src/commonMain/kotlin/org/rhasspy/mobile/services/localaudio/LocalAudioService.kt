@@ -6,7 +6,7 @@ import org.rhasspy.mobile.fileutils.FolderType
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.nativeutils.AudioPlayer
-import org.rhasspy.mobile.nativeutils.FileStream
+import org.rhasspy.mobile.nativeutils.FileWavStream
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.sounds.SoundOption
@@ -27,7 +27,7 @@ class LocalAudioService : IService() {
         audioPlayer.close()
     }
 
-    suspend fun playAudio(data: FileStream): ServiceState = suspendCoroutine { continuation ->
+    suspend fun playAudio(data: FileWavStream): ServiceState = suspendCoroutine { continuation ->
         if (AppSetting.isAudioOutputEnabled.value) {
             logger.d { "playAudio ${data.length}" }
             audioPlayer.playData(

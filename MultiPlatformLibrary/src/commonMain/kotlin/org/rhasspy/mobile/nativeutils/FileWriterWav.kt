@@ -39,6 +39,6 @@ expect class FileWriterWav(filename: String) : FileWriter {
     /**
      * get file content as stream
      */
-    fun getFileContentStream(): FileStream
+    fun getFileContentStream(): FileWavStream
 
 }

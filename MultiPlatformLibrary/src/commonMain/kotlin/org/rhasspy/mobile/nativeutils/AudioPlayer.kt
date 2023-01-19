@@ -27,7 +27,7 @@ expect class AudioPlayer() : Closeable {
      * on Error is called when an playback error occurs
      */
     fun playData(
-        data: FileStream,
+        data: FileWavStream,
         volume: Float,
         audioOutputOption: AudioOutputOption,
         onFinished: (() -> Unit)? = null,
