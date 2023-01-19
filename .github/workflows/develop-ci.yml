@@ -29,6 +29,7 @@ jobs:
       KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
   approve:
     needs: merge
+    runs-on: self-hosted
     steps:
       # auto approve pr
       - name: Approve Pull Request
