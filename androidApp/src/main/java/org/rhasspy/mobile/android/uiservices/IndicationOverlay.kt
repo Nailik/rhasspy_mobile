@@ -117,6 +117,10 @@ object IndicationOverlay : KoinComponent {
                     showVisualIndicationOldValue = it
                 }
             }
+        }.also {
+            it.invokeOnCompletion {
+                overlayWindowManager.removeView(view)
+            }
         }
     }
 

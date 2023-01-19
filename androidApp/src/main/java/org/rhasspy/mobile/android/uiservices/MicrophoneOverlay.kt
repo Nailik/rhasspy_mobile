@@ -166,6 +166,10 @@ object MicrophoneOverlay : KoinComponent {
                     }
                 }
             }
+        }.also {
+            it.invokeOnCompletion {
+                overlayWindowManager.removeView(view)
+            }
         }
     }
 
