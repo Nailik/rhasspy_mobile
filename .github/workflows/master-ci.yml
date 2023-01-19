@@ -4,7 +4,7 @@ on:
   pull_request:
     branches:
       - master
-    types: [ created, labeled, synchronize ]
+    types: [ opened, labeled, synchronize ]
 
 jobs:
   check:
