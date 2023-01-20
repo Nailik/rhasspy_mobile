@@ -20,7 +20,7 @@
 
     <application
         android:requestLegacyExternalStorage="true"
-        tools:ignore="MissingApplicationIcon" >
+        tools:ignore="MissingApplicationIcon">
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
             android:value="no" />

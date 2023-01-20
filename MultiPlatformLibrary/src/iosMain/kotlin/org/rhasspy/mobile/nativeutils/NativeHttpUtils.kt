@@ -1,8 +1,10 @@
 package org.rhasspy.mobile.nativeutils
 
-import io.ktor.client.engine.cio.*
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
+import io.ktor.client.engine.cio.CIOEngineConfig
+import io.ktor.server.application.Application
+import io.ktor.server.engine.ApplicationEngineEnvironment
+import io.ktor.server.engine.ApplicationEngineEnvironmentBuilder
+import io.ktor.server.engine.BaseApplicationEngine
 
 /**
  * adds call logging to web server

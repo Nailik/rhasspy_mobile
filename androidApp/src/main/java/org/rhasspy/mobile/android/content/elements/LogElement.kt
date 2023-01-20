@@ -11,7 +11,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.touchlab.kermit.Severity
 import org.rhasspy.mobile.android.content.list.ListElement
-import org.rhasspy.mobile.android.theme.*
+import org.rhasspy.mobile.android.theme.color_assert
+import org.rhasspy.mobile.android.theme.color_debug
+import org.rhasspy.mobile.android.theme.color_error
+import org.rhasspy.mobile.android.theme.color_info
+import org.rhasspy.mobile.android.theme.color_unknown
+import org.rhasspy.mobile.android.theme.color_verbose
+import org.rhasspy.mobile.android.theme.color_warn
 import org.rhasspy.mobile.logger.LogElement
 
 @Composable
