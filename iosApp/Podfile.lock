@@ -1,5 +1,5 @@
 PODS:
-  - MultiPlatformLibrary (0.4.1-30)
+  - MultiPlatformLibrary (0.4.3-34)
 
 DEPENDENCIES:
   - MultiPlatformLibrary (from `../MultiPlatformLibrary`)
@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "../MultiPlatformLibrary"
 
 SPEC CHECKSUMS:
-  MultiPlatformLibrary: a10233b6ce9b387343bf87cfb88934f8b55159fb
+  MultiPlatformLibrary: b0bf4310a54de088974fb6e883132eaaac349b0f
 
 PODFILE CHECKSUM: 98f129854622357d23222956ba5bf69bf541be7a
 
