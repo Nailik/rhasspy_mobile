@@ -1,6 +1,10 @@
 package org.rhasspy.mobile.android.content.item
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -48,6 +52,7 @@ fun EventStateIcon(serviceState: ServiceState) {
             is ServiceState.Success -> Icons.Outlined.Done
             is ServiceState.Error,
             is ServiceState.Exception -> Icons.Filled.Error
+
             is ServiceState.Disabled -> Icons.Outlined.Circle
         },
         contentDescription = when (serviceState) {
@@ -56,6 +61,7 @@ fun EventStateIcon(serviceState: ServiceState) {
             is ServiceState.Success -> MR.strings.success
             is ServiceState.Error,
             is ServiceState.Exception -> MR.strings.error
+
             is ServiceState.Disabled -> MR.strings.disabled
         }
     )
@@ -85,6 +91,7 @@ fun EventStateIconTinted(serviceState: ServiceState) {
             is ServiceState.Success -> Icons.Outlined.Done
             is ServiceState.Error,
             is ServiceState.Exception -> Icons.Filled.Error
+
             is ServiceState.Disabled -> Icons.Outlined.Circle
         },
         contentDescription = when (serviceState) {
@@ -93,6 +100,7 @@ fun EventStateIconTinted(serviceState: ServiceState) {
             is ServiceState.Success -> MR.strings.success
             is ServiceState.Error,
             is ServiceState.Exception -> MR.strings.error
+
             is ServiceState.Disabled -> MR.strings.disabled
         },
         tint = when (serviceState) {
@@ -101,6 +109,7 @@ fun EventStateIconTinted(serviceState: ServiceState) {
             is ServiceState.Success -> MaterialTheme.colorScheme.primary
             is ServiceState.Error,
             is ServiceState.Exception -> MaterialTheme.colorScheme.errorContainer
+
             is ServiceState.Disabled -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
         }
     )
@@ -117,6 +126,7 @@ fun EventStateContent(
         is ServiceState.Success -> MaterialTheme.colorScheme.onPrimaryContainer
         is ServiceState.Error,
         is ServiceState.Exception -> MaterialTheme.colorScheme.onErrorContainer
+
         is ServiceState.Disabled -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
     }
 
@@ -143,6 +153,7 @@ fun EventStateCard(
                 is ServiceState.Success -> MaterialTheme.colorScheme.primaryContainer
                 is ServiceState.Error,
                 is ServiceState.Exception -> MaterialTheme.colorScheme.errorContainer
+
                 is ServiceState.Disabled -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f)
             }
         ),

@@ -1,11 +1,23 @@
 package org.rhasspy.mobile.nativeutils
 
-import ai.picovoice.porcupine.*
+import ai.picovoice.porcupine.PorcupineActivationException
+import ai.picovoice.porcupine.PorcupineActivationLimitException
+import ai.picovoice.porcupine.PorcupineActivationRefusedException
+import ai.picovoice.porcupine.PorcupineActivationThrottledException
+import ai.picovoice.porcupine.PorcupineIOException
+import ai.picovoice.porcupine.PorcupineInvalidArgumentException
+import ai.picovoice.porcupine.PorcupineInvalidStateException
+import ai.picovoice.porcupine.PorcupineKeyException
+import ai.picovoice.porcupine.PorcupineManager
+import ai.picovoice.porcupine.PorcupineManagerCallback
+import ai.picovoice.porcupine.PorcupineMemoryException
+import ai.picovoice.porcupine.PorcupineRuntimeException
+import ai.picovoice.porcupine.PorcupineStopIterationException
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
-import io.ktor.utils.io.core.*
+import io.ktor.utils.io.core.Closeable
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.services.wakeword.PorcupineError
 import org.rhasspy.mobile.services.wakeword.PorcupineErrorType
@@ -194,26 +206,32 @@ actual class PorcupineWakeWordClient actual constructor(
                 this,
                 PorcupineErrorType.ActivationException
             )
+
             is PorcupineActivationLimitException -> PorcupineError(
                 this,
                 PorcupineErrorType.ActivationLimitException
             )
+
             is PorcupineActivationRefusedException -> PorcupineError(
                 this,
                 PorcupineErrorType.ActivationRefusedException
             )
+
             is PorcupineActivationThrottledException -> PorcupineError(
                 this,
                 PorcupineErrorType.ActivationThrottledException
             )
+
             is PorcupineInvalidArgumentException -> PorcupineError(
                 this,
                 PorcupineErrorType.InvalidArgumentException
             )
+
             is PorcupineInvalidStateException -> PorcupineError(
                 this,
                 PorcupineErrorType.InvalidStateException
             )
+
             is PorcupineIOException -> PorcupineError(this, PorcupineErrorType.IOException)
             is PorcupineKeyException -> PorcupineError(this, PorcupineErrorType.KeyException)
             is PorcupineMemoryException -> PorcupineError(this, PorcupineErrorType.MemoryException)
@@ -221,10 +239,12 @@ actual class PorcupineWakeWordClient actual constructor(
                 this,
                 PorcupineErrorType.RuntimeException
             )
+
             is PorcupineStopIterationException -> PorcupineError(
                 this,
                 PorcupineErrorType.StopIterationException
             )
+
             else -> PorcupineError(this, PorcupineErrorType.Other)
         }
     }

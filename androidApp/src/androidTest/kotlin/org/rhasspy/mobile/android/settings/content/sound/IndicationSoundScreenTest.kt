@@ -17,8 +17,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.junit.Rule
-import org.rhasspy.mobile.android.*
+import org.rhasspy.mobile.android.MainActivity
+import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalNavController
+import org.rhasspy.mobile.android.onNodeWithCombinedTag
+import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.android.requestExternalStoragePermissions
 import org.rhasspy.mobile.android.test.R
 import org.rhasspy.mobile.settings.option.AudioOutputOption
 import org.rhasspy.mobile.viewmodel.settings.IndicationSettingsViewModel
