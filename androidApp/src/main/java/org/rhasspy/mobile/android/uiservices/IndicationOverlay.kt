@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -27,8 +28,8 @@ import org.rhasspy.mobile.viewmodel.overlay.IndicationOverlayViewModel
  * Overlay Service
  */
 object IndicationOverlay : KoinComponent {
-
-    private var mParams: WindowManager.LayoutParams
+    private val logger = Logger.withTag("IndicationOverlay")
+    private var mParams = WindowManager.LayoutParams()
     private var lifecycleOwner = CustomLifecycleOwner()
 
     //stores old value to only react to changes
@@ -57,25 +58,29 @@ object IndicationOverlay : KoinComponent {
     }
 
     init {
-        val typeFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        } else {
-            @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_PHONE
+        try {
+            val typeFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            } else {
+                @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_PHONE
+            }
+            // set the layout parameters of the window
+            mParams = WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                typeFlag,
+                @Suppress("DEPRECATION") WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                        or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                        or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                PixelFormat.TRANSLUCENT,
+            ).apply {
+                gravity = Gravity.BOTTOM
+            }
+            lifecycleOwner.performRestore(null)
+            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+        } catch (exception: Exception) {
+            logger.a(exception) { "exception in initialization" }
         }
-        // set the layout parameters of the window
-        mParams = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            typeFlag,
-            @Suppress("DEPRECATION") WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                    or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                    or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-            PixelFormat.TRANSLUCENT,
-        ).apply {
-            gravity = Gravity.BOTTOM
-        }
-        lifecycleOwner.performRestore(null)
-        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
     }
 
 
@@ -83,40 +88,52 @@ object IndicationOverlay : KoinComponent {
      * start service, listen to showVisualIndication and show the overlay or remove it when necessary
      */
     fun start() {
-        viewModel = get()
+        try {
+            viewModel = get()
 
-        val view = getView()
+            val view = getView()
 
-        view.setViewTreeLifecycleOwner(lifecycleOwner)
-        view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
+            view.setViewTreeLifecycleOwner(lifecycleOwner)
+            view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
 
-        val viewModelStore = ViewModelStore()
-        ViewTreeViewModelStoreOwner.set(view) { viewModelStore }
+            val viewModelStore = ViewModelStore()
+            ViewTreeViewModelStoreOwner.set(view) { viewModelStore }
 
-        if (job?.isActive == true) {
-            return
-        }
-        job = CoroutineScope(Dispatchers.Default).launch {
-            viewModel.isShowVisualIndication.collect {
-                if (it != showVisualIndicationOldValue) {
-                    if (it) {
-                        if (OverlayPermission.isGranted()) {
+            if (job?.isActive == true) {
+                return
+            }
+            job = CoroutineScope(Dispatchers.Default).launch {
+                viewModel.isShowVisualIndication.collect {
+                    if (it != showVisualIndicationOldValue) {
+                        if (it) {
+                            if (OverlayPermission.isGranted()) {
+                                mainScope.launch {
+                                    overlayWindowManager.addView(view, mParams)
+                                    //has to be called from main thread
+                                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                                }
+                            }
+                        } else {
                             mainScope.launch {
-                                overlayWindowManager.addView(view, mParams)
+                                overlayWindowManager.removeView(view)
                                 //has to be called from main thread
-                                lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                                lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
                             }
                         }
-                    } else {
-                        mainScope.launch {
-                            overlayWindowManager.removeView(view)
-                            //has to be called from main thread
-                            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-                        }
+                        showVisualIndicationOldValue = it
                     }
-                    showVisualIndicationOldValue = it
+                }
+            }.also {
+                it.invokeOnCompletion {
+                    if (view.parent != null) {
+                        //check if view is attached before removing it
+                        //removing a not attached view results in IllegalArgumentException
+                        overlayWindowManager.removeView(view)
+                    }
                 }
             }
+        } catch (exception: Exception) {
+            logger.a(exception) { "exception in start" }
         }
     }
 
