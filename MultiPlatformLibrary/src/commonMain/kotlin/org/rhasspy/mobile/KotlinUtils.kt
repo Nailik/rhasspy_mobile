@@ -15,6 +15,8 @@ fun ByteArray.addWavHeader(): ByteArray {
     this.copyInto(dataWithHeader, wavHeader.size)
     return dataWithHeader
 }
+
+//https://github.com/razzo04/rhasspy-mobile-app/blob/3c59971270eab0278cd5dbf6adac4064b5f14908/android/app/src/main/java/com/example/rhasspy_mobile_app/WakeWordService.java#L151
 fun Long.getWavHeaderForSize(): ByteArray {
     val dataSize = (this + 44 - 8).toByteArray()
     val audioDataSize = this.toByteArray()
