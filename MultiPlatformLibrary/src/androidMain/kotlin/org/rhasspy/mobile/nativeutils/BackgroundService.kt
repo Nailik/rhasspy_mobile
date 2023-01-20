@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.nativeutils
 
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import co.touchlab.kermit.Logger
 import org.rhasspy.mobile.Application
@@ -9,7 +10,6 @@ import org.rhasspy.mobile.Application
  * Native Service to run continuously in background
  */
 actual class BackgroundService : android.app.Service() {
-    private val logger = Logger.withTag("NativeService")
 
     /**
      * create service, show notification and start in foreground
@@ -34,19 +34,19 @@ actual class BackgroundService : android.app.Service() {
     }
 
     actual companion object {
-        private val logger = Logger.withTag("NativeService")
+        private val logger = Logger.withTag("BackgroundService")
+        private val intent = Intent(Application.nativeInstance, BackgroundService::class.java)
 
         /**
          * start background service
          */
         actual fun start() {
             logger.d { "start" }
-            Application.nativeInstance.startService(
-                Intent(
-                    Application.nativeInstance,
-                    BackgroundService::class.java
-                )
-            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Application.nativeInstance.startForegroundService(intent)
+            } else {
+                Application.nativeInstance.startService(intent)
+            }
         }
 
         /**
@@ -54,12 +54,7 @@ actual class BackgroundService : android.app.Service() {
          */
         actual fun stop() {
             logger.d { "stop" }
-            Application.nativeInstance.stopService(
-                Intent(
-                    Application.nativeInstance,
-                    BackgroundService::class.java
-                )
-            )
+            Application.nativeInstance.stopService(intent)
         }
     }
 

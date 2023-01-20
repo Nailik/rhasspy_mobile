@@ -56,6 +56,7 @@ actual class AudioPlayer : Closeable {
             AudioOutputOption.Sound -> {
                 playSound(Uri.fromFile(soundFile), MutableStateFlow(volume), onFinished, onError)
             }
+
             AudioOutputOption.Notification -> {
                 playNotification(
                     Uri.fromFile(soundFile),
@@ -88,6 +89,7 @@ actual class AudioPlayer : Closeable {
             AudioOutputOption.Sound -> {
                 playSound(getUriFromResource(fileResource.rawResId), volume, onFinished, onError)
             }
+
             AudioOutputOption.Notification -> {
                 playNotification(
                     getUriFromResource(fileResource.rawResId),
@@ -122,6 +124,7 @@ actual class AudioPlayer : Closeable {
             AudioOutputOption.Sound -> {
                 playSound(Uri.fromFile(soundFile), volume, onFinished, onError)
             }
+
             AudioOutputOption.Notification -> {
                 playNotification(Uri.fromFile(soundFile), volume, onFinished, onError)
             }
@@ -134,7 +137,8 @@ actual class AudioPlayer : Closeable {
             audioTrack?.stop()
             mediaPlayer?.stop()
             notification?.stop()
-        } catch (_: Exception) { }
+        } catch (_: Exception) {
+        }
         audioTrack = null
         mediaPlayer = null
         notification = null

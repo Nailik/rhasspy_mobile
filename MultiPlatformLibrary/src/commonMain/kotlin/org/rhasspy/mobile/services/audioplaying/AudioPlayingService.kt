@@ -58,10 +58,12 @@ open class AudioPlayingService : IService() {
                 _serviceState.value = localAudioService.playAudio(data)
                 serviceMiddleware.action(DialogAction.PlayFinished(Source.Local))
             }
+
             AudioPlayingOption.RemoteHTTP -> {
                 _serviceState.value = httpClientService.playWav(data).toServiceState()
                 serviceMiddleware.action(DialogAction.PlayFinished(Source.HttpApi))
             }
+
             AudioPlayingOption.RemoteMQTT -> {
                 _serviceState.value = if (!fromMqtt) {
                     mqttClientService.playBytes(data)
@@ -70,6 +72,7 @@ open class AudioPlayingService : IService() {
                     serviceMiddleware.action(DialogAction.PlayFinished(Source.Local))
                 }
             }
+
             AudioPlayingOption.Disabled -> {}
         }
     }

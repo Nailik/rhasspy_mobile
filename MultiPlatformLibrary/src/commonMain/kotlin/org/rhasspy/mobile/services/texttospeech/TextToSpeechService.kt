@@ -58,8 +58,10 @@ open class TextToSpeechService : IService() {
                 }
                 serviceMiddleware.action(action)
             }
+
             TextToSpeechOption.RemoteMQTT -> _serviceState.value =
                 mqttClientService.say(sessionId, text)
+
             TextToSpeechOption.Disabled -> {}
         }
     }

@@ -8,7 +8,7 @@ import android.media.AudioRecord.RECORDSTATE_RECORDING
 import android.media.MediaRecorder
 import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
-import io.ktor.utils.io.core.*
+import io.ktor.utils.io.core.Closeable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow

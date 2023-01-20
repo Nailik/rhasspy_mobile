@@ -46,8 +46,10 @@ open class IntentHandlingService : IService() {
         when (params.intentHandlingOption) {
             IntentHandlingOption.HomeAssistant -> _serviceState.value =
                 homeAssistantService.sendIntent(intentName, intent)
+
             IntentHandlingOption.RemoteHTTP -> _serviceState.value =
                 httpClientService.intentHandling(intent).toServiceState()
+
             IntentHandlingOption.WithRecognition -> {}
             IntentHandlingOption.Disabled -> {}
         }

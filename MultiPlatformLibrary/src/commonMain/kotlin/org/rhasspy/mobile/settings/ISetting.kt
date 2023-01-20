@@ -42,7 +42,6 @@ open class ISetting<T>(
      * save current value
      */
     @OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
-    @Suppress("UNCHECKED_CAST")
     private fun saveValue(newValue: T) {
         when (initial) {
             is String -> settings[key.name] = newValue as String

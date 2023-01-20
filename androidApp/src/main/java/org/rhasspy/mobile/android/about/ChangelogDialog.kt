@@ -64,7 +64,9 @@ private fun ChangelogDialog(changelogText: String, onDismissRequest: () -> Unit)
         },
         text = {
             Column(
-                modifier = Modifier.verticalScroll(scrollState),
+                modifier = Modifier
+                    .testTag(TestTag.DialogChangelog)
+                    .verticalScroll(scrollState),
             ) {
                 changelogText.split("\\\\")
                     .map { it.replace("\n", "") }
@@ -73,8 +75,7 @@ private fun ChangelogDialog(changelogText: String, onDismissRequest: () -> Unit)
                         Text(text = "· $it")
                     }
             }
-        },
-        modifier = Modifier.testTag(TestTag.DialogChangelog)
+        }
     )
 
 }
