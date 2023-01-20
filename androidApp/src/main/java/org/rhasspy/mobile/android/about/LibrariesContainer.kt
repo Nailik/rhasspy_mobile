@@ -173,15 +173,16 @@ private fun LibraryDialog(library: Library, onDismissRequest: () -> Unit) {
         },
         text = {
             Column(
-                modifier = Modifier.verticalScroll(scrollState),
+                modifier = Modifier
+                    .testTag(TestTag.DialogLibrary)
+                    .verticalScroll(scrollState),
             ) {
                 HtmlText(
                     html = library.licenses.firstOrNull()?.htmlReadyLicenseContent.orEmpty(),
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
-        },
-        modifier = Modifier.testTag(TestTag.DialogLibrary)
+        }
     )
 
 }

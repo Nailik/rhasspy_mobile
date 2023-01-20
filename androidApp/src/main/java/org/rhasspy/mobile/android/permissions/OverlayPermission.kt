@@ -71,7 +71,10 @@ private fun OverlayPermissionInfoDialog(onResult: (result: Boolean) -> Unit) {
             Text(MR.strings.overlayPermissionTitle)
         },
         text = {
-            Text(MR.strings.overlayPermissionInfo)
+            Text(
+                resource = MR.strings.overlayPermissionInfo,
+                modifier = Modifier.testTag(TestTag.DialogInformationOverlayPermission)
+            )
         },
         icon = {
             Icon(imageVector = Icons.Filled.Layers, contentDescription = MR.strings.overlay)
@@ -99,6 +102,5 @@ private fun OverlayPermissionInfoDialog(onResult: (result: Boolean) -> Unit) {
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
-            .testTag(TestTag.DialogInformationOverlayPermission)
     )
 }

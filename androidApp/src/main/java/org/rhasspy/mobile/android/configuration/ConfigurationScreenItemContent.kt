@@ -238,8 +238,12 @@ private fun UnsavedChangesDialog(
             )
         },
         title = { Text(MR.strings.unsavedChanges) },
-        text = { Text(MR.strings.unsavedChangesInformation) },
-        modifier = Modifier.testTag(TestTag.DialogUnsavedChanges)
+        text = {
+            Text(
+                resource = MR.strings.unsavedChangesInformation,
+                modifier = Modifier.testTag(TestTag.DialogUnsavedChanges)
+            )
+        }
     )
 
 }

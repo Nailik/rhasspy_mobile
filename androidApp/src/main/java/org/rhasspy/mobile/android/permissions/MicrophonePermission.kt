@@ -118,7 +118,10 @@ private fun MicrophonePermissionInfoDialog(
             Text(MR.strings.microphonePermissionDialogTitle)
         },
         text = {
-            Text(message)
+            Text(
+                resource = message,
+                modifier = Modifier.testTag(TestTag.DialogInformationMicrophonePermission)
+            )
         },
         icon = {
             Icon(imageVector = Icons.Filled.Mic, contentDescription = MR.strings.microphone)
@@ -146,7 +149,6 @@ private fun MicrophonePermissionInfoDialog(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
-            .testTag(TestTag.DialogInformationMicrophonePermission)
     )
 
 }
