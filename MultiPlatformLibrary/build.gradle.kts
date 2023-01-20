@@ -101,7 +101,7 @@ kotlin {
                 implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
             }
         }
-        val androidTest by getting {
+        val androidUnitTest by getting {
             dependsOn(commonMain)
             dependencies {
                 implementation(Kotlin.Test.junit)
@@ -110,7 +110,6 @@ kotlin {
                 implementation(AndroidX.Compose.Ui.testJunit4)
                 implementation(AndroidX.Compose.Ui.testManifest)
             }
-
         }
         val iosX64Main by getting
         val iosArm64Main by getting

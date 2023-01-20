@@ -9,8 +9,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
+import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -87,7 +87,7 @@ object IndicationOverlay : KoinComponent {
 
         val view = getView()
 
-        ViewTreeLifecycleOwner.set(view, lifecycleOwner)
+        view.setViewTreeLifecycleOwner(lifecycleOwner)
         view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
 
         val viewModelStore = ViewModelStore()

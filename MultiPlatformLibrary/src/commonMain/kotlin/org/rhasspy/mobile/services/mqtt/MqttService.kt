@@ -2,12 +2,27 @@ package org.rhasspy.mobile.services.mqtt
 
 import com.benasher44.uuid.uuid4
 import com.benasher44.uuid.variant
-import io.ktor.utils.io.core.*
-import kotlinx.coroutines.*
+import io.ktor.utils.io.core.toByteArray
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonObjectBuilder
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.floatOrNull
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.put
 import org.koin.core.component.inject
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.logger.LogType
@@ -16,7 +31,12 @@ import org.rhasspy.mobile.middleware.Action.DialogAction
 import org.rhasspy.mobile.middleware.ServiceMiddleware
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.middleware.Source
-import org.rhasspy.mobile.mqtt.*
+import org.rhasspy.mobile.mqtt.MqttMessage
+import org.rhasspy.mobile.mqtt.MqttParams
+import org.rhasspy.mobile.mqtt.MqttPersistence
+import org.rhasspy.mobile.mqtt.MqttTopicPlaceholder
+import org.rhasspy.mobile.mqtt.MqttTopicsPublish
+import org.rhasspy.mobile.mqtt.MqttTopicsSubscription
 import org.rhasspy.mobile.nativeutils.MqttClient
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
@@ -192,15 +212,18 @@ class MqttService : IService() {
             MqttTopicsSubscription.HotWordDetected.topic.matches(topic) -> {
                 hotWordDetectedCalled(topic)
             }
+
             MqttTopicsSubscription.IntentRecognitionResult.topic.matches(topic) -> {
                 val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
                 intentRecognitionResult(jsonObject)
             }
+
             MqttTopicsSubscription.PlayBytes.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId)
                 .matches(topic) -> {
                 playBytes(message.payload)
             }
+
             else -> return false
         }
         return true
@@ -243,6 +266,7 @@ class MqttService : IService() {
                         MqttTopicsSubscription.IntentRecognitionResult -> intentRecognitionResult(
                             jsonObject
                         )
+
                         MqttTopicsSubscription.SetVolume -> setVolume(jsonObject)
                         else -> {
                             logger.d { "isThisSiteId mqttTopic notFound $topic" }
@@ -266,11 +290,13 @@ class MqttService : IService() {
                     .matches(topic) -> {
                     playBytes(message.payload)
                 }
+
                 MqttTopicsSubscription.PlayFinished.topic
                     .set(MqttTopicPlaceholder.SiteId, params.siteId)
                     .matches(topic) -> {
                     playFinishedCall()
                 }
+
                 else -> {
                     logger.d { "siteId in Topic mqttTopic notFound $topic" }
                 }
@@ -895,6 +921,7 @@ class MqttService : IService() {
             MqttTopicsSubscription.PlayBytes.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId)
                 .matches(topic) -> MqttTopicsSubscription.IntentRecognitionResult
+
             else -> MqttTopicsSubscription.fromTopic(topic)
         }
     }

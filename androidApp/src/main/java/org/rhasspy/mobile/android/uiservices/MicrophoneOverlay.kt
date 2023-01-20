@@ -18,8 +18,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
+import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
@@ -134,8 +134,8 @@ object MicrophoneOverlay : KoinComponent {
 
         val view = getView()
 
+        view.setViewTreeLifecycleOwner(lifecycleOwner)
         view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
-        ViewTreeLifecycleOwner.set(view, lifecycleOwner)
 
         val viewModelStore = ViewModelStore()
         ViewTreeViewModelStoreOwner.set(view) { viewModelStore }

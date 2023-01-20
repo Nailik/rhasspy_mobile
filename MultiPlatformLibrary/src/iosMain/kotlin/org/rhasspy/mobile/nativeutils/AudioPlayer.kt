@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.nativeutils
 
 import dev.icerock.moko.resources.FileResource
-import io.ktor.utils.io.core.*
+import io.ktor.utils.io.core.Closeable
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.settings.option.AudioOutputOption
 

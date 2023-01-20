@@ -63,12 +63,14 @@ class LocalAudioService : IService() {
             SoundOption.Disabled.name -> {
                 onFinished()
             }
+
             SoundOption.Default.name -> audioPlayer.playFileResource(
                 MR.files.etc_wav_beep_hi,
                 AppSetting.wakeSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value,
                 onFinished
             ) { onFinished() }
+
             else -> audioPlayer.playSoundFile(
                 "${FolderType.SoundFolder.Wake}/${AppSetting.wakeSound.value}",
                 AppSetting.wakeSoundVolume.data,
@@ -87,6 +89,7 @@ class LocalAudioService : IService() {
                 AppSetting.recordedSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
             )
+
             else -> audioPlayer.playSoundFile(
                 "${FolderType.SoundFolder.Recorded}/${AppSetting.recordedSound.value}",
                 AppSetting.recordedSoundVolume.data,
@@ -104,6 +107,7 @@ class LocalAudioService : IService() {
                 AppSetting.errorSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
             )
+
             else -> audioPlayer.playSoundFile(
                 "${FolderType.SoundFolder.Error}/${AppSetting.errorSound.value}",
                 AppSetting.errorSoundVolume.data,

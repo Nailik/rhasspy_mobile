@@ -1,7 +1,11 @@
 package org.rhasspy.mobile.services.speechtotext
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.addWavHeader
 import org.rhasspy.mobile.logger.LogType
@@ -85,8 +89,10 @@ open class SpeechToTextService : IService() {
                 }
                 serviceMiddleware.action(action)
             }
+
             SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) _serviceState.value =
                 mqttClientService.stopListening(sessionId)
+
             SpeechToTextOption.Disabled -> {}
         }
     }
@@ -118,6 +124,7 @@ open class SpeechToTextService : IService() {
             SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) {
                 mqttClientService.startListening(sessionId)
             } else ServiceState.Success
+
             SpeechToTextOption.Disabled -> ServiceState.Disabled
         }
     }

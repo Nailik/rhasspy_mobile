@@ -1,8 +1,13 @@
 package org.rhasspy.mobile.android.configuration.content.porcupine
 
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onChildAt
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToKey
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.runBlocking
 import org.junit.Before

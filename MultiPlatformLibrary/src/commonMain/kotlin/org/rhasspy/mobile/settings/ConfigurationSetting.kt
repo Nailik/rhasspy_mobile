@@ -1,6 +1,16 @@
 package org.rhasspy.mobile.settings
 
-import org.rhasspy.mobile.settings.option.*
+import org.rhasspy.mobile.settings.option.AudioOutputOption
+import org.rhasspy.mobile.settings.option.AudioPlayingOption
+import org.rhasspy.mobile.settings.option.DialogManagementOption
+import org.rhasspy.mobile.settings.option.HomeAssistantIntentHandlingOption
+import org.rhasspy.mobile.settings.option.IntentHandlingOption
+import org.rhasspy.mobile.settings.option.IntentRecognitionOption
+import org.rhasspy.mobile.settings.option.PorcupineKeywordOption
+import org.rhasspy.mobile.settings.option.PorcupineLanguageOption
+import org.rhasspy.mobile.settings.option.SpeechToTextOption
+import org.rhasspy.mobile.settings.option.TextToSpeechOption
+import org.rhasspy.mobile.settings.option.WakeWordOption
 import org.rhasspy.mobile.settings.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.settings.serializer.PorcupineCustomKeywordSerializer
 import org.rhasspy.mobile.settings.serializer.PorcupineDefaultKeywordSerializer

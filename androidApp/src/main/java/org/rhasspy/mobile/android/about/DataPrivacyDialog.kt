@@ -66,15 +66,16 @@ private fun DataPrivacyDialog(onDismissRequest: () -> Unit) {
         },
         text = {
             Column(
-                modifier = Modifier.verticalScroll(scrollState),
+                modifier = Modifier
+                    .testTag(TestTag.DialogDataPrivacy)
+                    .verticalScroll(scrollState),
             ) {
                 HtmlText(
                     html = MR.files.dataprivacy.readText(LocalContext.current),
                     color = LocalContentColor.current
                 )
             }
-        },
-        modifier = Modifier.testTag(TestTag.DialogDataPrivacy)
+        }
     )
 
 }

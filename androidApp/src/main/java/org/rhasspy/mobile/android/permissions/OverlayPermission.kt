@@ -7,8 +7,12 @@ import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
@@ -71,7 +75,10 @@ private fun OverlayPermissionInfoDialog(onResult: (result: Boolean) -> Unit) {
             Text(MR.strings.overlayPermissionTitle)
         },
         text = {
-            Text(MR.strings.overlayPermissionInfo)
+            Text(
+                resource = MR.strings.overlayPermissionInfo,
+                modifier = Modifier.testTag(TestTag.DialogInformationOverlayPermission)
+            )
         },
         icon = {
             Icon(imageVector = Icons.Filled.Layers, contentDescription = MR.strings.overlay)
@@ -99,6 +106,5 @@ private fun OverlayPermissionInfoDialog(onResult: (result: Boolean) -> Unit) {
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
-            .testTag(TestTag.DialogInformationOverlayPermission)
     )
 }

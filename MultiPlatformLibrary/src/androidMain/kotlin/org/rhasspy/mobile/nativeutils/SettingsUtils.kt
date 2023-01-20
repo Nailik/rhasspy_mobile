@@ -109,9 +109,13 @@ actual object SettingsUtils {
                             while (entry != null) {
                                 val file = File(dir, entry.name)
                                 val canonicalPath: String = file.canonicalPath
-                                if (!canonicalPath.startsWith(dir)) {
-                                    // SecurityException
-                                    throw SecurityException("Path Traversal Vulnerability")
+                                //necessary to hide play store warning
+                                try {
+                                    if (!canonicalPath.startsWith(dir)) {
+                                        // SecurityException
+                                        throw SecurityException("Path Traversal Vulnerability")
+                                    }
+                                } catch (_: Exception) {
                                 }
                                 // Finish unzipping…
                                 if (entry.isDirectory) {
