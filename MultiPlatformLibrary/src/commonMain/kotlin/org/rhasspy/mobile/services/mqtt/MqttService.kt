@@ -10,6 +10,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.koin.core.component.inject
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.addWavHeader
 import org.rhasspy.mobile.fileutils.SoundCacheFileType
 import org.rhasspy.mobile.fileutils.SoundCacheFileWriterFactory
 import org.rhasspy.mobile.logger.LogType
@@ -462,7 +463,7 @@ class MqttService : IService() {
             MqttTopicsPublish.AsrAudioFrame.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId)
                 .set(MqttTopicPlaceholder.SessionId, sessionId),
-            MqttMessage(byteArray)
+            MqttMessage(byteArray.addWavHeader())
         )
 
     /**

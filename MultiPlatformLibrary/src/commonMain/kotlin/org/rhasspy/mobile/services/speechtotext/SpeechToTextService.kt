@@ -1,11 +1,14 @@
 package org.rhasspy.mobile.services.speechtotext
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.fileutils.SoundCacheFileType
 import org.rhasspy.mobile.fileutils.SoundCacheFileWriterFactory
-import org.rhasspy.mobile.getWavHeaderForSize
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action.DialogAction
 import org.rhasspy.mobile.middleware.ServiceMiddleware
@@ -138,11 +141,7 @@ open class SpeechToTextService : IService() {
         _serviceState.value = when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> ServiceState.Success
             SpeechToTextOption.RemoteMQTT -> {
-                val wavHeader = data.size.toLong().getWavHeaderForSize()
-                val dataWithHeader = ByteArray(wavHeader.size + data.size)
-                wavHeader.copyInto(dataWithHeader)
-                data.copyInto(dataWithHeader, wavHeader.size)
-                mqttClientService.asrAudioFrame(sessionId, dataWithHeader)
+                mqttClientService.asrAudioFrame(sessionId, data)
             }
             SpeechToTextOption.Disabled -> ServiceState.Disabled
         }

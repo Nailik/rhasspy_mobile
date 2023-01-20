@@ -8,6 +8,13 @@ import kotlinx.coroutines.flow.*
 fun Number.toByteArray(size: Int = 4): ByteArray =
     ByteArray(size) { i -> (this.toLong() shr (i * 8)).toByte() }
 
+fun ByteArray.addWavHeader(): ByteArray {
+    val wavHeader = this.size.toLong().getWavHeaderForSize()
+    val dataWithHeader = ByteArray(wavHeader.size + this.size)
+    wavHeader.copyInto(dataWithHeader)
+    this.copyInto(dataWithHeader, wavHeader.size)
+    return dataWithHeader
+}
 fun Long.getWavHeaderForSize(): ByteArray {
     val dataSize = (this + 44 - 8).toByteArray()
     val audioDataSize = this.toByteArray()
