@@ -20,7 +20,7 @@
         android:name="org.rhasspy.mobile.android.AndroidApplication"
         android:enableOnBackInvokedCallback="true"
         android:exported="true"
-        android:hardwareAccelerated="false"
+        android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="Rhasspy Mobile"
         android:largeHeap="true"
