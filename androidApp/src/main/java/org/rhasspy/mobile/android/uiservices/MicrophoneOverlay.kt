@@ -168,7 +168,11 @@ object MicrophoneOverlay : KoinComponent {
             }
         }.also {
             it.invokeOnCompletion {
-                overlayWindowManager.removeView(view)
+                if (view.parent != null) {
+                    //check if view is attached before removing it
+                    //removing a not attached view results in IllegalArgumentException
+                    overlayWindowManager.removeView(view)
+                }
             }
         }
     }
