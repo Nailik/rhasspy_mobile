@@ -1,7 +1,14 @@
 package org.rhasspy.mobile.android.main
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
@@ -48,6 +55,7 @@ fun HomeScreen(viewModel: HomeScreenViewModel = get()) {
             Configuration.ORIENTATION_PORTRAIT -> {
                 PortraitContent(paddingValues, viewModel)
             }
+
             else -> {
                 LandscapeContent(paddingValues, viewModel)
             }

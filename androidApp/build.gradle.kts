@@ -46,6 +46,7 @@ android {
         versionName = Version.toString()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["clearPackageData"] = "true"
+        testInstrumentationRunnerArguments["disableAnalytics"] = "true"
     }
 
     buildTypes {
