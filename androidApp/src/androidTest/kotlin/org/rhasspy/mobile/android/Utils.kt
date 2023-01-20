@@ -3,8 +3,17 @@ package org.rhasspy.mobile.android
 import android.os.Build
 import android.provider.Settings
 import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.filter
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.onChildren
+import androidx.compose.ui.test.onFirst
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.permission.PermissionRequester
 import androidx.test.uiautomator.UiDevice
@@ -69,9 +78,11 @@ fun requestExternalStoragePermissions(device: UiDevice) {
                 requestPermissions()
             }
         }
+
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
             device.executeShellCommand("appops set --uid ${getInstrumentation().targetContext.packageName} MANAGE_EXTERNAL_STORAGE allow")
         }
+
         else -> return
     }
 }

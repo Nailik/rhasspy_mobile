@@ -261,6 +261,7 @@ class DialogManagerService : IService() {
         when (_currentDialogState.value) {
             DialogManagerServiceState.Idle,
             DialogManagerServiceState.AwaitingWakeWord -> indicationService.onIdle()
+
             DialogManagerServiceState.RecordingIntent -> indicationService.onListening()
             DialogManagerServiceState.TranscribingIntent,
             DialogManagerServiceState.RecognizingIntent,
@@ -433,14 +434,17 @@ class DialogManagerService : IService() {
                         }
                         return result
                     }
+
                     is Source.Mqtt -> {
 
                         //exceptions where calls form mqtt are ok
                         val doNotIgnore = when (action) {
                             is DialogAction.AsrError,
                             is DialogAction.AsrTextCaptured -> get<SpeechToTextServiceParams>().speechToTextOption == SpeechToTextOption.RemoteMQTT
+
                             is DialogAction.IntentRecognitionError,
                             is DialogAction.IntentRecognitionResult -> get<IntentRecognitionServiceParams>().intentRecognitionOption == IntentRecognitionOption.RemoteMQTT
+
                             else -> false
                         }
 
