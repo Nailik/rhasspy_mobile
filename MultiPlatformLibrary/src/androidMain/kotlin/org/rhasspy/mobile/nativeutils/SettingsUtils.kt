@@ -115,8 +115,7 @@ actual object SettingsUtils {
                                         // SecurityException
                                         throw SecurityException("Path Traversal Vulnerability")
                                     }
-                                } catch (_: Exception) {
-                                }
+                                }catch (_: Exception) {}
                                 // Finish unzipping…
                                 if (entry.isDirectory) {
                                     //when it's a directory create new directory

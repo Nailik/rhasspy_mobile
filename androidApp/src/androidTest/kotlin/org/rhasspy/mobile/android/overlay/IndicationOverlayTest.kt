@@ -38,7 +38,11 @@ class IndicationOverlayTest : KoinComponent {
             timeoutMillis = 5000
         )
         composeTestRule.waitForIdle()
-        device.waitForIdle()
+        composeTestRule.waitUntil(
+            condition = { get<IndicationService>().indicationState.value != IndicationState.Idle },
+            timeoutMillis = 5000
+        )
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithCombinedTag(TestTag.Indication, TestTag.Overlay).assertExists()
     }
 }
