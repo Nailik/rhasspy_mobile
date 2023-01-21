@@ -4,68 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 
-//https://stackoverflow.com/questions/67179257/how-can-i-convert-an-int-to-a-bytearray-and-then-convert-it-back-to-an-int-with
-fun Number.toByteArray(size: Int = 4): ByteArray =
-    ByteArray(size) { i -> (this.toLong() shr (i * 8)).toByte() }
-
-fun ByteArray.addWavHeader(): ByteArray {
-    val wavHeader = this.size.toLong().getWavHeaderForSize()
-    return wavHeader + this
-}
-
-//https://github.com/razzo04/rhasspy-mobile-app/blob/3c59971270eab0278cd5dbf6adac4064b5f14908/android/app/src/main/java/com/example/rhasspy_mobile_app/WakeWordService.java#L151
-fun Long.getWavHeaderForSize(): ByteArray {
-    val dataSize = (this + 44 - 8).toByteArray()
-    val audioDataSize = this.toByteArray()
-    val wavHeader = arrayOf(
-        82,
-        73,
-        70,
-        70,
-        dataSize[0],
-        dataSize[1],
-        dataSize[2],
-        dataSize[3], //4-7 overall size
-        87,
-        65,
-        86,
-        69,
-        102,
-        109,
-        116,
-        32,
-        16,
-        0,
-        0,
-        0,
-        1,
-        0,
-        1,
-        0,
-        -128,
-        62,
-        0,
-        0,
-        0,
-        125,
-        0,
-        0,
-        2,
-        0,
-        16,
-        0,
-        100,
-        97,
-        116,
-        97,
-        audioDataSize[0],
-        audioDataSize[1],
-        audioDataSize[2],
-        audioDataSize[3] //40-43 data size of rest
-    )
-    return wavHeader.toByteArray()
-}
-
 fun <T1, T2, R> combineState(
     flow1: StateFlow<T1>,
     flow2: StateFlow<T2>,

@@ -6,8 +6,8 @@ import io.ktor.server.engine.internal.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
-import org.rhasspy.mobile.addWavHeader
 import org.rhasspy.mobile.logger.LogType
+import org.rhasspy.mobile.nativeutils.AudioRecorder.Companion.appendWavHeader
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.settings.AppSetting
 
@@ -52,7 +52,7 @@ class UdpService(host: String, port: Int) : IService() {
         }
         socketAddress?.also {
             try {
-                sendChannel?.send(Datagram(ByteReadPacket(data.addWavHeader()), it))
+                sendChannel?.send(Datagram(ByteReadPacket(data.appendWavHeader()), it))
             } catch (exception: Exception) {
                 if (AppSetting.isLogAudioFramesEnabled.value) {
                     if (exception::class.simpleName == "JobCancellationException") {

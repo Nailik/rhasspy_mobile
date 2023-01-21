@@ -33,4 +33,13 @@ expect class AudioRecorder() : Closeable {
      */
     fun stopRecording()
 
+    companion object {
+        /**
+         * use the settings of the audio recorder
+         * (samplingRate, channels, bitrate) and the audioSize
+         * to create wav header and add it in front of the given data
+         */
+        fun ByteArray.appendWavHeader(): ByteArray
+    }
+
 }
