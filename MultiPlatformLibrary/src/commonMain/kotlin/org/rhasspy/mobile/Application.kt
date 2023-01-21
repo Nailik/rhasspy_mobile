@@ -128,7 +128,7 @@ abstract class Application : NativeApplication(), KoinComponent {
     /**
      * tell the system that this app should have a custom language
      */
-    abstract fun setLanguage(languageType: LanguageType)
+    protected abstract fun setLanguage(languageType: LanguageType)
 
     override suspend fun updateWidgetNative() {
         updateWidget()

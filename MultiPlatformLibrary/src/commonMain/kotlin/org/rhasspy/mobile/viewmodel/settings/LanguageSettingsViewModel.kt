@@ -14,6 +14,6 @@ class LanguageSettingsViewModel : ViewModel() {
     val languageOptions = LanguageType::values
 
     //select log level
-    fun selectLanguageOption(option: LanguageType) = Application.instance.setLanguage(option)
+    fun selectLanguageOption(option: LanguageType) = Application.instance.changeLanguage(option)
 
 }

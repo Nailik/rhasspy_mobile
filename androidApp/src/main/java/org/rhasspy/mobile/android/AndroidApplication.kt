@@ -18,6 +18,7 @@ import org.rhasspy.mobile.android.uiservices.IndicationOverlay
 import org.rhasspy.mobile.android.uiservices.MicrophoneOverlay
 import org.rhasspy.mobile.android.widget.MicrophoneWidget
 import org.rhasspy.mobile.nativeutils.NativeApplication
+import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.types.LanguageType
 import kotlin.system.exitProcess
 
@@ -120,6 +121,7 @@ class AndroidApplication : Application() {
     override fun setLanguage(languageType: LanguageType) {
         val appLocale = LocaleListCompat.forLanguageTags(languageType.code)
         AppCompatDelegate.setApplicationLocales(appLocale)
+        AppSetting.languageType.value = languageType
     }
 
 }
