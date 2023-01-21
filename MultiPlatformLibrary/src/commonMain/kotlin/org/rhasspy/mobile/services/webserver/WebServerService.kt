@@ -15,8 +15,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.inject
 import org.rhasspy.mobile.fileutils.FolderType
-import org.rhasspy.mobile.fileutils.SoundCacheFileType
-import org.rhasspy.mobile.fileutils.SoundCacheFileWriterFactory
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action
 import org.rhasspy.mobile.middleware.Action.AppSettingsAction
@@ -30,7 +28,6 @@ import org.rhasspy.mobile.nativeutils.installCompression
 import org.rhasspy.mobile.nativeutils.installConnector
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
-import org.rhasspy.mobile.services.httpclient.StreamContent
 
 /**
  * Web server service holds all routes for WebServerPath values
@@ -257,7 +254,7 @@ class WebServerService : IService() {
      * GET to download WAV data from last recorded voice command
      */
     private suspend fun playRecordingGet(call: ApplicationCall): WebServerResult? {
-        call.respond(StreamContent(serviceMiddleware.getRecordedData()))
+        call.respond(serviceMiddleware.getRecordedData())
         return null
     }
 
@@ -272,10 +269,8 @@ class WebServerService : IService() {
             logger.w { "playWav wrong content type ${call.request.contentType()}" }
             WebServerResult.Error(WebServerServiceErrorType.AudioContentTypeWarning)
         } else WebServerResult.Ok
-        //play even without header
-        val fileWriterWav = SoundCacheFileWriterFactory.getFileWriter(SoundCacheFileType.WebServerService_playWav)
-        fileWriterWav.writeData(call.receiveChannel())
-        serviceMiddleware.action(DialogAction.PlayAudio(Source.HttpApi, fileWriterWav))
+        //play even without content type
+        serviceMiddleware.action(DialogAction.PlayAudio(Source.HttpApi, call.receive()))
         return result
     }
 
@@ -337,9 +332,7 @@ class WebServerService : IService() {
      * just like using say in the ui start screen but remote
      */
     private suspend fun say(call: ApplicationCall): WebServerResult {
-        val fileWriterWav = SoundCacheFileWriterFactory.getFileWriter(SoundCacheFileType.WebServerService_say)
-        fileWriterWav.writeData(call.receiveChannel())
-        serviceMiddleware.action(DialogAction.PlayAudio(Source.HttpApi, fileWriterWav))
+        serviceMiddleware.action(DialogAction.PlayAudio(Source.HttpApi, call.receive()))
         return WebServerResult.Ok
     }
 

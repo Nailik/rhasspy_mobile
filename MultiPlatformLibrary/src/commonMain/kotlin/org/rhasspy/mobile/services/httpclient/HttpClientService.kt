@@ -9,19 +9,16 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.client.statement.bodyAsChannel
 import io.ktor.client.utils.buildHeaders
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMessageBuilder
 import io.ktor.http.contentType
-import io.ktor.utils.io.ByteWriteChannel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.inject
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.middleware.ServiceState.Success
-import org.rhasspy.mobile.nativeutils.FileWavStream
 import org.rhasspy.mobile.nativeutils.configureEngine
 import org.rhasspy.mobile.readOnly
 import org.rhasspy.mobile.services.IService
@@ -130,11 +127,11 @@ class HttpClientService : IService() {
      * Set Accept: application/json to receive JSON with more details
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
-    suspend fun speechToText(fileWavStream: FileWavStream): HttpClientResult<String> {
-        logger.d { "speechToText dataSize: ${fileWavStream.length}" }
+    suspend fun speechToText(byteArray: ByteArray): HttpClientResult<String> {
+        logger.d { "speechToText dataSize: ${byteArray.size}" }
 
         return post(speechToTextUrl) {
-            setBody(StreamContent(fileWavStream))
+            setBody(byteArray)
         }
     }
 
@@ -163,9 +160,9 @@ class HttpClientService : IService() {
      * ?volume=<volume> - volume level to speak at (0 = off, 1 = full volume)
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun textToSpeech(text: String): HttpClientResult<ByteWriteChannel> {
+    suspend fun textToSpeech(text: String): HttpClientResult<ByteArray> {
         logger.d { "textToSpeech text: $text" }
-         return post(textToSpeechUrl, true) {
+         return post(textToSpeechUrl) {
             setBody(text)
         }
     }
@@ -176,16 +173,14 @@ class HttpClientService : IService() {
      * Make sure to set Content-Type to audio/wav
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun playWav(fileWavStream: FileWavStream): HttpClientResult<String> {
-        logger.d { "playWav dataSize: ${fileWavStream.length}" }
-        val result: HttpClientResult<String> = post(audioPlayingUrl) {
+    suspend fun playWav(byteArray: ByteArray): HttpClientResult<String> {
+        logger.d { "playWav size: ${byteArray.size}" }
+        return post(audioPlayingUrl) {
             setAttributes {
                 contentType(audioContentType)
             }
-            setBody(StreamContent(fileWavStream))
+            setBody(byteArray)
         }
-        fileWavStream.close()
-        return result
     }
 
     /**
@@ -247,18 +242,11 @@ class HttpClientService : IService() {
      */
     private suspend inline fun <reified T> post(
         url: String,
-        readContent: Boolean = false,
         block: HttpRequestBuilder.() -> Unit
     ): HttpClientResult<T> {
         return httpClient?.let { client ->
             try {
                 val request = client.post(url, block)
-
-                if(readContent) {
-                    @Suppress("UNCHECKED_CAST")
-                    return HttpClientResult.Success(request.bodyAsChannel()) as HttpClientResult<T>
-                }
-
                 val result = request.body<T>()
                 if (result is ByteArray) {
                     logger.d { "post result size: ${result.size}" }

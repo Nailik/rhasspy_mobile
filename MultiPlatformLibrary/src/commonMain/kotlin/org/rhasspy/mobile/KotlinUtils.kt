@@ -10,10 +10,7 @@ fun Number.toByteArray(size: Int = 4): ByteArray =
 
 fun ByteArray.addWavHeader(): ByteArray {
     val wavHeader = this.size.toLong().getWavHeaderForSize()
-    val dataWithHeader = ByteArray(wavHeader.size + this.size)
-    wavHeader.copyInto(dataWithHeader)
-    this.copyInto(dataWithHeader, wavHeader.size)
-    return dataWithHeader
+    return wavHeader + this
 }
 
 //https://github.com/razzo04/rhasspy-mobile-app/blob/3c59971270eab0278cd5dbf6adac4064b5f14908/android/app/src/main/java/com/example/rhasspy_mobile_app/WakeWordService.java#L151

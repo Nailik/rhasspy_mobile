@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.*
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.settings.option.AudioOutputOption
 import java.io.File
-import java.io.FileOutputStream
 
 actual class AudioPlayer : Closeable {
 
@@ -37,18 +36,13 @@ actual class AudioPlayer : Closeable {
      * on Error is called when an playback error occurs
      */
     actual fun playData(
-        data: FileWavStream,
+        data: ByteArray,
         volume: Float,
         audioOutputOption: AudioOutputOption,
         onFinished: (() -> Unit)?,
         onError: ((exception: Exception?) -> Unit)?
     ) {
         val soundFile = File(Application.nativeInstance.cacheDir, "/playData.wav")
-
-        val fos = FileOutputStream(soundFile)
-        data.copyTo(fos)
-        fos.close()
-
         playAudio(Uri.fromFile(soundFile), MutableStateFlow(volume), audioOutputOption, onFinished, onError)
     }
 

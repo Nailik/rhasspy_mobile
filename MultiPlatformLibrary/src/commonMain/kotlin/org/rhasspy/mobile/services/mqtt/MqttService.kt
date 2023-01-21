@@ -11,8 +11,6 @@ import kotlinx.serialization.json.*
 import org.koin.core.component.inject
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.addWavHeader
-import org.rhasspy.mobile.fileutils.SoundCacheFileType
-import org.rhasspy.mobile.fileutils.SoundCacheFileWriterFactory
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action.AppSettingsAction
 import org.rhasspy.mobile.middleware.Action.DialogAction
@@ -781,10 +779,8 @@ class MqttService : IService() {
      * Response(s)
      * hermes/audioServer/<siteId>/playFinished (JSON)
      */
-    private fun playBytes(payload: ByteArray) {
-        val fileWriterWav = SoundCacheFileWriterFactory.getFileWriter(SoundCacheFileType.MqttService_say)
-        fileWriterWav.writeData(payload)
-        serviceMiddleware.action(DialogAction.PlayAudio(Source.Mqtt(null), fileWriterWav))
+    private fun playBytes(byteArray: ByteArray) {
+        serviceMiddleware.action(DialogAction.PlayAudio(Source.Mqtt(null), byteArray))
     }
 
     /**
