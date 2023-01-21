@@ -29,6 +29,7 @@ import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.option.MicrophoneOverlaySizeOption
+import org.rhasspy.mobile.settings.types.LanguageType
 import org.rhasspy.mobile.viewmodel.*
 import org.rhasspy.mobile.viewmodel.configuration.*
 import org.rhasspy.mobile.viewmodel.configuration.test.*
@@ -100,6 +101,34 @@ abstract class Application : NativeApplication(), KoinComponent {
             _isHasStarted.value = true
         }
     }
+
+    fun setupLanguage() {
+        val language: LanguageType = getSystemAppLanguage() ?: AppSetting.languageType.value
+        StringDesc.localeType = StringDesc.LocaleType.Custom(language.code)
+        AppSetting.languageType.value = language
+        setLanguage(language)
+    }
+
+    fun changeLanguage(language: LanguageType) {
+        StringDesc.localeType = StringDesc.LocaleType.Custom(language.code)
+        AppSetting.languageType.value = language
+        setLanguage(language)
+    }
+
+    /**
+     * get the language of the device
+     */
+    abstract fun getDeviceLanguage(): LanguageType
+
+    /**
+     * get if the system has a custom language for this app
+     */
+    abstract fun getSystemAppLanguage(): LanguageType?
+
+    /**
+     * tell the system that this app should have a custom language
+     */
+    abstract fun setLanguage(languageType: LanguageType)
 
     override suspend fun updateWidgetNative() {
         updateWidget()
