@@ -322,6 +322,9 @@
     <string name="autoscrollList">Liste automatisch scrollen</string>
     <string name="requestTimeout">Anfrage Timeout (MS)</string>
     <string name="allowMicrophonePermission">Mikrofon zugriff erlauben</string>
+    <string name="textAsrTimeoutText">Speech To Text Timeout (MS)</string>
+    <string name="intentRecognitionTimeoutText">Zeitüberschreitung bei der Erkennung von Absicht (MS)</string>
+    <string name="recordingTimeoutText">Aufnahmezeitüberschreitung (MS)</string>
     <!-- porcupine error -->
     <string name="activation_exception">activation exception</string>
     <string name="activation_limit_exception">activation limit exception</string>

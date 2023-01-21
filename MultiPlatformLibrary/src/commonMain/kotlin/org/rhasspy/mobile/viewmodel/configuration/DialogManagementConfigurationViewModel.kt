@@ -28,14 +28,39 @@ class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
     override val serviceState get() = get<DialogManagerService>().serviceState
 
     //unsaved data
-    private val _dialogManagementOption =
-        MutableStateFlow(ConfigurationSetting.dialogManagementOption.value)
+    private val _dialogManagementOption = MutableStateFlow(ConfigurationSetting.dialogManagementOption.value)
+    private val _textAsrTimeoutText = MutableStateFlow(ConfigurationSetting.textAsrTimeout.value.toString())
+    private val _textAsrTimeout = MutableStateFlow(ConfigurationSetting.textAsrTimeout.value)
+    private val _intentRecognitionTimeoutText = MutableStateFlow(ConfigurationSetting.intentRecognitionTimeout.value.toString())
+    private val _intentRecognitionTimeout = MutableStateFlow(ConfigurationSetting.intentRecognitionTimeout.value)
+    private val _recordingTimeoutText = MutableStateFlow(ConfigurationSetting.recordingTimeout.value.toString())
+    private val _recordingTimeout = MutableStateFlow(ConfigurationSetting.recordingTimeout.value)
 
     //unsaved ui data
     val dialogManagementOption = _dialogManagementOption.readOnly
+    val textAsrTimeoutText = _textAsrTimeoutText.readOnly
+    val intentRecognitionTimeoutText = _intentRecognitionTimeoutText.readOnly
+    val recordingTimeoutText = _recordingTimeoutText.readOnly
 
-    override val isTestingEnabled =
-        _dialogManagementOption.mapReadonlyState { it != DialogManagementOption.Disabled }
+    fun updateTextAsrTimeout(connectionTimeout: String) {
+        val text = connectionTimeout.replace("""[-,. ]""".toRegex(), "")
+        _textAsrTimeoutText.value = text
+        _textAsrTimeout.value = text.toLongOrNull() ?: 0L
+    }
+
+    fun updateIntentRecognitionTimeout(connectionTimeout: String) {
+        val text = connectionTimeout.replace("""[-,. ]""".toRegex(), "")
+        _intentRecognitionTimeoutText.value = text
+        _intentRecognitionTimeout.value = text.toLongOrNull() ?: 0L
+    }
+
+    fun updateRecordingTimeout(connectionTimeout: String) {
+        val text = connectionTimeout.replace("""[-,. ]""".toRegex(), "")
+        _recordingTimeoutText.value = text
+        _recordingTimeout.value = text.toLongOrNull() ?: 0L
+    }
+
+    override val isTestingEnabled = _dialogManagementOption.mapReadonlyState { it != DialogManagementOption.Disabled }
 
     override val hasUnsavedChanges = combineAny(
         combineStateNotEquals(
@@ -47,6 +72,11 @@ class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
     //all options
     val dialogManagementOptionList = DialogManagementOption::values
 
+    //if local dialog management settings should be visible
+    fun isLocalDialogManagementSettingsVisible(option: DialogManagementOption): Boolean {
+        return option == DialogManagementOption.Local
+    }
+
     //set new dialog management option
     fun selectDialogManagementOption(option: DialogManagementOption) {
         _dialogManagementOption.value = option
@@ -57,6 +87,9 @@ class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
      */
     override fun onSave() {
         ConfigurationSetting.dialogManagementOption.value = _dialogManagementOption.value
+        ConfigurationSetting.textAsrTimeout.value = _textAsrTimeout.value
+        ConfigurationSetting.intentRecognitionTimeout.value = _intentRecognitionTimeout.value
+        ConfigurationSetting.recordingTimeout.value = _recordingTimeout.value
     }
 
     /**
@@ -64,13 +97,19 @@ class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
      */
     override fun discard() {
         _dialogManagementOption.value = ConfigurationSetting.dialogManagementOption.value
+        _textAsrTimeout.value = ConfigurationSetting.textAsrTimeout.value
+        _intentRecognitionTimeout.value = ConfigurationSetting.intentRecognitionTimeout.value
+        _recordingTimeout.value = ConfigurationSetting.recordingTimeout.value
     }
 
     override fun initializeTestParams() {
         get<DialogManagerServiceParams> {
             parametersOf(
                 DialogManagerServiceParams(
-                    option = _dialogManagementOption.value
+                    option = _dialogManagementOption.value,
+                    asrTimeout = _textAsrTimeout.value,
+                    intentRecognitionTimeout = _intentRecognitionTimeout.value,
+                    recordingTimeout = _recordingTimeout.value,
                 )
             )
         }

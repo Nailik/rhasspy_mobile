@@ -11,4 +11,7 @@ data class DialogManagerServiceParams(
     val wakeWordOption: WakeWordOption = ConfigurationSetting.wakeWordOption.value,
     val speechToTextOption: SpeechToTextOption = ConfigurationSetting.speechToTextOption.value,
     val intentRecognitionOption: IntentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value,
+    val asrTimeout: Long = ConfigurationSetting.textAsrTimeout.value,
+    val intentRecognitionTimeout: Long = ConfigurationSetting.intentRecognitionTimeout.value,
+    val recordingTimeout: Long = ConfigurationSetting.recordingTimeout.value,
 )

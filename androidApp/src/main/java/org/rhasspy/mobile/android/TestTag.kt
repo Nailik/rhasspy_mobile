@@ -60,6 +60,10 @@ enum class TestTag {
 
     WakeWordOptions,
 
+    TextAsrTimeout,
+    IntentRecognitionTimeout,
+    RecordingTimeout,
+
     ServerSwitch,
     MqttSwitch,
     Host,
