@@ -11,6 +11,7 @@ import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -29,6 +30,7 @@ import org.rhasspy.mobile.android.test.R
 import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 import java.io.File
 import kotlin.test.assertTrue
+
 
 class PorcupineKeywordCustomScreenTest {
 
@@ -134,6 +136,9 @@ class PorcupineKeywordCustomScreenTest {
         //file manager is opened
         device.findObject(UiSelector().textMatches(fileName)).exists()
         //user clicks jarvis.zip
+        val roomSelection = UiScrollable(UiSelector().scrollable(true))
+        val selectRoom = UiSelector().childSelector(UiSelector().textMatches(fileName))
+        roomSelection.scrollIntoView(selectRoom)
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
         //app is opened with current page (custom)
         composeTestRule.awaitIdle()
@@ -175,6 +180,9 @@ class PorcupineKeywordCustomScreenTest {
         getInstrumentation().context.resources.openRawResource(R.raw.porcupine_test)
             .copyTo(file.outputStream())
         composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
+        val roomSelection = UiScrollable(UiSelector().scrollable(true))
+        val selectRoom = UiSelector().childSelector(UiSelector().textMatches(fileName))
+        roomSelection.scrollIntoView(selectRoom)
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
         composeTestRule.awaitIdle()
         viewModel.onSave()
