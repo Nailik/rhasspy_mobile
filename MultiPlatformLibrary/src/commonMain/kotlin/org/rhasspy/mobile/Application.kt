@@ -106,13 +106,19 @@ abstract class Application : NativeApplication(), KoinComponent {
         val language: LanguageType = getSystemAppLanguage() ?: AppSetting.languageType.value
         StringDesc.localeType = StringDesc.LocaleType.Custom(language.code)
         AppSetting.languageType.value = language
-        setLanguage(language)
+        if(getDeviceLanguage() != language && getSystemAppLanguage() != language) {
+            //only needs to be set if it differs from current settings and from device settings
+            setLanguage(language)
+        }
     }
 
     fun changeLanguage(language: LanguageType) {
         StringDesc.localeType = StringDesc.LocaleType.Custom(language.code)
         AppSetting.languageType.value = language
-        setLanguage(language)
+        if(getDeviceLanguage() != language && getSystemAppLanguage() != language) {
+            //only needs to be set if it differs from current settings and from device settings
+            setLanguage(language)
+        }
     }
 
     /**
