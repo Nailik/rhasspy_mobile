@@ -14,3 +14,5 @@ plugins {
 rootProject.name = "Rhasspy_Mobile"
 include(":androidApp")
 include(":shared")
+include(":shared-ui")
+include(":shared-viewmodel")
