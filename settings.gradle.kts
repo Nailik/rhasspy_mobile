@@ -13,4 +13,4 @@ plugins {
 
 rootProject.name = "Rhasspy_Mobile"
 include(":androidApp")
-include(":MultiPlatformLibrary")
+include(":shared")
