@@ -71,9 +71,9 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
                     TextFieldListItem(
                         label = MR.strings.port,
                         modifier = Modifier.testTag(TestTag.Port),
-                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                         value = viewModel.httpServerPortText.collectAsState().value,
-                        onValueChange = viewModel::changeHttpServerPort
+                        onValueChange = viewModel::changeHttpServerPort,
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                     )
 
                     WebserverSSL(viewModel)

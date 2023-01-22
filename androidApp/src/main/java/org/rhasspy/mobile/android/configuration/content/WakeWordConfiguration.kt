@@ -228,9 +228,9 @@ private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.AudioRecordingUdpPort),
             label = MR.strings.port,
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             value = viewModel.wakeWordUdpOutputPortText.collectAsState().value,
-            onValueChange = viewModel::changeUdpOutputPort
+            onValueChange = viewModel::changeUdpOutputPort,
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
 
         //button to enabled microphone
