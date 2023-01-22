@@ -30,6 +30,7 @@ import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 import java.io.File
 import kotlin.test.assertTrue
 
+
 class PorcupineKeywordCustomScreenTest {
 
     @get: Rule

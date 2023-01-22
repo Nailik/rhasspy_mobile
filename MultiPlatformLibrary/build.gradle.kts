@@ -82,6 +82,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                implementation(AndroidX.appCompat)
                 implementation(AndroidX.lifecycle.process)
                 implementation(AndroidX.Fragment.ktx)
                 implementation(AndroidX.Compose.foundation)

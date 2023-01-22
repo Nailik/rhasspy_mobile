@@ -4,6 +4,8 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.provider.Settings
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import co.touchlab.kermit.Logger
 import com.google.firebase.crashlytics.ktx.crashlytics
@@ -16,6 +18,8 @@ import org.rhasspy.mobile.android.uiservices.IndicationOverlay
 import org.rhasspy.mobile.android.uiservices.MicrophoneOverlay
 import org.rhasspy.mobile.android.widget.MicrophoneWidget
 import org.rhasspy.mobile.nativeutils.NativeApplication
+import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.types.LanguageType
 import kotlin.system.exitProcess
 
 /**
@@ -90,6 +94,34 @@ class AndroidApplication : Application() {
 
     override fun isInstrumentedTest(): Boolean {
         return Settings.System.getString(contentResolver, "firebase.test.lab") == "true"
+    }
+
+
+    override fun getDeviceLanguage(): LanguageType {
+        Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+        return LocaleListCompat.getDefault().getFirstMatch(arrayOf("en", "de")).let {
+            when (it?.language) {
+                "en" -> LanguageType.English
+                "de" -> LanguageType.German
+                else -> LanguageType.English
+            }
+        }
+    }
+
+    override fun getSystemAppLanguage(): LanguageType? {
+        return AppCompatDelegate.getApplicationLocales().getFirstMatch(arrayOf("en", "de")).let {
+            when (it?.language) {
+                "en" -> LanguageType.English
+                "de" -> LanguageType.German
+                else -> null
+            }
+        }
+    }
+
+    override fun setLanguage(languageType: LanguageType) {
+        val appLocale = LocaleListCompat.forLanguageTags(languageType.code)
+        AppCompatDelegate.setApplicationLocales(appLocale)
+        AppSetting.languageType.value = languageType
     }
 
 }
