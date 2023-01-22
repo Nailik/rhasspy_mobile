@@ -6,14 +6,13 @@ import org.rhasspy.mobile.settings.option.AudioOutputOption
 import org.rhasspy.mobile.settings.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.settings.serializer.StringSetSerializer
 import org.rhasspy.mobile.settings.sounds.SoundOption
-import org.rhasspy.mobile.settings.types.LanguageType
 
 /**
  * directly consumed
  */
 object AppSetting {
 
-    val languageType = ISetting(SettingsEnum.LanguageOption, LanguageType.English)
+    val languageType = ISetting(SettingsEnum.LanguageOption, Application.instance.getDeviceLanguage())
 
     val isAutomaticSilenceDetectionEnabled = ISetting(SettingsEnum.AutomaticSilenceDetection, false)
     val automaticSilenceDetectionAudioLevel =

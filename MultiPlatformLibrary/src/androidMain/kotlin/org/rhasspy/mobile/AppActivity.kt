@@ -3,13 +3,14 @@ package org.rhasspy.mobile
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.provider.DocumentsContract.EXTRA_INITIAL_URI
-import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 
-abstract class AppActivity : ComponentActivity() {
+abstract class AppActivity : AppCompatActivity() {
 
     private var resultCallback: ((activityResult: ActivityResult) -> Unit)? = null
 
@@ -19,6 +20,12 @@ abstract class AppActivity : ComponentActivity() {
         ) {
             resultCallback?.invoke(it)
         }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //setup language
+        Application.instance.setupLanguage()
+    }
 
     fun createDocument(
         title: String,

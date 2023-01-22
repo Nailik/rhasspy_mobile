@@ -44,6 +44,7 @@ android {
         targetSdk = 33
         versionCode = Version.code
         versionName = Version.toString()
+        resourceConfigurations += setOf("en", "de")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["clearPackageData"] = "true"
         testInstrumentationRunnerArguments["disableAnalytics"] = "true"
@@ -171,6 +172,7 @@ dependencies {
 
     implementation(AndroidX.glance.appWidget)
 
+    implementation(AndroidX.appCompat)
     implementation(AndroidX.Activity.compose)
     implementation(AndroidX.Core.splashscreen)
     implementation(AndroidX.ConstraintLayout.compose)
