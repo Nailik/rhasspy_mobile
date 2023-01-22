@@ -12,4 +12,8 @@ actual object OverlayPermission {
         TODO("Not yet implemented")
     }
 
+    actual fun requestPermission(onGranted: () -> Unit) {
+        TODO("Not yet implemented")
+    }
+
 }
