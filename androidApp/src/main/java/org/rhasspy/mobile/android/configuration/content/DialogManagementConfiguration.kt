@@ -2,9 +2,11 @@ package org.rhasspy.mobile.android.configuration.content
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
@@ -58,25 +60,30 @@ private fun LocalDialogManagementSettings(viewModel: DialogManagementConfigurati
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
-        //endpoint input field
+        //asr timeout
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.TextAsrTimeout),
             value = viewModel.textAsrTimeoutText.collectAsState().value,
             onValueChange = viewModel::updateTextAsrTimeout,
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             label = MR.strings.textAsrTimeoutText
         )
 
+        //intent recognition timeout
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.IntentRecognitionTimeout),
             value = viewModel.intentRecognitionTimeoutText.collectAsState().value,
             onValueChange = viewModel::updateIntentRecognitionTimeout,
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             label = MR.strings.intentRecognitionTimeoutText
         )
 
+        //recording timeout
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.RecordingTimeout),
             value = viewModel.recordingTimeoutText.collectAsState().value,
             onValueChange = viewModel::updateRecordingTimeout,
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             label = MR.strings.recordingTimeoutText
         )
 

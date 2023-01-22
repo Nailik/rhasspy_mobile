@@ -66,6 +66,18 @@ class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
         combineStateNotEquals(
             _dialogManagementOption,
             ConfigurationSetting.dialogManagementOption.data
+        ),
+        combineStateNotEquals(
+            _textAsrTimeout,
+            ConfigurationSetting.textAsrTimeout.data
+        ),
+        combineStateNotEquals(
+            _intentRecognitionTimeout,
+            ConfigurationSetting.intentRecognitionTimeout.data
+        ),
+        combineStateNotEquals(
+            _recordingTimeout,
+            ConfigurationSetting.recordingTimeout.data
         )
     )
 
