@@ -15,7 +15,6 @@ import org.rhasspy.mobile.services.indication.IndicationService
 import org.rhasspy.mobile.services.indication.IndicationState
 import org.rhasspy.mobile.settings.AppSetting
 
-
 @RunWith(AndroidJUnit4::class)
 class IndicationOverlayTest : KoinComponent {
 
@@ -42,7 +41,6 @@ class IndicationOverlayTest : KoinComponent {
             condition = { get<IndicationService>().indicationState.value != IndicationState.Idle },
             timeoutMillis = 5000
         )
-        composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithCombinedTag(TestTag.Indication, TestTag.Overlay).assertExists()
+        composeTestRule.waitUntilExists(hasCombinedTestTag(TestTag.Indication, TestTag.Overlay))
     }
 }
