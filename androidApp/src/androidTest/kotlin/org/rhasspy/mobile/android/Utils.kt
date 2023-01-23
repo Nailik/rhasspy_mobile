@@ -1,16 +1,28 @@
 package org.rhasspy.mobile.android
 
 import android.os.Build
+import android.os.Environment
+import android.provider.Settings
 import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.filter
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import androidx.test.platform.app.InstrumentationRegistry
+import androidx.compose.ui.test.onChildren
+import androidx.compose.ui.test.onFirst
+import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.permission.PermissionRequester
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
+import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 
 
@@ -32,6 +44,12 @@ fun SemanticsNodeInteractionsProvider.onNodeWithTag(
 ): SemanticsNodeInteraction = onNode(hasTestTag(name), useUnmergedTree)
 
 fun SemanticsNodeInteractionsProvider.onNodeWithCombinedTag(
+    tag1: TestTag, tag2: TestTag,
+    useUnmergedTree: Boolean = false
+): SemanticsNodeInteraction = onNode(hasTestTag("${tag1.name}${tag2.name}"), useUnmergedTree)
+
+
+fun SemanticsNodeInteractionsProvider.onNodeWithCombinedTag(
     testTag: Enum<*>, tag: TestTag,
     useUnmergedTree: Boolean = false
 ): SemanticsNodeInteraction = onNode(hasTestTag("${testTag.name}${tag.name}"), useUnmergedTree)
@@ -44,7 +62,7 @@ fun SemanticsNodeInteractionsProvider.onNodeWithCombinedTag(
 fun UiSelector.text(text: StringResource): UiSelector {
     return this.textMatches(
         StringDesc.Resource(text).toString(
-            InstrumentationRegistry.getInstrumentation()
+            getInstrumentation()
                 .targetContext.applicationContext
         )
     )
@@ -61,10 +79,15 @@ fun requestExternalStoragePermissions(device: UiDevice) {
                 requestPermissions()
             }
         }
+
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
-            device.executeShellCommand("appops set --uid ${InstrumentationRegistry.getInstrumentation().targetContext.packageName} MANAGE_EXTERNAL_STORAGE allow")
+            device.executeShellCommand("appops set --uid ${getInstrumentation().targetContext.packageName} MANAGE_EXTERNAL_STORAGE allow")
         }
+
         else -> return
+    }
+    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).listFiles()?.forEach {
+        it.deleteRecursively()
     }
 }
 
@@ -72,6 +95,25 @@ fun requestMicrophonePermissions() {
     with(PermissionRequester()) {
         addPermissions("android.permission.RECORD_AUDIO")
         requestPermissions()
+    }
+}
+
+fun UiDevice.requestOverlayPermissions() {
+    try {
+        with(PermissionRequester()) {
+            try {
+                addPermissions("android.permission.SYSTEM_ALERT_WINDOW")
+                requestPermissions()
+            } catch (e: Exception) {
+                requestOverlayPermissionLegacy()
+            }
+        }
+    } catch (e: Exception) {
+        requestOverlayPermissionLegacy()
+    }
+    if (!Settings.canDrawOverlays(Application.nativeInstance)) {
+        //will be called on android M (23)
+        requestOverlayPermissionLegacy()
     }
 }
 
@@ -83,7 +125,7 @@ fun SemanticsNodeInteraction.assertTextEquals(
     this.assertTextEquals(
         values = arrayOf(
             StringDesc.Resource(text).toString(
-                InstrumentationRegistry.getInstrumentation()
+                getInstrumentation()
                     .targetContext.applicationContext
             )
         ),
@@ -98,7 +140,7 @@ fun SemanticsNodeInteractionsProvider.onNodeWithText(
 ): SemanticsNodeInteraction = onNode(
     hasText(
         StringDesc.Resource(text).toString(
-            InstrumentationRegistry.getInstrumentation()
+            getInstrumentation()
                 .targetContext.applicationContext
         ), substring, ignoreCase
     ), useUnmergedTree

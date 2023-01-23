@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.koin
 
 import co.touchlab.kermit.Logger
-import io.ktor.utils.io.core.*
+import io.ktor.utils.io.core.Closeable
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.definition.Definition

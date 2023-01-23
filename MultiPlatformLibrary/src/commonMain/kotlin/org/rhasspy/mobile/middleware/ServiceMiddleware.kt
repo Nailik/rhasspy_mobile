@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.middleware
 
-import io.ktor.utils.io.core.*
+import io.ktor.utils.io.core.Closeable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -65,23 +65,28 @@ class ServiceMiddleware : KoinComponent, Closeable {
                         }
                     }
                 }
+
                 is Action.WakeWordError -> mqttService.wakeWordError(action.description)
                 is Action.AppSettingsAction -> {
                     when (action) {
                         is Action.AppSettingsAction.AudioOutputToggle -> appSettingsService.audioOutputToggle(
                             action.enabled
                         )
+
                         is Action.AppSettingsAction.AudioVolumeChange -> appSettingsService.setAudioVolume(
                             action.volume
                         )
+
                         is Action.AppSettingsAction.HotWordToggle -> appSettingsService.hotWordToggle(
                             action.enabled
                         )
+
                         is Action.AppSettingsAction.IntentHandlingToggle -> appSettingsService.intentHandlingToggle(
                             action.enabled
                         )
                     }
                 }
+
                 is Action.DialogAction -> {
                     dialogManagerService.onAction(action)
                 }
@@ -94,9 +99,11 @@ class ServiceMiddleware : KoinComponent, Closeable {
             DialogManagerServiceState.AwaitingWakeWord -> {
                 action(Action.DialogAction.WakeWordDetected(Source.Local, "manual"))
             }
+
             DialogManagerServiceState.RecordingIntent -> {
                 action(Action.DialogAction.StopListening(Source.Local))
             }
+
             else -> {}
         }
     }

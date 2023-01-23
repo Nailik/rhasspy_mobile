@@ -1,14 +1,25 @@
 package org.rhasspy.mobile.services.webserver
 
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.plugins.dataconversion.*
-import io.ktor.server.plugins.statuspages.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.http.ContentType
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.call
+import io.ktor.server.application.install
+import io.ktor.server.engine.BaseApplicationEngine
+import io.ktor.server.engine.applicationEngineEnvironment
+import io.ktor.server.plugins.cors.routing.CORS
+import io.ktor.server.plugins.dataconversion.DataConversion
+import io.ktor.server.plugins.statuspages.StatusPages
+import io.ktor.server.request.contentType
+import io.ktor.server.request.receive
+import io.ktor.server.response.respond
+import io.ktor.server.response.respondBytes
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
+import io.ktor.server.routing.post
+import io.ktor.server.routing.routing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -154,6 +165,7 @@ class WebServerService : IService() {
                     WebServerPath.WebServerCallType.POST -> post(path.path) {
                         evaluateCall(path, call)
                     }
+
                     WebServerPath.WebServerCallType.GET -> get(path.path) {
                         evaluateCall(path, call)
                     }
@@ -184,13 +196,16 @@ class WebServerService : IService() {
                 is WebServerResult.Accepted -> {
                     call.respond(HttpStatusCode.Accepted)
                 }
+
                 is WebServerResult.Error -> {
                     logger.d { "evaluateCall BadRequest ${result.errorType.description}" }
                     call.respond(HttpStatusCode.BadRequest, result.errorType.description)
                 }
+
                 WebServerResult.Ok -> {
                     call.respond(HttpStatusCode.OK)
                 }
+
                 else -> {
 
                 }

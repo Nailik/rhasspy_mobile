@@ -1,9 +1,12 @@
 package org.rhasspy.mobile.services.udp
 
-import io.ktor.network.selector.*
-import io.ktor.network.sockets.*
-import io.ktor.server.engine.internal.*
-import io.ktor.utils.io.core.*
+import io.ktor.network.selector.SelectorManager
+import io.ktor.network.sockets.Datagram
+import io.ktor.network.sockets.InetSocketAddress
+import io.ktor.network.sockets.SocketAddress
+import io.ktor.network.sockets.aSocket
+import io.ktor.server.engine.internal.ClosedChannelException
+import io.ktor.utils.io.core.ByteReadPacket
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
 import org.rhasspy.mobile.logger.LogType

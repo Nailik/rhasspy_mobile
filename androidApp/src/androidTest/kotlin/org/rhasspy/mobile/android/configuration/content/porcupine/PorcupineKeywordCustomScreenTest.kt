@@ -19,12 +19,17 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.Application
-import org.rhasspy.mobile.android.*
+import org.rhasspy.mobile.android.MainActivity
+import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
+import org.rhasspy.mobile.android.onNodeWithCombinedTag
+import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.android.requestExternalStoragePermissions
 import org.rhasspy.mobile.android.test.R
 import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 import java.io.File
 import kotlin.test.assertTrue
+
 
 class PorcupineKeywordCustomScreenTest {
 

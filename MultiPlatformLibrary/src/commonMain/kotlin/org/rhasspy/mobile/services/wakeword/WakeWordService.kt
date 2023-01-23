@@ -1,7 +1,11 @@
 package org.rhasspy.mobile.services.wakeword
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.logger.LogType
@@ -102,6 +106,7 @@ class WakeWordService : IService() {
                     _serviceState.value = error?.errorType?.serviceState ?: ServiceState.Success
                 }
             }
+
             WakeWordOption.MQTT -> {} //nothing will wait for mqtt message
             WakeWordOption.Udp -> {
                 _isRecording.value = true
@@ -112,6 +117,7 @@ class WakeWordService : IService() {
                     }
                 }
             }
+
             WakeWordOption.Disabled -> {}
         }
     }
@@ -127,6 +133,7 @@ class WakeWordService : IService() {
                 //needs to be called async else native Audio Recorder stops working
                 udpService.streamAudio(data)
             }
+
             WakeWordOption.Disabled -> {}
         }
     }

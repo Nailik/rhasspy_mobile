@@ -88,8 +88,10 @@ open class SpeechToTextService : IService() {
                 }
                 serviceMiddleware.action(action)
             }
+
             SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) _serviceState.value =
                 mqttClientService.stopListening(sessionId)
+
             SpeechToTextOption.Disabled -> {}
         }
     }
@@ -121,6 +123,7 @@ open class SpeechToTextService : IService() {
             SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) {
                 mqttClientService.startListening(sessionId)
             } else ServiceState.Success
+
             SpeechToTextOption.Disabled -> ServiceState.Disabled
         }
     }

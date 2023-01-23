@@ -29,6 +29,7 @@ import org.rhasspy.mobile.services.webserver.WebServerService
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.settings.option.MicrophoneOverlaySizeOption
+import org.rhasspy.mobile.settings.types.LanguageType
 import org.rhasspy.mobile.viewmodel.*
 import org.rhasspy.mobile.viewmodel.configuration.*
 import org.rhasspy.mobile.viewmodel.configuration.test.*
@@ -62,7 +63,7 @@ abstract class Application : NativeApplication(), KoinComponent {
         }
 
         CoroutineScope(Dispatchers.Default).launch {
-            if (!isDebug()) {
+            if (!isDebug() && !isInstrumentedTest()) {
                 Logger.addLogWriter(
                     CrashlyticsLogWriter(
                         minSeverity = Severity.Info,
@@ -74,7 +75,12 @@ abstract class Application : NativeApplication(), KoinComponent {
 
             logger.i { "######## Application started ########" }
 
-            setCrashlyticsCollectionEnabled(AppSetting.isCrashlyticsEnabled.value)
+
+            setCrashlyticsCollectionEnabled(
+                if (!isDebug() && !isInstrumentedTest()) {
+                    AppSetting.isCrashlyticsEnabled.value
+                } else false
+            )
 
             //initialize/load the settings, generate the MutableStateFlow
             AppSetting
@@ -96,6 +102,40 @@ abstract class Application : NativeApplication(), KoinComponent {
         }
     }
 
+    fun setupLanguage() {
+        val language: LanguageType = getSystemAppLanguage() ?: AppSetting.languageType.value
+        StringDesc.localeType = StringDesc.LocaleType.Custom(language.code)
+        AppSetting.languageType.value = language
+        if(getDeviceLanguage() != language && getSystemAppLanguage() != language) {
+            //only needs to be set if it differs from current settings and from device settings
+            setLanguage(language)
+        }
+    }
+
+    fun changeLanguage(language: LanguageType) {
+        StringDesc.localeType = StringDesc.LocaleType.Custom(language.code)
+        AppSetting.languageType.value = language
+        if(getDeviceLanguage() != language && getSystemAppLanguage() != language) {
+            //only needs to be set if it differs from current settings and from device settings
+            setLanguage(language)
+        }
+    }
+
+    /**
+     * get the language of the device
+     */
+    abstract fun getDeviceLanguage(): LanguageType
+
+    /**
+     * get if the system has a custom language for this app
+     */
+    abstract fun getSystemAppLanguage(): LanguageType?
+
+    /**
+     * tell the system that this app should have a custom language
+     */
+    protected abstract fun setLanguage(languageType: LanguageType)
+
     override suspend fun updateWidgetNative() {
         updateWidget()
     }
@@ -105,6 +145,8 @@ abstract class Application : NativeApplication(), KoinComponent {
     abstract fun stopOverlay()
 
     abstract fun isDebug(): Boolean
+
+    abstract fun isInstrumentedTest(): Boolean
 
     abstract suspend fun updateWidget()
 
@@ -149,6 +191,5 @@ abstract class Application : NativeApplication(), KoinComponent {
         get<MqttService>()
         get<DialogManagerService>()
     }
-
 
 }

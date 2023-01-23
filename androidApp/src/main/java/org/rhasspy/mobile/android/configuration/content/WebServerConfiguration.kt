@@ -21,7 +21,12 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.elements.translate
-import org.rhasspy.mobile.android.content.list.*
+import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
+import org.rhasspy.mobile.android.content.list.InformationListElement
+import org.rhasspy.mobile.android.content.list.ListElement
+import org.rhasspy.mobile.android.content.list.SwitchListItem
+import org.rhasspy.mobile.android.content.list.TextFieldListItem
+import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewmodel.configuration.WebServerConfigurationViewModel
 
@@ -66,9 +71,9 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
                     TextFieldListItem(
                         label = MR.strings.port,
                         modifier = Modifier.testTag(TestTag.Port),
-                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                         value = viewModel.httpServerPortText.collectAsState().value,
-                        onValueChange = viewModel::changeHttpServerPort
+                        onValueChange = viewModel::changeHttpServerPort,
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                     )
 
                     WebserverSSL(viewModel)

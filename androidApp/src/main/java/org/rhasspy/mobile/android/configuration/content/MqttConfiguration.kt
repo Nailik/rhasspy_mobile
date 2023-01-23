@@ -21,7 +21,12 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.elements.translate
-import org.rhasspy.mobile.android.content.list.*
+import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
+import org.rhasspy.mobile.android.content.list.InformationListElement
+import org.rhasspy.mobile.android.content.list.ListElement
+import org.rhasspy.mobile.android.content.list.SwitchListItem
+import org.rhasspy.mobile.android.content.list.TextFieldListItem
+import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.viewmodel.configuration.MqttConfigurationViewModel
 
@@ -100,10 +105,10 @@ private fun MqttConnectionSettings(viewModel: MqttConfigurationViewModel) {
     //port
     TextFieldListItem(
         label = MR.strings.port,
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         modifier = Modifier.testTag(TestTag.Port),
         value = viewModel.mqttPortText.collectAsState().value,
         onValueChange = viewModel::updateMqttPort,
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         isLastItem = false
     )
 
@@ -203,19 +208,19 @@ private fun MqttConnectionTiming(viewModel: MqttConfigurationViewModel) {
 
     TextFieldListItem(
         label = MR.strings.keepAliveInterval,
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         modifier = Modifier.testTag(TestTag.KeepAliveInterval),
         value = viewModel.mqttKeepAliveIntervalText.collectAsState().value,
         onValueChange = viewModel::updateMqttKeepAliveInterval,
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         isLastItem = false
     )
 
     TextFieldListItem(
         label = MR.strings.retryInterval,
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         modifier = Modifier.testTag(TestTag.RetryInterval),
         value = viewModel.mqttRetryIntervalText.collectAsState().value,
-        onValueChange = viewModel::updateMqttRetryInterval
+        onValueChange = viewModel::updateMqttRetryInterval,
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
     )
 
 }

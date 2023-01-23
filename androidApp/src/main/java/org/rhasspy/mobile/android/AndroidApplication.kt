@@ -3,6 +3,9 @@ package org.rhasspy.mobile.android
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.provider.Settings
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import co.touchlab.kermit.Logger
 import com.google.firebase.crashlytics.ktx.crashlytics
@@ -15,6 +18,8 @@ import org.rhasspy.mobile.android.uiservices.IndicationOverlay
 import org.rhasspy.mobile.android.uiservices.MicrophoneOverlay
 import org.rhasspy.mobile.android.widget.MicrophoneWidget
 import org.rhasspy.mobile.nativeutils.NativeApplication
+import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.types.LanguageType
 import kotlin.system.exitProcess
 
 /**
@@ -66,7 +71,7 @@ class AndroidApplication : Application() {
             val intent: Intent = packageManager.getLaunchIntentForPackage(this.packageName)!!
             val componentName: ComponentName = intent.component!!
             val restartIntent: Intent = Intent.makeRestartActivityTask(componentName)
-            this.startActivity(restartIntent)
+            nativeInstance.startActivity(restartIntent)
             Runtime.getRuntime().exit(0)
         } catch (e: Exception) {
             Runtime.getRuntime().exit(0)
@@ -74,21 +79,49 @@ class AndroidApplication : Application() {
     }
 
     override fun setCrashlyticsCollectionEnabled(enabled: Boolean) {
-        if (!BuildConfig.DEBUG) {
-            Firebase.crashlytics.setCrashlyticsCollectionEnabled(enabled)
-        }
+        Firebase.crashlytics.setCrashlyticsCollectionEnabled(enabled)
     }
 
     override suspend fun updateWidget() {
-        GlanceAppWidgetManager(this).getGlanceIds(MicrophoneWidget::class.java)
+        GlanceAppWidgetManager(nativeInstance).getGlanceIds(MicrophoneWidget::class.java)
             .firstOrNull()
-            ?.also {
-                MicrophoneWidget().update(this, it)
-            }
+            ?.also { MicrophoneWidget().update(nativeInstance, it) }
     }
 
     override fun isDebug(): Boolean {
         return BuildConfig.DEBUG
+    }
+
+    override fun isInstrumentedTest(): Boolean {
+        return Settings.System.getString(contentResolver, "firebase.test.lab") == "true"
+    }
+
+
+    override fun getDeviceLanguage(): LanguageType {
+        Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+        return LocaleListCompat.getDefault().getFirstMatch(arrayOf("en", "de")).let {
+            when (it?.language) {
+                "en" -> LanguageType.English
+                "de" -> LanguageType.German
+                else -> LanguageType.English
+            }
+        }
+    }
+
+    override fun getSystemAppLanguage(): LanguageType? {
+        return AppCompatDelegate.getApplicationLocales().getFirstMatch(arrayOf("en", "de")).let {
+            when (it?.language) {
+                "en" -> LanguageType.English
+                "de" -> LanguageType.German
+                else -> null
+            }
+        }
+    }
+
+    override fun setLanguage(languageType: LanguageType) {
+        val appLocale = LocaleListCompat.forLanguageTags(languageType.code)
+        AppCompatDelegate.setApplicationLocales(appLocale)
+        AppSetting.languageType.value = languageType
     }
 
 }

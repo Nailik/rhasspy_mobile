@@ -51,9 +51,9 @@ class DialogManagerService : IService() {
 
     private var timeoutJob: Job? = null
 
-    private val textAsrTimeout = 10000.toDuration(DurationUnit.MILLISECONDS)
-    private val intentRecognitionTimeout = 10000.toDuration(DurationUnit.MILLISECONDS)
-    private val recordingTimeout = 100000.toDuration(DurationUnit.MILLISECONDS)
+    private val textAsrTimeout = params.asrTimeout.toDuration(DurationUnit.MILLISECONDS)
+    private val intentRecognitionTimeout = params.intentRecognitionTimeout.toDuration(DurationUnit.MILLISECONDS)
+    private val recordingTimeout = params.recordingTimeout.toDuration(DurationUnit.MILLISECONDS)
 
     private val _currentDialogState = MutableStateFlow(DialogManagerServiceState.Idle)
     val currentDialogState = _currentDialogState.readOnly
@@ -134,6 +134,7 @@ class DialogManagerService : IService() {
             informMqtt(action)
 
             notNull(sessionId, action.text, { id, text ->
+
                 if (params.option == DialogManagementOption.Local) {
                     //only do action on local dialog management
                     intentRecognitionService.recognizeIntent(id, text)
@@ -261,6 +262,7 @@ class DialogManagerService : IService() {
         when (_currentDialogState.value) {
             DialogManagerServiceState.Idle,
             DialogManagerServiceState.AwaitingWakeWord -> indicationService.onIdle()
+
             DialogManagerServiceState.RecordingIntent -> indicationService.onListening()
             DialogManagerServiceState.TranscribingIntent,
             DialogManagerServiceState.RecognizingIntent,
@@ -349,11 +351,14 @@ class DialogManagerService : IService() {
                 CoroutineScope(Dispatchers.Default).launch {
                     speechToTextService.startSpeechToText(id, action.source is Source.Mqtt)
                 }
-                //await silence to stop recording
-                timeoutJob = coroutineScope.launch {
-                    delay(recordingTimeout)
-                    logger.d { "recordingTimeout" }
-                    onAction(DialogAction.StopListening(Source.Local))
+
+                if (params.option == DialogManagementOption.Local) {
+                    //await silence to stop recording
+                    timeoutJob = coroutineScope.launch {
+                        delay(recordingTimeout)
+                        logger.d { "recordingTimeout" }
+                        onAction(DialogAction.StopListening(Source.Local))
+                    }
                 }
             } ?: run {
                 logger.d { "startListening parameter issue sessionId: $sessionId" }
@@ -396,11 +401,14 @@ class DialogManagerService : IService() {
                 if (sendAudioCaptured) {
                     mqttService.audioCaptured(id, speechToTextService.speechToTextAudioData)
                 }
-                //await for text recognition
-                timeoutJob = coroutineScope.launch {
-                    delay(textAsrTimeout)
-                    logger.d { "textAsrTimeout" }
-                    onAction(DialogAction.AsrError(Source.Local))
+
+                if(params.option == DialogManagementOption.Local) {
+                    //await for text recognition
+                    timeoutJob = coroutineScope.launch {
+                        delay(textAsrTimeout)
+                        logger.d { "textAsrTimeout" }
+                        onAction(DialogAction.AsrError(Source.Local))
+                    }
                 }
             } ?: run {
                 logger.d { "stopListening parameter issue sessionId: $sessionId" }
@@ -433,14 +441,17 @@ class DialogManagerService : IService() {
                         }
                         return result
                     }
+
                     is Source.Mqtt -> {
 
                         //exceptions where calls form mqtt are ok
                         val doNotIgnore = when (action) {
                             is DialogAction.AsrError,
                             is DialogAction.AsrTextCaptured -> get<SpeechToTextServiceParams>().speechToTextOption == SpeechToTextOption.RemoteMQTT
+
                             is DialogAction.IntentRecognitionError,
                             is DialogAction.IntentRecognitionResult -> get<IntentRecognitionServiceParams>().intentRecognitionOption == IntentRecognitionOption.RemoteMQTT
+
                             else -> false
                         }
 

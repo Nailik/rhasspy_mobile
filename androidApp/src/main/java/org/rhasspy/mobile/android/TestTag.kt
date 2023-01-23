@@ -30,6 +30,8 @@ enum class TestTag {
     LibrariesContainer,
     MicrophoneOverlaySizeOptions,
     MicrophoneFab,
+    Indication,
+    Overlay,
 
     AudioPlayingOptions,
     AudioOutputOptions,
@@ -57,6 +59,10 @@ enum class TestTag {
     TextToSpeechOptions,
 
     WakeWordOptions,
+
+    TextAsrTimeout,
+    IntentRecognitionTimeout,
+    RecordingTimeout,
 
     ServerSwitch,
     MqttSwitch,
@@ -131,6 +137,13 @@ fun Modifier.combinedTestTag(name: String, tag: TestTag) = semantics(
         testTag = "$name${tag.name}"
     }
 )
+
+fun Modifier.combinedTestTag(name: TestTag, tag: TestTag) = semantics(
+    properties = {
+        testTag = "${name.name}${tag.name}"
+    }
+)
+
 
 fun Modifier.testTag(enum: Enum<*>) = semantics(
     properties = {

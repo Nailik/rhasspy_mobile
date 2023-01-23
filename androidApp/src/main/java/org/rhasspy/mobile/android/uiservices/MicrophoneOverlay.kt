@@ -2,6 +2,7 @@ package org.rhasspy.mobile.android.uiservices
 
 import android.content.Context
 import android.graphics.PixelFormat
+import android.os.Build
 import android.os.Looper
 import android.view.Gravity
 import android.view.View
@@ -17,8 +18,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
+import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
@@ -27,8 +28,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.AndroidApplication
-import org.rhasspy.mobile.android.MainActivity
+import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.MicrophoneFab
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.nativeutils.MicrophonePermission
@@ -40,8 +40,7 @@ import org.rhasspy.mobile.viewmodel.overlay.MicrophoneOverlayViewModel
  */
 object MicrophoneOverlay : KoinComponent {
     private val logger = Logger.withTag("MicrophoneOverlay")
-
-    private var mParams: WindowManager.LayoutParams
+    private var mParams = WindowManager.LayoutParams()
     private val lifecycleOwner = CustomLifecycleOwner()
 
     private var viewModel = get<MicrophoneOverlayViewModel>()
@@ -74,6 +73,7 @@ object MicrophoneOverlay : KoinComponent {
                     MicrophoneFab(
                         modifier = Modifier
                             .size(size.dp)
+                            .combinedTestTag(TestTag.MicrophoneFab, TestTag.Overlay)
                             .pointerInput(Unit) {
                                 detectDragGestures { change, dragAmount ->
                                     change.consume()
@@ -96,21 +96,27 @@ object MicrophoneOverlay : KoinComponent {
         overlayWindowManager.updateViewLayout(view, mParams)
     }
 
-
     init {
-        @Suppress("DEPRECATION")
-        // set the layout parameters of the window
-        mParams = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                    or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-                    or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-            PixelFormat.TRANSLUCENT
-        ).applySettings()
-        lifecycleOwner.performRestore(null)
-        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+        try {
+            val typeFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            } else {
+                @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_PHONE
+            }
+            // set the layout parameters of the window
+            mParams = WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                typeFlag,
+                @Suppress("DEPRECATION") WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                        or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT
+            ).applySettings()
+            lifecycleOwner.performRestore(null)
+            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+        } catch (exception: Exception) {
+            logger.a(exception) { "exception in initialization" }
+        }
     }
 
 
@@ -127,42 +133,52 @@ object MicrophoneOverlay : KoinComponent {
      * start service, listen to showVisualIndication and show the overlay or remove it when necessary
      */
     fun start() {
-        viewModel = get()
+        try {
+            viewModel = get()
 
-        val view = getView()
+            val view = getView()
 
-        view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
-        ViewTreeLifecycleOwner.set(view, lifecycleOwner)
+            view.setViewTreeLifecycleOwner(lifecycleOwner)
+            view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
 
-        val viewModelStore = ViewModelStore()
-        ViewTreeViewModelStoreOwner.set(view) { viewModelStore }
+            val viewModelStore = ViewModelStore()
+            ViewTreeViewModelStoreOwner.set(view) { viewModelStore }
 
-        if (job?.isActive == true) {
-            return
-        }
-        logger.d { "start" }
+            if (job?.isActive == true) {
+                return
+            }
+            logger.d { "start" }
 
-        job = CoroutineScope(Dispatchers.Default).launch {
-            viewModel.shouldOverlayBeShown.collect {
-                if (it) {
-                    if (Looper.myLooper() == null) {
-                        Looper.prepare()
-                    }
-                    CoroutineScope(Dispatchers.Main).launch {
-                        overlayWindowManager.addView(view, mParams)
-                        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
-                    }
-                } else {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        try {
-                            overlayWindowManager.removeView(view)
+            job = CoroutineScope(Dispatchers.Default).launch {
+                viewModel.shouldOverlayBeShown.collect {
+                    if (it) {
+                        if (Looper.myLooper() == null) {
+                            Looper.prepare()
+                        }
+                        launch(Dispatchers.Main) {
+                            overlayWindowManager.addView(view, mParams)
+                            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                        }
+                    } else {
+                        launch(Dispatchers.Main) {
+                            if (view.parent != null) {
+                                overlayWindowManager.removeView(view)
+                            }
                             lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-                        } catch (exception: Exception) {
-                            //remove view may throw not attached to window manager
                         }
                     }
                 }
+            }.also {
+                it.invokeOnCompletion {
+                    if (view.parent != null) {
+                        //check if view is attached before removing it
+                        //removing a not attached view results in IllegalArgumentException
+                        overlayWindowManager.removeView(view)
+                    }
+                }
             }
+        } catch (exception: Exception) {
+            logger.a(exception) { "exception in start" }
         }
     }
 
