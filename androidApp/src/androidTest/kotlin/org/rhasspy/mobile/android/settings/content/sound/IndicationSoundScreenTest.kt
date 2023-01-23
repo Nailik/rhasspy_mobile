@@ -24,7 +24,7 @@ import org.rhasspy.mobile.android.onNodeWithCombinedTag
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.requestExternalStoragePermissions
 import org.rhasspy.mobile.android.test.R
-import org.rhasspy.mobile.settings.option.AudioOutputOption
+import org.rhasspy.mobile.logic.settings.option.AudioOutputOption
 import org.rhasspy.mobile.viewmodel.settings.IndicationSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.sound.IIndicationSoundSettingsViewModel
 import java.io.File

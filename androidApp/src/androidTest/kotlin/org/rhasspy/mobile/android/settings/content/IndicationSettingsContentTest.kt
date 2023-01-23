@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.android.settings.content
 
 import android.widget.Switch
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -55,7 +56,7 @@ class IndicationSettingsContentTest {
     @Before
     fun setUp() {
 
-        composeTestRule.setContent {
+        composeTestRule.activity.setContent {
             Surface(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.surface)

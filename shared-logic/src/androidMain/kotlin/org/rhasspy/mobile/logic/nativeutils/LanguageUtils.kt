@@ -46,5 +46,6 @@ actual fun getSystemAppLanguage(): LanguageType? {
 actual fun setLanguage(languageType: LanguageType) {
     val appLocale = LocaleListCompat.forLanguageTags(languageType.code)
     AppCompatDelegate.setApplicationLocales(appLocale)
+    StringDesc.localeType = StringDesc.LocaleType.Custom(languageType.code)
     AppSetting.languageType.value = languageType
 }
