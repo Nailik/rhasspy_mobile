@@ -51,10 +51,9 @@ open class TextToSpeechService : IService() {
                 }
                 val action = when (result) {
                     is HttpClientResult.Error -> DialogAction.AsrError(Source.HttpApi)
-                    is HttpClientResult.Success -> DialogAction.PlayAudio(
-                        Source.HttpApi,
-                        result.data
-                    )
+                    is HttpClientResult.Success -> {
+                        DialogAction.PlayAudio(Source.HttpApi, result.data)
+                    }
                 }
                 serviceMiddleware.action(action)
             }

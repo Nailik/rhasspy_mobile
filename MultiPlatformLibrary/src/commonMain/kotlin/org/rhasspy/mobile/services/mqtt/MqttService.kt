@@ -31,6 +31,7 @@ import org.rhasspy.mobile.middleware.Action.DialogAction
 import org.rhasspy.mobile.middleware.ServiceMiddleware
 import org.rhasspy.mobile.middleware.ServiceState
 import org.rhasspy.mobile.middleware.Source
+import org.rhasspy.mobile.nativeutils.AudioRecorder.Companion.appendWavHeader
 import org.rhasspy.mobile.mqtt.MqttMessage
 import org.rhasspy.mobile.mqtt.MqttParams
 import org.rhasspy.mobile.mqtt.MqttPersistence
@@ -62,7 +63,6 @@ class MqttService : IService() {
     val isConnected = _isConnected.readOnly
     private val _isHasStarted = MutableStateFlow(false)
     val isHasStarted = _isHasStarted.readOnly
-
 
     /**
      * start client externally, only starts if mqtt is enabled
@@ -482,12 +482,12 @@ class MqttService : IService() {
      * siteId: string - Hermes site ID (part of topic)
      * sessionId: string - session ID (part of topic)
      */
-    suspend fun asrAudioFrame(sessionId: String, byteArray: List<Byte>) =
+    suspend fun asrAudioFrame(sessionId: String, byteArray: ByteArray) =
         publishMessage(
             MqttTopicsPublish.AsrAudioFrame.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId)
                 .set(MqttTopicPlaceholder.SessionId, sessionId),
-            MqttMessage(byteArray.toByteArray())
+            MqttMessage(byteArray.appendWavHeader())
         )
 
     /**
@@ -695,14 +695,13 @@ class MqttService : IService() {
      * sessionId: string - current session ID (part of topic)
      * Only sent if sendAudioCaptured = true in startListening
      */
-    suspend fun audioCaptured(sessionId: String, byteData: List<Byte>) {
+    suspend fun audioCaptured(sessionId: String, byteArray: ByteArray) =
         publishMessage(
             MqttTopicsPublish.AudioCaptured.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId)
                 .set(MqttTopicPlaceholder.SessionId, sessionId),
-            MqttMessage(byteData.toByteArray())
+            MqttMessage(byteArray)
         )
-    }
 
     /**
      * hermes/nlu/query (JSON)
@@ -806,8 +805,9 @@ class MqttService : IService() {
      * Response(s)
      * hermes/audioServer/<siteId>/playFinished (JSON)
      */
-    private fun playBytes(payload: ByteArray) =
-        serviceMiddleware.action(DialogAction.PlayAudio(Source.Mqtt(null), payload))
+    private fun playBytes(byteArray: ByteArray) {
+        serviceMiddleware.action(DialogAction.PlayAudio(Source.Mqtt(null), byteArray))
+    }
 
     /**
      * hermes/audioServer/<siteId>/playFinished
@@ -830,12 +830,12 @@ class MqttService : IService() {
      * hermes/audioServer/<siteId>/playFinished (JSON)
      *
      */
-    suspend fun playBytes(data: List<Byte>) =
+    suspend fun playBytesRemote(data: ByteArray) =
         publishMessage(
             MqttTopicsPublish.AudioOutputPlayBytes.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId)
                 .set(MqttTopicPlaceholder.RequestId, uuid4().toString()),
-            MqttMessage(data.toByteArray())
+            MqttMessage(data)
         )
 
     /**

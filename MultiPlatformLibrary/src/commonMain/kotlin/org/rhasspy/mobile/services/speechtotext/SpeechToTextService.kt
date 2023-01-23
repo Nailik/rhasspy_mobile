@@ -7,7 +7,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
-import org.rhasspy.mobile.addWavHeader
 import org.rhasspy.mobile.logger.LogType
 import org.rhasspy.mobile.middleware.Action.DialogAction
 import org.rhasspy.mobile.middleware.ServiceMiddleware
@@ -41,8 +40,8 @@ open class SpeechToTextService : IService() {
 
     private val serviceMiddleware by inject<ServiceMiddleware>()
 
-    private val _speechToTextAudioData = mutableListOf<Byte>()
-    val speechToTextAudioData = _speechToTextAudioData.readOnly
+    private var _speechToTextAudioData: ByteArray = ByteArray(0)
+    val speechToTextAudioData get() = _speechToTextAudioData
 
     private val scope = CoroutineScope(Dispatchers.Default)
     private var collector: Job? = null
@@ -78,7 +77,7 @@ open class SpeechToTextService : IService() {
         //evaluate result
         when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> {
-                val result = httpClientService.speechToText(_speechToTextAudioData.addWavHeader())
+                val result = httpClientService.speechToText(_speechToTextAudioData)
                 _serviceState.value = result.toServiceState()
                 val action = when (result) {
                     is HttpClientResult.Error -> DialogAction.AsrError(Source.HttpApi)
@@ -107,7 +106,7 @@ open class SpeechToTextService : IService() {
         //clear data and start recording
         collector?.cancel()
         collector = null
-        _speechToTextAudioData.clear()
+        _speechToTextAudioData = ByteArray(0)
 
         if (params.speechToTextOption != SpeechToTextOption.Disabled) {
             recordingService.toggleSilenceDetectionEnabled(true)
@@ -129,15 +128,18 @@ open class SpeechToTextService : IService() {
         }
     }
 
-    private suspend fun audioFrame(sessionId: String, data: List<Byte>) {
+    private suspend fun audioFrame(sessionId: String, data: ByteArray) {
         if (AppSetting.isLogAudioFramesEnabled.value) {
             logger.d { "audioFrame dataSize: ${data.size}" }
         }
-        _speechToTextAudioData.addAll(data)
+
+        _speechToTextAudioData += data
 
         _serviceState.value = when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> ServiceState.Success
-            SpeechToTextOption.RemoteMQTT -> mqttClientService.asrAudioFrame(sessionId, data.toMutableList().addWavHeader())
+            SpeechToTextOption.RemoteMQTT -> {
+                mqttClientService.asrAudioFrame(sessionId, data)
+            }
             SpeechToTextOption.Disabled -> ServiceState.Disabled
         }
     }

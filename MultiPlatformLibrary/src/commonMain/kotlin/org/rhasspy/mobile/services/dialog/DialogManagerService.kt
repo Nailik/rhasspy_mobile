@@ -235,7 +235,7 @@ class DialogManagerService : IService() {
 
         indicationService.onPlayAudio()
         audioPlayingService.stopPlayAudio()
-        audioPlayingService.playAudio(action.byteArray.toMutableList(), action.source is Source.Mqtt)
+        audioPlayingService.playAudio(action.byteArray, action.source is Source.Mqtt)
 
     }
 

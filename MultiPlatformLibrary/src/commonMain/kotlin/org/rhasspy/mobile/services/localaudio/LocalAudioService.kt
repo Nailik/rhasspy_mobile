@@ -26,11 +26,11 @@ class LocalAudioService : IService() {
         audioPlayer.close()
     }
 
-    suspend fun playAudio(data: List<Byte>): ServiceState = suspendCancellableCoroutine { continuation ->
+    suspend fun playAudio(byteArray: ByteArray): ServiceState = suspendCancellableCoroutine { continuation ->
         if (AppSetting.isAudioOutputEnabled.value) {
-            logger.d { "playAudio ${data.size}" }
+            logger.d { "playAudio ${byteArray.size}" }
             audioPlayer.playData(
-                data = data,
+                data = byteArray,
                 volume = AppSetting.volume.value,
                 audioOutputOption = params.audioOutputOption,
                 onFinished = {

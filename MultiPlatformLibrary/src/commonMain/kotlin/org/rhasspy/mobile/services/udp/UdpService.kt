@@ -10,6 +10,7 @@ import io.ktor.utils.io.core.ByteReadPacket
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
 import org.rhasspy.mobile.logger.LogType
+import org.rhasspy.mobile.nativeutils.AudioRecorder.Companion.appendWavHeader
 import org.rhasspy.mobile.services.IService
 import org.rhasspy.mobile.settings.AppSetting
 
@@ -48,13 +49,13 @@ class UdpService(host: String, port: Int) : IService() {
         socketAddress = null
     }
 
-    suspend fun streamAudio(data: List<Byte>): Exception? {
+    suspend fun streamAudio(data: ByteArray): Exception? {
         if (AppSetting.isLogAudioFramesEnabled.value) {
             logger.d { "stream audio dataSize: ${data.size}" }
         }
         socketAddress?.also {
             try {
-                sendChannel?.send(Datagram(ByteReadPacket(data.toByteArray()), it))
+                sendChannel?.send(Datagram(ByteReadPacket(data.appendWavHeader()), it))
             } catch (exception: Exception) {
                 if (AppSetting.isLogAudioFramesEnabled.value) {
                     if (exception::class.simpleName == "JobCancellationException") {
