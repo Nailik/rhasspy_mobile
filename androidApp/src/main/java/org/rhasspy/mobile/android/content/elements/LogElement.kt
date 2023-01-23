@@ -18,7 +18,7 @@ import org.rhasspy.mobile.android.theme.color_info
 import org.rhasspy.mobile.android.theme.color_unknown
 import org.rhasspy.mobile.android.theme.color_verbose
 import org.rhasspy.mobile.android.theme.color_warn
-import org.rhasspy.mobile.logger.LogElement
+import org.rhasspy.mobile.logic.logger.LogElement
 
 @Composable
 fun LogListElement(item: LogElement) {

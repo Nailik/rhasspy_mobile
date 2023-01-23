@@ -10,7 +10,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.rememberNavController
@@ -23,6 +23,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
@@ -31,9 +32,9 @@ import org.rhasspy.mobile.android.resetOverlayPermission
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScreens
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.text
-import org.rhasspy.mobile.nativeutils.OverlayPermission
-import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.settings.option.AudioOutputOption
+import org.rhasspy.mobile.logic.nativeutils.OverlayPermission
+import org.rhasspy.mobile.logic.settings.AppSetting
+import org.rhasspy.mobile.logic.settings.option.AudioOutputOption
 import org.rhasspy.mobile.viewmodel.settings.IndicationSettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -41,7 +42,7 @@ import kotlin.test.assertTrue
 class IndicationSettingsContentTest {
 
     @get: Rule
-    val composeTestRule = createComposeRule()
+    val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     private val viewModel = IndicationSettingsViewModel()
 
@@ -91,7 +92,7 @@ class IndicationSettingsContentTest {
      */
     @Test
     fun testIndicationSettings() = runBlocking {
-        device.resetOverlayPermission()
+        device.resetOverlayPermission(composeTestRule.activity)
 
         viewModel.toggleWakeWordDetectionTurnOnDisplay(false)
         if (AppSetting.isWakeWordLightIndicationEnabled.value) {

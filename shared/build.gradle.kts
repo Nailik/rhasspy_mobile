@@ -1,9 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
 import co.touchlab.faktory.crashlyticsLinkerConfig
-import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT
-import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
-import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -11,11 +8,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
-    kotlin("plugin.serialization")
     id("com.android.library")
-    id("dev.icerock.mobile.multiplatform-resources")
     id("com.mikepenz.aboutlibraries.plugin")
-    id("com.codingfeline.buildkonfig")
     id("org.sonarqube")
 }
 
@@ -40,25 +34,24 @@ kotlin {
         }
     }
 
-    @Suppress("UNUSED_VARIABLE")
-    sourceSets {
 
+    sourceSets {
         all {
             //Warning: This class can only be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'
             languageSettings.optIn("kotlin.RequiresOptIn")
+
         }
 
         val commonMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-common"))
-                implementation(kotlin("stdlib"))
+                implementation(project(":shared-logic"))
+                implementation(project(":shared-ui"))
+                implementation(project(":shared-viewmodel"))
+                implementation(Kotlin.Stdlib.common)
                 implementation(Touchlab.kermit)
                 implementation(Touchlab.Kermit.crashlytics)
                 implementation(Icerock.Mvvm.core)
                 implementation(Icerock.Resources)
-                implementation(Russhwolf.multiplatformSettings)
-                implementation(Russhwolf.multiplatformSettingsNoArg)
-                implementation(Russhwolf.multiplatformSettingsSerialization)
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Ktor.Client.core)
@@ -93,13 +86,11 @@ kotlin {
                 implementation(AndroidX.Compose.ui)
                 implementation(AndroidX.Compose.material3)
                 implementation(Icerock.Resources.resourcesCompose)
-                implementation(Picovoice.porcupineAndroid)
                 implementation(Slf4j.simple)
                 implementation(Ktor2.Server.compression)
                 implementation(Ktor2.Server.callLogging)
                 implementation(Ktor.Server.netty)
                 implementation(Ktor.Plugins.networkTlsCertificates)
-                implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
             }
         }
         val androidUnitTest by getting {
@@ -160,21 +151,16 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 android {
     compileSdk = 33
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-    if (Os.isFamily(Os.FAMILY_MAC)) {
-        sourceSets.getByName("main").res.srcDir(File(buildDir, "generated/moko/androidMain/res"))
-    }
 
     defaultConfig {
         minSdk = 23
     }
     packagingOptions {
         resources.pickFirsts.add("META-INF/*")
+        resources.pickFirsts.add("BuildConfig.kt")
+        resources.pickFirsts.add("BuildConfig.dex")
     }
     namespace = "org.rhasspy.mobile"
-}
-
-multiplatformResources {
-    multiplatformResourcesPackage = "org.rhasspy.mobile" // required
 }
 
 aboutLibraries {
@@ -184,53 +170,6 @@ aboutLibraries {
     // Configure the duplication rule, to match "duplicates" with
     duplicationRule = com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
 }
-
-buildkonfig {
-    packageName = "org.rhasspy.mobile"
-    objectName = "BuildKonfig"
-    exposeObjectWithName = "BuildKonfig"
-
-    defaultConfigs {
-        buildConfigField(STRING, "changelog", generateChangelog())
-        buildConfigField(INT, "versionCode", Version.code.toString())
-        buildConfigField(STRING, "versionName", Version.toString())
-    }
-}
-
-fun generateChangelog(): String {
-    try {
-        var os = org.apache.commons.io.output.ByteArrayOutputStream()
-
-        exec {
-            standardOutput = os
-            commandLine = listOf("git")
-            args = listOf("describe", "--tags", "--abbrev=0")
-        }
-
-        val lastTag = String(os.toByteArray()).trim()
-        os.close()
-
-        os = org.apache.commons.io.output.ByteArrayOutputStream()
-        exec {
-            standardOutput = os
-            commandLine = listOf("git")
-            args = listOf(
-                "log",
-                "$lastTag..develop",
-                "--merges",
-                "--first-parent",
-                "--pretty=format:\"%b\"\\\\"
-            )
-        }
-        val changelog = String(os.toByteArray()).trim()
-        os.close()
-
-        return changelog
-    } catch (e: Exception) {
-        return ""
-    }
-}
-
 
 tasks.withType<Test> {
     testLogging {

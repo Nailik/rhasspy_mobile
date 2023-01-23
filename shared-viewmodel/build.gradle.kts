@@ -5,7 +5,7 @@ plugins {
 
 kotlin {
     android()
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -17,13 +17,29 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting
+        val commonMain by getting {
+            dependencies {
+                implementation(project(":shared-logic"))
+                implementation(project(":shared-resources"))
+                implementation(Touchlab.kermit)
+                implementation(Jetbrains.Kotlinx.coroutines)
+                implementation(Jetbrains.Kotlinx.dateTime)
+                implementation(Koin.core)
+                implementation(Icerock.Mvvm.core)
+                implementation(Ktor2.Client.core)
+                implementation(Icerock.Resources)
+            }
+        }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
             }
         }
-        val androidMain by getting
+        val androidMain by getting {
+            dependencies {
+                implementation(AndroidX.multidex)
+            }
+        }
         val androidUnitTest by getting
         val iosX64Main by getting
         val iosArm64Main by getting
@@ -47,10 +63,9 @@ kotlin {
 }
 
 android {
-    namespace = "org.rhasspy.mobile.shared_viewmodel"
+    namespace = "org.rhasspy.mobile.viewmodel"
     compileSdk = 33
     defaultConfig {
-        minSdk = 24
-        targetSdk = 33
+        minSdk = 23
     }
 }

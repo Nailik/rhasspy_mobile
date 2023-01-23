@@ -19,9 +19,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.theme.AppTheme
-import org.rhasspy.mobile.nativeutils.OverlayPermission
+import org.rhasspy.mobile.logic.nativeutils.NativeApplication
+import org.rhasspy.mobile.logic.nativeutils.OverlayPermission
 import org.rhasspy.mobile.viewmodel.overlay.IndicationOverlayViewModel
 
 /**
@@ -41,14 +41,14 @@ object IndicationOverlay : KoinComponent {
     private var job: Job? = null
 
     private val overlayWindowManager by lazy {
-        AndroidApplication.nativeInstance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        get<NativeApplication>().getSystemService(Context.WINDOW_SERVICE) as WindowManager
     }
 
     /**
      * view that's displayed when a wake word is detected
      */
     private fun getView(): ComposeView {
-        return ComposeView(AndroidApplication.nativeInstance).apply {
+        return ComposeView(get<NativeApplication>()).apply {
             setContent {
                 AppTheme {
                     Indication(viewModel.indicationState.collectAsState().value)

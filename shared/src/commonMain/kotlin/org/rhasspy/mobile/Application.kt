@@ -15,51 +15,32 @@ import org.koin.core.component.get
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
 import org.koin.core.context.unloadKoinModules
-import org.rhasspy.mobile.koin.factoryModule
-import org.rhasspy.mobile.koin.nativeModule
-import org.rhasspy.mobile.koin.serviceModule
-import org.rhasspy.mobile.koin.viewModelModule
-import org.rhasspy.mobile.logger.FileLogger
-import org.rhasspy.mobile.nativeutils.BackgroundService
-import org.rhasspy.mobile.nativeutils.NativeApplication
-import org.rhasspy.mobile.nativeutils.OverlayPermission
-import org.rhasspy.mobile.services.dialog.DialogManagerService
-import org.rhasspy.mobile.services.mqtt.MqttService
-import org.rhasspy.mobile.services.webserver.WebServerService
-import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.settings.option.MicrophoneOverlaySizeOption
-import org.rhasspy.mobile.settings.types.LanguageType
-import org.rhasspy.mobile.viewmodel.*
-import org.rhasspy.mobile.viewmodel.configuration.*
-import org.rhasspy.mobile.viewmodel.configuration.test.*
-import org.rhasspy.mobile.viewmodel.screens.*
-import org.rhasspy.mobile.viewmodel.settings.*
+import org.koin.dsl.module
+import org.rhasspy.mobile.logic.logger.FileLogger
+import org.rhasspy.mobile.logic.nativeutils.BackgroundService
+import org.rhasspy.mobile.logic.nativeutils.NativeApplication
+import org.rhasspy.mobile.logic.nativeutils.OverlayPermission
+import org.rhasspy.mobile.logic.nativeutils.isDebug
+import org.rhasspy.mobile.logic.readOnly
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
+import org.rhasspy.mobile.logic.services.mqtt.MqttService
+import org.rhasspy.mobile.logic.services.webserver.WebServerService
+import org.rhasspy.mobile.logic.settings.AppSetting
+import org.rhasspy.mobile.logic.settings.ConfigurationSetting
+import org.rhasspy.mobile.logic.settings.option.MicrophoneOverlaySizeOption
 
-@Suppress("LeakingThis")
 abstract class Application : NativeApplication(), KoinComponent {
     private val logger = Logger.withTag("Application")
     private val _isHasStarted = MutableStateFlow(false)
-    val isHasStarted = _isHasStarted.readOnly
-
-    init {
-        println("init Application init")
-        nativeInstance = this
-        instance = this
-    }
-
-    companion object {
-        lateinit var nativeInstance: NativeApplication
-            private set
-        lateinit var instance: Application
-            private set
-    }
+    override val isHasStarted = _isHasStarted.readOnly
 
     @OptIn(ExperimentalKermitApi::class)
     fun onCreated() {
         startKoin {
             // declare used modules
-            modules(serviceModule, viewModelModule, factoryModule, nativeModule)
+            modules(module {
+                single<NativeApplication> { this@Application }
+            }, serviceModule, viewModelModule, factoryModule, nativeModule)
         }
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -75,16 +56,15 @@ abstract class Application : NativeApplication(), KoinComponent {
 
             logger.i { "######## Application started ########" }
 
+            //initialize/load the settings, generate the MutableStateFlow
+            AppSetting
+            ConfigurationSetting
 
             setCrashlyticsCollectionEnabled(
                 if (!isDebug() && !isInstrumentedTest()) {
                     AppSetting.isCrashlyticsEnabled.value
                 } else false
             )
-
-            //initialize/load the settings, generate the MutableStateFlow
-            AppSetting
-            ConfigurationSetting
 
             //setup language
             StringDesc.localeType = StringDesc.LocaleType.Custom(AppSetting.languageType.value.code)
@@ -102,40 +82,6 @@ abstract class Application : NativeApplication(), KoinComponent {
         }
     }
 
-    fun setupLanguage() {
-        val language: LanguageType = getSystemAppLanguage() ?: AppSetting.languageType.value
-        StringDesc.localeType = StringDesc.LocaleType.Custom(language.code)
-        AppSetting.languageType.value = language
-        if(getDeviceLanguage() != language && getSystemAppLanguage() != language) {
-            //only needs to be set if it differs from current settings and from device settings
-            setLanguage(language)
-        }
-    }
-
-    fun changeLanguage(language: LanguageType) {
-        StringDesc.localeType = StringDesc.LocaleType.Custom(language.code)
-        AppSetting.languageType.value = language
-        if(getDeviceLanguage() != language && getSystemAppLanguage() != language) {
-            //only needs to be set if it differs from current settings and from device settings
-            setLanguage(language)
-        }
-    }
-
-    /**
-     * get the language of the device
-     */
-    abstract fun getDeviceLanguage(): LanguageType
-
-    /**
-     * get if the system has a custom language for this app
-     */
-    abstract fun getSystemAppLanguage(): LanguageType?
-
-    /**
-     * tell the system that this app should have a custom language
-     */
-    protected abstract fun setLanguage(languageType: LanguageType)
-
     override suspend fun updateWidgetNative() {
         updateWidget()
     }
@@ -144,28 +90,20 @@ abstract class Application : NativeApplication(), KoinComponent {
 
     abstract fun stopOverlay()
 
-    abstract fun isDebug(): Boolean
-
-    abstract fun isInstrumentedTest(): Boolean
-
     abstract suspend fun updateWidget()
 
-    abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)
-
-    abstract fun restart()
-
-    fun startTest() {
+    override suspend fun startTest() {
         BackgroundService.stop()
         stopOverlay()
         unloadKoinModules(listOf(viewModelModule, serviceModule))
         loadKoinModules(listOf(serviceModule, viewModelModule))
     }
 
-    fun stopTest() {
+    override suspend fun stopTest() {
         reloadServiceModules()
     }
 
-    fun reloadServiceModules() {
+    override suspend fun reloadServiceModules() {
         stopOverlay()
         unloadKoinModules(listOf(viewModelModule, serviceModule))
         loadKoinModules(listOf(serviceModule, viewModelModule))

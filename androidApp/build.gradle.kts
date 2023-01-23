@@ -164,6 +164,9 @@ kotlin {
 dependencies {
     coreLibraryDesugaring(Android.tools.desugarJdkLibs)
     implementation(project(":shared"))
+    implementation(project(":shared-viewmodel"))
+    implementation(project(":shared-logic"))
+    implementation(project(":shared-resources"))
 
     implementation(KotlinX.Coroutines.core)
     implementation(KotlinX.Coroutines.android)

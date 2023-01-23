@@ -47,10 +47,9 @@ kotlin {
 }
 
 android {
-    namespace = "org.rhasspy.mobile"
+    namespace = "org.rhasspy.mobile.ui"
     compileSdk = 33
     defaultConfig {
-        minSdk = 24
-        targetSdk = 33
+        minSdk = 23
     }
 }
