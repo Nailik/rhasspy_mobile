@@ -61,7 +61,10 @@ class WebServerService : IService() {
     private val serviceMiddleware by inject<ServiceMiddleware>()
 
     private val scope = CoroutineScope(Dispatchers.Default)
-    private val audioContentType = ContentType("audio", "wav")
+
+    companion object {
+        val audioContentType = ContentType("audio", "wav")
+    }
 
     private lateinit var server: BaseApplicationEngine
 
@@ -268,10 +271,7 @@ class WebServerService : IService() {
      * GET to download WAV data from last recorded voice command
      */
     private suspend fun playRecordingGet(call: ApplicationCall): WebServerResult? {
-        call.respondBytes(
-            bytes = serviceMiddleware.getRecordedData(),
-            contentType = audioContentType
-        )
+        call.respond(serviceMiddleware.getRecordedData())
         return null
     }
 
@@ -286,7 +286,7 @@ class WebServerService : IService() {
             logger.w { "playWav wrong content type ${call.request.contentType()}" }
             WebServerResult.Error(WebServerServiceErrorType.AudioContentTypeWarning)
         } else WebServerResult.Ok
-        //play even without header
+        //play even without content type
         serviceMiddleware.action(DialogAction.PlayAudio(Source.HttpApi, call.receive()))
         return result
     }

@@ -26,7 +26,7 @@ expect class AudioPlayer() : Closeable {
      * on Error is called when an playback error occurs
      */
     fun playData(
-        data: List<Byte>,
+        data: ByteArray,
         volume: Float,
         audioOutputOption: AudioOutputOption,
         onFinished: (() -> Unit)? = null,

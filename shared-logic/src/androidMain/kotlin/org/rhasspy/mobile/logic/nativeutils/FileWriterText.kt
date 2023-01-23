@@ -1,26 +1,17 @@
-package org.rhasspy.mobile.logic.nativeutils
+package org.rhasspy.mobile.nativeutils
 
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import androidx.core.content.FileProvider
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
+import org.rhasspy.mobile.Application
 import java.io.File
 
 /**
  * write file with name and maximum size to app storage
  */
-actual class FileWriter actual constructor(filename: String, actual val maxFileSize: Long) : KoinComponent {
+actual class FileWriterText actual constructor(filename: String, actual val maxFileSize: Long?) : FileWriter(filename) {
 
-    private val context = get<NativeApplication>()
-
-    //file to write to
-    private val file = File(context.filesDir, filename)
-
-    /**
-     * create file and return if it was successfully
-     */
     actual fun createFile(): Boolean {
         if (!file.exists()) {
             file.createNewFile()
@@ -37,19 +28,14 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
     actual fun appendText(element: String) {
         file.appendText("\n$element")
 
-        if (maxFileSize != 0L) {
-            if (file.length() / 1024 >= maxFileSize) {
+        maxFileSize?.also {
+            if (file.length() / 1024 >= it) {
                 try {
-                    val oldFile =
-                        File("${file.parent}/${file.nameWithoutExtension}_old.${file.extension}")
+                    val oldFile = File("${file.parent}/${file.nameWithoutExtension}_old.${file.extension}")
                     if (oldFile.exists()) {
                         //overwrite old file content
-                        oldFile.writeText(file.readText())
-                    } else {
-                        //rename current file to new
-                        file.renameTo(oldFile)
-                        //clear current file
-                        file.writeText("")
+                        file.copyTo(oldFile, true)
+                        file.writeBytes(ByteArray(0))
                     }
                 } catch (e: Exception) {
                     //don't log else recursive issue
@@ -60,19 +46,18 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
     }
 
     /**
-     * clears file content
+     * read all file contents
      */
-    actual fun clearFile() {
-        file.writeBytes(ByteArray(0))
-    }
+    actual fun getFileContent() = file.readText()
+
 
     /**
-     * length of content
+     * open share file system dialog
      */
     actual fun shareFile() {
         val fileUri: Uri = FileProvider.getUriForFile(
-            context,
-            context.packageName.toString() + ".provider",
+            Application.nativeInstance,
+            Application.nativeInstance.packageName.toString() + ".provider",
             file
         )
 
@@ -81,7 +66,7 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
             putExtra(Intent.EXTRA_STREAM, fileUri)
             type = "text/html"
         }
-        context.startActivity(Intent.createChooser(shareIntent, null).apply {
+        Application.nativeInstance.startActivity(Intent.createChooser(shareIntent, null).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         })
     }
@@ -90,12 +75,12 @@ actual class FileWriter actual constructor(filename: String, actual val maxFileS
      * copy file to specific new file
      */
     actual fun copyFile(fileName: String, fileType: String) {
-        context.currentActivity?.createDocument(fileName, fileType) {
+        Application.nativeInstance.currentActivity?.createDocument(fileName, fileType) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
-                    context.contentResolver.openOutputStream(uri)
+                    Application.nativeInstance.contentResolver.openOutputStream(uri)
                         ?.also { outputStream ->
-                            outputStream.write(file.readBytes())
+                            file.inputStream().copyTo(outputStream)
                             outputStream.flush()
                             outputStream.close()
                         }

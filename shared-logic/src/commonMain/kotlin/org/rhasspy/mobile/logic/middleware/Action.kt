@@ -59,7 +59,7 @@ sealed class Action {
 
         class PlayAudio(source: Source, val byteArray: ByteArray) : DialogAction(source) {
             override fun toString(): String {
-                return "${super.toString()} byteArray: ${byteArray.size}"
+                return "${super.toString()} size: ${byteArray.size}"
             }
         }
 

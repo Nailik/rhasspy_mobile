@@ -58,7 +58,7 @@ class ServiceMiddleware : KoinComponent, Closeable {
                             shouldResumeHotWordService = AppSetting.isHotWordEnabled.value
                             appSettingsService.hotWordToggle(false)
                             //suspend coroutine
-                            localAudioService.playAudio(speechToTextService.speechToTextAudioData.toMutableList().addWavHeader())
+                            localAudioService.playAudio(speechToTextService.speechToTextAudioData)
                             //resumes when play finished
                             if (_isPlayingRecording.value) {
                                 action(Action.PlayStopRecording)
@@ -109,7 +109,7 @@ class ServiceMiddleware : KoinComponent, Closeable {
         }
     }
 
-    fun getRecordedData(): ByteArray = speechToTextService.speechToTextAudioData.toByteArray()
+    fun getRecordedData(): ByteArray = speechToTextService.speechToTextAudioData
 
     override fun close() {
         coroutineScope.cancel()

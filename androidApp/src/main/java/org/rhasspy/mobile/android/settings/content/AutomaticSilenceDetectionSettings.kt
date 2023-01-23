@@ -103,9 +103,9 @@ private fun Time(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
     TextFieldListItem(
         label = MR.strings.silenceDetectionTime,
         modifier = Modifier.testTag(TestTag.AutomaticSilenceDetectionSettingsTime),
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         value = viewModel.automaticSilenceDetectionTimeText.collectAsState().value,
-        onValueChange = viewModel::updateAutomaticSilenceDetectionTime
+        onValueChange = viewModel::updateAutomaticSilenceDetectionTime,
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
     )
 
 }

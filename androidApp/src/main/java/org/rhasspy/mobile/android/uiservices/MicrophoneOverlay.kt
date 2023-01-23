@@ -156,18 +156,16 @@ object MicrophoneOverlay : KoinComponent {
                         if (Looper.myLooper() == null) {
                             Looper.prepare()
                         }
-                        CoroutineScope(Dispatchers.Main).launch {
+                        launch(Dispatchers.Main) {
                             overlayWindowManager.addView(view, mParams)
                             lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
                         }
                     } else {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            try {
+                        launch(Dispatchers.Main) {
+                            if (view.parent != null) {
                                 overlayWindowManager.removeView(view)
-                                lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-                            } catch (exception: Exception) {
-                                //remove view may throw not attached to window manager
                             }
+                            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
                         }
                     }
                 }

@@ -9,7 +9,7 @@ expect class AudioRecorder() : Closeable {
     /**
      * output data as flow
      */
-    val output: Flow<List<Byte>>
+    val output: Flow<ByteArray>
 
     /**
      * max volume since start recording
@@ -31,5 +31,14 @@ expect class AudioRecorder() : Closeable {
      * stop recording
      */
     fun stopRecording()
+
+    companion object {
+        /**
+         * use the settings of the audio recorder
+         * (samplingRate, channels, bitrate) and the audioSize
+         * to create wav header and add it in front of the given data
+         */
+        fun ByteArray.appendWavHeader(): ByteArray
+    }
 
 }

@@ -28,7 +28,7 @@ actual object FileUtils : KoinComponent {
 
         openDocument(folderType)?.also { uri ->
             queryFile(uri)?.also { fileName ->
-                val finalFileName = renameFileWhileExists(folderType.toString(), fileName)
+                val finalFileName = renameFileWhileExists(Application.nativeInstance.filesDir, folderType.toString(), fileName)
                 return copyFile(folderType, uri, folderType.toString(), finalFileName)
             }
         }
@@ -143,7 +143,7 @@ actual object FileUtils : KoinComponent {
 
                             if (!ze.isDirectory) {
                                 if (ze.name.endsWith(".ppn")) {
-                                    val fileName = renameFileWhileExists(folderName, ze.name)
+                                    val fileName = renameFileWhileExists(Application.nativeInstance.filesDir, folderName, ze.name)
 
                                     File(
                                         context.filesDir,
@@ -166,7 +166,7 @@ actual object FileUtils : KoinComponent {
 
                     selectedFileName.endsWith(".ppn") -> {
                         //use this file
-                        val fileName = renameFileWhileExists(folderName, selectedFileName)
+                        val fileName = renameFileWhileExists(Application.nativeInstance.filesDir, folderName, selectedFileName)
 
                         File(context.filesDir, "$folderName/$fileName").apply {
                             this.outputStream().apply {
@@ -189,10 +189,10 @@ actual object FileUtils : KoinComponent {
     /**
      *  rename file while it already exists
      */
-    private fun renameFileWhileExists(folder: String, file: String): String {
+    fun renameFileWhileExists(dir: File, folder: String, file: String): String {
         var fileName = file
         var index = 0
-        while (File(context.filesDir, "$folder/$fileName").exists()) {
+        while (File(dir, "$folder/$fileName").exists()) {
             index++
             fileName = if (fileName.contains(Regex("\\([1-9]+\\)."))) {
                 fileName.replace(Regex("\\([1-9]+\\)."), "($index).")

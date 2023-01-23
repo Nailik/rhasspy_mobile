@@ -1,8 +1,8 @@
 package org.rhasspy.mobile.logic.nativeutils
 
-actual class FileWriter actual constructor(filename: String, maxFileSize: Long) {
+actual class FileWriterText actual constructor(filename: String, maxFileSize: Long?) : FileWriter(filename) {
 
-    actual val maxFileSize: Long
+    actual val maxFileSize: Long?
         get() = TODO("Not yet implemented")
 
     /**
@@ -18,12 +18,6 @@ actual class FileWriter actual constructor(filename: String, maxFileSize: Long) 
      * and a new file is created
      */
     actual fun appendText(element: String) {
-    }
-
-    /**
-     * clears file content
-     */
-    actual fun clearFile() {
     }
 
     /**

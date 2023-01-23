@@ -96,6 +96,9 @@ enum class SettingsEnum {
     AudioPlayingHttpEndpoint,
 
     DialogManagementOption,
+    DialogManagementLocalAsrTimeout,
+    DialogManagementLocalIntentRecognitionTimeout,
+    DialogManagementLocalRecordingTimeout,
 
     IntentHandlingOption,
     IntentHandlingEndpoint,

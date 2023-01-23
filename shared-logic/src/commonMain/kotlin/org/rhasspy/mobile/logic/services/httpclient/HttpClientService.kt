@@ -127,10 +127,11 @@ class HttpClientService : IService() {
      * Set Accept: application/json to receive JSON with more details
      * ?noheader=true - send raw 16-bit 16Khz mono audio without a WAV header
      */
-    suspend fun speechToText(data: List<Byte>): HttpClientResult<String> {
-        logger.d { "speechToText dataSize: ${data.size}" }
+    suspend fun speechToText(byteArray: ByteArray): HttpClientResult<String> {
+        logger.d { "speechToText dataSize: ${byteArray.size}" }
+
         return post(speechToTextUrl) {
-            setBody(data.toByteArray())
+            setBody(byteArray)
         }
     }
 
@@ -161,7 +162,7 @@ class HttpClientService : IService() {
      */
     suspend fun textToSpeech(text: String): HttpClientResult<ByteArray> {
         logger.d { "textToSpeech text: $text" }
-        return post(textToSpeechUrl) {
+         return post(textToSpeechUrl) {
             setBody(text)
         }
     }
@@ -172,13 +173,13 @@ class HttpClientService : IService() {
      * Make sure to set Content-Type to audio/wav
      * ?siteId=site1,site2,... to apply to specific site(s)
      */
-    suspend fun playWav(data: List<Byte>): HttpClientResult<String> {
-        logger.d { "playWav dataSize: ${data.size}" }
+    suspend fun playWav(byteArray: ByteArray): HttpClientResult<String> {
+        logger.d { "playWav size: ${byteArray.size}" }
         return post(audioPlayingUrl) {
             setAttributes {
                 contentType(audioContentType)
             }
-            setBody(data.toMutableList().toByteArray())
+            setBody(byteArray)
         }
     }
 

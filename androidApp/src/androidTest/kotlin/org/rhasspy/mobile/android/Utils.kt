@@ -33,6 +33,9 @@ fun SemanticsNodeInteraction.onSwitch(): SemanticsNodeInteraction {
 fun hasTestTag(testTag: Enum<*>): SemanticsMatcher =
     SemanticsMatcher.expectValue(SemanticsProperties.TestTag, testTag.name)
 
+fun hasCombinedTestTag(tag1: Enum<*>, tag2: Enum<*>): SemanticsMatcher =
+    SemanticsMatcher.expectValue(SemanticsProperties.TestTag, "${tag1.name}${tag2.name}")
+
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     testTag: Enum<*>,
     useUnmergedTree: Boolean = false
@@ -151,4 +154,29 @@ fun ComposeContentTestRule.awaitSaved(viewModel: IConfigurationViewModel) {
         condition = { !viewModel.isLoading.value },
         timeoutMillis = 5000
     )
+}
+
+
+fun ComposeContentTestRule.waitUntilExists(
+    matcher: SemanticsMatcher,
+    timeoutMillis: Long = 1_000L
+) {
+    return this.waitUntilNodeCount(matcher, 1, timeoutMillis)
+}
+
+fun ComposeContentTestRule.waitUntilDoesNotExist(
+    matcher: SemanticsMatcher,
+    timeoutMillis: Long = 1_000L
+) {
+    return this.waitUntilNodeCount(matcher, 0, timeoutMillis)
+}
+
+fun ComposeContentTestRule.waitUntilNodeCount(
+    matcher: SemanticsMatcher,
+    count: Int,
+    timeoutMillis: Long = 1_000L
+) {
+    this.waitUntil(timeoutMillis) {
+        this.onAllNodes(matcher).fetchSemanticsNodes().size == count
+    }
 }
