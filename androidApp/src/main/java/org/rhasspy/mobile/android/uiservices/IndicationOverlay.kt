@@ -3,6 +3,7 @@ package org.rhasspy.mobile.android.uiservices
 import android.content.Context
 import android.graphics.PixelFormat
 import android.os.Build
+import android.os.Looper
 import android.view.Gravity
 import android.view.WindowManager
 import androidx.compose.runtime.collectAsState
@@ -35,7 +36,6 @@ object IndicationOverlay : KoinComponent {
     //stores old value to only react to changes
     private var showVisualIndicationOldValue = false
 
-    private var mainScope = CoroutineScope(Dispatchers.Main)
     private var viewModel = get<IndicationOverlayViewModel>()
 
     private var job: Job? = null
@@ -107,16 +107,19 @@ object IndicationOverlay : KoinComponent {
                     if (it != showVisualIndicationOldValue) {
                         if (it) {
                             if (OverlayPermission.isGranted()) {
-                                mainScope.launch {
+                                if (Looper.myLooper() == null) {
+                                    Looper.prepare()
+                                }
+                                launch(Dispatchers.Main) {
                                     overlayWindowManager.addView(view, mParams)
-                                    //has to be called from main thread
                                     lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
                                 }
                             }
                         } else {
-                            mainScope.launch {
-                                overlayWindowManager.removeView(view)
-                                //has to be called from main thread
+                            launch(Dispatchers.Main) {
+                                if (view.parent != null) {
+                                    overlayWindowManager.removeView(view)
+                                }
                                 lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
                             }
                         }
