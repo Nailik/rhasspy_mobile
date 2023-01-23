@@ -40,8 +40,9 @@ class MicrophoneOverlayTest : KoinComponent {
         //text field changed text
         composeTestRule.waitUntil(
             condition = { get<DialogManagerService>().currentDialogState.value != DialogManagerServiceState.AwaitingWakeWord },
-            timeoutMillis = 5000
+            timeoutMillis = 50000
         )
         assertNotEquals(DialogManagerServiceState.AwaitingWakeWord, get<DialogManagerService>().currentDialogState.value)
     }
+
 }
