@@ -20,7 +20,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.nativeutils.OverlayPermission
+import org.rhasspy.mobile.logic.nativeutils.OverlayPermission
 
 /**
  * to request a overlay permission

@@ -15,7 +15,7 @@ import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.settings.types.LanguageType
+import org.rhasspy.mobile.logic.settings.types.LanguageType
 import org.rhasspy.mobile.viewmodel.settings.LanguageSettingsViewModel
 import kotlin.test.assertEquals
 

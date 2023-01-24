@@ -163,7 +163,10 @@ kotlin {
 
 dependencies {
     coreLibraryDesugaring(Android.tools.desugarJdkLibs)
-    implementation(project(":MultiPlatformLibrary"))
+    implementation(project(":shared"))
+    implementation(project(":shared-viewmodel"))
+    implementation(project(":shared-logic"))
+    implementation(project(":shared-resources"))
 
     implementation(KotlinX.Coroutines.core)
     implementation(KotlinX.Coroutines.android)
@@ -199,8 +202,8 @@ dependencies {
     implementation(Icerock.Mvvm.core)
     implementation(Koin.core)
     implementation(Koin.compose)
+    androidTestImplementation(project(":shared"))
 
-    androidTestImplementation(project(":MultiPlatformLibrary"))
     androidTestUtil(AndroidX.Test.orchestrator)
     androidTestImplementation(AndroidX.Test.uiAutomator)
     androidTestImplementation(AndroidX.Test.runner)

@@ -12,7 +12,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.settings.option.PorcupineLanguageOption
+import org.rhasspy.mobile.logic.settings.option.PorcupineLanguageOption
 import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 import kotlin.test.assertEquals
 

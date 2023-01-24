@@ -6,6 +6,7 @@ object Jetbrains : IsNotADependency {
     object Kotlinx : DependencyGroup(group = "org.jetbrains.kotlinx") {
         val dateTime = module("kotlinx-datetime")
         val serialization = module("kotlinx-serialization-json")
+        val coroutines = module("kotlinx-coroutines-core")
     }
 
 }

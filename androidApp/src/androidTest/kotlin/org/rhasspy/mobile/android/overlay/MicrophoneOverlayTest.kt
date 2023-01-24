@@ -12,10 +12,10 @@ import org.junit.runner.RunWith
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
-import org.rhasspy.mobile.services.dialog.DialogManagerService
-import org.rhasspy.mobile.services.dialog.DialogManagerServiceState
-import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.settings.option.MicrophoneOverlaySizeOption
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceState
+import org.rhasspy.mobile.logic.settings.AppSetting
+import org.rhasspy.mobile.logic.settings.option.MicrophoneOverlaySizeOption
 import kotlin.test.assertNotEquals
 
 @RunWith(AndroidJUnit4::class)
@@ -28,7 +28,7 @@ class MicrophoneOverlayTest : KoinComponent {
     @Before
     fun setUp() {
         requestMicrophonePermissions()
-        device.requestOverlayPermissions()
+        device.requestOverlayPermissions(composeTestRule.activity)
         AppSetting.microphoneOverlaySizeOption.value = MicrophoneOverlaySizeOption.Big
         AppSetting.isMicrophoneOverlayWhileAppEnabled.value = true
     }

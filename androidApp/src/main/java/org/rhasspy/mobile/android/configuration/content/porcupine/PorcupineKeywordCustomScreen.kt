@@ -35,7 +35,7 @@ import org.rhasspy.mobile.android.content.list.InformationListElement
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.SliderListItem
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.settings.porcupine.PorcupineCustomKeyword
+import org.rhasspy.mobile.logic.settings.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 
 /**

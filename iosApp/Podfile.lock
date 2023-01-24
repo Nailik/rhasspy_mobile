@@ -1,16 +1,16 @@
 PODS:
-  - MultiPlatformLibrary (0.4.6-53)
+  - shared (0.4.6-54)
 
 DEPENDENCIES:
-  - MultiPlatformLibrary (from `../MultiPlatformLibrary`)
+  - shared (from `../shared`)
 
 EXTERNAL SOURCES:
-  MultiPlatformLibrary:
-    :path: "../MultiPlatformLibrary"
+  shared:
+    :path: "../shared"
 
 SPEC CHECKSUMS:
-  MultiPlatformLibrary: 581c111e4319ef1c59b50f8bb1a93d4c1875e74c
+  shared: 0caa84765d100881b2e0eb15915de6a52a350043
 
-PODFILE CHECKSUM: 98f129854622357d23222956ba5bf69bf541be7a
+PODFILE CHECKSUM: f282da88f39e69507b0a255187c8a6b644477756
 
 COCOAPODS: 1.8.4

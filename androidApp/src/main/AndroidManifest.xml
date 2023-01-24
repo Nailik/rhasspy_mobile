@@ -28,7 +28,7 @@
         android:localeConfig="@xml/locales_config"
         tools:ignore="Instantiatable,UnusedAttribute">
         <service
-            android:name="org.rhasspy.mobile.nativeutils.BackgroundService"
+            android:name="org.rhasspy.mobile.logic.nativeutils.BackgroundService"
             android:foregroundServiceType="microphone" />
 
         <service

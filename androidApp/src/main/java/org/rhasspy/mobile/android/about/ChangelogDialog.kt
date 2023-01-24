@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.Text
@@ -22,7 +23,7 @@ import org.rhasspy.mobile.android.testTag
  * button to open changelog dialog
  */
 @Composable
-fun ChangelogDialogButton(changelogText: String) {
+fun ChangelogDialogButton() {
 
     var openDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -34,7 +35,7 @@ fun ChangelogDialogButton(changelogText: String) {
     }
 
     if (openDialog) {
-        ChangelogDialog(changelogText) {
+        ChangelogDialog {
             openDialog = false
         }
     }
@@ -45,7 +46,7 @@ fun ChangelogDialogButton(changelogText: String) {
  * Displays changelog as text in a dialog
  */
 @Composable
-private fun ChangelogDialog(changelogText: String, onDismissRequest: () -> Unit) {
+private fun ChangelogDialog(onDismissRequest: () -> Unit) {
 
     val scrollState = rememberScrollState()
 
@@ -68,7 +69,7 @@ private fun ChangelogDialog(changelogText: String, onDismissRequest: () -> Unit)
                     .testTag(TestTag.DialogChangelog)
                     .verticalScroll(scrollState),
             ) {
-                changelogText.split("\\\\")
+                BuildKonfig.changelog.split("\\\\")
                     .map { it.replace("\n", "") }
                     .filter { it.isNotEmpty() }
                     .forEach {

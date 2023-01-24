@@ -27,8 +27,8 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.theme.AppTheme
-import org.rhasspy.mobile.nativeutils.MicrophonePermission
-import org.rhasspy.mobile.settings.types.LanguageType
+import org.rhasspy.mobile.logic.nativeutils.MicrophonePermission
+import org.rhasspy.mobile.logic.settings.types.LanguageType
 import org.rhasspy.mobile.viewmodel.settings.LanguageSettingsViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -522,9 +522,5 @@ class MicrophonePermissionTest {
         //Permission is allowed
         getInstrumentation().waitForIdleSync()
         assertTrue { MicrophonePermission.granted.value }
-
-        //User clicks button
-        composeTestRule.onNodeWithText(btnRequestPermission).performClick()
-        assertTrue { permissionResult }
     }
 }

@@ -86,7 +86,7 @@ fun Header(viewModel: AboutScreenViewModel) {
             modifier = Modifier.padding(8.dp)
         )
 
-        AppInformationChips(viewModel.changelogText, viewModel::onOpenSourceCode)
+        AppInformationChips(viewModel::onOpenSourceCode)
     }
 }
 
@@ -125,7 +125,7 @@ fun AppIcon() {
  * Chips to show data privacy, link to source code and changelog
  */
 @Composable
-fun AppInformationChips(changelogText: String, onOpenSourceCode: () -> Unit) {
+fun AppInformationChips(onOpenSourceCode: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -136,6 +136,6 @@ fun AppInformationChips(changelogText: String, onOpenSourceCode: () -> Unit) {
         OutlinedButton(onClick = onOpenSourceCode) {
             Text(MR.strings.sourceCode)
         }
-        ChangelogDialogButton(changelogText)
+        ChangelogDialogButton()
     }
 }
