@@ -11,7 +11,7 @@ import org.rhasspy.mobile.logic.fileutils.FolderType
 import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.mapReadonlyState
 import org.rhasspy.mobile.logic.nativeutils.FileUtils
-import org.rhasspy.mobile.logic.nativeutils.openLink
+import org.rhasspy.mobile.logic.openLink
 import org.rhasspy.mobile.logic.readOnly
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.mqtt.MqttServiceConnectionOptions

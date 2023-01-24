@@ -13,7 +13,7 @@ import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.mapReadonlyState
 import org.rhasspy.mobile.logic.nativeutils.FileUtils
 import org.rhasspy.mobile.logic.nativeutils.MicrophonePermission
-import org.rhasspy.mobile.logic.nativeutils.openLink
+import org.rhasspy.mobile.logic.openLink
 import org.rhasspy.mobile.logic.readOnly
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordServiceParams
