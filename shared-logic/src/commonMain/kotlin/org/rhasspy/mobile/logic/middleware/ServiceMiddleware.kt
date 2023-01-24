@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import org.rhasspy.mobile.logic.addWavHeader
 import org.rhasspy.mobile.logic.combineState
 import org.rhasspy.mobile.logic.readOnly
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService

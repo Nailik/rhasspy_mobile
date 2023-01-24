@@ -7,7 +7,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.inject
-import org.rhasspy.mobile.logic.addWavHeader
 import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.middleware.Action.DialogAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware

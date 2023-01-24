@@ -13,7 +13,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.rhasspy.mobile.logic.nativeutils.FileWriter
+import org.rhasspy.mobile.logic.nativeutils.FileWriterText
 import org.rhasspy.mobile.logic.readOnly
 import org.rhasspy.mobile.logic.settings.AppSetting
 

@@ -37,6 +37,7 @@ import org.rhasspy.mobile.logic.mqtt.MqttPersistence
 import org.rhasspy.mobile.logic.mqtt.MqttTopicPlaceholder
 import org.rhasspy.mobile.logic.mqtt.MqttTopicsPublish
 import org.rhasspy.mobile.logic.mqtt.MqttTopicsSubscription
+import org.rhasspy.mobile.logic.nativeutils.AudioRecorder.Companion.appendWavHeader
 import org.rhasspy.mobile.logic.nativeutils.MqttClient
 import org.rhasspy.mobile.logic.readOnly
 import org.rhasspy.mobile.logic.services.IService

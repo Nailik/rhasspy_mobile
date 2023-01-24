@@ -1,9 +1,8 @@
-package org.rhasspy.mobile.nativeutils
+package org.rhasspy.mobile.logic.nativeutils
 
 /**
  * write file with name and maximum size to app storage
  */
-@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect class FileWriterText(filename: String, maxFileSize: Long? = null) : FileWriter {
 
     val maxFileSize: Long?

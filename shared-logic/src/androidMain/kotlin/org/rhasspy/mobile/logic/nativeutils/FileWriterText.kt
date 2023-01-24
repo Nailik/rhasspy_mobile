@@ -1,16 +1,18 @@
-package org.rhasspy.mobile.nativeutils
+package org.rhasspy.mobile.logic.nativeutils
 
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import androidx.core.content.FileProvider
-import org.rhasspy.mobile.Application
+import org.koin.core.component.get
 import java.io.File
 
 /**
  * write file with name and maximum size to app storage
  */
 actual class FileWriterText actual constructor(filename: String, actual val maxFileSize: Long?) : FileWriter(filename) {
+
+    private val context = get<NativeApplication>()
 
     actual fun createFile(): Boolean {
         if (!file.exists()) {
@@ -56,8 +58,8 @@ actual class FileWriterText actual constructor(filename: String, actual val maxF
      */
     actual fun shareFile() {
         val fileUri: Uri = FileProvider.getUriForFile(
-            Application.nativeInstance,
-            Application.nativeInstance.packageName.toString() + ".provider",
+            context,
+            context.packageName.toString() + ".provider",
             file
         )
 
@@ -66,7 +68,7 @@ actual class FileWriterText actual constructor(filename: String, actual val maxF
             putExtra(Intent.EXTRA_STREAM, fileUri)
             type = "text/html"
         }
-        Application.nativeInstance.startActivity(Intent.createChooser(shareIntent, null).apply {
+        context.startActivity(Intent.createChooser(shareIntent, null).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         })
     }
@@ -75,10 +77,10 @@ actual class FileWriterText actual constructor(filename: String, actual val maxF
      * copy file to specific new file
      */
     actual fun copyFile(fileName: String, fileType: String) {
-        Application.nativeInstance.currentActivity?.createDocument(fileName, fileType) {
+        context.currentActivity?.createDocument(fileName, fileType) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.data?.also { uri ->
-                    Application.nativeInstance.contentResolver.openOutputStream(uri)
+                    context.contentResolver.openOutputStream(uri)
                         ?.also { outputStream ->
                             file.inputStream().copyTo(outputStream)
                             outputStream.flush()

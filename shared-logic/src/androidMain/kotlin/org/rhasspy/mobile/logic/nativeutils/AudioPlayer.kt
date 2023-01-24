@@ -15,7 +15,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.logic.settings.option.AudioOutputOption
 import java.io.File
 
-actual class AudioPlayer : Closeable {
+actual class AudioPlayer : Closeable, KoinComponent {
 
     private val logger = Logger.withTag("AudioPlayer")
 
@@ -24,7 +24,6 @@ actual class AudioPlayer : Closeable {
 
     private var audioTrack: AudioTrack? = null
     private var mediaPlayer: MediaPlayer? = null
-    private var notification: Ringtone? = null
     private var volumeChange: Job? = null
 
     //on finished is stored to invoke it when stop is called
@@ -45,7 +44,7 @@ actual class AudioPlayer : Closeable {
         onFinished: (() -> Unit)?,
         onError: ((exception: Exception?) -> Unit)?
     ) {
-        val soundFile = File(Application.nativeInstance.cacheDir, "/playData.wav")
+        val soundFile = File(context.cacheDir, "/playData.wav")
         playAudio(Uri.fromFile(soundFile), MutableStateFlow(volume), audioOutputOption, onFinished, onError)
     }
 
@@ -84,17 +83,15 @@ actual class AudioPlayer : Closeable {
         onError: ((exception: Exception?) -> Unit)?
     ) {
         logger.v { "playSoundFile $filename" }
-        val soundFile = File(Application.nativeInstance.filesDir, filename)
+        val soundFile = File(context.filesDir, filename)
         playAudio(Uri.fromFile(soundFile), volume, audioOutputOption, onFinished, onError)
     }
 
     actual fun stop() {
         audioTrack?.stop()
         mediaPlayer?.stop()
-        notification?.stop()
         audioTrack = null
         mediaPlayer = null
-        notification = null
         _isPlayingState.value = false
         onFinished?.invoke()
         onFinished = null
