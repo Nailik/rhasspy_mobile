@@ -8,9 +8,4 @@ expect open class FileWriter(filename: String) {
      */
     fun clearFile()
 
-    /**
-     * length of content
-     */
-    fun length(): Long
-
 }
