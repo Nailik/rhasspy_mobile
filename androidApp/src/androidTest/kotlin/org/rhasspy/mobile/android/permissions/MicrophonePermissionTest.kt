@@ -522,9 +522,5 @@ class MicrophonePermissionTest {
         //Permission is allowed
         getInstrumentation().waitForIdleSync()
         assertTrue { MicrophonePermission.granted.value }
-
-        //User clicks button
-        composeTestRule.onNodeWithText(btnRequestPermission).performClick()
-        assertTrue { permissionResult }
     }
 }

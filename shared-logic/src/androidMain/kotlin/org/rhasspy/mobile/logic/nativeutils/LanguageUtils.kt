@@ -4,13 +4,11 @@ import android.provider.Settings
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import dev.icerock.moko.resources.desc.StringDesc
-import org.rhasspy.mobile.logic.BuildConfig
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.logic.settings.types.LanguageType
-
-actual fun isDebug(): Boolean {
-    return BuildConfig.DEBUG
-}
 
 actual fun getDeviceLanguage(): LanguageType {
     Settings.ACTION_APPLICATION_DETAILS_SETTINGS
@@ -45,7 +43,10 @@ actual fun getSystemAppLanguage(): LanguageType? {
 
 actual fun setLanguage(languageType: LanguageType) {
     val appLocale = LocaleListCompat.forLanguageTags(languageType.code)
-    AppCompatDelegate.setApplicationLocales(appLocale)
+    CoroutineScope(Dispatchers.Main).launch {
+        //must be called from main thread
+        AppCompatDelegate.setApplicationLocales(appLocale)
+    }
     StringDesc.localeType = StringDesc.LocaleType.Custom(languageType.code)
     AppSetting.languageType.value = languageType
 }
