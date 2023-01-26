@@ -68,7 +68,6 @@ kotlin {
                 implementation(Koin.core)
                 implementation(Jetbrains.Compose.ui)
                 implementation(Jetbrains.Compose.foundation)
-                implementation(Jetbrains.Compose.material)
                 implementation(Jetbrains.Compose.material3)
                 implementation(Jetbrains.Compose.runtime)
             }
