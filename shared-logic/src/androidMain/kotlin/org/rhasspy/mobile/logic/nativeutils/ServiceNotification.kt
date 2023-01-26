@@ -15,7 +15,7 @@ import org.rhasspy.mobile.MR
 /**
  * creates necessary notification to hold services in background
  */
-object ServiceNotification: KoinComponent {
+object ServiceNotification : KoinComponent {
 
     private const val CHANNEL_ID = "org.rhasspy.mobile.services.channel.id"
     private const val GROUP_ID = "org.rhasspy.mobile.services.group.id"

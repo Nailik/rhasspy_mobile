@@ -32,6 +32,7 @@ import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordServiceParams
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.logic.services.webserver.WebServerServiceParams
+import org.rhasspy.mobile.viewmodel.AppViewModel
 import org.rhasspy.mobile.viewmodel.configuration.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.DialogManagementConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.IntentHandlingConfigurationViewModel
@@ -69,7 +70,6 @@ import org.rhasspy.mobile.viewmodel.settings.LogSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.MicrophoneOverlaySettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.SaveAndRestoreSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.sound.ErrorIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewmodel.AppViewModel
 import org.rhasspy.mobile.viewmodel.settings.sound.RecordedIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.sound.WakeIndicationSoundSettingsViewModel
 

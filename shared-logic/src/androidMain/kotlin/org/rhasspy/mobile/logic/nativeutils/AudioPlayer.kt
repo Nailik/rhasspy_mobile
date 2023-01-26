@@ -64,7 +64,7 @@ actual class AudioPlayer : Closeable, KoinComponent {
         onError: ((exception: Exception?) -> Unit)?
     ) {
         logger.v { "playSoundFileResource" }
-        playAudio(getUriFromResource(fileResource.rawResId), volume,audioOutputOption, onFinished, onError)
+        playAudio(getUriFromResource(fileResource.rawResId), volume, audioOutputOption, onFinished, onError)
     }
 
     /**
@@ -125,6 +125,7 @@ actual class AudioPlayer : Closeable, KoinComponent {
                                 this.setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                                 this.setUsage(AudioAttributes.USAGE_MEDIA)
                             }
+
                             AudioOutputOption.Notification -> {
                                 this.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                                 this.setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)

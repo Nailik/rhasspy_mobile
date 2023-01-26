@@ -45,7 +45,7 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
     private val _wakeWordPorcupineKeywordCustomOptions =
         MutableStateFlow(
             ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value
-            .map { PorcupineCustomKeywordUi(it) })
+                .map { PorcupineCustomKeywordUi(it) })
     private val _wakeWordPorcupineKeywordCustomOptionsNormal =
         _wakeWordPorcupineKeywordCustomOptions
             .mapReadonlyState { options ->

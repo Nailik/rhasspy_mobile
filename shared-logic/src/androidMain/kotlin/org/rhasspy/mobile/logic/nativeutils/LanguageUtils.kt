@@ -25,7 +25,7 @@ actual fun setupLanguage() {
     val language: LanguageType = getSystemAppLanguage() ?: AppSetting.languageType.value
     StringDesc.localeType = StringDesc.LocaleType.Custom(language.code)
     AppSetting.languageType.value = language
-    if(getDeviceLanguage() != language && getSystemAppLanguage() != language) {
+    if (getDeviceLanguage() != language && getSystemAppLanguage() != language) {
         //only needs to be set if it differs from current settings and from device settings
         setLanguage(language)
     }

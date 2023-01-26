@@ -1,6 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import co.touchlab.faktory.crashlyticsLinkerConfig
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -11,6 +10,8 @@ plugins {
     id("com.android.library")
     id("com.mikepenz.aboutlibraries.plugin")
     id("org.sonarqube")
+    id("org.jetbrains.compose")
+    id("co.touchlab.crashkios.crashlyticslink")
 }
 
 version = Version.toString()
@@ -26,11 +27,11 @@ kotlin {
     cocoapods {
         summary = "Some description for the Shared Module"
         homepage = "Link to the Shared Module homepage"
-        ios.deploymentTarget = "14.1"
+        ios.deploymentTarget = "16.1"
         podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "shared"
-            isStatic = false
+            isStatic = true
         }
     }
 
@@ -65,6 +66,10 @@ kotlin {
                 implementation(Ktor.Plugins.network)
                 implementation(Benasher.uuid)
                 implementation(Koin.core)
+                implementation(Jetbrains.Compose.ui)
+                implementation(Jetbrains.Compose.foundation)
+                implementation(Jetbrains.Compose.material3)
+                implementation(Jetbrains.Compose.runtime)
             }
         }
         val commonTest by getting {
@@ -122,8 +127,6 @@ kotlin {
             iosSimulatorArm64Test.dependsOn(this)
         }
     }
-
-    crashlyticsLinkerConfig()
 
     afterEvaluate {
         // Remove log pollution until Android support in KMP improves.
@@ -208,4 +211,9 @@ val increaseCodeVersion = tasks.register("increaseCodeVersion") {
             )
         }
     }
+}
+
+compose {
+    //necessary to use the androidx compose compiler for multiplatform in order to use kotlin 1.8
+    kotlinCompilerPlugin.set(AndroidX.Compose.compiler.toString())
 }

@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.logic.nativeutils
 
-import io.ktor.utils.io.core.*
+import io.ktor.utils.io.core.Closeable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 

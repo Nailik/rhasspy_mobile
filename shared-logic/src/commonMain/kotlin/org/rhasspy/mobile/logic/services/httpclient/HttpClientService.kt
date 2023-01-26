@@ -162,7 +162,7 @@ class HttpClientService : IService() {
      */
     suspend fun textToSpeech(text: String): HttpClientResult<ByteArray> {
         logger.d { "textToSpeech text: $text" }
-         return post(textToSpeechUrl) {
+        return post(textToSpeechUrl) {
             setBody(text)
         }
     }

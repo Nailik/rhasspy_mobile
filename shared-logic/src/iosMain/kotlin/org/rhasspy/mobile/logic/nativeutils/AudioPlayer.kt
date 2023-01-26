@@ -13,20 +13,6 @@ actual class AudioPlayer : Closeable {
     actual val isPlayingState: StateFlow<Boolean>
         get() = TODO("Not yet implemented")
 
-    /**
-     * play byte list
-     *
-     * on Finished is called when playing has been finished
-     * on Error is called when an playback error occurs
-     */
-    actual fun playData(
-        data: List<Byte>,
-        volume: Float,
-        audioOutputOption: AudioOutputOption,
-        onFinished: (() -> Unit)?,
-        onError: ((exception: Exception?) -> Unit)?
-    ) {
-    }
 
     /**
      * play file from resources
@@ -70,6 +56,21 @@ actual class AudioPlayer : Closeable {
 
     override fun close() {
         TODO("Not yet implemented")
+    }
+
+    /**
+     * play byte list
+     *
+     * on Finished is called when playing has been finished
+     * on Error is called when an playback error occurs
+     */
+    actual fun playData(
+        data: ByteArray,
+        volume: Float,
+        audioOutputOption: AudioOutputOption,
+        onFinished: (() -> Unit)?,
+        onError: ((exception: Exception?) -> Unit)?
+    ) {
     }
 
 }

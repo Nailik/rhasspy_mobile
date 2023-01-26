@@ -24,8 +24,8 @@
         android:icon="@drawable/ic_launcher"
         android:label="Rhasspy Mobile"
         android:largeHeap="true"
-        android:supportsRtl="true"
         android:localeConfig="@xml/locales_config"
+        android:supportsRtl="true"
         tools:ignore="Instantiatable,UnusedAttribute">
         <service
             android:name="org.rhasspy.mobile.logic.nativeutils.BackgroundService"
