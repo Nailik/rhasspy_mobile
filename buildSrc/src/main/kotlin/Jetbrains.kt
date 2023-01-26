@@ -1,5 +1,4 @@
 import de.fayard.refreshVersions.core.DependencyGroup
-import de.fayard.refreshVersions.core.DependencyNotationAndGroup
 import org.gradle.kotlin.dsl.IsNotADependency
 
 object Jetbrains : IsNotADependency {
@@ -11,10 +10,10 @@ object Jetbrains : IsNotADependency {
     }
 
     object Compose : DependencyGroup(group = "org.jetbrains.compose") {
-        val ui = module("$group.ui","ui")
-        val foundation = module("$group.foundation","foundation")
-        val material = module("$group.material","material")
-        val material3 = module("$group.material3","material3")
-        val runtime = module("$group.runtime","runtime")
+        val ui = module("$group.ui", "ui")
+        val foundation = module("$group.foundation", "foundation")
+        val material = module("$group.material", "material")
+        val material3 = module("$group.material3", "material3")
+        val runtime = module("$group.runtime", "runtime")
     }
 }

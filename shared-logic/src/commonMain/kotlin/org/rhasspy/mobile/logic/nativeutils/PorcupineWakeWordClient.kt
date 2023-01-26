@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.logic.nativeutils
 
-import io.ktor.utils.io.core.*
+import io.ktor.utils.io.core.Closeable
 import org.rhasspy.mobile.logic.services.wakeword.PorcupineError
 import org.rhasspy.mobile.logic.settings.option.PorcupineLanguageOption
 import org.rhasspy.mobile.logic.settings.porcupine.PorcupineCustomKeyword

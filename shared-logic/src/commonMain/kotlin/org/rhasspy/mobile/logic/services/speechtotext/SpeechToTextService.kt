@@ -140,6 +140,7 @@ open class SpeechToTextService : IService() {
             SpeechToTextOption.RemoteMQTT -> {
                 mqttClientService.asrAudioFrame(sessionId, data)
             }
+
             SpeechToTextOption.Disabled -> ServiceState.Disabled
         }
     }

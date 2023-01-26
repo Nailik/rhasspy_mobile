@@ -14,9 +14,10 @@ import org.rhasspy.mobile.logic.readOnly
 /**
  * to check microphone permission
  */
-actual object MicrophonePermission: KoinComponent {
+actual object MicrophonePermission : KoinComponent {
 
     private val context by inject<NativeApplication>()
+
     /**
      * to observe if microphone permission is granted
      */

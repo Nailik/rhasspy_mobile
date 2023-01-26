@@ -19,7 +19,7 @@ import org.rhasspy.mobile.logic.combineState
 /**
  * used to observe device settings for sound or notification volume
  */
-actual object DeviceVolume: KoinComponent {
+actual object DeviceVolume : KoinComponent {
 
     private val context = get<NativeApplication>()
 

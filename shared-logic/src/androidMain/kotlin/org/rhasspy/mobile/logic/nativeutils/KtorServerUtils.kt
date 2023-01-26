@@ -1,13 +1,19 @@
 package org.rhasspy.mobile.logic.nativeutils
 
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.plugins.callloging.*
-import io.ktor.server.plugins.compression.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.engine.ApplicationEngineEnvironment
+import io.ktor.server.engine.ApplicationEngineEnvironmentBuilder
+import io.ktor.server.engine.BaseApplicationEngine
+import io.ktor.server.engine.connector
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.engine.sslConnector
+import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.plugins.compression.Compression
+import io.ktor.server.plugins.compression.gzip
 import java.io.File
 import java.security.KeyStore
-import kotlin.text.toCharArray
 
 /**
  * adds call logging to web server

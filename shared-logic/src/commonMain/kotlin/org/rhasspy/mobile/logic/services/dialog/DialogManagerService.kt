@@ -402,7 +402,7 @@ class DialogManagerService : IService() {
                     mqttService.audioCaptured(id, speechToTextService.speechToTextAudioData)
                 }
 
-                if(params.option == DialogManagementOption.Local) {
+                if (params.option == DialogManagementOption.Local) {
                     //await for text recognition
                     timeoutJob = coroutineScope.launch {
                         delay(textAsrTimeout)

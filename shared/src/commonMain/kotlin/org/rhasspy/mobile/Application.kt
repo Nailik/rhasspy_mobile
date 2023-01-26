@@ -60,7 +60,7 @@ abstract class Application : NativeApplication(), KoinComponent {
             AppSetting
             ConfigurationSetting
 
-           setCrashlyticsCollectionEnabled(
+            setCrashlyticsCollectionEnabled(
                 if (!isDebug() && !isInstrumentedTest()) {
                     AppSetting.isCrashlyticsEnabled.value
                 } else false

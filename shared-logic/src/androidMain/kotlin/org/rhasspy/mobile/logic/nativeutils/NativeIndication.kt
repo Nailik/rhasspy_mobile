@@ -9,7 +9,7 @@ import org.koin.core.component.get
 /**
  * handles indication of wake up locally
  */
-actual object NativeIndication: KoinComponent {
+actual object NativeIndication : KoinComponent {
 
     private val logger = Logger.withTag("NativeIndication")
     private var wakeLock: PowerManager.WakeLock? = null
