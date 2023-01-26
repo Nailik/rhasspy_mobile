@@ -99,7 +99,7 @@ kotlin {
                 implementation(Ktor.Plugins.networkTlsCertificates)
             }
         }
-        val androidTest by getting {
+        val androidUnitTest by getting {
             dependsOn(commonMain)
             dependencies {
                 implementation(Kotlin.Test.junit)
@@ -212,4 +212,9 @@ val increaseCodeVersion = tasks.register("increaseCodeVersion") {
             )
         }
     }
+}
+
+compose {
+    //necessary to use the androidx compose compiler for multiplatform in order to use kotlin 1.8
+    kotlinCompilerPlugin.set(AndroidX.Compose.compiler.toString())
 }
