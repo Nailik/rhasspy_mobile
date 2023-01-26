@@ -3,7 +3,6 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.Framework.BitcodeEmbeddingMode
 
 plugins {
     kotlin("multiplatform")
@@ -67,11 +66,11 @@ kotlin {
                 implementation(Ktor.Plugins.network)
                 implementation(Benasher.uuid)
                 implementation(Koin.core)
-                implementation("org.jetbrains.compose.ui:ui:_")
-                implementation("org.jetbrains.compose.foundation:foundation:_")
-                implementation("org.jetbrains.compose.material:material:_")
-                implementation("org.jetbrains.compose.material3:material3:_")
-                implementation("org.jetbrains.compose.runtime:runtime:_")
+                implementation(Jetbrains.Compose.ui)
+                implementation(Jetbrains.Compose.foundation)
+                implementation(Jetbrains.Compose.material)
+                implementation(Jetbrains.Compose.material3)
+                implementation(Jetbrains.Compose.runtime)
             }
         }
         val commonTest by getting {
