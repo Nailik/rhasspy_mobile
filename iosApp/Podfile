@@ -1,5 +1,6 @@
 target 'iosApp' do
   use_frameworks!
-  platform :ios, '14.1'
+  platform :ios, '15.2'
+  pod 'Firebase/Crashlytics'
   pod 'shared', :path => '../shared'
 end

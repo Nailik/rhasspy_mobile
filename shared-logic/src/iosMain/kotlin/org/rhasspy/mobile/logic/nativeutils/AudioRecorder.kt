@@ -5,11 +5,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 actual class AudioRecorder : Closeable {
-    /**
-     * output data as flow
-     */
-    actual val output: Flow<List<Byte>>
-        get() = TODO("Not yet implemented")
 
     /**
      * max volume since start recording
@@ -35,6 +30,23 @@ actual class AudioRecorder : Closeable {
 
     override fun close() {
         TODO("Not yet implemented")
+    }
+
+    /**
+     * output data as flow
+     */
+    actual val output: Flow<ByteArray>
+        get() = TODO("Not yet implemented")
+
+    actual companion object {
+        /**
+         * use the settings of the audio recorder
+         * (samplingRate, channels, bitrate) and the audioSize
+         * to create wav header and add it in front of the given data
+         */
+        actual fun ByteArray.appendWavHeader(): ByteArray {
+            TODO("Not yet implemented")
+        }
     }
 
 }

@@ -44,7 +44,7 @@ abstract class Application : NativeApplication(), KoinComponent {
         }
 
         CoroutineScope(Dispatchers.Default).launch {
-            if (!isDebug() && !isInstrumentedTest()) {
+            if (!isDebug() && !isInstrumentedTest()) { //TODO must be done in platform specific code
                 Logger.addLogWriter(
                     CrashlyticsLogWriter(
                         minSeverity = Severity.Info,
@@ -60,7 +60,7 @@ abstract class Application : NativeApplication(), KoinComponent {
             AppSetting
             ConfigurationSetting
 
-            setCrashlyticsCollectionEnabled(
+           setCrashlyticsCollectionEnabled(
                 if (!isDebug() && !isInstrumentedTest()) {
                     AppSetting.isCrashlyticsEnabled.value
                 } else false

@@ -1,9 +1,9 @@
 @file:Suppress("UnstableApiUsage")
 
-import co.touchlab.faktory.crashlyticsLinkerConfig
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.Framework.BitcodeEmbeddingMode
 
 plugins {
     kotlin("multiplatform")
@@ -11,6 +11,8 @@ plugins {
     id("com.android.library")
     id("com.mikepenz.aboutlibraries.plugin")
     id("org.sonarqube")
+    id("org.jetbrains.compose")
+    id("co.touchlab.crashkios.crashlyticslink")
 }
 
 version = Version.toString()
@@ -26,11 +28,11 @@ kotlin {
     cocoapods {
         summary = "Some description for the Shared Module"
         homepage = "Link to the Shared Module homepage"
-        ios.deploymentTarget = "14.1"
+        ios.deploymentTarget = "15.2"
         podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "shared"
-            isStatic = false
+            isStatic = true
         }
     }
 
@@ -65,6 +67,11 @@ kotlin {
                 implementation(Ktor.Plugins.network)
                 implementation(Benasher.uuid)
                 implementation(Koin.core)
+                implementation("org.jetbrains.compose.ui:ui:_")
+                implementation("org.jetbrains.compose.foundation:foundation:_")
+                implementation("org.jetbrains.compose.material:material:_")
+                implementation("org.jetbrains.compose.material3:material3:_")
+                implementation("org.jetbrains.compose.runtime:runtime:_")
             }
         }
         val commonTest by getting {
@@ -93,7 +100,7 @@ kotlin {
                 implementation(Ktor.Plugins.networkTlsCertificates)
             }
         }
-        val androidUnitTest by getting {
+        val androidTest by getting {
             dependsOn(commonMain)
             dependencies {
                 implementation(Kotlin.Test.junit)
@@ -122,8 +129,6 @@ kotlin {
             iosSimulatorArm64Test.dependsOn(this)
         }
     }
-
-    crashlyticsLinkerConfig()
 
     afterEvaluate {
         // Remove log pollution until Android support in KMP improves.

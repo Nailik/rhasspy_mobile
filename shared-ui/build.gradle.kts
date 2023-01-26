@@ -4,27 +4,36 @@ plugins {
 }
 
 kotlin {
-    android()
-    
+    targets {
+        android()
+    }
+
     listOf(
         iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "shared-ui"
+            baseName = "shared_ui"
         }
     }
 
     sourceSets {
-        val commonMain by getting
+        val commonMain by getting {
+            dependencies {
+              /*  implementation("org.jetbrains.compose.ui:ui:_")
+                implementation("org.jetbrains.compose.foundation:foundation:_")
+                implementation("org.jetbrains.compose.material3:material3:_")
+                implementation("org.jetbrains.compose.runtime:runtime:_") */
+            }
+        }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
             }
         }
         val androidMain by getting
-        val androidUnitTest by getting
+        val androidTest by getting
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
