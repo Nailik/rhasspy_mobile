@@ -144,7 +144,7 @@ actual class AudioRecorder : KoinComponent, Closeable {
 
     actual companion object {
         private const val SAMPLING_RATE_IN_HZ = 16000
-        private const val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
+        private const val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_DEFAULT
         private const val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT
         private const val BIT_RATE = 16 //according to ENCODING_PCM_16BIT
         private const val BYTE_RATE = (BIT_RATE * SAMPLING_RATE_IN_HZ * CHANNEL_CONFIG) / 8

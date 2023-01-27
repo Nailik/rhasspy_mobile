@@ -15,6 +15,7 @@ import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingServiceParams
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.logic.services.localaudio.LocalAudioServiceParams
+import org.rhasspy.mobile.logic.services.mqtt.MqttServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.logic.settings.option.AudioOutputOption
 import org.rhasspy.mobile.logic.settings.option.AudioPlayingOption
@@ -42,10 +43,13 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
         MutableStateFlow(ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value)
     private val _audioPlayingHttpEndpoint =
         MutableStateFlow(ConfigurationSetting.audioPlayingHttpEndpoint.value)
+    private val _audioPlayingMqttSiteId =
+        MutableStateFlow(ConfigurationSetting.audioPlayingMqttSiteId.value)
 
     //unsaved ui data
     val audioPlayingOption = _audioPlayingOption.readOnly
     val audioOutputOption = _audioOutputOption.readOnly
+    val audioPlayingMqttSiteId = _audioPlayingMqttSiteId.readOnly
     val audioPlayingHttpEndpoint = combineState(
         _isUseCustomAudioPlayingHttpEndpoint,
         _audioPlayingHttpEndpoint
@@ -74,6 +78,10 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
         combineStateNotEquals(
             _audioPlayingHttpEndpoint,
             ConfigurationSetting.audioPlayingHttpEndpoint.data
+        ),
+        combineStateNotEquals(
+            _audioPlayingMqttSiteId,
+            ConfigurationSetting.audioPlayingMqttSiteId.data
         )
     )
 
@@ -101,6 +109,11 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
         _audioPlayingHttpEndpoint.value = endpoint
     }
 
+    //edit mqtt site id
+    fun changeAudioPlayingMqttSiteId(siteId: String) {
+        _audioPlayingMqttSiteId.value = siteId
+    }
+
     //show audio playing local settings
     fun isAudioPlayingLocalSettingsVisible(option: AudioPlayingOption): Boolean {
         return option == AudioPlayingOption.Local
@@ -109,6 +122,11 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
     //show audio playing http endpoint settings
     fun isAudioPlayingHttpEndpointSettingsVisible(option: AudioPlayingOption): Boolean {
         return option == AudioPlayingOption.RemoteHTTP
+    }
+
+    //show audio playing mqtt siteId settings
+    fun isAudioPlayingMqttSiteIdSettingsVisible(option: AudioPlayingOption): Boolean {
+        return option == AudioPlayingOption.RemoteMQTT
     }
 
 
@@ -121,6 +139,7 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
         ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value =
             _isUseCustomAudioPlayingHttpEndpoint.value
         ConfigurationSetting.audioPlayingHttpEndpoint.value = _audioPlayingHttpEndpoint.value
+        ConfigurationSetting.audioPlayingMqttSiteId.value = _audioPlayingMqttSiteId.value
     }
 
     /**
@@ -132,6 +151,7 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
         _isUseCustomAudioPlayingHttpEndpoint.value =
             ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value
         _audioPlayingHttpEndpoint.value = ConfigurationSetting.audioPlayingHttpEndpoint.value
+        _audioPlayingMqttSiteId.value = ConfigurationSetting.audioPlayingMqttSiteId.value
     }
 
     override fun initializeTestParams() {
@@ -156,6 +176,14 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
             parametersOf(
                 LocalAudioServiceParams(
                     audioOutputOption = _audioOutputOption.value
+                )
+            )
+        }
+
+        get<MqttServiceParams> {
+            parametersOf(
+                MqttServiceParams(
+                    audioPlayingMqttSiteId = _audioPlayingMqttSiteId.value
                 )
             )
         }

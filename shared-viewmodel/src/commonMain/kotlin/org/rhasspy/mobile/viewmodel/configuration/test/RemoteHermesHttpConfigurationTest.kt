@@ -27,7 +27,7 @@ class RemoteHermesHttpConfigurationTest : IConfigurationTest() {
         testScope.launch {
             val result = get<HttpClientService>().textToSpeech(text)
             if (result is HttpClientResult.Success) {
-                get<AudioPlayingService>().playAudio(result.data, false)
+                get<AudioPlayingService>().playAudio(result.data)
             }
         }
     }

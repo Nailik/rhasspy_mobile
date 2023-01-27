@@ -12,6 +12,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import dev.icerock.moko.resources.StringResource
 import org.koin.androidx.compose.get
+import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.*
@@ -241,7 +242,7 @@ private fun About() {
 
     SettingsListItem(
         text = MR.strings.aboutTitle,
-        secondaryText = "${translate(MR.strings.version)} ${"versionName"}",
+        secondaryText = "${translate(MR.strings.version)} ${BuildKonfig.versionName}",
         screen = SettingsScreenType.AboutSettings
     )
 

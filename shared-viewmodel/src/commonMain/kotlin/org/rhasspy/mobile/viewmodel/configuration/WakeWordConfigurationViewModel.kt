@@ -295,7 +295,9 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
 
     //restart wake word service after microphone permission was allowed
     fun microphonePermissionAllowed() {
-        save()
+        if (!hasUnsavedChanges.value) {
+            save()
+        }
     }
 
     /**
