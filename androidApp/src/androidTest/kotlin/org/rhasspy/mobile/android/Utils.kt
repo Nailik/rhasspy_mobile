@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.android
 
+import android.content.Context
 import android.os.Build
+import android.os.Environment
 import android.provider.Settings
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
@@ -21,7 +23,6 @@ import androidx.test.uiautomator.UiSelector
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
-import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 
 
@@ -31,6 +32,9 @@ fun SemanticsNodeInteraction.onSwitch(): SemanticsNodeInteraction {
 
 fun hasTestTag(testTag: Enum<*>): SemanticsMatcher =
     SemanticsMatcher.expectValue(SemanticsProperties.TestTag, testTag.name)
+
+fun hasCombinedTestTag(tag1: Enum<*>, tag2: Enum<*>): SemanticsMatcher =
+    SemanticsMatcher.expectValue(SemanticsProperties.TestTag, "${tag1.name}${tag2.name}")
 
 fun SemanticsNodeInteractionsProvider.onNodeWithTag(
     testTag: Enum<*>,
@@ -85,6 +89,9 @@ fun requestExternalStoragePermissions(device: UiDevice) {
 
         else -> return
     }
+    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).listFiles()?.forEach {
+        it.deleteRecursively()
+    }
 }
 
 fun requestMicrophonePermissions() {
@@ -94,22 +101,22 @@ fun requestMicrophonePermissions() {
     }
 }
 
-fun UiDevice.requestOverlayPermissions() {
+fun UiDevice.requestOverlayPermissions(context: Context) {
     try {
         with(PermissionRequester()) {
             try {
                 addPermissions("android.permission.SYSTEM_ALERT_WINDOW")
                 requestPermissions()
             } catch (e: Exception) {
-                requestOverlayPermissionLegacy()
+                requestOverlayPermissionLegacy(context)
             }
         }
     } catch (e: Exception) {
-        requestOverlayPermissionLegacy()
+        requestOverlayPermissionLegacy(context)
     }
-    if (!Settings.canDrawOverlays(Application.nativeInstance)) {
+    if (!Settings.canDrawOverlays(context)) {
         //will be called on android M (23)
-        requestOverlayPermissionLegacy()
+        requestOverlayPermissionLegacy(context)
     }
 }
 
@@ -147,4 +154,29 @@ fun ComposeContentTestRule.awaitSaved(viewModel: IConfigurationViewModel) {
         condition = { !viewModel.isLoading.value },
         timeoutMillis = 5000
     )
+}
+
+
+fun ComposeContentTestRule.waitUntilExists(
+    matcher: SemanticsMatcher,
+    timeoutMillis: Long = 1_000L
+) {
+    return this.waitUntilNodeCount(matcher, 1, timeoutMillis)
+}
+
+fun ComposeContentTestRule.waitUntilDoesNotExist(
+    matcher: SemanticsMatcher,
+    timeoutMillis: Long = 1_000L
+) {
+    return this.waitUntilNodeCount(matcher, 0, timeoutMillis)
+}
+
+fun ComposeContentTestRule.waitUntilNodeCount(
+    matcher: SemanticsMatcher,
+    count: Int,
+    timeoutMillis: Long = 1_000L
+) {
+    this.waitUntil(timeoutMillis) {
+        this.onAllNodes(matcher).fetchSemanticsNodes().size == count
+    }
 }

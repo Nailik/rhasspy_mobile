@@ -24,9 +24,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.AppActivity
-import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.android.main.MainNavigation
+import org.rhasspy.mobile.logic.nativeutils.AppActivity
+import org.rhasspy.mobile.logic.nativeutils.NativeApplication
 import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
 
 
@@ -36,20 +36,21 @@ import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
 @NoLiveLiterals
 class MainActivity : KoinComponent, AppActivity() {
 
-    companion object {
+    companion object : KoinComponent {
         var isFirstLaunch = false
             private set
 
         fun startRecordingAction() {
-            AndroidApplication.nativeInstance.currentActivity?.also {
+            val application = get<NativeApplication>()
+            application.currentActivity?.also {
                 it.startActivity(
-                    Intent(AndroidApplication.nativeInstance, MainActivity::class.java).apply {
+                    Intent(application, MainActivity::class.java).apply {
                         putExtra(IntentAction.StartRecording.param, true)
                     }
                 )
             } ?: run {
-                AndroidApplication.nativeInstance.startActivity(
-                    Intent(AndroidApplication.nativeInstance, MainActivity::class.java).apply {
+                application.startActivity(
+                    Intent(application, MainActivity::class.java).apply {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         putExtra(IntentAction.StartRecording.param, true)
                     }
@@ -66,7 +67,7 @@ class MainActivity : KoinComponent, AppActivity() {
 
         installSplashScreen().setKeepOnScreenCondition {
             //splash screen should be visible until the app has started
-            !Application.instance.isHasStarted.value
+            !get<NativeApplication>().isHasStarted.value
         }
         super.onCreate(savedInstanceState)
 
@@ -94,7 +95,7 @@ class MainActivity : KoinComponent, AppActivity() {
         }
 
         CoroutineScope(Dispatchers.Default).launch {
-            Application.nativeInstance.updateWidgetNative()
+            get<NativeApplication>().updateWidgetNative()
         }
     }
 }

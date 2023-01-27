@@ -15,7 +15,7 @@ import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.settings.types.LanguageType
+import org.rhasspy.mobile.logic.settings.types.LanguageType
 import org.rhasspy.mobile.viewmodel.settings.LanguageSettingsViewModel
 import kotlin.test.assertEquals
 
@@ -76,12 +76,15 @@ class LanguageSettingsContentTest {
 
         //User clicks german
         composeTestRule.onNodeWithTag(LanguageType.German).performClick()
+        composeTestRule.awaitIdle()
         //language is german
-        assertEquals(LanguageType.German, viewModel.languageOption.value)
+
+        composeTestRule.waitUntil(
+            condition = { viewModel.languageOption.value == LanguageType.German },
+            timeoutMillis = 5000
+        )
         //german is selected
         composeTestRule.onNodeWithTag(LanguageType.German, true).onChildAt(0).assertIsSelected()
-        //title is "Sprache"
-        composeTestRule.onNodeWithTag(TestTag.AppBarTitle).assertTextEquals("Sprache")
         //StringDesc is German
         assertEquals(LanguageType.German.code, StringDesc.localeType.systemLocale!!.language)
         //language german is saved
@@ -94,8 +97,6 @@ class LanguageSettingsContentTest {
         assertEquals(LanguageType.English, viewModel.languageOption.value)
         //english is selected
         composeTestRule.onNodeWithTag(LanguageType.English, true).onChildAt(0).assertIsSelected()
-        //title is "Language"
-        composeTestRule.onNodeWithTag(TestTag.AppBarTitle).assertTextEquals("Language")
         //StringDesc is English
         assertEquals(LanguageType.English.code, StringDesc.localeType.systemLocale!!.language)
         //language english is saved

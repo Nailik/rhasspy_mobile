@@ -18,7 +18,7 @@ import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithCombinedTag
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.settings.option.PorcupineKeywordOption
+import org.rhasspy.mobile.logic.settings.option.PorcupineKeywordOption
 import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

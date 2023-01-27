@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.nativeutils.MicrophonePermission
+import org.rhasspy.mobile.logic.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 
 /**

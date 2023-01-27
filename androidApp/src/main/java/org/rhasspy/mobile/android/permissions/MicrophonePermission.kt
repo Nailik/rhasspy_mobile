@@ -30,7 +30,7 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.elements.translate
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.nativeutils.MicrophonePermission
+import org.rhasspy.mobile.logic.nativeutils.MicrophonePermission
 
 /**
  * Wraps a composable that requires the Microphone Permission before click

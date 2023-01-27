@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.android.content.SecondaryContent
 import org.rhasspy.mobile.android.content.list.RadioButtonListItem
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.settings.option.IOption
+import org.rhasspy.mobile.logic.settings.option.IOption
 
 @Composable
 fun <E : IOption<*>> RadioButtonsEnumSelectionList(
