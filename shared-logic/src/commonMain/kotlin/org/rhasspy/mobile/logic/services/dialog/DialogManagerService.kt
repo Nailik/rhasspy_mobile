@@ -21,9 +21,11 @@ import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextServiceParams
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
+import org.rhasspy.mobile.logic.services.wakeword.WakeWordServiceParams
 import org.rhasspy.mobile.logic.settings.option.DialogManagementOption
 import org.rhasspy.mobile.logic.settings.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.settings.option.SpeechToTextOption
+import org.rhasspy.mobile.logic.settings.option.WakeWordOption
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
@@ -446,6 +448,12 @@ class DialogManagerService : IService() {
 
                         //exceptions where calls form mqtt are ok
                         val doNotIgnore = when (action) {
+                            is DialogAction.WakeWordDetected -> {
+                                val wakeWordOption = get<WakeWordServiceParams>().wakeWordOption
+                                return wakeWordOption == WakeWordOption.MQTT || wakeWordOption == WakeWordOption.Udp
+
+                            }
+
                             is DialogAction.AsrError,
                             is DialogAction.AsrTextCaptured -> get<SpeechToTextServiceParams>().speechToTextOption == SpeechToTextOption.RemoteMQTT
 
