@@ -11,10 +11,9 @@ import org.junit.runner.RunWith
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
-import org.rhasspy.mobile.services.indication.IndicationService
-import org.rhasspy.mobile.services.indication.IndicationState
-import org.rhasspy.mobile.settings.AppSetting
-
+import org.rhasspy.mobile.logic.services.indication.IndicationService
+import org.rhasspy.mobile.logic.services.indication.IndicationState
+import org.rhasspy.mobile.logic.settings.AppSetting
 
 @RunWith(AndroidJUnit4::class)
 class IndicationOverlayTest : KoinComponent {
@@ -25,7 +24,7 @@ class IndicationOverlayTest : KoinComponent {
 
     @Before
     fun setUp() {
-        device.requestOverlayPermissions()
+        device.requestOverlayPermissions(composeTestRule.activity)
         AppSetting.isWakeWordLightIndicationEnabled.value = true
     }
 
@@ -42,7 +41,6 @@ class IndicationOverlayTest : KoinComponent {
             condition = { get<IndicationService>().indicationState.value != IndicationState.Idle },
             timeoutMillis = 5000
         )
-        composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithCombinedTag(TestTag.Indication, TestTag.Overlay).assertExists()
+        composeTestRule.waitUntilExists(hasCombinedTestTag(TestTag.Indication, TestTag.Overlay))
     }
 }

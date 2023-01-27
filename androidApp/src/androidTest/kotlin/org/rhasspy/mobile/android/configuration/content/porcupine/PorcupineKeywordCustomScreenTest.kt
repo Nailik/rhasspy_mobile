@@ -18,7 +18,8 @@ import kotlinx.coroutines.withContext
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.rhasspy.mobile.Application
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
@@ -26,11 +27,13 @@ import org.rhasspy.mobile.android.onNodeWithCombinedTag
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.requestExternalStoragePermissions
 import org.rhasspy.mobile.android.test.R
+import org.rhasspy.mobile.logic.nativeutils.NativeApplication
 import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 import java.io.File
 import kotlin.test.assertTrue
 
-class PorcupineKeywordCustomScreenTest {
+
+class PorcupineKeywordCustomScreenTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
@@ -122,7 +125,7 @@ class PorcupineKeywordCustomScreenTest {
         //user clicks back twice
         device.pressBack()
 
-        if (Application.nativeInstance.isAppInBackground.value) {
+        if (get<NativeApplication>().isAppInBackground.value) {
             device.pressBack()
         }
         //app is opened with current page (custom)

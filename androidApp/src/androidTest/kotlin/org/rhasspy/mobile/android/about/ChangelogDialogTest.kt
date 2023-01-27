@@ -20,7 +20,7 @@ class ChangelogDialogTest {
     fun setUp() {
 
         composeTestRule.setContent {
-            ChangelogDialogButton("")
+            ChangelogDialogButton()
         }
 
     }

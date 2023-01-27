@@ -140,7 +140,7 @@ fun TextFieldListItem(
             keyboardOptions = if (isLastItem) {
                 keyboardOptions
             } else {
-                KeyboardOptions.Default.copy(
+                keyboardOptions.copy(
                     imeAction = ImeAction.Next,
                     autoCorrect = autoCorrect
                 )

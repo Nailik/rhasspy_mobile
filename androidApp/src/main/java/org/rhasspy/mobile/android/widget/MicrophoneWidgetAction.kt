@@ -7,7 +7,7 @@ import androidx.glance.appwidget.action.ActionCallback
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.MainActivity
-import org.rhasspy.mobile.nativeutils.MicrophonePermission
+import org.rhasspy.mobile.logic.nativeutils.MicrophonePermission
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 
 /**

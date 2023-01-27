@@ -15,7 +15,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.settings.option.DialogManagementOption
+import org.rhasspy.mobile.logic.settings.option.DialogManagementOption
 import org.rhasspy.mobile.viewmodel.configuration.DialogManagementConfigurationViewModel
 import kotlin.test.assertEquals
 

@@ -3,6 +3,7 @@ package org.rhasspy.mobile.android.uiservices
 import android.content.Context
 import android.graphics.PixelFormat
 import android.os.Build
+import android.os.Looper
 import android.view.Gravity
 import android.view.WindowManager
 import androidx.compose.runtime.collectAsState
@@ -19,9 +20,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.android.theme.AppTheme
-import org.rhasspy.mobile.nativeutils.OverlayPermission
+import org.rhasspy.mobile.logic.nativeutils.NativeApplication
+import org.rhasspy.mobile.logic.nativeutils.OverlayPermission
 import org.rhasspy.mobile.viewmodel.overlay.IndicationOverlayViewModel
 
 /**
@@ -35,20 +36,19 @@ object IndicationOverlay : KoinComponent {
     //stores old value to only react to changes
     private var showVisualIndicationOldValue = false
 
-    private var mainScope = CoroutineScope(Dispatchers.Main)
     private var viewModel = get<IndicationOverlayViewModel>()
 
     private var job: Job? = null
 
     private val overlayWindowManager by lazy {
-        AndroidApplication.nativeInstance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        get<NativeApplication>().getSystemService(Context.WINDOW_SERVICE) as WindowManager
     }
 
     /**
      * view that's displayed when a wake word is detected
      */
     private fun getView(): ComposeView {
-        return ComposeView(AndroidApplication.nativeInstance).apply {
+        return ComposeView(get<NativeApplication>()).apply {
             setContent {
                 AppTheme {
                     Indication(viewModel.indicationState.collectAsState().value)
@@ -107,16 +107,19 @@ object IndicationOverlay : KoinComponent {
                     if (it != showVisualIndicationOldValue) {
                         if (it) {
                             if (OverlayPermission.isGranted()) {
-                                mainScope.launch {
+                                if (Looper.myLooper() == null) {
+                                    Looper.prepare()
+                                }
+                                launch(Dispatchers.Main) {
                                     overlayWindowManager.addView(view, mParams)
-                                    //has to be called from main thread
                                     lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
                                 }
                             }
                         } else {
-                            mainScope.launch {
-                                overlayWindowManager.removeView(view)
-                                //has to be called from main thread
+                            launch(Dispatchers.Main) {
+                                if (view.parent != null) {
+                                    overlayWindowManager.removeView(view)
+                                }
                                 lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
                             }
                         }

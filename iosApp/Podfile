@@ -1,5 +1,6 @@
 target 'iosApp' do
   use_frameworks!
-  platform :ios, '14.1'
-  pod 'MultiPlatformLibrary', :path => '../MultiPlatformLibrary'
+  platform :ios, '16.1'
+  pod 'Firebase/Crashlytics'
+  pod 'shared', :path => '../shared'
 end

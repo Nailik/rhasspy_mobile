@@ -21,7 +21,7 @@ import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.onSwitch
-import org.rhasspy.mobile.settings.option.SpeechToTextOption
+import org.rhasspy.mobile.logic.settings.option.SpeechToTextOption
 import org.rhasspy.mobile.viewmodel.configuration.SpeechToTextConfigurationViewModel
 import kotlin.test.assertEquals
 

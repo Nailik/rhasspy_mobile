@@ -36,7 +36,7 @@ import org.rhasspy.mobile.android.theme.assistant_color_four
 import org.rhasspy.mobile.android.theme.assistant_color_one
 import org.rhasspy.mobile.android.theme.assistant_color_three
 import org.rhasspy.mobile.android.theme.assistant_color_two
-import org.rhasspy.mobile.services.indication.IndicationState
+import org.rhasspy.mobile.logic.services.indication.IndicationState
 import kotlin.math.abs
 
 /**

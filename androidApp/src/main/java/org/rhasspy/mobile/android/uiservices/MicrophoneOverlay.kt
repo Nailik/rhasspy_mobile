@@ -31,7 +31,8 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.MicrophoneFab
 import org.rhasspy.mobile.android.theme.AppTheme
-import org.rhasspy.mobile.nativeutils.MicrophonePermission
+import org.rhasspy.mobile.logic.nativeutils.MicrophonePermission
+import org.rhasspy.mobile.logic.nativeutils.NativeApplication
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.overlay.MicrophoneOverlayViewModel
 
@@ -48,7 +49,7 @@ object MicrophoneOverlay : KoinComponent {
     private var job: Job? = null
 
     private val overlayWindowManager by lazy {
-        AndroidApplication.nativeInstance.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        get<NativeApplication>().getSystemService(Context.WINDOW_SERVICE) as WindowManager
     }
 
     private fun onClick() {
@@ -63,7 +64,7 @@ object MicrophoneOverlay : KoinComponent {
      * view that's displayed as overlay to start wake word detection
      */
     private fun getView(): ComposeView {
-        return ComposeView(AndroidApplication.nativeInstance).apply {
+        return ComposeView(get<NativeApplication>()).apply {
             setContent {
                 AppTheme {
                     val size by viewModel.microphoneOverlaySize.collectAsState()
@@ -155,18 +156,16 @@ object MicrophoneOverlay : KoinComponent {
                         if (Looper.myLooper() == null) {
                             Looper.prepare()
                         }
-                        CoroutineScope(Dispatchers.Main).launch {
+                        launch(Dispatchers.Main) {
                             overlayWindowManager.addView(view, mParams)
                             lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
                         }
                     } else {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            try {
+                        launch(Dispatchers.Main) {
+                            if (view.parent != null) {
                                 overlayWindowManager.removeView(view)
-                                lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-                            } catch (exception: Exception) {
-                                //remove view may throw not attached to window manager
                             }
+                            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
                         }
                     }
                 }
