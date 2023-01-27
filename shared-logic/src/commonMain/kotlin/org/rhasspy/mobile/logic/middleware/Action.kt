@@ -4,7 +4,17 @@ sealed class Action {
 
     object PlayStopRecording : Action()
 
-    data class WakeWordError(val description: String) : Action()
+    data class WakeWordError(val description: String) : Action() {
+        override fun toString(): String {
+            return "${super.toString()} description: $description"
+        }
+    }
+
+    class SayText(val text: String) : Action() {
+        override fun toString(): String {
+            return "${super.toString()} text: $text"
+        }
+    }
 
     sealed class AppSettingsAction : Action() {
         class AudioOutputToggle(val enabled: Boolean) : AppSettingsAction()

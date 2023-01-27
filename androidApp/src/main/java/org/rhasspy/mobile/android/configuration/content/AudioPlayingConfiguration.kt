@@ -56,6 +56,11 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
                 if (viewModel.isAudioPlayingHttpEndpointSettingsVisible(it)) {
                     HttpEndpointConfigurationContent(viewModel)
                 }
+
+                if (viewModel.isAudioPlayingMqttSiteIdSettingsVisible(it)) {
+                    MqttSiteIdConfigurationContent(viewModel)
+                }
+
             }
         }
     }
@@ -106,6 +111,28 @@ private fun HttpEndpointConfigurationContent(viewModel: AudioPlayingConfiguratio
             value = viewModel.audioPlayingHttpEndpoint.collectAsState().value,
             onValueChange = viewModel::changeAudioPlayingHttpEndpoint,
             label = translate(MR.strings.audioOutputURL, HttpClientPath.PlayWav.path)
+        )
+
+    }
+
+}
+
+
+/**
+ * show mqtt site id options
+ */
+@Composable
+private fun MqttSiteIdConfigurationContent(viewModel: AudioPlayingConfigurationViewModel) {
+
+    //visibility of endpoint option
+    Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
+
+        //http endpoint input field
+        TextFieldListItem(
+            modifier = Modifier.testTag(TestTag.ConfigurationSiteId),
+            value = viewModel.audioPlayingMqttSiteId.collectAsState().value,
+            onValueChange = viewModel::changeAudioPlayingMqttSiteId,
+            label = translate(MR.strings.siteId)
         )
 
     }

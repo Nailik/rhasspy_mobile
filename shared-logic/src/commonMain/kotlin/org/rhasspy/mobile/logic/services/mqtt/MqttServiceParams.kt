@@ -16,5 +16,6 @@ data class MqttServiceParams(
         connectionTimeout = ConfigurationSetting.mqttConnectionTimeout.value,
         keepAliveInterval = ConfigurationSetting.mqttKeepAliveInterval.value
     ),
-    val isUseSpeechToTextMqttSilenceDetection: Boolean = ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value
+    val isUseSpeechToTextMqttSilenceDetection: Boolean = ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value,
+    val audioPlayingMqttSiteId: String = ConfigurationSetting.audioPlayingMqttSiteId.value
 )

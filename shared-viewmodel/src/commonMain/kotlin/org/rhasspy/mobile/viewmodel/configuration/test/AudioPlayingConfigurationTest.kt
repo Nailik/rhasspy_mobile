@@ -26,7 +26,7 @@ class AudioPlayingConfigurationTest : IConfigurationTest() {
                     .distinctUntilChanged()
                     .first { it }
             }
-            get<AudioPlayingService>().playAudio(FileUtils.readDataFromFile(MR.files.etc_wav_beep_hi), false)
+            get<AudioPlayingService>().playAudio(FileUtils.readDataFromFile(MR.files.etc_wav_beep_hi))
         }
     }
 

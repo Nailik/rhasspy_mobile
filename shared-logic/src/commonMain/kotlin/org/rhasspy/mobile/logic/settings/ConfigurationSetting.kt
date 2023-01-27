@@ -79,6 +79,7 @@ object ConfigurationSetting {
     val audioOutputOption = ISetting(SettingsEnum.AudioOutputOption, AudioOutputOption.Sound)
     val isUseCustomAudioPlayingHttpEndpoint = ISetting(SettingsEnum.CustomAudioPlayingHttpEndpoint, false)
     val audioPlayingHttpEndpoint = ISetting(SettingsEnum.AudioPlayingHttpEndpoint, "")
+    val audioPlayingMqttSiteId = ISetting(SettingsEnum.AudioPlayingMqttSiteId, "")
 
     val speechToTextOption = ISetting(SettingsEnum.SpeechToTextOption, SpeechToTextOption.Disabled)
     val isUseCustomSpeechToTextHttpEndpoint = ISetting(SettingsEnum.CustomSpeechToTextEndpoint, false)

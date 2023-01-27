@@ -348,7 +348,7 @@ class WebServerService : IService() {
      * just like using say in the ui start screen but remote
      */
     private suspend fun say(call: ApplicationCall): WebServerResult {
-        serviceMiddleware.action(DialogAction.PlayAudio(Source.HttpApi, call.receive()))
+        serviceMiddleware.action(Action.SayText(call.receive()))
         return WebServerResult.Ok
     }
 

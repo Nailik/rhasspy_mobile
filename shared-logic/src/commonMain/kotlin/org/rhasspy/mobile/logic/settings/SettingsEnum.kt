@@ -94,6 +94,7 @@ enum class SettingsEnum {
     AudioOutputOption,
     CustomAudioPlayingHttpEndpoint,
     AudioPlayingHttpEndpoint,
+    AudioPlayingMqttSiteId,
 
     DialogManagementOption,
     DialogManagementLocalAsrTimeout,

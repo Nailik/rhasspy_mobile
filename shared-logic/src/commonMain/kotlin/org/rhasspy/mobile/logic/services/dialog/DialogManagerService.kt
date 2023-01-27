@@ -237,7 +237,7 @@ class DialogManagerService : IService() {
 
         indicationService.onPlayAudio()
         audioPlayingService.stopPlayAudio()
-        audioPlayingService.playAudio(action.byteArray, action.source is Source.Mqtt)
+        audioPlayingService.playAudio(action.byteArray)
 
     }
 
@@ -451,7 +451,6 @@ class DialogManagerService : IService() {
                             is DialogAction.WakeWordDetected -> {
                                 val wakeWordOption = get<WakeWordServiceParams>().wakeWordOption
                                 return wakeWordOption == WakeWordOption.MQTT || wakeWordOption == WakeWordOption.Udp
-
                             }
 
                             is DialogAction.AsrError,

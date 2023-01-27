@@ -740,8 +740,7 @@ class MqttService : IService() {
         serviceMiddleware.action(
             DialogAction.IntentRecognitionResult(
                 source = jsonObject.getSource(),
-                intentName = jsonObject[MqttParams.Intent.value]?.jsonObject?.get(MqttParams.IntentName.value)?.jsonPrimitive?.content
-                    ?: "",
+                intentName = jsonObject[MqttParams.Intent.value]?.jsonObject?.get(MqttParams.IntentName.value)?.jsonPrimitive?.content ?: "",
                 intent = jsonObject.toString()
             )
         )
@@ -830,10 +829,9 @@ class MqttService : IService() {
      * hermes/audioServer/<siteId>/playFinished (JSON)
      *
      */
-    suspend fun playBytesRemote(data: ByteArray) =
-        publishMessage(
+    suspend fun playBytesRemote(data: ByteArray) = publishMessage(
             MqttTopicsPublish.AudioOutputPlayBytes.topic
-                .set(MqttTopicPlaceholder.SiteId, params.siteId)
+                .set(MqttTopicPlaceholder.SiteId, params.audioPlayingMqttSiteId)
                 .set(MqttTopicPlaceholder.RequestId, uuid4().toString()),
             MqttMessage(data)
         )

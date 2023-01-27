@@ -7,6 +7,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.logic.combineState
 import org.rhasspy.mobile.logic.readOnly
@@ -16,6 +17,7 @@ import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.settings.AppSettingsService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
+import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
 import org.rhasspy.mobile.logic.settings.AppSetting
 
 /**
@@ -85,6 +87,10 @@ class ServiceMiddleware : KoinComponent, Closeable {
                             action.enabled
                         )
                     }
+                }
+
+                is Action.SayText -> {
+                    get<TextToSpeechService>().textToSpeech("", action.text)
                 }
 
                 is Action.DialogAction -> {

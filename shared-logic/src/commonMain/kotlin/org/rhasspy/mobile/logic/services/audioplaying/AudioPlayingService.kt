@@ -51,7 +51,7 @@ open class AudioPlayingService : IService() {
      * MQTT:
      * - calls default site to play audio
      */
-    suspend fun playAudio(byteArray: ByteArray, fromMqtt: Boolean) {
+    suspend fun playAudio(byteArray: ByteArray) {
         logger.d { "playAudio dataSize: ${byteArray.size}" }
         when (params.audioPlayingOption) {
             AudioPlayingOption.Local -> {
@@ -65,12 +65,8 @@ open class AudioPlayingService : IService() {
             }
 
             AudioPlayingOption.RemoteMQTT -> {
-                _serviceState.value = if (!fromMqtt) {
-                    mqttClientService.playBytesRemote(byteArray)
-                } else ServiceState.Success
-                if (fromMqtt) {
-                    serviceMiddleware.action(DialogAction.PlayFinished(Source.Local))
-                }
+                _serviceState.value = mqttClientService.playBytesRemote(byteArray)
+                serviceMiddleware.action(DialogAction.PlayFinished(Source.Local))
             }
 
             AudioPlayingOption.Disabled -> {}
