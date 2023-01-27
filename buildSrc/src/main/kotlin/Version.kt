@@ -2,7 +2,7 @@ object Version {
 
     const val major = 0
     const val minor = 4
-    const val patch = 6
+    const val patch = 7
     const val code = 57
 
     override fun toString(): String {
