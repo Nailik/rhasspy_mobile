@@ -45,6 +45,10 @@ actual class AudioPlayer : Closeable, KoinComponent {
         onError: ((exception: Exception?) -> Unit)?
     ) {
         val soundFile = File(context.cacheDir, "/playData.wav")
+        if(!soundFile.exists()) {
+            soundFile.createNewFile()
+        }
+        soundFile.writeBytes(data)
         playAudio(Uri.fromFile(soundFile), MutableStateFlow(volume), audioOutputOption, onFinished, onError)
     }
 
