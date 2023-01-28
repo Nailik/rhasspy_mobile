@@ -830,11 +830,11 @@ class MqttService : IService() {
      *
      */
     suspend fun playBytesRemote(data: ByteArray) = publishMessage(
-            MqttTopicsPublish.AudioOutputPlayBytes.topic
-                .set(MqttTopicPlaceholder.SiteId, params.audioPlayingMqttSiteId)
-                .set(MqttTopicPlaceholder.RequestId, uuid4().toString()),
-            MqttMessage(data)
-        )
+        MqttTopicsPublish.AudioOutputPlayBytes.topic
+            .set(MqttTopicPlaceholder.SiteId, params.audioPlayingMqttSiteId)
+            .set(MqttTopicPlaceholder.RequestId, uuid4().toString()),
+        MqttMessage(data)
+    )
 
     /**
      * hermes/audioServer/toggleOff (JSON)
