@@ -1,7 +1,6 @@
 import SwiftUI
 import UIKit
 import shared
-import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

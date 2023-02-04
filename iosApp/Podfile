@@ -3,4 +3,5 @@ target 'iosApp' do
   platform :ios, '16.1'
   pod 'Firebase/Crashlytics'
   pod 'shared', :path => '../shared'
+  pod 'shared_ui', :path => '../shared-ui'
 end
