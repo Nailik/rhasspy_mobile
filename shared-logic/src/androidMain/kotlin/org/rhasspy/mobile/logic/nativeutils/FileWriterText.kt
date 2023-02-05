@@ -4,6 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import androidx.core.content.FileProvider
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import org.koin.core.component.get
 import java.io.File
 
@@ -50,8 +53,10 @@ actual class FileWriterText actual constructor(filename: String, actual val maxF
     /**
      * read all file contents
      */
-    actual fun getFileContent() = file.readText()
-
+    @OptIn(ExperimentalSerializationApi::class)
+    actual inline fun <reified T> decodeFromFile(): T {
+        return Json.decodeFromStream(file.inputStream())
+    }
 
     /**
      * open share file system dialog

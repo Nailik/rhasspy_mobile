@@ -22,7 +22,7 @@ expect class FileWriterText(filename: String, maxFileSize: Long? = null) : FileW
     /**
      * read all file contents
      */
-    fun getFileContent(): String
+    inline fun <reified T> decodeFromFile(): T
 
     /**
      * open share file system dialog

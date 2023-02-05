@@ -13,7 +13,6 @@ import androidx.activity.result.contract.ActivityResultContracts.*
 import androidx.appcompat.app.AppCompatActivity
 import co.touchlab.kermit.Logger
 
-
 abstract class AppActivity : AppCompatActivity() {
     val logger = Logger.withTag("AppActivity")
 

@@ -12,7 +12,7 @@ actual open class FileWriter actual constructor(filename: String) : KoinComponen
     private val context = get<NativeApplication>()
 
     //file to write to
-    protected open val file = File(context.filesDir, filename)
+    open val file = File(context.filesDir, filename)
 
     /**
      * clears file content
