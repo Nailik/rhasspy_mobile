@@ -189,7 +189,7 @@ actual object FileUtils : KoinComponent {
     /**
      *  rename file while it already exists
      */
-    fun renameFileWhileExists(dir: File, folder: String, file: String): String {
+    private fun renameFileWhileExists(dir: File, folder: String, file: String): String {
         var fileName = file
         var index = 0
         while (File(dir, "$folder/$fileName").exists()) {
