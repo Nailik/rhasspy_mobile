@@ -10,7 +10,6 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.rhasspy.mobile.logic.nativeutils.FileWriterText
@@ -66,7 +65,7 @@ object FileLogger : LogWriter() {
      */
     fun getLines(): List<LogElement> {
         return try {
-            Json.decodeFromString("[${fileWriterText.getFileContent()}]")
+            fileWriterText.decodeFromFile()
         } catch (exception: Exception) {
             fileWriterText.clearFile()
             listOf()
