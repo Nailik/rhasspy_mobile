@@ -47,6 +47,7 @@ abstract class AppActivity : AppCompatActivity() {
         resultCallback = onResult
 
         if (!tryOpenDocument(types)) {
+            logger.a { "tryOpenDocument didn't work" }
             tryGetContent(types)
         }
     }
