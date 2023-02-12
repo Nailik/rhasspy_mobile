@@ -4,45 +4,45 @@
     <string name="home">Home</string>
     <string name="configuration">Konfiguration</string>
     <string name="settings">Einstellungen</string>
-    <string name="siteId">Site ID</string>
+    <string name="siteId">Site-ID</string>
     <string name="mqtt">MQTT</string>
     <string name="externalMQTT">Externes MQTT</string>
-    <string name="notConnected">Nicht Verbunden</string>
+    <string name="notConnected">Nicht verbunden</string>
     <string name="connected">Verbunden</string>
     <string name="on">An</string>
     <string name="off">Aus</string>
     <string name="host">Host</string>
     <string name="port">Port</string>
-    <string name="baseHost">Basis Host</string>
+    <string name="baseHost">Basis-Host</string>
     <string name="userName">Benutzername</string>
     <string name="password">Passwort</string>
     <string name="audioRecording">Audioaufnahme</string>
-    <string name="udpAudioOutput">UDP Audio (Ausgabe)</string>
-    <string name="udpAudioOutputOff">UDP Audio (Aus)</string>
-    <string name="udpAudioOutputOn">UDP Audio (An)</string>
+    <string name="udpAudioOutput">UDP-Audio (Ausgabe)</string>
+    <string name="udpAudioOutputOff">UDP-Audio (aus)</string>
+    <string name="udpAudioOutputOn">UDP-Audio (an)</string>
     <string name="udpAudioOutputDetail">(außerhalb von ASR)</string>
-    <string name="wakeWord">Wake Word</string>
+    <string name="wakeWord">Aktivierungswort</string>
     <string name="sensitivity">Empfindlichkeit</string>
-    <string name="speechToText">Sprache zu Text</string>
-    <string name="speechToTextURL">Sprache zu Text URL (%s)</string>
-    <string name="intentRecognition">Intent Erkennung</string>
-    <string name="rhasspyTextToIntentURL">Rhasspy Text-zu-Intent URL (%s)</string>
-    <string name="textToSpeech">Text to Speech</string>
-    <string name="rhasspyTextToSpeechURL">Rhasspy Text-zu-Sprache URL (%s)</string>
-    <string name="audioOutputURL">Audio Ausgabe URL (%s)</string>
+    <string name="speechToText">Sprache-zu-Text</string>
+    <string name="speechToTextURL">Sprache-zu-Text-URL (%s)</string>
+    <string name="intentRecognition">Intenterkennung</string>
+    <string name="rhasspyTextToIntentURL">Rhasspy-Text-zu-Intent-URL (%s)</string>
+    <string name="textToSpeech">Text-zu-Sprache</string>
+    <string name="rhasspyTextToSpeechURL">Rhasspy-Text-zu-Sprache-URL (%s)</string>
+    <string name="audioOutputURL">Audioausgabe-URL (%s)</string>
     <string name="audioPlaying">Audiowiedergabe</string>
-    <string name="dialogManagement">Dialog-Verwaltung</string>
-    <string name="intentHandling">Intent Handling</string>
+    <string name="dialogManagement">Dialogverwaltung</string>
+    <string name="intentHandling">Intent-Behandlung</string>
     <string name="remoteURL">Entfernte URL</string>
     <string name="checkConnection">Verbindung prüfen</string>
     <string name="localPorcupine">Porcupine (lokal)</string>
     <string name="local">Lokal</string>
     <string name="remote">Ferngesteuert</string>
     <string name="disabled">Deaktiviert</string>
-    <string name="remoteMQTT">Entfernte Hermes MQTT</string>
+    <string name="remoteMQTT">Entferntes Hermes-MQTT</string>
     <string name="remoteHTTP">Ferngesteuertes HTTP</string>
     <string name="withRecognition">Mit Erkennung</string>
-    <string name="homeAssistant">Home Assistant</string>
+    <string name="homeAssistant">Home-Assistant</string>
     <string name="hassURL">Hass URL</string>
     <string name="wakeUp">Aufwachen</string>
     <string name="playRecording">Aufnahme abspielen</string>
@@ -50,17 +50,17 @@
     <string name="textToRecognize">Zu erkennender Text</string>
     <string name="textToSpeak">Text zum Sprechen</string>
     <string name="accessToken">Zugriffstoken</string>
-    <string name="homeAssistantEvents">Sende *Ereignisse* an Home Assistant\n(/api/events)</string>
-    <string name="homeAssistantIntents">Sende *Intents* an Home Assistant\n(/api/intent/handle)
+    <string name="homeAssistantEvents">Sende *Ereignisse* an Home-Assistant\n(/api/events)</string>
+    <string name="homeAssistantIntents">Sende *Intents* an Home-Assistant\n(/api/intent/handle)
     </string>
     <string name="refresh">Laden</string>
     <string name="de">Deutsch</string>
     <string name="en">English</string>
     <string name="automaticSilenceDetection">Automatische Stille-Erkennung</string>
-    <string name="backgroundWakeWordDetection">Hintergrund-WakeWord-Erkennung</string>
+    <string name="backgroundWakeWordDetection">Hintergrund-Aktivierungswort-Erkennung</string>
     <string name="enableBackground">Hintergrunddienste aktivieren</string>
     <string name="backgroundWakeWordDetectionTurnOnDisplay">Display aufwecken</string>
-    <string name="wakeWordIndication">WakeWord Indikation</string>
+    <string name="wakeWordIndication">Aktivierungswort-Indikation</string>
     <string name="wakeWordSoundIndication">Ton</string>
     <string name="wakeWordLightIndication">Visual</string>
     <string name="enableSSL">SSL aktivieren</string>
@@ -71,9 +71,9 @@
     <string name="chooseCertificate">Zertifikatdatei öffnen (.bks)</string>
     <string name="showLog">Protokoll anzeigen</string>
     <string name="log">Protokoll</string>
-    <string name="audioFramesLogging">Audio Frames protokollieren</string>
-    <string name="httpSSL">HTTP SSL</string>
-    <string name="porcupineAccessKey">PicoVoice Console</string>
+    <string name="audioFramesLogging">Audio-Frames protokollieren</string>
+    <string name="httpSSL">HTTP-SSL</string>
+    <string name="porcupineAccessKey">Picovoice-Konsole</string>
     <string name="openPicoVoiceConsole">Zugangsschlüssel erstellen</string>
     <string name="openPicoVoiceConsoleInfo">Klick zum Öffnen des Browsers und Erzeugen des
         Zugangstokens
@@ -81,45 +81,23 @@
     <string name="expandListItem">Listenelement erweitern</string>
     <string name="expandDropDown">Ausklappen des Dropdowns</string>
     <string name="visibility">Sichtbarkeit</string>
-    <string name="alexa">Alexa</string>
-    <string name="americano">Americano</string>
-    <string name="blueberry">Blueberry</string>
-    <string name="bumblebee">Bumblebee</string>
-    <string name="computer">Computer</string>
-    <string name="grapefruit">Grapefruit</string>
-    <string name="grasshopper">Grasshopper</string>
-    <string name="heyGoogle">Hey Google</string>
-    <string name="heySiri">Hey Siri</string>
-    <string name="jarvis">Jarvis</string>
-    <string name="okGoogle">Ok Google</string>
-    <string name="picovoice">Picovoice</string>
-    <string name="porcupine">Porcupine</string>
-    <string name="terminator">Terminator</string>
-    <string name="logSettings">Log-Einstellungen</string>
-    <string name="verbose">Verbose</string>
-    <string name="debug">Debug</string>
-    <string name="info">Info</string>
-    <string name="warn">Warn</string>
-    <string name="error">Error</string>
-    <string name="assert_level">Assert</string>
     <string name="microphone">Mikrofon</string>
     <string name="microphonePermissionDialogTitle">Zugang zum Mikrofon</string>
     <string name="microphonePermissionInfoRecord">Um Audio aufzunehmen, ist der Zugriff auf das
         Mikrofon erforderlich.
     </string>
-    <string name="microphonePermissionInfoWakeWord">Um den Porcupine WakeWord-Dienst zu nutzen, ist
+    <string name="microphonePermissionInfoWakeWord">Um den Porcupine-Aktivierungswort-Dienst zu nutzen, ist
         der Zugriff auf das Mikrofon erforderlich.
     </string>
     <string name="microphonePermissionInfoAudioLevel">Um den Audiopegel zu überprüfen, ist der
         Zugriff auf das Mikrofon erforderlich.
     </string>
-    <string name="microphonePermissionDenied">open settings to allow microphone access</string>
-    <string name="settings">Einstellungen</string>
+    <string name="microphonePermissionDenied">Öffnen Sie die Einstellungen um den Mikrofonzugriff zu erlauben</string>
     <string name="cancel">Abbrechen</string>
-    <string name="ok">Ok</string>
-    <string name="testAudioLevel">Audio Level Test</string>
+    <string name="ok">OK</string>
+    <string name="testAudioLevel">Audio-Level-Test</string>
     <string name="stop">Stop</string>
-    <string name="audioLevelThreshold">Audio Level Threshold</string>
+    <string name="audioLevelThreshold">Audio-Level-Schwelle</string>
     <string name="silenceDetectionTime">Stille-Erkennungszeit (ms)</string>
     <string name="overlayPermissionTitle">Overlay-Erlaubnis</string>
     <string name="overlay">Overlay</string>
@@ -140,11 +118,10 @@
         werden.
     </string>
     <string name="volume">Lautstärke</string>
-    <string name="hotWord">HotWord (WakeWord)</string>
+    <string name="hotWord">Aktivierungswort (Wakeword)</string>
     <string name="audioOutput">Audioausgabe</string>
-    <string name="intentHandling">Intent Handling</string>
-    <string name="microphoneOverlay">Mikrofon Overlay</string>
-    <string name="showMicrophoneOverlay">Zeige Mikrofon Overlay</string>
+    <string name="microphoneOverlay">Mikrofon-Overlay</string>
+    <string name="showMicrophoneOverlay">Zeige Mikrofon-Overlay</string>
     <string name="showMicrophoneOverlayInfo">Am besten mit Hintergrunddiensten verwenden, da sonst
         das Overlay geschlossen wird, wenn die App
         ausgeblendet wird
@@ -152,17 +129,17 @@
     <string name="whileAppIsOpened">Sichtbar während App geöffnet ist</string>
     <string name="restore">Laden</string>
     <string name="saveAndRestoreSettings">Einstellungen speichern und laden</string>
-    <string name="saveSettings">Einstellungen Speichern</string>
+    <string name="saveSettings">Einstellungen speichern</string>
     <string name="saveSettingsWarningText">Die exportierte Einstellungsdatei enthält sensible Daten!
         Lesen Sie die Datei und bearbeiten Sie sie
         sorgfältig, vor der Weitergabe.
     </string>
-    <string name="restoreSettings">Einstellungen Laden</string>
+    <string name="restoreSettings">Einstellungen laden</string>
     <string name="restoreSettingsWarningText">Ihre aktuellen Einstellungen gehen beim
         Wiederherstellen aus der Datei verloren!
     </string>
     <string name="warning">Warnung</string>
-    <string name="success">Success</string>
+    <string name="success">Erfolg</string>
     <string name="aboutTitle">Über Rhasspy Mobile</string>
     <string name="version">Version</string>
     <string name="sounds">Töne</string>
@@ -174,14 +151,14 @@
     <string name="errorSound">Fehler</string>
     <string name="selectFile">Datei auswählen</string>
     <string name="defaultText">Standard</string>
-    <string name="remoteHermesHTTP">Remote Hermes HTTP</string>
-    <string name="sslValidation">SSL Validierung</string>
-    <string name="disableSSLValidation">Deaktiviere SSL Zertifikat Validierung</string>
+    <string name="remoteHermesHTTP">Remote-Hermes-HTTP</string>
+    <string name="sslValidation">SSL-Validierung</string>
+    <string name="disableSSLValidation">Deaktiviere SSL-Zertifikat-Validierung</string>
     <string name="disableSSLValidationInformation">Möglicherweise erforderlich bei der Verwendung
         von selbstsignierten Zertifikaten
     </string>
     <string name="webserver">Webserver</string>
-    <string name="enableHTTPApi">Aktiviere HTTP Api</string>
+    <string name="enableHTTPApi">Aktiviere HTTP-Api</string>
     <string name="english">Englisch</string>
     <string name="german">Deutsch</string>
     <string name="spanish">Spanisch</string>
@@ -195,12 +172,11 @@
     <string name="sourceCode">Sourcecode</string>
     <string name="changelog">Changelog</string>
     <string name="remove">Entfernen</string>
-    <string name="sounds">Töne</string>
     <string name="selectCustomSoundFile">Benutzerdefinierte Sounddatei auswählen</string>
     <string name="connectionTimeout">Verbindungstimeout (s)</string>
-    <string name="keepAliveInterval">KeepAlive-Intervall (s)</string>
+    <string name="keepAliveInterval">Keepalive-Intervall (s)</string>
     <string name="retryInterval">Wiederverbindungsintervall (s)</string>
-    <string name="testConnection">Verbindung Testen</string>
+    <string name="testConnection">Verbindung testen</string>
     <string name="background">Hintergrund</string>
     <string name="batteryOptimization">Akku-Optimierung deaktivieren</string>
     <string name="mqttNotConnected">MQTT nicht verbunden</string>
@@ -210,25 +186,23 @@
     <string name="backup">Backup der Einstellungen und Konfiguration</string>
     <string name="unsavedChanges">Nicht gespeicherte Änderungen</string>
     <string name="unsavedChangesInformation">Wollen Sie die Änderungen speichern?</string>
-    <string name="save">Speichern</string>
     <string name="discard">Verwerfen</string>
     <string name="test">Test</string>
     <string name="back">Zurück</string>
     <string name="language">Sprache</string>
     <string name="fileOpen">Datei auswählen</string>
-    <string name="useCustomEndpoint">Benutzerdefinierte Http-URL</string>
+    <string name="useCustomEndpoint">Benutzerdefinierte HTTP-URL</string>
     <string name="textDefault">Standard</string>
     <string name="textCustom">Benutzerdefiniert</string>
     <string name="download">Herunterladen</string>
     <string name="delete">Löschen</string>
     <string name="active">Aktiv</string>
-    <string name="porcupineKeyword">Porcupine WakeWord</string>
+    <string name="porcupineKeyword">Porcupine-Aktivierungswort</string>
     <string name="small">Klein</string>
     <string name="medium">Mittel</string>
     <string name="big">Groß</string>
     <string name="play">Abspielen</string>
     <string name="indication">Indikation</string>
-    <string name="sounds">Töne</string>
     <string name="soundsInfo">Benutzerdefinierte Töne können in den Einstellungen ausgewählt
         werden
     </string>
@@ -236,17 +210,14 @@
     </string>
     <string name="notification">Benachrichtigung</string>
     <string name="audioOutputSilentOrDisabled">Ihr Audioausgang ist stumm oder deaktiviert</string>
-    <string name="startPorcupine">Start Porcupine</string>
+    <string name="startPorcupine">Starte Porcupine</string>
     <string name="initializePorcupine">Initialisiere Porcupine</string>
-    <string name="hotWordDetected">HotWord Erkannt</string>
+    <string name="hotWordDetected">Aktivierungswort erkannt</string>
     <string name="start">Start</string>
-    <string name="speechToText">Sprache zu Text</string>
     <string name="recognizeIntent">Intent erkennen</string>
-    <string name="textToSpeech">Text in Sprache</string>
     <string name="playWav">Ton abspielen</string>
-    <string name="intentHandling">Intent handhaben</string>
-    <string name="hassEvent">Homeassistant Event</string>
-    <string name="hassIntent">Homeassistant Intent</string>
+    <string name="hassEvent">Home-Assistant-Event</string>
+    <string name="hassIntent">Home-Assistant-Intent</string>
     <string name="received">Empfangen</string>
     <string name="streamAudio">Audiostream</string>
     <string name="connecting">Verbindung wird hergestellt</string>
@@ -258,25 +229,25 @@
     <string name="say">Sagen</string>
     <string name="playAudio">Audio abspielen</string>
     <string name="sendIntent">Intent senden</string>
-    <string name="homeAssistantService">Hausassistent Dienst</string>
-    <string name="hotWordService">HotWord Dienst</string>
-    <string name="httpClientService">Http Client Dienst</string>
+    <string name="homeAssistantService">Home-Assistent-Dienst</string>
+    <string name="hotWordService">Aktivierungswort-Dienst</string>
+    <string name="httpClientService">HTTP-Client-Dienst</string>
     <string name="indicationService">Anzeigedienst</string>
-    <string name="mqttService">Mqtt Dienst</string>
-    <string name="rhasspyActionService">Rhasspy Actions Dienst</string>
-    <string name="udpService">Udp Dienst</string>
-    <string name="webServerService">Webserver Dienst</string>
-    <string name="recordingService">Aufnahme Dienst</string>
+    <string name="mqttService">MQTT-Dienst</string>
+    <string name="rhasspyActionService">Rhasspy-Aktionen-Dienst</string>
+    <string name="udpService">UDP-Dienst</string>
+    <string name="webServerService">Webserver-Dienst</string>
+    <string name="recordingService">Aufnahme-Dienst</string>
     <string name="pending">Wartet</string>
     <string name="loading">Lädt</string>
-    <string name="noDetails">keine Details</string>
-    <string name="startRecordAudio">Audio Aufnahme starten</string>
-    <string name="stopRecordAudio">Audio Aufnahme stoppen</string>
-    <string name="useMqttSilenceDetection">Nutze Mqtt Stille-Erkennung</string>
-    <string name="textToSpeechText">Text zu Sprache Text</string>
+    <string name="noDetails">Keine Details</string>
+    <string name="startRecordAudio">Audioaufnahme starten</string>
+    <string name="stopRecordAudio">Audioaufnahme stoppen</string>
+    <string name="useMqttSilenceDetection">Nutze MQTT-Stille-Erkennung</string>
+    <string name="textToSpeechText">Text-zu-Sprache-Text</string>
     <string name="executeTextToSpeechText">Text in Sprache übersetzten</string>
     <string name="textIntentRecognitionText">Text zur Erkennung des Intent</string>
-    <string name="executeIntentRecognition">Intent Ausführen</string>
+    <string name="executeIntentRecognition">Intent erkennen</string>
     <string name="crashlytics">Crashlytics</string>
     <string name="crashlyticsText">Senden Sie Abstürze, um die Anwendung zu verbessern</string>
     <string name="crashlyticsDialogText">Bitte erlauben Sie das Sammeln von Absturzberichten, um die
@@ -285,45 +256,45 @@
     </string>
     <string name="confirm">Zustimmen</string>
     <string name="deny">Ablehnen</string>
-    <string name="serviceStatusPending">Pending</string>
+    <string name="serviceStatusPending">Ausstehend</string>
     <string name="serviceStatusLoading">Ladend</string>
     <string name="serviceStatusWarning">Warnung</string>
-    <string name="serviceStatusError">Error</string>
+    <string name="serviceStatusError">Fehler</string>
     <string name="serviceStatusPendingText">Dienste warten</string>
     <string name="serviceStatusLoadingText">Dienste werden gestartet</string>
     <string name="serviceStatusRunningText">Dienste laufen</string>
     <string name="serviceStatusWarningText">Dienste haben mögliche Probleme entdeckt</string>
     <string name="serviceStatusErrorText">Dienstfehler ist aufgetreten</string>
-    <string name="executeTestHttpConnection">Teste Http Verbindung</string>
-    <string name="porcupineLanguageInformation">Alle aktiven WakeWords müssen mit der ausgewählten
+    <string name="executeTestHttpConnection">Teste HTTP-Verbindung</string>
+    <string name="porcupineLanguageInformation">Alle aktiven Aktivierungswörter müssen mit der ausgewählten
         Sprache übereinstimmen!
     </string>
-    <string name="backgroundServiceInformation">Background service ermöglicht es, der App im
+    <string name="backgroundServiceInformation">Der Hintergrunddienst ermöglicht es, der App im
         Hintergrund aktiv zu bleiben und dadurch nicht vom System beendet zu werden.
     </string>
     <string name="deviceSettingsLongInformation">Diese Einstellungen können durch das Aufrufen des
-        Webservers (HTTP API) oder MQTT Nachrichten geändert werden.
+        Webservers (HTTP-API) oder MQTT-Nachrichten geändert werden.
     </string>
-    <string name="intentName">Intent Name</string>
-    <string name="intentText">Intent Json</string>
+    <string name="intentName">Intent-Name</string>
+    <string name="intentText">Intent-JSON</string>
     <string name="executePlayTestAudio">Testaudio abspielen</string>
     <string name="executeHandleIntent">Intent ausführen</string>
     <string name="executeStartMqtt">MQTT starten</string>
     <string name="executeStartWebserver">starte Webserver</string>
-    <string name="sslWiki">Erstellen der Zertifikat Datei</string>
-    <string name="sslWikiInfo">öffne GitHub Wiki um zu Erfahren, wie ein Zertifikat erstellt werden
+    <string name="sslWiki">Erstellen der Zertifikatdatei</string>
+    <string name="sslWikiInfo">öffne GitHu- Wiki um zu Erfahren, wie ein Zertifikat erstellt werden
         kann
     </string>
     <string name="currentlySelectedCertificate">Aktuell ausgewähltes Zertifikat: %s</string>
-    <string name="keyStorePassword">KeyStore Passwort</string>
-    <string name="keyStoreKeyAlias">Key Alias</string>
-    <string name="keyStoreKeyPassword">Key Passwort</string>
+    <string name="keyStorePassword">Key-Store-Passwort</string>
+    <string name="keyStoreKeyAlias">Key-Alias</string>
+    <string name="keyStoreKeyPassword">Key-Passwort</string>
     <string name="filterList">Liste filtern</string>
     <string name="autoscrollList">Liste automatisch scrollen</string>
-    <string name="requestTimeout">Anfrage Timeout (MS)</string>
-    <string name="allowMicrophonePermission">Mikrofon zugriff erlauben</string>
-    <string name="textAsrTimeoutText">Speech To Text Timeout (MS)</string>
-    <string name="intentRecognitionTimeoutText">Zeitüberschreitung bei der Erkennung von Absicht
+    <string name="requestTimeout">Anfrage-Timeout (MS)</string>
+    <string name="allowMicrophonePermission">Mikrofonzugriff erlauben</string>
+    <string name="textAsrTimeoutText">Sprache-zu-Text-Timeout (MS)</string>
+    <string name="intentRecognitionTimeoutText">Zeitüberschreitung bei der Erkennung des Intents
         (MS)
     </string>
     <string name="recordingTimeoutText">Aufnahmezeitüberschreitung (MS)</string>
@@ -358,6 +329,16 @@
     <string name="subscribe_failed">subscription failed</string>
     <string name="topic_subscription_failed">topic subscription failed</string>
     <!-- not translatable -->
+    <string name="heyGoogle">Hey Google</string>
+    <string name="heySiri">Hey Siri</string>
+    <string name="okGoogle">OK Google</string>
+    <string name="logSettings">Log-Einstellungen</string>
+    <string name="verbose">Verbose</string>
+    <string name="debug">Debug</string>
+    <string name="info">Info</string>
+    <string name="warn">Warn</string>
+    <string name="error">Error</string>
+    <string name="assert_level">Assert</string>
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>
     <string name="blueberry">Blueberry</string>
@@ -369,7 +350,7 @@
     <string name="hey_google">Hey Google</string>
     <string name="hey_siri">Hey Siri</string>
     <string name="jarvis">Jarvis</string>
-    <string name="ok_google">Ok Google</string>
+    <string name="ok_google">OK Google</string>
     <string name="pico_clock">Pico Clock</string>
     <string name="picovoice">Picovoice</string>
     <string name="porcupine">Porcupine</string>

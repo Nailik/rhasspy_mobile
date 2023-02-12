@@ -79,20 +79,6 @@
     <string name="expandListItem">Expand list item</string>
     <string name="expandDropDown">Expand drop down</string>
     <string name="visibility">Visibility</string>
-    <string name="alexa">Alexa</string>
-    <string name="americano">Americano</string>
-    <string name="blueberry">Blueberry</string>
-    <string name="bumblebee">Bumblebee</string>
-    <string name="computer">Computer</string>
-    <string name="grapefruit">Grapefruit</string>
-    <string name="grasshopper">Grasshopper</string>
-    <string name="heyGoogle">Hey Google</string>
-    <string name="heySiri">Hey Siri</string>
-    <string name="jarvis">Jarvis</string>
-    <string name="okGoogle">Ok Google</string>
-    <string name="picovoice">Picovoice</string>
-    <string name="porcupine">Porcupine</string>
-    <string name="terminator">Terminator</string>
     <string name="logSettings">Log Settings</string>
     <string name="verbose">Verbose</string>
     <string name="debug">Debug</string>
@@ -111,9 +97,8 @@
         required.
     </string>
     <string name="microphonePermissionDenied">open settings to allow microphone access</string>
-    <string name="settings">Settings</string>
     <string name="cancel">Cancel</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="testAudioLevel">Audio Level Test</string>
     <string name="stop">Stop</string>
     <string name="audioLevelThreshold">Audio Level Threshold</string>
@@ -136,7 +121,6 @@
     <string name="volume">Volume</string>
     <string name="hotWord">HotWord (WakeWord)</string>
     <string name="audioOutput">Audio Output</string>
-    <string name="intentHandling">Intent Handling</string>
     <string name="microphoneOverlay">Microphone Overlay</string>
     <string name="showMicrophoneOverlay">Show Microphone Overlay</string>
     <string name="showMicrophoneOverlayInfo">Best to use with Background Services, else the Overlay
@@ -187,7 +171,6 @@
     <string name="sourceCode">Sourcecode</string>
     <string name="changelog">Changelog</string>
     <string name="remove">Remove</string>
-    <string name="sounds">Sounds</string>
     <string name="selectCustomSoundFile">Select custom sound file</string>
     <string name="connectionTimeout">Connection timeout (s)</string>
     <string name="keepAliveInterval">KeepAlive interval (s)</string>
@@ -202,7 +185,6 @@
     <string name="backup">Backup Settings and Configuration</string>
     <string name="unsavedChanges">Unsaved changes</string>
     <string name="unsavedChangesInformation">Do you want to save the changes?</string>
-    <string name="save">Save</string>
     <string name="discard">Discard</string>
     <string name="test">Test</string>
     <string name="back">Back</string>
@@ -220,7 +202,6 @@
     <string name="big">Big</string>
     <string name="play">Play</string>
     <string name="indication">Indication</string>
-    <string name="sounds">Sounds</string>
     <string name="soundsInfo">Custom Sounds can be selected in the Settings</string>
     <string name="audioPlayingInfo">can be set in configuration Settings</string>
     <string name="notification">Notification</string>
@@ -229,11 +210,8 @@
     <string name="startPorcupine">Start Porcupine</string>
     <string name="hotWordDetected">HotWord Detected</string>
     <string name="start">Start</string>
-    <string name="speechToText">Speech to Text</string>
     <string name="recognizeIntent">Recognize Intent</string>
-    <string name="textToSpeech">Text to Speech</string>
     <string name="playWav">Play Sound</string>
-    <string name="intentHandling">Handle Intent</string>
     <string name="hassEvent">Homeassistant Event</string>
     <string name="hassIntent">Homeassistant Intent</string>
     <string name="received">Received</string>
@@ -343,6 +321,9 @@
     <string name="subscribe_failed">subscription failed</string>
     <string name="topic_subscription_failed">topic subscription failed</string>
     <!-- not translatable -->
+    <string name="heyGoogle">Hey Google</string>
+    <string name="heySiri">Hey Siri</string>
+    <string name="okGoogle">OK Google</string>
     <string name="alexa">Alexa</string>
     <string name="americano">Americano</string>
     <string name="blueberry">Blueberry</string>
@@ -354,7 +335,7 @@
     <string name="hey_google">Hey Google</string>
     <string name="hey_siri">Hey Siri</string>
     <string name="jarvis">Jarvis</string>
-    <string name="ok_google">Ok Google</string>
+    <string name="ok_google">OK Google</string>
     <string name="pico_clock">Pico Clock</string>
     <string name="picovoice">Picovoice</string>
     <string name="porcupine">Porcupine</string>
