@@ -72,7 +72,7 @@ open class IntentRecognitionService : IService() {
             }
 
             IntentRecognitionOption.RemoteMQTT -> _serviceState.value = mqttClientService.recognizeIntent(sessionId, text)
-            IntentRecognitionOption.Disabled -> {}
+            IntentRecognitionOption.Disabled -> serviceMiddleware.action(DialogAction.IntentRecognitionResult(Source.Local, "",""))
         }
     }
 

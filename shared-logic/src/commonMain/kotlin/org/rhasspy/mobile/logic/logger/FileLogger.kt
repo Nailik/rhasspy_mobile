@@ -17,6 +17,7 @@ import org.rhasspy.mobile.logic.readOnly
 import org.rhasspy.mobile.logic.settings.AppSetting
 
 object FileLogger : LogWriter() {
+    private val logger = Logger.withTag("FileLogger")
     //create new file when logfile is 2 MB
     private val fileWriterText = FileWriterText("logfile.txt", 2000)
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
@@ -67,6 +68,7 @@ object FileLogger : LogWriter() {
         return try {
             fileWriterText.decodeFromFile()
         } catch (exception: Exception) {
+            logger.e(exception) { "could not read log file" }
             fileWriterText.clearFile()
             listOf()
         }
