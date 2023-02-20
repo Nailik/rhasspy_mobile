@@ -116,8 +116,7 @@ actual class AudioPlayer : Closeable, KoinComponent {
 
         if (_isPlayingState.value) {
             logger.e { "AudioPlayer playSound already playing data" }
-            onError?.invoke(null)
-            return
+            stop()
         }
 
         try {
@@ -148,15 +147,17 @@ actual class AudioPlayer : Closeable, KoinComponent {
                     onFinished?.invoke()
                 }
                 setOnPreparedListener {
-                    if (!it.isPlaying) {
-                        volumeChange = CoroutineScope(Dispatchers.IO).launch {
-                            volume.collect {
-                                mediaPlayer?.setVolume(volume.value, volume.value)
-                            }
-                        }
-
-                        start()
+                    if (it.isPlaying) {
+                        logger.e { "AudioPlayer it.isPlaying true" }
+                        it.stop()
                     }
+                    volumeChange = CoroutineScope(Dispatchers.IO).launch {
+                        volume.collect {
+                            mediaPlayer?.setVolume(volume.value, volume.value)
+                        }
+                    }
+
+                    start()
                 }
 
                 _isPlayingState.value = true
@@ -164,12 +165,13 @@ actual class AudioPlayer : Closeable, KoinComponent {
 
                 prepareAsync()
             }
-        } catch (e: Exception) {
+        } catch (exception: Exception) {
+            logger.e(exception) { "AudioPlayer thrown exception" }
             mediaPlayer = null
             volumeChange?.cancel()
             volumeChange = null
             _isPlayingState.value = false
-            onError?.invoke(e)
+            onError?.invoke(exception)
         }
     }
 
