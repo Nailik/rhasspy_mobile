@@ -22,7 +22,7 @@ import org.junit.runner.RunWith
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.theme.AppTheme
-import org.rhasspy.mobile.logic.nativeutils.OverlayPermission
+import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 

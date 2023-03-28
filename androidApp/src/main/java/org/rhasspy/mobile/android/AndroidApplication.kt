@@ -13,7 +13,7 @@ import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.android.uiservices.IndicationOverlay
 import org.rhasspy.mobile.android.uiservices.MicrophoneOverlay
 import org.rhasspy.mobile.android.widget.MicrophoneWidget
-import org.rhasspy.mobile.logic.nativeutils.NativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import kotlin.system.exitProcess
 
 /**

@@ -45,9 +45,11 @@ kotlin {
 
         val commonMain by getting {
             dependencies {
-                implementation(project(":shared-logic"))
-                implementation(project(":shared-ui"))
-                implementation(project(":shared-viewmodel"))
+                implementation(project(":logic"))
+                implementation(project(":ui"))
+                implementation(project(":viewmodel"))
+                implementation(project(":platformspecific"))
+                implementation(project(":data"))
                 implementation(Kotlin.Stdlib.common)
                 implementation(Touchlab.kermit)
                 implementation(Touchlab.Kermit.crashlytics)
@@ -70,6 +72,7 @@ kotlin {
                 implementation(Jetbrains.Compose.foundation)
                 implementation(Jetbrains.Compose.material3)
                 implementation(Jetbrains.Compose.runtime)
+                implementation(Square.okio)
             }
         }
         val commonTest by getting {

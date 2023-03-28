@@ -47,7 +47,7 @@ import org.rhasspy.mobile.android.content.list.RadioButtonListItem
 import org.rhasspy.mobile.android.content.list.SliderListItem
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.logic.settings.sounds.SoundFile
+import org.rhasspy.mobile.data.sounds.SoundFile
 import org.rhasspy.mobile.viewmodel.settings.sound.IIndicationSoundSettingsViewModel
 
 /**

@@ -27,7 +27,7 @@ import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.onSwitch
 import org.rhasspy.mobile.android.resetOverlayPermission
 import org.rhasspy.mobile.android.text
-import org.rhasspy.mobile.logic.settings.option.MicrophoneOverlaySizeOption
+import org.rhasspy.mobile.data.serviceoption.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.viewmodel.settings.MicrophoneOverlaySettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

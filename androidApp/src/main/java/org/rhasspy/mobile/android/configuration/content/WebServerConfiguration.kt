@@ -141,7 +141,7 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
                 InformationListElement(
                     text = translate(
                         resource = MR.strings.currentlySelectedCertificate,
-                        viewModel.httpServerSSLKeyStoreFileText.collectAsState().value
+                        viewModel.httpServerSSLKeyStoreFileText.collectAsState().value?.name ?: ""
                     )
                 )
             }

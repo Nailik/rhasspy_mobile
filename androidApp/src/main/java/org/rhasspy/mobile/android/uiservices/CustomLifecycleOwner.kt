@@ -18,13 +18,10 @@ class CustomLifecycleOwner : LifecycleOwner, ViewModelStoreOwner, SavedStateRegi
     private var mLifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
     private var mSavedStateRegistryController: SavedStateRegistryController =
         SavedStateRegistryController.create(this)
+    override val lifecycle: Lifecycle = LifecycleRegistry(this)
 
     override val savedStateRegistry: SavedStateRegistry
         get() = mSavedStateRegistryController.savedStateRegistry
-
-    override fun getLifecycle(): Lifecycle {
-        return mLifecycleRegistry
-    }
 
     fun handleLifecycleEvent(event: Lifecycle.Event) {
         mLifecycleRegistry.handleLifecycleEvent(event)
@@ -34,6 +31,6 @@ class CustomLifecycleOwner : LifecycleOwner, ViewModelStoreOwner, SavedStateRegi
         mSavedStateRegistryController.performRestore(savedState)
     }
 
-    private val store = ViewModelStore()
-    override fun getViewModelStore(): ViewModelStore = store
+    override val viewModelStore = ViewModelStore()
+
 }
