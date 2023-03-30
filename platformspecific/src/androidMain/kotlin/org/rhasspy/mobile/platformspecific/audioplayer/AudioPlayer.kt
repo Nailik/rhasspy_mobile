@@ -38,8 +38,13 @@ actual class AudioPlayer : Closeable, KoinComponent {
     private val context = get<NativeApplication>()
 
     actual fun stop() {
-        audioTrack?.stop()
-        mediaPlayer?.stop()
+        try {
+            audioTrack?.stop()
+        } catch (_: Exception) { }
+        try {
+            mediaPlayer?.stop()
+            mediaPlayer?.release()
+        } catch (_: Exception) {  }
         audioTrack = null
         mediaPlayer = null
         _isPlayingState.value = false
@@ -86,6 +91,7 @@ actual class AudioPlayer : Closeable, KoinComponent {
                 setVolume(volume.value, volume.value)
                 //on completion listener is also called when error occurs
                 setOnCompletionListener {
+                    logger.v { "finished" }
                     _isPlayingState.value = false
                     mediaPlayer = null
                     volumeChange?.cancel()
@@ -125,7 +131,9 @@ actual class AudioPlayer : Closeable, KoinComponent {
                 }
                 setDataSource(get<NativeApplication>(), uri)
 
-                prepareAsync()
+
+                //don't use prepare async because it may fail and doesn't throw an error, blocking the whole app
+                prepare()
             }
         } catch (exception: Exception) {
             logger.e(exception) { "AudioPlayer thrown exception" }
