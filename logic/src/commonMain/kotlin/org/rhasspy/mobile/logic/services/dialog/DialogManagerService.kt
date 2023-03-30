@@ -26,6 +26,7 @@ import org.rhasspy.mobile.data.serviceoption.DialogManagementOption
 import org.rhasspy.mobile.data.serviceoption.IntentRecognitionOption
 import org.rhasspy.mobile.data.serviceoption.SpeechToTextOption
 import org.rhasspy.mobile.data.serviceoption.WakeWordOption
+import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
@@ -71,6 +72,7 @@ class DialogManagerService : IService() {
     init {
         _serviceState.value = ServiceState.Success
         _currentDialogState.value = DialogManagerServiceState.AwaitingWakeWord
+        AppSetting.isHotWordEnabled.value = true
         wakeWordService.startDetection()
     }
 

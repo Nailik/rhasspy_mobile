@@ -6,16 +6,16 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import okio.Buffer
 import okio.Path
-import okio.use
 import org.koin.core.component.get
 import org.koin.core.component.inject
+import org.rhasspy.mobile.data.serviceoption.SpeechToTextOption
 import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.middleware.Action.DialogAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceState
 import org.rhasspy.mobile.logic.middleware.Source
+import org.rhasspy.mobile.logic.nativeutils.AudioRecorder
 import org.rhasspy.mobile.logic.readOnly
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientResult
@@ -23,7 +23,6 @@ import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.recording.RecordingService
 import org.rhasspy.mobile.logic.settings.AppSetting
-import org.rhasspy.mobile.data.serviceoption.SpeechToTextOption
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
 import org.rhasspy.mobile.platformspecific.extensions.commonSize
@@ -47,7 +46,7 @@ open class SpeechToTextService : IService() {
 
     private val serviceMiddleware by inject<ServiceMiddleware>()
 
-    val speechToTextAudioFile: Path = Path.commonInternalPath(get(),"SpeechToTextAudio.wav") //TODO!!
+    val speechToTextAudioFile: Path = Path.commonInternalPath(get(),"SpeechToTextAudio.wav")
 
     private val scope = CoroutineScope(Dispatchers.Default)
     private var collector: Job? = null
@@ -78,6 +77,11 @@ open class SpeechToTextService : IService() {
         //stop collection
         collector?.cancel()
         collector = null
+
+        //add wav header to file
+        val header = AudioRecorder.getWavHeader(speechToTextAudioFile.commonSize() ?: 0)
+        speechToTextAudioFile.commonReadWrite().write(0, header, 0, header.size)
+
         recordingService.toggleSilenceDetectionEnabled(false)
 
         //evaluate result
@@ -139,10 +143,6 @@ open class SpeechToTextService : IService() {
             logger.d { "audioFrame dataSize: ${data.size}" }
         }
 
-        speechToTextAudioFile.commonReadWrite().appendingSink().use {
-            it.write(Buffer().write(data), data.size.toLong())
-            it.flush()
-        }
         speechToTextAudioFile.commonReadWrite().write(speechToTextAudioFile.commonSize() ?: 0, data, 0, data.size)
 
         _serviceState.value = when (params.speechToTextOption) {

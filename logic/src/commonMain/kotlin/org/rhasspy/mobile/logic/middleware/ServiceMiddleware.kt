@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import okio.Path
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.component.inject
@@ -18,6 +19,7 @@ import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.settings.AppSettingsService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
 import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
+import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 
@@ -31,6 +33,7 @@ class ServiceMiddleware : KoinComponent, Closeable {
     private val appSettingsService by inject<AppSettingsService>()
     private val localAudioService by inject<LocalAudioService>()
     private val mqttService by inject<MqttService>()
+    private val wakeWordService by inject<WakeWordService>()
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     private val _isPlayingRecording = MutableStateFlow(false)
@@ -39,6 +42,11 @@ class ServiceMiddleware : KoinComponent, Closeable {
         playing || (state == DialogManagerServiceState.Idle || state == DialogManagerServiceState.AwaitingWakeWord)
     }
 
+    val isUserActionEnabled = combineState(_isPlayingRecording, dialogManagerService.currentDialogState) { playingRecording, dialogState ->
+        !playingRecording && (dialogState == DialogManagerServiceState.Idle ||
+                dialogState == DialogManagerServiceState.AwaitingWakeWord ||
+                dialogState == DialogManagerServiceState.RecordingIntent)
+    }
     private var shouldResumeHotWordService = false
 
     fun action(action: Action) {
@@ -48,7 +56,7 @@ class ServiceMiddleware : KoinComponent, Closeable {
                     if (_isPlayingRecording.value) {
                         _isPlayingRecording.value = false
                         if (shouldResumeHotWordService) {
-                            appSettingsService.hotWordToggle(true)
+                            action(Action.AppSettingsAction.HotWordToggle(true))
                         }
                         action(Action.DialogAction.PlayFinished(Source.Local))
                     } else {
@@ -56,7 +64,7 @@ class ServiceMiddleware : KoinComponent, Closeable {
                             dialogManagerService.currentDialogState.value == DialogManagerServiceState.AwaitingWakeWord) {
                             _isPlayingRecording.value = true
                             shouldResumeHotWordService = AppSetting.isHotWordEnabled.value
-                            appSettingsService.hotWordToggle(false)
+                            action(Action.AppSettingsAction.HotWordToggle(false))
                             //suspend coroutine
                             localAudioService.playAudio(AudioSource.File(speechToTextService.speechToTextAudioFile))
                             //resumes when play finished
@@ -70,21 +78,23 @@ class ServiceMiddleware : KoinComponent, Closeable {
                 is Action.WakeWordError -> mqttService.wakeWordError(action.description)
                 is Action.AppSettingsAction -> {
                     when (action) {
-                        is Action.AppSettingsAction.AudioOutputToggle -> appSettingsService.audioOutputToggle(
-                            action.enabled
-                        )
+                        is Action.AppSettingsAction.AudioOutputToggle ->
+                            appSettingsService.audioOutputToggle(action.enabled)
 
-                        is Action.AppSettingsAction.AudioVolumeChange -> appSettingsService.setAudioVolume(
-                            action.volume
-                        )
+                        is Action.AppSettingsAction.AudioVolumeChange ->
+                            appSettingsService.setAudioVolume(action.volume)
 
-                        is Action.AppSettingsAction.HotWordToggle -> appSettingsService.hotWordToggle(
-                            action.enabled
-                        )
+                        is Action.AppSettingsAction.HotWordToggle -> {
+                            appSettingsService.hotWordToggle(action.enabled)
+                            if(action.enabled){
+                                wakeWordService.startDetection()
+                            } else {
+                                wakeWordService.stopDetection()
+                            }
+                        }
 
-                        is Action.AppSettingsAction.IntentHandlingToggle -> appSettingsService.intentHandlingToggle(
-                            action.enabled
-                        )
+                        is Action.AppSettingsAction.IntentHandlingToggle ->
+                            appSettingsService.intentHandlingToggle(action.enabled)
                     }
                 }
 
@@ -113,7 +123,7 @@ class ServiceMiddleware : KoinComponent, Closeable {
         }
     }
 
-    fun getRecordedData(): ByteArray = ByteArray(0)
+    fun getRecordedFile(): Path = speechToTextService.speechToTextAudioFile
 
     override fun close() {
         coroutineScope.cancel()

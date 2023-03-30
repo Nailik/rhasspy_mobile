@@ -58,7 +58,7 @@ class WakeWordService : IService() {
         initialize()
     }
 
-    fun initialize() {
+    private fun initialize() {
         logger.d { "initialization" }
         _serviceState.value = when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {

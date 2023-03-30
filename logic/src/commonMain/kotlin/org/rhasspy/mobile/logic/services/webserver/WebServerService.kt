@@ -39,6 +39,7 @@ import org.rhasspy.mobile.logic.nativeutils.installCompression
 import org.rhasspy.mobile.logic.nativeutils.installConnector
 import org.rhasspy.mobile.logic.readOnly
 import org.rhasspy.mobile.logic.services.IService
+import org.rhasspy.mobile.logic.services.speechtotext.StreamContent
 
 /**
  * Web server service holds all routes for WebServerPath values
@@ -270,7 +271,7 @@ class WebServerService : IService() {
      * GET to download WAV data from last recorded voice command
      */
     private suspend fun playRecordingGet(call: ApplicationCall): WebServerResult? {
-        call.respond(serviceMiddleware.getRecordedData())
+        call.respond(StreamContent(serviceMiddleware.getRecordedFile()))
         return null
     }
 

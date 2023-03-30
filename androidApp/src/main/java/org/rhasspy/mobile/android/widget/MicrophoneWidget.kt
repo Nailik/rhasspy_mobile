@@ -36,7 +36,7 @@ class MicrophoneWidget : GlanceAppWidget(), KoinComponent {
                         if (viewModel.isShowBorder.value) {
                             R.drawable.microphone_widget_background_error
                         } else getContainerForMicrophoneFabLegacy(
-                            viewModel.isActionEnabled.value,
+                            viewModel.isUserActionEnabled.value,
                             viewModel.isRecording.value
                         )
                     )
@@ -52,7 +52,7 @@ class MicrophoneWidget : GlanceAppWidget(), KoinComponent {
                     .background(
                         ImageProvider(
                             getContainerForMicrophoneFabLegacy(
-                                viewModel.isActionEnabled.value,
+                                viewModel.isUserActionEnabled.value,
                                 viewModel.isRecording.value
                             )
                         )
@@ -66,7 +66,7 @@ class MicrophoneWidget : GlanceAppWidget(), KoinComponent {
                     provider = ImageProvider(
                         getMicrophoneFabIconLegacy(
                             viewModel.isShowMicOn.value,
-                            viewModel.isActionEnabled.value,
+                            viewModel.isUserActionEnabled.value,
                             viewModel.isRecording.value
                         )
                     ),

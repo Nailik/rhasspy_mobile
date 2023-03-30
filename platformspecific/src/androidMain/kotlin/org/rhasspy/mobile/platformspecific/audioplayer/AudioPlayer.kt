@@ -3,7 +3,6 @@ package org.rhasspy.mobile.platformspecific.audioplayer
 import android.content.ContentResolver
 import android.content.res.Resources
 import android.media.AudioAttributes
-import android.media.AudioTrack
 import android.media.MediaPlayer
 import android.net.Uri
 import androidx.annotation.AnyRes
@@ -28,7 +27,6 @@ actual class AudioPlayer : Closeable, KoinComponent {
     private var _isPlayingState = MutableStateFlow(false)
     actual val isPlayingState: StateFlow<Boolean> get() = _isPlayingState
 
-    private var audioTrack: AudioTrack? = null
     private var mediaPlayer: MediaPlayer? = null
     private var volumeChange: Job? = null
 
@@ -39,13 +37,8 @@ actual class AudioPlayer : Closeable, KoinComponent {
 
     actual fun stop() {
         try {
-            audioTrack?.stop()
-        } catch (_: Exception) { }
-        try {
             mediaPlayer?.stop()
-            mediaPlayer?.release()
         } catch (_: Exception) {  }
-        audioTrack = null
         mediaPlayer = null
         _isPlayingState.value = false
         onFinished?.invoke()
@@ -127,10 +120,9 @@ actual class AudioPlayer : Closeable, KoinComponent {
                         val soundFile = audioSource.path.toFile()
                         Uri.fromFile(soundFile)
                     }
-                    is AudioSource.Resource ->  getUriFromResource(audioSource.fileResource.rawResId)
+                    is AudioSource.Resource -> getUriFromResource(audioSource.fileResource.rawResId)
                 }
                 setDataSource(get<NativeApplication>(), uri)
-
 
                 //don't use prepare async because it may fail and doesn't throw an error, blocking the whole app
                 prepare()
