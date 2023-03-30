@@ -38,7 +38,8 @@ actual class AudioPlayer : Closeable, KoinComponent {
     actual fun stop() {
         try {
             mediaPlayer?.stop()
-        } catch (_: Exception) {  }
+        } catch (_: Exception) {
+        }
         mediaPlayer = null
         _isPlayingState.value = false
         onFinished?.invoke()
@@ -80,18 +81,20 @@ actual class AudioPlayer : Closeable, KoinComponent {
                         }
                     }.build()
                 )
+            }
 
-                setVolume(volume.value, volume.value)
-                //on completion listener is also called when error occurs
-                setOnCompletionListener {
-                    logger.v { "finished" }
-                    _isPlayingState.value = false
-                    mediaPlayer = null
-                    volumeChange?.cancel()
-                    volumeChange = null
-                    onFinished?.invoke()
-                }
-                setOnPreparedListener {
+            mediaPlayer?.setVolume(volume.value, volume.value)
+            //on completion listener is also called when error occurs
+            mediaPlayer?.setOnCompletionListener {
+                logger.v { "finished" }
+                _isPlayingState.value = false
+                mediaPlayer = null
+                volumeChange?.cancel()
+                volumeChange = null
+                onFinished?.invoke()
+            }
+            mediaPlayer?.setOnPreparedListener {
+                try {
                     if (it.isPlaying) {
                         logger.e { "AudioPlayer it.isPlaying true" }
                         it.stop()
@@ -102,31 +105,40 @@ actual class AudioPlayer : Closeable, KoinComponent {
                         }
                     }
 
-                    start()
+                    mediaPlayer?.start()
+                } catch (exception: Exception) {
+                    logger.e(exception) { "AudioPlayer thrown exception setOnPreparedListener" }
+                    mediaPlayer = null
+                    volumeChange?.cancel()
+                    volumeChange = null
+                    _isPlayingState.value = false
+                    onError?.invoke(exception)
                 }
-
-                _isPlayingState.value = true
-
-                val uri = when(audioSource) {
-                    is AudioSource.Data -> {
-                        val soundFile = File(context.cacheDir, "/playData.wav")
-                        if (!soundFile.exists()) {
-                            soundFile.createNewFile()
-                        }
-                        soundFile.writeBytes(audioSource.data)
-                        Uri.fromFile(soundFile)
-                    }
-                    is AudioSource.File -> {
-                        val soundFile = audioSource.path.toFile()
-                        Uri.fromFile(soundFile)
-                    }
-                    is AudioSource.Resource -> getUriFromResource(audioSource.fileResource.rawResId)
-                }
-                setDataSource(get<NativeApplication>(), uri)
-
-                //don't use prepare async because it may fail and doesn't throw an error, blocking the whole app
-                prepare()
             }
+
+            _isPlayingState.value = true
+
+            val uri = when (audioSource) {
+                is AudioSource.Data -> {
+                    val soundFile = File(context.cacheDir, "/playData.wav")
+                    if (!soundFile.exists()) {
+                        soundFile.createNewFile()
+                    }
+                    soundFile.writeBytes(audioSource.data)
+                    Uri.fromFile(soundFile)
+                }
+
+                is AudioSource.File -> {
+                    val soundFile = audioSource.path.toFile()
+                    Uri.fromFile(soundFile)
+                }
+
+                is AudioSource.Resource -> getUriFromResource(audioSource.fileResource.rawResId)
+            }
+            mediaPlayer?.setDataSource(get<NativeApplication>(), uri)
+
+            //don't use prepare async because it may fail and doesn't throw an error, blocking the whole app
+            mediaPlayer?.prepare()
         } catch (exception: Exception) {
             logger.e(exception) { "AudioPlayer thrown exception" }
             mediaPlayer = null
