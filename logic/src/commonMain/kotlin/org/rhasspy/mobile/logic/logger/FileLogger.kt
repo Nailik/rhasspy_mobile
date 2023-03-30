@@ -47,7 +47,7 @@ object FileLogger : LogWriter(), KoinComponent {
                     null
                 )
             )
-        )
+        ).flush()
     }
 
     /**
@@ -62,7 +62,7 @@ object FileLogger : LogWriter(), KoinComponent {
                 message,
                 throwable?.message
             )
-            file.commonReadWrite().appendingSink().buffer().writeUtf8(",${Json.encodeToString(element)}")
+            file.commonReadWrite().appendingSink().buffer().writeUtf8(",${Json.encodeToString(element)}").flush()
             _flow.emit(element)
         }
     }
