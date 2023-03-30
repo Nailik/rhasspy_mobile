@@ -14,6 +14,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.logic.settings.option.AudioOutputOption
 import java.io.File
+import java.lang.Exception
 
 actual class AudioPlayer : Closeable, KoinComponent {
 
@@ -92,8 +93,12 @@ actual class AudioPlayer : Closeable, KoinComponent {
     }
 
     actual fun stop() {
-        audioTrack?.stop()
-        mediaPlayer?.stop()
+        try {
+            audioTrack?.stop()
+        } catch (e: Exception) {}
+        try {
+            mediaPlayer?.stop()
+        } catch (e: Exception) {}
         audioTrack = null
         mediaPlayer = null
         _isPlayingState.value = false
