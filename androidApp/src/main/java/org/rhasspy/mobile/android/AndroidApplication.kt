@@ -1,5 +1,7 @@
 package org.rhasspy.mobile.android
 
+import android.os.StrictMode
+import android.os.StrictMode.VmPolicy
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import co.touchlab.kermit.Logger
 import com.google.firebase.crashlytics.ktx.crashlytics
@@ -13,8 +15,10 @@ import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.android.uiservices.IndicationOverlay
 import org.rhasspy.mobile.android.uiservices.MicrophoneOverlay
 import org.rhasspy.mobile.android.widget.MicrophoneWidget
+import org.rhasspy.mobile.logic.nativeutils.isDebug
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import kotlin.system.exitProcess
+
 
 /**
  * holds android application and native functions and provides koin module
@@ -33,6 +37,9 @@ class AndroidApplication : Application(), KoinComponent {
 
     override fun onCreate() {
         super.onCreate()
+        if(isDebug()) {
+            StrictMode.setVmPolicy(VmPolicy.Builder(StrictMode.getVmPolicy()).detectAll().build())
+        }
         onCreated()
     }
 

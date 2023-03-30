@@ -28,8 +28,7 @@ expect class AudioPlayer() : Closeable {
         audioSource: AudioSource,
         volume: StateFlow<Float>,
         audioOutputOption: AudioOutputOption,
-        onFinished: (() -> Unit)? = null,
-        onError: ((exception: Exception?) -> Unit)? = null
+        onFinished: (exception: Exception?) -> Unit
     )
 
     /**

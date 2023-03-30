@@ -21,8 +21,7 @@ actual class AudioPlayer : Closeable {
         audioSource: AudioSource,
         volume: StateFlow<Float>,
         audioOutputOption: AudioOutputOption,
-        onFinished: (() -> Unit)?,
-        onError: ((exception: Exception?) -> Unit)?
+        onFinished: (exception: Exception?) -> Unit
     ) {
     }
 

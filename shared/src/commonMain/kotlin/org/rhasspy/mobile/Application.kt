@@ -45,7 +45,8 @@ abstract class Application : NativeApplication(), KoinComponent {
         }
 
         CoroutineScope(Dispatchers.Default).launch {
-            if (!isDebug() && !isInstrumentedTest()) { //TODO must be done in platform specific code
+            Logger.addLogWriter(FileLogger)
+            if (!isDebug() && !isInstrumentedTest()) {
                 Logger.addLogWriter(
                     CrashlyticsLogWriter(
                         minSeverity = Severity.Info,
@@ -53,7 +54,6 @@ abstract class Application : NativeApplication(), KoinComponent {
                     )
                 )
             }
-            Logger.addLogWriter(FileLogger)
 
             logger.i { "######## Application started ########" }
 
