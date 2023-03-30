@@ -17,8 +17,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
@@ -32,8 +30,8 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.MicrophoneFab
 import org.rhasspy.mobile.android.theme.AppTheme
-import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.overlay.MicrophoneOverlayViewModel
 
@@ -142,9 +140,7 @@ object MicrophoneOverlay : KoinComponent {
 
             view.setViewTreeLifecycleOwner(lifecycleOwner)
             view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
-            view.setViewTreeViewModelStoreOwner(object: ViewModelStoreOwner {
-                override val viewModelStore: ViewModelStore = ViewModelStore()
-            })
+            view.setViewTreeViewModelStoreOwner(lifecycleOwner)
 
             if (job?.isActive == true) {
                 return

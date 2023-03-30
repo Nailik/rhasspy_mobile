@@ -9,10 +9,8 @@ import android.view.WindowManager
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.lifecycle.setViewTreeLifecycleOwner
+import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
@@ -96,9 +94,7 @@ object IndicationOverlay : KoinComponent {
 
             view.setViewTreeLifecycleOwner(lifecycleOwner)
             view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
-            view.setViewTreeViewModelStoreOwner(object: ViewModelStoreOwner {
-                override val viewModelStore: ViewModelStore = ViewModelStore()
-            })
+            view.setViewTreeViewModelStoreOwner(lifecycleOwner)
 
             if (job?.isActive == true) {
                 return
