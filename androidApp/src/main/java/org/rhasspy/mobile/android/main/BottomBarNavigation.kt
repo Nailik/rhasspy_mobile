@@ -20,7 +20,6 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -38,6 +37,7 @@ import org.rhasspy.mobile.android.content.item.NavigationItem
 import org.rhasspy.mobile.android.navigation.BottomBarScreenType
 import org.rhasspy.mobile.android.navigation.NavigationParams
 import org.rhasspy.mobile.android.settings.SettingsScreen
+import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
 
 val LocalConfigurationNavController = compositionLocalOf<NavController> {
@@ -144,7 +144,7 @@ fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavControlle
             screen = BottomBarScreenType.ConfigurationScreen,
             icon = {
                 Icon(
-                    painterResource(MR.images.ic_launcher.drawableResId),
+                    RhasspyLogo,
                     MR.strings.configuration,
                     Modifier.size(24.dp)
                 )

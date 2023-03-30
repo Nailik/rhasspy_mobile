@@ -3,6 +3,7 @@ plugins {
     id("com.android.library")
     id("dev.icerock.mobile.multiplatform-resources")
     id("com.codingfeline.buildkonfig")
+    id("org.jetbrains.compose")
 }
 
 kotlin {
@@ -22,6 +23,11 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(Icerock.Resources)
+                implementation(Jetbrains.Compose.ui)
+                implementation(Jetbrains.Compose.foundation)
+                implementation(Jetbrains.Compose.material)
+                implementation(Jetbrains.Compose.material3)
+                implementation(Jetbrains.Compose.runtime)
             }
         }
         val commonTest by getting {
