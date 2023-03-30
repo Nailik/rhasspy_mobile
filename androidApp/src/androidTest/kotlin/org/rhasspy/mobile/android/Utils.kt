@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.Settings
 import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
@@ -157,6 +158,7 @@ fun ComposeContentTestRule.awaitSaved(viewModel: IConfigurationViewModel) {
 }
 
 
+@OptIn(ExperimentalTestApi::class)
 fun ComposeContentTestRule.waitUntilExists(
     matcher: SemanticsMatcher,
     timeoutMillis: Long = 1_000L
@@ -164,6 +166,7 @@ fun ComposeContentTestRule.waitUntilExists(
     return this.waitUntilNodeCount(matcher, 1, timeoutMillis)
 }
 
+@OptIn(ExperimentalTestApi::class)
 fun ComposeContentTestRule.waitUntilDoesNotExist(
     matcher: SemanticsMatcher,
     timeoutMillis: Long = 1_000L
