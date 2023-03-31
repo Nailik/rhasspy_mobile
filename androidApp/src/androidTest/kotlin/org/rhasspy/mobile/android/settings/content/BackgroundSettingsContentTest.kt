@@ -96,7 +96,7 @@ class BackgroundSettingsContentTest {
             //user clicks accept
             device.findObject(UiSelector().resourceIdMatches(acceptButton)).click()
             //deactivate battery optimization is shown as enabled
-            composeTestRule.onNodeWithTag(TestTag.BatteryOptimization, true).onChildAt(2)
+            composeTestRule.onNodeWithTag(TestTag.BatteryOptimization, true).onChildAt(0).onChildAt(2)
                 .assertTextEquals(MR.strings.enabled)
 
         }
