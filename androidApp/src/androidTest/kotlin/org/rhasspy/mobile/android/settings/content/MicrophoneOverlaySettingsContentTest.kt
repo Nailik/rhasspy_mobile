@@ -27,7 +27,7 @@ import org.rhasspy.mobile.android.onListItemRadioButton
 import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.resetOverlayPermission
 import org.rhasspy.mobile.android.text
-import org.rhasspy.mobile.data.serviceoption.MicrophoneOverlaySizeOption
+import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.viewmodel.settings.MicrophoneOverlaySettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

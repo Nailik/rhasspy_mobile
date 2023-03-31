@@ -4,15 +4,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.logic.combineAny
-import org.rhasspy.mobile.logic.combineStateNotEquals
+import org.rhasspy.mobile.platformspecific.combineAny
+import org.rhasspy.mobile.platformspecific.combineStateNotEquals
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.mapReadonlyState
-import org.rhasspy.mobile.logic.readOnly
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.data.serviceoption.DialogManagementOption
+import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.viewmodel.configuration.test.DialogManagementConfigurationTest
 
 /**

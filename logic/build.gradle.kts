@@ -39,23 +39,11 @@ kotlin {
                 implementation(Koin.core)
             }
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-            }
-        }
+        val commonTest by getting
         val androidMain by getting {
             dependencies {
-                implementation(AndroidX.appCompat)
                 implementation(AndroidX.multidex)
-                implementation(Ktor2.Server.compression)
-                implementation(Ktor2.Server.callLogging)
-                implementation(Ktor2.Server.netty)
-                implementation(Koin.android)
-                implementation(Koin.androidCompat)
-                implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Picovoice.porcupineAndroid)
-                implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
             }
         }
         val androidUnitTest by getting

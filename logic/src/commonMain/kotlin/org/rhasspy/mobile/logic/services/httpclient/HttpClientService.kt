@@ -18,12 +18,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import okio.Path
 import org.koin.core.component.get
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.serviceoption.IntentHandlingOption
+import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.middleware.ServiceState
-import org.rhasspy.mobile.logic.middleware.ServiceState.Success
-import org.rhasspy.mobile.logic.nativeutils.configureEngine
-import org.rhasspy.mobile.logic.readOnly
+import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState.Success
+import org.rhasspy.mobile.platformspecific.ktor.configureEngine
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.speechtotext.StreamContent
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
@@ -181,6 +181,7 @@ class HttpClientService : IService() {
     @Suppress("IMPLICIT_CAST_TO_ANY")
     suspend fun playWav(audioSource: AudioSource): HttpClientResult<String> {
         logger.d { "playWav size: $audioSource" }
+        @Suppress("DEPRECATION")
         val body = when(audioSource) {
             is AudioSource.Data -> audioSource.data
             is AudioSource.File -> StreamContent(audioSource.path)

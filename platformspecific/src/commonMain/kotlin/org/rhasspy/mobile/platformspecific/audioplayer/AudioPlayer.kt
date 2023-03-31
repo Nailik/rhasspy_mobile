@@ -2,7 +2,7 @@ package org.rhasspy.mobile.platformspecific.audioplayer
 
 import io.ktor.utils.io.core.Closeable
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.serviceoption.AudioOutputOption
+import org.rhasspy.mobile.data.service.option.AudioOutputOption
 
 /**
  * plays audio on the device

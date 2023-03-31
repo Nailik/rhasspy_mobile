@@ -10,8 +10,8 @@ import okio.Path
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.component.inject
-import org.rhasspy.mobile.logic.combineState
-import org.rhasspy.mobile.logic.readOnly
+import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceState
 import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService

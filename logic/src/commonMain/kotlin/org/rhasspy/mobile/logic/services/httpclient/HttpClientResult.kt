@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.logic.services.httpclient
 
-import org.rhasspy.mobile.logic.middleware.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState
 
 sealed class HttpClientResult<T> {
 
