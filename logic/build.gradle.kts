@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
@@ -6,16 +8,9 @@ plugins {
 
 kotlin {
     android()
-
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
-            baseName = "logic"
-        }
-    }
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     sourceSets {
         val commonMain by getting {
@@ -90,5 +85,9 @@ android {
     compileSdk = 33
     defaultConfig {
         minSdk = 23
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_19
+        targetCompatibility = JavaVersion.VERSION_19
     }
 }

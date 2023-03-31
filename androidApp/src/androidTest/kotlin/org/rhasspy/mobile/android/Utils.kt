@@ -13,8 +13,10 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.filter
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isSelectable
 import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onFirst
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
@@ -27,8 +29,12 @@ import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 
 
-fun SemanticsNodeInteraction.onSwitch(): SemanticsNodeInteraction {
-    return this.onChildren().filter(isToggleable()).onFirst()
+fun SemanticsNodeInteraction.onListItemSwitch(): SemanticsNodeInteraction {
+    return this.onChildAt(0).onChildren().filter(isToggleable()).onFirst()
+}
+
+fun SemanticsNodeInteraction.onListItemRadioButton(): SemanticsNodeInteraction {
+    return this.onChildAt(0).onChildren().filter(isSelectable()).onFirst()
 }
 
 fun hasTestTag(testTag: Enum<*>): SemanticsMatcher =

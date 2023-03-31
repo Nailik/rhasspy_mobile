@@ -34,7 +34,7 @@ class InternalAudioPlayer(
             mediaPlayer.stop()
             mediaPlayer.release()
         } catch (exception: Exception) {
-            logger.e { "stop exception" }
+            logger.e(exception) { "stop exception" }
             onFinished(exception)
         }
     }
@@ -43,6 +43,7 @@ class InternalAudioPlayer(
     val isPlaying: Boolean
         get() = mediaPlayer.isPlaying
 
+    @Suppress("DEPRECATION")
     private val uri = when (audioSource) {
         is AudioSource.Data -> getUriFromData(audioSource.data)
         is AudioSource.File -> Uri.fromFile(audioSource.path.toFile())
@@ -76,7 +77,7 @@ class InternalAudioPlayer(
             mediaPlayer.setDataSource(get<NativeApplication>(), uri)
             mediaPlayer.prepare()
         } catch (exception: Exception) {
-            logger.e { "start exception" }
+            logger.e(exception) { "start exception" }
             onFinished(exception)
         }
     }

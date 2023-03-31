@@ -41,7 +41,7 @@ actual class PorcupineWakeWordClient actual constructor(
     private val onKeywordDetected: (hotWord: String) -> Unit,
     private val onError: (PorcupineError) -> Unit
 ) : PorcupineManagerCallback, Closeable, KoinComponent {
-    private val logger = Logger.withTag("NativeLocalWakeWordService")
+    private val logger = Logger.withTag("PorcupineWakeWordClient")
 
     //manager to stop start and reload porcupine
     private var porcupineManager: PorcupineManager? = null

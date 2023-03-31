@@ -6,7 +6,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
@@ -22,6 +21,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.onNodeWithCombinedTag
 import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.android.onListItemRadioButton
 import org.rhasspy.mobile.android.requestExternalStoragePermissions
 import org.rhasspy.mobile.android.test.R
 import org.rhasspy.mobile.data.serviceoption.AudioOutputOption
@@ -103,7 +103,7 @@ abstract class IndicationSoundScreenTest(
         //Disabled sound is saved
         assertTrue { viewModel.isSoundIndicationDisabled.value }
         //Disabled sound ist selected
-        composeTestRule.onNodeWithTag(TestTag.Disabled).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(TestTag.Disabled).onListItemRadioButton().assertIsSelected()
 
         //user selects add file
         composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
@@ -113,14 +113,14 @@ abstract class IndicationSoundScreenTest(
         //file is added to list
         composeTestRule.onNodeWithTag(fileName).assertIsDisplayed()
         //file is selected
-        composeTestRule.onNodeWithTag(fileName).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(fileName).onListItemRadioButton().assertIsSelected()
         //file cannot be deleted
         composeTestRule.onNodeWithCombinedTag(fileName, TestTag.Delete).assertDoesNotExist()
 
         //user clicks default
         composeTestRule.onNodeWithTag(TestTag.Default).performClick()
         //default sound ist selected
-        composeTestRule.onNodeWithTag(TestTag.Default).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(TestTag.Default).onListItemRadioButton().assertIsSelected()
         //default sound is saved
         assertTrue { viewModel.isSoundIndicationDefault.value }
 
@@ -183,12 +183,12 @@ abstract class IndicationSoundScreenTest(
         //Disabled sound is saved
         assertTrue { viewModel.isSoundIndicationDisabled.value }
         //Disabled sound ist selected
-        composeTestRule.onNodeWithTag(TestTag.Disabled).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(TestTag.Disabled).onListItemRadioButton().assertIsSelected()
 
         //user clicks default
         composeTestRule.onNodeWithTag(TestTag.Default).performClick()
         //default is selected
-        composeTestRule.onNodeWithTag(TestTag.Default).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(TestTag.Default).onListItemRadioButton().assertIsSelected()
 
         //user selects add file
         composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
@@ -198,7 +198,7 @@ abstract class IndicationSoundScreenTest(
         //file is added to list
         composeTestRule.onNodeWithTag(fileName).assertIsDisplayed()
         //file is selected
-        composeTestRule.onNodeWithTag(fileName).onChildAt(0).assertIsSelected()
+        composeTestRule.onNodeWithTag(fileName).onListItemRadioButton().assertIsSelected()
 
         //user clicks play
         composeTestRule.onNodeWithTag(TestTag.PlayPause).performClick()
