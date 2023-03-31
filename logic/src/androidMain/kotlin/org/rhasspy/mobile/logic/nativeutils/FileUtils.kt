@@ -35,9 +35,10 @@ actual object FileUtils : KoinComponent {
                     it.data?.data?.also { uri ->
 
                         queryFile(uri)?.also { fileName ->
+                            val finalFileName = renameFileWhileExists(context.filesDir, folderType.toString(), fileName)
                             //create folder if it doesn't exist yet
                             File(context.filesDir, folderType.toString()).mkdirs()
-                            val result = copyFile(folderType, uri, folderType.toString(), fileName)
+                            val result = copyFile(folderType, uri, folderType.toString(), finalFileName)
                             continuation.resume(result?.toPath())
 
                         } ?: kotlin.run {
@@ -118,13 +119,13 @@ actual object FileUtils : KoinComponent {
     private suspend fun copyPorcupineFile(
         uri: Uri,
         folderName: String,
-        fileName: String
+        selectedFileName: String
     ): String? =
         suspendCoroutine { continuation ->
             context.contentResolver.openInputStream(uri)?.also { inputStream ->
 
                 when {
-                    fileName.endsWith(".zip") -> {
+                    selectedFileName.endsWith(".zip") -> {
 
                         //check if file contains .ppn file
                         val zipInputStream =
@@ -136,6 +137,8 @@ actual object FileUtils : KoinComponent {
 
                             if (!ze.isDirectory) {
                                 if (ze.name.endsWith(".ppn")) {
+                                    val fileName = renameFileWhileExists(context.filesDir, folderName, ze.name)
+
                                     File(
                                         context.filesDir,
                                         "$folderName/$fileName"
@@ -155,8 +158,10 @@ actual object FileUtils : KoinComponent {
                         inputStream.close()
                     }
 
-                    fileName.endsWith(".ppn") -> {
-                        //use this file
+                    selectedFileName.endsWith(".ppn") -> {
+                    //use this file
+                        val fileName = renameFileWhileExists(context.filesDir, folderName, selectedFileName)
+
                         File(context.filesDir, "$folderName/$fileName").apply {
                             this.outputStream().apply {
                                 inputStream.copyTo(this)
@@ -174,5 +179,22 @@ actual object FileUtils : KoinComponent {
             //when not yet returned, then there is an issue
             continuation.resume(null)
         }
+
+    /**
+     *  rename file while it already exists
+     */
+    private fun renameFileWhileExists(dir: File, folder: String, file: String): String {
+        var fileName = file
+        var index = 0
+        while (File(dir, "$folder/$fileName").exists()) {
+            index++
+            fileName = if (fileName.contains(Regex("\\([1-9]+\\)."))) {
+                fileName.replace(Regex("\\([1-9]+\\)."), "($index).")
+            } else {
+                "${fileName.substringBeforeLast(".")}($index).${fileName.substringAfterLast(".")}"
+            }
+        }
+        return fileName
+    }
 
 }

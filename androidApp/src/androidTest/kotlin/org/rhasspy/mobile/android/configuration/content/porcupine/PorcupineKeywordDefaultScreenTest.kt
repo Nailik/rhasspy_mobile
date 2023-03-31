@@ -15,9 +15,9 @@ import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
+import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.onNodeWithCombinedTag
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.data.serviceoption.PorcupineKeywordOption
 import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 import kotlin.test.assertFalse
@@ -74,11 +74,9 @@ class PorcupineKeywordDefaultScreenTest {
         }
         //none is selected
         viewModel.wakeWordPorcupineKeywordDefaultOptions.value.forEach {
-            composeTestRule
-                .onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen, true)
+            composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen)
                 .performScrollToKey(it.option)
-                .onListItemSwitch()
-                .assertIsOff()
+            composeTestRule.onNodeWithTag(it.option).onListItemSwitch().assertIsOff()
             composeTestRule.awaitIdle()
         }
 
