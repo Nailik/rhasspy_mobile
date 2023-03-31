@@ -6,7 +6,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
@@ -25,9 +24,10 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithCombinedTag
 import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.requestExternalStoragePermissions
 import org.rhasspy.mobile.android.test.R
-import org.rhasspy.mobile.logic.nativeutils.NativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 import java.io.File
 import kotlin.test.assertTrue
@@ -143,7 +143,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordCustomScreen).assertIsDisplayed()
         //jarvis is added to list and enabled
         composeTestRule.onNodeWithTag(ppn).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(ppn).onChildAt(0).assertIsOn()
+        composeTestRule.onNodeWithTag(ppn).onListItemSwitch().assertIsOn()
 
         //viewModel save is invoked
         viewModel.onSave()

@@ -9,7 +9,7 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.logic.nativeutils.OverlayPermission
+import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 
 fun UiDevice.resetOverlayPermission(context: Context) {
     if (!Settings.canDrawOverlays(context)) {

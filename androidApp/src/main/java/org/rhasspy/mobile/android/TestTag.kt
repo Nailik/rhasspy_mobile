@@ -3,7 +3,7 @@ package org.rhasspy.mobile.android
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
-import org.rhasspy.mobile.logic.settings.option.IOption
+import org.rhasspy.mobile.data.serviceoption.IOption
 
 /**
  * test tags to be used in compose

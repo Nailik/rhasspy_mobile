@@ -13,7 +13,7 @@ import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.onSwitch
+import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.viewmodel.settings.DeviceSettingsSettingsViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -64,32 +64,32 @@ class DeviceSettingsContentTest {
         composeTestRule.onNodeWithTag(TestTag.Volume).assertIsDisplayed()
 
         //hot word is enabled
-        composeTestRule.onNodeWithTag(TestTag.HotWord).onSwitch().assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.HotWord).onListItemSwitch().assertIsOn()
         assertTrue { DeviceSettingsSettingsViewModel().isHotWordEnabled.value }
         //user clicks hot word
         composeTestRule.onNodeWithTag(TestTag.HotWord).performClick()
         //hot word is disabled
-        composeTestRule.onNodeWithTag(TestTag.HotWord).onSwitch().assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.HotWord).onListItemSwitch().assertIsOff()
         //hot word disabled is saved
         assertFalse { DeviceSettingsSettingsViewModel().isHotWordEnabled.value }
 
         //audio output is enabled
-        composeTestRule.onNodeWithTag(TestTag.AudioOutput).onSwitch().assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.AudioOutput).onListItemSwitch().assertIsOn()
         assertTrue { DeviceSettingsSettingsViewModel().isAudioOutputEnabled.value }
         //user clicks audio output
         composeTestRule.onNodeWithTag(TestTag.AudioOutput).performClick()
         //audio output is disabled
-        composeTestRule.onNodeWithTag(TestTag.AudioOutput).onSwitch().assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.AudioOutput).onListItemSwitch().assertIsOff()
         //audio output disabled is saved
         assertFalse { DeviceSettingsSettingsViewModel().isAudioOutputEnabled.value }
 
         //intent handling is enabled
-        composeTestRule.onNodeWithTag(TestTag.IntentHandling).onSwitch().assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.IntentHandling).onListItemSwitch().assertIsOn()
         assertTrue { DeviceSettingsSettingsViewModel().isIntentHandlingEnabled.value }
         //user clicks intent handling
         composeTestRule.onNodeWithTag(TestTag.IntentHandling).performClick()
         //intent handling is disabled
-        composeTestRule.onNodeWithTag(TestTag.IntentHandling).onSwitch().assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.IntentHandling).onListItemSwitch().assertIsOff()
         //intent handling disabled is saved
         assertFalse { DeviceSettingsSettingsViewModel().isIntentHandlingEnabled.value }
     }

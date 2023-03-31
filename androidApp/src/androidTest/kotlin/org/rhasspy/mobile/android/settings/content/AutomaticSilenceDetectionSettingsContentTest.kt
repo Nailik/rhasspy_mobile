@@ -20,7 +20,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.onSwitch
+import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.requestMicrophonePermissions
 import org.rhasspy.mobile.viewmodel.settings.AutomaticSilenceDetectionSettingsViewModel
 import kotlin.test.assertEquals
@@ -70,7 +70,7 @@ class AutomaticSilenceDetectionSettingsContentTest {
         val numberInputTest = "5000"
 
         //Automatic silence detection disabled
-        composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onSwitch().assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onListItemSwitch().assertIsOff()
         //settings not visible
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration)
             .assertDoesNotExist()
@@ -78,7 +78,7 @@ class AutomaticSilenceDetectionSettingsContentTest {
         //user clicks automatic silence detection
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).performClick()
         //Automatic silence detection enabled
-        composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onSwitch().assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onListItemSwitch().assertIsOn()
         //Automatic silence detection enabled saved
         assertTrue { AutomaticSilenceDetectionSettingsViewModel().isAutomaticSilenceDetectionEnabled.value }
         //settings visible

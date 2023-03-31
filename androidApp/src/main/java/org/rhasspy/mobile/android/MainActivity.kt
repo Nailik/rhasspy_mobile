@@ -19,14 +19,15 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.AppLaunchChecker
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.multidex.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.main.MainNavigation
-import org.rhasspy.mobile.logic.nativeutils.AppActivity
-import org.rhasspy.mobile.logic.nativeutils.NativeApplication
+import org.rhasspy.mobile.platformspecific.application.AppActivity
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
 
 

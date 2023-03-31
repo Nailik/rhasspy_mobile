@@ -8,7 +8,6 @@ import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
@@ -21,9 +20,10 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.onSwitch
-import org.rhasspy.mobile.logic.settings.option.AudioOutputOption
-import org.rhasspy.mobile.logic.settings.option.AudioPlayingOption
+import org.rhasspy.mobile.android.onListItemRadioButton
+import org.rhasspy.mobile.android.onListItemSwitch
+import org.rhasspy.mobile.data.serviceoption.AudioOutputOption
+import org.rhasspy.mobile.data.serviceoption.AudioPlayingOption
 import org.rhasspy.mobile.viewmodel.configuration.AudioPlayingConfigurationViewModel
 import kotlin.test.assertEquals
 
@@ -77,8 +77,7 @@ class AudioPlayingConfigurationContentTest {
         val textInputTest = "endpointTestInput"
 
         //option disable is set
-        composeTestRule.onNodeWithTag(AudioPlayingOption.Disabled).onChildAt(0)
-            .assertIsSelected()
+        composeTestRule.onNodeWithTag(AudioPlayingOption.Disabled).onListItemRadioButton().assertIsSelected()
 
         //User clicks option remote http
         composeTestRule.onNodeWithTag(AudioPlayingOption.RemoteHTTP).performClick()
@@ -91,17 +90,18 @@ class AudioPlayingConfigurationContentTest {
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
 
         //switch is off
-        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performScrollTo().onSwitch()
-            .assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performScrollTo().onListItemSwitch().assertIsOff()
         //endpoint cannot be changed
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsNotEnabled()
 
         //user clicks switch
         composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performClick()
         //switch is on
-        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).onSwitch().assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).onListItemSwitch().assertIsOn()
         //endpoint can be changed
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsEnabled()
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).performClick()
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextReplacement(textInputTest)
         composeTestRule.awaitIdle()
         assertEquals(textInputTest, viewModel.audioPlayingHttpEndpoint.value)
@@ -145,8 +145,7 @@ class AudioPlayingConfigurationContentTest {
         assertEquals(AudioOutputOption.Sound, viewModel.audioOutputOption.value)
 
         //option disable is set
-        composeTestRule.onNodeWithTag(AudioPlayingOption.Disabled, true).onChildAt(0)
-            .assertIsSelected()
+        composeTestRule.onNodeWithTag(AudioPlayingOption.Disabled, true).onListItemRadioButton().assertIsSelected()
         //output options not visible
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertDoesNotExist()
 
@@ -158,14 +157,12 @@ class AudioPlayingConfigurationContentTest {
         //output options visible
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertIsDisplayed()
         //option sound is set
-        composeTestRule.onNodeWithTag(AudioOutputOption.Sound, true).onChildAt(0)
-            .assertIsSelected()
+        composeTestRule.onNodeWithTag(AudioOutputOption.Sound, true).onListItemRadioButton().assertIsSelected()
 
         //user clicks option notification
         composeTestRule.onNodeWithTag(AudioOutputOption.Notification).performClick()
         //option notification is selected
-        composeTestRule.onNodeWithTag(AudioOutputOption.Notification, true).onChildAt(0)
-            .assertIsSelected()
+        composeTestRule.onNodeWithTag(AudioOutputOption.Notification, true).onListItemRadioButton().assertIsSelected()
 
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()

@@ -4,7 +4,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.runBlocking
@@ -15,7 +14,8 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.logic.settings.option.DialogManagementOption
+import org.rhasspy.mobile.android.onListItemRadioButton
+import org.rhasspy.mobile.data.serviceoption.DialogManagementOption
 import org.rhasspy.mobile.viewmodel.configuration.DialogManagementConfigurationViewModel
 import kotlin.test.assertEquals
 
@@ -55,13 +55,11 @@ class DialogManagementConfigurationContentTest {
         viewModel.onSave()
 
         //option disable is set
-        composeTestRule.onNodeWithTag(DialogManagementOption.Disabled, true).onChildAt(0)
-            .assertIsSelected()
+        composeTestRule.onNodeWithTag(DialogManagementOption.Disabled, true).onListItemRadioButton().assertIsSelected()
         //User clicks option local
         composeTestRule.onNodeWithTag(DialogManagementOption.Local).performClick()
         //new option is selected
-        composeTestRule.onNodeWithTag(DialogManagementOption.Local, true).onChildAt(0)
-            .assertIsSelected()
+        composeTestRule.onNodeWithTag(DialogManagementOption.Local, true).onListItemRadioButton().assertIsSelected()
 
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()

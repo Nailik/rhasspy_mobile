@@ -17,9 +17,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.lifecycle.setViewTreeLifecycleOwner
+import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
@@ -31,8 +30,8 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.MicrophoneFab
 import org.rhasspy.mobile.android.theme.AppTheme
-import org.rhasspy.mobile.logic.nativeutils.MicrophonePermission
-import org.rhasspy.mobile.logic.nativeutils.NativeApplication
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.overlay.MicrophoneOverlayViewModel
 
@@ -48,8 +47,14 @@ object MicrophoneOverlay : KoinComponent {
 
     private var job: Job? = null
 
+    private val context: Context
+        get() {
+            val application = get<NativeApplication>()
+            return application.currentActivity ?: application
+        }
+
     private val overlayWindowManager by lazy {
-        get<NativeApplication>().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     }
 
     private fun onClick() {
@@ -64,7 +69,7 @@ object MicrophoneOverlay : KoinComponent {
      * view that's displayed as overlay to start wake word detection
      */
     private fun getView(): ComposeView {
-        return ComposeView(get<NativeApplication>()).apply {
+        return ComposeView(context).apply {
             setContent {
                 AppTheme {
                     val size by viewModel.microphoneOverlaySize.collectAsState()
@@ -141,9 +146,7 @@ object MicrophoneOverlay : KoinComponent {
 
             view.setViewTreeLifecycleOwner(lifecycleOwner)
             view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
-
-            val viewModelStore = ViewModelStore()
-            ViewTreeViewModelStoreOwner.set(view) { viewModelStore }
+            view.setViewTreeViewModelStoreOwner(lifecycleOwner)
 
             if (job?.isActive == true) {
                 return

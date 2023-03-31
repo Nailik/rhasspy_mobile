@@ -16,10 +16,11 @@ import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
 import org.koin.core.context.unloadKoinModules
 import org.koin.dsl.module
+import org.rhasspy.mobile.data.serviceoption.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.logic.logger.FileLogger
 import org.rhasspy.mobile.logic.nativeutils.BackgroundService
-import org.rhasspy.mobile.logic.nativeutils.NativeApplication
-import org.rhasspy.mobile.logic.nativeutils.OverlayPermission
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.logic.nativeutils.isDebug
 import org.rhasspy.mobile.logic.readOnly
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
@@ -27,7 +28,7 @@ import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.logic.settings.option.MicrophoneOverlaySizeOption
+import org.rhasspy.mobile.platformspecific.language.setupLanguage
 
 abstract class Application : NativeApplication(), KoinComponent {
     private val logger = Logger.withTag("Application")
@@ -44,7 +45,8 @@ abstract class Application : NativeApplication(), KoinComponent {
         }
 
         CoroutineScope(Dispatchers.Default).launch {
-            if (!isDebug() && !isInstrumentedTest()) { //TODO must be done in platform specific code
+            Logger.addLogWriter(FileLogger)
+            if (!isDebug() && !isInstrumentedTest()) {
                 Logger.addLogWriter(
                     CrashlyticsLogWriter(
                         minSeverity = Severity.Info,
@@ -52,7 +54,6 @@ abstract class Application : NativeApplication(), KoinComponent {
                     )
                 )
             }
-            Logger.addLogWriter(FileLogger)
 
             logger.i { "######## Application started ########" }
 
@@ -67,6 +68,7 @@ abstract class Application : NativeApplication(), KoinComponent {
             )
 
             //setup language
+            initializeLanguage()
             StringDesc.localeType = StringDesc.LocaleType.Custom(AppSetting.languageType.value.code)
 
             //start foreground service if enabled
@@ -129,5 +131,7 @@ abstract class Application : NativeApplication(), KoinComponent {
         get<MqttService>()
         get<DialogManagerService>()
     }
-
+    fun initializeLanguage() {
+        AppSetting.languageType.value = setupLanguage(AppSetting.languageType.value )
+    }
 }

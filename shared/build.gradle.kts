@@ -1,4 +1,4 @@
-@file:Suppress("UnstableApiUsage")
+@file:Suppress("UnstableApiUsage", "UNUSED_VARIABLE")
 
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
@@ -17,12 +17,10 @@ plugins {
 version = Version.toString()
 
 kotlin {
-    targets {
-        android()
-        iosX64()
-        iosArm64()
-        iosSimulatorArm64()
-    }
+    android()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     cocoapods {
         summary = "Some description for the Shared Module"
@@ -45,9 +43,11 @@ kotlin {
 
         val commonMain by getting {
             dependencies {
-                implementation(project(":shared-logic"))
-                implementation(project(":shared-ui"))
-                implementation(project(":shared-viewmodel"))
+                implementation(project(":logic"))
+                implementation(project(":ui"))
+                implementation(project(":viewmodel"))
+                implementation(project(":platformspecific"))
+                implementation(project(":data"))
                 implementation(Kotlin.Stdlib.common)
                 implementation(Touchlab.kermit)
                 implementation(Touchlab.Kermit.crashlytics)
@@ -70,6 +70,7 @@ kotlin {
                 implementation(Jetbrains.Compose.foundation)
                 implementation(Jetbrains.Compose.material3)
                 implementation(Jetbrains.Compose.runtime)
+                implementation(Square.okio)
             }
         }
         val commonTest by getting {
@@ -144,26 +145,25 @@ kotlin {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-opt-in=co.touchlab.kermit.ExperimentalKermitApi"
-
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
 }
 
 
 android {
+    namespace = "org.rhasspy.mobile"
     compileSdk = 33
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-
     defaultConfig {
         minSdk = 23
     }
-    packagingOptions {
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_19
+        targetCompatibility = JavaVersion.VERSION_19
+    }
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    packaging {
         resources.pickFirsts.add("META-INF/*")
         resources.pickFirsts.add("BuildConfig.kt")
         resources.pickFirsts.add("BuildConfig.dex")
     }
-    namespace = "org.rhasspy.mobile"
 }
 
 aboutLibraries {

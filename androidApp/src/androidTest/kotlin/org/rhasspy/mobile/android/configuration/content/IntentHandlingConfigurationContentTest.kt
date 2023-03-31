@@ -4,7 +4,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
@@ -17,7 +16,8 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.logic.settings.option.IntentHandlingOption
+import org.rhasspy.mobile.android.onListItemRadioButton
+import org.rhasspy.mobile.data.serviceoption.IntentHandlingOption
 import org.rhasspy.mobile.viewmodel.configuration.IntentHandlingConfigurationViewModel
 import kotlin.test.assertEquals
 
@@ -61,8 +61,7 @@ class IntentHandlingConfigurationContentTest {
         viewModel.selectIntentHandlingOption(IntentHandlingOption.Disabled)
         val textInputTest = "endpointTestInput"
         //option disable is set
-        composeTestRule.onNodeWithTag(IntentHandlingOption.Disabled, true).onChildAt(0)
-            .assertIsSelected()
+        composeTestRule.onNodeWithTag(IntentHandlingOption.Disabled, true).onListItemRadioButton().assertIsSelected()
 
         //User clicks option remote http
         composeTestRule.onNodeWithTag(IntentHandlingOption.RemoteHTTP, true).performClick()
@@ -120,8 +119,7 @@ class IntentHandlingConfigurationContentTest {
         val textInputTestToken = "tokenTestInput"
 
         //option disable is set
-        composeTestRule.onNodeWithTag(IntentHandlingOption.Disabled, true).onChildAt(0)
-            .assertIsSelected()
+        composeTestRule.onNodeWithTag(IntentHandlingOption.Disabled, true).onListItemRadioButton().assertIsSelected()
 
         //User clicks option HomeAssistant
         composeTestRule.onNodeWithTag(IntentHandlingOption.HomeAssistant).performClick()
@@ -148,12 +146,12 @@ class IntentHandlingConfigurationContentTest {
 
         //send intents is set
         composeTestRule.onNodeWithTag(TestTag.SendIntents, true)
-            .performScrollTo().performClick().onChildAt(0).assertIsSelected()
+            .performScrollTo().performClick().onListItemRadioButton().assertIsSelected()
         //send events can clicked
         composeTestRule.onNodeWithTag(TestTag.SendEvents).performScrollTo().performClick()
         //send events is set
         composeTestRule.onNodeWithTag(TestTag.SendEvents, true)
-            .performScrollTo().onChildAt(0).assertIsSelected()
+            .performScrollTo().onListItemRadioButton().assertIsSelected()
 
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()

@@ -17,7 +17,7 @@ import org.rhasspy.mobile.android.permissions.RequiresOverlayPermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.logic.settings.option.MicrophoneOverlaySizeOption
+import org.rhasspy.mobile.data.serviceoption.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.viewmodel.settings.MicrophoneOverlaySettingsViewModel
 
 /**

@@ -88,7 +88,7 @@ android {
         }
     }
 
-    packagingOptions {
+    packaging {
         //else netty finds multiple INDEX.LIST files
         resources.pickFirsts.add("META-INF/INDEX.LIST")
         resources.pickFirsts.add("META-INF/io.netty.versions.properties")
@@ -96,8 +96,8 @@ android {
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_19
+        targetCompatibility = JavaVersion.VERSION_19
     }
 
     testOptions {
@@ -128,12 +128,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi"
     kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
     kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi"
-    kotlinOptions.freeCompilerArgs += "-opt-in=com.google.accompanist.pager.ExperimentalPagerApi"
     kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi"
-
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
 }
 
 
@@ -164,9 +159,11 @@ kotlin {
 dependencies {
     coreLibraryDesugaring(Android.tools.desugarJdkLibs)
     implementation(project(":shared"))
-    implementation(project(":shared-viewmodel"))
-    implementation(project(":shared-logic"))
-    implementation(project(":shared-resources"))
+    implementation(project(":viewmodel"))
+    implementation(project(":logic"))
+    implementation(project(":resources"))
+    implementation(project(":platformspecific"))
+    implementation(project(":data"))
 
     implementation(KotlinX.Coroutines.core)
     implementation(KotlinX.Coroutines.android)
@@ -212,10 +209,12 @@ dependencies {
     androidTestImplementation(Kotlin.Test.junit)
     androidTestImplementation(AndroidX.Test.coreKtx)
     androidTestImplementation(AndroidX.Compose.Ui.testJunit4)
+    debugImplementation(AndroidX.tracing)
     debugImplementation(AndroidX.Compose.Ui.testManifest)
 
     implementation(platform(Firebase.bom))
 
     implementation(Firebase.analyticsKtx)
     implementation(Firebase.crashlyticsKtx)
+    implementation(Square.okio)
 }

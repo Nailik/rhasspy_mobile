@@ -12,7 +12,7 @@ import org.junit.runner.RunWith
 import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.logic.settings.AppSetting
-import org.rhasspy.mobile.logic.settings.option.MicrophoneOverlaySizeOption
+import org.rhasspy.mobile.data.serviceoption.MicrophoneOverlaySizeOption
 
 @RunWith(AndroidJUnit4::class)
 class MicrophoneOverlayTest : KoinComponent {

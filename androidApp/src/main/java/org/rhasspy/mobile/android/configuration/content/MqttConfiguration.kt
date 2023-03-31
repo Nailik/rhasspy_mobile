@@ -180,7 +180,7 @@ private fun MqttSSL(viewModel: MqttConfigurationViewModel) {
                 InformationListElement(
                     text = translate(
                         resource = MR.strings.currentlySelectedCertificate,
-                        viewModel.keyStoreFileText.collectAsState().value
+                        viewModel.keyStoreFileText.collectAsState().value?.name ?: ""
                     )
                 )
             }
