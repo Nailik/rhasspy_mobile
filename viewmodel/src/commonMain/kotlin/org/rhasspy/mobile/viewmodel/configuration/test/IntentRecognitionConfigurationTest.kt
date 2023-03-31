@@ -8,7 +8,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionService
 import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionServiceParams
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.data.serviceoption.IntentRecognitionOption
+import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 
 class IntentRecognitionConfigurationTest : IConfigurationTest() {
 

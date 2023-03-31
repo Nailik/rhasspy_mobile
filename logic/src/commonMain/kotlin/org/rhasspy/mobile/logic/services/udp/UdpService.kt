@@ -10,7 +10,7 @@ import io.ktor.utils.io.core.ByteReadPacket
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.nativeutils.AudioRecorder.Companion.appendWavHeader
+import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder.Companion.appendWavHeader
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.settings.AppSetting
 

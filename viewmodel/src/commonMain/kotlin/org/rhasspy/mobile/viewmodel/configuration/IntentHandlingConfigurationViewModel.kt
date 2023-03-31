@@ -4,18 +4,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.logic.combineAny
-import org.rhasspy.mobile.logic.combineStateNotEquals
+import org.rhasspy.mobile.platformspecific.combineAny
+import org.rhasspy.mobile.platformspecific.combineStateNotEquals
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.mapReadonlyState
-import org.rhasspy.mobile.logic.readOnly
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantServiceParams
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingService
 import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.data.serviceoption.HomeAssistantIntentHandlingOption
-import org.rhasspy.mobile.data.serviceoption.IntentHandlingOption
+import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
+import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.viewmodel.configuration.test.IntentHandlingConfigurationTest
 
 class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {

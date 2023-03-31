@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.rhasspy.mobile.android
 
 import android.os.StrictMode
@@ -15,7 +17,7 @@ import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.android.uiservices.IndicationOverlay
 import org.rhasspy.mobile.android.uiservices.MicrophoneOverlay
 import org.rhasspy.mobile.android.widget.MicrophoneWidget
-import org.rhasspy.mobile.logic.nativeutils.isDebug
+import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import kotlin.system.exitProcess
 

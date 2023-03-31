@@ -10,8 +10,9 @@ import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
-import org.rhasspy.mobile.data.serviceoption.IOption
-import org.rhasspy.mobile.logic.readOnly
+import org.rhasspy.mobile.data.service.option.IOption
+import org.rhasspy.mobile.data.settings.SettingsEnum
+import org.rhasspy.mobile.platformspecific.readOnly
 
 private val settings = Settings()
 private val logger = Logger.withTag("ISetting")

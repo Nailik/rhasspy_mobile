@@ -2,7 +2,7 @@ package org.rhasspy.mobile.data.language
 
 import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.data.serviceoption.IOption
+import org.rhasspy.mobile.data.service.option.IOption
 
 enum class LanguageType(override val text: StringResource, val code: String) :
     IOption<LanguageType> {

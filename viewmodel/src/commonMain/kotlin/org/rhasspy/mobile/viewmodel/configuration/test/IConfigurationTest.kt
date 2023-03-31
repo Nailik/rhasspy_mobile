@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.KoinComponent
-import org.rhasspy.mobile.logic.middleware.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState
 
 abstract class IConfigurationTest : Closeable, KoinComponent {
 

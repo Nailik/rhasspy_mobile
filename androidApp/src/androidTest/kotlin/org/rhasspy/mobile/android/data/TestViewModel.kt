@@ -3,7 +3,7 @@ package org.rhasspy.mobile.android.data
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.middleware.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTest
 

@@ -5,7 +5,7 @@ import io.ktor.utils.io.core.Closeable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.KoinComponent
-import org.rhasspy.mobile.data.serviceoption.AudioOutputOption
+import org.rhasspy.mobile.data.service.option.AudioOutputOption
 
 actual class AudioPlayer : Closeable, KoinComponent {
 

@@ -6,9 +6,9 @@ import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.sounds.SoundOption
-import org.rhasspy.mobile.logic.fileutils.FolderType
+import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.middleware.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioPlayer

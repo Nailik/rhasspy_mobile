@@ -32,17 +32,17 @@ import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.middleware.Action.AppSettingsAction
 import org.rhasspy.mobile.logic.middleware.Action.DialogAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.middleware.Source
-import org.rhasspy.mobile.logic.mqtt.MqttMessage
-import org.rhasspy.mobile.logic.mqtt.MqttParams
-import org.rhasspy.mobile.logic.mqtt.MqttPersistence
-import org.rhasspy.mobile.logic.mqtt.MqttTopicPlaceholder
-import org.rhasspy.mobile.logic.mqtt.MqttTopicsPublish
-import org.rhasspy.mobile.logic.mqtt.MqttTopicsSubscription
-import org.rhasspy.mobile.logic.nativeutils.AudioRecorder.Companion.appendWavHeader
-import org.rhasspy.mobile.logic.nativeutils.MqttClient
-import org.rhasspy.mobile.logic.readOnly
+import org.rhasspy.mobile.platformspecific.mqtt.MqttMessage
+import org.rhasspy.mobile.platformspecific.mqtt.MqttParams
+import org.rhasspy.mobile.platformspecific.mqtt.MqttPersistence
+import org.rhasspy.mobile.platformspecific.mqtt.MqttTopicPlaceholder
+import org.rhasspy.mobile.platformspecific.mqtt.MqttTopicsPublish
+import org.rhasspy.mobile.platformspecific.mqtt.MqttTopicsSubscription
+import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder.Companion.appendWavHeader
+import org.rhasspy.mobile.platformspecific.mqtt.MqttClient
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.extensions.commonData
@@ -840,6 +840,7 @@ class MqttService : IService() {
             .set(MqttTopicPlaceholder.SiteId, params.audioPlayingMqttSiteId)
             .set(MqttTopicPlaceholder.RequestId, uuid4().toString()),
         MqttMessage(
+            @Suppress("DEPRECATION")
             when (audioSource) {
                 is AudioSource.Data -> audioSource.data
                 is AudioSource.File -> audioSource.path.commonSource().buffer().readByteArray()

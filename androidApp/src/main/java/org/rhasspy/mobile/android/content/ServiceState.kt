@@ -28,7 +28,7 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.item.EventStateCard
 import org.rhasspy.mobile.android.content.item.EventStateIcon
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.logic.middleware.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 
 @Composable
