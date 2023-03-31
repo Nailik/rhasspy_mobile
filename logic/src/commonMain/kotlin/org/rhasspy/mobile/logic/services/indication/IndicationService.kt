@@ -4,8 +4,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.nativeutils.NativeIndication
-import org.rhasspy.mobile.logic.readOnly
+import org.rhasspy.mobile.platformspecific.indication.NativeIndication
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.logic.settings.AppSetting

@@ -16,8 +16,8 @@ import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.middleware.Action
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.Source
-import org.rhasspy.mobile.logic.nativeutils.AudioRecorder
-import org.rhasspy.mobile.logic.readOnly
+import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.settings.AppSetting
 import kotlin.time.Duration.Companion.milliseconds

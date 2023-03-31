@@ -2,7 +2,7 @@ package org.rhasspy.mobile.viewmodel.settings
 
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import org.rhasspy.mobile.logic.nativeutils.SettingsUtils
+import org.rhasspy.mobile.platformspecific.settings.SettingsUtils
 
 class SaveAndRestoreSettingsViewModel : ViewModel() {
 

@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.logic.services.mqtt
 
+import org.rhasspy.mobile.data.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 
 data class MqttServiceParams(

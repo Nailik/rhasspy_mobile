@@ -22,8 +22,8 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.onListItemRadioButton
 import org.rhasspy.mobile.android.onListItemSwitch
-import org.rhasspy.mobile.data.serviceoption.AudioOutputOption
-import org.rhasspy.mobile.data.serviceoption.AudioPlayingOption
+import org.rhasspy.mobile.data.service.option.AudioOutputOption
+import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.viewmodel.configuration.AudioPlayingConfigurationViewModel
 import kotlin.test.assertEquals
 

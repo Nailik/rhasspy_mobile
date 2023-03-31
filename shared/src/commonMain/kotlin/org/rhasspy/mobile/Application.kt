@@ -16,13 +16,13 @@ import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
 import org.koin.core.context.unloadKoinModules
 import org.koin.dsl.module
-import org.rhasspy.mobile.data.serviceoption.MicrophoneOverlaySizeOption
+import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.logic.logger.FileLogger
-import org.rhasspy.mobile.logic.nativeutils.BackgroundService
+import org.rhasspy.mobile.platformspecific.background.BackgroundService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
-import org.rhasspy.mobile.logic.nativeutils.isDebug
-import org.rhasspy.mobile.logic.readOnly
+import org.rhasspy.mobile.platformspecific.utils.isDebug
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.webserver.WebServerService

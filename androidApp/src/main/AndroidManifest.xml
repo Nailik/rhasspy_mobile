@@ -28,7 +28,7 @@
         android:supportsRtl="true"
         tools:ignore="Instantiatable,UnusedAttribute">
         <service
-            android:name="org.rhasspy.mobile.logic.nativeutils.BackgroundService"
+            android:name="org.rhasspy.mobile.platformspecific.background.BackgroundService"
             android:foregroundServiceType="microphone" />
 
         <service

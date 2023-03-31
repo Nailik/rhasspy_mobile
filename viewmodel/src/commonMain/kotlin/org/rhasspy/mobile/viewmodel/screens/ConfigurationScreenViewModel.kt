@@ -3,8 +3,8 @@ package org.rhasspy.mobile.viewmodel.screens
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.logic.combineStateFlow
-import org.rhasspy.mobile.logic.middleware.ServiceState
+import org.rhasspy.mobile.platformspecific.combineStateFlow
+import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientService

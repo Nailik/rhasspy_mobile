@@ -17,7 +17,7 @@ import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.onListItemRadioButton
-import org.rhasspy.mobile.data.serviceoption.IntentHandlingOption
+import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.viewmodel.configuration.IntentHandlingConfigurationViewModel
 import kotlin.test.assertEquals
 

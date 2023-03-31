@@ -15,7 +15,7 @@ import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.onListItemRadioButton
-import org.rhasspy.mobile.data.serviceoption.DialogManagementOption
+import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.viewmodel.configuration.DialogManagementConfigurationViewModel
 import kotlin.test.assertEquals
 

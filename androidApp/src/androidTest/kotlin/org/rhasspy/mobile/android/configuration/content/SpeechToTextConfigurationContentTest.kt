@@ -21,7 +21,7 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.onListItemRadioButton
 import org.rhasspy.mobile.android.onListItemSwitch
-import org.rhasspy.mobile.data.serviceoption.SpeechToTextOption
+import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.viewmodel.configuration.SpeechToTextConfigurationViewModel
 import kotlin.test.assertEquals
 

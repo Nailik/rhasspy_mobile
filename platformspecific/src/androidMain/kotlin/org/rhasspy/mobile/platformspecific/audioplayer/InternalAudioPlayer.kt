@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.data.serviceoption.AudioOutputOption
+import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import java.io.File
 

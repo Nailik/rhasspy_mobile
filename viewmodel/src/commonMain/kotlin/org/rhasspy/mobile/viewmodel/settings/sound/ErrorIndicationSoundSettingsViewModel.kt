@@ -6,10 +6,10 @@ import okio.Path
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.sounds.SoundFile
 import org.rhasspy.mobile.data.sounds.SoundOption
-import org.rhasspy.mobile.logic.combineState
-import org.rhasspy.mobile.logic.fileutils.FolderType
-import org.rhasspy.mobile.logic.mapReadonlyState
-import org.rhasspy.mobile.logic.nativeutils.FileUtils
+import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.file.FolderType
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath

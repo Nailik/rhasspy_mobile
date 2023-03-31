@@ -16,7 +16,7 @@ import okio.Path
 import okio.buffer
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.logic.readOnly
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.extensions.commonDecode
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
