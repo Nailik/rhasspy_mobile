@@ -39,6 +39,8 @@ expect class AudioRecorder() : Closeable {
          * to create wav header and add it in front of the given data
          */
         fun ByteArray.appendWavHeader(): ByteArray
+
+        fun getWavHeader(audioSize: Long): ByteArray
     }
 
 }

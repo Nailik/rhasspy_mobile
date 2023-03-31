@@ -211,6 +211,57 @@ actual class AudioRecorder : KoinComponent, Closeable {
             )
             return header.toByteArray() + this
         }
+
+        actual fun getWavHeader(audioSize: Long): ByteArray {
+            val totalLength = audioSize + 36
+            val header = arrayOf(
+                'R'.code.toByte(),
+                'I'.code.toByte(),
+                'F'.code.toByte(),
+                'F'.code.toByte(),
+                (totalLength and 0xff).toByte(),
+                ((totalLength shr 8) and 0xff).toByte(),
+                ((totalLength shr 16) and 0xff).toByte(),
+                ((totalLength shr 24) and 0xff).toByte(),
+                'W'.code.toByte(),
+                'A'.code.toByte(),
+                'V'.code.toByte(),
+                'E'.code.toByte(),
+                'f'.code.toByte(), // 'fmt ' chunk
+                'm'.code.toByte(),
+                't'.code.toByte(),
+                ' '.code.toByte(),
+                16, // 4 bytes: size of 'fmt ' chunk
+                0,
+                0,
+                0,
+                1, // format = 1
+                0,
+                CHANNEL_CONFIG.toByte(),
+                0,
+                (SAMPLING_RATE_IN_HZ and 0xff).toByte(),
+                ((SAMPLING_RATE_IN_HZ shr 8) and 0xff).toByte(),
+                ((SAMPLING_RATE_IN_HZ shr 16) and 0xff).toByte(),
+                ((SAMPLING_RATE_IN_HZ shr 24) and 0xff).toByte(),
+                (BYTE_RATE and 0xff).toByte(),
+                ((BYTE_RATE shr 8) and 0xff).toByte(),
+                ((BYTE_RATE shr 16) and 0xff).toByte(),
+                ((BYTE_RATE shr 24) and 0xff).toByte(),
+                1, // block align
+                0,
+                BIT_RATE.toByte(), // bits per sample
+                0,
+                'd'.code.toByte(),
+                'a'.code.toByte(),
+                't'.code.toByte(),
+                'a'.code.toByte(),
+                (audioSize and 0xff).toByte(),
+                ((audioSize shr 8) and 0xff).toByte(),
+                ((audioSize shr 16) and 0xff).toByte(),
+                ((audioSize shr 24) and 0xff).toByte() //40-43 data size of rest
+            )
+            return header.toByteArray()
+        }
     }
 
 }

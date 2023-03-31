@@ -43,7 +43,7 @@ class IndicationService : IService(), KoinComponent {
         }
         _indicationState.value = IndicationState.WakeUp
         if (AppSetting.isSoundIndicationEnabled.value) {
-            localAudioService.playWakeSound(onFinished)
+            localAudioService.playWakeSound { onFinished() }
         } else {
             onFinished()
         }

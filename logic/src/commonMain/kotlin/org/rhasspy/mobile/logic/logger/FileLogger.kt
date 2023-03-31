@@ -35,19 +35,7 @@ object FileLogger : LogWriter(), KoinComponent {
 
     init {
         Logger.setMinSeverity(AppSetting.logLevel.value.severity)
-
-        //create initial log file
-        file.commonReadWrite().appendingSink().buffer().writeUtf8(
-            Json.encodeToString(
-                LogElement(
-                    Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(),
-                    Severity.Verbose,
-                    "NativeFileWriter",
-                    "createdLogFile",
-                    null
-                )
-            )
-        )
+        log(Severity.Error, "NativeFileWriter", "createdLogFile")
     }
 
     /**
@@ -62,7 +50,10 @@ object FileLogger : LogWriter(), KoinComponent {
                 message,
                 throwable?.message
             )
-            file.commonReadWrite().appendingSink().buffer().writeUtf8(",${Json.encodeToString(element)}")
+            file.commonReadWrite().appendingSink().buffer().writeUtf8(",${Json.encodeToString(element)}").also {
+                it.flush()
+                it.close()
+            }
             _flow.emit(element)
         }
     }

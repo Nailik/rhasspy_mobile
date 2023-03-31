@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.logic.nativeutils
 
-import org.rhasspy.mobile.logic.BuildConfig
+import androidx.multidex.BuildConfig
 
 actual fun isDebug(): Boolean {
     return BuildConfig.DEBUG

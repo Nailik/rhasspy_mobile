@@ -47,6 +47,10 @@ actual class AudioRecorder : Closeable {
         actual fun ByteArray.appendWavHeader(): ByteArray {
             TODO("Not yet implemented")
         }
+
+        actual fun getWavHeader(audioSize: Long): ByteArray {
+            TODO("Not yet implemented")
+        }
     }
 
 }

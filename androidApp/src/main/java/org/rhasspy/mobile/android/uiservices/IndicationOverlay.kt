@@ -9,10 +9,8 @@ import android.view.WindowManager
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.lifecycle.setViewTreeLifecycleOwner
+import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
@@ -41,15 +39,21 @@ object IndicationOverlay : KoinComponent {
 
     private var job: Job? = null
 
+    private val context: Context
+        get() {
+            val application = get<NativeApplication>()
+            return application.currentActivity ?: application
+        }
+
     private val overlayWindowManager by lazy {
-        get<NativeApplication>().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     }
 
     /**
      * view that's displayed when a wake word is detected
      */
     private fun getView(): ComposeView {
-        return ComposeView(get<NativeApplication>()).apply {
+        return ComposeView(context).apply {
             setContent {
                 AppTheme {
                     Indication(viewModel.indicationState.collectAsState().value)
@@ -96,9 +100,7 @@ object IndicationOverlay : KoinComponent {
 
             view.setViewTreeLifecycleOwner(lifecycleOwner)
             view.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
-            view.setViewTreeViewModelStoreOwner(object: ViewModelStoreOwner {
-                override val viewModelStore: ViewModelStore = ViewModelStore()
-            })
+            view.setViewTreeViewModelStoreOwner(lifecycleOwner)
 
             if (job?.isActive == true) {
                 return
@@ -148,5 +150,6 @@ object IndicationOverlay : KoinComponent {
         job?.cancel()
         job = null
     }
+
 }
 

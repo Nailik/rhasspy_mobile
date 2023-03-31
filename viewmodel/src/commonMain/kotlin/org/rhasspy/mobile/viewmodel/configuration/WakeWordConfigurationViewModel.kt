@@ -13,7 +13,6 @@ import org.rhasspy.mobile.logic.combineStateNotEquals
 import org.rhasspy.mobile.logic.fileutils.FolderType
 import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.mapReadonlyState
-import org.rhasspy.mobile.logic.nativeutils.FileUtils
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.logic.openLink
 import org.rhasspy.mobile.logic.readOnly
@@ -23,6 +22,7 @@ import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.data.serviceoption.PorcupineKeywordOption
 import org.rhasspy.mobile.data.serviceoption.PorcupineLanguageOption
 import org.rhasspy.mobile.data.serviceoption.WakeWordOption
+import org.rhasspy.mobile.logic.nativeutils.FileUtils
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.viewmodel.configuration.test.WakeWordConfigurationTest

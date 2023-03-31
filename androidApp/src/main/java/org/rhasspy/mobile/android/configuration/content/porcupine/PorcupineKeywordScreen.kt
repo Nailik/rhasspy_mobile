@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.IconButton
@@ -19,9 +20,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.rememberPagerState
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
@@ -86,7 +86,7 @@ fun PorcupineKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
         ) { paddingValues ->
             //horizontal pager to slide between pages
             Surface(modifier = Modifier.padding(paddingValues)) {
-                HorizontalPager(count = 2, state = pagerState) { page ->
+                HorizontalPager(pageCount = 2, state = pagerState) { page ->
                     if (page == 0) {
                         PorcupineKeywordDefaultScreen(viewModel)
                     } else {

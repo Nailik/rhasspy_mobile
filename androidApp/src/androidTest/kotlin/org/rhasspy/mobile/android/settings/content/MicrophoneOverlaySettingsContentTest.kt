@@ -8,7 +8,6 @@ import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
@@ -24,7 +23,8 @@ import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.onSwitch
+import org.rhasspy.mobile.android.onListItemRadioButton
+import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.resetOverlayPermission
 import org.rhasspy.mobile.android.text
 import org.rhasspy.mobile.data.serviceoption.MicrophoneOverlaySizeOption
@@ -97,8 +97,7 @@ class MicrophoneOverlaySettingsContentTest {
             viewModel.microphoneOverlaySizeOption.value
         )
         //Disabled is selected
-        composeTestRule.onNodeWithTag(MicrophoneOverlaySizeOption.Disabled, true).onChildAt(0)
-            .assertIsSelected()
+        composeTestRule.onNodeWithTag(MicrophoneOverlaySizeOption.Disabled, true).onListItemRadioButton().assertIsSelected()
         //Visible while app is not visible
         composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).assertDoesNotExist()
 
@@ -121,8 +120,7 @@ class MicrophoneOverlaySettingsContentTest {
         composeTestRule.awaitIdle()
 
         //Medium is selected
-        composeTestRule.onNodeWithTag(MicrophoneOverlaySizeOption.Medium, true).onChildAt(0)
-            .assertIsSelected()
+        composeTestRule.onNodeWithTag(MicrophoneOverlaySizeOption.Medium, true).onListItemRadioButton().assertIsSelected()
         //Visible while app is visible
         composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).assertIsDisplayed()
         //Medium is saved
@@ -135,12 +133,12 @@ class MicrophoneOverlaySettingsContentTest {
         //Visible while app is disabled
         assertFalse { viewModel.isMicrophoneOverlayWhileAppEnabled.value }
         //element is turned off
-        composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).onSwitch().assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).onListItemSwitch().assertIsOff()
 
         //user clicks visible while app
         composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).performClick()
         //element is turned on
-        composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).onSwitch().assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).onListItemSwitch().assertIsOn()
         //visible while app is saved
         newViewModel = MicrophoneOverlaySettingsViewModel()
         assertTrue { newViewModel.isMicrophoneOverlayWhileAppEnabled.value }

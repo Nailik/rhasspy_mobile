@@ -190,7 +190,7 @@ class HttpClientService : IService() {
             setAttributes {
                 contentType(audioContentType)
             }
-            setBody(body) //todo input stream
+            setBody(body)
         }
     }
 

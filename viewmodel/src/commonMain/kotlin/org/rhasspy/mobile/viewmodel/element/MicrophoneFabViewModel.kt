@@ -23,21 +23,19 @@ class MicrophoneFabViewModel : ViewModel(), KoinComponent {
         get() = getSafe<DialogManagerService>()?.currentDialogState ?: MutableStateFlow(
             DialogManagerServiceState.Idle
         ).readOnly
+
+    val isUserActionEnabled
+        get() = getSafe<ServiceMiddleware>()?.isUserActionEnabled ?: MutableStateFlow(false).readOnly
+
     val isShowBorder
         get() = getSafe<WakeWordService>()?.isRecording ?: MutableStateFlow(false)
     val isShowMicOn: StateFlow<Boolean> = MicrophonePermission.granted
     val isRecording get() = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
-    val isActionEnabled
-        get() = dialogManagerServiceState.mapReadonlyState {
-            it == DialogManagerServiceState.Idle ||
-                    it == DialogManagerServiceState.AwaitingWakeWord ||
-                    it == DialogManagerServiceState.RecordingIntent
-        }
 
     init {
         viewModelScope.launch {
-            combineState(isShowBorder, isShowMicOn, isRecording, isActionEnabled) { _, _, _, _ ->
-                listOf(isShowBorder, isShowMicOn, isRecording, isActionEnabled)
+            combineState(isShowBorder, isShowMicOn, isRecording, isUserActionEnabled) { _, _, _, _ ->
+                listOf(isShowBorder, isShowMicOn, isRecording, isUserActionEnabled)
             }.collect {
                 viewModelScope.launch {
                     get<NativeApplication>().updateWidgetNative()
