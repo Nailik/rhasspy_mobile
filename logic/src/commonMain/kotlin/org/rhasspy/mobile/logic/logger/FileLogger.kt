@@ -16,7 +16,7 @@ import okio.Path
 import okio.buffer
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.logic.readOnly
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.extensions.commonDecode
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
@@ -35,19 +35,7 @@ object FileLogger : LogWriter(), KoinComponent {
 
     init {
         Logger.setMinSeverity(AppSetting.logLevel.value.severity)
-
-        //create initial log file
-        file.commonReadWrite().appendingSink().buffer().writeUtf8(
-            Json.encodeToString(
-                LogElement(
-                    Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(),
-                    Severity.Verbose,
-                    "NativeFileWriter",
-                    "createdLogFile",
-                    null
-                )
-            )
-        )
+        log(Severity.Error, "NativeFileWriter", "createdLogFile")
     }
 
     /**
@@ -62,7 +50,10 @@ object FileLogger : LogWriter(), KoinComponent {
                 message,
                 throwable?.message
             )
-            file.commonReadWrite().appendingSink().buffer().writeUtf8(",${Json.encodeToString(element)}")
+            file.commonReadWrite().appendingSink().buffer().writeUtf8(",${Json.encodeToString(element)}").also {
+                it.flush()
+                it.close()
+            }
             _flow.emit(element)
         }
     }

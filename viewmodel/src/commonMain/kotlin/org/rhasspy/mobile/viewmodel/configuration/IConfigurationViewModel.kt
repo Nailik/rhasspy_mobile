@@ -14,15 +14,15 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.logic.combineState
+import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.logic.logger.FileLogger
 import org.rhasspy.mobile.logic.logger.LogElement
 import org.rhasspy.mobile.logic.logger.LogLevel
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.mapReadonlyState
-import org.rhasspy.mobile.logic.middleware.ServiceState
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.logic.readOnly
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTest
 

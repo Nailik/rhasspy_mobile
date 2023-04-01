@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.Settings
 import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
@@ -12,8 +13,10 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.filter
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isSelectable
 import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onFirst
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
@@ -26,8 +29,12 @@ import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 
 
-fun SemanticsNodeInteraction.onSwitch(): SemanticsNodeInteraction {
-    return this.onChildren().filter(isToggleable()).onFirst()
+fun SemanticsNodeInteraction.onListItemSwitch(): SemanticsNodeInteraction {
+    return this.onChildAt(0).onChildren().filter(isToggleable()).onFirst()
+}
+
+fun SemanticsNodeInteraction.onListItemRadioButton(): SemanticsNodeInteraction {
+    return this.onChildAt(0).onChildren().filter(isSelectable()).onFirst()
 }
 
 fun hasTestTag(testTag: Enum<*>): SemanticsMatcher =
@@ -157,26 +164,10 @@ fun ComposeContentTestRule.awaitSaved(viewModel: IConfigurationViewModel) {
 }
 
 
+@OptIn(ExperimentalTestApi::class)
 fun ComposeContentTestRule.waitUntilExists(
     matcher: SemanticsMatcher,
     timeoutMillis: Long = 1_000L
 ) {
     return this.waitUntilNodeCount(matcher, 1, timeoutMillis)
-}
-
-fun ComposeContentTestRule.waitUntilDoesNotExist(
-    matcher: SemanticsMatcher,
-    timeoutMillis: Long = 1_000L
-) {
-    return this.waitUntilNodeCount(matcher, 0, timeoutMillis)
-}
-
-fun ComposeContentTestRule.waitUntilNodeCount(
-    matcher: SemanticsMatcher,
-    count: Int,
-    timeoutMillis: Long = 1_000L
-) {
-    this.waitUntil(timeoutMillis) {
-        this.onAllNodes(matcher).fetchSemanticsNodes().size == count
-    }
 }

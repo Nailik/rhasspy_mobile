@@ -1,10 +1,10 @@
 package org.rhasspy.mobile.logic.services.dialog
 
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.data.serviceoption.DialogManagementOption
-import org.rhasspy.mobile.data.serviceoption.IntentRecognitionOption
-import org.rhasspy.mobile.data.serviceoption.SpeechToTextOption
-import org.rhasspy.mobile.data.serviceoption.WakeWordOption
+import org.rhasspy.mobile.data.service.option.DialogManagementOption
+import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
+import org.rhasspy.mobile.data.service.option.SpeechToTextOption
+import org.rhasspy.mobile.data.service.option.WakeWordOption
 
 data class DialogManagerServiceParams(
     val option: DialogManagementOption = ConfigurationSetting.dialogManagementOption.value,

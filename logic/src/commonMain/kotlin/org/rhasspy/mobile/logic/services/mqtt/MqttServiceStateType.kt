@@ -1,8 +1,8 @@
 package org.rhasspy.mobile.logic.services.mqtt
 
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.logic.middleware.ServiceState
-import org.rhasspy.mobile.logic.mqtt.MqttStatus
+import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.platformspecific.mqtt.MqttStatus
 
 enum class MqttServiceStateType(val serviceState: ServiceState) {
     SUCCESS(ServiceState.Success),

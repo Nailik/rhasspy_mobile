@@ -19,7 +19,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.assertTextEquals
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.onSwitch
+import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.viewmodel.settings.BackgroundServiceSettingsViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -72,14 +72,14 @@ class BackgroundSettingsContentTest {
         viewModel.toggleBackgroundServiceEnabled(false)
 
         //background services disabled
-        composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onSwitch().assertIsOff()
+        composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onListItemSwitch().assertIsOff()
         //deactivate battery optimization invisible
         composeTestRule.onNodeWithTag(TestTag.BatteryOptimization).assertDoesNotExist()
 
         //user clicks background services
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).performClick()
         //background services active
-        composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onSwitch().assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onListItemSwitch().assertIsOn()
         //deactivate battery optimization visible
         composeTestRule.onNodeWithTag(TestTag.BatteryOptimization).assertIsDisplayed()
         //background services enabled saved
@@ -96,7 +96,7 @@ class BackgroundSettingsContentTest {
             //user clicks accept
             device.findObject(UiSelector().resourceIdMatches(acceptButton)).click()
             //deactivate battery optimization is shown as enabled
-            composeTestRule.onNodeWithTag(TestTag.BatteryOptimization, true).onChildAt(2)
+            composeTestRule.onNodeWithTag(TestTag.BatteryOptimization, true).onChildAt(0).onChildAt(2)
                 .assertTextEquals(MR.strings.enabled)
 
         }

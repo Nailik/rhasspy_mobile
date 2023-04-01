@@ -3,8 +3,8 @@ package org.rhasspy.mobile.logic.services.wakeword
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.data.serviceoption.PorcupineLanguageOption
-import org.rhasspy.mobile.data.serviceoption.WakeWordOption
+import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
+import org.rhasspy.mobile.data.service.option.WakeWordOption
 
 class WakeWordServiceParams(
     val wakeWordOption: WakeWordOption = ConfigurationSetting.wakeWordOption.value,

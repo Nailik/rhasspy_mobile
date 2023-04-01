@@ -7,10 +7,10 @@ import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.middleware.Action.DialogAction
-import org.rhasspy.mobile.logic.middleware.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.middleware.Source
-import org.rhasspy.mobile.logic.notNull
-import org.rhasspy.mobile.logic.readOnly
+import org.rhasspy.mobile.platformspecific.notNull
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.logic.services.indication.IndicationService
@@ -22,10 +22,11 @@ import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextServiceParams
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordServiceParams
-import org.rhasspy.mobile.data.serviceoption.DialogManagementOption
-import org.rhasspy.mobile.data.serviceoption.IntentRecognitionOption
-import org.rhasspy.mobile.data.serviceoption.SpeechToTextOption
-import org.rhasspy.mobile.data.serviceoption.WakeWordOption
+import org.rhasspy.mobile.data.service.option.DialogManagementOption
+import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
+import org.rhasspy.mobile.data.service.option.SpeechToTextOption
+import org.rhasspy.mobile.data.service.option.WakeWordOption
+import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
@@ -71,6 +72,7 @@ class DialogManagerService : IService() {
     init {
         _serviceState.value = ServiceState.Success
         _currentDialogState.value = DialogManagerServiceState.AwaitingWakeWord
+        AppSetting.isHotWordEnabled.value = true
         wakeWordService.startDetection()
     }
 
@@ -238,6 +240,7 @@ class DialogManagerService : IService() {
 
         indicationService.onPlayAudio()
         audioPlayingService.stopPlayAudio()
+        @Suppress("DEPRECATION")
         audioPlayingService.playAudio(AudioSource.Data(action.byteArray))
 
     }

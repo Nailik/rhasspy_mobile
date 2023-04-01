@@ -11,7 +11,6 @@ import androidx.compose.ui.window.Application
 import co.touchlab.kermit.ExperimentalKermitApi
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
-import co.touchlab.kermit.crashlytics.setCrashlyticsUnhandledExceptionHook
 import platform.UIKit.UIViewController
 
 fun MainViewController(): UIViewController =
@@ -28,5 +27,4 @@ fun MainViewController(): UIViewController =
 @OptIn(ExperimentalKermitApi::class)
 fun setupKermit() {
     Logger.addLogWriter(CrashlyticsLogWriter())
-    setCrashlyticsUnhandledExceptionHook()
 }

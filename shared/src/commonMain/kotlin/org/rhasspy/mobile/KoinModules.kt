@@ -3,7 +3,7 @@ package org.rhasspy.mobile
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.closeableSingle
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
-import org.rhasspy.mobile.logic.nativeutils.AudioRecorder
+import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingServiceParams
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService

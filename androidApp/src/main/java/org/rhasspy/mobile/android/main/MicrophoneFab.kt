@@ -35,7 +35,7 @@ fun MicrophoneFab(
     onClick: () -> Unit
 ) {
 
-    val isActionEnabled by viewModel.isActionEnabled.collectAsState()
+    val isActionEnabled by viewModel.isUserActionEnabled.collectAsState()
     val isRecording by viewModel.isRecording.collectAsState()
 
     FloatingActionButton(

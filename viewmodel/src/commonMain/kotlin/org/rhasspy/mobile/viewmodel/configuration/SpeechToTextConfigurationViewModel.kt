@@ -4,19 +4,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.logic.combineAny
-import org.rhasspy.mobile.logic.combineState
-import org.rhasspy.mobile.logic.combineStateNotEquals
+import org.rhasspy.mobile.platformspecific.combineAny
+import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.combineStateNotEquals
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.mapReadonlyState
-import org.rhasspy.mobile.logic.readOnly
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.logic.services.mqtt.MqttServiceParams
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.data.serviceoption.SpeechToTextOption
+import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.viewmodel.configuration.test.SpeechToTextConfigurationTest
 
 class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {

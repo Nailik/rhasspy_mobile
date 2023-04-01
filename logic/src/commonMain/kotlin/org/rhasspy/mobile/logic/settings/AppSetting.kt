@@ -1,10 +1,11 @@
 package org.rhasspy.mobile.logic.settings
 
-import org.rhasspy.mobile.data.serviceoption.AudioOutputOption
-import org.rhasspy.mobile.data.serviceoption.MicrophoneOverlaySizeOption
+import org.rhasspy.mobile.data.service.option.AudioOutputOption
+import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
+import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.data.sounds.SoundOption
 import org.rhasspy.mobile.logic.logger.LogLevel
-import org.rhasspy.mobile.logic.nativeutils.isDebug
+import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.logic.settings.serializer.StringSetSerializer
 import org.rhasspy.mobile.platformspecific.language.getDeviceLanguage
 

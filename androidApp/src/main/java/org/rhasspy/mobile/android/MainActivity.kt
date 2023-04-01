@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.AppLaunchChecker
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.multidex.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

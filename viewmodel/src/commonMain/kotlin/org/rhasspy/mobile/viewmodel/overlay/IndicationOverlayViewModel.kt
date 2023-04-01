@@ -4,7 +4,7 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.logic.getSafe
-import org.rhasspy.mobile.logic.readOnly
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.indication.IndicationService
 import org.rhasspy.mobile.logic.services.indication.IndicationState
 

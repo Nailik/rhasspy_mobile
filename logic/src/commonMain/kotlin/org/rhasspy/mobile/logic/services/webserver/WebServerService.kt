@@ -25,20 +25,21 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
 import org.koin.core.component.inject
-import org.rhasspy.mobile.logic.fileutils.FolderType
+import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.middleware.Action
 import org.rhasspy.mobile.logic.middleware.Action.AppSettingsAction
 import org.rhasspy.mobile.logic.middleware.Action.DialogAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.ServiceState
+import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.middleware.Source
-import org.rhasspy.mobile.logic.nativeutils.getEngine
-import org.rhasspy.mobile.logic.nativeutils.installCallLogging
-import org.rhasspy.mobile.logic.nativeutils.installCompression
-import org.rhasspy.mobile.logic.nativeutils.installConnector
-import org.rhasspy.mobile.logic.readOnly
+import org.rhasspy.mobile.platformspecific.ktor.getEngine
+import org.rhasspy.mobile.platformspecific.ktor.installCallLogging
+import org.rhasspy.mobile.platformspecific.ktor.installCompression
+import org.rhasspy.mobile.platformspecific.ktor.installConnector
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.IService
+import org.rhasspy.mobile.logic.services.speechtotext.StreamContent
 
 /**
  * Web server service holds all routes for WebServerPath values
@@ -270,7 +271,7 @@ class WebServerService : IService() {
      * GET to download WAV data from last recorded voice command
      */
     private suspend fun playRecordingGet(call: ApplicationCall): WebServerResult? {
-        call.respond(serviceMiddleware.getRecordedData())
+        call.respond(StreamContent(serviceMiddleware.getRecordedFile()))
         return null
     }
 

@@ -2,7 +2,7 @@ package org.rhasspy.mobile.platformspecific.audioplayer
 
 import io.ktor.utils.io.core.Closeable
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.serviceoption.AudioOutputOption
+import org.rhasspy.mobile.data.service.option.AudioOutputOption
 
 /**
  * plays audio on the device
@@ -28,8 +28,7 @@ expect class AudioPlayer() : Closeable {
         audioSource: AudioSource,
         volume: StateFlow<Float>,
         audioOutputOption: AudioOutputOption,
-        onFinished: (() -> Unit)? = null,
-        onError: ((exception: Exception?) -> Unit)? = null
+        onFinished: (exception: Exception?) -> Unit
     )
 
     /**

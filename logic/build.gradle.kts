@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
@@ -6,16 +8,9 @@ plugins {
 
 kotlin {
     android()
-
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
-            baseName = "logic"
-        }
-    }
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     sourceSets {
         val commonMain by getting {
@@ -44,23 +39,11 @@ kotlin {
                 implementation(Koin.core)
             }
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-            }
-        }
+        val commonTest by getting
         val androidMain by getting {
             dependencies {
-                implementation(AndroidX.appCompat)
                 implementation(AndroidX.multidex)
-                implementation(Ktor2.Server.compression)
-                implementation(Ktor2.Server.callLogging)
-                implementation(Ktor2.Server.netty)
-                implementation(Koin.android)
-                implementation(Koin.androidCompat)
-                implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Picovoice.porcupineAndroid)
-                implementation(files("libs/org.eclipse.paho.client.mqttv3-1.2.5.jar"))
             }
         }
         val androidUnitTest by getting
@@ -90,5 +73,9 @@ android {
     compileSdk = 33
     defaultConfig {
         minSdk = 23
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_19
+        targetCompatibility = JavaVersion.VERSION_19
     }
 }

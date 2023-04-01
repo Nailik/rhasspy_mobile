@@ -7,7 +7,6 @@ import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
@@ -20,8 +19,9 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.onSwitch
-import org.rhasspy.mobile.data.serviceoption.IntentRecognitionOption
+import org.rhasspy.mobile.android.onListItemRadioButton
+import org.rhasspy.mobile.android.onListItemSwitch
+import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.viewmodel.configuration.IntentRecognitionConfigurationViewModel
 import kotlin.test.assertEquals
 
@@ -75,8 +75,7 @@ class IntentRecognitionConfigurationContentTest {
         val textInputTest = "endpointTestInput"
 
         //option disable is set
-        composeTestRule.onNodeWithTag(IntentRecognitionOption.Disabled, true).onChildAt(0)
-            .assertIsSelected()
+        composeTestRule.onNodeWithTag(IntentRecognitionOption.Disabled, true).onListItemRadioButton().assertIsSelected()
 
         //User clicks option remote http
         composeTestRule.onNodeWithTag(IntentRecognitionOption.RemoteHTTP).performClick()
@@ -89,7 +88,7 @@ class IntentRecognitionConfigurationContentTest {
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
 
         //switch is off
-        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performScrollTo().onSwitch()
+        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performScrollTo().onListItemSwitch()
             .assertIsOff()
         //endpoint cannot be changed
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsNotEnabled()
@@ -97,9 +96,11 @@ class IntentRecognitionConfigurationContentTest {
         //user clicks switch
         composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).performClick()
         //switch is on
-        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).onSwitch().assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.CustomEndpointSwitch).onListItemSwitch().assertIsOn()
         //endpoint can be changed
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertIsEnabled()
+        composeTestRule.onNodeWithTag(TestTag.Endpoint).performClick()
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextReplacement(textInputTest)
         composeTestRule.awaitIdle()
         assertEquals(textInputTest, viewModel.intentRecognitionHttpEndpoint.value)

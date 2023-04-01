@@ -18,7 +18,12 @@ fun RadioButtonListItem(
 ) {
     ListElement(
         modifier = modifier.clickable(onClick = onClick),
-        icon = { RadioButton(selected = isChecked, onClick = onClick) },
+        icon = {
+            RadioButton(
+                selected = isChecked,
+                onClick = onClick
+            )
+        },
         text = { Text(text) },
         trailing = trailing
     )
@@ -34,7 +39,12 @@ fun RadioButtonListItem(
 ) {
     ListElement(
         modifier = modifier.clickable(onClick = onClick),
-        icon = { RadioButton(selected = isChecked, onClick = onClick) },
+        icon = {
+            RadioButton(
+                selected = isChecked,
+                onClick = onClick
+            )
+        },
         text = { Text(text) },
         trailing = trailing
     )
