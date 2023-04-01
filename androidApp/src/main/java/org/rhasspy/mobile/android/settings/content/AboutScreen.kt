@@ -34,6 +34,7 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.elements.translate
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.viewmodel.screens.AboutScreenViewModel
 
 /**
@@ -109,7 +110,7 @@ fun AppIcon() {
         }
 
         Icon(
-            imageResource = MR.images.ic_launcher,
+            imageVector = RhasspyLogo,
             contentDescription = MR.strings.icon,
             modifier = Modifier
                 .padding(top = 16.dp)
