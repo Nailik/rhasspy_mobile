@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.rhasspy.mobile.main
 
 import androidx.compose.foundation.layout.Box
@@ -7,14 +9,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.window.Application
+import androidx.compose.ui.window.ComposeUIViewController
 import co.touchlab.kermit.ExperimentalKermitApi
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.crashlytics.CrashlyticsLogWriter
 import platform.UIKit.UIViewController
 
-fun MainViewController(): UIViewController =
-    Application("Rhasspy Mobile") {
+fun mainViewController(): UIViewController =
+    ComposeUIViewController {
         MaterialTheme {
             Box(modifier = Modifier.fillMaxSize()) {
                 FilledTonalButton(modifier = Modifier.align(Alignment.Center), onClick = {}) {

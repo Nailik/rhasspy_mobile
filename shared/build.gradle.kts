@@ -159,11 +159,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_19
     }
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-    packaging {
-        resources.pickFirsts.add("META-INF/*")
-        resources.pickFirsts.add("BuildConfig.kt")
-        resources.pickFirsts.add("BuildConfig.dex")
-    }
 }
 
 aboutLibraries {

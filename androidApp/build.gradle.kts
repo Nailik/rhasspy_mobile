@@ -122,6 +122,13 @@ android {
                     .replace("-debug-unsigned", "")
             }
     }
+
+    packaging {
+        resources.pickFirsts.add("META-INF/.*")
+        resources.pickFirsts.add("BuildConfig.kt")
+        resources.pickFirsts.add("BuildConfig.dex")
+        jniLibs.keepDebugSymbols.add("**/libpv_porcupine.so")
+    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
