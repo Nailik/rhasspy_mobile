@@ -77,9 +77,7 @@ abstract class Application : NativeApplication(), KoinComponent {
             }
 
             //check if overlay permission is granted
-            checkOverlayPermission()
-            startServices()
-            startOverlay()
+            resume()
             _isHasStarted.value = true
         }
     }
@@ -113,6 +111,12 @@ abstract class Application : NativeApplication(), KoinComponent {
         startOverlay()
     }
 
+    override fun resume() {
+        checkOverlayPermission()
+        startServices()
+        startOverlay()
+    }
+
     private fun checkOverlayPermission() {
         if (!OverlayPermission.isGranted()) {
             if (AppSetting.microphoneOverlaySizeOption.value != MicrophoneOverlaySizeOption.Disabled ||
@@ -131,7 +135,8 @@ abstract class Application : NativeApplication(), KoinComponent {
         get<MqttService>()
         get<DialogManagerService>()
     }
-    fun initializeLanguage() {
+
+    private fun initializeLanguage() {
         AppSetting.languageType.value = setupLanguage(AppSetting.languageType.value )
     }
 }

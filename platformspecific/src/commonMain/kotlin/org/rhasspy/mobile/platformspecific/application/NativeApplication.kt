@@ -17,6 +17,8 @@ expect abstract class NativeApplication() {
 
     abstract suspend fun stopTest()
 
+    abstract fun resume()
+
     abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)
 
     fun isInstrumentedTest(): Boolean

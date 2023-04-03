@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.platformspecific.application
 
 import android.app.Activity
-import android.app.Application
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -15,8 +14,6 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
-import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 
 actual abstract class NativeApplication : MultiDexApplication() {
 
@@ -48,8 +45,7 @@ actual abstract class NativeApplication : MultiDexApplication() {
             }
 
             override fun onActivityResumed(p0: Activity) {
-                MicrophonePermission.update()
-                OverlayPermission.update()
+                resume()
             }
 
             override fun onActivityPaused(p0: Activity) {}
@@ -96,5 +92,6 @@ actual abstract class NativeApplication : MultiDexApplication() {
     actual abstract suspend fun stopTest()
     actual abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)
     actual abstract val isHasStarted: StateFlow<Boolean>
+    actual abstract fun resume()
 
 }
