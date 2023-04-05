@@ -26,6 +26,7 @@ actual abstract class NativeApplication : MultiDexApplication() {
                 when (event) {
                     Lifecycle.Event.ON_START -> currentlyAppInBackground.value = false
                     Lifecycle.Event.ON_STOP -> currentlyAppInBackground.value = true
+                    Lifecycle.Event.ON_RESUME -> resume()
                     else -> {}
                 }
             }
@@ -43,11 +44,7 @@ actual abstract class NativeApplication : MultiDexApplication() {
                     currentActivity = p0
                 }
             }
-
-            override fun onActivityResumed(p0: Activity) {
-                resume()
-            }
-
+            override fun onActivityResumed(p0: Activity) {}
             override fun onActivityPaused(p0: Activity) {}
             override fun onActivityStopped(p0: Activity) {}
             override fun onActivitySaveInstanceState(p0: Activity, p1: Bundle) {}

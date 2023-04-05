@@ -29,6 +29,7 @@ import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.language.setupLanguage
+import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 
 abstract class Application : NativeApplication(), KoinComponent {
     private val logger = Logger.withTag("Application")
@@ -112,6 +113,8 @@ abstract class Application : NativeApplication(), KoinComponent {
     }
 
     override fun resume() {
+        MicrophonePermission.update()
+        OverlayPermission.update()
         checkOverlayPermission()
         startServices()
         startOverlay()

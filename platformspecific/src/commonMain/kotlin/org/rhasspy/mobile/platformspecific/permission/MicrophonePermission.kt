@@ -22,4 +22,9 @@ expect object MicrophonePermission {
      */
     fun requestPermissionExternally()
 
+    /**
+     * read from system
+     */
+    fun update()
+
 }

@@ -20,5 +20,13 @@ actual object MicrophonePermission {
      * to request the permission externally, redirect user to settings
      */
     actual fun requestPermissionExternally() {
+        TODO("Not yet implemented")
+    }
+
+    /**
+     * read from system
+     */
+    actual fun update() {
+        TODO("Not yet implemented")
     }
 }

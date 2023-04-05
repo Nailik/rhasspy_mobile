@@ -26,13 +26,6 @@ actual object MicrophonePermission : KoinComponent {
     actual val granted: StateFlow<Boolean> = _granted
 
     /**
-     * update the permission on initialization of app
-     */
-    fun update() {
-        _granted.value = isGranted()
-    }
-
-    /**
      * to check if the information dialog should be shown
      */
     actual fun requestPermissionExternally() {
@@ -68,6 +61,13 @@ actual object MicrophonePermission : KoinComponent {
             context,
             Manifest.permission.RECORD_AUDIO
         ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    /**
+     * read from system
+     */
+    actual fun update() {
+        _granted.value = isGranted()
     }
 
 }
