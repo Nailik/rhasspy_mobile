@@ -26,4 +26,6 @@ actual abstract class NativeApplication {
 
     actual fun onCreate() {
     }
+
+    actual abstract fun resume()
 }

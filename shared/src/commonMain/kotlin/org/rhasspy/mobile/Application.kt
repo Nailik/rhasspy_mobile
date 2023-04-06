@@ -29,6 +29,7 @@ import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.language.setupLanguage
+import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 
 abstract class Application : NativeApplication(), KoinComponent {
     private val logger = Logger.withTag("Application")
@@ -77,9 +78,7 @@ abstract class Application : NativeApplication(), KoinComponent {
             }
 
             //check if overlay permission is granted
-            checkOverlayPermission()
-            startServices()
-            startOverlay()
+            resume()
             _isHasStarted.value = true
         }
     }
@@ -113,6 +112,14 @@ abstract class Application : NativeApplication(), KoinComponent {
         startOverlay()
     }
 
+    override fun resume() {
+        MicrophonePermission.update()
+        OverlayPermission.update()
+        checkOverlayPermission()
+        startServices()
+        startOverlay()
+    }
+
     private fun checkOverlayPermission() {
         if (!OverlayPermission.isGranted()) {
             if (AppSetting.microphoneOverlaySizeOption.value != MicrophoneOverlaySizeOption.Disabled ||
@@ -131,7 +138,8 @@ abstract class Application : NativeApplication(), KoinComponent {
         get<MqttService>()
         get<DialogManagerService>()
     }
-    fun initializeLanguage() {
+
+    private fun initializeLanguage() {
         AppSetting.languageType.value = setupLanguage(AppSetting.languageType.value )
     }
 }

@@ -14,18 +14,16 @@ actual object OverlayPermission : KoinComponent {
     private val logger = Logger.withTag("OverlayPermission")
     private val context by inject<NativeApplication>()
     private val _granted = MutableStateFlow(isGranted())
+    /**
+     * to observe if microphone permission is granted
+     */
     actual val granted: StateFlow<Boolean> = _granted
 
     private var onGranted: (() -> Unit)? = null
 
-    fun update() {
-        _granted.value = isGranted()
-        if (_granted.value) {
-            onGranted?.invoke()
-        }
-        onGranted = null
-    }
-
+    /**
+     * to request the permission externally, redirect user to settings
+     */
     actual fun requestPermission(onGranted: () -> Unit) {
         OverlayPermission.onGranted = onGranted
 
@@ -61,8 +59,20 @@ actual object OverlayPermission : KoinComponent {
         }
     }
 
-    actual fun isGranted(): Boolean {
-        return Settings.canDrawOverlays(context)
+    /**
+     * check if the permission is currently granted
+     */
+    actual fun isGranted(): Boolean = Settings.canDrawOverlays(context)
+
+    /**
+     * read from system
+     */
+    actual fun update() {
+        _granted.value = isGranted()
+        if (_granted.value) {
+            onGranted?.invoke()
+        }
+        onGranted = null
     }
 
 }
