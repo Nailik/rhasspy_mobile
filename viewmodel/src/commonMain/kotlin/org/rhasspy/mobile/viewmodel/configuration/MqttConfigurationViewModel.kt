@@ -5,19 +5,21 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.platformspecific.combineAny
-import org.rhasspy.mobile.platformspecific.combineStateNotEquals
-import org.rhasspy.mobile.platformspecific.file.FolderType
-import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
-import org.rhasspy.mobile.platformspecific.file.FileUtils
-import org.rhasspy.mobile.logic.openLink
-import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.data.mqtt.MqttServiceConnectionOptions
+import org.rhasspy.mobile.logic.logger.LogType
+import org.rhasspy.mobile.logic.openLink
+import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.mqtt.MqttServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
+import org.rhasspy.mobile.platformspecific.combineAny
+import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.combineStateNotEquals
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
+import org.rhasspy.mobile.platformspecific.file.FileUtils
+import org.rhasspy.mobile.platformspecific.file.FolderType
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.test.MqttConfigurationTest
 
 class MqttConfigurationViewModel : IConfigurationViewModel() {
@@ -63,9 +65,7 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
     val mqttKeepAliveIntervalText = _mqttKeepAliveIntervalText.readOnly
     val mqttRetryIntervalText = _mqttRetryIntervalText.readOnly
 
-    override val isTestingEnabled = _isMqttEnabled.readOnly
-
-    override val hasUnsavedChanges = combineAny(
+    private val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_isMqttEnabled, ConfigurationSetting.isMqttEnabled.data),
         combineStateNotEquals(_mqttHost, ConfigurationSetting.mqttHost.data),
         combineStateNotEquals(_mqttPort, ConfigurationSetting.mqttPort.data),
@@ -82,6 +82,13 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
         ),
         combineStateNotEquals(_mqttRetryInterval, ConfigurationSetting.mqttRetryInterval.data)
     )
+
+    override val configurationEditViewState = combineState(hasUnsavedChanges, _isMqttEnabled) { hasUnsavedChanges, isMqttEnabled ->
+        IConfigurationEditViewState(
+            hasUnsavedChanges = hasUnsavedChanges,
+            isTestingEnabled = isMqttEnabled
+        )
+    }
 
     //show input field for endpoint
     val isMqttSettingsVisible = _isMqttEnabled.mapReadonlyState { it }

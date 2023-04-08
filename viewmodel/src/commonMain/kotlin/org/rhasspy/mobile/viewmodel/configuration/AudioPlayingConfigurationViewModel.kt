@@ -4,12 +4,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.platformspecific.combineAny
-import org.rhasspy.mobile.platformspecific.combineState
-import org.rhasspy.mobile.platformspecific.combineStateNotEquals
+import org.rhasspy.mobile.data.service.option.AudioOutputOption
+import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingServiceParams
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
@@ -17,8 +14,11 @@ import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.logic.services.localaudio.LocalAudioServiceParams
 import org.rhasspy.mobile.logic.services.mqtt.MqttServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.data.service.option.AudioOutputOption
-import org.rhasspy.mobile.data.service.option.AudioPlayingOption
+import org.rhasspy.mobile.platformspecific.combineAny
+import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.combineStateNotEquals
+import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.test.AudioPlayingConfigurationTest
 
 /**
@@ -64,11 +64,8 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
     val isUseCustomAudioPlayingHttpEndpoint = _isUseCustomAudioPlayingHttpEndpoint.readOnly
     val isAudioPlayingHttpEndpointChangeEnabled = isUseCustomAudioPlayingHttpEndpoint
 
-    override val isTestingEnabled =
-        _audioPlayingOption.mapReadonlyState { it != AudioPlayingOption.Disabled }
-
     //if there are unsaved changes
-    override val hasUnsavedChanges = combineAny(
+    private val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_audioPlayingOption, ConfigurationSetting.audioPlayingOption.data),
         combineStateNotEquals(_audioOutputOption, ConfigurationSetting.audioOutputOption.data),
         combineStateNotEquals(
@@ -84,6 +81,13 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
             ConfigurationSetting.audioPlayingMqttSiteId.data
         )
     )
+
+    override val configurationEditViewState = combineState(hasUnsavedChanges, _audioPlayingOption) { hasUnsavedChanges, audioPlayingOption ->
+        IConfigurationViewState.IConfigurationEditViewState(
+            hasUnsavedChanges = hasUnsavedChanges,
+            isTestingEnabled = audioPlayingOption != AudioPlayingOption.Disabled
+        )
+    }
 
     //all options
     val audioPlayingOptionList = AudioPlayingOption::values

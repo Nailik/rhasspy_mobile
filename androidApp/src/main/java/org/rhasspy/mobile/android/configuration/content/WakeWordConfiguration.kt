@@ -91,7 +91,8 @@ private fun WakeWordConfigurationOverview(viewModel: WakeWordConfigurationViewMo
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.WakeWordConfiguration),
         title = MR.strings.wakeWord,
-        viewModel = viewModel,
+        viewState = viewModel.viewState.collectAsState().value,
+        onAction = viewModel::onAction,
         testContent = { TestContent(viewModel) }
     ) {
 

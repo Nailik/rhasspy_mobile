@@ -7,24 +7,25 @@ import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
-import org.rhasspy.mobile.platformspecific.combineAny
-import org.rhasspy.mobile.platformspecific.combineState
-import org.rhasspy.mobile.platformspecific.combineStateNotEquals
-import org.rhasspy.mobile.platformspecific.file.FolderType
-import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
-import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
-import org.rhasspy.mobile.logic.openLink
-import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
-import org.rhasspy.mobile.logic.services.wakeword.WakeWordServiceParams
-import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.data.service.option.PorcupineKeywordOption
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
-import org.rhasspy.mobile.platformspecific.file.FileUtils
+import org.rhasspy.mobile.logic.logger.LogType
+import org.rhasspy.mobile.logic.openLink
+import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
+import org.rhasspy.mobile.logic.services.wakeword.WakeWordServiceParams
+import org.rhasspy.mobile.logic.settings.ConfigurationSetting
+import org.rhasspy.mobile.platformspecific.combineAny
+import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.combineStateNotEquals
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
+import org.rhasspy.mobile.platformspecific.file.FileUtils
+import org.rhasspy.mobile.platformspecific.file.FolderType
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
+import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.test.WakeWordConfigurationTest
 
 class WakeWordConfigurationViewModel : IConfigurationViewModel() {
@@ -98,36 +99,22 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
         return option == WakeWordOption.Udp
     }
 
-    override val isTestingEnabled =
-        _wakeWordOption.mapReadonlyState { it != WakeWordOption.Disabled }
-
-    override val hasUnsavedChanges = combineAny(
+    private val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_wakeWordOption, ConfigurationSetting.wakeWordOption.data),
-        combineStateNotEquals(
-            _wakeWordPorcupineAccessToken,
-            ConfigurationSetting.wakeWordPorcupineAccessToken.data
-        ),
-        combineStateNotEquals(
-            _wakeWordPorcupineKeywordDefaultOptions,
-            ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.data
-        ),
-        combineStateNotEquals(
-            _wakeWordPorcupineKeywordCustomOptionsNormal,
-            ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.data
-        ),
-        combineStateNotEquals(
-            _wakeWordPorcupineLanguage,
-            ConfigurationSetting.wakeWordPorcupineLanguage.data
-        ),
-        combineStateNotEquals(
-            _wakeWordUdpOutputHost,
-            ConfigurationSetting.wakeWordUdpOutputHost.data
-        ),
-        combineStateNotEquals(
-            _wakeWordUdpOutputPort,
-            ConfigurationSetting.wakeWordUdpOutputPort.data
-        )
+        combineStateNotEquals(_wakeWordPorcupineAccessToken, ConfigurationSetting.wakeWordPorcupineAccessToken.data),
+        combineStateNotEquals(_wakeWordPorcupineKeywordDefaultOptions, ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.data),
+        combineStateNotEquals(_wakeWordPorcupineKeywordCustomOptionsNormal, ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.data),
+        combineStateNotEquals(_wakeWordPorcupineLanguage, ConfigurationSetting.wakeWordPorcupineLanguage.data),
+        combineStateNotEquals(_wakeWordUdpOutputHost, ConfigurationSetting.wakeWordUdpOutputHost.data),
+        combineStateNotEquals(_wakeWordUdpOutputPort, ConfigurationSetting.wakeWordUdpOutputPort.data)
     )
+
+    override val configurationEditViewState = combineState(hasUnsavedChanges, _wakeWordOption) { hasUnsavedChanges, wakeWordOption ->
+        IConfigurationEditViewState(
+            hasUnsavedChanges = hasUnsavedChanges,
+            isTestingEnabled = wakeWordOption != WakeWordOption.Disabled
+        )
+    }
 
     //for custom wake word
     private val newFiles = mutableListOf<String>()

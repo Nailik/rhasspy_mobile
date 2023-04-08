@@ -174,6 +174,7 @@ dependencies {
 
     implementation(KotlinX.Coroutines.core)
     implementation(KotlinX.Coroutines.android)
+    implementation(Jetbrains.Kotlinx.immutable)
 
     implementation(Google.accompanist.systemUiController)
 

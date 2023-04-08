@@ -29,7 +29,8 @@ fun DialogManagementConfigurationContent(viewModel: DialogManagementConfiguratio
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.DialogManagementConfiguration),
         title = MR.strings.dialogManagement,
-        viewModel = viewModel
+        viewState = viewModel.viewState.collectAsState().value,
+        onAction = viewModel::onAction
     ) {
 
         item {

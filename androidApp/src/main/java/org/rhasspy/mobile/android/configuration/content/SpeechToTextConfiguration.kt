@@ -34,7 +34,8 @@ fun SpeechToTextConfigurationContent(viewModel: SpeechToTextConfigurationViewMod
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.SpeechToTextConfiguration),
         title = MR.strings.speechToText,
-        viewModel = viewModel,
+        viewState = viewModel.viewState.collectAsState().value,
+        onAction = viewModel::onAction,
         testContent = { TestContent(viewModel) }
     ) {
 

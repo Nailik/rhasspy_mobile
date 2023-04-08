@@ -4,18 +4,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.platformspecific.combineAny
-import org.rhasspy.mobile.platformspecific.combineState
-import org.rhasspy.mobile.platformspecific.combineStateNotEquals
+import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionService
 import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
+import org.rhasspy.mobile.platformspecific.combineAny
+import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.combineStateNotEquals
+import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.test.IntentRecognitionConfigurationTest
 
 class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
@@ -54,23 +54,18 @@ class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
         _isUseCustomIntentRecognitionHttpEndpoint.readOnly
     val isIntentRecognitionHttpEndpointChangeEnabled = isUseCustomIntentRecognitionHttpEndpoint
 
-    override val isTestingEnabled =
-        _intentRecognitionOption.mapReadonlyState { it != IntentRecognitionOption.Disabled }
-
-    override val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(
-            _intentRecognitionOption,
-            ConfigurationSetting.intentRecognitionOption.data
-        ),
-        combineStateNotEquals(
-            _isUseCustomIntentRecognitionHttpEndpoint,
-            ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.data
-        ),
-        combineStateNotEquals(
-            _intentRecognitionHttpEndpoint,
-            ConfigurationSetting.intentRecognitionHttpEndpoint.data
-        )
+    private val hasUnsavedChanges = combineAny(
+        combineStateNotEquals(_intentRecognitionOption, ConfigurationSetting.intentRecognitionOption.data),
+        combineStateNotEquals(_isUseCustomIntentRecognitionHttpEndpoint, ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.data),
+        combineStateNotEquals(_intentRecognitionHttpEndpoint, ConfigurationSetting.intentRecognitionHttpEndpoint.data)
     )
+
+    override val configurationEditViewState = combineState(hasUnsavedChanges, _intentRecognitionOption) { hasUnsavedChanges, intentRecognitionOption ->
+        IConfigurationViewState.IConfigurationEditViewState(
+            hasUnsavedChanges = hasUnsavedChanges,
+            isTestingEnabled = intentRecognitionOption != IntentRecognitionOption.Disabled
+        )
+    }
 
     //show endpoint settings
     fun isIntentRecognitionHttpSettingsVisible(option: IntentRecognitionOption): Boolean {

@@ -4,18 +4,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.platformspecific.combineAny
-import org.rhasspy.mobile.platformspecific.combineState
-import org.rhasspy.mobile.platformspecific.combineStateNotEquals
+import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
 import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.data.service.option.TextToSpeechOption
+import org.rhasspy.mobile.platformspecific.combineAny
+import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.combineStateNotEquals
+import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.test.TextToSpeechConfigurationTest
 
 class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
@@ -52,20 +52,18 @@ class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
     val isUseCustomTextToSpeechHttpEndpoint = _isUseCustomTextToSpeechHttpEndpoint.readOnly
     val isTextToSpeechHttpEndpointChangeEnabled = isUseCustomTextToSpeechHttpEndpoint
 
-    override val isTestingEnabled =
-        _textToSpeechOption.mapReadonlyState { it != TextToSpeechOption.Disabled }
-
-    override val hasUnsavedChanges = combineAny(
+    private val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_textToSpeechOption, ConfigurationSetting.textToSpeechOption.data),
-        combineStateNotEquals(
-            _isUseCustomTextToSpeechHttpEndpoint,
-            ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.data
-        ),
-        combineStateNotEquals(
-            _textToSpeechHttpEndpoint,
-            ConfigurationSetting.textToSpeechHttpEndpoint.data
-        )
+        combineStateNotEquals(_isUseCustomTextToSpeechHttpEndpoint, ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.data),
+        combineStateNotEquals(_textToSpeechHttpEndpoint, ConfigurationSetting.textToSpeechHttpEndpoint.data)
     )
+
+    override val configurationEditViewState = combineState(hasUnsavedChanges, _textToSpeechOption) { hasUnsavedChanges, textToSpeechOption ->
+        IConfigurationViewState.IConfigurationEditViewState(
+            hasUnsavedChanges = hasUnsavedChanges,
+            isTestingEnabled = textToSpeechOption != TextToSpeechOption.Disabled
+        )
+    }
 
     //show endpoint settings
     fun isTextToSpeechHttpSettingsVisible(option: TextToSpeechOption): Boolean {

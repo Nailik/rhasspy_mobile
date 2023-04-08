@@ -33,7 +33,8 @@ fun IntentHandlingConfigurationContent(viewModel: IntentHandlingConfigurationVie
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.IntentHandlingConfiguration),
         title = MR.strings.intentHandling,
-        viewModel = viewModel,
+        viewState = viewModel.viewState.collectAsState().value,
+        onAction = viewModel::onAction,
         testContent = { TestContent(viewModel) }
     ) {
 

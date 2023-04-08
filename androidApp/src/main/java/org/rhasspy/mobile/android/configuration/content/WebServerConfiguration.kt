@@ -43,7 +43,8 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.WebServerConfiguration),
         title = MR.strings.webserver,
-        viewModel = viewModel,
+        viewState = viewModel.viewState.collectAsState().value,
+        onAction = viewModel::onAction,
         testContent = { }
     ) {
 

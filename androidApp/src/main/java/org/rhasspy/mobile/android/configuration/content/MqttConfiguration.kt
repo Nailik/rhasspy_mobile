@@ -46,7 +46,8 @@ fun MqttConfigurationContent(viewModel: MqttConfigurationViewModel = get()) {
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.MqttConfiguration),
         title = MR.strings.mqtt,
-        viewModel = viewModel,
+        viewState = viewModel.viewState.collectAsState().value,
+        onAction = viewModel::onAction,
         testContent = { }
     ) {
 

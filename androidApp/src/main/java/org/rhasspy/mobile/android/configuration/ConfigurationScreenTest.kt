@@ -26,6 +26,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.StringResource
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
@@ -39,14 +40,20 @@ import org.rhasspy.mobile.android.main.LocalConfigurationNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.SetSystemColor
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationTestUiAction
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListAutoscroll
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListFiltered
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationServiceViewState
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationTestViewState
 
 /**
  * screen that's shown when a configuration is being tested
  */
 @Composable
 fun ConfigurationScreenTest(
-    viewModel: IConfigurationViewModel,
+    viewState: IConfigurationTestViewState,
+    serviceViewState: StateFlow<IConfigurationServiceViewState>,
+    onAction: (IConfigurationTestUiAction) -> Unit,
     content: (@Composable () -> Unit)?
 ) {
     SetSystemColor(1.dp)
@@ -65,7 +72,8 @@ fun ConfigurationScreenTest(
     Scaffold(
         topBar = {
             AppBar(
-                viewModel = viewModel,
+                viewState = viewState,
+                onAction = onAction,
                 title = MR.strings.test,
                 onBackClick = navController::popBackStack
             ) {
@@ -81,7 +89,8 @@ fun ConfigurationScreenTest(
             tonalElevation = 3.dp
         ) {
             ConfigurationScreenTestList(
-                viewModel = viewModel,
+                viewState = viewState,
+                serviceViewState = serviceViewState,
                 content = content
             )
         }
@@ -94,15 +103,16 @@ fun ConfigurationScreenTest(
 @Composable
 private fun ConfigurationScreenTestList(
     modifier: Modifier = Modifier,
-    viewModel: IConfigurationViewModel,
+    viewState: IConfigurationTestViewState,
+    serviceViewState: StateFlow<IConfigurationServiceViewState>,
     content: (@Composable () -> Unit)?
 ) {
     Column(modifier = modifier) {
         val coroutineScope = rememberCoroutineScope()
         val scrollState = rememberLazyListState()
-        val logEventsList by viewModel.logEvents.collectAsState()
+        val logEventsList by viewState.logEvents.collectAsState()
 
-        if (viewModel.isListAutoscroll.collectAsState().value) {
+        if (viewState.isListAutoscroll) {
             LaunchedEffect(logEventsList.size) {
                 coroutineScope.launch {
                     if (logEventsList.isNotEmpty()) {
@@ -117,7 +127,7 @@ private fun ConfigurationScreenTestList(
             modifier = Modifier.weight(1f)
         ) {
             stickyHeader {
-                ServiceStateHeader(viewModel)
+                ServiceStateHeader(serviceViewState.collectAsState().value)
             }
 
             items(logEventsList) { item ->
@@ -145,7 +155,8 @@ private fun ConfigurationScreenTestList(
  */
 @Composable
 private fun AppBar(
-    viewModel: IConfigurationViewModel,
+    viewState: IConfigurationTestViewState,
+    onAction: (IConfigurationTestUiAction) -> Unit,
     title: StringResource,
     onBackClick: () -> Unit,
     icon: @Composable () -> Unit
@@ -170,15 +181,15 @@ private fun AppBar(
             )
         },
         actions = {
-            IconButton(onClick = viewModel::toggleListFiltered) {
+            IconButton(onClick = { onAction(ToggleListFiltered) }) {
                 Icon(
-                    imageVector = if (viewModel.isListFiltered.collectAsState().value) Icons.Filled.FilterListOff else Icons.Filled.FilterList,
+                    imageVector = if (viewState.isListFiltered) Icons.Filled.FilterListOff else Icons.Filled.FilterList,
                     contentDescription = MR.strings.filterList
                 )
             }
-            IconButton(onClick = viewModel::toggleListAutoscroll) {
+            IconButton(onClick = { onAction(ToggleListAutoscroll) }) {
                 Icon(
-                    imageVector = if (viewModel.isListAutoscroll.collectAsState().value) Icons.Filled.LowPriority else Icons.Filled.PlaylistRemove,
+                    imageVector = if (viewState.isListAutoscroll) Icons.Filled.LowPriority else Icons.Filled.PlaylistRemove,
                     contentDescription = MR.strings.autoscrollList
                 )
             }

@@ -4,15 +4,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.platformspecific.combineAny
-import org.rhasspy.mobile.platformspecific.combineStateNotEquals
+import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.data.service.option.DialogManagementOption
+import org.rhasspy.mobile.platformspecific.combineAny
+import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.combineStateNotEquals
+import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.test.DialogManagementConfigurationTest
 
 /**
@@ -60,26 +61,19 @@ class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
         _recordingTimeout.value = text.toLongOrNull() ?: 0L
     }
 
-    override val isTestingEnabled = _dialogManagementOption.mapReadonlyState { it != DialogManagementOption.Disabled }
-
-    override val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(
-            _dialogManagementOption,
-            ConfigurationSetting.dialogManagementOption.data
-        ),
-        combineStateNotEquals(
-            _textAsrTimeout,
-            ConfigurationSetting.textAsrTimeout.data
-        ),
-        combineStateNotEquals(
-            _intentRecognitionTimeout,
-            ConfigurationSetting.intentRecognitionTimeout.data
-        ),
-        combineStateNotEquals(
-            _recordingTimeout,
-            ConfigurationSetting.recordingTimeout.data
-        )
+    private val hasUnsavedChanges = combineAny(
+        combineStateNotEquals(_dialogManagementOption, ConfigurationSetting.dialogManagementOption.data),
+        combineStateNotEquals(_textAsrTimeout, ConfigurationSetting.textAsrTimeout.data),
+        combineStateNotEquals(_intentRecognitionTimeout, ConfigurationSetting.intentRecognitionTimeout.data),
+        combineStateNotEquals(_recordingTimeout, ConfigurationSetting.recordingTimeout.data)
     )
+
+    override val configurationEditViewState = combineState(hasUnsavedChanges, _dialogManagementOption) { hasUnsavedChanges, dialogManagementOption ->
+        IConfigurationViewState.IConfigurationEditViewState(
+            hasUnsavedChanges = hasUnsavedChanges,
+            isTestingEnabled = dialogManagementOption != DialogManagementOption.Disabled
+        )
+    }
 
     //all options
     val dialogManagementOptionList = DialogManagementOption::values

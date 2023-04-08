@@ -2,6 +2,7 @@ package org.rhasspy.mobile.logic
 
 import co.touchlab.kermit.Logger
 import io.ktor.utils.io.core.Closeable
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.definition.Definition
@@ -41,6 +42,16 @@ inline fun <reified T : Closeable> Module.closeableSingle(
             it?.close()
         } catch (exception: Exception) {
             Logger.withTag("KoinUtils").a(exception) { "Koin close exception" }
+        }
+    }
+}
+
+inline fun <T> MutableStateFlow<T>.update(function: (T) -> T) {
+    while (true) {
+        val prevValue = value
+        val nextValue = function(prevValue)
+        if (compareAndSet(prevValue, nextValue)) {
+            return
         }
     }
 }

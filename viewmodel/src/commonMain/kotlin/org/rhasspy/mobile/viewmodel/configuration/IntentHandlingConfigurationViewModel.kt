@@ -4,18 +4,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.platformspecific.combineAny
-import org.rhasspy.mobile.platformspecific.combineStateNotEquals
+import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
+import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantServiceParams
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingService
 import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
-import org.rhasspy.mobile.data.service.option.IntentHandlingOption
+import org.rhasspy.mobile.platformspecific.combineAny
+import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.combineStateNotEquals
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.test.IntentHandlingConfigurationTest
 
 class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
@@ -51,31 +53,20 @@ class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
     val isIntentHandlingHassIntent =
         _intentHandlingHomeAssistantOption.mapReadonlyState { it == HomeAssistantIntentHandlingOption.Intent }
 
-    override val isTestingEnabled =
-        _intentHandlingOption.mapReadonlyState { it != IntentHandlingOption.Disabled && it != IntentHandlingOption.WithRecognition }
-
-    override val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(
-            _intentHandlingOption,
-            ConfigurationSetting.intentHandlingOption.data
-        ),
-        combineStateNotEquals(
-            _intentHandlingHttpEndpoint,
-            ConfigurationSetting.intentHandlingHttpEndpoint.data
-        ),
-        combineStateNotEquals(
-            _intentHandlingHassEndpoint,
-            ConfigurationSetting.intentHandlingHassEndpoint.data
-        ),
-        combineStateNotEquals(
-            _intentHandlingHassAccessToken,
-            ConfigurationSetting.intentHandlingHassAccessToken.data
-        ),
-        combineStateNotEquals(
-            _intentHandlingHomeAssistantOption,
-            ConfigurationSetting.intentHandlingHomeAssistantOption.data
-        )
+    private val hasUnsavedChanges = combineAny(
+        combineStateNotEquals(_intentHandlingOption, ConfigurationSetting.intentHandlingOption.data),
+        combineStateNotEquals(_intentHandlingHttpEndpoint, ConfigurationSetting.intentHandlingHttpEndpoint.data),
+        combineStateNotEquals(_intentHandlingHassEndpoint, ConfigurationSetting.intentHandlingHassEndpoint.data),
+        combineStateNotEquals(_intentHandlingHassAccessToken, ConfigurationSetting.intentHandlingHassAccessToken.data),
+        combineStateNotEquals(_intentHandlingHomeAssistantOption, ConfigurationSetting.intentHandlingHomeAssistantOption.data)
     )
+
+    override val configurationEditViewState = combineState(hasUnsavedChanges, _intentHandlingOption) { hasUnsavedChanges, intentHandlingOption ->
+        IConfigurationViewState.IConfigurationEditViewState(
+            hasUnsavedChanges = hasUnsavedChanges,
+            isTestingEnabled = intentHandlingOption != IntentHandlingOption.WithRecognition
+        )
+    }
 
     //show input field for endpoint
     fun isRemoteHttpSettingsVisible(option: IntentHandlingOption): Boolean {

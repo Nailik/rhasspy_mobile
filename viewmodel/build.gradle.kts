@@ -20,6 +20,7 @@ kotlin {
                 implementation(project(":resources"))
                 implementation(Touchlab.kermit)
                 implementation(Jetbrains.Kotlinx.coroutines)
+                implementation(Jetbrains.Kotlinx.immutable)
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Koin.core)
                 implementation(Icerock.Mvvm.core)

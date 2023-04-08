@@ -13,7 +13,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,10 +28,10 @@ import org.rhasspy.mobile.android.content.item.EventStateCard
 import org.rhasspy.mobile.android.content.item.EventStateIcon
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationServiceViewState
 
 @Composable
-fun ServiceStateHeader(viewModel: IConfigurationViewModel) {
+fun ServiceStateHeader(viewState: IConfigurationServiceViewState) {
 
     var isShowDialog by remember { mutableStateOf(false) }
 
@@ -40,8 +39,8 @@ fun ServiceStateHeader(viewModel: IConfigurationViewModel) {
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp))
             .padding(16.dp),
-        serviceState = viewModel.serviceState.collectAsState().value,
-        enabled = viewModel.isOpenServiceDialogEnabled.collectAsState().value,
+        serviceState = viewState.serviceState,
+        enabled = viewState.isOpenServiceDialogEnabled,
         onClick = {
             isShowDialog = true
         }
@@ -56,8 +55,7 @@ fun ServiceStateHeader(viewModel: IConfigurationViewModel) {
                 Text(MR.strings.error)
             },
             text = {
-                when (val informationText =
-                    viewModel.serviceStateDialogText.collectAsState().value) {
+                when (val informationText = viewState.serviceStateDialogText) {
                     is StringResource -> Text(informationText)
                     is String -> androidx.compose.material3.Text(informationText)
                     else -> {}

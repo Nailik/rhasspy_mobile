@@ -21,6 +21,7 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.coroutines)
                 implementation(Touchlab.kermit)
                 implementation(Jetbrains.Kotlinx.serialization)
+                implementation(Jetbrains.Kotlinx.immutable)
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Icerock.Resources)
                 implementation(Ktor2.Server.core)

@@ -5,18 +5,20 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.platformspecific.combineAny
-import org.rhasspy.mobile.platformspecific.combineStateNotEquals
-import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
-import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.logic.openLink
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.logic.services.webserver.WebServerServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
+import org.rhasspy.mobile.platformspecific.combineAny
+import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.combineStateNotEquals
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
+import org.rhasspy.mobile.platformspecific.file.FileUtils
+import org.rhasspy.mobile.platformspecific.file.FolderType
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.test.WebServerConfigurationTest
 
 class WebServerConfigurationViewModel : IConfigurationViewModel() {
@@ -56,32 +58,22 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
     val httpServerSSLKeyAlias = _httpServerSSLKeyAlias.readOnly
     val httpServerSSLKeyPassword = _httpServerSSLKeyPassword.readOnly
 
-    override val isTestingEnabled = _isHttpServerEnabled.readOnly
-
-    override val hasUnsavedChanges = combineAny(
+    private val hasUnsavedChanges = combineAny(
         combineStateNotEquals(_isHttpServerEnabled, ConfigurationSetting.isHttpServerEnabled.data),
         combineStateNotEquals(_httpServerPort, ConfigurationSetting.httpServerPort.data),
-        combineStateNotEquals(
-            _isHttpServerSSLEnabled,
-            ConfigurationSetting.isHttpServerSSLEnabledEnabled.data
-        ),
-        combineStateNotEquals(
-            _httpServerSSLKeyStoreFile,
-            ConfigurationSetting.httpServerSSLKeyStoreFile.data
-        ),
-        combineStateNotEquals(
-            _httpServerSSLKeyStorePassword,
-            ConfigurationSetting.httpServerSSLKeyStorePassword.data
-        ),
-        combineStateNotEquals(
-            _httpServerSSLKeyAlias,
-            ConfigurationSetting.httpServerSSLKeyAlias.data
-        ),
-        combineStateNotEquals(
-            _httpServerSSLKeyPassword,
-            ConfigurationSetting.httpServerSSLKeyPassword.data
-        )
+        combineStateNotEquals(_isHttpServerSSLEnabled, ConfigurationSetting.isHttpServerSSLEnabledEnabled.data),
+        combineStateNotEquals(_httpServerSSLKeyStoreFile, ConfigurationSetting.httpServerSSLKeyStoreFile.data),
+        combineStateNotEquals(_httpServerSSLKeyStorePassword, ConfigurationSetting.httpServerSSLKeyStorePassword.data),
+        combineStateNotEquals(_httpServerSSLKeyAlias, ConfigurationSetting.httpServerSSLKeyAlias.data),
+        combineStateNotEquals(_httpServerSSLKeyPassword, ConfigurationSetting.httpServerSSLKeyPassword.data)
     )
+
+    override val configurationEditViewState = combineState(hasUnsavedChanges, _isHttpServerEnabled) { hasUnsavedChanges, isHttpServerEnabled ->
+        IConfigurationViewState.IConfigurationEditViewState(
+            hasUnsavedChanges = hasUnsavedChanges,
+            isTestingEnabled = isHttpServerEnabled
+        )
+    }
 
     //toggle HTTP Server enabled
     fun toggleHttpServerEnabled(enabled: Boolean) {

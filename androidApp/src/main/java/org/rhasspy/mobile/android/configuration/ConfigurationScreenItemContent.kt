@@ -35,7 +35,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -45,7 +44,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.icerock.moko.resources.StringResource
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.ServiceStateHeader
@@ -56,7 +55,15 @@ import org.rhasspy.mobile.android.main.LocalConfigurationNavController
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.SetSystemColor
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationEditUiAction
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationEditUiAction.Discard
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationEditUiAction.Save
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationEditUiAction.StartTest
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationEditUiAction.StopTest
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationServiceViewState
 
 enum class ConfigurationContentScreens(val route: String) {
     Edit("ConfigurationContentScreens_Edit"),
@@ -73,9 +80,10 @@ enum class ConfigurationContentScreens(val route: String) {
  */
 @Composable
 fun ConfigurationScreenItemContent(
+    viewState: IConfigurationViewState,
+    onAction: (IConfigurationUiAction) -> Unit,
     modifier: Modifier,
     title: StringResource,
-    viewModel: IConfigurationViewModel,
     testContent: (@Composable () -> Unit)? = null,
     content: LazyListScope.() -> Unit
 ) {
@@ -84,14 +92,14 @@ fun ConfigurationScreenItemContent(
     LaunchedEffect(Unit) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.route == ConfigurationContentScreens.Edit.route) {
-                viewModel.stopTest()
+                onAction(StopTest)
             }
         }
     }
 
-    BackHandler(viewModel.isBackPressDisabled.collectAsState().value) {}
+    BackHandler(viewState.isBackPressDisabled) {}
 
-    if (viewModel.isLoading.collectAsState().value) {
+    if (viewState.isLoading) {
         Surface {
             Box(modifier = Modifier.fillMaxSize()) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
@@ -109,13 +117,17 @@ fun ConfigurationScreenItemContent(
                 composable(ConfigurationContentScreens.Edit.route) {
                     EditConfigurationScreen(
                         title = title,
-                        viewModel = viewModel,
+                        viewState = viewState.editViewState.collectAsState().value,
+                        serviceViewState = viewState.serviceViewState,
+                        onAction = onAction,
                         content = content
                     )
                 }
                 composable(ConfigurationContentScreens.Test.route) {
                     ConfigurationScreenTest(
-                        viewModel = viewModel,
+                        viewState = viewState.testViewState.collectAsState().value,
+                        serviceViewState = viewState.serviceViewState,
+                        onAction = onAction,
                         content = testContent
                     )
                 }
@@ -130,7 +142,9 @@ fun ConfigurationScreenItemContent(
 @Composable
 private fun EditConfigurationScreen(
     title: StringResource,
-    viewModel: IConfigurationViewModel,
+    viewState: IConfigurationEditViewState,
+    serviceViewState: StateFlow<IConfigurationServiceViewState>,
+    onAction: (IConfigurationEditUiAction) -> Unit,
     content: LazyListScope.() -> Unit
 ) {
     SetSystemColor(0.dp)
@@ -138,10 +152,8 @@ private fun EditConfigurationScreen(
     val navController = LocalMainNavController.current
     var showBackButtonDialog by rememberSaveable { mutableStateOf(false) }
 
-    val hasUnsavedChanges by viewModel.hasUnsavedChanges.collectAsState()
-
     fun onBackPress() {
-        if (hasUnsavedChanges) {
+        if (viewState.hasUnsavedChanges) {
             showBackButtonDialog = true
         } else {
             navController.popBackStack()
@@ -154,8 +166,8 @@ private fun EditConfigurationScreen(
     //Show unsaved changes dialog back press
     if (showBackButtonDialog) {
         UnsavedBackButtonDialog(
-            onSave = viewModel::save,
-            onDiscard = viewModel::discard,
+            onSave = { onAction(Save) },
+            onDiscard = { onAction(Discard) },
             onClose = {
                 showBackButtonDialog = false
             }
@@ -175,7 +187,11 @@ private fun EditConfigurationScreen(
             }
         },
         bottomBar = {
-            BottomAppBar(viewModel)
+            BottomAppBar(
+                hasUnsavedChanges = viewState.hasUnsavedChanges,
+                isTestingEnabled = viewState.isTestingEnabled,
+                onAction = onAction,
+            )
         }
     ) { paddingValues ->
         Surface(tonalElevation = 1.dp) {
@@ -186,7 +202,7 @@ private fun EditConfigurationScreen(
             ) {
 
                 stickyHeader {
-                    ServiceStateHeader(viewModel)
+                    ServiceStateHeader(serviceViewState.collectAsState().value)
                 }
 
                 content()
@@ -278,35 +294,29 @@ private fun UnsavedChangesDialog(
  */
 @Composable
 private fun BottomAppBar(
-    viewModel: IConfigurationViewModel,
+    hasUnsavedChanges: Boolean,
+    isTestingEnabled: Boolean,
+    onAction: (IConfigurationEditUiAction) -> Unit,
 ) {
-    val isHasUnsavedChanges by viewModel.hasUnsavedChanges.collectAsState()
-    val isTestingEnabled by viewModel.isTestingEnabled.collectAsState()
-    val coroutineScope = rememberCoroutineScope()
-
     BottomAppBar(
         actions = {
             IconButton(
                 modifier = Modifier.testTag(TestTag.BottomAppBarDiscard),
-                onClick = viewModel::discard,
-                enabled = isHasUnsavedChanges
+                onClick = { onAction(Discard) },
+                enabled = hasUnsavedChanges
             ) {
                 Icon(
-                    imageVector = if (isHasUnsavedChanges) Icons.Outlined.Delete else Icons.Filled.Delete,
+                    imageVector = if (hasUnsavedChanges) Icons.Outlined.Delete else Icons.Filled.Delete,
                     contentDescription = MR.strings.discard,
                 )
             }
             IconButton(
                 modifier = Modifier.testTag(TestTag.BottomAppBarSave),
-                onClick = {
-                    coroutineScope.launch {
-                        viewModel.save()
-                    }
-                },
-                enabled = isHasUnsavedChanges
+                onClick = { onAction(Save) },
+                enabled = hasUnsavedChanges
             ) {
                 Icon(
-                    imageVector = if (isHasUnsavedChanges) Icons.Outlined.Save else Icons.Filled.Save,
+                    imageVector = if (hasUnsavedChanges) Icons.Outlined.Save else Icons.Filled.Save,
                     contentDescription = MR.strings.save
                 )
             }
@@ -321,7 +331,7 @@ private fun BottomAppBar(
                         minHeight = 56.0.dp,
                     ),
                 onClick = {
-                    viewModel.startTest()
+                    onAction(StartTest)
                     navController.navigate(ConfigurationContentScreens.Test.route)
                 },
                 isEnabled = isTestingEnabled,

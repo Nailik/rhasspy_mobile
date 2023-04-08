@@ -4,25 +4,25 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.platformspecific.combineAny
-import org.rhasspy.mobile.platformspecific.combineState
-import org.rhasspy.mobile.platformspecific.combineStateNotEquals
-import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
-import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
-import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
+import org.rhasspy.mobile.logic.logger.LogType
+import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
+import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
+import org.rhasspy.mobile.logic.settings.ConfigurationSetting
+import org.rhasspy.mobile.platformspecific.combineAny
+import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.combineStateNotEquals
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.test.RemoteHermesHttpConfigurationTest
 
 class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     override val testRunner by inject<RemoteHermesHttpConfigurationTest>()
     override val logType = LogType.HttpClientService
     override val serviceState get() = get<HttpClientService>().serviceState
-
     val isRecordingAudio = testRunner.isRecording
 
     //unsaved data
@@ -73,7 +73,7 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     val testTextToSpeechText = _testTextToSpeechText.readOnly
     val isTextToSpeechTestEnabled = _testTextToSpeechText.mapReadonlyState { it.isNotEmpty() }
 
-    override val isTestingEnabled = combineState(
+    private val isTestingEnabled = combineState(
         ConfigurationSetting.speechToTextOption.data,
         ConfigurationSetting.intentRecognitionOption.data,
         ConfigurationSetting.textToSpeechOption.data,
@@ -85,21 +85,20 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
                         textToSpeechOption == TextToSpeechOption.RemoteHTTP)
     }
 
-    override val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(
-            _httpClientServerEndpointHost,
-            ConfigurationSetting.httpClientServerEndpointHost.data
-        ),
-        combineStateNotEquals(
-            _httpClientServerEndpointPort,
-            ConfigurationSetting.httpClientServerEndpointPort.data
-        ),
+    private val hasUnsavedChanges = combineAny(
+        combineStateNotEquals(_httpClientServerEndpointHost, ConfigurationSetting.httpClientServerEndpointHost.data),
+        combineStateNotEquals(_httpClientServerEndpointPort, ConfigurationSetting.httpClientServerEndpointPort.data),
         combineStateNotEquals(_httpClientTimeout, ConfigurationSetting.httpClientTimeout.data),
-        combineStateNotEquals(
-            _isHttpSSLVerificationDisabled,
-            ConfigurationSetting.isHttpClientSSLVerificationDisabled.data
-        )
+        combineStateNotEquals(_isHttpSSLVerificationDisabled, ConfigurationSetting.isHttpClientSSLVerificationDisabled.data)
     )
+
+    override val configurationEditViewState = combineState(hasUnsavedChanges, isTestingEnabled) { hasUnsavedChanges, isTestingEnabled ->
+        IConfigurationEditViewState(
+            hasUnsavedChanges = hasUnsavedChanges,
+            isTestingEnabled = isTestingEnabled
+        )
+    }
+
 
     //set new http server endpoint host
     fun updateHttpClientServerEndpointHost(endpoint: String) {
