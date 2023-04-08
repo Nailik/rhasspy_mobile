@@ -38,6 +38,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.OnPauseEffect
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.list.InformationListElement
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.SliderListItem
 import org.rhasspy.mobile.android.content.list.SwitchListItem
@@ -79,6 +80,8 @@ fun AutomaticSilenceDetectionSettingsContent(viewModel: AutomaticSilenceDetectio
 
             Column(modifier = Modifier.testTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration)) {
 
+                InformationListElement(text = MR.strings.silenceDetectionInformation)
+
                 Time(viewModel)
 
                 CurrentAudioLevel(viewModel)
@@ -99,6 +102,14 @@ fun AutomaticSilenceDetectionSettingsContent(viewModel: AutomaticSilenceDetectio
  */
 @Composable
 private fun Time(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
+
+    TextFieldListItem(
+        label = MR.strings.silenceDetectionMinimumTime,
+        modifier = Modifier.testTag(TestTag.AutomaticSilenceDetectionSettingsMinimumTime),
+        value = viewModel.automaticSilenceDetectionMinimumTimeText.collectAsState().value,
+        onValueChange = viewModel::updateAutomaticSilenceDetectionMinimumTime,
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+    )
 
     TextFieldListItem(
         label = MR.strings.silenceDetectionTime,

@@ -8,6 +8,7 @@ enum class SettingsEnum {
     AutomaticSilenceDetection,
     AutomaticSilenceDetectionAudioLevel,
     AutomaticSilenceDetectionTime,
+    AutomaticSilenceDetectionMinimumTime,
 
     BackgroundEnabled,
     SSLVerificationDisabled,

@@ -20,6 +20,7 @@ object AppSetting {
     val automaticSilenceDetectionAudioLevel =
         ISetting(SettingsEnum.AutomaticSilenceDetectionAudioLevel, 40f)
     val automaticSilenceDetectionTime = ISetting(SettingsEnum.AutomaticSilenceDetectionTime, 2000)
+    val automaticSilenceDetectionMinimumTime = ISetting(SettingsEnum.AutomaticSilenceDetectionMinimumTime, 2000)
 
     val isBackgroundServiceEnabled = ISetting(SettingsEnum.BackgroundEnabled, false)
     val microphoneOverlaySizeOption =

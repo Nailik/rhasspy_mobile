@@ -117,6 +117,7 @@ enum class TestTag {
     AudioOutput,
     IntentHandling,
     AutomaticSilenceDetectionSettingsConfiguration,
+    AutomaticSilenceDetectionSettingsMinimumTime,
     AutomaticSilenceDetectionSettingsTime,
     AutomaticSilenceDetectionSettingsAudioLevelTest,
     AutomaticSilenceDetectionSettingsTest,

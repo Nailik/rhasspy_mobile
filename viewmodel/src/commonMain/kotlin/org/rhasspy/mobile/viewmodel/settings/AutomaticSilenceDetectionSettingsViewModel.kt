@@ -19,6 +19,8 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel(), KoinComponent {
     //unsaved data
     private val _automaticSilenceDetectionTimeText =
         MutableStateFlow(AppSetting.automaticSilenceDetectionTime.value.toString())
+    private val _automaticSilenceDetectionMinimumTimeText =
+        MutableStateFlow(AppSetting.automaticSilenceDetectionMinimumTime.value.toString())
     private val maxAudioLevel = audioRecorder.absoluteMaxVolume
 
     //unsaved ui data
@@ -26,6 +28,7 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel(), KoinComponent {
 
     val isSilenceDetectionSettingsVisible = isAutomaticSilenceDetectionEnabled
     val automaticSilenceDetectionTimeText = _automaticSilenceDetectionTimeText.readOnly
+    val automaticSilenceDetectionMinimumTimeText = _automaticSilenceDetectionMinimumTimeText.readOnly
 
     val automaticSilenceDetectionAudioLevelPercentage =
         AppSetting.automaticSilenceDetectionAudioLevel.data.mapReadonlyState {
@@ -50,6 +53,13 @@ class AutomaticSilenceDetectionSettingsViewModel : ViewModel(), KoinComponent {
     //set new intent recognition option
     fun toggleAutomaticSilenceDetectionEnabled(enabled: Boolean) {
         AppSetting.isAutomaticSilenceDetectionEnabled.value = enabled
+    }
+
+    //update time for automatic silence detection
+    fun updateAutomaticSilenceDetectionMinimumTime(minimumTime: String) {
+        val text = minimumTime.replace("""[-,. ]""".toRegex(), "")
+        _automaticSilenceDetectionMinimumTimeText.value = text
+        AppSetting.automaticSilenceDetectionMinimumTime.value = text.toIntOrNull() ?: 0
     }
 
     //update time for automatic silence detection
