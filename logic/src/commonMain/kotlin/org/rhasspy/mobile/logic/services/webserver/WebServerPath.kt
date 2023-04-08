@@ -12,7 +12,8 @@ enum class WebServerPath(val path: String, val type: WebServerCallType) {
     SetVolume("/api/set-volume", POST),
     StartRecording("/api/start-recording", POST),
     StopRecording("/api/stop-recording", POST),
-    Say("/api/say", POST);
+    Say("/api/say", POST),
+    Mqtt("/api/mqtt/{...}", POST);
 
     enum class WebServerCallType {
         POST,

@@ -16,6 +16,8 @@ sealed class Action {
         }
     }
 
+    class Mqtt(val topic: String, val payload: ByteArray) : Action()
+
     sealed class AppSettingsAction : Action() {
         class AudioOutputToggle(val enabled: Boolean) : AppSettingsAction()
         class AudioVolumeChange(val volume: Float) : AppSettingsAction()

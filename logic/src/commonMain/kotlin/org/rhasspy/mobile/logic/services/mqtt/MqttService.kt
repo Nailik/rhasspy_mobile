@@ -119,7 +119,7 @@ class MqttService : IService() {
             onDelivered = { },
             onMessageReceived = { topic, message ->
                 scope.launch {
-                    onMessageReceived(topic, message)
+                    onMessageInternalReceived(topic, message)
                 }
             },
             onDisconnect = { error -> onDisconnect(error) },
@@ -186,8 +186,8 @@ class MqttService : IService() {
         }
     }
 
-    private fun onMessageReceived(topic: String, message: MqttMessage) {
-        logger.d { "onMessageReceived id ${message.msgId} $topic" }
+    private fun onMessageInternalReceived(topic: String, message: MqttMessage) {
+        logger.d { "onMessageInternalReceived id ${message.msgId} $topic" }
 
         if (message.msgId == id) {
             //ignore all messages that i have send
@@ -195,14 +195,24 @@ class MqttService : IService() {
             return
         }
 
+        onMessageReceived(topic, message.payload)
+    }
+
+    /**
+     * message from external sources
+     * eg: http api
+     */
+    fun onMessageReceived(topic: String, payload: ByteArray) {
+        logger.d { "onMessageReceived $topic" }
+
         try {
             //regex topic
-            if (!regexTopic(topic, message)) {
-                compareTopic(topic, message)
+            if (!regexTopic(topic, payload)) {
+                compareTopic(topic, payload)
             }
 
         } catch (e: Exception) {
-            logger.e(e) { "received message on $topic error" }
+            logger.a(e) { "received message on $topic error" }
         }
     }
 
@@ -212,7 +222,7 @@ class MqttService : IService() {
      *
      * returns true when message was consumed
      */
-    private fun regexTopic(topic: String, message: MqttMessage): Boolean {
+    private fun regexTopic(topic: String, payload: ByteArray): Boolean {
         logger.d { "regexTopic $topic" }
         when {
             MqttTopicsSubscription.HotWordDetected.topic.matches(topic) -> {
@@ -220,14 +230,14 @@ class MqttService : IService() {
             }
 
             MqttTopicsSubscription.IntentRecognitionResult.topic.matches(topic) -> {
-                val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
+                val jsonObject = Json.decodeFromString<JsonObject>(payload.decodeToString())
                 intentRecognitionResult(jsonObject)
             }
 
             MqttTopicsSubscription.PlayBytes.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId)
                 .matches(topic) -> {
-                playBytes(message.payload)
+                playBytes(payload)
             }
 
             else -> return false
@@ -240,7 +250,7 @@ class MqttService : IService() {
      *
      * returns true when message was consumed
      */
-    private fun compareTopic(topic: String, message: MqttMessage) {
+    private fun compareTopic(topic: String, payload: ByteArray) {
         logger.d { "compareTopic $topic" }
 
         //topic matches enum
@@ -249,7 +259,7 @@ class MqttService : IService() {
             if (!mqttTopic.topic.contains(MqttTopicPlaceholder.SiteId.toString())) {
                 //site id in payload
                 //decode json object
-                val jsonObject = Json.decodeFromString<JsonObject>(message.payload.decodeToString())
+                val jsonObject = Json.decodeFromString<JsonObject>(payload.decodeToString())
                 //validate site id
                 if (jsonObject.isThisSiteId()) {
                     when (mqttTopic) {
@@ -294,7 +304,7 @@ class MqttService : IService() {
                 MqttTopicsSubscription.PlayBytes.topic
                     .set(MqttTopicPlaceholder.SiteId, params.siteId)
                     .matches(topic) -> {
-                    playBytes(message.payload)
+                    playBytes(payload)
                 }
 
                 MqttTopicsSubscription.PlayFinished.topic

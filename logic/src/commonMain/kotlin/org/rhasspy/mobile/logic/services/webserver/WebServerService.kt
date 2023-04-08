@@ -13,6 +13,7 @@ import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.dataconversion.DataConversion
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.request.contentType
+import io.ktor.server.request.path
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
@@ -83,7 +84,7 @@ class WebServerService : IService() {
                 _serviceState.value = ServiceState.Success
             } catch (exception: Exception) {
                 //start error
-                logger.e(exception) { "initialization error" }
+                logger.a(exception) { "initialization error" }
                 _serviceState.value = ServiceState.Exception(exception)
             }
         }
@@ -192,6 +193,7 @@ class WebServerService : IService() {
                 WebServerPath.StartRecording -> startRecording()
                 WebServerPath.StopRecording -> stopRecording()
                 WebServerPath.Say -> say(call)
+                WebServerPath.Mqtt -> mqtt(call)
             }
 
             when (result) {
@@ -350,6 +352,18 @@ class WebServerService : IService() {
      */
     private suspend fun say(call: ApplicationCall): WebServerResult {
         serviceMiddleware.action(Action.SayText(call.receive()))
+        return WebServerResult.Ok
+    }
+
+    /**
+     * /api/mqtt
+     *
+     * POST JSON payload to /api/mqtt/<topic>
+     * the mqtt Message will be evaluated but not send to mqtt broker
+     */
+    private suspend fun mqtt(call: ApplicationCall): WebServerResult {
+        val topic = call.request.path().substringAfter("/mqtt")
+        serviceMiddleware.action(Action.Mqtt(topic, call.receive()))
         return WebServerResult.Ok
     }
 
