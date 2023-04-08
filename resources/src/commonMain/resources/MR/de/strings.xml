@@ -98,6 +98,8 @@
     <string name="testAudioLevel">Audio-Level-Test</string>
     <string name="stop">Stop</string>
     <string name="audioLevelThreshold">Audio-Level-Schwelle</string>
+    <string name="silenceDetectionInformation">Stille wird erkannt, wenn der Audiopegel für die gewählte Zeitspanne unter dem gewählten Grenzwert bleibt und die Aufnahme mindestens die Länge der Mindestdauer hat</string>
+    <string name="silenceDetectionMinimumTime">Sprachbefehl Mindestdauer (ms)</string>
     <string name="silenceDetectionTime">Stille-Erkennungszeit (ms)</string>
     <string name="overlayPermissionTitle">Overlay-Erlaubnis</string>
     <string name="overlay">Overlay</string>
