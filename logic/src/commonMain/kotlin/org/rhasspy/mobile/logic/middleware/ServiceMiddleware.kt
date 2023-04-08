@@ -105,6 +105,8 @@ class ServiceMiddleware : KoinComponent, Closeable {
                 is Action.DialogAction -> {
                     dialogManagerService.onAction(action)
                 }
+
+                is Action.Mqtt -> mqttService.onMessageReceived(action.topic, action.payload)
             }
         }
     }
