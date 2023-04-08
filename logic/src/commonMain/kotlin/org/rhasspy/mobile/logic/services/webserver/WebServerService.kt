@@ -84,7 +84,7 @@ class WebServerService : IService() {
                 _serviceState.value = ServiceState.Success
             } catch (exception: Exception) {
                 //start error
-                logger.e(exception) { "initialization error" }
+                logger.a(exception) { "initialization error" }
                 _serviceState.value = ServiceState.Exception(exception)
             }
         }
@@ -359,10 +359,12 @@ class WebServerService : IService() {
      * /api/mqtt
      *
      * POST JSON payload to /api/mqtt/<topic>
+     * the mqtt Message will be evaluated but not send to mqtt broker
      */
     private suspend fun mqtt(call: ApplicationCall): WebServerResult {
-        val topic = call.request.path().substringAfter("mqtt/")
+        val topic = call.request.path().substringAfter("/mqtt")
         serviceMiddleware.action(Action.Mqtt(topic, call.receive()))
         return WebServerResult.Ok
     }
+
 }

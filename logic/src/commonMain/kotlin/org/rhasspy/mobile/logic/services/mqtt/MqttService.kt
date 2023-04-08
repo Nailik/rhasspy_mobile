@@ -212,7 +212,7 @@ class MqttService : IService() {
             }
 
         } catch (e: Exception) {
-            logger.e(e) { "received message on $topic error" }
+            logger.a(e) { "received message on $topic error" }
         }
     }
 

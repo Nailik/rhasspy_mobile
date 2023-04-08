@@ -13,7 +13,7 @@ enum class WebServerPath(val path: String, val type: WebServerCallType) {
     StartRecording("/api/start-recording", POST),
     StopRecording("/api/stop-recording", POST),
     Say("/api/say", POST),
-    Mqtt("/api/mqtt/*", POST);
+    Mqtt("/api/mqtt/{...}", POST);
 
     enum class WebServerCallType {
         POST,
