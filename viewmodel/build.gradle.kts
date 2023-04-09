@@ -23,6 +23,7 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.coroutines)
                 implementation(Jetbrains.Kotlinx.immutable)
                 implementation(Jetbrains.Kotlinx.dateTime)
+                implementation(Jetbrains.Compose.runtime)
                 implementation(Koin.core)
                 implementation(Icerock.Mvvm.core)
                 implementation(Ktor2.Client.core)

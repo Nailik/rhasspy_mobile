@@ -14,7 +14,7 @@ import kotlin.coroutines.CoroutineContext
  *  @param action Callback that gets called in the composition's [CoroutineContext]. Perform the actual action this [event] leads to.
  */
 @Composable
-fun <T : Event> UiEventEffect(event: T, onConsumed: (event: T) -> Unit, action: suspend (event: T) -> Unit) {
+fun <T : Event> UiEventEffect(event: T, onConsumed: (event: T) -> Unit, action: (event: T) -> Unit) {
     LaunchedEffect(key1 = event, key2 = onConsumed) {
         if (event.stateEvent == StateEvent.Triggered) {
             action(event)

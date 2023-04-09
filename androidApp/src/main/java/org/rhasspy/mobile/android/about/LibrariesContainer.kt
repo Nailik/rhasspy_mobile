@@ -32,6 +32,8 @@ import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.entity.License
 import com.mikepenz.aboutlibraries.util.withContext
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.CustomDivider
@@ -62,7 +64,7 @@ fun LibrariesContainer(
         libraries = librariesBlock.invoke(context)
     }
 
-    libraries?.libraries?.also { libs ->
+    libraries?.libraries?.toImmutableList()?.also { libs ->
         Libraries(
             libs,
             modifier,
@@ -80,7 +82,7 @@ fun LibrariesContainer(
  */
 @Composable
 private fun Libraries(
-    libraries: List<Library>,
+    libraries: ImmutableList<Library>,
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(0.dp),

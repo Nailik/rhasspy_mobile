@@ -30,6 +30,7 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenVie
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.IntentRecognitionViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.MqttViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.RemoteHermesHttpViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.ServiceViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SiteIdViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SpeechToTextViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.TextToSpeechViewState
@@ -58,43 +59,43 @@ class ConfigurationScreenViewModel : ViewModel(), KoinComponent {
             ),
             remoteHermesHttp = RemoteHermesHttpViewState(
                 isHttpSSLVerificationEnabled = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value,
-                serviceState = get<HttpClientService>().serviceState
+                serviceState = ServiceViewState(get<HttpClientService>().serviceState)
             ),
             webserver = WebServerViewState(
                 isHttpServerEnabled = ConfigurationSetting.isHttpServerEnabled.value,
-                serviceState = get<WebServerService>().serviceState
+                serviceState = ServiceViewState(get<WebServerService>().serviceState)
             ),
             mqtt = MqttViewState(
                 isMQTTConnected = get<MqttService>().isConnected,
-                serviceState = get<MqttService>().serviceState
+                serviceState = ServiceViewState(get<MqttService>().serviceState)
             ),
             wakeWord = WakeWordViewState(
                 wakeWordValueOption = ConfigurationSetting.wakeWordOption.value,
-                serviceState = get<WakeWordService>().serviceState
+                serviceState = ServiceViewState(get<WakeWordService>().serviceState)
             ),
             speechToText = SpeechToTextViewState(
                 speechToTextOption = ConfigurationSetting.speechToTextOption.value,
-                serviceState = get<SpeechToTextService>().serviceState
+                serviceState = ServiceViewState(get<SpeechToTextService>().serviceState)
             ),
             intentRecognition = IntentRecognitionViewState(
                 intentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value,
-                serviceState = get<IntentRecognitionService>().serviceState
+                serviceState = ServiceViewState(get<IntentRecognitionService>().serviceState)
             ),
             textToSpeech = TextToSpeechViewState(
                 textToSpeechOption = ConfigurationSetting.textToSpeechOption.value,
-                serviceState = get<TextToSpeechService>().serviceState
+                serviceState = ServiceViewState(get<TextToSpeechService>().serviceState)
             ),
             audioPlaying = AudioPlayingViewState(
                 audioPlayingOption = ConfigurationSetting.audioPlayingOption.value,
-                serviceState = get<AudioPlayingService>().serviceState
+                serviceState = ServiceViewState(get<AudioPlayingService>().serviceState)
             ),
             dialogManagement = DialogManagementViewState(
                 dialogManagementOption = ConfigurationSetting.dialogManagementOption.value,
-                serviceState = get<DialogManagerService>().serviceState
+                serviceState = ServiceViewState(get<DialogManagerService>().serviceState)
             ),
             intentHandling = ConfigurationScreenViewState.IntentHandlingViewState(
                 intentHandlingOption = ConfigurationSetting.intentHandlingOption.value,
-                serviceState = get<IntentHandlingService>().serviceState
+                serviceState = ServiceViewState(get<IntentHandlingService>().serviceState)
             ),
             hasError = serviceStateFlow.mapReadonlyState { array -> array.firstOrNull { it is ServiceState.Error } != null },
             scrollToErrorEvent = ScrollToErrorEvent(Consumed, 0)

@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import dev.icerock.moko.resources.StringResource
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
@@ -26,7 +26,6 @@ import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiAction
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiAction.ScrollToError
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiAction.SiteIdChange
@@ -37,6 +36,7 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenVie
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.IntentRecognitionViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.MqttViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.RemoteHermesHttpViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.ServiceViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SiteIdViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SpeechToTextViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.TextToSpeechViewState
@@ -48,10 +48,7 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenVie
  */
 @Preview
 @Composable
-fun ConfigurationScreen(
-    viewModel: ConfigurationScreenViewModel = get(),
-    scrollToError: Boolean = false
-) {
+fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = get()) {
 
     val viewState by viewModel.viewState.collectAsState()
 
@@ -66,13 +63,16 @@ fun ConfigurationScreen(
 
         val hasError by viewState.hasError.collectAsState()
         val scrollState = rememberLazyListState()
+        val coroutineScope = rememberCoroutineScope()
 
         UiEventEffect(
             event = viewState.scrollToErrorEvent,
             onConsumed = viewModel::onConsumed
         ) {
             //+1 to account for sticky header
-            scrollState.animateScrollToItem(it.firstErrorIndex + 1)
+            coroutineScope.launch {
+                scrollState.animateScrollToItem(it.firstErrorIndex + 1)
+            }
         }
 
         LazyColumn(
@@ -268,7 +268,7 @@ private fun RemoteHermesHttp(viewState: RemoteHermesHttpViewState) {
         text = MR.strings.remoteHermesHTTP,
         secondaryText = "${translate(MR.strings.sslValidation)} ${translate(viewState.isHttpSSLVerificationEnabled.not().toText())}",
         screen = ConfigurationScreenType.RemoteHermesHttpConfiguration,
-        serviceState = viewState.serviceState
+        viewState = viewState.serviceState
     )
 
 }
@@ -284,7 +284,7 @@ private fun Webserver(viewState: WebServerViewState) {
         text = MR.strings.webserver,
         secondaryText = viewState.isHttpServerEnabled.toText(),
         screen = ConfigurationScreenType.WebServerConfiguration,
-        serviceState = viewState.serviceState
+        serviceViewState = viewState.serviceState
     )
 
 }
@@ -302,7 +302,7 @@ private fun Mqtt(viewState: MqttViewState) {
         text = MR.strings.mqtt,
         secondaryText = if (isMQTTConnected) MR.strings.connected else MR.strings.notConnected,
         screen = ConfigurationScreenType.MqttConfiguration,
-        serviceState = viewState.serviceState
+        serviceViewState = viewState.serviceState
     )
 
 }
@@ -319,7 +319,7 @@ private fun WakeWord(viewState: WakeWordViewState) {
         text = MR.strings.wakeWord,
         secondaryText = viewState.wakeWordValueOption.text,
         screen = ConfigurationScreenType.WakeWordConfiguration,
-        serviceState = viewState.serviceState
+        serviceViewState = viewState.serviceState
     )
 
 }
@@ -335,7 +335,7 @@ private fun SpeechToText(viewState: SpeechToTextViewState) {
         text = MR.strings.speechToText,
         secondaryText = viewState.speechToTextOption.text,
         screen = ConfigurationScreenType.SpeechToTextConfiguration,
-        serviceState = viewState.serviceState
+        serviceViewState = viewState.serviceState
     )
 
 }
@@ -352,7 +352,7 @@ private fun IntentRecognition(viewState: IntentRecognitionViewState) {
         text = MR.strings.intentRecognition,
         secondaryText = viewState.intentRecognitionOption.text,
         screen = ConfigurationScreenType.IntentRecognitionConfiguration,
-        serviceState = viewState.serviceState
+        serviceViewState = viewState.serviceState
     )
 
 }
@@ -368,7 +368,7 @@ private fun TextToSpeech(viewState: TextToSpeechViewState) {
         text = MR.strings.textToSpeech,
         secondaryText = viewState.textToSpeechOption.text,
         screen = ConfigurationScreenType.TextToSpeechConfiguration,
-        serviceState = viewState.serviceState
+        serviceViewState = viewState.serviceState
     )
 
 }
@@ -384,7 +384,7 @@ private fun AudioPlaying(viewState: AudioPlayingViewState) {
         text = MR.strings.audioPlaying,
         secondaryText = viewState.audioPlayingOption.text,
         screen = ConfigurationScreenType.AudioPlayingConfiguration,
-        serviceState = viewState.serviceState
+        serviceViewState = viewState.serviceState
     )
 
 }
@@ -400,7 +400,7 @@ private fun DialogManagement(viewState: DialogManagementViewState) {
         text = MR.strings.dialogManagement,
         secondaryText = viewState.dialogManagementOption.text,
         screen = ConfigurationScreenType.DialogManagementConfiguration,
-        serviceState = viewState.serviceState
+        serviceViewState = viewState.serviceState
     )
 
 }
@@ -416,7 +416,7 @@ private fun IntentHandling(viewState: IntentHandlingViewState) {
         text = MR.strings.intentHandling,
         secondaryText = viewState.intentHandlingOption.text,
         screen = ConfigurationScreenType.IntentHandlingConfiguration,
-        serviceState = viewState.serviceState
+        serviceViewState = viewState.serviceState
     )
 
 }
@@ -429,7 +429,7 @@ private fun ConfigurationListItem(
     text: StringResource,
     secondaryText: StringResource,
     screen: ConfigurationScreenType,
-    serviceState: StateFlow<ServiceState>
+    serviceViewState: ServiceViewState
 ) {
 
     val navController = LocalMainNavController.current
@@ -443,7 +443,7 @@ private fun ConfigurationListItem(
         text = { Text(text) },
         secondaryText = { Text(secondaryText) },
         trailing = {
-            val serviceStateValue by serviceState.collectAsState()
+            val serviceStateValue by serviceViewState.serviceState.collectAsState()
             EventStateIconTinted(serviceStateValue)
         }
     )
@@ -459,7 +459,7 @@ private fun ConfigurationListItem(
     text: StringResource,
     secondaryText: String,
     screen: ConfigurationScreenType,
-    serviceState: StateFlow<ServiceState>
+    viewState: ServiceViewState
 ) {
 
     val navController = LocalMainNavController.current
@@ -473,7 +473,7 @@ private fun ConfigurationListItem(
         text = { Text(text) },
         secondaryText = { Text(text = secondaryText) },
         trailing = {
-            val serviceStateValue by serviceState.collectAsState()
+            val serviceStateValue by viewState.serviceState.collectAsState()
             EventStateIconTinted(serviceStateValue)
         }
     )

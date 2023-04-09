@@ -1,5 +1,8 @@
 package org.rhasspy.mobile.ui.event
 
+import androidx.compose.runtime.Stable
+
+@Stable
 abstract class Event(open val stateEvent: StateEvent)
 
 /**

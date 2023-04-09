@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.viewmodel.screens.configuration
 
+import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
@@ -11,6 +12,7 @@ import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.ScrollToErrorEvent
 
+@Stable
 data class ConfigurationScreenViewState(
     val siteId: SiteIdViewState,
     val remoteHermesHttp: RemoteHermesHttpViewState,
@@ -27,57 +29,73 @@ data class ConfigurationScreenViewState(
     val scrollToErrorEvent: ScrollToErrorEvent
 ) {
 
+    @Stable
     data class SiteIdViewState(
         val text: StateFlow<String>
     )
 
+    @Stable
     data class RemoteHermesHttpViewState(
         val isHttpSSLVerificationEnabled: Boolean,
-        val serviceState: StateFlow<ServiceState>
+        val serviceState: ServiceViewState
     )
 
+    @Stable
     data class WebServerViewState(
         val isHttpServerEnabled: Boolean,
-        val serviceState: StateFlow<ServiceState>
+        val serviceState: ServiceViewState
     )
 
+    @Stable
     data class MqttViewState(
         val isMQTTConnected: StateFlow<Boolean>,
-        val serviceState: StateFlow<ServiceState>
+        val serviceState: ServiceViewState
     )
 
+    @Stable
     data class WakeWordViewState(
         val wakeWordValueOption: WakeWordOption,
-        val serviceState: StateFlow<ServiceState>
+        val serviceState: ServiceViewState
     )
 
+    @Stable
     data class SpeechToTextViewState(
         val speechToTextOption: SpeechToTextOption,
-        val serviceState: StateFlow<ServiceState>
+        val serviceState: ServiceViewState
     )
 
+    @Stable
     data class IntentRecognitionViewState(
         val intentRecognitionOption: IntentRecognitionOption,
-        val serviceState: StateFlow<ServiceState>
+        val serviceState: ServiceViewState
     )
 
+    @Stable
     data class TextToSpeechViewState(
         val textToSpeechOption: TextToSpeechOption,
-        val serviceState: StateFlow<ServiceState>
+        val serviceState: ServiceViewState
     )
 
+    @Stable
     data class AudioPlayingViewState(
         val audioPlayingOption: AudioPlayingOption,
-        val serviceState: StateFlow<ServiceState>
+        val serviceState: ServiceViewState
     )
 
+    @Stable
     data class DialogManagementViewState(
         val dialogManagementOption: DialogManagementOption,
-        val serviceState: StateFlow<ServiceState>
+        val serviceState: ServiceViewState
     )
 
+    @Stable
     data class IntentHandlingViewState(
         val intentHandlingOption: IntentHandlingOption,
+        val serviceState: ServiceViewState
+    )
+
+    @Stable
+    data class ServiceViewState(
         val serviceState: StateFlow<ServiceState>
     )
 
