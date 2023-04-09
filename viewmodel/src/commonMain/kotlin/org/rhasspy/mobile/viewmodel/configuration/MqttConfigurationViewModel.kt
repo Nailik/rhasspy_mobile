@@ -86,7 +86,8 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
     override val configurationEditViewState = combineState(hasUnsavedChanges, _isMqttEnabled) { hasUnsavedChanges, isMqttEnabled ->
         IConfigurationEditViewState(
             hasUnsavedChanges = hasUnsavedChanges,
-            isTestingEnabled = isMqttEnabled
+            isTestingEnabled = isMqttEnabled,
+            serviceViewState = serviceViewState
         )
     }
 

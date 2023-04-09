@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.ServiceStateHeader
@@ -64,7 +63,6 @@ import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.I
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationEditUiAction.StopTest
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationServiceViewState
 
 enum class ConfigurationContentScreens(val route: String) {
     Edit("ConfigurationContentScreens_Edit"),
@@ -119,7 +117,6 @@ fun ConfigurationScreenItemContent(
                     EditConfigurationScreen(
                         title = title,
                         viewState = viewState.editViewState.collectAsState().value,
-                        serviceViewState = viewState.serviceViewState,
                         onAction = onAction,
                         content = content
                     )
@@ -127,7 +124,6 @@ fun ConfigurationScreenItemContent(
                 composable(ConfigurationContentScreens.Test.route) {
                     ConfigurationScreenTest(
                         viewState = viewState.testViewState.collectAsState().value,
-                        serviceViewState = viewState.serviceViewState,
                         onAction = onAction,
                         content = testContent
                     )
@@ -144,7 +140,6 @@ fun ConfigurationScreenItemContent(
 private fun EditConfigurationScreen(
     title: StableStringResource,
     viewState: IConfigurationEditViewState,
-    serviceViewState: StateFlow<IConfigurationServiceViewState>,
     onAction: (IConfigurationEditUiAction) -> Unit,
     content: LazyListScope.() -> Unit
 ) {
@@ -203,7 +198,8 @@ private fun EditConfigurationScreen(
             ) {
 
                 stickyHeader {
-                    ServiceStateHeader(serviceViewState.collectAsState().value)
+                    val serviceStateHeaderViewState by viewState.serviceViewState.collectAsState()
+                    ServiceStateHeader(serviceStateHeaderViewState)
                 }
 
                 content()

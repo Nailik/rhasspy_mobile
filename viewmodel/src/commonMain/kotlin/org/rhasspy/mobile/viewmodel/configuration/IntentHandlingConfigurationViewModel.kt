@@ -64,7 +64,8 @@ class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
     override val configurationEditViewState = combineState(hasUnsavedChanges, _intentHandlingOption) { hasUnsavedChanges, intentHandlingOption ->
         IConfigurationViewState.IConfigurationEditViewState(
             hasUnsavedChanges = hasUnsavedChanges,
-            isTestingEnabled = intentHandlingOption != IntentHandlingOption.WithRecognition
+            isTestingEnabled = intentHandlingOption != IntentHandlingOption.WithRecognition,
+            serviceViewState = serviceViewState
         )
     }
 

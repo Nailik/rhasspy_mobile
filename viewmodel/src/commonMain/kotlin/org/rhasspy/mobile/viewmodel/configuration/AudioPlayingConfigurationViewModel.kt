@@ -18,7 +18,7 @@ import org.rhasspy.mobile.platformspecific.combineAny
 import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.combineStateNotEquals
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.test.AudioPlayingConfigurationTest
 
 /**
@@ -82,12 +82,14 @@ class AudioPlayingConfigurationViewModel : IConfigurationViewModel() {
         )
     )
 
-    override val configurationEditViewState = combineState(hasUnsavedChanges, _audioPlayingOption) { hasUnsavedChanges, audioPlayingOption ->
-        IConfigurationViewState.IConfigurationEditViewState(
-            hasUnsavedChanges = hasUnsavedChanges,
-            isTestingEnabled = audioPlayingOption != AudioPlayingOption.Disabled
-        )
-    }
+    override val configurationEditViewState =
+        combineState(hasUnsavedChanges, _audioPlayingOption) { hasUnsavedChanges, audioPlayingOption ->
+            IConfigurationEditViewState(
+                hasUnsavedChanges = hasUnsavedChanges,
+                isTestingEnabled = audioPlayingOption != AudioPlayingOption.Disabled,
+                serviceViewState = serviceViewState
+            )
+        }
 
     //all options
     val audioPlayingOptionList = AudioPlayingOption::values

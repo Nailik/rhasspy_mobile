@@ -64,7 +64,8 @@ class SpeechToTextConfigurationViewModel : IConfigurationViewModel() {
     override val configurationEditViewState = combineState(hasUnsavedChanges, _speechToTextOption) { hasUnsavedChanges, speechToTextOption ->
         IConfigurationViewState.IConfigurationEditViewState(
             hasUnsavedChanges = hasUnsavedChanges,
-            isTestingEnabled = speechToTextOption != SpeechToTextOption.Disabled
+            isTestingEnabled = speechToTextOption != SpeechToTextOption.Disabled,
+            serviceViewState = serviceViewState
         )
     }
 

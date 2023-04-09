@@ -25,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
@@ -44,7 +43,6 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationTestUiAction
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListAutoscroll
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListFiltered
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationServiceViewState
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationTestViewState
 
 /**
@@ -53,7 +51,6 @@ import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.
 @Composable
 fun ConfigurationScreenTest(
     viewState: IConfigurationTestViewState,
-    serviceViewState: StateFlow<IConfigurationServiceViewState>,
     onAction: (IConfigurationTestUiAction) -> Unit,
     content: (@Composable () -> Unit)?
 ) {
@@ -91,7 +88,6 @@ fun ConfigurationScreenTest(
         ) {
             ConfigurationScreenTestList(
                 viewState = viewState,
-                serviceViewState = serviceViewState,
                 content = content
             )
         }
@@ -105,7 +101,6 @@ fun ConfigurationScreenTest(
 private fun ConfigurationScreenTestList(
     modifier: Modifier = Modifier,
     viewState: IConfigurationTestViewState,
-    serviceViewState: StateFlow<IConfigurationServiceViewState>,
     content: (@Composable () -> Unit)?
 ) {
     Column(modifier = modifier) {
@@ -128,7 +123,8 @@ private fun ConfigurationScreenTestList(
             modifier = Modifier.weight(1f)
         ) {
             stickyHeader {
-                ServiceStateHeader(serviceViewState.collectAsState().value)
+                val serviceStateHeaderViewState by viewState.serviceViewState.collectAsState()
+                ServiceStateHeader(serviceStateHeaderViewState)
             }
 
             items(logEventsList) { item ->

@@ -95,7 +95,8 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     override val configurationEditViewState = combineState(hasUnsavedChanges, isTestingEnabled) { hasUnsavedChanges, isTestingEnabled ->
         IConfigurationEditViewState(
             hasUnsavedChanges = hasUnsavedChanges,
-            isTestingEnabled = isTestingEnabled
+            isTestingEnabled = isTestingEnabled,
+            serviceViewState = serviceViewState
         )
     }
 

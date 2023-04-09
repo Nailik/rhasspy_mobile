@@ -30,7 +30,6 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenVie
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.IntentRecognitionViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.MqttViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.RemoteHermesHttpViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.ServiceViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SiteIdViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SpeechToTextViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.TextToSpeechViewState
@@ -51,6 +50,8 @@ class ConfigurationScreenViewModel : ViewModel(), KoinComponent {
         get<DialogManagerService>().serviceState,
         get<IntentHandlingService>().serviceState
     ) { it }
+
+    private val scrollToErrorEvent = MutableStateFlow(ScrollToErrorEvent(Consumed, 0))
 
     private val _viewState = MutableStateFlow(
         ConfigurationScreenViewState(
@@ -98,7 +99,7 @@ class ConfigurationScreenViewModel : ViewModel(), KoinComponent {
                 serviceState = ServiceViewState(get<IntentHandlingService>().serviceState)
             ),
             hasError = serviceStateFlow.mapReadonlyState { array -> array.firstOrNull { it is ServiceState.Error } != null },
-            scrollToErrorEvent = ScrollToErrorEvent(Consumed, 0)
+            scrollToErrorEvent = scrollToErrorEvent
         )
     )
 
@@ -107,20 +108,16 @@ class ConfigurationScreenViewModel : ViewModel(), KoinComponent {
     fun onAction(action: ConfigurationScreenUiAction) {
         when (action) {
             is SiteIdChange -> ConfigurationSetting.siteId.value = action.text
-            ScrollToError -> _viewState.update {
-                it.copy(
-                    scrollToErrorEvent = it.scrollToErrorEvent.copy(
-                        stateEvent = Triggered,
-                        firstErrorIndex = serviceStateFlow.value.indexOfFirst { serviceState -> serviceState is ServiceState.Error }
-                    )
+            ScrollToError -> scrollToErrorEvent.value = ScrollToErrorEvent(
+                    stateEvent = Triggered,
+                    firstErrorIndex = serviceStateFlow.value.indexOfFirst { serviceState -> serviceState is ServiceState.Error }
                 )
-            }
         }
     }
 
     fun onConsumed(event: ConfigurationScreenUiEvent) {
         when (event) {
-            is ScrollToErrorEvent -> _viewState.update { it.copy(scrollToErrorEvent = it.scrollToErrorEvent.copy(stateEvent = Consumed)) }
+            is ScrollToErrorEvent -> scrollToErrorEvent.update { it.copy(stateEvent = Consumed) }
         }
     }
 

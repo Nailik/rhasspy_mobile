@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,10 +30,10 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationServiceViewState
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.ServiceStateHeaderViewState
 
 @Composable
-fun ServiceStateHeader(viewState: IConfigurationServiceViewState) {
+fun ServiceStateHeader(viewState: ServiceStateHeaderViewState) {
 
     var isShowDialog by remember { mutableStateOf(false) }
 
@@ -40,7 +41,7 @@ fun ServiceStateHeader(viewState: IConfigurationServiceViewState) {
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp))
             .padding(16.dp),
-        serviceState = viewState.serviceState,
+        serviceState = viewState.serviceState.serviceState.collectAsState().value,
         enabled = viewState.isOpenServiceDialogEnabled,
         onClick = {
             isShowDialog = true

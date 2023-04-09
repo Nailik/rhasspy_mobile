@@ -38,9 +38,10 @@ import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.I
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListFiltered
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationServiceViewState
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.ServiceStateHeaderViewState
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationTestViewState
 import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTest
+import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     private val logger = Logger.withTag("IConfigurationViewModel")
@@ -53,30 +54,38 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
     abstract val configurationEditViewState: StateFlow<IConfigurationEditViewState>
 
     private val logEvents = MutableStateFlow<ImmutableList<LogElement>>(persistentListOf())
-    private val configurationTestViewState = MutableStateFlow(IConfigurationTestViewState(
-            isListFiltered = false,
-            isListAutoscroll = true,
-            logEvents = logEvents.mapReadonlyState { it.toImmutableList() }
-        )
-    )
 
-    private val _viewState get() = MutableStateFlow(
+
+    internal val serviceViewState
+        get() = serviceState.mapReadonlyState {
+            ServiceStateHeaderViewState(
+                serviceState = ServiceViewState(serviceState),
+                isOpenServiceDialogEnabled = (it is ServiceState.Exception || it is ServiceState.Error),
+                serviceStateDialogText = when (it) {
+                    is ServiceState.Error -> it.information
+                    is ServiceState.Exception -> it.exception?.toString() ?: ""
+                    else -> ""
+                }
+            )
+        }
+
+    private val configurationTestViewState
+        get() = MutableStateFlow(
+            IConfigurationTestViewState(
+                isListFiltered = false,
+                isListAutoscroll = true,
+                logEvents = logEvents.mapReadonlyState { it.toImmutableList() },
+                serviceViewState = serviceViewState
+            )
+        )
+
+    private val _viewState
+        get() = MutableStateFlow(
             IConfigurationViewState(
                 isBackPressDisabled = false,
                 isLoading = false,
                 editViewState = configurationEditViewState,
-                testViewState = configurationTestViewState,
-                serviceViewState = serviceState.mapReadonlyState {
-                    IConfigurationServiceViewState(
-                        serviceState = it,
-                        isOpenServiceDialogEnabled = (it is ServiceState.Exception || it is ServiceState.Error),
-                        serviceStateDialogText = when (it) {
-                            is ServiceState.Error -> it.information
-                            is ServiceState.Exception -> it.exception?.toString() ?: ""
-                            else -> ""
-                        }
-                    )
-                }
+                testViewState = configurationTestViewState
             )
         )
     val viewState get() = _viewState.readOnly

@@ -71,7 +71,8 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
     override val configurationEditViewState = combineState(hasUnsavedChanges, _isHttpServerEnabled) { hasUnsavedChanges, isHttpServerEnabled ->
         IConfigurationViewState.IConfigurationEditViewState(
             hasUnsavedChanges = hasUnsavedChanges,
-            isTestingEnabled = isHttpServerEnabled
+            isTestingEnabled = isHttpServerEnabled,
+            serviceViewState = serviceViewState
         )
     }
 

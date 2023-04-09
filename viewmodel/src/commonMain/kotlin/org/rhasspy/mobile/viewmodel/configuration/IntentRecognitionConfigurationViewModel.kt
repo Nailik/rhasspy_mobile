@@ -63,7 +63,8 @@ class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
     override val configurationEditViewState = combineState(hasUnsavedChanges, _intentRecognitionOption) { hasUnsavedChanges, intentRecognitionOption ->
         IConfigurationViewState.IConfigurationEditViewState(
             hasUnsavedChanges = hasUnsavedChanges,
-            isTestingEnabled = intentRecognitionOption != IntentRecognitionOption.Disabled
+            isTestingEnabled = intentRecognitionOption != IntentRecognitionOption.Disabled,
+            serviceViewState = serviceViewState
         )
     }
 

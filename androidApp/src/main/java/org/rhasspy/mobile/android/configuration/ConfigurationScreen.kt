@@ -37,7 +37,7 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenVie
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.IntentRecognitionViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.MqttViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.RemoteHermesHttpViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.ServiceViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SiteIdViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SpeechToTextViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.TextToSpeechViewState
@@ -67,7 +67,7 @@ fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = get()) {
         val coroutineScope = rememberCoroutineScope()
 
         UiEventEffect(
-            event = viewState.scrollToErrorEvent,
+            event = viewState.scrollToErrorEvent.collectAsState().value,
             onConsumed = viewModel::onConsumed
         ) {
             //+1 to account for sticky header

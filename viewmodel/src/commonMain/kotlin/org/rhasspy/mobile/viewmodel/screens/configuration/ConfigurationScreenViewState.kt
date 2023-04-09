@@ -2,7 +2,6 @@ package org.rhasspy.mobile.viewmodel.screens.configuration
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
@@ -26,7 +25,7 @@ data class ConfigurationScreenViewState(
     val dialogManagement: DialogManagementViewState,
     val intentHandling: IntentHandlingViewState,
     val hasError: StateFlow<Boolean>,
-    val scrollToErrorEvent: ScrollToErrorEvent
+    val scrollToErrorEvent: StateFlow<ScrollToErrorEvent>
 ) {
 
     @Stable
@@ -92,11 +91,6 @@ data class ConfigurationScreenViewState(
     data class IntentHandlingViewState(
         val intentHandlingOption: IntentHandlingOption,
         val serviceState: ServiceViewState
-    )
-
-    @Stable
-    data class ServiceViewState(
-        val serviceState: StateFlow<ServiceState>
     )
 
 }

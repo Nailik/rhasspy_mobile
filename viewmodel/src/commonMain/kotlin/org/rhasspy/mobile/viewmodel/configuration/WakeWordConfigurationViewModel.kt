@@ -112,7 +112,8 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
     override val configurationEditViewState = combineState(hasUnsavedChanges, _wakeWordOption) { hasUnsavedChanges, wakeWordOption ->
         IConfigurationEditViewState(
             hasUnsavedChanges = hasUnsavedChanges,
-            isTestingEnabled = wakeWordOption != WakeWordOption.Disabled
+            isTestingEnabled = wakeWordOption != WakeWordOption.Disabled,
+            serviceViewState = serviceViewState
         )
     }
 

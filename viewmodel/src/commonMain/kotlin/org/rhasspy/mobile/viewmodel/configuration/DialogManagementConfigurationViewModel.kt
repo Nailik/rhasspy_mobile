@@ -13,7 +13,7 @@ import org.rhasspy.mobile.platformspecific.combineAny
 import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.combineStateNotEquals
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.test.DialogManagementConfigurationTest
 
 /**
@@ -69,9 +69,10 @@ class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
     )
 
     override val configurationEditViewState = combineState(hasUnsavedChanges, _dialogManagementOption) { hasUnsavedChanges, dialogManagementOption ->
-        IConfigurationViewState.IConfigurationEditViewState(
+        IConfigurationEditViewState(
             hasUnsavedChanges = hasUnsavedChanges,
-            isTestingEnabled = dialogManagementOption != DialogManagementOption.Disabled
+            isTestingEnabled = dialogManagementOption != DialogManagementOption.Disabled,
+            serviceViewState = serviceViewState
         )
     }
 
