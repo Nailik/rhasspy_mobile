@@ -24,7 +24,7 @@ import org.rhasspy.mobile.android.onListItemRadioButton
 import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
-import org.rhasspy.mobile.viewmodel.configuration.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import kotlin.test.assertEquals
 
 class AudioPlayingConfigurationContentTest {

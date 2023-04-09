@@ -9,7 +9,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -22,6 +21,7 @@ import org.rhasspy.mobile.logic.logger.FileLogger
 import org.rhasspy.mobile.logic.logger.LogElement
 import org.rhasspy.mobile.logic.logger.LogLevel
 import org.rhasspy.mobile.logic.logger.LogType
+import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.logic.update
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
@@ -37,58 +37,55 @@ import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.I
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListAutoscroll
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListFiltered
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.ServiceStateHeaderViewState
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationTestViewState
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.ServiceStateHeaderViewState
 import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTest
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
-abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
+abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationContentViewState>(
+    private val service: IService,
+    internal val testRunner: T,
+    private val logType: LogType,
+    initialViewState: V
+) : ViewModel(), KoinComponent {
     private val logger = Logger.withTag("IConfigurationViewModel")
     private var testStartDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).toString()
 
-    protected abstract val testRunner: IConfigurationTest
-    protected abstract val logType: LogType
+    protected val contentViewState = MutableStateFlow(initialViewState)
 
-    abstract val serviceState: StateFlow<ServiceState>
-    abstract val configurationEditViewState: StateFlow<IConfigurationEditViewState>
+    private val serviceViewState = service.serviceState.mapReadonlyState {
+        ServiceStateHeaderViewState(
+            serviceState = ServiceViewState(service.serviceState),
+            isOpenServiceDialogEnabled = (it is ServiceState.Exception || it is ServiceState.Error),
+            serviceStateDialogText = when (it) {
+                is ServiceState.Error -> it.information
+                is ServiceState.Exception -> it.exception?.toString() ?: ""
+                else -> ""
+            }
+        )
+    }
 
     private val logEvents = MutableStateFlow<ImmutableList<LogElement>>(persistentListOf())
-
-
-    internal val serviceViewState
-        get() = serviceState.mapReadonlyState {
-            ServiceStateHeaderViewState(
-                serviceState = ServiceViewState(serviceState),
-                isOpenServiceDialogEnabled = (it is ServiceState.Exception || it is ServiceState.Error),
-                serviceStateDialogText = when (it) {
-                    is ServiceState.Error -> it.information
-                    is ServiceState.Exception -> it.exception?.toString() ?: ""
-                    else -> ""
-                }
-            )
-        }
-
-    private val configurationTestViewState
-        get() = MutableStateFlow(
-            IConfigurationTestViewState(
-                isListFiltered = false,
-                isListAutoscroll = true,
-                logEvents = logEvents.mapReadonlyState { it.toImmutableList() },
-                serviceViewState = serviceViewState
-            )
+    private val configurationTestViewState = MutableStateFlow(
+        IConfigurationTestViewState(
+            isListFiltered = false,
+            isListAutoscroll = true,
+            logEvents = logEvents.mapReadonlyState { it.toImmutableList() },
+            serviceViewState = serviceViewState
         )
+    )
 
-    private val _viewState
-        get() = MutableStateFlow(
-            IConfigurationViewState(
-                isBackPressDisabled = false,
-                isLoading = false,
-                editViewState = configurationEditViewState,
-                testViewState = configurationTestViewState
-            )
+
+    private val _viewState = MutableStateFlow(
+        IConfigurationViewState(
+            contentViewState = initialViewState,
+            isBackPressDisabled = false,
+            isLoading = false,
+            editViewState = contentViewState.mapReadonlyState { it.getEditViewState(serviceViewState) },
+            testViewState = configurationTestViewState
         )
-    val viewState get() = _viewState.readOnly
+    )
+    val viewState = _viewState.readOnly
 
     fun onAction(action: IConfigurationUiAction) {
         when (action) {

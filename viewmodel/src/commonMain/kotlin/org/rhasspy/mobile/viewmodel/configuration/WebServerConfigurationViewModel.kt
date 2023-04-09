@@ -19,6 +19,7 @@ import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.test.WebServerConfigurationTest
 
 class WebServerConfigurationViewModel : IConfigurationViewModel() {
@@ -69,7 +70,7 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
     )
 
     override val configurationEditViewState = combineState(hasUnsavedChanges, _isHttpServerEnabled) { hasUnsavedChanges, isHttpServerEnabled ->
-        IConfigurationViewState.IConfigurationEditViewState(
+        IConfigurationEditViewState(
             hasUnsavedChanges = hasUnsavedChanges,
             isTestingEnabled = isHttpServerEnabled,
             serviceViewState = serviceViewState

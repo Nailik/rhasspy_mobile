@@ -18,6 +18,7 @@ import org.rhasspy.mobile.platformspecific.combineStateNotEquals
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.test.IntentHandlingConfigurationTest
 
 class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
@@ -62,7 +63,7 @@ class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
     )
 
     override val configurationEditViewState = combineState(hasUnsavedChanges, _intentHandlingOption) { hasUnsavedChanges, intentHandlingOption ->
-        IConfigurationViewState.IConfigurationEditViewState(
+        IConfigurationEditViewState(
             hasUnsavedChanges = hasUnsavedChanges,
             isTestingEnabled = intentHandlingOption != IntentHandlingOption.WithRecognition,
             serviceViewState = serviceViewState

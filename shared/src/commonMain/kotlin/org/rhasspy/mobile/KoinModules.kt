@@ -2,8 +2,8 @@ package org.rhasspy.mobile
 
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.closeableSingle
+import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
-import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingServiceParams
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
@@ -32,8 +32,9 @@ import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordServiceParams
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.logic.services.webserver.WebServerServiceParams
+import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.viewmodel.AppViewModel
-import org.rhasspy.mobile.viewmodel.configuration.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.DialogManagementConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.IntentHandlingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.IntentRecognitionConfigurationViewModel
@@ -57,10 +58,10 @@ import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.overlay.IndicationOverlayViewModel
 import org.rhasspy.mobile.viewmodel.overlay.MicrophoneOverlayViewModel
 import org.rhasspy.mobile.viewmodel.screens.AboutScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.LogScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.SettingsScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.AutomaticSilenceDetectionSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.BackgroundServiceSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.DeviceSettingsSettingsViewModel
@@ -72,7 +73,6 @@ import org.rhasspy.mobile.viewmodel.settings.SaveAndRestoreSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.sound.ErrorIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.sound.RecordedIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.sound.WakeIndicationSoundSettingsViewModel
-
 
 val serviceModule = module {
     closeableSingle { LocalAudioService() }
@@ -136,7 +136,11 @@ val viewModelModule = module {
     single { HomeScreenViewModel() }
     single { MicrophoneFabViewModel() }
     single { ConfigurationScreenViewModel() }
-    single { AudioPlayingConfigurationViewModel() }
+    single { AudioPlayingConfigurationViewModel(
+        service = get(),
+        testRunner =  get(),
+        logType = LogType.AudioPlayingService
+    ) }
     single { DialogManagementConfigurationViewModel() }
     single { IntentHandlingConfigurationViewModel() }
     single { IntentRecognitionConfigurationViewModel() }

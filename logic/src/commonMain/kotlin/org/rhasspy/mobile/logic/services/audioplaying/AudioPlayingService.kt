@@ -26,7 +26,7 @@ open class AudioPlayingService : IService() {
     private val params by inject<AudioPlayingServiceParams>()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
-    val serviceState = _serviceState.readOnly
+    override val serviceState = _serviceState.readOnly
 
     private val localAudioService by inject<LocalAudioService>()
     private val httpClientService by inject<HttpClientService>()

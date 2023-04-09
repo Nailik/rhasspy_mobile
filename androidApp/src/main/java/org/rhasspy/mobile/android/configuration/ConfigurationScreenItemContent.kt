@@ -78,8 +78,8 @@ enum class ConfigurationContentScreens(val route: String) {
  * Shows dialog on Back press when there are unsaved changes
  */
 @Composable
-fun ConfigurationScreenItemContent(
-    viewState: IConfigurationViewState,
+fun <V> ConfigurationScreenItemContent(
+    viewState: IConfigurationViewState<V>,
     onAction: (IConfigurationUiAction) -> Unit,
     modifier: Modifier,
     title: StableStringResource,

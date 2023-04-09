@@ -16,6 +16,7 @@ import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.combineStateNotEquals
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.test.TextToSpeechConfigurationTest
 
 class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
@@ -59,7 +60,7 @@ class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
     )
 
     override val configurationEditViewState = combineState(hasUnsavedChanges, _textToSpeechOption) { hasUnsavedChanges, textToSpeechOption ->
-        IConfigurationViewState.IConfigurationEditViewState(
+        IConfigurationEditViewState(
             hasUnsavedChanges = hasUnsavedChanges,
             isTestingEnabled = textToSpeechOption != TextToSpeechOption.Disabled,
             serviceViewState = serviceViewState

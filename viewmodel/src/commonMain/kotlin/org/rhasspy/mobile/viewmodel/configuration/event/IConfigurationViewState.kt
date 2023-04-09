@@ -7,7 +7,8 @@ import org.rhasspy.mobile.logic.logger.LogElement
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable
-data class IConfigurationViewState(
+data class IConfigurationViewState<V>(
+    val contentViewState: V,
     val isBackPressDisabled: Boolean,
     val isLoading: Boolean,
     val editViewState: StateFlow<IConfigurationEditViewState>,
