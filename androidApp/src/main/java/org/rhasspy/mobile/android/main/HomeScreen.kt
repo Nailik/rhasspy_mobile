@@ -27,6 +27,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
 
@@ -46,7 +47,7 @@ fun HomeScreen(viewModel: HomeScreenViewModel = get()) {
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(MR.strings.appName) }
+                title = { Text(MR.strings.appName.stable) }
             )
         },
     ) { paddingValues ->
@@ -91,7 +92,7 @@ private fun PortraitContent(
             val microphoneViewModel = get<MicrophoneFabViewModel>()
 
             RequiresMicrophonePermission(
-                MR.strings.microphonePermissionInfoRecord,
+                MR.strings.microphonePermissionInfoRecord.stable,
                 microphoneViewModel::onClick
             ) { onClick ->
                 SideEffect {
@@ -141,7 +142,7 @@ fun LandscapeContent(
             val microphoneViewModel = get<MicrophoneFabViewModel>()
 
             RequiresMicrophonePermission(
-                MR.strings.microphonePermissionInfoRecord,
+                MR.strings.microphonePermissionInfoRecord.stable,
                 microphoneViewModel::onClick
             ) { onClick ->
                 SideEffect {
@@ -185,7 +186,7 @@ private fun PlayRecording(viewModel: HomeScreenViewModel) {
         onClick = viewModel::togglePlayRecording,
         enabled = viewModel.isPlayingRecordingEnabled.collectAsState().value,
         icon = if (isPlaying) Icons.Filled.Stop else Icons.Filled.PlayArrow,
-        text = if (isPlaying) MR.strings.stopPlayRecording else MR.strings.playRecording
+        text = if (isPlaying) MR.strings.stopPlayRecording.stable else MR.strings.playRecording.stable
     )
 
 }

@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import dev.icerock.moko.resources.StringResource
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
@@ -20,6 +19,8 @@ import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.settings.content.*
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.screens.SettingsScreenViewModel
 
 
@@ -31,7 +32,7 @@ fun SettingsScreen(viewModel: SettingsScreenViewModel = get()) {
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(MR.strings.settings) }
+                title = { Text(MR.strings.settings.stable) }
             )
         },
     ) { paddingValues ->
@@ -139,7 +140,7 @@ fun NavGraphBuilder.addSettingsScreen() {
 private fun Language(viewModel: SettingsScreenViewModel) {
 
     SettingsListItem(
-        text = MR.strings.language,
+        text = MR.strings.language.stable,
         secondaryText = viewModel.currentLanguage.collectAsState().value.text,
         screen = SettingsScreenType.LanguageSettings
     )
@@ -150,7 +151,7 @@ private fun Language(viewModel: SettingsScreenViewModel) {
 private fun BackgroundService(viewModel: SettingsScreenViewModel) {
 
     SettingsListItem(
-        text = MR.strings.background,
+        text = MR.strings.background.stable,
         secondaryText = viewModel.isBackgroundEnabled.collectAsState().value.toText(),
         screen = SettingsScreenType.BackgroundServiceSettings
     )
@@ -161,7 +162,7 @@ private fun BackgroundService(viewModel: SettingsScreenViewModel) {
 private fun MicrophoneOverlay(viewModel: SettingsScreenViewModel) {
 
     SettingsListItem(
-        text = MR.strings.microphoneOverlay,
+        text = MR.strings.microphoneOverlay.stable,
         secondaryText = viewModel.microphoneOverlaySizeOption.collectAsState().value.name,
         screen = SettingsScreenType.MicrophoneOverlaySettings
     )
@@ -174,19 +175,19 @@ private fun Indication(viewModel: SettingsScreenViewModel) {
     val isWakeWordSoundIndication by viewModel.isSoundIndicationEnabled.collectAsState()
     val isWakeWordLightIndication by viewModel.isWakeWordLightIndicationEnabled.collectAsState()
 
-    var stateText = if (isWakeWordSoundIndication) translate(MR.strings.sound) else ""
+    var stateText = if (isWakeWordSoundIndication) translate(MR.strings.sound.stable) else ""
     if (isWakeWordLightIndication) {
         if (stateText.isNotEmpty()) {
-            stateText += " ${translate(MR.strings._and)} "
+            stateText += " ${translate(MR.strings._and.stable)} "
         }
-        stateText += translate(MR.strings.light)
+        stateText += translate(MR.strings.light.stable)
     }
     if (stateText.isEmpty()) {
-        stateText = translate(MR.strings.disabled)
+        stateText = translate(MR.strings.disabled.stable)
     }
 
     SettingsListItem(
-        text = MR.strings.indication,
+        text = MR.strings.indication.stable,
         secondaryText = stateText,
         screen = SettingsScreenType.IndicationSettings
     )
@@ -197,8 +198,8 @@ private fun Indication(viewModel: SettingsScreenViewModel) {
 private fun Device() {
 
     SettingsListItem(
-        text = MR.strings.device,
-        secondaryText = MR.strings.deviceSettingsInformation,
+        text = MR.strings.device.stable,
+        secondaryText = MR.strings.deviceSettingsInformation.stable,
         screen = SettingsScreenType.DeviceSettings
     )
 
@@ -208,7 +209,7 @@ private fun Device() {
 private fun AutomaticSilenceDetection(viewModel: SettingsScreenViewModel) {
 
     SettingsListItem(
-        text = MR.strings.automaticSilenceDetection,
+        text = MR.strings.automaticSilenceDetection.stable,
         secondaryText = viewModel.isAutomaticSilenceDetectionEnabled.collectAsState().value.toText(),
         screen = SettingsScreenType.AutomaticSilenceDetectionSettings
     )
@@ -219,7 +220,7 @@ private fun AutomaticSilenceDetection(viewModel: SettingsScreenViewModel) {
 private fun Log(viewModel: SettingsScreenViewModel) {
 
     SettingsListItem(
-        text = MR.strings.logSettings,
+        text = MR.strings.logSettings.stable,
         secondaryText = viewModel.logLevel.collectAsState().value.text,
         screen = SettingsScreenType.LogSettings
     )
@@ -230,8 +231,8 @@ private fun Log(viewModel: SettingsScreenViewModel) {
 private fun SaveAndRestore() {
 
     SettingsListItem(
-        text = MR.strings.saveAndRestoreSettings,
-        secondaryText = MR.strings.backup,
+        text = MR.strings.saveAndRestoreSettings.stable,
+        secondaryText = MR.strings.backup.stable,
         screen = SettingsScreenType.SaveAndRestoreSettings
     )
 
@@ -241,8 +242,8 @@ private fun SaveAndRestore() {
 private fun About() {
 
     SettingsListItem(
-        text = MR.strings.aboutTitle,
-        secondaryText = "${translate(MR.strings.version)} ${BuildKonfig.versionName}",
+        text = MR.strings.aboutTitle.stable,
+        secondaryText = "${translate(MR.strings.version.stable)} ${BuildKonfig.versionName}",
         screen = SettingsScreenType.AboutSettings
     )
 
@@ -251,8 +252,8 @@ private fun About() {
 
 @Composable
 private fun SettingsListItem(
-    text: StringResource,
-    secondaryText: StringResource? = null,
+    text: StableStringResource,
+    secondaryText: StableStringResource? = null,
     screen: SettingsScreenType
 ) {
     val navController = LocalMainNavController.current
@@ -270,7 +271,7 @@ private fun SettingsListItem(
 
 @Composable
 private fun SettingsListItem(
-    text: StringResource,
+    text: StableStringResource,
     secondaryText: String,
     @Suppress("SameParameterValue") screen: SettingsScreenType
 ) {

@@ -1,11 +1,9 @@
-package org.rhasspy.mobile.android.stability
+package org.rhasspy.mobile.data.resource
 
 import androidx.compose.runtime.Stable
 import dev.icerock.moko.resources.StringResource
 
-fun StringResource.stable() : StableStringResource{
-    return StableStringResource(this)
-}
+val StringResource.stable get() = StableStringResource(this)
 
 @Stable
 data class StableStringResource(

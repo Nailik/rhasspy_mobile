@@ -19,6 +19,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.HtmlText
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.stable
 
 /**
  * button to open changelog dialog
@@ -32,7 +33,7 @@ fun DataPrivacyDialogButton() {
         onClick = { openDialog = true },
         modifier = Modifier.testTag(TestTag.DialogDataPrivacyButton)
     ) {
-        Text(MR.strings.dataPrivacy)
+        Text(MR.strings.dataPrivacy.stable)
     }
 
     if (openDialog) {
@@ -58,11 +59,11 @@ private fun DataPrivacyDialog(onDismissRequest: () -> Unit) {
                 onClick = onDismissRequest,
                 modifier = Modifier.testTag(TestTag.DialogOk)
             ) {
-                Text(MR.strings.close)
+                Text(MR.strings.close.stable)
             }
         },
         title = {
-            Text(MR.strings.dataPrivacy)
+            Text(MR.strings.dataPrivacy.stable)
         },
         text = {
             Column(

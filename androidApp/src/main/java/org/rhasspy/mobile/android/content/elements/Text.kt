@@ -22,18 +22,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.text.HtmlCompat
-import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.ResourceFormatted
 import dev.icerock.moko.resources.desc.StringDesc
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.AppViewModel
 
 
 @Composable
 fun Text(
-    resource: StringResource,
+    resource: StableStringResource,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
     fontSize: TextUnit = TextUnit.Unspecified,
@@ -74,7 +75,7 @@ fun Text(
 
 @Composable
 fun Text(
-    resource: StringResource,
+    resource: StableStringResource,
     vararg args: Any,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
@@ -115,15 +116,15 @@ fun Text(
 }
 
 @Composable
-fun translate(resource: StringResource): String {
+fun translate(resource: StableStringResource): String {
     get<AppViewModel>().languageType.collectAsState().value
-    return StringDesc.Resource(resource).toString(LocalContext.current)
+    return StringDesc.Resource(resource.stringResource).toString(LocalContext.current)
 }
 
 @Composable
-fun translate(resource: StringResource, vararg args: Any): String {
+fun translate(resource: StableStringResource, vararg args: Any): String {
     get<AppViewModel>().languageType.collectAsState().value
-    return StringDesc.ResourceFormatted(resource, *args).toString(LocalContext.current)
+    return StringDesc.ResourceFormatted(resource.stringResource, *args).toString(LocalContext.current)
 }
 
 
@@ -139,8 +140,8 @@ fun ProvideTextStyleFromToken(
 }
 
 
-fun Boolean.toText(): StringResource {
-    return if (this) MR.strings.enabled else MR.strings.disabled
+fun Boolean.toText(): StableStringResource {
+    return if (this) MR.strings.enabled.stable else MR.strings.disabled.stable
 }
 
 /**

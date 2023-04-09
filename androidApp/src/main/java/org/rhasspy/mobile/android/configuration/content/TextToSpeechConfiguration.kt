@@ -18,6 +18,7 @@ import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.viewmodel.configuration.TextToSpeechConfigurationViewModel
 
@@ -32,7 +33,7 @@ fun TextToSpeechConfigurationContent(viewModel: TextToSpeechConfigurationViewMod
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.TextToSpeechConfiguration),
-        title = MR.strings.textToSpeech,
+        title = MR.strings.textToSpeech.stable,
         viewState = viewModel.viewState.collectAsState().value,
         onAction = viewModel::onAction,
         testContent = { TestContent(viewModel) }
@@ -69,7 +70,7 @@ private fun TextToSpeechHTTP(viewModel: TextToSpeechConfigurationViewModel) {
         //switch to use custom
         SwitchListItem(
             modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
-            text = MR.strings.useCustomEndpoint,
+            text = MR.strings.useCustomEndpoint.stable,
             isChecked = viewModel.isUseCustomTextToSpeechHttpEndpoint.collectAsState().value,
             onCheckedChange = viewModel::toggleUseCustomHttpEndpoint
         )
@@ -80,7 +81,7 @@ private fun TextToSpeechHTTP(viewModel: TextToSpeechConfigurationViewModel) {
             modifier = Modifier.testTag(TestTag.Endpoint),
             value = viewModel.textToSpeechHttpEndpoint.collectAsState().value,
             onValueChange = viewModel::updateTextToSpeechHttpEndpoint,
-            label = translate(MR.strings.rhasspyTextToSpeechURL, HttpClientPath.TextToSpeech.path)
+            label = translate(MR.strings.rhasspyTextToSpeechURL.stable, HttpClientPath.TextToSpeech.path)
         )
 
     }
@@ -95,14 +96,14 @@ private fun TestContent(viewModel: TextToSpeechConfigurationViewModel) {
 
     Column {
         TextFieldListItem(
+            label = MR.strings.textToSpeechText.stable,
             modifier = Modifier.testTag(TestTag.TextToSpeechText),
             value = viewModel.testTextToSpeechText.collectAsState().value,
-            onValueChange = viewModel::updateTestTextToSpeechText,
-            label = MR.strings.textToSpeechText
+            onValueChange = viewModel::updateTestTextToSpeechText
         )
 
         FilledTonalButtonListItem(
-            text = MR.strings.executeTextToSpeechText,
+            text = MR.strings.executeTextToSpeechText.stable,
             onClick = viewModel::startTextToSpeech
         )
     }

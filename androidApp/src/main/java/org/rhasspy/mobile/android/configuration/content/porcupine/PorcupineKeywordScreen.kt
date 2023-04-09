@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.IconButton
@@ -20,8 +22,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.pager.rememberPagerState
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
@@ -31,6 +31,7 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 
 /**
@@ -61,7 +62,7 @@ fun PorcupineKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
                         modifier = Modifier
                             .testTag(TestTag.PorcupineLanguage)
                             .clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineLanguage.route) },
-                        text = { Text(MR.strings.language) },
+                        text = { Text(MR.strings.language.stable) },
                         secondaryText = { Text(viewModel.wakeWordPorcupineLanguage.collectAsState().value.text) }
                     )
                 }
@@ -108,9 +109,7 @@ private fun AppBar() {
     val navigation = LocalNavController.current
 
     TopAppBar(
-        title = {
-            Text(MR.strings.porcupineKeyword)
-        },
+        title = { Text(MR.strings.porcupineKeyword.stable) },
         navigationIcon = {
             IconButton(
                 onClick = navigation::popBackStack,
@@ -118,7 +117,7 @@ private fun AppBar() {
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = MR.strings.back,
+                    contentDescription = MR.strings.back.stable
                 )
             }
         }
@@ -141,13 +140,13 @@ private fun BottomTabBar(state: PagerState, onSelectIndex: (index: Int) -> Unit)
                 selected = state.currentPage == 0,
                 modifier = Modifier.testTag(TestTag.TabDefault),
                 onClick = { onSelectIndex(0) },
-                text = { Text(MR.strings.textDefault) }
+                text = { Text(MR.strings.textDefault.stable) }
             )
             Tab(
                 selected = state.currentPage == 1,
                 modifier = Modifier.testTag(TestTag.TabCustom),
                 onClick = { onSelectIndex(1) },
-                text = { Text(MR.strings.textCustom) }
+                text = { Text(MR.strings.textCustom.stable) }
             )
         }
 

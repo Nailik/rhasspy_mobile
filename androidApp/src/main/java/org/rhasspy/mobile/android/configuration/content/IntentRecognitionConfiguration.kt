@@ -19,6 +19,7 @@ import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.viewmodel.configuration.IntentRecognitionConfigurationViewModel
 
@@ -33,7 +34,7 @@ fun IntentRecognitionConfigurationContent(viewModel: IntentRecognitionConfigurat
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.IntentRecognitionConfiguration),
-        title = MR.strings.intentRecognition,
+        title = MR.strings.intentRecognition.stable,
         viewState = viewModel.viewState.collectAsState().value,
         onAction = viewModel::onAction,
         testContent = { TestContent(viewModel) }
@@ -68,7 +69,7 @@ private fun IntentRecognitionHTTP(viewModel: IntentRecognitionConfigurationViewM
         //switch to use custom
         SwitchListItem(
             modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
-            text = MR.strings.useCustomEndpoint,
+            text = MR.strings.useCustomEndpoint.stable,
             isChecked = viewModel.isUseCustomIntentRecognitionHttpEndpoint.collectAsState().value,
             onCheckedChange = viewModel::toggleUseCustomHttpEndpoint
         )
@@ -81,7 +82,7 @@ private fun IntentRecognitionHTTP(viewModel: IntentRecognitionConfigurationViewM
                 .padding(bottom = 8.dp),
             value = viewModel.intentRecognitionHttpEndpoint.collectAsState().value,
             onValueChange = viewModel::changeIntentRecognitionHttpEndpoint,
-            label = translate(MR.strings.rhasspyTextToIntentURL, HttpClientPath.TextToIntent.path)
+            label = translate(MR.strings.rhasspyTextToIntentURL.stable, HttpClientPath.TextToIntent.path)
         )
     }
 
@@ -98,11 +99,11 @@ private fun TestContent(viewModel: IntentRecognitionConfigurationViewModel) {
             modifier = Modifier.testTag(TestTag.TextToSpeechText),
             value = viewModel.testIntentRecognitionText.collectAsState().value,
             onValueChange = viewModel::updateTestIntentRecognitionText,
-            label = MR.strings.textIntentRecognitionText
+            label = MR.strings.textIntentRecognitionText.stable
         )
 
         FilledTonalButtonListItem(
-            text = MR.strings.executeIntentRecognition,
+            text = MR.strings.executeIntentRecognition.stable,
             onClick = viewModel::runIntentRecognition
         )
     }

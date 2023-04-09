@@ -28,6 +28,7 @@ import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.configuration.MqttConfigurationViewModel
 
 /**
@@ -45,7 +46,7 @@ fun MqttConfigurationContent(viewModel: MqttConfigurationViewModel = get()) {
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.MqttConfiguration),
-        title = MR.strings.mqtt,
+        title = MR.strings.mqtt.stable,
         viewState = viewModel.viewState.collectAsState().value,
         onAction = viewModel::onAction,
         testContent = { }
@@ -54,7 +55,7 @@ fun MqttConfigurationContent(viewModel: MqttConfigurationViewModel = get()) {
         item {
             //toggle to turn mqtt enabled on or off
             SwitchListItem(
-                text = MR.strings.externalMQTT,
+                text = MR.strings.externalMQTT.stable,
                 modifier = Modifier.testTag(TestTag.MqttSwitch),
                 isChecked = viewModel.isMqttEnabled.collectAsState().value,
                 onCheckedChange = viewModel::toggleMqttEnabled
@@ -96,7 +97,7 @@ private fun MqttConnectionSettings(viewModel: MqttConfigurationViewModel) {
 
     //host
     TextFieldListItem(
-        label = MR.strings.host,
+        label = MR.strings.host.stable,
         modifier = Modifier.testTag(TestTag.Host),
         value = viewModel.mqttHost.collectAsState().value,
         onValueChange = viewModel::updateMqttHost,
@@ -105,7 +106,7 @@ private fun MqttConnectionSettings(viewModel: MqttConfigurationViewModel) {
 
     //port
     TextFieldListItem(
-        label = MR.strings.port,
+        label = MR.strings.port.stable,
         modifier = Modifier.testTag(TestTag.Port),
         value = viewModel.mqttPortText.collectAsState().value,
         onValueChange = viewModel::updateMqttPort,
@@ -115,19 +116,19 @@ private fun MqttConnectionSettings(viewModel: MqttConfigurationViewModel) {
 
     //username
     TextFieldListItem(
+        label = MR.strings.userName.stable,
+        modifier = Modifier.testTag(TestTag.UserName),
         value = viewModel.mqttUserName.collectAsState().value,
         onValueChange = viewModel::updateMqttUserName,
-        modifier = Modifier.testTag(TestTag.UserName),
-        label = MR.strings.userName,
         isLastItem = false
     )
 
     //password
     TextFieldListItemVisibility(
-        value = viewModel.mqttPassword.collectAsState().value,
-        onValueChange = viewModel::updateMqttPassword,
+        label = MR.strings.password.stable,
         modifier = Modifier.testTag(TestTag.Password),
-        label = MR.strings.password
+        value = viewModel.mqttPassword.collectAsState().value,
+        onValueChange = viewModel::updateMqttPassword
     )
 }
 
@@ -139,7 +140,7 @@ private fun MqttConnectionSettings(viewModel: MqttConfigurationViewModel) {
 private fun MqttSSL(viewModel: MqttConfigurationViewModel) {
 
     SwitchListItem(
-        text = MR.strings.enableSSL,
+        text = MR.strings.enableSSL.stable,
         modifier = Modifier.testTag(TestTag.SSLSwitch),
         isChecked = viewModel.isMqttSSLEnabled.collectAsState().value,
         onCheckedChange = viewModel::toggleMqttSSLEnabled
@@ -160,15 +161,15 @@ private fun MqttSSL(viewModel: MqttConfigurationViewModel) {
                 icon = {
                     Icon(
                         imageVector = Icons.Filled.Link,
-                        contentDescription = MR.strings.sslWiki
+                        contentDescription = MR.strings.sslWiki.stable
                     )
                 },
-                text = { Text(MR.strings.sslWiki) },
-                secondaryText = { Text(MR.strings.sslWikiInfo) }
+                text = { Text(MR.strings.sslWiki.stable) },
+                secondaryText = { Text(MR.strings.sslWikiInfo.stable) }
             )
 
             FilledTonalButtonListItem(
-                text = MR.strings.chooseCertificate,
+                text = MR.strings.chooseCertificate.stable,
                 modifier = Modifier.testTag(TestTag.CertificateButton),
                 onClick = viewModel::selectSSLCertificate
             )
@@ -180,7 +181,7 @@ private fun MqttSSL(viewModel: MqttConfigurationViewModel) {
             ) {
                 InformationListElement(
                     text = translate(
-                        resource = MR.strings.currentlySelectedCertificate,
+                        resource = MR.strings.currentlySelectedCertificate.stable,
                         viewModel.keyStoreFileText.collectAsState().value?.name ?: ""
                     )
                 )
@@ -199,7 +200,7 @@ private fun MqttSSL(viewModel: MqttConfigurationViewModel) {
 private fun MqttConnectionTiming(viewModel: MqttConfigurationViewModel) {
 
     TextFieldListItem(
-        label = MR.strings.connectionTimeout,
+        label = MR.strings.connectionTimeout.stable,
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         modifier = Modifier.testTag(TestTag.ConnectionTimeout),
         value = viewModel.mqttConnectionTimeoutText.collectAsState().value,
@@ -208,7 +209,7 @@ private fun MqttConnectionTiming(viewModel: MqttConfigurationViewModel) {
     )
 
     TextFieldListItem(
-        label = MR.strings.keepAliveInterval,
+        label = MR.strings.keepAliveInterval.stable,
         modifier = Modifier.testTag(TestTag.KeepAliveInterval),
         value = viewModel.mqttKeepAliveIntervalText.collectAsState().value,
         onValueChange = viewModel::updateMqttKeepAliveInterval,
@@ -217,7 +218,7 @@ private fun MqttConnectionTiming(viewModel: MqttConfigurationViewModel) {
     )
 
     TextFieldListItem(
-        label = MR.strings.retryInterval,
+        label = MR.strings.retryInterval.stable,
         modifier = Modifier.testTag(TestTag.RetryInterval),
         value = viewModel.mqttRetryIntervalText.collectAsState().value,
         onValueChange = viewModel::updateMqttRetryInterval,

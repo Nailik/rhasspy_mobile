@@ -38,6 +38,7 @@ import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 
 enum class WakeWordConfigurationScreens(val route: String) {
@@ -90,7 +91,7 @@ private fun WakeWordConfigurationOverview(viewModel: WakeWordConfigurationViewMo
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.WakeWordConfiguration),
-        title = MR.strings.wakeWord,
+        title = MR.strings.wakeWord.stable,
         viewState = viewModel.viewState.collectAsState().value,
         onAction = viewModel::onAction,
         testContent = { TestContent(viewModel) }
@@ -137,10 +138,10 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
 
         //porcupine access token
         TextFieldListItemVisibility(
+            label = MR.strings.porcupineAccessKey.stable,
             modifier = Modifier.testTag(TestTag.PorcupineAccessToken),
             value = viewModel.wakeWordPorcupineAccessToken.collectAsState().value,
-            onValueChange = viewModel::updateWakeWordPorcupineAccessToken,
-            label = MR.strings.porcupineAccessKey
+            onValueChange = viewModel::updateWakeWordPorcupineAccessToken
         )
 
         //button to open pico voice console to generate access token
@@ -151,11 +152,11 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
             icon = {
                 Icon(
                     imageVector = Icons.Filled.Link,
-                    contentDescription = MR.strings.openPicoVoiceConsole
+                    contentDescription = MR.strings.openPicoVoiceConsole.stable
                 )
             },
-            text = { Text(MR.strings.openPicoVoiceConsole) },
-            secondaryText = { Text(MR.strings.openPicoVoiceConsoleInfo) }
+            text = { Text(MR.strings.openPicoVoiceConsole.stable) },
+            secondaryText = { Text(MR.strings.openPicoVoiceConsoleInfo.stable) }
         )
 
         //opens page for porcupine keyword or language selection
@@ -166,7 +167,7 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
             modifier = Modifier
                 .testTag(TestTag.PorcupineLanguage)
                 .clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineLanguage.route) },
-            text = { Text(MR.strings.language) },
+            text = { Text(MR.strings.language.stable) },
             secondaryText = { Text(viewModel.wakeWordPorcupineLanguage.collectAsState().value.text) }
         )
 
@@ -175,15 +176,9 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
             modifier = Modifier
                 .testTag(TestTag.PorcupineKeyword)
                 .clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineKeyword.route) },
-            text = { Text(MR.strings.wakeWord) },
+            text = { Text(MR.strings.wakeWord.stable) },
             secondaryText = {
-                Text(
-                    "${viewModel.wakeWordPorcupineKeywordCount.collectAsState().value} ${
-                        translate(
-                            MR.strings.active
-                        )
-                    }"
-                )
+                Text("${viewModel.wakeWordPorcupineKeywordCount.collectAsState().value} ${translate(MR.strings.active.stable)}")
             }
         )
 
@@ -194,11 +189,11 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
             visible = viewModel.isMicrophonePermissionRequestVisible.collectAsState().value
         ) {
             RequiresMicrophonePermission(
-                MR.strings.microphonePermissionInfoRecord,
+                MR.strings.microphonePermissionInfoRecord.stable,
                 viewModel::microphonePermissionAllowed
             ) { onClick ->
                 FilledTonalButtonListItem(
-                    text = MR.strings.allowMicrophonePermission,
+                    text = MR.strings.allowMicrophonePermission.stable,
                     onClick = onClick
                 )
             }
@@ -218,8 +213,8 @@ private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
 
         //udp host
         TextFieldListItem(
+            label = MR.strings.host.stable,
             modifier = Modifier.testTag(TestTag.AudioRecordingUdpHost),
-            label = MR.strings.host,
             value = viewModel.wakeWordUdpOutputHost.collectAsState().value,
             onValueChange = viewModel::changeUdpOutputHost,
             isLastItem = false
@@ -227,8 +222,8 @@ private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
 
         //udp port
         TextFieldListItem(
+            label = MR.strings.port.stable,
             modifier = Modifier.testTag(TestTag.AudioRecordingUdpPort),
-            label = MR.strings.port,
             value = viewModel.wakeWordUdpOutputPortText.collectAsState().value,
             onValueChange = viewModel::changeUdpOutputPort,
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
@@ -241,11 +236,11 @@ private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
             visible = viewModel.isMicrophonePermissionRequestVisible.collectAsState().value
         ) {
             RequiresMicrophonePermission(
-                MR.strings.microphonePermissionInfoRecord,
+                MR.strings.microphonePermissionInfoRecord.stable,
                 viewModel::microphonePermissionAllowed
             ) { onClick ->
                 FilledTonalButtonListItem(
-                    text = MR.strings.allowMicrophonePermission,
+                    text = MR.strings.allowMicrophonePermission.stable,
                     onClick = onClick
                 )
             }
@@ -262,11 +257,11 @@ private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
 private fun TestContent(viewModel: WakeWordConfigurationViewModel) {
 
     RequiresMicrophonePermission(
-        MR.strings.microphonePermissionInfoRecord,
+        MR.strings.microphonePermissionInfoRecord.stable,
         viewModel::startWakeWordDetection
     ) { onClick ->
         FilledTonalButtonListItem(
-            text = MR.strings.startRecordAudio,
+            text = MR.strings.startRecordAudio.stable,
             onClick = onClick
         )
     }

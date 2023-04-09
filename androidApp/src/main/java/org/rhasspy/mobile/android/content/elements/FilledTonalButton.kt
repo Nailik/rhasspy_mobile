@@ -9,13 +9,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.StringResource
+import org.rhasspy.mobile.data.resource.StableStringResource
 
 @Composable
 fun FilledTonalButton(
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
-    text: StringResource,
+    text: StableStringResource,
     enabled: Boolean = true,
     onClick: () -> Unit
 ) {

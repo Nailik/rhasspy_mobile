@@ -18,6 +18,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.stable
 
 /**
  * button to open changelog dialog
@@ -31,7 +32,7 @@ fun ChangelogDialogButton() {
         onClick = { openDialog = true },
         modifier = Modifier.testTag(TestTag.DialogChangelogButton)
     ) {
-        Text(MR.strings.changelog)
+        Text(MR.strings.changelog.stable)
     }
 
     if (openDialog) {
@@ -57,11 +58,11 @@ private fun ChangelogDialog(onDismissRequest: () -> Unit) {
                 onClick = onDismissRequest,
                 modifier = Modifier.testTag(TestTag.DialogOk)
             ) {
-                Text(MR.strings.close)
+                Text(MR.strings.close.stable)
             }
         },
         title = {
-            Text(MR.strings.changelog)
+            Text(MR.strings.changelog.stable)
         },
         text = {
             Column(

@@ -5,13 +5,13 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.data.resource.StableStringResource
 
 @Composable
 fun RadioButtonListItem(
     modifier: Modifier = Modifier,
-    text: StringResource,
+    text: StableStringResource,
     isChecked: Boolean,
     trailing: @Composable (() -> Unit)? = null,
     onClick: () -> Unit

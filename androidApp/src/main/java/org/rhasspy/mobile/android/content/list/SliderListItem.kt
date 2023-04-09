@@ -16,15 +16,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.android.content.elements.ProvideTextStyleFromToken
 import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.data.resource.StableStringResource
 
 
 @Composable
 fun SliderListItem(
     modifier: Modifier = Modifier,
-    text: StringResource,
+    text: StableStringResource,
     value: Float,
     valueText: String? = null,
     onValueChange: (Float) -> Unit

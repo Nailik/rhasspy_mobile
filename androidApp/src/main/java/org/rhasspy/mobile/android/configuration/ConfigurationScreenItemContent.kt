@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
@@ -55,6 +54,8 @@ import org.rhasspy.mobile.android.main.LocalConfigurationNavController
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.SetSystemColor
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationEditUiAction
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationEditUiAction.Discard
@@ -83,7 +84,7 @@ fun ConfigurationScreenItemContent(
     viewState: IConfigurationViewState,
     onAction: (IConfigurationUiAction) -> Unit,
     modifier: Modifier,
-    title: StringResource,
+    title: StableStringResource,
     testContent: (@Composable () -> Unit)? = null,
     content: LazyListScope.() -> Unit
 ) {
@@ -141,7 +142,7 @@ fun ConfigurationScreenItemContent(
  */
 @Composable
 private fun EditConfigurationScreen(
-    title: StringResource,
+    title: StableStringResource,
     viewState: IConfigurationEditViewState,
     serviceViewState: StateFlow<IConfigurationServiceViewState>,
     onAction: (IConfigurationEditUiAction) -> Unit,
@@ -182,7 +183,7 @@ private fun EditConfigurationScreen(
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = MR.strings.back,
+                    contentDescription = MR.strings.back.stable,
                 )
             }
         },
@@ -236,7 +237,7 @@ private fun UnsavedBackButtonDialog(
             navController.popBackStack()
             onClose.invoke()
         },
-        dismissButtonText = MR.strings.discard
+        dismissButtonText = MR.strings.discard.stable
     )
 }
 
@@ -249,7 +250,7 @@ private fun UnsavedChangesDialog(
     onDismissRequest: () -> Unit,
     onSave: () -> Unit,
     onDiscard: () -> Unit,
-    dismissButtonText: StringResource
+    dismissButtonText: StableStringResource
 ) {
 
     AlertDialog(
@@ -259,7 +260,7 @@ private fun UnsavedChangesDialog(
                 onClick = onSave,
                 modifier = Modifier.testTag(TestTag.DialogOk)
             ) {
-                Text(MR.strings.save)
+                Text(MR.strings.save.stable)
             }
         },
         dismissButton = {
@@ -273,13 +274,13 @@ private fun UnsavedChangesDialog(
         icon = {
             Icon(
                 imageVector = Icons.Filled.Warning,
-                contentDescription = MR.strings.discard
+                contentDescription = MR.strings.discard.stable
             )
         },
-        title = { Text(MR.strings.unsavedChanges) },
+        title = { Text(MR.strings.unsavedChanges.stable) },
         text = {
             Text(
-                resource = MR.strings.unsavedChangesInformation,
+                resource = MR.strings.unsavedChangesInformation.stable,
                 modifier = Modifier.testTag(TestTag.DialogUnsavedChanges)
             )
         }
@@ -307,7 +308,7 @@ private fun BottomAppBar(
             ) {
                 Icon(
                     imageVector = if (hasUnsavedChanges) Icons.Outlined.Delete else Icons.Filled.Delete,
-                    contentDescription = MR.strings.discard,
+                    contentDescription = MR.strings.discard.stable,
                 )
             }
             IconButton(
@@ -317,7 +318,7 @@ private fun BottomAppBar(
             ) {
                 Icon(
                     imageVector = if (hasUnsavedChanges) Icons.Outlined.Save else Icons.Filled.Save,
-                    contentDescription = MR.strings.save
+                    contentDescription = MR.strings.save.stable
                 )
             }
         },
@@ -340,7 +341,7 @@ private fun BottomAppBar(
                 icon = {
                     Icon(
                         imageVector = if (isTestingEnabled) Icons.Filled.PlayArrow else Icons.Outlined.PlayArrow,
-                        contentDescription = MR.strings.test
+                        contentDescription = MR.strings.test.stable
                     )
                 }
             )
@@ -352,7 +353,7 @@ private fun BottomAppBar(
  * top app bar with title and back navigation button
  */
 @Composable
-private fun AppBar(title: StringResource, onBackClick: () -> Unit, icon: @Composable () -> Unit) {
+private fun AppBar(title: StableStringResource, onBackClick: () -> Unit, icon: @Composable () -> Unit) {
 
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(

@@ -41,6 +41,7 @@ import org.rhasspy.mobile.android.content.elements.HtmlText
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.stable
 
 /**
  * displays libraries list with dialog when clicked on it
@@ -183,7 +184,7 @@ private fun LibraryDialog(library: Library, onDismissRequest: () -> Unit) {
                 onClick = onDismissRequest,
                 modifier = Modifier.testTag(TestTag.DialogOk)
             ) {
-                Text(MR.strings.ok)
+                Text(MR.strings.ok.stable)
             }
         },
         text = {

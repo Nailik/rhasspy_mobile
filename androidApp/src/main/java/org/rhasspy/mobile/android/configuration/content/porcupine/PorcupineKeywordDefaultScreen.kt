@@ -19,6 +19,7 @@ import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.SliderListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 
 /**
@@ -96,7 +97,7 @@ private fun DefaultKeywordListItem(
             modifier = Modifier
                 .combinedTestTag(element.option, TestTag.Sensitivity)
                 .padding(horizontal = 12.dp),
-            text = MR.strings.sensitivity,
+            text = MR.strings.sensitivity.stable,
             value = element.sensitivity,
             onValueChange = onUpdateSensitivity
         )

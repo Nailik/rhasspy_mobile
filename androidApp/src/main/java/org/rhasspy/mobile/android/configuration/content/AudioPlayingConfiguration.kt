@@ -20,6 +20,7 @@ import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.viewmodel.configuration.AudioPlayingConfigurationViewModel
 
@@ -34,7 +35,7 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.AudioPlayingConfiguration),
-        title = MR.strings.audioPlaying,
+        title = MR.strings.audioPlaying.stable,
         viewState = viewModel.viewState.collectAsState().value,
         onAction = viewModel::onAction,
         testContent = { TestContent(viewModel) }
@@ -100,7 +101,7 @@ private fun HttpEndpointConfigurationContent(viewModel: AudioPlayingConfiguratio
         //switch to use custom
         SwitchListItem(
             modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
-            text = MR.strings.useCustomEndpoint,
+            text = MR.strings.useCustomEndpoint.stable,
             isChecked = viewModel.isUseCustomAudioPlayingHttpEndpoint.collectAsState().value,
             onCheckedChange = viewModel::toggleUseCustomHttpEndpoint
         )
@@ -111,7 +112,7 @@ private fun HttpEndpointConfigurationContent(viewModel: AudioPlayingConfiguratio
             modifier = Modifier.testTag(TestTag.Endpoint),
             value = viewModel.audioPlayingHttpEndpoint.collectAsState().value,
             onValueChange = viewModel::changeAudioPlayingHttpEndpoint,
-            label = translate(MR.strings.audioOutputURL, HttpClientPath.PlayWav.path)
+            label = translate(MR.strings.audioOutputURL.stable, HttpClientPath.PlayWav.path)
         )
 
     }
@@ -133,7 +134,7 @@ private fun MqttSiteIdConfigurationContent(viewModel: AudioPlayingConfigurationV
             modifier = Modifier.testTag(TestTag.ConfigurationSiteId),
             value = viewModel.audioPlayingMqttSiteId.collectAsState().value,
             onValueChange = viewModel::changeAudioPlayingMqttSiteId,
-            label = translate(MR.strings.siteId)
+            label = translate(MR.strings.siteId.stable)
         )
 
     }
@@ -147,7 +148,7 @@ private fun MqttSiteIdConfigurationContent(viewModel: AudioPlayingConfigurationV
 private fun TestContent(viewModel: AudioPlayingConfigurationViewModel) {
 
     FilledTonalButtonListItem(
-        text = MR.strings.executePlayTestAudio,
+        text = MR.strings.executePlayTestAudio.stable,
         onClick = viewModel::playTestAudio
     )
 

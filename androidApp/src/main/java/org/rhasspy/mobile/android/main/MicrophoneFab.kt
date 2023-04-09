@@ -22,6 +22,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.FloatingActionButton
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 
 /**
@@ -63,7 +64,7 @@ fun MicrophoneFab(
             Icon(
                 modifier = Modifier.size(iconSize),
                 imageVector = if (viewModel.isShowMicOn.collectAsState().value) Icons.Filled.Mic else Icons.Filled.MicOff,
-                contentDescription = MR.strings.wakeUp,
+                contentDescription = MR.strings.wakeUp.stable,
             )
         }
     )

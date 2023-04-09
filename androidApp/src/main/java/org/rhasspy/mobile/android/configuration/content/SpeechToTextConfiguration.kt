@@ -19,6 +19,7 @@ import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.viewmodel.configuration.SpeechToTextConfigurationViewModel
 
@@ -33,7 +34,7 @@ fun SpeechToTextConfigurationContent(viewModel: SpeechToTextConfigurationViewMod
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.SpeechToTextConfiguration),
-        title = MR.strings.speechToText,
+        title = MR.strings.speechToText.stable,
         viewState = viewModel.viewState.collectAsState().value,
         onAction = viewModel::onAction,
         testContent = { TestContent(viewModel) }
@@ -73,7 +74,7 @@ private fun SpeechToTextHTTP(viewModel: SpeechToTextConfigurationViewModel) {
         //switch to use custom
         SwitchListItem(
             modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
-            text = MR.strings.useCustomEndpoint,
+            text = MR.strings.useCustomEndpoint.stable,
             isChecked = viewModel.isUseCustomSpeechToTextHttpEndpoint.collectAsState().value,
             onCheckedChange = viewModel::toggleUseCustomHttpEndpoint
         )
@@ -84,7 +85,7 @@ private fun SpeechToTextHTTP(viewModel: SpeechToTextConfigurationViewModel) {
             modifier = Modifier.testTag(TestTag.Endpoint),
             value = viewModel.speechToTextHttpEndpoint.collectAsState().value,
             onValueChange = viewModel::updateSpeechToTextHttpEndpoint,
-            label = translate(MR.strings.speechToTextURL, HttpClientPath.SpeechToText.path)
+            label = translate(MR.strings.speechToTextURL.stable, HttpClientPath.SpeechToText.path)
         )
 
     }
@@ -102,7 +103,7 @@ private fun SpeechToTextMqtt(viewModel: SpeechToTextConfigurationViewModel) {
         //switch to use silence detection
         SwitchListItem(
             modifier = Modifier.testTag(TestTag.MqttSilenceDetectionSwitch),
-            text = MR.strings.useMqttSilenceDetection,
+            text = MR.strings.useMqttSilenceDetection.stable,
             isChecked = viewModel.isUseSpeechToTextMqttSilenceDetection.collectAsState().value,
             onCheckedChange = viewModel::toggleUseSpeechToTextMqttSilenceDetection
         )
@@ -117,11 +118,11 @@ private fun SpeechToTextMqtt(viewModel: SpeechToTextConfigurationViewModel) {
 private fun TestContent(viewModel: SpeechToTextConfigurationViewModel) {
 
     RequiresMicrophonePermission(
-        MR.strings.microphonePermissionInfoRecord,
+        MR.strings.microphonePermissionInfoRecord.stable,
         viewModel::toggleRecording
     ) { onClick ->
         FilledTonalButtonListItem(
-            text = if (viewModel.isRecordingAudio.collectAsState().value) MR.strings.stopRecordAudio else MR.strings.startRecordAudio,
+            text = if (viewModel.isRecordingAudio.collectAsState().value) MR.strings.stopRecordAudio.stable else MR.strings.startRecordAudio.stable,
             onClick = onClick
         )
     }

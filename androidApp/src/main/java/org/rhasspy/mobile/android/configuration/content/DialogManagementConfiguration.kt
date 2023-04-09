@@ -17,6 +17,7 @@ import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.configuration.DialogManagementConfigurationViewModel
 
 /**
@@ -28,7 +29,7 @@ fun DialogManagementConfigurationContent(viewModel: DialogManagementConfiguratio
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.DialogManagementConfiguration),
-        title = MR.strings.dialogManagement,
+        title = MR.strings.dialogManagement.stable,
         viewState = viewModel.viewState.collectAsState().value,
         onAction = viewModel::onAction
     ) {
@@ -67,7 +68,7 @@ private fun LocalDialogManagementSettings(viewModel: DialogManagementConfigurati
             value = viewModel.textAsrTimeoutText.collectAsState().value,
             onValueChange = viewModel::updateTextAsrTimeout,
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            label = MR.strings.textAsrTimeoutText
+            label = MR.strings.textAsrTimeoutText.stable
         )
 
         //intent recognition timeout
@@ -76,7 +77,7 @@ private fun LocalDialogManagementSettings(viewModel: DialogManagementConfigurati
             value = viewModel.intentRecognitionTimeoutText.collectAsState().value,
             onValueChange = viewModel::updateIntentRecognitionTimeout,
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            label = MR.strings.intentRecognitionTimeoutText
+            label = MR.strings.intentRecognitionTimeoutText.stable
         )
 
         //recording timeout
@@ -85,7 +86,7 @@ private fun LocalDialogManagementSettings(viewModel: DialogManagementConfigurati
             value = viewModel.recordingTimeoutText.collectAsState().value,
             onValueChange = viewModel::updateRecordingTimeout,
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            label = MR.strings.recordingTimeoutText
+            label = MR.strings.recordingTimeoutText.stable
         )
 
     }

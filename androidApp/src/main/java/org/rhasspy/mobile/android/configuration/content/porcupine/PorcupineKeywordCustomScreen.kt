@@ -36,6 +36,7 @@ import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.SliderListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 
 /**
@@ -57,7 +58,7 @@ fun PorcupineKeywordCustomScreen(viewModel: WakeWordConfigurationViewModel) {
                 .weight(1f)
         ) {
             stickyHeader {
-                InformationListElement(text = MR.strings.porcupineLanguageInformation)
+                InformationListElement(text = MR.strings.porcupineLanguageInformation.stable)
             }
 
             items(
@@ -144,7 +145,7 @@ private fun CustomKeywordListItem(
             ) {
                 Icon(
                     imageVector = Icons.Filled.Delete,
-                    contentDescription = MR.strings.defaultText
+                    contentDescription = MR.strings.defaultText.stable
                 )
             }
         }
@@ -154,7 +155,7 @@ private fun CustomKeywordListItem(
         //sensitivity of porcupine
         SliderListItem(
             modifier = Modifier.padding(horizontal = 12.dp),
-            text = MR.strings.sensitivity,
+            text = MR.strings.sensitivity.stable,
             value = keyword.sensitivity,
             onValueChange = onUpdateSensitivity
         )
@@ -186,7 +187,7 @@ private fun CustomKeywordDeletedListItem(
             ) {
                 Icon(
                     imageVector = Icons.Filled.Block,
-                    contentDescription = MR.strings.defaultText
+                    contentDescription = MR.strings.defaultText.stable
                 )
             }
         }
@@ -213,10 +214,10 @@ private fun CustomKeywordsActionButtons(viewModel: WakeWordConfigurationViewMode
             content = {
                 Icon(
                     imageVector = Icons.Filled.Download,
-                    contentDescription = MR.strings.fileOpen
+                    contentDescription = MR.strings.fileOpen.stable
                 )
                 Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-                Text(MR.strings.download)
+                Text(MR.strings.download.stable)
             })
 
         FilledTonalButton(
@@ -227,10 +228,10 @@ private fun CustomKeywordsActionButtons(viewModel: WakeWordConfigurationViewMode
             content = {
                 Icon(
                     imageVector = Icons.Filled.FileOpen,
-                    contentDescription = MR.strings.fileOpen
+                    contentDescription = MR.strings.fileOpen.stable
                 )
                 Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-                Text(MR.strings.fileOpen)
+                Text(MR.strings.fileOpen.stable)
             })
 
     }

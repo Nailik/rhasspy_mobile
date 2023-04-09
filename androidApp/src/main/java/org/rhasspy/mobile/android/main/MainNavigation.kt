@@ -32,6 +32,7 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.settings.addSettingsScreen
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.AppTheme
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.settings.LogSettingsViewModel
 
 /**
@@ -105,7 +106,7 @@ private fun CrashlyticsDialog(viewModel: LogSettingsViewModel = get(), onClose: 
                 },
                 modifier = Modifier.testTag(TestTag.DialogOk)
             ) {
-                Text(MR.strings.confirm)
+                Text(MR.strings.confirm.stable)
             }
         },
         dismissButton = {
@@ -116,14 +117,14 @@ private fun CrashlyticsDialog(viewModel: LogSettingsViewModel = get(), onClose: 
                 },
                 modifier = Modifier.testTag(TestTag.DialogOk)
             ) {
-                Text(MR.strings.deny)
+                Text(MR.strings.deny.stable)
             }
         },
         title = {
-            Text(MR.strings.crashlytics)
+            Text(MR.strings.crashlytics.stable)
         },
         text = {
-            Text(MR.strings.crashlyticsDialogText)
+            Text(MR.strings.crashlyticsDialogText.stable)
         },
         properties = DialogProperties(
             dismissOnBackPress = false,

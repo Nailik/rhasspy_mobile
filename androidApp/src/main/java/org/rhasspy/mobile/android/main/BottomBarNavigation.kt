@@ -37,6 +37,7 @@ import org.rhasspy.mobile.android.content.item.NavigationItem
 import org.rhasspy.mobile.android.navigation.BottomBarScreenType
 import org.rhasspy.mobile.android.navigation.NavigationParams
 import org.rhasspy.mobile.android.settings.SettingsScreen
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
 
@@ -126,12 +127,13 @@ fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavControlle
                         Icons.Filled.Mic
                     } else {
                         Icons.Outlined.Mic
-                    }, MR.strings.home
+                    },
+                    MR.strings.home.stable
                 )
             },
             label = {
                 Text(
-                    resource = MR.strings.home,
+                    resource = MR.strings.home.stable,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1
                 )
@@ -143,13 +145,13 @@ fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavControlle
             icon = {
                 Icon(
                     RhasspyLogo,
-                    MR.strings.configuration,
+                    MR.strings.configuration.stable,
                     Modifier.size(24.dp)
                 )
             },
             label = {
                 Text(
-                    resource = MR.strings.configuration,
+                    resource = MR.strings.configuration.stable,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1
                 )
@@ -164,12 +166,13 @@ fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavControlle
                         Icons.Filled.Settings
                     } else {
                         Icons.Outlined.Settings
-                    }, MR.strings.settings
+                    },
+                    MR.strings.settings.stable
                 )
             },
             label = {
                 Text(
-                    resource = MR.strings.settings,
+                    resource = MR.strings.settings.stable,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1
                 )
@@ -178,8 +181,8 @@ fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavControlle
 
         if (viewModel.isShowLogEnabled.collectAsState().value) {
             NavigationItem(screen = BottomBarScreenType.LogScreen,
-                icon = { Icon(Icons.Filled.Code, MR.strings.log) },
-                label = { Text(MR.strings.log) }
+                icon = { Icon(Icons.Filled.Code, MR.strings.log.stable) },
+                label = { Text(MR.strings.log.stable) }
             )
         }
 

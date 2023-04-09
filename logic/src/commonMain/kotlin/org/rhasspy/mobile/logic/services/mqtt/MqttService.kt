@@ -28,25 +28,26 @@ import okio.buffer
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.middleware.Action.AppSettingsAction
 import org.rhasspy.mobile.logic.middleware.Action.DialogAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
-import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.middleware.Source
+import org.rhasspy.mobile.logic.services.IService
+import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
+import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder.Companion.appendWavHeader
+import org.rhasspy.mobile.platformspecific.extensions.commonData
+import org.rhasspy.mobile.platformspecific.extensions.commonSource
+import org.rhasspy.mobile.platformspecific.mqtt.MqttClient
 import org.rhasspy.mobile.platformspecific.mqtt.MqttMessage
 import org.rhasspy.mobile.platformspecific.mqtt.MqttParams
 import org.rhasspy.mobile.platformspecific.mqtt.MqttPersistence
 import org.rhasspy.mobile.platformspecific.mqtt.MqttTopicPlaceholder
 import org.rhasspy.mobile.platformspecific.mqtt.MqttTopicsPublish
 import org.rhasspy.mobile.platformspecific.mqtt.MqttTopicsSubscription
-import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder.Companion.appendWavHeader
-import org.rhasspy.mobile.platformspecific.mqtt.MqttClient
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.logic.services.IService
-import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
-import org.rhasspy.mobile.platformspecific.extensions.commonData
-import org.rhasspy.mobile.platformspecific.extensions.commonSource
 
 class MqttService : IService() {
     private val logger = LogType.MqttService.logger()
@@ -93,7 +94,7 @@ class MqttService : IService() {
                             _serviceState.value = subscribeTopics()
                             _isHasStarted.value = true
                         } else {
-                            _serviceState.value = ServiceState.Error(MR.strings.notConnected)
+                            _serviceState.value = ServiceState.Error(MR.strings.notConnected.stable)
                             logger.e { "client could not connect" }
                         }
                     } catch (exception: Exception) {

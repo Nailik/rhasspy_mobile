@@ -34,6 +34,7 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.elements.translate
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.viewmodel.screens.AboutScreenViewModel
 
@@ -76,13 +77,13 @@ fun Header(viewModel: AboutScreenViewModel) {
         AppIcon()
 
         Text(
-            resource = MR.strings.appName,
+            resource = MR.strings.appName.stable,
             style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier.padding(8.dp)
         )
 
         Text(
-            text = "${translate(MR.strings.version)} ${BuildKonfig.versionName}",
+            text = "${translate(MR.strings.version.stable)} ${BuildKonfig.versionName}",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(8.dp)
         )
@@ -106,12 +107,12 @@ fun AppIcon() {
                 .align(Alignment.TopStart)
                 .testTag(TestTag.AppBarBackButton)
         ) {
-            Icon(imageVector = Icons.Filled.Close, contentDescription = MR.strings.close)
+            Icon(imageVector = Icons.Filled.Close, contentDescription = MR.strings.close.stable)
         }
 
         Icon(
             imageVector = RhasspyLogo,
-            contentDescription = MR.strings.icon,
+            contentDescription = MR.strings.icon.stable,
             modifier = Modifier
                 .padding(top = 16.dp)
                 .size(96.dp)
@@ -135,7 +136,7 @@ fun AppInformationChips(onOpenSourceCode: () -> Unit) {
     ) {
         DataPrivacyDialogButton()
         OutlinedButton(onClick = onOpenSourceCode) {
-            Text(MR.strings.sourceCode)
+            Text(MR.strings.sourceCode.stable)
         }
         ChangelogDialogButton()
     }

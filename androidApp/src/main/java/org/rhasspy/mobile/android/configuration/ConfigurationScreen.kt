@@ -13,7 +13,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
@@ -26,6 +25,8 @@ import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiAction
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiAction.ScrollToError
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiAction.SiteIdChange
@@ -56,7 +57,7 @@ fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = get()) {
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(MR.strings.configuration) }
+                title = { Text(MR.strings.configuration.stable) }
             )
         },
     ) { paddingValues ->
@@ -222,12 +223,12 @@ private fun ServiceErrorInformation(
             ) {
                 Icon(
                     imageVector = Icons.Filled.Error,
-                    contentDescription = MR.strings.error,
+                    contentDescription = MR.strings.error.stable,
                     tint = MaterialTheme.colorScheme.onErrorContainer
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    resource = MR.strings.error,
+                    resource = MR.strings.error.stable,
                     color = MaterialTheme.colorScheme.onErrorContainer
                 )
             }
@@ -252,7 +253,7 @@ private fun SiteId(
         modifier = Modifier.testTag(TestTag.ConfigurationSiteId),
         value = value,
         onValueChange = { onAction(SiteIdChange(it)) },
-        label = MR.strings.siteId,
+        label = MR.strings.siteId.stable,
     )
 
 }
@@ -265,8 +266,8 @@ private fun SiteId(
 private fun RemoteHermesHttp(viewState: RemoteHermesHttpViewState) {
 
     ConfigurationListItem(
-        text = MR.strings.remoteHermesHTTP,
-        secondaryText = "${translate(MR.strings.sslValidation)} ${translate(viewState.isHttpSSLVerificationEnabled.not().toText())}",
+        text = MR.strings.remoteHermesHTTP.stable,
+        secondaryText = "${translate(MR.strings.sslValidation.stable)} ${translate(viewState.isHttpSSLVerificationEnabled.not().toText())}",
         screen = ConfigurationScreenType.RemoteHermesHttpConfiguration,
         viewState = viewState.serviceState
     )
@@ -281,7 +282,7 @@ private fun RemoteHermesHttp(viewState: RemoteHermesHttpViewState) {
 private fun Webserver(viewState: WebServerViewState) {
 
     ConfigurationListItem(
-        text = MR.strings.webserver,
+        text = MR.strings.webserver.stable,
         secondaryText = viewState.isHttpServerEnabled.toText(),
         screen = ConfigurationScreenType.WebServerConfiguration,
         serviceViewState = viewState.serviceState
@@ -299,8 +300,8 @@ private fun Mqtt(viewState: MqttViewState) {
     val isMQTTConnected by viewState.isMQTTConnected.collectAsState()
 
     ConfigurationListItem(
-        text = MR.strings.mqtt,
-        secondaryText = if (isMQTTConnected) MR.strings.connected else MR.strings.notConnected,
+        text = MR.strings.mqtt.stable,
+        secondaryText = if (isMQTTConnected) MR.strings.connected.stable else MR.strings.notConnected.stable,
         screen = ConfigurationScreenType.MqttConfiguration,
         serviceViewState = viewState.serviceState
     )
@@ -316,7 +317,7 @@ private fun Mqtt(viewState: MqttViewState) {
 private fun WakeWord(viewState: WakeWordViewState) {
 
     ConfigurationListItem(
-        text = MR.strings.wakeWord,
+        text = MR.strings.wakeWord.stable,
         secondaryText = viewState.wakeWordValueOption.text,
         screen = ConfigurationScreenType.WakeWordConfiguration,
         serviceViewState = viewState.serviceState
@@ -332,7 +333,7 @@ private fun WakeWord(viewState: WakeWordViewState) {
 private fun SpeechToText(viewState: SpeechToTextViewState) {
 
     ConfigurationListItem(
-        text = MR.strings.speechToText,
+        text = MR.strings.speechToText.stable,
         secondaryText = viewState.speechToTextOption.text,
         screen = ConfigurationScreenType.SpeechToTextConfiguration,
         serviceViewState = viewState.serviceState
@@ -349,7 +350,7 @@ private fun SpeechToText(viewState: SpeechToTextViewState) {
 private fun IntentRecognition(viewState: IntentRecognitionViewState) {
 
     ConfigurationListItem(
-        text = MR.strings.intentRecognition,
+        text = MR.strings.intentRecognition.stable,
         secondaryText = viewState.intentRecognitionOption.text,
         screen = ConfigurationScreenType.IntentRecognitionConfiguration,
         serviceViewState = viewState.serviceState
@@ -365,7 +366,7 @@ private fun IntentRecognition(viewState: IntentRecognitionViewState) {
 private fun TextToSpeech(viewState: TextToSpeechViewState) {
 
     ConfigurationListItem(
-        text = MR.strings.textToSpeech,
+        text = MR.strings.textToSpeech.stable,
         secondaryText = viewState.textToSpeechOption.text,
         screen = ConfigurationScreenType.TextToSpeechConfiguration,
         serviceViewState = viewState.serviceState
@@ -381,7 +382,7 @@ private fun TextToSpeech(viewState: TextToSpeechViewState) {
 private fun AudioPlaying(viewState: AudioPlayingViewState) {
 
     ConfigurationListItem(
-        text = MR.strings.audioPlaying,
+        text = MR.strings.audioPlaying.stable,
         secondaryText = viewState.audioPlayingOption.text,
         screen = ConfigurationScreenType.AudioPlayingConfiguration,
         serviceViewState = viewState.serviceState
@@ -397,7 +398,7 @@ private fun AudioPlaying(viewState: AudioPlayingViewState) {
 private fun DialogManagement(viewState: DialogManagementViewState) {
 
     ConfigurationListItem(
-        text = MR.strings.dialogManagement,
+        text = MR.strings.dialogManagement.stable,
         secondaryText = viewState.dialogManagementOption.text,
         screen = ConfigurationScreenType.DialogManagementConfiguration,
         serviceViewState = viewState.serviceState
@@ -413,7 +414,7 @@ private fun DialogManagement(viewState: DialogManagementViewState) {
 private fun IntentHandling(viewState: IntentHandlingViewState) {
 
     ConfigurationListItem(
-        text = MR.strings.intentHandling,
+        text = MR.strings.intentHandling.stable,
         secondaryText = viewState.intentHandlingOption.text,
         screen = ConfigurationScreenType.IntentHandlingConfiguration,
         serviceViewState = viewState.serviceState
@@ -426,8 +427,8 @@ private fun IntentHandling(viewState: IntentHandlingViewState) {
  */
 @Composable
 private fun ConfigurationListItem(
-    text: StringResource,
-    secondaryText: StringResource,
+    text: StableStringResource,
+    secondaryText: StableStringResource,
     screen: ConfigurationScreenType,
     serviceViewState: ServiceViewState
 ) {
@@ -456,7 +457,7 @@ private fun ConfigurationListItem(
 @Suppress("SameParameterValue")
 @Composable
 private fun ConfigurationListItem(
-    text: StringResource,
+    text: StableStringResource,
     secondaryText: String,
     screen: ConfigurationScreenType,
     viewState: ServiceViewState

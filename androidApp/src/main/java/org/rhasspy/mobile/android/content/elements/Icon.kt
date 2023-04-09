@@ -9,12 +9,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import dev.icerock.moko.resources.ImageResource
-import dev.icerock.moko.resources.StringResource
+import org.rhasspy.mobile.data.resource.StableStringResource
 
 @Composable
 fun Icon(
     imageResource: ImageResource,
-    contentDescription: StringResource,
+    contentDescription: StableStringResource,
     modifier: Modifier = Modifier,
     tint: Color = LocalContentColor.current
 ) {
@@ -29,7 +29,7 @@ fun Icon(
 @Composable
 fun Icon(
     painter: Painter,
-    contentDescription: StringResource,
+    contentDescription: StableStringResource,
     modifier: Modifier = Modifier,
     tint: Color = LocalContentColor.current
 ) {
@@ -45,7 +45,7 @@ fun Icon(
 @Composable
 fun Icon(
     imageVector: ImageVector,
-    contentDescription: StringResource,
+    contentDescription: StableStringResource,
     modifier: Modifier = Modifier,
     tint: Color = LocalContentColor.current
 ) {

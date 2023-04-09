@@ -28,6 +28,7 @@ import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.settings.SaveAndRestoreSettingsViewModel
 
 /**
@@ -39,7 +40,7 @@ fun SaveAndRestoreSettingsContent(viewModel: SaveAndRestoreSettingsViewModel = g
 
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreenType.SaveAndRestoreSettings),
-        title = MR.strings.saveAndRestoreSettings
+        title = MR.strings.saveAndRestoreSettings.stable
     ) {
 
         //Save Settings
@@ -69,14 +70,14 @@ private fun SaveSettings(viewModel: SaveAndRestoreSettingsViewModel) {
         icon = {
             Icon(
                 imageVector = Icons.Filled.Save,
-                contentDescription = MR.strings.save
+                contentDescription = MR.strings.save.stable
             )
         },
         text = {
-            Text(MR.strings.save)
+            Text(MR.strings.save.stable)
         },
         secondaryText = {
-            Text(MR.strings.saveSettingsText)
+            Text(MR.strings.saveSettingsText.stable)
         }
     )
 
@@ -109,14 +110,14 @@ private fun RestoreSettings(viewModel: SaveAndRestoreSettingsViewModel) {
         icon = {
             Icon(
                 imageVector = Icons.Filled.Restore,
-                contentDescription = MR.strings.restore
+                contentDescription = MR.strings.restore.stable
             )
         },
         text = {
-            Text(MR.strings.restore)
+            Text(MR.strings.restore.stable)
         },
         secondaryText = {
-            Text(MR.strings.restoreSettingsText)
+            Text(MR.strings.restoreSettingsText.stable)
         }
     )
 
@@ -145,14 +146,14 @@ private fun ShareSettings(viewModel: SaveAndRestoreSettingsViewModel) {
         icon = {
             Icon(
                 imageVector = Icons.Filled.Share,
-                contentDescription = MR.strings.share
+                contentDescription = MR.strings.share.stable
             )
         },
         text = {
-            Text(MR.strings.share)
+            Text(MR.strings.share.stable)
         },
         secondaryText = {
-            Text(MR.strings.shareSettingsText)
+            Text(MR.strings.shareSettingsText.stable)
         }
     )
 
@@ -167,28 +168,28 @@ private fun SaveSettingsDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
     AlertDialog(
         onDismissRequest = onConfirm,
         title = {
-            Text(MR.strings.saveSettings)
+            Text(MR.strings.saveSettings.stable)
         },
         text = {
             Text(
-                resource = MR.strings.saveSettingsWarningText,
+                resource = MR.strings.saveSettingsWarningText.stable,
                 textAlign = TextAlign.Center
             )
         },
         icon = {
             Icon(
                 imageVector = Icons.Filled.Warning,
-                contentDescription = MR.strings.warning
+                contentDescription = MR.strings.warning.stable
             )
         },
         confirmButton = {
             Button(onConfirm) {
-                Text(MR.strings.ok)
+                Text(MR.strings.ok.stable)
             }
         },
         dismissButton = {
             OutlinedButton(onDismiss) {
-                Text(MR.strings.cancel)
+                Text(MR.strings.cancel.stable)
             }
         },
         modifier = Modifier
@@ -207,28 +208,28 @@ private fun RestoreSettingsDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(MR.strings.restoreSettings)
+            Text(MR.strings.restoreSettings.stable)
         },
         text = {
             Text(
-                resource = MR.strings.restoreSettingsWarningText,
+                resource = MR.strings.restoreSettingsWarningText.stable,
                 textAlign = TextAlign.Center
             )
         },
         icon = {
             Icon(
                 imageVector = Icons.Filled.Warning,
-                contentDescription = MR.strings.warning
+                contentDescription = MR.strings.warning.stable
             )
         },
         confirmButton = {
             Button(onConfirm) {
-                Text(MR.strings.ok)
+                Text(MR.strings.ok.stable)
             }
         },
         dismissButton = {
             OutlinedButton(onDismiss) {
-                Text(MR.strings.cancel)
+                Text(MR.strings.cancel.stable)
             }
         },
         modifier = Modifier

@@ -23,9 +23,9 @@ import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.permission.PermissionRequester
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
-import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
+import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 
 
@@ -69,9 +69,9 @@ fun SemanticsNodeInteractionsProvider.onNodeWithCombinedTag(
     useUnmergedTree: Boolean = false
 ): SemanticsNodeInteraction = onNode(hasTestTag("$name${tag.name}"), useUnmergedTree)
 
-fun UiSelector.text(text: StringResource): UiSelector {
+fun UiSelector.text(text: StableStringResource): UiSelector {
     return this.textMatches(
-        StringDesc.Resource(text).toString(
+        StringDesc.Resource(text.stringResource).toString(
             getInstrumentation()
                 .targetContext.applicationContext
         )
@@ -129,12 +129,12 @@ fun UiDevice.requestOverlayPermissions(context: Context) {
 
 
 fun SemanticsNodeInteraction.assertTextEquals(
-    text: StringResource,
+    text: StableStringResource,
     includeEditableText: Boolean = true
 ): SemanticsNodeInteraction =
     this.assertTextEquals(
         values = arrayOf(
-            StringDesc.Resource(text).toString(
+            StringDesc.Resource(text.stringResource).toString(
                 getInstrumentation()
                     .targetContext.applicationContext
             )
@@ -143,13 +143,13 @@ fun SemanticsNodeInteraction.assertTextEquals(
     )
 
 fun SemanticsNodeInteractionsProvider.onNodeWithText(
-    text: StringResource,
+    text: StableStringResource,
     substring: Boolean = false,
     ignoreCase: Boolean = false,
     useUnmergedTree: Boolean = false
 ): SemanticsNodeInteraction = onNode(
     hasText(
-        StringDesc.Resource(text).toString(
+        StringDesc.Resource(text.stringResource).toString(
             getInstrumentation()
                 .targetContext.applicationContext
         ), substring, ignoreCase
@@ -158,7 +158,7 @@ fun SemanticsNodeInteractionsProvider.onNodeWithText(
 
 fun ComposeContentTestRule.awaitSaved(viewModel: IConfigurationViewModel) {
     this.waitUntil(
-        condition = { !viewModel.isLoading.value },
+        condition = { !viewModel.viewState.value.isLoading },
         timeoutMillis = 5000
     )
 }

@@ -28,6 +28,7 @@ import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.configuration.WebServerConfigurationViewModel
 
 /**
@@ -42,7 +43,7 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.WebServerConfiguration),
-        title = MR.strings.webserver,
+        title = MR.strings.webserver.stable,
         viewState = viewModel.viewState.collectAsState().value,
         onAction = viewModel::onAction,
         testContent = { }
@@ -51,7 +52,7 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
         item {
             //switch to enable http server
             SwitchListItem(
-                text = MR.strings.enableHTTPApi,
+                text = MR.strings.enableHTTPApi.stable,
                 modifier = Modifier.testTag(TestTag.ServerSwitch),
                 isChecked = viewModel.isHttpServerEnabled.collectAsState().value,
                 onCheckedChange = viewModel::toggleHttpServerEnabled
@@ -70,7 +71,7 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
 
                     //port of server
                     TextFieldListItem(
-                        label = MR.strings.port,
+                        label = MR.strings.port.stable,
                         modifier = Modifier.testTag(TestTag.Port),
                         value = viewModel.httpServerPortText.collectAsState().value,
                         onValueChange = viewModel::changeHttpServerPort,
@@ -98,7 +99,7 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
 
     //switch to enabled http ssl
     SwitchListItem(
-        text = MR.strings.enableSSL,
+        text = MR.strings.enableSSL.stable,
         modifier = Modifier.testTag(TestTag.SSLSwitch),
         isChecked = viewModel.isHttpServerSSLEnabled.collectAsState().value,
         onCheckedChange = viewModel::toggleHttpServerSSLEnabled
@@ -120,16 +121,16 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
                 icon = {
                     Icon(
                         imageVector = Icons.Filled.Link,
-                        contentDescription = MR.strings.sslWiki
+                        contentDescription = MR.strings.sslWiki.stable
                     )
                 },
-                text = { Text(MR.strings.sslWiki) },
-                secondaryText = { Text(MR.strings.sslWikiInfo) }
+                text = { Text(MR.strings.sslWiki.stable) },
+                secondaryText = { Text(MR.strings.sslWikiInfo.stable) }
             )
 
             //button to select ssl certificate
             FilledTonalButtonListItem(
-                text = MR.strings.chooseCertificate,
+                text = MR.strings.chooseCertificate.stable,
                 modifier = Modifier.testTag(TestTag.CertificateButton),
                 onClick = viewModel::selectSSLCertificate
             )
@@ -141,7 +142,7 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
             ) {
                 InformationListElement(
                     text = translate(
-                        resource = MR.strings.currentlySelectedCertificate,
+                        resource = MR.strings.currentlySelectedCertificate.stable,
                         viewModel.httpServerSSLKeyStoreFileText.collectAsState().value?.name ?: ""
                     )
                 )
@@ -149,7 +150,7 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
 
             //text field to change key store password
             TextFieldListItemVisibility(
-                label = MR.strings.keyStorePassword,
+                label = MR.strings.keyStorePassword.stable,
                 value = viewModel.httpServerSSLKeyStorePassword.collectAsState().value,
                 onValueChange = viewModel::changeHttpSSLKeyStorePassword,
                 isLastItem = false
@@ -157,7 +158,7 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
 
             //textField to change key alias
             TextFieldListItemVisibility(
-                label = MR.strings.keyStoreKeyAlias,
+                label = MR.strings.keyStoreKeyAlias.stable,
                 value = viewModel.httpServerSSLKeyAlias.collectAsState().value,
                 onValueChange = viewModel::changeHttpSSLKeyAlias,
                 isLastItem = false
@@ -165,7 +166,7 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
 
             //textField to change key password
             TextFieldListItemVisibility(
-                label = MR.strings.keyStoreKeyPassword,
+                label = MR.strings.keyStoreKeyPassword.stable,
                 value = viewModel.httpServerSSLKeyPassword.collectAsState().value,
                 onValueChange = viewModel::changeHttpSSLKeyPassword
             )

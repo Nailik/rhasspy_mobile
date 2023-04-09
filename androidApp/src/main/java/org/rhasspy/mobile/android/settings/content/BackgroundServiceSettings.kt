@@ -24,6 +24,7 @@ import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.settings.BackgroundServiceSettingsViewModel
 
 /**
@@ -37,15 +38,15 @@ fun BackgroundServiceSettingsContent(viewModel: BackgroundServiceSettingsViewMod
 
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreenType.BackgroundServiceSettings),
-        title = MR.strings.background
+        title = MR.strings.background.stable
     ) {
 
-        InformationListElement(text = MR.strings.backgroundServiceInformation)
+        InformationListElement(text = MR.strings.backgroundServiceInformation.stable)
 
         //on oFF
         SwitchListItem(
             modifier = Modifier.testTag(TestTag.EnabledSwitch),
-            text = MR.strings.enableBackground,
+            text = MR.strings.enableBackground.stable,
             isChecked = viewModel.isBackgroundServiceEnabled.collectAsState().value,
             onCheckedChange = viewModel::toggleBackgroundServiceEnabled
         )
@@ -72,11 +73,11 @@ fun BackgroundServiceSettingsContent(viewModel: BackgroundServiceSettingsViewMod
                 icon = {
                     Icon(
                         imageVector = Icons.Filled.BatteryAlert,
-                        contentDescription = MR.strings.batteryOptimization
+                        contentDescription = MR.strings.batteryOptimization.stable
                     )
                 },
                 text = {
-                    Text(MR.strings.batteryOptimization)
+                    Text(MR.strings.batteryOptimization.stable)
                 },
                 secondaryText = {
                     Text(viewModel.isBatteryOptimizationDisabled.collectAsState().value.toText())

@@ -32,6 +32,7 @@ import org.rhasspy.mobile.android.content.elements.CustomDivider
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.LogListElement
 import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.screens.LogScreenViewModel
 
 /**
@@ -58,7 +59,7 @@ fun LogScreen(viewModel: LogScreenViewModel = get()) {
 @Composable
 private fun AppBar(viewModel: LogScreenViewModel) {
     TopAppBar(modifier = Modifier,
-        title = { Text(MR.strings.log) },
+        title = { Text(MR.strings.log.stable) },
         actions = {
             LogScreenActions(viewModel)
         }
@@ -109,16 +110,22 @@ private fun LogScreenActions(viewModel: LogScreenViewModel) {
         IconButton(onClick = viewModel::toggleListAutoscroll) {
             Icon(
                 imageVector = if (viewModel.isListAutoscroll.collectAsState().value) Icons.Filled.LowPriority else Icons.Filled.PlaylistRemove,
-                contentDescription = MR.strings.autoscrollList
+                contentDescription = MR.strings.autoscrollList.stable
             )
         }
 
         IconButton(onClick = viewModel::shareLogFile) {
-            Icon(imageVector = Icons.Filled.Share, contentDescription = MR.strings.share)
+            Icon(
+                imageVector = Icons.Filled.Share,
+                contentDescription = MR.strings.share.stable
+            )
         }
 
         IconButton(onClick = viewModel::saveLogFile) {
-            Icon(imageVector = Icons.Filled.Save, contentDescription = MR.strings.save)
+            Icon(
+                imageVector = Icons.Filled.Save,
+                contentDescription = MR.strings.save.stable
+            )
         }
     }
 

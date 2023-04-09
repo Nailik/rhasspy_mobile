@@ -29,16 +29,17 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.translate
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
 
 @Composable
 fun TextFieldListItemVisibility(
     modifier: Modifier = Modifier,
-    label: StringResource,
+    label: StableStringResource,
     value: String,
     readOnly: Boolean = false,
     autoCorrect: Boolean = false,
@@ -69,7 +70,7 @@ fun TextFieldListItemVisibility(
                     } else {
                         Icons.Filled.VisibilityOff
                     },
-                    contentDescription = MR.strings.visibility,
+                    contentDescription = MR.strings.visibility.stable,
                 )
             }
         },
@@ -80,7 +81,7 @@ fun TextFieldListItemVisibility(
 @Composable
 fun TextFieldListItem(
     modifier: Modifier = Modifier,
-    label: StringResource,
+    label: StableStringResource,
     value: String,
     readOnly: Boolean = false,
     autoCorrect: Boolean = false,

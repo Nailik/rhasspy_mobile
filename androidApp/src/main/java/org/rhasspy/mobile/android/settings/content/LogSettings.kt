@@ -12,6 +12,7 @@ import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.settings.LogSettingsViewModel
 
 /**
@@ -23,7 +24,7 @@ fun LogSettingsContent(viewModel: LogSettingsViewModel = get()) {
 
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreenType.LogSettings),
-        title = MR.strings.logSettings
+        title = MR.strings.logSettings.stable
     ) {
 
         //log level
@@ -35,8 +36,8 @@ fun LogSettingsContent(viewModel: LogSettingsViewModel = get()) {
 
         //crashlytics
         SwitchListItem(
-            text = MR.strings.crashlytics,
-            secondaryText = MR.strings.crashlyticsText,
+            text = MR.strings.crashlytics.stable,
+            secondaryText = MR.strings.crashlyticsText.stable,
             modifier = Modifier.testTag(TestTag.CrashlyticsEnabled),
             isChecked = viewModel.isCrashlyticsEnabled.collectAsState().value,
             onCheckedChange = viewModel::toggleCrashlyticsEnabled
@@ -44,7 +45,7 @@ fun LogSettingsContent(viewModel: LogSettingsViewModel = get()) {
 
         //show log enabled
         SwitchListItem(
-            text = MR.strings.showLog,
+            text = MR.strings.showLog.stable,
             modifier = Modifier.testTag(TestTag.ShowLogEnabled),
             isChecked = viewModel.isShowLogEnabled.collectAsState().value,
             onCheckedChange = viewModel::toggleShowLogEnabled
@@ -52,7 +53,7 @@ fun LogSettingsContent(viewModel: LogSettingsViewModel = get()) {
 
         //audio frames logging enabled
         SwitchListItem(
-            text = MR.strings.audioFramesLogging,
+            text = MR.strings.audioFramesLogging.stable,
             modifier = Modifier.testTag(TestTag.AudioFramesEnabled),
             isChecked = viewModel.isLogAudioFramesEnabled.collectAsState().value,
             onCheckedChange = viewModel::toggleLogAudioFramesEnabled

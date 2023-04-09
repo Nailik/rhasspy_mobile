@@ -35,7 +35,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.combinedTestTag
@@ -47,6 +46,8 @@ import org.rhasspy.mobile.android.content.list.RadioButtonListItem
 import org.rhasspy.mobile.android.content.list.SliderListItem
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.sounds.SoundFile
 import org.rhasspy.mobile.viewmodel.settings.sound.IIndicationSoundSettingsViewModel
 
@@ -56,7 +57,7 @@ import org.rhasspy.mobile.viewmodel.settings.sound.IIndicationSoundSettingsViewM
 @Composable
 fun IndicationSoundScreen(
     viewModel: IIndicationSoundSettingsViewModel,
-    title: StringResource,
+    title: StableStringResource,
     screen: IndicationSettingsScreens
 ) {
 
@@ -94,17 +95,17 @@ fun IndicationSoundScreen(
                             icon = {
                                 Icon(
                                     Icons.Filled.Info,
-                                    contentDescription = MR.strings.info
+                                    contentDescription = MR.strings.info.stable
                                 )
                             },
-                            text = { Text(MR.strings.audioOutputSilentOrDisabled) },
+                            text = { Text(MR.strings.audioOutputSilentOrDisabled.stable) },
                             secondaryText = { Text(viewModel.audioOutputOption.collectAsState().value.text) }
                         )
 
                     }
 
                     SliderListItem(
-                        text = MR.strings.volume,
+                        text = MR.strings.volume.stable,
                         value = viewModel.soundVolume.collectAsState().value,
                         onValueChange = viewModel::updateSoundVolume
                     )
@@ -131,14 +132,14 @@ private fun ColumnScope.SoundElements(viewModel: IIndicationSoundSettingsViewMod
 
     RadioButtonListItem(
         modifier = Modifier.testTag(TestTag.Default),
-        text = MR.strings.defaultText,
+        text = MR.strings.defaultText.stable,
         isChecked = viewModel.isSoundIndicationDefault.collectAsState().value,
         onClick = viewModel::onClickSoundIndicationDefault
     )
 
     RadioButtonListItem(
         modifier = Modifier.testTag(TestTag.Disabled),
-        text = MR.strings.disabled,
+        text = MR.strings.disabled.stable,
         isChecked = viewModel.isSoundIndicationDisabled.collectAsState().value,
         onClick = viewModel::onClickSoundIndicationDisabled
     )
@@ -189,7 +190,7 @@ private fun SoundListItem(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Delete,
-                        contentDescription = MR.strings.defaultText
+                        contentDescription = MR.strings.defaultText.stable
                     )
                 }
             }
@@ -230,12 +231,12 @@ private fun SoundActionButtons(
                 content = {
                     Icon(
                         imageVector = if (isPlaying) Icons.Filled.Stop else Icons.Filled.PlayArrow,
-                        contentDescription = if (isPlaying) MR.strings.stop else MR.strings.play
+                        contentDescription = if (isPlaying) MR.strings.stop.stable else MR.strings.play.stable
                     )
                     Spacer(
                         modifier = Modifier.size(ButtonDefaults.IconSpacing)
                     )
-                    Text(if (isPlaying) MR.strings.stop else MR.strings.play)
+                    Text(if (isPlaying) MR.strings.stop.stable else MR.strings.play.stable)
                 })
 
             //visibility of mqtt settings
@@ -247,10 +248,10 @@ private fun SoundActionButtons(
                 content = {
                     Icon(
                         imageVector = Icons.Filled.FileOpen,
-                        contentDescription = MR.strings.fileOpen
+                        contentDescription = MR.strings.fileOpen.stable
                     )
                     Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-                    Text(MR.strings.fileOpen)
+                    Text(MR.strings.fileOpen.stable)
                 })
 
         }
@@ -261,7 +262,7 @@ private fun SoundActionButtons(
  * app bar for indication screen
  */
 @Composable
-private fun AppBar(title: StringResource) {
+private fun AppBar(title: StableStringResource) {
 
     val navigation = LocalNavController.current
 
@@ -276,7 +277,7 @@ private fun AppBar(title: StringResource) {
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = MR.strings.back,
+                    contentDescription = MR.strings.back.stable,
                 )
             }
         }

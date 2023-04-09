@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.data.service
 
-import dev.icerock.moko.resources.StringResource
+import org.rhasspy.mobile.data.resource.StableStringResource
 
 sealed class ServiceState {
 
@@ -12,7 +12,7 @@ sealed class ServiceState {
 
     class Exception(val exception: kotlin.Exception? = null) : ServiceState()
 
-    class Error(val information: StringResource) : ServiceState()
+    class Error(val information: StableStringResource) : ServiceState()
 
     object Disabled : ServiceState()
 

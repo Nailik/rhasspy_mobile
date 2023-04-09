@@ -17,6 +17,7 @@ import org.rhasspy.mobile.android.permissions.RequiresOverlayPermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.viewmodel.settings.MicrophoneOverlaySettingsViewModel
 
@@ -32,7 +33,7 @@ fun MicrophoneOverlaySettingsContent(viewModel: MicrophoneOverlaySettingsViewMod
 
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreenType.MicrophoneOverlaySettings),
-        title = MR.strings.microphoneOverlay
+        title = MR.strings.microphoneOverlay.stable
     ) {
 
         Column {
@@ -72,7 +73,7 @@ fun MicrophoneOverlaySettingsContent(viewModel: MicrophoneOverlaySettingsViewMod
 
                 SwitchListItem(
                     modifier = Modifier.testTag(TestTag.VisibleWhileAppIsOpened),
-                    text = MR.strings.whileAppIsOpened,
+                    text = MR.strings.whileAppIsOpened.stable,
                     isChecked = viewModel.isMicrophoneOverlayWhileAppEnabled.collectAsState().value,
                     onCheckedChange = viewModel::toggleMicrophoneOverlayWhileAppEnabled
                 )

@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.Icon
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
 
 @Composable
@@ -56,13 +57,13 @@ fun EventStateIcon(serviceState: ServiceState) {
             is ServiceState.Disabled -> Icons.Outlined.Circle
         },
         contentDescription = when (serviceState) {
-            is ServiceState.Pending -> MR.strings.pending
-            is ServiceState.Loading -> MR.strings.loading
-            is ServiceState.Success -> MR.strings.success
+            is ServiceState.Pending -> MR.strings.pending.stable
+            is ServiceState.Loading -> MR.strings.loading.stable
+            is ServiceState.Success -> MR.strings.success.stable
             is ServiceState.Error,
-            is ServiceState.Exception -> MR.strings.error
+            is ServiceState.Exception -> MR.strings.error.stable
 
-            is ServiceState.Disabled -> MR.strings.disabled
+            is ServiceState.Disabled -> MR.strings.disabled.stable
         }
     )
 }
@@ -95,13 +96,13 @@ fun EventStateIconTinted(serviceState: ServiceState) {
             is ServiceState.Disabled -> Icons.Outlined.Circle
         },
         contentDescription = when (serviceState) {
-            is ServiceState.Pending -> MR.strings.pending
-            is ServiceState.Loading -> MR.strings.loading
-            is ServiceState.Success -> MR.strings.success
+            is ServiceState.Pending -> MR.strings.pending.stable
+            is ServiceState.Loading -> MR.strings.loading.stable
+            is ServiceState.Success -> MR.strings.success.stable
             is ServiceState.Error,
-            is ServiceState.Exception -> MR.strings.error
+            is ServiceState.Exception -> MR.strings.error.stable
 
-            is ServiceState.Disabled -> MR.strings.disabled
+            is ServiceState.Disabled -> MR.strings.disabled.stable
         },
         tint = when (serviceState) {
             is ServiceState.Pending -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)

@@ -25,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
@@ -39,6 +38,8 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.main.LocalConfigurationNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.SetSystemColor
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationTestUiAction
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListAutoscroll
@@ -74,12 +75,12 @@ fun ConfigurationScreenTest(
             AppBar(
                 viewState = viewState,
                 onAction = onAction,
-                title = MR.strings.test,
+                title = MR.strings.test.stable,
                 onBackClick = navController::popBackStack
             ) {
                 Icon(
                     imageVector = Icons.Filled.Close,
-                    contentDescription = MR.strings.stop,
+                    contentDescription = MR.strings.stop.stable,
                 )
             }
         },
@@ -157,7 +158,7 @@ private fun ConfigurationScreenTestList(
 private fun AppBar(
     viewState: IConfigurationTestViewState,
     onAction: (IConfigurationTestUiAction) -> Unit,
-    title: StringResource,
+    title: StableStringResource,
     onBackClick: () -> Unit,
     icon: @Composable () -> Unit
 ) {
@@ -184,13 +185,13 @@ private fun AppBar(
             IconButton(onClick = { onAction(ToggleListFiltered) }) {
                 Icon(
                     imageVector = if (viewState.isListFiltered) Icons.Filled.FilterListOff else Icons.Filled.FilterList,
-                    contentDescription = MR.strings.filterList
+                    contentDescription = MR.strings.filterList.stable
                 )
             }
             IconButton(onClick = { onAction(ToggleListAutoscroll) }) {
                 Icon(
                     imageVector = if (viewState.isListAutoscroll) Icons.Filled.LowPriority else Icons.Filled.PlaylistRemove,
-                    contentDescription = MR.strings.autoscrollList
+                    contentDescription = MR.strings.autoscrollList.stable
                 )
             }
         }

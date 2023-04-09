@@ -18,6 +18,7 @@ import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.configuration.IntentHandlingConfigurationViewModel
 
 /**
@@ -32,7 +33,7 @@ fun IntentHandlingConfigurationContent(viewModel: IntentHandlingConfigurationVie
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.IntentHandlingConfiguration),
-        title = MR.strings.intentHandling,
+        title = MR.strings.intentHandling.stable,
         viewState = viewModel.viewState.collectAsState().value,
         onAction = viewModel::onAction,
         testContent = { TestContent(viewModel) }
@@ -75,7 +76,7 @@ private fun RemoteHTTPOption(viewModel: IntentHandlingConfigurationViewModel) {
             modifier = Modifier.testTag(TestTag.Endpoint),
             value = viewModel.intentHandlingHttpEndpoint.collectAsState().value,
             onValueChange = viewModel::changeIntentHandlingHttpEndpoint,
-            label = MR.strings.remoteURL
+            label = MR.strings.remoteURL.stable
         )
 
     }
@@ -98,7 +99,7 @@ private fun HomeAssistantOption(viewModel: IntentHandlingConfigurationViewModel)
             modifier = Modifier.testTag(TestTag.Endpoint),
             value = viewModel.intentHandlingHassEndpoint.collectAsState().value,
             onValueChange = viewModel::changeIntentHandlingHassEndpoint,
-            label = MR.strings.hassURL,
+            label = MR.strings.hassURL.stable,
             isLastItem = false
         )
 
@@ -107,20 +108,20 @@ private fun HomeAssistantOption(viewModel: IntentHandlingConfigurationViewModel)
             modifier = Modifier.testTag(TestTag.AccessToken),
             value = viewModel.intentHandlingHassAccessToken.collectAsState().value,
             onValueChange = viewModel::changeIntentHandlingHassAccessToken,
-            label = MR.strings.accessToken
+            label = MR.strings.accessToken.stable
         )
 
         //select hass event or hass intent
         RadioButtonListItem(
             modifier = Modifier.testTag(TestTag.SendEvents),
-            text = MR.strings.homeAssistantEvents,
+            text = MR.strings.homeAssistantEvents.stable,
             isChecked = viewModel.isIntentHandlingHassEvent.collectAsState().value,
             onClick = viewModel::selectIntentHandlingHassEvent
         )
 
         RadioButtonListItem(
             modifier = Modifier.testTag(TestTag.SendIntents),
-            text = MR.strings.homeAssistantIntents,
+            text = MR.strings.homeAssistantIntents.stable,
             isChecked = viewModel.isIntentHandlingHassIntent.collectAsState().value,
             onClick = viewModel::selectIntentHandlingHassIntent
         )
@@ -141,18 +142,18 @@ private fun TestContent(viewModel: IntentHandlingConfigurationViewModel) {
             modifier = Modifier.testTag(TestTag.IntentNameText),
             value = viewModel.testIntentNameText.collectAsState().value,
             onValueChange = viewModel::updateTestIntentNameText,
-            label = MR.strings.intentName
+            label = MR.strings.intentName.stable
         )
 
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.IntentText),
             value = viewModel.testIntentText.collectAsState().value,
             onValueChange = viewModel::updateTestIntentText,
-            label = MR.strings.intentText
+            label = MR.strings.intentText.stable
         )
 
         FilledTonalButtonListItem(
-            text = MR.strings.executeHandleIntent,
+            text = MR.strings.executeHandleIntent.stable,
             onClick = viewModel::testIntentHandling
         )
 

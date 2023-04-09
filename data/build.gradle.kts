@@ -19,6 +19,7 @@ kotlin {
                 implementation(Icerock.Resources)
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Square.okio)
+                implementation(Jetbrains.Compose.runtime)
             }
         }
         val commonTest by getting {

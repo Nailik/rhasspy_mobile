@@ -19,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.Icon
@@ -27,6 +26,8 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.item.EventStateCard
 import org.rhasspy.mobile.android.content.item.EventStateIcon
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationServiceViewState
 
@@ -52,24 +53,27 @@ fun ServiceStateHeader(viewState: IConfigurationServiceViewState) {
                 isShowDialog = false
             },
             title = {
-                Text(MR.strings.error)
+                Text(MR.strings.error.stable)
             },
             text = {
                 when (val informationText = viewState.serviceStateDialogText) {
-                    is StringResource -> Text(informationText)
+                    is StableStringResource -> Text(informationText)
                     is String -> androidx.compose.material3.Text(informationText)
                     else -> {}
                 }
             },
             icon = {
-                Icon(imageVector = Icons.Filled.Info, contentDescription = MR.strings.info)
+                Icon(
+                    imageVector = Icons.Filled.Info,
+                    contentDescription = MR.strings.info.stable
+                )
             },
             confirmButton = {
                 TextButton(
                     onClick = { isShowDialog = false },
                     modifier = Modifier.testTag(TestTag.DialogOk)
                 ) {
-                    Text(MR.strings.close)
+                    Text(MR.strings.close.stable)
                 }
             },
             dismissButton = { },
@@ -121,12 +125,12 @@ private fun ServiceStateText(serviceState: ServiceState) {
 
     Text(
         resource = when (serviceState) {
-            is ServiceState.Pending -> MR.strings.pending
-            is ServiceState.Loading -> MR.strings.loading
-            is ServiceState.Success -> MR.strings.success
-            is ServiceState.Error -> MR.strings.error
-            is ServiceState.Exception -> MR.strings.error
-            is ServiceState.Disabled -> MR.strings.disabled
+            is ServiceState.Pending -> MR.strings.pending.stable
+            is ServiceState.Loading -> MR.strings.loading.stable
+            is ServiceState.Success -> MR.strings.success.stable
+            is ServiceState.Error -> MR.strings.error.stable
+            is ServiceState.Exception -> MR.strings.error.stable
+            is ServiceState.Disabled -> MR.strings.disabled.stable
         }
     )
 

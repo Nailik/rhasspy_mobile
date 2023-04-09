@@ -20,6 +20,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 
 /**
@@ -72,16 +73,19 @@ private fun OverlayPermissionInfoDialog(onResult: (result: Boolean) -> Unit) {
             onResult.invoke(false)
         },
         title = {
-            Text(MR.strings.overlayPermissionTitle)
+            Text(MR.strings.overlayPermissionTitle.stable)
         },
         text = {
             Text(
-                resource = MR.strings.overlayPermissionInfo,
+                resource = MR.strings.overlayPermissionInfo.stable,
                 modifier = Modifier.testTag(TestTag.DialogInformationOverlayPermission)
             )
         },
         icon = {
-            Icon(imageVector = Icons.Filled.Layers, contentDescription = MR.strings.overlay)
+            Icon(
+                imageVector = Icons.Filled.Layers,
+                contentDescription = MR.strings.overlay.stable
+            )
         },
         confirmButton = {
             Button(
@@ -90,7 +94,7 @@ private fun OverlayPermissionInfoDialog(onResult: (result: Boolean) -> Unit) {
                 },
                 modifier = Modifier.testTag(TestTag.DialogOk)
             ) {
-                Text(MR.strings.ok)
+                Text(MR.strings.ok.stable)
             }
         },
         dismissButton = {
@@ -100,7 +104,7 @@ private fun OverlayPermissionInfoDialog(onResult: (result: Boolean) -> Unit) {
                 },
                 modifier = Modifier.testTag(TestTag.DialogCancel)
             ) {
-                Text(MR.strings.cancel)
+                Text(MR.strings.cancel.stable)
             }
         },
         modifier = Modifier

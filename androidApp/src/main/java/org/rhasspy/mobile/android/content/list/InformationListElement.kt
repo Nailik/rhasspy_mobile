@@ -11,14 +11,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.data.resource.StableStringResource
 
 @Composable
 fun InformationListElement(
     modifier: Modifier = Modifier,
-    text: StringResource,
+    text: StableStringResource,
 ) {
     ListElement(
         modifier = modifier

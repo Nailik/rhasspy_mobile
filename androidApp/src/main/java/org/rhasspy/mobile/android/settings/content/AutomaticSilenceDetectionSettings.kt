@@ -47,6 +47,7 @@ import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.settings.AutomaticSilenceDetectionSettingsViewModel
 
 /**
@@ -60,13 +61,13 @@ fun AutomaticSilenceDetectionSettingsContent(viewModel: AutomaticSilenceDetectio
 
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreenType.AutomaticSilenceDetectionSettings),
-        title = MR.strings.automaticSilenceDetection
+        title = MR.strings.automaticSilenceDetection.stable
     ) {
 
         //toggle
         SwitchListItem(
             modifier = Modifier.testTag(TestTag.EnabledSwitch),
-            text = MR.strings.automaticSilenceDetection,
+            text = MR.strings.automaticSilenceDetection.stable,
             isChecked = viewModel.isAutomaticSilenceDetectionEnabled.collectAsState().value,
             onCheckedChange = viewModel::toggleAutomaticSilenceDetectionEnabled
         )
@@ -80,7 +81,7 @@ fun AutomaticSilenceDetectionSettingsContent(viewModel: AutomaticSilenceDetectio
 
             Column(modifier = Modifier.testTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration)) {
 
-                InformationListElement(text = MR.strings.silenceDetectionInformation)
+                InformationListElement(text = MR.strings.silenceDetectionInformation.stable)
 
                 Time(viewModel)
 
@@ -104,7 +105,7 @@ fun AutomaticSilenceDetectionSettingsContent(viewModel: AutomaticSilenceDetectio
 private fun Time(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
 
     TextFieldListItem(
-        label = MR.strings.silenceDetectionMinimumTime,
+        label = MR.strings.silenceDetectionMinimumTime.stable,
         modifier = Modifier.testTag(TestTag.AutomaticSilenceDetectionSettingsMinimumTime),
         value = viewModel.automaticSilenceDetectionMinimumTimeText.collectAsState().value,
         onValueChange = viewModel::updateAutomaticSilenceDetectionMinimumTime,
@@ -112,7 +113,7 @@ private fun Time(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
     )
 
     TextFieldListItem(
-        label = MR.strings.silenceDetectionTime,
+        label = MR.strings.silenceDetectionTime.stable,
         modifier = Modifier.testTag(TestTag.AutomaticSilenceDetectionSettingsTime),
         value = viewModel.automaticSilenceDetectionTimeText.collectAsState().value,
         onValueChange = viewModel::updateAutomaticSilenceDetectionTime,
@@ -128,7 +129,7 @@ private fun Time(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
 private fun AudioLevel(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
 
     SliderListItem(
-        text = MR.strings.audioLevelThreshold,
+        text = MR.strings.audioLevelThreshold.stable,
         value = viewModel.automaticSilenceDetectionAudioLevelPercentage.collectAsState().value,
         valueText = "%.0f".format(
             null,
@@ -195,7 +196,7 @@ private fun CurrentAudioLevel(viewModel: AutomaticSilenceDetectionSettingsViewMo
 private fun StartTestButton(viewModel: AutomaticSilenceDetectionSettingsViewModel) {
 
     RequiresMicrophonePermission(
-        MR.strings.microphonePermissionInfoRecord,
+        MR.strings.microphonePermissionInfoRecord.stable,
         viewModel::toggleAudioLevelTest
     ) { onClick ->
         ListElement {
@@ -212,12 +213,12 @@ private fun StartTestButton(viewModel: AutomaticSilenceDetectionSettingsViewMode
 
                     Icon(
                         if (isRecording) Icons.Filled.MicOff else Icons.Filled.Mic,
-                        MR.strings.microphone
+                        MR.strings.microphone.stable
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    Text(if (isRecording) MR.strings.stop else MR.strings.testAudioLevel)
+                    Text(if (isRecording) MR.strings.stop.stable else MR.strings.testAudioLevel.stable)
 
                 }
 

@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.CustomDivider
@@ -22,6 +21,8 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.list.RadioButtonListItem
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
 
 /**
@@ -34,7 +35,7 @@ fun PorcupineLanguageScreen(viewModel: WakeWordConfigurationViewModel) {
         modifier = Modifier
             .testTag(TestTag.PorcupineLanguageScreen)
             .fillMaxSize(),
-        topBar = { AppBar(MR.strings.language) }
+        topBar = { AppBar(MR.strings.language.stable) }
     ) { paddingValues ->
 
         Surface(Modifier.padding(paddingValues)) {
@@ -67,7 +68,7 @@ fun PorcupineLanguageScreen(viewModel: WakeWordConfigurationViewModel) {
  * app bar for the language
  */
 @Composable
-private fun AppBar(title: StringResource) {
+private fun AppBar(title: StableStringResource) {
 
     val navigation = LocalNavController.current
 
@@ -82,7 +83,7 @@ private fun AppBar(title: StringResource) {
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = MR.strings.back,
+                    contentDescription = MR.strings.back.stable,
                 )
             }
         }

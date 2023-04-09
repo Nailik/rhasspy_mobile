@@ -31,6 +31,7 @@ import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScree
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSoundScreen
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.settings.IndicationSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.sound.ErrorIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.sound.RecordedIndicationSoundSettingsViewModel
@@ -60,7 +61,7 @@ fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = g
             composable(IndicationSettingsScreens.WakeIndicationSound.route) {
                 IndicationSoundScreen(
                     viewModel = get<WakeIndicationSoundSettingsViewModel>(),
-                    title = MR.strings.wakeSound,
+                    title = MR.strings.wakeSound.stable,
                     screen = IndicationSettingsScreens.WakeIndicationSound
                 )
             }
@@ -68,7 +69,7 @@ fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = g
             composable(IndicationSettingsScreens.RecordedIndicationSound.route) {
                 IndicationSoundScreen(
                     viewModel = get<RecordedIndicationSoundSettingsViewModel>(),
-                    title = MR.strings.recordedSound,
+                    title = MR.strings.recordedSound.stable,
                     screen = IndicationSettingsScreens.RecordedIndicationSound
                 )
             }
@@ -76,7 +77,7 @@ fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = g
             composable(IndicationSettingsScreens.ErrorIndicationSound.route) {
                 IndicationSoundScreen(
                     viewModel = get<ErrorIndicationSoundSettingsViewModel>(),
-                    title = MR.strings.errorSound,
+                    title = MR.strings.errorSound.stable,
                     screen = IndicationSettingsScreens.ErrorIndicationSound
                 )
             }
@@ -94,7 +95,7 @@ fun IndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
 
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreenType.IndicationSettings),
-        title = MR.strings.indication
+        title = MR.strings.indication.stable
     ) {
 
         Card(
@@ -105,7 +106,7 @@ fun IndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
             //turn on display
             SwitchListItem(
                 modifier = Modifier.testTag(TestTag.WakeWordDetectionTurnOnDisplay),
-                text = MR.strings.backgroundWakeWordDetectionTurnOnDisplay,
+                text = MR.strings.backgroundWakeWordDetectionTurnOnDisplay.stable,
                 isChecked = viewModel.isWakeWordDetectionTurnOnDisplayEnabled.collectAsState().value,
                 onCheckedChange = viewModel::toggleWakeWordDetectionTurnOnDisplay
             )
@@ -114,7 +115,7 @@ fun IndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
             RequiresOverlayPermission({ viewModel.toggleWakeWordLightIndicationEnabled() }) { onClick ->
                 SwitchListItem(
                     modifier = Modifier.testTag(TestTag.WakeWordLightIndicationEnabled),
-                    text = MR.strings.wakeWordLightIndication,
+                    text = MR.strings.wakeWordLightIndication.stable,
                     isChecked = viewModel.isWakeWordLightIndicationEnabled.collectAsState().value,
                     onCheckedChange = onClick
                 )
@@ -123,7 +124,7 @@ fun IndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
             //sound indication
             SwitchListItem(
                 modifier = Modifier.testTag(TestTag.SoundIndicationEnabled),
-                text = MR.strings.wakeWordSoundIndication,
+                text = MR.strings.wakeWordSoundIndication.stable,
                 isChecked = viewModel.isSoundIndicationEnabled.collectAsState().value,
                 onCheckedChange = viewModel::toggleWakeWordSoundIndicationEnabled
             )
@@ -162,7 +163,7 @@ private fun SoundIndicationSettingsOverview(viewModel: IndicationSettingsViewMod
                 modifier = Modifier
                     .testTag(IndicationSettingsScreens.WakeIndicationSound)
                     .clickable { navigation.navigate(IndicationSettingsScreens.WakeIndicationSound.route) },
-                text = { Text(MR.strings.wakeWord) },
+                text = { Text(MR.strings.wakeWord.stable) },
                 secondaryText = { Text(text = viewModel.wakeSound.collectAsState().value) }
             )
 
@@ -171,7 +172,7 @@ private fun SoundIndicationSettingsOverview(viewModel: IndicationSettingsViewMod
                 modifier = Modifier
                     .testTag(IndicationSettingsScreens.RecordedIndicationSound)
                     .clickable { navigation.navigate(IndicationSettingsScreens.RecordedIndicationSound.route) },
-                text = { Text(MR.strings.recordedSound) },
+                text = { Text(MR.strings.recordedSound.stable) },
                 secondaryText = { Text(text = viewModel.recordedSound.collectAsState().value) }
             )
 
@@ -180,7 +181,7 @@ private fun SoundIndicationSettingsOverview(viewModel: IndicationSettingsViewMod
                 modifier = Modifier
                     .testTag(IndicationSettingsScreens.ErrorIndicationSound)
                     .clickable { navigation.navigate(IndicationSettingsScreens.ErrorIndicationSound.route) },
-                text = { Text(MR.strings.errorSound) },
+                text = { Text(MR.strings.errorSound.stable) },
                 secondaryText = { Text(text = viewModel.errorSound.collectAsState().value) }
             )
         }
