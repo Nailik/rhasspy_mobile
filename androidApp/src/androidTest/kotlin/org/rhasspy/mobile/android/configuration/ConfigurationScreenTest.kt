@@ -14,7 +14,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.hasTestTag
 import org.rhasspy.mobile.android.navigation.BottomBarScreenType
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.viewmodel.screens.ConfigurationScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
 import kotlin.test.assertEquals
 
 /**
@@ -69,7 +69,7 @@ class ConfigurationScreenTest {
         composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId).performScrollTo()
             .performTextReplacement(textInputTest)
         //text field changed text
-        assertEquals(textInputTest, ConfigurationScreenViewModel().siteId.value)
+        assertEquals(textInputTest, ConfigurationScreenViewModel().viewState.value.siteId.text.value)
     }
 
 }

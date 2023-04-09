@@ -18,6 +18,7 @@ kotlin {
                 implementation(project(":platformspecific"))
                 implementation(project(":logic"))
                 implementation(project(":resources"))
+                implementation(project(":ui"))
                 implementation(Touchlab.kermit)
                 implementation(Jetbrains.Kotlinx.coroutines)
                 implementation(Jetbrains.Kotlinx.immutable)

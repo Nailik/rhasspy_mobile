@@ -3,7 +3,6 @@ package org.rhasspy.mobile.android.configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
@@ -15,11 +14,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import dev.icerock.moko.resources.StringResource
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.StateFlow
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.UiEventEffect
 import org.rhasspy.mobile.android.configuration.content.*
 import org.rhasspy.mobile.android.content.elements.*
 import org.rhasspy.mobile.android.content.item.EventStateIconTinted
@@ -28,7 +27,21 @@ import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.viewmodel.screens.ConfigurationScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiAction
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiAction.ScrollToError
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiAction.SiteIdChange
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.AudioPlayingViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.DialogManagementViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.IntentHandlingViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.IntentRecognitionViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.MqttViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.RemoteHermesHttpViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SiteIdViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SpeechToTextViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.TextToSpeechViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.WakeWordViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.WebServerViewState
 
 /**
  * configuration screens with list items that open bottom sheet
@@ -40,21 +53,7 @@ fun ConfigurationScreen(
     scrollToError: Boolean = false
 ) {
 
-    val coroutineScope = rememberCoroutineScope()
-    val scrollState = rememberLazyListState()
-    val firstErrorIndex by viewModel.firstErrorIndex.collectAsState()
-
-    LaunchedEffect(scrollToError) {
-        if (scrollToError) {
-            scrollToFirstError(
-                firstErrorIndex = firstErrorIndex,
-                coroutineScope = coroutineScope,
-                scrollState = scrollState
-            )
-        }
-    }
-
-    val hasError by viewModel.hasError.collectAsState()
+    val viewState by viewModel.viewState.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -64,6 +63,18 @@ fun ConfigurationScreen(
             )
         },
     ) { paddingValues ->
+
+        val hasError by viewState.hasError.collectAsState()
+        val scrollState = rememberLazyListState()
+
+        UiEventEffect(
+            event = viewState.scrollToErrorEvent,
+            onConsumed = viewModel::onConsumed
+        ) {
+            //+1 to account for sticky header
+            scrollState.animateScrollToItem(it.firstErrorIndex + 1)
+        }
+
         LazyColumn(
             modifier = Modifier
                 .testTag(TestTag.List)
@@ -74,62 +85,62 @@ fun ConfigurationScreen(
 
             if (hasError) {
                 stickyHeader {
-                    ServiceErrorInformation(viewModel, scrollState)
+                    ServiceErrorInformation(viewModel::onAction)
                 }
             }
 
             item {
-                SiteId(viewModel)
+                SiteId(viewState.siteId, viewModel::onAction)
                 CustomDivider()
             }
 
             item {
-                RemoteHermesHttp(viewModel)
+                RemoteHermesHttp(viewState.remoteHermesHttp)
                 CustomDivider()
             }
 
             item {
-                Webserver(viewModel)
+                Webserver(viewState.webserver)
                 CustomDivider()
             }
 
             item {
-                Mqtt(viewModel)
+                Mqtt(viewState.mqtt)
                 CustomDivider()
             }
 
             item {
-                WakeWord(viewModel)
+                WakeWord(viewState.wakeWord)
                 CustomDivider()
             }
 
             item {
-                SpeechToText(viewModel)
+                SpeechToText(viewState.speechToText)
                 CustomDivider()
             }
 
             item {
-                IntentRecognition(viewModel)
+                IntentRecognition(viewState.intentRecognition)
                 CustomDivider()
             }
 
             item {
-                TextToSpeech(viewModel)
+                TextToSpeech(viewState.textToSpeech)
                 CustomDivider()
             }
 
             item {
-                AudioPlaying(viewModel)
+                AudioPlaying(viewState.audioPlaying)
                 CustomDivider()
             }
 
             item {
-                DialogManagement(viewModel)
+                DialogManagement(viewState.dialogManagement)
                 CustomDivider()
             }
 
             item {
-                IntentHandling(viewModel)
+                IntentHandling(viewState.intentHandling)
                 CustomDivider()
             }
 
@@ -190,12 +201,8 @@ fun NavGraphBuilder.addConfigurationScreens() {
  */
 @Composable
 private fun ServiceErrorInformation(
-    viewModel: ConfigurationScreenViewModel,
-    scrollState: LazyListState
+    onAction: (ConfigurationScreenUiAction) -> Unit
 ) {
-
-    val coroutineScope = rememberCoroutineScope()
-    val firstErrorIndex by viewModel.firstErrorIndex.collectAsState()
 
     Surface {
         Card(
@@ -206,13 +213,7 @@ private fun ServiceErrorInformation(
             colors = CardDefaults.outlinedCardColors(
                 containerColor = MaterialTheme.colorScheme.errorContainer
             ),
-            onClick = {
-                scrollToFirstError(
-                    firstErrorIndex = firstErrorIndex,
-                    coroutineScope = coroutineScope,
-                    scrollState = scrollState
-                )
-            }
+            onClick = { onAction(ScrollToError) }
         ) {
             Row(
                 modifier = Modifier
@@ -240,12 +241,17 @@ private fun ServiceErrorInformation(
  * site id element
  */
 @Composable
-private fun SiteId(viewModel: ConfigurationScreenViewModel) {
+private fun SiteId(
+    viewState: SiteIdViewState,
+    onAction: (ConfigurationScreenUiAction) -> Unit
+) {
+
+    val value by viewState.text.collectAsState()
 
     TextFieldListItem(
         modifier = Modifier.testTag(TestTag.ConfigurationSiteId),
-        value = viewModel.siteId.collectAsState().value,
-        onValueChange = viewModel::changeSiteId,
+        value = value,
+        onValueChange = { onAction(SiteIdChange(it)) },
         label = MR.strings.siteId,
     )
 
@@ -256,13 +262,13 @@ private fun SiteId(viewModel: ConfigurationScreenViewModel) {
  * shows if ssl verification is enabled
  */
 @Composable
-private fun RemoteHermesHttp(viewModel: ConfigurationScreenViewModel) {
+private fun RemoteHermesHttp(viewState: RemoteHermesHttpViewState) {
 
     ConfigurationListItem(
         text = MR.strings.remoteHermesHTTP,
-        secondaryText = "${translate(MR.strings.sslValidation)} ${translate((!viewModel.isHttpSSLVerificationEnabled.collectAsState().value).toText())}",
+        secondaryText = "${translate(MR.strings.sslValidation)} ${translate(viewState.isHttpSSLVerificationEnabled.not().toText())}",
         screen = ConfigurationScreenType.RemoteHermesHttpConfiguration,
-        serviceState = viewModel.httpClientServiceState.collectAsState().value
+        serviceState = viewState.serviceState
     )
 
 }
@@ -272,13 +278,13 @@ private fun RemoteHermesHttp(viewModel: ConfigurationScreenViewModel) {
  * shows if web server is enabled
  */
 @Composable
-private fun Webserver(viewModel: ConfigurationScreenViewModel) {
+private fun Webserver(viewState: WebServerViewState) {
 
     ConfigurationListItem(
         text = MR.strings.webserver,
-        secondaryText = viewModel.isHttpServerEnabled.collectAsState().value.toText(),
+        secondaryText = viewState.isHttpServerEnabled.toText(),
         screen = ConfigurationScreenType.WebServerConfiguration,
-        serviceState = viewModel.httpServerServiceState.collectAsState().value
+        serviceState = viewState.serviceState
     )
 
 }
@@ -288,13 +294,15 @@ private fun Webserver(viewModel: ConfigurationScreenViewModel) {
  * shows connection state of mqtt
  */
 @Composable
-private fun Mqtt(viewModel: ConfigurationScreenViewModel) {
+private fun Mqtt(viewState: MqttViewState) {
+
+    val isMQTTConnected by viewState.isMQTTConnected.collectAsState()
 
     ConfigurationListItem(
         text = MR.strings.mqtt,
-        secondaryText = if (viewModel.isMQTTConnected.collectAsState().value) MR.strings.connected else MR.strings.notConnected,
+        secondaryText = if (isMQTTConnected) MR.strings.connected else MR.strings.notConnected,
         screen = ConfigurationScreenType.MqttConfiguration,
-        serviceState = viewModel.mqttServiceState.collectAsState().value
+        serviceState = viewState.serviceState
     )
 
 }
@@ -305,15 +313,13 @@ private fun Mqtt(viewModel: ConfigurationScreenViewModel) {
  * shows which option is selected
  */
 @Composable
-private fun WakeWord(viewModel: ConfigurationScreenViewModel) {
-
-    val wakeWordValueOption = viewModel.wakeWordOption.collectAsState().value
+private fun WakeWord(viewState: WakeWordViewState) {
 
     ConfigurationListItem(
         text = MR.strings.wakeWord,
-        secondaryText = wakeWordValueOption.text,
+        secondaryText = viewState.wakeWordValueOption.text,
         screen = ConfigurationScreenType.WakeWordConfiguration,
-        serviceState = viewModel.wakeWordServiceState.collectAsState().value
+        serviceState = viewState.serviceState
     )
 
 }
@@ -323,13 +329,13 @@ private fun WakeWord(viewModel: ConfigurationScreenViewModel) {
  * shows which option is selected
  */
 @Composable
-private fun SpeechToText(viewModel: ConfigurationScreenViewModel) {
+private fun SpeechToText(viewState: SpeechToTextViewState) {
 
     ConfigurationListItem(
         text = MR.strings.speechToText,
-        secondaryText = viewModel.speechToTextOption.collectAsState().value.text,
+        secondaryText = viewState.speechToTextOption.text,
         screen = ConfigurationScreenType.SpeechToTextConfiguration,
-        serviceState = viewModel.speechToTextServiceState.collectAsState().value
+        serviceState = viewState.serviceState
     )
 
 }
@@ -340,13 +346,13 @@ private fun SpeechToText(viewModel: ConfigurationScreenViewModel) {
  * shows which option is selected
  */
 @Composable
-private fun IntentRecognition(viewModel: ConfigurationScreenViewModel) {
+private fun IntentRecognition(viewState: IntentRecognitionViewState) {
 
     ConfigurationListItem(
         text = MR.strings.intentRecognition,
-        secondaryText = viewModel.intentRecognitionOption.collectAsState().value.text,
+        secondaryText = viewState.intentRecognitionOption.text,
         screen = ConfigurationScreenType.IntentRecognitionConfiguration,
-        serviceState = viewModel.intentRecognitionServiceState.collectAsState().value
+        serviceState = viewState.serviceState
     )
 
 }
@@ -356,13 +362,13 @@ private fun IntentRecognition(viewModel: ConfigurationScreenViewModel) {
  * shows which option is selected
  */
 @Composable
-private fun TextToSpeech(viewModel: ConfigurationScreenViewModel) {
+private fun TextToSpeech(viewState: TextToSpeechViewState) {
 
     ConfigurationListItem(
         text = MR.strings.textToSpeech,
-        secondaryText = viewModel.textToSpeechOption.collectAsState().value.text,
+        secondaryText = viewState.textToSpeechOption.text,
         screen = ConfigurationScreenType.TextToSpeechConfiguration,
-        serviceState = viewModel.textToSpeechServiceState.collectAsState().value
+        serviceState = viewState.serviceState
     )
 
 }
@@ -372,13 +378,13 @@ private fun TextToSpeech(viewModel: ConfigurationScreenViewModel) {
  * shows which option is selected
  */
 @Composable
-private fun AudioPlaying(viewModel: ConfigurationScreenViewModel) {
+private fun AudioPlaying(viewState: AudioPlayingViewState) {
 
     ConfigurationListItem(
         text = MR.strings.audioPlaying,
-        secondaryText = viewModel.audioPlayingOption.collectAsState().value.text,
+        secondaryText = viewState.audioPlayingOption.text,
         screen = ConfigurationScreenType.AudioPlayingConfiguration,
-        serviceState = viewModel.audioPlayingServiceState.collectAsState().value
+        serviceState = viewState.serviceState
     )
 
 }
@@ -388,13 +394,13 @@ private fun AudioPlaying(viewModel: ConfigurationScreenViewModel) {
  * shows which option is active
  */
 @Composable
-private fun DialogManagement(viewModel: ConfigurationScreenViewModel) {
+private fun DialogManagement(viewState: DialogManagementViewState) {
 
     ConfigurationListItem(
         text = MR.strings.dialogManagement,
-        secondaryText = viewModel.dialogManagementOption.collectAsState().value.text,
+        secondaryText = viewState.dialogManagementOption.text,
         screen = ConfigurationScreenType.DialogManagementConfiguration,
-        serviceState = viewModel.dialogManagementServiceState.collectAsState().value
+        serviceState = viewState.serviceState
     )
 
 }
@@ -404,13 +410,13 @@ private fun DialogManagement(viewModel: ConfigurationScreenViewModel) {
  * shows which option is selected
  */
 @Composable
-private fun IntentHandling(viewModel: ConfigurationScreenViewModel) {
+private fun IntentHandling(viewState: IntentHandlingViewState) {
 
     ConfigurationListItem(
         text = MR.strings.intentHandling,
-        secondaryText = viewModel.intentHandlingOption.collectAsState().value.text,
+        secondaryText = viewState.intentHandlingOption.text,
         screen = ConfigurationScreenType.IntentHandlingConfiguration,
-        serviceState = viewModel.intentHandlingServiceState.collectAsState().value
+        serviceState = viewState.serviceState
     )
 
 }
@@ -423,7 +429,7 @@ private fun ConfigurationListItem(
     text: StringResource,
     secondaryText: StringResource,
     screen: ConfigurationScreenType,
-    serviceState: ServiceState
+    serviceState: StateFlow<ServiceState>
 ) {
 
     val navController = LocalMainNavController.current
@@ -436,7 +442,10 @@ private fun ConfigurationListItem(
             .testTag(screen),
         text = { Text(text) },
         secondaryText = { Text(secondaryText) },
-        trailing = { EventStateIconTinted(serviceState) }
+        trailing = {
+            val serviceStateValue by serviceState.collectAsState()
+            EventStateIconTinted(serviceStateValue)
+        }
     )
 
 }
@@ -450,7 +459,7 @@ private fun ConfigurationListItem(
     text: StringResource,
     secondaryText: String,
     screen: ConfigurationScreenType,
-    serviceState: ServiceState
+    serviceState: StateFlow<ServiceState>
 ) {
 
     val navController = LocalMainNavController.current
@@ -463,23 +472,10 @@ private fun ConfigurationListItem(
             .testTag(screen),
         text = { Text(text) },
         secondaryText = { Text(text = secondaryText) },
-        trailing = { EventStateIconTinted(serviceState) }
+        trailing = {
+            val serviceStateValue by serviceState.collectAsState()
+            EventStateIconTinted(serviceStateValue)
+        }
     )
 
-}
-
-/**
- * function to scroll to the first error
- */
-private fun scrollToFirstError(
-    firstErrorIndex: Int,
-    coroutineScope: CoroutineScope,
-    scrollState: LazyListState
-) {
-    coroutineScope.launch {
-        if (firstErrorIndex in 0..10) {
-            //+1 to account for sticky header
-            scrollState.animateScrollToItem(firstErrorIndex + 1)
-        }
-    }
 }

@@ -171,6 +171,7 @@ dependencies {
     implementation(project(":resources"))
     implementation(project(":platformspecific"))
     implementation(project(":data"))
+    implementation(project(":ui"))
 
     implementation(KotlinX.Coroutines.core)
     implementation(KotlinX.Coroutines.android)

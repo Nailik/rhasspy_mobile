@@ -57,7 +57,7 @@ import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.overlay.IndicationOverlayViewModel
 import org.rhasspy.mobile.viewmodel.overlay.MicrophoneOverlayViewModel
 import org.rhasspy.mobile.viewmodel.screens.AboutScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.ConfigurationScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.LogScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.SettingsScreenViewModel
