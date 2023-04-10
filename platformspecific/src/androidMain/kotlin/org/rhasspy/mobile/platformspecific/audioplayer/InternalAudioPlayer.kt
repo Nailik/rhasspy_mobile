@@ -10,6 +10,8 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -28,14 +30,23 @@ class InternalAudioPlayer(
     private val onFinished: (exception: Exception?) -> Unit
 ) : KoinComponent {
 
+    private var finishCalled = false
+    private var coroutineScope = CoroutineScope(Dispatchers.IO)
+    private var timeoutJob: Job? = null
+
     fun stop() {
+        timeoutJob?.cancel()
+        timeoutJob = null
         logger.v { "stop" }
         try {
             mediaPlayer.stop()
             mediaPlayer.release()
         } catch (exception: Exception) {
             logger.e(exception) { "stop exception" }
-            onFinished(exception)
+            if(!finishCalled) {
+                finishCalled = true
+                onFinished(exception)
+            }
         }
     }
 
@@ -68,44 +79,54 @@ class InternalAudioPlayer(
         )
     }
 
-    init {
-        try {
-            mediaPlayer.setVolume(volume.value, volume.value)
-            mediaPlayer.setOnPreparedListener { onPrepared() }
-            mediaPlayer.setOnCompletionListener { onMediaPlayerCompletion() }
-            mediaPlayer.setOnErrorListener { _, _, _ -> onMediaPlayerError(); true }
-            mediaPlayer.setDataSource(get<NativeApplication>(), uri)
-            mediaPlayer.prepare()
-        } catch (exception: Exception) {
-            logger.e(exception) { "start exception" }
-            onFinished(exception)
-        }
-    }
-
     private var volumeChange = CoroutineScope(Dispatchers.IO).launch(start = CoroutineStart.LAZY) {
         volume.collect {
             mediaPlayer.setVolume(volume.value, volume.value)
         }
     }
 
-    private fun onPrepared() {
-        logger.v { "onPrepared" }
-        mediaPlayer.start()
-        volumeChange.start()
+    init {
+        try {
+            mediaPlayer.setVolume(volume.value, volume.value)
+            mediaPlayer.setOnCompletionListener { onMediaPlayerCompletion() }
+            mediaPlayer.setOnErrorListener { _, _, _ -> onMediaPlayerError(); false }
+            mediaPlayer.setDataSource(get<NativeApplication>(), uri)
+            mediaPlayer.prepare()
+            volumeChange.start()
+            val duration = mediaPlayer.duration
+            timeoutJob = coroutineScope.launch {
+                delay(duration.toLong() + 100)
+                onMediaPlayerCompletion()
+            }
+            mediaPlayer.start()
+        } catch (exception: Exception) {
+            logger.e(exception) { "start exception" }
+            onFinished(exception)
+        }
     }
 
     private fun onMediaPlayerCompletion() {
         logger.v { "onMediaPlayerCompletion" }
+        timeoutJob?.cancel()
+        timeoutJob = null
         mediaPlayer.stop()
         mediaPlayer.release()
-        onFinished(null)
+        if(!finishCalled) {
+            finishCalled = true
+            onFinished(null)
+        }
     }
 
     private fun onMediaPlayerError() {
         logger.v { "onMediaPlayerError" }
+        timeoutJob?.cancel()
+        timeoutJob = null
         mediaPlayer.stop()
         mediaPlayer.release()
-        onFinished(RuntimeException())
+        if(!finishCalled) {
+            finishCalled = true
+            onFinished(RuntimeException())
+        }
     }
 
     @Throws(Resources.NotFoundException::class)
