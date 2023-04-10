@@ -11,12 +11,9 @@ import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionService
 import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.platformspecific.combineAny
 import org.rhasspy.mobile.platformspecific.combineState
-import org.rhasspy.mobile.platformspecific.combineStateNotEquals
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationEditViewState
 
 class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
 

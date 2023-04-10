@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.viewmodel.configuration.webserver
 
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.koin.core.component.inject
@@ -19,30 +18,13 @@ import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.IConfigurationEditViewState
 
 class WebServerConfigurationViewModel : IConfigurationViewModel() {
 
     override val testRunner by inject<WebServerConfigurationTest>()
     override val logType = LogType.WebServerService
     override val serviceState get() = get<WebServerService>().serviceState
-
-    //unsaved data
-    private val _isHttpServerEnabled =
-        MutableStateFlow(ConfigurationSetting.isHttpServerEnabled.value)
-    private val _httpServerPort = MutableStateFlow(ConfigurationSetting.httpServerPort.value)
-    private val _httpServerPortText =
-        MutableStateFlow(ConfigurationSetting.httpServerPort.value.toString())
-    private val _isHttpServerSSLEnabled =
-        MutableStateFlow(ConfigurationSetting.isHttpServerSSLEnabledEnabled.value)
-    private val _httpServerSSLKeyStoreFile =
-        MutableStateFlow(ConfigurationSetting.httpServerSSLKeyStoreFile.value)
-    private val _httpServerSSLKeyStorePassword =
-        MutableStateFlow(ConfigurationSetting.httpServerSSLKeyStorePassword.value)
-    private val _httpServerSSLKeyAlias =
-        MutableStateFlow(ConfigurationSetting.httpServerSSLKeyAlias.value)
-    private val _httpServerSSLKeyPassword =
-        MutableStateFlow(ConfigurationSetting.httpServerSSLKeyPassword.value)
 
     //unsaved ui data
     val isHttpServerEnabled = _isHttpServerEnabled.readOnly
@@ -68,7 +50,7 @@ class WebServerConfigurationViewModel : IConfigurationViewModel() {
         combineStateNotEquals(_httpServerSSLKeyPassword, ConfigurationSetting.httpServerSSLKeyPassword.data)
     )
 
-    override val configurationEditViewState = combineState(hasUnsavedChanges, _isHttpServerEnabled) { hasUnsavedChanges, isHttpServerEnabled ->
+    val IConfigurationEditViewState = combineState(hasUnsavedChanges, _isHttpServerEnabled) { hasUnsavedChanges, isHttpServerEnabled ->
         IConfigurationEditViewState(
             hasUnsavedChanges = hasUnsavedChanges,
             isTestingEnabled = isHttpServerEnabled,

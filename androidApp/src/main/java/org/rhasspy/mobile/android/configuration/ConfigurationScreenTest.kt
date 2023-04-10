@@ -29,7 +29,6 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.content.ServiceStateHeader
 import org.rhasspy.mobile.android.content.elements.CustomDivider
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.LogListElement
@@ -40,17 +39,17 @@ import org.rhasspy.mobile.android.theme.SetSystemColor
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationTestViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListAutoscroll
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListFiltered
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationTestViewState
 
 /**
  * screen that's shown when a configuration is being tested
  */
 @Composable
 fun ConfigurationScreenTest(
-    viewState: IConfigurationTestViewState,
+    viewState: ConfigurationTestViewState,
     onAction: (IConfigurationTestUiAction) -> Unit,
     content: (@Composable () -> Unit)?
 ) {
@@ -100,7 +99,7 @@ fun ConfigurationScreenTest(
 @Composable
 private fun ConfigurationScreenTestList(
     modifier: Modifier = Modifier,
-    viewState: IConfigurationTestViewState,
+    viewState: ConfigurationTestViewState,
     content: (@Composable () -> Unit)?
 ) {
     Column(modifier = modifier) {
@@ -122,11 +121,6 @@ private fun ConfigurationScreenTestList(
             state = scrollState,
             modifier = Modifier.weight(1f)
         ) {
-            stickyHeader {
-                val serviceStateHeaderViewState by viewState.serviceViewState.collectAsState()
-                ServiceStateHeader(serviceStateHeaderViewState)
-            }
-
             items(logEventsList) { item ->
                 LogListElement(item)
                 CustomDivider()
@@ -152,7 +146,7 @@ private fun ConfigurationScreenTestList(
  */
 @Composable
 private fun AppBar(
-    viewState: IConfigurationTestViewState,
+    viewState: ConfigurationTestViewState,
     onAction: (IConfigurationTestUiAction) -> Unit,
     title: StableStringResource,
     onBackClick: () -> Unit,

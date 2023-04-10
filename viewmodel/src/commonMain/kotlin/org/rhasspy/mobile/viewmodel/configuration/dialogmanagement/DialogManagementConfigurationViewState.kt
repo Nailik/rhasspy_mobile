@@ -6,9 +6,8 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationContentViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.ServiceStateHeaderViewState
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.ServiceStateHeaderViewState
 
 @Stable
 data class DialogManagementConfigurationViewState(
@@ -20,7 +19,7 @@ data class DialogManagementConfigurationViewState(
     val intentRecognitionTimeout: Long,
     val recordingTimeoutText: String,
     val recordingTimeout: Long
-): IConfigurationContentViewState {
+): IConfigurationContentViewState() {
 
     companion object {
         fun getInitial() = DialogManagementConfigurationViewState(

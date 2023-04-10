@@ -11,13 +11,10 @@ import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.platformspecific.combineAny
 import org.rhasspy.mobile.platformspecific.combineState
-import org.rhasspy.mobile.platformspecific.combineStateNotEquals
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationEditViewState
 
 class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     override val testRunner by inject<RemoteHermesHttpConfigurationTest>()
@@ -73,33 +70,6 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     val testTextToSpeechText = _testTextToSpeechText.readOnly
     val isTextToSpeechTestEnabled = _testTextToSpeechText.mapReadonlyState { it.isNotEmpty() }
 
-    private val isTestingEnabled = combineState(
-        ConfigurationSetting.speechToTextOption.data,
-        ConfigurationSetting.intentRecognitionOption.data,
-        ConfigurationSetting.textToSpeechOption.data,
-        _httpClientServerEndpointHost
-    ) { speechToTextOption, intentRecognitionOption, textToSpeechOption, host ->
-        host.isNotBlank() &&
-                (speechToTextOption == SpeechToTextOption.RemoteHTTP ||
-                        intentRecognitionOption == IntentRecognitionOption.RemoteHTTP ||
-                        textToSpeechOption == TextToSpeechOption.RemoteHTTP)
-    }
-
-    private val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(_httpClientServerEndpointHost, ConfigurationSetting.httpClientServerEndpointHost.data),
-        combineStateNotEquals(_httpClientServerEndpointPort, ConfigurationSetting.httpClientServerEndpointPort.data),
-        combineStateNotEquals(_httpClientTimeout, ConfigurationSetting.httpClientTimeout.data),
-        combineStateNotEquals(_isHttpSSLVerificationDisabled, ConfigurationSetting.isHttpClientSSLVerificationDisabled.data)
-    )
-
-    override val configurationEditViewState = combineState(hasUnsavedChanges, isTestingEnabled) { hasUnsavedChanges, isTestingEnabled ->
-        IConfigurationEditViewState(
-            hasUnsavedChanges = hasUnsavedChanges,
-            isTestingEnabled = isTestingEnabled,
-            serviceViewState = serviceViewState
-        )
-    }
-
 
     //set new http server endpoint host
     fun updateHttpClientServerEndpointHost(endpoint: String) {
@@ -133,32 +103,6 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     //update the test text
     fun updateTestTextToSpeechText(text: String) {
         _testTextToSpeechText.value = text
-    }
-
-    /**
-     * save data configuration
-     */
-    override fun onSave() {
-        ConfigurationSetting.httpClientServerEndpointHost.value =
-            _httpClientServerEndpointHost.value
-        ConfigurationSetting.httpClientServerEndpointPort.value =
-            _httpClientServerEndpointPort.value
-        ConfigurationSetting.isHttpClientSSLVerificationDisabled.value =
-            _isHttpSSLVerificationDisabled.value
-    }
-
-    /**
-     * undo all changes
-     */
-    override fun discard() {
-        _httpClientServerEndpointHost.value =
-            ConfigurationSetting.httpClientServerEndpointHost.value
-        _httpClientServerEndpointPort.value =
-            ConfigurationSetting.httpClientServerEndpointPort.value
-        _httpClientServerEndpointPortText.value =
-            ConfigurationSetting.httpClientServerEndpointPort.value.toString()
-        _isHttpSSLVerificationDisabled.value =
-            ConfigurationSetting.isHttpClientSSLVerificationDisabled.value
     }
 
     override fun initializeTestParams() {

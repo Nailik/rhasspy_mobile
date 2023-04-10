@@ -6,10 +6,8 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.platformspecific.combineStateNotEquals
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationContentViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.ServiceStateHeaderViewState
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.ServiceStateHeaderViewState
 
 @Stable
 data class IntentRecognitionConfigurationViewState(
@@ -17,7 +15,7 @@ data class IntentRecognitionConfigurationViewState(
     val intentRecognitionOption: IntentRecognitionOption,
     val isUseCustomIntentRecognitionHttpEndpoint: Boolean,
     val intentRecognitionHttpEndpoint: String
-): IConfigurationContentViewState {
+): IConfigurationContentViewState() {
 
     companion object {
         fun getInitial() = IntentRecognitionConfigurationViewState(

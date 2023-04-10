@@ -14,13 +14,12 @@ import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.combineAny
 import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.combineStateNotEquals
-import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.IConfigurationEditViewState
 
 class MqttConfigurationViewModel : IConfigurationViewModel() {
 
@@ -83,7 +82,7 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
         combineStateNotEquals(_mqttRetryInterval, ConfigurationSetting.mqttRetryInterval.data)
     )
 
-    override val configurationEditViewState = combineState(hasUnsavedChanges, _isMqttEnabled) { hasUnsavedChanges, isMqttEnabled ->
+    val IConfigurationEditViewState = combineState(hasUnsavedChanges, _isMqttEnabled) { hasUnsavedChanges, isMqttEnabled ->
         IConfigurationEditViewState(
             hasUnsavedChanges = hasUnsavedChanges,
             isTestingEnabled = isMqttEnabled,
@@ -162,47 +161,6 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
     fun openMQTTSSLWiki() {
         openLink("https://github.com/Nailik/rhasspy_mobile/wiki/MQTT#enable-ssl")
     }
-
-    /**
-     * save data configuration
-     */
-    override fun onSave() {
-        if (ConfigurationSetting.mqttKeyStoreFile.value != _mqttKeyStoreFile.value) {
-            ConfigurationSetting.mqttKeyStoreFile.value?.commonDelete()
-        }
-
-        ConfigurationSetting.isMqttEnabled.value = _isMqttEnabled.value
-        ConfigurationSetting.mqttHost.value = _mqttHost.value
-        ConfigurationSetting.mqttPort.value = _mqttPort.value
-        ConfigurationSetting.mqttUserName.value = _mqttUserName.value
-        ConfigurationSetting.mqttPassword.value = _mqttPassword.value
-        ConfigurationSetting.isMqttSSLEnabled.value = _isMqttSSLEnabled.value
-        ConfigurationSetting.mqttKeyStoreFile.value = _mqttKeyStoreFile.value
-        ConfigurationSetting.mqttConnectionTimeout.value = _mqttConnectionTimeout.value
-        ConfigurationSetting.mqttKeepAliveInterval.value = _mqttKeepAliveInterval.value
-        ConfigurationSetting.mqttRetryInterval.value = _mqttRetryInterval.value
-    }
-
-    /**
-     * undo all changes
-     */
-    override fun discard() {
-        if (ConfigurationSetting.mqttKeyStoreFile.value != _mqttKeyStoreFile.value) {
-            _mqttKeyStoreFile.value?.commonDelete()
-        }
-
-        _isMqttEnabled.value = ConfigurationSetting.isMqttEnabled.value
-        _mqttHost.value = ConfigurationSetting.mqttHost.value
-        _mqttPort.value = ConfigurationSetting.mqttPort.value
-        _mqttPortText.value = ConfigurationSetting.mqttPort.value.toString()
-        _mqttUserName.value = ConfigurationSetting.mqttUserName.value
-        _mqttPassword.value = ConfigurationSetting.mqttPassword.value
-        _isMqttSSLEnabled.value = ConfigurationSetting.isMqttSSLEnabled.value
-        _mqttConnectionTimeout.value = ConfigurationSetting.mqttConnectionTimeout.value
-        _mqttKeepAliveInterval.value = ConfigurationSetting.mqttKeepAliveInterval.value
-        _mqttRetryInterval.value = ConfigurationSetting.mqttRetryInterval.value
-    }
-
 
     /**
      * test unsaved data configuration

@@ -30,7 +30,7 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.ServiceStateHeaderViewState
+import org.rhasspy.mobile.viewmodel.configuration.ServiceStateHeaderViewState
 
 @Composable
 fun ServiceStateHeader(viewState: ServiceStateHeaderViewState) {

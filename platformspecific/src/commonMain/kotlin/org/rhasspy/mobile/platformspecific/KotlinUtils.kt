@@ -1,5 +1,8 @@
 package org.rhasspy.mobile.platformspecific
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -101,4 +104,12 @@ inline fun <T1 : Any, T2 : Any> notNull(
     run: () -> Unit
 ) {
     return if (p1 != null && p2 != null) block(p1, p2) else run()
+}
+
+inline fun <T> Array<out T>.toImmutableList(): ImmutableList<T> {
+    return when (size) {
+        0 -> persistentListOf()
+        1 -> persistentListOf(this[0])
+        else -> this.toList().toImmutableList()
+    }
 }

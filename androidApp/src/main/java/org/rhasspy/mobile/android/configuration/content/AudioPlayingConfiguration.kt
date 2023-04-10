@@ -48,14 +48,14 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.AudioPlayingConfiguration),
         title = MR.strings.audioPlaying.stable,
-        viewState = viewModel.viewState.collectAsState().value,
+        viewState = viewState,
         onAction = viewModel::onAction,
         testContent = { TestContent(viewModel) }
-    ) {
+    ) { contentViewState ->
 
         item {
             AudioPlayingOptionContent(
-                viewState = viewState.contentViewState,
+                viewState = contentViewState,
                 onAction = viewModel::onAction
             )
         }

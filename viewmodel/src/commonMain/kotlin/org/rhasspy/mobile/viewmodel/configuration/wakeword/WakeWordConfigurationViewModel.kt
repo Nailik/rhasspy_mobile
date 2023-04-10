@@ -26,7 +26,7 @@ import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.IConfigurationEditViewState
 
 class WakeWordConfigurationViewModel : IConfigurationViewModel() {
 
@@ -109,7 +109,7 @@ class WakeWordConfigurationViewModel : IConfigurationViewModel() {
         combineStateNotEquals(_wakeWordUdpOutputPort, ConfigurationSetting.wakeWordUdpOutputPort.data)
     )
 
-    override val configurationEditViewState = combineState(hasUnsavedChanges, _wakeWordOption) { hasUnsavedChanges, wakeWordOption ->
+    val IConfigurationEditViewState = combineState(hasUnsavedChanges, _wakeWordOption) { hasUnsavedChanges, wakeWordOption ->
         IConfigurationEditViewState(
             hasUnsavedChanges = hasUnsavedChanges,
             isTestingEnabled = wakeWordOption != WakeWordOption.Disabled,

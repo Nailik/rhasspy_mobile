@@ -2,6 +2,7 @@ package org.rhasspy.mobile.android.configuration
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -55,14 +56,14 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.SetSystemColor
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.Discard
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.Save
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.StartTest
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.StopTest
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationEditViewState
 
 enum class ConfigurationContentScreens(val route: String) {
     Edit("ConfigurationContentScreens_Edit"),
@@ -78,13 +79,13 @@ enum class ConfigurationContentScreens(val route: String) {
  * Shows dialog on Back press when there are unsaved changes
  */
 @Composable
-fun <V> ConfigurationScreenItemContent(
-    viewState: IConfigurationViewState<V>,
+fun <V: IConfigurationEditViewState> ConfigurationScreenItemContent(
+    viewState: ConfigurationViewState<V>,
     onAction: (IConfigurationUiAction) -> Unit,
     modifier: Modifier,
     title: StableStringResource,
     testContent: (@Composable () -> Unit)? = null,
-    content: LazyListScope.() -> Unit
+    content: LazyListScope.(contentViewState: V) -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -105,28 +106,35 @@ fun <V> ConfigurationScreenItemContent(
             }
         }
     } else {
-        CompositionLocalProvider(
-            LocalConfigurationNavController provides navController
-        ) {
-            NavHost(
-                navController = navController,
-                startDestination = ConfigurationContentScreens.Edit.route,
-                modifier = modifier.testTag(TestTag.ConfigurationScreenItemContent),
+        Column {
+            val serviceStateHeaderViewState by viewState.serviceViewState.collectAsState()
+            ServiceStateHeader(serviceStateHeaderViewState)
+
+            CompositionLocalProvider(
+                LocalConfigurationNavController provides navController
             ) {
-                composable(ConfigurationContentScreens.Edit.route) {
-                    EditConfigurationScreen(
-                        title = title,
-                        viewState = viewState.editViewState.collectAsState().value,
-                        onAction = onAction,
-                        content = content
-                    )
-                }
-                composable(ConfigurationContentScreens.Test.route) {
-                    ConfigurationScreenTest(
-                        viewState = viewState.testViewState.collectAsState().value,
-                        onAction = onAction,
-                        content = testContent
-                    )
+                NavHost(
+                    navController = navController,
+                    startDestination = ConfigurationContentScreens.Edit.route,
+                    modifier = modifier.testTag(TestTag.ConfigurationScreenItemContent),
+                ) {
+
+
+                    composable(ConfigurationContentScreens.Edit.route) {
+                        EditConfigurationScreen(
+                            title = title,
+                            viewState = viewState.editViewState.collectAsState().value,
+                            onAction = onAction,
+                            content = content
+                        )
+                    }
+                    composable(ConfigurationContentScreens.Test.route) {
+                        ConfigurationScreenTest(
+                            viewState = viewState.testViewState.collectAsState().value,
+                            onAction = onAction,
+                            content = testContent
+                        )
+                    }
                 }
             }
         }
@@ -137,11 +145,11 @@ fun <V> ConfigurationScreenItemContent(
  * configuration screen where settings are edited
  */
 @Composable
-private fun EditConfigurationScreen(
+private fun<V: IConfigurationEditViewState> EditConfigurationScreen(
     title: StableStringResource,
-    viewState: IConfigurationEditViewState,
+    viewState: V,
     onAction: (IConfigurationEditUiAction) -> Unit,
-    content: LazyListScope.() -> Unit
+    content: LazyListScope.(V) -> Unit
 ) {
     SetSystemColor(0.dp)
 
@@ -196,13 +204,7 @@ private fun EditConfigurationScreen(
                     .padding(paddingValues)
                     .fillMaxSize()
             ) {
-
-                stickyHeader {
-                    val serviceStateHeaderViewState by viewState.serviceViewState.collectAsState()
-                    ServiceStateHeader(serviceStateHeaderViewState)
-                }
-
-                content()
+                content(viewState)
             }
         }
     }

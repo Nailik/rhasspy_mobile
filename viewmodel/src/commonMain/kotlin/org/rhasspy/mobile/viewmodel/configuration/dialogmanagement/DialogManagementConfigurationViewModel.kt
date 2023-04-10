@@ -14,7 +14,7 @@ import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.combineStateNotEquals
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.IConfigurationEditViewState
 
 /**
  * ViewModel for Dialog Management Configuration
@@ -68,7 +68,7 @@ class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
         combineStateNotEquals(_recordingTimeout, ConfigurationSetting.recordingTimeout.data)
     )
 
-    override val configurationEditViewState = combineState(hasUnsavedChanges, _dialogManagementOption) { hasUnsavedChanges, dialogManagementOption ->
+    val IConfigurationEditViewState = combineState(hasUnsavedChanges, _dialogManagementOption) { hasUnsavedChanges, dialogManagementOption ->
         IConfigurationEditViewState(
             hasUnsavedChanges = hasUnsavedChanges,
             isTestingEnabled = dialogManagementOption != DialogManagementOption.Disabled,

@@ -11,14 +11,8 @@ import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantServiceParam
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingService
 import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingServiceParams
-import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.platformspecific.combineAny
-import org.rhasspy.mobile.platformspecific.combineState
-import org.rhasspy.mobile.platformspecific.combineStateNotEquals
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationEditViewState
 
 class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
 

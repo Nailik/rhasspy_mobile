@@ -7,11 +7,8 @@ import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.platformspecific.combineAny
-import org.rhasspy.mobile.platformspecific.combineStateNotEquals
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationContentViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.ServiceStateHeaderViewState
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.ServiceStateHeaderViewState
 
 @Stable
 data class IntentHandlingConfigurationViewState(
@@ -21,7 +18,7 @@ data class IntentHandlingConfigurationViewState(
     val intentHandlingHassEndpoint: String,
     val intentHandlingHassAccessToken: String,
     val intentHandlingHomeAssistantOption: HomeAssistantIntentHandlingOption,
-): IConfigurationContentViewState {
+): IConfigurationContentViewState() {
 
     companion object {
         fun getInitial() = IntentHandlingConfigurationViewState(

@@ -35,20 +35,16 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfig
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListAutoscroll
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListFiltered
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationTestViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.ServiceStateHeaderViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
-abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationContentViewState>(
+abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationEditViewState>(
     private val service: IService,
     internal val testRunner: T,
     private val logType: LogType,
-    private val initialViewState: () -> V
+    private val initialViewState: V
 ) : ViewModel(), KoinComponent {
     private val logger = Logger.withTag("IConfigurationViewModel")
     private var testStartDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).toString()
-
-    protected val contentViewState = MutableStateFlow(initialViewState())
 
     private val serviceViewState = service.serviceState.mapReadonlyState {
         ServiceStateHeaderViewState(
@@ -64,21 +60,21 @@ abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationC
 
     private val logEvents = MutableStateFlow<ImmutableList<LogElement>>(persistentListOf())
     private val configurationTestViewState = MutableStateFlow(
-        IConfigurationTestViewState(
+        ConfigurationTestViewState(
             isListFiltered = false,
             isListAutoscroll = true,
-            logEvents = logEvents.mapReadonlyState { it.toImmutableList() },
-            serviceViewState = serviceViewState
+            logEvents = logEvents.mapReadonlyState { it.toImmutableList() }
         )
     )
 
+    protected val contentViewState = MutableStateFlow(initialViewState)
 
     private val _viewState = MutableStateFlow(
-        IConfigurationViewState(
-            contentViewState = initialViewState,
+        ConfigurationViewState(
             isBackPressDisabled = false,
             isLoading = false,
-            editViewState = contentViewState.mapReadonlyState { it.getEditViewState(serviceViewState) },
+            serviceViewState = serviceViewState,
+            editViewState = contentViewState,
             testViewState = configurationTestViewState
         )
     )
@@ -93,7 +89,7 @@ abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationC
 
     private fun onEditAction(action: IConfigurationEditUiAction) {
         when (action) {
-            Discard -> discard()
+            Discard -> onDiscard()
             Save -> save()
             StartTest -> startTest()
             StopTest -> stopTest()
@@ -132,14 +128,15 @@ abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationC
             get<NativeApplication>().reloadServiceModules()
 
             _viewState.update { it.copy(isLoading = false) }
+            //TODO reset usaved changes
         }
     }
 
-    fun discard() {
-        contentViewState.value = initialViewState()
+    fun onDiscard() {
+        contentViewState.value = getInitialViewState()
     }
 
-    fun onSave() = contentViewState.value.save()
+    abstract fun onSave()
 
     abstract fun initializeTestParams()
 

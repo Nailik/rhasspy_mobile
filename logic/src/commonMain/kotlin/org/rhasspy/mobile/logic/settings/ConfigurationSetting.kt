@@ -1,5 +1,8 @@
 package org.rhasspy.mobile.logic.settings
 
+import kotlinx.collections.immutable.immutableSetOf
+import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.collections.immutable.toImmutableSet
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
@@ -61,12 +64,12 @@ object ConfigurationSetting {
     val wakeWordPorcupineAccessToken = ISetting(SettingsEnum.WakeWordPorcupineAccessToken, "")
     val wakeWordPorcupineKeywordDefaultOptions = ISetting(
         SettingsEnum.WakeWordPorcupineKeywordDefaultSelectedOptions,
-        PorcupineKeywordOption.values().map { PorcupineDefaultKeyword(it, false, 0.5f) }.toSet(),
+        PorcupineKeywordOption.values().map { PorcupineDefaultKeyword(it, false, 0.5f) }.toImmutableSet(),
         PorcupineDefaultKeywordSerializer
     )
     val wakeWordPorcupineKeywordCustomOptions = ISetting(
         SettingsEnum.WakeWordPorcupineKeywordCustomOptions,
-        setOf(),
+        persistentSetOf(),
         PorcupineCustomKeywordSerializer
     )
     val wakeWordPorcupineLanguage = ISetting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOption.EN)

@@ -16,7 +16,6 @@ import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.combineStateNotEquals
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationEditViewState
 
 class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
 
@@ -58,14 +57,6 @@ class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
         combineStateNotEquals(_textToSpeechHttpEndpoint, ConfigurationSetting.textToSpeechHttpEndpoint.data)
     )
 
-    override val configurationEditViewState = combineState(hasUnsavedChanges, _textToSpeechOption) { hasUnsavedChanges, textToSpeechOption ->
-        IConfigurationEditViewState(
-            hasUnsavedChanges = hasUnsavedChanges,
-            isTestingEnabled = textToSpeechOption != TextToSpeechOption.Disabled,
-            serviceViewState = serviceViewState
-        )
-    }
-
     //show endpoint settings
     fun isTextToSpeechHttpSettingsVisible(option: TextToSpeechOption): Boolean {
         return option == TextToSpeechOption.RemoteHTTP
@@ -92,26 +83,6 @@ class TextToSpeechConfigurationViewModel : IConfigurationViewModel() {
     //update the test text
     fun updateTestTextToSpeechText(text: String) {
         _testTextToSpeechText.value = text
-    }
-
-    /**
-     * save data configuration
-     */
-    override fun onSave() {
-        ConfigurationSetting.textToSpeechOption.value = _textToSpeechOption.value
-        ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value =
-            _isUseCustomTextToSpeechHttpEndpoint.value
-        ConfigurationSetting.textToSpeechHttpEndpoint.value = _textToSpeechHttpEndpoint.value
-    }
-
-    /**
-     * undo all changes
-     */
-    override fun discard() {
-        _textToSpeechOption.value = ConfigurationSetting.textToSpeechOption.value
-        _isUseCustomTextToSpeechHttpEndpoint.value =
-            ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value
-        _textToSpeechHttpEndpoint.value = ConfigurationSetting.textToSpeechHttpEndpoint.value
     }
 
     override fun initializeTestParams() {

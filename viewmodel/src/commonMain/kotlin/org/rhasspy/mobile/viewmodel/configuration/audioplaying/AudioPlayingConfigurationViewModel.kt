@@ -9,6 +9,7 @@ import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingServiceParams
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.logic.services.localaudio.LocalAudioServiceParams
 import org.rhasspy.mobile.logic.services.mqtt.MqttServiceParams
+import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiAction.ChangeAudioPlayingHttpEndpoint
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiAction.ChangeAudioPlayingMqttSiteId
@@ -32,17 +33,27 @@ class AudioPlayingConfigurationViewModel(
     service = service,
     testRunner = testRunner,
     logType = logType,
-    initialViewState = AudioPlayingConfigurationViewState::getInitial
+    initialViewState = AudioPlayingConfigurationViewState()
 ) {
 
     fun onAction(action: AudioPlayingConfigurationUiAction) {
-        when (action) {
-            is SelectAudioPlayingOption -> contentViewState.update { it.copy(audioPlayingOption = action.option) }
-            is SelectAudioOutputOption -> contentViewState.update { it.copy(audioOutputOption = action.option) }
-            ToggleUseCustomHttpEndpoint -> contentViewState.update { it.copy(isUseCustomAudioPlayingHttpEndpoint = !it.isUseCustomAudioPlayingHttpEndpoint) }
-            is ChangeAudioPlayingHttpEndpoint -> contentViewState.update { it.copy(audioPlayingHttpEndpoint = action.value) }
-            is ChangeAudioPlayingMqttSiteId -> contentViewState.update { it.copy(audioPlayingMqttSiteId = action.value) }
+        contentViewState.update {
+            when (action) {
+                is SelectAudioPlayingOption -> it.copy(audioPlayingOption = action.option)
+                is SelectAudioOutputOption -> it.copy(audioOutputOption = action.option)
+                ToggleUseCustomHttpEndpoint -> it.copy(isUseCustomAudioPlayingHttpEndpoint = !it.isUseCustomAudioPlayingHttpEndpoint)
+                is ChangeAudioPlayingHttpEndpoint -> it.copy(audioPlayingHttpEndpoint = action.value)
+                is ChangeAudioPlayingMqttSiteId -> it.copy(audioPlayingMqttSiteId = action.value)
+            }
         }
+    }
+
+    override fun onSave() {
+        ConfigurationSetting.audioPlayingOption.value = contentViewState.value.audioPlayingOption
+        ConfigurationSetting.audioOutputOption.value = contentViewState.value.audioOutputOption
+        ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value = contentViewState.value.isUseCustomAudioPlayingHttpEndpoint
+        ConfigurationSetting.audioPlayingHttpEndpoint.value = contentViewState.value.audioPlayingHttpEndpoint
+        ConfigurationSetting.audioPlayingMqttSiteId.value = contentViewState.value.audioPlayingMqttSiteId
     }
 
     override fun initializeTestParams() {
