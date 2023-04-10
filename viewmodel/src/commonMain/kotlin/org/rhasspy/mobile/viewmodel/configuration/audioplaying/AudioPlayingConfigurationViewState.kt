@@ -8,8 +8,8 @@ import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationContentViewState
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.ServiceStateHeaderViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.ServiceStateHeaderViewState
 
 @Stable
 data class AudioPlayingConfigurationViewState(
@@ -36,18 +36,16 @@ data class AudioPlayingConfigurationViewState(
 
     override fun getEditViewState(serviceViewState: StateFlow<ServiceStateHeaderViewState>): IConfigurationEditViewState {
         return IConfigurationEditViewState(
-            hasUnsavedChanges = audioPlayingOption == ConfigurationSetting.audioPlayingOption.value &&
+            hasUnsavedChanges = !(audioPlayingOption == ConfigurationSetting.audioPlayingOption.value &&
                     isUseCustomAudioPlayingHttpEndpoint == ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value &&
                     audioPlayingHttpEndpoint == ConfigurationSetting.audioPlayingHttpEndpoint.value &&
-                    audioPlayingMqttSiteId == ConfigurationSetting.audioPlayingMqttSiteId.value,
+                    audioPlayingMqttSiteId == ConfigurationSetting.audioPlayingMqttSiteId.value),
             isTestingEnabled = audioPlayingOption != AudioPlayingOption.Disabled,
             serviceViewState = serviceViewState
         )
     }
 
-    fun isTestingEnabled(): Boolean = audioPlayingOption != AudioPlayingOption.Disabled
-
-    fun save() {
+    override fun save() {
         ConfigurationSetting.audioPlayingOption.value = audioPlayingOption
         ConfigurationSetting.audioOutputOption.value = audioOutputOption
         ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value = isUseCustomAudioPlayingHttpEndpoint

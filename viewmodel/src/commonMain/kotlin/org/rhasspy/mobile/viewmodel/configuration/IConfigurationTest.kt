@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.test
+package org.rhasspy.mobile.viewmodel.configuration
 
 import io.ktor.utils.io.core.Closeable
 import kotlinx.coroutines.CoroutineScope

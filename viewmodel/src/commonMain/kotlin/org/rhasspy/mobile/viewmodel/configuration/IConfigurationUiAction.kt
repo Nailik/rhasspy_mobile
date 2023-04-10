@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.event
+package org.rhasspy.mobile.viewmodel.configuration
 
 
 sealed interface IConfigurationUiAction {

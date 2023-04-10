@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.test
+package org.rhasspy.mobile.viewmodel.configuration.audioplaying
 
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -11,6 +11,7 @@ import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingServiceParams
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationTest
 
 class AudioPlayingConfigurationTest : IConfigurationTest() {
 

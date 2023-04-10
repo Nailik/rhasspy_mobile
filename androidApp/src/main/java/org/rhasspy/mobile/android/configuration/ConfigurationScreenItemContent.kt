@@ -55,14 +55,14 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.SetSystemColor
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationEditUiAction
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationEditUiAction.Discard
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationEditUiAction.Save
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationEditUiAction.StartTest
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationEditUiAction.StopTest
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.Discard
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.Save
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.StartTest
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.StopTest
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationEditViewState
 
 enum class ConfigurationContentScreens(val route: String) {
     Edit("ConfigurationContentScreens_Edit"),

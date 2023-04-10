@@ -1,8 +1,9 @@
-package org.rhasspy.mobile.viewmodel.configuration.test
+package org.rhasspy.mobile.viewmodel.configuration.intenthandling
 
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingService
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationTest
 
 class IntentHandlingConfigurationTest : IConfigurationTest() {
 

@@ -29,7 +29,7 @@ import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.viewmodel.configuration.MqttConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
 
 /**
  * mqtt configuration content

@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration
+package org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
@@ -16,8 +16,8 @@ import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.combineStateNotEquals
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.test.RemoteHermesHttpConfigurationTest
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationEditViewState
 
 class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     override val testRunner by inject<RemoteHermesHttpConfigurationTest>()

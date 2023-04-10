@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.test
+package org.rhasspy.mobile.viewmodel.configuration.texttospeech
 
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationTest
 
 class TextToSpeechConfigurationTest : IConfigurationTest() {
 

@@ -22,7 +22,7 @@ import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.onListItemRadioButton
 import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
-import org.rhasspy.mobile.viewmodel.configuration.TextToSpeechConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
 import kotlin.test.assertEquals
 
 class TextToSpeechConfigurationContentTest {

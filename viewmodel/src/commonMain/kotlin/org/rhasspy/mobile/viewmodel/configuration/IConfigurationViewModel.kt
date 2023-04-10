@@ -27,31 +27,28 @@ import org.rhasspy.mobile.logic.update
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationEditUiAction
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationEditUiAction.Discard
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationEditUiAction.Save
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationEditUiAction.StartTest
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationEditUiAction.StopTest
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationTestUiAction
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListAutoscroll
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListFiltered
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationTestViewState
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.ServiceStateHeaderViewState
-import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTest
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.Discard
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.Save
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.StartTest
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.StopTest
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListAutoscroll
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListFiltered
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationTestViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.ServiceStateHeaderViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationContentViewState>(
     private val service: IService,
     internal val testRunner: T,
     private val logType: LogType,
-    initialViewState: V
+    private val initialViewState: () -> V
 ) : ViewModel(), KoinComponent {
     private val logger = Logger.withTag("IConfigurationViewModel")
     private var testStartDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).toString()
 
-    protected val contentViewState = MutableStateFlow(initialViewState)
+    protected val contentViewState = MutableStateFlow(initialViewState())
 
     private val serviceViewState = service.serviceState.mapReadonlyState {
         ServiceStateHeaderViewState(
@@ -138,9 +135,11 @@ abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationC
         }
     }
 
-    abstract fun discard()
+    fun discard() {
+        contentViewState.value = initialViewState()
+    }
 
-    abstract fun onSave()
+    fun onSave() = contentViewState.value.save()
 
     abstract fun initializeTestParams()
 

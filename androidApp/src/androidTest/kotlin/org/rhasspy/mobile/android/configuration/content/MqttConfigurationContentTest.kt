@@ -18,7 +18,7 @@ import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.onListItemSwitch
-import org.rhasspy.mobile.viewmodel.configuration.MqttConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

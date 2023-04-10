@@ -28,7 +28,7 @@ import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.requestExternalStoragePermissions
 import org.rhasspy.mobile.android.test.R
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import java.io.File
 import kotlin.test.assertTrue
 

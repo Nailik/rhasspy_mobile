@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.event
+package org.rhasspy.mobile.viewmodel.configuration
 
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList

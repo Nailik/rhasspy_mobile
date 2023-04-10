@@ -15,7 +15,6 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiAction.SelectAudioOutputOption
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiAction.SelectAudioPlayingOption
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiAction.ToggleUseCustomHttpEndpoint
-import org.rhasspy.mobile.viewmodel.configuration.test.AudioPlayingConfigurationTest
 
 /**
  * ViewModel for Audio Playing Configuration
@@ -33,7 +32,7 @@ class AudioPlayingConfigurationViewModel(
     service = service,
     testRunner = testRunner,
     logType = logType,
-    initialViewState = AudioPlayingConfigurationViewState.getInitial()
+    initialViewState = AudioPlayingConfigurationViewState::getInitial
 ) {
 
     fun onAction(action: AudioPlayingConfigurationUiAction) {
@@ -44,20 +43,6 @@ class AudioPlayingConfigurationViewModel(
             is ChangeAudioPlayingHttpEndpoint -> contentViewState.update { it.copy(audioPlayingHttpEndpoint = action.value) }
             is ChangeAudioPlayingMqttSiteId -> contentViewState.update { it.copy(audioPlayingMqttSiteId = action.value) }
         }
-    }
-
-    /**
-     * save data configuration
-     */
-    override fun onSave() {
-        contentViewState.value.save()
-    }
-
-    /**
-     * undo all changes
-     */
-    override fun discard() {
-        contentViewState.value = AudioPlayingConfigurationViewState.getInitial()
     }
 
     override fun initializeTestParams() {

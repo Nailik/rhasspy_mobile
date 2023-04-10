@@ -40,10 +40,10 @@ import org.rhasspy.mobile.android.theme.SetSystemColor
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationTestUiAction
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListAutoscroll
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListFiltered
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationTestViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListAutoscroll
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListFiltered
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationTestViewState
 
 /**
  * screen that's shown when a configuration is being tested

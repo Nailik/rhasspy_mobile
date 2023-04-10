@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTest
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationTest
 
 class TestViewModel : IConfigurationViewModel() {
 

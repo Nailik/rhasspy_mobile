@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration.test
+package org.rhasspy.mobile.viewmodel.configuration.speechtotext
 
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -10,6 +10,7 @@ import org.rhasspy.mobile.logic.services.recording.RecordingService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextServiceParams
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationTest
 
 class SpeechToTextConfigurationTest : IConfigurationTest() {
 

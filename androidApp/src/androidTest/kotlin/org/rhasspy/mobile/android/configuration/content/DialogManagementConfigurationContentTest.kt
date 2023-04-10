@@ -16,7 +16,7 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.onListItemRadioButton
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
-import org.rhasspy.mobile.viewmodel.configuration.DialogManagementConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
 import kotlin.test.assertEquals
 
 class DialogManagementConfigurationContentTest {

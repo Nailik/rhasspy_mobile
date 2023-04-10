@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.configuration
+package org.rhasspy.mobile.viewmodel.configuration.dialogmanagement
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
@@ -13,8 +13,8 @@ import org.rhasspy.mobile.platformspecific.combineAny
 import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.combineStateNotEquals
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.viewmodel.configuration.event.IConfigurationViewState.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.test.DialogManagementConfigurationTest
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewState.IConfigurationEditViewState
 
 /**
  * ViewModel for Dialog Management Configuration
@@ -87,26 +87,6 @@ class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
     //set new dialog management option
     fun selectDialogManagementOption(option: DialogManagementOption) {
         _dialogManagementOption.value = option
-    }
-
-    /**
-     * save data configuration
-     */
-    override fun onSave() {
-        ConfigurationSetting.dialogManagementOption.value = _dialogManagementOption.value
-        ConfigurationSetting.textAsrTimeout.value = _textAsrTimeout.value
-        ConfigurationSetting.intentRecognitionTimeout.value = _intentRecognitionTimeout.value
-        ConfigurationSetting.recordingTimeout.value = _recordingTimeout.value
-    }
-
-    /**
-     * undo all changes
-     */
-    override fun discard() {
-        _dialogManagementOption.value = ConfigurationSetting.dialogManagementOption.value
-        _textAsrTimeout.value = ConfigurationSetting.textAsrTimeout.value
-        _intentRecognitionTimeout.value = ConfigurationSetting.intentRecognitionTimeout.value
-        _recordingTimeout.value = ConfigurationSetting.recordingTimeout.value
     }
 
     override fun initializeTestParams() {
