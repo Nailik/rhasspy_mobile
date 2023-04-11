@@ -21,7 +21,7 @@ open class IntentHandlingService : IService() {
     private val params by inject<IntentHandlingServiceParams>()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
-    val serviceState = _serviceState.readOnly
+    override val serviceState = _serviceState.readOnly
 
     private val httpClientService by inject<HttpClientService>()
     private val homeAssistantService by inject<HomeAssistantService>()

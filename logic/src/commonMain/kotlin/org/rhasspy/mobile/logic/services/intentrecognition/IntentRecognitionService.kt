@@ -30,7 +30,7 @@ open class IntentRecognitionService : IService() {
     private val params by inject<IntentRecognitionServiceParams>()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
-    val serviceState = _serviceState.readOnly
+    override val serviceState = _serviceState.readOnly
 
     private val httpClientService by inject<HttpClientService>()
     private val mqttClientService by inject<MqttService>()

@@ -55,7 +55,7 @@ class WebServerService : IService() {
     private val logger = LogType.WebServerService.logger()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
-    val serviceState = _serviceState.readOnly
+    override val serviceState = _serviceState.readOnly
 
     private val params by inject<WebServerServiceParams>()
 

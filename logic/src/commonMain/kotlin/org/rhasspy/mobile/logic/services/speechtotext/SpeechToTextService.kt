@@ -38,7 +38,7 @@ open class SpeechToTextService : IService() {
     private val params by inject<SpeechToTextServiceParams>()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
-    val serviceState = _serviceState.readOnly
+    override val serviceState = _serviceState.readOnly
 
     private val httpClientService by inject<HttpClientService>()
     private val mqttClientService by inject<MqttService>()

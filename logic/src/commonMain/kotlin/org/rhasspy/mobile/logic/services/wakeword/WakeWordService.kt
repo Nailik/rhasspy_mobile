@@ -31,7 +31,7 @@ class WakeWordService : IService() {
     private val logger = LogType.WakeWordService.logger()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
-    val serviceState = _serviceState.readOnly
+    override val serviceState = _serviceState.readOnly
 
     private val params by inject<WakeWordServiceParams>()
     private val udpService by inject<UdpService> {

@@ -38,7 +38,7 @@ class HttpClientService : IService() {
     private val logger = LogType.HttpClientService.logger()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
-    val serviceState = _serviceState.readOnly
+    override val serviceState = _serviceState.readOnly
 
     private val params by inject<HttpClientServiceParams>()
 
