@@ -1,20 +1,16 @@
 package org.rhasspy.mobile.viewmodel.configuration.dialogmanagement
 
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import org.koin.core.component.get
-import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.data.service.option.DialogManagementOption
-import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.platformspecific.combineAny
-import org.rhasspy.mobile.platformspecific.combineState
-import org.rhasspy.mobile.platformspecific.combineStateNotEquals
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiAction.ChangeIntentRecognitionTimeout
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiAction.ChangeRecordingTimeout
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiAction.ChangeTextAsrTimeout
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiAction.SelectDialogManagementOption
 
 /**
  * ViewModel for Dialog Management Configuration
@@ -22,81 +18,41 @@ import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.IConfig
  * Current Option
  * all Options as list
  */
-class DialogManagementConfigurationViewModel : IConfigurationViewModel() {
+class DialogManagementConfigurationViewModel(
+    service: DialogManagerService,
+    testRunner: DialogManagementConfigurationTest
+) : IConfigurationViewModel<DialogManagementConfigurationTest, DialogManagementConfigurationViewState>(
+    service = service,
+    testRunner = testRunner,
+    initialViewState = DialogManagementConfigurationViewState()
+) {
 
-    override val testRunner by inject<DialogManagementConfigurationTest>()
-    override val logType = LogType.DialogManagerService
-    override val serviceState get() = get<DialogManagerService>().serviceState
-
-    //unsaved data
-    private val _dialogManagementOption = MutableStateFlow(ConfigurationSetting.dialogManagementOption.value)
-    private val _textAsrTimeoutText = MutableStateFlow(ConfigurationSetting.textAsrTimeout.value.toString())
-    private val _textAsrTimeout = MutableStateFlow(ConfigurationSetting.textAsrTimeout.value)
-    private val _intentRecognitionTimeoutText = MutableStateFlow(ConfigurationSetting.intentRecognitionTimeout.value.toString())
-    private val _intentRecognitionTimeout = MutableStateFlow(ConfigurationSetting.intentRecognitionTimeout.value)
-    private val _recordingTimeoutText = MutableStateFlow(ConfigurationSetting.recordingTimeout.value.toString())
-    private val _recordingTimeout = MutableStateFlow(ConfigurationSetting.recordingTimeout.value)
-
-    //unsaved ui data
-    val dialogManagementOption = _dialogManagementOption.readOnly
-    val textAsrTimeoutText = _textAsrTimeoutText.readOnly
-    val intentRecognitionTimeoutText = _intentRecognitionTimeoutText.readOnly
-    val recordingTimeoutText = _recordingTimeoutText.readOnly
-
-    fun updateTextAsrTimeout(connectionTimeout: String) {
-        val text = connectionTimeout.replace("""[-,. ]""".toRegex(), "")
-        _textAsrTimeoutText.value = text
-        _textAsrTimeout.value = text.toLongOrNull() ?: 0L
+    fun onAction(action: DialogManagementConfigurationUiAction) {
+        contentViewState.update {
+            when (action) {
+                is ChangeIntentRecognitionTimeout -> it.copy(intentRecognitionTimeoutText = action.value)
+                is ChangeRecordingTimeout -> it.copy(recordingTimeoutText = action.value)
+                is ChangeTextAsrTimeout -> it.copy(textAsrTimeoutText = action.value)
+                is SelectDialogManagementOption -> it.copy(dialogManagementOption = action.option)
+            }
+        }
     }
 
-    fun updateIntentRecognitionTimeout(connectionTimeout: String) {
-        val text = connectionTimeout.replace("""[-,. ]""".toRegex(), "")
-        _intentRecognitionTimeoutText.value = text
-        _intentRecognitionTimeout.value = text.toLongOrNull() ?: 0L
-    }
-
-    fun updateRecordingTimeout(connectionTimeout: String) {
-        val text = connectionTimeout.replace("""[-,. ]""".toRegex(), "")
-        _recordingTimeoutText.value = text
-        _recordingTimeout.value = text.toLongOrNull() ?: 0L
-    }
-
-    private val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(_dialogManagementOption, ConfigurationSetting.dialogManagementOption.data),
-        combineStateNotEquals(_textAsrTimeout, ConfigurationSetting.textAsrTimeout.data),
-        combineStateNotEquals(_intentRecognitionTimeout, ConfigurationSetting.intentRecognitionTimeout.data),
-        combineStateNotEquals(_recordingTimeout, ConfigurationSetting.recordingTimeout.data)
-    )
-
-    val IConfigurationEditViewState = combineState(hasUnsavedChanges, _dialogManagementOption) { hasUnsavedChanges, dialogManagementOption ->
-        IConfigurationEditViewState(
-            hasUnsavedChanges = hasUnsavedChanges,
-            isTestingEnabled = dialogManagementOption != DialogManagementOption.Disabled,
-            serviceViewState = serviceViewState
-        )
-    }
-
-    //all options
-    val dialogManagementOptionList = DialogManagementOption::values
-
-    //if local dialog management settings should be visible
-    fun isLocalDialogManagementSettingsVisible(option: DialogManagementOption): Boolean {
-        return option == DialogManagementOption.Local
-    }
-
-    //set new dialog management option
-    fun selectDialogManagementOption(option: DialogManagementOption) {
-        _dialogManagementOption.value = option
+    override fun onSave() {
+        ConfigurationSetting.dialogManagementOption.value = data.dialogManagementOption
+        ConfigurationSetting.textAsrTimeout.value = data.textAsrTimeout
+        ConfigurationSetting.intentRecognitionTimeout.value = data.intentRecognitionTimeout
+        ConfigurationSetting.recordingTimeout.value = data.recordingTimeout
     }
 
     override fun initializeTestParams() {
         get<DialogManagerServiceParams> {
             parametersOf(
                 DialogManagerServiceParams(
-                    option = _dialogManagementOption.value,
-                    asrTimeout = _textAsrTimeout.value,
-                    intentRecognitionTimeout = _intentRecognitionTimeout.value,
-                    recordingTimeout = _recordingTimeout.value,
+                    option = data.dialogManagementOption,
+                    asrTimeout = data.textAsrTimeout,
+                    intentRecognitionTimeout = data.intentRecognitionTimeout,
+                    recordingTimeout = data.recordingTimeout
                 )
             )
         }

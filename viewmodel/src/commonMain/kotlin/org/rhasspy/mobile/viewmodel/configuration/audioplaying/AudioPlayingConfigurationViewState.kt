@@ -19,10 +19,11 @@ data class AudioPlayingConfigurationViewState(
     val audioPlayingMqttSiteId: String = ConfigurationSetting.audioPlayingMqttSiteId.value
 ) : IConfigurationEditViewState {
 
-    override val hasUnsavedChanges: Boolean get() = !(audioPlayingOption == ConfigurationSetting.audioPlayingOption.value &&
-            isUseCustomAudioPlayingHttpEndpoint == ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value &&
-            audioPlayingHttpEndpoint == ConfigurationSetting.audioPlayingHttpEndpoint.value &&
-            audioPlayingMqttSiteId == ConfigurationSetting.audioPlayingMqttSiteId.value)
+    override val hasUnsavedChanges: Boolean
+        get() = !(audioPlayingOption == ConfigurationSetting.audioPlayingOption.value &&
+                isUseCustomAudioPlayingHttpEndpoint == ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value &&
+                audioPlayingHttpEndpoint == ConfigurationSetting.audioPlayingHttpEndpoint.value &&
+                audioPlayingMqttSiteId == ConfigurationSetting.audioPlayingMqttSiteId.value)
 
     override val isTestingEnabled: Boolean get() = audioPlayingOption != AudioPlayingOption.Disabled
 

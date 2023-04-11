@@ -77,17 +77,18 @@ private fun AudioPlayingOptionContent(
         values = viewState.audioPlayingOptionList
     ) {
 
-        when (viewState.audioPlayingOption) {
+        when (it) {
             AudioPlayingOption.Local -> LocalConfigurationContent(
                 audioOutputOption = viewState.audioOutputOption,
                 audioOutputOptionList = viewState.audioOutputOptionList,
                 onAction = onAction
             )
+
             AudioPlayingOption.RemoteHTTP -> HttpEndpointConfigurationContent(
                 isUseCustomAudioPlayingHttpEndpoint = viewState.isUseCustomAudioPlayingHttpEndpoint,
                 audioPlayingHttpEndpoint = viewState.audioPlayingHttpEndpoint,
                 onAction = onAction
-                )
+            )
             AudioPlayingOption.RemoteMQTT -> MqttSiteIdConfigurationContent(
             audioPlayingMqttSiteId = viewState.audioPlayingMqttSiteId,
             onAction = onAction

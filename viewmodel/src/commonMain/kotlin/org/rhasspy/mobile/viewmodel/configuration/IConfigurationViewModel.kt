@@ -20,7 +20,6 @@ import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.logger.FileLogger
 import org.rhasspy.mobile.logic.logger.LogElement
 import org.rhasspy.mobile.logic.logger.LogLevel
-import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.logic.update
@@ -40,7 +39,6 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationEditViewState>(
     private val service: IService,
     internal val testRunner: T,
-    private val logType: LogType,
     private val initialViewState: V
 ) : ViewModel(), KoinComponent {
     private val logger = Logger.withTag("IConfigurationViewModel")
@@ -68,6 +66,8 @@ abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationE
     )
 
     protected val contentViewState = MutableStateFlow(initialViewState)
+
+    protected val data get() = contentViewState.value
 
     private val _viewState = MutableStateFlow(
         ConfigurationViewState(
@@ -105,7 +105,7 @@ abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationE
                         .copy(
                             logEvents = logEvents.mapReadonlyState { events ->
                                 if (it.isListFiltered) {
-                                    events.filter { event -> event.tag == logType.name && event.time >= testStartDate }
+                                    events.filter { event -> event.tag == service.logType.name && event.time >= testStartDate }
                                         .toImmutableList()
                                 } else {
                                     events.toImmutableList()

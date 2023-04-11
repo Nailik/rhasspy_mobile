@@ -3,7 +3,6 @@ package org.rhasspy.mobile.viewmodel.configuration.audioplaying
 import kotlinx.coroutines.flow.update
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingServiceParams
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
@@ -27,12 +26,10 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
  */
 class AudioPlayingConfigurationViewModel(
     service: AudioPlayingService,
-    testRunner: AudioPlayingConfigurationTest,
-    logType: LogType
+    testRunner: AudioPlayingConfigurationTest
 ) : IConfigurationViewModel<AudioPlayingConfigurationTest, AudioPlayingConfigurationViewState>(
     service = service,
     testRunner = testRunner,
-    logType = logType,
     initialViewState = AudioPlayingConfigurationViewState()
 ) {
 
@@ -49,18 +46,18 @@ class AudioPlayingConfigurationViewModel(
     }
 
     override fun onSave() {
-        ConfigurationSetting.audioPlayingOption.value = contentViewState.value.audioPlayingOption
-        ConfigurationSetting.audioOutputOption.value = contentViewState.value.audioOutputOption
-        ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value = contentViewState.value.isUseCustomAudioPlayingHttpEndpoint
-        ConfigurationSetting.audioPlayingHttpEndpoint.value = contentViewState.value.audioPlayingHttpEndpoint
-        ConfigurationSetting.audioPlayingMqttSiteId.value = contentViewState.value.audioPlayingMqttSiteId
+        ConfigurationSetting.audioPlayingOption.value = data.audioPlayingOption
+        ConfigurationSetting.audioOutputOption.value = data.audioOutputOption
+        ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value = data.isUseCustomAudioPlayingHttpEndpoint
+        ConfigurationSetting.audioPlayingHttpEndpoint.value = data.audioPlayingHttpEndpoint
+        ConfigurationSetting.audioPlayingMqttSiteId.value = data.audioPlayingMqttSiteId
     }
 
     override fun initializeTestParams() {
         get<AudioPlayingServiceParams> {
             parametersOf(
                 AudioPlayingServiceParams(
-                    audioPlayingOption = contentViewState.value.audioPlayingOption
+                    audioPlayingOption = data.audioPlayingOption
                 )
             )
         }
@@ -68,8 +65,8 @@ class AudioPlayingConfigurationViewModel(
         get<HttpClientServiceParams> {
             parametersOf(
                 HttpClientServiceParams(
-                    isUseCustomAudioPlayingEndpoint = contentViewState.value.isUseCustomAudioPlayingHttpEndpoint,
-                    audioPlayingHttpEndpoint = contentViewState.value.audioPlayingHttpEndpoint
+                    isUseCustomAudioPlayingEndpoint = data.isUseCustomAudioPlayingHttpEndpoint,
+                    audioPlayingHttpEndpoint = data.audioPlayingHttpEndpoint
                 )
             )
         }
@@ -77,7 +74,7 @@ class AudioPlayingConfigurationViewModel(
         get<LocalAudioServiceParams> {
             parametersOf(
                 LocalAudioServiceParams(
-                    audioOutputOption = contentViewState.value.audioOutputOption
+                    audioOutputOption = data.audioOutputOption
                 )
             )
         }
@@ -85,7 +82,7 @@ class AudioPlayingConfigurationViewModel(
         get<MqttServiceParams> {
             parametersOf(
                 MqttServiceParams(
-                    audioPlayingMqttSiteId = contentViewState.value.audioPlayingMqttSiteId
+                    audioPlayingMqttSiteId = data.audioPlayingMqttSiteId
                 )
             )
         }

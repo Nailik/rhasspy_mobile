@@ -113,3 +113,5 @@ inline fun <T> Array<out T>.toImmutableList(): ImmutableList<T> {
         else -> this.toList().toImmutableList()
     }
 }
+
+fun String.toLongOrZero(): Long = toLongOrNull() ?: 0L

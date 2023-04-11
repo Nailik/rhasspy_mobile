@@ -2,55 +2,32 @@ package org.rhasspy.mobile.viewmodel.configuration.dialogmanagement
 
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.ServiceStateHeaderViewState
+import org.rhasspy.mobile.platformspecific.toImmutableList
+import org.rhasspy.mobile.platformspecific.toLongOrZero
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 
 @Stable
 data class DialogManagementConfigurationViewState(
-    val dialogManagementOptionList: ImmutableList<DialogManagementOption>,
-    val dialogManagementOption: DialogManagementOption,
-    val textAsrTimeoutText: String,
-    val textAsrTimeout: Long,
-    val intentRecognitionTimeoutText: String,
-    val intentRecognitionTimeout: Long,
-    val recordingTimeoutText: String,
-    val recordingTimeout: Long
-): IConfigurationContentViewState() {
+    val dialogManagementOptionList: ImmutableList<DialogManagementOption> = DialogManagementOption.values().toImmutableList(),
+    val dialogManagementOption: DialogManagementOption = ConfigurationSetting.dialogManagementOption.value,
+    val textAsrTimeoutText: String = ConfigurationSetting.textAsrTimeout.value.toString(),
+    val intentRecognitionTimeoutText: String = ConfigurationSetting.intentRecognitionTimeout.value.toString(),
+    val recordingTimeoutText: String = ConfigurationSetting.recordingTimeout.value.toString()
+) : IConfigurationEditViewState {
 
-    companion object {
-        fun getInitial() = DialogManagementConfigurationViewState(
-            dialogManagementOptionList = DialogManagementOption.values().toList().toImmutableList(),
-            dialogManagementOption = ConfigurationSetting.dialogManagementOption.value,
-            textAsrTimeoutText = ConfigurationSetting.textAsrTimeout.value.toString(),
-            textAsrTimeout = ConfigurationSetting.textAsrTimeout.value,
-            intentRecognitionTimeoutText = ConfigurationSetting.intentRecognitionTimeout.value.toString(),
-            intentRecognitionTimeout = ConfigurationSetting.intentRecognitionTimeout.value,
-            recordingTimeoutText = ConfigurationSetting.recordingTimeout.value.toString(),
-            recordingTimeout = ConfigurationSetting.recordingTimeout.value
-        )
-    }
+    val textAsrTimeout: Long get() = textAsrTimeoutText.toLongOrZero()
+    val intentRecognitionTimeout: Long get() = intentRecognitionTimeoutText.toLongOrZero()
+    val recordingTimeout: Long get() = recordingTimeoutText.toLongOrZero()
 
-    override fun getEditViewState(serviceViewState: StateFlow<ServiceStateHeaderViewState>): IConfigurationEditViewState {
-        return IConfigurationEditViewState(
-            hasUnsavedChanges =
-            !(dialogManagementOption == ConfigurationSetting.dialogManagementOption.value &&
-                    textAsrTimeout == ConfigurationSetting.textAsrTimeout.value &&
-                    intentRecognitionTimeout == ConfigurationSetting.intentRecognitionTimeout.value &&
-                    recordingTimeout == ConfigurationSetting.recordingTimeout.value),
-            isTestingEnabled = dialogManagementOption != DialogManagementOption.Disabled,
-            serviceViewState = serviceViewState
-        )
-    }
+    override val hasUnsavedChanges: Boolean
+        get() = !(dialogManagementOption == ConfigurationSetting.dialogManagementOption.value &&
+                textAsrTimeout == ConfigurationSetting.textAsrTimeout.value &&
+                intentRecognitionTimeout == ConfigurationSetting.intentRecognitionTimeout.value &&
+                recordingTimeout == ConfigurationSetting.recordingTimeout.value)
 
-    override fun save() {
-        ConfigurationSetting.dialogManagementOption.value = dialogManagementOption
-        ConfigurationSetting.textAsrTimeout.value = textAsrTimeout
-        ConfigurationSetting.intentRecognitionTimeout.value = intentRecognitionTimeout
-        ConfigurationSetting.recordingTimeout.value = recordingTimeout
-    }
+    override val isTestingEnabled: Boolean get() = dialogManagementOption != DialogManagementOption.Disabled
+
 
 }
