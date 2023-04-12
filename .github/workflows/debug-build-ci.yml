@@ -8,8 +8,8 @@ on:
 
 
 jobs:
-  runs-on: self-hosted
   build:
+    runs-on: self-hosted
     if: contains(github.event.pull_request.labels.*.name, 'buildDebug')
     steps:
       - name: Build Debug
