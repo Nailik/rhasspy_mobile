@@ -8,8 +8,10 @@ on:
 
 
 jobs:
-  build:
+  start:
     if: contains(github.event.pull_request.labels.*.name, 'buildDebug')
+  build:
+    needs: start
     uses: ./.github/workflows/build-ci.yml
     with:
       BUILD_TYPE: Debug
