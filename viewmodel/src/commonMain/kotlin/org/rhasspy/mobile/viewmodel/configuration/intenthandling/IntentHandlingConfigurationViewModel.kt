@@ -1,72 +1,52 @@
 package org.rhasspy.mobile.viewmodel.configuration.intenthandling
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import org.koin.core.component.get
-import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
-import org.rhasspy.mobile.logic.logger.LogType
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantServiceParams
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
-import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingService
 import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingServiceParams
+import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiAction.ChangeIntentHandlingHassAccessToken
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiAction.ChangeIntentHandlingHassEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiAction.ChangeIntentHandlingHttpEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiAction.SelectIntentHandlingHassOption
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiAction.SelectIntentHandlingOption
 
-class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
+class IntentHandlingConfigurationViewModel(
+    service: DialogManagerService,
+    testRunner: IntentHandlingConfigurationTest
+) : IConfigurationViewModel<IntentHandlingConfigurationTest, IntentHandlingConfigurationViewState>(
+    service = service,
+    testRunner = testRunner,
+    initialViewState = IntentHandlingConfigurationViewState()
+){
 
-    override val testRunner by inject<IntentHandlingConfigurationTest>()
-    override val logType = LogType.IntentHandlingService
-    override val serviceState get() = get<IntentHandlingService>().serviceState
+    fun onAction(action: IntentHandlingConfigurationUiAction) {
+        contentViewState.update {
+            when(action) {
+                is ChangeIntentHandlingHassAccessToken -> it.copy(intentHandlingHassAccessToken = action.value)
+                is ChangeIntentHandlingHassEndpoint -> it.copy(intentHandlingHassEndpoint = action.value)
+                is ChangeIntentHandlingHttpEndpoint -> it.copy(intentHandlingHttpEndpoint = action.value)
+                is SelectIntentHandlingHassOption -> it.copy(intentHandlingHomeAssistantOption = action.option)
+                is SelectIntentHandlingOption -> it.copy(intentHandlingOption = action.option)
+            }
+        }
+    }
 
     private val _testIntentNameText = MutableStateFlow("")
     val testIntentNameText = _testIntentNameText.readOnly
     private val _testIntentText = MutableStateFlow("")
     val testIntentText = _testIntentText.readOnly
 
-
     //show input field for endpoint
     fun isRemoteHttpSettingsVisible(option: IntentHandlingOption): Boolean {
         return option == IntentHandlingOption.RemoteHTTP
-    }
-
-    //show fields for home assistant settings
-    fun isHomeAssistantSettingsVisible(option: IntentHandlingOption): Boolean {
-        return option == IntentHandlingOption.HomeAssistant
-    }
-
-    //all options
-    val intentHandlingOptionList = IntentHandlingOption::values
-
-    //set new intent handling option
-    fun selectIntentHandlingOption(option: IntentHandlingOption) {
-        _intentHandlingOption.value = option
-    }
-
-    //edit endpoint
-    fun changeIntentHandlingHttpEndpoint(endpoint: String) {
-        _intentHandlingHttpEndpoint.value = endpoint
-    }
-
-    //edit endpoint
-    fun changeIntentHandlingHassEndpoint(endpoint: String) {
-        _intentHandlingHassEndpoint.value = endpoint
-    }
-
-    //edit endpoint
-    fun changeIntentHandlingHassAccessToken(token: String) {
-        _intentHandlingHassAccessToken.value = token
-    }
-
-    //choose hass intent handling as event
-    fun selectIntentHandlingHassEvent() {
-        _intentHandlingHomeAssistantOption.value = HomeAssistantIntentHandlingOption.Event
-    }
-
-    //choose hass intent handling as intent
-    fun selectIntentHandlingHassIntent() {
-        _intentHandlingHomeAssistantOption.value = HomeAssistantIntentHandlingOption.Intent
     }
 
     fun updateTestIntentNameText(text: String) {
@@ -77,11 +57,19 @@ class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
         _testIntentText.value = text
     }
 
+    override fun onSave() {
+        ConfigurationSetting.intentHandlingOption.value = data.intentHandlingOption
+        ConfigurationSetting.intentHandlingHttpEndpoint.value = data.intentHandlingHttpEndpoint
+        ConfigurationSetting.intentHandlingHassEndpoint.value = data.intentHandlingHassEndpoint
+        ConfigurationSetting.intentHandlingHassAccessToken.value = data.intentHandlingHassAccessToken
+        ConfigurationSetting.intentHandlingHomeAssistantOption.value = data.intentHandlingHomeAssistantOption
+    }
+
     override fun initializeTestParams() {
         get<IntentHandlingServiceParams> {
             parametersOf(
                 IntentHandlingServiceParams(
-                    intentHandlingOption = _intentHandlingOption.value
+                    intentHandlingOption = data.intentHandlingOption
                 )
             )
         }
@@ -89,10 +77,10 @@ class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
         get<HttpClientServiceParams> {
             parametersOf(
                 HttpClientServiceParams(
-                    intentHandlingHttpEndpoint = _intentHandlingHttpEndpoint.value,
-                    intentHandlingHassEndpoint = _intentHandlingHassEndpoint.value,
-                    intentHandlingHassAccessToken = _intentHandlingHassAccessToken.value,
-                    intentHandlingOption = _intentHandlingOption.value
+                    intentHandlingHttpEndpoint = data.intentHandlingHttpEndpoint,
+                    intentHandlingHassEndpoint = data.intentHandlingHassEndpoint,
+                    intentHandlingHassAccessToken = data.intentHandlingHassAccessToken,
+                    intentHandlingOption = data.intentHandlingOption
                 )
             )
         }
@@ -100,7 +88,7 @@ class IntentHandlingConfigurationViewModel : IConfigurationViewModel() {
         get<HomeAssistantServiceParams> {
             parametersOf(
                 HomeAssistantServiceParams(
-                    intentHandlingHomeAssistantOption = _intentHandlingHomeAssistantOption.value
+                    intentHandlingHomeAssistantOption = data.intentHandlingHomeAssistantOption
                 )
             )
         }
