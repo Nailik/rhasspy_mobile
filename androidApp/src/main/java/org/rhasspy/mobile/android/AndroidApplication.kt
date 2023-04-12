@@ -31,7 +31,6 @@ class AndroidApplication : Application(), KoinComponent {
     init {
         //catches all exceptions
         Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
-            println(exception)
             logger.a(exception) { "uncaught exception in Thread $thread" }
             exitProcess(2)
         }

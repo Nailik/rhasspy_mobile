@@ -24,9 +24,7 @@ import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
  *
  * when data is null the service was most probably mqtt and will return result in a call function
  */
-open class IntentRecognitionService : IService() {
-    private val logger = LogType.IntentRecognitionService.logger()
-
+open class IntentRecognitionService : IService(LogType.IntentRecognitionService) {
     private val params by inject<IntentRecognitionServiceParams>()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)

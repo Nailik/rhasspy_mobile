@@ -23,9 +23,7 @@ import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
  * events
  * intent
  */
-class HomeAssistantService : IService() {
-    private val logger = LogType.HomeAssistanceService.logger()
-
+class HomeAssistantService : IService(LogType.HomeAssistanceService) {
     private val params by inject<HomeAssistantServiceParams>()
     private val httpClientService by inject<HttpClientService>()
 

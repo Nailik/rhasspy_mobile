@@ -49,9 +49,7 @@ import org.rhasspy.mobile.platformspecific.mqtt.MqttTopicsPublish
 import org.rhasspy.mobile.platformspecific.mqtt.MqttTopicsSubscription
 import org.rhasspy.mobile.platformspecific.readOnly
 
-class MqttService : IService() {
-    private val logger = LogType.MqttService.logger()
-
+class MqttService : IService(LogType.MqttService) {
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly
 

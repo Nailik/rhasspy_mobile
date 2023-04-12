@@ -32,9 +32,7 @@ import org.rhasspy.mobile.platformspecific.extensions.commonSize
  *
  * when data is null the service was most probably mqtt and will return result in a call function
  */
-open class SpeechToTextService : IService() {
-    private val logger = LogType.SpeechToTextService.logger()
-
+open class SpeechToTextService : IService(LogType.SpeechToTextService) {
     private val params by inject<SpeechToTextServiceParams>()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)

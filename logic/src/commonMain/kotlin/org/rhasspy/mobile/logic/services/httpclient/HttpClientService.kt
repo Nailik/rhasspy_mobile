@@ -34,9 +34,7 @@ import org.rhasspy.mobile.platformspecific.extensions.commonData
  *
  * functions return the result or an exception
  */
-class HttpClientService : IService() {
-    private val logger = LogType.HttpClientService.logger()
-
+class HttpClientService : IService(LogType.HttpClientService) {
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly
 

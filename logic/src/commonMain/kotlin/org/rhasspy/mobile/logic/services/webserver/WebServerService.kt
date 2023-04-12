@@ -51,9 +51,7 @@ import org.rhasspy.mobile.logic.services.speechtotext.StreamContent
  * - parameter Invalid: BadRequest
  * - else: determined by Ktor
  */
-class WebServerService : IService() {
-    private val logger = LogType.WebServerService.logger()
-
+class WebServerService : IService(LogType.WebServerService) {
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly
 

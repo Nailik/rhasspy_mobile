@@ -14,9 +14,7 @@ import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder.Companion
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.settings.AppSetting
 
-class UdpService(host: String, port: Int) : IService() {
-    private val logger = LogType.UdpService.logger()
-
+class UdpService(host: String, port: Int) : IService(LogType.UdpService) {
     private var socketAddress: SocketAddress? = null
     private var sendChannel: SendChannel<Datagram>? = null
     private var hasLoggedError = false

@@ -19,9 +19,7 @@ import org.rhasspy.mobile.data.service.option.TextToSpeechOption
  *
  * when data is null the service was most probably mqtt and will return result in a call function
  */
-open class TextToSpeechService : IService() {
-    private val logger = LogType.TextToSpeechService.logger()
-
+open class TextToSpeechService : IService(LogType.TextToSpeechService) {
     private val params by inject<TextToSpeechServiceParams>()
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)

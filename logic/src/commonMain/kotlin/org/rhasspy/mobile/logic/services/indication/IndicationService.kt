@@ -10,9 +10,7 @@ import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.indication.NativeIndication
 import org.rhasspy.mobile.platformspecific.readOnly
 
-class IndicationService : IService(), KoinComponent {
-    private val logger = LogType.IndicationService.logger()
-
+class IndicationService : IService(LogType.IndicationService), KoinComponent {
     private val localAudioService by inject<LocalAudioService>()
 
     //states are used by overlay

@@ -16,9 +16,7 @@ import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import kotlin.coroutines.resume
 
-class LocalAudioService : IService() {
-    private val logger = LogType.LocalAudioService.logger()
-
+class LocalAudioService : IService(LogType.LocalAudioService) {
     private val params by inject<LocalAudioServiceParams>()
 
     private val audioPlayer = AudioPlayer()

@@ -27,9 +27,7 @@ import org.rhasspy.mobile.data.service.option.WakeWordOption
  *
  * calls stateMachineService when hot word was detected
  */
-class WakeWordService : IService() {
-    private val logger = LogType.WakeWordService.logger()
-
+class WakeWordService : IService(LogType.WakeWordService) {
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly
 

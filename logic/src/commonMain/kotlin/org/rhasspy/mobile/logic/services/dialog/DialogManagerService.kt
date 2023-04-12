@@ -34,8 +34,7 @@ import kotlin.time.toDuration
 /**
  * The Dialog Manager handles the various states and goes to the next state according to the function that is called
  */
-class DialogManagerService : IService() {
-    private val logger = LogType.DialogManagerService.logger()
+class DialogManagerService : IService(LogType.DialogManagerService) {
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly

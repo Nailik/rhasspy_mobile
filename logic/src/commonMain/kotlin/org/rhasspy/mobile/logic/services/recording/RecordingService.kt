@@ -28,9 +28,7 @@ import kotlin.time.Duration.Companion.milliseconds
  *
  * recording is started and stopped automatically when output is observed
  */
-class RecordingService : IService() {
-    private val logger = LogType.RecordingService.logger()
-
+class RecordingService : IService(LogType.RecordingService) {
     private val serviceMiddleware by inject<ServiceMiddleware>()
     private val audioRecorder by inject<AudioRecorder>()
 
