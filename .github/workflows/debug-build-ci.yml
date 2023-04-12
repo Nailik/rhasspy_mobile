@@ -12,15 +12,13 @@ jobs:
     runs-on: self-hosted
     if: contains(github.event.pull_request.labels.*.name, 'buildDebug')
     steps:
-  build:
-    runs-on: self-hosted
-    needs: start
-    uses: ./.github/workflows/build-ci.yml
-    with:
-      BUILD_TYPE: Debug
-      BUILD_TYPE_LOWERCASE: debug
-    secrets:
-      SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-      ALIAS: ${{ secrets.ALIAS }}
-      KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
-      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      - name: Build Debug
+        uses: ./.github/workflows/build-ci.yml
+        with:
+          BUILD_TYPE: Debug
+          BUILD_TYPE_LOWERCASE: debug
+        secrets:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          ALIAS: ${{ secrets.ALIAS }}
+          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
