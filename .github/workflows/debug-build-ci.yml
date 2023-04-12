@@ -9,7 +9,6 @@ on:
 
 jobs:
   start:
-    runs-on: self-hosted
     if: contains(github.event.pull_request.labels.*.name, 'buildDebug')
     uses: ./.github/workflows/build-ci.yml
     with:
