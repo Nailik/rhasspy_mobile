@@ -131,6 +131,7 @@ android {
                     .replace("androidApp", "rhasspy_mobile_V_$Version")
                     .replace("-release-unsigned", "")
                     .replace("-debug-unsigned", "")
+                    .replace("-debug", "")
             }
     }
 
