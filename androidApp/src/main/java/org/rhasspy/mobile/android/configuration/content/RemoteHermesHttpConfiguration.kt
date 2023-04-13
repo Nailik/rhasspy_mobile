@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,6 +19,10 @@ import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.ToggleHttpSSLVerificationDisabled
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.UpdateHttpClientServerEndpointHost
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.UpdateHttpClientServerEndpointPort
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.UpdateHttpClientTimeout
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewModel
 
 /**
@@ -28,21 +33,23 @@ import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesH
 @Composable
 fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfigurationViewModel = get()) {
 
+    val viewState by viewModel.viewState.collectAsState()
+
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.RemoteHermesHttpConfiguration),
         title = MR.strings.remoteHermesHTTP.stable,
-        viewState = viewModel.viewState.collectAsState().value,
+        viewState = viewState,
         onAction = viewModel::onAction,
         testContent = { TestContent(viewModel) }
-    ) {
+    ) { contentViewState ->
 
         item {
             //base http endpoint
             TextFieldListItem(
                 label = MR.strings.baseHost.stable,
                 modifier = Modifier.testTag(TestTag.Host),
-                value = viewModel.httpClientServerEndpointHost.collectAsState().value,
-                onValueChange = viewModel::updateHttpClientServerEndpointHost,
+                value = contentViewState.httpClientServerEndpointHost,
+                onValueChange = {  viewModel.onAction(UpdateHttpClientServerEndpointHost(it)) },
                 isLastItem = false
             )
         }
@@ -52,8 +59,8 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
             TextFieldListItem(
                 label = MR.strings.port.stable,
                 modifier = Modifier.testTag(TestTag.Port),
-                value = viewModel.httpClientServerEndpointPort.collectAsState().value,
-                onValueChange = viewModel::updateHttpClientServerEndpointPort,
+                value = contentViewState.httpClientServerEndpointPortText,
+                onValueChange = { viewModel.onAction(UpdateHttpClientServerEndpointPort(it)) },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
             )
         }
@@ -63,8 +70,8 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
             TextFieldListItem(
                 label = MR.strings.requestTimeout.stable,
                 modifier = Modifier.testTag(TestTag.Timeout),
-                value = viewModel.httpClientTimeoutText.collectAsState().value,
-                onValueChange = viewModel::updateHttpClientTimeout,
+                value = contentViewState.httpClientTimeoutText,
+                onValueChange = {  viewModel.onAction(UpdateHttpClientTimeout(it)) },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
             )
         }
@@ -75,8 +82,8 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
                 text = MR.strings.disableSSLValidation.stable,
                 modifier = Modifier.testTag(TestTag.SSLSwitch),
                 secondaryText = MR.strings.disableSSLValidationInformation.stable,
-                isChecked = viewModel.isHttpSSLVerificationDisabled.collectAsState().value,
-                onCheckedChange = viewModel::toggleHttpSSLVerificationDisabled
+                isChecked = contentViewState.isHttpSSLVerificationDisabled,
+                onCheckedChange = {  viewModel.onAction(ToggleHttpSSLVerificationDisabled) },
             )
         }
 

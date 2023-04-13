@@ -2,44 +2,56 @@ package org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
-import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
-import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
+import org.rhasspy.mobile.logic.update
 import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.ToggleHttpSSLVerificationDisabled
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.UpdateHttpClientServerEndpointHost
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.UpdateHttpClientServerEndpointPort
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.UpdateHttpClientTimeout
 
-class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
-    override val testRunner by inject<RemoteHermesHttpConfigurationTest>()
-    override val logType = LogType.HttpClientService
-    override val serviceState get() = get<HttpClientService>().serviceState
-    val isRecordingAudio = testRunner.isRecording
+class RemoteHermesHttpConfigurationViewModel(
+    service: HttpClientService,
+    testRunner: RemoteHermesHttpConfigurationTest
+) : IConfigurationViewModel<RemoteHermesHttpConfigurationTest, RemoteHermesHttpConfigurationViewState>(
+    service = service,
+    testRunner = testRunner,
+    initialViewState = RemoteHermesHttpConfigurationViewState()
+) {
 
-    //unsaved data
-    private val _httpClientServerEndpointHost =
-        MutableStateFlow(ConfigurationSetting.httpClientServerEndpointHost.value)
-    private val _httpClientServerEndpointPort =
-        MutableStateFlow(ConfigurationSetting.httpClientServerEndpointPort.value)
-    private val _httpClientServerEndpointPortText =
-        MutableStateFlow(ConfigurationSetting.httpClientServerEndpointPort.value.toString())
-    private val _httpClientTimeout = MutableStateFlow(ConfigurationSetting.httpClientTimeout.value)
-    private val _httpClientTimeoutText =
-        MutableStateFlow(ConfigurationSetting.httpClientTimeout.value.toString())
-    private val _isHttpSSLVerificationDisabled =
-        MutableStateFlow(ConfigurationSetting.isHttpClientSSLVerificationDisabled.value)
+    fun onAction(action: RemoteHermesHttpConfigurationUiAction){
+        when(action) {
+            is Change -> onChange(action)
+        }
+    }
 
-    //unsaved ui data
-    val httpClientServerEndpointHost = _httpClientServerEndpointHost.readOnly
-    val httpClientServerEndpointPort = _httpClientServerEndpointPortText.readOnly
-    val httpClientTimeoutText = _httpClientTimeoutText.readOnly
-    val isHttpSSLVerificationDisabled = _isHttpSSLVerificationDisabled.readOnly
+    private fun onChange(change: Change){
+        contentViewState.update {
+            when (change) {
+                ToggleHttpSSLVerificationDisabled -> it.copy(isHttpSSLVerificationDisabled = !it.isHttpSSLVerificationDisabled)
+                is UpdateHttpClientServerEndpointHost -> it.copy(httpClientServerEndpointHost = change.value)
+                is UpdateHttpClientServerEndpointPort -> it.copy(httpClientServerEndpointPortText = change.value)
+                is UpdateHttpClientTimeout -> it.copy(httpClientTimeoutText = change.value)
+            }
+        }
+    }
+
+    override fun onSave() {
+        ConfigurationSetting.httpClientServerEndpointHost.value = data.httpClientServerEndpointHost
+        ConfigurationSetting.httpClientServerEndpointPort.value = data.httpClientServerEndpointPort
+        ConfigurationSetting.isHttpClientSSLVerificationDisabled.value = data.isHttpSSLVerificationDisabled
+    }
+
 
     //test
     val isSpeechToTextTestVisible = combineState(
@@ -61,6 +73,8 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
         option == TextToSpeechOption.RemoteHTTP && !isUseCustomEndpoint
     }
 
+    val isRecordingAudio = testRunner.isRecording
+
     private val _testIntentRecognitionText = MutableStateFlow("")
     val testIntentRecognitionText = _testIntentRecognitionText.readOnly
     val isIntentRecognitionTestEnabled =
@@ -69,31 +83,6 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
     private val _testTextToSpeechText = MutableStateFlow("")
     val testTextToSpeechText = _testTextToSpeechText.readOnly
     val isTextToSpeechTestEnabled = _testTextToSpeechText.mapReadonlyState { it.isNotEmpty() }
-
-
-    //set new http server endpoint host
-    fun updateHttpClientServerEndpointHost(endpoint: String) {
-        _httpClientServerEndpointHost.value = endpoint
-    }
-
-    //set new http server endpoint port
-    fun updateHttpClientTimeout(timeout: String) {
-        val text = timeout.replace("""[-,. ]""".toRegex(), "")
-        _httpClientTimeoutText.value = text
-        _httpClientTimeout.value = text.toLongOrNull()
-    }
-
-    //set new http server endpoint port
-    fun updateHttpClientServerEndpointPort(port: String) {
-        val text = port.replace("""[-,. ]""".toRegex(), "")
-        _httpClientServerEndpointPortText.value = text
-        _httpClientServerEndpointPort.value = text.toIntOrNull() ?: 0
-    }
-
-    //set new intent recognition option
-    fun toggleHttpSSLVerificationDisabled(disabled: Boolean) {
-        _isHttpSSLVerificationDisabled.value = disabled
-    }
 
     //update intent test text
     fun updateTestIntentRecognitionText(text: String) {
@@ -109,9 +98,9 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
         get<HttpClientServiceParams> {
             parametersOf(
                 HttpClientServiceParams(
-                    isHttpSSLVerificationDisabled = _isHttpSSLVerificationDisabled.value,
-                    httpClientServerEndpointHost = _httpClientServerEndpointHost.value,
-                    httpClientServerEndpointPort = _httpClientServerEndpointPort.value
+                    isHttpSSLVerificationDisabled = data.isHttpSSLVerificationDisabled,
+                    httpClientServerEndpointHost = data.httpClientServerEndpointHost,
+                    httpClientServerEndpointPort = data.httpClientServerEndpointPort
                 )
             )
         }
@@ -119,8 +108,7 @@ class RemoteHermesHttpConfigurationViewModel : IConfigurationViewModel() {
 
     fun toggleRecording() = testRunner.toggleRecording()
 
-    fun runIntentRecognitionTest() =
-        testRunner.startIntentRecognitionTest(_testIntentRecognitionText.value)
+    fun runIntentRecognitionTest() = testRunner.startIntentRecognitionTest(_testIntentRecognitionText.value)
 
     fun runTextToSpeechTest() = testRunner.startTextToSpeechTest(_testTextToSpeechText.value)
 
