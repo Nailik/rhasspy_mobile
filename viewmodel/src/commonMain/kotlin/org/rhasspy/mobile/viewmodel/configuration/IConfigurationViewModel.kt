@@ -124,7 +124,6 @@ abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationE
 
         viewModelScope.launch(Dispatchers.Default) {
             onSave()
-
             get<NativeApplication>().reloadServiceModules()
 
             _viewState.update { it.copy(isLoading = false) }
@@ -132,9 +131,22 @@ abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationE
         }
     }
 
-    fun onDiscard() {
+    fun discard() {
         contentViewState.value = getInitialViewState()
+
+        _viewState.update { it.copy(isLoading = true) }
+
+        viewModelScope.launch(Dispatchers.Default) {
+            onDiscard()
+            get<NativeApplication>().reloadServiceModules()
+
+            _viewState.update { it.copy(isLoading = false) }
+            //TODO reset usaved changes
+        }
+
     }
+
+    open fun onDiscard() {}
 
     abstract fun onSave()
 

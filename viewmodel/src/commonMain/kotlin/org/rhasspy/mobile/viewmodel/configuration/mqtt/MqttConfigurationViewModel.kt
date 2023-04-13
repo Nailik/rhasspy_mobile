@@ -1,165 +1,100 @@
 package org.rhasspy.mobile.viewmodel.configuration.mqtt
 
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
-import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.mqtt.MqttServiceConnectionOptions
-import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.openLink
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.mqtt.MqttServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.platformspecific.combineAny
-import org.rhasspy.mobile.platformspecific.combineState
-import org.rhasspy.mobile.platformspecific.combineStateNotEquals
+import org.rhasspy.mobile.logic.update
+import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.ToggleMqttEnabled
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.ToggleMqttSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttConnectionTimeout
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttHost
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttKeepAliveInterval
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttKeyStoreFile
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttPassword
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttPort
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttRetryInterval
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttUserName
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Navigate
 
-class MqttConfigurationViewModel : IConfigurationViewModel() {
+class MqttConfigurationViewModel(
+    service: MqttService,
+    testRunner: MqttConfigurationTest
+) : IConfigurationViewModel<MqttConfigurationTest, MqttConfigurationViewState>(
+    service = service,
+    testRunner = testRunner,
+    initialViewState = MqttConfigurationViewState()
+) {
 
-    override val testRunner by inject<MqttConfigurationTest>()
-    override val logType = LogType.MqttService
-    override val serviceState get() = get<MqttService>().serviceState
-
-    //unsaved data
-    private val _isMqttEnabled = MutableStateFlow(ConfigurationSetting.isMqttEnabled.value)
-    private val _mqttHost = MutableStateFlow(ConfigurationSetting.mqttHost.value)
-    private val _mqttPort = MutableStateFlow(ConfigurationSetting.mqttPort.value)
-    private val _mqttPortText = MutableStateFlow(ConfigurationSetting.mqttPort.value.toString())
-    private val _mqttUserName = MutableStateFlow(ConfigurationSetting.mqttUserName.value)
-    private val _mqttPassword = MutableStateFlow(ConfigurationSetting.mqttPassword.value)
-    private val _isMqttSSLEnabled = MutableStateFlow(ConfigurationSetting.isMqttSSLEnabled.value)
-    private val _mqttConnectionTimeout =
-        MutableStateFlow(ConfigurationSetting.mqttConnectionTimeout.value)
-    private val _mqttConnectionTimeoutText =
-        MutableStateFlow(ConfigurationSetting.mqttConnectionTimeout.value.toString())
-    private val _mqttKeepAliveInterval =
-        MutableStateFlow(ConfigurationSetting.mqttKeepAliveInterval.value)
-    private val _mqttKeepAliveIntervalText =
-        MutableStateFlow(ConfigurationSetting.mqttKeepAliveInterval.value.toString())
-    private val _mqttRetryInterval = MutableStateFlow(ConfigurationSetting.mqttRetryInterval.value)
-    private val _mqttRetryIntervalText =
-        MutableStateFlow(ConfigurationSetting.mqttRetryInterval.value.toString())
-    private val _mqttKeyStoreFile = MutableStateFlow(ConfigurationSetting.mqttKeyStoreFile.value)
-
-    //unsaved ui data
-    val isMqttEnabled = _isMqttEnabled.readOnly
-    val mqttHost = _mqttHost.readOnly
-    val mqttPortText = _mqttPortText.readOnly
-    val mqttUserName = _mqttUserName.readOnly
-    val mqttPassword = _mqttPassword.readOnly
-    val isMqttSSLEnabled = _isMqttSSLEnabled.readOnly
-
-    val isMqttChooseCertificateVisible = isMqttSSLEnabled
-    val keyStoreFileText = _mqttKeyStoreFile.readOnly
-    val isKeyStoreFileTextVisible = _mqttKeyStoreFile.mapReadonlyState { it != null }
-
-    val mqttConnectionTimeoutText = _mqttConnectionTimeoutText.readOnly
-    val mqttKeepAliveIntervalText = _mqttKeepAliveIntervalText.readOnly
-    val mqttRetryIntervalText = _mqttRetryIntervalText.readOnly
-
-    private val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(_isMqttEnabled, ConfigurationSetting.isMqttEnabled.data),
-        combineStateNotEquals(_mqttHost, ConfigurationSetting.mqttHost.data),
-        combineStateNotEquals(_mqttPort, ConfigurationSetting.mqttPort.data),
-        combineStateNotEquals(_mqttUserName, ConfigurationSetting.mqttUserName.data),
-        combineStateNotEquals(_mqttPassword, ConfigurationSetting.mqttPassword.data),
-        combineStateNotEquals(_isMqttSSLEnabled, ConfigurationSetting.isMqttSSLEnabled.data),
-        combineStateNotEquals(
-            _mqttConnectionTimeout,
-            ConfigurationSetting.mqttConnectionTimeout.data
-        ),
-        combineStateNotEquals(
-            _mqttKeepAliveInterval,
-            ConfigurationSetting.mqttKeepAliveInterval.data
-        ),
-        combineStateNotEquals(_mqttRetryInterval, ConfigurationSetting.mqttRetryInterval.data)
-    )
-
-    val IConfigurationEditViewState = combineState(hasUnsavedChanges, _isMqttEnabled) { hasUnsavedChanges, isMqttEnabled ->
-        IConfigurationEditViewState(
-            hasUnsavedChanges = hasUnsavedChanges,
-            isTestingEnabled = isMqttEnabled,
-            serviceViewState = serviceViewState
-        )
+    fun onAction(action: MqttConfigurationUiAction){
+       when(action) {
+           is Change -> onChange(action)
+           is Navigate -> onNavigate(action)
+       }
     }
 
-    //show input field for endpoint
-    val isMqttSettingsVisible = _isMqttEnabled.mapReadonlyState { it }
-
-    //set new intent recognition option
-    fun toggleMqttEnabled(enabled: Boolean) {
-        _isMqttEnabled.value = enabled
-    }
-
-    //set mqtt host
-    fun updateMqttHost(host: String) {
-        _mqttHost.value = host
-    }
-
-    //set mqtt port
-    fun updateMqttPort(port: String) {
-        val text = port.replace("""[-,. ]""".toRegex(), "")
-        _mqttPortText.value = text
-        _mqttPort.value = text.toIntOrNull() ?: 0
-    }
-
-    //set mqtt username
-    fun updateMqttUserName(userName: String) {
-        _mqttUserName.value = userName
-    }
-
-    //set mqtt password
-    fun updateMqttPassword(password: String) {
-        _mqttPassword.value = password
-    }
-
-    //toggle if mqtt ssl is enabled
-    fun toggleMqttSSLEnabled(enabled: Boolean) {
-        _isMqttSSLEnabled.value = enabled
-    }
-
-    //open file chooser to select certificate
-    fun selectSSLCertificate() {
-        viewModelScope.launch {
-            FileUtils.selectFile(FolderType.CertificateFolder.Mqtt)?.also { path ->
-                _mqttKeyStoreFile.value = path
+    private fun onChange(change: Change){
+        contentViewState.update {
+            when(change) {
+                ToggleMqttEnabled -> it.copy(isMqttEnabled = !it.isMqttEnabled)
+                ToggleMqttSSLEnabled -> it.copy(isMqttSSLEnabled = !it.isMqttSSLEnabled)
+                is UpdateMqttConnectionTimeout -> it.copy(mqttConnectionTimeoutText = change.value)
+                is UpdateMqttHost -> it.copy(mqttHost = change.value)
+                is UpdateMqttKeepAliveInterval -> it.copy(mqttKeepAliveIntervalText = change.value)
+                is UpdateMqttPassword -> it.copy(mqttPassword = change.value)
+                is UpdateMqttPort -> it.copy(mqttPortText = change.value)
+                is UpdateMqttRetryInterval -> it.copy(mqttRetryIntervalText = change.value)
+                is UpdateMqttUserName -> it.copy(mqttUserName = change.value)
+                is UpdateMqttKeyStoreFile -> it.copy(mqttKeyStoreFile = change.value)
             }
         }
     }
 
-    //set connection timeout time
-    fun updateMqttConnectionTimeout(connectionTimeout: String) {
-        val text = connectionTimeout.replace("""[-,. ]""".toRegex(), "")
-        _mqttConnectionTimeoutText.value = text
-        _mqttConnectionTimeout.value = text.toIntOrNull() ?: 0
+    private fun onNavigate(navigate: Navigate){
+        when(navigate) {
+            Navigate.OpenMqttSSLWiki -> openLink("https://github.com/Nailik/rhasspy_mobile/wiki/MQTT#enable-ssl")
+            Navigate.SelectSSLCertificate -> selectSSLCertificate()
+        }
     }
 
-    //set keep alive interval time
-    fun updateMqttKeepAliveInterval(keepAliveInterval: String) {
-        val text = keepAliveInterval.replace("""[-,. ]""".toRegex(), "")
-        _mqttKeepAliveIntervalText.value = text
-        _mqttKeepAliveInterval.value = text.toIntOrNull() ?: 0
+    private fun selectSSLCertificate() {
+        viewModelScope.launch {
+            FileUtils.selectFile(FolderType.CertificateFolder.Mqtt)?.also { path ->
+                onChange(UpdateMqttKeyStoreFile(path))
+            }
+        }
     }
 
-    //set retry interval time
-    fun updateMqttRetryInterval(retryInterval: String) {
-        val text = retryInterval.replace("""[-,. ]""".toRegex(), "")
-        _mqttRetryIntervalText.value = text
-        _mqttRetryInterval.value = text.toLongOrNull() ?: 0
+    override fun onSave() {
+        if (ConfigurationSetting.mqttKeyStoreFile.value != data.mqttKeyStoreFile) {
+            ConfigurationSetting.mqttKeyStoreFile.value?.commonDelete()
+        }
+
+        ConfigurationSetting.isMqttEnabled.value = data.isMqttEnabled
+        ConfigurationSetting.mqttHost.value = data.mqttHost
+        ConfigurationSetting.mqttPort.value = data.mqttPort
+        ConfigurationSetting.mqttUserName.value = data.mqttUserName
+        ConfigurationSetting.mqttPassword.value = data.mqttPassword
+        ConfigurationSetting.isMqttSSLEnabled.value = data.isMqttSSLEnabled
+        ConfigurationSetting.mqttKeyStoreFile.value = data.mqttKeyStoreFile
+        ConfigurationSetting.mqttConnectionTimeout.value = data.mqttConnectionTimeout
+        ConfigurationSetting.mqttKeepAliveInterval.value = data.mqttKeepAliveInterval
+        ConfigurationSetting.mqttRetryInterval.value = data.mqttRetryInterval
     }
 
-    /**
-     * open wiki page
-     */
-    fun openMQTTSSLWiki() {
-        openLink("https://github.com/Nailik/rhasspy_mobile/wiki/MQTT#enable-ssl")
+    override fun onDiscard() {
+        if (ConfigurationSetting.mqttKeyStoreFile.value != data.mqttKeyStoreFile) {
+            data.mqttKeyStoreFile?.commonDelete()
+        }
     }
 
     /**
@@ -170,17 +105,17 @@ class MqttConfigurationViewModel : IConfigurationViewModel() {
         get<MqttServiceParams> {
             parametersOf(
                 MqttServiceParams(
-                    isMqttEnabled = _isMqttEnabled.value,
-                    mqttHost = _mqttHost.value,
-                    mqttPort = _mqttPort.value,
-                    retryInterval = _mqttRetryInterval.value,
+                    isMqttEnabled = data.isMqttEnabled,
+                    mqttHost = data.mqttHost,
+                    mqttPort = data.mqttPort,
+                    retryInterval = data.mqttRetryInterval,
                     mqttServiceConnectionOptions = MqttServiceConnectionOptions(
-                        isSSLEnabled = _isMqttSSLEnabled.value,
-                        keyStorePath = _mqttKeyStoreFile.value,
-                        connUsername = _mqttUserName.value,
-                        connPassword = _mqttPassword.value,
-                        connectionTimeout = _mqttConnectionTimeout.value,
-                        keepAliveInterval = _mqttKeepAliveInterval.value
+                        isSSLEnabled = data.isMqttSSLEnabled,
+                        keyStorePath = data.mqttKeyStoreFile,
+                        connUsername = data.mqttUserName,
+                        connPassword = data.mqttPassword,
+                        connectionTimeout = data.mqttConnectionTimeout,
+                        keepAliveInterval = data.mqttKeepAliveInterval
                     )
                 )
             )
