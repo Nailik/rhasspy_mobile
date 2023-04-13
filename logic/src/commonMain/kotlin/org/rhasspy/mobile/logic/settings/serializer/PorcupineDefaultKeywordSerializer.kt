@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.logic.settings.serializer
 
-import kotlinx.collections.immutable.ImmutableSet
-import kotlinx.collections.immutable.toImmutableSet
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -12,7 +12,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.serializer
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 
-internal object PorcupineDefaultKeywordSerializer : KSerializer<ImmutableSet<PorcupineDefaultKeyword>> {
+internal object PorcupineDefaultKeywordSerializer : KSerializer<ImmutableList<PorcupineDefaultKeyword>> {
 
     @OptIn(InternalSerializationApi::class)
     private val delegatedSerializer = ListSerializer(PorcupineDefaultKeyword::class.serializer())
@@ -21,11 +21,11 @@ internal object PorcupineDefaultKeywordSerializer : KSerializer<ImmutableSet<Por
     override val descriptor =
         SerialDescriptor("PorcupineDefaultKeywordSerializer", delegatedSerializer.descriptor)
 
-    override fun serialize(encoder: Encoder, value: ImmutableSet<PorcupineDefaultKeyword>) {
+    override fun serialize(encoder: Encoder, value: ImmutableList<PorcupineDefaultKeyword>) {
         encoder.encodeSerializableValue(delegatedSerializer, value.toList())
     }
 
-    override fun deserialize(decoder: Decoder): ImmutableSet<PorcupineDefaultKeyword> {
-        return decoder.decodeSerializableValue(delegatedSerializer).toImmutableSet()
+    override fun deserialize(decoder: Decoder): ImmutableList<PorcupineDefaultKeyword> {
+        return decoder.decodeSerializableValue(delegatedSerializer).toImmutableList()
     }
 }
