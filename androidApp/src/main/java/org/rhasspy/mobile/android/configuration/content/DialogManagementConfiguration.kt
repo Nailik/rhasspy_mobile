@@ -66,16 +66,20 @@ private fun DialogManagementOptionContent(
         selected = viewState.dialogManagementOption,
         onSelect = { onAction(SelectDialogManagementOption(it)) },
         values = viewState.dialogManagementOptionList
-    ) {
-        if (it == DialogManagementOption.Local) {
-            //http endpoint
-            LocalDialogManagementSettings(
-                textAsrTimeoutText = viewState.textAsrTimeoutText,
-                intentRecognitionTimeoutText = viewState.intentRecognitionTimeoutText,
-                recordingTimeoutText = viewState.recordingTimeoutText,
-                onAction = onAction
-            )
+    ) {option ->
+
+        when (option) {
+            DialogManagementOption.Local ->
+                LocalDialogManagementSettings(
+                    textAsrTimeoutText = viewState.textAsrTimeoutText,
+                    intentRecognitionTimeoutText = viewState.intentRecognitionTimeoutText,
+                    recordingTimeoutText = viewState.recordingTimeoutText,
+                    onAction = onAction
+                )
+
+            else -> {}
         }
+
     }
 }
 

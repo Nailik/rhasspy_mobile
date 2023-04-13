@@ -15,7 +15,7 @@ data class IntentHandlingConfigurationViewState(
     val intentHandlingHttpEndpoint: String = ConfigurationSetting.intentHandlingHttpEndpoint.value,
     val intentHandlingHassEndpoint: String = ConfigurationSetting.intentHandlingHassEndpoint.value,
     val intentHandlingHassAccessToken: String = ConfigurationSetting.intentHandlingHassAccessToken.value,
-    val intentHandlingHomeAssistantOption: HomeAssistantIntentHandlingOption = ConfigurationSetting.intentHandlingHomeAssistantOption.value
+    val intentHandlingHassOption: HomeAssistantIntentHandlingOption = ConfigurationSetting.intentHandlingHomeAssistantOption.value
 ): IConfigurationEditViewState {
 
     override val hasUnsavedChanges: Boolean
@@ -23,7 +23,7 @@ data class IntentHandlingConfigurationViewState(
                 intentHandlingHttpEndpoint == ConfigurationSetting.intentHandlingHttpEndpoint.value &&
                 intentHandlingHassEndpoint == ConfigurationSetting.intentHandlingHassEndpoint.value &&
                 intentHandlingHassAccessToken == ConfigurationSetting.intentHandlingHassAccessToken.value &&
-                intentHandlingHomeAssistantOption == ConfigurationSetting.intentHandlingHomeAssistantOption.value)
+                intentHandlingHassOption == ConfigurationSetting.intentHandlingHomeAssistantOption.value)
 
     override val isTestingEnabled: Boolean get() = intentHandlingOption != IntentHandlingOption.Disabled
 

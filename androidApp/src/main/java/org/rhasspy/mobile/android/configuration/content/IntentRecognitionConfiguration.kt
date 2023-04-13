@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,8 +21,14 @@ import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiAction
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiAction.ChangeIntentRecognitionHttpEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiAction.SelectIntentRecognitionOption
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiAction.ToggleUseCustomHttpEndpoint
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewState
 
 /**
  * configuration content for intent recognition
@@ -32,29 +39,48 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
 @Composable
 fun IntentRecognitionConfigurationContent(viewModel: IntentRecognitionConfigurationViewModel = get()) {
 
+    val viewState by viewModel.viewState.collectAsState()
+
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.IntentRecognitionConfiguration),
         title = MR.strings.intentRecognition.stable,
-        viewState = viewModel.viewState.collectAsState().value,
+        viewState = viewState,
         onAction = viewModel::onAction,
         testContent = { TestContent(viewModel) }
-    ) {
+    ) { contentViewState ->
 
         item {
-            //drop down to select intent recognition option
-            RadioButtonsEnumSelection(
-                modifier = Modifier.testTag(TestTag.IntentRecognitionOptions),
-                selected = viewModel.intentRecognitionOption.collectAsState().value,
-                onSelect = viewModel::selectIntentRecognitionOption,
-                values = viewModel.intentRecognitionOptionList
-            ) {
-
-                if (viewModel.isIntentRecognitionHttpSettingsVisible(it)) {
-                    IntentRecognitionHTTP(viewModel)
-                }
-
-            }
+            IntentRecognitionOptionContent(
+                viewState = contentViewState,
+                onAction = viewModel::onAction
+            )
         }
+    }
+}
+
+@Composable
+private fun IntentRecognitionOptionContent(
+    viewState: IntentRecognitionConfigurationViewState,
+    onAction: (IntentRecognitionConfigurationUiAction) -> Unit
+) {
+
+    RadioButtonsEnumSelection(
+        modifier = Modifier.testTag(TestTag.IntentRecognitionOptions),
+        selected = viewState.intentRecognitionOption,
+        onSelect = { onAction(SelectIntentRecognitionOption(it)) },
+        values = viewState.intentRecognitionOptionList
+    ) {option ->
+
+        when(option) {
+            IntentRecognitionOption.RemoteHTTP ->
+                IntentRecognitionHTTP(
+                    isUseCustomIntentRecognitionHttpEndpoint = viewState.isUseCustomIntentRecognitionHttpEndpoint,
+                    intentRecognitionHttpEndpointText = viewState.intentRecognitionHttpEndpointText,
+                    onAction = onAction
+                )
+            else -> {}
+        }
+
     }
 }
 
@@ -62,7 +88,11 @@ fun IntentRecognitionConfigurationContent(viewModel: IntentRecognitionConfigurat
  * http endpoint settings
  */
 @Composable
-private fun IntentRecognitionHTTP(viewModel: IntentRecognitionConfigurationViewModel) {
+private fun IntentRecognitionHTTP(
+    isUseCustomIntentRecognitionHttpEndpoint: Boolean,
+    intentRecognitionHttpEndpointText: String,
+    onAction: (IntentRecognitionConfigurationUiAction) -> Unit
+) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
@@ -70,18 +100,18 @@ private fun IntentRecognitionHTTP(viewModel: IntentRecognitionConfigurationViewM
         SwitchListItem(
             modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
             text = MR.strings.useCustomEndpoint.stable,
-            isChecked = viewModel.isUseCustomIntentRecognitionHttpEndpoint.collectAsState().value,
-            onCheckedChange = viewModel::toggleUseCustomHttpEndpoint
+            isChecked = isUseCustomIntentRecognitionHttpEndpoint,
+            onCheckedChange = { onAction(ToggleUseCustomHttpEndpoint) }
         )
 
         //http endpoint input field
         TextFieldListItem(
-            enabled = viewModel.isIntentRecognitionHttpEndpointChangeEnabled.collectAsState().value,
+            enabled = isUseCustomIntentRecognitionHttpEndpoint,
             modifier = Modifier
                 .testTag(TestTag.Endpoint)
                 .padding(bottom = 8.dp),
-            value = viewModel.intentRecognitionHttpEndpoint.collectAsState().value,
-            onValueChange = viewModel::changeIntentRecognitionHttpEndpoint,
+            value = intentRecognitionHttpEndpointText,
+            onValueChange = { onAction(ChangeIntentRecognitionHttpEndpoint(it)) },
             label = translate(MR.strings.rhasspyTextToIntentURL.stable, HttpClientPath.TextToIntent.path)
         )
     }

@@ -75,9 +75,9 @@ private fun AudioPlayingOptionContent(
         selected = viewState.audioPlayingOption,
         onSelect = { onAction(SelectAudioPlayingOption(it)) },
         values = viewState.audioPlayingOptionList
-    ) {
+    ) {option ->
 
-        when (it) {
+        when (option) {
             AudioPlayingOption.Local -> LocalConfigurationContent(
                 audioOutputOption = viewState.audioOutputOption,
                 audioOutputOptionList = viewState.audioOutputOptionList,

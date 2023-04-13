@@ -4,7 +4,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantServiceParams
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
@@ -33,7 +32,7 @@ class IntentHandlingConfigurationViewModel(
                 is ChangeIntentHandlingHassAccessToken -> it.copy(intentHandlingHassAccessToken = action.value)
                 is ChangeIntentHandlingHassEndpoint -> it.copy(intentHandlingHassEndpoint = action.value)
                 is ChangeIntentHandlingHttpEndpoint -> it.copy(intentHandlingHttpEndpoint = action.value)
-                is SelectIntentHandlingHassOption -> it.copy(intentHandlingHomeAssistantOption = action.option)
+                is SelectIntentHandlingHassOption -> it.copy(intentHandlingHassOption = action.option)
                 is SelectIntentHandlingOption -> it.copy(intentHandlingOption = action.option)
             }
         }
@@ -43,11 +42,6 @@ class IntentHandlingConfigurationViewModel(
     val testIntentNameText = _testIntentNameText.readOnly
     private val _testIntentText = MutableStateFlow("")
     val testIntentText = _testIntentText.readOnly
-
-    //show input field for endpoint
-    fun isRemoteHttpSettingsVisible(option: IntentHandlingOption): Boolean {
-        return option == IntentHandlingOption.RemoteHTTP
-    }
 
     fun updateTestIntentNameText(text: String) {
         _testIntentNameText.value = text
@@ -62,7 +56,7 @@ class IntentHandlingConfigurationViewModel(
         ConfigurationSetting.intentHandlingHttpEndpoint.value = data.intentHandlingHttpEndpoint
         ConfigurationSetting.intentHandlingHassEndpoint.value = data.intentHandlingHassEndpoint
         ConfigurationSetting.intentHandlingHassAccessToken.value = data.intentHandlingHassAccessToken
-        ConfigurationSetting.intentHandlingHomeAssistantOption.value = data.intentHandlingHomeAssistantOption
+        ConfigurationSetting.intentHandlingHomeAssistantOption.value = data.intentHandlingHassOption
     }
 
     override fun initializeTestParams() {
@@ -88,7 +82,7 @@ class IntentHandlingConfigurationViewModel(
         get<HomeAssistantServiceParams> {
             parametersOf(
                 HomeAssistantServiceParams(
-                    intentHandlingHomeAssistantOption = data.intentHandlingHomeAssistantOption
+                    intentHandlingHomeAssistantOption = data.intentHandlingHassOption
                 )
             )
         }

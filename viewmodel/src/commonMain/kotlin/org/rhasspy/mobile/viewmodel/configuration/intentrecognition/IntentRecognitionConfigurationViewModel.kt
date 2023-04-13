@@ -1,78 +1,46 @@
 package org.rhasspy.mobile.viewmodel.configuration.intentrecognition
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import org.koin.core.component.get
-import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
-import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionService
 import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiAction.ChangeIntentRecognitionHttpEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiAction.SelectIntentRecognitionOption
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiAction.ToggleUseCustomHttpEndpoint
 
-class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
+class IntentRecognitionConfigurationViewModel(
+    service: IntentRecognitionService,
+    testRunner: IntentRecognitionConfigurationTest
+) : IConfigurationViewModel<IntentRecognitionConfigurationTest, IntentRecognitionConfigurationViewState>(
+    service = service,
+    testRunner = testRunner,
+    initialViewState = IntentRecognitionConfigurationViewState()
+) {
 
-    //test data
+    fun onAction(action: IntentRecognitionConfigurationUiAction){
+        contentViewState.update {
+            when(action) {
+                is ChangeIntentRecognitionHttpEndpoint -> it.copy(intentRecognitionHttpEndpoint = action.value)
+                is SelectIntentRecognitionOption -> it.copy(intentRecognitionOption = action.option)
+                ToggleUseCustomHttpEndpoint -> it.copy(isUseCustomIntentRecognitionHttpEndpoint = !it.isUseCustomIntentRecognitionHttpEndpoint)
+            }
+        }
+    }
 
-    val testRunner by inject<IntentRecognitionConfigurationTest>()
-    override val logType = LogType.IntentRecognitionService
-    override val serviceState get() = get<IntentRecognitionService>().serviceState
+    override fun onSave() {
+        ConfigurationSetting.intentRecognitionOption.value = data.intentRecognitionOption
+        ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value = data.isUseCustomIntentRecognitionHttpEndpoint
+        ConfigurationSetting.intentRecognitionHttpEndpoint.value = data.intentRecognitionHttpEndpoint
+    }
 
     private val _testIntentRecognitionText = MutableStateFlow("")
     val testIntentRecognitionText = _testIntentRecognitionText.readOnly
-
-    //unsaved data
-    private val _intentRecognitionOption =
-        MutableStateFlow(ConfigurationSetting.intentRecognitionOption.value)
-    private val _isUseCustomIntentRecognitionHttpEndpoint =
-        MutableStateFlow(ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value)
-    private val _intentRecognitionHttpEndpoint =
-        MutableStateFlow(ConfigurationSetting.intentRecognitionHttpEndpoint.value)
-
-    //unsaved ui data
-    val intentRecognitionOption = _intentRecognitionOption.readOnly
-    val intentRecognitionHttpEndpoint =
-        combineState(
-            _isUseCustomIntentRecognitionHttpEndpoint,
-            _intentRecognitionHttpEndpoint
-        ) { useCustomIntentRecognitionHttpEndpoint,
-            intentRecognitionHttpEndpoint ->
-            if (useCustomIntentRecognitionHttpEndpoint) {
-                intentRecognitionHttpEndpoint
-            } else {
-                HttpClientPath.TextToIntent.fromBaseConfiguration()
-            }
-        }
-
-
-
-    //show endpoint settings
-    fun isIntentRecognitionHttpSettingsVisible(option: IntentRecognitionOption): Boolean {
-        return option == IntentRecognitionOption.RemoteHTTP
-    }
-
-    //all options
-    val intentRecognitionOptionList = IntentRecognitionOption::values
-
-    //set new intent recognition option
-    fun selectIntentRecognitionOption(option: IntentRecognitionOption) {
-        _intentRecognitionOption.value = option
-    }
-
-    //toggle if custom endpoint is used
-    fun toggleUseCustomHttpEndpoint(enabled: Boolean) {
-        _isUseCustomIntentRecognitionHttpEndpoint.value = enabled
-    }
-
-    //set new intent recognition option
-    fun changeIntentRecognitionHttpEndpoint(endpoint: String) {
-        _intentRecognitionHttpEndpoint.value = endpoint
-    }
 
     fun updateTestIntentRecognitionText(text: String) {
         _testIntentRecognitionText.value = text
@@ -82,7 +50,7 @@ class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
         get<IntentRecognitionServiceParams> {
             parametersOf(
                 IntentRecognitionServiceParams(
-                    intentRecognitionOption = _intentRecognitionOption.value
+                    intentRecognitionOption = data.intentRecognitionOption
                 )
             )
         }
@@ -90,8 +58,8 @@ class IntentRecognitionConfigurationViewModel : IConfigurationViewModel() {
         get<HttpClientServiceParams> {
             parametersOf(
                 HttpClientServiceParams(
-                    isUseCustomTextToSpeechHttpEndpoint = _isUseCustomIntentRecognitionHttpEndpoint.value,
-                    intentRecognitionHttpEndpoint = _intentRecognitionHttpEndpoint.value,
+                    isUseCustomTextToSpeechHttpEndpoint = data.isUseCustomIntentRecognitionHttpEndpoint,
+                    intentRecognitionHttpEndpoint = data.intentRecognitionHttpEndpoint,
                 )
             )
         }
