@@ -23,7 +23,7 @@ class IntentHandlingConfigurationViewModel(
 ) : IConfigurationViewModel<IntentHandlingConfigurationTest, IntentHandlingConfigurationViewState>(
     service = service,
     testRunner = testRunner,
-    initialViewState = IntentHandlingConfigurationViewState()
+    initialViewState = ::IntentHandlingConfigurationViewState
 ){
 
     fun onAction(action: IntentHandlingConfigurationUiAction) {

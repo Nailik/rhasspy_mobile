@@ -24,7 +24,7 @@ class DialogManagementConfigurationViewModel(
 ) : IConfigurationViewModel<DialogManagementConfigurationTest, DialogManagementConfigurationViewState>(
     service = service,
     testRunner = testRunner,
-    initialViewState = DialogManagementConfigurationViewState()
+    initialViewState = ::DialogManagementConfigurationViewState
 ) {
 
     fun onAction(action: DialogManagementConfigurationUiAction) {

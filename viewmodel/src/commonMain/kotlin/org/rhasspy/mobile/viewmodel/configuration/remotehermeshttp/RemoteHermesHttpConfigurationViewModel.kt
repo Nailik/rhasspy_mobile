@@ -26,7 +26,7 @@ class RemoteHermesHttpConfigurationViewModel(
 ) : IConfigurationViewModel<RemoteHermesHttpConfigurationTest, RemoteHermesHttpConfigurationViewState>(
     service = service,
     testRunner = testRunner,
-    initialViewState = RemoteHermesHttpConfigurationViewState()
+    initialViewState = ::RemoteHermesHttpConfigurationViewState
 ) {
 
     fun onAction(action: RemoteHermesHttpConfigurationUiAction){

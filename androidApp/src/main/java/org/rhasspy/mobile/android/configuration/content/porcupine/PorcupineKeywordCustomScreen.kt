@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Delete
@@ -21,8 +22,6 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
@@ -37,22 +36,31 @@ import org.rhasspy.mobile.android.content.list.SliderListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.AddCustomPorcupineKeyword
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.ClickPorcupineKeywordCustom
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.DeletePorcupineKeywordCustom
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.DownloadCustomPorcupineKeyword
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.TogglePorcupineKeywordCustom
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.UndoCustomKeywordDeleted
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.UpdateWakeWordPorcupineKeywordCustomSensitivity
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel.PorcupineCustomKeywordUi
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 
 /**
  * Custom keywords screen
  */
 @Composable
-fun PorcupineKeywordCustomScreen(viewModel: WakeWordConfigurationViewModel) {
+fun PorcupineKeywordCustomScreen(
+    viewState: PorcupineViewState,
+    onAction: (PorcupineUiAction) -> Unit
+) {
 
     Column(
         modifier = Modifier
             .testTag(TestTag.PorcupineKeywordCustomScreen)
             .fillMaxSize()
     ) {
-        //added files
-        val options by viewModel.wakeWordPorcupineKeywordCustomOptions.collectAsState()
-
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
@@ -61,15 +69,18 @@ fun PorcupineKeywordCustomScreen(viewModel: WakeWordConfigurationViewModel) {
                 InformationListElement(text = MR.strings.porcupineLanguageInformation.stable)
             }
 
-            items(
-                count = options.size,
-                itemContent = { index ->
-                    KeywordListItem(options.elementAt(index), index, viewModel)
-                    CustomDivider()
-                })
+            items(viewState.customOptionsUi) { option ->
+
+                KeywordListItem(
+                    option,
+                    onAction
+                )
+
+                CustomDivider()
+            }
         }
 
-        CustomKeywordsActionButtons(viewModel = viewModel)
+        CustomKeywordsActionButtons(onAction = onAction)
 
     }
 
@@ -80,34 +91,25 @@ fun PorcupineKeywordCustomScreen(viewModel: WakeWordConfigurationViewModel) {
  */
 @Composable
 private fun KeywordListItem(
-    element: WakeWordConfigurationViewModel.PorcupineCustomKeywordUi,
-    index: Int,
-    viewModel: WakeWordConfigurationViewModel
+    option: PorcupineCustomKeywordUi,
+    onAction: (PorcupineUiAction) -> Unit
 ) {
-    if (element.deleted) {
+    if (option.deleted) {
         //small item to be deleted
         CustomKeywordDeletedListItem(
-            modifier = Modifier.testTag(element.keyword.fileName),
-            keyword = element.keyword,
-            onUndo = { viewModel.undoWakeWordPorcupineCustomKeywordDeleted(index) }
+            modifier = Modifier.testTag(option.keyword.fileName),
+            keyword = option.keyword,
+            onUndo = { onAction(UndoCustomKeywordDeleted(option)) }
         )
     } else {
         //normal item
         CustomKeywordListItem(
-            modifier = Modifier.testTag(element.keyword.fileName),
-            keyword = element.keyword,
-            onClick = {
-                viewModel.clickPorcupineKeywordCustom(index)
-            },
-            onToggle = { enabled ->
-                viewModel.togglePorcupineKeywordCustom(index, enabled)
-            },
-            onDelete = {
-                viewModel.deletePorcupineKeywordCustom(index)
-            },
-            onUpdateSensitivity = { sensitivity ->
-                viewModel.updateWakeWordPorcupineKeywordCustomSensitivity(index, sensitivity)
-            }
+            modifier = Modifier.testTag(option.keyword.fileName),
+            keyword = option.keyword,
+            onClick = { onAction(ClickPorcupineKeywordCustom(option.keyword)) },
+            onToggle = { onAction(TogglePorcupineKeywordCustom(option.keyword, it)) },
+            onDelete = { onAction(DeletePorcupineKeywordCustom(option)) },
+            onUpdateSensitivity = { onAction(UpdateWakeWordPorcupineKeywordCustomSensitivity(option.keyword, it)) }
         )
     }
 }
@@ -198,7 +200,7 @@ private fun CustomKeywordDeletedListItem(
  * custom keywords action buttons (download and open file)
  */
 @Composable
-private fun CustomKeywordsActionButtons(viewModel: WakeWordConfigurationViewModel) {
+private fun CustomKeywordsActionButtons(onAction: (PorcupineUiAction) -> Unit) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
@@ -210,7 +212,7 @@ private fun CustomKeywordsActionButtons(viewModel: WakeWordConfigurationViewMode
             modifier = Modifier
                 .weight(1f)
                 .testTag(TestTag.Download),
-            onClick = viewModel::downloadCustomPorcupineKeyword,
+            onClick = { onAction(DownloadCustomPorcupineKeyword) },
             content = {
                 Icon(
                     imageVector = Icons.Filled.Download,
@@ -218,13 +220,14 @@ private fun CustomKeywordsActionButtons(viewModel: WakeWordConfigurationViewMode
                 )
                 Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
                 Text(MR.strings.download.stable)
-            })
+            }
+        )
 
         FilledTonalButton(
             modifier = Modifier
                 .weight(1f)
                 .testTag(TestTag.SelectFile),
-            onClick = viewModel::addCustomPorcupineKeyword,
+            onClick = { onAction(AddCustomPorcupineKeyword) },
             content = {
                 Icon(
                     imageVector = Icons.Filled.FileOpen,
@@ -232,7 +235,8 @@ private fun CustomKeywordsActionButtons(viewModel: WakeWordConfigurationViewMode
                 )
                 Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
                 Text(MR.strings.fileOpen.stable)
-            })
+            }
+        )
 
     }
 }

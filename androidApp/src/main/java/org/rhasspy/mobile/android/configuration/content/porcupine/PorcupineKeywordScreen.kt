@@ -32,7 +32,11 @@ import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 
 /**
  *  screen for porcupine keyword option
@@ -41,7 +45,10 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
  *  bottom bar to switch between pages
  */
 @Composable
-fun PorcupineKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
+fun PorcupineKeywordScreen(
+    viewState: PorcupineViewState,
+    onAction: (PorcupineUiAction) -> Unit
+) {
 
     val navController = rememberNavController()
     val pagerState = rememberPagerState()
@@ -63,7 +70,7 @@ fun PorcupineKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
                             .testTag(TestTag.PorcupineLanguage)
                             .clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineLanguage.route) },
                         text = { Text(MR.strings.language.stable) },
-                        secondaryText = { Text(viewModel.wakeWordPorcupineLanguage.collectAsState().value.text) }
+                        secondaryText = { Text(viewState.porcupineLanguage.text) }
                     )
                 }
             },
@@ -89,9 +96,15 @@ fun PorcupineKeywordScreen(viewModel: WakeWordConfigurationViewModel) {
             Surface(modifier = Modifier.padding(paddingValues)) {
                 HorizontalPager(pageCount = 2, state = pagerState) { page ->
                     if (page == 0) {
-                        PorcupineKeywordDefaultScreen(viewModel)
+                        PorcupineKeywordDefaultScreen(
+                            viewState = viewState,
+                            onAction = onAction
+                        )
                     } else {
-                        PorcupineKeywordCustomScreen(viewModel)
+                        PorcupineKeywordCustomScreen(
+                            viewState = viewState,
+                            onAction = onAction
+                        )
                     }
                 }
             }

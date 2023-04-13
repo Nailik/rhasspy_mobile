@@ -4,89 +4,59 @@ import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.collections.immutable.toImmutableSet
-import kotlinx.coroutines.flow.StateFlow
-import okio.Path
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.platformspecific.extensions.commonDelete
-import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
-import org.rhasspy.mobile.platformspecific.file.FolderType
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.ServiceStateHeaderViewState
+import org.rhasspy.mobile.platformspecific.toImmutableList
+import org.rhasspy.mobile.platformspecific.toIntOrZero
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel.PorcupineCustomKeywordUi
 
 @Stable
 data class WakeWordConfigurationViewState(
-    val wakeWordOption: WakeWordOption,
-    val wakeWordPorcupineAccessToken: String,
-    val wakeWordPorcupineKeywordDefaultOptions: ImmutableSet<PorcupineDefaultKeyword>,
-    val wakeWordPorcupineKeywordCustomOptions: ImmutableList<PorcupineCustomKeywordUi>,
-    val wakeWordPorcupineKeywordCustomOptionsNormal: ImmutableSet<PorcupineCustomKeyword>,
-    val wakeWordPorcupineLanguage: PorcupineLanguageOption,
-    val wakeWordUdpOutputHost: String,
-    val wakeWordUdpOutputPort: Int,
-    val wakeWordUdpOutputPortText: String
-): IConfigurationContentViewState() {
+    val wakeWordOptions: ImmutableList<WakeWordOption> = WakeWordOption.values().toImmutableList(),
+    val wakeWordOption: WakeWordOption= ConfigurationSetting.wakeWordOption.value,
+    val wakeWordPorcupineViewState: PorcupineViewState = PorcupineViewState(),
+    val wakeWordUdpViewState: UdpViewState = UdpViewState()
+): IConfigurationEditViewState {
 
-    companion object {
-        fun getInitial() = WakeWordConfigurationViewState(
-            wakeWordOption = ConfigurationSetting.wakeWordOption.value,
-            wakeWordPorcupineAccessToken = ConfigurationSetting.wakeWordPorcupineAccessToken.value,
-            wakeWordPorcupineKeywordDefaultOptions = ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value,
-            wakeWordPorcupineKeywordCustomOptions = ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value
-                .map { PorcupineCustomKeywordUi(it) }.toImmutableList(),
-            wakeWordPorcupineKeywordCustomOptionsNormal = ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value,
-            wakeWordPorcupineLanguage = ConfigurationSetting.wakeWordPorcupineLanguage.value,
-            wakeWordUdpOutputHost = ConfigurationSetting.wakeWordUdpOutputHost.value,
-            wakeWordUdpOutputPort = ConfigurationSetting.wakeWordUdpOutputPort.value,
-            wakeWordUdpOutputPortText = ConfigurationSetting.wakeWordUdpOutputPort.value.toString()
-        )
+    override val hasUnsavedChanges: Boolean
+        get() = !(wakeWordOption == ConfigurationSetting.wakeWordOption.value &&
+                wakeWordPorcupineViewState.hasUnsavedChanges.not() &&
+                wakeWordUdpViewState.hasUnsavedChanges.not())
+
+    override val isTestingEnabled: Boolean get() = wakeWordOption != WakeWordOption.Disabled
+
+    @Stable
+    data class PorcupineViewState(
+        val accessToken: String= ConfigurationSetting.wakeWordPorcupineAccessToken.value,
+        val defaultOptions: ImmutableSet<PorcupineDefaultKeyword> = ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value,
+        val customOptions: ImmutableSet<PorcupineCustomKeyword> = ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value,
+        val languageOptions: ImmutableList<PorcupineLanguageOption> = PorcupineLanguageOption.values().toImmutableList(),
+        val porcupineLanguage: PorcupineLanguageOption= ConfigurationSetting.wakeWordPorcupineLanguage.value
+    ) {
+        val hasUnsavedChanges: Boolean
+            get() = !(accessToken == ConfigurationSetting.wakeWordPorcupineAccessToken.value &&
+                    defaultOptions == ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value &&
+                    customOptions == ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value &&
+                    porcupineLanguage == ConfigurationSetting.wakeWordPorcupineLanguage.value)
+
+        val customOptionsUi: ImmutableList<PorcupineCustomKeywordUi> get() = customOptions.map { PorcupineCustomKeywordUi(it) }.toImmutableList()
+        val keywordCount: Int get() = defaultOptions.count { it.isEnabled } + customOptions.count { it.isEnabled }
     }
 
-    override fun getEditViewState(serviceViewState: StateFlow<ServiceStateHeaderViewState>): IConfigurationEditViewState {
-        return IConfigurationEditViewState(
-            hasUnsavedChanges = !(wakeWordOption == ConfigurationSetting.wakeWordOption.value &&
-            wakeWordPorcupineAccessToken == ConfigurationSetting.wakeWordPorcupineAccessToken.value &&
-            wakeWordPorcupineKeywordDefaultOptions == ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value &&
-            wakeWordPorcupineKeywordCustomOptionsNormal == ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value &&
-            wakeWordPorcupineLanguage == ConfigurationSetting.wakeWordPorcupineLanguage.value &&
-            wakeWordUdpOutputHost == ConfigurationSetting.wakeWordUdpOutputHost.value &&
-            wakeWordUdpOutputPort == ConfigurationSetting.wakeWordUdpOutputPort.value),
-            isTestingEnabled = wakeWordOption != WakeWordOption.Disabled,
-            serviceViewState = serviceViewState
-        )
-    }
+    @Stable
+    data class UdpViewState(
+        val outputHost: String= ConfigurationSetting.wakeWordUdpOutputHost.value,
+        val outputPortText: String = ConfigurationSetting.wakeWordUdpOutputPort.value.toString()
+    ) {
+        val hasUnsavedChanges: Boolean
+            get() = !(outputHost == ConfigurationSetting.wakeWordUdpOutputHost.value &&
+                    outputPort == ConfigurationSetting.wakeWordUdpOutputPort.value)
 
-    private val newFiles = mutableListOf<String>()
-    private val filesToDelete = mutableListOf<String>()
-
-    override fun save() {
-        ConfigurationSetting.wakeWordOption.value = wakeWordOption
-        ConfigurationSetting.wakeWordPorcupineAccessToken.value = wakeWordPorcupineAccessToken
-        ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value = wakeWordPorcupineKeywordDefaultOptions
-        ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value = wakeWordPorcupineKeywordCustomOptions
-            .filter { !it.deleted }.map { it.keyword }
-            .toImmutableSet()
-        ConfigurationSetting.wakeWordPorcupineLanguage.value = wakeWordPorcupineLanguage
-        ConfigurationSetting.wakeWordUdpOutputHost.value = wakeWordUdpOutputHost
-        ConfigurationSetting.wakeWordUdpOutputPort.value = wakeWordUdpOutputPort
-
-        filesToDelete.forEach {
-            Path.commonInternalPath(get(),"${FolderType.PorcupineFolder}/$it").commonDelete()
-        }
-        filesToDelete.clear()
-        newFiles.clear()
-    }
-
-    override fun discard() {
-        newFiles.forEach {
-            Path.commonInternalPath(get(),"${FolderType.PorcupineFolder}/$it").commonDelete()
-        }
-        filesToDelete.clear()
+        val outputPort: Int get() = outputPortText.toIntOrZero()
     }
 
 }

@@ -1,44 +1,24 @@
 package org.rhasspy.mobile.viewmodel.configuration.speechtotext
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.ServiceStateHeaderViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 
 @Stable
 data class SpeechToTextConfigurationViewState(
-    val speechToTextOption: SpeechToTextOption,
-    val isUseCustomSpeechToTextHttpEndpoint: Boolean,
-    val isUseSpeechToTextMqttSilenceDetection: Boolean,
-    val speechToTextHttpEndpoint: String
-): IConfigurationContentViewState() {
+    val speechToTextOption: SpeechToTextOption = ConfigurationSetting.speechToTextOption.value,
+    val isUseCustomSpeechToTextHttpEndpoint: Boolean= ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value,
+    val isUseSpeechToTextMqttSilenceDetection: Boolean= ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value,
+    val speechToTextHttpEndpoint: String= ConfigurationSetting.speechToTextHttpEndpoint.value
+): IConfigurationEditViewState {
 
-    companion object {
-        fun getInitial() = SpeechToTextConfigurationViewState(
-            speechToTextOption = ConfigurationSetting.speechToTextOption.value,
-            isUseCustomSpeechToTextHttpEndpoint = ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value,
-            isUseSpeechToTextMqttSilenceDetection = ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value,
-            speechToTextHttpEndpoint = ConfigurationSetting.speechToTextHttpEndpoint.value
-        )
-    }
-
-    override fun getEditViewState(serviceViewState: StateFlow<ServiceStateHeaderViewState>): IConfigurationEditViewState {
-        return IConfigurationEditViewState(
-            hasUnsavedChanges = !(speechToTextOption == ConfigurationSetting.speechToTextOption.value &&
+    override val hasUnsavedChanges: Boolean
+        get() = !(speechToTextOption == ConfigurationSetting.speechToTextOption.value &&
                 isUseCustomSpeechToTextHttpEndpoint == ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value &&
                 isUseSpeechToTextMqttSilenceDetection == ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value &&
-                speechToTextHttpEndpoint == ConfigurationSetting.speechToTextHttpEndpoint.value),
-            isTestingEnabled = speechToTextOption != SpeechToTextOption.Disabled,
-            serviceViewState = serviceViewState)
-    }
+                speechToTextHttpEndpoint == ConfigurationSetting.speechToTextHttpEndpoint.value)
 
-    override fun save() {
-        ConfigurationSetting.speechToTextOption.value = speechToTextOption
-        ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value = isUseCustomSpeechToTextHttpEndpoint
-        ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value = isUseSpeechToTextMqttSilenceDetection
-        ConfigurationSetting.speechToTextHttpEndpoint.value = speechToTextHttpEndpoint
-    }
+    override val isTestingEnabled: Boolean get() = speechToTextOption != SpeechToTextOption.Disabled
 
 }

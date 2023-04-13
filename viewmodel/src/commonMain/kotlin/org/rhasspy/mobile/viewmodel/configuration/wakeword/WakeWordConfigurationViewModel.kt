@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.viewmodel.configuration.wakeword
 
+import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okio.Path
 import org.koin.core.component.get
@@ -27,18 +29,67 @@ import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.Change
 
-class WakeWordConfigurationViewModel : IConfigurationViewModel() {
+class WakeWordConfigurationViewModel(
+    service: WakeWordService,
+    testRunner: WakeWordConfigurationTest
+) : IConfigurationViewModel<WakeWordConfigurationTest, WakeWordConfigurationViewState>(
+    service = service,
+    testRunner = testRunner,
+    initialViewState = ::WakeWordConfigurationViewState
+) {
+
+    fun onAction(action: WakeWordConfigurationUiAction) {
+        when(action) {
+            is Change -> onChange(action)
+        }
+    }
+
+    private fun onChange(change: Change) {
+        contentViewState.update {
+            when(change) {
+
+            }
+        }
+    }
 
     //use get to fix issues where instance dies because udp socket causes thread exception
     override val testRunner by inject<WakeWordConfigurationTest>()
     override val logType = LogType.WakeWordService
     override val serviceState get() = get<WakeWordService>().serviceState
 
+    private val newFiles = mutableListOf<String>()
+    private val filesToDelete = mutableListOf<String>()
     data class PorcupineCustomKeywordUi(
         val keyword: PorcupineCustomKeyword,
         val deleted: Boolean = false
     )
+
+    override fun onSave() {
+        ConfigurationSetting.wakeWordOption.value = wakeWordOption
+        ConfigurationSetting.wakeWordPorcupineAccessToken.value = wakeWordPorcupineAccessToken
+        ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value = wakeWordPorcupineKeywordDefaultOptions
+        ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value = wakeWordPorcupineKeywordCustomOptions
+            .filter { !it.deleted }.map { it.keyword }
+            .toImmutableSet()
+        ConfigurationSetting.wakeWordPorcupineLanguage.value = wakeWordPorcupineLanguage
+        ConfigurationSetting.wakeWordUdpOutputHost.value = wakeWordUdpOutputHost
+        ConfigurationSetting.wakeWordUdpOutputPort.value = wakeWordUdpOutputPort
+
+        filesToDelete.forEach {
+            Path.commonInternalPath(get(),"${FolderType.PorcupineFolder}/$it").commonDelete()
+        }
+        filesToDelete.clear()
+        newFiles.clear()
+    }
+
+    override fun onDiscard() {
+        newFiles.forEach {
+            Path.commonInternalPath(get(),"${FolderType.PorcupineFolder}/$it").commonDelete()
+        }
+        filesToDelete.clear()
+    }
 
     //unsaved data
     private val _wakeWordOption = MutableStateFlow(ConfigurationSetting.wakeWordOption.value)

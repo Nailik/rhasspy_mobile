@@ -20,7 +20,7 @@ class IntentRecognitionConfigurationViewModel(
 ) : IConfigurationViewModel<IntentRecognitionConfigurationTest, IntentRecognitionConfigurationViewState>(
     service = service,
     testRunner = testRunner,
-    initialViewState = IntentRecognitionConfigurationViewState()
+    initialViewState = ::IntentRecognitionConfigurationViewState
 ) {
 
     fun onAction(action: IntentRecognitionConfigurationUiAction){

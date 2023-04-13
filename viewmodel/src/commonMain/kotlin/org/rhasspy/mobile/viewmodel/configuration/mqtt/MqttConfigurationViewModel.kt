@@ -32,7 +32,7 @@ class MqttConfigurationViewModel(
 ) : IConfigurationViewModel<MqttConfigurationTest, MqttConfigurationViewState>(
     service = service,
     testRunner = testRunner,
-    initialViewState = MqttConfigurationViewState()
+    initialViewState = ::MqttConfigurationViewState
 ) {
 
     fun onAction(action: MqttConfigurationUiAction){

@@ -13,12 +13,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.collections.immutable.ImmutableList
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
@@ -39,7 +43,18 @@ import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.data.service.option.WakeWordOption
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.Change.SelectWakeWordOption
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.Change.UpdateUdpOutputHost
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.Change.UpdateUdpOutputPort
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.Change.UpdateWakeWordPorcupineAccessToken
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.Navigate.OpenPicoVoiceConsole
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.UdpViewState
 
 enum class WakeWordConfigurationScreens(val route: String) {
     Overview("WakeWordConfigurationScreens_Overview"),
@@ -59,6 +74,9 @@ fun WakeWordConfigurationContent(viewModel: WakeWordConfigurationViewModel = get
     CompositionLocalProvider(
         LocalNavController provides navController
     ) {
+
+
+
         NavHost(
             navController = navController,
             startDestination = WakeWordConfigurationScreens.Overview.route
@@ -69,11 +87,21 @@ fun WakeWordConfigurationContent(viewModel: WakeWordConfigurationViewModel = get
             }
 
             composable(WakeWordConfigurationScreens.PorcupineLanguage.route) {
-                PorcupineLanguageScreen(viewModel)
+                val viewState by viewModel.viewState.collectAsState()
+                val contentViewState by viewState.editViewState.collectAsState()
+                PorcupineLanguageScreen(
+                    viewState = contentViewState.wakeWordPorcupineViewState,
+                    onAction = viewModel::onAction
+                )
             }
 
             composable(WakeWordConfigurationScreens.PorcupineKeyword.route) {
-                PorcupineKeywordScreen(viewModel)
+                val viewState by viewModel.viewState.collectAsState()
+                val contentViewState by viewState.editViewState.collectAsState()
+                PorcupineKeywordScreen(
+                    viewState = contentViewState.wakeWordPorcupineViewState,
+                    onAction = viewModel::onAction
+                )
             }
 
         }
@@ -89,33 +117,57 @@ fun WakeWordConfigurationContent(viewModel: WakeWordConfigurationViewModel = get
 @Composable
 private fun WakeWordConfigurationOverview(viewModel: WakeWordConfigurationViewModel) {
 
+    val viewState by viewModel.viewState.collectAsState()
+
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.WakeWordConfiguration),
         title = MR.strings.wakeWord.stable,
-        viewState = viewModel.viewState.collectAsState().value,
+        viewState = viewState,
         onAction = viewModel::onAction,
         testContent = { TestContent(viewModel) }
-    ) {
+    ) { contentViewState ->
 
         item {
-            //drop down list to select option
-            RadioButtonsEnumSelection(
-                modifier = Modifier.testTag(TestTag.WakeWordOptions),
-                selected = viewModel.wakeWordOption.collectAsState().value,
-                onSelect = viewModel::selectWakeWordOption,
-                values = viewModel.wakeWordOptions
-            ) {
-
-                if (viewModel.isWakeWordPorcupineSettingsVisible(it)) {
-                    PorcupineConfiguration(viewModel)
-                }
-
-                if (viewModel.isUdpOutputSettingsVisible(it)) {
-                    UdpSettings(viewModel)
-                }
-
-            }
+            WakeWordConfigurationOptionContent(
+                wakeWordOption = contentViewState.wakeWordOption,
+                wakeWordOptions = contentViewState.wakeWordOptions,
+                wakeWordPorcupineViewState = contentViewState.wakeWordPorcupineViewState,
+                wakeWordUdpViewState = contentViewState.wakeWordUdpViewState,
+                onAction = viewModel::onAction
+            )
         }
+    }
+
+}
+
+@Composable
+private fun WakeWordConfigurationOptionContent(
+    wakeWordOption: WakeWordOption,
+    wakeWordOptions: ImmutableList<WakeWordOption>,
+    wakeWordPorcupineViewState: PorcupineViewState,
+    wakeWordUdpViewState: UdpViewState,
+    onAction: (WakeWordConfigurationUiAction) -> Unit
+) {
+
+    RadioButtonsEnumSelection(
+        modifier = Modifier.testTag(TestTag.WakeWordOptions),
+        selected = wakeWordOption,
+        onSelect = { onAction(SelectWakeWordOption(it)) },
+        values = wakeWordOptions
+    ) { option ->
+
+        when (option) {
+            WakeWordOption.Porcupine -> PorcupineConfiguration(
+                viewState = wakeWordPorcupineViewState,
+                onAction = onAction
+            )
+            WakeWordOption.Udp -> UdpSettings(
+                viewState = wakeWordUdpViewState,
+                onAction = onAction
+            )
+            else -> {}
+        }
+
     }
 
 }
@@ -128,7 +180,10 @@ private fun WakeWordConfigurationOverview(viewModel: WakeWordConfigurationViewMo
  * sensitivity slider
  */
 @Composable
-private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
+private fun PorcupineConfiguration(
+    viewState: PorcupineViewState,
+    onAction: (WakeWordConfigurationUiAction) -> Unit
+) {
 
     Column(
         modifier = Modifier
@@ -140,15 +195,15 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
         TextFieldListItemVisibility(
             label = MR.strings.porcupineAccessKey.stable,
             modifier = Modifier.testTag(TestTag.PorcupineAccessToken),
-            value = viewModel.wakeWordPorcupineAccessToken.collectAsState().value,
-            onValueChange = viewModel::updateWakeWordPorcupineAccessToken
+            value = viewState.accessToken,
+            onValueChange = {onAction(UpdateWakeWordPorcupineAccessToken(it))}
         )
 
         //button to open pico voice console to generate access token
         ListElement(
             modifier = Modifier
                 .testTag(TestTag.PorcupineOpenConsole)
-                .clickable(onClick = viewModel::openPicoVoiceConsole),
+                .clickable(onClick = {onAction(OpenPicoVoiceConsole)}),
             icon = {
                 Icon(
                     imageVector = Icons.Filled.Link,
@@ -168,7 +223,10 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
                 .testTag(TestTag.PorcupineLanguage)
                 .clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineLanguage.route) },
             text = { Text(MR.strings.language.stable) },
-            secondaryText = { Text(viewModel.wakeWordPorcupineLanguage.collectAsState().value.text) }
+            secondaryText = {
+                val porcupineLanguageText by remember { derivedStateOf { viewState.porcupineLanguage.text } }
+                Text(porcupineLanguageText)
+            }
         )
 
         //wake word list
@@ -177,9 +235,7 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
                 .testTag(TestTag.PorcupineKeyword)
                 .clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineKeyword.route) },
             text = { Text(MR.strings.wakeWord.stable) },
-            secondaryText = {
-                Text("${viewModel.wakeWordPorcupineKeywordCount.collectAsState().value} ${translate(MR.strings.active.stable)}")
-            }
+            secondaryText = { Text("${viewState.keywordCount} ${translate(MR.strings.active.stable)}") }
         )
 
         //button to enabled microphone
@@ -207,7 +263,10 @@ private fun PorcupineConfiguration(viewModel: WakeWordConfigurationViewModel) {
  *  udp host and port
  */
 @Composable
-private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
+private fun UdpSettings(
+    viewState: UdpViewState,
+    onAction: (WakeWordConfigurationUiAction) -> Unit
+) {
 
     Column {
 
@@ -215,8 +274,8 @@ private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
         TextFieldListItem(
             label = MR.strings.host.stable,
             modifier = Modifier.testTag(TestTag.AudioRecordingUdpHost),
-            value = viewModel.wakeWordUdpOutputHost.collectAsState().value,
-            onValueChange = viewModel::changeUdpOutputHost,
+            value = viewState.outputHost,
+            onValueChange = { onAction(UpdateUdpOutputHost(it))},
             isLastItem = false
         )
 
@@ -224,8 +283,8 @@ private fun UdpSettings(viewModel: WakeWordConfigurationViewModel) {
         TextFieldListItem(
             label = MR.strings.port.stable,
             modifier = Modifier.testTag(TestTag.AudioRecordingUdpPort),
-            value = viewModel.wakeWordUdpOutputPortText.collectAsState().value,
-            onValueChange = viewModel::changeUdpOutputPort,
+            value = viewState.outputPortText,
+            onValueChange = { onAction(UpdateUdpOutputPort(it))},
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
 

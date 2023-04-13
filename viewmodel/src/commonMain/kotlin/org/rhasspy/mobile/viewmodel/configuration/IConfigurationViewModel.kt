@@ -39,7 +39,7 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationEditViewState>(
     private val service: IService,
     internal val testRunner: T,
-    private val initialViewState: V
+    private val initialViewState: () -> V
 ) : ViewModel(), KoinComponent {
     private val logger = Logger.withTag("IConfigurationViewModel")
     private var testStartDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).toString()
@@ -65,7 +65,7 @@ abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationE
         )
     )
 
-    protected val contentViewState = MutableStateFlow(initialViewState)
+    protected val contentViewState = MutableStateFlow(initialViewState())
 
     protected val data get() = contentViewState.value
 
@@ -132,12 +132,12 @@ abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationE
     }
 
     fun discard() {
-        contentViewState.value = getInitialViewState()
 
         _viewState.update { it.copy(isLoading = true) }
 
         viewModelScope.launch(Dispatchers.Default) {
             onDiscard()
+            contentViewState.value = initialViewState()
             get<NativeApplication>().reloadServiceModules()
 
             _viewState.update { it.copy(isLoading = false) }
