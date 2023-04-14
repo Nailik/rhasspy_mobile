@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.speechtotext
 
+import androidx.compose.runtime.Stable
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
@@ -15,6 +16,7 @@ import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfi
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiAction.Change.ToggleUseSpeechToTextMqttSilenceDetection
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiAction.Change.UpdateSpeechToTextHttpEndpoint
 
+@Stable
 class SpeechToTextConfigurationViewModel(
     service: SpeechToTextService,
     testRunner: SpeechToTextConfigurationTest

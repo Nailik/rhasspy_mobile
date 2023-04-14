@@ -11,6 +11,7 @@ import kotlinx.collections.immutable.ImmutableList
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
@@ -44,15 +45,16 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
 fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewModel = get()) {
 
     val viewState by viewModel.viewState.collectAsState()
+    val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.AudioPlayingConfiguration),
-        title = MR.strings.audioPlaying.stable,
+        config = ConfigurationScreenConfig(MR.strings.audioPlaying.stable),
         viewState = viewState,
-        onAction = viewModel::onAction,
-        onConsumed = viewModel::onConsumed,
+        onAction = { viewModel.onAction(it) },
+        onConsumed = { viewModel.onConsumed(it) },
         testContent = { TestContent(viewModel) }
-    ) { contentViewState ->
+    ) {
 
         item {
             AudioPlayingOptionContent(

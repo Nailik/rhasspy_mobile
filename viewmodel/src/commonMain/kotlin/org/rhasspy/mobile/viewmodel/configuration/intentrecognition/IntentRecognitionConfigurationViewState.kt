@@ -14,7 +14,7 @@ data class IntentRecognitionConfigurationViewState(
     val intentRecognitionOption: IntentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value,
     val isUseCustomIntentRecognitionHttpEndpoint: Boolean = ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value,
     val intentRecognitionHttpEndpoint: String = ConfigurationSetting.intentRecognitionHttpEndpoint.value
-): IConfigurationEditViewState {
+): IConfigurationEditViewState() {
 
     override val hasUnsavedChanges: Boolean
         get() = !(intentRecognitionOption == ConfigurationSetting.intentRecognitionOption.value &&

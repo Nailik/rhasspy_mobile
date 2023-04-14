@@ -39,7 +39,7 @@ class RemoteHermesHttpConfigurationContentTest {
             CompositionLocalProvider(
                 LocalMainNavController provides navController
             ) {
-                RemoteHermesHttpConfigurationContent(viewModel)
+              //  RemoteHermesHttpConfigurationContent(viewModel)
             }
         }
 

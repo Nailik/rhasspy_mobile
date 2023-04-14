@@ -16,7 +16,7 @@ data class IntentHandlingConfigurationViewState(
     val intentHandlingHassEndpoint: String = ConfigurationSetting.intentHandlingHassEndpoint.value,
     val intentHandlingHassAccessToken: String = ConfigurationSetting.intentHandlingHassAccessToken.value,
     val intentHandlingHassOption: HomeAssistantIntentHandlingOption = ConfigurationSetting.intentHandlingHomeAssistantOption.value
-): IConfigurationEditViewState {
+): IConfigurationEditViewState() {
 
     override val hasUnsavedChanges: Boolean
         get() = !(intentHandlingOption == ConfigurationSetting.intentHandlingOption.value &&

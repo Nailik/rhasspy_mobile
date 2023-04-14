@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.webserver
 
+import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
@@ -24,6 +25,7 @@ import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurati
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Navigate.OpenWebServerSSLWiki
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Navigate.SelectSSLCertificate
 
+@Stable
 class WebServerConfigurationViewModel(
     service: WebServerService,
     testRunner: WebServerConfigurationTest

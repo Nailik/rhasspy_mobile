@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp
 
+import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
@@ -20,6 +21,7 @@ import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesH
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.UpdateHttpClientServerEndpointPort
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.UpdateHttpClientTimeout
 
+@Stable
 class RemoteHermesHttpConfigurationViewModel(
     service: HttpClientService,
     testRunner: RemoteHermesHttpConfigurationTest

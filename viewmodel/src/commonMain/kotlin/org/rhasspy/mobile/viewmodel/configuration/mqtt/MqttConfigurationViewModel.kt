@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.mqtt
 
+import androidx.compose.runtime.Stable
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
@@ -26,6 +27,7 @@ import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttUserName
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Navigate
 
+@Stable
 class MqttConfigurationViewModel(
     service: MqttService,
     testRunner: MqttConfigurationTest

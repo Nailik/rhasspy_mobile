@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.intentrecognition
 
+import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import org.koin.core.component.get
@@ -14,6 +15,7 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiAction.SelectIntentRecognitionOption
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiAction.ToggleUseCustomHttpEndpoint
 
+@Stable
 class IntentRecognitionConfigurationViewModel(
     service: IntentRecognitionService,
     testRunner: IntentRecognitionConfigurationTest

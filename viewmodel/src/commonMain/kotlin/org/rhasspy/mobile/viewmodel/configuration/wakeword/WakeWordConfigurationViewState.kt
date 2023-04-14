@@ -19,7 +19,7 @@ data class WakeWordConfigurationViewState(
     val wakeWordPorcupineViewState: PorcupineViewState = PorcupineViewState(),
     val wakeWordUdpViewState: UdpViewState = UdpViewState(),
     val isMicrophonePermissionRequestVisible: Boolean = false
-): IConfigurationEditViewState {
+): IConfigurationEditViewState() {
 
     override val hasUnsavedChanges: Boolean
         get() = !(wakeWordOption == ConfigurationSetting.wakeWordOption.value &&

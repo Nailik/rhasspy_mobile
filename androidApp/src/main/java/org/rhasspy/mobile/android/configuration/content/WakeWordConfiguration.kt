@@ -26,6 +26,7 @@ import kotlinx.collections.immutable.ImmutableList
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.configuration.content.porcupine.PorcupineKeywordScreen
@@ -117,15 +118,16 @@ fun WakeWordConfigurationContent(viewModel: WakeWordConfigurationViewModel = get
 private fun WakeWordConfigurationOverview(viewModel: WakeWordConfigurationViewModel) {
 
     val viewState by viewModel.viewState.collectAsState()
+    val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.WakeWordConfiguration),
-        title = MR.strings.wakeWord.stable,
+        config = ConfigurationScreenConfig(MR.strings.wakeWord.stable),
         viewState = viewState,
-        onAction = viewModel::onAction,
-        onConsumed = viewModel::onConsumed,
+        onAction = { viewModel.onAction(it) },
+        onConsumed = { viewModel.onConsumed(it) },
         testContent = { TestContent(viewModel) }
-    ) { contentViewState ->
+    ) {
 
         item {
             WakeWordConfigurationOptionContent(

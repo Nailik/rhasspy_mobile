@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
@@ -36,14 +37,15 @@ import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagem
 fun DialogManagementConfigurationContent(viewModel: DialogManagementConfigurationViewModel = get()) {
 
     val viewState by viewModel.viewState.collectAsState()
+    val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.DialogManagementConfiguration),
-        title = MR.strings.dialogManagement.stable,
+        config = ConfigurationScreenConfig(MR.strings.dialogManagement.stable),
         viewState = viewState,
-        onAction = viewModel::onAction,
-        onConsumed = viewModel::onConsumed
-    ) { contentViewState ->
+        onAction = { viewModel.onAction(it) },
+        onConsumed = { viewModel.onConsumed(it) }
+    ) {
 
         item {
             DialogManagementOptionContent(

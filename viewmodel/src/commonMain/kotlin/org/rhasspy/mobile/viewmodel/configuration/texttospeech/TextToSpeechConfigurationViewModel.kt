@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.texttospeech
 
+import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.get
 import org.koin.core.component.inject
@@ -22,6 +23,7 @@ import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfi
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiAction.Change.ToggleUseCustomHttpEndpoint
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiAction.Change.UpdateTextToSpeechHttpEndpoint
 
+@Stable
 class TextToSpeechConfigurationViewModel(
     service: TextToSpeechService,
     testRunner: TextToSpeechConfigurationTest

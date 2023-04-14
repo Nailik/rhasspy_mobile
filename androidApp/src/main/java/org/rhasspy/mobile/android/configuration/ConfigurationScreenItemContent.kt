@@ -34,7 +34,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -87,9 +89,9 @@ fun <V: IConfigurationEditViewState> ConfigurationScreenItemContent(
     onAction: (IConfigurationUiAction) -> Unit,
     onConsumed: (IConfigurationUiEvent) -> Unit,
     modifier: Modifier,
-    title: StableStringResource,
+    config: ConfigurationScreenConfig = ConfigurationScreenConfig(MR.strings.save.stable),
     testContent: (@Composable () -> Unit)? = null,
-    content: LazyListScope.(contentViewState: V) -> Unit
+    content: LazyListScope.() -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -133,7 +135,7 @@ fun <V: IConfigurationEditViewState> ConfigurationScreenItemContent(
 
                     composable(ConfigurationContentScreens.Edit.route) {
                         EditConfigurationScreen(
-                            title = title,
+                            title = config.title,
                             viewState = viewState.editViewState.collectAsState().value,
                             showUnsavedChangesDialog = viewState.showUnsavedChangesDialog,
                             popBackStack = viewState.popBackStack,
@@ -159,14 +161,14 @@ fun <V: IConfigurationEditViewState> ConfigurationScreenItemContent(
  * configuration screen where settings are edited
  */
 @Composable
-private fun<V: IConfigurationEditViewState> EditConfigurationScreen(
+private fun EditConfigurationScreen(
     title: StableStringResource,
-    viewState: V,
+    viewState: IConfigurationEditViewState,
     showUnsavedChangesDialog: Boolean,
     popBackStack: PopBackStack = PopBackStack(Consumed),
     onAction: (IConfigurationEditUiAction) -> Unit,
     onConsumed: (IConfigurationUiEvent) -> Unit,
-    content: LazyListScope.(V) -> Unit
+    content: LazyListScope.() -> Unit
 ) {
     SetSystemColor(0.dp)
 
@@ -195,7 +197,7 @@ private fun<V: IConfigurationEditViewState> EditConfigurationScreen(
         topBar = {
             AppBar(
                 title = title,
-                onBackClick = { (onAction(BackPress))}
+                onBackClick = { (onAction(BackPress)) }
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
@@ -207,7 +209,7 @@ private fun<V: IConfigurationEditViewState> EditConfigurationScreen(
             BottomAppBar(
                 hasUnsavedChanges = viewState.hasUnsavedChanges,
                 isTestingEnabled = viewState.isTestingEnabled,
-                onAction = onAction,
+                onAction = { onAction(it) },
             )
         }
     ) { paddingValues ->
@@ -217,7 +219,7 @@ private fun<V: IConfigurationEditViewState> EditConfigurationScreen(
                     .padding(paddingValues)
                     .fillMaxSize()
             ) {
-                content(viewState)
+                content()
             }
         }
     }
@@ -323,27 +325,38 @@ private fun BottomAppBar(
             }
         },
         floatingActionButton = {
-            val navController = LocalConfigurationNavController.current
-            FloatingActionButton(
-                modifier = Modifier
-                    .testTag(TestTag.BottomAppBarTest)
-                    .defaultMinSize(
-                        minWidth = 56.0.dp,
-                        minHeight = 56.0.dp,
-                    ),
-                onClick = {
-                    onAction(StartTest)
-                    navController.navigate(ConfigurationContentScreens.Test.route)
-                },
-                isEnabled = isTestingEnabled,
-                containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
-                contentColor = LocalContentColor.current,
-                icon = {
-                    Icon(
-                        imageVector = if (isTestingEnabled) Icons.Filled.PlayArrow else Icons.Outlined.PlayArrow,
-                        contentDescription = MR.strings.test.stable
-                    )
-                }
+            FloatingActionButtonElement(
+                isTestingEnabled= isTestingEnabled,
+                onAction = { onAction(it) }
+            )
+        }
+    )
+}
+
+@Composable
+private fun FloatingActionButtonElement(
+    isTestingEnabled: Boolean,
+    onAction: (IConfigurationEditUiAction) -> Unit
+) {
+    val navController = rememberNavController()
+    FloatingActionButton(
+        modifier = Modifier
+            .testTag(TestTag.BottomAppBarTest)
+            .defaultMinSize(
+                minWidth = 56.0.dp,
+                minHeight = 56.0.dp,
+            ),
+        onClick = {
+            onAction(StartTest)
+            navController.navigate(ConfigurationContentScreens.Test.route)
+        },
+        containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
+        contentColor = LocalContentColor.current,
+        isEnabled = isTestingEnabled,
+        icon = {
+            Icon(
+                imageVector = if (isTestingEnabled) Icons.Filled.PlayArrow else Icons.Outlined.PlayArrow,
+                contentDescription = MR.strings.test.stable
             )
         }
     )
@@ -367,7 +380,7 @@ private fun AppBar(title: StableStringResource, onBackClick: () -> Unit, icon: @
         },
         navigationIcon = {
             IconButton(
-                onClick = onBackClick,
+                onClick = { onBackClick() },
                 modifier = Modifier.testTag(TestTag.AppBarBackButton),
                 content = icon
             )

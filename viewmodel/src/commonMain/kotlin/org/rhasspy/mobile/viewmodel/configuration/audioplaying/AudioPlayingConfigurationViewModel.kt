@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.audioplaying
 
+import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.update
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
@@ -24,6 +25,7 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
  * if Endpoint option should be shown
  * all Options as list
  */
+@Stable
 class AudioPlayingConfigurationViewModel(
     service: AudioPlayingService,
     testRunner: AudioPlayingConfigurationTest

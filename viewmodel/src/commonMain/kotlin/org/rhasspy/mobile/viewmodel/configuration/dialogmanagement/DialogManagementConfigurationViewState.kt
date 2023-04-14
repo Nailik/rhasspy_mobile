@@ -15,7 +15,7 @@ data class DialogManagementConfigurationViewState(
     val textAsrTimeoutText: String = ConfigurationSetting.textAsrTimeout.value.toString(),
     val intentRecognitionTimeoutText: String = ConfigurationSetting.intentRecognitionTimeout.value.toString(),
     val recordingTimeoutText: String = ConfigurationSetting.recordingTimeout.value.toString()
-) : IConfigurationEditViewState {
+) : IConfigurationEditViewState() {
 
     val textAsrTimeout: Long get() = textAsrTimeoutText.toLongOrZero()
     val intentRecognitionTimeout: Long get() = intentRecognitionTimeoutText.toLongOrZero()

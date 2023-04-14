@@ -14,7 +14,7 @@ data class SpeechToTextConfigurationViewState(
     val isUseCustomSpeechToTextHttpEndpoint: Boolean= ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value,
     val isUseSpeechToTextMqttSilenceDetection: Boolean= ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value,
     val speechToTextHttpEndpoint: String= ConfigurationSetting.speechToTextHttpEndpoint.value
-): IConfigurationEditViewState {
+): IConfigurationEditViewState() {
 
     override val hasUnsavedChanges: Boolean
         get() = !(speechToTextOption == ConfigurationSetting.speechToTextOption.value &&

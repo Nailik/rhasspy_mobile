@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.wakeword
 
+import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -39,6 +40,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.UdpUiAction.Change.UpdateUdpOutputHost
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.UdpUiAction.Change.UpdateUdpOutputPort
 
+@Stable
 class WakeWordConfigurationViewModel(
     service: WakeWordService,
     testRunner: WakeWordConfigurationTest

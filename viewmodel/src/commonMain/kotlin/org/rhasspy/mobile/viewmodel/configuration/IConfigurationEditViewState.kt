@@ -1,6 +1,9 @@
 package org.rhasspy.mobile.viewmodel.configuration
 
-interface IConfigurationEditViewState {
-    val hasUnsavedChanges: Boolean
-    val isTestingEnabled: Boolean
+import androidx.compose.runtime.Stable
+
+@Stable
+abstract class IConfigurationEditViewState {
+    abstract val hasUnsavedChanges: Boolean
+    abstract val isTestingEnabled: Boolean
 }

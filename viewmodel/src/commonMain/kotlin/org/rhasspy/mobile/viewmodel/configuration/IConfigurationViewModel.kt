@@ -150,6 +150,7 @@ abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationE
                 _viewState.update {
                     it.copy(
                         showUnsavedChangesDialog = false,
+                        isLoading = false,
                         popBackStack = PopBackStack(Triggered)
                     )
                 }
@@ -167,12 +168,12 @@ abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationE
         viewModelScope.launch(Dispatchers.Default) {
             onDiscard()
             contentViewState.value = initialViewState()
-            get<NativeApplication>().reloadServiceModules()
 
             if(_viewState.value.showUnsavedChangesDialog) {
                 _viewState.update {
                     it.copy(
                         showUnsavedChangesDialog = false,
+                        isLoading = false,
                         popBackStack = PopBackStack(Triggered)
                     )
                 }

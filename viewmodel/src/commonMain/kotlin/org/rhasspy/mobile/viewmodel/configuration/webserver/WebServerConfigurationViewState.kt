@@ -15,7 +15,7 @@ data class WebServerConfigurationViewState(
     val httpServerSSLKeyStorePassword: String= ConfigurationSetting.httpServerSSLKeyStorePassword.value,
     val httpServerSSLKeyAlias: String = ConfigurationSetting.httpServerSSLKeyAlias.value,
     val httpServerSSLKeyPassword: String= ConfigurationSetting.httpServerSSLKeyPassword.value
-): IConfigurationEditViewState {
+): IConfigurationEditViewState() {
 
     override val hasUnsavedChanges: Boolean
         get() =!(isHttpServerEnabled == ConfigurationSetting.isHttpServerEnabled.value &&

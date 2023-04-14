@@ -15,7 +15,7 @@ data class RemoteHermesHttpConfigurationViewState(
     val httpClientServerEndpointPortText: String = ConfigurationSetting.httpClientServerEndpointPort.value.toString(),
     val httpClientTimeoutText: String= ConfigurationSetting.httpClientTimeout.value.toString(),
     val isHttpSSLVerificationDisabled: Boolean= ConfigurationSetting.isHttpClientSSLVerificationDisabled.value
-): IConfigurationEditViewState {
+): IConfigurationEditViewState() {
 
     override val hasUnsavedChanges: Boolean
         get() = !(httpClientServerEndpointHost == ConfigurationSetting.httpClientServerEndpointHost.value &&

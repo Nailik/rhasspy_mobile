@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.intenthandling
 
+import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import org.koin.core.component.get
@@ -17,6 +18,7 @@ import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingC
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiAction.SelectIntentHandlingHassOption
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiAction.SelectIntentHandlingOption
 
+@Stable
 class IntentHandlingConfigurationViewModel(
     service: DialogManagerService,
     testRunner: IntentHandlingConfigurationTest

@@ -37,12 +37,12 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenVie
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.IntentRecognitionViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.MqttViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.RemoteHermesHttpViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SiteIdViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SpeechToTextViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.TextToSpeechViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.WakeWordViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.WebServerViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 /**
  * configuration screens with list items that open bottom sheet

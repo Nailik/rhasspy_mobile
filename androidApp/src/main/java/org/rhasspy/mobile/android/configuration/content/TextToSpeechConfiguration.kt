@@ -10,6 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
@@ -39,15 +40,16 @@ import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfi
 fun TextToSpeechConfigurationContent(viewModel: TextToSpeechConfigurationViewModel = get()) {
 
     val viewState by viewModel.viewState.collectAsState()
+    val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.TextToSpeechConfiguration),
-        title = MR.strings.textToSpeech.stable,
+        config = ConfigurationScreenConfig(MR.strings.textToSpeech.stable),
         viewState = viewState,
-        onAction = viewModel::onAction,
-        onConsumed = viewModel::onConsumed,
+        onAction = { viewModel.onAction(it) },
+        onConsumed = { viewModel.onConsumed(it) },
         testContent = { TestContent(viewModel) }
-    ) { contentViewState ->
+    ) {
 
         item {
             TextToSpeechOptionContent(

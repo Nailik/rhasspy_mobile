@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.dialogmanagement
 
+import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.update
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
@@ -18,6 +19,7 @@ import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagem
  * Current Option
  * all Options as list
  */
+@Stable
 class DialogManagementConfigurationViewModel(
     service: DialogManagerService,
     testRunner: DialogManagementConfigurationTest
