@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.android.configuration.content.porcupine
 
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -16,6 +18,8 @@ import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationTest
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import kotlin.test.assertTrue
 
@@ -24,7 +28,10 @@ class PorcupineKeywordScreenTest {
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = WakeWordConfigurationViewModel()
+    private val viewModel = WakeWordConfigurationViewModel(
+        service = WakeWordService(),
+        testRunner = WakeWordConfigurationTest()
+    )
 
     @Before
     fun setUp() {
@@ -35,7 +42,12 @@ class PorcupineKeywordScreenTest {
             CompositionLocalProvider(
                 LocalNavController provides navController
             ) {
-                PorcupineKeywordScreen(viewModel)
+                val viewState by viewModel.viewState.collectAsState()
+                val contentViewState by viewState.editViewState.collectAsState()
+                PorcupineKeywordScreen(
+                    viewState = contentViewState.wakeWordPorcupineViewState,
+                    onAction = viewModel::onAction
+                )
             }
         }
 

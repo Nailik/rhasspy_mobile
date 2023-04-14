@@ -5,11 +5,12 @@ import androidx.test.uiautomator.UiDevice
 import org.junit.Before
 import org.junit.Test
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.settings.sound.RecordedIndicationSoundSettingsViewModel
 
 class RecordedIndicationSoundScreenTest : IndicationSoundScreenTest(
     viewModel = RecordedIndicationSoundSettingsViewModel(),
-    title = MR.strings.recordedSound,
+    title = MR.strings.recordedSound.stable,
     screen = IndicationSettingsScreens.RecordedIndicationSound
 ) {
 

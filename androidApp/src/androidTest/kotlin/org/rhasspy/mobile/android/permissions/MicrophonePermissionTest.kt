@@ -28,6 +28,7 @@ import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.data.language.LanguageType
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.viewmodel.settings.LanguageSettingsViewModel
 import kotlin.test.assertFalse
@@ -108,7 +109,7 @@ class MicrophonePermissionTest {
                     ) {
 
                         RequiresMicrophonePermission(
-                            MR.strings.defaultText,
+                            MR.strings.defaultText.stable,
                             { permissionResult = true }) { onClick ->
                             Button(onClick = onClick) {
                                 Text(btnRequestPermission)
@@ -347,7 +348,7 @@ class MicrophonePermissionTest {
         composeTestRule.onNodeWithText(btnRequestPermission).performClick()
         //snack bar shown
         assertTrue {
-            device.findObject(UiSelector().text(MR.strings.microphonePermissionDenied)).exists()
+            device.findObject(UiSelector().text(MR.strings.microphonePermissionDenied.stable)).exists()
         }
     }
 
@@ -409,7 +410,7 @@ class MicrophonePermissionTest {
         assertFalse { MicrophonePermission.granted.value }
         //Snackbar is shown
         assertTrue {
-            device.findObject(UiSelector().text(MR.strings.microphonePermissionDenied)).exists()
+            device.findObject(UiSelector().text(MR.strings.microphonePermissionDenied.stable)).exists()
         }
         assertFalse { MicrophonePermission.granted.value }
 
@@ -477,11 +478,11 @@ class MicrophonePermissionTest {
         //Snackbar is shown
         getInstrumentation().waitForIdleSync()
         assertTrue {
-            device.findObject(UiSelector().text(MR.strings.microphonePermissionDenied)).exists()
+            device.findObject(UiSelector().text(MR.strings.microphonePermissionDenied.stable)).exists()
         }
         composeTestRule.waitForIdle()
         //Snackbar action is clicked
-        composeTestRule.onNodeWithText(MR.strings.settings).performClick()
+        composeTestRule.onNodeWithText(MR.strings.settings.stable).performClick()
         //User is redirected to settings
         getInstrumentation().waitForIdleSync()
         device.findObject(UiSelector().resourceId(txtEntityHeader).text(appName)).exists()

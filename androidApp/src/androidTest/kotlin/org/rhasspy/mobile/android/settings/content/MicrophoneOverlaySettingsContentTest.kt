@@ -27,6 +27,7 @@ import org.rhasspy.mobile.android.onListItemRadioButton
 import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.resetOverlayPermission
 import org.rhasspy.mobile.android.text
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.viewmodel.settings.MicrophoneOverlaySettingsViewModel
 import kotlin.test.assertEquals
@@ -111,8 +112,8 @@ class MicrophoneOverlaySettingsContentTest {
         //user accepts permission
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         assertTrue { device.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
-        UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName))
-        device.findObject(UiSelector().text(MR.strings.appName)).click()
+        UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName.stable))
+        device.findObject(UiSelector().text(MR.strings.appName.stable)).click()
         device.findObject(UiSelector().className(Switch::class.java)).click()
         //User clicks back
         device.pressBack()

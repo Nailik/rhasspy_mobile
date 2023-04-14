@@ -26,6 +26,8 @@ import androidx.test.uiautomator.UiSelector
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationTest
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 
 
@@ -156,7 +158,7 @@ fun SemanticsNodeInteractionsProvider.onNodeWithText(
     ), useUnmergedTree
 )
 
-fun ComposeContentTestRule.awaitSaved(viewModel: IConfigurationViewModel) {
+fun <T: IConfigurationTest, V: IConfigurationEditViewState> ComposeContentTestRule.awaitSaved(viewModel: IConfigurationViewModel<T,V>) {
     this.waitUntil(
         condition = { !viewModel.viewState.value.isLoading },
         timeoutMillis = 5000

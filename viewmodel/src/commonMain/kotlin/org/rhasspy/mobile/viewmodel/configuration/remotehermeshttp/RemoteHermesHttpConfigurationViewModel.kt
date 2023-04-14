@@ -16,7 +16,7 @@ import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.ToggleHttpSSLVerificationDisabled
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.SetHttpSSLVerificationDisabled
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.UpdateHttpClientServerEndpointHost
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.UpdateHttpClientServerEndpointPort
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.UpdateHttpClientTimeout
@@ -40,7 +40,7 @@ class RemoteHermesHttpConfigurationViewModel(
     private fun onChange(change: Change){
         contentViewState.update {
             when (change) {
-                ToggleHttpSSLVerificationDisabled -> it.copy(isHttpSSLVerificationDisabled = !it.isHttpSSLVerificationDisabled)
+                is SetHttpSSLVerificationDisabled -> it.copy(isHttpSSLVerificationDisabled = change.disabled)
                 is UpdateHttpClientServerEndpointHost -> it.copy(httpClientServerEndpointHost = change.value)
                 is UpdateHttpClientServerEndpointPort -> it.copy(httpClientServerEndpointPortText = change.value)
                 is UpdateHttpClientTimeout -> it.copy(httpClientTimeoutText = change.value)

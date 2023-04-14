@@ -35,8 +35,8 @@ import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.ToggleMqttEnabled
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.ToggleMqttSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.SetMqttEnabled
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.SetMqttSSLEnabled
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttConnectionTimeout
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttHost
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttKeepAliveInterval
@@ -78,7 +78,7 @@ fun MqttConfigurationContent(viewModel: MqttConfigurationViewModel = get()) {
                 text = MR.strings.externalMQTT.stable,
                 modifier = Modifier.testTag(TestTag.MqttSwitch),
                 isChecked = contentViewState.isMqttSSLEnabled,
-                onCheckedChange = { viewModel.onAction(ToggleMqttEnabled) }
+                onCheckedChange = { viewModel.onAction(SetMqttEnabled(it)) }
             )
         }
 
@@ -188,7 +188,7 @@ private fun MqttSSL(
         text = MR.strings.enableSSL.stable,
         modifier = Modifier.testTag(TestTag.SSLSwitch),
         isChecked = isMqttSSLEnabled,
-        onCheckedChange = {  onAction(ToggleMqttSSLEnabled) }
+        onCheckedChange = {  onAction(SetMqttSSLEnabled(it)) }
     )
 
     AnimatedVisibility(

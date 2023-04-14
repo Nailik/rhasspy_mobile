@@ -54,6 +54,7 @@ class ConfigurationScreenTest {
             composeTestRule.onNodeWithTag(tag).assertExists()
             //press toolbar back button
             composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
+            composeTestRule.awaitIdle()
         }
     }
 

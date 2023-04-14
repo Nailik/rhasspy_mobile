@@ -24,7 +24,12 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.WakeWordOption
+import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationTest
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.Change.SelectWakeWordOption
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.UpdateWakeWordPorcupineAccessToken
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -36,7 +41,10 @@ class WakeWordConfigurationContentTest {
     private val device: UiDevice =
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-    private val viewModel = WakeWordConfigurationViewModel()
+    private val viewModel = WakeWordConfigurationViewModel(
+        service = WakeWordService(),
+        testRunner = WakeWordConfigurationTest()
+    )
 
     @Before
     fun setUp() {
@@ -71,9 +79,13 @@ class WakeWordConfigurationContentTest {
     @Test
     fun testWakeWordContent() = runBlocking {
         //option is disable
-        viewModel.selectWakeWordOption(WakeWordOption.Disabled)
-        viewModel.onSave()
-        assertEquals(WakeWordOption.Disabled, viewModel.wakeWordOption.value)
+        viewModel.onAction(SelectWakeWordOption(WakeWordOption.Disabled))
+        viewModel.save()
+        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
+        val viewState = viewModel.viewState.value.editViewState
+
+        assertEquals(WakeWordOption.Disabled, viewState.value.wakeWordOption)
 
         //porcupine options not visible
         composeTestRule.onNodeWithTag(TestTag.PorcupineWakeWordSettings).assertDoesNotExist()
@@ -85,9 +97,9 @@ class WakeWordConfigurationContentTest {
         //user clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
-        val newViewModel = WakeWordConfigurationViewModel()
+        val newViewState = WakeWordConfigurationViewState()
         //new option is saved
-        assertEquals(WakeWordOption.Porcupine, newViewModel.wakeWordOption.value)
+        assertEquals(WakeWordOption.Porcupine, newViewState.wakeWordOption)
     }
 
     /**
@@ -106,9 +118,14 @@ class WakeWordConfigurationContentTest {
     @Test
     fun testPorcupineOptions() = runBlocking {
         //option is porcupine
-        viewModel.selectWakeWordOption(WakeWordOption.Porcupine)
-        viewModel.onSave()
-        assertEquals(WakeWordOption.Porcupine, viewModel.wakeWordOption.value)
+        viewModel.onAction(SelectWakeWordOption(WakeWordOption.Porcupine))
+        viewModel.onAction(UpdateWakeWordPorcupineAccessToken(""))
+        viewModel.save()
+        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
+        val viewState = viewModel.viewState.value.editViewState
+
+        assertEquals(WakeWordOption.Porcupine, viewState.value.wakeWordOption)
 
         val textInputTest = "fghfghhrtrtzh34ß639254´1´90!$/%(&$("
 
@@ -117,8 +134,7 @@ class WakeWordConfigurationContentTest {
         //user changes access token
         composeTestRule.onNodeWithTag(TestTag.PorcupineAccessToken).performScrollTo().performClick()
         //access token change
-        composeTestRule.onNodeWithTag(TestTag.PorcupineAccessToken)
-            .performTextReplacement(textInputTest)
+        composeTestRule.onNodeWithTag(TestTag.PorcupineAccessToken).performTextReplacement(textInputTest)
 
         //user clicks picovoice console
         composeTestRule.onNodeWithTag(TestTag.PorcupineOpenConsole).performScrollTo().performClick()
@@ -132,9 +148,9 @@ class WakeWordConfigurationContentTest {
         //user clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
-        val newViewModel = WakeWordConfigurationViewModel()
+        val newViewState = WakeWordConfigurationViewState()
         //access token is saved
-        assertEquals(WakeWordOption.Porcupine, newViewModel.wakeWordOption.value)
+        assertEquals(WakeWordOption.Porcupine, newViewState.wakeWordOption)
     }
 
     /**
@@ -155,9 +171,13 @@ class WakeWordConfigurationContentTest {
     @Test
     fun testPorcupineWakeWordOptions() = runBlocking {
         //option is porcupine
-        viewModel.selectWakeWordOption(WakeWordOption.Porcupine)
-        viewModel.onSave()
-        assertEquals(WakeWordOption.Porcupine, viewModel.wakeWordOption.value)
+        viewModel.onAction(SelectWakeWordOption(WakeWordOption.Porcupine))
+        viewModel.save()
+        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
+        val viewState = viewModel.viewState.value.editViewState
+
+        assertEquals(WakeWordOption.Porcupine, viewState.value.wakeWordOption)
 
         //wake word is clicked,
         composeTestRule.onNodeWithTag(TestTag.PorcupineKeyword).performScrollTo().performClick()

@@ -104,6 +104,6 @@ object ConfigurationSetting {
 
     val intentHandlingHassEndpoint = ISetting(SettingsEnum.IntentHandlingHassUrl, "")
     val intentHandlingHassAccessToken = ISetting(SettingsEnum.IntentHandlingHassAccessToken, "")
-    val intentHandlingHomeAssistantOption = ISetting(SettingsEnum.IsIntentHandlingHassEvent, HomeAssistantIntentHandlingOption.Event)
+    val intentHandlingHomeAssistantOption = ISetting(SettingsEnum.IsIntentHandlingHassEvent, HomeAssistantIntentHandlingOption.Intent)
 
 }

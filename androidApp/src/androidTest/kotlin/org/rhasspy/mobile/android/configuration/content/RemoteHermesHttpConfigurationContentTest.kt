@@ -16,9 +16,13 @@ import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.onListItemSwitch
+import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationTest
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.SetHttpSSLVerificationDisabled
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewState
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -28,7 +32,10 @@ class RemoteHermesHttpConfigurationContentTest {
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = RemoteHermesHttpConfigurationViewModel()
+    private val viewModel = RemoteHermesHttpConfigurationViewModel(
+        service = HttpClientService(),
+        testRunner = RemoteHermesHttpConfigurationTest()
+    )
 
     @Before
     fun setUp() {
@@ -39,7 +46,7 @@ class RemoteHermesHttpConfigurationContentTest {
             CompositionLocalProvider(
                 LocalMainNavController provides navController
             ) {
-              //  RemoteHermesHttpConfigurationContent(viewModel)
+                RemoteHermesHttpConfigurationContent(viewModel)
             }
         }
 
@@ -60,8 +67,11 @@ class RemoteHermesHttpConfigurationContentTest {
      */
     @Test
     fun testHttpContent() = runBlocking {
-        viewModel.toggleHttpSSLVerificationDisabled(true)
-        viewModel.onSave()
+        viewModel.onAction(SetHttpSSLVerificationDisabled(true))
+        viewModel.save()
+        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
+        val viewState = viewModel.viewState.value.editViewState
 
         val textInputTest = "textTestInput"
 
@@ -69,24 +79,24 @@ class RemoteHermesHttpConfigurationContentTest {
         composeTestRule.onNodeWithTag(TestTag.Host).performScrollTo().performClick()
         composeTestRule.onNodeWithTag(TestTag.Host).performTextReplacement(textInputTest)
         //disable ssl validation is on
-        assertTrue { viewModel.isHttpSSLVerificationDisabled.value }
+        assertTrue { viewState.value.isHttpSSLVerificationDisabled }
         //switch is on
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOn()
 
         //user clicks switch
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).performClick()
         //disable ssl validation is off
-        assertFalse { viewModel.isHttpSSLVerificationDisabled.value }
+        assertFalse { viewState.value.isHttpSSLVerificationDisabled }
         //switch is off
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOff()
 
         //user click save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
-        val newViewModel = RemoteHermesHttpConfigurationViewModel()
+        val newViewState = RemoteHermesHttpConfigurationViewState()
         //disable ssl validation off is saved
-        assertEquals(false, newViewModel.isHttpSSLVerificationDisabled.value)
+        assertEquals(false, newViewState.isHttpSSLVerificationDisabled)
         //host is saved
-        assertEquals(textInputTest, newViewModel.httpClientServerEndpointHost.value)
+        assertEquals(textInputTest, newViewState.httpClientServerEndpointHost)
     }
 }

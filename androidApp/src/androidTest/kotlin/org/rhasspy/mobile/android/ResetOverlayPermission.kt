@@ -9,6 +9,7 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 
 fun UiDevice.resetOverlayPermission(context: Context) {
@@ -23,8 +24,8 @@ fun UiDevice.resetOverlayPermission(context: Context) {
     val list = ".*list"
 
     InstrumentationRegistry.getInstrumentation().waitForIdleSync()
-    UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName))
-    this.findObject(UiSelector().text(MR.strings.appName)).click()
+    UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName.stable))
+    this.findObject(UiSelector().text(MR.strings.appName.stable)).click()
     this.findObject(UiSelector().className(Switch::class.java)).click()
 
     this.pressBack()
@@ -44,8 +45,8 @@ fun UiDevice.requestOverlayPermissionLegacy(context: Context) {
     val list = ".*list"
 
     InstrumentationRegistry.getInstrumentation().waitForIdleSync()
-    UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName))
-    this.findObject(UiSelector().text(MR.strings.appName)).click()
+    UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName.stable))
+    this.findObject(UiSelector().text(MR.strings.appName.stable)).click()
     this.findObject(UiSelector().className(Switch::class.java)).click()
 
     this.pressBack()

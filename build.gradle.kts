@@ -16,6 +16,7 @@ buildscript {
         classpath("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:_")
         classpath("org.gradle:test-retry-gradle-plugin:_")
         classpath("org.jetbrains.compose:compose-gradle-plugin:_")
+        classpath("org.kodein.mock:mockmp-gradle-plugin:_")
         classpath("co.touchlab.crashkios.crashlyticslink:co.touchlab.crashkios.crashlyticslink.gradle.plugin:_")
     }
 }

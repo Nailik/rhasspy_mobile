@@ -15,8 +15,8 @@ import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.ToggleMqttEnabled
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.ToggleMqttSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.SetMqttEnabled
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.SetMqttSSLEnabled
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttConnectionTimeout
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttHost
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttKeepAliveInterval
@@ -47,8 +47,8 @@ class MqttConfigurationViewModel(
     private fun onChange(change: Change){
         contentViewState.update {
             when(change) {
-                ToggleMqttEnabled -> it.copy(isMqttEnabled = !it.isMqttEnabled)
-                ToggleMqttSSLEnabled -> it.copy(isMqttSSLEnabled = !it.isMqttSSLEnabled)
+                is SetMqttEnabled -> it.copy(isMqttEnabled = change.enabled)
+                is SetMqttSSLEnabled -> it.copy(isMqttSSLEnabled = change.enabled)
                 is UpdateMqttConnectionTimeout -> it.copy(mqttConnectionTimeoutText = change.value)
                 is UpdateMqttHost -> it.copy(mqttHost = change.value)
                 is UpdateMqttKeepAliveInterval -> it.copy(mqttKeepAliveIntervalText = change.value)

@@ -13,10 +13,14 @@ import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.onListItemRadioButton
+import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationTest
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiAction.SelectDialogManagementOption
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewState
 import kotlin.test.assertEquals
 
 class DialogManagementConfigurationContentTest {
@@ -24,7 +28,10 @@ class DialogManagementConfigurationContentTest {
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = DialogManagementConfigurationViewModel()
+    private val viewModel = DialogManagementConfigurationViewModel(
+        service = DialogManagerService(),
+        testRunner = DialogManagementConfigurationTest()
+    )
 
     @Before
     fun setUp() {
@@ -51,8 +58,10 @@ class DialogManagementConfigurationContentTest {
      */
     @Test
     fun testEndpoint() = runBlocking {
-        viewModel.selectDialogManagementOption(DialogManagementOption.Disabled)
+        viewModel.onAction(SelectDialogManagementOption(DialogManagementOption.Disabled))
         viewModel.onSave()
+        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
 
         //option disable is set
         composeTestRule.onNodeWithTag(DialogManagementOption.Disabled, true).onListItemRadioButton().assertIsSelected()
@@ -64,9 +73,9 @@ class DialogManagementConfigurationContentTest {
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
-        val newViewModel = DialogManagementConfigurationViewModel()
+        val newViewState = DialogManagementConfigurationViewState()
         //option is saved to local
-        assertEquals(DialogManagementOption.Local, newViewModel.dialogManagementOption.value)
+        assertEquals(DialogManagementOption.Local, newViewState.dialogManagementOption)
     }
 
 }

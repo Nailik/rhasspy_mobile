@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.android.configuration.content.porcupine
 
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
@@ -19,7 +21,10 @@ import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.onNodeWithCombinedTag
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.PorcupineKeywordOption
+import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationTest
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -28,7 +33,10 @@ class PorcupineKeywordDefaultScreenTest {
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = WakeWordConfigurationViewModel()
+    private val viewModel = WakeWordConfigurationViewModel(
+        service = WakeWordService(),
+        testRunner = WakeWordConfigurationTest()
+    )
 
     @Before
     fun setUp() {
@@ -39,7 +47,12 @@ class PorcupineKeywordDefaultScreenTest {
             CompositionLocalProvider(
                 LocalMainNavController provides navController
             ) {
-                PorcupineKeywordDefaultScreen(viewModel)
+                val viewState by viewModel.viewState.collectAsState()
+                val contentViewState by viewState.editViewState.collectAsState()
+                PorcupineKeywordDefaultScreen(
+                    viewState = contentViewState.wakeWordPorcupineViewState,
+                    onAction = viewModel::onAction
+                )
             }
         }
 
@@ -69,11 +82,12 @@ class PorcupineKeywordDefaultScreenTest {
     @Test
     fun testList() = runBlocking {
         //no wake word is set
-        viewModel.wakeWordPorcupineKeywordDefaultOptions.value.forEach {
+        val viewState = viewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
+        viewState.defaultOptions.forEach {
             assertFalse(it.isEnabled)
         }
         //none is selected
-        viewModel.wakeWordPorcupineKeywordDefaultOptions.value.forEach {
+        viewState.defaultOptions.forEach {
             composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen)
                 .performScrollToKey(it.option)
             composeTestRule.onNodeWithTag(it.option).onListItemSwitch().assertIsOff()
@@ -126,8 +140,8 @@ class PorcupineKeywordDefaultScreenTest {
         //viewModel save is invoked
         viewModel.save()
         composeTestRule.awaitSaved(viewModel)
-        val newViewModel = WakeWordConfigurationViewModel()
-        newViewModel.wakeWordPorcupineKeywordDefaultOptions.value.forEach {
+        val newViewState = PorcupineViewState()
+        newViewState.defaultOptions.forEach {
             //americano is saved with enabled
             //porcupine is saved with not enabled
             //everything else is saved with not enabled

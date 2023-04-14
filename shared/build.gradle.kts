@@ -5,6 +5,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 plugins {
+    id("org.kodein.mock.mockmp")
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
@@ -15,6 +16,11 @@ plugins {
 }
 
 version = Version.toString()
+
+mockmp {
+    usesHelper = true
+    public = true
+}
 
 kotlin {
     android()

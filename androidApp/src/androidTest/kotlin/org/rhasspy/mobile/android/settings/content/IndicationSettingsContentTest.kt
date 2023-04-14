@@ -33,6 +33,7 @@ import org.rhasspy.mobile.android.resetOverlayPermission
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScreens
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.text
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
@@ -129,8 +130,8 @@ class IndicationSettingsContentTest {
         //Redirected to settings
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         assertTrue { device.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
-        UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName))
-        device.findObject(UiSelector().text(MR.strings.appName)).click()
+        UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName.stable))
+        device.findObject(UiSelector().text(MR.strings.appName.stable)).click()
         device.findObject(UiSelector().className(Switch::class.java)).click()
         //User clicks back
         device.pressBack()

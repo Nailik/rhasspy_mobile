@@ -92,6 +92,11 @@ android {
         //else netty finds multiple INDEX.LIST files
         resources.pickFirsts.add("META-INF/INDEX.LIST")
         resources.pickFirsts.add("META-INF/io.netty.versions.properties")
+        resources.pickFirsts.add("META-INF/.*")
+        resources.excludes.add("META-INF/LICENSE*.md")
+        resources.pickFirsts.add("BuildConfig.kt")
+        resources.pickFirsts.add("BuildConfig.dex")
+        jniLibs.keepDebugSymbols.add("**/libpv_porcupine.so")
     }
 
     compileOptions {
@@ -123,12 +128,6 @@ android {
             }
     }
 
-    packaging {
-        resources.pickFirsts.add("META-INF/.*")
-        resources.pickFirsts.add("BuildConfig.kt")
-        resources.pickFirsts.add("BuildConfig.dex")
-        jniLibs.keepDebugSymbols.add("**/libpv_porcupine.so")
-    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -209,9 +208,9 @@ dependencies {
     implementation(Icerock.Mvvm.core)
     implementation(Koin.core)
     implementation(Koin.compose)
-    androidTestImplementation(project(":shared"))
 
     androidTestUtil(AndroidX.Test.orchestrator)
+    androidTestImplementation(project(":shared"))
     androidTestImplementation(AndroidX.Test.uiAutomator)
     androidTestImplementation(AndroidX.Test.runner)
     androidTestImplementation(AndroidX.Test.rules)

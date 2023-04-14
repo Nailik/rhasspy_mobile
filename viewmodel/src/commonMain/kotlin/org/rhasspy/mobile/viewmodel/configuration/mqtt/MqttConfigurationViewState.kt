@@ -17,7 +17,7 @@ data class MqttConfigurationViewState(
     val isMqttSSLEnabled: Boolean = ConfigurationSetting.isMqttSSLEnabled.value,
     val mqttConnectionTimeoutText: String = ConfigurationSetting.mqttConnectionTimeout.value.toString(),
     val mqttKeepAliveIntervalText: String = ConfigurationSetting.mqttKeepAliveInterval.value.toString(),
-    val mqttRetryIntervalText: String = ConfigurationSetting.mqttKeepAliveInterval.value.toString(),
+    val mqttRetryIntervalText: String = ConfigurationSetting.mqttRetryInterval.value.toString(),
     val mqttKeyStoreFile: Path? = ConfigurationSetting.mqttKeyStoreFile.value
 ): IConfigurationEditViewState() {
 

@@ -16,19 +16,27 @@ import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.onListItemSwitch
+import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.logic.services.webserver.WebServerService
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationTest
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.SetHttpServerEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.SetHttpServerSSLEnabled
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewState
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class WebServerServiceConfigurationContentTest {
+class WebServerServiceConfigurationContentTest  {
 
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = WebServerConfigurationViewModel()
+    private val viewModel = WebServerConfigurationViewModel(
+        service = WebServerService(),
+        testRunner = WebServerConfigurationTest()
+    )
 
     @Before
     fun setUp() {
@@ -73,14 +81,17 @@ class WebServerServiceConfigurationContentTest {
      */
     @Test
     fun testHttpContent() = runBlocking {
-        viewModel.toggleHttpServerEnabled(false)
-        viewModel.toggleHttpServerSSLEnabled(false)
+        viewModel.onAction(SetHttpServerEnabled(false))
+        viewModel.onAction(SetHttpServerSSLEnabled(false))
         viewModel.onSave()
+        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
+        val viewState = viewModel.viewState.value.editViewState
 
         val textInputTest = "6541"
 
         //http api is disabled
-        assertFalse { viewModel.isHttpServerEnabled.value }
+        assertFalse { viewState.value.isHttpServerEnabled }
         //switch is off
         composeTestRule.onNodeWithTag(TestTag.ServerSwitch).onListItemSwitch().assertIsOff()
         //settings not visible
@@ -91,7 +102,7 @@ class WebServerServiceConfigurationContentTest {
         //user clicks switch
         composeTestRule.onNodeWithTag(TestTag.ServerSwitch).performClick()
         //http api is enabled
-        assertTrue { viewModel.isHttpServerEnabled.value }
+        assertTrue { viewState.value.isHttpServerEnabled }
         //switch is on
         composeTestRule.onNodeWithTag(TestTag.ServerSwitch).onListItemSwitch().assertIsOn()
         //settings visible
@@ -103,7 +114,7 @@ class WebServerServiceConfigurationContentTest {
         composeTestRule.onNodeWithTag(TestTag.Port).performTextReplacement(textInputTest)
 
         //enable ssl is off
-        assertFalse { viewModel.isHttpServerSSLEnabled.value }
+        assertFalse { viewState.value.isHttpServerSSLEnabled }
         //enable ssl switch is off
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOff()
         //certificate button not visible
@@ -112,7 +123,7 @@ class WebServerServiceConfigurationContentTest {
         //user clicks enable ssl
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).performScrollTo().performClick()
         //ssl is on
-        assertTrue { viewModel.isHttpServerSSLEnabled.value }
+        assertTrue { viewState.value.isHttpServerSSLEnabled }
         //enable ssl switch is on
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOn()
         //certificate button visible
@@ -121,12 +132,12 @@ class WebServerServiceConfigurationContentTest {
         //user click save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
-        val newViewModel = WebServerConfigurationViewModel()
+        val newViewState = WebServerConfigurationViewState()
         //enable http api is saved
-        assertEquals(true, newViewModel.isHttpServerEnabled.value)
+        assertEquals(true, newViewState.isHttpServerEnabled)
         //port is saved
-        assertEquals(textInputTest, newViewModel.httpServerPortText.value)
+        assertEquals(textInputTest, newViewState.httpServerPortText)
         //enable ssl is saved
-        assertEquals(true, newViewModel.isHttpServerSSLEnabled.value)
+        assertEquals(true, newViewState.isHttpServerSSLEnabled)
     }
 }
