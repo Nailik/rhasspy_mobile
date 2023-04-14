@@ -5,10 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.ui.event.StateEvent.Consumed
-import org.rhasspy.mobile.ui.event.StateEvent.Triggered
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
@@ -20,8 +17,11 @@ import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
+import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.ui.event.StateEvent.Consumed
+import org.rhasspy.mobile.ui.event.StateEvent.Triggered
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiAction.ScrollToError
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiAction.SiteIdChange
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.ScrollToErrorEvent
@@ -109,9 +109,9 @@ class ConfigurationScreenViewModel : ViewModel(), KoinComponent {
         when (action) {
             is SiteIdChange -> ConfigurationSetting.siteId.value = action.text
             ScrollToError -> scrollToErrorEvent.value = ScrollToErrorEvent(
-                    stateEvent = Triggered,
-                    firstErrorIndex = serviceStateFlow.value.indexOfFirst { serviceState -> serviceState is ServiceState.Error }
-                )
+                stateEvent = Triggered,
+                firstErrorIndex = serviceStateFlow.value.indexOfFirst { serviceState -> serviceState is ServiceState.Error }
+            )
         }
     }
 

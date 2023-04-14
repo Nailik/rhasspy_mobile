@@ -8,17 +8,17 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 
 @Stable
 data class WebServerConfigurationViewState(
-    val isHttpServerEnabled: Boolean= ConfigurationSetting.isHttpServerEnabled.value,
-    val httpServerPortText: String= ConfigurationSetting.httpServerPort.value.toString(),
-    val isHttpServerSSLEnabled: Boolean= ConfigurationSetting.isHttpServerSSLEnabledEnabled.value,
-    val httpServerSSLKeyStoreFile: Path?= ConfigurationSetting.httpServerSSLKeyStoreFile.value,
-    val httpServerSSLKeyStorePassword: String= ConfigurationSetting.httpServerSSLKeyStorePassword.value,
+    val isHttpServerEnabled: Boolean = ConfigurationSetting.isHttpServerEnabled.value,
+    val httpServerPortText: String = ConfigurationSetting.httpServerPort.value.toString(),
+    val isHttpServerSSLEnabled: Boolean = ConfigurationSetting.isHttpServerSSLEnabledEnabled.value,
+    val httpServerSSLKeyStoreFile: Path? = ConfigurationSetting.httpServerSSLKeyStoreFile.value,
+    val httpServerSSLKeyStorePassword: String = ConfigurationSetting.httpServerSSLKeyStorePassword.value,
     val httpServerSSLKeyAlias: String = ConfigurationSetting.httpServerSSLKeyAlias.value,
-    val httpServerSSLKeyPassword: String= ConfigurationSetting.httpServerSSLKeyPassword.value
-): IConfigurationEditViewState() {
+    val httpServerSSLKeyPassword: String = ConfigurationSetting.httpServerSSLKeyPassword.value
+) : IConfigurationEditViewState() {
 
     override val hasUnsavedChanges: Boolean
-        get() =!(isHttpServerEnabled == ConfigurationSetting.isHttpServerEnabled.value &&
+        get() = !(isHttpServerEnabled == ConfigurationSetting.isHttpServerEnabled.value &&
                 httpServerPort == ConfigurationSetting.httpServerPort.value &&
                 isHttpServerSSLEnabled == ConfigurationSetting.isHttpServerSSLEnabledEnabled.value &&
                 httpServerSSLKeyStoreFile == ConfigurationSetting.httpServerSSLKeyStoreFile.value &&

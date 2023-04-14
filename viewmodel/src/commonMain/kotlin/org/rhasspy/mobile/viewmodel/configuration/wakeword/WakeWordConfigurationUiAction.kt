@@ -11,10 +11,10 @@ sealed interface WakeWordConfigurationUiAction {
     }
 
     sealed interface Navigate : WakeWordConfigurationUiAction {
-        object MicrophonePermissionAllowed: Navigate
+        object MicrophonePermissionAllowed : Navigate
     }
 
-    sealed interface PorcupineUiAction: WakeWordConfigurationUiAction {
+    sealed interface PorcupineUiAction : WakeWordConfigurationUiAction {
 
         sealed interface Change : PorcupineUiAction {
             data class UpdateWakeWordPorcupineAccessToken(val value: String) : Change
@@ -25,19 +25,19 @@ sealed interface WakeWordConfigurationUiAction {
             data class UpdateWakeWordPorcupineKeywordCustomSensitivity(val index: Int, val value: Float) : Change
             data class ClickPorcupineKeywordCustom(val index: Int) : Change
             data class TogglePorcupineKeywordCustom(val index: Int, val value: Boolean) : Change
-            data class UndoCustomKeywordDeleted(val index: Int): Change
-            data class AddPorcupineKeywordCustom(val path: Path): Change
-            data class DeletePorcupineKeywordCustom(val index: Int): Change
+            data class UndoCustomKeywordDeleted(val index: Int) : Change
+            data class AddPorcupineKeywordCustom(val path: Path) : Change
+            data class DeletePorcupineKeywordCustom(val index: Int) : Change
         }
 
-        sealed interface Navigate: PorcupineUiAction {
-            object DownloadCustomPorcupineKeyword: Navigate
-            object AddCustomPorcupineKeyword: Navigate
-            object OpenPicoVoiceConsole: Navigate
+        sealed interface Navigate : PorcupineUiAction {
+            object DownloadCustomPorcupineKeyword : Navigate
+            object AddCustomPorcupineKeyword : Navigate
+            object OpenPicoVoiceConsole : Navigate
         }
     }
 
-    sealed interface UdpUiAction: WakeWordConfigurationUiAction {
+    sealed interface UdpUiAction : WakeWordConfigurationUiAction {
         sealed interface Change : UdpUiAction {
             data class UpdateUdpOutputHost(val value: String) : Change
             data class UpdateUdpOutputPort(val value: String) : Change

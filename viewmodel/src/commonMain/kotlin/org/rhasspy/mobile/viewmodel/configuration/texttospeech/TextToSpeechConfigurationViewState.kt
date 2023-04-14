@@ -11,9 +11,9 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 data class TextToSpeechConfigurationViewState(
     val textToSpeechOptions: ImmutableList<TextToSpeechOption> = TextToSpeechOption.values().toImmutableList(),
     val textToSpeechOption: TextToSpeechOption = ConfigurationSetting.textToSpeechOption.value,
-    val isUseCustomTextToSpeechHttpEndpoint: Boolean= ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value,
+    val isUseCustomTextToSpeechHttpEndpoint: Boolean = ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value,
     val textToSpeechHttpEndpoint: String = ConfigurationSetting.textToSpeechHttpEndpoint.value
-): IConfigurationEditViewState() {
+) : IConfigurationEditViewState() {
 
     override val hasUnsavedChanges: Boolean
         get() = !(textToSpeechOption == ConfigurationSetting.textToSpeechOption.value &&

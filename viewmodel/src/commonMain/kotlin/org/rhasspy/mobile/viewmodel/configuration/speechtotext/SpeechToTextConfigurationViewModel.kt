@@ -27,7 +27,7 @@ class SpeechToTextConfigurationViewModel(
 ) {
 
     fun onAction(action: SpeechToTextConfigurationUiAction) {
-        when(action) {
+        when (action) {
             is Change -> onChange(action)
         }
     }
@@ -38,7 +38,7 @@ class SpeechToTextConfigurationViewModel(
                 is SelectSpeechToTextOption -> it.copy(speechToTextOption = change.option)
                 ToggleUseCustomHttpEndpoint -> it.copy(isUseCustomSpeechToTextHttpEndpoint = !it.isUseCustomSpeechToTextHttpEndpoint)
                 ToggleUseSpeechToTextMqttSilenceDetection -> it.copy(isUseSpeechToTextMqttSilenceDetection = !it.isUseSpeechToTextMqttSilenceDetection)
-                is UpdateSpeechToTextHttpEndpoint ->  it.copy(speechToTextHttpEndpoint = change.value)
+                is UpdateSpeechToTextHttpEndpoint -> it.copy(speechToTextHttpEndpoint = change.value)
             }
         }
     }

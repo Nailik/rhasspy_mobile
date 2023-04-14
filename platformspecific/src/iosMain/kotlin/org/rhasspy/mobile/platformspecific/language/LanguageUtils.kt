@@ -6,7 +6,7 @@ actual fun getDeviceLanguage(): LanguageType {
     TODO("Not yet implemented")
 }
 
-actual fun setupLanguage(defaultLanguageType: LanguageType) : LanguageType {
+actual fun setupLanguage(defaultLanguageType: LanguageType): LanguageType {
     TODO("Not yet implemented")
 }
 

@@ -17,8 +17,8 @@ import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.android.uiservices.IndicationOverlay
 import org.rhasspy.mobile.android.uiservices.MicrophoneOverlay
 import org.rhasspy.mobile.android.widget.MicrophoneWidget
-import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.utils.isDebug
 import kotlin.system.exitProcess
 
 
@@ -38,7 +38,7 @@ class AndroidApplication : Application(), KoinComponent {
 
     override fun onCreate() {
         super.onCreate()
-        if(isDebug()) {
+        if (isDebug()) {
             StrictMode.setVmPolicy(VmPolicy.Builder(StrictMode.getVmPolicy()).detectAll().build())
         }
         onCreated()

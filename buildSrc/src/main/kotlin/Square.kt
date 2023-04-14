@@ -1,6 +1,4 @@
 import de.fayard.refreshVersions.core.DependencyGroup
-import de.fayard.refreshVersions.core.DependencyNotationAndGroup
-import org.gradle.kotlin.dsl.IsNotADependency
 
 object Square : DependencyGroup(group = "com.squareup") {
 

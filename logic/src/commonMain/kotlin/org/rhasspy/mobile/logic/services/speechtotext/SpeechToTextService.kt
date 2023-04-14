@@ -9,23 +9,23 @@ import kotlinx.coroutines.launch
 import okio.Path
 import org.koin.core.component.get
 import org.koin.core.component.inject
+import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.middleware.Action.DialogAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
-import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.middleware.Source
-import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientResult
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.recording.RecordingService
 import org.rhasspy.mobile.logic.settings.AppSetting
+import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
 import org.rhasspy.mobile.platformspecific.extensions.commonSize
+import org.rhasspy.mobile.platformspecific.readOnly
 
 /**
  * calls actions and returns result
@@ -44,7 +44,7 @@ open class SpeechToTextService : IService(LogType.SpeechToTextService) {
 
     private val serviceMiddleware by inject<ServiceMiddleware>()
 
-    val speechToTextAudioFile: Path = Path.commonInternalPath(get(),"SpeechToTextAudio.wav")
+    val speechToTextAudioFile: Path = Path.commonInternalPath(get(), "SpeechToTextAudio.wav")
 
     private val scope = CoroutineScope(Dispatchers.Default)
     private var collector: Job? = null

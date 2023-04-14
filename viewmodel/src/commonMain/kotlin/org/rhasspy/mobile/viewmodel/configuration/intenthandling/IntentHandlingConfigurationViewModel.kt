@@ -26,11 +26,11 @@ class IntentHandlingConfigurationViewModel(
     service = service,
     testRunner = testRunner,
     initialViewState = ::IntentHandlingConfigurationViewState
-){
+) {
 
     fun onAction(action: IntentHandlingConfigurationUiAction) {
         contentViewState.update {
-            when(action) {
+            when (action) {
                 is ChangeIntentHandlingHassAccessToken -> it.copy(intentHandlingHassAccessToken = action.value)
                 is ChangeIntentHandlingHassEndpoint -> it.copy(intentHandlingHassEndpoint = action.value)
                 is ChangeIntentHandlingHttpEndpoint -> it.copy(intentHandlingHttpEndpoint = action.value)

@@ -19,7 +19,7 @@ data class MqttConfigurationViewState(
     val mqttKeepAliveIntervalText: String = ConfigurationSetting.mqttKeepAliveInterval.value.toString(),
     val mqttRetryIntervalText: String = ConfigurationSetting.mqttRetryInterval.value.toString(),
     val mqttKeyStoreFile: Path? = ConfigurationSetting.mqttKeyStoreFile.value
-): IConfigurationEditViewState() {
+) : IConfigurationEditViewState() {
 
     override val hasUnsavedChanges: Boolean
         get() = !(isMqttEnabled == ConfigurationSetting.isMqttEnabled.value &&

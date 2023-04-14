@@ -87,6 +87,7 @@ private fun SpeechToTextOptionContent(
                 isUseSpeechToTextMqttSilenceDetection = viewState.isUseSpeechToTextMqttSilenceDetection,
                 onAction = onAction
             )
+
             else -> {}
         }
 

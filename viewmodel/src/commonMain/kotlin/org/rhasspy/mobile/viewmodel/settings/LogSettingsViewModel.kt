@@ -5,8 +5,8 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.logic.logger.LogLevel
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.logic.settings.AppSetting
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.toImmutableList
 
 class LogSettingsViewModel : ViewModel(), KoinComponent {

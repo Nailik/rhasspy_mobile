@@ -18,18 +18,18 @@ import org.koin.core.context.unloadKoinModules
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.logic.logger.FileLogger
-import org.rhasspy.mobile.platformspecific.background.BackgroundService
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
-import org.rhasspy.mobile.platformspecific.utils.isDebug
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.background.BackgroundService
 import org.rhasspy.mobile.platformspecific.language.setupLanguage
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
+import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.platformspecific.utils.isDebug
 
 abstract class Application : NativeApplication(), KoinComponent {
     private val logger = Logger.withTag("Application")
@@ -140,6 +140,6 @@ abstract class Application : NativeApplication(), KoinComponent {
     }
 
     private fun initializeLanguage() {
-        AppSetting.languageType.value = setupLanguage(AppSetting.languageType.value )
+        AppSetting.languageType.value = setupLanguage(AppSetting.languageType.value)
     }
 }

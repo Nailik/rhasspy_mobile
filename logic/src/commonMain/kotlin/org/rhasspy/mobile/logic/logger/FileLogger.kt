@@ -28,6 +28,7 @@ import org.rhasspy.mobile.platformspecific.readOnly
 
 object FileLogger : LogWriter(), KoinComponent {
     private val logger = Logger.withTag("FileLogger")
+
     //create new file when logfile is 2 MB
     private val file = Path.commonInternalPath(get(), "logfile.txt")
     private val coroutineScope = CoroutineScope(Dispatchers.Default)

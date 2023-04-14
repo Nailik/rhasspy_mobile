@@ -158,7 +158,7 @@ fun SemanticsNodeInteractionsProvider.onNodeWithText(
     ), useUnmergedTree
 )
 
-fun <T: IConfigurationTest, V: IConfigurationEditViewState> ComposeContentTestRule.awaitSaved(viewModel: IConfigurationViewModel<T,V>) {
+fun <T : IConfigurationTest, V : IConfigurationEditViewState> ComposeContentTestRule.awaitSaved(viewModel: IConfigurationViewModel<T, V>) {
     this.waitUntil(
         condition = { !viewModel.viewState.value.isLoading },
         timeoutMillis = 5000

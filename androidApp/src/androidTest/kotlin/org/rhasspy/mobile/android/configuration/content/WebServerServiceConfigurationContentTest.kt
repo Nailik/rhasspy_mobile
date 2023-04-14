@@ -28,7 +28,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class WebServerServiceConfigurationContentTest  {
+class WebServerServiceConfigurationContentTest {
 
     @get: Rule
     val composeTestRule = createComposeRule()

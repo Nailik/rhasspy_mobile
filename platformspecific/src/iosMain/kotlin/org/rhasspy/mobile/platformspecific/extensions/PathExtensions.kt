@@ -16,12 +16,16 @@ actual fun Path.commonDelete() {
 
 actual fun Path.commonSize(): Long? = FileSystem.SYSTEM.metadata(this).size
 
-actual fun Path.commonSource() : Source = FileSystem.SYSTEM.source(this)
+actual fun Path.commonSource(): Source = FileSystem.SYSTEM.source(this)
 
 actual fun Path.commonReadWrite(): FileHandle = FileSystem.SYSTEM.openReadWrite(this, mustCreate = true, mustExist = false)
 
 actual inline fun <reified T> Path.commonDecode(): T = TODO()
 
-actual fun Path.commonShare(nativeApplication: NativeApplication) { TODO() }
+actual fun Path.commonShare(nativeApplication: NativeApplication) {
+    TODO()
+}
 
-actual fun Path.commonSave(nativeApplication: NativeApplication, fileName: String, fileType: String) { TODO() }
+actual fun Path.commonSave(nativeApplication: NativeApplication, fileName: String, fileType: String) {
+    TODO()
+}

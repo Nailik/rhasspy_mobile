@@ -1,9 +1,9 @@
 package org.rhasspy.mobile.viewmodel.settings
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
-import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
+import org.rhasspy.mobile.logic.settings.AppSetting
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.toImmutableList
 
 class MicrophoneOverlaySettingsViewModel : ViewModel() {

@@ -18,8 +18,8 @@ sealed interface MqttConfigurationUiAction {
     }
 
     sealed interface Navigate : MqttConfigurationUiAction {
-        object OpenMqttSSLWiki: Navigate
-        object SelectSSLCertificate: Navigate
+        object OpenMqttSSLWiki : Navigate
+        object SelectSSLCertificate : Navigate
     }
 
 }

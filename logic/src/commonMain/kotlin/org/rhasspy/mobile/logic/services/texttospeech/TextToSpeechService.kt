@@ -2,17 +2,17 @@ package org.rhasspy.mobile.logic.services.texttospeech
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.inject
+import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.middleware.Action.DialogAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
-import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.middleware.Source
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientResult
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.data.service.option.TextToSpeechOption
+import org.rhasspy.mobile.platformspecific.readOnly
 
 /**
  * calls actions and returns result

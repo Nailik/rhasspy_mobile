@@ -5,10 +5,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
+import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionService
 import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionServiceParams
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationTest
 
 class IntentRecognitionConfigurationTest : IConfigurationTest() {

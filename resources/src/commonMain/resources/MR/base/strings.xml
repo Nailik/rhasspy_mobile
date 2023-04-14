@@ -102,7 +102,10 @@
     <string name="testAudioLevel">Audio Level Test</string>
     <string name="stop">Stop</string>
     <string name="audioLevelThreshold">Audio Level Threshold</string>
-    <string name="silenceDetectionInformation">Silence is detected if the audio level remains below the selected threshold for the selected time period and the recording is at least the length of the minimum duration</string>
+    <string name="silenceDetectionInformation">Silence is detected if the audio level remains below
+        the selected threshold for the selected time period and the recording is at least the length
+        of the minimum duration
+    </string>
     <string name="silenceDetectionMinimumTime">Voice command minimum Time (ms)</string>
     <string name="silenceDetectionTime">Silence Detection Time (ms)</string>
     <string name="overlayPermissionTitle">Overlay Permission</string>

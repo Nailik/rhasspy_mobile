@@ -76,7 +76,6 @@ fun WakeWordConfigurationContent(viewModel: WakeWordConfigurationViewModel = get
     ) {
 
 
-
         NavHost(
             navController = navController,
             startDestination = WakeWordConfigurationScreens.Overview.route
@@ -166,11 +165,13 @@ private fun WakeWordConfigurationOptionContent(
                 isMicrophonePermissionRequestVisible = isMicrophonePermissionRequestVisible,
                 onAction = onAction
             )
+
             WakeWordOption.Udp -> UdpSettings(
                 viewState = wakeWordUdpViewState,
                 isMicrophonePermissionRequestVisible = isMicrophonePermissionRequestVisible,
                 onAction = onAction
             )
+
             else -> {}
         }
 
@@ -203,14 +204,14 @@ private fun PorcupineConfiguration(
             label = MR.strings.porcupineAccessKey.stable,
             modifier = Modifier.testTag(TestTag.PorcupineAccessToken),
             value = viewState.accessToken,
-            onValueChange = {onAction(UpdateWakeWordPorcupineAccessToken(it))}
+            onValueChange = { onAction(UpdateWakeWordPorcupineAccessToken(it)) }
         )
 
         //button to open pico voice console to generate access token
         ListElement(
             modifier = Modifier
                 .testTag(TestTag.PorcupineOpenConsole)
-                .clickable(onClick = {onAction(OpenPicoVoiceConsole)}),
+                .clickable(onClick = { onAction(OpenPicoVoiceConsole) }),
             icon = {
                 Icon(
                     imageVector = Icons.Filled.Link,

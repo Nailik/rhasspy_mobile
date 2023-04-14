@@ -37,16 +37,16 @@ class MqttConfigurationViewModel(
     initialViewState = ::MqttConfigurationViewState
 ) {
 
-    fun onAction(action: MqttConfigurationUiAction){
-       when(action) {
-           is Change -> onChange(action)
-           is Navigate -> onNavigate(action)
-       }
+    fun onAction(action: MqttConfigurationUiAction) {
+        when (action) {
+            is Change -> onChange(action)
+            is Navigate -> onNavigate(action)
+        }
     }
 
-    private fun onChange(change: Change){
+    private fun onChange(change: Change) {
         contentViewState.update {
-            when(change) {
+            when (change) {
                 is SetMqttEnabled -> it.copy(isMqttEnabled = change.enabled)
                 is SetMqttSSLEnabled -> it.copy(isMqttSSLEnabled = change.enabled)
                 is UpdateMqttConnectionTimeout -> it.copy(mqttConnectionTimeoutText = change.value)
@@ -61,8 +61,8 @@ class MqttConfigurationViewModel(
         }
     }
 
-    private fun onNavigate(navigate: Navigate){
-        when(navigate) {
+    private fun onNavigate(navigate: Navigate) {
+        when (navigate) {
             Navigate.OpenMqttSSLWiki -> openLink("https://github.com/Nailik/rhasspy_mobile/wiki/MQTT#enable-ssl")
             Navigate.SelectSSLCertificate -> selectSSLCertificate()
         }

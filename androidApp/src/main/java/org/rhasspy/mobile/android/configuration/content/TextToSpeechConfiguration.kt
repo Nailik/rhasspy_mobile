@@ -75,11 +75,12 @@ private fun TextToSpeechOptionContent(
     ) {
 
         when (it) {
-            TextToSpeechOption.RemoteHTTP ->  TextToSpeechHTTP(
+            TextToSpeechOption.RemoteHTTP -> TextToSpeechHTTP(
                 isUseCustomTextToSpeechHttpEndpoint = viewState.isUseCustomTextToSpeechHttpEndpoint,
                 textToSpeechHttpEndpoint = viewState.textToSpeechHttpEndpoint,
                 onAction = onAction
             )
+
             else -> {}
         }
 
@@ -103,7 +104,7 @@ private fun TextToSpeechHTTP(
             modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
             text = MR.strings.useCustomEndpoint.stable,
             isChecked = isUseCustomTextToSpeechHttpEndpoint,
-            onCheckedChange = {  onAction(ToggleUseCustomHttpEndpoint) }
+            onCheckedChange = { onAction(ToggleUseCustomHttpEndpoint) }
         )
 
         //http endpoint input field
@@ -111,7 +112,7 @@ private fun TextToSpeechHTTP(
             enabled = isUseCustomTextToSpeechHttpEndpoint,
             modifier = Modifier.testTag(TestTag.Endpoint),
             value = textToSpeechHttpEndpoint,
-            onValueChange = {  onAction(UpdateTextToSpeechHttpEndpoint(it)) },
+            onValueChange = { onAction(UpdateTextToSpeechHttpEndpoint(it)) },
             label = translate(MR.strings.rhasspyTextToSpeechURL.stable, HttpClientPath.TextToSpeech.path)
         )
 

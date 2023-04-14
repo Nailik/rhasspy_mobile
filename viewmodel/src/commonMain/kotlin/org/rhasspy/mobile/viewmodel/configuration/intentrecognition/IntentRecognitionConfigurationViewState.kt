@@ -14,7 +14,7 @@ data class IntentRecognitionConfigurationViewState(
     val intentRecognitionOption: IntentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value,
     val isUseCustomIntentRecognitionHttpEndpoint: Boolean = ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value,
     val intentRecognitionHttpEndpoint: String = ConfigurationSetting.intentRecognitionHttpEndpoint.value
-): IConfigurationEditViewState() {
+) : IConfigurationEditViewState() {
 
     override val hasUnsavedChanges: Boolean
         get() = !(intentRecognitionOption == ConfigurationSetting.intentRecognitionOption.value &&
@@ -23,8 +23,9 @@ data class IntentRecognitionConfigurationViewState(
 
     override val isTestingEnabled: Boolean get() = intentRecognitionOption != IntentRecognitionOption.Disabled
 
-    val intentRecognitionHttpEndpointText: String get() = if(isUseCustomIntentRecognitionHttpEndpoint) {
-        intentRecognitionHttpEndpoint
-    } else HttpClientPath.TextToIntent.fromBaseConfiguration()
+    val intentRecognitionHttpEndpointText: String
+        get() = if (isUseCustomIntentRecognitionHttpEndpoint) {
+            intentRecognitionHttpEndpoint
+        } else HttpClientPath.TextToIntent.fromBaseConfiguration()
 
 }

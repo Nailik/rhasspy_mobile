@@ -15,11 +15,11 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 @Stable
 data class WakeWordConfigurationViewState(
     val wakeWordOptions: ImmutableList<WakeWordOption> = WakeWordOption.values().toImmutableList(),
-    val wakeWordOption: WakeWordOption= ConfigurationSetting.wakeWordOption.value,
+    val wakeWordOption: WakeWordOption = ConfigurationSetting.wakeWordOption.value,
     val wakeWordPorcupineViewState: PorcupineViewState = PorcupineViewState(),
     val wakeWordUdpViewState: UdpViewState = UdpViewState(),
     val isMicrophonePermissionRequestVisible: Boolean = false
-): IConfigurationEditViewState() {
+) : IConfigurationEditViewState() {
 
     override val hasUnsavedChanges: Boolean
         get() = !(wakeWordOption == ConfigurationSetting.wakeWordOption.value &&

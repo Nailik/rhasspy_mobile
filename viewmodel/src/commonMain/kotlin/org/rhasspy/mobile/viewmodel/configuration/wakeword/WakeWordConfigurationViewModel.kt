@@ -61,7 +61,7 @@ class WakeWordConfigurationViewModel(
 
     private fun onChange(change: Change) {
         contentViewState.update {
-            when(change) {
+            when (change) {
                 is SelectWakeWordOption -> it.copy(wakeWordOption = change.option)
             }
         }
@@ -77,7 +77,7 @@ class WakeWordConfigurationViewModel(
     }
 
     private fun onPorcupineAction(action: PorcupineUiAction) {
-        when(action) {
+        when (action) {
             is PorcupineUiAction.Change -> onPorcupineChange(action)
             is PorcupineUiAction.Navigate -> onPorcupineNavigate(action)
         }
@@ -105,11 +105,13 @@ class WakeWordConfigurationViewModel(
                             .toImmutableList())
 
                     is AddPorcupineKeywordCustom -> it.copy(customOptionsUi = it.customOptionsUi.toMutableList()
-                        .apply { add(PorcupineCustomKeywordUi(PorcupineCustomKeyword(change.path.name, true, 0.5f)))}
+                        .apply { add(PorcupineCustomKeywordUi(PorcupineCustomKeyword(change.path.name, true, 0.5f))) }
                         .toImmutableList())
+
                     is DeletePorcupineKeywordCustom -> it.copy(customOptionsUi = it.customOptionsUi.toMutableList()
                         .also { it[change.index] = it[change.index].copy(deleted = true) }
                         .toImmutableList())
+
                     is SelectWakeWordPorcupineLanguage -> it.copy(porcupineLanguage = change.option)
                     is TogglePorcupineKeywordCustom ->
                         it.copy(customOptionsUi = it.customOptionsUi.toMutableList()
@@ -128,6 +130,7 @@ class WakeWordConfigurationViewModel(
                     is UndoCustomKeywordDeleted -> it.copy(customOptionsUi = it.customOptionsUi.toMutableList()
                         .also { it[change.index] = it[change.index].copy(deleted = false) }
                         .toImmutableList())
+
                     is UpdateWakeWordPorcupineKeywordCustomSensitivity ->
                         it.copy(customOptionsUi = it.customOptionsUi.toMutableList()
                             .also {
@@ -147,7 +150,7 @@ class WakeWordConfigurationViewModel(
     }
 
     private fun onPorcupineNavigate(navigate: PorcupineUiAction.Navigate) {
-        when(navigate) {
+        when (navigate) {
             AddCustomPorcupineKeyword -> addCustomPorcupineKeyword()
             DownloadCustomPorcupineKeyword -> openLink("https://console.picovoice.ai/ppn")
             OpenPicoVoiceConsole -> openLink("https://console.picovoice.ai")
@@ -168,7 +171,7 @@ class WakeWordConfigurationViewModel(
     }
 
     private fun onUdpAction(action: UdpUiAction) {
-        when(action) {
+        when (action) {
             is UdpUiAction.Change -> onUdpChange(action)
         }
     }
@@ -199,7 +202,7 @@ class WakeWordConfigurationViewModel(
         ConfigurationSetting.wakeWordUdpOutputPort.value = data.wakeWordUdpViewState.outputPort
 
         filesToDelete.forEach {
-            Path.commonInternalPath(get(),"${FolderType.PorcupineFolder}/$it").commonDelete()
+            Path.commonInternalPath(get(), "${FolderType.PorcupineFolder}/$it").commonDelete()
         }
         filesToDelete.clear()
         newFiles.clear()
@@ -207,7 +210,7 @@ class WakeWordConfigurationViewModel(
 
     override fun onDiscard() {
         newFiles.forEach {
-            Path.commonInternalPath(get(),"${FolderType.PorcupineFolder}/$it").commonDelete()
+            Path.commonInternalPath(get(), "${FolderType.PorcupineFolder}/$it").commonDelete()
         }
         newFiles.clear()
         filesToDelete.clear()

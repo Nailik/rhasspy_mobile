@@ -135,46 +135,66 @@ val viewModelModule = module {
     single { HomeScreenViewModel() }
     single { MicrophoneFabViewModel() }
     single { ConfigurationScreenViewModel() }
-    single { AudioPlayingConfigurationViewModel(
-        service = get(),
-        testRunner =  get()
-    ) }
-    single { DialogManagementConfigurationViewModel(
-        service = get(),
-        testRunner =  get()
-    ) }
-    single { IntentHandlingConfigurationViewModel(
-        service = get(),
-        testRunner =  get()
-    ) }
-    single { IntentRecognitionConfigurationViewModel(
-        service = get(),
-        testRunner =  get()
-    ) }
-    single { MqttConfigurationViewModel(
-        service = get(),
-        testRunner =  get()
-    ) }
-    single { RemoteHermesHttpConfigurationViewModel(
-        service = get(),
-        testRunner =  get()
-    ) }
-    single { SpeechToTextConfigurationViewModel(
-        service = get(),
-        testRunner =  get()
-    ) }
-    single { TextToSpeechConfigurationViewModel(
-        service = get(),
-        testRunner =  get()
-    ) }
-    single { WakeWordConfigurationViewModel(
-        service = get(),
-        testRunner =  get()
-    ) }
-    single { WebServerConfigurationViewModel(
-        service = get(),
-        testRunner =  get()
-    ) }
+    single {
+        AudioPlayingConfigurationViewModel(
+            service = get(),
+            testRunner = get()
+        )
+    }
+    single {
+        DialogManagementConfigurationViewModel(
+            service = get(),
+            testRunner = get()
+        )
+    }
+    single {
+        IntentHandlingConfigurationViewModel(
+            service = get(),
+            testRunner = get()
+        )
+    }
+    single {
+        IntentRecognitionConfigurationViewModel(
+            service = get(),
+            testRunner = get()
+        )
+    }
+    single {
+        MqttConfigurationViewModel(
+            service = get(),
+            testRunner = get()
+        )
+    }
+    single {
+        RemoteHermesHttpConfigurationViewModel(
+            service = get(),
+            testRunner = get()
+        )
+    }
+    single {
+        SpeechToTextConfigurationViewModel(
+            service = get(),
+            testRunner = get()
+        )
+    }
+    single {
+        TextToSpeechConfigurationViewModel(
+            service = get(),
+            testRunner = get()
+        )
+    }
+    single {
+        WakeWordConfigurationViewModel(
+            service = get(),
+            testRunner = get()
+        )
+    }
+    single {
+        WebServerConfigurationViewModel(
+            service = get(),
+            testRunner = get()
+        )
+    }
     single { LogScreenViewModel() }
     single { SettingsScreenViewModel() }
     single { AboutScreenViewModel() }

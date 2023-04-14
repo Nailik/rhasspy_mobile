@@ -5,13 +5,13 @@ import android.content.Intent
 import android.net.Uri
 import androidx.core.content.FileProvider
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import okio.FileHandle
 import okio.FileSystem
 import okio.Path
 import okio.Source
 import okio.source
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromStream
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
 actual fun Path.Companion.commonExternalPath(fileName: String): Path = fileName.toPath()
@@ -24,7 +24,7 @@ actual fun Path.commonDelete() {
 
 actual fun Path.commonSize(): Long? = FileSystem.SYSTEM.metadata(this).size
 
-actual fun Path.commonSource() : Source = this.toNioPath().source()
+actual fun Path.commonSource(): Source = this.toNioPath().source()
 
 actual fun Path.commonReadWrite(): FileHandle = FileSystem.SYSTEM.openReadWrite(this)
 

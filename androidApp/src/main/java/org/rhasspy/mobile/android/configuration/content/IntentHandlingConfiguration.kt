@@ -79,19 +79,21 @@ private fun IntentHandlingOptionContent(
         selected = viewState.intentHandlingOption,
         onSelect = { onAction(SelectIntentHandlingOption(it)) },
         values = viewState.intentHandlingOptionList
-    ) {option ->
+    ) { option ->
 
-        when(option) {
-            IntentHandlingOption.HomeAssistant ->  HomeAssistantOption(
+        when (option) {
+            IntentHandlingOption.HomeAssistant -> HomeAssistantOption(
                 intentHandlingHassEndpoint = viewState.intentHandlingHassEndpoint,
                 intentHandlingHassAccessToken = viewState.intentHandlingHassAccessToken,
                 intentHandlingHassOption = viewState.intentHandlingHassOption,
                 onAction = onAction
             )
+
             IntentHandlingOption.RemoteHTTP -> RemoteHTTPOption(
                 intentHandlingHttpEndpoint = viewState.intentHandlingHttpEndpoint,
                 onAction = onAction
             )
+
             else -> {}
         }
 
@@ -158,7 +160,7 @@ private fun HomeAssistantOption(
 
         //select hass event or hass intent
 
-        val isEventChecked by remember{ derivedStateOf { intentHandlingHassOption == Event }}
+        val isEventChecked by remember { derivedStateOf { intentHandlingHassOption == Event } }
 
         RadioButtonListItem(
             modifier = Modifier.testTag(TestTag.SendEvents),
@@ -167,7 +169,7 @@ private fun HomeAssistantOption(
             onClick = { onAction(SelectIntentHandlingHassOption(Event)) }
         )
 
-        val isIntentChecked by remember{ derivedStateOf { intentHandlingHassOption == Intent }}
+        val isIntentChecked by remember { derivedStateOf { intentHandlingHassOption == Intent } }
 
         RadioButtonListItem(
             modifier = Modifier.testTag(TestTag.SendIntents),

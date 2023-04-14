@@ -90,7 +90,7 @@ class LocalAudioService : IService(LogType.LocalAudioService) {
             ) {}
 
             else -> audioPlayer.playAudio(
-                AudioSource.File(Path.commonInternalPath(get(),"${FolderType.SoundFolder.Recorded}/${AppSetting.recordedSound.value}")),
+                AudioSource.File(Path.commonInternalPath(get(), "${FolderType.SoundFolder.Recorded}/${AppSetting.recordedSound.value}")),
                 AppSetting.recordedSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
             ) {}
@@ -108,7 +108,7 @@ class LocalAudioService : IService(LogType.LocalAudioService) {
             ) {}
 
             else -> audioPlayer.playAudio(
-                AudioSource.File(Path.commonInternalPath(get(),"${FolderType.SoundFolder.Error}/${AppSetting.errorSound.value}")),
+                AudioSource.File(Path.commonInternalPath(get(), "${FolderType.SoundFolder.Error}/${AppSetting.errorSound.value}")),
                 AppSetting.errorSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
             ) {}

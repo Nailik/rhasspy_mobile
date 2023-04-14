@@ -34,9 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -84,7 +82,7 @@ enum class ConfigurationContentScreens(val route: String) {
  * Shows dialog on Back press when there are unsaved changes
  */
 @Composable
-fun <V: IConfigurationEditViewState> ConfigurationScreenItemContent(
+fun <V : IConfigurationEditViewState> ConfigurationScreenItemContent(
     viewState: ConfigurationViewState<V>,
     onAction: (IConfigurationUiAction) -> Unit,
     onConsumed: (IConfigurationUiEvent) -> Unit,
@@ -182,7 +180,7 @@ private fun EditConfigurationScreen(
 
 
     //Back handler to show dialog if there are unsaved changes
-    BackHandler(onBack = { (onAction(BackPress))})
+    BackHandler(onBack = { (onAction(BackPress)) })
 
     //Show unsaved changes dialog back press
     if (showUnsavedChangesDialog) {
@@ -326,7 +324,7 @@ private fun BottomAppBar(
         },
         floatingActionButton = {
             FloatingActionButtonElement(
-                isTestingEnabled= isTestingEnabled,
+                isTestingEnabled = isTestingEnabled,
                 onAction = { onAction(it) }
             )
         }

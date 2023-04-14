@@ -5,9 +5,9 @@ import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.data.sounds.SoundOption
 import org.rhasspy.mobile.logic.logger.LogLevel
-import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.logic.settings.serializer.StringSetSerializer
 import org.rhasspy.mobile.platformspecific.language.getDeviceLanguage
+import org.rhasspy.mobile.platformspecific.utils.isDebug
 
 /**
  * directly consumed

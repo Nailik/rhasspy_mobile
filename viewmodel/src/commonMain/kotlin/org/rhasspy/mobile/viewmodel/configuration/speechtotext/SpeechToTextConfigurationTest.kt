@@ -5,11 +5,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
+import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.recording.RecordingService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextServiceParams
-import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationTest
 
 class SpeechToTextConfigurationTest : IConfigurationTest() {

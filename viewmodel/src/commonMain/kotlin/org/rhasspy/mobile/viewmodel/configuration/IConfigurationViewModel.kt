@@ -41,7 +41,7 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfig
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.PopBackStack
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
-abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationEditViewState>(
+abstract class IConfigurationViewModel<T : IConfigurationTest, V : IConfigurationEditViewState>(
     private val service: IService,
     internal val testRunner: T,
     private val initialViewState: () -> V
@@ -108,11 +108,11 @@ abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationE
                 if (contentViewState.value.hasUnsavedChanges) {
                     _viewState.update { it.copy(showUnsavedChangesDialog = true) }
                 } else {
-                    _viewState.update { it.copy(popBackStack = PopBackStack(Triggered))}
+                    _viewState.update { it.copy(popBackStack = PopBackStack(Triggered)) }
                 }
             }
 
-            DismissDialog -> _viewState.update { it.copy(showUnsavedChangesDialog = false)}
+            DismissDialog -> _viewState.update { it.copy(showUnsavedChangesDialog = false) }
         }
     }
 
@@ -146,7 +146,7 @@ abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationE
             onSave()
             get<NativeApplication>().reloadServiceModules()
 
-            if(_viewState.value.showUnsavedChangesDialog) {
+            if (_viewState.value.showUnsavedChangesDialog) {
                 _viewState.update {
                     it.copy(
                         showUnsavedChangesDialog = false,
@@ -169,7 +169,7 @@ abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationE
             onDiscard()
             contentViewState.value = initialViewState()
 
-            if(_viewState.value.showUnsavedChangesDialog) {
+            if (_viewState.value.showUnsavedChangesDialog) {
                 _viewState.update {
                     it.copy(
                         showUnsavedChangesDialog = false,

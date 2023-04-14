@@ -44,6 +44,7 @@ actual abstract class NativeApplication : MultiDexApplication() {
                     currentActivity = p0
                 }
             }
+
             override fun onActivityResumed(p0: Activity) {}
             override fun onActivityPaused(p0: Activity) {}
             override fun onActivityStopped(p0: Activity) {}

@@ -22,9 +22,9 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.onListItemRadioButton
 import org.rhasspy.mobile.android.onListItemSwitch
+import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.resetOverlayPermission
 import org.rhasspy.mobile.android.text
 import org.rhasspy.mobile.data.resource.stable

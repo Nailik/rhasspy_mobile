@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.logic.services.httpclient
 
-import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
+import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 
 data class HttpClientServiceParams(
     val siteId: String = ConfigurationSetting.siteId.value,

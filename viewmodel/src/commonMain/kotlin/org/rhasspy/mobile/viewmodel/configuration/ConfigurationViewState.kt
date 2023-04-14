@@ -2,9 +2,6 @@ package org.rhasspy.mobile.viewmodel.configuration
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.data.resource.StableStringResource
-import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.ui.event.StateEvent.Consumed
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.PopBackStack
 

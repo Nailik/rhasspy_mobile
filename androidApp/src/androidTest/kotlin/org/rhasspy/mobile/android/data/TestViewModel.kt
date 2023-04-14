@@ -2,22 +2,22 @@ package org.rhasspy.mobile.android.data
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationTest
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 
-class TestViewModelTest: IConfigurationTest(){
+class TestViewModelTest : IConfigurationTest() {
     override val serviceState: StateFlow<ServiceState>
         get() = MutableStateFlow(ServiceState.Success)
 
 }
 
-class TestService: IService(LogType.AudioPlayingService)
+class TestService : IService(LogType.AudioPlayingService)
 
-class TestViewState: IConfigurationEditViewState() {
+class TestViewState : IConfigurationEditViewState() {
     val isHasUnsavedChanges = MutableStateFlow(false)
 
     override val hasUnsavedChanges: Boolean

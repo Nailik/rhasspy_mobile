@@ -31,13 +31,13 @@ class RemoteHermesHttpConfigurationViewModel(
     initialViewState = ::RemoteHermesHttpConfigurationViewState
 ) {
 
-    fun onAction(action: RemoteHermesHttpConfigurationUiAction){
-        when(action) {
+    fun onAction(action: RemoteHermesHttpConfigurationUiAction) {
+        when (action) {
             is Change -> onChange(action)
         }
     }
 
-    private fun onChange(change: Change){
+    private fun onChange(change: Change) {
         contentViewState.update {
             when (change) {
                 is SetHttpSSLVerificationDisabled -> it.copy(isHttpSSLVerificationDisabled = change.disabled)

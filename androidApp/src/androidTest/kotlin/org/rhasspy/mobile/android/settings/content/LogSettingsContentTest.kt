@@ -12,9 +12,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.onListItemRadioButton
 import org.rhasspy.mobile.android.onListItemSwitch
+import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.logic.logger.LogLevel
 import org.rhasspy.mobile.viewmodel.settings.LogSettingsViewModel
 import kotlin.test.assertEquals

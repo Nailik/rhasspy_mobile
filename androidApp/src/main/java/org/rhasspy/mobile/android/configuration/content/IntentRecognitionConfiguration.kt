@@ -72,15 +72,16 @@ private fun IntentRecognitionOptionContent(
         selected = viewState.intentRecognitionOption,
         onSelect = { onAction(SelectIntentRecognitionOption(it)) },
         values = viewState.intentRecognitionOptionList
-    ) {option ->
+    ) { option ->
 
-        when(option) {
+        when (option) {
             IntentRecognitionOption.RemoteHTTP ->
                 IntentRecognitionHTTP(
                     isUseCustomIntentRecognitionHttpEndpoint = viewState.isUseCustomIntentRecognitionHttpEndpoint,
                     intentRecognitionHttpEndpointText = viewState.intentRecognitionHttpEndpointText,
                     onAction = onAction
                 )
+
             else -> {}
         }
 

@@ -25,9 +25,9 @@ class IntentRecognitionConfigurationViewModel(
     initialViewState = ::IntentRecognitionConfigurationViewState
 ) {
 
-    fun onAction(action: IntentRecognitionConfigurationUiAction){
+    fun onAction(action: IntentRecognitionConfigurationUiAction) {
         contentViewState.update {
-            when(action) {
+            when (action) {
                 is ChangeIntentRecognitionHttpEndpoint -> it.copy(intentRecognitionHttpEndpoint = action.value)
                 is SelectIntentRecognitionOption -> it.copy(intentRecognitionOption = action.option)
                 ToggleUseCustomHttpEndpoint -> it.copy(isUseCustomIntentRecognitionHttpEndpoint = !it.isUseCustomIntentRecognitionHttpEndpoint)

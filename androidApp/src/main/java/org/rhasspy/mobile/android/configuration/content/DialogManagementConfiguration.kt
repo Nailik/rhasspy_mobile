@@ -69,7 +69,7 @@ private fun DialogManagementOptionContent(
         selected = viewState.dialogManagementOption,
         onSelect = { onAction(SelectDialogManagementOption(it)) },
         values = viewState.dialogManagementOptionList
-    ) {option ->
+    ) { option ->
 
         when (option) {
             DialogManagementOption.Local ->

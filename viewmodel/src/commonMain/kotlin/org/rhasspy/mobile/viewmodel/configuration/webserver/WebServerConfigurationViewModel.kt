@@ -36,7 +36,7 @@ class WebServerConfigurationViewModel(
 ) {
 
     fun onAction(action: WebServerConfigurationUiAction) {
-        when(action){
+        when (action) {
             is Change -> onChange(action)
             is Navigate -> onNavigate(action)
         }
@@ -55,8 +55,9 @@ class WebServerConfigurationViewModel(
             }
         }
     }
+
     private fun onNavigate(navigate: Navigate) {
-        when(navigate) {
+        when (navigate) {
             OpenWebServerSSLWiki -> openLink("https://github.com/Nailik/rhasspy_mobile/wiki/Webserver#enable-ssl")
             SelectSSLCertificate -> selectSSLCertificate()
         }

@@ -3,9 +3,9 @@ package org.rhasspy.mobile.logic.services.wakeword
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
-import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
+import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 
 class WakeWordServiceParams(
     val wakeWordOption: WakeWordOption = ConfigurationSetting.wakeWordOption.value,

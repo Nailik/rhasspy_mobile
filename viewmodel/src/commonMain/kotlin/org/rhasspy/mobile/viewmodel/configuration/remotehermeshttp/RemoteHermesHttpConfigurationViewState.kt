@@ -10,12 +10,12 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 
 @Stable
 data class RemoteHermesHttpConfigurationViewState(
-    val httpClientServerEndpointHost : String= ConfigurationSetting.httpClientServerEndpointHost.value,
-    val httpClientServerEndpointPort: Int= ConfigurationSetting.httpClientServerEndpointPort.value,
+    val httpClientServerEndpointHost: String = ConfigurationSetting.httpClientServerEndpointHost.value,
+    val httpClientServerEndpointPort: Int = ConfigurationSetting.httpClientServerEndpointPort.value,
     val httpClientServerEndpointPortText: String = ConfigurationSetting.httpClientServerEndpointPort.value.toString(),
-    val httpClientTimeoutText: String= ConfigurationSetting.httpClientTimeout.value.toString(),
-    val isHttpSSLVerificationDisabled: Boolean= ConfigurationSetting.isHttpClientSSLVerificationDisabled.value
-): IConfigurationEditViewState() {
+    val httpClientTimeoutText: String = ConfigurationSetting.httpClientTimeout.value.toString(),
+    val isHttpSSLVerificationDisabled: Boolean = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value
+) : IConfigurationEditViewState() {
 
     override val hasUnsavedChanges: Boolean
         get() = !(httpClientServerEndpointHost == ConfigurationSetting.httpClientServerEndpointHost.value &&

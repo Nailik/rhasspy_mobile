@@ -141,7 +141,7 @@ private fun MqttConnectionSettings(
         label = MR.strings.host.stable,
         modifier = Modifier.testTag(TestTag.Host),
         value = mqttHost,
-        onValueChange = { onAction(UpdateMqttHost(it))},
+        onValueChange = { onAction(UpdateMqttHost(it)) },
         isLastItem = false
     )
 
@@ -150,7 +150,7 @@ private fun MqttConnectionSettings(
         label = MR.strings.port.stable,
         modifier = Modifier.testTag(TestTag.Port),
         value = mqttPortText,
-        onValueChange = { onAction(UpdateMqttPort(it))},
+        onValueChange = { onAction(UpdateMqttPort(it)) },
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         isLastItem = false
     )
@@ -160,7 +160,7 @@ private fun MqttConnectionSettings(
         label = MR.strings.userName.stable,
         modifier = Modifier.testTag(TestTag.UserName),
         value = mqttUserName,
-        onValueChange = { onAction(UpdateMqttUserName(it))},
+        onValueChange = { onAction(UpdateMqttUserName(it)) },
         isLastItem = false
     )
 
@@ -169,7 +169,7 @@ private fun MqttConnectionSettings(
         label = MR.strings.password.stable,
         modifier = Modifier.testTag(TestTag.Password),
         value = mqttPassword,
-        onValueChange = { onAction(UpdateMqttPassword(it))}
+        onValueChange = { onAction(UpdateMqttPassword(it)) }
     )
 }
 
@@ -188,7 +188,7 @@ private fun MqttSSL(
         text = MR.strings.enableSSL.stable,
         modifier = Modifier.testTag(TestTag.SSLSwitch),
         isChecked = isMqttSSLEnabled,
-        onCheckedChange = {  onAction(SetMqttSSLEnabled(it)) }
+        onCheckedChange = { onAction(SetMqttSSLEnabled(it)) }
     )
 
     AnimatedVisibility(
@@ -216,7 +216,7 @@ private fun MqttSSL(
             FilledTonalButtonListItem(
                 text = MR.strings.chooseCertificate.stable,
                 modifier = Modifier.testTag(TestTag.CertificateButton),
-                onClick = {  onAction(SelectSSLCertificate) }
+                onClick = { onAction(SelectSSLCertificate) }
             )
 
             val isKeyStoreFileTextVisible by remember { derivedStateOf { mqttKeyStoreFile != null } }
@@ -256,7 +256,7 @@ private fun MqttConnectionTiming(
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         modifier = Modifier.testTag(TestTag.ConnectionTimeout),
         value = mqttConnectionTimeoutText,
-        onValueChange = {  onAction(UpdateMqttConnectionTimeout(it)) },
+        onValueChange = { onAction(UpdateMqttConnectionTimeout(it)) },
         isLastItem = false
     )
 
@@ -264,7 +264,7 @@ private fun MqttConnectionTiming(
         label = MR.strings.keepAliveInterval.stable,
         modifier = Modifier.testTag(TestTag.KeepAliveInterval),
         value = mqttKeepAliveIntervalText,
-        onValueChange = {  onAction(UpdateMqttKeepAliveInterval(it)) },
+        onValueChange = { onAction(UpdateMqttKeepAliveInterval(it)) },
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         isLastItem = false
     )
@@ -273,7 +273,7 @@ private fun MqttConnectionTiming(
         label = MR.strings.retryInterval.stable,
         modifier = Modifier.testTag(TestTag.RetryInterval),
         value = mqttRetryIntervalText,
-        onValueChange = {  onAction(UpdateMqttRetryInterval(it)) },
+        onValueChange = { onAction(UpdateMqttRetryInterval(it)) },
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
     )
 

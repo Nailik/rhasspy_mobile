@@ -10,8 +10,6 @@ import okio.Path
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.component.inject
-import org.rhasspy.mobile.platformspecific.combineState
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceState
 import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
@@ -22,6 +20,8 @@ import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
+import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.readOnly
 
 /**
  * handles ALL INCOMING events
@@ -61,7 +61,8 @@ class ServiceMiddleware : KoinComponent, Closeable {
                         action(Action.DialogAction.PlayFinished(Source.Local))
                     } else {
                         if (dialogManagerService.currentDialogState.value == DialogManagerServiceState.Idle ||
-                            dialogManagerService.currentDialogState.value == DialogManagerServiceState.AwaitingWakeWord) {
+                            dialogManagerService.currentDialogState.value == DialogManagerServiceState.AwaitingWakeWord
+                        ) {
                             _isPlayingRecording.value = true
                             shouldResumeHotWordService = AppSetting.isHotWordEnabled.value
                             action(Action.AppSettingsAction.HotWordToggle(false))
@@ -86,7 +87,7 @@ class ServiceMiddleware : KoinComponent, Closeable {
 
                         is Action.AppSettingsAction.HotWordToggle -> {
                             appSettingsService.hotWordToggle(action.enabled)
-                            if(action.enabled){
+                            if (action.enabled) {
                                 wakeWordService.startDetection()
                             } else {
                                 wakeWordService.stopDetection()

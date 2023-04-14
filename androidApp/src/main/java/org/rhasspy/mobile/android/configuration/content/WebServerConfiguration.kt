@@ -124,7 +124,7 @@ private fun WebserverSSL(
     httpServerSSLKeyStorePassword: String,
     httpServerSSLKeyAlias: String,
     httpServerSSLKeyPassword: String,
-    onAction: (WebServerConfigurationUiAction)-> Unit
+    onAction: (WebServerConfigurationUiAction) -> Unit
 ) {
 
 
@@ -133,7 +133,7 @@ private fun WebserverSSL(
         text = MR.strings.enableSSL.stable,
         modifier = Modifier.testTag(TestTag.SSLSwitch),
         isChecked = isHttpServerSSLEnabled,
-        onCheckedChange = { onAction(SetHttpServerSSLEnabled(it))}
+        onCheckedChange = { onAction(SetHttpServerSSLEnabled(it)) }
     )
 
     //visibility of choose certificate button for ssl
@@ -148,7 +148,7 @@ private fun WebserverSSL(
             ListElement(
                 modifier = Modifier
                     .testTag(TestTag.WebServerSSLWiki)
-                    .clickable(onClick = { onAction(OpenWebServerSSLWiki)}),
+                    .clickable(onClick = { onAction(OpenWebServerSSLWiki) }),
                 icon = {
                     Icon(
                         imageVector = Icons.Filled.Link,
@@ -163,7 +163,7 @@ private fun WebserverSSL(
             FilledTonalButtonListItem(
                 text = MR.strings.chooseCertificate.stable,
                 modifier = Modifier.testTag(TestTag.CertificateButton),
-                onClick = { onAction(SelectSSLCertificate)}
+                onClick = { onAction(SelectSSLCertificate) }
             )
 
             val isKeyStoreFileTextVisible by remember { derivedStateOf { httpServerSSLKeyStoreFile != null } }
@@ -185,7 +185,7 @@ private fun WebserverSSL(
             TextFieldListItemVisibility(
                 label = MR.strings.keyStorePassword.stable,
                 value = httpServerSSLKeyStorePassword,
-                onValueChange = { onAction(UpdateHttpSSLKeyStorePassword(it))},
+                onValueChange = { onAction(UpdateHttpSSLKeyStorePassword(it)) },
                 isLastItem = false
             )
 
@@ -193,7 +193,7 @@ private fun WebserverSSL(
             TextFieldListItemVisibility(
                 label = MR.strings.keyStoreKeyAlias.stable,
                 value = httpServerSSLKeyAlias,
-                onValueChange = { onAction(UpdateHttpSSLKeyAlias(it))},
+                onValueChange = { onAction(UpdateHttpSSLKeyAlias(it)) },
                 isLastItem = false
             )
 
@@ -201,7 +201,7 @@ private fun WebserverSSL(
             TextFieldListItemVisibility(
                 label = MR.strings.keyStoreKeyPassword.stable,
                 value = httpServerSSLKeyPassword,
-                onValueChange = { onAction(UpdateHttpSSLKeyPassword(it))},
+                onValueChange = { onAction(UpdateHttpSSLKeyPassword(it)) },
             )
 
         }

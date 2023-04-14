@@ -13,8 +13,8 @@ sealed interface IConfigurationUiAction {
         object StopTest : IConfigurationEditUiAction
         object Save : IConfigurationEditUiAction
         object Discard : IConfigurationEditUiAction
-        object BackPress: IConfigurationEditUiAction
-        object DismissDialog: IConfigurationEditUiAction
+        object BackPress : IConfigurationEditUiAction
+        object DismissDialog : IConfigurationEditUiAction
 
     }
 
