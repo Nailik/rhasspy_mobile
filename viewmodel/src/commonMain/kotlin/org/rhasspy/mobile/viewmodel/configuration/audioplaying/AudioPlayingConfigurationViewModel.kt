@@ -30,7 +30,7 @@ class AudioPlayingConfigurationViewModel(
 ) : IConfigurationViewModel<AudioPlayingConfigurationTest, AudioPlayingConfigurationViewState>(
     service = service,
     testRunner = testRunner,
-    initialViewState = AudioPlayingConfigurationViewState()
+    initialViewState = ::AudioPlayingConfigurationViewState
 ) {
 
     fun onAction(action: AudioPlayingConfigurationUiAction) {

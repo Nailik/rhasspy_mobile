@@ -1,8 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration
 
-
 sealed interface IConfigurationUiAction {
-
 
     sealed interface IConfigurationEditUiAction : IConfigurationUiAction {
 
@@ -10,6 +8,8 @@ sealed interface IConfigurationUiAction {
         object StopTest : IConfigurationEditUiAction
         object Save : IConfigurationEditUiAction
         object Discard : IConfigurationEditUiAction
+        object BackPress: IConfigurationEditUiAction
+        object DismissDialog: IConfigurationEditUiAction
 
     }
 
@@ -19,4 +19,5 @@ sealed interface IConfigurationUiAction {
         object ToggleListAutoscroll : IConfigurationTestUiAction
 
     }
+
 }

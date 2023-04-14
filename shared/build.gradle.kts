@@ -55,6 +55,7 @@ kotlin {
                 implementation(Icerock.Resources)
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Jetbrains.Kotlinx.serialization)
+                implementation(Jetbrains.Kotlinx.immutable)
                 implementation(Ktor.Client.core)
                 implementation(Ktor.plugins.network)
                 implementation(Ktor2.Server.core)

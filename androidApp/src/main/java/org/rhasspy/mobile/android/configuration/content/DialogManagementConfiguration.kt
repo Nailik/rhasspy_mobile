@@ -41,7 +41,8 @@ fun DialogManagementConfigurationContent(viewModel: DialogManagementConfiguratio
         modifier = Modifier.testTag(ConfigurationScreenType.DialogManagementConfiguration),
         title = MR.strings.dialogManagement.stable,
         viewState = viewState,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
+        onConsumed = viewModel::onConsumed
     ) { contentViewState ->
 
         item {

@@ -52,6 +52,7 @@ fun IntentHandlingConfigurationContent(viewModel: IntentHandlingConfigurationVie
         title = MR.strings.intentHandling.stable,
         viewState = viewState,
         onAction = viewModel::onAction,
+        onConsumed = viewModel::onConsumed,
         testContent = { TestContent(viewModel) }
     ) { contentViewState ->
 

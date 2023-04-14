@@ -75,7 +75,7 @@ class WebServerConfigurationViewModel(
     override fun onSave() {
         ConfigurationSetting.apply {
             //delete old keystore file if changed
-            if (data.httpServerSSLKeyStoreFile != httpServerSSLKeyStoreFile) {
+            if (data.httpServerSSLKeyStoreFile != httpServerSSLKeyStoreFile.value) {
                 httpServerSSLKeyStoreFile.value?.commonDelete()
             }
 

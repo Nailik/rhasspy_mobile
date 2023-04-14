@@ -3,6 +3,7 @@ package org.rhasspy.mobile.viewmodel.settings
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
+import org.rhasspy.mobile.platformspecific.toImmutableList
 
 
 class IndicationSettingsViewModel : ViewModel() {
@@ -20,7 +21,7 @@ class IndicationSettingsViewModel : ViewModel() {
     val errorSound = AppSetting.errorSound.data
 
     //all audio output options
-    val audioOutputOptionList = AudioOutputOption::values
+    val audioOutputOptionList = AudioOutputOption.values().toImmutableList()
 
     //toggle wake word light indication
     fun toggleWakeWordLightIndicationEnabled() {

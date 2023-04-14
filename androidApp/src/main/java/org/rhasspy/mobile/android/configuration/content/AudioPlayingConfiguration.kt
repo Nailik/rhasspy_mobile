@@ -50,6 +50,7 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
         title = MR.strings.audioPlaying.stable,
         viewState = viewState,
         onAction = viewModel::onAction,
+        onConsumed = viewModel::onConsumed,
         testContent = { TestContent(viewModel) }
     ) { contentViewState ->
 

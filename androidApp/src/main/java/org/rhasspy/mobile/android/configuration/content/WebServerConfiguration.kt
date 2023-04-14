@@ -61,6 +61,7 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
         title = MR.strings.webserver.stable,
         viewState = viewState,
         onAction = viewModel::onAction,
+        onConsumed = viewModel::onConsumed,
         testContent = { }
     ) { contentViewState ->
 

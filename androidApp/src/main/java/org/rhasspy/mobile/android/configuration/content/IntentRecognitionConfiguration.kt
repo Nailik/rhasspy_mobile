@@ -46,6 +46,7 @@ fun IntentRecognitionConfigurationContent(viewModel: IntentRecognitionConfigurat
         title = MR.strings.intentRecognition.stable,
         viewState = viewState,
         onAction = viewModel::onAction,
+        onConsumed = viewModel::onConsumed,
         testContent = { TestContent(viewModel) }
     ) { contentViewState ->
 

@@ -40,6 +40,7 @@ fun RemoteHermesHttpConfigurationContent(viewModel: RemoteHermesHttpConfiguratio
         title = MR.strings.remoteHermesHTTP.stable,
         viewState = viewState,
         onAction = viewModel::onAction,
+        onConsumed = viewModel::onConsumed,
         testContent = { TestContent(viewModel) }
     ) { contentViewState ->
 

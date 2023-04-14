@@ -18,6 +18,7 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
 import io.ktor.utils.io.core.Closeable
+import kotlinx.collections.immutable.ImmutableList
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
@@ -35,8 +36,8 @@ import java.io.File
  */
 actual class PorcupineWakeWordClient actual constructor(
     private val wakeWordPorcupineAccessToken: String,
-    private val wakeWordPorcupineKeywordDefaultOptions: Set<PorcupineDefaultKeyword>,
-    private val wakeWordPorcupineKeywordCustomOptions: Set<PorcupineCustomKeyword>,
+    private val wakeWordPorcupineKeywordDefaultOptions: ImmutableList<PorcupineDefaultKeyword>,
+    private val wakeWordPorcupineKeywordCustomOptions: ImmutableList<PorcupineCustomKeyword>,
     private val wakeWordPorcupineLanguage: PorcupineLanguageOption,
     private val onKeywordDetected: (hotWord: String) -> Unit,
     private val onError: (PorcupineError) -> Unit

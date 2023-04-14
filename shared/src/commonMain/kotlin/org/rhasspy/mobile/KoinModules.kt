@@ -2,7 +2,6 @@ package org.rhasspy.mobile
 
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.closeableSingle
-import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingServiceParams
@@ -34,26 +33,26 @@ import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.logic.services.webserver.WebServerServiceParams
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.viewmodel.AppViewModel
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationTest
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationTest
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationTest
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationTest
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationTest
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationTest
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationTest
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationTest
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationTest
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationTest
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.overlay.IndicationOverlayViewModel
 import org.rhasspy.mobile.viewmodel.overlay.MicrophoneOverlayViewModel
@@ -138,18 +137,44 @@ val viewModelModule = module {
     single { ConfigurationScreenViewModel() }
     single { AudioPlayingConfigurationViewModel(
         service = get(),
-        testRunner =  get(),
-        logType = LogType.AudioPlayingService
+        testRunner =  get()
     ) }
-    single { DialogManagementConfigurationViewModel() }
-    single { IntentHandlingConfigurationViewModel() }
-    single { IntentRecognitionConfigurationViewModel() }
-    single { MqttConfigurationViewModel() }
-    single { RemoteHermesHttpConfigurationViewModel() }
-    single { SpeechToTextConfigurationViewModel() }
-    single { TextToSpeechConfigurationViewModel() }
-    single { WakeWordConfigurationViewModel() }
-    single { WebServerConfigurationViewModel() }
+    single { DialogManagementConfigurationViewModel(
+        service = get(),
+        testRunner =  get()
+    ) }
+    single { IntentHandlingConfigurationViewModel(
+        service = get(),
+        testRunner =  get()
+    ) }
+    single { IntentRecognitionConfigurationViewModel(
+        service = get(),
+        testRunner =  get()
+    ) }
+    single { MqttConfigurationViewModel(
+        service = get(),
+        testRunner =  get()
+    ) }
+    single { RemoteHermesHttpConfigurationViewModel(
+        service = get(),
+        testRunner =  get()
+    ) }
+    single { SpeechToTextConfigurationViewModel(
+        service = get(),
+        testRunner =  get()
+    ) }
+    single { TextToSpeechConfigurationViewModel(
+        service = get(),
+        testRunner =  get()
+    ) }
+    single { WakeWordConfigurationViewModel(
+        service = get(),
+        testRunner =  get()
+    ) }
+    single { WebServerConfigurationViewModel(
+        service = get(),
+        testRunner =  get()
+    ) }
     single { LogScreenViewModel() }
     single { SettingsScreenViewModel() }
     single { AboutScreenViewModel() }

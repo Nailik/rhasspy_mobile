@@ -4,6 +4,7 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
+import org.rhasspy.mobile.platformspecific.toImmutableList
 
 class MicrophoneOverlaySettingsViewModel : ViewModel() {
 
@@ -12,7 +13,7 @@ class MicrophoneOverlaySettingsViewModel : ViewModel() {
     val isMicrophoneOverlayWhileAppEnabledVisible =
         microphoneOverlaySizeOption.mapReadonlyState { it != MicrophoneOverlaySizeOption.Disabled }
     val isMicrophoneOverlayWhileAppEnabled = AppSetting.isMicrophoneOverlayWhileAppEnabled.data
-    val microphoneOverlaySizeOptions = MicrophoneOverlaySizeOption::values
+    val microphoneOverlaySizeOptions = MicrophoneOverlaySizeOption.values().toImmutableList()
 
     //microphone overlay on/off
     fun selectMicrophoneOverlayOptionSize(option: MicrophoneOverlaySizeOption) {

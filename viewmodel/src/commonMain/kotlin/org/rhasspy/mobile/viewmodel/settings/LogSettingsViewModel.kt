@@ -7,6 +7,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.logic.logger.LogLevel
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.logic.settings.AppSetting
+import org.rhasspy.mobile.platformspecific.toImmutableList
 
 class LogSettingsViewModel : ViewModel(), KoinComponent {
 
@@ -17,7 +18,7 @@ class LogSettingsViewModel : ViewModel(), KoinComponent {
     val isLogAudioFramesEnabled = AppSetting.isLogAudioFramesEnabled.data
 
     //all options
-    val logLevelOptions = LogLevel::values
+    val logLevelOptions = LogLevel.values().toImmutableList()
 
     //select log level
     fun selectLogLevel(logLevel: LogLevel) {

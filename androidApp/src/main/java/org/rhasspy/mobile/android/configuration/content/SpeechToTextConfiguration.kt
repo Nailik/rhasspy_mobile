@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import org.koin.androidx.compose.get
@@ -20,8 +21,15 @@ import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiAction
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiAction.Change.SelectSpeechToTextOption
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiAction.Change.ToggleUseCustomHttpEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiAction.Change.ToggleUseSpeechToTextMqttSilenceDetection
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiAction.Change.UpdateSpeechToTextHttpEndpoint
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState
 
 /**
  * Content to configure speech to text
@@ -32,42 +40,66 @@ import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfi
 @Composable
 fun SpeechToTextConfigurationContent(viewModel: SpeechToTextConfigurationViewModel = get()) {
 
+    val viewState by viewModel.viewState.collectAsState()
+
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.SpeechToTextConfiguration),
         title = MR.strings.speechToText.stable,
-        viewState = viewModel.viewState.collectAsState().value,
+        viewState = viewState,
         onAction = viewModel::onAction,
+        onConsumed = viewModel::onConsumed,
         testContent = { TestContent(viewModel) }
-    ) {
+    ) { contentViewState ->
 
         item {
-            //drop down of option
-            RadioButtonsEnumSelection(
-                modifier = Modifier.testTag(TestTag.SpeechToTextOptions),
-                selected = viewModel.speechToTextOption.collectAsState().value,
-                onSelect = viewModel::selectSpeechToTextOption,
-                values = viewModel.speechToTextOptions
-            ) {
-
-                if (viewModel.isSpeechToTextHttpSettingsVisible(it)) {
-                    SpeechToTextHTTP(viewModel)
-                }
-
-                if (viewModel.isSpeechToTextMqttSettingsVisible(it)) {
-                    SpeechToTextMqtt(viewModel)
-                }
-            }
+            SpeechToTextOptionContent(
+                viewState = contentViewState,
+                onAction = viewModel::onAction
+            )
         }
 
     }
 
 }
 
+@Composable
+private fun SpeechToTextOptionContent(
+    viewState: SpeechToTextConfigurationViewState,
+    onAction: (SpeechToTextConfigurationUiAction) -> Unit
+) {
+    RadioButtonsEnumSelection(
+        modifier = Modifier.testTag(TestTag.SpeechToTextOptions),
+        selected = viewState.speechToTextOption,
+        onSelect = { onAction(SelectSpeechToTextOption(it)) },
+        values = viewState.speechToTextOptions
+    ) {
+
+        when (it) {
+            SpeechToTextOption.RemoteHTTP -> SpeechToTextHTTP(
+                isUseCustomSpeechToTextHttpEndpoint = viewState.isUseCustomSpeechToTextHttpEndpoint,
+                speechToTextHttpEndpoint = viewState.speechToTextHttpEndpoint,
+                onAction = onAction
+            )
+
+            SpeechToTextOption.RemoteMQTT -> SpeechToTextMqtt(
+                isUseSpeechToTextMqttSilenceDetection = viewState.isUseSpeechToTextMqttSilenceDetection,
+                onAction = onAction
+            )
+            else -> {}
+        }
+
+    }
+}
+
 /**
  * http endpoint setings
  */
 @Composable
-private fun SpeechToTextHTTP(viewModel: SpeechToTextConfigurationViewModel) {
+private fun SpeechToTextHTTP(
+    isUseCustomSpeechToTextHttpEndpoint: Boolean,
+    speechToTextHttpEndpoint: String,
+    onAction: (SpeechToTextConfigurationUiAction) -> Unit
+) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
@@ -75,16 +107,16 @@ private fun SpeechToTextHTTP(viewModel: SpeechToTextConfigurationViewModel) {
         SwitchListItem(
             modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
             text = MR.strings.useCustomEndpoint.stable,
-            isChecked = viewModel.isUseCustomSpeechToTextHttpEndpoint.collectAsState().value,
-            onCheckedChange = viewModel::toggleUseCustomHttpEndpoint
+            isChecked = isUseCustomSpeechToTextHttpEndpoint,
+            onCheckedChange = { onAction(ToggleUseCustomHttpEndpoint) }
         )
 
         //input to edit http endpoint
         TextFieldListItem(
-            enabled = viewModel.isSpeechToTextHttpEndpointChangeEnabled.collectAsState().value,
+            enabled = isUseCustomSpeechToTextHttpEndpoint,
             modifier = Modifier.testTag(TestTag.Endpoint),
-            value = viewModel.speechToTextHttpEndpoint.collectAsState().value,
-            onValueChange = viewModel::updateSpeechToTextHttpEndpoint,
+            value = speechToTextHttpEndpoint,
+            onValueChange = { onAction(UpdateSpeechToTextHttpEndpoint(it)) },
             label = translate(MR.strings.speechToTextURL.stable, HttpClientPath.SpeechToText.path)
         )
 
@@ -96,7 +128,10 @@ private fun SpeechToTextHTTP(viewModel: SpeechToTextConfigurationViewModel) {
  * mqtt silence detection settings
  */
 @Composable
-private fun SpeechToTextMqtt(viewModel: SpeechToTextConfigurationViewModel) {
+private fun SpeechToTextMqtt(
+    isUseSpeechToTextMqttSilenceDetection: Boolean,
+    onAction: (SpeechToTextConfigurationUiAction) -> Unit
+) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
@@ -104,8 +139,8 @@ private fun SpeechToTextMqtt(viewModel: SpeechToTextConfigurationViewModel) {
         SwitchListItem(
             modifier = Modifier.testTag(TestTag.MqttSilenceDetectionSwitch),
             text = MR.strings.useMqttSilenceDetection.stable,
-            isChecked = viewModel.isUseSpeechToTextMqttSilenceDetection.collectAsState().value,
-            onCheckedChange = viewModel::toggleUseSpeechToTextMqttSilenceDetection
+            isChecked = isUseSpeechToTextMqttSilenceDetection,
+            onCheckedChange = { onAction(ToggleUseSpeechToTextMqttSilenceDetection) }
         )
     }
 

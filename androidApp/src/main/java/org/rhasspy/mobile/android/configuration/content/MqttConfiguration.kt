@@ -67,7 +67,7 @@ fun MqttConfigurationContent(viewModel: MqttConfigurationViewModel = get()) {
         title = MR.strings.mqtt.stable,
         viewState = viewState,
         onAction = viewModel::onAction,
-        testContent = { }
+        onConsumed = viewModel::onConsumed
     ) { contentViewState ->
 
         item {

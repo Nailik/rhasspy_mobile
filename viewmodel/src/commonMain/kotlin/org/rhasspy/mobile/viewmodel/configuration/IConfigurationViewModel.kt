@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -22,18 +23,22 @@ import org.rhasspy.mobile.logic.logger.LogElement
 import org.rhasspy.mobile.logic.logger.LogLevel
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.settings.AppSetting
-import org.rhasspy.mobile.logic.update
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.ui.event.StateEvent
+import org.rhasspy.mobile.ui.event.StateEvent.Triggered
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.BackPress
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.Discard
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.DismissDialog
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.Save
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.StartTest
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.StopTest
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListAutoscroll
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListFiltered
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.PopBackStack
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationEditViewState>(
@@ -87,12 +92,27 @@ abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationE
         }
     }
 
+    fun onConsumed(event: IConfigurationUiEvent) {
+        when (event) {
+            is PopBackStack -> _viewState.update { it.copy(popBackStack = PopBackStack(StateEvent.Consumed)) }
+        }
+    }
+
     private fun onEditAction(action: IConfigurationEditUiAction) {
         when (action) {
-            Discard -> onDiscard()
+            Discard -> discard()
             Save -> save()
             StartTest -> startTest()
             StopTest -> stopTest()
+            BackPress -> {
+                if (contentViewState.value.hasUnsavedChanges) {
+                    _viewState.update { it.copy(showUnsavedChangesDialog = true) }
+                } else {
+                    _viewState.update { it.copy(popBackStack = PopBackStack(Triggered))}
+                }
+            }
+
+            DismissDialog -> _viewState.update { it.copy(showUnsavedChangesDialog = false)}
         }
     }
 
@@ -126,12 +146,21 @@ abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationE
             onSave()
             get<NativeApplication>().reloadServiceModules()
 
-            _viewState.update { it.copy(isLoading = false) }
-            //TODO reset usaved changes
+            if(_viewState.value.showUnsavedChangesDialog) {
+                _viewState.update {
+                    it.copy(
+                        showUnsavedChangesDialog = false,
+                        popBackStack = PopBackStack(Triggered)
+                    )
+                }
+            } else {
+                _viewState.update { it.copy(isLoading = false) }
+            }
+
         }
     }
 
-    fun discard() {
+    private fun discard() {
 
         _viewState.update { it.copy(isLoading = true) }
 
@@ -140,8 +169,16 @@ abstract class IConfigurationViewModel<T: IConfigurationTest, V: IConfigurationE
             contentViewState.value = initialViewState()
             get<NativeApplication>().reloadServiceModules()
 
-            _viewState.update { it.copy(isLoading = false) }
-            //TODO reset usaved changes
+            if(_viewState.value.showUnsavedChangesDialog) {
+                _viewState.update {
+                    it.copy(
+                        showUnsavedChangesDialog = false,
+                        popBackStack = PopBackStack(Triggered)
+                    )
+                }
+            } else {
+                _viewState.update { it.copy(isLoading = false) }
+            }
         }
 
     }

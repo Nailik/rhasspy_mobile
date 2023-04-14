@@ -19,11 +19,11 @@ data class WebServerConfigurationViewState(
 
     override val hasUnsavedChanges: Boolean
         get() =!(isHttpServerEnabled == ConfigurationSetting.isHttpServerEnabled.value &&
-                httpServerPort ==ConfigurationSetting.httpServerPort.value &&
+                httpServerPort == ConfigurationSetting.httpServerPort.value &&
                 isHttpServerSSLEnabled == ConfigurationSetting.isHttpServerSSLEnabledEnabled.value &&
                 httpServerSSLKeyStoreFile == ConfigurationSetting.httpServerSSLKeyStoreFile.value &&
-                httpServerSSLKeyStorePassword ==ConfigurationSetting.httpServerSSLKeyStorePassword.value &&
-                httpServerSSLKeyAlias ==ConfigurationSetting.httpServerSSLKeyAlias.value &&
+                httpServerSSLKeyStorePassword == ConfigurationSetting.httpServerSSLKeyStorePassword.value &&
+                httpServerSSLKeyAlias == ConfigurationSetting.httpServerSSLKeyAlias.value &&
                 httpServerSSLKeyPassword == ConfigurationSetting.httpServerSSLKeyPassword.value)
 
     override val isTestingEnabled: Boolean get() = isHttpServerEnabled

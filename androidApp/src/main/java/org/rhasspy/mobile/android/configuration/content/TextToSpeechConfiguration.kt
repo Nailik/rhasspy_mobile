@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import org.koin.androidx.compose.get
@@ -19,8 +20,14 @@ import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiAction
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiAction.Change.SelectTextToSpeechOption
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiAction.Change.ToggleUseCustomHttpEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiAction.Change.UpdateTextToSpeechHttpEndpoint
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewState
 
 /**
  * Content to configure text to speech
@@ -31,39 +38,61 @@ import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfi
 @Composable
 fun TextToSpeechConfigurationContent(viewModel: TextToSpeechConfigurationViewModel = get()) {
 
+    val viewState by viewModel.viewState.collectAsState()
+
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.TextToSpeechConfiguration),
         title = MR.strings.textToSpeech.stable,
-        viewState = viewModel.viewState.collectAsState().value,
+        viewState = viewState,
         onAction = viewModel::onAction,
+        onConsumed = viewModel::onConsumed,
         testContent = { TestContent(viewModel) }
-    ) {
+    ) { contentViewState ->
 
         item {
-            //drop down to select text to speech
-            RadioButtonsEnumSelection(
-                modifier = Modifier.testTag(TestTag.TextToSpeechOptions),
-                selected = viewModel.textToSpeechOption.collectAsState().value,
-                onSelect = viewModel::selectTextToSpeechOption,
-                values = viewModel.textToSpeechOptions
-            ) {
-
-                if (viewModel.isTextToSpeechHttpSettingsVisible(it)) {
-                    TextToSpeechHTTP(viewModel)
-                }
-
-            }
+            TextToSpeechOptionContent(
+                viewState = contentViewState,
+                onAction = viewModel::onAction
+            )
         }
 
     }
 
 }
 
+@Composable
+private fun TextToSpeechOptionContent(
+    viewState: TextToSpeechConfigurationViewState,
+    onAction: (TextToSpeechConfigurationUiAction) -> Unit
+) {
+    RadioButtonsEnumSelection(
+        modifier = Modifier.testTag(TestTag.TextToSpeechOptions),
+        selected = viewState.textToSpeechOption,
+        onSelect = { onAction(SelectTextToSpeechOption(it)) },
+        values = viewState.textToSpeechOptions
+    ) {
+
+        when (it) {
+            TextToSpeechOption.RemoteHTTP ->  TextToSpeechHTTP(
+                isUseCustomTextToSpeechHttpEndpoint = viewState.isUseCustomTextToSpeechHttpEndpoint,
+                textToSpeechHttpEndpoint = viewState.textToSpeechHttpEndpoint,
+                onAction = onAction
+            )
+            else -> {}
+        }
+
+    }
+}
+
 /**
  * http endpoint settings
  */
 @Composable
-private fun TextToSpeechHTTP(viewModel: TextToSpeechConfigurationViewModel) {
+private fun TextToSpeechHTTP(
+    isUseCustomTextToSpeechHttpEndpoint: Boolean,
+    textToSpeechHttpEndpoint: String,
+    onAction: (TextToSpeechConfigurationUiAction) -> Unit
+) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
@@ -71,16 +100,16 @@ private fun TextToSpeechHTTP(viewModel: TextToSpeechConfigurationViewModel) {
         SwitchListItem(
             modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
             text = MR.strings.useCustomEndpoint.stable,
-            isChecked = viewModel.isUseCustomTextToSpeechHttpEndpoint.collectAsState().value,
-            onCheckedChange = viewModel::toggleUseCustomHttpEndpoint
+            isChecked = isUseCustomTextToSpeechHttpEndpoint,
+            onCheckedChange = {  onAction(ToggleUseCustomHttpEndpoint) }
         )
 
         //http endpoint input field
         TextFieldListItem(
-            enabled = viewModel.isTextToSpeechHttpEndpointChangeEnabled.collectAsState().value,
+            enabled = isUseCustomTextToSpeechHttpEndpoint,
             modifier = Modifier.testTag(TestTag.Endpoint),
-            value = viewModel.textToSpeechHttpEndpoint.collectAsState().value,
-            onValueChange = viewModel::updateTextToSpeechHttpEndpoint,
+            value = textToSpeechHttpEndpoint,
+            onValueChange = {  onAction(UpdateTextToSpeechHttpEndpoint(it)) },
             label = translate(MR.strings.rhasspyTextToSpeechURL.stable, HttpClientPath.TextToSpeech.path)
         )
 
