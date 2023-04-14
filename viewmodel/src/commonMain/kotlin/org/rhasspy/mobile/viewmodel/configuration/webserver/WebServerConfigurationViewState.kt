@@ -1,59 +1,33 @@
 package org.rhasspy.mobile.viewmodel.configuration.webserver
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.StateFlow
 import okio.Path
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.ServiceStateHeaderViewState
+import org.rhasspy.mobile.platformspecific.toIntOrZero
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 
 @Stable
 data class WebServerConfigurationViewState(
-    val isHttpServerEnabled: Boolean,
-   val httpServerPort: Int,
-    val httpServerPortText: String,
-    val isHttpServerSSLEnabled: Boolean,
-    val httpServerSSLKeyStoreFile: Path?,
-    val httpServerSSLKeyStorePassword: String,
-    val httpServerSSLKeyAlias: String,
-    val httpServerSSLKeyPassword: String
-): IConfigurationContentViewState() {
+    val isHttpServerEnabled: Boolean= ConfigurationSetting.isHttpServerEnabled.value,
+    val httpServerPortText: String= ConfigurationSetting.httpServerPort.value.toString(),
+    val isHttpServerSSLEnabled: Boolean= ConfigurationSetting.isHttpServerSSLEnabledEnabled.value,
+    val httpServerSSLKeyStoreFile: Path?= ConfigurationSetting.httpServerSSLKeyStoreFile.value,
+    val httpServerSSLKeyStorePassword: String= ConfigurationSetting.httpServerSSLKeyStorePassword.value,
+    val httpServerSSLKeyAlias: String = ConfigurationSetting.httpServerSSLKeyAlias.value,
+    val httpServerSSLKeyPassword: String= ConfigurationSetting.httpServerSSLKeyPassword.value
+): IConfigurationEditViewState {
 
-    companion object {
-        fun getInitial() = WebServerConfigurationViewState(
-            isHttpServerEnabled= ConfigurationSetting.isHttpServerEnabled.value,
-            httpServerPort = ConfigurationSetting.httpServerPort.value,
-            httpServerPortText = ConfigurationSetting.httpServerPort.value.toString(),
-            isHttpServerSSLEnabled = ConfigurationSetting.isHttpServerSSLEnabledEnabled.value,
-            httpServerSSLKeyStoreFile = ConfigurationSetting.httpServerSSLKeyStoreFile.value,
-            httpServerSSLKeyStorePassword = ConfigurationSetting.httpServerSSLKeyStorePassword.value,
-            httpServerSSLKeyAlias = ConfigurationSetting.httpServerSSLKeyAlias.value,
-            httpServerSSLKeyPassword = ConfigurationSetting.httpServerSSLKeyPassword.value
-        )
-    }
+    override val hasUnsavedChanges: Boolean
+        get() =!(isHttpServerEnabled == ConfigurationSetting.isHttpServerEnabled.value &&
+                httpServerPort ==ConfigurationSetting.httpServerPort.value &&
+                isHttpServerSSLEnabled == ConfigurationSetting.isHttpServerSSLEnabledEnabled.value &&
+                httpServerSSLKeyStoreFile == ConfigurationSetting.httpServerSSLKeyStoreFile.value &&
+                httpServerSSLKeyStorePassword ==ConfigurationSetting.httpServerSSLKeyStorePassword.value &&
+                httpServerSSLKeyAlias ==ConfigurationSetting.httpServerSSLKeyAlias.value &&
+                httpServerSSLKeyPassword == ConfigurationSetting.httpServerSSLKeyPassword.value)
 
-    override fun getEditViewState(serviceViewState: StateFlow<ServiceStateHeaderViewState>): IConfigurationEditViewState {
-        return IConfigurationEditViewState(
-            hasUnsavedChanges = !(isHttpServerEnabled == ConfigurationSetting.isHttpServerEnabled.value &&
-            httpServerPort ==ConfigurationSetting.httpServerPort.value &&
-            isHttpServerSSLEnabled == ConfigurationSetting.isHttpServerSSLEnabledEnabled.value &&
-            httpServerSSLKeyStoreFile == ConfigurationSetting.httpServerSSLKeyStoreFile.value &&
-            httpServerSSLKeyStorePassword ==ConfigurationSetting.httpServerSSLKeyStorePassword.value &&
-            httpServerSSLKeyAlias ==ConfigurationSetting.httpServerSSLKeyAlias.value &&
-            httpServerSSLKeyPassword == ConfigurationSetting.httpServerSSLKeyPassword.value),
-            isTestingEnabled = isHttpServerEnabled,
-            serviceViewState = serviceViewState
-        )
-    }
+    override val isTestingEnabled: Boolean get() = isHttpServerEnabled
 
-    override fun save() {
-        ConfigurationSetting.isHttpServerEnabled.value = isHttpServerEnabled
-        ConfigurationSetting.httpServerPort.value = httpServerPort
-        ConfigurationSetting.isHttpServerSSLEnabledEnabled.value = isHttpServerSSLEnabled
-        ConfigurationSetting.httpServerSSLKeyStoreFile.value = httpServerSSLKeyStoreFile
-        ConfigurationSetting.httpServerSSLKeyStorePassword.value = httpServerSSLKeyStorePassword
-        ConfigurationSetting.httpServerSSLKeyAlias.value = httpServerSSLKeyAlias
-        ConfigurationSetting.httpServerSSLKeyPassword.value = httpServerSSLKeyPassword
-    }
+    val httpServerPort: Int get() = httpServerPortText.toIntOrZero()
 
 }

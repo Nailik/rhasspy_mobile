@@ -2,7 +2,6 @@ package org.rhasspy.mobile.viewmodel.configuration.wakeword
 
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
@@ -12,14 +11,14 @@ import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel.PorcupineCustomKeywordUi
 
 @Stable
 data class WakeWordConfigurationViewState(
     val wakeWordOptions: ImmutableList<WakeWordOption> = WakeWordOption.values().toImmutableList(),
     val wakeWordOption: WakeWordOption= ConfigurationSetting.wakeWordOption.value,
     val wakeWordPorcupineViewState: PorcupineViewState = PorcupineViewState(),
-    val wakeWordUdpViewState: UdpViewState = UdpViewState()
+    val wakeWordUdpViewState: UdpViewState = UdpViewState(),
+    val isMicrophonePermissionRequestVisible: Boolean = false
 ): IConfigurationEditViewState {
 
     override val hasUnsavedChanges: Boolean
@@ -31,11 +30,11 @@ data class WakeWordConfigurationViewState(
 
     @Stable
     data class PorcupineViewState(
-        val accessToken: String= ConfigurationSetting.wakeWordPorcupineAccessToken.value,
+        val accessToken: String = ConfigurationSetting.wakeWordPorcupineAccessToken.value,
         val defaultOptions: ImmutableList<PorcupineDefaultKeyword> = ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value,
-        val customOptions: ImmutableSet<PorcupineCustomKeyword> = ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value,
+        val customOptionsUi: ImmutableList<PorcupineCustomKeywordUi> = ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value.map { PorcupineCustomKeywordUi(it) }.toImmutableList(),
         val languageOptions: ImmutableList<PorcupineLanguageOption> = PorcupineLanguageOption.values().toImmutableList(),
-        val porcupineLanguage: PorcupineLanguageOption= ConfigurationSetting.wakeWordPorcupineLanguage.value
+        val porcupineLanguage: PorcupineLanguageOption = ConfigurationSetting.wakeWordPorcupineLanguage.value
     ) {
         val hasUnsavedChanges: Boolean
             get() = !(accessToken == ConfigurationSetting.wakeWordPorcupineAccessToken.value &&
@@ -43,13 +42,14 @@ data class WakeWordConfigurationViewState(
                     customOptions == ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value &&
                     porcupineLanguage == ConfigurationSetting.wakeWordPorcupineLanguage.value)
 
-        val customOptionsUi: ImmutableList<PorcupineCustomKeywordUi> get() = customOptions.map { PorcupineCustomKeywordUi(it) }.toImmutableList()
-        val keywordCount: Int get() = defaultOptions.count { it.isEnabled } + customOptions.count { it.isEnabled }
+        val customOptions: ImmutableList<PorcupineCustomKeyword> get() = customOptionsUi.filter { !it.deleted }.map { it.keyword }.toImmutableList()
+
+        val keywordCount: Int get() = defaultOptions.count { it.isEnabled } + customOptionsUi.count { it.keyword.isEnabled }
     }
 
     @Stable
     data class UdpViewState(
-        val outputHost: String= ConfigurationSetting.wakeWordUdpOutputHost.value,
+        val outputHost: String = ConfigurationSetting.wakeWordUdpOutputHost.value,
         val outputPortText: String = ConfigurationSetting.wakeWordUdpOutputPort.value.toString()
     ) {
         val hasUnsavedChanges: Boolean

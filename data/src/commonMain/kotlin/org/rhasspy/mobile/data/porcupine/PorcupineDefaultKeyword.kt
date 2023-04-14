@@ -6,6 +6,6 @@ import org.rhasspy.mobile.data.service.option.PorcupineKeywordOption
 @Serializable
 data class PorcupineDefaultKeyword(
     val option: PorcupineKeywordOption,
-    val isEnabled: Boolean,
-    val sensitivity: Float
-)
+    override val isEnabled: Boolean,
+    override val sensitivity: Float
+) : PorcupineKeyword

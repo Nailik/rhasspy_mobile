@@ -44,15 +44,14 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.WakeWordOption
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.Change.MicrophonePermissionAllowed
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.Change.SelectWakeWordOption
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.Change.UpdateUdpOutputHost
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.Change.UpdateUdpOutputPort
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.Change.UpdateWakeWordPorcupineAccessToken
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.Navigate.OpenPicoVoiceConsole
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.UdpUiAction.UpdateUdpOutputHost
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.UdpUiAction.UpdateUdpOutputPort
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.UdpViewState
 
@@ -130,6 +129,7 @@ private fun WakeWordConfigurationOverview(viewModel: WakeWordConfigurationViewMo
         item {
             WakeWordConfigurationOptionContent(
                 wakeWordOption = contentViewState.wakeWordOption,
+                isMicrophonePermissionRequestVisible = contentViewState.isMicrophonePermissionRequestVisible,
                 wakeWordOptions = contentViewState.wakeWordOptions,
                 wakeWordPorcupineViewState = contentViewState.wakeWordPorcupineViewState,
                 wakeWordUdpViewState = contentViewState.wakeWordUdpViewState,
@@ -143,6 +143,7 @@ private fun WakeWordConfigurationOverview(viewModel: WakeWordConfigurationViewMo
 @Composable
 private fun WakeWordConfigurationOptionContent(
     wakeWordOption: WakeWordOption,
+    isMicrophonePermissionRequestVisible: Boolean,
     wakeWordOptions: ImmutableList<WakeWordOption>,
     wakeWordPorcupineViewState: PorcupineViewState,
     wakeWordUdpViewState: UdpViewState,
@@ -159,10 +160,12 @@ private fun WakeWordConfigurationOptionContent(
         when (option) {
             WakeWordOption.Porcupine -> PorcupineConfiguration(
                 viewState = wakeWordPorcupineViewState,
+                isMicrophonePermissionRequestVisible = isMicrophonePermissionRequestVisible,
                 onAction = onAction
             )
             WakeWordOption.Udp -> UdpSettings(
                 viewState = wakeWordUdpViewState,
+                isMicrophonePermissionRequestVisible = isMicrophonePermissionRequestVisible,
                 onAction = onAction
             )
             else -> {}
@@ -182,6 +185,7 @@ private fun WakeWordConfigurationOptionContent(
 @Composable
 private fun PorcupineConfiguration(
     viewState: PorcupineViewState,
+    isMicrophonePermissionRequestVisible: Boolean,
     onAction: (WakeWordConfigurationUiAction) -> Unit
 ) {
 
@@ -242,11 +246,11 @@ private fun PorcupineConfiguration(
         AnimatedVisibility(
             enter = expandVertically(),
             exit = shrinkVertically(),
-            visible = viewModel.isMicrophonePermissionRequestVisible.collectAsState().value
+            visible = isMicrophonePermissionRequestVisible
         ) {
             RequiresMicrophonePermission(
                 MR.strings.microphonePermissionInfoRecord.stable,
-                viewModel::microphonePermissionAllowed
+                { onAction(MicrophonePermissionAllowed) }
             ) { onClick ->
                 FilledTonalButtonListItem(
                     text = MR.strings.allowMicrophonePermission.stable,
@@ -265,6 +269,7 @@ private fun PorcupineConfiguration(
 @Composable
 private fun UdpSettings(
     viewState: UdpViewState,
+    isMicrophonePermissionRequestVisible: Boolean,
     onAction: (WakeWordConfigurationUiAction) -> Unit
 ) {
 
@@ -275,7 +280,7 @@ private fun UdpSettings(
             label = MR.strings.host.stable,
             modifier = Modifier.testTag(TestTag.AudioRecordingUdpHost),
             value = viewState.outputHost,
-            onValueChange = { onAction(UpdateUdpOutputHost(it))},
+            onValueChange = { onAction(UpdateUdpOutputHost(it)) },
             isLastItem = false
         )
 
@@ -284,7 +289,7 @@ private fun UdpSettings(
             label = MR.strings.port.stable,
             modifier = Modifier.testTag(TestTag.AudioRecordingUdpPort),
             value = viewState.outputPortText,
-            onValueChange = { onAction(UpdateUdpOutputPort(it))},
+            onValueChange = { onAction(UpdateUdpOutputPort(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
 
@@ -292,11 +297,11 @@ private fun UdpSettings(
         AnimatedVisibility(
             enter = expandVertically(),
             exit = shrinkVertically(),
-            visible = viewModel.isMicrophonePermissionRequestVisible.collectAsState().value
+            visible = isMicrophonePermissionRequestVisible
         ) {
             RequiresMicrophonePermission(
                 MR.strings.microphonePermissionInfoRecord.stable,
-                viewModel::microphonePermissionAllowed
+                { onAction(MicrophonePermissionAllowed) }
             ) { onClick ->
                 FilledTonalButtonListItem(
                     text = MR.strings.allowMicrophonePermission.stable,

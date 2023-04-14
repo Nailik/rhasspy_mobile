@@ -17,7 +17,6 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -32,10 +31,7 @@ import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 
 /**

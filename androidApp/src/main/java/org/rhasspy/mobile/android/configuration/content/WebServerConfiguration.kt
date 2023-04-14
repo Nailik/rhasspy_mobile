@@ -10,9 +10,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import okio.Path
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
@@ -29,6 +33,15 @@ import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.SetHttpServerEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.SetHttpServerSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.UpdateHttpSSLKeyAlias
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.UpdateHttpSSLKeyPassword
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.UpdateHttpSSLKeyStorePassword
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.UpdateHttpServerPort
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Navigate.OpenWebServerSSLWiki
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Navigate.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
 
 /**
@@ -41,21 +54,23 @@ import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurati
 @Composable
 fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = get()) {
 
+    val viewState by viewModel.viewState.collectAsState()
+
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.WebServerConfiguration),
         title = MR.strings.webserver.stable,
-        viewState = viewModel.viewState.collectAsState().value,
+        viewState = viewState,
         onAction = viewModel::onAction,
         testContent = { }
-    ) {
+    ) { contentViewState ->
 
         item {
             //switch to enable http server
             SwitchListItem(
                 text = MR.strings.enableHTTPApi.stable,
                 modifier = Modifier.testTag(TestTag.ServerSwitch),
-                isChecked = viewModel.isHttpServerEnabled.collectAsState().value,
-                onCheckedChange = viewModel::toggleHttpServerEnabled
+                isChecked = contentViewState.isHttpServerEnabled,
+                onCheckedChange = { viewModel.onAction(SetHttpServerEnabled(it)) }
             )
         }
 
@@ -64,7 +79,7 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
             AnimatedVisibility(
                 enter = expandVertically(),
                 exit = shrinkVertically(),
-                visible = viewModel.isHttpServerSettingsVisible.collectAsState().value
+                visible = contentViewState.isHttpServerEnabled
             ) {
 
                 Column {
@@ -73,12 +88,19 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
                     TextFieldListItem(
                         label = MR.strings.port.stable,
                         modifier = Modifier.testTag(TestTag.Port),
-                        value = viewModel.httpServerPortText.collectAsState().value,
-                        onValueChange = viewModel::changeHttpServerPort,
+                        value = contentViewState.httpServerPortText,
+                        onValueChange = { viewModel.onAction(UpdateHttpServerPort(it)) },
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                     )
 
-                    WebserverSSL(viewModel)
+                    WebserverSSL(
+                        isHttpServerSSLEnabled = contentViewState.isHttpServerSSLEnabled,
+                        httpServerSSLKeyStoreFile = contentViewState.httpServerSSLKeyStoreFile,
+                        httpServerSSLKeyStorePassword = contentViewState.httpServerSSLKeyStorePassword,
+                        httpServerSSLKeyAlias = contentViewState.httpServerSSLKeyAlias,
+                        httpServerSSLKeyPassword = contentViewState.httpServerSSLKeyPassword,
+                        onAction = viewModel::onAction
+                    )
 
                 }
 
@@ -94,22 +116,29 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
  * certificate selection
  */
 @Composable
-private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
+private fun WebserverSSL(
+    isHttpServerSSLEnabled: Boolean,
+    httpServerSSLKeyStoreFile: Path?,
+    httpServerSSLKeyStorePassword: String,
+    httpServerSSLKeyAlias: String,
+    httpServerSSLKeyPassword: String,
+    onAction: (WebServerConfigurationUiAction)-> Unit
+) {
 
 
     //switch to enabled http ssl
     SwitchListItem(
         text = MR.strings.enableSSL.stable,
         modifier = Modifier.testTag(TestTag.SSLSwitch),
-        isChecked = viewModel.isHttpServerSSLEnabled.collectAsState().value,
-        onCheckedChange = viewModel::toggleHttpServerSSLEnabled
+        isChecked = isHttpServerSSLEnabled,
+        onCheckedChange = { onAction(SetHttpServerSSLEnabled(it))}
     )
 
     //visibility of choose certificate button for ssl
     AnimatedVisibility(
         enter = expandVertically(),
         exit = shrinkVertically(),
-        visible = viewModel.isHttpServerSSLCertificateVisible.collectAsState().value
+        visible = isHttpServerSSLEnabled
     ) {
 
         Column {
@@ -117,7 +146,7 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
             ListElement(
                 modifier = Modifier
                     .testTag(TestTag.WebServerSSLWiki)
-                    .clickable(onClick = viewModel::openWebServerSSLWiki),
+                    .clickable(onClick = { onAction(OpenWebServerSSLWiki)}),
                 icon = {
                     Icon(
                         imageVector = Icons.Filled.Link,
@@ -132,43 +161,45 @@ private fun WebserverSSL(viewModel: WebServerConfigurationViewModel) {
             FilledTonalButtonListItem(
                 text = MR.strings.chooseCertificate.stable,
                 modifier = Modifier.testTag(TestTag.CertificateButton),
-                onClick = viewModel::selectSSLCertificate
+                onClick = { onAction(SelectSSLCertificate)}
             )
+
+            val isKeyStoreFileTextVisible by remember { derivedStateOf { httpServerSSLKeyStoreFile != null } }
 
             AnimatedVisibility(
                 enter = expandVertically(),
                 exit = shrinkVertically(),
-                visible = viewModel.isHttpServerSSLKeyStoreFileTextVisible.collectAsState().value
+                visible = isKeyStoreFileTextVisible
             ) {
+
+                val keyStoreFileText by remember { derivedStateOf { httpServerSSLKeyStoreFile?.name ?: "" } }
+
                 InformationListElement(
-                    text = translate(
-                        resource = MR.strings.currentlySelectedCertificate.stable,
-                        viewModel.httpServerSSLKeyStoreFileText.collectAsState().value?.name ?: ""
-                    )
+                    text = translate(resource = MR.strings.currentlySelectedCertificate.stable, keyStoreFileText)
                 )
             }
 
             //text field to change key store password
             TextFieldListItemVisibility(
                 label = MR.strings.keyStorePassword.stable,
-                value = viewModel.httpServerSSLKeyStorePassword.collectAsState().value,
-                onValueChange = viewModel::changeHttpSSLKeyStorePassword,
+                value = httpServerSSLKeyStorePassword,
+                onValueChange = { onAction(UpdateHttpSSLKeyStorePassword(it))},
                 isLastItem = false
             )
 
             //textField to change key alias
             TextFieldListItemVisibility(
                 label = MR.strings.keyStoreKeyAlias.stable,
-                value = viewModel.httpServerSSLKeyAlias.collectAsState().value,
-                onValueChange = viewModel::changeHttpSSLKeyAlias,
+                value = httpServerSSLKeyAlias,
+                onValueChange = { onAction(UpdateHttpSSLKeyAlias(it))},
                 isLastItem = false
             )
 
             //textField to change key password
             TextFieldListItemVisibility(
                 label = MR.strings.keyStoreKeyPassword.stable,
-                value = viewModel.httpServerSSLKeyPassword.collectAsState().value,
-                onValueChange = viewModel::changeHttpSSLKeyPassword
+                value = httpServerSSLKeyPassword,
+                onValueChange = { onAction(UpdateHttpSSLKeyPassword(it))},
             )
 
         }

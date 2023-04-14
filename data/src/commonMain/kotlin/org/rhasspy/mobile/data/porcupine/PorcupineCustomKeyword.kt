@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PorcupineCustomKeyword(
     val fileName: String,
-    val isEnabled: Boolean,
-    val sensitivity: Float
-)
+    override val isEnabled: Boolean,
+    override val sensitivity: Float
+) : PorcupineKeyword
 

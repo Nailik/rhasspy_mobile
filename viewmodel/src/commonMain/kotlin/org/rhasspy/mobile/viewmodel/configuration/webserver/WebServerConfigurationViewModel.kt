@@ -1,159 +1,115 @@
 package org.rhasspy.mobile.viewmodel.configuration.webserver
 
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
-import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.openLink
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.logic.services.webserver.WebServerServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.platformspecific.combineAny
-import org.rhasspy.mobile.platformspecific.combineState
-import org.rhasspy.mobile.platformspecific.combineStateNotEquals
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.SetHttpServerEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.SetHttpServerSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.SetHttpServerSSLKeyStoreFile
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.UpdateHttpSSLKeyAlias
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.UpdateHttpSSLKeyPassword
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.UpdateHttpSSLKeyStorePassword
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.UpdateHttpServerPort
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Navigate
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Navigate.OpenWebServerSSLWiki
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Navigate.SelectSSLCertificate
 
-class WebServerConfigurationViewModel : IConfigurationViewModel() {
+class WebServerConfigurationViewModel(
+    service: WebServerService,
+    testRunner: WebServerConfigurationTest
+) : IConfigurationViewModel<WebServerConfigurationTest, WebServerConfigurationViewState>(
+    service = service,
+    testRunner = testRunner,
+    initialViewState = ::WebServerConfigurationViewState
+) {
 
-    override val testRunner by inject<WebServerConfigurationTest>()
-    override val logType = LogType.WebServerService
-    override val serviceState get() = get<WebServerService>().serviceState
-
-    //unsaved ui data
-    val isHttpServerEnabled = _isHttpServerEnabled.readOnly
-    val httpServerPortText = _httpServerPortText.readOnly
-    val isHttpServerSSLEnabled = _isHttpServerSSLEnabled.readOnly
-    val isHttpServerSettingsVisible = _isHttpServerEnabled.readOnly
-    val isHttpServerSSLCertificateVisible = _isHttpServerSSLEnabled.readOnly
-
-    val httpServerSSLKeyStoreFileText = _httpServerSSLKeyStoreFile.readOnly
-    val isHttpServerSSLKeyStoreFileTextVisible =
-        _httpServerSSLKeyStoreFile.mapReadonlyState { it != null }
-    val httpServerSSLKeyStorePassword = _httpServerSSLKeyStorePassword.readOnly
-    val httpServerSSLKeyAlias = _httpServerSSLKeyAlias.readOnly
-    val httpServerSSLKeyPassword = _httpServerSSLKeyPassword.readOnly
-
-    private val hasUnsavedChanges = combineAny(
-        combineStateNotEquals(_isHttpServerEnabled, ConfigurationSetting.isHttpServerEnabled.data),
-        combineStateNotEquals(_httpServerPort, ConfigurationSetting.httpServerPort.data),
-        combineStateNotEquals(_isHttpServerSSLEnabled, ConfigurationSetting.isHttpServerSSLEnabledEnabled.data),
-        combineStateNotEquals(_httpServerSSLKeyStoreFile, ConfigurationSetting.httpServerSSLKeyStoreFile.data),
-        combineStateNotEquals(_httpServerSSLKeyStorePassword, ConfigurationSetting.httpServerSSLKeyStorePassword.data),
-        combineStateNotEquals(_httpServerSSLKeyAlias, ConfigurationSetting.httpServerSSLKeyAlias.data),
-        combineStateNotEquals(_httpServerSSLKeyPassword, ConfigurationSetting.httpServerSSLKeyPassword.data)
-    )
-
-    val IConfigurationEditViewState = combineState(hasUnsavedChanges, _isHttpServerEnabled) { hasUnsavedChanges, isHttpServerEnabled ->
-        IConfigurationEditViewState(
-            hasUnsavedChanges = hasUnsavedChanges,
-            isTestingEnabled = isHttpServerEnabled,
-            serviceViewState = serviceViewState
-        )
-    }
-
-    //toggle HTTP Server enabled
-    fun toggleHttpServerEnabled(enabled: Boolean) {
-        _isHttpServerEnabled.value = enabled
-    }
-
-    //edit port
-    fun changeHttpServerPort(port: String) {
-        val text = port.replace("""[-,. ]""".toRegex(), "")
-        _httpServerPortText.value = text
-        _httpServerPort.value = text.toIntOrNull() ?: 0
-    }
-
-    //Toggle http server ssl enabled
-    fun toggleHttpServerSSLEnabled(enabled: Boolean) {
-        _isHttpServerSSLEnabled.value = enabled
-    }
-
-    //open wiki page
-    fun openWebServerSSLWiki() {
-        openLink("https://github.com/Nailik/rhasspy_mobile/wiki/Webserver#enable-ssl")
-    }
-
-    //open file chooser to select certificate
-    fun selectSSLCertificate() {
-        viewModelScope.launch {
-            FileUtils.selectFile(FolderType.CertificateFolder.WebServer)?.also { fileName ->
-                _httpServerSSLKeyStoreFile.value = fileName
-            }
+    fun onAction(action: WebServerConfigurationUiAction) {
+        when(action){
+            is Change -> onChange(action)
+            is Navigate -> onNavigate(action)
         }
     }
 
-    //set keystore password
-    fun changeHttpSSLKeyStorePassword(password: String) {
-        _httpServerSSLKeyStorePassword.value = password
+    private fun onChange(change: Change) {
+        contentViewState.update {
+            when (change) {
+                is SetHttpServerEnabled -> it.copy(isHttpServerEnabled = change.value)
+                is SetHttpServerSSLEnabled -> it.copy(isHttpServerSSLEnabled = change.value)
+                is UpdateHttpSSLKeyAlias -> it.copy(httpServerSSLKeyAlias = change.value)
+                is UpdateHttpSSLKeyPassword -> it.copy(httpServerSSLKeyPassword = change.value)
+                is UpdateHttpSSLKeyStorePassword -> it.copy(httpServerSSLKeyStorePassword = change.value)
+                is UpdateHttpServerPort -> it.copy(httpServerPortText = change.value)
+                is SetHttpServerSSLKeyStoreFile -> it.copy(httpServerSSLKeyStoreFile = change.value)
+            }
+        }
+    }
+    private fun onNavigate(navigate: Navigate) {
+        when(navigate) {
+            OpenWebServerSSLWiki -> openLink("https://github.com/Nailik/rhasspy_mobile/wiki/Webserver#enable-ssl")
+            SelectSSLCertificate -> selectSSLCertificate()
+        }
     }
 
-    //set key alias
-    fun changeHttpSSLKeyAlias(alias: String) {
-        _httpServerSSLKeyAlias.value = alias
-    }
-
-    //set password for key alias
-    fun changeHttpSSLKeyPassword(password: String) {
-        _httpServerSSLKeyPassword.value = password
+    //open file chooser to select certificate
+    private fun selectSSLCertificate() {
+        viewModelScope.launch {
+            FileUtils.selectFile(FolderType.CertificateFolder.WebServer)?.also { path ->
+                onAction(SetHttpServerSSLKeyStoreFile(path))
+            }
+        }
     }
 
     /**
      * save data configuration
      */
     override fun onSave() {
-        //delete old keystore file if changed
-        if (_httpServerSSLKeyStoreFile.value != ConfigurationSetting.httpServerSSLKeyStoreFile.value) {
-            ConfigurationSetting.httpServerSSLKeyStoreFile.value?.commonDelete()
-        }
+        ConfigurationSetting.apply {
+            //delete old keystore file if changed
+            if (data.httpServerSSLKeyStoreFile != httpServerSSLKeyStoreFile) {
+                httpServerSSLKeyStoreFile.value?.commonDelete()
+            }
 
-        ConfigurationSetting.isHttpServerEnabled.value = _isHttpServerEnabled.value
-        ConfigurationSetting.httpServerPort.value = _httpServerPort.value
-        ConfigurationSetting.isHttpServerSSLEnabledEnabled.value = _isHttpServerSSLEnabled.value
-        ConfigurationSetting.httpServerSSLKeyStoreFile.value = _httpServerSSLKeyStoreFile.value
-        ConfigurationSetting.httpServerSSLKeyStorePassword.value =
-            _httpServerSSLKeyStorePassword.value
-        ConfigurationSetting.httpServerSSLKeyAlias.value = _httpServerSSLKeyAlias.value
-        ConfigurationSetting.httpServerSSLKeyPassword.value = _httpServerSSLKeyPassword.value
+            isHttpServerEnabled.value = data.isHttpServerEnabled
+            httpServerPort.value = data.httpServerPort
+            isHttpServerSSLEnabledEnabled.value = data.isHttpServerSSLEnabled
+            httpServerSSLKeyStoreFile.value = data.httpServerSSLKeyStoreFile
+            httpServerSSLKeyStorePassword.value = data.httpServerSSLKeyStorePassword
+            httpServerSSLKeyAlias.value = data.httpServerSSLKeyAlias
+            httpServerSSLKeyPassword.value = data.httpServerSSLKeyPassword
+        }
     }
 
     /**
      * undo all changes
      */
-    override fun discard() {
+    override fun onDiscard() {
         //delete new keystore file if changed
-        if (_httpServerSSLKeyStoreFile.value != ConfigurationSetting.httpServerSSLKeyStoreFile.value) {
-            _httpServerSSLKeyStoreFile.value?.commonDelete()
+        if (data.httpServerSSLKeyStoreFile != ConfigurationSetting.httpServerSSLKeyStoreFile.value) {
+            data.httpServerSSLKeyStoreFile?.commonDelete()
         }
-
-        _isHttpServerEnabled.value = ConfigurationSetting.isHttpServerEnabled.value
-        _httpServerPort.value = ConfigurationSetting.httpServerPort.value
-        _httpServerPortText.value = ConfigurationSetting.httpServerPort.value.toString()
-        _isHttpServerSSLEnabled.value = ConfigurationSetting.isHttpServerSSLEnabledEnabled.value
-        _httpServerSSLKeyStoreFile.value = ConfigurationSetting.httpServerSSLKeyStoreFile.value
-        _httpServerSSLKeyStorePassword.value =
-            ConfigurationSetting.httpServerSSLKeyStorePassword.value
-        _httpServerSSLKeyAlias.value = ConfigurationSetting.httpServerSSLKeyAlias.value
-        _httpServerSSLKeyPassword.value = ConfigurationSetting.httpServerSSLKeyPassword.value
     }
 
     override fun initializeTestParams() {
         get<WebServerServiceParams> {
             parametersOf(
                 WebServerServiceParams(
-                    isHttpServerEnabled = _isHttpServerEnabled.value,
-                    httpServerPort = _httpServerPort.value,
-                    isHttpServerSSLEnabled = _isHttpServerSSLEnabled.value,
-                    httpServerSSLKeyStoreFile = _httpServerSSLKeyStoreFile.value,
-                    httpServerSSLKeyStorePassword = _httpServerSSLKeyStorePassword.value,
-                    httpServerSSLKeyAlias = _httpServerSSLKeyAlias.value,
-                    httpServerSSLKeyPassword = _httpServerSSLKeyPassword.value
+                    isHttpServerEnabled = data.isHttpServerEnabled,
+                    httpServerPort = data.httpServerPort,
+                    isHttpServerSSLEnabled = data.isHttpServerSSLEnabled,
+                    httpServerSSLKeyStoreFile = data.httpServerSSLKeyStoreFile,
+                    httpServerSSLKeyStorePassword = data.httpServerSSLKeyStorePassword,
+                    httpServerSSLKeyAlias = data.httpServerSSLKeyAlias,
+                    httpServerSSLKeyPassword = data.httpServerSSLKeyPassword
                 )
             )
         }
