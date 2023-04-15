@@ -17,11 +17,10 @@ class TestViewModelTest : IConfigurationTest() {
 
 class TestService : IService(LogType.AudioPlayingService)
 
-class TestViewState : IConfigurationEditViewState() {
-    val isHasUnsavedChanges = MutableStateFlow(false)
+class TestViewState(private val isHasUnsavedChanges: Boolean = false) : IConfigurationEditViewState() {
 
     override val hasUnsavedChanges: Boolean
-        get() = isHasUnsavedChanges.value
+        get() = isHasUnsavedChanges
     override val isTestingEnabled: Boolean
         get() = false
 
@@ -46,5 +45,9 @@ class TestViewModel : IConfigurationViewModel<TestViewModelTest, TestViewState>(
 
     override fun initializeTestParams() {
 
+    }
+
+    fun setContentViewState(testViewState: TestViewState) {
+        contentViewState.value = testViewState
     }
 }

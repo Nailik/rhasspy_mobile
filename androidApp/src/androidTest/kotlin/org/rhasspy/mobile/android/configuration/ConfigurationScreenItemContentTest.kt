@@ -22,8 +22,8 @@ import org.junit.Test
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.assertTextEquals
-import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.data.TestViewModel
+import org.rhasspy.mobile.android.data.TestViewState
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.data.resource.stable
@@ -139,19 +139,13 @@ class ConfigurationScreenItemContentTest {
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertExists()
 
         //hasUnsavedChanges false
-        viewModel.viewState.value.editViewState.value.isHasUnsavedChanges.value = false
-        viewModel.save()
-        composeTestRule.awaitSaved(viewModel)
-        composeTestRule.awaitIdle()
+        viewModel.setContentViewState(TestViewState(isHasUnsavedChanges = false))
         //save and discard disabled
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarDiscard).assertIsNotEnabled()
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsNotEnabled()
 
         //hasUnsavedChanges true
-        viewModel.viewState.value.editViewState.value.isHasUnsavedChanges.value = true
-        viewModel.save()
-        composeTestRule.awaitSaved(viewModel)
-        composeTestRule.awaitIdle()
+        viewModel.setContentViewState(TestViewState(isHasUnsavedChanges = true))
         //save and discard enabled
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarDiscard).assertIsEnabled()
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled()
@@ -165,7 +159,7 @@ class ConfigurationScreenItemContentTest {
         assertTrue { viewModel.onDiscard }
         //save click invokes save
         assertFalse { viewModel.onSave }
-        viewModel.viewState.value.editViewState.value.isHasUnsavedChanges.value = true
+        viewModel.setContentViewState(TestViewState(isHasUnsavedChanges = true))
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).performClick()
         composeTestRule.waitUntil(
             condition = { viewModel.onSave && !viewModel.viewState.value.isLoading },
@@ -173,6 +167,7 @@ class ConfigurationScreenItemContentTest {
         )
         assertTrue { viewModel.onSave }
 
+        viewModel.setContentViewState(TestViewState(isHasUnsavedChanges = true))
         //app bar back click shows dialog
         composeTestRule.awaitIdle()
         device.pressBack()
@@ -196,7 +191,7 @@ class ConfigurationScreenItemContentTest {
         //open screen
         composeTestRule.onNodeWithText(btnStartTest).performClick()
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertExists()
-        viewModel.viewState.value.editViewState.value.isHasUnsavedChanges.value = true
+        viewModel.setContentViewState(TestViewState(isHasUnsavedChanges = true))
 
         //back click shows dialog
         device.pressBack()

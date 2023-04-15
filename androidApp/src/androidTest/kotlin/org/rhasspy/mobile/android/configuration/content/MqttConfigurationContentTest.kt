@@ -69,7 +69,7 @@ class MqttConfigurationContentTest {
     @Test
     fun testMqttContent() = runBlocking {
         viewModel.onAction(SetMqttEnabled(false))
-        viewModel.save()
+        viewModel.onSave()
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState
@@ -129,7 +129,7 @@ class MqttConfigurationContentTest {
     @Test
     fun testMqttConnectionSettings() = runBlocking {
         viewModel.onAction(SetMqttEnabled(true))
-        viewModel.save()
+        viewModel.onSave()
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState
@@ -191,8 +191,8 @@ class MqttConfigurationContentTest {
     @Test
     fun testMqttSSL() = runBlocking {
         viewModel.onAction(SetMqttEnabled(true))
-        viewModel.onAction(SetMqttSSLEnabled(true))
-        viewModel.save()
+        viewModel.onAction(SetMqttSSLEnabled(false))
+        viewModel.onSave()
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState
@@ -217,6 +217,7 @@ class MqttConfigurationContentTest {
         //user clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
         val newViewState = MqttConfigurationViewState()
         //ssl on is saved
         assertEquals(true, newViewState.isMqttSSLEnabled)
@@ -236,7 +237,7 @@ class MqttConfigurationContentTest {
     @Test
     fun testMqttConnectionTiming() = runBlocking {
         viewModel.onAction(SetMqttEnabled(true))
-        viewModel.save()
+        viewModel.onSave()
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState
@@ -266,6 +267,7 @@ class MqttConfigurationContentTest {
         //user click save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
         val newViewState = MqttConfigurationViewState()
         //timeout is saved
         assertEquals(textInputTestConnectionTimeout, newViewState.mqttConnectionTimeoutText)

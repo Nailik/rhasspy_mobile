@@ -120,7 +120,7 @@ class WakeWordConfigurationContentTest {
         //option is porcupine
         viewModel.onAction(SelectWakeWordOption(WakeWordOption.Porcupine))
         viewModel.onAction(UpdateWakeWordPorcupineAccessToken(""))
-        viewModel.save()
+        viewModel.onSave()
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState
@@ -172,7 +172,7 @@ class WakeWordConfigurationContentTest {
     fun testPorcupineWakeWordOptions() = runBlocking {
         //option is porcupine
         viewModel.onAction(SelectWakeWordOption(WakeWordOption.Porcupine))
-        viewModel.save()
+        viewModel.onSave()
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState

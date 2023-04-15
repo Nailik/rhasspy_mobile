@@ -9,8 +9,8 @@ enum class PorcupineKeywordOption(
     override val text: StableStringResource,
     val file: FileResource,
     val language: PorcupineLanguageOption
-) :
-    IOption<PorcupineKeywordOption> {
+) : IOption<PorcupineKeywordOption> {
+
     ALEXA(
         MR.strings.alexa.stable,
         MR.files.porcupine_wakeword_en_alexa_android,

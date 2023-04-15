@@ -23,6 +23,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.onNodeWithCombinedTag
@@ -178,7 +179,6 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
     @Test
     fun testList() = runBlocking {
         //one element with ppn exists and selected
-        val viewState = viewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
         val file = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
             fileName
@@ -195,6 +195,8 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
         composeTestRule.awaitIdle()
         viewModel.onSave()
+        composeTestRule.awaitSaved(viewModel)
+        val viewState = viewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
         assertTrue { viewState.customOptionsUi.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null }
 
         //user clicks delete on ppn
@@ -207,6 +209,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
 
         //viewModel save is invoked
         viewModel.onSave()
+        composeTestRule.awaitSaved(viewModel)
         val newViewState = PorcupineViewState()
         //ppn is saved with ppn.ppn and enabled
         assertTrue { newViewState.customOptionsUi.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null }

@@ -8,7 +8,7 @@ import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollToKey
+import androidx.compose.ui.test.performScrollToNode
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -16,6 +16,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.awaitSaved
+import org.rhasspy.mobile.android.hasTestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.onNodeWithCombinedTag
@@ -88,8 +89,7 @@ class PorcupineKeywordDefaultScreenTest {
         }
         //none is selected
         viewState.defaultOptions.forEach {
-            composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen)
-                .performScrollToKey(it.option)
+            composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen).performScrollToNode(hasTestTag(it.option))
             composeTestRule.onNodeWithTag(it.option).onListItemSwitch().assertIsOff()
             composeTestRule.awaitIdle()
         }
@@ -97,7 +97,7 @@ class PorcupineKeywordDefaultScreenTest {
         //user clicks americano
         composeTestRule
             .onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen)
-            .performScrollToKey(PorcupineKeywordOption.AMERICANO)
+            .performScrollToNode(hasTestTag(PorcupineKeywordOption.AMERICANO))
         composeTestRule.onNodeWithTag(PorcupineKeywordOption.AMERICANO).performClick()
         composeTestRule.awaitIdle()
         //americano is selected
@@ -112,7 +112,7 @@ class PorcupineKeywordDefaultScreenTest {
 
         composeTestRule
             .onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen)
-            .performScrollToKey(PorcupineKeywordOption.PORCUPINE)
+            .performScrollToNode(hasTestTag(PorcupineKeywordOption.PORCUPINE))
         composeTestRule.onNodeWithTag(PorcupineKeywordOption.PORCUPINE).performClick()
         composeTestRule.awaitIdle()
         //porcupine is selected
@@ -126,7 +126,7 @@ class PorcupineKeywordDefaultScreenTest {
         //user clicks porcupine
         composeTestRule
             .onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen)
-            .performScrollToKey(PorcupineKeywordOption.PORCUPINE)
+            .performScrollToNode(hasTestTag(PorcupineKeywordOption.PORCUPINE))
         composeTestRule.onNodeWithTag(PorcupineKeywordOption.PORCUPINE).performClick()
         composeTestRule.awaitIdle()
         //porcupine is unselected

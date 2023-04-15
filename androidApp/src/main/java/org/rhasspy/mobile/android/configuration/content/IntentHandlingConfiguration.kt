@@ -4,9 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import org.koin.androidx.compose.get
@@ -159,22 +157,17 @@ private fun HomeAssistantOption(
         )
 
         //select hass event or hass intent
-
-        val isEventChecked by remember { derivedStateOf { intentHandlingHassOption == Event } }
-
         RadioButtonListItem(
             modifier = Modifier.testTag(TestTag.SendEvents),
             text = MR.strings.homeAssistantEvents.stable,
-            isChecked = isEventChecked,
+            isChecked = intentHandlingHassOption == Event,
             onClick = { onAction(SelectIntentHandlingHassOption(Event)) }
         )
-
-        val isIntentChecked by remember { derivedStateOf { intentHandlingHassOption == Intent } }
 
         RadioButtonListItem(
             modifier = Modifier.testTag(TestTag.SendIntents),
             text = MR.strings.homeAssistantIntents.stable,
-            isChecked = isIntentChecked,
+            isChecked = intentHandlingHassOption == Intent,
             onClick = { onAction(SelectIntentHandlingHassOption(Intent)) }
         )
 

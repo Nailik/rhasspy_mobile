@@ -145,6 +145,7 @@ abstract class IConfigurationViewModel<T : IConfigurationTest, V : IConfiguratio
         viewModelScope.launch(Dispatchers.Default) {
             onSave()
             get<NativeApplication>().reloadServiceModules()
+            contentViewState.value = initialViewState()
 
             if (_viewState.value.showUnsavedChangesDialog) {
                 _viewState.update {

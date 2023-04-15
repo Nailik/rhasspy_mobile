@@ -77,7 +77,7 @@ fun MqttConfigurationContent(viewModel: MqttConfigurationViewModel = get()) {
             SwitchListItem(
                 text = MR.strings.externalMQTT.stable,
                 modifier = Modifier.testTag(TestTag.MqttSwitch),
-                isChecked = contentViewState.isMqttSSLEnabled,
+                isChecked = contentViewState.isMqttEnabled,
                 onCheckedChange = { viewModel.onAction(SetMqttEnabled(it)) }
             )
         }
@@ -87,7 +87,7 @@ fun MqttConfigurationContent(viewModel: MqttConfigurationViewModel = get()) {
             AnimatedVisibility(
                 enter = expandVertically(),
                 exit = shrinkVertically(),
-                visible = contentViewState.isMqttSSLEnabled
+                visible = contentViewState.isMqttEnabled
             ) {
 
                 Column {

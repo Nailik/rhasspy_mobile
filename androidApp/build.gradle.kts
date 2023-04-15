@@ -63,6 +63,9 @@ android {
             }
         }
         debug {
+            isDebuggable = true
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
             isMinifyEnabled = false
             isShrinkResources = false
             if (signingEnabled) {
