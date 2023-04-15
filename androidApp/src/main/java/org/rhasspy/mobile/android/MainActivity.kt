@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.AppLaunchChecker
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import androidx.multidex.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,6 +27,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.android.main.MainNavigation
 import org.rhasspy.mobile.platformspecific.application.AppActivity
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
 
 
@@ -80,7 +80,7 @@ class MainActivity : KoinComponent, AppActivity() {
         this.setContent {
             Box(modifier = Modifier.fillMaxSize()) {
                 MainNavigation()
-                if (BuildConfig.DEBUG) {
+                if (isDebug()) {
                     Text(
                         text = "DEBUG",
                         modifier = Modifier

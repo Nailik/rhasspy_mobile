@@ -20,6 +20,7 @@ if (signingEnabled) {
 }
 
 android {
+    setPublishNonDefault(true)
     signingConfigs {
         if (signingEnabled) {
             create("release") {

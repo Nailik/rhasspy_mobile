@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED_VARIABLE")
+@file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
 
 plugins {
     kotlin("multiplatform")
@@ -102,5 +102,16 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_19
         targetCompatibility = JavaVersion.VERSION_19
+    }
+    buildFeatures {
+        buildConfig = true
+    }
+    buildTypes {
+        release {
+            buildConfigField("boolean", "IS_DEBUG", "true")
+        }
+        debug {
+            buildConfigField("boolean", "IS_DEBUG", "true")
+        }
     }
 }
