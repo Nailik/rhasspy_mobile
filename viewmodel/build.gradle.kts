@@ -29,6 +29,7 @@ kotlin {
                 implementation(Ktor2.Client.core)
                 implementation(Icerock.Resources)
                 implementation(Square.okio)
+                implementation(Mikepenz.aboutLibrariesCore)
             }
         }
         val commonTest by getting {

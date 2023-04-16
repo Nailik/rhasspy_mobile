@@ -33,7 +33,7 @@ import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.list.LogListElement
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.viewmodel.screens.LogScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
 
 /**
  * show log information

@@ -29,7 +29,7 @@ import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
-import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
 
 /**
  * Home Screen contains

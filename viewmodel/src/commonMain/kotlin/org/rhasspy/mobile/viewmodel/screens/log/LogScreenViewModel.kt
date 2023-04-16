@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.screens
+package org.rhasspy.mobile.viewmodel.screens.log
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.CoroutineScope

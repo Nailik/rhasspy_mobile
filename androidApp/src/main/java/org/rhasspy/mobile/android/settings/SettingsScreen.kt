@@ -21,7 +21,7 @@ import org.rhasspy.mobile.android.settings.content.*
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.viewmodel.screens.SettingsScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
 
 
 @Preview

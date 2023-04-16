@@ -1,12 +1,8 @@
 @file:Suppress("UnstableApiUsage", "UNUSED_VARIABLE")
 
+import org.gradle.api.JavaVersion.VERSION_19
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_ERROR
-import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT
-import org.gradle.api.tasks.testing.logging.TestLogEvent.STARTED
+import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 plugins {
@@ -14,7 +10,6 @@ plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
-    id("com.mikepenz.aboutlibraries.plugin")
     id("org.sonarqube")
     id("org.jetbrains.compose")
     id("co.touchlab.crashkios.crashlyticslink")
@@ -167,18 +162,10 @@ android {
         minSdk = 23
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_19
-        targetCompatibility = JavaVersion.VERSION_19
+        sourceCompatibility = VERSION_19
+        targetCompatibility = VERSION_19
     }
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-}
-
-aboutLibraries {
-    registerAndroidTasks = true
-    // Enable the duplication mode, allows to merge, or link dependencies which relate
-    duplicationMode = com.mikepenz.aboutlibraries.plugin.DuplicateMode.MERGE
-    // Configure the duplication rule, to match "duplicates" with
-    duplicationRule = com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
 }
 
 tasks.withType<Test> {
@@ -208,6 +195,7 @@ val createVersionTxt = tasks.register("createVersionTxt") {
         }
     }
 }
+
 tasks.findByPath("preBuild")!!.dependsOn(createVersionTxt)
 
 val increaseCodeVersion = tasks.register("increaseCodeVersion") {

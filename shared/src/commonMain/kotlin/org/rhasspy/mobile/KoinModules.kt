@@ -55,10 +55,10 @@ import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurati
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.overlay.IndicationOverlayViewModel
 import org.rhasspy.mobile.viewmodel.overlay.MicrophoneOverlayViewModel
-import org.rhasspy.mobile.viewmodel.screens.AboutScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.LogScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.SettingsScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.AutomaticSilenceDetectionSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.BackgroundServiceSettingsViewModel

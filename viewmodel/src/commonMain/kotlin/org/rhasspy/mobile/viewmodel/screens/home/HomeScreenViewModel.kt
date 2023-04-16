@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.screens
+package org.rhasspy.mobile.viewmodel.screens.home
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import org.koin.core.component.KoinComponent

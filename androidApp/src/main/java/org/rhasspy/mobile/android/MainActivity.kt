@@ -28,7 +28,7 @@ import org.rhasspy.mobile.android.main.MainNavigation
 import org.rhasspy.mobile.platformspecific.application.AppActivity
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.utils.isDebug
-import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
 
 
 /**

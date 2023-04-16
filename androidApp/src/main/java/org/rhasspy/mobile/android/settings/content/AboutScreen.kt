@@ -18,6 +18,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -36,7 +38,10 @@ import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.icons.RhasspyLogo
-import org.rhasspy.mobile.viewmodel.screens.AboutScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent
+import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Navigate.OpenSourceCode
+import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewState
 
 /**
  * About Screen contains A Header with Information,
@@ -46,17 +51,20 @@ import org.rhasspy.mobile.viewmodel.screens.AboutScreenViewModel
 fun AboutScreen(viewModel: AboutScreenViewModel = get()) {
     Surface(modifier = Modifier.testTag(SettingsScreenType.AboutSettings)) {
         val configuration = LocalConfiguration.current
-        LibrariesContainer(header = {
-            if (configuration.screenHeightDp.dp > 600.dp) {
-                stickyHeader {
-                    Header(viewModel)
-                }
-            } else {
-                item {
-                    Header(viewModel)
+        LibrariesContainer(
+            libraries = viewModel.viewState.value.libraries,
+            header = {
+                if (configuration.screenHeightDp.dp > 600.dp) {
+                    stickyHeader {
+                        Header(viewModel)
+                    }
+                } else {
+                    item {
+                        Header(viewModel)
+                    }
                 }
             }
-        })
+        )
     }
 }
 
@@ -88,7 +96,12 @@ fun Header(viewModel: AboutScreenViewModel) {
             modifier = Modifier.padding(8.dp)
         )
 
-        AppInformationChips(viewModel::onOpenSourceCode)
+        val viewState by viewModel.viewState.collectAsState()
+
+        AppInformationChips(
+            viewState = viewState,
+            onEvent = viewModel::onEvent
+        )
     }
 }
 
@@ -127,17 +140,19 @@ fun AppIcon() {
  * Chips to show data privacy, link to source code and changelog
  */
 @Composable
-fun AppInformationChips(onOpenSourceCode: () -> Unit) {
+fun AppInformationChips(
+    viewState: AboutScreenViewState,
+    onEvent: (AboutScreenUiEvent) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        DataPrivacyDialogButton()
-        OutlinedButton(onClick = onOpenSourceCode) {
+        DataPrivacyDialogButton(viewState.privacy)
+        OutlinedButton(onClick = { onEvent(OpenSourceCode) }) {
             Text(MR.strings.sourceCode.stable)
         }
-        ChangelogDialogButton()
+        ChangelogDialogButton(viewState.changelog)
     }
 }
