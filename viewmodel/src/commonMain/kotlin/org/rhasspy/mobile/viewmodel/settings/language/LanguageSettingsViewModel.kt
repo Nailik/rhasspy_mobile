@@ -1,23 +1,35 @@
 package org.rhasspy.mobile.viewmodel.settings.language
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import org.rhasspy.mobile.data.language.LanguageType
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.language.setLanguage
-import org.rhasspy.mobile.platformspecific.toImmutableList
+import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change
+import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SetLanguageOption
 
 class LanguageSettingsViewModel : ViewModel() {
 
-    //unsaved ui data
-    val languageOption = AppSetting.languageType.data
+    private val _viewState = MutableStateFlow(LanguageSettingsViewState())
+    val viewState = _viewState.readOnly
 
-    //all options
-    val languageOptions = LanguageType.values().toImmutableList()
+    fun onEvent(event: LanguageSettingsUiEvent) {
+        when(event){
+            is Change -> onChange(event)
+        }
+    }
 
-    //select log level
-    fun selectLanguageOption(option: LanguageType) {
-        AppSetting.languageType.value = option
-        setLanguage(option)
+    private fun onChange(change: Change) {
+        _viewState.update {
+            when (change) {
+                is SetLanguageOption -> {
+                    AppSetting.languageType.value = change.option
+                    setLanguage(change.option)
+                    it.copy(languageOption = change.option)
+                }
+            }
+        }
     }
 
 }
