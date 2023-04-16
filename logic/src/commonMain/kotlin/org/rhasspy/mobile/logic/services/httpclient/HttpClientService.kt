@@ -265,20 +265,20 @@ class HttpClientService : IService(LogType.HttpClientService) {
                 }
 
                 _serviceState.value = Success
-                return HttpClientResult.Success(result)
+                HttpClientResult.Success(result)
 
             } catch (exception: Exception) {
 
                 logger.e(exception) { "post result error" }
                 _serviceState.value = mapError(exception)
-                return HttpClientResult.Error(exception)
+                HttpClientResult.Error(exception)
 
             }
         } ?: run {
 
             logger.a { "post client not initialized" }
             _serviceState.value = ServiceState.Exception()
-            return HttpClientResult.Error(Exception())
+            HttpClientResult.Error(Exception())
 
         }
     }
@@ -306,9 +306,7 @@ class HttpClientService : IService(LogType.HttpClientService) {
             null
         }
 
-        return type?.serviceState ?: run {
-            ServiceState.Exception(exception)
-        }
+        return type?.serviceState ?: ServiceState.Exception(exception)
     }
 
 }

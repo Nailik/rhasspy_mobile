@@ -74,9 +74,7 @@ open class ISetting<T>(
             is IOption<*> -> initial.findValue(settings[key.name, initial.name])
             else -> serializer?.let {
                 settings.decodeValue(serializer, key.name, initial)
-            } ?: run {
-                initial
-            }
+            } ?: initial
         } as T
     }
 

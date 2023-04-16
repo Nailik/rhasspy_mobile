@@ -120,12 +120,12 @@ actual class PorcupineWakeWordClient actual constructor(
      * tries to start porcupine
      */
     actual fun start(): PorcupineError? {
-        porcupineManager?.let {
+        return porcupineManager?.let {
             it.start()
-            return null
+           null
         } ?: run {
             logger.a { "Porcupine start but porcupineManager not initialized" }
-            return PorcupineError(null, PorcupineErrorType.NotInitialized)
+            PorcupineError(null, PorcupineErrorType.NotInitialized)
         }
     }
 

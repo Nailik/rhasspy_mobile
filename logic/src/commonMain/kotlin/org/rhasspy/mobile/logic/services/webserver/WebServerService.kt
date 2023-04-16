@@ -247,12 +247,10 @@ class WebServerService : IService(LogType.WebServerService) {
             else -> null
         }
 
-        action?.let {
+        return action?.let {
             serviceMiddleware.action(AppSettingsServiceMiddlewareAction.HotWordToggle(it))
-            return WebServerResult.Accepted(it.toString())
-        } ?: run {
-            return WebServerResult.Error(WebServerServiceErrorType.WakeOptionInvalid)
-        }
+            WebServerResult.Accepted(it.toString())
+        } ?: WebServerResult.Error(WebServerServiceErrorType.WakeOptionInvalid)
     }
 
 
@@ -303,14 +301,14 @@ class WebServerService : IService(LogType.WebServerService) {
         return result.toFloatOrNull()?.let {
             if (it in 0f..1f) {
                 serviceMiddleware.action(AppSettingsServiceMiddlewareAction.AudioVolumeChange(it))
-                return WebServerResult.Accepted(it.toString())
+                WebServerResult.Accepted(it.toString())
             } else {
                 logger.w { "setVolume VolumeValueOutOfRange $it" }
-                return WebServerResult.Error(WebServerServiceErrorType.VolumeValueOutOfRange)
+                WebServerResult.Error(WebServerServiceErrorType.VolumeValueOutOfRange)
             }
         } ?: run {
             logger.w { "setVolume VolumeValueInvalid $result" }
-            return WebServerResult.Error(WebServerServiceErrorType.VolumeValueInvalid)
+            WebServerResult.Error(WebServerServiceErrorType.VolumeValueInvalid)
         }
     }
 

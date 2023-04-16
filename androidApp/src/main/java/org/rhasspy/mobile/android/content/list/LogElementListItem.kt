@@ -55,7 +55,7 @@ fun LogListElement(item: LogElement) {
             }
         },
         text = {
-            androidx.compose.material3.Text(text = "${item.message}${item.throwable?.let { "\n$it" } ?: run { "" }}")
+            androidx.compose.material3.Text(text = "${item.message}${item.throwable?.let { "\n$it" } ?: "" }")
         },
         secondaryText = {
             androidx.compose.material3.Text(item.time)
