@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.content.elements
+package org.rhasspy.mobile.android.content.list
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.touchlab.kermit.Severity
-import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.theme.color_assert
 import org.rhasspy.mobile.android.theme.color_debug
 import org.rhasspy.mobile.android.theme.color_error

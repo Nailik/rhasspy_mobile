@@ -32,7 +32,6 @@ import org.rhasspy.mobile.logic.services.wakeword.WakeWordServiceParams
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.logic.services.webserver.WebServerServiceParams
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
-import org.rhasspy.mobile.viewmodel.AppViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationTest
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationTest
@@ -131,7 +130,6 @@ val serviceModule = module {
 }
 
 val viewModelModule = module {
-    single { AppViewModel() }
     single { HomeScreenViewModel() }
     single { MicrophoneFabViewModel() }
     single { ConfigurationScreenViewModel() }

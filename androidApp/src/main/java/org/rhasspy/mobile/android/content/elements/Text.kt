@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -25,11 +26,10 @@ import androidx.core.text.HtmlCompat
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.ResourceFormatted
 import dev.icerock.moko.resources.desc.StringDesc
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.viewmodel.AppViewModel
+import org.rhasspy.mobile.logic.settings.AppSetting
 
 
 @Composable
@@ -53,23 +53,23 @@ fun Text(
     style: TextStyle = LocalTextStyle.current
 ) {
     androidx.compose.material3.Text(
-        translate(resource),
-        modifier,
-        color,
-        fontSize,
-        fontStyle,
-        fontWeight,
-        fontFamily,
-        letterSpacing,
-        textDecoration,
-        textAlign,
-        lineHeight,
-        overflow,
-        softWrap,
-        maxLines,
-        minLines,
-        onTextLayout,
-        style
+        text = translate(resource),
+        modifier = modifier,
+        color = color,
+        fontSize = fontSize,
+        fontStyle = fontStyle,
+        fontWeight = fontWeight,
+        fontFamily = fontFamily,
+        letterSpacing = letterSpacing,
+        textDecoration = textDecoration,
+        textAlign = textAlign,
+        lineHeight = lineHeight,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        onTextLayout = onTextLayout,
+        style = style
     )
 }
 
@@ -95,35 +95,39 @@ fun Text(
     style: TextStyle = LocalTextStyle.current
 ) {
     androidx.compose.material3.Text(
-        translate(resource, *args),
-        modifier,
-        color,
-        fontSize,
-        fontStyle,
-        fontWeight,
-        fontFamily,
-        letterSpacing,
-        textDecoration,
-        textAlign,
-        lineHeight,
-        overflow,
-        softWrap,
-        maxLines,
-        minLines,
-        onTextLayout,
-        style
+        text = translate(resource, *args),
+        modifier = modifier,
+        color = color,
+        fontSize = fontSize,
+        fontStyle = fontStyle,
+        fontWeight = fontWeight,
+        fontFamily = fontFamily,
+        letterSpacing = letterSpacing,
+        textDecoration = textDecoration,
+        textAlign = textAlign,
+        lineHeight = lineHeight,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        onTextLayout = onTextLayout,
+        style = style
     )
 }
 
 @Composable
 fun translate(resource: StableStringResource): String {
-    get<AppViewModel>().languageType.collectAsState().value
+    if(!LocalInspectionMode.current) {
+        AppSetting.languageType.data.collectAsState().value
+    }
     return StringDesc.Resource(resource.stringResource).toString(LocalContext.current)
 }
 
 @Composable
 fun translate(resource: StableStringResource, vararg args: Any): String {
-    get<AppViewModel>().languageType.collectAsState().value
+    if(!LocalInspectionMode.current) {
+        AppSetting.languageType.data.collectAsState().value
+    }
     return StringDesc.ResourceFormatted(resource.stringResource, *args).toString(LocalContext.current)
 }
 

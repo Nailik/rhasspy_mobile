@@ -14,6 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.HtmlText
@@ -24,6 +25,7 @@ import org.rhasspy.mobile.data.resource.stable
 /**
  * button to open changelog dialog
  */
+@Preview(showBackground = true)
 @Composable
 fun DataPrivacyDialogButton() {
 
@@ -47,8 +49,9 @@ fun DataPrivacyDialogButton() {
 /**
  * Dialog to show data privacy information
  */
+@Preview(showBackground = true)
 @Composable
-private fun DataPrivacyDialog(onDismissRequest: () -> Unit) {
+private fun DataPrivacyDialog(onDismissRequest: () -> Unit = {}) {
 
     val scrollState = rememberScrollState()
 

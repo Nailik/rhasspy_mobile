@@ -1,37 +1,25 @@
 package org.rhasspy.mobile.android.content.item
 
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.outlined.Circle
-import androidx.compose.material.icons.outlined.Done
-import androidx.compose.material.icons.outlined.Pending
-import androidx.compose.material.icons.outlined.RotateRight
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.unit.dp
-import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.content.elements.Icon
-import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.data.service.ServiceState
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.*
+import androidx.compose.foundation.shape.*
+import androidx.compose.material.icons.*
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import androidx.compose.ui.draw.*
+import androidx.compose.ui.unit.*
+import org.rhasspy.mobile.*
+import org.rhasspy.mobile.android.content.elements.*
+import org.rhasspy.mobile.data.resource.*
+import org.rhasspy.mobile.data.service.*
+import org.rhasspy.mobile.data.service.ServiceState.*
 
 @Composable
 fun EventStateIcon(serviceState: ServiceState) {
-    val rotation = if (serviceState == ServiceState.Loading) {
+    val rotation = if (serviceState == Loading) {
         val infiniteTransition = rememberInfiniteTransition()
         val animateRotation by infiniteTransition.animateFloat(
             initialValue = 0f,
@@ -48,29 +36,29 @@ fun EventStateIcon(serviceState: ServiceState) {
     Icon(
         modifier = Modifier.rotate(rotation),
         imageVector = when (serviceState) {
-            is ServiceState.Pending -> Icons.Outlined.Pending
-            is ServiceState.Loading -> Icons.Outlined.RotateRight
-            is ServiceState.Success -> Icons.Outlined.Done
-            is ServiceState.Error,
-            is ServiceState.Exception -> Icons.Filled.Error
+            is Pending -> Icons.Outlined.Pending
+            is Loading -> Icons.Outlined.RotateRight
+            is Success -> Icons.Outlined.Done
+            is Error,
+            is Exception -> Icons.Filled.Error
 
-            is ServiceState.Disabled -> Icons.Outlined.Circle
+            is Disabled -> Icons.Outlined.Circle
         },
         contentDescription = when (serviceState) {
-            is ServiceState.Pending -> MR.strings.pending.stable
-            is ServiceState.Loading -> MR.strings.loading.stable
-            is ServiceState.Success -> MR.strings.success.stable
-            is ServiceState.Error,
-            is ServiceState.Exception -> MR.strings.error.stable
+            is Pending -> MR.strings.pending.stable
+            is Loading -> MR.strings.loading.stable
+            is Success -> MR.strings.success.stable
+            is Error,
+            is Exception -> MR.strings.error.stable
 
-            is ServiceState.Disabled -> MR.strings.disabled.stable
+            is Disabled -> MR.strings.disabled.stable
         }
     )
 }
 
 @Composable
 fun EventStateIconTinted(serviceState: ServiceState) {
-    val rotation = if (serviceState == ServiceState.Loading) {
+    val rotation = if (serviceState == Loading) {
         val infiniteTransition = rememberInfiniteTransition()
         val animateRotation by infiniteTransition.animateFloat(
             initialValue = 0f,
@@ -87,31 +75,31 @@ fun EventStateIconTinted(serviceState: ServiceState) {
     Icon(
         modifier = Modifier.rotate(rotation),
         imageVector = when (serviceState) {
-            is ServiceState.Pending -> Icons.Outlined.Pending
-            is ServiceState.Loading -> Icons.Outlined.RotateRight
-            is ServiceState.Success -> Icons.Outlined.Done
-            is ServiceState.Error,
-            is ServiceState.Exception -> Icons.Filled.Error
+            is Pending -> Icons.Outlined.Pending
+            is Loading -> Icons.Outlined.RotateRight
+            is Success -> Icons.Outlined.Done
+            is Error,
+            is Exception -> Icons.Filled.Error
 
-            is ServiceState.Disabled -> Icons.Outlined.Circle
+            is Disabled -> Icons.Outlined.Circle
         },
         contentDescription = when (serviceState) {
-            is ServiceState.Pending -> MR.strings.pending.stable
-            is ServiceState.Loading -> MR.strings.loading.stable
-            is ServiceState.Success -> MR.strings.success.stable
-            is ServiceState.Error,
-            is ServiceState.Exception -> MR.strings.error.stable
+            is Pending -> MR.strings.pending.stable
+            is Loading -> MR.strings.loading.stable
+            is Success -> MR.strings.success.stable
+            is Error,
+            is Exception -> MR.strings.error.stable
 
-            is ServiceState.Disabled -> MR.strings.disabled.stable
+            is Disabled -> MR.strings.disabled.stable
         },
         tint = when (serviceState) {
-            is ServiceState.Pending -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-            is ServiceState.Loading -> MaterialTheme.colorScheme.secondary
-            is ServiceState.Success -> MaterialTheme.colorScheme.primary
-            is ServiceState.Error,
-            is ServiceState.Exception -> MaterialTheme.colorScheme.errorContainer
+            is Pending -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+            is Loading -> MaterialTheme.colorScheme.secondary
+            is Success -> MaterialTheme.colorScheme.primary
+            is Error,
+            is Exception -> MaterialTheme.colorScheme.errorContainer
 
-            is ServiceState.Disabled -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+            is Disabled -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
         }
     )
 }
@@ -122,13 +110,13 @@ fun EventStateContent(
     content: @Composable () -> Unit
 ) {
     val contentColor = when (serviceState) {
-        is ServiceState.Pending -> MaterialTheme.colorScheme.onSurfaceVariant
-        is ServiceState.Loading -> MaterialTheme.colorScheme.onSecondaryContainer
-        is ServiceState.Success -> MaterialTheme.colorScheme.onPrimaryContainer
-        is ServiceState.Error,
-        is ServiceState.Exception -> MaterialTheme.colorScheme.onErrorContainer
+        is Pending -> MaterialTheme.colorScheme.onSurfaceVariant
+        is Loading -> MaterialTheme.colorScheme.onSecondaryContainer
+        is Success -> MaterialTheme.colorScheme.onPrimaryContainer
+        is Error,
+        is Exception -> MaterialTheme.colorScheme.onErrorContainer
 
-        is ServiceState.Disabled -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+        is Disabled -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
     }
 
     CompositionLocalProvider(
@@ -149,13 +137,13 @@ fun EventStateCard(
             .let { onClick?.let { it1 -> it.clickable(enabled = enabled, onClick = it1) } ?: it },
         colors = CardDefaults.outlinedCardColors(
             containerColor = when (serviceState) {
-                is ServiceState.Pending -> MaterialTheme.colorScheme.surfaceVariant
-                is ServiceState.Loading -> MaterialTheme.colorScheme.secondaryContainer
-                is ServiceState.Success -> MaterialTheme.colorScheme.primaryContainer
-                is ServiceState.Error,
-                is ServiceState.Exception -> MaterialTheme.colorScheme.errorContainer
+                is Pending -> MaterialTheme.colorScheme.surfaceVariant
+                is Loading -> MaterialTheme.colorScheme.secondaryContainer
+                is Success -> MaterialTheme.colorScheme.primaryContainer
+                is Error,
+                is Exception -> MaterialTheme.colorScheme.errorContainer
 
-                is ServiceState.Disabled -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f)
+                is Disabled -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f)
             }
         ),
         content = {

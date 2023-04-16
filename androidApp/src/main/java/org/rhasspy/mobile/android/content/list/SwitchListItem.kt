@@ -18,7 +18,7 @@ fun SwitchListItem(
     ListElement(
         modifier = modifier.toggleable(value = isChecked, onValueChange = onCheckedChange),
         text = { Text(text) },
-        secondaryText = secondaryText?.let { { Text(secondaryText) } } ?: run { null },
+        secondaryText = secondaryText?.let { { Text(secondaryText) } },
         trailing = {
             Switch(
                 checked = isChecked,

@@ -224,7 +224,7 @@ dependencies {
     androidTestImplementation(AndroidX.Compose.Ui.testJunit4)
     debugImplementation(AndroidX.tracing)
     debugImplementation(AndroidX.Compose.Ui.testManifest)
-
+    implementation(Russhwolf.multiplatformSettingsNoArg)
     implementation(platform(Firebase.bom))
 
     implementation(Firebase.analyticsKtx)

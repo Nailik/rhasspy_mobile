@@ -29,7 +29,8 @@ import org.rhasspy.mobile.android.content.item.EventStateIcon
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.*
+import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.viewmodel.configuration.ServiceStateHeaderViewState
 
 @Composable
@@ -126,12 +127,12 @@ private fun ServiceStateText(serviceState: ServiceState) {
 
     Text(
         resource = when (serviceState) {
-            is ServiceState.Pending -> MR.strings.pending.stable
-            is ServiceState.Loading -> MR.strings.loading.stable
-            is ServiceState.Success -> MR.strings.success.stable
-            is ServiceState.Error -> MR.strings.error.stable
-            is ServiceState.Exception -> MR.strings.error.stable
-            is ServiceState.Disabled -> MR.strings.disabled.stable
+            is Pending -> MR.strings.pending.stable
+            is Loading -> MR.strings.loading.stable
+            is Success -> MR.strings.success.stable
+            is Error -> MR.strings.error.stable
+            is Exception -> MR.strings.error.stable
+            is Disabled -> MR.strings.disabled.stable
         }
     )
 

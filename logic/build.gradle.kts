@@ -33,7 +33,6 @@ kotlin {
                 implementation(Ktor2.Plugins.network)
                 implementation(Ktor2.Server.core)
                 implementation(Benasher.uuid)
-                implementation(Russhwolf.multiplatformSettings)
                 implementation(Russhwolf.multiplatformSettingsNoArg)
                 implementation(Russhwolf.multiplatformSettingsSerialization)
                 implementation(Square.okio)

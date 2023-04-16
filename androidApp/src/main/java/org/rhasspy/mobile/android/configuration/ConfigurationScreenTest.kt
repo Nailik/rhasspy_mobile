@@ -31,8 +31,8 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.CustomDivider
 import org.rhasspy.mobile.android.content.elements.Icon
-import org.rhasspy.mobile.android.content.elements.LogListElement
 import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.list.LogListElement
 import org.rhasspy.mobile.android.main.LocalConfigurationNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.SetSystemColor

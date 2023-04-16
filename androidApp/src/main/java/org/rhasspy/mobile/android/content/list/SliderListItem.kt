@@ -32,21 +32,21 @@ fun SliderListItem(
     //uses custom list item to fix padding for slider
     Surface(
         modifier = modifier,
-        shape = RectangleShape, //ListItemDefaults.shape,
-        color = MaterialTheme.colorScheme.surface, //ListItemDefaults.containerColor,
-        contentColor = MaterialTheme.colorScheme.onSurface, //ListItemDefaults.contentColor,
-        tonalElevation = 0.0.dp, //ListItemDefaults.Elevation,
-        shadowElevation = 0.0.dp, //ListItemDefaults.Elevation,
+        shape = RectangleShape,
+        color = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        tonalElevation = 0.0.dp,
+        shadowElevation = 0.0.dp,
     ) {
         Row(
             modifier = Modifier
-                .heightIn(min = 56.0.dp) //ListTokens.ListItemContainerHeight
+                .heightIn(min = 56.0.dp)
                 .padding(
                     PaddingValues(
                         16.dp - 8.dp,
                         8.dp
                     )
-                ), //ListItemHorizontalPadding, ListItemVerticalPadding
+                ),
             content = {
                 Box(
                     Modifier
@@ -57,10 +57,9 @@ fun SliderListItem(
                     Column {
 
                         ProvideTextStyleFromToken(
-                            MaterialTheme.colorScheme.onSurface, //colors.headlineColor(enabled = true).value
+                            MaterialTheme.colorScheme.onSurface,
                             MaterialTheme.typography.bodyLarge
-                        ) //ListTokens.ListItemLabelTextFont
-                        {
+                        ) {
                             Row(modifier = Modifier.padding(horizontal = 8.dp)) {
                                 Text(text)
                                 Spacer(modifier = Modifier.weight(1f))
@@ -69,10 +68,9 @@ fun SliderListItem(
                         }
 
                         ProvideTextStyleFromToken(
-                            MaterialTheme.colorScheme.onSurfaceVariant, //colors.supportingColor().value
+                            MaterialTheme.colorScheme.onSurfaceVariant,
                             MaterialTheme.typography.bodyMedium
-                        ) //ListTokens.ListItemSupportingTextFont
-                        {
+                        ) {
                             Slider(
                                 value = value,
                                 onValueChange = onValueChange

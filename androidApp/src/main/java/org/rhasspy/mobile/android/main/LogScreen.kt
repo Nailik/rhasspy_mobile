@@ -30,8 +30,8 @@ import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.CustomDivider
 import org.rhasspy.mobile.android.content.elements.Icon
-import org.rhasspy.mobile.android.content.elements.LogListElement
 import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.list.LogListElement
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.screens.LogScreenViewModel
 

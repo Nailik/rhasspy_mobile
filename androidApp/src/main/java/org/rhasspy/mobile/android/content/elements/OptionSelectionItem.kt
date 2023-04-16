@@ -7,6 +7,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.glance.appwidget.lazy.LazyColumn
+import androidx.glance.appwidget.lazy.items
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.android.content.SecondaryContent
 import org.rhasspy.mobile.android.content.list.RadioButtonListItem
@@ -21,13 +23,14 @@ fun <E : IOption<*>> RadioButtonsEnumSelectionList(
     values: ImmutableList<E>
 ) {
     Column(modifier = modifier) {
-        values.forEach {
-            RadioButtonListItem(
-                modifier = Modifier.testTag(it),
-                text = it.text,
-                isChecked = selected == it,
-            ) {
-                onSelect(it)
+        LazyColumn {
+            items(values) { item ->
+                RadioButtonListItem(
+                    modifier = Modifier.testTag(item),
+                    text = item.text,
+                    isChecked = selected == item,
+                    onClick = { onSelect(item) }
+                )
             }
         }
     }
@@ -45,24 +48,26 @@ fun <E : IOption<*>> RadioButtonsEnumSelection(
         modifier = modifier.padding(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
-        values.forEach {
-            Column {
-                RadioButtonListItem(
-                    modifier = Modifier.testTag(it),
-                    text = it.text,
-                    isChecked = selected == it,
-                ) {
-                    onSelect(it)
+        LazyColumn {
+            items(values) { item ->
+                Column {
+                    RadioButtonListItem(
+                        modifier = Modifier.testTag(item),
+                        text = item.text,
+                        isChecked = selected == item,
+                        onClick = { onSelect(item) }
+                    )
+                }
+
+                content?.also { nullSafeContent ->
+                    SecondaryContent(
+                        visible = selected == item,
+                        content = { nullSafeContent(item) }
+                    )
                 }
             }
 
-            content?.also { nullSafeContent ->
-                SecondaryContent(visible = selected == it) {
-                    nullSafeContent(it)
-                }
-            }
         }
-
     }
 }
 
