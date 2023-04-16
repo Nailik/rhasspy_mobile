@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.settings
+package org.rhasspy.mobile.viewmodel.settings.devicesettings
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import org.rhasspy.mobile.logic.settings.AppSetting

@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.settings.sound
+package org.rhasspy.mobile.viewmodel.settings.indication.sound
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.StateFlow

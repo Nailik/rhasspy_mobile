@@ -37,7 +37,7 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
-import org.rhasspy.mobile.viewmodel.settings.IndicationSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

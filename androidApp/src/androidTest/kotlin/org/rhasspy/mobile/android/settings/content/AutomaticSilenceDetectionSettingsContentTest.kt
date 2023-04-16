@@ -22,7 +22,7 @@ import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.requestMicrophonePermissions
-import org.rhasspy.mobile.viewmodel.settings.AutomaticSilenceDetectionSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.automaticsilencedetection.AutomaticSilenceDetectionSettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

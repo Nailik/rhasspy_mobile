@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.settings.sound
+package org.rhasspy.mobile.viewmodel.settings.indication.sound
 
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -14,53 +14,53 @@ import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 
-class WakeIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel() {
+class RecordedIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel() {
 
     override val isSoundIndicationDefault: StateFlow<Boolean> =
-        AppSetting.wakeSound.data.mapReadonlyState {
+        AppSetting.recordedSound.data.mapReadonlyState {
             it == SoundOption.Default.name
         }
 
     override val isSoundIndicationDisabled: StateFlow<Boolean> =
-        AppSetting.wakeSound.data.mapReadonlyState {
+        AppSetting.recordedSound.data.mapReadonlyState {
             it == SoundOption.Disabled.name
         }
 
     override val customSoundFiles: StateFlow<List<SoundFile>> =
         combineState(
-            AppSetting.wakeSound.data,
-            AppSetting.customWakeSounds.data
+            AppSetting.recordedSound.data,
+            AppSetting.customRecordedSounds.data
         ) { selected, set ->
             set.map { fileName ->
                 SoundFile(fileName, selected == fileName, selected != fileName)
             }.toList()
         }
 
-    override val soundVolume: StateFlow<Float> = AppSetting.wakeSoundVolume.data
+    override val soundVolume: StateFlow<Float> = AppSetting.recordedSoundVolume.data
 
     override fun onClickSoundIndicationDefault() {
-        AppSetting.wakeSound.value = SoundOption.Default.name
+        AppSetting.recordedSound.value = SoundOption.Default.name
     }
 
     override fun onClickSoundIndicationDisabled() {
-        AppSetting.wakeSound.value = SoundOption.Disabled.name
+        AppSetting.recordedSound.value = SoundOption.Disabled.name
     }
 
     override fun updateSoundVolume(volume: Float) {
-        AppSetting.wakeSoundVolume.value = volume
+        AppSetting.recordedSoundVolume.value = volume
     }
 
     override fun selectSoundFile(file: SoundFile) {
-        AppSetting.wakeSound.value = file.fileName
+        AppSetting.recordedSound.value = file.fileName
     }
 
     override fun deleteSoundFile(file: SoundFile) {
         if (file.canBeDeleted && !file.selected) {
-            val customSounds = AppSetting.customWakeSounds.data
-            AppSetting.customWakeSounds.value = customSounds.value.toMutableSet().apply {
+            val customSounds = AppSetting.customRecordedSounds.data
+            AppSetting.customRecordedSounds.value = customSounds.value.toMutableSet().apply {
                 remove(file.fileName)
             }
-            Path.commonInternalPath(get(), "${FolderType.SoundFolder.Wake}/${file.fileName}").commonDelete()
+            Path.commonInternalPath(get(), "${FolderType.SoundFolder.Recorded}/${file.fileName}").commonDelete()
         }
     }
 
@@ -68,20 +68,20 @@ class WakeIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel()
         if (isAudioPlaying.value) {
             localAudioService.stop()
         } else {
-            localAudioService.playWakeSound {}
+            localAudioService.playRecordedSound()
         }
     }
 
     override fun chooseSoundFile() {
         viewModelScope.launch {
-            FileUtils.selectFile(FolderType.SoundFolder.Wake)
+            FileUtils.selectFile(FolderType.SoundFolder.Recorded)
                 ?.also { fileName ->
-                    val customSounds = AppSetting.customWakeSounds.data
-                    AppSetting.customWakeSounds.value =
+                    val customSounds = AppSetting.customRecordedSounds.data
+                    AppSetting.customRecordedSounds.value =
                         customSounds.value.toMutableSet().apply {
                             add(fileName.name)
                         }
-                    AppSetting.wakeSound.value = fileName.name
+                    AppSetting.recordedSound.value = fileName.name
                 }
         }
     }

@@ -48,7 +48,7 @@ import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.viewmodel.settings.AutomaticSilenceDetectionSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.automaticsilencedetection.AutomaticSilenceDetectionSettingsViewModel
 
 /**
  * settings to configure automatic silence detection

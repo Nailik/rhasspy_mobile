@@ -33,7 +33,7 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.utils.isDebug
-import org.rhasspy.mobile.viewmodel.settings.LogSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 
 /**
  * main screens, full size

@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.settings
+package org.rhasspy.mobile.viewmodel.settings.automaticsilencedetection
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

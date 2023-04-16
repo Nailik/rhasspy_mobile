@@ -60,17 +60,17 @@ import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
-import org.rhasspy.mobile.viewmodel.settings.AutomaticSilenceDetectionSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.BackgroundServiceSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.DeviceSettingsSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.IndicationSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.LanguageSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.LogSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.MicrophoneOverlaySettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.SaveAndRestoreSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.sound.ErrorIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.sound.RecordedIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.sound.WakeIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.automaticsilencedetection.AutomaticSilenceDetectionSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.ErrorIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.RecordedIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoundSettingsViewModel
 
 val serviceModule = module {
     closeableSingle { LocalAudioService() }

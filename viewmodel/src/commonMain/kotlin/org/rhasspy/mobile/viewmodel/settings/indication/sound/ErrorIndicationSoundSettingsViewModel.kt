@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.settings.sound
+package org.rhasspy.mobile.viewmodel.settings.indication.sound
 
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -14,53 +14,53 @@ import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 
-class RecordedIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel() {
+class ErrorIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewModel() {
 
     override val isSoundIndicationDefault: StateFlow<Boolean> =
-        AppSetting.recordedSound.data.mapReadonlyState {
+        AppSetting.errorSound.data.mapReadonlyState {
             it == SoundOption.Default.name
         }
 
     override val isSoundIndicationDisabled: StateFlow<Boolean> =
-        AppSetting.recordedSound.data.mapReadonlyState {
+        AppSetting.errorSound.data.mapReadonlyState {
             it == SoundOption.Disabled.name
         }
 
     override val customSoundFiles: StateFlow<List<SoundFile>> =
         combineState(
-            AppSetting.recordedSound.data,
-            AppSetting.customRecordedSounds.data
+            AppSetting.errorSound.data,
+            AppSetting.customErrorSounds.data
         ) { selected, set ->
             set.map { fileName ->
                 SoundFile(fileName, selected == fileName, selected != fileName)
             }.toList()
         }
 
-    override val soundVolume: StateFlow<Float> = AppSetting.recordedSoundVolume.data
+    override val soundVolume: StateFlow<Float> = AppSetting.errorSoundVolume.data
 
     override fun onClickSoundIndicationDefault() {
-        AppSetting.recordedSound.value = SoundOption.Default.name
+        AppSetting.errorSound.value = SoundOption.Default.name
     }
 
     override fun onClickSoundIndicationDisabled() {
-        AppSetting.recordedSound.value = SoundOption.Disabled.name
+        AppSetting.errorSound.value = SoundOption.Disabled.name
     }
 
     override fun updateSoundVolume(volume: Float) {
-        AppSetting.recordedSoundVolume.value = volume
+        AppSetting.errorSoundVolume.value = volume
     }
 
     override fun selectSoundFile(file: SoundFile) {
-        AppSetting.recordedSound.value = file.fileName
+        AppSetting.errorSound.value = file.fileName
     }
 
     override fun deleteSoundFile(file: SoundFile) {
         if (file.canBeDeleted && !file.selected) {
-            val customSounds = AppSetting.customRecordedSounds.data
-            AppSetting.customRecordedSounds.value = customSounds.value.toMutableSet().apply {
+            val customSounds = AppSetting.customErrorSounds.data
+            AppSetting.customErrorSounds.value = customSounds.value.toMutableSet().apply {
                 remove(file.fileName)
             }
-            Path.commonInternalPath(get(), "${FolderType.SoundFolder.Recorded}/${file.fileName}").commonDelete()
+            Path.commonInternalPath(get(), "${FolderType.SoundFolder.Error}/${file.fileName}").commonDelete()
         }
     }
 
@@ -68,20 +68,19 @@ class RecordedIndicationSoundSettingsViewModel : IIndicationSoundSettingsViewMod
         if (isAudioPlaying.value) {
             localAudioService.stop()
         } else {
-            localAudioService.playRecordedSound()
+            localAudioService.playErrorSound()
         }
     }
 
     override fun chooseSoundFile() {
         viewModelScope.launch {
-            FileUtils.selectFile(FolderType.SoundFolder.Recorded)
+            FileUtils.selectFile(FolderType.SoundFolder.Error)
                 ?.also { fileName ->
-                    val customSounds = AppSetting.customRecordedSounds.data
-                    AppSetting.customRecordedSounds.value =
-                        customSounds.value.toMutableSet().apply {
-                            add(fileName.name)
-                        }
-                    AppSetting.recordedSound.value = fileName.name
+                    val customSounds = AppSetting.customErrorSounds.data
+                    AppSetting.customErrorSounds.value = customSounds.value.toMutableSet().apply {
+                        add(fileName.name)
+                    }
+                    AppSetting.errorSound.value = fileName.name
                 }
         }
     }

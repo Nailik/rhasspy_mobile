@@ -49,7 +49,7 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.sounds.SoundFile
-import org.rhasspy.mobile.viewmodel.settings.sound.IIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsViewModel
 
 /**
  * screen to choose indication sound

@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.settings
+package org.rhasspy.mobile.viewmodel.settings.saveandrestore
 
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.viewmodel.ViewModel

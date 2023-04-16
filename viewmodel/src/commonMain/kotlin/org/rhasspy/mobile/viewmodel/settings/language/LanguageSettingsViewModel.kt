@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.settings
+package org.rhasspy.mobile.viewmodel.settings.language
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import org.rhasspy.mobile.data.language.LanguageType

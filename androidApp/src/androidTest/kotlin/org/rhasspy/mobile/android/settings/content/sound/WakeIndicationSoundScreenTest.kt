@@ -6,7 +6,7 @@ import org.junit.Before
 import org.junit.Test
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.viewmodel.settings.sound.WakeIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoundSettingsViewModel
 
 class WakeIndicationSoundScreenTest : IndicationSoundScreenTest(
     viewModel = WakeIndicationSoundSettingsViewModel(),

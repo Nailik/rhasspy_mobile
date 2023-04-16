@@ -30,7 +30,7 @@ import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.data.language.LanguageType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
-import org.rhasspy.mobile.viewmodel.settings.LanguageSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
