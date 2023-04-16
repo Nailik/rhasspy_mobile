@@ -2,47 +2,54 @@ package org.rhasspy.mobile.viewmodel.settings.log
 
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
-import org.rhasspy.mobile.logic.logger.LogLevel
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.toImmutableList
+import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.*
 
-class LogSettingsViewModel : ViewModel(), KoinComponent {
+class LogSettingsViewModel(
+    private val nativeApplication: NativeApplication
+) : ViewModel(), KoinComponent {
 
-    //unsaved ui data
-    val logLevel = AppSetting.logLevel.data
-    val isCrashlyticsEnabled = AppSetting.isCrashlyticsEnabled.data
-    val isShowLogEnabled = AppSetting.isShowLogEnabled.data
-    val isLogAudioFramesEnabled = AppSetting.isLogAudioFramesEnabled.data
+    private val _viewState = MutableStateFlow(LogSettingsViewState())
+    val viewState = _viewState.readOnly
 
-    //all options
-    val logLevelOptions = LogLevel.values().toImmutableList()
-
-    //select log level
-    fun selectLogLevel(logLevel: LogLevel) {
-        AppSetting.logLevel.value = logLevel
-        Logger.setMinSeverity(AppSetting.logLevel.value.severity)
+    fun onEvent(event: LogSettingsUiEvent) {
+        when (event) {
+            is Change -> onChange(event)
+        }
     }
 
-    /**
-     * set if crashlytics enabled
-     * changes will be detected in Application.kt and crashlytics will be enabled/disabled there
-     */
-    fun toggleCrashlyticsEnabled(enabled: Boolean) {
-        AppSetting.isCrashlyticsEnabled.value = enabled
-        get<NativeApplication>().setCrashlyticsCollectionEnabled(AppSetting.isCrashlyticsEnabled.value)
-    }
+    private fun onChange(change: Change) {
+        _viewState.update {
+            when (change) {
+                is SetCrashlyticsEnabled -> {
+                    AppSetting.isCrashlyticsEnabled.value = change.enabled
+                    nativeApplication.setCrashlyticsCollectionEnabled(change.enabled)
+                    it.copy(isCrashlyticsEnabled = change.enabled)
+                }
 
-    //toggle show log enabled
-    fun toggleShowLogEnabled(enabled: Boolean) {
-        AppSetting.isShowLogEnabled.value = enabled
-    }
+                is SetLogAudioFramesEnabled -> {
+                    AppSetting.isLogAudioFramesEnabled.value = change.enabled
+                    it.copy(isLogAudioFramesEnabled = change.enabled)
+                }
 
-    //toggle log audio frames enabled
-    fun toggleLogAudioFramesEnabled(enabled: Boolean) {
-        AppSetting.isLogAudioFramesEnabled.value = enabled
+                is SetLogLevel -> {
+                    AppSetting.logLevel.value = change.logLevel
+                    Logger.setMinSeverity(AppSetting.logLevel.value.severity)
+                    it.copy(logLevel = change.logLevel)
+                }
+
+                is SetShowLogEnabled -> {
+                    AppSetting.isShowLogEnabled.value = change.enabled
+                    it.copy(isShowLogEnabled = change.enabled)
+                }
+            }
+        }
     }
 
 }

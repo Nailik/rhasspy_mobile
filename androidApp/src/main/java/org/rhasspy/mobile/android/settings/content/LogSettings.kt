@@ -2,6 +2,7 @@ package org.rhasspy.mobile.android.settings.content
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import org.koin.androidx.compose.get
@@ -13,6 +14,7 @@ import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 
 /**
@@ -22,6 +24,8 @@ import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 @Composable
 fun LogSettingsContent(viewModel: LogSettingsViewModel = get()) {
 
+    val viewState by viewModel.viewState.collectAsState()
+
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreenType.LogSettings),
         title = MR.strings.logSettings.stable
@@ -29,9 +33,9 @@ fun LogSettingsContent(viewModel: LogSettingsViewModel = get()) {
 
         //log level
         RadioButtonsEnumSelection(
-            selected = viewModel.logLevel.collectAsState().value,
-            onSelect = viewModel::selectLogLevel,
-            values = viewModel.logLevelOptions
+            selected = viewState.logLevel,
+            onSelect = { viewModel.onEvent(SetLogLevel(it)) },
+            values = viewState.logLevelOptions
         )
 
         //crashlytics
@@ -39,24 +43,24 @@ fun LogSettingsContent(viewModel: LogSettingsViewModel = get()) {
             text = MR.strings.crashlytics.stable,
             secondaryText = MR.strings.crashlyticsText.stable,
             modifier = Modifier.testTag(TestTag.CrashlyticsEnabled),
-            isChecked = viewModel.isCrashlyticsEnabled.collectAsState().value,
-            onCheckedChange = viewModel::toggleCrashlyticsEnabled
+            isChecked = viewState.isCrashlyticsEnabled,
+            onCheckedChange = { viewModel.onEvent(SetCrashlyticsEnabled(it)) }
         )
 
         //show log enabled
         SwitchListItem(
             text = MR.strings.showLog.stable,
             modifier = Modifier.testTag(TestTag.ShowLogEnabled),
-            isChecked = viewModel.isShowLogEnabled.collectAsState().value,
-            onCheckedChange = viewModel::toggleShowLogEnabled
+            isChecked = viewState.isShowLogEnabled,
+            onCheckedChange = { viewModel.onEvent(SetShowLogEnabled(it)) }
         )
 
         //audio frames logging enabled
         SwitchListItem(
             text = MR.strings.audioFramesLogging.stable,
             modifier = Modifier.testTag(TestTag.AudioFramesEnabled),
-            isChecked = viewModel.isLogAudioFramesEnabled.collectAsState().value,
-            onCheckedChange = viewModel::toggleLogAudioFramesEnabled
+            isChecked = viewState.isLogAudioFramesEnabled,
+            onCheckedChange = { viewModel.onEvent(SetLogAudioFramesEnabled(it)) }
         )
 
     }
