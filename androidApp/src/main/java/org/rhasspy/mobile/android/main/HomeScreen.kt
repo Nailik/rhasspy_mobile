@@ -1,21 +1,13 @@
 package org.rhasspy.mobile.android.main
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -29,7 +21,10 @@ import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
+import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent
+import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent.Action.TogglePlayRecording
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewState
 
 /**
  * Home Screen contains
@@ -52,13 +47,23 @@ fun HomeScreen(viewModel: HomeScreenViewModel = get()) {
         },
     ) { paddingValues ->
 
+        val viewState by viewModel.viewState.collectAsState()
+
         when (LocalConfiguration.current.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
-                PortraitContent(paddingValues, viewModel)
+                PortraitContent(
+                    paddingValues = paddingValues,
+                    viewState = viewState,
+                    onEvent = viewModel::onEvent
+                )
             }
 
             else -> {
-                LandscapeContent(paddingValues, viewModel)
+                LandscapeContent(
+                    paddingValues = paddingValues,
+                    viewState = viewState,
+                    onEvent = viewModel::onEvent
+                )
             }
         }
 
@@ -76,9 +81,9 @@ fun HomeScreen(viewModel: HomeScreenViewModel = get()) {
 @Composable
 private fun PortraitContent(
     paddingValues: PaddingValues,
-    viewModel: HomeScreenViewModel
+    viewState: HomeScreenViewState,
+    onEvent: (event: HomeScreenUiEvent) -> Unit
 ) {
-
     Column(
         modifier = Modifier
             .padding(paddingValues)
@@ -86,35 +91,18 @@ private fun PortraitContent(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-
         Box(modifier = Modifier.weight(1f)) {
-
-            val microphoneViewModel = get<MicrophoneFabViewModel>()
-
-            RequiresMicrophonePermission(
-                MR.strings.microphonePermissionInfoRecord.stable,
-                microphoneViewModel::onClick
-            ) { onClick ->
-                SideEffect {
-                    if (viewModel.isStartRecordingAction) {
-                        viewModel.consumedStartRecordingAction()
-                        onClick()
-                    }
-                }
-
-                MicrophoneFab(
-                    modifier = Modifier.fillMaxSize(),
-                    iconSize = 96.dp,
-                    viewModel = microphoneViewModel,
-                    onClick = onClick
-                )
-            }
+            MicrophoneFab(get())
         }
 
-        PlayRecording(viewModel)
-
+        val isPlaying by viewState.isPlayingRecording.collectAsState()
+        val isPlayingRecordingEnabled by viewState.isPlayingRecordingEnabled.collectAsState()
+        PlayRecording(
+            isPlaying = isPlaying,
+            isPlayingRecordingEnabled = isPlayingRecordingEnabled,
+            onEvent = onEvent
+        )
     }
-
 }
 
 /**
@@ -127,9 +115,9 @@ private fun PortraitContent(
 @Composable
 fun LandscapeContent(
     paddingValues: PaddingValues,
-    viewModel: HomeScreenViewModel
+    viewState: HomeScreenViewState,
+    onEvent: (event: HomeScreenUiEvent) -> Unit
 ) {
-
     Row(
         modifier = Modifier
             .padding(paddingValues)
@@ -138,53 +126,63 @@ fun LandscapeContent(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Box(modifier = Modifier.weight(1f)) {
-
-            val microphoneViewModel = get<MicrophoneFabViewModel>()
-
-            RequiresMicrophonePermission(
-                MR.strings.microphonePermissionInfoRecord.stable,
-                microphoneViewModel::onClick
-            ) { onClick ->
-                SideEffect {
-                    if (viewModel.isStartRecordingAction) {
-                        viewModel.consumedStartRecordingAction()
-                        onClick()
-                    }
-                }
-
-                MicrophoneFab(
-                    modifier = Modifier.fillMaxSize(),
-                    iconSize = 96.dp,
-                    viewModel = microphoneViewModel,
-                    onClick = onClick
-                )
-            }
+            MicrophoneFab(get())
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            PlayRecording(viewModel)
-        }
+        val isPlaying by viewState.isPlayingRecording.collectAsState()
+        val isPlayingRecordingEnabled by viewState.isPlayingRecordingEnabled.collectAsState()
+        PlayRecording(
+            modifier = Modifier.weight(1f),
+            isPlaying = isPlaying,
+            isPlayingRecordingEnabled = isPlayingRecordingEnabled,
+            onEvent = onEvent
+        )
     }
 
 }
 
 
-/**
+@Composable
+private fun MicrophoneFab(viewModel: MicrophoneFabViewModel) {
+    val viewState by viewModel.viewState.collectAsState()
+
+    if(viewState.isMicrophonePermissionRequired) {
+        RequiresMicrophonePermission(
+            informationText = MR.strings.microphonePermissionInfoRecord.stable,
+            onClick = viewModel::onClick
+        ) { onClick ->
+            MicrophoneFab(
+                modifier = Modifier.fillMaxSize(),
+                iconSize = 96.dp,
+                viewModel = viewModel,
+                onClick = onClick
+            )
+        }
+    } else {
+        MicrophoneFab(
+            modifier = Modifier.fillMaxSize(),
+            iconSize = 96.dp,
+            viewModel = viewModel,
+            onClick =  viewModel::onClick
+        )
+    }
+}
+
+
+        /**
  * button to play latest recording
  */
 @Composable
-private fun PlayRecording(viewModel: HomeScreenViewModel) {
-
-    val isPlaying by viewModel.isPlayingRecording.collectAsState()
-
+private fun PlayRecording(
+            modifier: Modifier = Modifier,
+    isPlaying: Boolean,
+    isPlayingRecordingEnabled: Boolean,
+    onEvent: (event: HomeScreenUiEvent) -> Unit
+) {
     FilledTonalButtonListItem(
-        onClick = viewModel::togglePlayRecording,
-        enabled = viewModel.isPlayingRecordingEnabled.collectAsState().value,
+        modifier = modifier,
+        onClick = { onEvent(TogglePlayRecording) },
+        enabled = isPlayingRecordingEnabled,
         icon = if (isPlaying) Icons.Filled.Stop else Icons.Filled.PlayArrow,
         text = if (isPlaying) MR.strings.stopPlayRecording.stable else MR.strings.playRecording.stable
     )

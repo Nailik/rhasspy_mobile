@@ -25,10 +25,12 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.main.MainNavigation
+import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
+import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.platformspecific.application.AppActivity
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.utils.isDebug
-import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
 
 
 /**
@@ -74,8 +76,9 @@ class MainActivity : KoinComponent, AppActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
-        val value = intent.getBooleanExtra(IntentAction.StartRecording.param, false)
-        get<HomeScreenViewModel>().startRecordingAction(value)
+        if(intent.getBooleanExtra(IntentAction.StartRecording.param, false)) {
+            get<ServiceMiddleware>().action(WakeWordDetected(Source.Local, wakeWord = "intent"))
+        }
 
         this.setContent {
             Box(modifier = Modifier.fillMaxSize()) {

@@ -28,6 +28,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import kotlinx.coroutines.flow.StateFlow
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.configuration.ConfigurationScreen
@@ -71,10 +72,16 @@ fun BottomBarScreensNavigation(viewModel: HomeScreenViewModel = get()) {
         LocalNavController provides navController,
         LocalSnackbarHostState provides snackBarHostState
     ) {
+        val viewState by viewModel.viewState.collectAsState()
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             snackbarHost = { SnackbarHost(snackBarHostState) },
-            bottomBar = { BottomNavigation(viewModel, navController) }
+            bottomBar = {
+                BottomNavigation(
+                    isShowLogEnabled = viewState.isShowLogEnabled,
+                    navController = navController
+                )
+            }
         ) { paddingValues ->
 
             NavHost(
@@ -113,7 +120,9 @@ fun BottomBarScreensNavigation(viewModel: HomeScreenViewModel = get()) {
  * navigation bar on bottom
  */
 @Composable
-fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavController) {
+fun BottomNavigation(
+    isShowLogEnabled: StateFlow<Boolean>,
+    navController: NavController) {
 
     NavigationBar {
 
@@ -179,7 +188,7 @@ fun BottomNavigation(viewModel: HomeScreenViewModel, navController: NavControlle
             }
         )
 
-        if (viewModel.isShowLogEnabled.collectAsState().value) {
+        if (isShowLogEnabled.collectAsState().value) {
             NavigationItem(screen = BottomBarScreenType.LogScreen,
                 icon = { Icon(Icons.Filled.Code, MR.strings.log.stable) },
                 label = { Text(MR.strings.log.stable) }

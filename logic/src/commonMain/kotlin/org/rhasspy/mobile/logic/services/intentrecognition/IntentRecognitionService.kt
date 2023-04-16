@@ -10,7 +10,7 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.middleware.Action.DialogAction
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
@@ -59,8 +59,8 @@ open class IntentRecognitionService : IService(LogType.IntentRecognitionService)
                 val result = httpClientService.recognizeIntent(text)
                 _serviceState.value = result.toServiceState()
                 val action = when (result) {
-                    is HttpClientResult.Error -> DialogAction.IntentRecognitionError(Source.HttpApi)
-                    is HttpClientResult.Success -> DialogAction.IntentRecognitionResult(
+                    is HttpClientResult.Error -> DialogServiceMiddlewareAction.IntentRecognitionError(Source.HttpApi)
+                    is HttpClientResult.Success -> DialogServiceMiddlewareAction.IntentRecognitionResult(
                         Source.HttpApi,
                         readIntentNameFromJson(result.data),
                         result.data
@@ -70,7 +70,7 @@ open class IntentRecognitionService : IService(LogType.IntentRecognitionService)
             }
 
             IntentRecognitionOption.RemoteMQTT -> _serviceState.value = mqttClientService.recognizeIntent(sessionId, text)
-            IntentRecognitionOption.Disabled -> serviceMiddleware.action(DialogAction.IntentRecognitionResult(Source.Local, "", ""))
+            IntentRecognitionOption.Disabled -> serviceMiddleware.action(DialogServiceMiddlewareAction.IntentRecognitionResult(Source.Local, "", ""))
         }
     }
 

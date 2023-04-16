@@ -12,7 +12,7 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.middleware.Action.DialogAction
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
@@ -88,8 +88,8 @@ open class SpeechToTextService : IService(LogType.SpeechToTextService) {
                 val result = httpClientService.speechToText(speechToTextAudioFile)
                 _serviceState.value = result.toServiceState()
                 val action = when (result) {
-                    is HttpClientResult.Error -> DialogAction.AsrError(Source.HttpApi)
-                    is HttpClientResult.Success -> DialogAction.AsrTextCaptured(
+                    is HttpClientResult.Error -> DialogServiceMiddlewareAction.AsrError(Source.HttpApi)
+                    is HttpClientResult.Success -> DialogServiceMiddlewareAction.AsrTextCaptured(
                         Source.HttpApi,
                         result.data
                     )

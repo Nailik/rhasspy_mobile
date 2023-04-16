@@ -19,6 +19,9 @@ import org.rhasspy.mobile.platformspecific.readOnly
 
 class MicrophoneFabViewModel : ViewModel(), KoinComponent {
 
+    private val _viewState = MutableStateFlow(MicrophoneFabViewState())
+    val viewState = _viewState.readOnly
+
     private val dialogManagerServiceState
         get() = getSafe<DialogManagerService>()?.currentDialogState ?: MutableStateFlow(
             DialogManagerServiceState.Idle

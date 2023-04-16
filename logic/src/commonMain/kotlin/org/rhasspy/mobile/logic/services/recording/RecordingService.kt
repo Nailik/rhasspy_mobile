@@ -13,7 +13,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.component.inject
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.middleware.Action
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
@@ -97,7 +97,7 @@ class RecordingService : IService(LogType.RecordingService) {
                         val timeSinceSilenceDetected = silenceStartTime?.let { currentTime.minus(it) } ?: 0.milliseconds
                         //check if silence was detected for x milliseconds
                         if (timeSinceSilenceDetected > AppSetting.automaticSilenceDetectionTime.value.milliseconds) {
-                            serviceMiddleware.action(Action.DialogAction.SilenceDetected(Source.Local))
+                            serviceMiddleware.action(ServiceMiddlewareAction.DialogServiceMiddlewareAction.SilenceDetected(Source.Local))
                         }
 
                     } else {

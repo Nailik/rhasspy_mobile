@@ -1,31 +1,32 @@
 package org.rhasspy.mobile.viewmodel.screens.home
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
-import org.rhasspy.mobile.logic.middleware.Action
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
-import org.rhasspy.mobile.logic.settings.AppSetting
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.PlayStopRecording
+import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent.Action
+import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent.Action.TogglePlayRecording
 
-class HomeScreenViewModel : ViewModel(), KoinComponent {
+class HomeScreenViewModel(
+    private val serviceMiddleware: ServiceMiddleware
+) : ViewModel(), KoinComponent {
 
-    private val serviceMiddleware by inject<ServiceMiddleware>()
+    private val _viewState =
+        MutableStateFlow(HomeScreenViewState.getInitialViewState(serviceMiddleware))
+    val viewState = _viewState.readOnly
 
-    val isPlayingRecording = serviceMiddleware.isPlayingRecording
-    val isPlayingRecordingEnabled = serviceMiddleware.isPlayingRecordingEnabled
-    val isShowLogEnabled = AppSetting.isShowLogEnabled.data
-
-    var isStartRecordingAction: Boolean = false
-        private set
-
-    fun togglePlayRecording() = serviceMiddleware.action(Action.PlayStopRecording)
-
-    fun startRecordingAction(value: Boolean) {
-        isStartRecordingAction = value
+    fun onEvent(event: HomeScreenUiEvent) {
+        when(event) {
+            is Action -> onAction(event)
+        }
     }
 
-    fun consumedStartRecordingAction() {
-        isStartRecordingAction = false
+    private fun onAction(action: Action) {
+        when(action) {
+            TogglePlayRecording -> serviceMiddleware.action(PlayStopRecording)
+        }
     }
 
 }

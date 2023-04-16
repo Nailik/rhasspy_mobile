@@ -49,65 +49,65 @@ class ServiceMiddleware : KoinComponent, Closeable {
     }
     private var shouldResumeHotWordService = false
 
-    fun action(action: Action) {
+    fun action(serviceMiddlewareAction: ServiceMiddlewareAction) {
         coroutineScope.launch {
-            when (action) {
-                is Action.PlayStopRecording -> {
+            when (serviceMiddlewareAction) {
+                is ServiceMiddlewareAction.PlayStopRecording -> {
                     if (_isPlayingRecording.value) {
                         _isPlayingRecording.value = false
                         if (shouldResumeHotWordService) {
-                            action(Action.AppSettingsAction.HotWordToggle(true))
+                            action(ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.HotWordToggle(true))
                         }
-                        action(Action.DialogAction.PlayFinished(Source.Local))
+                        action(ServiceMiddlewareAction.DialogServiceMiddlewareAction.PlayFinished(Source.Local))
                     } else {
                         if (dialogManagerService.currentDialogState.value == DialogManagerServiceState.Idle ||
                             dialogManagerService.currentDialogState.value == DialogManagerServiceState.AwaitingWakeWord
                         ) {
                             _isPlayingRecording.value = true
                             shouldResumeHotWordService = AppSetting.isHotWordEnabled.value
-                            action(Action.AppSettingsAction.HotWordToggle(false))
+                            action(ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.HotWordToggle(false))
                             //suspend coroutine
                             localAudioService.playAudio(AudioSource.File(speechToTextService.speechToTextAudioFile))
                             //resumes when play finished
                             if (_isPlayingRecording.value) {
-                                action(Action.PlayStopRecording)
+                                action(ServiceMiddlewareAction.PlayStopRecording)
                             }
                         }
                     }
                 }
 
-                is Action.WakeWordError -> mqttService.wakeWordError(action.description)
-                is Action.AppSettingsAction -> {
-                    when (action) {
-                        is Action.AppSettingsAction.AudioOutputToggle ->
-                            appSettingsService.audioOutputToggle(action.enabled)
+                is ServiceMiddlewareAction.WakeWordError -> mqttService.wakeWordError(serviceMiddlewareAction.description)
+                is ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction -> {
+                    when (serviceMiddlewareAction) {
+                        is ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioOutputToggle ->
+                            appSettingsService.audioOutputToggle(serviceMiddlewareAction.enabled)
 
-                        is Action.AppSettingsAction.AudioVolumeChange ->
-                            appSettingsService.setAudioVolume(action.volume)
+                        is ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioVolumeChange ->
+                            appSettingsService.setAudioVolume(serviceMiddlewareAction.volume)
 
-                        is Action.AppSettingsAction.HotWordToggle -> {
-                            appSettingsService.hotWordToggle(action.enabled)
-                            if (action.enabled) {
+                        is ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.HotWordToggle -> {
+                            appSettingsService.hotWordToggle(serviceMiddlewareAction.enabled)
+                            if (serviceMiddlewareAction.enabled) {
                                 wakeWordService.startDetection()
                             } else {
                                 wakeWordService.stopDetection()
                             }
                         }
 
-                        is Action.AppSettingsAction.IntentHandlingToggle ->
-                            appSettingsService.intentHandlingToggle(action.enabled)
+                        is ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.IntentHandlingToggle ->
+                            appSettingsService.intentHandlingToggle(serviceMiddlewareAction.enabled)
                     }
                 }
 
-                is Action.SayText -> {
-                    get<TextToSpeechService>().textToSpeech("", action.text)
+                is ServiceMiddlewareAction.SayText -> {
+                    get<TextToSpeechService>().textToSpeech("", serviceMiddlewareAction.text)
                 }
 
-                is Action.DialogAction -> {
-                    dialogManagerService.onAction(action)
+                is ServiceMiddlewareAction.DialogServiceMiddlewareAction -> {
+                    dialogManagerService.onAction(serviceMiddlewareAction)
                 }
 
-                is Action.Mqtt -> mqttService.onMessageReceived(action.topic, action.payload)
+                is ServiceMiddlewareAction.Mqtt -> mqttService.onMessageReceived(serviceMiddlewareAction.topic, serviceMiddlewareAction.payload)
             }
         }
     }
@@ -115,11 +115,11 @@ class ServiceMiddleware : KoinComponent, Closeable {
     fun userSessionClick() {
         when (dialogManagerService.currentDialogState.value) {
             DialogManagerServiceState.AwaitingWakeWord -> {
-                action(Action.DialogAction.WakeWordDetected(Source.Local, "manual"))
+                action(ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected(Source.Local, "manual"))
             }
 
             DialogManagerServiceState.RecordingIntent -> {
-                action(Action.DialogAction.StopListening(Source.Local))
+                action(ServiceMiddlewareAction.DialogServiceMiddlewareAction.StopListening(Source.Local))
             }
 
             else -> {}

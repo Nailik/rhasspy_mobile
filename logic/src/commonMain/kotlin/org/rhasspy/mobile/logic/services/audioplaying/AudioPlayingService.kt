@@ -5,7 +5,7 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.middleware.Action.DialogAction
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
@@ -56,17 +56,17 @@ open class AudioPlayingService : IService(LogType.AudioPlayingService) {
         when (params.audioPlayingOption) {
             AudioPlayingOption.Local -> {
                 _serviceState.value = localAudioService.playAudio(audioSource)
-                serviceMiddleware.action(DialogAction.PlayFinished(Source.Local))
+                serviceMiddleware.action(DialogServiceMiddlewareAction.PlayFinished(Source.Local))
             }
 
             AudioPlayingOption.RemoteHTTP -> {
                 _serviceState.value = httpClientService.playWav(audioSource).toServiceState()
-                serviceMiddleware.action(DialogAction.PlayFinished(Source.HttpApi))
+                serviceMiddleware.action(DialogServiceMiddlewareAction.PlayFinished(Source.HttpApi))
             }
 
             AudioPlayingOption.RemoteMQTT -> {
                 _serviceState.value = mqttClientService.playAudioRemote(audioSource)
-                serviceMiddleware.action(DialogAction.PlayFinished(Source.Local))
+                serviceMiddleware.action(DialogServiceMiddlewareAction.PlayFinished(Source.Local))
             }
 
             AudioPlayingOption.Disabled -> {}

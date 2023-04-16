@@ -130,7 +130,9 @@ val serviceModule = module {
 }
 
 val viewModelModule = module {
-    single { HomeScreenViewModel() }
+    single { HomeScreenViewModel(
+        serviceMiddleware = get()
+    ) }
     single { MicrophoneFabViewModel() }
     single { ConfigurationScreenViewModel() }
     single {

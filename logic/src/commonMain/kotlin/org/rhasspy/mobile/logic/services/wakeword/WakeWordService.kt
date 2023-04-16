@@ -12,7 +12,7 @@ import org.rhasspy.mobile.data.porcupine.PorcupineError
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.middleware.Action
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
@@ -147,7 +147,7 @@ class WakeWordService : IService(LogType.WakeWordService) {
 
     private fun onKeywordDetected(hotWord: String) {
         logger.d { "onKeywordDetected $hotWord" }
-        serviceMiddleware.action(Action.DialogAction.WakeWordDetected(Source.Local, hotWord))
+        serviceMiddleware.action(ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected(Source.Local, hotWord))
     }
 
     override fun onClose() {
