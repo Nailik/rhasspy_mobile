@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Looper
 import android.view.Gravity
 import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.Lifecycle
@@ -65,18 +66,16 @@ object IndicationOverlay : KoinComponent {
     init {
         try {
             val typeFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+                TYPE_APPLICATION_OVERLAY
             } else {
-                @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_PHONE
+                @Suppress("DEPRECATION") TYPE_PHONE
             }
             // set the layout parameters of the window
             mParams = WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
+                WRAP_CONTENT,
+                WRAP_CONTENT,
                 typeFlag,
-                @Suppress("DEPRECATION") WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                        or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                        or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                @Suppress("DEPRECATION") FLAG_SHOW_WHEN_LOCKED or FLAG_NOT_FOCUSABLE or FLAG_NOT_TOUCHABLE,
                 PixelFormat.TRANSLUCENT,
             ).apply {
                 gravity = Gravity.BOTTOM

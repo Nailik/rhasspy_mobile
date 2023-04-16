@@ -37,6 +37,7 @@ import org.rhasspy.mobile.android.theme.assistant_color_one
 import org.rhasspy.mobile.android.theme.assistant_color_three
 import org.rhasspy.mobile.android.theme.assistant_color_two
 import org.rhasspy.mobile.logic.services.indication.IndicationState
+import org.rhasspy.mobile.logic.services.indication.IndicationState.*
 import kotlin.math.abs
 
 /**
@@ -53,11 +54,11 @@ fun Indication(indicationState: IndicationState) {
     ) {
 
         when (indicationState) {
-            IndicationState.Idle -> {}
-            IndicationState.WakeUp -> WakeupIndication()
-            IndicationState.Recording -> RecordingIndication()
-            IndicationState.Thinking -> ThinkingIndication()
-            IndicationState.Speaking -> SpeakingIndication()
+            Idle -> {}
+            WakeUp -> WakeupIndication()
+            Recording -> RecordingIndication()
+            Thinking -> ThinkingIndication()
+            Speaking -> SpeakingIndication()
         }
     }
 }

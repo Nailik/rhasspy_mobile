@@ -7,6 +7,7 @@ import android.os.Looper
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.*
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.collectAsState
@@ -105,17 +106,16 @@ object MicrophoneOverlay : KoinComponent {
     init {
         try {
             val typeFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+                TYPE_APPLICATION_OVERLAY
             } else {
-                @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_PHONE
+                @Suppress("DEPRECATION") TYPE_PHONE
             }
             // set the layout parameters of the window
             mParams = WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
+                WRAP_CONTENT,
+                WRAP_CONTENT,
                 typeFlag,
-                @Suppress("DEPRECATION") WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                        or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                @Suppress("DEPRECATION") FLAG_SHOW_WHEN_LOCKED or FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
             ).applySettings()
             lifecycleOwner.performRestore(null)

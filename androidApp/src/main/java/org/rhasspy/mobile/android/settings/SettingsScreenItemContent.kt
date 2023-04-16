@@ -36,8 +36,7 @@ fun SettingsScreenItemContent(
 
     Surface(tonalElevation = 1.dp) {
         Scaffold(
-            modifier = modifier
-                .fillMaxSize(),
+            modifier = modifier.fillMaxSize(),
             topBar = {
                 AppBar(
                     title = title,

@@ -21,8 +21,10 @@ import org.rhasspy.mobile.android.settings.content.*
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
+import org.rhasspy.mobile.logic.logger.LogLevel
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
-
+import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewState
 
 @Preview
 @Composable
@@ -36,6 +38,9 @@ fun SettingsScreen(viewModel: SettingsScreenViewModel = get()) {
             )
         },
     ) { paddingValues ->
+
+        val viewState by viewModel.viewState.collectAsState()
+
         LazyColumn(
             Modifier
                 .testTag(TestTag.List)
@@ -44,22 +49,25 @@ fun SettingsScreen(viewModel: SettingsScreenViewModel = get()) {
         ) {
 
             item {
-                Language(viewModel)
+                Language(viewState)
                 CustomDivider()
             }
 
             item {
-                BackgroundService(viewModel)
+                BackgroundService(viewState.isBackgroundEnabled)
                 CustomDivider()
             }
 
             item {
-                MicrophoneOverlay(viewModel)
+                MicrophoneOverlay(viewState.microphoneOverlaySizeOption)
                 CustomDivider()
             }
 
             item {
-                Indication(viewModel)
+                Indication(
+                    isSoundIndicationEnabled = viewState.isSoundIndicationEnabled,
+                    isWakeWordLightIndicationEnabled = viewState.isWakeWordLightIndicationEnabled
+                )
                 CustomDivider()
             }
 
@@ -69,12 +77,12 @@ fun SettingsScreen(viewModel: SettingsScreenViewModel = get()) {
             }
 
             item {
-                AutomaticSilenceDetection(viewModel)
+                AutomaticSilenceDetection(viewState.isAutomaticSilenceDetectionEnabled)
                 CustomDivider()
             }
 
             item {
-                Log(viewModel)
+                Log(viewState.logLevel)
                 CustomDivider()
             }
 
@@ -137,46 +145,46 @@ fun NavGraphBuilder.addSettingsScreen() {
 }
 
 @Composable
-private fun Language(viewModel: SettingsScreenViewModel) {
+private fun Language(viewState: SettingsScreenViewState) {
 
     SettingsListItem(
         text = MR.strings.language.stable,
-        secondaryText = viewModel.currentLanguage.collectAsState().value.text,
+        secondaryText = viewState.currentLanguage.text,
         screen = SettingsScreenType.LanguageSettings
     )
 
 }
 
 @Composable
-private fun BackgroundService(viewModel: SettingsScreenViewModel) {
+private fun BackgroundService(isBackgroundEnabled: Boolean) {
 
     SettingsListItem(
         text = MR.strings.background.stable,
-        secondaryText = viewModel.isBackgroundEnabled.collectAsState().value.toText(),
+        secondaryText = isBackgroundEnabled.toText(),
         screen = SettingsScreenType.BackgroundServiceSettings
     )
 
 }
 
 @Composable
-private fun MicrophoneOverlay(viewModel: SettingsScreenViewModel) {
+private fun MicrophoneOverlay(microphoneOverlaySizeOption: MicrophoneOverlaySizeOption) {
 
     SettingsListItem(
         text = MR.strings.microphoneOverlay.stable,
-        secondaryText = viewModel.microphoneOverlaySizeOption.collectAsState().value.name,
+        secondaryText = microphoneOverlaySizeOption.name,
         screen = SettingsScreenType.MicrophoneOverlaySettings
     )
 
 }
 
 @Composable
-private fun Indication(viewModel: SettingsScreenViewModel) {
+private fun Indication(
+    isSoundIndicationEnabled: Boolean,
+    isWakeWordLightIndicationEnabled: Boolean
+) {
 
-    val isWakeWordSoundIndication by viewModel.isSoundIndicationEnabled.collectAsState()
-    val isWakeWordLightIndication by viewModel.isWakeWordLightIndicationEnabled.collectAsState()
-
-    var stateText = if (isWakeWordSoundIndication) translate(MR.strings.sound.stable) else ""
-    if (isWakeWordLightIndication) {
+    var stateText = if (isSoundIndicationEnabled) translate(MR.strings.sound.stable) else ""
+    if (isWakeWordLightIndicationEnabled) {
         if (stateText.isNotEmpty()) {
             stateText += " ${translate(MR.strings._and.stable)} "
         }
@@ -206,22 +214,22 @@ private fun Device() {
 }
 
 @Composable
-private fun AutomaticSilenceDetection(viewModel: SettingsScreenViewModel) {
+private fun AutomaticSilenceDetection(isAutomaticSilenceDetectionEnabled: Boolean) {
 
     SettingsListItem(
         text = MR.strings.automaticSilenceDetection.stable,
-        secondaryText = viewModel.isAutomaticSilenceDetectionEnabled.collectAsState().value.toText(),
+        secondaryText = isAutomaticSilenceDetectionEnabled.toText(),
         screen = SettingsScreenType.AutomaticSilenceDetectionSettings
     )
 
 }
 
 @Composable
-private fun Log(viewModel: SettingsScreenViewModel) {
+private fun Log(logLevel: LogLevel) {
 
     SettingsListItem(
         text = MR.strings.logSettings.stable,
-        secondaryText = viewModel.logLevel.collectAsState().value.text,
+        secondaryText = logLevel.text,
         screen = SettingsScreenType.LogSettings
     )
 
