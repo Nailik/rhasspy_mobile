@@ -2,13 +2,15 @@ package org.rhasspy.mobile.android.content.elements
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.glance.appwidget.lazy.LazyColumn
-import androidx.glance.appwidget.lazy.items
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.android.content.SecondaryContent
 import org.rhasspy.mobile.android.content.list.RadioButtonListItem
@@ -48,8 +50,8 @@ fun <E : IOption<*>> RadioButtonsEnumSelection(
         modifier = modifier.padding(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
-        LazyColumn {
-            items(values) { item ->
+        Column {
+            values.forEach { item ->
                 Column {
                     RadioButtonListItem(
                         modifier = Modifier.testTag(item),

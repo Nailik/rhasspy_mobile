@@ -15,6 +15,8 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
@@ -22,17 +24,17 @@ import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.android.requestMicrophonePermissions
-import org.rhasspy.mobile.viewmodel.settings.automaticsilencedetection.AutomaticSilenceDetectionSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class AutomaticSilenceDetectionSettingsContentTest {
+class AutomaticSilenceDetectionSettingsContentTest: KoinComponent {
 
     @get: Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
-    private val viewModel = AutomaticSilenceDetectionSettingsViewModel()
+    private val viewModel = SilenceDetectionSettingsViewModel( )
 
     @Before
     fun setUp() {
@@ -80,7 +82,7 @@ class AutomaticSilenceDetectionSettingsContentTest {
         //Automatic silence detection enabled
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onListItemSwitch().assertIsOn()
         //Automatic silence detection enabled saved
-        assertTrue { AutomaticSilenceDetectionSettingsViewModel().isAutomaticSilenceDetectionEnabled.value }
+        assertTrue { SilenceDetectionSettingsViewModel().isAutomaticSilenceDetectionEnabled.value }
         //settings visible
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration)
             .assertIsDisplayed()
@@ -93,7 +95,7 @@ class AutomaticSilenceDetectionSettingsContentTest {
         //silence detection time 5000 saved
         assertEquals(
             numberInputTest,
-            AutomaticSilenceDetectionSettingsViewModel().automaticSilenceDetectionMinimumTimeText.value
+            SilenceDetectionSettingsViewModel().automaticSilenceDetectionMinimumTimeText.value
         )
 
         //user changes silence detection time to 5000
@@ -104,7 +106,7 @@ class AutomaticSilenceDetectionSettingsContentTest {
         //silence detection time 5000 saved
         assertEquals(
             numberInputTest,
-            AutomaticSilenceDetectionSettingsViewModel().automaticSilenceDetectionTimeText.value
+            SilenceDetectionSettingsViewModel().automaticSilenceDetectionTimeText.value
         )
     }
 

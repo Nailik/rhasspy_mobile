@@ -5,9 +5,11 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
+import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
+import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
@@ -18,7 +20,6 @@ data class WakeWordConfigurationViewState(
     val wakeWordOption: WakeWordOption = ConfigurationSetting.wakeWordOption.value,
     val wakeWordPorcupineViewState: PorcupineViewState = PorcupineViewState(),
     val wakeWordUdpViewState: UdpViewState = UdpViewState(),
-    val isMicrophonePermissionRequestVisible: Boolean = false
 ) : IConfigurationEditViewState() {
 
     override val hasUnsavedChanges: Boolean
@@ -27,6 +28,9 @@ data class WakeWordConfigurationViewState(
                 wakeWordUdpViewState.hasUnsavedChanges.not())
 
     override val isTestingEnabled: Boolean get() = wakeWordOption != WakeWordOption.Disabled
+
+    val isMicrophonePermissionRequestVisible: Boolean get() =
+        !MicrophonePermission.granted.value && (wakeWordOption == WakeWordOption.Porcupine || wakeWordOption == WakeWordOption.Udp)
 
     @Stable
     data class PorcupineViewState(

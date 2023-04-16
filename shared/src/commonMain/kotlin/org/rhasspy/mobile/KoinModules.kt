@@ -60,7 +60,7 @@ import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
-import org.rhasspy.mobile.viewmodel.settings.automaticsilencedetection.AutomaticSilenceDetectionSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
@@ -192,7 +192,11 @@ val viewModelModule = module {
     single { LogScreenViewModel() }
     single { SettingsScreenViewModel() }
     single { AboutScreenViewModel() }
-    single { AutomaticSilenceDetectionSettingsViewModel() }
+    single {
+        SilenceDetectionSettingsViewModel(
+            nativeApplication = get()
+        )
+    }
     single { BackgroundServiceSettingsViewModel() }
     single { DeviceSettingsSettingsViewModel() }
     single { IndicationSettingsViewModel() }
