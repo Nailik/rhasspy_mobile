@@ -204,7 +204,11 @@ val viewModelModule = module {
     single { RecordedIndicationSoundSettingsViewModel() }
     single { ErrorIndicationSoundSettingsViewModel() }
     single { LanguageSettingsViewModel() }
-    single { LogSettingsViewModel() }
+    single {
+        LogSettingsViewModel(
+            nativeApplication = get()
+        )
+    }
     single { MicrophoneOverlaySettingsViewModel() }
     single { SaveAndRestoreSettingsViewModel() }
     single { MicrophoneOverlayViewModel() }

@@ -2,6 +2,7 @@ package org.rhasspy.mobile.android.settings.content
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import org.koin.androidx.compose.get
@@ -15,6 +16,7 @@ import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.*
 
 /**
  * Device Settings
@@ -27,6 +29,8 @@ import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsSettin
 @Composable
 fun DeviceSettingsContent(viewModel: DeviceSettingsSettingsViewModel = get()) {
 
+    val viewState by viewModel.viewState.collectAsState()
+
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreenType.DeviceSettings),
         title = MR.strings.device.stable
@@ -38,32 +42,32 @@ fun DeviceSettingsContent(viewModel: DeviceSettingsSettingsViewModel = get()) {
         SliderListItem(
             modifier = Modifier.testTag(TestTag.Volume),
             text = MR.strings.volume.stable,
-            value = viewModel.volume.collectAsState().value,
-            onValueChange = viewModel::updateVolume
+            value = viewState.volume,
+            onValueChange = { viewModel.onEvent(UpdateVolume(it)) }
         )
 
         //hot word enabled
         SwitchListItem(
             modifier = Modifier.testTag(TestTag.HotWord),
             text = MR.strings.hotWord.stable,
-            isChecked = viewModel.isHotWordEnabled.collectAsState().value,
-            onCheckedChange = viewModel::toggleHotWordEnabled
+            isChecked = viewState.isHotWordEnabled,
+            onCheckedChange = { viewModel.onEvent(SetHotWordEnabled(it)) }
         )
 
         //audio output enabled
         SwitchListItem(
             modifier = Modifier.testTag(TestTag.AudioOutput),
             text = MR.strings.audioOutput.stable,
-            isChecked = viewModel.isAudioOutputEnabled.collectAsState().value,
-            onCheckedChange = viewModel::toggleAudioOutputEnabled
+            isChecked = viewState.isAudioOutputEnabled,
+            onCheckedChange = { viewModel.onEvent(SetAudioOutputEnabled(it)) }
         )
 
         //intent handling enabled
         SwitchListItem(
             modifier = Modifier.testTag(TestTag.IntentHandling),
             text = MR.strings.intentHandling.stable,
-            isChecked = viewModel.isIntentHandlingEnabled.collectAsState().value,
-            onCheckedChange = viewModel::toggleIntentHandlingEnabled
+            isChecked = viewState.isIntentHandlingEnabled,
+            onCheckedChange = { viewModel.onEvent(SetIntentHandlingEnabled(it)) }
         )
 
     }

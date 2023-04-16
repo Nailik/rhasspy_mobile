@@ -3,19 +3,8 @@ package org.rhasspy.mobile.android.main
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.DialogProperties
@@ -33,6 +22,7 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.utils.isDebug
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.SetCrashlyticsEnabled
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 
 /**
@@ -101,7 +91,7 @@ private fun CrashlyticsDialog(viewModel: LogSettingsViewModel = get(), onClose: 
         confirmButton = {
             TextButton(
                 onClick = {
-                    viewModel.toggleCrashlyticsEnabled(true)
+                    viewModel.onEvent(SetCrashlyticsEnabled(true))
                     onClose()
                 },
                 modifier = Modifier.testTag(TestTag.DialogOk)
@@ -112,7 +102,7 @@ private fun CrashlyticsDialog(viewModel: LogSettingsViewModel = get(), onClose: 
         dismissButton = {
             TextButton(
                 onClick = {
-                    viewModel.toggleCrashlyticsEnabled(false)
+                    viewModel.onEvent(SetCrashlyticsEnabled(false))
                     onClose()
                 },
                 modifier = Modifier.testTag(TestTag.DialogOk)
