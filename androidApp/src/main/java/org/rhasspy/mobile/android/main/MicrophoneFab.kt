@@ -10,8 +10,6 @@ import androidx.compose.material.icons.filled.MicOff
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
@@ -23,7 +21,9 @@ import org.rhasspy.mobile.android.content.elements.FloatingActionButton
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
+import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent
+import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent.Action.UserSessionClick
+import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewState
 
 /**
  * Floating Action Button with microphone
@@ -32,18 +32,15 @@ import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 fun MicrophoneFab(
     modifier: Modifier = Modifier,
     iconSize: Dp,
-    viewModel: MicrophoneFabViewModel,
-    onClick: () -> Unit
+    viewState: MicrophoneFabViewState,
+    onEvent: (MicrophoneFabUiEvent) -> Unit
 ) {
-
-    val isActionEnabled by viewModel.isUserActionEnabled.collectAsState()
-    val isRecording by viewModel.isRecording.collectAsState()
 
     FloatingActionButton(
         modifier = modifier
             .testTag(TestTag.MicrophoneFab)
             .let {
-                if (viewModel.isShowBorder.collectAsState().value) {
+                if (viewState.isShowBorder) {
                     return@let it.border(
                         8.dp,
                         MaterialTheme.colorScheme.errorContainer,
@@ -52,18 +49,14 @@ fun MicrophoneFab(
                 }
                 it
             },
-        onClick = {
-            if (isActionEnabled) {
-                onClick()
-            }
-        },
-        isEnabled = isActionEnabled,
-        containerColor = getContainerColorForMicrophoneFab(isActionEnabled, isRecording),
-        contentColor = getContentColorForMicrophoneFab(isActionEnabled, isRecording),
+        onClick = { if (viewState.isUserActionEnabled) { onEvent(UserSessionClick) } },
+        isEnabled = viewState.isUserActionEnabled,
+        containerColor = getContainerColorForMicrophoneFab(viewState.isUserActionEnabled, viewState.isRecording),
+        contentColor = getContentColorForMicrophoneFab(viewState.isUserActionEnabled, viewState.isRecording),
         icon = {
             Icon(
                 modifier = Modifier.size(iconSize),
-                imageVector = if (viewModel.isShowMicOn.collectAsState().value) Icons.Filled.Mic else Icons.Filled.MicOff,
+                imageVector = if (viewState.isShowMicOn) Icons.Filled.Mic else Icons.Filled.MicOff,
                 contentDescription = MR.strings.wakeUp.stable,
             )
         }
@@ -92,7 +85,10 @@ fun getContentColorForMicrophoneFab(isActionEnabled: Boolean, isRecording: Boole
 
 @Composable
 @DrawableRes
-fun getContainerForMicrophoneFabLegacy(isActionEnabled: Boolean, isRecording: Boolean): Int {
+fun getContainerForMicrophoneFabLegacy(
+    isActionEnabled: Boolean,
+    isRecording: Boolean
+): Int {
     return when {
         isRecording -> R.drawable.microphone_widget_background_error
         isActionEnabled -> R.drawable.microphone_widget_background_primary

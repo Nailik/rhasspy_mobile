@@ -33,6 +33,7 @@ import org.rhasspy.mobile.android.main.MicrophoneFab
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
+import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent.Action.UserSessionClick
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.overlay.MicrophoneOverlayViewModel
 
@@ -58,9 +59,9 @@ object MicrophoneOverlay : KoinComponent {
         context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     }
 
-    private fun onClick() {
+    private fun onClick(microphoneViewModel: MicrophoneFabViewModel) {
         if (MicrophonePermission.granted.value) {
-            get<MicrophoneFabViewModel>().onClick()
+            microphoneViewModel.onEvent(UserSessionClick)
         } else {
             MainActivity.startRecordingAction()
         }
@@ -70,12 +71,12 @@ object MicrophoneOverlay : KoinComponent {
      * view that's displayed as overlay to start wake word detection
      */
     private fun getView(): ComposeView {
+        val microphoneViewModel = get<MicrophoneFabViewModel>()
         return ComposeView(context).apply {
             setContent {
                 AppTheme {
                     val size by viewModel.microphoneOverlaySize.collectAsState()
-
-                    val microphoneViewModel = get<MicrophoneFabViewModel>()
+                    val viewState by microphoneViewModel.viewState.collectAsState()
 
                     MicrophoneFab(
                         modifier = Modifier
@@ -88,8 +89,8 @@ object MicrophoneOverlay : KoinComponent {
                                 }
                             },
                         iconSize = (size * 0.4).dp,
-                        viewModel = microphoneViewModel,
-                        onClick = ::onClick
+                        viewState = viewState,
+                        onEvent = { onClick(microphoneViewModel) }
                     )
                 }
             }

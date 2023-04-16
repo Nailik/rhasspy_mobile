@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.android.widget
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import androidx.glance.*
 import androidx.glance.action.clickable
@@ -25,6 +27,7 @@ class MicrophoneWidget : GlanceAppWidget(), KoinComponent {
     @Suppress("StateFlowValueCalledInComposition") //suppress because it doesn't work in glance
     override fun Content() {
         val viewModel = get<MicrophoneFabViewModel>()
+        val viewState by viewModel.viewState.collectAsState()
 
         //used to mimic border, drawable necessary for rounded corner on older devices
         Box(
@@ -33,11 +36,11 @@ class MicrophoneWidget : GlanceAppWidget(), KoinComponent {
                 .fillMaxSize()
                 .background(
                     ImageProvider(
-                        if (viewModel.isShowBorder.value) {
+                        if (viewState.isShowBorder) {
                             R.drawable.microphone_widget_background_error
                         } else getContainerForMicrophoneFabLegacy(
-                            viewModel.isUserActionEnabled.value,
-                            viewModel.isRecording.value
+                            isActionEnabled = viewState.isUserActionEnabled,
+                            isRecording = viewState.isRecording
                         )
                     )
                 ),
@@ -52,8 +55,8 @@ class MicrophoneWidget : GlanceAppWidget(), KoinComponent {
                     .background(
                         ImageProvider(
                             getContainerForMicrophoneFabLegacy(
-                                viewModel.isUserActionEnabled.value,
-                                viewModel.isRecording.value
+                                isActionEnabled = viewState.isUserActionEnabled,
+                                isRecording = viewState.isRecording
                             )
                         )
                     ),
@@ -65,9 +68,9 @@ class MicrophoneWidget : GlanceAppWidget(), KoinComponent {
                         .size(48.dp),
                     provider = ImageProvider(
                         getMicrophoneFabIconLegacy(
-                            viewModel.isShowMicOn.value,
-                            viewModel.isUserActionEnabled.value,
-                            viewModel.isRecording.value
+                            isMicOn = viewState.isShowMicOn,
+                            isActionEnabled = viewState.isUserActionEnabled,
+                            isRecording = viewState.isRecording
                         )
                     ),
                     contentDescription = "translate(resource = MR.strings.microphone)",

@@ -20,6 +20,7 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent.Action.UserSessionClick
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent.Action.TogglePlayRecording
@@ -92,7 +93,7 @@ private fun PortraitContent(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Box(modifier = Modifier.weight(1f)) {
-            MicrophoneFab(get())
+            MicrophoneFabElement(get())
         }
 
         val isPlaying by viewState.isPlayingRecording.collectAsState()
@@ -126,7 +127,7 @@ fun LandscapeContent(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Box(modifier = Modifier.weight(1f)) {
-            MicrophoneFab(get())
+            MicrophoneFabElement(get())
         }
 
         val isPlaying by viewState.isPlayingRecording.collectAsState()
@@ -143,27 +144,27 @@ fun LandscapeContent(
 
 
 @Composable
-private fun MicrophoneFab(viewModel: MicrophoneFabViewModel) {
+private fun MicrophoneFabElement(viewModel: MicrophoneFabViewModel) {
     val viewState by viewModel.viewState.collectAsState()
 
     if(viewState.isMicrophonePermissionRequired) {
         RequiresMicrophonePermission(
             informationText = MR.strings.microphonePermissionInfoRecord.stable,
-            onClick = viewModel::onClick
+            onClick = { viewModel.onEvent(UserSessionClick) }
         ) { onClick ->
             MicrophoneFab(
                 modifier = Modifier.fillMaxSize(),
                 iconSize = 96.dp,
-                viewModel = viewModel,
-                onClick = onClick
+                viewState = viewState,
+                onEvent = { onClick() }
             )
         }
     } else {
         MicrophoneFab(
             modifier = Modifier.fillMaxSize(),
             iconSize = 96.dp,
-            viewModel = viewModel,
-            onClick =  viewModel::onClick
+            viewState = viewState,
+            onEvent = viewModel::onEvent
         )
     }
 }
