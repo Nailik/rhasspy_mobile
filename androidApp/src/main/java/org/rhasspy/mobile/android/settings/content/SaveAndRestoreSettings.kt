@@ -29,6 +29,8 @@ import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsViewModel
 
 /**
@@ -44,13 +46,13 @@ fun SaveAndRestoreSettingsContent(viewModel: SaveAndRestoreSettingsViewModel = g
     ) {
 
         //Save Settings
-        SaveSettings(viewModel)
+        SaveSettings(viewModel::onEvent)
 
         //Restore Settings
-        RestoreSettings(viewModel)
+        RestoreSettings(viewModel::onEvent)
 
         //Share Settings
-        ShareSettings(viewModel)
+        ShareSettings(viewModel::onEvent)
     }
 
 }
@@ -60,7 +62,7 @@ fun SaveAndRestoreSettingsContent(viewModel: SaveAndRestoreSettingsViewModel = g
  * Shows warning Dialog that the file contains sensitive information
  */
 @Composable
-private fun SaveSettings(viewModel: SaveAndRestoreSettingsViewModel) {
+private fun SaveSettings(onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit) {
 
     var openSaveSettingsDialog by remember { mutableStateOf(false) }
 
@@ -86,7 +88,7 @@ private fun SaveSettings(viewModel: SaveAndRestoreSettingsViewModel) {
         SaveSettingsDialog(
             onConfirm = {
                 openSaveSettingsDialog = false
-                viewModel.exportSettingsFile()
+                onEvent(ExportSettingsFile)
             },
             onDismiss = {
                 openSaveSettingsDialog = false
@@ -100,7 +102,7 @@ private fun SaveSettings(viewModel: SaveAndRestoreSettingsViewModel) {
  * shows dialog that current settings will be overwritten
  */
 @Composable
-private fun RestoreSettings(viewModel: SaveAndRestoreSettingsViewModel) {
+private fun RestoreSettings(onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit) {
 
     var openRestoreSettingsDialog by remember { mutableStateOf(false) }
 
@@ -127,7 +129,7 @@ private fun RestoreSettings(viewModel: SaveAndRestoreSettingsViewModel) {
         RestoreSettingsDialog(
             onConfirm = {
                 openRestoreSettingsDialog = false
-                viewModel.restoreSettingsFromFile()
+                onEvent(RestoreSettingsFromFile)
             },
             onDismiss = {
                 openRestoreSettingsDialog = false
@@ -138,11 +140,11 @@ private fun RestoreSettings(viewModel: SaveAndRestoreSettingsViewModel) {
 }
 
 @Composable
-private fun ShareSettings(viewModel: SaveAndRestoreSettingsViewModel) {
+private fun ShareSettings(onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit) {
 
     //restore settings
     ListElement(
-        modifier = Modifier.clickable(onClick = viewModel::shareSettingsFile),
+        modifier = Modifier.clickable(onClick = { onEvent(ShareSettingsFile) }),
         icon = {
             Icon(
                 imageVector = Icons.Filled.Share,
