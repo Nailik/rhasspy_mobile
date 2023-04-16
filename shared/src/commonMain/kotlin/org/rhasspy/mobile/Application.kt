@@ -56,7 +56,7 @@ abstract class Application : NativeApplication(), KoinComponent {
                 )
             }
 
-            logger.i { "######## Application started ########" }
+            logger.i { "######## Application \n started ########" }
 
             //initialize/load the settings, generate the MutableStateFlow
             AppSetting

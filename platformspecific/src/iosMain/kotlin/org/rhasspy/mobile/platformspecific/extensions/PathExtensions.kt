@@ -6,8 +6,6 @@ import okio.Path
 import okio.Source
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
-actual fun Path.Companion.commonExternalPath(fileName: String): Path = fileName.toPath()
-
 actual fun Path.Companion.commonInternalPath(nativeApplication: NativeApplication, fileName: String): Path = fileName.toPath()
 
 actual fun Path.commonDelete() {
@@ -20,7 +18,7 @@ actual fun Path.commonSource(): Source = FileSystem.SYSTEM.source(this)
 
 actual fun Path.commonReadWrite(): FileHandle = FileSystem.SYSTEM.openReadWrite(this, mustCreate = true, mustExist = false)
 
-actual inline fun <reified T> Path.commonDecode(): T = TODO()
+actual inline fun <reified T> Path.commonDecodeLogList(): T = TODO()
 
 actual fun Path.commonShare(nativeApplication: NativeApplication) {
     TODO()

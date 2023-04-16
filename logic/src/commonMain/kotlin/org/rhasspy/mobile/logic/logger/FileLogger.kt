@@ -18,13 +18,15 @@ import okio.Path
 import okio.buffer
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.logic.settings.AppSetting
-import org.rhasspy.mobile.platformspecific.extensions.commonDecode
+import org.rhasspy.mobile.platformspecific.extensions.commonDecodeLogList
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
 import org.rhasspy.mobile.platformspecific.extensions.commonSave
 import org.rhasspy.mobile.platformspecific.extensions.commonShare
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.platformspecific.toImmutableList
 
 object FileLogger : LogWriter(), KoinComponent {
     private val logger = Logger.withTag("FileLogger")
@@ -66,10 +68,9 @@ object FileLogger : LogWriter(), KoinComponent {
      */
     fun getLines(): ImmutableList<LogElement> {
         return try {
-            file.commonDecode()
+            file.commonDecodeLogList<Array<LogElement>>().toImmutableList()
         } catch (exception: Exception) {
             logger.e(exception) { "could not read log file" }
-            file.commonReadWrite().resize(0)
             persistentListOf()
         }
     }

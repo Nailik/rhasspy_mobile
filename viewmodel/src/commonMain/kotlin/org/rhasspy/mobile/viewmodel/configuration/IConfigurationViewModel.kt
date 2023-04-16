@@ -19,7 +19,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.logger.FileLogger
-import org.rhasspy.mobile.logic.logger.LogElement
+import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.logic.logger.LogLevel
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.settings.AppSetting
