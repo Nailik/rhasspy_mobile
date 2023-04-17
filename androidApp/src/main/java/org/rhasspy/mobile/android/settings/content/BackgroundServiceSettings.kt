@@ -8,13 +8,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BatteryAlert
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.Lifecycle
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.content.ComposableLifecycle
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.elements.toText
@@ -26,6 +25,8 @@ import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Action.DisableBatteryOptimization
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Change.SetBackgroundServiceEnabled
 
 /**
  * background service
@@ -35,6 +36,8 @@ import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundService
 @Preview
 @Composable
 fun BackgroundServiceSettingsContent(viewModel: BackgroundServiceSettingsViewModel = get()) {
+
+    val viewState by viewModel.viewState.collectAsState()
 
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreenType.BackgroundServiceSettings),
@@ -47,28 +50,21 @@ fun BackgroundServiceSettingsContent(viewModel: BackgroundServiceSettingsViewMod
         SwitchListItem(
             modifier = Modifier.testTag(TestTag.EnabledSwitch),
             text = MR.strings.enableBackground.stable,
-            isChecked = viewModel.isBackgroundServiceEnabled.collectAsState().value,
-            onCheckedChange = viewModel::toggleBackgroundServiceEnabled
+            isChecked = viewState.isBackgroundServiceEnabled,
+            onCheckedChange = { viewModel.onEvent(SetBackgroundServiceEnabled(it)) }
         )
-
-        //tell viewModel when ui is resumed
-        ComposableLifecycle { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                viewModel.onResume()
-            }
-        }
 
         //visibility of battery optimization
         AnimatedVisibility(
             enter = expandVertically(),
             exit = shrinkVertically(),
-            visible = viewModel.isBatteryOptimizationVisible.collectAsState().value
+            visible = !viewState.isBatteryOptimizationDisabled
         ) {
 
             //background battery optimization on/off
             ListElement(
                 modifier = Modifier
-                    .clickable(onClick = viewModel::onDisableBatteryOptimization)
+                    .clickable(onClick = { viewModel.onEvent(DisableBatteryOptimization) })
                     .testTag(TestTag.BatteryOptimization),
                 icon = {
                     Icon(
@@ -80,7 +76,7 @@ fun BackgroundServiceSettingsContent(viewModel: BackgroundServiceSettingsViewMod
                     Text(MR.strings.batteryOptimization.stable)
                 },
                 secondaryText = {
-                    Text(viewModel.isBatteryOptimizationDisabled.collectAsState().value.toText())
+                    Text(viewState.isBatteryOptimizationDisabled.toText())
                 },
             )
 

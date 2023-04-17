@@ -39,13 +39,10 @@ fun MicrophoneOverlaySettingsContent(viewModel: MicrophoneOverlaySettingsViewMod
         Column {
 
             //overlay permission request
-            RequiresOverlayPermission({ option ->
-                option?.also {
-                    viewModel.selectMicrophoneOverlayOptionSize(
-                        it
-                    )
-                }
-            }) { onClick ->
+            RequiresOverlayPermission(
+                initialData = viewModel.microphoneOverlaySizeOption.collectAsState().value,
+                onClick = { option -> viewModel.selectMicrophoneOverlayOptionSize(option) }
+            ) { onClick ->
 
                 //drop down to select option
                 RadioButtonsEnumSelection(

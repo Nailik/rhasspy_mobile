@@ -6,14 +6,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -35,20 +28,16 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.content.OnPauseEffect
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
-import org.rhasspy.mobile.android.content.list.InformationListElement
-import org.rhasspy.mobile.android.content.list.ListElement
-import org.rhasspy.mobile.android.content.list.SliderListItem
-import org.rhasspy.mobile.android.content.list.SwitchListItem
-import org.rhasspy.mobile.android.content.list.TextFieldListItem
+import org.rhasspy.mobile.android.content.list.*
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.ToggleAudioLevelTest
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
 
@@ -228,7 +217,7 @@ private fun StartTestButton(
 
     RequiresMicrophonePermission(
         informationText = MR.strings.microphonePermissionInfoRecord.stable,
-        onClick = { onEvent(SilenceDetectionSettingsUiEvent.Action.ToggleAudioLevelTest) }
+        onClick = { onEvent(ToggleAudioLevelTest) }
     ) { onClick ->
         ListElement {
             Column(modifier = Modifier.fillMaxWidth()) {

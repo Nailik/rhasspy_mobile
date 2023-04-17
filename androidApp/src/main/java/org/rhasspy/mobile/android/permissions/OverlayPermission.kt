@@ -32,10 +32,11 @@ import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
  */
 @Composable
 fun <T : Any> RequiresOverlayPermission(
-    onClick: (data: T?) -> Unit,
-    content: @Composable (onClick: (data: T?) -> Unit) -> Unit
+    initialData: T,
+    onClick: (data: T) -> Unit,
+    content: @Composable (onClick: (data: T) -> Unit) -> Unit
 ) {
-    var currentData by rememberSaveable { mutableStateOf<T?>(null) }
+    var currentData by rememberSaveable { mutableStateOf(initialData) }
     var openRequestPermissionDialog by remember { mutableStateOf(false) }
 
     if (openRequestPermissionDialog) {

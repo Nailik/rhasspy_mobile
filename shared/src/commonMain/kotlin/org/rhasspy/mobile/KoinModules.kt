@@ -197,7 +197,11 @@ val viewModelModule = module {
             nativeApplication = get()
         )
     }
-    single { BackgroundServiceSettingsViewModel() }
+    single {
+        BackgroundServiceSettingsViewModel(
+            nativeApplication = get()
+        )
+    }
     single { DeviceSettingsSettingsViewModel() }
     single { IndicationSettingsViewModel() }
     single { WakeIndicationSoundSettingsViewModel() }
