@@ -2,8 +2,6 @@ package org.rhasspy.mobile.android.content.elements
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
@@ -23,15 +21,13 @@ fun <E : IOption<*>> RadioButtonsEnumSelectionList(
     values: ImmutableList<E>
 ) {
     Column(modifier = modifier) {
-        LazyColumn {
-            items(values) { item ->
-                RadioButtonListItem(
-                    modifier = Modifier.testTag(item),
-                    text = item.text,
-                    isChecked = selected == item,
-                    onClick = { onSelect(item) }
-                )
-            }
+        values.forEach { item ->
+            RadioButtonListItem(
+                modifier = Modifier.testTag(item),
+                text = item.text,
+                isChecked = selected == item,
+                onClick = { onSelect(item) }
+            )
         }
     }
 }

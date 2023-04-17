@@ -39,6 +39,7 @@ class InternalAudioPlayer(
         timeoutJob = null
         logger.v { "stop" }
         try {
+            volumeChange.cancel()
             mediaPlayer.stop()
             mediaPlayer.release()
         } catch (exception: Exception) {
@@ -81,7 +82,14 @@ class InternalAudioPlayer(
 
     private var volumeChange = CoroutineScope(Dispatchers.IO).launch(start = CoroutineStart.LAZY) {
         volume.collect {
-            mediaPlayer.setVolume(volume.value, volume.value)
+            try {
+                if (mediaPlayer.isPlaying) {
+                    mediaPlayer.setVolume(volume.value, volume.value)
+                }
+            } catch (exception: Exception) {
+                //eventually called in false state (not yet playing, already stopped)
+                logger.a(exception) { "crash on volume change" }
+            }
         }
     }
 
@@ -108,6 +116,7 @@ class InternalAudioPlayer(
     private fun onMediaPlayerCompletion() {
         logger.v { "onMediaPlayerCompletion" }
         timeoutJob?.cancel()
+        volumeChange.cancel()
         timeoutJob = null
         mediaPlayer.stop()
         mediaPlayer.release()
@@ -120,6 +129,7 @@ class InternalAudioPlayer(
     private fun onMediaPlayerError() {
         logger.v { "onMediaPlayerError" }
         timeoutJob?.cancel()
+        volumeChange.cancel()
         timeoutJob = null
         mediaPlayer.stop()
         mediaPlayer.release()

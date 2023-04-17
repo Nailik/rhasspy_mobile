@@ -4,8 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -119,7 +117,7 @@ fun IndicationSoundScreen(
  * list element for sound item
  */
 @Composable
-private fun ColumnScope.SoundElements(
+private fun SoundElements(
     soundSetting: String,
     customSoundFiles: ImmutableList<String>,
     onEvent: (IIndicationSoundSettingsUiEvent) -> Unit
@@ -140,11 +138,8 @@ private fun ColumnScope.SoundElements(
     )
 
     //added files
-    LazyColumn(
-        modifier = Modifier.weight(1f)
-    ) {
-
-        items(customSoundFiles) { item ->
+    Column {
+        customSoundFiles.forEach { item ->
             SoundListItem(
                 isSelected = item == soundSetting,
                 soundFile = item,
