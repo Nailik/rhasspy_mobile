@@ -19,7 +19,6 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationTest
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import kotlin.test.assertTrue
 

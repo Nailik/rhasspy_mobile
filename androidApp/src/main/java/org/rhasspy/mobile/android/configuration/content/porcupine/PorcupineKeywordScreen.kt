@@ -31,7 +31,7 @@ import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 
 /**
@@ -43,7 +43,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 @Composable
 fun PorcupineKeywordScreen(
     viewState: PorcupineViewState,
-    onAction: (PorcupineUiAction) -> Unit
+    onEvent: (PorcupineUiEvent) -> Unit
 ) {
 
     val navController = rememberNavController()
@@ -94,12 +94,12 @@ fun PorcupineKeywordScreen(
                     if (page == 0) {
                         PorcupineKeywordDefaultScreen(
                             viewState = viewState,
-                            onAction = onAction
+                            onEvent = onEvent
                         )
                     } else {
                         PorcupineKeywordCustomScreen(
                             viewState = viewState,
-                            onAction = onAction
+                            onEvent = onEvent
                         )
                     }
                 }

@@ -40,9 +40,8 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationTestViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListAutoscroll
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListFiltered
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
 
 /**
  * screen that's shown when a configuration is being tested
@@ -50,7 +49,7 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfig
 @Composable
 fun ConfigurationScreenTest(
     viewState: ConfigurationTestViewState,
-    onAction: (IConfigurationTestUiAction) -> Unit,
+    onAction: (IConfigurationUiEvent) -> Unit,
     content: (@Composable () -> Unit)?
 ) {
     SetSystemColor(1.dp)
@@ -147,7 +146,7 @@ private fun ConfigurationScreenTestList(
 @Composable
 private fun AppBar(
     viewState: ConfigurationTestViewState,
-    onAction: (IConfigurationTestUiAction) -> Unit,
+    onAction: (IConfigurationUiEvent) -> Unit,
     title: StableStringResource,
     onBackClick: () -> Unit,
     icon: @Composable () -> Unit
@@ -178,7 +177,7 @@ private fun AppBar(
                     contentDescription = MR.strings.filterList.stable
                 )
             }
-            IconButton(onClick = { onAction(ToggleListAutoscroll) }) {
+            IconButton(onClick = { onAction(IConfigurationUiEvent.Action.ToggleListAutoscroll) }) {
                 Icon(
                     imageVector = if (viewState.isListAutoscroll) Icons.Filled.LowPriority else Icons.Filled.PlaylistRemove,
                     contentDescription = MR.strings.autoscrollList.stable

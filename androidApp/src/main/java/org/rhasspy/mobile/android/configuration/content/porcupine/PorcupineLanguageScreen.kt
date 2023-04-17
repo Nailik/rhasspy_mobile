@@ -22,8 +22,8 @@ import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.SelectWakeWordPorcupineLanguage
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SelectWakeWordPorcupineLanguage
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 
 /**
@@ -32,7 +32,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 @Composable
 fun PorcupineLanguageScreen(
     viewState: PorcupineViewState,
-    onAction: (PorcupineUiAction) -> Unit
+    onEvent: (PorcupineUiEvent) -> Unit
 ) {
 
     Scaffold(
@@ -52,7 +52,7 @@ fun PorcupineLanguageScreen(
                         modifier = Modifier.testTag(IOption = option),
                         text = option.text,
                         isChecked = viewState.porcupineLanguage == option,
-                        onClick = { onAction(SelectWakeWordPorcupineLanguage(option)) }
+                        onClick = { onEvent(SelectWakeWordPorcupineLanguage(option)) }
                     )
 
                     CustomDivider()

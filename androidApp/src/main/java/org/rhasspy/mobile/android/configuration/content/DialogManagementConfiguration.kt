@@ -21,11 +21,8 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiAction
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiAction.ChangeIntentRecognitionTimeout
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiAction.ChangeRecordingTimeout
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiAction.ChangeTextAsrTimeout
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiAction.SelectDialogManagementOption
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewState
 
@@ -50,7 +47,7 @@ fun DialogManagementConfigurationContent(viewModel: DialogManagementConfiguratio
         item {
             DialogManagementOptionContent(
                 viewState = contentViewState,
-                onAction = viewModel::onAction
+                onAction = viewModel::onEvent
             )
         }
 
@@ -61,7 +58,7 @@ fun DialogManagementConfigurationContent(viewModel: DialogManagementConfiguratio
 @Composable
 private fun DialogManagementOptionContent(
     viewState: DialogManagementConfigurationViewState,
-    onAction: (DialogManagementConfigurationUiAction) -> Unit
+    onAction: (DialogManagementConfigurationUiEvent) -> Unit
 ) {
     //drop down to select option
     RadioButtonsEnumSelection(
@@ -95,7 +92,7 @@ private fun LocalDialogManagementSettings(
     textAsrTimeoutText: String,
     intentRecognitionTimeoutText: String,
     recordingTimeoutText: String,
-    onAction: (DialogManagementConfigurationUiAction) -> Unit
+    onAction: (DialogManagementConfigurationUiEvent) -> Unit
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {

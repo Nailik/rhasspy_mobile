@@ -3,7 +3,7 @@ package org.rhasspy.mobile.viewmodel.configuration
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.ui.event.StateEvent.Consumed
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.PopBackStack
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiNavigate.PopBackStack
 
 @Stable
 data class ConfigurationViewState<V : IConfigurationEditViewState>(

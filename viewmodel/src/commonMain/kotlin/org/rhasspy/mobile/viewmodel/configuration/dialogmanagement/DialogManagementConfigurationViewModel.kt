@@ -6,12 +6,10 @@ import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceParams
+import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiAction.ChangeIntentRecognitionTimeout
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiAction.ChangeRecordingTimeout
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiAction.ChangeTextAsrTimeout
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiAction.SelectDialogManagementOption
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
 
 /**
  * ViewModel for Dialog Management Configuration
@@ -21,21 +19,19 @@ import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagem
  */
 @Stable
 class DialogManagementConfigurationViewModel(
-    service: DialogManagerService,
-    testRunner: DialogManagementConfigurationTest
-) : IConfigurationViewModel<DialogManagementConfigurationTest, DialogManagementConfigurationViewState>(
+    service: DialogManagerService
+) : IConfigurationViewModel<DialogManagementConfigurationViewState>(
     service = service,
-    testRunner = testRunner,
     initialViewState = ::DialogManagementConfigurationViewState
 ) {
 
-    fun onAction(action: DialogManagementConfigurationUiAction) {
+    fun onEvent(event: DialogManagementConfigurationUiEvent) {
         contentViewState.update {
-            when (action) {
-                is ChangeIntentRecognitionTimeout -> it.copy(intentRecognitionTimeoutText = action.value)
-                is ChangeRecordingTimeout -> it.copy(recordingTimeoutText = action.value)
-                is ChangeTextAsrTimeout -> it.copy(textAsrTimeoutText = action.value)
-                is SelectDialogManagementOption -> it.copy(dialogManagementOption = action.option)
+            when (event) {
+                is ChangeIntentRecognitionTimeout -> it.copy(intentRecognitionTimeoutText = event.timeout)
+                is ChangeRecordingTimeout -> it.copy(recordingTimeoutText = event.timeout)
+                is ChangeTextAsrTimeout -> it.copy(textAsrTimeoutText = event.timeout)
+                is SelectDialogManagementOption -> it.copy(dialogManagementOption = event.option)
             }
         }
     }
@@ -58,6 +54,7 @@ class DialogManagementConfigurationViewModel(
                 )
             )
         }
+        get<MqttService>()
     }
 
 }

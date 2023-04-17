@@ -37,14 +37,14 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.PorcupineCustomKeywordUi
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.ClickPorcupineKeywordCustom
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.DeletePorcupineKeywordCustom
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.TogglePorcupineKeywordCustom
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.UndoCustomKeywordDeleted
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.UpdateWakeWordPorcupineKeywordCustomSensitivity
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Navigate.AddCustomPorcupineKeyword
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Navigate.DownloadCustomPorcupineKeyword
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.ClickPorcupineKeywordCustom
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.DeletePorcupineKeywordCustom
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.TogglePorcupineKeywordCustom
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UndoCustomKeywordDeleted
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineKeywordCustomSensitivity
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.AddCustomPorcupineKeyword
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.DownloadCustomPorcupineKeyword
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 
 /**
@@ -53,7 +53,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 @Composable
 fun PorcupineKeywordCustomScreen(
     viewState: PorcupineViewState,
-    onAction: (PorcupineUiAction) -> Unit
+    onEvent: (PorcupineUiEvent) -> Unit
 ) {
 
     Column(
@@ -72,16 +72,16 @@ fun PorcupineKeywordCustomScreen(
             itemsIndexed(viewState.customOptionsUi) { index, option ->
 
                 KeywordListItem(
-                    option,
-                    index,
-                    onAction
+                    option = option,
+                    index = index,
+                    onEvent = onEvent
                 )
 
                 CustomDivider()
             }
         }
 
-        CustomKeywordsActionButtons(onAction = onAction)
+        CustomKeywordsActionButtons(onAction = onEvent)
 
     }
 
@@ -94,24 +94,24 @@ fun PorcupineKeywordCustomScreen(
 private fun KeywordListItem(
     option: PorcupineCustomKeywordUi,
     index: Int,
-    onAction: (PorcupineUiAction) -> Unit
+    onEvent: (PorcupineUiEvent) -> Unit
 ) {
     if (option.deleted) {
         //small item to be deleted
         CustomKeywordDeletedListItem(
             modifier = Modifier.testTag(option.keyword.fileName),
             keyword = option.keyword,
-            onUndo = { onAction(UndoCustomKeywordDeleted(index)) }
+            onUndo = { onEvent(UndoCustomKeywordDeleted(index)) }
         )
     } else {
         //normal item
         CustomKeywordListItem(
             modifier = Modifier.testTag(option.keyword.fileName),
             keyword = option.keyword,
-            onClick = { onAction(ClickPorcupineKeywordCustom(index)) },
-            onToggle = { onAction(TogglePorcupineKeywordCustom(index, it)) },
-            onDelete = { onAction(DeletePorcupineKeywordCustom(index)) },
-            onUpdateSensitivity = { onAction(UpdateWakeWordPorcupineKeywordCustomSensitivity(index, it)) }
+            onClick = { onEvent(ClickPorcupineKeywordCustom(index)) },
+            onToggle = { onEvent(TogglePorcupineKeywordCustom(index, it)) },
+            onDelete = { onEvent(DeletePorcupineKeywordCustom(index)) },
+            onUpdateSensitivity = { onEvent(UpdateWakeWordPorcupineKeywordCustomSensitivity(index, it)) }
         )
     }
 }
@@ -202,7 +202,7 @@ private fun CustomKeywordDeletedListItem(
  * custom keywords action buttons (download and open file)
  */
 @Composable
-private fun CustomKeywordsActionButtons(onAction: (PorcupineUiAction) -> Unit) {
+private fun CustomKeywordsActionButtons(onAction: (PorcupineUiEvent) -> Unit) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier

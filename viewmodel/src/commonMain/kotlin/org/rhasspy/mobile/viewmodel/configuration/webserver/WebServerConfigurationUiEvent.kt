@@ -2,9 +2,9 @@ package org.rhasspy.mobile.viewmodel.configuration.webserver
 
 import okio.Path
 
-sealed interface WebServerConfigurationUiAction {
+sealed interface WebServerConfigurationUiEvent {
 
-    sealed interface Change : WebServerConfigurationUiAction {
+    sealed interface Change : WebServerConfigurationUiEvent {
         data class SetHttpServerEnabled(val value: Boolean) : Change
         data class UpdateHttpServerPort(val value: String) : Change
         data class SetHttpServerSSLEnabled(val value: Boolean) : Change
@@ -14,9 +14,9 @@ sealed interface WebServerConfigurationUiAction {
         data class SetHttpServerSSLKeyStoreFile(val value: Path) : Change
     }
 
-    sealed interface Navigate : WebServerConfigurationUiAction {
-        object OpenWebServerSSLWiki : Navigate
-        object SelectSSLCertificate : Navigate
+    sealed interface Action : WebServerConfigurationUiEvent {
+        object OpenWebServerSSLWiki : Action
+        object SelectSSLCertificate : Action
     }
 
 }

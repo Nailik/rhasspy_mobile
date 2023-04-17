@@ -1,21 +1,27 @@
 package org.rhasspy.mobile.viewmodel.configuration.audioplaying
 
 import androidx.compose.runtime.Stable
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
+import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingServiceParams
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.logic.services.localaudio.LocalAudioServiceParams
+import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.mqtt.MqttServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
+import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiAction.ChangeAudioPlayingHttpEndpoint
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiAction.ChangeAudioPlayingMqttSiteId
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiAction.SelectAudioOutputOption
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiAction.SelectAudioPlayingOption
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiAction.ToggleUseCustomHttpEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.*
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
 
 /**
  * ViewModel for Audio Playing Configuration
@@ -27,23 +33,34 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
  */
 @Stable
 class AudioPlayingConfigurationViewModel(
-    service: AudioPlayingService,
-    testRunner: AudioPlayingConfigurationTest
-) : IConfigurationViewModel<AudioPlayingConfigurationTest, AudioPlayingConfigurationViewState>(
+    service: AudioPlayingService
+) : IConfigurationViewModel<AudioPlayingConfigurationViewState>(
     service = service,
-    testRunner = testRunner,
     initialViewState = ::AudioPlayingConfigurationViewState
 ) {
 
-    fun onAction(action: AudioPlayingConfigurationUiAction) {
+    fun onEvent(change: AudioPlayingConfigurationUiEvent) {
+        when(change) {
+            is Change -> onChange(change)
+            is Action -> onAction(change)
+        }
+    }
+
+    private fun onChange(change: Change) {
         contentViewState.update {
-            when (action) {
-                is SelectAudioPlayingOption -> it.copy(audioPlayingOption = action.option)
-                is SelectAudioOutputOption -> it.copy(audioOutputOption = action.option)
-                ToggleUseCustomHttpEndpoint -> it.copy(isUseCustomAudioPlayingHttpEndpoint = !it.isUseCustomAudioPlayingHttpEndpoint)
-                is ChangeAudioPlayingHttpEndpoint -> it.copy(audioPlayingHttpEndpoint = action.value)
-                is ChangeAudioPlayingMqttSiteId -> it.copy(audioPlayingMqttSiteId = action.value)
+            when (change) {
+                is SelectAudioPlayingOption -> it.copy(audioPlayingOption = change.option)
+                is SelectAudioOutputOption -> it.copy(audioOutputOption = change.option)
+                is SetUseCustomHttpEndpoint -> it.copy(isUseCustomAudioPlayingHttpEndpoint = change.enabled)
+                is ChangeAudioPlayingHttpEndpoint -> it.copy(audioPlayingHttpEndpoint = change.enabled)
+                is ChangeAudioPlayingMqttSiteId -> it.copy(audioPlayingMqttSiteId = change.siteId)
             }
+        }
+    }
+
+    private fun onAction(action: Action) {
+        when(action) {
+            PlayTestAudio -> playTestAudio()
         }
     }
 
@@ -90,6 +107,18 @@ class AudioPlayingConfigurationViewModel(
         }
     }
 
-    fun playTestAudio() = testRunner.playTestAudio()
+    private fun playTestAudio() {
+        testScope.launch {
+            if (get<AudioPlayingServiceParams>().audioPlayingOption == AudioPlayingOption.RemoteMQTT) {
+                //await for mqtt service to start if necessary
+                get<MqttService>()
+                    .isHasStarted
+                    .map { it }
+                    .distinctUntilChanged()
+                    .first { it }
+            }
+            get<AudioPlayingService>().playAudio(AudioSource.Resource(MR.files.etc_wav_beep_hi))
+        }
+    }
 
 }

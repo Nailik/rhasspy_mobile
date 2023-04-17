@@ -17,45 +17,44 @@ import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.Change
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.Change.SelectWakeWordOption
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.Navigate
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.Navigate.MicrophonePermissionAllowed
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.AddPorcupineKeywordCustom
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.ClickPorcupineKeywordCustom
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.ClickPorcupineKeywordDefault
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.DeletePorcupineKeywordCustom
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.SelectWakeWordPorcupineLanguage
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.TogglePorcupineKeywordCustom
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.TogglePorcupineKeywordDefault
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.UndoCustomKeywordDeleted
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.UpdateWakeWordPorcupineAccessToken
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.UpdateWakeWordPorcupineKeywordCustomSensitivity
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.UpdateWakeWordPorcupineKeywordDefaultSensitivity
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Navigate.AddCustomPorcupineKeyword
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Navigate.DownloadCustomPorcupineKeyword
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Navigate.OpenPicoVoiceConsole
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.UdpUiAction
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.UdpUiAction.Change.UpdateUdpOutputHost
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.UdpUiAction.Change.UpdateUdpOutputPort
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.MicrophonePermissionAllowed
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.TestStartWakeWord
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.AddPorcupineKeywordCustom
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.ClickPorcupineKeywordCustom
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.ClickPorcupineKeywordDefault
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.DeletePorcupineKeywordCustom
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SelectWakeWordPorcupineLanguage
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.TogglePorcupineKeywordCustom
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.TogglePorcupineKeywordDefault
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UndoCustomKeywordDeleted
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineKeywordCustomSensitivity
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineKeywordDefaultSensitivity
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.AddCustomPorcupineKeyword
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.DownloadCustomPorcupineKeyword
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.OpenPicoVoiceConsole
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
 
 @Stable
 class WakeWordConfigurationViewModel(
-    service: WakeWordService,
-    testRunner: WakeWordConfigurationTest
-) : IConfigurationViewModel<WakeWordConfigurationTest, WakeWordConfigurationViewState>(
+    service: WakeWordService
+) : IConfigurationViewModel<WakeWordConfigurationViewState>(
     service = service,
-    testRunner = testRunner,
     initialViewState = ::WakeWordConfigurationViewState
 ) {
 
-    fun onAction(action: WakeWordConfigurationUiAction) {
-        when (action) {
-            is Change -> onChange(action)
-            is Navigate -> onNavigate(action)
-            is PorcupineUiAction -> onPorcupineAction(action)
-            is UdpUiAction -> onUdpAction(action)
+    fun onEvent(event: WakeWordConfigurationUiEvent) {
+        when (event) {
+            is Change -> onChange(event)
+            is Action -> onAction(event)
+            is PorcupineUiEvent -> onPorcupineAction(event)
+            is UdpUiEvent -> onUdpAction(event)
         }
     }
 
@@ -67,23 +66,21 @@ class WakeWordConfigurationViewModel(
         }
     }
 
-    private fun onNavigate(navigate: Navigate) {
-        when (navigate) {
-            MicrophonePermissionAllowed ->
-                if (!contentViewState.value.hasUnsavedChanges) {
-                    save()
-                }
-        }
-    }
-
-    private fun onPorcupineAction(action: PorcupineUiAction) {
+    private fun onAction(action: Action) {
         when (action) {
-            is PorcupineUiAction.Change -> onPorcupineChange(action)
-            is PorcupineUiAction.Navigate -> onPorcupineNavigate(action)
+            MicrophonePermissionAllowed -> if (!contentViewState.value.hasUnsavedChanges) { save() }
+            TestStartWakeWord ->  startWakeWordDetection()
         }
     }
 
-    private fun onPorcupineChange(change: PorcupineUiAction.Change) {
+    private fun onPorcupineAction(action: PorcupineUiEvent) {
+        when (action) {
+            is PorcupineUiEvent.Change -> onPorcupineChange(action)
+            is PorcupineUiEvent.Action -> onPorcupineNavigate(action)
+        }
+    }
+
+    private fun onPorcupineChange(change: PorcupineUiEvent.Change) {
         contentViewState.update { contentViewState ->
             val it = contentViewState.wakeWordPorcupineViewState
             contentViewState.copy(
@@ -149,8 +146,8 @@ class WakeWordConfigurationViewModel(
         }
     }
 
-    private fun onPorcupineNavigate(navigate: PorcupineUiAction.Navigate) {
-        when (navigate) {
+    private fun onPorcupineNavigate(action: PorcupineUiEvent.Action) {
+        when (action) {
             AddCustomPorcupineKeyword -> addCustomPorcupineKeyword()
             DownloadCustomPorcupineKeyword -> openLink("https://console.picovoice.ai/ppn")
             OpenPicoVoiceConsole -> openLink("https://console.picovoice.ai")
@@ -170,13 +167,13 @@ class WakeWordConfigurationViewModel(
         }
     }
 
-    private fun onUdpAction(action: UdpUiAction) {
+    private fun onUdpAction(action: UdpUiEvent) {
         when (action) {
-            is UdpUiAction.Change -> onUdpChange(action)
+            is UdpUiEvent.Change -> onUdpChange(action)
         }
     }
 
-    private fun onUdpChange(change: UdpUiAction.Change) {
+    private fun onUdpChange(change: UdpUiEvent.Change) {
         contentViewState.update { contentViewState ->
             val it = contentViewState.wakeWordUdpViewState
             contentViewState.copy(
@@ -232,6 +229,8 @@ class WakeWordConfigurationViewModel(
         }
     }
 
-    fun startWakeWordDetection() = testRunner.startWakeWordDetection()
+    private fun startWakeWordDetection() {
+        get<WakeWordService>().startDetection()
+    }
 
 }

@@ -19,8 +19,7 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationTest
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.SetHttpSSLVerificationDisabled
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.SetHttpSSLVerificationDisabled
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewState
 import kotlin.test.assertEquals
@@ -67,7 +66,7 @@ class RemoteHermesHttpConfigurationContentTest {
      */
     @Test
     fun testHttpContent() = runBlocking {
-        viewModel.onAction(SetHttpSSLVerificationDisabled(true))
+        viewModel.onEvent(SetHttpSSLVerificationDisabled(true))
         viewModel.save()
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()

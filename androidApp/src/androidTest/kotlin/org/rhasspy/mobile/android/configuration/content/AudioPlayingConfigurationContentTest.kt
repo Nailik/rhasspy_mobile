@@ -25,8 +25,7 @@ import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationTest
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiAction.SelectAudioPlayingOption
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.SelectAudioPlayingOption
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewState
 import kotlin.test.assertEquals
@@ -78,7 +77,7 @@ class AudioPlayingConfigurationContentTest {
      */
     @Test
     fun testEndpoint() = runBlocking {
-        viewModel.onAction(SelectAudioPlayingOption(AudioPlayingOption.Disabled))
+        viewModel.onEvent(SelectAudioPlayingOption(AudioPlayingOption.Disabled))
         viewModel.save()
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
@@ -148,7 +147,7 @@ class AudioPlayingConfigurationContentTest {
      */
     @Test
     fun testLocalOutput() = runBlocking {
-        viewModel.onAction(SelectAudioPlayingOption(AudioPlayingOption.Disabled))
+        viewModel.onEvent(SelectAudioPlayingOption(AudioPlayingOption.Disabled))
         viewModel.save()
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()

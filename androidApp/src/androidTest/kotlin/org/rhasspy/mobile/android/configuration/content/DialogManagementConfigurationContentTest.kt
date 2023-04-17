@@ -17,8 +17,7 @@ import org.rhasspy.mobile.android.onListItemRadioButton
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationTest
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiAction.SelectDialogManagementOption
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.SelectDialogManagementOption
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewState
 import kotlin.test.assertEquals
@@ -58,7 +57,7 @@ class DialogManagementConfigurationContentTest {
      */
     @Test
     fun testEndpoint() = runBlocking {
-        viewModel.onAction(SelectDialogManagementOption(DialogManagementOption.Disabled))
+        viewModel.onEvent(SelectDialogManagementOption(DialogManagementOption.Disabled))
         viewModel.onSave()
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()

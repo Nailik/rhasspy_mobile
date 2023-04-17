@@ -23,7 +23,6 @@ import org.rhasspy.mobile.android.onNodeWithCombinedTag
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.PorcupineKeywordOption
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationTest
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 import kotlin.test.assertFalse

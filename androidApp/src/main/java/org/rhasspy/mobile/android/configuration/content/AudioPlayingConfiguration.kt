@@ -26,12 +26,9 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiAction
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiAction.ChangeAudioPlayingHttpEndpoint
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiAction.ChangeAudioPlayingMqttSiteId
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiAction.SelectAudioOutputOption
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiAction.SelectAudioPlayingOption
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiAction.ToggleUseCustomHttpEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action.PlayTestAudio
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewState
 
@@ -53,13 +50,13 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
         viewState = viewState,
         onAction = { viewModel.onAction(it) },
         onConsumed = { viewModel.onConsumed(it) },
-        testContent = { TestContent(viewModel) }
+        testContent = { TestContent(viewModel::onEvent) }
     ) {
 
         item {
             AudioPlayingOptionContent(
                 viewState = contentViewState,
-                onAction = viewModel::onAction
+                onEvent = viewModel::onEvent
             )
         }
     }
@@ -69,14 +66,14 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
 @Composable
 private fun AudioPlayingOptionContent(
     viewState: AudioPlayingConfigurationViewState,
-    onAction: (AudioPlayingConfigurationUiAction) -> Unit
+    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
 ) {
 
     //radio buttons list of available values
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.AudioPlayingOptions),
         selected = viewState.audioPlayingOption,
-        onSelect = { onAction(SelectAudioPlayingOption(it)) },
+        onSelect = { onEvent(SelectAudioPlayingOption(it)) },
         values = viewState.audioPlayingOptionList
     ) { option ->
 
@@ -84,18 +81,18 @@ private fun AudioPlayingOptionContent(
             AudioPlayingOption.Local -> LocalConfigurationContent(
                 audioOutputOption = viewState.audioOutputOption,
                 audioOutputOptionList = viewState.audioOutputOptionList,
-                onAction = onAction
+                onEvent = onEvent
             )
 
             AudioPlayingOption.RemoteHTTP -> HttpEndpointConfigurationContent(
                 isUseCustomAudioPlayingHttpEndpoint = viewState.isUseCustomAudioPlayingHttpEndpoint,
                 audioPlayingHttpEndpoint = viewState.audioPlayingHttpEndpoint,
-                onAction = onAction
+                onEvent = onEvent
             )
 
             AudioPlayingOption.RemoteMQTT -> MqttSiteIdConfigurationContent(
                 audioPlayingMqttSiteId = viewState.audioPlayingMqttSiteId,
-                onAction = onAction
+                onEvent = onEvent
             )
 
             else -> {}
@@ -112,7 +109,7 @@ private fun AudioPlayingOptionContent(
 private fun LocalConfigurationContent(
     audioOutputOption: AudioOutputOption,
     audioOutputOptionList: ImmutableList<AudioOutputOption>,
-    onAction: (AudioPlayingConfigurationUiAction) -> Unit
+    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
 ) {
 
     //visibility of local output options
@@ -121,7 +118,7 @@ private fun LocalConfigurationContent(
         RadioButtonsEnumSelectionList(
             modifier = Modifier.testTag(TestTag.AudioOutputOptions),
             selected = audioOutputOption,
-            onSelect = { onAction(SelectAudioOutputOption(it)) },
+            onSelect = { onEvent(SelectAudioOutputOption(it)) },
             values = audioOutputOptionList
         )
 
@@ -136,7 +133,7 @@ private fun LocalConfigurationContent(
 private fun HttpEndpointConfigurationContent(
     isUseCustomAudioPlayingHttpEndpoint: Boolean,
     audioPlayingHttpEndpoint: String,
-    onAction: (AudioPlayingConfigurationUiAction) -> Unit
+    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
 ) {
 
     //visibility of endpoint option
@@ -147,7 +144,7 @@ private fun HttpEndpointConfigurationContent(
             modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
             text = MR.strings.useCustomEndpoint.stable,
             isChecked = isUseCustomAudioPlayingHttpEndpoint,
-            onCheckedChange = { onAction(ToggleUseCustomHttpEndpoint) }
+            onCheckedChange = { onEvent(SetUseCustomHttpEndpoint(it)) }
         )
 
         //http endpoint input field
@@ -155,7 +152,7 @@ private fun HttpEndpointConfigurationContent(
             enabled = isUseCustomAudioPlayingHttpEndpoint,
             modifier = Modifier.testTag(TestTag.Endpoint),
             value = audioPlayingHttpEndpoint,
-            onValueChange = { onAction(ChangeAudioPlayingHttpEndpoint(it)) },
+            onValueChange = { onEvent(ChangeAudioPlayingHttpEndpoint(it)) },
             label = translate(MR.strings.audioOutputURL.stable, HttpClientPath.PlayWav.path)
         )
 
@@ -170,7 +167,7 @@ private fun HttpEndpointConfigurationContent(
 @Composable
 private fun MqttSiteIdConfigurationContent(
     audioPlayingMqttSiteId: String,
-    onAction: (AudioPlayingConfigurationUiAction) -> Unit
+    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
 ) {
 
     //visibility of endpoint option
@@ -180,7 +177,7 @@ private fun MqttSiteIdConfigurationContent(
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.ConfigurationSiteId),
             value = audioPlayingMqttSiteId,
-            onValueChange = { onAction(ChangeAudioPlayingMqttSiteId(it)) },
+            onValueChange = { onEvent(ChangeAudioPlayingMqttSiteId(it)) },
             label = translate(MR.strings.siteId.stable)
         )
 
@@ -192,11 +189,11 @@ private fun MqttSiteIdConfigurationContent(
  * test content, play button
  */
 @Composable
-private fun TestContent(viewModel: AudioPlayingConfigurationViewModel) {
+private fun TestContent(onEvent: (AudioPlayingConfigurationUiEvent) -> Unit) {
 
     FilledTonalButtonListItem(
         text = MR.strings.executePlayTestAudio.stable,
-        onClick = viewModel::playTestAudio
+        onClick = { onEvent(PlayTestAudio) }
     )
 
 }

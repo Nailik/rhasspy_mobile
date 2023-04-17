@@ -19,9 +19,8 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationTest
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.SetHttpServerEnabled
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.SetHttpServerSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLEnabled
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewState
 import kotlin.test.assertEquals
@@ -81,8 +80,8 @@ class WebServerServiceConfigurationContentTest {
      */
     @Test
     fun testHttpContent() = runBlocking {
-        viewModel.onAction(SetHttpServerEnabled(false))
-        viewModel.onAction(SetHttpServerSSLEnabled(false))
+        viewModel.onEvent(SetHttpServerEnabled(false))
+        viewModel.onEvent(SetHttpServerSSLEnabled(false))
         viewModel.onSave()
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()

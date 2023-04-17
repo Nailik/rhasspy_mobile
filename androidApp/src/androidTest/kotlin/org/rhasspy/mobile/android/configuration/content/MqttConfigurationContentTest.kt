@@ -19,9 +19,8 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationTest
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.SetMqttEnabled
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.SetMqttSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttEnabled
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttSSLEnabled
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewState
 import kotlin.test.assertEquals

@@ -23,10 +23,9 @@ import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiAction
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiAction.Change.SelectTextToSpeechOption
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiAction.Change.ToggleUseCustomHttpEndpoint
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiAction.Change.UpdateTextToSpeechHttpEndpoint
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewState
 
@@ -48,13 +47,18 @@ fun TextToSpeechConfigurationContent(viewModel: TextToSpeechConfigurationViewMod
         viewState = viewState,
         onAction = { viewModel.onAction(it) },
         onConsumed = { viewModel.onConsumed(it) },
-        testContent = { TestContent(viewModel) }
+        testContent = {
+            TestContent(
+                testTextToSpeechText = contentViewState.testTextToSpeechText,
+                onEvent = viewModel::onEvent
+            )
+        }
     ) {
 
         item {
             TextToSpeechOptionContent(
                 viewState = contentViewState,
-                onAction = viewModel::onAction
+                onAction = viewModel::onEvent
             )
         }
 
@@ -65,7 +69,7 @@ fun TextToSpeechConfigurationContent(viewModel: TextToSpeechConfigurationViewMod
 @Composable
 private fun TextToSpeechOptionContent(
     viewState: TextToSpeechConfigurationViewState,
-    onAction: (TextToSpeechConfigurationUiAction) -> Unit
+    onAction: (TextToSpeechConfigurationUiEvent) -> Unit
 ) {
     RadioButtonsEnumSelection(
         modifier = Modifier.testTag(TestTag.TextToSpeechOptions),
@@ -94,7 +98,7 @@ private fun TextToSpeechOptionContent(
 private fun TextToSpeechHTTP(
     isUseCustomTextToSpeechHttpEndpoint: Boolean,
     textToSpeechHttpEndpoint: String,
-    onAction: (TextToSpeechConfigurationUiAction) -> Unit
+    onAction: (TextToSpeechConfigurationUiEvent) -> Unit
 ) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
@@ -104,7 +108,7 @@ private fun TextToSpeechHTTP(
             modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
             text = MR.strings.useCustomEndpoint.stable,
             isChecked = isUseCustomTextToSpeechHttpEndpoint,
-            onCheckedChange = { onAction(ToggleUseCustomHttpEndpoint) }
+            onCheckedChange = { onAction(SetUseCustomHttpEndpoint(it)) }
         )
 
         //http endpoint input field
@@ -124,19 +128,22 @@ private fun TextToSpeechHTTP(
  * input field and execute button
  */
 @Composable
-private fun TestContent(viewModel: TextToSpeechConfigurationViewModel) {
+private fun TestContent(
+    testTextToSpeechText: String,
+    onEvent: (TextToSpeechConfigurationUiEvent) -> Unit
+) {
 
     Column {
         TextFieldListItem(
             label = MR.strings.textToSpeechText.stable,
             modifier = Modifier.testTag(TestTag.TextToSpeechText),
-            value = viewModel.testTextToSpeechText.collectAsState().value,
-            onValueChange = viewModel::updateTestTextToSpeechText
+            value = testTextToSpeechText,
+            onValueChange = { onEvent(UpdateTestTextToSpeechText(it)) }
         )
 
         FilledTonalButtonListItem(
             text = MR.strings.executeTextToSpeechText.stable,
-            onClick = viewModel::startTextToSpeech
+            onClick = { onEvent(TestRemoteHermesHttpTextToSpeechTest) }
         )
     }
 

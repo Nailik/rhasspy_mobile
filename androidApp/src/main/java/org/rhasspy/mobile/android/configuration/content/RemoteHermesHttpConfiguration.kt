@@ -19,10 +19,9 @@ import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.SetHttpSSLVerificationDisabled
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.UpdateHttpClientServerEndpointHost
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.UpdateHttpClientServerEndpointPort
-import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiAction.Change.UpdateHttpClientTimeout
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewModel
 
 /**
@@ -43,7 +42,17 @@ fun RemoteHermesHttpConfigurationContent(
         viewState = viewState,
         onAction = { viewModel.onAction(it) },
         onConsumed = { viewModel.onConsumed(it) },
-        testContent = { TestContent(viewModel) }
+        testContent = {
+            TestContent(
+                testIntentRecognitionText = contentViewState.testIntentRecognitionText,
+                testTextToSpeechText = contentViewState.testTextToSpeechText,
+                isTestRecordingAudio = contentViewState.isTestRecordingAudio,
+                isSpeechToTextTestVisible = contentViewState.isSpeechToTextTestVisible,
+                isIntentRecognitionTestVisible = contentViewState.isIntentRecognitionTestVisible,
+                isTextToSpeechTestVisible = contentViewState.isTextToSpeechTestVisible,
+                onEvent = viewModel::onEvent
+            )
+        }
     ) {
 
         item {
@@ -52,7 +61,7 @@ fun RemoteHermesHttpConfigurationContent(
                 label = MR.strings.baseHost.stable,
                 modifier = Modifier.testTag(TestTag.Host),
                 value = contentViewState.httpClientServerEndpointHost,
-                onValueChange = { viewModel.onAction(UpdateHttpClientServerEndpointHost(it)) },
+                onValueChange = { viewModel.onEvent(UpdateHttpClientServerEndpointHost(it)) },
                 isLastItem = false
             )
         }
@@ -63,7 +72,7 @@ fun RemoteHermesHttpConfigurationContent(
                 label = MR.strings.port.stable,
                 modifier = Modifier.testTag(TestTag.Port),
                 value = contentViewState.httpClientServerEndpointPortText,
-                onValueChange = { viewModel.onAction(UpdateHttpClientServerEndpointPort(it)) },
+                onValueChange = { viewModel.onEvent(UpdateHttpClientServerEndpointPort(it)) },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
             )
         }
@@ -74,7 +83,7 @@ fun RemoteHermesHttpConfigurationContent(
                 label = MR.strings.requestTimeout.stable,
                 modifier = Modifier.testTag(TestTag.Timeout),
                 value = contentViewState.httpClientTimeoutText,
-                onValueChange = { viewModel.onAction(UpdateHttpClientTimeout(it)) },
+                onValueChange = { viewModel.onEvent(UpdateHttpClientTimeout(it)) },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
             )
         }
@@ -86,7 +95,7 @@ fun RemoteHermesHttpConfigurationContent(
                 modifier = Modifier.testTag(TestTag.SSLSwitch),
                 secondaryText = MR.strings.disableSSLValidationInformation.stable,
                 isChecked = contentViewState.isHttpSSLVerificationDisabled,
-                onCheckedChange = { viewModel.onAction(SetHttpSSLVerificationDisabled(it)) },
+                onCheckedChange = { viewModel.onEvent(SetHttpSSLVerificationDisabled(it)) },
             )
         }
 
@@ -98,49 +107,55 @@ fun RemoteHermesHttpConfigurationContent(
  * test http connection button
  */
 @Composable
-private fun TestContent(viewModel: RemoteHermesHttpConfigurationViewModel) {
+private fun TestContent(
+    testIntentRecognitionText: String ,
+    testTextToSpeechText: String ,
+    isTestRecordingAudio: Boolean ,
+    isSpeechToTextTestVisible: Boolean,
+    isIntentRecognitionTestVisible: Boolean,
+    isTextToSpeechTestVisible: Boolean,
+    onEvent: (RemoteHermesHttpConfigurationUiEvent) -> Unit
+) {
 
     Column {
 
-        if (viewModel.isSpeechToTextTestVisible.collectAsState().value) {
+        if (isSpeechToTextTestVisible) {
             RequiresMicrophonePermission(
-                MR.strings.microphonePermissionInfoRecord.stable,
-                viewModel::toggleRecording
+                informationText = MR.strings.microphonePermissionInfoRecord.stable,
+                onClick = { onEvent(TestRemoteHermesHttpToggleRecording) }
             ) { onClick ->
                 FilledTonalButtonListItem(
-                    text = if (viewModel.isRecordingAudio.collectAsState().value) MR.strings.stopRecordAudio.stable else MR.strings.startRecordAudio.stable,
+                    text = if (isTestRecordingAudio) MR.strings.stopRecordAudio.stable else MR.strings.startRecordAudio.stable,
                     onClick = onClick
                 )
             }
         }
 
-        if (viewModel.isIntentRecognitionTestVisible.collectAsState().value) {
+        if (isIntentRecognitionTestVisible) {
             TextFieldListItem(
                 label = MR.strings.textIntentRecognitionText.stable,
                 modifier = Modifier.testTag(TestTag.TextToSpeechText),
-                value = viewModel.testIntentRecognitionText.collectAsState().value,
-                onValueChange = viewModel::updateTestIntentRecognitionText
+                value = testIntentRecognitionText,
+                onValueChange = { onEvent(UpdateTestRemoteHermesHttpIntentRecognitionText(it)) }
             )
 
             FilledTonalButtonListItem(
                 text = MR.strings.executeIntentRecognition.stable,
-                enabled = viewModel.isIntentRecognitionTestEnabled.collectAsState().value,
-                onClick = viewModel::runIntentRecognitionTest
+                onClick = { onEvent(TestRemoteHermesHttpIntentRecognitionTest) }
             )
         }
 
-        if (viewModel.isTextToSpeechTestVisible.collectAsState().value) {
+        if (isTextToSpeechTestVisible) {
             TextFieldListItem(
                 label = MR.strings.textToSpeechText.stable,
                 modifier = Modifier.testTag(TestTag.TextToSpeechText),
-                value = viewModel.testTextToSpeechText.collectAsState().value,
-                onValueChange = viewModel::updateTestTextToSpeechText
+                value = testTextToSpeechText,
+                onValueChange = { onEvent(UpdateTestRemoteHermesHttpTextToSpeechText(it)) }
             )
 
             FilledTonalButtonListItem(
                 text = MR.strings.executeTextToSpeechText.stable,
-                enabled = viewModel.isTextToSpeechTestEnabled.collectAsState().value,
-                onClick = viewModel::runTextToSpeechTest
+                onClick = { onEvent(TestRemoteHermesHttpTextToSpeechTest) }
             )
         }
     }

@@ -10,12 +10,13 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 
 @Stable
 data class DialogManagementConfigurationViewState(
-    val dialogManagementOptionList: ImmutableList<DialogManagementOption> = DialogManagementOption.values().toImmutableList(),
     val dialogManagementOption: DialogManagementOption = ConfigurationSetting.dialogManagementOption.value,
     val textAsrTimeoutText: String = ConfigurationSetting.textAsrTimeout.value.toString(),
     val intentRecognitionTimeoutText: String = ConfigurationSetting.intentRecognitionTimeout.value.toString(),
     val recordingTimeoutText: String = ConfigurationSetting.recordingTimeout.value.toString()
 ) : IConfigurationEditViewState() {
+
+    val dialogManagementOptionList: ImmutableList<DialogManagementOption> = DialogManagementOption.values().toImmutableList()
 
     val textAsrTimeout: Long get() = textAsrTimeoutText.toLongOrZero()
     val intentRecognitionTimeout: Long get() = intentRecognitionTimeoutText.toLongOrZero()

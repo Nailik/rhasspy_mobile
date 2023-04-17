@@ -25,9 +25,8 @@ import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationTest
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.Change.SelectWakeWordOption
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.UpdateWakeWordPorcupineAccessToken
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState
 import kotlin.test.assertEquals

@@ -57,16 +57,10 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.ui.event.StateEvent.Consumed
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.BackPress
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.Discard
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.DismissDialog
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.Save
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.StartTest
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.StopTest
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiNavigate
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiNavigate.PopBackStack
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.PopBackStack
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
 
 enum class ConfigurationContentScreens(val route: String) {
     Edit("ConfigurationContentScreens_Edit"),
@@ -84,8 +78,8 @@ enum class ConfigurationContentScreens(val route: String) {
 @Composable
 fun <V : IConfigurationEditViewState> ConfigurationScreenItemContent(
     viewState: ConfigurationViewState<V>,
-    onAction: (IConfigurationUiAction) -> Unit,
-    onConsumed: (IConfigurationUiEvent) -> Unit,
+    onAction: (IConfigurationUiEvent) -> Unit,
+    onConsumed: (IConfigurationUiNavigate) -> Unit,
     modifier: Modifier,
     config: ConfigurationScreenConfig = ConfigurationScreenConfig(MR.strings.save.stable),
     testContent: (@Composable () -> Unit)? = null,
@@ -164,8 +158,8 @@ private fun EditConfigurationScreen(
     viewState: IConfigurationEditViewState,
     showUnsavedChangesDialog: Boolean,
     popBackStack: PopBackStack = PopBackStack(Consumed),
-    onAction: (IConfigurationEditUiAction) -> Unit,
-    onConsumed: (IConfigurationUiEvent) -> Unit,
+    onAction: (IConfigurationUiEvent) -> Unit,
+    onConsumed: (IConfigurationUiNavigate) -> Unit,
     content: LazyListScope.() -> Unit
 ) {
     SetSystemColor(0.dp)
@@ -297,7 +291,7 @@ private fun UnsavedChangesDialog(
 private fun BottomAppBar(
     hasUnsavedChanges: Boolean,
     isTestingEnabled: Boolean,
-    onAction: (IConfigurationEditUiAction) -> Unit,
+    onAction: (IConfigurationUiEvent) -> Unit,
 ) {
     BottomAppBar(
         actions = {
@@ -334,7 +328,7 @@ private fun BottomAppBar(
 @Composable
 private fun FloatingActionButtonElement(
     isTestingEnabled: Boolean,
-    onAction: (IConfigurationEditUiAction) -> Unit
+    onAction: (IConfigurationUiEvent) -> Unit
 ) {
     val navController = rememberNavController()
     FloatingActionButton(

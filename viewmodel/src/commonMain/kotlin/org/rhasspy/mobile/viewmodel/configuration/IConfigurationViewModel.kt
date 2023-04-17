@@ -28,22 +28,12 @@ import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.ui.event.StateEvent
 import org.rhasspy.mobile.ui.event.StateEvent.Triggered
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.BackPress
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.Discard
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.DismissDialog
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.Save
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.StartTest
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationEditUiAction.StopTest
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListAutoscroll
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiAction.IConfigurationTestUiAction.ToggleListFiltered
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.PopBackStack
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiNavigate.PopBackStack
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
-abstract class IConfigurationViewModel<T : IConfigurationTest, V : IConfigurationEditViewState>(
+abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
     private val service: IService,
-    internal val testRunner: T,
     private val initialViewState: () -> V
 ) : ViewModel(), KoinComponent {
     private val logger = Logger.withTag("IConfigurationViewModel")
@@ -85,20 +75,7 @@ abstract class IConfigurationViewModel<T : IConfigurationTest, V : IConfiguratio
     )
     val viewState = _viewState.readOnly
 
-    fun onAction(action: IConfigurationUiAction) {
-        when (action) {
-            is IConfigurationEditUiAction -> onEditAction(action)
-            is IConfigurationTestUiAction -> onTestAction(action)
-        }
-    }
-
-    fun onConsumed(event: IConfigurationUiEvent) {
-        when (event) {
-            is PopBackStack -> _viewState.update { it.copy(popBackStack = PopBackStack(StateEvent.Consumed)) }
-        }
-    }
-
-    private fun onEditAction(action: IConfigurationEditUiAction) {
+    fun onAction(action: IConfigurationUiEvent) {
         when (action) {
             Discard -> discard()
             Save -> save()
@@ -113,11 +90,6 @@ abstract class IConfigurationViewModel<T : IConfigurationTest, V : IConfiguratio
             }
 
             DismissDialog -> _viewState.update { it.copy(showUnsavedChangesDialog = false) }
-        }
-    }
-
-    private fun onTestAction(action: IConfigurationTestUiAction) {
-        when (action) {
             ToggleListAutoscroll -> configurationTestViewState.update { it.copy(isListAutoscroll = !it.isListAutoscroll) }
             ToggleListFiltered ->
                 configurationTestViewState.update {
@@ -136,8 +108,15 @@ abstract class IConfigurationViewModel<T : IConfigurationTest, V : IConfiguratio
         }
     }
 
+    fun onConsumed(event: IConfigurationUiNavigate) {
+        when (event) {
+            is PopBackStack -> _viewState.update { it.copy(popBackStack = PopBackStack(StateEvent.Consumed)) }
+        }
+    }
+
     private val isTestRunning = MutableStateFlow(false)
-    private var testScope = CoroutineScope(Dispatchers.Default)
+    protected var testScope = CoroutineScope(Dispatchers.Default)
+        private set
 
     fun save() {
         _viewState.update { it.copy(isLoading = true) }
@@ -229,8 +208,6 @@ abstract class IConfigurationViewModel<T : IConfigurationTest, V : IConfiguratio
 
             get<NativeApplication>().startTest()
             initializeTestParams()
-
-            testRunner.initializeTest()
 
             _viewState.update { it.copy(isLoading = false) }
         }

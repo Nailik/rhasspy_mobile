@@ -1,10 +1,18 @@
 package org.rhasspy.mobile.viewmodel.configuration
 
-import org.rhasspy.mobile.ui.event.Event
-import org.rhasspy.mobile.ui.event.StateEvent
+sealed interface IConfigurationUiEvent {
 
-sealed class IConfigurationUiEvent(stateEvent: StateEvent) : Event(stateEvent) {
+    sealed interface Action : IConfigurationUiEvent {
 
-    data class PopBackStack(override val stateEvent: StateEvent) : IConfigurationUiEvent(stateEvent)
+        object StartTest : Action
+        object StopTest : Action
+        object Save : Action
+        object Discard : Action
+        object BackPress : Action
+        object DismissDialog : Action
+        object ToggleListFiltered : Action
+        object ToggleListAutoscroll : Action
+
+    }
 
 }

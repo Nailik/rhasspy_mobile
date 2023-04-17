@@ -1,19 +1,9 @@
 package org.rhasspy.mobile.android.data
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationTest
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-
-class TestViewModelTest : IConfigurationTest() {
-    override val serviceState: StateFlow<ServiceState>
-        get() = MutableStateFlow(ServiceState.Success)
-
-}
 
 class TestService : IService(LogType.AudioPlayingService)
 
@@ -26,9 +16,8 @@ class TestViewState(private val isHasUnsavedChanges: Boolean = false) : IConfigu
 
 }
 
-class TestViewModel : IConfigurationViewModel<TestViewModelTest, TestViewState>(
+class TestViewModel : IConfigurationViewModel<TestViewState>(
     service = TestService(),
-    testRunner = TestViewModelTest(),
     initialViewState = { TestViewState() }
 ) {
 

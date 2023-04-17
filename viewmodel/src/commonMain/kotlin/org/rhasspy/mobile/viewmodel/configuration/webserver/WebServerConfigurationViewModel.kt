@@ -13,32 +13,30 @@ import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.SetHttpServerEnabled
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.SetHttpServerSSLEnabled
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.SetHttpServerSSLKeyStoreFile
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.UpdateHttpSSLKeyAlias
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.UpdateHttpSSLKeyPassword
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.UpdateHttpSSLKeyStorePassword
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.UpdateHttpServerPort
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Navigate
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Navigate.OpenWebServerSSLWiki
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Navigate.SelectSSLCertificate
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLKeyStoreFile
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyAlias
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyPassword
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyStorePassword
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpServerPort
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.OpenWebServerSSLWiki
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.SelectSSLCertificate
 
 @Stable
 class WebServerConfigurationViewModel(
-    service: WebServerService,
-    testRunner: WebServerConfigurationTest
-) : IConfigurationViewModel<WebServerConfigurationTest, WebServerConfigurationViewState>(
+    service: WebServerService
+) : IConfigurationViewModel<WebServerConfigurationViewState>(
     service = service,
-    testRunner = testRunner,
     initialViewState = ::WebServerConfigurationViewState
 ) {
 
-    fun onAction(action: WebServerConfigurationUiAction) {
-        when (action) {
-            is Change -> onChange(action)
-            is Navigate -> onNavigate(action)
+    fun onEvent(event: WebServerConfigurationUiEvent) {
+        when (event) {
+            is Change -> onChange(event)
+            is Action -> onAction(event)
         }
     }
 
@@ -56,8 +54,8 @@ class WebServerConfigurationViewModel(
         }
     }
 
-    private fun onNavigate(navigate: Navigate) {
-        when (navigate) {
+    private fun onAction(action: Action) {
+        when (action) {
             OpenWebServerSSLWiki -> openLink("https://github.com/Nailik/rhasspy_mobile/wiki/Webserver#enable-ssl")
             SelectSSLCertificate -> selectSSLCertificate()
         }
@@ -67,7 +65,7 @@ class WebServerConfigurationViewModel(
     private fun selectSSLCertificate() {
         viewModelScope.launch {
             FileUtils.selectFile(FolderType.CertificateFolder.WebServer)?.also { path ->
-                onAction(SetHttpServerSSLKeyStoreFile(path))
+                onEvent(SetHttpServerSSLKeyStoreFile(path))
             }
         }
     }
@@ -116,6 +114,7 @@ class WebServerConfigurationViewModel(
                 )
             )
         }
+        get<WebServerService>()
     }
 
 }

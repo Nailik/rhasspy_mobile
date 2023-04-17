@@ -10,11 +10,13 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 
 @Stable
 data class IntentRecognitionConfigurationViewState(
-    val intentRecognitionOptionList: ImmutableList<IntentRecognitionOption> = IntentRecognitionOption.values().toImmutableList(),
     val intentRecognitionOption: IntentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value,
     val isUseCustomIntentRecognitionHttpEndpoint: Boolean = ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value,
-    val intentRecognitionHttpEndpoint: String = ConfigurationSetting.intentRecognitionHttpEndpoint.value
+    val intentRecognitionHttpEndpoint: String = ConfigurationSetting.intentRecognitionHttpEndpoint.value,
+    val testIntentRecognitionText: String = ""
 ) : IConfigurationEditViewState() {
+
+    val intentRecognitionOptionList: ImmutableList<IntentRecognitionOption> = IntentRecognitionOption.values().toImmutableList()
 
     override val hasUnsavedChanges: Boolean
         get() = !(intentRecognitionOption == ConfigurationSetting.intentRecognitionOption.value &&

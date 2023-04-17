@@ -5,20 +5,8 @@ import android.os.Build
 import android.os.Environment
 import android.provider.Settings
 import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.SemanticsMatcher
-import androidx.compose.ui.test.SemanticsNodeInteraction
-import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
-import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.filter
-import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.isSelectable
-import androidx.compose.ui.test.isToggleable
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import androidx.compose.ui.test.onChildAt
-import androidx.compose.ui.test.onChildren
-import androidx.compose.ui.test.onFirst
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.permission.PermissionRequester
 import androidx.test.uiautomator.UiDevice
@@ -27,7 +15,6 @@ import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationTest
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 
 
@@ -158,7 +145,7 @@ fun SemanticsNodeInteractionsProvider.onNodeWithText(
     ), useUnmergedTree
 )
 
-fun <T : IConfigurationTest, V : IConfigurationEditViewState> ComposeContentTestRule.awaitSaved(viewModel: IConfigurationViewModel<T, V>) {
+fun <V : IConfigurationEditViewState> ComposeContentTestRule.awaitSaved(viewModel: IConfigurationViewModel<V>) {
     this.waitUntil(
         condition = { !viewModel.viewState.value.isLoading },
         timeoutMillis = 5000

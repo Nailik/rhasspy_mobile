@@ -4,19 +4,20 @@ import okio.Path
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 
-sealed interface WakeWordConfigurationUiAction {
+sealed interface WakeWordConfigurationUiEvent {
 
-    sealed interface Change : WakeWordConfigurationUiAction {
+    sealed interface Change : WakeWordConfigurationUiEvent {
         data class SelectWakeWordOption(val option: WakeWordOption) : Change
     }
 
-    sealed interface Navigate : WakeWordConfigurationUiAction {
-        object MicrophonePermissionAllowed : Navigate
+    sealed interface Action : WakeWordConfigurationUiEvent {
+        object MicrophonePermissionAllowed : Action
+        object TestStartWakeWord: Action
     }
 
-    sealed interface PorcupineUiAction : WakeWordConfigurationUiAction {
+    sealed interface PorcupineUiEvent : WakeWordConfigurationUiEvent {
 
-        sealed interface Change : PorcupineUiAction {
+        sealed interface Change : PorcupineUiEvent {
             data class UpdateWakeWordPorcupineAccessToken(val value: String) : Change
             data class SelectWakeWordPorcupineLanguage(val option: PorcupineLanguageOption) : Change
             data class UpdateWakeWordPorcupineKeywordDefaultSensitivity(val index: Int, val value: Float) : Change
@@ -30,15 +31,15 @@ sealed interface WakeWordConfigurationUiAction {
             data class DeletePorcupineKeywordCustom(val index: Int) : Change
         }
 
-        sealed interface Navigate : PorcupineUiAction {
-            object DownloadCustomPorcupineKeyword : Navigate
-            object AddCustomPorcupineKeyword : Navigate
-            object OpenPicoVoiceConsole : Navigate
+        sealed interface Action : PorcupineUiEvent {
+            object DownloadCustomPorcupineKeyword : Action
+            object AddCustomPorcupineKeyword : Action
+            object OpenPicoVoiceConsole : Action
         }
     }
 
-    sealed interface UdpUiAction : WakeWordConfigurationUiAction {
-        sealed interface Change : UdpUiAction {
+    sealed interface UdpUiEvent : WakeWordConfigurationUiEvent {
+        sealed interface Change : UdpUiEvent {
             data class UpdateUdpOutputHost(val value: String) : Change
             data class UpdateUdpOutputPort(val value: String) : Change
         }

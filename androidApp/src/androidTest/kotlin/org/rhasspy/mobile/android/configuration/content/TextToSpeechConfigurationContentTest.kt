@@ -23,8 +23,7 @@ import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationTest
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiAction.Change.SelectTextToSpeechOption
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.SelectTextToSpeechOption
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewState
 import kotlin.test.assertEquals
@@ -76,7 +75,7 @@ class TextToSpeechConfigurationContentTest {
      */
     @Test
     fun testEndpoint() = runBlocking {
-        viewModel.onAction(SelectTextToSpeechOption(TextToSpeechOption.Disabled))
+        viewModel.onEvent(SelectTextToSpeechOption(TextToSpeechOption.Disabled))
         viewModel.save()
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()

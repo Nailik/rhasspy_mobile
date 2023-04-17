@@ -34,18 +34,18 @@ import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.SetMqttEnabled
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.SetMqttSSLEnabled
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttConnectionTimeout
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttHost
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttKeepAliveInterval
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttPassword
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttPort
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttRetryInterval
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttUserName
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Navigate.OpenMqttSSLWiki
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Navigate.SelectSSLCertificate
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttEnabled
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttConnectionTimeout
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttHost
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttKeepAliveInterval
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttPassword
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttPort
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttRetryInterval
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttUserName
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.OpenMqttSSLWiki
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
 
 /**
@@ -133,7 +133,7 @@ private fun MqttConnectionSettings(
     mqttPortText: String,
     mqttUserName: String,
     mqttPassword: String,
-    onAction: (MqttConfigurationUiAction) -> Unit
+    onAction: (MqttConfigurationUiEvent) -> Unit
 ) {
 
     //host
@@ -181,7 +181,7 @@ private fun MqttConnectionSettings(
 private fun MqttSSL(
     isMqttSSLEnabled: Boolean,
     mqttKeyStoreFile: Path?,
-    onAction: (MqttConfigurationUiAction) -> Unit
+    onAction: (MqttConfigurationUiEvent) -> Unit
 ) {
 
     SwitchListItem(
@@ -248,7 +248,7 @@ private fun MqttConnectionTiming(
     mqttConnectionTimeoutText: String,
     mqttKeepAliveIntervalText: String,
     mqttRetryIntervalText: String,
-    onAction: (MqttConfigurationUiAction) -> Unit
+    onAction: (MqttConfigurationUiEvent) -> Unit
 ) {
 
     TextFieldListItem(

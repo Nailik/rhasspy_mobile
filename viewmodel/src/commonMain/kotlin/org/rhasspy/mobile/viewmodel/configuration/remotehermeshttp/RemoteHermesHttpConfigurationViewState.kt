@@ -1,10 +1,14 @@
 package org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp
 
 import androidx.compose.runtime.Stable
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
+import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toLongOrZero
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 
@@ -14,7 +18,10 @@ data class RemoteHermesHttpConfigurationViewState(
     val httpClientServerEndpointPort: Int = ConfigurationSetting.httpClientServerEndpointPort.value,
     val httpClientServerEndpointPortText: String = ConfigurationSetting.httpClientServerEndpointPort.value.toString(),
     val httpClientTimeoutText: String = ConfigurationSetting.httpClientTimeout.value.toString(),
-    val isHttpSSLVerificationDisabled: Boolean = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value
+    val isHttpSSLVerificationDisabled: Boolean = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value,
+    val testIntentRecognitionText: String = "",
+    val testTextToSpeechText: String = "",
+    val isTestRecordingAudio: Boolean = false
 ) : IConfigurationEditViewState() {
 
     override val hasUnsavedChanges: Boolean
@@ -29,6 +36,18 @@ data class RemoteHermesHttpConfigurationViewState(
                         ConfigurationSetting.intentRecognitionOption.value == IntentRecognitionOption.RemoteHTTP ||
                         ConfigurationSetting.textToSpeechOption.value == TextToSpeechOption.RemoteHTTP)
 
-    val httpClientTimeout: Long get() = httpClientTimeoutText.toLongOrZero()
+    private val httpClientTimeout: Long get() = httpClientTimeoutText.toLongOrZero()
+
+    val isSpeechToTextTestVisible get() =
+        ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.RemoteHTTP &&
+                !ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value
+
+    val isIntentRecognitionTestVisible get() =
+        ConfigurationSetting.intentRecognitionOption.value ==IntentRecognitionOption.RemoteHTTP
+                && !ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value
+
+    val isTextToSpeechTestVisible get() =
+        ConfigurationSetting.textToSpeechOption.value ==TextToSpeechOption.RemoteHTTP
+                && !ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value
 
 }

@@ -14,33 +14,33 @@ import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.SetMqttEnabled
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.SetMqttSSLEnabled
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttConnectionTimeout
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttHost
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttKeepAliveInterval
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttKeyStoreFile
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttPassword
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttPort
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttRetryInterval
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Change.UpdateMqttUserName
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiAction.Navigate
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttEnabled
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttConnectionTimeout
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttHost
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttKeepAliveInterval
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttKeyStoreFile
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttPassword
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttPort
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttRetryInterval
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttUserName
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.OpenMqttSSLWiki
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.SelectSSLCertificate
 
 @Stable
 class MqttConfigurationViewModel(
     service: MqttService,
-    testRunner: MqttConfigurationTest
-) : IConfigurationViewModel<MqttConfigurationTest, MqttConfigurationViewState>(
+) : IConfigurationViewModel<MqttConfigurationViewState>(
     service = service,
-    testRunner = testRunner,
     initialViewState = ::MqttConfigurationViewState
 ) {
 
-    fun onAction(action: MqttConfigurationUiAction) {
+    fun onAction(action: MqttConfigurationUiEvent) {
         when (action) {
             is Change -> onChange(action)
-            is Navigate -> onNavigate(action)
+            is Action -> onAction(action)
         }
     }
 
@@ -49,22 +49,22 @@ class MqttConfigurationViewModel(
             when (change) {
                 is SetMqttEnabled -> it.copy(isMqttEnabled = change.enabled)
                 is SetMqttSSLEnabled -> it.copy(isMqttSSLEnabled = change.enabled)
-                is UpdateMqttConnectionTimeout -> it.copy(mqttConnectionTimeoutText = change.value)
-                is UpdateMqttHost -> it.copy(mqttHost = change.value)
-                is UpdateMqttKeepAliveInterval -> it.copy(mqttKeepAliveIntervalText = change.value)
-                is UpdateMqttPassword -> it.copy(mqttPassword = change.value)
-                is UpdateMqttPort -> it.copy(mqttPortText = change.value)
-                is UpdateMqttRetryInterval -> it.copy(mqttRetryIntervalText = change.value)
-                is UpdateMqttUserName -> it.copy(mqttUserName = change.value)
-                is UpdateMqttKeyStoreFile -> it.copy(mqttKeyStoreFile = change.value)
+                is UpdateMqttConnectionTimeout -> it.copy(mqttConnectionTimeoutText = change.timeout)
+                is UpdateMqttHost -> it.copy(mqttHost = change.host)
+                is UpdateMqttKeepAliveInterval -> it.copy(mqttKeepAliveIntervalText = change.keepAliveInterval)
+                is UpdateMqttPassword -> it.copy(mqttPassword = change.password)
+                is UpdateMqttPort -> it.copy(mqttPortText = change.port)
+                is UpdateMqttRetryInterval -> it.copy(mqttRetryIntervalText = change.retryInterval)
+                is UpdateMqttUserName -> it.copy(mqttUserName = change.userName)
+                is UpdateMqttKeyStoreFile -> it.copy(mqttKeyStoreFile = change.file)
             }
         }
     }
 
-    private fun onNavigate(navigate: Navigate) {
-        when (navigate) {
-            Navigate.OpenMqttSSLWiki -> openLink("https://github.com/Nailik/rhasspy_mobile/wiki/MQTT#enable-ssl")
-            Navigate.SelectSSLCertificate -> selectSSLCertificate()
+    private fun onAction(action: Action) {
+        when (action) {
+            OpenMqttSSLWiki -> openLink("https://github.com/Nailik/rhasspy_mobile/wiki/MQTT#enable-ssl")
+            SelectSSLCertificate -> selectSSLCertificate()
         }
     }
 
@@ -122,6 +122,7 @@ class MqttConfigurationViewModel(
                 )
             )
         }
+        get<MqttService>()
     }
 
 }

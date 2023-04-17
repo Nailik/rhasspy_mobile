@@ -19,10 +19,10 @@ import org.rhasspy.mobile.android.content.list.SliderListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.ClickPorcupineKeywordDefault
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.TogglePorcupineKeywordDefault
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiAction.PorcupineUiAction.Change.UpdateWakeWordPorcupineKeywordDefaultSensitivity
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.ClickPorcupineKeywordDefault
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.TogglePorcupineKeywordDefault
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineKeywordDefaultSensitivity
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 
 /**
@@ -31,7 +31,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 @Composable
 fun PorcupineKeywordDefaultScreen(
     viewState: PorcupineViewState,
-    onAction: (PorcupineUiAction) -> Unit
+    onEvent: (PorcupineUiEvent) -> Unit
 ) {
 
     LazyColumn(
@@ -43,9 +43,9 @@ fun PorcupineKeywordDefaultScreen(
 
             DefaultKeywordListItem(
                 element = option,
-                onClick = { onAction(ClickPorcupineKeywordDefault(index)) },
-                onToggle = { onAction(TogglePorcupineKeywordDefault(index, it)) },
-                onUpdateSensitivity = { onAction(UpdateWakeWordPorcupineKeywordDefaultSensitivity(index, it)) }
+                onClick = { onEvent(ClickPorcupineKeywordDefault(index)) },
+                onToggle = { onEvent(TogglePorcupineKeywordDefault(index, it)) },
+                onUpdateSensitivity = { onEvent(UpdateWakeWordPorcupineKeywordDefaultSensitivity(index, it)) }
             )
 
             CustomDivider()

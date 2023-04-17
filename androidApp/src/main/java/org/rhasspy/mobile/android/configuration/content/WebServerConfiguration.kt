@@ -34,15 +34,15 @@ import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.SetHttpServerEnabled
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.SetHttpServerSSLEnabled
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.UpdateHttpSSLKeyAlias
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.UpdateHttpSSLKeyPassword
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.UpdateHttpSSLKeyStorePassword
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Change.UpdateHttpServerPort
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Navigate.OpenWebServerSSLWiki
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiAction.Navigate.SelectSSLCertificate
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyAlias
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyPassword
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyStorePassword
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpServerPort
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.OpenWebServerSSLWiki
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
 
 /**
@@ -72,7 +72,7 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
                 text = MR.strings.enableHTTPApi.stable,
                 modifier = Modifier.testTag(TestTag.ServerSwitch),
                 isChecked = contentViewState.isHttpServerEnabled,
-                onCheckedChange = { viewModel.onAction(SetHttpServerEnabled(it)) }
+                onCheckedChange = { viewModel.onEvent(SetHttpServerEnabled(it)) }
             )
         }
 
@@ -91,7 +91,7 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
                         label = MR.strings.port.stable,
                         modifier = Modifier.testTag(TestTag.Port),
                         value = contentViewState.httpServerPortText,
-                        onValueChange = { viewModel.onAction(UpdateHttpServerPort(it)) },
+                        onValueChange = { viewModel.onEvent(UpdateHttpServerPort(it)) },
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                     )
 
@@ -101,7 +101,7 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
                         httpServerSSLKeyStorePassword = contentViewState.httpServerSSLKeyStorePassword,
                         httpServerSSLKeyAlias = contentViewState.httpServerSSLKeyAlias,
                         httpServerSSLKeyPassword = contentViewState.httpServerSSLKeyPassword,
-                        onAction = viewModel::onAction
+                        onAction = viewModel::onEvent
                     )
 
                 }
@@ -124,7 +124,7 @@ private fun WebserverSSL(
     httpServerSSLKeyStorePassword: String,
     httpServerSSLKeyAlias: String,
     httpServerSSLKeyPassword: String,
-    onAction: (WebServerConfigurationUiAction) -> Unit
+    onAction: (WebServerConfigurationUiEvent) -> Unit
 ) {
 
 

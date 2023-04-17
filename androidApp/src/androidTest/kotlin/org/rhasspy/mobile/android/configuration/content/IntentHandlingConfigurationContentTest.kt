@@ -20,8 +20,7 @@ import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationTest
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiAction.SelectIntentHandlingOption
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.SelectIntentHandlingOption
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewState
 import kotlin.test.assertEquals
@@ -66,7 +65,7 @@ class IntentHandlingConfigurationContentTest {
      */
     @Test
     fun testEndpoint() = runBlocking {
-        viewModel.onAction(SelectIntentHandlingOption(IntentHandlingOption.Disabled))
+        viewModel.onEvent(SelectIntentHandlingOption(IntentHandlingOption.Disabled))
         viewModel.save()
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
@@ -124,7 +123,7 @@ class IntentHandlingConfigurationContentTest {
      */
     @Test
     fun testHomeAssistant() = runBlocking {
-        viewModel.onAction(SelectIntentHandlingOption(IntentHandlingOption.Disabled))
+        viewModel.onEvent(SelectIntentHandlingOption(IntentHandlingOption.Disabled))
         viewModel.save()
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
