@@ -1,5 +1,7 @@
 package org.rhasspy.mobile.logic.settings.serializer
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -9,7 +11,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.serializer
 
-internal object StringSetSerializer : KSerializer<Set<String>> {
+internal object StringListSerializer : KSerializer<ImmutableList<String>> {
 
     @OptIn(InternalSerializationApi::class)
     private val delegatedSerializer = ListSerializer(String::class.serializer())
@@ -18,12 +20,11 @@ internal object StringSetSerializer : KSerializer<Set<String>> {
     override val descriptor =
         SerialDescriptor("StringSetSerializer", delegatedSerializer.descriptor)
 
-    override fun serialize(encoder: Encoder, value: Set<String>) {
-        val l = value.toList()
-        encoder.encodeSerializableValue(delegatedSerializer, l)
+    override fun serialize(encoder: Encoder, value: ImmutableList<String>) {
+        encoder.encodeSerializableValue(delegatedSerializer, value.toList())
     }
 
-    override fun deserialize(decoder: Decoder): Set<String> {
-        return decoder.decodeSerializableValue(delegatedSerializer).toSet()
+    override fun deserialize(decoder: Decoder): ImmutableList<String> {
+        return decoder.decodeSerializableValue(delegatedSerializer).toImmutableList()
     }
 }

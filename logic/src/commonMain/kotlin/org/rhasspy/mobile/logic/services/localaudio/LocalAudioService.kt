@@ -56,6 +56,8 @@ class LocalAudioService : IService(LogType.LocalAudioService) {
         }
     }
 
+    fun playWakeSoundWithoutParameter() = playWakeSound {}
+
     fun playWakeSound(onFinished: (exception: Exception?) -> Unit) {
         logger.d { "playWakeSound" }
         when (AppSetting.wakeSound.value) {

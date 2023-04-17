@@ -1,50 +1,148 @@
 package org.rhasspy.mobile.viewmodel.settings.indication.sound
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import okio.Path
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
-import org.rhasspy.mobile.data.sounds.SoundFile
 import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.logic.settings.AppSetting
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.logic.settings.ISetting
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.combineStateFlow
+import org.rhasspy.mobile.platformspecific.extensions.commonDelete
+import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
+import org.rhasspy.mobile.platformspecific.file.FileUtils
+import org.rhasspy.mobile.platformspecific.file.FolderType
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.volume.DeviceVolume
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.ChooseSoundFile
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.ToggleAudioPlayerActive
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change.*
+import kotlin.reflect.KFunction1
 
-abstract class IIndicationSoundSettingsViewModel : ViewModel(), KoinComponent {
+abstract class IIndicationSoundSettingsViewModel(
+    private val localAudioService: LocalAudioService,
+    private val nativeApplication: NativeApplication,
+    private val customSoundOptions: ISetting<ImmutableList<String>>,
+    private  val soundSetting: ISetting<String>,
+    private val soundVolume: ISetting<Float>,
+    private val soundFolderType: FolderType
+) : ViewModel(), KoinComponent {
 
-    val localAudioService by inject<LocalAudioService>()
+    abstract val playSound: KFunction1<LocalAudioService, Unit>
 
-    abstract val isSoundIndicationDefault: StateFlow<Boolean>
-    abstract val isSoundIndicationDisabled: StateFlow<Boolean>
-    abstract val customSoundFiles: StateFlow<List<SoundFile>>
-    abstract val soundVolume: StateFlow<Float>
 
-    val isAudioPlaying: StateFlow<Boolean> = localAudioService.isPlayingState
-    val audioOutputOption = AppSetting.soundIndicationOutputOption.data
-    val isNoSoundInformationBoxVisible = when (AppSetting.soundIndicationOutputOption.value) {
-        AudioOutputOption.Sound -> DeviceVolume.volumeFlowSound.mapReadonlyState { it == 0 }
-        AudioOutputOption.Notification -> DeviceVolume.volumeFlowNotification.mapReadonlyState { it == 0 }
+    private val _viewState =
+        MutableStateFlow(
+            IIndicationSoundSettingsViewState.getInitialViewState(
+                soundSetting = soundSetting.value,
+                customSoundFiles = customSoundOptions.value,
+                soundVolume = soundVolume.value,
+                localAudioService = localAudioService
+            )
+        )
+    val viewState = _viewState.readOnly
+
+    init {
+        viewModelScope.launch(Dispatchers.Default) {
+            combineStateFlow(
+                DeviceVolume.volumeFlowSound,
+                DeviceVolume.volumeFlowNotification,
+                localAudioService.isPlayingState
+            ).collect { data ->
+                _viewState.update {
+                    it.copy(
+                        isNoSoundInformationBoxVisible = when (AppSetting.soundIndicationOutputOption.value) {
+                            AudioOutputOption.Sound -> data[0] as Int? == 0
+                            AudioOutputOption.Notification -> data[1] as Int? == 0
+                        },
+                        isAudioPlaying = data[2] as Boolean
+                    )
+                }
+            }
+        }
     }
 
-    abstract fun onClickSoundIndicationDefault()
+    fun onEvent(event: IIndicationSoundSettingsUiEvent) {
+        when (event) {
+            is Change -> onChange(event)
+            is Action -> onAction(event)
+        }
+    }
 
-    abstract fun onClickSoundIndicationDisabled()
+    private fun onChange(change: Change) {
+        _viewState.update {
+            when (change) {
+                is SetSoundFile -> {
+                    soundSetting.value = change.file
+                    it.copy(soundSetting = change.file)
+                }
 
-    //update sound volume
-    abstract fun updateSoundVolume(volume: Float)
+                is SetSoundIndicationOption -> {
+                    soundSetting.value = change.option.name
+                    it.copy(soundSetting = change.option.name)
+                }
 
-    //select sound file
-    abstract fun selectSoundFile(file: SoundFile)
+                is UpdateSoundVolume -> {
+                    soundVolume.value = change.volume
+                    it.copy(soundVolume = change.volume)
+                }
 
-    //delete sound file
-    abstract fun deleteSoundFile(file: SoundFile)
+                is AddSoundFile -> {
+                    val customSounds = it.customSoundFiles
+                        .toMutableList()
+                        .apply { remove(change.file) }
+                        .toImmutableList()
+                    soundSetting.value = change.file
+                    it.copy(
+                        soundSetting = change.file,
+                        customSoundFiles = customSounds
+                    )
+                }
 
-    //play/stop sound file
-    abstract fun toggleAudioPlayer()
+                is DeleteSoundFile -> {
+                    if (viewState.value.soundSetting != change.file) {
+                        val customSounds = it.customSoundFiles
+                            .toMutableList()
+                            .apply { remove(change.file) }
+                            .toImmutableList()
+                        customSoundOptions.value = customSounds
+                        Path.commonInternalPath(
+                            nativeApplication = nativeApplication,
+                            fileName = "${soundFolderType}/${change.file}"
+                        ).commonDelete()
+                        it.copy(customSoundFiles = customSounds)
+                    } else it
+                }
+            }
+        }
+    }
 
-    //choose sound file from files
-    abstract fun chooseSoundFile()
+    private fun onAction(action: Action) {
+        when (action) {
+            ChooseSoundFile -> {
+                viewModelScope.launch {
+                    FileUtils.selectFile(soundFolderType)
+                        ?.also { path -> onEvent(AddSoundFile(path.name)) }
+                }
+            }
+
+            ToggleAudioPlayerActive ->
+                if (localAudioService.isPlayingState.value) {
+                    localAudioService.stop()
+                } else {
+                    playSound(localAudioService)
+                }
+        }
+    }
 
     fun onPause() {
         localAudioService.stop()

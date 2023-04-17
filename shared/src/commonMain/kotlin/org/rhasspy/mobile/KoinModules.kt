@@ -204,9 +204,24 @@ val viewModelModule = module {
     }
     single { DeviceSettingsSettingsViewModel() }
     single { IndicationSettingsViewModel() }
-    single { WakeIndicationSoundSettingsViewModel() }
-    single { RecordedIndicationSoundSettingsViewModel() }
-    single { ErrorIndicationSoundSettingsViewModel() }
+    single {
+        WakeIndicationSoundSettingsViewModel(
+            localAudioService = get(),
+            nativeApplication = get()
+        )
+    }
+    single {
+        RecordedIndicationSoundSettingsViewModel(
+            localAudioService = get(),
+            nativeApplication = get()
+        )
+    }
+    single {
+        ErrorIndicationSoundSettingsViewModel(
+            localAudioService = get(),
+            nativeApplication = get()
+        )
+    }
     single { LanguageSettingsViewModel() }
     single {
         LogSettingsViewModel(
