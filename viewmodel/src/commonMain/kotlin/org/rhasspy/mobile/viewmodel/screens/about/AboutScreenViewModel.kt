@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.logic.openLink
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Navigate
-import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Navigate.OpenSourceCode
+import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action
+import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.OpenSourceCode
 
 /**
  * For About screen that displays app information
@@ -19,12 +19,12 @@ class AboutScreenViewModel : ViewModel(), KoinComponent {
 
     fun onEvent(event: AboutScreenUiEvent) {
         when(event) {
-            is Navigate -> onNavigate(event)
+            is Action -> onAction(event)
         }
     }
 
-    private fun onNavigate(navigate: Navigate) {
-        when(navigate) {
+    private fun onAction(action: Action) {
+        when(action) {
             OpenSourceCode -> openLink("https://github.com/Nailik/rhasspy_mobile")
         }
     }

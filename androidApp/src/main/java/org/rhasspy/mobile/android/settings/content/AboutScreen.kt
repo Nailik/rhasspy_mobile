@@ -39,7 +39,7 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent
-import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Navigate.OpenSourceCode
+import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.OpenSourceCode
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewState
 

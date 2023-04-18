@@ -9,7 +9,7 @@ import org.rhasspy.mobile.platformspecific.toLongOrZero
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 
 @Stable
-data class DialogManagementConfigurationViewState(
+data class DialogManagementConfigurationViewState internal constructor(
     val dialogManagementOption: DialogManagementOption = ConfigurationSetting.dialogManagementOption.value,
     val textAsrTimeoutText: String = ConfigurationSetting.textAsrTimeout.value.toString(),
     val intentRecognitionTimeoutText: String = ConfigurationSetting.intentRecognitionTimeout.value.toString(),

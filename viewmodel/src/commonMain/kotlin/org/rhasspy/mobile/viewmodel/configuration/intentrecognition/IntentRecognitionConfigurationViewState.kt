@@ -9,7 +9,7 @@ import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 
 @Stable
-data class IntentRecognitionConfigurationViewState(
+data class IntentRecognitionConfigurationViewState internal constructor(
     val intentRecognitionOption: IntentRecognitionOption = ConfigurationSetting.intentRecognitionOption.value,
     val isUseCustomIntentRecognitionHttpEndpoint: Boolean = ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value,
     val intentRecognitionHttpEndpoint: String = ConfigurationSetting.intentRecognitionHttpEndpoint.value,

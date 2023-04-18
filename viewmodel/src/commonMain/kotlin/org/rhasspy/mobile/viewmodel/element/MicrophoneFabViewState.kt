@@ -9,7 +9,7 @@ import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 
-data class MicrophoneFabViewState(
+data class MicrophoneFabViewState internal constructor(
     val isMicrophonePermissionRequired: Boolean,
     val dialogManagerServiceState: DialogManagerServiceState,
     val isUserActionEnabled: Boolean,

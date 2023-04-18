@@ -40,6 +40,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState.PorcupineCustomKeywordViewState
 
 @Stable
 class WakeWordConfigurationViewModel(
@@ -102,7 +103,7 @@ class WakeWordConfigurationViewModel(
                             .toImmutableList())
 
                     is AddPorcupineKeywordCustom -> it.copy(customOptionsUi = it.customOptionsUi.toMutableList()
-                        .apply { add(PorcupineCustomKeywordUi(PorcupineCustomKeyword(change.path.name, true, 0.5f))) }
+                        .apply { add(PorcupineCustomKeywordViewState(PorcupineCustomKeyword(change.path.name, true, 0.5f))) }
                         .toImmutableList())
 
                     is DeletePorcupineKeywordCustom -> it.copy(customOptionsUi = it.customOptionsUi.toMutableList()

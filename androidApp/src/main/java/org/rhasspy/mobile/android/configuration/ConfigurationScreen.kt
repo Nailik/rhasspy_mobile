@@ -27,9 +27,9 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiAction
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiAction.ScrollToError
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiAction.SiteIdChange
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToError
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.AudioPlayingViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.DialogManagementViewState
@@ -86,12 +86,12 @@ fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = get()) {
 
             if (hasError) {
                 stickyHeader {
-                    ServiceErrorInformation(viewModel::onAction)
+                    ServiceErrorInformation(viewModel::onEvent)
                 }
             }
 
             item {
-                SiteId(viewState.siteId, viewModel::onAction)
+                SiteId(viewState.siteId, viewModel::onEvent)
                 CustomDivider()
             }
 
@@ -202,7 +202,7 @@ fun NavGraphBuilder.addConfigurationScreens() {
  */
 @Composable
 private fun ServiceErrorInformation(
-    onAction: (ConfigurationScreenUiAction) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
 
     Surface {
@@ -214,7 +214,7 @@ private fun ServiceErrorInformation(
             colors = CardDefaults.outlinedCardColors(
                 containerColor = MaterialTheme.colorScheme.errorContainer
             ),
-            onClick = { onAction(ScrollToError) }
+            onClick = { onEvent(ScrollToError) }
         ) {
             Row(
                 modifier = Modifier
@@ -244,15 +244,13 @@ private fun ServiceErrorInformation(
 @Composable
 private fun SiteId(
     viewState: SiteIdViewState,
-    onAction: (ConfigurationScreenUiAction) -> Unit
+    onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
-
-    val value by viewState.text.collectAsState()
 
     TextFieldListItem(
         modifier = Modifier.testTag(TestTag.ConfigurationSiteId),
-        value = value,
-        onValueChange = { onAction(SiteIdChange(it)) },
+        value =  viewState.text,
+        onValueChange = { onEvent(SiteIdChange(it)) },
         label = MR.strings.siteId.stable,
     )
 

@@ -2,9 +2,9 @@ package org.rhasspy.mobile.viewmodel.screens.about
 
 sealed interface AboutScreenUiEvent {
 
-    sealed interface Navigate : AboutScreenUiEvent{
+    sealed interface Action : AboutScreenUiEvent{
 
-        object OpenSourceCode : Navigate
+        object OpenSourceCode : Action
 
     }
 

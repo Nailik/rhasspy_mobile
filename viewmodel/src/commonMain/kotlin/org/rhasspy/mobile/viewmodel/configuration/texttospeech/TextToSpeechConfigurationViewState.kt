@@ -8,7 +8,7 @@ import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 
 @Stable
-data class TextToSpeechConfigurationViewState(
+data class TextToSpeechConfigurationViewState internal constructor(
     val textToSpeechOption: TextToSpeechOption = ConfigurationSetting.textToSpeechOption.value,
     val isUseCustomTextToSpeechHttpEndpoint: Boolean = ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value,
     val textToSpeechHttpEndpoint: String = ConfigurationSetting.textToSpeechHttpEndpoint.value,

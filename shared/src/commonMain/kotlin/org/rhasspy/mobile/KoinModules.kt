@@ -107,7 +107,20 @@ val viewModelModule = module {
             wakeWordService = get()
         )
     }
-    single { ConfigurationScreenViewModel() }
+    single {
+        ConfigurationScreenViewModel(
+            httpClientService = get(),
+            webServerService = get(),
+            mqttService = get(),
+            wakeWordService = get(),
+            speechToTextService = get(),
+            intentRecognitionService = get(),
+            textToSpeechService = get(),
+            audioPlayingService = get(),
+            dialogManagerService = get(),
+            intentHandlingService = get()
+        )
+    }
     single {
         AudioPlayingConfigurationViewModel(
             service = get()

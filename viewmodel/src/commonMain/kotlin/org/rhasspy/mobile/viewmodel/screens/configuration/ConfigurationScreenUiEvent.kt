@@ -1,13 +1,17 @@
 package org.rhasspy.mobile.viewmodel.screens.configuration
 
-import org.rhasspy.mobile.ui.event.Event
-import org.rhasspy.mobile.ui.event.StateEvent
+sealed interface ConfigurationScreenUiEvent {
 
-sealed class ConfigurationScreenUiEvent(stateEvent: StateEvent) : Event(stateEvent) {
+    sealed interface Change : ConfigurationScreenUiEvent{
 
-    data class ScrollToErrorEvent(
-        override val stateEvent: StateEvent,
-        val firstErrorIndex: Int
-    ) : ConfigurationScreenUiEvent(stateEvent)
+        class SiteIdChange(val text: String) : Change
+
+    }
+
+    sealed interface Action : ConfigurationScreenUiEvent{
+
+        object ScrollToError : Action
+
+    }
 
 }

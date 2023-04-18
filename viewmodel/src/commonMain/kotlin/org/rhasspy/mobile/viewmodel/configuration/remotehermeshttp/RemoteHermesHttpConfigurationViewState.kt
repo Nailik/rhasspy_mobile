@@ -1,19 +1,15 @@
 package org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.platformspecific.combineState
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toLongOrZero
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 
 @Stable
-data class RemoteHermesHttpConfigurationViewState(
+data class RemoteHermesHttpConfigurationViewState internal constructor(
     val httpClientServerEndpointHost: String = ConfigurationSetting.httpClientServerEndpointHost.value,
     val httpClientServerEndpointPort: Int = ConfigurationSetting.httpClientServerEndpointPort.value,
     val httpClientServerEndpointPortText: String = ConfigurationSetting.httpClientServerEndpointPort.value.toString(),

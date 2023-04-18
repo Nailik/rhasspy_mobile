@@ -9,15 +9,16 @@ import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 
 @Stable
-data class AudioPlayingConfigurationViewState(
-    val audioPlayingOptionList: ImmutableList<AudioPlayingOption> = AudioPlayingOption.values().toImmutableList(),
-    val audioOutputOptionList: ImmutableList<AudioOutputOption> = AudioOutputOption.values().toImmutableList(),
+data class AudioPlayingConfigurationViewState internal constructor(
     val audioPlayingOption: AudioPlayingOption = ConfigurationSetting.audioPlayingOption.value,
     val audioOutputOption: AudioOutputOption = ConfigurationSetting.audioOutputOption.value,
     val isUseCustomAudioPlayingHttpEndpoint: Boolean = ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value,
     val audioPlayingHttpEndpoint: String = ConfigurationSetting.audioPlayingHttpEndpoint.value,
     val audioPlayingMqttSiteId: String = ConfigurationSetting.audioPlayingMqttSiteId.value
 ) : IConfigurationEditViewState() {
+
+    val audioPlayingOptionList: ImmutableList<AudioPlayingOption> = AudioPlayingOption.values().toImmutableList()
+    val audioOutputOptionList: ImmutableList<AudioOutputOption> = AudioOutputOption.values().toImmutableList()
 
     override val hasUnsavedChanges: Boolean
         get() = !(audioPlayingOption == ConfigurationSetting.audioPlayingOption.value &&

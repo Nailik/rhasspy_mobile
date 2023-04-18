@@ -7,7 +7,7 @@ import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 
 @Stable
-data class WebServerConfigurationViewState(
+data class WebServerConfigurationViewState internal constructor(
     val isHttpServerEnabled: Boolean = ConfigurationSetting.isHttpServerEnabled.value,
     val httpServerPortText: String = ConfigurationSetting.httpServerPort.value.toString(),
     val isHttpServerSSLEnabled: Boolean = ConfigurationSetting.isHttpServerSSLEnabledEnabled.value,
