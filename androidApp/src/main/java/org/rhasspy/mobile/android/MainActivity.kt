@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.android
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -42,24 +41,6 @@ class MainActivity : KoinComponent, AppActivity() {
     companion object : KoinComponent {
         var isFirstLaunch = false
             private set
-
-        fun startRecordingAction() {
-            val application = get<NativeApplication>()
-            application.currentActivity?.also {
-                it.startActivity(
-                    Intent(application, MainActivity::class.java).apply {
-                        putExtra(IntentAction.StartRecording.param, true)
-                    }
-                )
-            } ?: run {
-                application.startActivity(
-                    Intent(application, MainActivity::class.java).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        putExtra(IntentAction.StartRecording.param, true)
-                    }
-                )
-            }
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -21,6 +21,8 @@ expect abstract class NativeApplication() {
 
     abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)
 
+    abstract fun startRecordingAction()
+
     fun isInstrumentedTest(): Boolean
 
     fun openLink(link: String)

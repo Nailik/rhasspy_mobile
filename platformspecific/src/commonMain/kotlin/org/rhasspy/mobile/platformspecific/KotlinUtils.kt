@@ -120,7 +120,7 @@ inline fun <T1 : Any, T2 : Any> notNull(
     return if (p1 != null && p2 != null) block(p1, p2) else run()
 }
 
-inline fun <T> Array<out T>.toImmutableList(): ImmutableList<T> {
+fun <T> Array<out T>.toImmutableList(): ImmutableList<T> {
     return when (size) {
         0 -> persistentListOf()
         1 -> persistentListOf(this[0])
@@ -131,3 +131,22 @@ inline fun <T> Array<out T>.toImmutableList(): ImmutableList<T> {
 fun String.toLongOrZero(): Long = toLongOrNull() ?: 0L
 fun String.toIntOrZero(): Int = toIntOrNull() ?: 0
 fun <E> Iterable<E>.replace(old: E, new: E) = map { if (it == old) new else it }
+
+fun <E> ImmutableList<E>.updateList(block: MutableList<E>.() -> Unit) : ImmutableList<E>{
+    return this.toMutableList().apply(block).toImmutableList()
+}
+
+fun <E> ImmutableList<E>.updateList(index: Int, block: E.() -> E) : ImmutableList<E> {
+    val item = get(index)
+    return this.toImmutableList().updateList {
+        set(index, block(item))
+    }
+}
+
+fun <E> E.updateViewState(block: E.() -> E) : E {
+    return this.block()
+}
+
+fun <E> MutableStateFlow<E>.updateViewStateFlow(block: E.() -> E) {
+    this.value = this.value.block()
+}

@@ -23,7 +23,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
-import org.rhasspy.mobile.viewmodel.overlay.IndicationOverlayViewModel
+import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
 
 /**
  * Overlay Service

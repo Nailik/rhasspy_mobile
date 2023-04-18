@@ -22,10 +22,10 @@ sealed interface WakeWordConfigurationUiEvent {
             data class SelectWakeWordPorcupineLanguage(val option: PorcupineLanguageOption) : Change
             data class UpdateWakeWordPorcupineKeywordDefaultSensitivity(val index: Int, val value: Float) : Change
             data class ClickPorcupineKeywordDefault(val index: Int) : Change
-            data class TogglePorcupineKeywordDefault(val index: Int, val value: Boolean) : Change
+            data class SetPorcupineKeywordDefault(val index: Int, val value: Boolean) : Change
             data class UpdateWakeWordPorcupineKeywordCustomSensitivity(val index: Int, val value: Float) : Change
             data class ClickPorcupineKeywordCustom(val index: Int) : Change
-            data class TogglePorcupineKeywordCustom(val index: Int, val value: Boolean) : Change
+            data class SetPorcupineKeywordCustom(val index: Int, val value: Boolean) : Change
             data class UndoCustomKeywordDeleted(val index: Int) : Change
             data class AddPorcupineKeywordCustom(val path: Path) : Change
             data class DeletePorcupineKeywordCustom(val index: Int) : Change

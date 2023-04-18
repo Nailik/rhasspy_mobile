@@ -7,7 +7,7 @@ import org.rhasspy.mobile.logic.logger.LogLevel
 import org.rhasspy.mobile.logic.settings.AppSetting
 
 @Stable
-data class SettingsScreenViewState(
+data class SettingsScreenViewState internal constructor(
     val currentLanguage: LanguageType = AppSetting.languageType.value,
     val isBackgroundEnabled: Boolean = AppSetting.isBackgroundServiceEnabled.value,
     val microphoneOverlaySizeOption: MicrophoneOverlaySizeOption = AppSetting.microphoneOverlaySizeOption.value,

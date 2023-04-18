@@ -43,8 +43,8 @@ import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfi
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
-import org.rhasspy.mobile.viewmodel.overlay.IndicationOverlayViewModel
-import org.rhasspy.mobile.viewmodel.overlay.MicrophoneOverlayViewModel
+import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
+import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayViewModel
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
@@ -212,8 +212,17 @@ val viewModelModule = module {
     }
     single { MicrophoneOverlaySettingsViewModel() }
     single { SaveAndRestoreSettingsViewModel() }
-    single { MicrophoneOverlayViewModel() }
-    single { IndicationOverlayViewModel() }
+    single {
+        MicrophoneOverlayViewModel(
+            nativeApplication = get(),
+            microphoneFabViewModel = get()
+        )
+    }
+    single {
+        IndicationOverlayViewModel(
+            indicationService = get()
+        )
+    }
 }
 
 val factoryModule = module {

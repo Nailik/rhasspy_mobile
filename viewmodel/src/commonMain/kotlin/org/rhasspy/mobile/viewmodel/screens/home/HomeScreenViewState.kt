@@ -10,7 +10,7 @@ import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 
 @Stable
-data class HomeScreenViewState(
+data class HomeScreenViewState internal constructor(
     val isMicrophonePermissionRequired: StateFlow<Boolean>,
     val isPlayingRecording: StateFlow<Boolean>,
     val isPlayingRecordingEnabled: StateFlow<Boolean>,

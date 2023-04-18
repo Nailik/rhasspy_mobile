@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.overlay
+package org.rhasspy.mobile.viewmodel.overlay.indication
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,7 +8,21 @@ import org.rhasspy.mobile.logic.services.indication.IndicationService
 import org.rhasspy.mobile.logic.services.indication.IndicationState
 import org.rhasspy.mobile.platformspecific.readOnly
 
-class IndicationOverlayViewModel : ViewModel(), KoinComponent {
+class IndicationOverlayViewModel(
+    indicationService: IndicationService
+) : ViewModel(), KoinComponent {
+
+    private val _viewState = MutableStateFlow(
+        IndicationOverlayViewState.getInitialViewState(indicationService)
+    )
+    val viewState = _viewState.readOnly
+
+    init {
+        IndicationOverlayViewStateUpdater(
+            _viewState = _viewState,
+            indicationService = indicationService
+        )
+    }
 
     val indicationState
         get() = getSafe<IndicationService>()?.indicationState

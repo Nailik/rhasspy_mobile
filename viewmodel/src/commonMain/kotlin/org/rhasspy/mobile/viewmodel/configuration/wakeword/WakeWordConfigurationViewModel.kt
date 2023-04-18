@@ -16,6 +16,9 @@ import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
+import org.rhasspy.mobile.platformspecific.updateList
+import org.rhasspy.mobile.platformspecific.updateViewState
+import org.rhasspy.mobile.platformspecific.updateViewStateFlow
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
@@ -28,8 +31,8 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.ClickPorcupineKeywordDefault
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.DeletePorcupineKeywordCustom
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SelectWakeWordPorcupineLanguage
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.TogglePorcupineKeywordCustom
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.TogglePorcupineKeywordDefault
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SetPorcupineKeywordCustom
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SetPorcupineKeywordDefault
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UndoCustomKeywordDeleted
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineKeywordCustomSensitivity
@@ -69,8 +72,11 @@ class WakeWordConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            MicrophonePermissionAllowed -> if (!contentViewState.value.hasUnsavedChanges) { save() }
-            TestStartWakeWord ->  startWakeWordDetection()
+            MicrophonePermissionAllowed -> if (!contentViewState.value.hasUnsavedChanges) {
+                save()
+            }
+
+            TestStartWakeWord -> startWakeWordDetection()
         }
     }
 
@@ -82,68 +88,33 @@ class WakeWordConfigurationViewModel(
     }
 
     private fun onPorcupineChange(change: PorcupineUiEvent.Change) {
-        contentViewState.update { contentViewState ->
-            val it = contentViewState.wakeWordPorcupineViewState
-            contentViewState.copy(
-                wakeWordPorcupineViewState =
-                when (change) {
-                    is UpdateWakeWordPorcupineAccessToken -> it.copy(accessToken = change.value)
-                    is ClickPorcupineKeywordCustom ->
-                        it.copy(customOptionsUi = it.customOptionsUi.toMutableList()
-                            .also {
-                                it[change.index] = it[change.index].let { item ->
-                                    item.copy(keyword = item.keyword.copy(isEnabled = !item.keyword.isEnabled))
-                                }
-                            }
-                            .toImmutableList())
-
-                    is ClickPorcupineKeywordDefault ->
-                        it.copy(defaultOptions = it.defaultOptions.toMutableList()
-                            .also { it[change.index] = it[change.index].copy(isEnabled = !it[change.index].isEnabled) }
-                            .toImmutableList())
-
-                    is AddPorcupineKeywordCustom -> it.copy(customOptionsUi = it.customOptionsUi.toMutableList()
-                        .apply { add(PorcupineCustomKeywordViewState(PorcupineCustomKeyword(change.path.name, true, 0.5f))) }
-                        .toImmutableList())
-
-                    is DeletePorcupineKeywordCustom -> it.copy(customOptionsUi = it.customOptionsUi.toMutableList()
-                        .also { it[change.index] = it[change.index].copy(deleted = true) }
-                        .toImmutableList())
-
-                    is SelectWakeWordPorcupineLanguage -> it.copy(porcupineLanguage = change.option)
-                    is TogglePorcupineKeywordCustom ->
-                        it.copy(customOptionsUi = it.customOptionsUi.toMutableList()
-                            .also {
-                                it[change.index] = it[change.index].let { item ->
-                                    item.copy(keyword = item.keyword.copy(isEnabled = change.value))
-                                }
-                            }
-                            .toImmutableList())
-
-                    is TogglePorcupineKeywordDefault ->
-                        it.copy(defaultOptions = it.defaultOptions.toMutableList()
-                            .also { it[change.index] = it[change.index].copy(isEnabled = change.value) }
-                            .toImmutableList())
-
-                    is UndoCustomKeywordDeleted -> it.copy(customOptionsUi = it.customOptionsUi.toMutableList()
-                        .also { it[change.index] = it[change.index].copy(deleted = false) }
-                        .toImmutableList())
-
-                    is UpdateWakeWordPorcupineKeywordCustomSensitivity ->
-                        it.copy(customOptionsUi = it.customOptionsUi.toMutableList()
-                            .also {
-                                it[change.index] = it[change.index].let { item ->
-                                    item.copy(keyword = item.keyword.copy(sensitivity = change.value))
-                                }
-                            }
-                            .toImmutableList())
-
-                    is UpdateWakeWordPorcupineKeywordDefaultSensitivity ->
-                        it.copy(defaultOptions = it.defaultOptions.toMutableList()
-                            .also { it[change.index] = it[change.index].copy(sensitivity = change.value) }
-                            .toImmutableList())
-                }
-            )
+        contentViewState.updateViewStateFlow {
+                copy(wakeWordPorcupineViewState = wakeWordPorcupineViewState.updateViewState {
+                    when (change) {
+                        is UpdateWakeWordPorcupineAccessToken -> copy(accessToken = change.value)
+                        is ClickPorcupineKeywordCustom -> copy(customOptionsUi = customOptionsUi.updateList(change.index) { copy(keyword = keyword.copy(isEnabled = !keyword.isEnabled)) })
+                        is ClickPorcupineKeywordDefault -> copy(defaultOptions = defaultOptions.updateList(change.index) { copy(isEnabled = !isEnabled) })
+                        is DeletePorcupineKeywordCustom -> copy(customOptionsUi = customOptionsUi.updateList(change.index) { copy(deleted = true) })
+                        is SelectWakeWordPorcupineLanguage -> copy(porcupineLanguage = change.option)
+                        is SetPorcupineKeywordCustom -> copy(customOptionsUi = customOptionsUi.updateList(change.index) { copy(keyword = keyword.copy(isEnabled = change.value)) })
+                        is SetPorcupineKeywordDefault -> copy(defaultOptions = defaultOptions.updateList(change.index) { copy(isEnabled = change.value) })
+                        is UndoCustomKeywordDeleted -> copy(customOptionsUi = customOptionsUi.updateList(change.index) { copy(deleted = false) })
+                        is UpdateWakeWordPorcupineKeywordCustomSensitivity -> copy(customOptionsUi = customOptionsUi.updateList(change.index) { copy(keyword = keyword.copy(sensitivity = change.value)) })
+                        is UpdateWakeWordPorcupineKeywordDefaultSensitivity -> copy(defaultOptions = defaultOptions.updateList(change.index) { copy(sensitivity = change.value) })
+                        is AddPorcupineKeywordCustom ->
+                            copy(customOptionsUi = customOptionsUi.updateList {
+                                add(
+                                    PorcupineCustomKeywordViewState(
+                                        PorcupineCustomKeyword(
+                                            fileName = change.path.name,
+                                            isEnabled = true,
+                                            sensitivity = 0.5f
+                                        )
+                                    )
+                                )
+                            })
+                    }
+                })
         }
     }
 
