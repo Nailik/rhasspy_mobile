@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration
 
+import androidx.compose.runtime.Stable
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.collections.immutable.ImmutableList
@@ -17,21 +18,22 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.logger.FileLogger
-import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.logic.logger.LogLevel
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.ui.event.StateEvent
+import org.rhasspy.mobile.ui.event.StateEvent.Consumed
 import org.rhasspy.mobile.ui.event.StateEvent.Triggered
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiNavigate.PopBackStack
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
+@Stable
 abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
     private val service: IService,
     private val initialViewState: () -> V
@@ -70,7 +72,8 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
             isLoading = false,
             serviceViewState = serviceViewState,
             editViewState = contentViewState,
-            testViewState = configurationTestViewState
+            testViewState = configurationTestViewState,
+            popBackStack = PopBackStack(Consumed)
         )
     )
     val viewState = _viewState.readOnly
@@ -110,7 +113,7 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
 
     fun onConsumed(event: IConfigurationUiNavigate) {
         when (event) {
-            is PopBackStack -> _viewState.update { it.copy(popBackStack = PopBackStack(StateEvent.Consumed)) }
+            is PopBackStack -> _viewState.update { it.copy(popBackStack = PopBackStack(Consumed)) }
         }
     }
 

@@ -10,7 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
+import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.permissions.RequiresOverlayPermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
@@ -48,7 +48,7 @@ fun MicrophoneOverlaySettingsContent(viewModel: MicrophoneOverlaySettingsViewMod
             ) { onClick ->
 
                 //drop down to select option
-                RadioButtonsEnumSelection(
+                RadioButtonsEnumSelectionList(
                     modifier = Modifier.testTag(TestTag.MicrophoneOverlaySizeOptions),
                     selected = viewState.microphoneOverlaySizeOption,
                     onSelect = { option ->

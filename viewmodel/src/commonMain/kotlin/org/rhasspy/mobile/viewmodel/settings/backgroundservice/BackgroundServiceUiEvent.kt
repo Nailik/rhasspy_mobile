@@ -9,8 +9,8 @@ sealed interface BackgroundServiceUiEvent {
 
     }
 
-    sealed interface Action: BackgroundServiceUiEvent {
-        object DisableBatteryOptimization: Action
+    sealed interface Action : BackgroundServiceUiEvent {
+        object DisableBatteryOptimization : Action
     }
 
 }

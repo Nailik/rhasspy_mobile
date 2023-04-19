@@ -1,16 +1,14 @@
 package org.rhasspy.mobile.viewmodel.screens.settings
 
+import androidx.compose.runtime.Stable
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import org.rhasspy.mobile.platformspecific.readOnly
+import kotlinx.coroutines.flow.StateFlow
 
-class SettingsScreenViewModel : ViewModel() {
+@Stable
+class SettingsScreenViewModel(
+    viewStateCreator: SettingsScreenViewStateCreator
+) : ViewModel() {
 
-    private val _viewState = MutableStateFlow(SettingsScreenViewState())
-    val viewState = _viewState.readOnly
-
-    init {
-        SettingsScreenViewStateUpdater(_viewState)
-    }
+    val viewState: StateFlow<SettingsScreenViewState> = viewStateCreator()
 
 }

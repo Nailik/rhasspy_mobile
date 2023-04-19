@@ -40,7 +40,6 @@ object FileLogger : LogWriter(), KoinComponent {
 
     init {
         Logger.setMinSeverity(AppSetting.logLevel.value.severity)
-        log(Severity.Error, "NativeFileWriter", "createdLogFile")
     }
 
     /**

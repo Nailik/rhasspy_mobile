@@ -1,10 +1,9 @@
 package org.rhasspy.mobile.viewmodel.overlay.microphone
 
+import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
-import org.rhasspy.mobile.logic.settings.AppSetting
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 
+@Stable
 data class MicrophoneOverlayViewState internal constructor(
     val shouldOverlayBeShown: Boolean,
     val microphoneOverlayPositionX: Int,
@@ -12,13 +11,20 @@ data class MicrophoneOverlayViewState internal constructor(
     val microphoneOverlaySize: Int
 ) {
 
-    constructor(nativeApplication: NativeApplication) : this (
-        shouldOverlayBeShown = OverlayPermission.granted.value &&
-                AppSetting.microphoneOverlaySizeOption.value != MicrophoneOverlaySizeOption.Disabled &&
-                (nativeApplication.isAppInBackground.value && AppSetting.isMicrophoneOverlayWhileAppEnabled.value),
-        microphoneOverlayPositionX = AppSetting.microphoneOverlayPositionX.value,
-        microphoneOverlayPositionY = AppSetting.microphoneOverlayPositionY.value,
-        microphoneOverlaySize = AppSetting.microphoneOverlaySizeOption.value.size
+    constructor(
+        isOverlayPermissionGranted: Boolean,
+        isAppInBackground: Boolean,
+        isMicrophoneOverlayWhileAppEnabled: Boolean,
+        microphoneOverlaySizeOption: MicrophoneOverlaySizeOption,
+        microphoneOverlayPositionX: Int,
+        microphoneOverlayPositionY: Int
+    ) : this(
+        shouldOverlayBeShown = isOverlayPermissionGranted &&
+                microphoneOverlaySizeOption != MicrophoneOverlaySizeOption.Disabled &&
+                (isAppInBackground && isMicrophoneOverlayWhileAppEnabled),
+        microphoneOverlayPositionX = microphoneOverlayPositionX,
+        microphoneOverlayPositionY = microphoneOverlayPositionY,
+        microphoneOverlaySize = microphoneOverlaySizeOption.size
     )
 
 }

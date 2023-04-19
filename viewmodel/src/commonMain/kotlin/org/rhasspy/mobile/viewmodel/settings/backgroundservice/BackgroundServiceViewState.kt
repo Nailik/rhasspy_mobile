@@ -1,9 +1,9 @@
 package org.rhasspy.mobile.viewmodel.settings.backgroundservice
 
-import org.rhasspy.mobile.logic.settings.AppSetting
-import org.rhasspy.mobile.platformspecific.permission.BatteryOptimization
+import androidx.compose.runtime.Stable
 
-data class BackgroundServiceViewState(
-    val isBackgroundServiceEnabled: Boolean = AppSetting.isBackgroundServiceEnabled.value,
-    val isBatteryOptimizationDisabled: Boolean = BatteryOptimization.isBatteryOptimizationDisabled()
+@Stable
+data class BackgroundServiceViewState internal constructor(
+    val isBackgroundServiceEnabled: Boolean,
+    val isBatteryOptimizationDisabled: Boolean
 )

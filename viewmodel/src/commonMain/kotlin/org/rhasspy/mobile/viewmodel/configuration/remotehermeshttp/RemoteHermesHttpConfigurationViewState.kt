@@ -5,7 +5,6 @@ import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.platformspecific.toLongOrZero
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 
 @Stable
@@ -20,30 +19,26 @@ data class RemoteHermesHttpConfigurationViewState internal constructor(
     val isTestRecordingAudio: Boolean = false
 ) : IConfigurationEditViewState() {
 
-    override val hasUnsavedChanges: Boolean
-        get() = !(httpClientServerEndpointHost == ConfigurationSetting.httpClientServerEndpointHost.value &&
-                httpClientServerEndpointPort == ConfigurationSetting.httpClientServerEndpointPort.value &&
-                httpClientTimeout == ConfigurationSetting.httpClientTimeout.value &&
-                isHttpSSLVerificationDisabled == ConfigurationSetting.isHttpClientSSLVerificationDisabled.value)
+    val isSpeechToTextTestVisible
+        get() =
+            ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.RemoteHTTP &&
+                    !ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value
 
+    val isIntentRecognitionTestVisible
+        get() =
+            ConfigurationSetting.intentRecognitionOption.value == IntentRecognitionOption.RemoteHTTP
+                    && !ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value
+
+    val isTextToSpeechTestVisible
+        get() =
+            ConfigurationSetting.textToSpeechOption.value == TextToSpeechOption.RemoteHTTP
+                    && !ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value
+
+    override val hasUnsavedChanges: Boolean get() = this != RemoteHermesHttpConfigurationViewState()
     override val isTestingEnabled: Boolean
         get() = httpClientServerEndpointHost.isNotBlank() &&
                 (ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.RemoteHTTP ||
                         ConfigurationSetting.intentRecognitionOption.value == IntentRecognitionOption.RemoteHTTP ||
                         ConfigurationSetting.textToSpeechOption.value == TextToSpeechOption.RemoteHTTP)
-
-    private val httpClientTimeout: Long get() = httpClientTimeoutText.toLongOrZero()
-
-    val isSpeechToTextTestVisible get() =
-        ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.RemoteHTTP &&
-                !ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value
-
-    val isIntentRecognitionTestVisible get() =
-        ConfigurationSetting.intentRecognitionOption.value ==IntentRecognitionOption.RemoteHTTP
-                && !ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value
-
-    val isTextToSpeechTestVisible get() =
-        ConfigurationSetting.textToSpeechOption.value ==TextToSpeechOption.RemoteHTTP
-                && !ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value
 
 }

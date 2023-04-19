@@ -12,7 +12,7 @@ sealed interface WakeWordConfigurationUiEvent {
 
     sealed interface Action : WakeWordConfigurationUiEvent {
         object MicrophonePermissionAllowed : Action
-        object TestStartWakeWord: Action
+        object TestStartWakeWord : Action
     }
 
     sealed interface PorcupineUiEvent : WakeWordConfigurationUiEvent {

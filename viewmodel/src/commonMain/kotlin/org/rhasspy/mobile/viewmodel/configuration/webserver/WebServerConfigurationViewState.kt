@@ -17,17 +17,10 @@ data class WebServerConfigurationViewState internal constructor(
     val httpServerSSLKeyPassword: String = ConfigurationSetting.httpServerSSLKeyPassword.value
 ) : IConfigurationEditViewState() {
 
-    override val hasUnsavedChanges: Boolean
-        get() = !(isHttpServerEnabled == ConfigurationSetting.isHttpServerEnabled.value &&
-                httpServerPort == ConfigurationSetting.httpServerPort.value &&
-                isHttpServerSSLEnabled == ConfigurationSetting.isHttpServerSSLEnabledEnabled.value &&
-                httpServerSSLKeyStoreFile == ConfigurationSetting.httpServerSSLKeyStoreFile.value &&
-                httpServerSSLKeyStorePassword == ConfigurationSetting.httpServerSSLKeyStorePassword.value &&
-                httpServerSSLKeyAlias == ConfigurationSetting.httpServerSSLKeyAlias.value &&
-                httpServerSSLKeyPassword == ConfigurationSetting.httpServerSSLKeyPassword.value)
+    val httpServerPort: Int get() = httpServerPortText.toIntOrZero()
 
+    override val hasUnsavedChanges: Boolean get() = this != WebServerConfigurationViewState()
     override val isTestingEnabled: Boolean get() = isHttpServerEnabled
 
-    val httpServerPort: Int get() = httpServerPortText.toIntOrZero()
 
 }

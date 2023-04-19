@@ -4,9 +4,9 @@ import org.rhasspy.mobile.data.language.LanguageType
 
 sealed interface LanguageSettingsUiEvent {
 
-    sealed interface Change: LanguageSettingsUiEvent {
+    sealed interface Change : LanguageSettingsUiEvent {
 
-        data class SetLanguageOption(val option: LanguageType): Change
+        data class SelectLanguageOption(val option: LanguageType) : Change
 
     }
 }

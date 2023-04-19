@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable
-data class ServiceStateHeaderViewState(
+data class ServiceStateHeaderViewState internal constructor(
     val serviceState: ServiceViewState,
     val isOpenServiceDialogEnabled: Boolean,
     val serviceStateDialogText: Any

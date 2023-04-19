@@ -13,12 +13,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -28,7 +23,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import kotlinx.coroutines.flow.StateFlow
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.configuration.ConfigurationScreen
@@ -121,7 +115,7 @@ fun BottomBarScreensNavigation(viewModel: HomeScreenViewModel = get()) {
  */
 @Composable
 fun BottomNavigation(
-    isShowLogEnabled: StateFlow<Boolean>,
+    isShowLogEnabled: Boolean,
     navController: NavController) {
 
     NavigationBar {
@@ -188,7 +182,7 @@ fun BottomNavigation(
             }
         )
 
-        if (isShowLogEnabled.collectAsState().value) {
+        if (isShowLogEnabled) {
             NavigationItem(screen = BottomBarScreenType.LogScreen,
                 icon = { Icon(Icons.Filled.Code, MR.strings.log.stable) },
                 label = { Text(MR.strings.log.stable) }

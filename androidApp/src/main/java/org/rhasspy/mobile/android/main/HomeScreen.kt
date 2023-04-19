@@ -96,11 +96,9 @@ private fun PortraitContent(
             MicrophoneFabElement(get())
         }
 
-        val isPlaying by viewState.isPlayingRecording.collectAsState()
-        val isPlayingRecordingEnabled by viewState.isPlayingRecordingEnabled.collectAsState()
         PlayRecording(
-            isPlaying = isPlaying,
-            isPlayingRecordingEnabled = isPlayingRecordingEnabled,
+            isPlaying = viewState.isPlayingRecording,
+            isPlayingRecordingEnabled = viewState.isPlayingRecordingEnabled,
             onEvent = onEvent
         )
     }
@@ -130,12 +128,10 @@ fun LandscapeContent(
             MicrophoneFabElement(get())
         }
 
-        val isPlaying by viewState.isPlayingRecording.collectAsState()
-        val isPlayingRecordingEnabled by viewState.isPlayingRecordingEnabled.collectAsState()
         PlayRecording(
             modifier = Modifier.weight(1f),
-            isPlaying = isPlaying,
-            isPlayingRecordingEnabled = isPlayingRecordingEnabled,
+            isPlaying = viewState.isPlayingRecording,
+            isPlayingRecordingEnabled = viewState.isPlayingRecordingEnabled,
             onEvent = onEvent
         )
     }
@@ -175,7 +171,7 @@ private fun MicrophoneFabElement(viewModel: MicrophoneFabViewModel) {
  */
 @Composable
 private fun PlayRecording(
-            modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier,
     isPlaying: Boolean,
     isPlayingRecordingEnabled: Boolean,
     onEvent: (event: HomeScreenUiEvent) -> Unit

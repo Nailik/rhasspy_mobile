@@ -16,12 +16,11 @@ sealed interface IntentHandlingConfigurationUiEvent {
 
     }
 
-    sealed interface Action : IntentHandlingConfigurationUiEvent{
+    sealed interface Action : IntentHandlingConfigurationUiEvent {
 
-        object RunIntentHandlingTest: Action
+        object RunIntentHandlingTest : Action
 
     }
-
 
 
 }

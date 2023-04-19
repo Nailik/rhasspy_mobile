@@ -1,14 +1,10 @@
 package org.rhasspy.mobile.viewmodel.element
 
-import org.koin.core.component.KoinComponent
+import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.data.service.option.WakeWordOption
-import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceState
-import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
-import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 
+@Stable
 data class MicrophoneFabViewState internal constructor(
     val isMicrophonePermissionRequired: Boolean,
     val dialogManagerServiceState: DialogManagerServiceState,
@@ -18,32 +14,19 @@ data class MicrophoneFabViewState internal constructor(
     val isRecording: Boolean
 ) {
 
-    companion object : KoinComponent {
-
-        fun getInitialViewState(
-            dialogManagerService: DialogManagerService,
-            serviceMiddleware: ServiceMiddleware,
-            wakeWordService: WakeWordService
-        ) : MicrophoneFabViewState {
-            return MicrophoneFabViewState(
-                isMicrophonePermissionRequired = isMicrophonePermissionRequired(ConfigurationSetting.wakeWordOption.value),
-                dialogManagerServiceState = dialogManagerService.currentDialogState.value,
-                isUserActionEnabled = serviceMiddleware.isUserActionEnabled.value,
-                isShowBorder = wakeWordService.isRecording.value,
-                isShowMicOn = MicrophonePermission.granted.value,
-                isRecording = isRecording(dialogManagerService.currentDialogState.value)
-            )
-        }
-
-        fun isMicrophonePermissionRequired(wakeWordOption: WakeWordOption): Boolean {
-            return wakeWordOption == WakeWordOption.Porcupine || wakeWordOption == WakeWordOption.Udp
-        }
-
-        fun isRecording(dialogManagerServiceState: DialogManagerServiceState): Boolean {
-            return dialogManagerServiceState == DialogManagerServiceState.RecordingIntent
-        }
-
-    }
-
+    constructor(
+        wakeWordOption: WakeWordOption,
+        dialogManagerServiceState: DialogManagerServiceState,
+        isUserActionEnabled: Boolean,
+        isShowBorder: Boolean,
+        isShowMicOn: Boolean,
+    ) : this(
+        isMicrophonePermissionRequired = wakeWordOption == WakeWordOption.Porcupine || wakeWordOption == WakeWordOption.Udp,
+        dialogManagerServiceState = dialogManagerServiceState,
+        isUserActionEnabled = isUserActionEnabled,
+        isShowBorder = isShowBorder,
+        isShowMicOn = isShowMicOn,
+        isRecording = dialogManagerServiceState == DialogManagerServiceState.RecordingIntent
+    )
 
 }

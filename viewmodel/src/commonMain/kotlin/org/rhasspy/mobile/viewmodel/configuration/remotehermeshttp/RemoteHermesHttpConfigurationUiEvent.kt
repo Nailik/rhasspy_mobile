@@ -12,11 +12,11 @@ sealed interface RemoteHermesHttpConfigurationUiEvent {
 
     }
 
-    sealed interface Action: RemoteHermesHttpConfigurationUiEvent {
+    sealed interface Action : RemoteHermesHttpConfigurationUiEvent {
 
-        object TestRemoteHermesHttpToggleRecording: Action
-        object TestRemoteHermesHttpIntentRecognitionTest: Action
-        object TestRemoteHermesHttpTextToSpeechTest: Action
+        object TestRemoteHermesHttpToggleRecording : Action
+        object TestRemoteHermesHttpIntentRecognitionTest : Action
+        object TestRemoteHermesHttpTextToSpeechTest : Action
 
 
     }

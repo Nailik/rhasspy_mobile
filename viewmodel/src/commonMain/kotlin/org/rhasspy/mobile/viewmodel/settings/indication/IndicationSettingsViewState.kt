@@ -1,11 +1,13 @@
 package org.rhasspy.mobile.viewmodel.settings.indication
 
+import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.toImmutableList
 
-data class IndicationSettingsViewState(
+@Stable
+data class IndicationSettingsViewState internal constructor(
     val isSoundIndicationEnabled: Boolean = AppSetting.isSoundIndicationEnabled.value,
     val isWakeWordLightIndicationEnabled: Boolean = AppSetting.isWakeWordLightIndicationEnabled.value,
     val isWakeWordDetectionTurnOnDisplayEnabled: Boolean = AppSetting.isWakeWordDetectionTurnOnDisplayEnabled.value,
@@ -15,6 +17,6 @@ data class IndicationSettingsViewState(
     val errorSound: String = AppSetting.errorSound.value
 ) {
 
-    val audioOutputOptionList: ImmutableList<AudioOutputOption> get() = AudioOutputOption.values().toImmutableList()
+    val audioOutputOptionList: ImmutableList<AudioOutputOption> = AudioOutputOption.values().toImmutableList()
 
 }

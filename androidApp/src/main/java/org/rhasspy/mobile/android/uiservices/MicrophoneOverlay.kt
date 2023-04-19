@@ -33,6 +33,7 @@ import org.rhasspy.mobile.android.main.MicrophoneFab
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
+import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayUiEvent.Change.UpdateMicrophoneOverlayPosition
 import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayViewModel
 
 /**
@@ -42,6 +43,9 @@ object MicrophoneOverlay : KoinComponent {
     private val logger = Logger.withTag("MicrophoneOverlay")
     private var mParams = WindowManager.LayoutParams()
     private val lifecycleOwner = CustomLifecycleOwner()
+
+    //stores old value to only react to changes
+    private var showVisualIndicationOldValue = false
 
     private val microphoneViewModel = get<MicrophoneFabViewModel>()
     private val viewModel = get<MicrophoneOverlayViewModel>()
@@ -93,7 +97,7 @@ object MicrophoneOverlay : KoinComponent {
 
 
     private fun onDrag(delta: Offset, view: View) {
-        viewModel.updateMicrophoneOverlayPosition(delta.x, delta.y)
+        viewModel.onEvent(UpdateMicrophoneOverlayPosition(offsetX = delta.x, offsetY = delta.y))
         mParams.applySettings()
         overlayWindowManager.updateViewLayout(view, mParams)
     }
@@ -148,21 +152,28 @@ object MicrophoneOverlay : KoinComponent {
 
             job = CoroutineScope(Dispatchers.Default).launch {
                 viewModel.viewState.collect {
-                    if (it.shouldOverlayBeShown) {
-                        if (Looper.myLooper() == null) {
-                            Looper.prepare()
-                        }
-                        launch(Dispatchers.Main) {
-                            overlayWindowManager.addView(view, mParams)
-                            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
-                        }
-                    } else {
-                        launch(Dispatchers.Main) {
-                            if (view.parent != null) {
-                                overlayWindowManager.removeView(view)
+                    try {
+                        if (it.shouldOverlayBeShown != showVisualIndicationOldValue) {
+                            showVisualIndicationOldValue = it.shouldOverlayBeShown
+                            if (it.shouldOverlayBeShown) {
+                                if (Looper.myLooper() == null) {
+                                    Looper.prepare()
+                                }
+                                launch(Dispatchers.Main) {
+                                    overlayWindowManager.addView(view, mParams)
+                                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                                }
+                            } else {
+                                launch(Dispatchers.Main) {
+                                    if (view.parent != null) {
+                                        overlayWindowManager.removeView(view)
+                                    }
+                                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+                                }
                             }
-                            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
                         }
+                    } catch (exception: Exception) {
+                        logger.a(exception) { "exception in collect" }
                     }
                 }
             }.also {

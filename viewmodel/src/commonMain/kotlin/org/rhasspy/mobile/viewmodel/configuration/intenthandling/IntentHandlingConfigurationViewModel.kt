@@ -26,7 +26,7 @@ class IntentHandlingConfigurationViewModel(
 ) {
 
     fun onEvent(event: IntentHandlingConfigurationUiEvent) {
-        when(event) {
+        when (event) {
             is Change -> onChange(event)
             is Action -> onAction(event)
         }
@@ -47,7 +47,7 @@ class IntentHandlingConfigurationViewModel(
     }
 
     private fun onAction(action: Action) {
-        when(action) {
+        when (action) {
             RunIntentHandlingTest -> {
                 testScope.launch {
                     get<IntentHandlingService>().intentHandling(

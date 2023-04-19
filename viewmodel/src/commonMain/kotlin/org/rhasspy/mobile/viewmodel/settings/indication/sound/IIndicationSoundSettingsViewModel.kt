@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.viewmodel.settings.indication.sound
 
+import androidx.compose.runtime.Stable
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -28,11 +29,12 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSe
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change.*
 import kotlin.reflect.KFunction1
 
+@Stable
 abstract class IIndicationSoundSettingsViewModel(
     private val localAudioService: LocalAudioService,
     private val nativeApplication: NativeApplication,
     private val customSoundOptions: ISetting<ImmutableList<String>>,
-    private  val soundSetting: ISetting<String>,
+    private val soundSetting: ISetting<String>,
     private val soundVolume: ISetting<Float>,
     private val soundFolderType: FolderType
 ) : ViewModel(), KoinComponent {

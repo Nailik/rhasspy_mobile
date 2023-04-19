@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.WindowManager
 import android.view.WindowManager.LayoutParams.*
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.setViewTreeLifecycleOwner
@@ -57,7 +58,8 @@ object IndicationOverlay : KoinComponent {
         return ComposeView(context).apply {
             setContent {
                 AppTheme {
-                    Indication(viewModel.indicationState.collectAsState().value)
+                    val viewState by viewModel.viewState.collectAsState()
+                    Indication(viewState.indicationState)
                 }
             }
         }
@@ -105,27 +107,31 @@ object IndicationOverlay : KoinComponent {
                 return
             }
             job = CoroutineScope(Dispatchers.Default).launch {
-                viewModel.isShowVisualIndication.collect {
-                    if (it != showVisualIndicationOldValue) {
-                        if (it) {
-                            if (OverlayPermission.isGranted()) {
-                                if (Looper.myLooper() == null) {
-                                    Looper.prepare()
+                viewModel.viewState.collect {
+                    try {
+                        if (it.isShowVisualIndication != showVisualIndicationOldValue) {
+                            showVisualIndicationOldValue = it.isShowVisualIndication
+                            if (it.isShowVisualIndication) {
+                                if (OverlayPermission.isGranted()) {
+                                    if (Looper.myLooper() == null) {
+                                        Looper.prepare()
+                                    }
+                                    launch(Dispatchers.Main) {
+                                        overlayWindowManager.addView(view, mParams)
+                                        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                                    }
                                 }
+                            } else {
                                 launch(Dispatchers.Main) {
-                                    overlayWindowManager.addView(view, mParams)
-                                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                                    if (view.parent != null) {
+                                        overlayWindowManager.removeView(view)
+                                    }
+                                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
                                 }
-                            }
-                        } else {
-                            launch(Dispatchers.Main) {
-                                if (view.parent != null) {
-                                    overlayWindowManager.removeView(view)
-                                }
-                                lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
                             }
                         }
-                        showVisualIndicationOldValue = it
+                    } catch (exception: Exception) {
+                        logger.a(exception) { "exception in collect" }
                     }
                 }
             }.also {

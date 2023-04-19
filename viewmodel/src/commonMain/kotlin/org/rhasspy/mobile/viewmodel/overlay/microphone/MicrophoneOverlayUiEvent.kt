@@ -2,15 +2,15 @@ package org.rhasspy.mobile.viewmodel.overlay.microphone
 
 sealed interface MicrophoneOverlayUiEvent {
 
-    sealed interface Change: MicrophoneOverlayUiEvent {
+    sealed interface Change : MicrophoneOverlayUiEvent {
 
-        data class UpdateMicrophoneOverlayPosition(val offsetX: Float, val offsetY: Float): Change
+        data class UpdateMicrophoneOverlayPosition(val offsetX: Float, val offsetY: Float) : Change
 
     }
 
-    sealed interface Action: MicrophoneOverlayUiEvent {
+    sealed interface Action : MicrophoneOverlayUiEvent {
 
-        object ToggleUserSession: Action
+        object ToggleUserSession : Action
 
     }
 

@@ -18,16 +18,10 @@ data class IntentRecognitionConfigurationViewState internal constructor(
 
     val intentRecognitionOptionList: ImmutableList<IntentRecognitionOption> = IntentRecognitionOption.values().toImmutableList()
 
-    override val hasUnsavedChanges: Boolean
-        get() = !(intentRecognitionOption == ConfigurationSetting.intentRecognitionOption.value &&
-                isUseCustomIntentRecognitionHttpEndpoint == ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value &&
-                intentRecognitionHttpEndpoint == ConfigurationSetting.intentRecognitionHttpEndpoint.value)
-
+    override val hasUnsavedChanges: Boolean get() = this != IntentRecognitionConfigurationViewState()
     override val isTestingEnabled: Boolean get() = intentRecognitionOption != IntentRecognitionOption.Disabled
 
     val intentRecognitionHttpEndpointText: String
-        get() = if (isUseCustomIntentRecognitionHttpEndpoint) {
-            intentRecognitionHttpEndpoint
-        } else HttpClientPath.TextToIntent.fromBaseConfiguration()
+        get() = if (isUseCustomIntentRecognitionHttpEndpoint) intentRecognitionHttpEndpoint else HttpClientPath.TextToIntent.fromBaseConfiguration()
 
 }

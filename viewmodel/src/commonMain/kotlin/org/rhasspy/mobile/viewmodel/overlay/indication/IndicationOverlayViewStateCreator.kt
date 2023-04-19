@@ -3,27 +3,36 @@ package org.rhasspy.mobile.viewmodel.overlay.indication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.services.indication.IndicationService
 import org.rhasspy.mobile.platformspecific.combineStateFlow
-import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewState.Companion.getInitialViewState
 
-class IndicationOverlayViewStateUpdater(
-    private val _viewState: MutableStateFlow<IndicationOverlayViewState>,
+class IndicationOverlayViewStateCreator(
     private val indicationService: IndicationService
 ) {
-
     private val updaterScope = CoroutineScope(Dispatchers.Default)
 
-    init {
+    operator fun invoke(): StateFlow<IndicationOverlayViewState> {
+        val viewState = MutableStateFlow(getViewState())
+
         updaterScope.launch {
             combineStateFlow(
                 indicationService.indicationState,
                 indicationService.isShowVisualIndication
             ).collect {
-                _viewState.value = getInitialViewState(indicationService)
+                viewState.value = getViewState()
             }
         }
+
+        return viewState
+    }
+
+    private fun getViewState(): IndicationOverlayViewState {
+        return IndicationOverlayViewState(
+            indicationState = indicationService.indicationState.value,
+            isShowVisualIndication = indicationService.isShowVisualIndication.value
+        )
     }
 
 }

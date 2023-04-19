@@ -21,13 +21,7 @@ data class IntentHandlingConfigurationViewState internal constructor(
 
     val intentHandlingOptionList: ImmutableList<IntentHandlingOption> = IntentHandlingOption.values().toList().toImmutableList()
 
-    override val hasUnsavedChanges: Boolean
-        get() = !(intentHandlingOption == ConfigurationSetting.intentHandlingOption.value &&
-                intentHandlingHttpEndpoint == ConfigurationSetting.intentHandlingHttpEndpoint.value &&
-                intentHandlingHassEndpoint == ConfigurationSetting.intentHandlingHassEndpoint.value &&
-                intentHandlingHassAccessToken == ConfigurationSetting.intentHandlingHassAccessToken.value &&
-                intentHandlingHassOption == ConfigurationSetting.intentHandlingHomeAssistantOption.value)
-
+    override val hasUnsavedChanges: Boolean get() = this != IntentHandlingConfigurationViewState()
     override val isTestingEnabled: Boolean get() = intentHandlingOption != IntentHandlingOption.Disabled
 
 }

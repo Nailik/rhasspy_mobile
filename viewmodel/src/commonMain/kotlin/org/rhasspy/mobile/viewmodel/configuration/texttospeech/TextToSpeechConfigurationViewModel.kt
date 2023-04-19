@@ -46,7 +46,7 @@ class TextToSpeechConfigurationViewModel(
     }
 
     private fun onAction(action: Action) {
-        when(action) {
+        when (action) {
             TestRemoteHermesHttpTextToSpeechTest -> startTextToSpeech()
         }
     }

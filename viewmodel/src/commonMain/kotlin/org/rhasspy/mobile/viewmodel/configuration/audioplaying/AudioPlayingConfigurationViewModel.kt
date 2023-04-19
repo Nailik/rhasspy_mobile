@@ -19,8 +19,9 @@ import org.rhasspy.mobile.logic.services.mqtt.MqttServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.*
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action.PlayTestAudio
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
 
 /**
@@ -40,7 +41,7 @@ class AudioPlayingConfigurationViewModel(
 ) {
 
     fun onEvent(change: AudioPlayingConfigurationUiEvent) {
-        when(change) {
+        when (change) {
             is Change -> onChange(change)
             is Action -> onAction(change)
         }
@@ -59,7 +60,7 @@ class AudioPlayingConfigurationViewModel(
     }
 
     private fun onAction(action: Action) {
-        when(action) {
+        when (action) {
             PlayTestAudio -> playTestAudio()
         }
     }

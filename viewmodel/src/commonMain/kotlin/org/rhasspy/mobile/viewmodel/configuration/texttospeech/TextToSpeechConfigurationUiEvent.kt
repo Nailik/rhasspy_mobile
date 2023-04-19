@@ -11,9 +11,9 @@ sealed interface TextToSpeechConfigurationUiEvent {
         data class UpdateTestTextToSpeechText(val text: String) : Change
     }
 
-    sealed interface Action: TextToSpeechConfigurationUiEvent {
+    sealed interface Action : TextToSpeechConfigurationUiEvent {
 
-        object TestRemoteHermesHttpTextToSpeechTest: Action
+        object TestRemoteHermesHttpTextToSpeechTest : Action
 
     }
 

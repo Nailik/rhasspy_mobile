@@ -1,7 +1,10 @@
 package org.rhasspy.mobile.viewmodel.configuration.intentrecognition
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
@@ -26,7 +29,7 @@ class IntentRecognitionConfigurationViewModel(
 ) {
 
     fun onEvent(event: IntentRecognitionConfigurationUiEvent) {
-        when(event) {
+        when (event) {
             is Change -> onChange(event)
             is Action -> onAction(event)
         }
@@ -44,7 +47,7 @@ class IntentRecognitionConfigurationViewModel(
     }
 
     private fun onAction(action: Action) {
-        when(action) {
+        when (action) {
             RunIntentRecognition -> runIntentRecognition()
         }
     }

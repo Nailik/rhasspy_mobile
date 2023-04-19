@@ -21,23 +21,13 @@ data class MqttConfigurationViewState internal constructor(
     val mqttKeyStoreFile: Path? = ConfigurationSetting.mqttKeyStoreFile.value
 ) : IConfigurationEditViewState() {
 
-    override val hasUnsavedChanges: Boolean
-        get() = !(isMqttEnabled == ConfigurationSetting.isMqttEnabled.value &&
-                mqttHost == ConfigurationSetting.mqttHost.value &&
-                mqttPort == ConfigurationSetting.mqttPort.value &&
-                mqttUserName == ConfigurationSetting.mqttUserName.value &&
-                mqttPassword == ConfigurationSetting.mqttPassword.value &&
-                isMqttSSLEnabled == ConfigurationSetting.isMqttSSLEnabled.value &&
-                mqttConnectionTimeout == ConfigurationSetting.mqttConnectionTimeout.value &&
-                mqttKeepAliveInterval == ConfigurationSetting.mqttKeepAliveInterval.value &&
-                mqttRetryInterval == ConfigurationSetting.mqttRetryInterval.value &&
-                mqttKeyStoreFile == ConfigurationSetting.mqttKeyStoreFile.value)
-
-    override val isTestingEnabled: Boolean get() = isMqttEnabled
-
     val mqttPort: Int get() = mqttPortText.toIntOrZero()
     val mqttConnectionTimeout: Int get() = mqttConnectionTimeoutText.toIntOrZero()
     val mqttKeepAliveInterval: Int get() = mqttKeepAliveIntervalText.toIntOrZero()
     val mqttRetryInterval: Long get() = mqttRetryIntervalText.toLongOrZero()
+
+    override val hasUnsavedChanges: Boolean get() = this != MqttConfigurationViewState()
+    override val isTestingEnabled: Boolean get() = isMqttEnabled
+
 
 }

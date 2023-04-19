@@ -4,20 +4,20 @@ import org.rhasspy.mobile.data.sounds.SoundOption
 
 sealed interface IIndicationSoundSettingsUiEvent {
 
-    sealed interface Change: IIndicationSoundSettingsUiEvent {
+    sealed interface Change : IIndicationSoundSettingsUiEvent {
 
-        data class SetSoundIndicationOption(val option: SoundOption): Change
-        data class SetSoundFile(val file: String): Change
-        data class UpdateSoundVolume(val volume: Float): Change
-        data class DeleteSoundFile(val file: String): Change
-        data class AddSoundFile(val file: String): Change
+        data class SetSoundIndicationOption(val option: SoundOption) : Change
+        data class SetSoundFile(val file: String) : Change
+        data class UpdateSoundVolume(val volume: Float) : Change
+        data class DeleteSoundFile(val file: String) : Change
+        data class AddSoundFile(val file: String) : Change
 
     }
 
-    sealed interface Action: IIndicationSoundSettingsUiEvent{
+    sealed interface Action : IIndicationSoundSettingsUiEvent {
 
-        object ToggleAudioPlayerActive: Action
-        object ChooseSoundFile: Action
+        object ToggleAudioPlayerActive : Action
+        object ChooseSoundFile : Action
 
     }
 }

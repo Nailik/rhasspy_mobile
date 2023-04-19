@@ -4,10 +4,10 @@ import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 
 sealed interface MicrophoneOverlaySettingsUiEvent {
 
-    sealed interface Change : MicrophoneOverlaySettingsUiEvent{
+    sealed interface Change : MicrophoneOverlaySettingsUiEvent {
 
-        data class SetMicrophoneOverlaySizeOption(val option: MicrophoneOverlaySizeOption): Change
-        data class SetMicrophoneOverlayWhileAppEnabled(val enabled: Boolean): Change
+        data class SetMicrophoneOverlaySizeOption(val option: MicrophoneOverlaySizeOption) : Change
+        data class SetMicrophoneOverlayWhileAppEnabled(val enabled: Boolean) : Change
 
     }
 

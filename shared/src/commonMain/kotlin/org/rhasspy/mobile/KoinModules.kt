@@ -43,16 +43,26 @@ import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfi
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
+import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewStateCreator
 import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
+import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewStateCreator
 import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayViewModel
+import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayViewStateCreator
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewStateCreator
+import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewStateCreator
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewStateCreator
+import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
@@ -61,6 +71,7 @@ import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettin
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.ErrorIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.RecordedIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewStateCreator
 
 val serviceModule = module {
     closeableSingle { LocalAudioService() }
@@ -96,19 +107,41 @@ val serviceModule = module {
 
 val viewModelModule = module {
     single {
-        HomeScreenViewModel(
+        MicrophoneFabViewStateCreator(
+            dialogManagerService = get(),
+            serviceMiddleware = get(),
+            wakeWordService = get()
+        )
+    }
+
+    single {
+        HomeScreenViewStateCreator(
             serviceMiddleware = get()
         )
     }
     single {
-        MicrophoneFabViewModel(
+        HomeScreenViewModel(
+            serviceMiddleware = get(),
+            viewStateCreator = get()
+        )
+    }
+
+    single {
+        MicrophoneFabViewStateCreator(
             dialogManagerService = get(),
             serviceMiddleware = get(),
             wakeWordService = get()
         )
     }
     single {
-        ConfigurationScreenViewModel(
+        MicrophoneFabViewModel(
+            serviceMiddleware = get(),
+            viewStateCreator = get()
+        )
+    }
+
+    single {
+        ConfigurationScreenViewStateCreator(
             httpClientService = get(),
             webServerService = get(),
             mqttService = get(),
@@ -119,6 +152,11 @@ val viewModelModule = module {
             audioPlayingService = get(),
             dialogManagerService = get(),
             intentHandlingService = get()
+        )
+    }
+    single {
+        ConfigurationScreenViewModel(
+            viewStateCreator = get()
         )
     }
     single {
@@ -171,20 +209,68 @@ val viewModelModule = module {
             service = get()
         )
     }
-    single { LogScreenViewModel() }
-    single { SettingsScreenViewModel() }
-    single { AboutScreenViewModel() }
+
+    single {
+        LogScreenViewStateCreator()
+    }
+    single {
+        LogScreenViewModel(
+            viewStateCreator = get()
+        )
+    }
+
+    single {
+        SettingsScreenViewStateCreator()
+    }
+    single {
+        SettingsScreenViewModel(
+            viewStateCreator = get()
+        )
+    }
+
+    single {
+        AboutScreenViewStateCreator(
+            nativeApplication = get()
+        )
+    }
+    single {
+        AboutScreenViewModel(
+            viewStateCreator = get()
+        )
+    }
+
+    single {
+        SilenceDetectionSettingsViewStateCreator(
+            audioRecorder = get()
+        )
+    }
     single {
         SilenceDetectionSettingsViewModel(
+            nativeApplication = get(),
+            viewStateCreator = get()
+        )
+    }
+
+    single {
+        BackgroundServiceViewStateCreator(
             nativeApplication = get()
         )
     }
     single {
         BackgroundServiceSettingsViewModel(
-            nativeApplication = get()
+            viewStateCreator = get()
         )
     }
-    single { DeviceSettingsSettingsViewModel() }
+
+    single {
+        DeviceSettingsViewStateCreator()
+    }
+    single {
+        DeviceSettingsSettingsViewModel(
+            viewStateCreator = get()
+        )
+    }
+
     single { IndicationSettingsViewModel() }
     single {
         WakeIndicationSoundSettingsViewModel(
@@ -212,15 +298,28 @@ val viewModelModule = module {
     }
     single { MicrophoneOverlaySettingsViewModel() }
     single { SaveAndRestoreSettingsViewModel() }
+
+    single {
+        MicrophoneOverlayViewStateCreator(
+            nativeApplication = get()
+        )
+    }
     single {
         MicrophoneOverlayViewModel(
             nativeApplication = get(),
-            microphoneFabViewModel = get()
+            microphoneFabViewModel = get(),
+            viewStateCreator = get()
+        )
+    }
+
+    single {
+        IndicationOverlayViewStateCreator(
+            indicationService = get()
         )
     }
     single {
         IndicationOverlayViewModel(
-            indicationService = get()
+            viewStateCreator = get()
         )
     }
 }

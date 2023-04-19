@@ -22,12 +22,7 @@ data class DialogManagementConfigurationViewState internal constructor(
     val intentRecognitionTimeout: Long get() = intentRecognitionTimeoutText.toLongOrZero()
     val recordingTimeout: Long get() = recordingTimeoutText.toLongOrZero()
 
-    override val hasUnsavedChanges: Boolean
-        get() = !(dialogManagementOption == ConfigurationSetting.dialogManagementOption.value &&
-                textAsrTimeout == ConfigurationSetting.textAsrTimeout.value &&
-                intentRecognitionTimeout == ConfigurationSetting.intentRecognitionTimeout.value &&
-                recordingTimeout == ConfigurationSetting.recordingTimeout.value)
-
+    override val hasUnsavedChanges: Boolean get() = this != DialogManagementConfigurationViewState()
     override val isTestingEnabled: Boolean get() = dialogManagementOption != DialogManagementOption.Disabled
 
 
