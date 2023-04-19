@@ -26,6 +26,7 @@ import org.rhasspy.mobile.android.content.elements.HtmlText
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.libraries.StableLibrary
 import org.rhasspy.mobile.data.resource.stable
 
 /**
@@ -33,12 +34,12 @@ import org.rhasspy.mobile.data.resource.stable
  */
 @Composable
 fun LibrariesContainer(
-    libraries: ImmutableList<Library>,
+    libraries: ImmutableList<StableLibrary>,
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(0.dp),
     header: (LazyListScope.() -> Unit)? = null,
-    onLibraryClick: ((Library) -> Unit)? = null,
+    onLibraryClick: ((StableLibrary) -> Unit)? = null,
 ) {
 
     LazyColumn(
@@ -78,14 +79,14 @@ fun LibrariesContainer(
  */
 @Composable
 private fun Library(
-    library: Library,
+    stableLibrary: StableLibrary,
     onClick: () -> Unit,
 ) {
 
     ListElement(
         modifier = Modifier.clickable { onClick.invoke() },
         text = {
-            Text(library.correctedName)
+            Text(stableLibrary.library.correctedName)
         },
         secondaryText = {
             Column(
@@ -94,10 +95,10 @@ private fun Library(
                     .padding(bottom = 8.dp)
             ) {
                 Text(
-                    text = library.author,
+                    text = stableLibrary.library.author,
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
-                library.licenses.forEach {
+                stableLibrary.library.licenses.forEach {
                     Badge(
                         contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -112,7 +113,7 @@ private fun Library(
             }
         },
         trailing = {
-            Text(library.artifactVersion ?: "")
+            Text(stableLibrary.library.artifactVersion ?: "")
         }
     )
 
@@ -123,7 +124,7 @@ private fun Library(
  * Library dialog with more information
  */
 @Composable
-private fun LibraryDialog(library: Library, onDismissRequest: () -> Unit) {
+private fun LibraryDialog(stableLibrary: StableLibrary, onDismissRequest: () -> Unit) {
 
     val scrollState = rememberScrollState()
 
@@ -144,7 +145,7 @@ private fun LibraryDialog(library: Library, onDismissRequest: () -> Unit) {
                     .verticalScroll(scrollState),
             ) {
                 HtmlText(
-                    html = library.licenses.firstOrNull()?.htmlReadyLicenseContent.orEmpty(),
+                    html = stableLibrary.library.licenses.firstOrNull()?.htmlReadyLicenseContent.orEmpty(),
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }

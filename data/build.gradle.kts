@@ -22,6 +22,7 @@ kotlin {
                 implementation(Touchlab.kermit)
                 implementation(Square.okio)
                 implementation(Jetbrains.Compose.runtime)
+                implementation(Mikepenz.aboutLibrariesCore)
             }
         }
         val commonTest by getting {

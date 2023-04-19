@@ -71,10 +71,7 @@ fun BottomBarScreensNavigation(viewModel: HomeScreenViewModel = get()) {
             modifier = Modifier.fillMaxSize(),
             snackbarHost = { SnackbarHost(snackBarHostState) },
             bottomBar = {
-                BottomNavigation(
-                    isShowLogEnabled = viewState.isShowLogEnabled,
-                    navController = navController
-                )
+                BottomNavigation(viewState.isShowLogEnabled)
             }
         ) { paddingValues ->
 
@@ -115,8 +112,10 @@ fun BottomBarScreensNavigation(viewModel: HomeScreenViewModel = get()) {
  */
 @Composable
 fun BottomNavigation(
-    isShowLogEnabled: Boolean,
-    navController: NavController) {
+    isShowLogEnabled: Boolean
+) {
+
+    val navController = rememberNavController()
 
     NavigationBar {
 

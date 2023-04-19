@@ -31,7 +31,6 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.settings.AppSetting
 
-
 @Composable
 fun Text(
     resource: StableStringResource,
@@ -74,48 +73,6 @@ fun Text(
 }
 
 @Composable
-fun Text(
-    resource: StableStringResource,
-    vararg args: Any,
-    modifier: Modifier = Modifier,
-    color: Color = Color.Unspecified,
-    fontSize: TextUnit = TextUnit.Unspecified,
-    fontStyle: FontStyle? = null,
-    fontWeight: FontWeight? = null,
-    fontFamily: FontFamily? = null,
-    letterSpacing: TextUnit = TextUnit.Unspecified,
-    textDecoration: TextDecoration? = null,
-    textAlign: TextAlign? = null,
-    lineHeight: TextUnit = TextUnit.Unspecified,
-    overflow: TextOverflow = TextOverflow.Clip,
-    softWrap: Boolean = true,
-    maxLines: Int = Int.MAX_VALUE,
-    minLines: Int = 1,
-    onTextLayout: (TextLayoutResult) -> Unit = {},
-    style: TextStyle = LocalTextStyle.current
-) {
-    androidx.compose.material3.Text(
-        text = translate(resource, *args),
-        modifier = modifier,
-        color = color,
-        fontSize = fontSize,
-        fontStyle = fontStyle,
-        fontWeight = fontWeight,
-        fontFamily = fontFamily,
-        letterSpacing = letterSpacing,
-        textDecoration = textDecoration,
-        textAlign = textAlign,
-        lineHeight = lineHeight,
-        overflow = overflow,
-        softWrap = softWrap,
-        maxLines = maxLines,
-        minLines = minLines,
-        onTextLayout = onTextLayout,
-        style = style
-    )
-}
-
-@Composable
 fun translate(resource: StableStringResource): String {
     if(!LocalInspectionMode.current) {
         AppSetting.languageType.data.collectAsState().value
@@ -124,13 +81,12 @@ fun translate(resource: StableStringResource): String {
 }
 
 @Composable
-fun translate(resource: StableStringResource, vararg args: Any): String {
+fun translate(resource: StableStringResource, arg: String): String {
     if(!LocalInspectionMode.current) {
         AppSetting.languageType.data.collectAsState().value
     }
-    return StringDesc.ResourceFormatted(resource.stringResource, *args).toString(LocalContext.current)
+    return StringDesc.ResourceFormatted(resource.stringResource, arg).toString(LocalContext.current)
 }
-
 
 @Composable
 fun ProvideTextStyleFromToken(

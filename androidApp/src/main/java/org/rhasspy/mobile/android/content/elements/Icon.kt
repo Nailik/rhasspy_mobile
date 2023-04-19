@@ -4,43 +4,9 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.res.painterResource
-import dev.icerock.moko.resources.ImageResource
 import org.rhasspy.mobile.data.resource.StableStringResource
-
-@Composable
-fun Icon(
-    imageResource: ImageResource,
-    contentDescription: StableStringResource,
-    modifier: Modifier = Modifier,
-    tint: Color = LocalContentColor.current
-) {
-    androidx.compose.material3.Icon(
-        painter = painterResource(imageResource.drawableResId),
-        contentDescription = translate(contentDescription),
-        modifier = modifier,
-        tint = tint
-    )
-}
-
-@Composable
-fun Icon(
-    painter: Painter,
-    contentDescription: StableStringResource,
-    modifier: Modifier = Modifier,
-    tint: Color = LocalContentColor.current
-) {
-    androidx.compose.material3.Icon(
-        painter = painter,
-        contentDescription = translate(contentDescription),
-        modifier = modifier,
-        tint = tint
-    )
-}
-
 
 @Composable
 fun Icon(

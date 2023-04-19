@@ -1,7 +1,9 @@
 package org.rhasspy.mobile.data.service
 
+import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.data.resource.StableStringResource
 
+@Stable
 sealed class ServiceState {
 
     object Pending : ServiceState()

@@ -8,15 +8,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Link
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import okio.Path
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
@@ -26,26 +21,13 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.elements.translate
-import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
-import org.rhasspy.mobile.android.content.list.InformationListElement
-import org.rhasspy.mobile.android.content.list.ListElement
-import org.rhasspy.mobile.android.content.list.SwitchListItem
-import org.rhasspy.mobile.android.content.list.TextFieldListItem
-import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
+import org.rhasspy.mobile.android.content.list.*
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttEnabled
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttSSLEnabled
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttConnectionTimeout
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttHost
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttKeepAliveInterval
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttPassword
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttPort
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttRetryInterval
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.UpdateMqttUserName
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.OpenMqttSSLWiki
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.SelectSSLCertificate
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
 
 /**
@@ -102,7 +84,7 @@ fun MqttConfigurationContent(viewModel: MqttConfigurationViewModel = get()) {
 
                     MqttSSL(
                         isMqttSSLEnabled = contentViewState.isMqttSSLEnabled,
-                        mqttKeyStoreFile = contentViewState.mqttKeyStoreFile,
+                        mqttKeyStoreFileName = contentViewState.mqttKeyStoreFileName,
                         onAction = viewModel::onAction
                     )
 
@@ -180,7 +162,7 @@ private fun MqttConnectionSettings(
 @Composable
 private fun MqttSSL(
     isMqttSSLEnabled: Boolean,
-    mqttKeyStoreFile: Path?,
+    mqttKeyStoreFileName: String?,
     onAction: (MqttConfigurationUiEvent) -> Unit
 ) {
 
@@ -219,7 +201,7 @@ private fun MqttSSL(
                 onClick = { onAction(SelectSSLCertificate) }
             )
 
-            val isKeyStoreFileTextVisible by remember { derivedStateOf { mqttKeyStoreFile != null } }
+            val isKeyStoreFileTextVisible by remember { derivedStateOf { mqttKeyStoreFileName != null } }
 
             AnimatedVisibility(
                 enter = expandVertically(),
@@ -227,7 +209,7 @@ private fun MqttSSL(
                 visible = isKeyStoreFileTextVisible
             ) {
 
-                val keyStoreFileText by remember { derivedStateOf { mqttKeyStoreFile?.name ?: "" } }
+                val keyStoreFileText by remember { derivedStateOf { mqttKeyStoreFileName ?: "" } }
 
                 InformationListElement(
                     text = translate(resource = MR.strings.currentlySelectedCertificate.stable, keyStoreFileText)

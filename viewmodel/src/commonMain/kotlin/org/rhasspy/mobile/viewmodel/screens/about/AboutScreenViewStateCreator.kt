@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.data.libraries.stable
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.resource.readToString
 
@@ -24,7 +25,9 @@ class AboutScreenViewStateCreator(
                 privacy = MR.files.dataprivacy.readToString(nativeApplication),
                 libraries = Libs.Builder().withJson(
                     MR.files.aboutlibraries.readToString(nativeApplication)
-                ).build().libraries.toImmutableList()
+                ).build().libraries.map {
+                    it.stable
+                }.toImmutableList()
             )
         )
 

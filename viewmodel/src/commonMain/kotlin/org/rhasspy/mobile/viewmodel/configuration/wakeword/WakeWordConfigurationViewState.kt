@@ -41,6 +41,7 @@ data class WakeWordConfigurationViewState internal constructor(
         val customOptions: ImmutableList<PorcupineCustomKeyword> get() = customOptionsUi.filter { !it.deleted }.map { it.keyword }.toImmutableList()
         val keywordCount: Int get() = defaultOptions.count { it.isEnabled } + customOptionsUi.count { it.keyword.isEnabled }
 
+        @Stable
         data class PorcupineCustomKeywordViewState(
             val keyword: PorcupineCustomKeyword,
             val deleted: Boolean = false

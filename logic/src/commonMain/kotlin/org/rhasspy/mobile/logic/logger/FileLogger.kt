@@ -56,7 +56,6 @@ object FileLogger : LogWriter(), KoinComponent {
             )
             file.commonReadWrite().appendingSink().buffer().writeUtf8(",${Json.encodeToString(element)}").also {
                 it.flush()
-                it.close()
             }
             _flow.emit(element)
         }

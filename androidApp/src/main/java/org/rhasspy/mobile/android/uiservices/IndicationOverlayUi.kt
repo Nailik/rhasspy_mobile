@@ -1,24 +1,9 @@
 package org.rhasspy.mobile.android.uiservices
 
 import android.util.Range
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -74,10 +59,10 @@ private fun WakeupIndication() {
             .height(8.dp)
             .fillMaxWidth()
     ) {
-        IndicationBar(1f, Range(0f, 1f), 1f, MaterialTheme.colorScheme.assistant_color_one)
-        IndicationBar(1f, Range(1f, 2f), 1f, MaterialTheme.colorScheme.assistant_color_two)
-        IndicationBar(1f, Range(2f, 3f), 1f, MaterialTheme.colorScheme.assistant_color_three)
-        IndicationBar(1f, Range(3f, 4f), 1f, MaterialTheme.colorScheme.assistant_color_four)
+        IndicationBar(1f, MaterialTheme.colorScheme.assistant_color_one)
+        IndicationBar(1f, MaterialTheme.colorScheme.assistant_color_two)
+        IndicationBar(1f, MaterialTheme.colorScheme.assistant_color_three)
+        IndicationBar(1f, MaterialTheme.colorScheme.assistant_color_four)
     }
 }
 
@@ -119,10 +104,10 @@ private fun RecordingIndication() {
             .height(8.dp)
             .fillMaxWidth()
     ) {
-        IndicationBar(item, Range(0f, 1f), size, MaterialTheme.colorScheme.assistant_color_one)
-        IndicationBar(item, Range(1f, 2f), size, MaterialTheme.colorScheme.assistant_color_two)
-        IndicationBar(item, Range(2f, 3f), size, MaterialTheme.colorScheme.assistant_color_three)
-        IndicationBar(item, Range(3f, 4f), size, MaterialTheme.colorScheme.assistant_color_four)
+        IndicationBar(if(Range(0f, 1f).contains(item)) size else 1f, MaterialTheme.colorScheme.assistant_color_one)
+        IndicationBar(if(Range(1f, 2f).contains(item)) size else 1f, MaterialTheme.colorScheme.assistant_color_two)
+        IndicationBar(if(Range(2f, 3f).contains(item)) size else 1f, MaterialTheme.colorScheme.assistant_color_three)
+        IndicationBar(if(Range(3f, 4f).contains(item)) size else 1f, MaterialTheme.colorScheme.assistant_color_four)
     }
 }
 
@@ -199,11 +184,11 @@ private fun BoxScope.IndicationCircle(alignment: Alignment, color: Color) {
 }
 
 @Composable
-private fun RowScope.IndicationBar(item: Float, range: Range<Float>, size: Float, color: Color) {
+private fun RowScope.IndicationBar(weight: Float, color: Color) {
     Box(
         modifier = Modifier
             .fillMaxHeight()
-            .weight(if (range.contains(item)) size else 1f)
+            .weight(weight)
             .background(color = color)
     )
 }

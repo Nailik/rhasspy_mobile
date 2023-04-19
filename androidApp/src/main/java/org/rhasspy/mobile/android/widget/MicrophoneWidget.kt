@@ -21,12 +21,12 @@ import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 class MicrophoneWidget : GlanceAppWidget(), KoinComponent {
 
     override val sizeMode: SizeMode = SizeMode.Exact
+    val viewModel = get<MicrophoneFabViewModel>()
 
     @Composable
     @GlanceComposable
     @Suppress("StateFlowValueCalledInComposition") //suppress because it doesn't work in glance
     override fun Content() {
-        val viewModel = get<MicrophoneFabViewModel>()
         val viewState by viewModel.viewState.collectAsState()
 
         //used to mimic border, drawable necessary for rounded corner on older devices

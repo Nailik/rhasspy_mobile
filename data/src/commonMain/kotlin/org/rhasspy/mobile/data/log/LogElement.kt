@@ -1,8 +1,10 @@
 package org.rhasspy.mobile.data.log
 
+import androidx.compose.runtime.Stable
 import co.touchlab.kermit.Severity
 import kotlinx.serialization.Serializable
 
+@Stable
 @Serializable
 data class LogElement(
     val time: String,

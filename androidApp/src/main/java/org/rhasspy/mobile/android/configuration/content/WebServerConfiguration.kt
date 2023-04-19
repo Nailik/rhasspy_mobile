@@ -8,15 +8,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Link
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import okio.Path
 import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
@@ -26,23 +21,13 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.elements.translate
-import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
-import org.rhasspy.mobile.android.content.list.InformationListElement
-import org.rhasspy.mobile.android.content.list.ListElement
-import org.rhasspy.mobile.android.content.list.SwitchListItem
-import org.rhasspy.mobile.android.content.list.TextFieldListItem
-import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
+import org.rhasspy.mobile.android.content.list.*
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerEnabled
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLEnabled
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyAlias
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyPassword
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpSSLKeyStorePassword
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.UpdateHttpServerPort
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.OpenWebServerSSLWiki
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.SelectSSLCertificate
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
 
 /**
@@ -97,7 +82,7 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
 
                     WebserverSSL(
                         isHttpServerSSLEnabled = contentViewState.isHttpServerSSLEnabled,
-                        httpServerSSLKeyStoreFile = contentViewState.httpServerSSLKeyStoreFile,
+                        httpServerSSLKeyStoreFileName = contentViewState.httpServerSSLKeyStoreFileName,
                         httpServerSSLKeyStorePassword = contentViewState.httpServerSSLKeyStorePassword,
                         httpServerSSLKeyAlias = contentViewState.httpServerSSLKeyAlias,
                         httpServerSSLKeyPassword = contentViewState.httpServerSSLKeyPassword,
@@ -120,7 +105,7 @@ fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = g
 @Composable
 private fun WebserverSSL(
     isHttpServerSSLEnabled: Boolean,
-    httpServerSSLKeyStoreFile: Path?,
+    httpServerSSLKeyStoreFileName: String?,
     httpServerSSLKeyStorePassword: String,
     httpServerSSLKeyAlias: String,
     httpServerSSLKeyPassword: String,
@@ -166,7 +151,7 @@ private fun WebserverSSL(
                 onClick = { onAction(SelectSSLCertificate) }
             )
 
-            val isKeyStoreFileTextVisible by remember { derivedStateOf { httpServerSSLKeyStoreFile != null } }
+            val isKeyStoreFileTextVisible by remember { derivedStateOf { httpServerSSLKeyStoreFileName != null } }
 
             AnimatedVisibility(
                 enter = expandVertically(),
@@ -174,7 +159,7 @@ private fun WebserverSSL(
                 visible = isKeyStoreFileTextVisible
             ) {
 
-                val keyStoreFileText by remember { derivedStateOf { httpServerSSLKeyStoreFile?.name ?: "" } }
+                val keyStoreFileText by remember { derivedStateOf { httpServerSSLKeyStoreFileName ?: "" } }
 
                 InformationListElement(
                     text = translate(resource = MR.strings.currentlySelectedCertificate.stable, keyStoreFileText)
