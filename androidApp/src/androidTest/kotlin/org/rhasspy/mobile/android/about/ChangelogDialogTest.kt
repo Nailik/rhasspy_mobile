@@ -2,6 +2,7 @@ package org.rhasspy.mobile.android.about
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
+import kotlinx.collections.immutable.persistentListOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -20,7 +21,7 @@ class ChangelogDialogTest {
     fun setUp() {
 
         composeTestRule.setContent {
-            ChangelogDialogButton()
+            ChangelogDialogButton(persistentListOf())
         }
 
     }

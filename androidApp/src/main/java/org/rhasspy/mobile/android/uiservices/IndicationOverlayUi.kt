@@ -104,10 +104,10 @@ private fun RecordingIndication() {
             .height(8.dp)
             .fillMaxWidth()
     ) {
-        IndicationBar(if(Range(0f, 1f).contains(item)) size else 1f, MaterialTheme.colorScheme.assistant_color_one)
-        IndicationBar(if(Range(1f, 2f).contains(item)) size else 1f, MaterialTheme.colorScheme.assistant_color_two)
-        IndicationBar(if(Range(2f, 3f).contains(item)) size else 1f, MaterialTheme.colorScheme.assistant_color_three)
-        IndicationBar(if(Range(3f, 4f).contains(item)) size else 1f, MaterialTheme.colorScheme.assistant_color_four)
+        IndicationBar(if (Range(0f, 1f).contains(item)) size else 1f, MaterialTheme.colorScheme.assistant_color_one)
+        IndicationBar(if (Range(1f, 2f).contains(item)) size else 1f, MaterialTheme.colorScheme.assistant_color_two)
+        IndicationBar(if (Range(2f, 3f).contains(item)) size else 1f, MaterialTheme.colorScheme.assistant_color_three)
+        IndicationBar(if (Range(3f, 4f).contains(item)) size else 1f, MaterialTheme.colorScheme.assistant_color_four)
     }
 }
 

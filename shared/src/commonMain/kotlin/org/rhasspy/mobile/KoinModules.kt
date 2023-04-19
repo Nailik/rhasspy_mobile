@@ -1,5 +1,6 @@
 package org.rhasspy.mobile
 
+import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.closeableSingle
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
@@ -31,6 +32,7 @@ import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordServiceParams
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.logic.services.webserver.WebServerServiceParams
+import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
@@ -50,27 +52,28 @@ import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayViewMode
 import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayViewStateCreator
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewStateCreator
-import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewStateCreator
+import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewStateCreator
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewStateCreator
+import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewStateCreator
-import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.ErrorIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsViewStateCreator
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.RecordedIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.ErrorIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.RecordedIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewStateCreator
 
 val serviceModule = module {
@@ -272,25 +275,59 @@ val viewModelModule = module {
     }
 
     single { IndicationSettingsViewModel() }
+
+
+
+    factory { params ->
+        IIndicationSoundSettingsViewStateCreator(
+            localAudioService = get(),
+            customSoundOptions = params[0],
+            soundSetting = params[1],
+            soundVolume = params[2]
+        )
+    }
     single {
         WakeIndicationSoundSettingsViewModel(
             localAudioService = get(),
-            nativeApplication = get()
+            nativeApplication = get(),
+            viewStateCreator = get {
+                parametersOf(
+                    AppSetting.customWakeSounds,
+                    AppSetting.wakeSound,
+                    AppSetting.wakeSoundVolume
+                )
+            }
         )
     }
     single {
         RecordedIndicationSoundSettingsViewModel(
             localAudioService = get(),
-            nativeApplication = get()
+            nativeApplication = get(),
+            viewStateCreator = get {
+                parametersOf(
+                    AppSetting.customRecordedSounds,
+                    AppSetting.recordedSound,
+                    AppSetting.recordedSoundVolume
+                )
+            }
         )
     }
     single {
         ErrorIndicationSoundSettingsViewModel(
             localAudioService = get(),
-            nativeApplication = get()
+            nativeApplication = get(),
+            viewStateCreator = get {
+                parametersOf(
+                    AppSetting.customErrorSounds,
+                    AppSetting.errorSound,
+                    AppSetting.errorSoundVolume
+                )
+            }
         )
     }
+
     single { LanguageSettingsViewModel() }
+
     single {
         LogSettingsViewModel(
             nativeApplication = get()

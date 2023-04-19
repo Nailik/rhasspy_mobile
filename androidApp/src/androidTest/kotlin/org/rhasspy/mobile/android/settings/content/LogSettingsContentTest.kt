@@ -10,22 +10,25 @@ import androidx.navigation.compose.rememberNavController
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onListItemRadioButton
 import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.logic.logger.LogLevel
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.SetShowLogEnabled
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class LogSettingsContentTest {
+class LogSettingsContentTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = LogSettingsViewModel()
+    private val viewModel = get<LogSettingsViewModel>()
 
     @Before
     fun setUp() {
@@ -65,7 +68,7 @@ class LogSettingsContentTest {
     @Test
     fun contentTest() {
         //debug is saved
-        assertEquals(LogLevel.Debug, viewModel.logLevel.value)
+        assertEquals(LogLevel.Debug, viewModel.viewState.value.logLevel)
         //debug is selected
         composeTestRule.onNodeWithTag(LogLevel.Debug, true).onListItemRadioButton().assertIsSelected()
 
@@ -74,10 +77,10 @@ class LogSettingsContentTest {
         //error is selected
         composeTestRule.onNodeWithTag(LogLevel.Error, true).onListItemRadioButton().assertIsSelected()
         //error is saved
-        assertEquals(LogLevel.Error, LogSettingsViewModel().logLevel.value)
+        assertEquals(LogLevel.Error, LogSettingsViewModel(get()).viewState.value.logLevel)
 
         //show log is false
-        viewModel.toggleShowLogEnabled(false)
+        viewModel.onEvent(SetShowLogEnabled(false))
         //show log false is shown
         composeTestRule.onNodeWithTag(TestTag.ShowLogEnabled).onListItemSwitch().assertIsOff()
         //user clicks show log
@@ -85,10 +88,10 @@ class LogSettingsContentTest {
         //show log true is shown
         composeTestRule.onNodeWithTag(TestTag.ShowLogEnabled).onListItemSwitch().assertIsOn()
         //show log true is saved
-        assertTrue { LogSettingsViewModel().isShowLogEnabled.value }
+        assertTrue { LogSettingsViewModel(get()).viewState.value.isShowLogEnabled }
 
         //audio frame logging is false
-        viewModel.toggleLogAudioFramesEnabled(false)
+        viewModel.onEvent(SetShowLogEnabled(false))
         //audio frame logging false is shown
         composeTestRule.onNodeWithTag(TestTag.AudioFramesEnabled).onListItemSwitch().assertIsOff()
         //user clicks audio frame logging
@@ -96,7 +99,7 @@ class LogSettingsContentTest {
         //audio frame logging true is shown
         composeTestRule.onNodeWithTag(TestTag.AudioFramesEnabled).onListItemSwitch().assertIsOn()
         //audio frame logging true is saved
-        assertTrue { LogSettingsViewModel().isLogAudioFramesEnabled.value }
+        assertTrue { LogSettingsViewModel(get()).viewState.value.isLogAudioFramesEnabled }
     }
 
 

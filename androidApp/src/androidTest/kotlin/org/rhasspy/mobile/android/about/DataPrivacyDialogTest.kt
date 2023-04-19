@@ -20,7 +20,7 @@ class DataPrivacyDialogTest {
     fun setUp() {
 
         composeTestRule.setContent {
-            DataPrivacyDialogButton()
+            DataPrivacyDialogButton("")
         }
 
     }

@@ -7,46 +7,39 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
-import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.MainActivity
-import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onListItemRadioButton
-import org.rhasspy.mobile.android.onListItemSwitch
-import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.resetOverlayPermission
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScreens
-import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.text
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
-import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class IndicationSettingsContentTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class IndicationSettingsContentTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
-    private val viewModel = IndicationSettingsViewModel()
+    private val viewModel = get<IndicationSettingsViewModel>()
 
     private val device: UiDevice =
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -93,14 +86,12 @@ class IndicationSettingsContentTest {
      * sound is saved
      */
     @Test
-    fun testIndicationSettings() = runBlocking {
+    fun testIndicationSettings() = runTest {
         device.resetOverlayPermission(composeTestRule.activity)
 
-        viewModel.toggleWakeWordDetectionTurnOnDisplay(false)
-        if (AppSetting.isWakeWordLightIndicationEnabled.value) {
-            viewModel.toggleWakeWordLightIndicationEnabled()
-        }
-        viewModel.toggleWakeWordSoundIndicationEnabled(false)
+        viewModel.onEvent(SetWakeWordLightIndicationEnabled(false))
+        viewModel.onEvent(SetSoundIndicationEnabled(false))
+        viewModel.onEvent(SetWakeWordDetectionTurnOnDisplay(false))
 
         //wake up display disabled
         composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onListItemSwitch()
@@ -117,7 +108,7 @@ class IndicationSettingsContentTest {
         composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onListItemSwitch()
             .assertIsOn()
         //wake up display is saved
-        assertTrue { IndicationSettingsViewModel().isWakeWordDetectionTurnOnDisplayEnabled.value }
+        assertTrue { IndicationSettingsViewModel().viewState.value.isWakeWordDetectionTurnOnDisplayEnabled }
 
 
         //user clicks visual
@@ -146,14 +137,14 @@ class IndicationSettingsContentTest {
         composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onListItemSwitch()
             .assertIsOn()
         //visual is saved
-        assertTrue { IndicationSettingsViewModel().isWakeWordLightIndicationEnabled.value }
+        assertTrue { IndicationSettingsViewModel().viewState.value.isWakeWordLightIndicationEnabled }
 
         //user clicks sound
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).performClick()
         //sound is enabled
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).onListItemSwitch().assertIsOn()
         //sound is saved
-        assertTrue { IndicationSettingsViewModel().isSoundIndicationEnabled.value }
+        assertTrue { IndicationSettingsViewModel().viewState.value.isSoundIndicationEnabled }
     }
 
     /**
@@ -186,7 +177,7 @@ class IndicationSettingsContentTest {
     @Test
     fun testSoundIndicationOptions() {
         //Sound is disabled
-        viewModel.toggleWakeWordSoundIndicationEnabled(false)
+        viewModel.onEvent(SetSoundIndicationEnabled(false))
         //sound settings invisible
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertDoesNotExist()
         composeTestRule.onNodeWithTag(IndicationSettingsScreens.WakeIndicationSound)
@@ -210,7 +201,7 @@ class IndicationSettingsContentTest {
             .assertIsDisplayed()
 
         //sound output is notification
-        assertEquals(AudioOutputOption.Notification, viewModel.soundIndicationOutputOption.value)
+        assertEquals(AudioOutputOption.Notification, viewModel.viewState.value.soundIndicationOutputOption)
         //sound output notification is selected
         composeTestRule.onNodeWithTag(AudioOutputOption.Notification, true).onListItemRadioButton().assertIsSelected()
 
@@ -221,7 +212,7 @@ class IndicationSettingsContentTest {
         //sound output sound is saved
         assertEquals(
             AudioOutputOption.Sound,
-            IndicationSettingsViewModel().soundIndicationOutputOption.value
+            IndicationSettingsViewModel().viewState.value.soundIndicationOutputOption
         )
 
         //user clicks wake word

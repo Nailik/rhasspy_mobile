@@ -7,30 +7,29 @@ import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.onListItemRadioButton
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
-import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SelectWakeWordPorcupineLanguage
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 import kotlin.test.assertEquals
 
-class PorcupineLanguageScreenTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class PorcupineLanguageScreenTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = WakeWordConfigurationViewModel(
-        service = WakeWordService(),
-        testRunner = WakeWordConfigurationTest()
-    )
+    private val viewModel = get<WakeWordConfigurationViewModel>()
 
     @Before
     fun setUp() {
@@ -45,7 +44,7 @@ class PorcupineLanguageScreenTest {
                 val contentViewState by viewState.editViewState.collectAsState()
                 PorcupineLanguageScreen(
                     viewState = contentViewState.wakeWordPorcupineViewState,
-                    onAction = viewModel::onAction
+                    onEvent = viewModel::onEvent
                 )
             }
         }
@@ -64,9 +63,9 @@ class PorcupineLanguageScreenTest {
      * german is saved
      */
     @Test
-    fun testContent() = runBlocking {
+    fun testContent() = runTest {
         //English is saved
-        viewModel.onAction(SelectWakeWordPorcupineLanguage(PorcupineLanguageOption.EN))
+        viewModel.onEvent(SelectWakeWordPorcupineLanguage(PorcupineLanguageOption.EN))
         viewModel.onSave()
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
@@ -84,8 +83,8 @@ class PorcupineLanguageScreenTest {
 
         //save is invoked
         viewModel.onSave()
-        val newViewState = PorcupineViewState()
+        val newViewModel = WakeWordConfigurationViewModel(get())
         //german is saved
-        assertEquals(PorcupineLanguageOption.DE, newViewState.porcupineLanguage)
+        assertEquals(PorcupineLanguageOption.DE, newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState.porcupineLanguage)
     }
 }

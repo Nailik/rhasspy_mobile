@@ -7,7 +7,7 @@ import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.updateViewStateFlow
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change
-import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SetMicrophoneOverlaySizeOption
+import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SelectMicrophoneOverlaySizeOption
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SetMicrophoneOverlayWhileAppEnabled
 
 @Stable
@@ -25,7 +25,7 @@ class MicrophoneOverlaySettingsViewModel : ViewModel() {
     private fun onChange(change: Change) {
         _viewState.updateViewStateFlow {
             when (change) {
-                is SetMicrophoneOverlaySizeOption -> {
+                is SelectMicrophoneOverlaySizeOption -> {
                     AppSetting.microphoneOverlaySizeOption.value = change.option
                     copy(microphoneOverlaySizeOption = change.option)
                 }

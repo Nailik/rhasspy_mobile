@@ -15,10 +15,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.assertTextEquals
@@ -34,7 +36,8 @@ import kotlin.test.assertTrue
  * Content Test of Configuration screens
  * save, discard and test buttons
  */
-class ConfigurationScreenItemContentTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class ConfigurationScreenItemContentTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createComposeRule()
@@ -133,7 +136,7 @@ class ConfigurationScreenItemContentTest {
      * save click invokes save and navigate back
      */
     @Test
-    fun testUnsavedChanges() = runBlocking {
+    fun testUnsavedChanges() = runTest {
         //open screen
         composeTestRule.onNodeWithText(btnStartTest).performClick()
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertExists()

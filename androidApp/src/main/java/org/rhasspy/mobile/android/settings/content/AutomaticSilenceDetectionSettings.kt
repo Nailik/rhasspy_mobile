@@ -146,8 +146,8 @@ private fun AudioLevel(
     SliderListItem(
         text = MR.strings.audioLevelThreshold.stable,
         value = silenceDetectionAudioLevelPercentage,
-        valueText = "%.0f".format(null,silenceDetectionAudioLevel),
-        onValueChange = { onEvent(UpdateSilenceDetectionAudioLevelPercentage(it))}
+        valueText = "%.0f".format(null, silenceDetectionAudioLevel),
+        onValueChange = { onEvent(UpdateSilenceDetectionAudioLevelPercentage(it)) }
     )
 
 }

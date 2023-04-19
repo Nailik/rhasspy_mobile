@@ -14,30 +14,24 @@ import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.MainActivity
-import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.awaitSaved
+import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onListItemSwitch
-import org.rhasspy.mobile.android.onNodeWithCombinedTag
-import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.requestExternalStoragePermissions
 import org.rhasspy.mobile.android.test.R
-import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 import java.io.File
 import kotlin.test.assertTrue
 
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class PorcupineKeywordCustomScreenTest : KoinComponent {
 
     @get: Rule
@@ -45,10 +39,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
 
     private val device: UiDevice = UiDevice.getInstance(getInstrumentation())
 
-    private val viewModel = WakeWordConfigurationViewModel(
-        service = WakeWordService(),
-        testRunner = WakeWordConfigurationTest()
-    )
+    private val viewModel = get<WakeWordConfigurationViewModel>()
 
     private val ppn = "Test-hello_en_android_v2_1_0.ppn"
     private val fileName = "porcupine_test.zip"
@@ -67,7 +58,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
                 val contentViewState by viewState.editViewState.collectAsState()
                 PorcupineKeywordCustomScreen(
                     viewState = contentViewState.wakeWordPorcupineViewState,
-                    onAction = viewModel::onAction
+                    onEvent = viewModel::onEvent
                 )
             }
         }
@@ -100,7 +91,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
      * jarvis is saved with enabled
      */
     @Test
-    fun testActions() = runBlocking {
+    fun testActions() = runTest {
         //copy test file to downloads directory
         //jarvis.zip file in download folder exists with ppn file inside
         val file = File(
@@ -160,9 +151,13 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
 
         //viewModel save is invoked
         viewModel.onSave()
-        val newViewState = PorcupineViewState()
+        val newViewModel = WakeWordConfigurationViewModel(get())
+
         //jarvis is saved with enabled
-        assertTrue { newViewState.customOptionsUi.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null }
+        assertTrue {
+            newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
+                .customOptionsUi.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null
+        }
     }
 
     /**
@@ -176,7 +171,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
      * ppn is saved with ppn and enabled
      */
     @Test
-    fun testList() = runBlocking {
+    fun testList() = runTest {
         //one element with ppn exists and selected
         val file = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
@@ -209,9 +204,12 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         //viewModel save is invoked
         viewModel.onSave()
         composeTestRule.awaitSaved(viewModel)
-        val newViewState = PorcupineViewState()
+        val newViewModel = WakeWordConfigurationViewModel(get())
         //ppn is saved with ppn.ppn and enabled
-        assertTrue { newViewState.customOptionsUi.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null }
+        assertTrue {
+            newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
+                .customOptionsUi.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null
+        }
     }
 
 }

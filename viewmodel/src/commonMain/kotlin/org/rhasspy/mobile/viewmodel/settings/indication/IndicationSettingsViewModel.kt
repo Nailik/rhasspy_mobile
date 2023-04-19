@@ -29,7 +29,7 @@ class IndicationSettingsViewModel : ViewModel() {
                     copy(isSoundIndicationEnabled = change.enabled)
                 }
 
-                is SetSoundIndicationOutputOption -> {
+                is SelectSoundIndicationOutputOption -> {
                     AppSetting.soundIndicationOutputOption.value = change.option
                     copy(soundIndicationOutputOption = change.option)
                 }

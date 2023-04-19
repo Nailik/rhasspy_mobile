@@ -37,7 +37,7 @@ fun ChangelogDialogButton(changelog: ImmutableList<String>) {
     if (openDialog) {
         ChangelogDialog(
             changelog = changelog,
-            onDismissRequest =  { openDialog = false }
+            onDismissRequest = { openDialog = false }
         )
     }
 

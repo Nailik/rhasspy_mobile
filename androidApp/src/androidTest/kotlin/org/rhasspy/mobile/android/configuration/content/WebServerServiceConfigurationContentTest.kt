@@ -1,41 +1,35 @@
 package org.rhasspy.mobile.android.configuration.content
 
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTextReplacement
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerEnabled
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLEnabled
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewState
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class WebServerServiceConfigurationContentTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class WebServerServiceConfigurationContentTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = WebServerConfigurationViewModel(
-        service = WebServerService(),
-        testRunner = WebServerConfigurationTest()
-    )
+    private val viewModel = get<WebServerConfigurationViewModel>()
 
     @Before
     fun setUp() {
@@ -79,7 +73,7 @@ class WebServerServiceConfigurationContentTest {
      * enable ssl is saved
      */
     @Test
-    fun testHttpContent() = runBlocking {
+    fun testHttpContent() = runTest {
         viewModel.onEvent(SetHttpServerEnabled(false))
         viewModel.onEvent(SetHttpServerSSLEnabled(false))
         viewModel.onSave()
@@ -131,12 +125,13 @@ class WebServerServiceConfigurationContentTest {
         //user click save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
-        val newViewState = WebServerConfigurationViewState()
-        //enable http api is saved
-        assertEquals(true, newViewState.isHttpServerEnabled)
-        //port is saved
-        assertEquals(textInputTest, newViewState.httpServerPortText)
-        //enable ssl is saved
-        assertEquals(true, newViewState.isHttpServerSSLEnabled)
+        WebServerConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+            //enable http api is saved
+            assertEquals(true, it.isHttpServerEnabled)
+            //port is saved
+            assertEquals(textInputTest, it.httpServerPortText)
+            //enable ssl is saved
+            assertEquals(true, it.isHttpServerSSLEnabled)
+        }
     }
 }

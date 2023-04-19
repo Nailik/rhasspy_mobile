@@ -10,6 +10,8 @@ import androidx.navigation.compose.rememberNavController
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onListItemSwitch
@@ -18,12 +20,12 @@ import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsSettin
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class DeviceSettingsContentTest {
+class DeviceSettingsContentTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = DeviceSettingsSettingsViewModel()
+    private val viewModel = get<DeviceSettingsSettingsViewModel>()
 
     @Before
     fun setUp() {
@@ -65,33 +67,33 @@ class DeviceSettingsContentTest {
 
         //hot word is enabled
         composeTestRule.onNodeWithTag(TestTag.HotWord).onListItemSwitch().assertIsOn()
-        assertTrue { DeviceSettingsSettingsViewModel().isHotWordEnabled.value }
+        assertTrue { DeviceSettingsSettingsViewModel(get()).viewState.value.isHotWordEnabled }
         //user clicks hot word
         composeTestRule.onNodeWithTag(TestTag.HotWord).performClick()
         //hot word is disabled
         composeTestRule.onNodeWithTag(TestTag.HotWord).onListItemSwitch().assertIsOff()
         //hot word disabled is saved
-        assertFalse { DeviceSettingsSettingsViewModel().isHotWordEnabled.value }
+        assertFalse { DeviceSettingsSettingsViewModel(get()).viewState.value.isHotWordEnabled }
 
         //audio output is enabled
         composeTestRule.onNodeWithTag(TestTag.AudioOutput).onListItemSwitch().assertIsOn()
-        assertTrue { DeviceSettingsSettingsViewModel().isAudioOutputEnabled.value }
+        assertTrue { DeviceSettingsSettingsViewModel(get()).viewState.value.isAudioOutputEnabled }
         //user clicks audio output
         composeTestRule.onNodeWithTag(TestTag.AudioOutput).performClick()
         //audio output is disabled
         composeTestRule.onNodeWithTag(TestTag.AudioOutput).onListItemSwitch().assertIsOff()
         //audio output disabled is saved
-        assertFalse { DeviceSettingsSettingsViewModel().isAudioOutputEnabled.value }
+        assertFalse { DeviceSettingsSettingsViewModel(get()).viewState.value.isAudioOutputEnabled }
 
         //intent handling is enabled
         composeTestRule.onNodeWithTag(TestTag.IntentHandling).onListItemSwitch().assertIsOn()
-        assertTrue { DeviceSettingsSettingsViewModel().isIntentHandlingEnabled.value }
+        assertTrue { DeviceSettingsSettingsViewModel(get()).viewState.value.isIntentHandlingEnabled }
         //user clicks intent handling
         composeTestRule.onNodeWithTag(TestTag.IntentHandling).performClick()
         //intent handling is disabled
         composeTestRule.onNodeWithTag(TestTag.IntentHandling).onListItemSwitch().assertIsOff()
         //intent handling disabled is saved
-        assertFalse { DeviceSettingsSettingsViewModel().isIntentHandlingEnabled.value }
+        assertFalse { DeviceSettingsSettingsViewModel(get()).viewState.value.isIntentHandlingEnabled }
     }
 
 }

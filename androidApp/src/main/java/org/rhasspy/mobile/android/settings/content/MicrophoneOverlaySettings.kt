@@ -18,7 +18,7 @@ import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
-import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SetMicrophoneOverlaySizeOption
+import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SelectMicrophoneOverlaySizeOption
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SetMicrophoneOverlayWhileAppEnabled
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsViewModel
 
@@ -44,7 +44,7 @@ fun MicrophoneOverlaySettingsContent(viewModel: MicrophoneOverlaySettingsViewMod
             //overlay permission request
             RequiresOverlayPermission(
                 initialData = viewState.microphoneOverlaySizeOption,
-                onClick = { viewModel.onEvent(SetMicrophoneOverlaySizeOption(it)) }
+                onClick = { viewModel.onEvent(SelectMicrophoneOverlaySizeOption(it)) }
             ) { onClick ->
 
                 //drop down to select option
@@ -57,7 +57,7 @@ fun MicrophoneOverlaySettingsContent(viewModel: MicrophoneOverlaySettingsViewMod
                             onClick.invoke(option)
                         } else {
                             //doesn't invoke permission request
-                            viewModel.onEvent(SetMicrophoneOverlaySizeOption(option))
+                            viewModel.onEvent(SelectMicrophoneOverlaySizeOption(option))
                         }
                     },
                     values = viewState.microphoneOverlaySizeOptions
@@ -66,7 +66,7 @@ fun MicrophoneOverlaySettingsContent(viewModel: MicrophoneOverlaySettingsViewMod
             }
 
 
-            val showOverlayWhileAppEnabled by remember { derivedStateOf { viewState.microphoneOverlaySizeOption != MicrophoneOverlaySizeOption.Disabled }}
+            val showOverlayWhileAppEnabled by remember { derivedStateOf { viewState.microphoneOverlaySizeOption != MicrophoneOverlaySizeOption.Disabled } }
 
 
             //visibility of overlay while app

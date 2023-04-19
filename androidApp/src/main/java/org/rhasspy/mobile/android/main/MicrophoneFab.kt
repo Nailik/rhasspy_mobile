@@ -49,7 +49,11 @@ fun MicrophoneFab(
                 }
                 it
             },
-        onClick = { if (viewState.isUserActionEnabled) { onEvent(UserSessionClick) } },
+        onClick = {
+            if (viewState.isUserActionEnabled) {
+                onEvent(UserSessionClick)
+            }
+        },
         isEnabled = viewState.isUserActionEnabled,
         containerColor = getContainerColorForMicrophoneFab(viewState.isUserActionEnabled, viewState.isRecording),
         contentColor = getContentColorForMicrophoneFab(viewState.isUserActionEnabled, viewState.isRecording),

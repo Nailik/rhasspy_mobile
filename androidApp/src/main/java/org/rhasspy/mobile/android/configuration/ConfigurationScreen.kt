@@ -31,17 +31,7 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiE
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToError
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.AudioPlayingViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.DialogManagementViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.IntentHandlingViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.IntentRecognitionViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.MqttViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.RemoteHermesHttpViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SiteIdViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.SpeechToTextViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.TextToSpeechViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.WakeWordViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.WebServerViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 /**
@@ -249,7 +239,7 @@ private fun SiteId(
 
     TextFieldListItem(
         modifier = Modifier.testTag(TestTag.ConfigurationSiteId),
-        value =  viewState.text,
+        value = viewState.text,
         onValueChange = { onEvent(SiteIdChange(it)) },
         label = MR.strings.siteId.stable,
     )

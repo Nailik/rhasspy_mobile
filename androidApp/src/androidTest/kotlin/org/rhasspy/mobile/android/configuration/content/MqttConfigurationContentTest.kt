@@ -1,41 +1,35 @@
 package org.rhasspy.mobile.android.configuration.content
 
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTextReplacement
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttEnabled
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttSSLEnabled
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewState
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class MqttConfigurationContentTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class MqttConfigurationContentTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = MqttConfigurationViewModel(
-        service = MqttService(),
-        testRunner = MqttConfigurationTest()
-    )
+    private val viewModel = get<MqttConfigurationViewModel>()
 
     @Before
     fun setUp() {
@@ -66,7 +60,7 @@ class MqttConfigurationContentTest {
      * mqtt enabled saved
      */
     @Test
-    fun testMqttContent() = runBlocking {
+    fun testMqttContent() = runTest {
         viewModel.onAction(SetMqttEnabled(false))
         viewModel.onSave()
         composeTestRule.awaitSaved(viewModel)
@@ -107,9 +101,10 @@ class MqttConfigurationContentTest {
         //user click save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
-        val newViewState = MqttConfigurationViewState()
-        //mqtt enabled saved
-        assertEquals(true, newViewState.isMqttEnabled)
+        MqttConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+            //mqtt enabled saved
+            assertEquals(true, it.isMqttEnabled)
+        }
     }
 
     /**
@@ -126,7 +121,7 @@ class MqttConfigurationContentTest {
      * password is saved
      */
     @Test
-    fun testMqttConnectionSettings() = runBlocking {
+    fun testMqttConnectionSettings() = runTest {
         viewModel.onAction(SetMqttEnabled(true))
         viewModel.onSave()
         composeTestRule.awaitSaved(viewModel)
@@ -162,15 +157,16 @@ class MqttConfigurationContentTest {
         //user click save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
-        val newViewState = MqttConfigurationViewState()
-        //host is saved
-        assertEquals(textInputTestHost, newViewState.mqttHost)
-        //port is saved
-        assertEquals(textInputTestPort, newViewState.mqttPortText)
-        //username is saved
-        assertEquals(textInputTestUsername, newViewState.mqttUserName)
-        //password is saved
-        assertEquals(textInputTestPassword, newViewState.mqttPassword)
+        MqttConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+            //host is saved
+            assertEquals(textInputTestHost, it.mqttHost)
+            //port is saved
+            assertEquals(textInputTestPort, it.mqttPortText)
+            //username is saved
+            assertEquals(textInputTestUsername, it.mqttUserName)
+            //password is saved
+            assertEquals(textInputTestPassword, it.mqttPassword)
+        }
     }
 
     /**
@@ -188,7 +184,7 @@ class MqttConfigurationContentTest {
      * ssl on is saved
      */
     @Test
-    fun testMqttSSL() = runBlocking {
+    fun testMqttSSL() = runTest {
         viewModel.onAction(SetMqttEnabled(true))
         viewModel.onAction(SetMqttSSLEnabled(false))
         viewModel.onSave()
@@ -217,9 +213,10 @@ class MqttConfigurationContentTest {
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val newViewState = MqttConfigurationViewState()
-        //ssl on is saved
-        assertEquals(true, newViewState.isMqttSSLEnabled)
+        MqttConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+            //ssl on is saved
+            assertEquals(true, it.isMqttSSLEnabled)
+        }
     }
 
     /**
@@ -234,7 +231,7 @@ class MqttConfigurationContentTest {
      * retry interval is saved
      */
     @Test
-    fun testMqttConnectionTiming() = runBlocking {
+    fun testMqttConnectionTiming() = runTest {
         viewModel.onAction(SetMqttEnabled(true))
         viewModel.onSave()
         composeTestRule.awaitSaved(viewModel)
@@ -267,13 +264,14 @@ class MqttConfigurationContentTest {
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val newViewState = MqttConfigurationViewState()
-        //timeout is saved
-        assertEquals(textInputTestConnectionTimeout, newViewState.mqttConnectionTimeoutText)
-        //keepAliveInterval is saved
-        assertEquals(textInputTestKeepAliveInterval, newViewState.mqttKeepAliveIntervalText)
-        //retry interval is saved
-        assertEquals(textInputTestRetryInterval, newViewState.mqttRetryIntervalText)
+        MqttConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+            //timeout is saved
+            assertEquals(textInputTestConnectionTimeout, it.mqttConnectionTimeoutText)
+            //keepAliveInterval is saved
+            assertEquals(textInputTestKeepAliveInterval, it.mqttKeepAliveIntervalText)
+            //retry interval is saved
+            assertEquals(textInputTestRetryInterval, it.mqttRetryIntervalText)
+        }
     }
 
 }

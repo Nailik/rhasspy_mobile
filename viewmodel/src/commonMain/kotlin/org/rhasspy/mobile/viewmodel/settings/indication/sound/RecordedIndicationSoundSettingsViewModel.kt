@@ -4,19 +4,21 @@ import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.file.FolderType
+import org.rhasspy.mobile.platformspecific.file.FolderType.SoundFolder.Recorded
 
 @Stable
 class RecordedIndicationSoundSettingsViewModel(
     localAudioService: LocalAudioService,
     nativeApplication: NativeApplication,
+    viewStateCreator: IIndicationSoundSettingsViewStateCreator
 ) : IIndicationSoundSettingsViewModel(
     localAudioService = localAudioService,
     nativeApplication = nativeApplication,
     customSoundOptions = AppSetting.customRecordedSounds,
     soundSetting = AppSetting.recordedSound,
     soundVolume = AppSetting.recordedSoundVolume,
-    soundFolderType = FolderType.SoundFolder.Recorded
+    soundFolderType = Recorded,
+    viewStateCreator = viewStateCreator
 ) {
 
     override val playSound = LocalAudioService::playRecordedSound

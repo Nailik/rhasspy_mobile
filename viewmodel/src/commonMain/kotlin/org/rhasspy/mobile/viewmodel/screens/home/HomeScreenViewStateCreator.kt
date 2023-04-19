@@ -16,7 +16,7 @@ class HomeScreenViewStateCreator(
 
     private val updaterScope = CoroutineScope(Dispatchers.Default)
 
-    operator fun invoke() : StateFlow<HomeScreenViewState> {
+    operator fun invoke(): StateFlow<HomeScreenViewState> {
         val viewState = MutableStateFlow(getViewState())
 
         updaterScope.launch {
@@ -36,9 +36,9 @@ class HomeScreenViewStateCreator(
     private fun getViewState(): HomeScreenViewState {
         return HomeScreenViewState(
             wakeWordOption = ConfigurationSetting.wakeWordOption.value,
-                isPlayingRecording = serviceMiddleware.isPlayingRecording.value,
-                isPlayingRecordingEnabled = serviceMiddleware.isPlayingRecordingEnabled.value,
-                isShowLogEnabled = AppSetting.isShowLogEnabled.data.value,
+            isPlayingRecording = serviceMiddleware.isPlayingRecording.value,
+            isPlayingRecordingEnabled = serviceMiddleware.isPlayingRecordingEnabled.value,
+            isShowLogEnabled = AppSetting.isShowLogEnabled.data.value,
         )
     }
 }

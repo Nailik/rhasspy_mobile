@@ -33,15 +33,21 @@ actual fun Path.commonReadWrite(): FileHandle = FileSystem.SYSTEM.openReadWrite(
 actual inline fun <reified T> Path.commonDecodeLogList(): T =
     Json.decodeFromStream(this.toFile().inputStream().modify())
 
-fun InputStream.modify() : InputStream {
+fun InputStream.modify(): InputStream {
     val streams = listOf(
-        ByteArrayInputStream("[${Json.encodeToString(
-            LogElement(
-            time = "",
-            severity = Severity.Assert,
-            tag = "",
-            message = "",
-            throwable = null))}".toByteArray()),
+        ByteArrayInputStream(
+            "[${
+                Json.encodeToString(
+                    LogElement(
+                        time = "",
+                        severity = Severity.Assert,
+                        tag = "",
+                        message = "",
+                        throwable = null
+                    )
+                )
+            }".toByteArray()
+        ),
         this,
         ByteArrayInputStream("]".toByteArray())
     )

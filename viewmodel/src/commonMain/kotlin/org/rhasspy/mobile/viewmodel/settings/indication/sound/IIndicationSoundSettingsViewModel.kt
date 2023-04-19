@@ -3,25 +3,18 @@ package org.rhasspy.mobile.viewmodel.settings.indication.sound
 import androidx.compose.runtime.Stable
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import okio.Path
 import org.koin.core.component.KoinComponent
-import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
-import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.logic.settings.ISetting
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
-import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.platformspecific.volume.DeviceVolume
+import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.ChooseSoundFile
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.ToggleAudioPlayerActive
@@ -36,42 +29,13 @@ abstract class IIndicationSoundSettingsViewModel(
     private val customSoundOptions: ISetting<ImmutableList<String>>,
     private val soundSetting: ISetting<String>,
     private val soundVolume: ISetting<Float>,
-    private val soundFolderType: FolderType
+    private val soundFolderType: FolderType,
+    viewStateCreator: IIndicationSoundSettingsViewStateCreator
 ) : ViewModel(), KoinComponent {
 
     abstract val playSound: KFunction1<LocalAudioService, Unit>
 
-
-    private val _viewState =
-        MutableStateFlow(
-            IIndicationSoundSettingsViewState.getInitialViewState(
-                soundSetting = soundSetting.value,
-                customSoundFiles = customSoundOptions.value,
-                soundVolume = soundVolume.value,
-                localAudioService = localAudioService
-            )
-        )
-    val viewState = _viewState.readOnly
-
-    init {
-        viewModelScope.launch(Dispatchers.Default) {
-            combineStateFlow(
-                DeviceVolume.volumeFlowSound,
-                DeviceVolume.volumeFlowNotification,
-                localAudioService.isPlayingState
-            ).collect { data ->
-                _viewState.update {
-                    it.copy(
-                        isNoSoundInformationBoxVisible = when (AppSetting.soundIndicationOutputOption.value) {
-                            AudioOutputOption.Sound -> data[0] as Int? == 0
-                            AudioOutputOption.Notification -> data[1] as Int? == 0
-                        },
-                        isAudioPlaying = data[2] as Boolean
-                    )
-                }
-            }
-        }
-    }
+    val viewState: StateFlow<IIndicationSoundSettingsViewState> = viewStateCreator()
 
     fun onEvent(event: IIndicationSoundSettingsUiEvent) {
         when (event) {
@@ -81,48 +45,28 @@ abstract class IIndicationSoundSettingsViewModel(
     }
 
     private fun onChange(change: Change) {
-        _viewState.update {
-            when (change) {
-                is SetSoundFile -> {
-                    soundSetting.value = change.file
-                    it.copy(soundSetting = change.file)
+        when (change) {
+            is SetSoundFile -> soundSetting.value = change.file
+            is SetSoundIndicationOption -> soundSetting.value = change.option.name
+            is UpdateSoundVolume -> soundVolume.value = change.volume
+            is AddSoundFile -> {
+                val customSounds = customSoundOptions.value.updateList {
+                    add(change.file)
                 }
+                customSoundOptions.value = customSounds
+                soundSetting.value = change.file
+            }
 
-                is SetSoundIndicationOption -> {
-                    soundSetting.value = change.option.name
-                    it.copy(soundSetting = change.option.name)
-                }
-
-                is UpdateSoundVolume -> {
-                    soundVolume.value = change.volume
-                    it.copy(soundVolume = change.volume)
-                }
-
-                is AddSoundFile -> {
-                    val customSounds = it.customSoundFiles
-                        .toMutableList()
-                        .apply { remove(change.file) }
-                        .toImmutableList()
-                    soundSetting.value = change.file
-                    it.copy(
-                        soundSetting = change.file,
-                        customSoundFiles = customSounds
-                    )
-                }
-
-                is DeleteSoundFile -> {
-                    if (viewState.value.soundSetting != change.file) {
-                        val customSounds = it.customSoundFiles
-                            .toMutableList()
-                            .apply { remove(change.file) }
-                            .toImmutableList()
-                        customSoundOptions.value = customSounds
-                        Path.commonInternalPath(
-                            nativeApplication = nativeApplication,
-                            fileName = "${soundFolderType}/${change.file}"
-                        ).commonDelete()
-                        it.copy(customSoundFiles = customSounds)
-                    } else it
+            is DeleteSoundFile -> {
+                if (viewState.value.soundSetting != change.file) {
+                    val customSounds = customSoundOptions.value.updateList {
+                        remove(change.file)
+                    }
+                    customSoundOptions.value = customSounds
+                    Path.commonInternalPath(
+                        nativeApplication = nativeApplication,
+                        fileName = "${soundFolderType}/${change.file}"
+                    ).commonDelete()
                 }
             }
         }
@@ -132,17 +76,12 @@ abstract class IIndicationSoundSettingsViewModel(
         when (action) {
             ChooseSoundFile -> {
                 viewModelScope.launch {
-                    FileUtils.selectFile(soundFolderType)
-                        ?.also { path -> onEvent(AddSoundFile(path.name)) }
+                    FileUtils.selectFile(soundFolderType)?.also { path -> onEvent(AddSoundFile(path.name)) }
                 }
             }
 
             ToggleAudioPlayerActive ->
-                if (localAudioService.isPlayingState.value) {
-                    localAudioService.stop()
-                } else {
-                    playSound(localAudioService)
-                }
+                if (localAudioService.isPlayingState.value) localAudioService.stop() else playSound(localAudioService)
         }
     }
 

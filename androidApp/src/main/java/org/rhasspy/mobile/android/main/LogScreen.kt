@@ -1,10 +1,6 @@
 package org.rhasspy.mobile.android.main
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -17,11 +13,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,8 +25,8 @@ import org.rhasspy.mobile.android.content.elements.CustomDivider
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.list.LogListElement
-import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.log.LogElement
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Change.ToggleListAutoScroll
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Navigate.SaveLogFile
@@ -52,10 +44,12 @@ fun LogScreen(viewModel: LogScreenViewModel = get()) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { AppBar(
-            isLogAutoscroll = viewState.isLogAutoscroll,
-            onEvent = viewModel::onEvent
-        ) },
+        topBar = {
+            AppBar(
+                isLogAutoscroll = viewState.isLogAutoscroll,
+                onEvent = viewModel::onEvent
+            )
+        },
     ) { paddingValues ->
 
         Surface(Modifier.padding(paddingValues)) {
@@ -73,7 +67,7 @@ fun LogScreen(viewModel: LogScreenViewModel = get()) {
  */
 @Composable
 private fun AppBar(
-    isLogAutoscroll : Boolean,
+    isLogAutoscroll: Boolean,
     onEvent: (LogScreenUiEvent) -> Unit
 ) {
     TopAppBar(modifier = Modifier,
@@ -125,7 +119,7 @@ private fun LogScreenContent(
  */
 @Composable
 private fun LogScreenActions(
-    isLogAutoscroll : Boolean,
+    isLogAutoscroll: Boolean,
     onEvent: (LogScreenUiEvent) -> Unit
 ) {
 
@@ -140,14 +134,14 @@ private fun LogScreenActions(
             )
         }
 
-        IconButton(onClick =  { onEvent(ShareLogFile) }) {
+        IconButton(onClick = { onEvent(ShareLogFile) }) {
             Icon(
                 imageVector = Icons.Filled.Share,
                 contentDescription = MR.strings.share.stable
             )
         }
 
-        IconButton(onClick =  { onEvent(SaveLogFile) }) {
+        IconButton(onClick = { onEvent(SaveLogFile) }) {
             Icon(
                 imageVector = Icons.Filled.Save,
                 contentDescription = MR.strings.save.stable

@@ -7,24 +7,29 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.rememberNavController
 import dev.icerock.moko.resources.desc.StringDesc
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onListItemRadioButton
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.data.language.LanguageType
+import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SelectLanguageOption
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
 import kotlin.test.assertEquals
 
-class LanguageSettingsContentTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class LanguageSettingsContentTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = LanguageSettingsViewModel()
+    private val viewModel = get<LanguageSettingsViewModel>()
 
     @Before
     fun setUp() {
@@ -62,11 +67,11 @@ class LanguageSettingsContentTest {
      * language english is saved
      */
     @Test
-    fun testLanguage() = runBlocking {
-        viewModel.selectLanguageOption(LanguageType.English)
+    fun testLanguage() = runTest {
+        viewModel.onEvent(SelectLanguageOption(LanguageType.English))
 
         //language is english
-        assertEquals(LanguageType.English, viewModel.languageOption.value)
+        assertEquals(LanguageType.English, viewModel.viewState.value.languageOption)
         //english is selected
         composeTestRule.onNodeWithTag(LanguageType.English, true).onListItemRadioButton().assertIsSelected()
         //title is "Language"
@@ -80,7 +85,7 @@ class LanguageSettingsContentTest {
         //language is german
 
         composeTestRule.waitUntil(
-            condition = { viewModel.languageOption.value == LanguageType.German },
+            condition = { viewModel.viewState.value.languageOption == LanguageType.German },
             timeoutMillis = 5000
         )
         //german is selected
@@ -89,19 +94,19 @@ class LanguageSettingsContentTest {
         assertEquals(LanguageType.German.code, StringDesc.localeType.systemLocale!!.language)
         //language german is saved
         var newViewModel = LanguageSettingsViewModel()
-        assertEquals(LanguageType.German, newViewModel.languageOption.value)
+        assertEquals(LanguageType.German, newViewModel.viewState.value.languageOption)
 
         //User clicks english
         composeTestRule.onNodeWithTag(LanguageType.English).performClick()
         //language is english
-        assertEquals(LanguageType.English, viewModel.languageOption.value)
+        assertEquals(LanguageType.English, viewModel.viewState.value.languageOption)
         //english is selected
         composeTestRule.onNodeWithTag(LanguageType.English, true).onListItemRadioButton().assertIsSelected()
         //StringDesc is English
         assertEquals(LanguageType.English.code, StringDesc.localeType.systemLocale!!.language)
         //language english is saved
         newViewModel = LanguageSettingsViewModel()
-        assertEquals(LanguageType.English, newViewModel.languageOption.value)
+        assertEquals(LanguageType.English, newViewModel.viewState.value.languageOption)
     }
 
 }

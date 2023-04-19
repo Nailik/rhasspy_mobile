@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
+import kotlinx.collections.immutable.persistentListOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -22,7 +23,10 @@ class LibrariesContainerTest {
     fun setUp() {
 
         composeTestRule.setContent {
-            LibrariesContainer(Modifier.fillMaxSize())
+            LibrariesContainer(
+                libraries = persistentListOf(),
+                modifier = Modifier.fillMaxSize()
+            )
         }
 
     }

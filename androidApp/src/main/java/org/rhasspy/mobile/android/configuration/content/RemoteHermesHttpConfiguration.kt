@@ -108,9 +108,9 @@ fun RemoteHermesHttpConfigurationContent(
  */
 @Composable
 private fun TestContent(
-    testIntentRecognitionText: String ,
-    testTextToSpeechText: String ,
-    isTestRecordingAudio: Boolean ,
+    testIntentRecognitionText: String,
+    testTextToSpeechText: String,
+    isTestRecordingAudio: Boolean,
     isSpeechToTextTestVisible: Boolean,
     isIntentRecognitionTestVisible: Boolean,
     isTextToSpeechTestVisible: Boolean,

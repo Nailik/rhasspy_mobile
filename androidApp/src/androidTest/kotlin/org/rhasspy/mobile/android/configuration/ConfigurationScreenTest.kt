@@ -5,10 +5,13 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextReplacement
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.hasTestTag
@@ -22,7 +25,8 @@ import kotlin.test.assertEquals
  * Items exist
  * Site ID edit
  */
-class ConfigurationScreenTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class ConfigurationScreenTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
@@ -42,7 +46,7 @@ class ConfigurationScreenTest {
      * back button exists
      */
     @Test
-    fun testContent() = runBlocking {
+    fun testContent() = runTest {
         //SiteId
         composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId).assertExists()
         //each item exists and navigates
@@ -70,7 +74,7 @@ class ConfigurationScreenTest {
         composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId).performScrollTo()
             .performTextReplacement(textInputTest)
         //text field changed text
-        assertEquals(textInputTest, ConfigurationScreenViewModel().viewState.value.siteId.text.value)
+        assertEquals(textInputTest, get<ConfigurationScreenViewModel>().viewState.value.siteId.text)
     }
 
 }

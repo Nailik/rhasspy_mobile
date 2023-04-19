@@ -74,7 +74,7 @@ fun Text(
 
 @Composable
 fun translate(resource: StableStringResource): String {
-    if(!LocalInspectionMode.current) {
+    if (!LocalInspectionMode.current) {
         AppSetting.languageType.data.collectAsState().value
     }
     return StringDesc.Resource(resource.stringResource).toString(LocalContext.current)
@@ -82,7 +82,7 @@ fun translate(resource: StableStringResource): String {
 
 @Composable
 fun translate(resource: StableStringResource, arg: String): String {
-    if(!LocalInspectionMode.current) {
+    if (!LocalInspectionMode.current) {
         AppSetting.languageType.data.collectAsState().value
     }
     return StringDesc.ResourceFormatted(resource.stringResource, arg).toString(LocalContext.current)

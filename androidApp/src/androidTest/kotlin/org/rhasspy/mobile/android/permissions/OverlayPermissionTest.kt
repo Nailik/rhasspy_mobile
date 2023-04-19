@@ -14,7 +14,8 @@ import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -30,6 +31,7 @@ import kotlin.test.assertTrue
 /**
  * Tests Overlay Permission redirecting and recognition
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class OverlayPermissionTest {
 
@@ -52,7 +54,10 @@ class OverlayPermissionTest {
         composeTestRule.activity.setContent {
             AppTheme {
 
-                RequiresOverlayPermission({ permissionResult = true }) { onClick ->
+                RequiresOverlayPermission(
+                    initialData = Unit,
+                    onClick = { permissionResult = true }
+                ) { onClick ->
                     Button(onClick = { onClick.invoke(Unit) }) {
                         Text(btnRequestPermission)
                     }
@@ -80,7 +85,7 @@ class OverlayPermissionTest {
      * invoke was done
      */
     @Test
-    fun testAllow() = runBlocking {
+    fun testAllow() = runTest {
         device.resetOverlayPermission(composeTestRule.activity)
 
         permissionResult = false

@@ -122,7 +122,7 @@ fun IndicationSettingsOverview(
                 modifier = Modifier.testTag(TestTag.WakeWordDetectionTurnOnDisplay),
                 text = MR.strings.backgroundWakeWordDetectionTurnOnDisplay.stable,
                 isChecked = viewState.isWakeWordDetectionTurnOnDisplayEnabled,
-                onCheckedChange = { onEvent(SetWakeWordDetectionTurnOnDisplay(it))}
+                onCheckedChange = { onEvent(SetWakeWordDetectionTurnOnDisplay(it)) }
             )
 
             //light indication
@@ -143,7 +143,7 @@ fun IndicationSettingsOverview(
                 modifier = Modifier.testTag(TestTag.SoundIndicationEnabled),
                 text = MR.strings.wakeWordSoundIndication.stable,
                 isChecked = viewState.isSoundIndicationEnabled,
-                onCheckedChange = { onEvent(SetSoundIndicationEnabled(it))}
+                onCheckedChange = { onEvent(SetSoundIndicationEnabled(it)) }
             )
 
 
@@ -185,7 +185,7 @@ private fun SoundIndicationSettingsOverview(
         RadioButtonsEnumSelectionList(
             modifier = Modifier.testTag(TestTag.AudioOutputOptions),
             selected = soundIndicationOutputOption,
-            onSelect = { onEvent(SetSoundIndicationOutputOption(it)) },
+            onSelect = { onEvent(SelectSoundIndicationOutputOption(it)) },
             values = audioOutputOptionList
         )
 

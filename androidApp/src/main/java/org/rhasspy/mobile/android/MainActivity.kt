@@ -57,7 +57,7 @@ class MainActivity : KoinComponent, AppActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
-        if(intent.getBooleanExtra(IntentAction.StartRecording.param, false)) {
+        if (intent.getBooleanExtra(IntentAction.StartRecording.param, false)) {
             get<ServiceMiddleware>().action(WakeWordDetected(Source.Local, wakeWord = "intent"))
         }
 

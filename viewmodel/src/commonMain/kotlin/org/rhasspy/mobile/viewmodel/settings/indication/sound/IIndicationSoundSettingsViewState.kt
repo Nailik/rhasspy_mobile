@@ -3,9 +3,6 @@ package org.rhasspy.mobile.viewmodel.settings.indication.sound
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
-import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
-import org.rhasspy.mobile.logic.settings.AppSetting
-import org.rhasspy.mobile.platformspecific.volume.DeviceVolume
 
 @Stable
 data class IIndicationSoundSettingsViewState internal constructor(
@@ -17,25 +14,24 @@ data class IIndicationSoundSettingsViewState internal constructor(
     val isNoSoundInformationBoxVisible: Boolean
 ) {
 
-    companion object {
-        fun getInitialViewState(
-            soundSetting: String,
-            customSoundFiles: ImmutableList<String>,
-            soundVolume: Float,
-            localAudioService: LocalAudioService,
-        ): IIndicationSoundSettingsViewState {
-            return IIndicationSoundSettingsViewState(
-                soundSetting = soundSetting,
-                customSoundFiles = customSoundFiles,
-                soundVolume = soundVolume,
-                isAudioPlaying = localAudioService.isPlayingState.value,
-                audioOutputOption = AppSetting.soundIndicationOutputOption.value,
-                isNoSoundInformationBoxVisible = when (AppSetting.soundIndicationOutputOption.value) {
-                    AudioOutputOption.Sound -> DeviceVolume.volumeFlowSound.value == 0
-                    AudioOutputOption.Notification -> DeviceVolume.volumeFlowNotification.value == 0
-                }
-            )
+    constructor(
+        soundSetting: String,
+        customSoundFiles: ImmutableList<String>,
+        soundVolume: Float,
+        isAudioPlaying: Boolean,
+        audioOutputOption: AudioOutputOption,
+        deviceSoundVolume: Int?,
+        deviceNotificationVolume: Int?
+    ) : this(
+        soundSetting = soundSetting,
+        customSoundFiles = customSoundFiles,
+        soundVolume = soundVolume,
+        isAudioPlaying = isAudioPlaying,
+        audioOutputOption = audioOutputOption,
+        isNoSoundInformationBoxVisible = when (audioOutputOption) {
+            AudioOutputOption.Sound -> deviceSoundVolume == 0
+            AudioOutputOption.Notification -> deviceNotificationVolume == 0
         }
-    }
+    )
 
 }

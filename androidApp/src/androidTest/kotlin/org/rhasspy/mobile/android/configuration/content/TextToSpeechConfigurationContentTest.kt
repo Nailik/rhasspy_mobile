@@ -1,42 +1,30 @@
 package org.rhasspy.mobile.android.configuration.content
 
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
-import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTextReplacement
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.awaitSaved
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onListItemRadioButton
-import org.rhasspy.mobile.android.onListItemSwitch
-import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
-import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.SelectTextToSpeechOption
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewState
 import kotlin.test.assertEquals
 
-class TextToSpeechConfigurationContentTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class TextToSpeechConfigurationContentTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = TextToSpeechConfigurationViewModel(
-        service = TextToSpeechService(),
-        testRunner = TextToSpeechConfigurationTest()
-    )
+    private val viewModel = get<TextToSpeechConfigurationViewModel>()
 
     @Before
     fun setUp() {
@@ -74,7 +62,7 @@ class TextToSpeechConfigurationContentTest {
      * use custom endpoint is saved
      */
     @Test
-    fun testEndpoint() = runBlocking {
+    fun testEndpoint() = runTest {
         viewModel.onEvent(SelectTextToSpeechOption(TextToSpeechOption.Disabled))
         viewModel.save()
         composeTestRule.awaitSaved(viewModel)
@@ -114,13 +102,14 @@ class TextToSpeechConfigurationContentTest {
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
-        val newViewState = TextToSpeechConfigurationViewState()
-        //option is saved to remote http
-        assertEquals(TextToSpeechOption.RemoteHTTP, newViewState.textToSpeechOption)
-        //endpoint is saved
-        assertEquals(textInputTest, newViewState.textToSpeechHttpEndpoint)
-        //use custom endpoint is saved
-        assertEquals(true, newViewState.isUseCustomTextToSpeechHttpEndpoint)
+        TextToSpeechConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+            //option is saved to remote http
+            assertEquals(TextToSpeechOption.RemoteHTTP, it.textToSpeechOption)
+            //endpoint is saved
+            assertEquals(textInputTest, it.textToSpeechHttpEndpoint)
+            //use custom endpoint is saved
+            assertEquals(true, it.isUseCustomTextToSpeechHttpEndpoint)
+        }
     }
 
 }

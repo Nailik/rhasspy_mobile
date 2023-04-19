@@ -127,14 +127,14 @@ private fun SoundElements(
         modifier = Modifier.testTag(TestTag.Default),
         text = MR.strings.defaultText.stable,
         isChecked = soundSetting == SoundOption.Default.name,
-        onClick =  {onEvent(SetSoundIndicationOption(SoundOption.Default))}
+        onClick = { onEvent(SetSoundIndicationOption(SoundOption.Default)) }
     )
 
     RadioButtonListItem(
         modifier = Modifier.testTag(TestTag.Disabled),
         text = MR.strings.disabled.stable,
         isChecked = soundSetting == SoundOption.Disabled.name,
-        onClick = {onEvent(SetSoundIndicationOption(SoundOption.Disabled))}
+        onClick = { onEvent(SetSoundIndicationOption(SoundOption.Disabled)) }
     )
 
     //added files

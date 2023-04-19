@@ -18,7 +18,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -30,6 +31,7 @@ import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.data.language.LanguageType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
+import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SelectLanguageOption
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -42,6 +44,7 @@ import kotlin.test.assertTrue
  * - 29 : allow, deny, deny always (button)
  * - 30 : allow only while using the app, ask every time, don't allow
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class MicrophonePermissionTest {
 
@@ -91,7 +94,7 @@ class MicrophonePermissionTest {
     @Before
     fun setUp() {
         //set english
-        LanguageSettingsViewModel().selectLanguageOption(LanguageType.English)
+        LanguageSettingsViewModel().onEvent(SelectLanguageOption(LanguageType.English))
 
         //set content
         composeTestRule.activity.setContent {
@@ -133,10 +136,10 @@ class MicrophonePermissionTest {
      * Dialog is closed and permission granted
      */
     @Test
-    fun testAllow() = runBlocking {
+    fun testAllow() = runTest {
         if (Build.VERSION.SDK_INT >= 30) {
             //no simple allow button on api 30
-            return@runBlocking
+            return@runTest
         }
 
         permissionResult = false
@@ -178,10 +181,10 @@ class MicrophonePermissionTest {
      * Dialog is closed and permission granted
      */
     @Test
-    fun testAllowWhileUsing() = runBlocking {
+    fun testAllowWhileUsing() = runTest {
         if (Build.VERSION.SDK_INT < 30) {
             //allow while using only available above and on api 30
-            return@runBlocking
+            return@runTest
         }
 
         permissionResult = false
@@ -224,10 +227,10 @@ class MicrophonePermissionTest {
      * Dialog is closed and permission granted
      */
     @Test
-    fun testAllowOnce() = runBlocking {
+    fun testAllowOnce() = runTest {
         if (Build.VERSION.SDK_INT < 30) {
             //allow one time only available above and on api 30
-            return@runBlocking
+            return@runTest
         }
 
         permissionResult = false
@@ -277,10 +280,10 @@ class MicrophonePermissionTest {
      * Snack Bar is shown
      */
     @Test
-    fun testDenyAlways() = runBlocking {
+    fun testDenyAlways() = runTest {
         if (Build.VERSION.SDK_INT >= 30) {
             //no always allow button above api 30
-            return@runBlocking
+            return@runTest
         }
 
         permissionResult = false
@@ -380,7 +383,7 @@ class MicrophonePermissionTest {
      * Permission is allowed
      */
     @Test
-    fun testInformationDialog() = runBlocking {
+    fun testInformationDialog() = runTest {
         permissionResult = false
         assertFalse { MicrophonePermission.granted.value }
 

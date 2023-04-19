@@ -20,11 +20,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.logic.settings.AppSetting
-import org.rhasspy.mobile.platformspecific.extensions.commonDecodeLogList
-import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
-import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
-import org.rhasspy.mobile.platformspecific.extensions.commonSave
-import org.rhasspy.mobile.platformspecific.extensions.commonShare
+import org.rhasspy.mobile.platformspecific.extensions.*
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toImmutableList
 

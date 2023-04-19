@@ -1,17 +1,16 @@
 package org.rhasspy.mobile.android.configuration.content
 
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTextReplacement
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
@@ -19,21 +18,17 @@ import org.rhasspy.mobile.android.onListItemRadioButton
 import org.rhasspy.mobile.android.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.SelectIntentHandlingOption
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingOption
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewState
 import kotlin.test.assertEquals
 
-class IntentHandlingConfigurationContentTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class IntentHandlingConfigurationContentTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = IntentHandlingConfigurationViewModel(
-        service = DialogManagerService(),
-        testRunner = IntentHandlingConfigurationTest()
-    )
+    private val viewModel = get<IntentHandlingConfigurationViewModel>()
 
     @Before
     fun setUp() {
@@ -64,7 +59,7 @@ class IntentHandlingConfigurationContentTest {
      * use custom endpoint is saved
      */
     @Test
-    fun testEndpoint() = runBlocking {
+    fun testEndpoint() = runTest {
         viewModel.onEvent(SelectIntentHandlingOption(IntentHandlingOption.Disabled))
         viewModel.save()
         composeTestRule.awaitSaved(viewModel)
@@ -91,11 +86,12 @@ class IntentHandlingConfigurationContentTest {
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
-        val newViewState = IntentHandlingConfigurationViewState()
-        //option is saved to remote http
-        assertEquals(IntentHandlingOption.RemoteHTTP, newViewState.intentHandlingOption)
-        //endpoint is saved
-        assertEquals(textInputTest, newViewState.intentHandlingHttpEndpoint)
+        IntentHandlingConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+            //option is saved to remote http
+            assertEquals(IntentHandlingOption.RemoteHTTP, it.intentHandlingOption)
+            //endpoint is saved
+            assertEquals(textInputTest, it.intentHandlingHttpEndpoint)
+        }
     }
 
     /**
@@ -122,7 +118,7 @@ class IntentHandlingConfigurationContentTest {
      * send events is saved
      */
     @Test
-    fun testHomeAssistant() = runBlocking {
+    fun testHomeAssistant() = runTest {
         viewModel.onEvent(SelectIntentHandlingOption(IntentHandlingOption.Disabled))
         viewModel.save()
         composeTestRule.awaitSaved(viewModel)
@@ -170,15 +166,16 @@ class IntentHandlingConfigurationContentTest {
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
-        val newViewState = IntentHandlingConfigurationViewState()
-        //option is saved to HomeAssistant
-        assertEquals(IntentHandlingOption.HomeAssistant, newViewState.intentHandlingOption)
-        //endpoint is saved
-        assertEquals(textInputTestEndpoint, newViewState.intentHandlingHassEndpoint)
-        //access token is saved
-        assertEquals(textInputTestToken, newViewState.intentHandlingHassAccessToken)
-        //send events is saved
-        assertEquals(HomeAssistantIntentHandlingOption.Event, newViewState.intentHandlingHassOption)
+        IntentHandlingConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+            //option is saved to HomeAssistant
+            assertEquals(IntentHandlingOption.HomeAssistant, it.intentHandlingOption)
+            //endpoint is saved
+            assertEquals(textInputTestEndpoint, it.intentHandlingHassEndpoint)
+            //access token is saved
+            assertEquals(textInputTestToken, it.intentHandlingHassAccessToken)
+            //send events is saved
+            assertEquals(HomeAssistantIntentHandlingOption.Event, it.intentHandlingHassOption)
+        }
     }
 
 }

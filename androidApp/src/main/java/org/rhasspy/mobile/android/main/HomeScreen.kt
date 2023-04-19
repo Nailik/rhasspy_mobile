@@ -143,7 +143,7 @@ fun LandscapeContent(
 private fun MicrophoneFabElement(viewModel: MicrophoneFabViewModel) {
     val viewState by viewModel.viewState.collectAsState()
 
-    if(viewState.isMicrophonePermissionRequired) {
+    if (viewState.isMicrophonePermissionRequired) {
         RequiresMicrophonePermission(
             informationText = MR.strings.microphonePermissionInfoRecord.stable,
             onClick = { viewModel.onEvent(UserSessionClick) }
@@ -166,7 +166,7 @@ private fun MicrophoneFabElement(viewModel: MicrophoneFabViewModel) {
 }
 
 
-        /**
+/**
  * button to play latest recording
  */
 @Composable

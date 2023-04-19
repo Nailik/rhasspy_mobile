@@ -1,18 +1,6 @@
 package org.rhasspy.mobile.platformspecific.porcupine
 
-import ai.picovoice.porcupine.PorcupineActivationException
-import ai.picovoice.porcupine.PorcupineActivationLimitException
-import ai.picovoice.porcupine.PorcupineActivationRefusedException
-import ai.picovoice.porcupine.PorcupineActivationThrottledException
-import ai.picovoice.porcupine.PorcupineIOException
-import ai.picovoice.porcupine.PorcupineInvalidArgumentException
-import ai.picovoice.porcupine.PorcupineInvalidStateException
-import ai.picovoice.porcupine.PorcupineKeyException
-import ai.picovoice.porcupine.PorcupineManager
-import ai.picovoice.porcupine.PorcupineManagerCallback
-import ai.picovoice.porcupine.PorcupineMemoryException
-import ai.picovoice.porcupine.PorcupineRuntimeException
-import ai.picovoice.porcupine.PorcupineStopIterationException
+import ai.picovoice.porcupine.*
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
@@ -122,7 +110,7 @@ actual class PorcupineWakeWordClient actual constructor(
     actual fun start(): PorcupineError? {
         return porcupineManager?.let {
             it.start()
-           null
+            null
         } ?: run {
             logger.a { "Porcupine start but porcupineManager not initialized" }
             PorcupineError(null, PorcupineErrorType.NotInitialized)

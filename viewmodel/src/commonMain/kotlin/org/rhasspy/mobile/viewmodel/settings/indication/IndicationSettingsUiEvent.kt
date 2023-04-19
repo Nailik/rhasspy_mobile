@@ -8,7 +8,7 @@ sealed interface IndicationSettingsUiEvent {
         data class SetSoundIndicationEnabled(val enabled: Boolean) : Change
         data class SetWakeWordLightIndicationEnabled(val enabled: Boolean) : Change
         data class SetWakeWordDetectionTurnOnDisplay(val enabled: Boolean) : Change
-        data class SetSoundIndicationOutputOption(val option: AudioOutputOption) : Change
+        data class SelectSoundIndicationOutputOption(val option: AudioOutputOption) : Change
     }
 
 }
