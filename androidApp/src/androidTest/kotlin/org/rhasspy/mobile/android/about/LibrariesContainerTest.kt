@@ -5,7 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.performClick
-import com.mikepenz.aboutlibraries.entity.*
+import com.mikepenz.aboutlibraries.entity.Library
 import kotlinx.collections.immutable.persistentListOf
 import org.junit.Before
 import org.junit.Rule
