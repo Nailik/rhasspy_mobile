@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.data
+package org.rhasspy.mobile.android.utils
 
 import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.services.IService

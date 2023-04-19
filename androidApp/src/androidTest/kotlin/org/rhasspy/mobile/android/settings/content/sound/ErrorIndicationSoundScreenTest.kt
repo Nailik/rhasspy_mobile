@@ -19,7 +19,7 @@ class ErrorIndicationSoundScreenTest : KoinComponent, IndicationSoundScreenTest(
     override val device: UiDevice =
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-    override fun getViewModel(): IIndicationSoundSettingsViewModel =
+    override fun getViewModelInstance(): IIndicationSoundSettingsViewModel =
         get<ErrorIndicationSoundSettingsViewModel>()
 
     @Before

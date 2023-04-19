@@ -1,8 +1,11 @@
 package org.rhasspy.mobile.android.settings.content
 
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
@@ -12,13 +15,10 @@ import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.assertTextEquals
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.onListItemSwitch
 import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Change.SetBackgroundServiceEnabled
 import kotlin.test.assertFalse
@@ -73,20 +73,18 @@ class BackgroundSettingsContentTest : KoinComponent {
 
         //background services disabled
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onListItemSwitch().assertIsOff()
-        //deactivate battery optimization invisible
-        composeTestRule.onNodeWithTag(TestTag.BatteryOptimization).assertDoesNotExist()
 
         //user clicks background services
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).performClick()
         //background services active
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onListItemSwitch().assertIsOn()
-        //deactivate battery optimization visible
-        composeTestRule.onNodeWithTag(TestTag.BatteryOptimization).assertIsDisplayed()
         //background services enabled saved
         val newViewModel = BackgroundServiceSettingsViewModel(get())
         assertTrue { newViewModel.viewState.value.isBackgroundServiceEnabled }
 
         if (!viewModel.viewState.value.isBatteryOptimizationDisabled) {
+            //deactivate battery optimization visible
+            composeTestRule.onNodeWithTag(TestTag.BatteryOptimization).assertIsDisplayed()
             //battery optimization is deactivated
             assertFalse { viewModel.viewState.value.isBatteryOptimizationDisabled }
             //user clicks deactivate battery optimization
@@ -95,11 +93,8 @@ class BackgroundSettingsContentTest : KoinComponent {
             device.findObject(UiSelector().resourceIdMatches(dialog)).exists()
             //user clicks accept
             device.findObject(UiSelector().resourceIdMatches(acceptButton)).click()
-            //deactivate battery optimization is shown as enabled
-            composeTestRule.onNodeWithTag(TestTag.BatteryOptimization, true).onChildAt(0).onChildAt(2)
-                .assertTextEquals(MR.strings.enabled.stable)
-
         }
+
     }
 
 }

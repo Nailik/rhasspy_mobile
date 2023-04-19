@@ -21,7 +21,7 @@ data class MicrophoneOverlayViewState internal constructor(
     ) : this(
         shouldOverlayBeShown = isOverlayPermissionGranted &&
                 microphoneOverlaySizeOption != MicrophoneOverlaySizeOption.Disabled &&
-                (isAppInBackground && isMicrophoneOverlayWhileAppEnabled),
+                (!isAppInBackground || isMicrophoneOverlayWhileAppEnabled),
         microphoneOverlayPositionX = microphoneOverlayPositionX,
         microphoneOverlayPositionY = microphoneOverlayPositionY,
         microphoneOverlaySize = microphoneOverlaySizeOption.size

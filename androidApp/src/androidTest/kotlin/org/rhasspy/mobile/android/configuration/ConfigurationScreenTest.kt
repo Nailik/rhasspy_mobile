@@ -68,11 +68,11 @@ class ConfigurationScreenTest : KoinComponent {
      * test if change is saved
      */
     @Test
-    fun testSiteIdEdit() {
+    fun testSiteIdEdit() = runTest {
         val textInputTest = "siteIdTestInput"
         //Test site id to be changed
-        composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId).performScrollTo()
-            .performTextReplacement(textInputTest)
+        composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId).performScrollTo().performTextReplacement(textInputTest)
+        composeTestRule.awaitIdle()
         //text field changed text
         assertEquals(textInputTest, get<ConfigurationScreenViewModel>().viewState.value.siteId.text)
     }

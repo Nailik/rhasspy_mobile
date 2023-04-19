@@ -77,7 +77,7 @@ class AutomaticSilenceDetectionSettingsContentTest : KoinComponent {
         //Automatic silence detection enabled
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onListItemSwitch().assertIsOn()
         //Automatic silence detection enabled saved
-        assertTrue { SilenceDetectionSettingsViewModel(get(), get()).viewState.value.isSilenceDetectionEnabled }
+        assertTrue { SilenceDetectionSettingsViewModel(get(), get(), get()).viewState.value.isSilenceDetectionEnabled }
         //settings visible
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration)
             .assertIsDisplayed()
@@ -90,7 +90,7 @@ class AutomaticSilenceDetectionSettingsContentTest : KoinComponent {
         //silence detection time 5000 saved
         assertEquals(
             numberInputTest,
-            SilenceDetectionSettingsViewModel(get(), get()).viewState.value.silenceDetectionMinimumTimeText
+            SilenceDetectionSettingsViewModel(get(), get(), get()).viewState.value.silenceDetectionMinimumTimeText
         )
 
         //user changes silence detection time to 5000
@@ -101,7 +101,7 @@ class AutomaticSilenceDetectionSettingsContentTest : KoinComponent {
         //silence detection time 5000 saved
         assertEquals(
             numberInputTest,
-            SilenceDetectionSettingsViewModel(get(), get()).viewState.value.silenceDetectionTimeText
+            SilenceDetectionSettingsViewModel(get(), get(), get()).viewState.value.silenceDetectionTimeText
         )
     }
 

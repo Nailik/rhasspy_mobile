@@ -19,10 +19,9 @@ import kotlin.math.pow
 @Stable
 class SilenceDetectionSettingsViewModel(
     private val nativeApplication: NativeApplication,
+    private val audioRecorder: AudioRecorder,
     viewStateCreator: SilenceDetectionSettingsViewStateCreator
 ) : ViewModel(), KoinComponent {
-
-    private val audioRecorder: AudioRecorder = AudioRecorder()
 
     val viewState: StateFlow<SilenceDetectionSettingsViewState> = viewStateCreator()
 

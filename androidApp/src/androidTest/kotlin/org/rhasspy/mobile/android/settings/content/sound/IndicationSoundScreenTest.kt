@@ -22,8 +22,9 @@ import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.test.R
 import org.rhasspy.mobile.data.resource.StableStringResource
-import org.rhasspy.mobile.data.service.option.AudioOutputOption
+import org.rhasspy.mobile.data.service.option.AudioOutputOption.Sound
 import org.rhasspy.mobile.data.sounds.SoundOption
+import org.rhasspy.mobile.data.sounds.SoundOption.Disabled
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SelectSoundIndicationOutputOption
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetSoundIndicationEnabled
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
@@ -45,9 +46,9 @@ abstract class IndicationSoundScreenTest(
 
     private val fileName = "sound.wav"
 
-    abstract fun getViewModel(): IIndicationSoundSettingsViewModel
+    abstract fun getViewModelInstance(): IIndicationSoundSettingsViewModel
 
-    private val viewModel get() = getViewModel()
+    private val viewModel get() = getViewModelInstance()
 
     open fun setUp() {
         requestExternalStoragePermissions(device)
@@ -103,11 +104,11 @@ abstract class IndicationSoundScreenTest(
         InstrumentationRegistry.getInstrumentation().context.resources.openRawResource(R.raw.sound)
             .copyTo(file.outputStream())
 
-        viewModel.onEvent(SetSoundIndicationOption(SoundOption.Disabled))
+        viewModel.onEvent(SetSoundIndicationOption(Disabled))
         composeTestRule.awaitIdle()
 
         //Disabled sound is saved
-        assertTrue { viewModel.viewState.value.soundSetting == SoundOption.Disabled.name }
+        assertTrue { viewModel.viewState.value.soundSetting == Disabled.name }
         //Disabled sound ist selected
         composeTestRule.onNodeWithTag(TestTag.Disabled).onListItemRadioButton().assertIsSelected()
 
@@ -182,8 +183,9 @@ abstract class IndicationSoundScreenTest(
         //output option is sound
         //(play works with silent sound but not silent notification)
         val otherViewModel = get<IndicationSettingsViewModel>()
-        otherViewModel.onEvent(SelectSoundIndicationOutputOption(AudioOutputOption.Sound))
-        otherViewModel.onEvent(SetSoundIndicationEnabled(false))
+        otherViewModel.onEvent(SelectSoundIndicationOutputOption(Sound))
+        otherViewModel.onEvent(SetSoundIndicationEnabled(true))
+        viewModel.onEvent(SetSoundIndicationOption(Disabled))
         composeTestRule.awaitIdle()
 
         //Disabled sound is saved

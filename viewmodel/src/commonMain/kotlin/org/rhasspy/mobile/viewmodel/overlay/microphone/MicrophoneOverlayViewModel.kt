@@ -35,7 +35,7 @@ class MicrophoneOverlayViewModel(
         when (change) {
             is UpdateMicrophoneOverlayPosition -> {
                 val newPositionX = (AppSetting.microphoneOverlayPositionX.value + change.offsetX).roundToInt()
-                val newPositionY = (AppSetting.microphoneOverlayPositionX.value + change.offsetY).roundToInt()
+                val newPositionY = (AppSetting.microphoneOverlayPositionY.value + change.offsetY).roundToInt()
                 AppSetting.microphoneOverlayPositionX.value = newPositionX
                 AppSetting.microphoneOverlayPositionY.value = newPositionY
             }

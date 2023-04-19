@@ -1,6 +1,7 @@
 package org.rhasspy.mobile
 
 import org.koin.core.parameter.parametersOf
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.closeableSingle
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
@@ -242,15 +243,20 @@ val viewModelModule = module {
         )
     }
 
-    single {
+    factory(named("AudioRecorderFactory")) {
+        AudioRecorder()
+    }
+    single { params ->
         SilenceDetectionSettingsViewStateCreator(
-            audioRecorder = get()
+            audioRecorder = params[0]
         )
     }
     single {
+        val audioRecorder = get<AudioRecorder>(named("AudioRecorderFactory"))
         SilenceDetectionSettingsViewModel(
             nativeApplication = get(),
-            viewStateCreator = get()
+            audioRecorder = audioRecorder,
+            viewStateCreator = get { parametersOf(audioRecorder) }
         )
     }
 
