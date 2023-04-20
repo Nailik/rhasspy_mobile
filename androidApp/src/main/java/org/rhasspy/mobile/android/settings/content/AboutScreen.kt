@@ -39,11 +39,12 @@ import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewState
  */
 @Composable
 fun AboutScreen() {
-    val viewModel: AboutScreenViewModel =  LocalViewModelFactory.current.getViewModel()
+    val viewModel: AboutScreenViewModel = LocalViewModelFactory.current.getViewModel()
     Surface(modifier = Modifier.testTag(SettingsScreenType.AboutSettings)) {
         val configuration = LocalConfiguration.current
+        val viewState by viewModel.viewState.collectAsState()
         LibrariesContainer(
-            libraries = viewModel.viewState.value.libraries,
+            libraries = viewState.libraries,
             header = {
                 if (configuration.screenHeightDp.dp > 600.dp) {
                     stickyHeader {
