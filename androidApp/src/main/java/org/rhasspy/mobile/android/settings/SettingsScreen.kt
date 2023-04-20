@@ -10,13 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.*
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.main.LocalMainNavController
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.content.*
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.StableStringResource
@@ -28,8 +28,8 @@ import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewState
 
 @Preview
 @Composable
-fun SettingsScreen(viewModel: SettingsScreenViewModel = get()) {
-
+fun SettingsScreen() {
+val viewModel: SettingsScreenViewModel = LocalViewModelFactory.current.getViewModel()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {

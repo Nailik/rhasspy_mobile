@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.UiEventEffect
@@ -24,6 +23,7 @@ import org.rhasspy.mobile.android.content.item.EventStateIconTinted
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.main.LocalMainNavController
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
@@ -37,10 +37,9 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 /**
  * configuration screens with list items that open bottom sheet
  */
-@Preview
 @Composable
-fun ConfigurationScreen(viewModel: ConfigurationScreenViewModel = get()) {
-
+fun ConfigurationScreen() {
+    val viewModel: ConfigurationScreenViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
 
     Scaffold(

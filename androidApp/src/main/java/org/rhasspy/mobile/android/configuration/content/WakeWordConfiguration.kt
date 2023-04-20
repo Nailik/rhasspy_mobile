@@ -18,7 +18,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.collections.immutable.ImmutableList
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
@@ -35,6 +34,7 @@ import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.android.main.LocalNavController
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
@@ -63,8 +63,8 @@ enum class WakeWordConfigurationScreens(val route: String) {
  */
 @Preview
 @Composable
-fun WakeWordConfigurationContent(viewModel: WakeWordConfigurationViewModel = get()) {
-
+fun WakeWordConfigurationContent() {
+val viewModel: WakeWordConfigurationViewModel =  LocalViewModelFactory.current.getViewModel()
     val navController = rememberNavController()
 
     CompositionLocalProvider(

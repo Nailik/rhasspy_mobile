@@ -12,7 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
@@ -22,6 +21,7 @@ import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.elements.translate
 import org.rhasspy.mobile.android.content.list.*
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent
@@ -38,8 +38,8 @@ import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurati
  */
 @Preview
 @Composable
-fun WebServerConfigurationContent(viewModel: WebServerConfigurationViewModel = get()) {
-
+fun WebServerConfigurationContent() {
+val viewModel: WebServerConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 

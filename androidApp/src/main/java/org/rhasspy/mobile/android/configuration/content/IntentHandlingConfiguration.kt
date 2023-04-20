@@ -6,8 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
@@ -18,6 +16,7 @@ import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.content.list.RadioButtonListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.data.resource.stable
@@ -37,10 +36,9 @@ import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingC
  * http configuration
  * home assistant configuration
  */
-@Preview
 @Composable
-fun IntentHandlingConfigurationContent(viewModel: IntentHandlingConfigurationViewModel = get()) {
-
+fun IntentHandlingConfigurationContent() {
+val viewModel: IntentHandlingConfigurationViewModel =  LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 

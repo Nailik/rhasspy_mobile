@@ -19,7 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.CustomDivider
 import org.rhasspy.mobile.android.content.elements.Icon
@@ -38,8 +37,8 @@ import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
  */
 @Preview
 @Composable
-fun LogScreen(viewModel: LogScreenViewModel = get()) {
-
+fun LogScreen() {
+val viewModel: LogScreenViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
 
     Scaffold(

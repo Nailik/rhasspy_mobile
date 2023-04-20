@@ -210,7 +210,6 @@ dependencies {
     implementation(Icerock.Resources)
     implementation(Icerock.Mvvm.core)
     implementation(Koin.core)
-    implementation(Koin.compose)
 
     androidTestUtil(AndroidX.Test.orchestrator)
     androidTestImplementation(project(":shared"))

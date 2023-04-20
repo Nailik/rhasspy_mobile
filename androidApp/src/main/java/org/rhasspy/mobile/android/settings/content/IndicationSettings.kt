@@ -17,7 +17,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.collections.immutable.ImmutableList
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.SecondaryContent
@@ -26,6 +25,7 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.main.LocalNavController
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.permissions.RequiresOverlayPermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
@@ -48,8 +48,9 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoun
  */
 @Preview
 @Composable
-fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = get()) {
-
+fun WakeWordIndicationSettingsContent() {
+    val viewModelFactory = LocalViewModelFactory.current
+val viewModel: IndicationSettingsViewModel = viewModelFactory.getViewModel()
     val navController = rememberNavController()
 
     CompositionLocalProvider(
@@ -71,7 +72,7 @@ fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = g
 
             composable(IndicationSettingsScreens.WakeIndicationSound.route) {
                 IndicationSoundScreen(
-                    viewModel = get<WakeIndicationSoundSettingsViewModel>(),
+                    viewModel =  viewModelFactory.getViewModel<WakeIndicationSoundSettingsViewModel>(),
                     title = MR.strings.wakeSound.stable,
                     screen = IndicationSettingsScreens.WakeIndicationSound
                 )
@@ -79,7 +80,7 @@ fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = g
 
             composable(IndicationSettingsScreens.RecordedIndicationSound.route) {
                 IndicationSoundScreen(
-                    viewModel = get<RecordedIndicationSoundSettingsViewModel>(),
+                    viewModel = viewModelFactory.getViewModel<RecordedIndicationSoundSettingsViewModel>(),
                     title = MR.strings.recordedSound.stable,
                     screen = IndicationSettingsScreens.RecordedIndicationSound
                 )
@@ -87,7 +88,7 @@ fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = g
 
             composable(IndicationSettingsScreens.ErrorIndicationSound.route) {
                 IndicationSoundScreen(
-                    viewModel = get<ErrorIndicationSoundSettingsViewModel>(),
+                    viewModel = viewModelFactory.getViewModel<ErrorIndicationSoundSettingsViewModel>(),
                     title = MR.strings.errorSound.stable,
                     screen = IndicationSettingsScreens.ErrorIndicationSound
                 )

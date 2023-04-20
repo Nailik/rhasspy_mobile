@@ -8,8 +8,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
@@ -17,6 +15,7 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.data.resource.stable
@@ -29,10 +28,9 @@ import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagem
 /**
  * DropDown to select dialog management option
  */
-@Preview
 @Composable
-fun DialogManagementConfigurationContent(viewModel: DialogManagementConfigurationViewModel = get()) {
-
+fun DialogManagementConfigurationContent() {
+val viewModel: DialogManagementConfigurationViewModel =  LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 

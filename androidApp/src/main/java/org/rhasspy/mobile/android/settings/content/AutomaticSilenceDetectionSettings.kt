@@ -25,12 +25,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.list.*
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
@@ -46,8 +46,8 @@ import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSe
  */
 @Preview
 @Composable
-fun AutomaticSilenceDetectionSettingsContent(viewModel: SilenceDetectionSettingsViewModel = get()) {
-
+fun AutomaticSilenceDetectionSettingsContent() {
+val viewModel: SilenceDetectionSettingsViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
 
     SettingsScreenItemContent(

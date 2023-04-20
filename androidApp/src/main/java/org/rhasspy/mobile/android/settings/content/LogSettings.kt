@@ -5,11 +5,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.android.content.list.SwitchListItem
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
@@ -22,8 +22,8 @@ import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
  */
 @Preview
 @Composable
-fun LogSettingsContent(viewModel: LogSettingsViewModel = get()) {
-
+fun LogSettingsContent() {
+val viewModel: LogSettingsViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
 
     SettingsScreenItemContent(

@@ -12,7 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.CustomDivider
@@ -24,7 +23,6 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.SetSystemColor
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationTestViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.ToggleListFiltered
@@ -41,15 +39,6 @@ fun ConfigurationScreenTest(
     SetSystemColor(1.dp)
 
     val navController = LocalConfigurationNavController.current
-    val nativeApplication = get<NativeApplication>()
-
-    LaunchedEffect(Unit) {
-        nativeApplication.isAppInBackground.collect {
-            if (it) {
-                navController.popBackStack()
-            }
-        }
-    }
 
     Scaffold(
         topBar = {

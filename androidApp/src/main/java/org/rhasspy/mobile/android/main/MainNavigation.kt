@@ -6,12 +6,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
@@ -22,6 +20,7 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.utils.isDebug
+import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.SetCrashlyticsEnabled
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 
@@ -36,9 +35,8 @@ enum class MainScreens(val route: String) {
  * root layout contains main navigation between the
  * 3 screens in the bottom bar and the about screen
  */
-@Preview
 @Composable
-fun MainNavigation() {
+fun MainNavigation(viewModelFactory: ViewModelFactory) {
     AppTheme {
         //fixes bright flashing when navigating between screens
         Surface(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
@@ -48,7 +46,8 @@ fun MainNavigation() {
 
             CompositionLocalProvider(
                 LocalMainNavController provides navController,
-                LocalSnackbarHostState provides snackBarHostState
+                LocalSnackbarHostState provides snackBarHostState,
+                LocalViewModelFactory provides viewModelFactory
             ) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -58,7 +57,7 @@ fun MainNavigation() {
                     var shouldShowCrashlyticsDialog by remember { mutableStateOf(MainActivity.isFirstLaunch) }
 
                     if (shouldShowCrashlyticsDialog && !isDebug()) {
-                        CrashlyticsDialog {
+                        CrashlyticsDialog() {
                             shouldShowCrashlyticsDialog = false
                         }
                     }
@@ -84,7 +83,8 @@ fun MainNavigation() {
  * dialog if user wants to enable crashlytics
  */
 @Composable
-private fun CrashlyticsDialog(viewModel: LogSettingsViewModel = get(), onClose: () -> Unit) {
+private fun CrashlyticsDialog(onClose: () -> Unit) {
+    val viewModel: LogSettingsViewModel = LocalViewModelFactory.current.getViewModel()
     AlertDialog(
         modifier = Modifier.testTag(TestTag.DialogCrashlytics),
         onDismissRequest = onClose,

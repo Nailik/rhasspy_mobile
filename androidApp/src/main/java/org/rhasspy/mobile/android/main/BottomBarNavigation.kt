@@ -23,7 +23,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.configuration.ConfigurationScreen
 import org.rhasspy.mobile.android.content.elements.Icon
@@ -34,6 +33,7 @@ import org.rhasspy.mobile.android.navigation.NavigationParams
 import org.rhasspy.mobile.android.settings.SettingsScreen
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.icons.RhasspyLogo
+import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
 
 val LocalConfigurationNavController = compositionLocalOf<NavController> {
@@ -52,11 +52,16 @@ val LocalSnackbarHostState = compositionLocalOf<SnackbarHostState> {
     error("No SnackbarHostState provided")
 }
 
+val LocalViewModelFactory = compositionLocalOf<ViewModelFactory> {
+    error("No NavController provided")
+}
+
 /**
  * navigation holder for bottom navigation bar screens
  */
 @Composable
-fun BottomBarScreensNavigation(viewModel: HomeScreenViewModel = get()) {
+fun BottomBarScreensNavigation() {
+    val viewModel: HomeScreenViewModel = LocalViewModelFactory.current.getViewModel()
 
     val navController = rememberNavController()
 

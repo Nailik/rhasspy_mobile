@@ -35,6 +35,7 @@ import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.logic.services.webserver.WebServerServiceParams
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
+import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
@@ -110,6 +111,10 @@ val serviceModule = module {
 }
 
 val viewModelModule = module {
+    single {
+        ViewModelFactory()
+    }
+
     single {
         MicrophoneFabViewStateCreator(
             dialogManagerService = get(),

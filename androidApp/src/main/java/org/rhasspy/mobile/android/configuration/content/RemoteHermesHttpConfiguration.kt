@@ -7,7 +7,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
@@ -16,6 +15,7 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
@@ -29,10 +29,8 @@ import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesH
  * switch to disable ssl verification
  */
 @Composable
-fun RemoteHermesHttpConfigurationContent(
-    viewModel: RemoteHermesHttpConfigurationViewModel = get()
-) {
-
+fun RemoteHermesHttpConfigurationContent() {
+val viewModel: RemoteHermesHttpConfigurationViewModel =  LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 

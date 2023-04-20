@@ -30,6 +30,7 @@ import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.platformspecific.application.AppActivity
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.utils.isDebug
+import org.rhasspy.mobile.viewmodel.ViewModelFactory
 
 
 /**
@@ -61,9 +62,11 @@ class MainActivity : KoinComponent, AppActivity() {
             get<ServiceMiddleware>().action(WakeWordDetected(Source.Local, wakeWord = "intent"))
         }
 
+        val viewModelFactory = get<ViewModelFactory>()
+
         this.setContent {
             Box(modifier = Modifier.fillMaxSize()) {
-                MainNavigation()
+                MainNavigation(viewModelFactory)
                 if (isDebug()) {
                     Text(
                         text = "DEBUG",

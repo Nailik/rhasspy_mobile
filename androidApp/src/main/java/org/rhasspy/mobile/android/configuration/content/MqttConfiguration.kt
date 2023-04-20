@@ -11,8 +11,6 @@ import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
@@ -22,6 +20,7 @@ import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.elements.translate
 import org.rhasspy.mobile.android.content.list.*
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent
@@ -39,10 +38,9 @@ import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewMode
  * ssl settings
  * connection timeout settings
  */
-@Preview
 @Composable
-fun MqttConfigurationContent(viewModel: MqttConfigurationViewModel = get()) {
-
+fun MqttConfigurationContent() {
+val viewModel: MqttConfigurationViewModel =  LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 
