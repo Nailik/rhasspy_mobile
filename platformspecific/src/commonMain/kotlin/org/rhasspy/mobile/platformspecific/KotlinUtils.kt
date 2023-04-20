@@ -17,22 +17,6 @@ fun <T1, T2, R> combineState(
     transform.invoke(o1, o2)
 }.stateIn(scope, sharingStarted, transform.invoke(flow1.value, flow2.value))
 
-
-inline fun <reified T, R> combineStateFlow(
-    vararg flows: StateFlow<T>,
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
-    sharingStarted: SharingStarted = SharingStarted.Lazily,
-    crossinline transform: (Array<T>) -> R
-): StateFlow<R> = combine(flows = flows) {
-    transform.invoke(it)
-}.stateIn(
-    scope = scope,
-    started = sharingStarted,
-    initialValue = transform.invoke(flows.map {
-        it.value
-    }.toTypedArray())
-)
-
 inline fun <reified T> combineStateFlow(
     vararg flows: StateFlow<T>,
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
@@ -90,12 +74,4 @@ fun <E> ImmutableList<E>.updateList(index: Int, block: E.() -> E): ImmutableList
     return this.toImmutableList().updateList {
         set(index, block(item))
     }
-}
-
-fun <E> E.updateViewState(block: E.() -> E): E {
-    return this.block()
-}
-
-fun <E> MutableStateFlow<E>.updateViewStateFlow(block: E.() -> E) {
-    this.value = this.value.block()
 }

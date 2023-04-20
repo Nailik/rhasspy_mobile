@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
@@ -19,7 +20,6 @@ import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
-import org.rhasspy.mobile.platformspecific.updateViewState
 import org.rhasspy.mobile.ui.event.StateEvent
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.IConfigurationScreenUiStateEvent.ScrollToErrorEventIState
@@ -52,10 +52,10 @@ class ConfigurationScreenViewStateCreator(
     }
 
     fun updateScrollToError(stateEvent: StateEvent) {
-        scrollToErrorEvent.value = scrollToErrorEvent.value.updateViewState {
-            copy(
+        scrollToErrorEvent.update {
+            it.copy(
                 stateEvent = stateEvent,
-                firstErrorIndex = viewState.value.firstErrorIndex.value ?: firstErrorIndex
+                firstErrorIndex = viewState.value.firstErrorIndex.value ?: it.firstErrorIndex
             )
         }
     }

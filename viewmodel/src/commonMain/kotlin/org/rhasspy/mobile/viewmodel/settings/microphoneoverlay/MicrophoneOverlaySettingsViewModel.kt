@@ -5,7 +5,7 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.platformspecific.updateViewStateFlow
+import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SelectMicrophoneOverlaySizeOption
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SetMicrophoneOverlayWhileAppEnabled
@@ -23,16 +23,16 @@ class MicrophoneOverlaySettingsViewModel : ViewModel() {
     }
 
     private fun onChange(change: Change) {
-        _viewState.updateViewStateFlow {
+        _viewState.update {
             when (change) {
                 is SelectMicrophoneOverlaySizeOption -> {
                     AppSetting.microphoneOverlaySizeOption.value = change.option
-                    copy(microphoneOverlaySizeOption = change.option)
+                    it.copy(microphoneOverlaySizeOption = change.option)
                 }
 
                 is SetMicrophoneOverlayWhileAppEnabled -> {
                     AppSetting.isMicrophoneOverlayWhileAppEnabled.value = change.enabled
-                    copy(isMicrophoneOverlayWhileAppEnabled = change.enabled)
+                    it.copy(isMicrophoneOverlayWhileAppEnabled = change.enabled)
                 }
             }
         }

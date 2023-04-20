@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.logger.FileLogger
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.updateList
-import org.rhasspy.mobile.platformspecific.updateViewStateFlow
 
 class LogScreenViewStateCreator {
 
@@ -40,8 +39,8 @@ class LogScreenViewStateCreator {
 
         updaterScope.launch {
             AppSetting.isLogAutoscroll.data.collect { isLogAutoscroll ->
-                viewState.updateViewStateFlow {
-                    copy(isLogAutoscroll = isLogAutoscroll)
+                viewState.update {
+                    it.copy(isLogAutoscroll = isLogAutoscroll)
                 }
             }
         }
