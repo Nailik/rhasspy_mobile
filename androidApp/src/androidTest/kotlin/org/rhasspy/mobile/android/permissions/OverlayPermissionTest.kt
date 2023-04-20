@@ -23,6 +23,9 @@ import org.junit.runner.RunWith
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.theme.AppTheme
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.resetOverlayPermission
+import org.rhasspy.mobile.android.utils.text
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import kotlin.test.assertFalse

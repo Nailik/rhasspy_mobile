@@ -15,6 +15,10 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
+import org.rhasspy.mobile.android.utils.awaitSaved
+import org.rhasspy.mobile.android.utils.onListItemSwitch
+import org.rhasspy.mobile.android.utils.onNodeWithCombinedTag
+import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.PorcupineKeywordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import kotlin.test.assertFalse
@@ -78,7 +82,7 @@ class PorcupineKeywordDefaultScreenTest : KoinComponent {
         }
         //none is selected
         viewState.defaultOptions.forEach {
-            composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen).performScrollToNode(hasTestTag(it.option))
+            composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen).performScrollToNode(org.rhasspy.mobile.android.utils.hasTestTag(it.option))
             composeTestRule.onNodeWithTag(it.option).onListItemSwitch().assertIsOff()
             composeTestRule.awaitIdle()
         }
@@ -86,7 +90,7 @@ class PorcupineKeywordDefaultScreenTest : KoinComponent {
         //user clicks americano
         composeTestRule
             .onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen)
-            .performScrollToNode(hasTestTag(PorcupineKeywordOption.AMERICANO))
+            .performScrollToNode(org.rhasspy.mobile.android.utils.hasTestTag(PorcupineKeywordOption.AMERICANO))
         composeTestRule.onNodeWithTag(PorcupineKeywordOption.AMERICANO).performClick()
         composeTestRule.awaitIdle()
         //americano is selected
@@ -101,7 +105,7 @@ class PorcupineKeywordDefaultScreenTest : KoinComponent {
 
         composeTestRule
             .onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen)
-            .performScrollToNode(hasTestTag(PorcupineKeywordOption.PORCUPINE))
+            .performScrollToNode(org.rhasspy.mobile.android.utils.hasTestTag(PorcupineKeywordOption.PORCUPINE))
         composeTestRule.onNodeWithTag(PorcupineKeywordOption.PORCUPINE).performClick()
         composeTestRule.awaitIdle()
         //porcupine is selected
@@ -115,7 +119,7 @@ class PorcupineKeywordDefaultScreenTest : KoinComponent {
         //user clicks porcupine
         composeTestRule
             .onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen)
-            .performScrollToNode(hasTestTag(PorcupineKeywordOption.PORCUPINE))
+            .performScrollToNode(org.rhasspy.mobile.android.utils.hasTestTag(PorcupineKeywordOption.PORCUPINE))
         composeTestRule.onNodeWithTag(PorcupineKeywordOption.PORCUPINE).performClick()
         composeTestRule.awaitIdle()
         //porcupine is unselected

@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android
+package org.rhasspy.mobile.android.utils
 
 import android.content.Context
 import android.content.Intent

@@ -17,6 +17,9 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
+import org.rhasspy.mobile.android.utils.onListItemSwitch
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.requestMicrophonePermissions
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.SetSilenceDetectionEnabled
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
 import kotlin.test.assertEquals
@@ -42,7 +45,7 @@ class AutomaticSilenceDetectionSettingsContentTest : KoinComponent {
                 LocalMainNavController provides navController,
                 LocalSnackbarHostState provides snackbarHostState
             ) {
-                AutomaticSilenceDetectionSettingsContent(viewModel)
+                AutomaticSilenceDetectionSettingsContent()
             }
         }
 

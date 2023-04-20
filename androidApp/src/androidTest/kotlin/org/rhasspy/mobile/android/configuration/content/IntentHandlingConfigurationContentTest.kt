@@ -12,10 +12,10 @@ import org.junit.Test
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.awaitSaved
+import org.rhasspy.mobile.android.utils.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onListItemRadioButton
-import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.android.utils.onListItemRadioButton
+import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingOption
@@ -39,7 +39,7 @@ class IntentHandlingConfigurationContentTest : KoinComponent {
             CompositionLocalProvider(
                 LocalMainNavController provides navController
             ) {
-                IntentHandlingConfigurationContent(viewModel)
+                IntentHandlingConfigurationContent()
             }
         }
 

@@ -14,9 +14,9 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onListItemRadioButton
-import org.rhasspy.mobile.android.onListItemSwitch
-import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.android.utils.onListItemRadioButton
+import org.rhasspy.mobile.android.utils.onListItemSwitch
+import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.logic.logger.LogLevel
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.SetShowLogEnabled
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
@@ -39,7 +39,7 @@ class LogSettingsContentTest : KoinComponent {
             CompositionLocalProvider(
                 LocalMainNavController provides navController
             ) {
-                LogSettingsContent(viewModel)
+                LogSettingsContent()
             }
         }
 

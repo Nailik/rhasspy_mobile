@@ -25,6 +25,7 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScreens
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
@@ -61,7 +62,7 @@ class IndicationSettingsContentTest : KoinComponent {
                 CompositionLocalProvider(
                     LocalMainNavController provides navController
                 ) {
-                    WakeWordIndicationSettingsContent(viewModel)
+                    WakeWordIndicationSettingsContent()
                 }
             }
         }

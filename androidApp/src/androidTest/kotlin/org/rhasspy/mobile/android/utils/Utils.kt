@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android
+package org.rhasspy.mobile.android.utils
 
 import android.content.Context
 import android.os.Build
@@ -13,6 +13,7 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
+import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel

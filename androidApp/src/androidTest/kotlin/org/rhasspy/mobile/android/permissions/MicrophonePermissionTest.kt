@@ -28,6 +28,9 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.theme.AppTheme
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.onNodeWithText
+import org.rhasspy.mobile.android.utils.text
 import org.rhasspy.mobile.data.language.LanguageType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission

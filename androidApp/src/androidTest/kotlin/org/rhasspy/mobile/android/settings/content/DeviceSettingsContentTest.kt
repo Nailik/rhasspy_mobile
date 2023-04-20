@@ -14,8 +14,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onListItemSwitch
-import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.android.utils.onListItemSwitch
+import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsSettingsViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -24,8 +24,6 @@ class DeviceSettingsContentTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createComposeRule()
-
-    private val viewModel = get<DeviceSettingsSettingsViewModel>()
 
     @Before
     fun setUp() {
@@ -36,7 +34,7 @@ class DeviceSettingsContentTest : KoinComponent {
             CompositionLocalProvider(
                 LocalMainNavController provides navController
             ) {
-                DeviceSettingsContent(viewModel)
+                DeviceSettingsContent()
             }
         }
 

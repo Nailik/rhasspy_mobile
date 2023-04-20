@@ -13,6 +13,10 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
+import org.rhasspy.mobile.android.utils.awaitSaved
+import org.rhasspy.mobile.android.utils.onListItemRadioButton
+import org.rhasspy.mobile.android.utils.onListItemSwitch
+import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
@@ -35,7 +39,7 @@ class SpeechToTextConfigurationContentTest : KoinComponent {
             CompositionLocalProvider(
                 LocalMainNavController provides navController
             ) {
-                SpeechToTextConfigurationContent(viewModel)
+                SpeechToTextConfigurationContent()
             }
         }
 

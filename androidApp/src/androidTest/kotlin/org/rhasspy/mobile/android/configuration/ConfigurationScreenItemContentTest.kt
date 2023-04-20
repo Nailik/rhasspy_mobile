@@ -23,9 +23,9 @@ import org.junit.Test
 import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.assertTextEquals
+import org.rhasspy.mobile.android.utils.assertTextEquals
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.TestViewModel
 import org.rhasspy.mobile.android.utils.TestViewState
 import org.rhasspy.mobile.data.resource.stable
