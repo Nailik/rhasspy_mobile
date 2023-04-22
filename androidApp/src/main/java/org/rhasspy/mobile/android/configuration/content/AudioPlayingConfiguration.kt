@@ -38,7 +38,7 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
  */
 @Composable
 fun AudioPlayingConfigurationContent() {
-val viewModel: AudioPlayingConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: AudioPlayingConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 

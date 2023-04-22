@@ -64,7 +64,7 @@ enum class WakeWordConfigurationScreens(val route: String) {
 @Preview
 @Composable
 fun WakeWordConfigurationContent() {
-val viewModel: WakeWordConfigurationViewModel =  LocalViewModelFactory.current.getViewModel()
+    val viewModel: WakeWordConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val navController = rememberNavController()
 
     CompositionLocalProvider(

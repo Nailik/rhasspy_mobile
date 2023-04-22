@@ -110,11 +110,14 @@ val serviceModule = module {
     single { params -> params.getOrNull<DialogManagerServiceParams>() ?: DialogManagerServiceParams() }
 }
 
-val viewModelModule = module {
+val viewModelFactory  = module {
     single {
         ViewModelFactory()
     }
 
+}
+
+val viewModelModule = module {
     single {
         MicrophoneFabViewStateCreator(
             dialogManagerService = get(),

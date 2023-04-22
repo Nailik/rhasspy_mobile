@@ -57,7 +57,7 @@ fun MainNavigation(viewModelFactory: ViewModelFactory) {
                     var shouldShowCrashlyticsDialog by remember { mutableStateOf(MainActivity.isFirstLaunch) }
 
                     if (shouldShowCrashlyticsDialog && !isDebug()) {
-                        CrashlyticsDialog() {
+                        CrashlyticsDialog {
                             shouldShowCrashlyticsDialog = false
                         }
                     }

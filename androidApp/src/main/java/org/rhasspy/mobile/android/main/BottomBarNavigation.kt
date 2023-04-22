@@ -53,7 +53,7 @@ val LocalSnackbarHostState = compositionLocalOf<SnackbarHostState> {
 }
 
 val LocalViewModelFactory = compositionLocalOf<ViewModelFactory> {
-    error("No NavController provided")
+    error("No LocalViewModelFactory provided")
 }
 
 /**

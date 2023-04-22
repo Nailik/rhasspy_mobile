@@ -37,7 +37,7 @@ import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfi
 @Preview
 @Composable
 fun TextToSpeechConfigurationContent() {
-val viewModel: TextToSpeechConfigurationViewModel =  LocalViewModelFactory.current.getViewModel()
+    val viewModel: TextToSpeechConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 

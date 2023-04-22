@@ -21,6 +21,7 @@ import org.rhasspy.mobile.android.utils.awaitSaved
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
@@ -49,7 +50,8 @@ class WakeWordConfigurationContentTest : KoinComponent {
 
             CompositionLocalProvider(
                 LocalSnackbarHostState provides snackbarHostState,
-                LocalMainNavController provides navController
+                LocalMainNavController provides navController,
+                LocalViewModelFactory provides get()
             ) {
                 WakeWordConfigurationContent()
             }
