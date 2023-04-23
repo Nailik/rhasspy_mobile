@@ -80,6 +80,7 @@ class AutomaticSilenceDetectionSettingsContentTest : KoinComponent {
         //user clicks automatic silence detection
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).performClick()
         //Automatic silence detection enabled
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onListItemSwitch().assertIsOn()
         //Automatic silence detection enabled saved
         assertTrue { SilenceDetectionSettingsViewModel(get(), get(), get()).viewState.value.isSilenceDetectionEnabled }
