@@ -98,11 +98,11 @@ class HttpClientService(
      * starts client and updates event
      */
     init {
-        start()
-
         coroutineScope.launch {
-            stop()
-            start()
+            paramsFlow.collect {
+                stop()
+                start()
+            }
         }
     }
 

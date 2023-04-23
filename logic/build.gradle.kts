@@ -39,7 +39,12 @@ kotlin {
                 implementation(Koin.core)
             }
         }
-        val commonTest by getting
+        val commonTest by getting {
+            dependencies {
+                implementation(Kotlin.test)
+                implementation(Koin.test)
+            }
+        }
         val androidMain by getting {
             dependencies {
                 implementation(AndroidX.multidex)
@@ -78,4 +83,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_19
         targetCompatibility = JavaVersion.VERSION_19
     }
+}
+dependencies {
+    androidTestImplementation("junit:junit:4.12")
 }
