@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.combineStateFlow
@@ -16,15 +15,13 @@ class DeviceSettingsViewStateCreator {
     operator fun invoke(): StateFlow<DeviceSettingsViewState> {
         val viewState = MutableStateFlow(getViewState())
         //live update when settings change from mqtt/ webserver
-        updaterScope.launch {
+        updaterScope.launch(Dispatchers.Default) {
             combineStateFlow(
                 AppSetting.isAudioOutputEnabled.data,
                 AppSetting.isHotWordEnabled.data,
                 AppSetting.isIntentHandlingEnabled.data,
                 AppSetting.volume.data
-            ).onEach {
-                viewState.value = getViewState()
-            }
+            ).collect { viewState.value = getViewState() }
         }
         return viewState
     }

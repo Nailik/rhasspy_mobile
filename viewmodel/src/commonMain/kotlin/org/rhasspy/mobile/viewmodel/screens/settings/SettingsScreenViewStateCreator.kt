@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.combineStateFlow
@@ -25,7 +24,7 @@ class SettingsScreenViewStateCreator {
                 AppSetting.isWakeWordLightIndicationEnabled.data,
                 AppSetting.isAutomaticSilenceDetectionEnabled.data,
                 AppSetting.logLevel.data
-            ).onEach {
+            ).collect {
                 viewState.value = getViewState()
             }
         }
