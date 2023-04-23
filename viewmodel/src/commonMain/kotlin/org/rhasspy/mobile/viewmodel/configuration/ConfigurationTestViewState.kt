@@ -10,4 +10,5 @@ data class ConfigurationTestViewState internal constructor(
     val isListFiltered: Boolean,
     val isListAutoscroll: Boolean,
     val logEvents: StateFlow<ImmutableList<LogElement>>,
+    val serviceViewState: StateFlow<ServiceStateHeaderViewState>
 )

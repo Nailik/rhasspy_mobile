@@ -39,7 +39,7 @@ import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurati
 @Preview
 @Composable
 fun WebServerConfigurationContent() {
-val viewModel: WebServerConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: WebServerConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 

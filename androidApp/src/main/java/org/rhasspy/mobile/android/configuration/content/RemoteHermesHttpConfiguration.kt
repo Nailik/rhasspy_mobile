@@ -30,7 +30,7 @@ import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesH
  */
 @Composable
 fun RemoteHermesHttpConfigurationContent() {
-val viewModel: RemoteHermesHttpConfigurationViewModel =  LocalViewModelFactory.current.getViewModel()
+    val viewModel: RemoteHermesHttpConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 

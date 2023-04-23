@@ -58,7 +58,8 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
         ConfigurationTestViewState(
             isListFiltered = false,
             isListAutoscroll = true,
-            logEvents = logEvents.mapReadonlyState { it.toImmutableList() }
+            logEvents = logEvents.mapReadonlyState { it.toImmutableList() },
+            serviceViewState = serviceViewState
         )
     )
 
@@ -69,14 +70,24 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
     private val _viewState = MutableStateFlow(
         ConfigurationViewState(
             isBackPressDisabled = false,
-            isLoading = false,
             serviceViewState = serviceViewState,
             editViewState = contentViewState,
             testViewState = configurationTestViewState,
-            popBackStack = PopBackStack(Consumed)
+            popBackStack = PopBackStack(Consumed),
+            hasUnsavedChanges = false
         )
     )
     val viewState = _viewState.readOnly
+
+    init {
+        viewModelScope.launch(Dispatchers.Default) {
+            contentViewState.collect { content ->
+                _viewState.update {
+                    it.copy(hasUnsavedChanges = content != initialViewState())
+                }
+            }
+        }
+    }
 
     fun onAction(action: IConfigurationUiEvent) {
         when (action) {
@@ -122,56 +133,41 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
         private set
 
     fun save() {
-        _viewState.update { it.copy(isLoading = true) }
-
         viewModelScope.launch(Dispatchers.Default) {
             onSave()
-            get<NativeApplication>().reloadServiceModules()
             contentViewState.value = initialViewState()
-
-            if (_viewState.value.showUnsavedChangesDialog) {
-                _viewState.update {
-                    it.copy(
-                        showUnsavedChangesDialog = false,
-                        isLoading = false,
-                        popBackStack = PopBackStack(Triggered)
-                    )
-                }
-            } else {
-                _viewState.update { it.copy(isLoading = false) }
-            }
-
+            noUnsavedChanges()
         }
     }
 
     private fun discard() {
-
-        _viewState.update { it.copy(isLoading = true) }
-
         viewModelScope.launch(Dispatchers.Default) {
             onDiscard()
             contentViewState.value = initialViewState()
-
-            if (_viewState.value.showUnsavedChangesDialog) {
-                _viewState.update {
-                    it.copy(
-                        showUnsavedChangesDialog = false,
-                        isLoading = false,
-                        popBackStack = PopBackStack(Triggered)
-                    )
-                }
-            } else {
-                _viewState.update { it.copy(isLoading = false) }
-            }
+            noUnsavedChanges()
         }
 
+    }
+
+    private fun noUnsavedChanges() {
+        _viewState.update {
+            if (_viewState.value.showUnsavedChangesDialog) {
+                it.copy(
+                    showUnsavedChangesDialog = false,
+                    hasUnsavedChanges = false,
+                    popBackStack = PopBackStack(Triggered)
+                )
+            } else {
+                it.copy(
+                    hasUnsavedChanges = false
+                )
+            }
+        }
     }
 
     open fun onDiscard() {}
 
     abstract fun onSave()
-
-    abstract fun initializeTestParams()
 
     private fun startTest() {
         if (isTestRunning.value) {
@@ -180,7 +176,6 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
         logger.d { "************* start Test ************" }
 
         isTestRunning.value = true
-        _viewState.update { it.copy(isLoading = true) }
 
         testStartDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).toString()
         //set log type to debug minimum
@@ -208,11 +203,6 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
                     }
                 }
             }
-
-            get<NativeApplication>().startTest()
-            initializeTestParams()
-
-            _viewState.update { it.copy(isLoading = false) }
         }
     }
 
@@ -224,7 +214,6 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
 
         //reset log level
         Logger.setMinSeverity(AppSetting.logLevel.value.severity)
-        _viewState.update { it.copy(isLoading = true) }
 
         viewModelScope.launch(Dispatchers.Default) {
             testScope.cancel()
@@ -232,7 +221,6 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
             //reload koin modules when test is stopped
             get<NativeApplication>().stopTest()
 
-            _viewState.update { it.copy(isLoading = false) }
             isTestRunning.value = false
         }
     }

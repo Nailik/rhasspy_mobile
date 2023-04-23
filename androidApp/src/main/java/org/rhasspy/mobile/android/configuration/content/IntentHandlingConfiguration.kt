@@ -38,7 +38,7 @@ import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingC
  */
 @Composable
 fun IntentHandlingConfigurationContent() {
-val viewModel: IntentHandlingConfigurationViewModel =  LocalViewModelFactory.current.getViewModel()
+    val viewModel: IntentHandlingConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 

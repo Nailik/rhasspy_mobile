@@ -22,7 +22,7 @@ import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
 @Preview
 @Composable
 fun LanguageSettingsScreenItemContent() {
-val viewModel: LanguageSettingsViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: LanguageSettingsViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
 
     SettingsScreenItemContent(

@@ -6,11 +6,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okio.Path
 import org.koin.core.component.get
-import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.logic.openLink
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
-import org.rhasspy.mobile.logic.services.wakeword.WakeWordServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
@@ -166,22 +164,6 @@ class WakeWordConfigurationViewModel(
         }
         newFiles.clear()
         filesToDelete.clear()
-    }
-
-    override fun initializeTestParams() {
-        get<WakeWordServiceParams> {
-            parametersOf(
-                WakeWordServiceParams(
-                    wakeWordOption = data.wakeWordOption,
-                    wakeWordPorcupineAccessToken = data.wakeWordPorcupineViewState.accessToken,
-                    wakeWordPorcupineKeywordDefaultOptions = data.wakeWordPorcupineViewState.defaultOptions,
-                    wakeWordPorcupineKeywordCustomOptions = data.wakeWordPorcupineViewState.customOptions,
-                    wakeWordPorcupineLanguage = data.wakeWordPorcupineViewState.porcupineLanguage,
-                    wakeWordUdpOutputHost = data.wakeWordUdpViewState.outputHost,
-                    wakeWordUdpOutputPort = data.wakeWordUdpViewState.outputPort
-                )
-            )
-        }
     }
 
     private fun startWakeWordDetection() {

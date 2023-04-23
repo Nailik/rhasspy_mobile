@@ -23,7 +23,7 @@ import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 @Preview
 @Composable
 fun LogSettingsContent() {
-val viewModel: LogSettingsViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: LogSettingsViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
 
     SettingsScreenItemContent(

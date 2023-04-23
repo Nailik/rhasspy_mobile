@@ -50,7 +50,7 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoun
 @Composable
 fun WakeWordIndicationSettingsContent() {
     val viewModelFactory = LocalViewModelFactory.current
-val viewModel: IndicationSettingsViewModel = viewModelFactory.getViewModel()
+    val viewModel: IndicationSettingsViewModel = viewModelFactory.getViewModel()
     val navController = rememberNavController()
 
     CompositionLocalProvider(
@@ -72,7 +72,7 @@ val viewModel: IndicationSettingsViewModel = viewModelFactory.getViewModel()
 
             composable(IndicationSettingsScreens.WakeIndicationSound.route) {
                 IndicationSoundScreen(
-                    viewModel =  viewModelFactory.getViewModel<WakeIndicationSoundSettingsViewModel>(),
+                    viewModel = viewModelFactory.getViewModel<WakeIndicationSoundSettingsViewModel>(),
                     title = MR.strings.wakeSound.stable,
                     screen = IndicationSettingsScreens.WakeIndicationSound
                 )

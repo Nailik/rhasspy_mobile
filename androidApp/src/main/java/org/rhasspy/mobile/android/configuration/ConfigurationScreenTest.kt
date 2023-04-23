@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.content.ServiceStateHeader
 import org.rhasspy.mobile.android.content.elements.CustomDivider
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
@@ -95,6 +96,10 @@ private fun ConfigurationScreenTestList(
             state = scrollState,
             modifier = Modifier.weight(1f)
         ) {
+            stickyHeader {
+                ServiceStateHeader(viewState.serviceViewState.collectAsState().value)
+            }
+
             items(logEventsList) { item ->
                 LogListElement(item)
                 CustomDivider()

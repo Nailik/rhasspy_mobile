@@ -38,7 +38,7 @@ import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
 @Preview
 @Composable
 fun LogScreen() {
-val viewModel: LogScreenViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: LogScreenViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
 
     Scaffold(

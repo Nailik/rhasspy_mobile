@@ -37,7 +37,7 @@ import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewState
 @Preview
 @Composable
 fun HomeScreen() {
-   val viewModel: HomeScreenViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: HomeScreenViewModel = LocalViewModelFactory.current.getViewModel()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {

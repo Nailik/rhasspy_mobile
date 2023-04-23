@@ -28,7 +28,7 @@ import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEven
 @Preview
 @Composable
 fun DeviceSettingsContent() {
-val viewModel: DeviceSettingsSettingsViewModel  = LocalViewModelFactory.current.getViewModel()
+    val viewModel: DeviceSettingsSettingsViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
 
     SettingsScreenItemContent(

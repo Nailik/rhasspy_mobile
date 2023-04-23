@@ -29,7 +29,7 @@ import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewState
 @Preview
 @Composable
 fun SettingsScreen() {
-val viewModel: SettingsScreenViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: SettingsScreenViewModel = LocalViewModelFactory.current.getViewModel()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {

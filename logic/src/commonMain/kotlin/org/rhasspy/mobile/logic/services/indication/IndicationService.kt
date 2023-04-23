@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.logic.services.indication
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.services.IService
@@ -10,7 +9,8 @@ import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.indication.NativeIndication
 import org.rhasspy.mobile.platformspecific.readOnly
 
-class IndicationService : IService(LogType.IndicationService), KoinComponent {
+class IndicationService : IService(LogType.IndicationService) {
+
     private val localAudioService by inject<LocalAudioService>()
 
     //states are used by overlay

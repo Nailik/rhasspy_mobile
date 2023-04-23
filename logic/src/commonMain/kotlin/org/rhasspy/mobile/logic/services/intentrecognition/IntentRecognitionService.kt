@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.logic.services.intentrecognition
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -10,7 +11,6 @@ import org.koin.core.component.inject
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
@@ -24,16 +24,19 @@ import org.rhasspy.mobile.platformspecific.readOnly
  *
  * when data is null the service was most probably mqtt and will return result in a call function
  */
-open class IntentRecognitionService : IService(LogType.IntentRecognitionService) {
-    private val params by inject<IntentRecognitionServiceParams>()
-
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
-    override val serviceState = _serviceState.readOnly
+open class IntentRecognitionService(
+    paramsCreator: IntentRecognitionServiceParamsCreator
+) : IService(LogType.IntentRecognitionService) {
 
     private val httpClientService by inject<HttpClientService>()
     private val mqttClientService by inject<MqttService>()
 
-    private val serviceMiddleware by inject<ServiceMiddleware>()
+    private val paramsFlow: StateFlow<IntentRecognitionServiceParams> = paramsCreator()
+    private val params get() = paramsFlow.value
+
+    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
+    override val serviceState = _serviceState.readOnly
+
 
     /**
      * hermes/nlu/query

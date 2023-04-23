@@ -23,11 +23,11 @@ import org.junit.Test
 import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.utils.assertTextEquals
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.TestViewModel
 import org.rhasspy.mobile.android.utils.TestViewState
+import org.rhasspy.mobile.android.utils.assertTextEquals
+import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.resource.stable
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -164,10 +164,6 @@ class ConfigurationScreenItemContentTest : KoinComponent {
         assertFalse { viewModel.onSave }
         viewModel.setContentViewState(TestViewState(isHasUnsavedChanges = true))
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).performClick()
-        composeTestRule.waitUntil(
-            condition = { viewModel.onSave && !viewModel.viewState.value.isLoading },
-            timeoutMillis = 5000
-        )
         assertTrue { viewModel.onSave }
 
         viewModel.setContentViewState(TestViewState(isHasUnsavedChanges = true))
@@ -203,10 +199,6 @@ class ConfigurationScreenItemContentTest : KoinComponent {
         //save click invokes save and navigate back
         assertFalse { viewModel.onSave }
         composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
-        composeTestRule.waitUntil(
-            condition = { viewModel.onSave && !viewModel.viewState.value.isLoading },
-            timeoutMillis = 5000
-        )
         composeTestRule.awaitIdle()
         assertTrue { viewModel.onSave }
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertDoesNotExist()

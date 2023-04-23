@@ -42,15 +42,15 @@ object FileLogger : LogWriter(), KoinComponent {
      * override log function to append text to file
      */
     override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
+        val element = LogElement(
+            Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(),
+            severity,
+            tag,
+            message,
+            throwable?.message
+        )
+        file.commonReadWrite().appendingSink().buffer().writeUtf8(",${Json.encodeToString(element)}").flush()
         coroutineScope.launch {
-            val element = LogElement(
-                Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(),
-                severity,
-                tag,
-                message,
-                throwable?.message
-            )
-            file.commonReadWrite().appendingSink().buffer().writeUtf8(",${Json.encodeToString(element)}").flush()
             _flow.emit(element)
         }
     }

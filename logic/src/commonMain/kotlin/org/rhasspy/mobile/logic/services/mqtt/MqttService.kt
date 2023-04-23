@@ -5,19 +5,19 @@ import com.benasher44.uuid.variant
 import io.ktor.utils.io.core.toByteArray
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import okio.Path
 import okio.buffer
-import org.koin.core.component.get
-import org.koin.core.component.inject
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioOutputToggle
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction.AudioVolumeChange
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
@@ -28,16 +28,18 @@ import org.rhasspy.mobile.platformspecific.extensions.commonSource
 import org.rhasspy.mobile.platformspecific.mqtt.*
 import org.rhasspy.mobile.platformspecific.readOnly
 
-class MqttService : IService(LogType.MqttService) {
+class MqttService(
+    paramsCreator: MqttServiceParamsCreator
+) : IService(LogType.MqttService) {
+    private var scope = CoroutineScope(Dispatchers.Default)
+
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly
 
-    private val params by inject<MqttServiceParams>()
+    private val paramsFlow: StateFlow<MqttServiceParams> = paramsCreator()
+    private val params: MqttServiceParams get() = paramsFlow.value
 
-    private val serviceMiddleware by inject<ServiceMiddleware>()
-
-    private var scope = CoroutineScope(Dispatchers.Default)
-    private val url = "tcp://${params.mqttHost}:${params.mqttPort}"
+    private val url get() = "tcp://${params.mqttHost}:${params.mqttPort}"
 
     private var client: MqttClient? = null
     private var retryJob: Job? = null
@@ -59,6 +61,17 @@ class MqttService : IService(LogType.MqttService) {
      * sets connected value
      */
     init {
+        start()
+
+        scope.launch {
+            paramsFlow.collect {
+                stop()
+                start()
+            }
+        }
+    }
+
+    private fun start() {
         if (params.isMqttEnabled) {
             logger.d { "initialize" }
             _serviceState.value = ServiceState.Loading
@@ -88,6 +101,21 @@ class MqttService : IService(LogType.MqttService) {
         }
     }
 
+    /**
+     * stops client
+     *
+     * disconnects, resets connected value and deletes client object
+     */
+    private fun stop() {
+        retryJob?.cancel()
+        retryJob = null
+        client?.disconnect()
+        client = null
+        _serviceState.value = ServiceState.Disabled
+        _isHasStarted.value = false
+        _isConnected.value = false
+    }
+
     private fun buildClient(): MqttClient {
         logger.d { "buildClient" }
         return MqttClient(
@@ -102,21 +130,6 @@ class MqttService : IService(LogType.MqttService) {
             },
             onDisconnect = { error -> onDisconnect(error) },
         )
-    }
-
-    /**
-     * stops client
-     *
-     * disconnects, resets connected value and deletes client object
-     */
-    override fun onClose() {
-        logger.d { "onClose" }
-        _isHasStarted.value = false
-        _isConnected.value = false
-        client?.disconnect()
-        retryJob?.cancel()
-        retryJob = null
-        scope.cancel()
     }
 
     /**
@@ -341,7 +354,7 @@ class MqttService : IService(LogType.MqttService) {
                     logger.e { "mqtt publish error $it" }
                     MqttServiceStateType.fromMqttStatus(it.statusCode).serviceState
                 } ?: run {
-                    logger.v { "mqtt message published" }
+                    logger.v { "$topic mqtt message published" }
                     ServiceState.Success
                 }
             } ?: run {
@@ -832,7 +845,7 @@ class MqttService : IService(LogType.MqttService) {
             when (audioSource) {
                 is AudioSource.Data -> audioSource.data
                 is AudioSource.File -> audioSource.path.commonSource().buffer().readByteArray()
-                is AudioSource.Resource -> audioSource.fileResource.commonData(get())
+                is AudioSource.Resource -> audioSource.fileResource.commonData(nativeApplication)
             }
         )
     )
@@ -843,7 +856,7 @@ class MqttService : IService(LogType.MqttService) {
      * siteId: string = "default" - Hermes site ID
      */
     private fun audioOutputToggleOff() =
-        serviceMiddleware.action(AppSettingsServiceMiddlewareAction.AudioOutputToggle(false))
+        serviceMiddleware.action(AudioOutputToggle(false))
 
     /**
      * hermes/audioServer/toggleOn (JSON)
@@ -851,7 +864,7 @@ class MqttService : IService(LogType.MqttService) {
      * siteId: string = "default" - Hermes site ID
      */
     private fun audioOutputToggleOn() =
-        serviceMiddleware.action(AppSettingsServiceMiddlewareAction.AudioOutputToggle(true))
+        serviceMiddleware.action(AudioOutputToggle(true))
 
     /**
      * hermes/audioServer/<siteId>/playFinished
@@ -875,7 +888,7 @@ class MqttService : IService(LogType.MqttService) {
      */
     private fun setVolume(jsonObject: JsonObject) =
         jsonObject[MqttParams.Volume.value]?.jsonPrimitive?.floatOrNull?.let {
-            serviceMiddleware.action(AppSettingsServiceMiddlewareAction.AudioVolumeChange(it))
+            serviceMiddleware.action(AudioVolumeChange(it))
         }
 
 

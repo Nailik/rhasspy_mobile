@@ -43,7 +43,18 @@ class ConfigurationScreenViewStateCreator(
 
     operator fun invoke(): StateFlow<ConfigurationScreenViewState> {
         updaterScope.launch {
-            ConfigurationSetting.siteId.data.collect {
+            combineStateFlow(
+                ConfigurationSetting.siteId.data,
+                ConfigurationSetting.isHttpClientSSLVerificationDisabled.data,
+                ConfigurationSetting.isHttpServerEnabled.data,
+                ConfigurationSetting.wakeWordOption.data,
+                ConfigurationSetting.speechToTextOption.data,
+                ConfigurationSetting.intentRecognitionOption.data,
+                ConfigurationSetting.textToSpeechOption.data,
+                ConfigurationSetting.audioPlayingOption.data,
+                ConfigurationSetting.dialogManagementOption.data,
+                ConfigurationSetting.intentHandlingOption.data
+            ).collect {
                 viewState.value = getViewState()
             }
         }

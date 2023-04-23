@@ -1,15 +1,11 @@
 package org.rhasspy.mobile.viewmodel.configuration.mqtt
 
 import androidx.compose.runtime.Stable
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.core.component.get
-import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.data.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.logic.openLink
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.logic.services.mqtt.MqttServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.logic.update
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
@@ -88,32 +84,6 @@ class MqttConfigurationViewModel(
         if (ConfigurationSetting.mqttKeyStoreFile.value != data.mqttKeyStoreFile) {
             data.mqttKeyStoreFile?.commonDelete()
         }
-    }
-
-    /**
-     * test unsaved data configuration
-     */
-    override fun initializeTestParams() {
-        //initialize test params
-        get<MqttServiceParams> {
-            parametersOf(
-                MqttServiceParams(
-                    isMqttEnabled = data.isMqttEnabled,
-                    mqttHost = data.mqttHost,
-                    mqttPort = data.mqttPort,
-                    retryInterval = data.mqttRetryInterval,
-                    mqttServiceConnectionOptions = MqttServiceConnectionOptions(
-                        isSSLEnabled = data.isMqttSSLEnabled,
-                        keyStorePath = data.mqttKeyStoreFile,
-                        connUsername = data.mqttUserName,
-                        connPassword = data.mqttPassword,
-                        connectionTimeout = data.mqttConnectionTimeout,
-                        keepAliveInterval = data.mqttKeepAliveInterval
-                    )
-                )
-            )
-        }
-        get<MqttService>()
     }
 
 }

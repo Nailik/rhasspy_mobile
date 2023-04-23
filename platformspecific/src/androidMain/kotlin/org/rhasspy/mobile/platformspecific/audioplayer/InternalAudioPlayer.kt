@@ -7,13 +7,8 @@ import android.media.MediaPlayer
 import android.net.Uri
 import androidx.annotation.AnyRes
 import co.touchlab.kermit.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
@@ -44,7 +39,7 @@ class InternalAudioPlayer(
             mediaPlayer.release()
         } catch (exception: Exception) {
             logger.e(exception) { "stop exception" }
-            if(!finishCalled) {
+            if (!finishCalled) {
                 finishCalled = true
                 onFinished(exception)
             }
@@ -120,7 +115,7 @@ class InternalAudioPlayer(
         timeoutJob = null
         mediaPlayer.stop()
         mediaPlayer.release()
-        if(!finishCalled) {
+        if (!finishCalled) {
             finishCalled = true
             onFinished(null)
         }
@@ -133,7 +128,7 @@ class InternalAudioPlayer(
         timeoutJob = null
         mediaPlayer.stop()
         mediaPlayer.release()
-        if(!finishCalled) {
+        if (!finishCalled) {
             finishCalled = true
             onFinished(RuntimeException())
         }

@@ -1,10 +1,9 @@
 package org.rhasspy.mobile.platformspecific.audiorecorder
 
-import io.ktor.utils.io.core.Closeable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
-expect class AudioRecorder() : Closeable {
+expect class AudioRecorder() {
 
     /**
      * output data as flow

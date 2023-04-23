@@ -30,7 +30,7 @@ import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagem
  */
 @Composable
 fun DialogManagementConfigurationContent() {
-val viewModel: DialogManagementConfigurationViewModel =  LocalViewModelFactory.current.getViewModel()
+    val viewModel: DialogManagementConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 

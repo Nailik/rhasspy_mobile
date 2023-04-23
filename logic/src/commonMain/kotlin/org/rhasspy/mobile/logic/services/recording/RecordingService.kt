@@ -2,14 +2,11 @@ package org.rhasspy.mobile.logic.services.recording
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import org.koin.core.component.inject
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
@@ -24,11 +21,11 @@ import kotlin.time.Duration.Companion.milliseconds
  *
  * recording is started and stopped automatically when output is observed
  */
-class RecordingService : IService(LogType.RecordingService) {
-    private val serviceMiddleware by inject<ServiceMiddleware>()
-    private val audioRecorder by inject<AudioRecorder>()
+class RecordingService(
+    private val audioRecorder: AudioRecorder
+) : IService(LogType.RecordingService) {
 
-    private var scope = CoroutineScope(Dispatchers.Default)
+    private val scope = CoroutineScope(Dispatchers.Default)
     private var silenceStartTime: Instant? = null
     private var recordingStartTime: Instant? = null
 
@@ -42,7 +39,6 @@ class RecordingService : IService(LogType.RecordingService) {
 
     init {
         logger.d { "initialize" }
-        scope = CoroutineScope(Dispatchers.Default)
 
         _output.subscriptionCount
             .map { count -> count > 0 } // map count into active/inactive flag
@@ -66,12 +62,6 @@ class RecordingService : IService(LogType.RecordingService) {
                 }
             }
         }
-    }
-
-    override fun onClose() {
-        logger.d { "onClose" }
-        audioRecorder.stopRecording()
-        scope.cancel()
     }
 
     private fun silenceDetection(volume: Short) {

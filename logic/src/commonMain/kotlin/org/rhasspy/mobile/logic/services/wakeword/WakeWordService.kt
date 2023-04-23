@@ -2,18 +2,16 @@ package org.rhasspy.mobile.logic.services.wakeword
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.inject
-import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.porcupine.PorcupineError
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.recording.RecordingService
-import org.rhasspy.mobile.logic.services.udp.UdpService
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.porcupine.PorcupineWakeWordClient
 import org.rhasspy.mobile.platformspecific.readOnly
@@ -23,22 +21,20 @@ import org.rhasspy.mobile.platformspecific.readOnly
  *
  * calls stateMachineService when hot word was detected
  */
-class WakeWordService : IService(LogType.WakeWordService) {
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
-    override val serviceState = _serviceState.readOnly
-
-    private val params by inject<WakeWordServiceParams>()
-    private val udpService by inject<UdpService> {
-        parametersOf(
-            params.wakeWordUdpOutputHost,
-            params.wakeWordUdpOutputPort
-        )
-    }
-    private var porcupineWakeWordClient: PorcupineWakeWordClient? = null
+class WakeWordService(
+    paramsCreator: WakeWordServiceParamsCreator,
+) : IService(LogType.WakeWordService) {
 
     private val recordingService by inject<RecordingService>()
 
-    private val serviceMiddleware by inject<ServiceMiddleware>()
+    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
+    override val serviceState = _serviceState.readOnly
+
+    private val paramsFlow: StateFlow<WakeWordServiceParams> = paramsCreator()
+    private val params: WakeWordServiceParams get() = paramsFlow.value
+
+    private var udpConnection: UdpConnection? = null
+    private var porcupineWakeWordClient: PorcupineWakeWordClient? = null
 
     private val _isRecording = MutableStateFlow(false)
     val isRecording = _isRecording.readOnly
@@ -50,10 +46,15 @@ class WakeWordService : IService(LogType.WakeWordService) {
      * starts the service
      */
     init {
-        initialize()
+        scope.launch {
+            paramsFlow.collect {
+                stop()
+                start()
+            }
+        }
     }
 
-    private fun initialize() {
+    private fun start() {
         logger.d { "initialization" }
         _serviceState.value = when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {
@@ -67,18 +68,34 @@ class WakeWordService : IService(LogType.WakeWordService) {
                     ::onKeywordDetected,
                     ::onClientError
                 )
-                val error = porcupineWakeWordClient?.initialize()
-                error?.also {
-                    logger.e(it.exception ?: Throwable()) { "porcupine error" }
-                    porcupineWakeWordClient = null
-                }
-                error?.errorType?.serviceState ?: ServiceState.Success
+                checkPorcupineInitialized()
             }
             //when mqtt is used for hotWord, start recording, might already recording but then this is ignored
-            WakeWordOption.MQTT -> ServiceState.Success
+            WakeWordOption.MQTT -> {
+                _serviceState.value = ServiceState.Loading
+
+                udpConnection = UdpConnection(
+                    params.wakeWordUdpOutputHost,
+                    params.wakeWordUdpOutputPort
+                )
+
+                checkUdpConnection()
+            }
+
             WakeWordOption.Udp -> ServiceState.Success
             WakeWordOption.Disabled -> ServiceState.Disabled
         }
+    }
+
+    private fun stop() {
+        logger.d { "onClose" }
+        scope.cancel()
+        recording?.cancel()
+        recording = null
+        porcupineWakeWordClient?.close()
+        porcupineWakeWordClient = null
+        udpConnection?.close()
+        udpConnection = null
     }
 
     private fun onClientError(porcupineError: PorcupineError) {
@@ -89,9 +106,9 @@ class WakeWordService : IService(LogType.WakeWordService) {
     fun startDetection() {
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {
-                if (porcupineWakeWordClient == null) {
-                    initialize()
-                }
+
+                _serviceState.value = checkPorcupineInitialized()
+
                 porcupineWakeWordClient?.also {
                     _isRecording.value = true
                     val error = porcupineWakeWordClient?.start()
@@ -100,6 +117,7 @@ class WakeWordService : IService(LogType.WakeWordService) {
                     }
                     _serviceState.value = error?.errorType?.serviceState ?: ServiceState.Success
                 }
+
             }
 
             WakeWordOption.MQTT -> {} //nothing will wait for mqtt message
@@ -124,9 +142,14 @@ class WakeWordService : IService(LogType.WakeWordService) {
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {}
             WakeWordOption.MQTT -> {} //nothing will wait for mqtt message
-            WakeWordOption.Udp -> scope.launch {
-                //needs to be called async else native Audio Recorder stops working
-                udpService.streamAudio(data)
+            WakeWordOption.Udp -> {
+
+                _serviceState.value = checkUdpConnection()
+
+                scope.launch {
+                    //needs to be called async else native Audio Recorder stops working
+                    udpConnection?.streamAudio(data)
+                }
             }
 
             WakeWordOption.Disabled -> {}
@@ -143,16 +166,26 @@ class WakeWordService : IService(LogType.WakeWordService) {
 
     private fun onKeywordDetected(hotWord: String) {
         logger.d { "onKeywordDetected $hotWord" }
-        serviceMiddleware.action(ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected(Source.Local, hotWord))
+        serviceMiddleware.action(WakeWordDetected(Source.Local, hotWord))
     }
 
-    override fun onClose() {
-        logger.d { "onClose" }
-        scope.cancel()
-        recording?.cancel()
-        recording = null
-        porcupineWakeWordClient?.close()
-        porcupineWakeWordClient = null
+    private fun checkUdpConnection(): ServiceState {
+        return if (udpConnection?.isConnected == false) {
+            udpConnection?.connect()?.let {
+                ServiceState.Exception(it)
+            } ?: ServiceState.Success
+        } else ServiceState.Exception()
+    }
+
+    private fun checkPorcupineInitialized(): ServiceState {
+        return if (porcupineWakeWordClient?.isInitialized == false) {
+            val error = porcupineWakeWordClient?.initialize()
+            error?.also {
+                logger.e(it.exception ?: Throwable()) { "porcupine error" }
+                porcupineWakeWordClient = null
+            }
+            error?.errorType?.serviceState ?: ServiceState.Success
+        } else ServiceState.Exception()
     }
 
 }

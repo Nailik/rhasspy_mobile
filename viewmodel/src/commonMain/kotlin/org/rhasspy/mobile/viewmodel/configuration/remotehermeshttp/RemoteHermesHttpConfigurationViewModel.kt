@@ -5,20 +5,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
-import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientResult
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.recording.RecordingService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.logic.update
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Action
@@ -66,18 +64,6 @@ class RemoteHermesHttpConfigurationViewModel(
         ConfigurationSetting.httpClientServerEndpointHost.value = data.httpClientServerEndpointHost
         ConfigurationSetting.httpClientServerEndpointPort.value = data.httpClientServerEndpointPort
         ConfigurationSetting.isHttpClientSSLVerificationDisabled.value = data.isHttpSSLVerificationDisabled
-    }
-
-    override fun initializeTestParams() {
-        get<HttpClientServiceParams> {
-            parametersOf(
-                HttpClientServiceParams(
-                    isHttpSSLVerificationDisabled = data.isHttpSSLVerificationDisabled,
-                    httpClientServerEndpointHost = data.httpClientServerEndpointHost,
-                    httpClientServerEndpointPort = data.httpClientServerEndpointPort
-                )
-            )
-        }
     }
 
     private fun toggleRecording() {

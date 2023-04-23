@@ -2,11 +2,7 @@ package org.rhasspy.mobile.viewmodel.configuration.dialogmanagement
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.update
-import org.koin.core.component.get
-import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceParams
-import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
@@ -41,20 +37,6 @@ class DialogManagementConfigurationViewModel(
         ConfigurationSetting.textAsrTimeout.value = data.textAsrTimeout
         ConfigurationSetting.intentRecognitionTimeout.value = data.intentRecognitionTimeout
         ConfigurationSetting.recordingTimeout.value = data.recordingTimeout
-    }
-
-    override fun initializeTestParams() {
-        get<DialogManagerServiceParams> {
-            parametersOf(
-                DialogManagerServiceParams(
-                    option = data.dialogManagementOption,
-                    asrTimeout = data.textAsrTimeout,
-                    intentRecognitionTimeout = data.intentRecognitionTimeout,
-                    recordingTimeout = data.recordingTimeout
-                )
-            )
-        }
-        get<MqttService>()
     }
 
 }

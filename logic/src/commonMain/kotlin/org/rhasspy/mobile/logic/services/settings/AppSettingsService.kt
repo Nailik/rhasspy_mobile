@@ -8,6 +8,7 @@ import org.rhasspy.mobile.logic.settings.AppSetting
  * handles changes of app settings that are called remotely
  */
 class AppSettingsService : IService(LogType.AppSettingsService) {
+
     fun hotWordToggle(value: Boolean) {
         logger.d { "hotWordToggle value: $value" }
         AppSetting.isHotWordEnabled.value = value

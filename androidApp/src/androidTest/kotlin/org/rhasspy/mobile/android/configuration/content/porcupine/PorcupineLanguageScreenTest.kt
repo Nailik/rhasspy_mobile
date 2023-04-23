@@ -14,8 +14,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.utils.awaitSaved
 import org.rhasspy.mobile.android.main.LocalNavController
+import org.rhasspy.mobile.android.utils.awaitSaved
 import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption

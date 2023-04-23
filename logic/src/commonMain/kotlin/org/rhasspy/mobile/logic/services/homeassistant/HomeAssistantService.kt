@@ -1,11 +1,13 @@
 package org.rhasspy.mobile.logic.services.homeassistant
 
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
+import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Event
+import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Intent
 import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
@@ -16,9 +18,14 @@ import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
  * events
  * intent
  */
-class HomeAssistantService : IService(LogType.HomeAssistanceService) {
-    private val params by inject<HomeAssistantServiceParams>()
+class HomeAssistantService(
+    paramsCreator: HomeAssistantServiceParamsCreator,
+) : IService(LogType.HomeAssistanceService) {
+
     private val httpClientService by inject<HttpClientService>()
+
+    private val paramsFlow: StateFlow<HomeAssistantServiceParams> = paramsCreator()
+    private val params: HomeAssistantServiceParams get() = paramsFlow.value
 
     /**
      * simplified conversion from intent to hass event or hass intent
@@ -56,12 +63,8 @@ class HomeAssistantService : IService(LogType.HomeAssistanceService) {
             val intentRes = Json.encodeToString(slots)
 
             val result = when (params.intentHandlingHomeAssistantOption) {
-                HomeAssistantIntentHandlingOption.Event -> httpClientService.hassEvent(
-                    intentRes,
-                    intentName
-                )
-
-                HomeAssistantIntentHandlingOption.Intent -> httpClientService.hassIntent("{\"name\" : \"$intentName\", \"data\": $intent }")
+                Event -> httpClientService.hassEvent(intentRes, intentName)
+                Intent -> httpClientService.hassIntent("{\"name\" : \"$intentName\", \"data\": $intent }")
             }
             return result.toServiceState()
         } catch (exception: Exception) {

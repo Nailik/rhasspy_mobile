@@ -3,11 +3,8 @@ package org.rhasspy.mobile.viewmodel.configuration.webserver
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.core.component.get
-import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.logic.openLink
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
-import org.rhasspy.mobile.logic.services.webserver.WebServerServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FileUtils
@@ -68,20 +65,18 @@ class WebServerConfigurationViewModel(
      * save data configuration
      */
     override fun onSave() {
-        ConfigurationSetting.apply {
-            //delete old keystore file if changed
-            if (data.httpServerSSLKeyStoreFile != httpServerSSLKeyStoreFile.value) {
-                httpServerSSLKeyStoreFile.value?.commonDelete()
-            }
-
-            isHttpServerEnabled.value = data.isHttpServerEnabled
-            httpServerPort.value = data.httpServerPort
-            isHttpServerSSLEnabledEnabled.value = data.isHttpServerSSLEnabled
-            httpServerSSLKeyStoreFile.value = data.httpServerSSLKeyStoreFile
-            httpServerSSLKeyStorePassword.value = data.httpServerSSLKeyStorePassword
-            httpServerSSLKeyAlias.value = data.httpServerSSLKeyAlias
-            httpServerSSLKeyPassword.value = data.httpServerSSLKeyPassword
+        //delete old keystore file if changed
+        if (data.httpServerSSLKeyStoreFile != ConfigurationSetting.httpServerSSLKeyStoreFile.value) {
+            ConfigurationSetting.httpServerSSLKeyStoreFile.value?.commonDelete()
         }
+
+        ConfigurationSetting.isHttpServerEnabled.value = data.isHttpServerEnabled
+        ConfigurationSetting.httpServerPort.value = data.httpServerPort
+        ConfigurationSetting.isHttpServerSSLEnabledEnabled.value = data.isHttpServerSSLEnabled
+        ConfigurationSetting.httpServerSSLKeyStoreFile.value = data.httpServerSSLKeyStoreFile
+        ConfigurationSetting.httpServerSSLKeyStorePassword.value = data.httpServerSSLKeyStorePassword
+        ConfigurationSetting.httpServerSSLKeyAlias.value = data.httpServerSSLKeyAlias
+        ConfigurationSetting.httpServerSSLKeyPassword.value = data.httpServerSSLKeyPassword
     }
 
     /**
@@ -92,23 +87,6 @@ class WebServerConfigurationViewModel(
         if (data.httpServerSSLKeyStoreFile != ConfigurationSetting.httpServerSSLKeyStoreFile.value) {
             data.httpServerSSLKeyStoreFile?.commonDelete()
         }
-    }
-
-    override fun initializeTestParams() {
-        get<WebServerServiceParams> {
-            parametersOf(
-                WebServerServiceParams(
-                    isHttpServerEnabled = data.isHttpServerEnabled,
-                    httpServerPort = data.httpServerPort,
-                    isHttpServerSSLEnabled = data.isHttpServerSSLEnabled,
-                    httpServerSSLKeyStoreFile = data.httpServerSSLKeyStoreFile,
-                    httpServerSSLKeyStorePassword = data.httpServerSSLKeyStorePassword,
-                    httpServerSSLKeyAlias = data.httpServerSSLKeyAlias,
-                    httpServerSSLKeyPassword = data.httpServerSSLKeyPassword
-                )
-            )
-        }
-        get<WebServerService>()
     }
 
 }

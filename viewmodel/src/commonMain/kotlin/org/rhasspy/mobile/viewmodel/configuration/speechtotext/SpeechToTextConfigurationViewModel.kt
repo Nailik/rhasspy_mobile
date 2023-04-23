@@ -4,18 +4,15 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
-import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.logic.services.mqtt.MqttServiceParams
 import org.rhasspy.mobile.logic.services.recording.RecordingService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.logic.update
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action.TestSpeechToTextToggleRecording
@@ -59,33 +56,6 @@ class SpeechToTextConfigurationViewModel(
         ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value = data.isUseCustomSpeechToTextHttpEndpoint
         ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.value = data.isUseSpeechToTextMqttSilenceDetection
         ConfigurationSetting.speechToTextHttpEndpoint.value = data.speechToTextHttpEndpoint
-    }
-
-    override fun initializeTestParams() {
-        get<MqttServiceParams> {
-            parametersOf(
-                MqttServiceParams(
-                    isUseSpeechToTextMqttSilenceDetection = data.isUseSpeechToTextMqttSilenceDetection
-                )
-            )
-        }
-
-        get<SpeechToTextServiceParams> {
-            parametersOf(
-                SpeechToTextServiceParams(
-                    speechToTextOption = data.speechToTextOption,
-                )
-            )
-        }
-
-        get<HttpClientServiceParams> {
-            parametersOf(
-                HttpClientServiceParams(
-                    isUseCustomSpeechToTextHttpEndpoint = data.isUseCustomSpeechToTextHttpEndpoint,
-                    speechToTextHttpEndpoint = data.speechToTextHttpEndpoint
-                )
-            )
-        }
     }
 
     private fun toggleRecording() {

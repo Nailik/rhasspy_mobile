@@ -5,7 +5,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
-import io.ktor.utils.io.core.Closeable
 import kotlinx.collections.immutable.ImmutableList
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -29,13 +28,16 @@ actual class PorcupineWakeWordClient actual constructor(
     private val wakeWordPorcupineLanguage: PorcupineLanguageOption,
     private val onKeywordDetected: (hotWord: String) -> Unit,
     private val onError: (PorcupineError) -> Unit
-) : PorcupineManagerCallback, Closeable, KoinComponent {
+) : PorcupineManagerCallback, KoinComponent {
     private val logger = Logger.withTag("PorcupineWakeWordClient")
 
     //manager to stop start and reload porcupine
     private var porcupineManager: PorcupineManager? = null
 
     private val context = get<NativeApplication>()
+
+    private var initialized: Boolean = false
+    actual val isInitialized: Boolean = initialized
 
     /**
      * create porcupine client
@@ -91,8 +93,10 @@ actual class PorcupineWakeWordClient actual constructor(
 
             porcupineManager = porcupineBuilder.build(context, this)
 
+            initialized = true
             null//no error
         } catch (e: Exception) {
+            initialized = false
             return e.toPorcupineError()
         }
     }
@@ -184,7 +188,7 @@ actual class PorcupineWakeWordClient actual constructor(
     /**
      * deletes the porcupine manager
      */
-    override fun close() {
+    actual fun close() {
         porcupineManager?.stop()
         porcupineManager?.delete()
         porcupineManager = null

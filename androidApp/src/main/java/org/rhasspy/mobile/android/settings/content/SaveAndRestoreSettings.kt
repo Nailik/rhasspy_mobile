@@ -35,7 +35,7 @@ import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettin
 @Preview
 @Composable
 fun SaveAndRestoreSettingsContent() {
-val viewModel: SaveAndRestoreSettingsViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: SaveAndRestoreSettingsViewModel = LocalViewModelFactory.current.getViewModel()
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreenType.SaveAndRestoreSettings),
         title = MR.strings.saveAndRestoreSettings.stable

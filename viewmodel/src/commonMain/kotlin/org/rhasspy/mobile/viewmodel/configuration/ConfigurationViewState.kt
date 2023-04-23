@@ -7,10 +7,10 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiNavigate.PopBa
 @Stable
 data class ConfigurationViewState<V : IConfigurationEditViewState> internal constructor(
     val isBackPressDisabled: Boolean,
-    val isLoading: Boolean,
     val serviceViewState: StateFlow<ServiceStateHeaderViewState>,
     val testViewState: StateFlow<ConfigurationTestViewState>,
     val editViewState: StateFlow<V>,
     val showUnsavedChangesDialog: Boolean = false,
-    val popBackStack: PopBackStack
+    val popBackStack: PopBackStack,
+    val hasUnsavedChanges: Boolean
 )

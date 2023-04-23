@@ -3,36 +3,35 @@ package org.rhasspy.mobile
 import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
-import org.rhasspy.mobile.logic.closeableSingle
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
-import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingServiceParams
+import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingServiceParamsCreator
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceParams
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceParamsCreator
 import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantService
-import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantServiceParams
+import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantServiceParamsCreator
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
+import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParamsCreator
 import org.rhasspy.mobile.logic.services.indication.IndicationService
 import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingService
-import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingServiceParams
+import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingServiceParamsCreator
 import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionService
-import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionServiceParams
+import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionServiceParamsCreator
 import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
-import org.rhasspy.mobile.logic.services.localaudio.LocalAudioServiceParams
+import org.rhasspy.mobile.logic.services.localaudio.LocalAudioServiceParamsCreator
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.logic.services.mqtt.MqttServiceParams
+import org.rhasspy.mobile.logic.services.mqtt.MqttServiceParamsCreator
 import org.rhasspy.mobile.logic.services.recording.RecordingService
 import org.rhasspy.mobile.logic.services.settings.AppSettingsService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
-import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextServiceParams
+import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextServiceParamsCreator
 import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
-import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechServiceParams
-import org.rhasspy.mobile.logic.services.udp.UdpService
+import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechServiceParamsCreator
+import org.rhasspy.mobile.logic.services.wakeword.UdpConnection
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
-import org.rhasspy.mobile.logic.services.wakeword.WakeWordServiceParams
+import org.rhasspy.mobile.logic.services.wakeword.WakeWordServiceParamsCreator
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
-import org.rhasspy.mobile.logic.services.webserver.WebServerServiceParams
+import org.rhasspy.mobile.logic.services.webserver.WebServerServiceParamsCreator
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
@@ -79,38 +78,62 @@ import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSe
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewStateCreator
 
 val serviceModule = module {
-    closeableSingle { LocalAudioService() }
-    closeableSingle { AudioPlayingService() }
-    closeableSingle { IntentHandlingService() }
-    closeableSingle { IntentRecognitionService() }
-    closeableSingle { SpeechToTextService() }
-    closeableSingle { TextToSpeechService() }
-    closeableSingle { MqttService() }
-    closeableSingle { HttpClientService() }
-    closeableSingle { WebServerService() }
-    closeableSingle { HomeAssistantService() }
-    closeableSingle { WakeWordService() }
-    closeableSingle { RecordingService() }
-    closeableSingle { DialogManagerService() }
-    closeableSingle { AppSettingsService() }
-    closeableSingle { IndicationService() }
-    closeableSingle { ServiceMiddleware() }
+    single {
+        ServiceMiddleware(
+            dialogManagerService = get(),
+            speechToTextService = get(),
+            textToSpeechService = get(),
+            appSettingsService = get(),
+            localAudioService = get(),
+            mqttService = get(),
+            wakeWordService = get()
+        )
+    }
 
-    single { params -> params.getOrNull<LocalAudioServiceParams>() ?: LocalAudioServiceParams() }
-    single { params -> params.getOrNull<AudioPlayingServiceParams>() ?: AudioPlayingServiceParams() }
-    single { params -> params.getOrNull<IntentHandlingServiceParams>() ?: IntentHandlingServiceParams() }
-    single { params -> params.getOrNull<IntentRecognitionServiceParams>() ?: IntentRecognitionServiceParams() }
-    single { params -> params.getOrNull<SpeechToTextServiceParams>() ?: SpeechToTextServiceParams() }
-    single { params -> params.getOrNull<TextToSpeechServiceParams>() ?: TextToSpeechServiceParams() }
-    single { params -> params.getOrNull<MqttServiceParams>() ?: MqttServiceParams() }
-    single { params -> params.getOrNull<HttpClientServiceParams>() ?: HttpClientServiceParams() }
-    single { params -> params.getOrNull<WebServerServiceParams>() ?: WebServerServiceParams() }
-    single { params -> params.getOrNull<HomeAssistantServiceParams>() ?: HomeAssistantServiceParams() }
-    single { params -> params.getOrNull<WakeWordServiceParams>() ?: WakeWordServiceParams() }
-    single { params -> params.getOrNull<DialogManagerServiceParams>() ?: DialogManagerServiceParams() }
+    single { AudioPlayingServiceParamsCreator() }
+    single { AudioPlayingService(paramsCreator = get()) }
+
+    single { DialogManagerServiceParamsCreator() }
+    single { DialogManagerService(paramsCreator = get()) }
+
+    single { HomeAssistantServiceParamsCreator() }
+    single { HomeAssistantService(paramsCreator = get()) }
+
+    single { HttpClientServiceParamsCreator() }
+    single { HttpClientService(paramsCreator = get()) }
+
+    single { IndicationService() }
+
+    single { IntentHandlingServiceParamsCreator() }
+    single { IntentHandlingService(paramsCreator = get()) }
+
+    single { IntentRecognitionServiceParamsCreator() }
+    single { IntentRecognitionService(paramsCreator = get()) }
+
+    single { LocalAudioServiceParamsCreator() }
+    single { LocalAudioService(paramsCreator = get()) }
+
+    single { RecordingService(audioRecorder = get()) }
+
+    single { AppSettingsService() }
+
+    single { MqttServiceParamsCreator() }
+    single { MqttService(paramsCreator = get()) }
+
+    single { SpeechToTextServiceParamsCreator() }
+    single { SpeechToTextService(paramsCreator = get()) }
+
+    single { TextToSpeechServiceParamsCreator() }
+    single { TextToSpeechService(paramsCreator = get()) }
+
+    single { WakeWordServiceParamsCreator() }
+    single { WakeWordService(paramsCreator = get()) }
+
+    single { WebServerServiceParamsCreator() }
+    single { WebServerService(paramsCreator = get()) }
 }
 
-val viewModelFactory  = module {
+val viewModelFactory = module {
     single {
         ViewModelFactory()
     }
@@ -376,9 +399,11 @@ val viewModelModule = module {
 }
 
 val factoryModule = module {
-    factory { params -> UdpService(params[0], params[1]) }
+    factory { params -> UdpConnection(params[0], params[1]) }
 }
 
 val nativeModule = module {
-    closeableSingle { AudioRecorder() }
+    single {
+        AudioRecorder()
+    }
 }

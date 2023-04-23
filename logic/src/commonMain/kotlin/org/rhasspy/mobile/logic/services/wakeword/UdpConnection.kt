@@ -1,5 +1,6 @@
-package org.rhasspy.mobile.logic.services.udp
+package org.rhasspy.mobile.logic.services.wakeword
 
+import co.touchlab.kermit.Logger
 import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.Datagram
 import io.ktor.network.sockets.InetSocketAddress
@@ -9,33 +10,44 @@ import io.ktor.server.engine.internal.ClosedChannelException
 import io.ktor.utils.io.core.ByteReadPacket
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
-import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder.Companion.appendWavHeader
 
-class UdpService(host: String, port: Int) : IService(LogType.UdpService) {
+class UdpConnection(
+    private val host: String,
+    private val port: Int
+) {
+    private val logger = Logger.withTag("UdpConnection")
+
     private var socketAddress: SocketAddress? = null
     private var sendChannel: SendChannel<Datagram>? = null
     private var hasLoggedError = false
+
+    var isConnected: Boolean = false
+        private set
 
     /**
      * makes sure the address is up to date
      *
      * suspend is necessary else there is an network on main thread error at least on android
      */
-    init {
+    fun connect(): Exception? {
         logger.d { "initialization" }
-        try {
+        return try {
             sendChannel = aSocket(SelectorManager(Dispatchers.Default)).udp().bind().outgoing
 
             socketAddress = InetSocketAddress(host, port)
+
+            isConnected = true
+            null
         } catch (exception: Exception) {
             logger.e(exception) { "initialization error" }
+            exception
         }
     }
 
-    override fun onClose() {
+    fun close() {
+        isConnected = false
         logger.d { "onClose" }
         try {
             sendChannel?.close()

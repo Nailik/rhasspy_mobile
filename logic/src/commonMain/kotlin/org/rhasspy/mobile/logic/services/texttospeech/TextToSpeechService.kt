@@ -1,11 +1,11 @@
 package org.rhasspy.mobile.logic.services.texttospeech
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
@@ -19,15 +19,18 @@ import org.rhasspy.mobile.platformspecific.readOnly
  *
  * when data is null the service was most probably mqtt and will return result in a call function
  */
-open class TextToSpeechService : IService(LogType.TextToSpeechService) {
-    private val params by inject<TextToSpeechServiceParams>()
-
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
-    override val serviceState = _serviceState.readOnly
+open class TextToSpeechService(
+    paramsCreator: TextToSpeechServiceParamsCreator,
+) : IService(LogType.TextToSpeechService) {
 
     private val httpClientService by inject<HttpClientService>()
     private val mqttClientService by inject<MqttService>()
-    private val serviceMiddleware by inject<ServiceMiddleware>()
+
+    private val paramsFlow: StateFlow<TextToSpeechServiceParams> = paramsCreator()
+    private val params: TextToSpeechServiceParams get() = paramsFlow.value
+
+    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
+    override val serviceState = _serviceState.readOnly
 
     /**
      * hermes/tts/say
@@ -56,9 +59,7 @@ open class TextToSpeechService : IService(LogType.TextToSpeechService) {
                 serviceMiddleware.action(action)
             }
 
-            TextToSpeechOption.RemoteMQTT -> _serviceState.value =
-                mqttClientService.say(sessionId, text)
-
+            TextToSpeechOption.RemoteMQTT -> _serviceState.value = mqttClientService.say(sessionId, text)
             TextToSpeechOption.Disabled -> {}
         }
     }

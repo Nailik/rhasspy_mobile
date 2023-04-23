@@ -4,15 +4,12 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
-import org.koin.core.parameter.parametersOf
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
-import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
-import org.rhasspy.mobile.logic.update
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action.TestRemoteHermesHttpTextToSpeechTest
@@ -55,25 +52,6 @@ class TextToSpeechConfigurationViewModel(
         ConfigurationSetting.textToSpeechOption.value = data.textToSpeechOption
         ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value = data.isUseCustomTextToSpeechHttpEndpoint
         ConfigurationSetting.textToSpeechHttpEndpoint.value = data.textToSpeechHttpEndpoint
-    }
-
-    override fun initializeTestParams() {
-        get<TextToSpeechServiceParams> {
-            parametersOf(
-                TextToSpeechServiceParams(
-                    textToSpeechOption = data.textToSpeechOption
-                )
-            )
-        }
-
-        get<HttpClientServiceParams> {
-            parametersOf(
-                HttpClientServiceParams(
-                    isUseCustomTextToSpeechHttpEndpoint = data.isUseCustomTextToSpeechHttpEndpoint,
-                    textToSpeechHttpEndpoint = data.textToSpeechHttpEndpoint
-                )
-            )
-        }
     }
 
     private fun startTextToSpeech() {

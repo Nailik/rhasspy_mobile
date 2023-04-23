@@ -1,15 +1,18 @@
 package org.rhasspy.mobile.logic.services.speechtotext
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import okio.Path
-import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrTextCaptured
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientResult
@@ -28,30 +31,34 @@ import org.rhasspy.mobile.platformspecific.readOnly
  *
  * when data is null the service was most probably mqtt and will return result in a call function
  */
-open class SpeechToTextService : IService(LogType.SpeechToTextService) {
-    private val params by inject<SpeechToTextServiceParams>()
-
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
-    override val serviceState = _serviceState.readOnly
+open class SpeechToTextService(
+    paramsCreator: SpeechToTextServiceParamsCreator,
+) : IService(LogType.SpeechToTextService) {
 
     private val httpClientService by inject<HttpClientService>()
     private val mqttClientService by inject<MqttService>()
     private val recordingService by inject<RecordingService>()
 
-    private val serviceMiddleware by inject<ServiceMiddleware>()
+    private val paramsFlow: StateFlow<SpeechToTextServiceParams> = paramsCreator()
+    private val params: SpeechToTextServiceParams get() = paramsFlow.value
 
-    val speechToTextAudioFile: Path = Path.commonInternalPath(get(), "SpeechToTextAudio.wav")
+    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
+    override val serviceState = _serviceState.readOnly
+
+    val speechToTextAudioFile: Path = Path.commonInternalPath(nativeApplication, "SpeechToTextAudio.wav")
 
     private val scope = CoroutineScope(Dispatchers.Default)
     private var collector: Job? = null
 
-    override fun onClose() {
-        logger.d { "onClose" }
-        //nothing to do
-        scope.cancel()
-        collector?.cancel()
-        collector = null
+    init {
+        scope.launch {
+            paramsFlow.collect {
+                collector?.cancel()
+                collector = null
+            }
+        }
     }
+
 
     /**
      * Speech to Text (Wav Data)
@@ -84,18 +91,13 @@ open class SpeechToTextService : IService(LogType.SpeechToTextService) {
                 val result = httpClientService.speechToText(speechToTextAudioFile)
                 _serviceState.value = result.toServiceState()
                 val action = when (result) {
-                    is HttpClientResult.Error -> DialogServiceMiddlewareAction.AsrError(Source.HttpApi)
-                    is HttpClientResult.Success -> DialogServiceMiddlewareAction.AsrTextCaptured(
-                        Source.HttpApi,
-                        result.data
-                    )
+                    is HttpClientResult.Error -> AsrError(Source.HttpApi)
+                    is HttpClientResult.Success -> AsrTextCaptured(Source.HttpApi, result.data)
                 }
                 serviceMiddleware.action(action)
             }
 
-            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) _serviceState.value =
-                mqttClientService.stopListening(sessionId)
-
+            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) _serviceState.value = mqttClientService.stopListening(sessionId)
             SpeechToTextOption.Disabled -> {}
         }
     }
@@ -124,10 +126,7 @@ open class SpeechToTextService : IService(LogType.SpeechToTextService) {
 
         _serviceState.value = when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> ServiceState.Success
-            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) {
-                mqttClientService.startListening(sessionId)
-            } else ServiceState.Success
-
+            SpeechToTextOption.RemoteMQTT -> if (!fromMqtt) mqttClientService.startListening(sessionId) else ServiceState.Success
             SpeechToTextOption.Disabled -> ServiceState.Disabled
         }
     }
@@ -137,15 +136,20 @@ open class SpeechToTextService : IService(LogType.SpeechToTextService) {
             logger.d { "audioFrame dataSize: ${data.size}" }
         }
 
-        speechToTextAudioFile.commonReadWrite().write(speechToTextAudioFile.commonSize() ?: 0, data, 0, data.size)
-
         _serviceState.value = when (params.speechToTextOption) {
             SpeechToTextOption.RemoteHTTP -> ServiceState.Success
-            SpeechToTextOption.RemoteMQTT -> {
-                mqttClientService.asrAudioFrame(sessionId, data)
-            }
-
+            SpeechToTextOption.RemoteMQTT -> mqttClientService.asrAudioFrame(sessionId, data)
             SpeechToTextOption.Disabled -> ServiceState.Disabled
+        }
+
+        scope.launch {
+            //write async after data was send
+            speechToTextAudioFile.commonReadWrite().write(
+                fileOffset = speechToTextAudioFile.commonSize() ?: 0,
+                array = data,
+                arrayOffset = 0,
+                byteCount = data.size
+            )
         }
     }
 

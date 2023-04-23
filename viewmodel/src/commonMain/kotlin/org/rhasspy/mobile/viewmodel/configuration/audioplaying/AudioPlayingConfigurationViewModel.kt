@@ -7,15 +7,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
-import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingServiceParams
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
-import org.rhasspy.mobile.logic.services.localaudio.LocalAudioServiceParams
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.logic.services.mqtt.MqttServiceParams
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
@@ -71,41 +67,6 @@ class AudioPlayingConfigurationViewModel(
         ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value = data.isUseCustomAudioPlayingHttpEndpoint
         ConfigurationSetting.audioPlayingHttpEndpoint.value = data.audioPlayingHttpEndpoint
         ConfigurationSetting.audioPlayingMqttSiteId.value = data.audioPlayingMqttSiteId
-    }
-
-    override fun initializeTestParams() {
-        get<AudioPlayingServiceParams> {
-            parametersOf(
-                AudioPlayingServiceParams(
-                    audioPlayingOption = data.audioPlayingOption
-                )
-            )
-        }
-
-        get<HttpClientServiceParams> {
-            parametersOf(
-                HttpClientServiceParams(
-                    isUseCustomAudioPlayingEndpoint = data.isUseCustomAudioPlayingHttpEndpoint,
-                    audioPlayingHttpEndpoint = data.audioPlayingHttpEndpoint
-                )
-            )
-        }
-
-        get<LocalAudioServiceParams> {
-            parametersOf(
-                LocalAudioServiceParams(
-                    audioOutputOption = data.audioOutputOption
-                )
-            )
-        }
-
-        get<MqttServiceParams> {
-            parametersOf(
-                MqttServiceParams(
-                    audioPlayingMqttSiteId = data.audioPlayingMqttSiteId
-                )
-            )
-        }
     }
 
     private fun playTestAudio() {

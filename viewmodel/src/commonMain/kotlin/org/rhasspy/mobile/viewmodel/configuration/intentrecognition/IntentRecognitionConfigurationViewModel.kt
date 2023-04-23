@@ -7,9 +7,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
-import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
 import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionService
 import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionServiceParams
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
@@ -56,25 +54,6 @@ class IntentRecognitionConfigurationViewModel(
         ConfigurationSetting.intentRecognitionOption.value = data.intentRecognitionOption
         ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value = data.isUseCustomIntentRecognitionHttpEndpoint
         ConfigurationSetting.intentRecognitionHttpEndpoint.value = data.intentRecognitionHttpEndpoint
-    }
-
-    override fun initializeTestParams() {
-        get<IntentRecognitionServiceParams> {
-            parametersOf(
-                IntentRecognitionServiceParams(
-                    intentRecognitionOption = data.intentRecognitionOption
-                )
-            )
-        }
-
-        get<HttpClientServiceParams> {
-            parametersOf(
-                HttpClientServiceParams(
-                    isUseCustomTextToSpeechHttpEndpoint = data.isUseCustomIntentRecognitionHttpEndpoint,
-                    intentRecognitionHttpEndpoint = data.intentRecognitionHttpEndpoint,
-                )
-            )
-        }
     }
 
     private fun runIntentRecognition() {

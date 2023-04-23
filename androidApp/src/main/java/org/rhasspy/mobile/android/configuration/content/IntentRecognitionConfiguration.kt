@@ -36,7 +36,7 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
  */
 @Composable
 fun IntentRecognitionConfigurationContent() {
-val viewModel: IntentRecognitionConfigurationViewModel =  LocalViewModelFactory.current.getViewModel()
+    val viewModel: IntentRecognitionConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 

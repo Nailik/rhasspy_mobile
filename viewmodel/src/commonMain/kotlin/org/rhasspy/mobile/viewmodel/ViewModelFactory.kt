@@ -8,7 +8,7 @@ import org.koin.core.component.get
 @Stable
 class ViewModelFactory : KoinComponent {
 
-    inline fun <reified T: ViewModel> getViewModel(): T {
+    inline fun <reified T : ViewModel> getViewModel(): T {
         return get()
     }
 

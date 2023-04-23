@@ -22,13 +22,11 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.koin.core.component.get
-import org.koin.core.component.inject
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.AppSettingsServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
@@ -51,13 +49,15 @@ import org.rhasspy.mobile.platformspecific.readOnly
  * - parameter Invalid: BadRequest
  * - else: determined by Ktor
  */
-class WebServerService : IService(LogType.WebServerService) {
+class WebServerService(
+    paramsCreator: WebServerServiceParamsCreator
+) : IService(LogType.WebServerService) {
+
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly
 
-    private val params by inject<WebServerServiceParams>()
-
-    private val serviceMiddleware by inject<ServiceMiddleware>()
+    private val paramsFlow: StateFlow<WebServerServiceParams> = paramsCreator()
+    private val params: WebServerServiceParams get() = paramsFlow.value
 
     private val scope = CoroutineScope(Dispatchers.Default)
 
@@ -65,20 +65,29 @@ class WebServerService : IService(LogType.WebServerService) {
         val audioContentType = ContentType("audio", "wav")
     }
 
-    private lateinit var server: BaseApplicationEngine
+    private var server: BaseApplicationEngine? = null
 
     /**
      * starts server when enabled
      * logs start event
      */
     init {
+        scope.launch {
+            paramsFlow.collect {
+                stop()
+                start()
+            }
+        }
+    }
+
+    private fun start() {
         if (params.isHttpServerEnabled) {
             logger.d { "initialization" }
             _serviceState.value = ServiceState.Loading
 
             try {
                 server = buildServer()
-                server.start()
+                server?.start()
                 _serviceState.value = ServiceState.Success
             } catch (exception: Exception) {
                 //start error
@@ -91,22 +100,20 @@ class WebServerService : IService(LogType.WebServerService) {
     /**
      * closes server and scope
      */
-    override fun onClose() {
+    private fun stop() {
         logger.d { "onClose" }
-        if (::server.isInitialized) {
-            server.stop()
-        }
-        scope.cancel()
+        server?.stop()
     }
 
     /**
      * build server with routing and addons
      */
     private fun buildServer(): BaseApplicationEngine {
+        // TrafficStats.setTrafficStatsTag()
         logger.d { "buildServer" }
         val environment = applicationEngineEnvironment {
             installConnector(
-                nativeApplication = get(),
+                nativeApplication = nativeApplication,
                 port = params.httpServerPort,
                 isUseSSL = params.isHttpServerSSLEnabled,
                 keyStoreFile = "${FolderType.CertificateFolder.WebServer}/${params.httpServerSSLKeyStoreFile ?: ""}",
