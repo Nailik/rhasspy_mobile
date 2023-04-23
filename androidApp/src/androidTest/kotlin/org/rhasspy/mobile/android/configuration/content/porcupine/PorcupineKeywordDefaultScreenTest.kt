@@ -134,6 +134,7 @@ class PorcupineKeywordDefaultScreenTest : KoinComponent {
         //viewModel save is invoked
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
         val newViewModel = WakeWordConfigurationViewModel(get())
         newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState.defaultOptions.forEach {
             //americano is saved with enabled

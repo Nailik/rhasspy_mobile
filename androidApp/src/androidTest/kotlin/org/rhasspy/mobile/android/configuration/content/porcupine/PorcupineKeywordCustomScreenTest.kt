@@ -155,6 +155,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         //viewModel save is invoked
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
         val newViewModel = WakeWordConfigurationViewModel(get())
 
         //jarvis is saved with enabled
@@ -194,6 +195,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         composeTestRule.awaitIdle()
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
         assertTrue { viewState.customOptionsUi.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null }
 
@@ -208,6 +210,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         //viewModel save is invoked
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
         val newViewModel = WakeWordConfigurationViewModel(get())
         //ppn is saved with ppn.ppn and enabled
         assertTrue {
