@@ -50,6 +50,8 @@ class IntentRecognitionConfigurationViewModel(
         }
     }
 
+    override fun onDiscard() {}
+
     override fun onSave() {
         ConfigurationSetting.intentRecognitionOption.value = data.intentRecognitionOption
         ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value = data.isUseCustomIntentRecognitionHttpEndpoint

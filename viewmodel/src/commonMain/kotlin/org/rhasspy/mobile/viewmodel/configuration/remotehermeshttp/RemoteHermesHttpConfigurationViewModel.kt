@@ -60,6 +60,8 @@ class RemoteHermesHttpConfigurationViewModel(
         }
     }
 
+    override fun onDiscard() {}
+
     override fun onSave() {
         ConfigurationSetting.httpClientServerEndpointHost.value = data.httpClientServerEndpointHost
         ConfigurationSetting.httpClientServerEndpointPort.value = data.httpClientServerEndpointPort

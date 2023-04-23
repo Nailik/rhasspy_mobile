@@ -27,6 +27,7 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.test.R
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import java.io.File
 import kotlin.test.assertTrue
@@ -151,7 +152,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         composeTestRule.onNodeWithTag(ppn).onListItemSwitch().assertIsOn()
 
         //viewModel save is invoked
-        viewModel.onSave()
+        viewModel.onAction(Save)
         val newViewModel = WakeWordConfigurationViewModel(get())
 
         //jarvis is saved with enabled
@@ -189,7 +190,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
         composeTestRule.awaitIdle()
-        viewModel.onSave()
+        viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         val viewState = viewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
         assertTrue { viewState.customOptionsUi.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null }
@@ -203,7 +204,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         composeTestRule.onNodeWithCombinedTag(ppn, TestTag.Undo).performClick()
 
         //viewModel save is invoked
-        viewModel.onSave()
+        viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         val newViewModel = WakeWordConfigurationViewModel(get())
         //ppn is saved with ppn.ppn and enabled

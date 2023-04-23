@@ -48,6 +48,8 @@ class TextToSpeechConfigurationViewModel(
         }
     }
 
+    override fun onDiscard() {}
+
     override fun onSave() {
         ConfigurationSetting.textToSpeechOption.value = data.textToSpeechOption
         ConfigurationSetting.isUseCustomTextToSpeechHttpEndpoint.value = data.isUseCustomTextToSpeechHttpEndpoint

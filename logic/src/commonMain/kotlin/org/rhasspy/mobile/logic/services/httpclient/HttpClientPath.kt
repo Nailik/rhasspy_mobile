@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.logic.services.httpclient
 
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
+import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 
 enum class HttpClientPath(val path: String) : KoinComponent {
     PlayWav("api/play-wav"),
@@ -13,8 +13,12 @@ enum class HttpClientPath(val path: String) : KoinComponent {
         return path
     }
 
-    fun fromBaseConfiguration(): String {
-        val params = get<HttpClientServiceParams>()
+    fun stringFromParams(params: HttpClientServiceParams): String {
         return "${params.httpClientServerEndpointHost}:${params.httpClientServerEndpointPort}/$path"
     }
+
+    fun stringFromConfiguration(): String {
+        return "${ConfigurationSetting.httpClientServerEndpointHost.value}:${ConfigurationSetting.httpClientServerEndpointPort.value}/$path"
+    }
+
 }

@@ -19,6 +19,7 @@ import org.rhasspy.mobile.android.utils.awaitSaved
 import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SelectWakeWordPorcupineLanguage
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import kotlin.test.assertEquals
@@ -66,7 +67,7 @@ class PorcupineLanguageScreenTest : KoinComponent {
     fun testContent() = runTest {
         //English is saved
         viewModel.onEvent(SelectWakeWordPorcupineLanguage(PorcupineLanguageOption.EN))
-        viewModel.onSave()
+        viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
@@ -82,7 +83,7 @@ class PorcupineLanguageScreenTest : KoinComponent {
         composeTestRule.onNodeWithTag(PorcupineLanguageOption.DE).onListItemRadioButton().assertIsSelected()
 
         //save is invoked
-        viewModel.onSave()
+        viewModel.onAction(Save)
         val newViewModel = WakeWordConfigurationViewModel(get())
         //german is saved
         assertEquals(PorcupineLanguageOption.DE, newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState.porcupineLanguage)

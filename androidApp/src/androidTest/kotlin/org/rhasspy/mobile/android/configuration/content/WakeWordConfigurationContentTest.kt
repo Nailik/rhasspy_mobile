@@ -118,7 +118,7 @@ class WakeWordConfigurationContentTest : KoinComponent {
         //option is porcupine
         viewModel.onEvent(SelectWakeWordOption(WakeWordOption.Porcupine))
         viewModel.onEvent(UpdateWakeWordPorcupineAccessToken(""))
-        viewModel.onSave()
+        viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState
@@ -171,7 +171,7 @@ class WakeWordConfigurationContentTest : KoinComponent {
     fun testPorcupineWakeWordOptions() = runTest {
         //option is porcupine
         viewModel.onEvent(SelectWakeWordOption(WakeWordOption.Porcupine))
-        viewModel.onSave()
+        viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState

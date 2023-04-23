@@ -55,6 +55,8 @@ class IntentHandlingConfigurationViewModel(
         }
     }
 
+    override fun onDiscard() {}
+
     override fun onSave() {
         ConfigurationSetting.intentHandlingOption.value = data.intentHandlingOption
         ConfigurationSetting.intentHandlingHttpEndpoint.value = data.intentHandlingHttpEndpoint

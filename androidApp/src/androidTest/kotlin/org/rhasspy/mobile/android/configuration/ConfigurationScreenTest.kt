@@ -74,7 +74,7 @@ class ConfigurationScreenTest : KoinComponent {
         composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId).performScrollTo().performTextReplacement(textInputTest)
         composeTestRule.awaitIdle()
         //text field changed text
-        assertEquals(textInputTest, get<ConfigurationScreenViewModel>().viewState.value.siteId.text)
+        assertEquals(textInputTest, get<ConfigurationScreenViewModel>().viewState.value.siteId.text.value)
     }
 
 }

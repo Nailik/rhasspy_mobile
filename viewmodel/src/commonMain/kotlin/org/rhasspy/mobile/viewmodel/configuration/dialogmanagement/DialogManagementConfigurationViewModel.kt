@@ -32,6 +32,8 @@ class DialogManagementConfigurationViewModel(
         }
     }
 
+    override fun onDiscard() {}
+
     override fun onSave() {
         ConfigurationSetting.dialogManagementOption.value = data.dialogManagementOption
         ConfigurationSetting.textAsrTimeout.value = data.textAsrTimeout

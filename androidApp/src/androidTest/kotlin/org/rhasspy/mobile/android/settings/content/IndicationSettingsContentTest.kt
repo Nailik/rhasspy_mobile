@@ -24,6 +24,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScreens
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
@@ -60,7 +61,8 @@ class IndicationSettingsContentTest : KoinComponent {
                 val navController = rememberNavController()
 
                 CompositionLocalProvider(
-                    LocalMainNavController provides navController
+                    LocalMainNavController provides navController,
+                    LocalViewModelFactory provides get()
                 ) {
                     WakeWordIndicationSettingsContent()
                 }

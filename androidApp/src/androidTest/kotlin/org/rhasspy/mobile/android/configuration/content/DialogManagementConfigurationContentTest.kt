@@ -20,6 +20,7 @@ import org.rhasspy.mobile.android.utils.awaitSaved
 import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.SelectDialogManagementOption
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
 import kotlin.test.assertEquals
@@ -59,7 +60,7 @@ class DialogManagementConfigurationContentTest : KoinComponent {
     @Test
     fun testEndpoint() = runTest {
         viewModel.onEvent(SelectDialogManagementOption(DialogManagementOption.Disabled))
-        viewModel.onSave()
+        viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
 

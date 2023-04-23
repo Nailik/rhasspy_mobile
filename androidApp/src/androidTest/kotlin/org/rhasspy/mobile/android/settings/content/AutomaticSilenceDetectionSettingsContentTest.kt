@@ -17,6 +17,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.requestMicrophonePermissions
@@ -43,7 +44,8 @@ class AutomaticSilenceDetectionSettingsContentTest : KoinComponent {
 
             CompositionLocalProvider(
                 LocalMainNavController provides navController,
-                LocalSnackbarHostState provides snackbarHostState
+                LocalSnackbarHostState provides snackbarHostState,
+                LocalViewModelFactory provides get()
             ) {
                 AutomaticSilenceDetectionSettingsContent()
             }

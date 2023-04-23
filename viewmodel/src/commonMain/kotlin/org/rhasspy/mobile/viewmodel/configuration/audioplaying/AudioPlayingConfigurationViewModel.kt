@@ -61,6 +61,8 @@ class AudioPlayingConfigurationViewModel(
         }
     }
 
+    override fun onDiscard() {}
+
     override fun onSave() {
         ConfigurationSetting.audioPlayingOption.value = data.audioPlayingOption
         ConfigurationSetting.audioOutputOption.value = data.audioOutputOption

@@ -21,6 +21,7 @@ data class IntentRecognitionConfigurationViewState internal constructor(
     override val isTestingEnabled: Boolean get() = intentRecognitionOption != IntentRecognitionOption.Disabled
 
     val intentRecognitionHttpEndpointText: String
-        get() = if (isUseCustomIntentRecognitionHttpEndpoint) intentRecognitionHttpEndpoint else HttpClientPath.TextToIntent.fromBaseConfiguration()
+        get() = if (isUseCustomIntentRecognitionHttpEndpoint) intentRecognitionHttpEndpoint else
+            HttpClientPath.TextToIntent.stringFromConfiguration()
 
 }

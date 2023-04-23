@@ -80,7 +80,7 @@ private fun SpeechToTextOptionContent(
         when (it) {
             SpeechToTextOption.RemoteHTTP -> SpeechToTextHTTP(
                 isUseCustomSpeechToTextHttpEndpoint = viewState.isUseCustomSpeechToTextHttpEndpoint,
-                speechToTextHttpEndpoint = viewState.speechToTextHttpEndpoint,
+                speechToTextHttpEndpointText = viewState.speechToTextHttpEndpointText,
                 onAction = onAction
             )
 
@@ -101,7 +101,7 @@ private fun SpeechToTextOptionContent(
 @Composable
 private fun SpeechToTextHTTP(
     isUseCustomSpeechToTextHttpEndpoint: Boolean,
-    speechToTextHttpEndpoint: String,
+    speechToTextHttpEndpointText: String,
     onAction: (SpeechToTextConfigurationUiEvent) -> Unit
 ) {
 
@@ -119,7 +119,7 @@ private fun SpeechToTextHTTP(
         TextFieldListItem(
             enabled = isUseCustomSpeechToTextHttpEndpoint,
             modifier = Modifier.testTag(TestTag.Endpoint),
-            value = speechToTextHttpEndpoint,
+            value = speechToTextHttpEndpointText,
             onValueChange = { onAction(UpdateSpeechToTextHttpEndpoint(it)) },
             label = translate(MR.strings.speechToTextURL.stable, HttpClientPath.SpeechToText.path)
         )

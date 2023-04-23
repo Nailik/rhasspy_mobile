@@ -163,9 +163,9 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
         }
     }
 
-    open fun onDiscard() {}
+    protected abstract fun onDiscard()
 
-    abstract fun onSave()
+    protected abstract fun onSave()
 
     private fun startTest() {
         if (isTestRunning.value) {

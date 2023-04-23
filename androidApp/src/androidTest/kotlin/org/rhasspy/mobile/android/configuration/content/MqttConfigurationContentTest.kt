@@ -17,6 +17,7 @@ import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.utils.awaitSaved
 import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttEnabled
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttSSLEnabled
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
@@ -64,7 +65,7 @@ class MqttConfigurationContentTest : KoinComponent {
     @Test
     fun testMqttContent() = runTest {
         viewModel.onAction(SetMqttEnabled(false))
-        viewModel.onSave()
+        viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState
@@ -125,7 +126,7 @@ class MqttConfigurationContentTest : KoinComponent {
     @Test
     fun testMqttConnectionSettings() = runTest {
         viewModel.onAction(SetMqttEnabled(true))
-        viewModel.onSave()
+        viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState
@@ -189,7 +190,7 @@ class MqttConfigurationContentTest : KoinComponent {
     fun testMqttSSL() = runTest {
         viewModel.onAction(SetMqttEnabled(true))
         viewModel.onAction(SetMqttSSLEnabled(false))
-        viewModel.onSave()
+        viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState
@@ -235,7 +236,7 @@ class MqttConfigurationContentTest : KoinComponent {
     @Test
     fun testMqttConnectionTiming() = runTest {
         viewModel.onAction(SetMqttEnabled(true))
-        viewModel.onSave()
+        viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState
