@@ -22,10 +22,7 @@ import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.test.R
-import org.rhasspy.mobile.android.utils.onListItemRadioButton
-import org.rhasspy.mobile.android.utils.onNodeWithCombinedTag
-import org.rhasspy.mobile.android.utils.onNodeWithTag
-import org.rhasspy.mobile.android.utils.requestExternalStoragePermissions
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.service.option.AudioOutputOption.Sound
 import org.rhasspy.mobile.data.sounds.SoundOption
@@ -124,6 +121,7 @@ abstract class IndicationSoundScreenTest(
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
 
         //file is added to list
+        composeTestRule.waitUntilExists(hasTag(fileName))
         composeTestRule.onNodeWithTag(fileName).assertIsDisplayed()
         //file is selected
         composeTestRule.onNodeWithTag(fileName).onListItemRadioButton().assertIsSelected()
@@ -196,11 +194,13 @@ abstract class IndicationSoundScreenTest(
 
         //Disabled sound is saved
         assertTrue { otherViewModel.viewState.value.isSoundIndicationEnabled }
+        composeTestRule.awaitIdle()
         //Disabled sound ist selected
         composeTestRule.onNodeWithTag(TestTag.Disabled).onListItemRadioButton().assertIsSelected()
 
         //user clicks default
         composeTestRule.onNodeWithTag(TestTag.Default).performClick()
+        composeTestRule.awaitIdle()
         //default is selected
         composeTestRule.onNodeWithTag(TestTag.Default).onListItemRadioButton().assertIsSelected()
 
@@ -208,9 +208,12 @@ abstract class IndicationSoundScreenTest(
         composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
         //user clicks file
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
+        composeTestRule.awaitIdle()
 
         //file is added to list
+        composeTestRule.waitUntilExists(hasTag(fileName))
         composeTestRule.onNodeWithTag(fileName).assertIsDisplayed()
+        composeTestRule.awaitIdle()
         //file is selected
         composeTestRule.onNodeWithTag(fileName).onListItemRadioButton().assertIsSelected()
 
