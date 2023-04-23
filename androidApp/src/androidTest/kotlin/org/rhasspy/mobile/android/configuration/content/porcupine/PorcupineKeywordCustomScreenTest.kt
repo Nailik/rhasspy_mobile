@@ -148,11 +148,13 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordCustomScreen).assertIsDisplayed()
         //jarvis is added to list and enabled
+        composeTestRule.waitUntilExists(hasTag(ppn), 5000)
         composeTestRule.onNodeWithTag(ppn).assertIsDisplayed()
         composeTestRule.onNodeWithTag(ppn).onListItemSwitch().assertIsOn()
 
         //viewModel save is invoked
         viewModel.onAction(Save)
+        composeTestRule.awaitSaved(viewModel)
         val newViewModel = WakeWordConfigurationViewModel(get())
 
         //jarvis is saved with enabled

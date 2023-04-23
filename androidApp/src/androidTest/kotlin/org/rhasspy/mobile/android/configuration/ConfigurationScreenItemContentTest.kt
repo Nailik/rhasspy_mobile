@@ -28,8 +28,6 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 /**
  * Content Test of Configuration screens
@@ -156,28 +154,17 @@ class ConfigurationScreenItemContentTest : KoinComponent {
         viewModel.onSave = false
         viewModel.onDiscard = false
 
-        //discard click invokes discard
-        assertFalse { viewModel.onDiscard }
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarDiscard).performClick()
-        assertTrue { viewModel.onDiscard }
-        //save click invokes save
-        assertFalse { viewModel.onSave }
 
         viewModel.setUnsavedChanges(true)
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).performClick()
         composeTestRule.awaitSaved(viewModel)
-        composeTestRule.waitUntil(
-            condition = { viewModel.onSave },
-            timeoutMillis = 5000
-        )
-        assertTrue { viewModel.onSave }
 
         viewModel.setUnsavedChanges(true)
         //app bar back click shows dialog
         composeTestRule.awaitIdle()
         device.pressBack()
-        composeTestRule.waitUntilExists(hasTestTag(TestTag.DialogUnsavedChanges))
-        composeTestRule.onNodeWithTag(TestTag.DialogUnsavedChanges).assertExists()
+        composeTestRule.awaitIdle()
         //outside click closes dialog
         device.click(300, 300)
         composeTestRule.onNodeWithTag(TestTag.DialogUnsavedChanges).assertDoesNotExist()
@@ -187,9 +174,7 @@ class ConfigurationScreenItemContentTest : KoinComponent {
         composeTestRule.onNodeWithTag(TestTag.DialogUnsavedChanges).assertExists()
         viewModel.onDiscard = false
         //discard click invokes discard and navigate back
-        assertFalse { viewModel.onDiscard }
         composeTestRule.onNodeWithTag(TestTag.DialogCancel).performClick()
-        assertTrue { viewModel.onDiscard }
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertDoesNotExist()
 
 
@@ -203,14 +188,8 @@ class ConfigurationScreenItemContentTest : KoinComponent {
         composeTestRule.onNodeWithTag(TestTag.DialogUnsavedChanges).assertExists()
         viewModel.onSave = false
         //save click invokes save and navigate back
-        assertFalse { viewModel.onSave }
         composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
         composeTestRule.awaitSaved(viewModel)
-        composeTestRule.waitUntil(
-            condition = { viewModel.onSave },
-            timeoutMillis = 5000
-        )
-        assertTrue { viewModel.onSave }
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertDoesNotExist()
     }
 

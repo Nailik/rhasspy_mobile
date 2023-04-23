@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.android.utils
 
+import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
@@ -8,7 +9,7 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 class TestService : IService(LogType.AudioPlayingService)
 
 data class TestViewState(
-    val data: String = ""
+    val data: Boolean = true
 ) : IConfigurationEditViewState() {
 
     override val isTestingEnabled: Boolean
@@ -34,7 +35,7 @@ class TestViewModel : IConfigurationViewModel<TestViewState>(
 
     fun setUnsavedChanges(value: Boolean) {
         if (value) {
-            contentViewState.value = TestViewState("a")
+            contentViewState.update { it.copy(data = !it.data) }
         } else {
             contentViewState.value = TestViewState()
         }

@@ -30,6 +30,9 @@ fun SemanticsNodeInteraction.onListItemRadioButton(): SemanticsNodeInteraction {
 fun hasTestTag(testTag: Enum<*>): SemanticsMatcher =
     SemanticsMatcher.expectValue(SemanticsProperties.TestTag, testTag.name)
 
+fun hasTag(tag: String): SemanticsMatcher =
+    SemanticsMatcher.expectValue(SemanticsProperties.TestTag, tag)
+
 fun hasCombinedTestTag(tag1: Enum<*>, tag2: Enum<*>): SemanticsMatcher =
     SemanticsMatcher.expectValue(SemanticsProperties.TestTag, "${tag1.name}${tag2.name}")
 
