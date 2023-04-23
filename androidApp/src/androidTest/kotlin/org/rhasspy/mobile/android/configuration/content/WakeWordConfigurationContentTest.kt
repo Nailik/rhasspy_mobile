@@ -24,6 +24,7 @@ import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.utils.awaitSaved
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.WakeWordOption
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
@@ -76,7 +77,7 @@ class WakeWordConfigurationContentTest : KoinComponent {
     fun testWakeWordContent() = runTest {
         //option is disable
         viewModel.onEvent(SelectWakeWordOption(WakeWordOption.Disabled))
-        viewModel.save()
+        viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState

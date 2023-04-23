@@ -18,7 +18,6 @@ data class SpeechToTextConfigurationViewState internal constructor(
 
     val speechToTextOptions: ImmutableList<SpeechToTextOption> = SpeechToTextOption.values().toImmutableList()
 
-    override val hasUnsavedChanges: Boolean get() = this != SpeechToTextConfigurationViewState()
     override val isTestingEnabled: Boolean get() = speechToTextOption != SpeechToTextOption.Disabled
 
 }

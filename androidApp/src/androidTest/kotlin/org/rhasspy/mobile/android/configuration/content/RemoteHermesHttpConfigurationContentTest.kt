@@ -17,6 +17,7 @@ import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.utils.awaitSaved
 import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.SetHttpSSLVerificationDisabled
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewModel
 import kotlin.test.assertEquals
@@ -63,7 +64,7 @@ class RemoteHermesHttpConfigurationContentTest : KoinComponent {
     @Test
     fun testHttpContent() = runTest {
         viewModel.onEvent(SetHttpSSLVerificationDisabled(true))
-        viewModel.save()
+        viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState

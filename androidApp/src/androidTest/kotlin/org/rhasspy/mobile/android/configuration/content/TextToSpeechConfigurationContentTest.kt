@@ -19,6 +19,7 @@ import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.SelectTextToSpeechOption
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
 import kotlin.test.assertEquals
@@ -70,7 +71,7 @@ class TextToSpeechConfigurationContentTest : KoinComponent {
     @Test
     fun testEndpoint() = runTest {
         viewModel.onEvent(SelectTextToSpeechOption(TextToSpeechOption.Disabled))
-        viewModel.save()
+        viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState

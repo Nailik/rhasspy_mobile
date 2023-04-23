@@ -148,7 +148,7 @@ fun SemanticsNodeInteractionsProvider.onNodeWithText(
 
 fun <V : IConfigurationEditViewState> ComposeContentTestRule.awaitSaved(viewModel: IConfigurationViewModel<V>) {
     this.waitUntil(
-        condition = { !viewModel.viewState.value.isLoading },
+        condition = { !viewModel.viewState.value.hasUnsavedChanges },
         timeoutMillis = 5000
     )
 }

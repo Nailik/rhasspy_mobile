@@ -20,6 +20,7 @@ import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithCombinedTag
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.PorcupineKeywordOption
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -131,7 +132,7 @@ class PorcupineKeywordDefaultScreenTest : KoinComponent {
         ).assertDoesNotExist()
 
         //viewModel save is invoked
-        viewModel.save()
+        viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         val newViewModel = WakeWordConfigurationViewModel(get())
         newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState.defaultOptions.forEach {

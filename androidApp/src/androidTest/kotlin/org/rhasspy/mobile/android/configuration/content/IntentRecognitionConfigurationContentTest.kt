@@ -19,6 +19,7 @@ import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SelectIntentRecognitionOption
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
 import kotlin.test.assertEquals
@@ -70,7 +71,7 @@ class IntentRecognitionConfigurationContentTest : KoinComponent {
     @Test
     fun testEndpoint() = runTest {
         viewModel.onEvent(SelectIntentRecognitionOption(IntentRecognitionOption.Disabled))
-        viewModel.save()
+        viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState

@@ -34,7 +34,6 @@ data class RemoteHermesHttpConfigurationViewState internal constructor(
             ConfigurationSetting.textToSpeechOption.value == TextToSpeechOption.RemoteHTTP
                     && !ConfigurationSetting.isUseCustomSpeechToTextHttpEndpoint.value
 
-    override val hasUnsavedChanges: Boolean get() = this != RemoteHermesHttpConfigurationViewState()
     override val isTestingEnabled: Boolean
         get() = httpClientServerEndpointHost.isNotBlank() &&
                 (ConfigurationSetting.speechToTextOption.value == SpeechToTextOption.RemoteHTTP ||

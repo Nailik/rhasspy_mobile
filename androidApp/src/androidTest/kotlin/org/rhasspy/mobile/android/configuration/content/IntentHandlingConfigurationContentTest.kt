@@ -19,6 +19,7 @@ import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingOption
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
 import kotlin.test.assertEquals
@@ -63,7 +64,7 @@ class IntentHandlingConfigurationContentTest : KoinComponent {
     @Test
     fun testEndpoint() = runTest {
         viewModel.onEvent(SelectIntentHandlingOption(IntentHandlingOption.Disabled))
-        viewModel.save()
+        viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState
@@ -122,7 +123,7 @@ class IntentHandlingConfigurationContentTest : KoinComponent {
     @Test
     fun testHomeAssistant() = runTest {
         viewModel.onEvent(SelectIntentHandlingOption(IntentHandlingOption.Disabled))
-        viewModel.save()
+        viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val viewState = viewModel.viewState.value.editViewState

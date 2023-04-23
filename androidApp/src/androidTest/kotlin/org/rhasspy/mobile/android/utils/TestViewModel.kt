@@ -7,10 +7,10 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 
 class TestService : IService(LogType.AudioPlayingService)
 
-class TestViewState(private val isHasUnsavedChanges: Boolean = false) : IConfigurationEditViewState() {
+data class TestViewState(
+    val data: String = ""
+) : IConfigurationEditViewState() {
 
-    override val hasUnsavedChanges: Boolean
-        get() = isHasUnsavedChanges
     override val isTestingEnabled: Boolean
         get() = false
 
@@ -32,11 +32,13 @@ class TestViewModel : IConfigurationViewModel<TestViewState>(
         onSave = true
     }
 
-    override fun initializeTestParams() {
-
+    fun setUnsavedChanges(value: Boolean) {
+        if(value) {
+            contentViewState.value = TestViewState("a")
+        } else {
+            contentViewState.value = TestViewState()
+        }
     }
 
-    fun setContentViewState(testViewState: TestViewState) {
-        contentViewState.value = testViewState
-    }
+
 }

@@ -15,6 +15,7 @@ import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.updateList
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.MicrophonePermissionAllowed
@@ -53,8 +54,8 @@ class WakeWordConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            MicrophonePermissionAllowed -> if (!contentViewState.value.hasUnsavedChanges) {
-                save()
+            MicrophonePermissionAllowed -> if (!viewState.value.hasUnsavedChanges) {
+                onAction(Save)
             }
 
             TestStartWakeWord -> startWakeWordDetection()

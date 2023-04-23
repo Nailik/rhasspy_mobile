@@ -20,7 +20,6 @@ data class AudioPlayingConfigurationViewState internal constructor(
     val audioPlayingOptionList: ImmutableList<AudioPlayingOption> = AudioPlayingOption.values().toImmutableList()
     val audioOutputOptionList: ImmutableList<AudioOutputOption> = AudioOutputOption.values().toImmutableList()
 
-    override val hasUnsavedChanges: Boolean get() = this != AudioPlayingConfigurationViewState()
     override val isTestingEnabled: Boolean get() = audioPlayingOption != AudioPlayingOption.Disabled
 
 }

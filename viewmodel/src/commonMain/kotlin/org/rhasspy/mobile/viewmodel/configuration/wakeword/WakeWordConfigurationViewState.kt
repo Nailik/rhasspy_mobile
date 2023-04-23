@@ -25,7 +25,6 @@ data class WakeWordConfigurationViewState internal constructor(
         get() =
             !MicrophonePermission.granted.value && (wakeWordOption == WakeWordOption.Porcupine || wakeWordOption == WakeWordOption.Udp)
 
-    override val hasUnsavedChanges: Boolean get() = this != WakeWordConfigurationViewState()
     override val isTestingEnabled: Boolean get() = wakeWordOption != WakeWordOption.Disabled
 
 
@@ -38,7 +37,7 @@ data class WakeWordConfigurationViewState internal constructor(
         val porcupineLanguage: PorcupineLanguageOption = ConfigurationSetting.wakeWordPorcupineLanguage.value
     ) {
         val languageOptions: ImmutableList<PorcupineLanguageOption> = PorcupineLanguageOption.values().toImmutableList()
-        val customOptions: ImmutableList<PorcupineCustomKeyword> get() = customOptionsUi.filter { !it.deleted }.map { it.keyword }.toImmutableList()
+
         val keywordCount: Int get() = defaultOptions.count { it.isEnabled } + customOptionsUi.count { it.keyword.isEnabled }
 
         @Stable

@@ -21,7 +21,6 @@ data class WebServerConfigurationViewState internal constructor(
 
     val httpServerSSLKeyStoreFileName: String? get() = httpServerSSLKeyStoreFile?.name
 
-    override val hasUnsavedChanges: Boolean get() = this != WebServerConfigurationViewState()
     override val isTestingEnabled: Boolean get() = isHttpServerEnabled
 
 

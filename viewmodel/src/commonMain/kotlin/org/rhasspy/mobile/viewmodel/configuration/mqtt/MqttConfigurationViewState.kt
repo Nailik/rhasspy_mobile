@@ -27,7 +27,6 @@ data class MqttConfigurationViewState internal constructor(
     val mqttRetryInterval: Long get() = mqttRetryIntervalText.toLongOrZero()
     val mqttKeyStoreFileName: String? get() = mqttKeyStoreFile?.name
 
-    override val hasUnsavedChanges: Boolean get() = this != MqttConfigurationViewState()
     override val isTestingEnabled: Boolean get() = isMqttEnabled
 
 

@@ -55,10 +55,10 @@ enum class ConfigurationContentScreens(val route: String) {
  */
 @Composable
 fun <V : IConfigurationEditViewState> ConfigurationScreenItemContent(
+    modifier: Modifier,
     viewState: ConfigurationViewState<V>,
     onAction: (IConfigurationUiEvent) -> Unit,
     onConsumed: (IConfigurationUiNavigate) -> Unit,
-    modifier: Modifier,
     config: ConfigurationScreenConfig = ConfigurationScreenConfig(MR.strings.save.stable),
     testContent: (@Composable () -> Unit)? = null,
     content: LazyListScope.() -> Unit

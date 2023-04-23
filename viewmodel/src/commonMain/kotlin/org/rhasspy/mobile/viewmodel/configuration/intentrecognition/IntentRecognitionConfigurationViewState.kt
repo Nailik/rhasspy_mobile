@@ -18,7 +18,6 @@ data class IntentRecognitionConfigurationViewState internal constructor(
 
     val intentRecognitionOptionList: ImmutableList<IntentRecognitionOption> = IntentRecognitionOption.values().toImmutableList()
 
-    override val hasUnsavedChanges: Boolean get() = this != IntentRecognitionConfigurationViewState()
     override val isTestingEnabled: Boolean get() = intentRecognitionOption != IntentRecognitionOption.Disabled
 
     val intentRecognitionHttpEndpointText: String

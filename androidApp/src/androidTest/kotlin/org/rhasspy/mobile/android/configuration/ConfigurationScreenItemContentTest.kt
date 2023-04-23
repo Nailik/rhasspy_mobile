@@ -24,10 +24,7 @@ import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.utils.TestViewModel
-import org.rhasspy.mobile.android.utils.TestViewState
-import org.rhasspy.mobile.android.utils.assertTextEquals
-import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -142,13 +139,13 @@ class ConfigurationScreenItemContentTest : KoinComponent {
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertExists()
 
         //hasUnsavedChanges false
-        viewModel.setContentViewState(TestViewState(isHasUnsavedChanges = false))
+        viewModel.setUnsavedChanges(false)
         //save and discard disabled
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarDiscard).assertIsNotEnabled()
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsNotEnabled()
 
         //hasUnsavedChanges true
-        viewModel.setContentViewState(TestViewState(isHasUnsavedChanges = true))
+        viewModel.setUnsavedChanges(true)
         //save and discard enabled
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarDiscard).assertIsEnabled()
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled()
@@ -162,15 +159,21 @@ class ConfigurationScreenItemContentTest : KoinComponent {
         assertTrue { viewModel.onDiscard }
         //save click invokes save
         assertFalse { viewModel.onSave }
-        viewModel.setContentViewState(TestViewState(isHasUnsavedChanges = true))
+
+        viewModel.setUnsavedChanges(true)
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).performClick()
+        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.waitUntil(
+            condition = { viewModel.onSave },
+            timeoutMillis = 5000
+        )
         assertTrue { viewModel.onSave }
 
-        viewModel.setContentViewState(TestViewState(isHasUnsavedChanges = true))
+        viewModel.setUnsavedChanges(true)
         //app bar back click shows dialog
         composeTestRule.awaitIdle()
         device.pressBack()
-        //composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick() TOO often not found while running test
+        composeTestRule.waitUntilExists(hasTestTag(TestTag.DialogUnsavedChanges))
         composeTestRule.onNodeWithTag(TestTag.DialogUnsavedChanges).assertExists()
         //outside click closes dialog
         device.click(300, 300)
@@ -190,7 +193,7 @@ class ConfigurationScreenItemContentTest : KoinComponent {
         //open screen
         composeTestRule.onNodeWithText(btnStartTest).performClick()
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertExists()
-        viewModel.setContentViewState(TestViewState(isHasUnsavedChanges = true))
+        viewModel.setUnsavedChanges(true)
 
         //back click shows dialog
         device.pressBack()
@@ -199,7 +202,11 @@ class ConfigurationScreenItemContentTest : KoinComponent {
         //save click invokes save and navigate back
         assertFalse { viewModel.onSave }
         composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
-        composeTestRule.awaitIdle()
+        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.waitUntil(
+            condition = { viewModel.onSave },
+            timeoutMillis = 5000
+        )
         assertTrue { viewModel.onSave }
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertDoesNotExist()
     }

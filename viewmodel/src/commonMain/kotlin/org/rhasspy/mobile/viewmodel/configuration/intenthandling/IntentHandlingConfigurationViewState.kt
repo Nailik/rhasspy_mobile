@@ -21,7 +21,6 @@ data class IntentHandlingConfigurationViewState internal constructor(
 
     val intentHandlingOptionList: ImmutableList<IntentHandlingOption> = IntentHandlingOption.values().toList().toImmutableList()
 
-    override val hasUnsavedChanges: Boolean get() = this != IntentHandlingConfigurationViewState()
     override val isTestingEnabled: Boolean get() = intentHandlingOption != IntentHandlingOption.Disabled
 
 }

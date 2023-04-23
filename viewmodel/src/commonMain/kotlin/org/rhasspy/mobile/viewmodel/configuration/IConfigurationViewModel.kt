@@ -96,7 +96,7 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
             StartTest -> startTest()
             StopTest -> stopTest()
             BackPress -> {
-                if (contentViewState.value.hasUnsavedChanges) {
+                if (_viewState.value.hasUnsavedChanges) {
                     _viewState.update { it.copy(showUnsavedChangesDialog = true) }
                 } else {
                     _viewState.update { it.copy(popBackStack = PopBackStack(Triggered)) }
@@ -132,7 +132,7 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
     protected var testScope = CoroutineScope(Dispatchers.Default)
         private set
 
-    fun save() {
+    private fun save() {
         viewModelScope.launch(Dispatchers.Default) {
             onSave()
             contentViewState.value = initialViewState()
@@ -158,9 +158,7 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
                     popBackStack = PopBackStack(Triggered)
                 )
             } else {
-                it.copy(
-                    hasUnsavedChanges = false
-                )
+                it.copy(hasUnsavedChanges = false)
             }
         }
     }
