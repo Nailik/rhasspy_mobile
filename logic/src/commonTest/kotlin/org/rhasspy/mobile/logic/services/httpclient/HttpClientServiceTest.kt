@@ -1,10 +1,11 @@
 package org.rhasspy.mobile.logic.services.httpclient
 
-import org.junit.*
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class HttpClientServiceTest {
 
-    @Before
+    @BeforeTest
     fun setUp() {
     }
 
