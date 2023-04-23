@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
@@ -29,7 +30,7 @@ class MicrophoneFabViewStateCreator(
                 serviceMiddleware.isUserActionEnabled,
                 wakeWordService.isRecording,
                 MicrophonePermission.granted,
-            ).collect {
+            ).onEach {
                 viewState.value = getViewState()
             }
         }

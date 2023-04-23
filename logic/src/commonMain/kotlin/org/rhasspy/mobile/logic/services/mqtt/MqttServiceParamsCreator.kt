@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.mqtt.MqttServiceConnectionOptions
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
@@ -30,7 +31,7 @@ class MqttServiceParamsCreator {
                 ConfigurationSetting.mqttKeepAliveInterval.data,
                 ConfigurationSetting.isUseSpeechToTextMqttSilenceDetection.data,
                 ConfigurationSetting.audioPlayingMqttSiteId.data
-            ).collect {
+            ).onEach {
                 paramsFlow.value = getParams()
             }
         }

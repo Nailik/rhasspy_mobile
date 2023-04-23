@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.combineStateFlow
@@ -17,7 +18,7 @@ class IntentRecognitionServiceParamsCreator {
         updaterScope.launch {
             combineStateFlow(
                 ConfigurationSetting.intentRecognitionOption.data
-            ).collect {
+            ).onEach {
                 paramsFlow.value = getParams()
             }
         }

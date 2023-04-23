@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.service.ServiceState
@@ -69,7 +70,7 @@ class ConfigurationScreenViewStateCreator(
                 ConfigurationSetting.dialogManagementOption.data,
                 ConfigurationSetting.intentHandlingOption.data,
                 mqttService.isConnected
-            ).collect {
+            ).onEach {
                 viewState.value = getViewState()
             }
         }
