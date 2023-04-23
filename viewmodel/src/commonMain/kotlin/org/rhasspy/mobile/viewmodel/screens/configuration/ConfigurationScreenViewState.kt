@@ -25,7 +25,7 @@ data class ConfigurationScreenViewState internal constructor(
 
     @Stable
     data class SiteIdViewState internal constructor(
-        val text: String
+        val text: StateFlow<String>
     )
 
     @Stable
@@ -42,7 +42,7 @@ data class ConfigurationScreenViewState internal constructor(
 
     @Stable
     data class MqttViewState internal constructor(
-        val isMQTTConnected: StateFlow<Boolean>,
+        val isMQTTConnected: Boolean,
         val serviceState: ServiceViewState
     )
 

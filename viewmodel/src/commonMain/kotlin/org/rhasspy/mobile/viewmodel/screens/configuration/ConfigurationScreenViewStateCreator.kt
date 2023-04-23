@@ -39,6 +39,20 @@ class ConfigurationScreenViewStateCreator(
     private val updaterScope = CoroutineScope(Dispatchers.Default)
 
     private val scrollToErrorEvent = MutableStateFlow(ScrollToErrorEventIState(StateEvent.Consumed, 0))
+
+    private val serviceStateFlow = combineStateFlow(
+        httpClientService.serviceState,
+        webServerService.serviceState,
+        mqttService.serviceState,
+        wakeWordService.serviceState,
+        speechToTextService.serviceState,
+        intentRecognitionService.serviceState,
+        textToSpeechService.serviceState,
+        audioPlayingService.serviceState,
+        dialogManagerService.serviceState,
+        intentHandlingService.serviceState
+    )
+
     private val viewState = MutableStateFlow(getViewState())
 
     operator fun invoke(): StateFlow<ConfigurationScreenViewState> {
@@ -53,7 +67,8 @@ class ConfigurationScreenViewStateCreator(
                 ConfigurationSetting.textToSpeechOption.data,
                 ConfigurationSetting.audioPlayingOption.data,
                 ConfigurationSetting.dialogManagementOption.data,
-                ConfigurationSetting.intentHandlingOption.data
+                ConfigurationSetting.intentHandlingOption.data,
+                mqttService.isConnected
             ).collect {
                 viewState.value = getViewState()
             }
@@ -71,23 +86,11 @@ class ConfigurationScreenViewStateCreator(
         }
     }
 
-    private fun getViewState(): ConfigurationScreenViewState {
-        val serviceStateFlow = combineStateFlow(
-            httpClientService.serviceState,
-            webServerService.serviceState,
-            mqttService.serviceState,
-            wakeWordService.serviceState,
-            speechToTextService.serviceState,
-            intentRecognitionService.serviceState,
-            textToSpeechService.serviceState,
-            audioPlayingService.serviceState,
-            dialogManagerService.serviceState,
-            intentHandlingService.serviceState
-        )
 
+    private fun getViewState(): ConfigurationScreenViewState {
         return ConfigurationScreenViewState(
             siteId = SiteIdViewState(
-                text = ConfigurationSetting.siteId.value
+                text = ConfigurationSetting.siteId.data
             ),
             remoteHermesHttp = RemoteHermesHttpViewState(
                 isHttpSSLVerificationEnabled = ConfigurationSetting.isHttpClientSSLVerificationDisabled.value,
@@ -98,7 +101,7 @@ class ConfigurationScreenViewStateCreator(
                 serviceState = ServiceViewState(webServerService.serviceState)
             ),
             mqtt = MqttViewState(
-                isMQTTConnected = mqttService.isConnected,
+                isMQTTConnected = mqttService.isConnected.value,
                 serviceState = ServiceViewState(mqttService.serviceState)
             ),
             wakeWord = WakeWordViewState(

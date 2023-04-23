@@ -2,8 +2,8 @@ package org.rhasspy.mobile.android.configuration
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.*
@@ -26,12 +26,10 @@ import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent
+import org.rhasspy.mobile.viewmodel.screens.configuration.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToError
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
-import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 /**
  * configuration screens with list items that open bottom sheet
@@ -40,6 +38,21 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 fun ConfigurationScreen() {
     val viewModel: ConfigurationScreenViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
+
+    ConfigurationScreenContent(
+        onEvent = viewModel::onEvent,
+        onConsumed = viewModel::onConsumed,
+        viewState = viewState
+    )
+
+}
+
+@Composable
+fun ConfigurationScreenContent(
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
+    onConsumed: (IConfigurationScreenUiStateEvent) -> Unit,
+    viewState: ConfigurationScreenViewState
+) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -51,87 +64,73 @@ fun ConfigurationScreen() {
     ) { paddingValues ->
 
         val hasError by viewState.hasError.collectAsState()
-        val scrollState = rememberLazyListState()
+        val scrollState = rememberScrollState()
         val coroutineScope = rememberCoroutineScope()
 
         UiEventEffect(
             event = viewState.scrollToErrorEvent.collectAsState().value,
-            onConsumed = viewModel::onConsumed
+            onConsumed = onConsumed
         ) {
-            //+1 to account for sticky header
             coroutineScope.launch {
-                scrollState.animateScrollToItem(it.firstErrorIndex + 1)
+                scrollState.animateScrollTo(it.firstErrorIndex)
             }
         }
 
-        LazyColumn(
+
+        if (hasError) {
+            ServiceErrorInformation(onEvent)
+        }
+
+        Column(
             modifier = Modifier
                 .testTag(TestTag.List)
                 .padding(paddingValues)
-                .fillMaxSize(),
-            state = scrollState
+                .fillMaxSize()
+                .verticalScroll(scrollState)
         ) {
 
-            if (hasError) {
-                stickyHeader {
-                    ServiceErrorInformation(viewModel::onEvent)
-                }
-            }
+            SiteId(viewState.siteId, onEvent)
+            CustomDivider()
 
-            item {
-                SiteId(viewState.siteId, viewModel::onEvent)
-                CustomDivider()
-            }
 
-            item {
-                RemoteHermesHttp(viewState.remoteHermesHttp)
-                CustomDivider()
-            }
+            RemoteHermesHttp(viewState.remoteHermesHttp)
+            CustomDivider()
 
-            item {
-                Webserver(viewState.webserver)
-                CustomDivider()
-            }
 
-            item {
-                Mqtt(viewState.mqtt)
-                CustomDivider()
-            }
+            Webserver(viewState.webserver)
+            CustomDivider()
 
-            item {
-                WakeWord(viewState.wakeWord)
-                CustomDivider()
-            }
 
-            item {
-                SpeechToText(viewState.speechToText)
-                CustomDivider()
-            }
+            Mqtt(viewState.mqtt)
+            CustomDivider()
 
-            item {
-                IntentRecognition(viewState.intentRecognition)
-                CustomDivider()
-            }
 
-            item {
-                TextToSpeech(viewState.textToSpeech)
-                CustomDivider()
-            }
+            WakeWord(viewState.wakeWord)
+            CustomDivider()
 
-            item {
-                AudioPlaying(viewState.audioPlaying)
-                CustomDivider()
-            }
 
-            item {
-                DialogManagement(viewState.dialogManagement)
-                CustomDivider()
-            }
+            SpeechToText(viewState.speechToText)
+            CustomDivider()
 
-            item {
-                IntentHandling(viewState.intentHandling)
-                CustomDivider()
-            }
+
+            IntentRecognition(viewState.intentRecognition)
+            CustomDivider()
+
+
+            TextToSpeech(viewState.textToSpeech)
+            CustomDivider()
+
+
+            AudioPlaying(viewState.audioPlaying)
+            CustomDivider()
+
+
+            DialogManagement(viewState.dialogManagement)
+            CustomDivider()
+
+
+            IntentHandling(viewState.intentHandling)
+            CustomDivider()
 
         }
     }
@@ -237,7 +236,7 @@ private fun SiteId(
 
     TextFieldListItem(
         modifier = Modifier.testTag(TestTag.ConfigurationSiteId),
-        value = viewState.text,
+        value = viewState.text.collectAsState().value,
         onValueChange = { onEvent(SiteIdChange(it)) },
         label = MR.strings.siteId.stable,
     )
@@ -283,11 +282,9 @@ private fun Webserver(viewState: WebServerViewState) {
 @Composable
 private fun Mqtt(viewState: MqttViewState) {
 
-    val isMQTTConnected by viewState.isMQTTConnected.collectAsState()
-
     ConfigurationListItem(
         text = MR.strings.mqtt.stable,
-        secondaryText = if (isMQTTConnected) MR.strings.connected.stable else MR.strings.notConnected.stable,
+        secondaryText = if (viewState.isMQTTConnected) MR.strings.connected.stable else MR.strings.notConnected.stable,
         screen = ConfigurationScreenType.MqttConfiguration,
         serviceViewState = viewState.serviceState
     )
