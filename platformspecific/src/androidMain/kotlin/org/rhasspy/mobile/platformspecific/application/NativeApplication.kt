@@ -84,10 +84,6 @@ actual abstract class NativeApplication : MultiDexApplication() {
             Runtime.getRuntime().exit(0)
         }
     }
-
-    actual abstract suspend fun reloadServiceModules()
-    actual abstract suspend fun startTest()
-    actual abstract suspend fun stopTest()
     actual abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)
     actual abstract val isHasStarted: StateFlow<Boolean>
     actual abstract fun resume()

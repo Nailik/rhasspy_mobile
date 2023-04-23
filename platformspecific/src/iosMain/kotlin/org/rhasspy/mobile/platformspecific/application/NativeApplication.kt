@@ -10,9 +10,6 @@ actual abstract class NativeApplication {
         get() = TODO("Not yet implemented")
     actual abstract val isHasStarted: StateFlow<Boolean>
     actual abstract suspend fun updateWidgetNative()
-    actual abstract suspend fun reloadServiceModules()
-    actual abstract suspend fun startTest()
-    actual abstract suspend fun stopTest()
     actual abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)
     actual fun isInstrumentedTest(): Boolean {
         TODO("Not yet implemented")
@@ -28,4 +25,5 @@ actual abstract class NativeApplication {
     }
 
     actual abstract fun resume()
+    actual abstract fun startRecordingAction()
 }

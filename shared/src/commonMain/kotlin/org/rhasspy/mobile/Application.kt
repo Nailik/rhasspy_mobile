@@ -12,9 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
-import org.koin.core.context.unloadKoinModules
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.logic.logger.FileLogger
@@ -92,25 +90,6 @@ abstract class Application : NativeApplication(), KoinComponent {
     abstract fun stopOverlay()
 
     abstract suspend fun updateWidget()
-
-    override suspend fun startTest() {
-        BackgroundService.stop()
-        stopOverlay()
-        unloadKoinModules(listOf(viewModelModule, serviceModule))
-        loadKoinModules(listOf(serviceModule, viewModelModule))
-    }
-
-    override suspend fun stopTest() {
-        reloadServiceModules()
-    }
-
-    override suspend fun reloadServiceModules() {
-        stopOverlay()
-        unloadKoinModules(listOf(viewModelModule, serviceModule))
-        loadKoinModules(listOf(serviceModule, viewModelModule))
-        startServices()
-        startOverlay()
-    }
 
     override fun resume() {
         MicrophonePermission.update()

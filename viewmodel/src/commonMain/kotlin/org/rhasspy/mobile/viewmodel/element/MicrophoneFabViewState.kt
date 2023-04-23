@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.viewmodel.element
 
 import androidx.compose.runtime.Stable
-import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceState
 
 @Stable
@@ -15,13 +14,13 @@ data class MicrophoneFabViewState internal constructor(
 ) {
 
     constructor(
-        wakeWordOption: WakeWordOption,
+        isMicrophonePermissionAllowed: Boolean,
         dialogManagerServiceState: DialogManagerServiceState,
         isUserActionEnabled: Boolean,
         isShowBorder: Boolean,
-        isShowMicOn: Boolean,
+        isShowMicOn: Boolean
     ) : this(
-        isMicrophonePermissionRequired = wakeWordOption == WakeWordOption.Porcupine || wakeWordOption == WakeWordOption.Udp,
+        isMicrophonePermissionRequired = !isMicrophonePermissionAllowed,
         dialogManagerServiceState = dialogManagerServiceState,
         isUserActionEnabled = isUserActionEnabled,
         isShowBorder = isShowBorder,

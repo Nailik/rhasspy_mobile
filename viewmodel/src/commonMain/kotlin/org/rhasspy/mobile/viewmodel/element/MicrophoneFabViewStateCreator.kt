@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
-import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 
@@ -25,7 +24,6 @@ class MicrophoneFabViewStateCreator(
 
         updaterScope.launch {
             combineStateFlow(
-                ConfigurationSetting.wakeWordOption.data,
                 dialogManagerService.currentDialogState,
                 serviceMiddleware.isUserActionEnabled,
                 wakeWordService.isRecording,
@@ -40,7 +38,7 @@ class MicrophoneFabViewStateCreator(
 
     private fun getViewState(): MicrophoneFabViewState {
         return MicrophoneFabViewState(
-            wakeWordOption = ConfigurationSetting.wakeWordOption.value,
+            isMicrophonePermissionAllowed = MicrophonePermission.granted.value,
             dialogManagerServiceState = dialogManagerService.currentDialogState.value,
             isUserActionEnabled = serviceMiddleware.isUserActionEnabled.value,
             isShowBorder = wakeWordService.isRecording.value,

@@ -17,14 +17,12 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.logger.FileLogger
 import org.rhasspy.mobile.logic.logger.LogLevel
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.settings.AppSetting
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.ui.event.StateEvent.Consumed
@@ -215,10 +213,6 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
 
         viewModelScope.launch(Dispatchers.Default) {
             testScope.cancel()
-
-            //reload koin modules when test is stopped
-            get<NativeApplication>().stopTest()
-
             isTestRunning.value = false
         }
     }
