@@ -13,6 +13,7 @@ plugins {
     id("org.sonarqube")
     id("org.jetbrains.compose")
     id("co.touchlab.crashkios.crashlyticslink")
+    id("com.google.devtools.ksp")
 }
 
 version = Version.toString()
@@ -206,9 +207,4 @@ val increaseCodeVersion = tasks.register("increaseCodeVersion") {
             )
         }
     }
-}
-
-compose {
-    //necessary to use the androidx compose compiler for multiplatform in order to use kotlin 1.8
-    kotlinCompilerPlugin.set(AndroidX.Compose.compiler.toString())
 }

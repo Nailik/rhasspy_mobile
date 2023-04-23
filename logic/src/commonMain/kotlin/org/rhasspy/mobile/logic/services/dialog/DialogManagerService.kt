@@ -22,7 +22,6 @@ import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionServ
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
-import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.notNull
@@ -66,11 +65,6 @@ class DialogManagerService(
     val currentDialogState = _currentDialogState.readOnly
 
     init {
-        _serviceState.value = ServiceState.Success
-        _currentDialogState.value = DialogManagerServiceState.AwaitingWakeWord
-        AppSetting.isHotWordEnabled.value = true
-        wakeWordService.startDetection()
-
         coroutineScope.launch {
             paramsFlow.collect {
                 //reset service on params change

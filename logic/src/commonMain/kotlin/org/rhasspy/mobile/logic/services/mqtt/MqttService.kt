@@ -61,8 +61,6 @@ class MqttService(
      * sets connected value
      */
     init {
-        start()
-
         scope.launch {
             paramsFlow.collect {
                 stop()

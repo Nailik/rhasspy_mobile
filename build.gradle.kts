@@ -7,7 +7,6 @@ buildscript {
     dependencies {
         //classpath dependencies cannot be loaded from buildSrc
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:_")
-        classpath(Android.tools.build.gradlePlugin)
         classpath("dev.icerock.moko:resources-generator:_")
         classpath("com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:_")
         classpath("com.codingfeline.buildkonfig:buildkonfig-gradle-plugin:_")
@@ -18,6 +17,7 @@ buildscript {
         classpath("org.jetbrains.compose:compose-gradle-plugin:_")
         classpath("org.kodein.mock:mockmp-gradle-plugin:_")
         classpath("co.touchlab.crashkios.crashlyticslink:co.touchlab.crashkios.crashlyticslink.gradle.plugin:_")
+        classpath("com.android.tools.build:gradle:_")
     }
 }
 
