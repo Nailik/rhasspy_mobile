@@ -33,7 +33,7 @@ class TestViewModel : IConfigurationViewModel<TestViewState>(
     }
 
     fun setUnsavedChanges(value: Boolean) {
-        if(value) {
+        if (value) {
             contentViewState.value = TestViewState("a")
         } else {
             contentViewState.value = TestViewState()
