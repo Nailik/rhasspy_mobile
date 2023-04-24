@@ -47,13 +47,16 @@ android {
         resourceConfigurations += setOf("en", "de")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["clearPackageData"] = "true"
-        testInstrumentationRunnerArguments["disableAnalytics"] = "true"
+        testInstrumentationRunnerArguments["useTestStorageService"] = "true"
+        testInstrumentationRunnerArguments["disableAnalytics"] = "false"
     }
 
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

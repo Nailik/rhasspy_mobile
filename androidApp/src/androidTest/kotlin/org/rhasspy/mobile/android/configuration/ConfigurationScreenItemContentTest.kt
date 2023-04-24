@@ -175,11 +175,13 @@ class ConfigurationScreenItemContentTest : KoinComponent {
         viewModel.onDiscard = false
         //discard click invokes discard and navigate back
         composeTestRule.onNodeWithTag(TestTag.DialogCancel).performClick()
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertDoesNotExist()
 
 
         //open screen
         composeTestRule.onNodeWithText(btnStartTest).performClick()
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertExists()
         viewModel.setUnsavedChanges(true)
 
@@ -189,6 +191,7 @@ class ConfigurationScreenItemContentTest : KoinComponent {
         viewModel.onSave = false
         //save click invokes save and navigate back
         composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
+        composeTestRule.awaitIdle()
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertDoesNotExist()
     }

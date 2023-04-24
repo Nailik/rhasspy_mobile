@@ -126,7 +126,9 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
 
         //user clicks select file
         composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
+        composeTestRule.awaitIdle()
         //file manager is opened
+        device.waitForIdle()
         device.findObject(UiSelector().textMatches(fileName)).exists()
         //user clicks back twice
         device.pressBack()
@@ -140,7 +142,9 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
 
         //user clicks select file
         composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
+        composeTestRule.awaitIdle()
         //file manager is opened
+        device.waitForIdle()
         device.findObject(UiSelector().textMatches(fileName)).exists()
         //user clicks jarvis.zip
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
@@ -191,11 +195,16 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         getInstrumentation().context.resources.openRawResource(R.raw.porcupine_test)
             .copyTo(file.outputStream())
         composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
+        composeTestRule.awaitIdle()
+        device.waitForIdle()
+
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
         composeTestRule.awaitIdle()
         viewModel.onAction(Save)
+
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
+
         val viewState = viewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
         assertTrue { viewState.customOptionsUi.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null }
 

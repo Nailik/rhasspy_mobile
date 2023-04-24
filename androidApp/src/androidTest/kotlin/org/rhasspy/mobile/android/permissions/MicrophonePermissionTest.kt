@@ -393,6 +393,9 @@ class MicrophonePermissionTest {
 
         //User clicks button
         composeTestRule.onNodeWithText(btnRequestPermission).performClick()
+        composeTestRule.awaitIdle()
+        device.waitForIdle()
+
         //System dialog is shown
         getInstrumentation().waitForIdleSync()
         assertTrue {
@@ -437,6 +440,7 @@ class MicrophonePermissionTest {
                 .assertExists()
             //Cancel clicked
             composeTestRule.onNodeWithTag(TestTag.DialogCancel).performClick()
+            composeTestRule.awaitIdle()
             //Dialog closed
             composeTestRule.onNodeWithTag(TestTag.DialogInformationMicrophonePermission)
                 .assertDoesNotExist()
@@ -450,6 +454,7 @@ class MicrophonePermissionTest {
                 .assertExists()
             //ok clicked
             composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
+            composeTestRule.awaitIdle()
             //Dialog closed
             composeTestRule.onNodeWithTag(TestTag.DialogInformationMicrophonePermission)
                 .assertDoesNotExist()
@@ -481,6 +486,7 @@ class MicrophonePermissionTest {
 
         //User clicks button
         composeTestRule.onNodeWithText(btnRequestPermission).performClick()
+        composeTestRule.awaitIdle()
         //Snackbar is shown
         getInstrumentation().waitForIdleSync()
         assertTrue {
@@ -489,6 +495,7 @@ class MicrophonePermissionTest {
         composeTestRule.waitForIdle()
         //Snackbar action is clicked
         composeTestRule.onNodeWithText(MR.strings.settings.stable).performClick()
+        composeTestRule.awaitIdle()
         //User is redirected to settings
         getInstrumentation().waitForIdleSync()
         device.findObject(UiSelector().resourceId(txtEntityHeader).text(appName)).exists()
