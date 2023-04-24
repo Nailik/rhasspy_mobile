@@ -10,6 +10,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -25,6 +27,7 @@ import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundService
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class BackgroundSettingsContentTest : KoinComponent {
 
     @get: Rule
@@ -70,7 +73,7 @@ class BackgroundSettingsContentTest : KoinComponent {
      * deactivate battery optimization is shown as enabled
      */
     @Test
-    fun testContent() {
+    fun testContent() = runTest {
         viewModel.onEvent(SetBackgroundServiceEnabled(false))
 
         //background services disabled
@@ -78,6 +81,7 @@ class BackgroundSettingsContentTest : KoinComponent {
 
         //user clicks background services
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).performClick()
+        composeTestRule.awaitIdle()
         //background services active
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onListItemSwitch().assertIsOn()
         //background services enabled saved
@@ -91,6 +95,7 @@ class BackgroundSettingsContentTest : KoinComponent {
             assertFalse { viewModel.viewState.value.isBatteryOptimizationDisabled }
             //user clicks deactivate battery optimization
             composeTestRule.onNodeWithTag(TestTag.BatteryOptimization).performClick()
+            composeTestRule.awaitIdle()
             //system dialog is shown
             device.findObject(UiSelector().resourceIdMatches(dialog)).exists()
             //user clicks accept

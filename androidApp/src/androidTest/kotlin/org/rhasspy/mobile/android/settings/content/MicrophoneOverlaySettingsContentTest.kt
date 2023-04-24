@@ -137,6 +137,7 @@ class MicrophoneOverlaySettingsContentTest : KoinComponent {
 
         //user clicks visible while app
         composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).performClick()
+        composeTestRule.awaitIdle()
         //element is turned on
         composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).onListItemSwitch().assertIsOn()
         //visible while app is saved

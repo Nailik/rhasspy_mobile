@@ -100,6 +100,7 @@ class LanguageSettingsContentTest : KoinComponent {
 
         //User clicks english
         composeTestRule.onNodeWithTag(LanguageType.English).performClick()
+        composeTestRule.awaitIdle()
         //language is english
         assertEquals(LanguageType.English, viewModel.viewState.value.languageOption)
         //english is selected

@@ -107,6 +107,7 @@ class IndicationSettingsContentTest : KoinComponent {
 
         //user clicks wake up display
         composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).performClick()
+        composeTestRule.awaitIdle()
         //wake up display is enabled
         composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onListItemSwitch()
             .assertIsOn()
@@ -116,9 +117,11 @@ class IndicationSettingsContentTest : KoinComponent {
 
         //user clicks visual
         composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).performClick()
+        composeTestRule.awaitIdle()
         //user accepts permission
         //Ok clicked
         composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
+        composeTestRule.awaitIdle()
         //on Q app is restarted when allowing overlay permission
 
         //Redirected to settings
@@ -144,6 +147,7 @@ class IndicationSettingsContentTest : KoinComponent {
 
         //user clicks sound
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).performClick()
+        composeTestRule.awaitIdle()
         //sound is enabled
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).onListItemSwitch().assertIsOn()
         //sound is saved
@@ -178,7 +182,7 @@ class IndicationSettingsContentTest : KoinComponent {
      * user clicks back
      */
     @Test
-    fun testSoundIndicationOptions() {
+    fun testSoundIndicationOptions() = runTest {
         //Sound is disabled
         viewModel.onEvent(SetSoundIndicationEnabled(false))
         //sound settings invisible
@@ -192,6 +196,7 @@ class IndicationSettingsContentTest : KoinComponent {
 
         //user clicks sound
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).performClick()
+        composeTestRule.awaitIdle()
         //sound is enabled
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).onListItemSwitch().assertIsOn()
         //sound settings visible
@@ -210,6 +215,7 @@ class IndicationSettingsContentTest : KoinComponent {
 
         //user clicks sound output sound
         composeTestRule.onNodeWithTag(AudioOutputOption.Sound).performClick()
+        composeTestRule.awaitIdle()
         //sound output sound is selected
         composeTestRule.onNodeWithTag(AudioOutputOption.Sound, true).onListItemRadioButton().assertIsSelected()
         //sound output sound is saved

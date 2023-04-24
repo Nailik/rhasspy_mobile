@@ -7,6 +7,8 @@ import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -24,6 +26,7 @@ import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class LogSettingsContentTest : KoinComponent {
 
     @get: Rule
@@ -68,7 +71,7 @@ class LogSettingsContentTest : KoinComponent {
      * audio frame logging true is saved
      */
     @Test
-    fun contentTest() {
+    fun contentTest() = runTest {
         //debug is saved
         assertEquals(LogLevel.Debug, viewModel.viewState.value.logLevel)
         //debug is selected
@@ -76,6 +79,7 @@ class LogSettingsContentTest : KoinComponent {
 
         //user clicks error
         composeTestRule.onNodeWithTag(LogLevel.Error).performClick()
+        composeTestRule.awaitIdle()
         //error is selected
         composeTestRule.onNodeWithTag(LogLevel.Error, true).onListItemRadioButton().assertIsSelected()
         //error is saved
@@ -87,6 +91,7 @@ class LogSettingsContentTest : KoinComponent {
         composeTestRule.onNodeWithTag(TestTag.ShowLogEnabled).onListItemSwitch().assertIsOff()
         //user clicks show log
         composeTestRule.onNodeWithTag(TestTag.ShowLogEnabled).performClick()
+        composeTestRule.awaitIdle()
         //show log true is shown
         composeTestRule.onNodeWithTag(TestTag.ShowLogEnabled).onListItemSwitch().assertIsOn()
         //show log true is saved
@@ -94,10 +99,12 @@ class LogSettingsContentTest : KoinComponent {
 
         //audio frame logging is false
         viewModel.onEvent(SetShowLogEnabled(false))
+        composeTestRule.awaitIdle()
         //audio frame logging false is shown
         composeTestRule.onNodeWithTag(TestTag.AudioFramesEnabled).onListItemSwitch().assertIsOff()
         //user clicks audio frame logging
         composeTestRule.onNodeWithTag(TestTag.AudioFramesEnabled).performClick()
+        composeTestRule.awaitIdle()
         //audio frame logging true is shown
         composeTestRule.onNodeWithTag(TestTag.AudioFramesEnabled).onListItemSwitch().assertIsOn()
         //audio frame logging true is saved
