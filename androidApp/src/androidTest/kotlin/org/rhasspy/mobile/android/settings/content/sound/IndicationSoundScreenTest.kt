@@ -195,12 +195,14 @@ abstract class IndicationSoundScreenTest(
         //Disabled sound is saved
         assertTrue { otherViewModel.viewState.value.isSoundIndicationEnabled }
         composeTestRule.awaitIdle()
+        device.waitForIdle()
         //Disabled sound ist selected
         composeTestRule.onNodeWithTag(TestTag.Disabled).onListItemRadioButton().assertIsSelected()
 
         //user clicks default
         composeTestRule.onNodeWithTag(TestTag.Default).performClick()
         composeTestRule.awaitIdle()
+        device.waitForIdle()
         //default is selected
         composeTestRule.onNodeWithTag(TestTag.Default).onListItemRadioButton().assertIsSelected()
 
