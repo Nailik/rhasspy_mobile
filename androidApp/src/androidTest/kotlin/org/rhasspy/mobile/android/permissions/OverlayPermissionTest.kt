@@ -14,7 +14,8 @@ import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -22,6 +23,10 @@ import org.junit.runner.RunWith
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.theme.AppTheme
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.resetOverlayPermission
+import org.rhasspy.mobile.android.utils.text
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -29,6 +34,7 @@ import kotlin.test.assertTrue
 /**
  * Tests Overlay Permission redirecting and recognition
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class OverlayPermissionTest {
 
@@ -51,8 +57,11 @@ class OverlayPermissionTest {
         composeTestRule.activity.setContent {
             AppTheme {
 
-                RequiresOverlayPermission({ permissionResult = true }) { onClick ->
-                    Button(onClick = { onClick.invoke(Unit) }) {
+                RequiresOverlayPermission(
+                    initialData = "",
+                    onClick = { permissionResult = true }
+                ) { onClick ->
+                    Button(onClick = { onClick.invoke("") }) {
                         Text(btnRequestPermission)
                     }
                 }
@@ -79,7 +88,7 @@ class OverlayPermissionTest {
      * invoke was done
      */
     @Test
-    fun testAllow() = runBlocking {
+    fun testAllow() = runTest {
         device.resetOverlayPermission(composeTestRule.activity)
 
         permissionResult = false
@@ -110,8 +119,8 @@ class OverlayPermissionTest {
             //Redirected to settings
             getInstrumentation().waitForIdleSync()
             assertTrue { device.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
-            UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName))
-            device.findObject(UiSelector().text(MR.strings.appName)).click()
+            UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName.stable))
+            device.findObject(UiSelector().text(MR.strings.appName.stable)).click()
             device.findObject(UiSelector().className(Switch::class.java)).click()
             //User clicks back
             device.pressBack()

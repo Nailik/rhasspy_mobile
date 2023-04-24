@@ -3,6 +3,8 @@ package org.rhasspy.mobile.android.configuration.content.porcupine
 import android.os.Environment
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -12,27 +14,26 @@ import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.MainActivity
-import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onNodeWithCombinedTag
-import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.onListItemSwitch
-import org.rhasspy.mobile.android.requestExternalStoragePermissions
 import org.rhasspy.mobile.android.test.R
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import java.io.File
 import kotlin.test.assertTrue
 
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class PorcupineKeywordCustomScreenTest : KoinComponent {
 
     @get: Rule
@@ -40,7 +41,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
 
     private val device: UiDevice = UiDevice.getInstance(getInstrumentation())
 
-    private val viewModel = WakeWordConfigurationViewModel()
+    private val viewModel = get<WakeWordConfigurationViewModel>()
 
     private val ppn = "Test-hello_en_android_v2_1_0.ppn"
     private val fileName = "porcupine_test.zip"
@@ -55,7 +56,12 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
             CompositionLocalProvider(
                 LocalMainNavController provides navController
             ) {
-                PorcupineKeywordCustomScreen(viewModel)
+                val viewState by viewModel.viewState.collectAsState()
+                val contentViewState by viewState.editViewState.collectAsState()
+                PorcupineKeywordCustomScreen(
+                    viewState = contentViewState.wakeWordPorcupineViewState,
+                    onEvent = viewModel::onEvent
+                )
             }
         }
 
@@ -87,7 +93,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
      * jarvis is saved with enabled
      */
     @Test
-    fun testActions() = runBlocking {
+    fun testActions() = runTest {
         //copy test file to downloads directory
         //jarvis.zip file in download folder exists with ppn file inside
         val file = File(
@@ -120,7 +126,9 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
 
         //user clicks select file
         composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
+        composeTestRule.awaitIdle()
         //file manager is opened
+        device.waitForIdle()
         device.findObject(UiSelector().textMatches(fileName)).exists()
         //user clicks back twice
         device.pressBack()
@@ -134,7 +142,9 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
 
         //user clicks select file
         composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
+        composeTestRule.awaitIdle()
         //file manager is opened
+        device.waitForIdle()
         device.findObject(UiSelector().textMatches(fileName)).exists()
         //user clicks jarvis.zip
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
@@ -142,14 +152,21 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordCustomScreen).assertIsDisplayed()
         //jarvis is added to list and enabled
+        composeTestRule.waitUntilExists(hasTag(ppn), 5000)
         composeTestRule.onNodeWithTag(ppn).assertIsDisplayed()
         composeTestRule.onNodeWithTag(ppn).onListItemSwitch().assertIsOn()
 
         //viewModel save is invoked
-        viewModel.onSave()
-        val newViewModel = WakeWordConfigurationViewModel()
+        viewModel.onAction(Save)
+        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
+        val newViewModel = WakeWordConfigurationViewModel(get())
+
         //jarvis is saved with enabled
-        assertTrue { newViewModel.wakeWordPorcupineKeywordCustomOptions.value.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null }
+        assertTrue {
+            newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
+                .customOptionsUi.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null
+        }
     }
 
     /**
@@ -163,7 +180,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
      * ppn is saved with ppn and enabled
      */
     @Test
-    fun testList() = runBlocking {
+    fun testList() = runTest {
         //one element with ppn exists and selected
         val file = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
@@ -178,10 +195,18 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         getInstrumentation().context.resources.openRawResource(R.raw.porcupine_test)
             .copyTo(file.outputStream())
         composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
+        composeTestRule.awaitIdle()
+        device.waitForIdle()
+
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
         composeTestRule.awaitIdle()
-        viewModel.onSave()
-        assertTrue { viewModel.wakeWordPorcupineKeywordCustomOptions.value.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null }
+        viewModel.onAction(Save)
+
+        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
+
+        val viewState = viewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
+        assertTrue { viewState.customOptionsUi.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null }
 
         //user clicks delete on ppn
         composeTestRule.onNodeWithCombinedTag(ppn, TestTag.Delete).assertIsDisplayed()
@@ -192,10 +217,15 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         composeTestRule.onNodeWithCombinedTag(ppn, TestTag.Undo).performClick()
 
         //viewModel save is invoked
-        viewModel.onSave()
-        val newViewModel = WakeWordConfigurationViewModel()
+        viewModel.onAction(Save)
+        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
+        val newViewModel = WakeWordConfigurationViewModel(get())
         //ppn is saved with ppn.ppn and enabled
-        assertTrue { newViewModel.wakeWordPorcupineKeywordCustomOptions.value.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null }
+        assertTrue {
+            newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
+                .customOptionsUi.find { it.keyword.fileName == ppn && it.keyword.isEnabled } != null
+        }
     }
 
 }

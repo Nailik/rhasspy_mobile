@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED_VARIABLE")
+@file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
 
 plugins {
     kotlin("multiplatform")
@@ -23,6 +23,7 @@ kotlin {
                 implementation(Icerock.Resources)
                 implementation(Touchlab.kermit)
                 implementation(Jetbrains.Kotlinx.serialization)
+                implementation(Jetbrains.Kotlinx.immutable)
                 implementation(Ktor2.Server.core)
                 implementation(Ktor2.Server.cors)
                 implementation(Ktor2.Server.cio)
@@ -101,5 +102,16 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_19
         targetCompatibility = JavaVersion.VERSION_19
+    }
+    buildFeatures {
+        buildConfig = true
+    }
+    buildTypes {
+        release {
+            buildConfigField("boolean", "IS_DEBUG", "true")
+        }
+        debug {
+            buildConfigField("boolean", "IS_DEBUG", "true")
+        }
     }
 }

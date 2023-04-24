@@ -1,7 +1,9 @@
 package org.rhasspy.mobile.data.service
 
-import dev.icerock.moko.resources.StringResource
+import androidx.compose.runtime.Stable
+import org.rhasspy.mobile.data.resource.StableStringResource
 
+@Stable
 sealed class ServiceState {
 
     object Pending : ServiceState()
@@ -12,7 +14,7 @@ sealed class ServiceState {
 
     class Exception(val exception: kotlin.Exception? = null) : ServiceState()
 
-    class Error(val information: StringResource) : ServiceState()
+    class Error(val information: StableStringResource) : ServiceState()
 
     object Disabled : ServiceState()
 

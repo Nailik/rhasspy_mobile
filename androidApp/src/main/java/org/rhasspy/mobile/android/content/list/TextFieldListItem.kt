@@ -9,18 +9,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusEvent
@@ -29,16 +20,17 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.translate
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
 
 @Composable
 fun TextFieldListItemVisibility(
     modifier: Modifier = Modifier,
-    label: StringResource,
+    label: StableStringResource,
     value: String,
     readOnly: Boolean = false,
     autoCorrect: Boolean = false,
@@ -69,7 +61,7 @@ fun TextFieldListItemVisibility(
                     } else {
                         Icons.Filled.VisibilityOff
                     },
-                    contentDescription = MR.strings.visibility,
+                    contentDescription = MR.strings.visibility.stable,
                 )
             }
         },
@@ -80,7 +72,7 @@ fun TextFieldListItemVisibility(
 @Composable
 fun TextFieldListItem(
     modifier: Modifier = Modifier,
-    label: StringResource,
+    label: StableStringResource,
     value: String,
     readOnly: Boolean = false,
     autoCorrect: Boolean = false,

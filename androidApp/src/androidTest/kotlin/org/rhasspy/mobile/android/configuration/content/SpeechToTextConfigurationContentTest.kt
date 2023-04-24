@@ -1,36 +1,36 @@
 package org.rhasspy.mobile.android.configuration.content
 
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
-import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTextReplacement
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.awaitSaved
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.onListItemRadioButton
-import org.rhasspy.mobile.android.onListItemSwitch
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
+import org.rhasspy.mobile.android.utils.awaitSaved
+import org.rhasspy.mobile.android.utils.onListItemRadioButton
+import org.rhasspy.mobile.android.utils.onListItemSwitch
+import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
-import org.rhasspy.mobile.viewmodel.configuration.SpeechToTextConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import kotlin.test.assertEquals
 
-class SpeechToTextConfigurationContentTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class SpeechToTextConfigurationContentTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = SpeechToTextConfigurationViewModel()
+    private val viewModel = get<SpeechToTextConfigurationViewModel>()
 
     @Before
     fun setUp() {
@@ -39,9 +39,10 @@ class SpeechToTextConfigurationContentTest {
             val navController = rememberNavController()
 
             CompositionLocalProvider(
-                LocalMainNavController provides navController
+                LocalMainNavController provides navController,
+                LocalViewModelFactory provides get()
             ) {
-                SpeechToTextConfigurationContent(viewModel)
+                SpeechToTextConfigurationContent()
             }
         }
 
@@ -68,9 +69,12 @@ class SpeechToTextConfigurationContentTest {
      * use custom endpoint is saved
      */
     @Test
-    fun testEndpoint() = runBlocking {
-        viewModel.selectSpeechToTextOption(SpeechToTextOption.Disabled)
-        viewModel.onSave()
+    fun testEndpoint() = runTest {
+        viewModel.onEvent(SelectSpeechToTextOption(SpeechToTextOption.Disabled))
+        viewModel.onAction(Save)
+        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
+        val viewState = viewModel.viewState.value.editViewState
 
         val textInputTest = "endpointTestInput"
 
@@ -80,7 +84,7 @@ class SpeechToTextConfigurationContentTest {
         //User clicks option remote http
         composeTestRule.onNodeWithTag(SpeechToTextOption.RemoteHTTP).performClick()
         //new option is selected
-        assertEquals(SpeechToTextOption.RemoteHTTP, viewModel.speechToTextOption.value)
+        assertEquals(SpeechToTextOption.RemoteHTTP, viewState.value.speechToTextOption)
 
         //Endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
@@ -103,18 +107,19 @@ class SpeechToTextConfigurationContentTest {
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextReplacement(textInputTest)
         composeTestRule.awaitIdle()
-        assertEquals(textInputTest, viewModel.speechToTextHttpEndpoint.value)
+        assertEquals(textInputTest, viewState.value.speechToTextHttpEndpoint)
 
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
-        val newViewModel = SpeechToTextConfigurationViewModel()
-        //option is saved to remote http
-        assertEquals(SpeechToTextOption.RemoteHTTP, newViewModel.speechToTextOption.value)
-        //endpoint is saved
-        assertEquals(textInputTest, newViewModel.speechToTextHttpEndpoint.value)
-        //use custom endpoint is saved
-        assertEquals(true, newViewModel.isUseCustomSpeechToTextHttpEndpoint.value)
+        SpeechToTextConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+            //option is saved to remote http
+            assertEquals(SpeechToTextOption.RemoteHTTP, it.speechToTextOption)
+            //endpoint is saved
+            assertEquals(textInputTest, it.speechToTextHttpEndpoint)
+            //use custom endpoint is saved
+            assertEquals(true, it.isUseCustomSpeechToTextHttpEndpoint)
+        }
     }
 
 }

@@ -47,13 +47,16 @@ android {
         resourceConfigurations += setOf("en", "de")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["clearPackageData"] = "true"
-        testInstrumentationRunnerArguments["disableAnalytics"] = "true"
+        testInstrumentationRunnerArguments["useTestStorageService"] = "true"
+        testInstrumentationRunnerArguments["disableAnalytics"] = "false"
     }
 
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -63,6 +66,9 @@ android {
             }
         }
         debug {
+            isDebuggable = true
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
             isMinifyEnabled = false
             isShrinkResources = false
             if (signingEnabled) {
@@ -92,6 +98,11 @@ android {
         //else netty finds multiple INDEX.LIST files
         resources.pickFirsts.add("META-INF/INDEX.LIST")
         resources.pickFirsts.add("META-INF/io.netty.versions.properties")
+        resources.pickFirsts.add("META-INF/.*")
+        resources.excludes.add("META-INF/LICENSE*.md")
+        resources.pickFirsts.add("BuildConfig.kt")
+        resources.pickFirsts.add("BuildConfig.dex")
+        jniLibs.keepDebugSymbols.add("**/libpv_porcupine.so")
     }
 
     compileOptions {
@@ -123,12 +134,6 @@ android {
             }
     }
 
-    packaging {
-        resources.pickFirsts.add("META-INF/.*")
-        resources.pickFirsts.add("BuildConfig.kt")
-        resources.pickFirsts.add("BuildConfig.dex")
-        jniLibs.keepDebugSymbols.add("**/libpv_porcupine.so")
-    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -136,8 +141,9 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
     kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi"
     kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi"
+    kotlinOptions.freeCompilerArgs += "-P=plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${project.buildDir.absolutePath}/compose_metrics"
+    kotlinOptions.freeCompilerArgs += "-P=plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_metrics"
 }
-
 
 tasks.withType<Test> {
     testLogging {
@@ -171,9 +177,11 @@ dependencies {
     implementation(project(":resources"))
     implementation(project(":platformspecific"))
     implementation(project(":data"))
+    implementation(project(":ui"))
 
     implementation(KotlinX.Coroutines.core)
     implementation(KotlinX.Coroutines.android)
+    implementation(Jetbrains.Kotlinx.immutable)
 
     implementation(Google.accompanist.systemUiController)
 
@@ -205,10 +213,9 @@ dependencies {
     implementation(Icerock.Resources)
     implementation(Icerock.Mvvm.core)
     implementation(Koin.core)
-    implementation(Koin.compose)
-    androidTestImplementation(project(":shared"))
 
     androidTestUtil(AndroidX.Test.orchestrator)
+    androidTestImplementation(project(":shared"))
     androidTestImplementation(AndroidX.Test.uiAutomator)
     androidTestImplementation(AndroidX.Test.runner)
     androidTestImplementation(AndroidX.Test.rules)
@@ -218,7 +225,7 @@ dependencies {
     androidTestImplementation(AndroidX.Compose.Ui.testJunit4)
     debugImplementation(AndroidX.tracing)
     debugImplementation(AndroidX.Compose.Ui.testManifest)
-
+    implementation(Russhwolf.multiplatformSettingsNoArg)
     implementation(platform(Firebase.bom))
 
     implementation(Firebase.analyticsKtx)

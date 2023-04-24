@@ -1,33 +1,41 @@
 package org.rhasspy.mobile.logic.services.localaudio
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okio.Path
-import org.koin.core.component.get
-import org.koin.core.component.inject
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.data.sounds.SoundOption
-import org.rhasspy.mobile.platformspecific.file.FolderType
-import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.sounds.SoundOption
+import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioPlayer
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
+import org.rhasspy.mobile.platformspecific.file.FolderType
 import kotlin.coroutines.resume
 
-class LocalAudioService : IService() {
-    private val logger = LogType.LocalAudioService.logger()
+class LocalAudioService(
+    paramsCreator: LocalAudioServiceParamsCreator
+) : IService(LogType.LocalAudioService) {
 
-    private val params by inject<LocalAudioServiceParams>()
+    private var coroutineScope = CoroutineScope(Dispatchers.Default)
+
+    private val paramsFlow: StateFlow<LocalAudioServiceParams> = paramsCreator()
+    private val params: LocalAudioServiceParams get() = paramsFlow.value
 
     private val audioPlayer = AudioPlayer()
     val isPlayingState = audioPlayer.isPlayingState
 
-    override fun onClose() {
-        logger.d { "onClose" }
-        audioPlayer.stop()
-        audioPlayer.close()
+    init {
+        coroutineScope.launch {
+            paramsFlow.collect {
+                audioPlayer.stop()
+            }
+        }
     }
 
     suspend fun playAudio(audioSource: AudioSource): ServiceState = suspendCancellableCoroutine { continuation ->
@@ -58,6 +66,8 @@ class LocalAudioService : IService() {
         }
     }
 
+    fun playWakeSoundWithoutParameter() = playWakeSound {}
+
     fun playWakeSound(onFinished: (exception: Exception?) -> Unit) {
         logger.d { "playWakeSound" }
         when (AppSetting.wakeSound.value) {
@@ -73,7 +83,12 @@ class LocalAudioService : IService() {
             )
 
             else -> audioPlayer.playAudio(
-                AudioSource.File(Path.commonInternalPath(get(), "${FolderType.SoundFolder.Wake}/${AppSetting.wakeSound.value}")),
+                AudioSource.File(
+                    Path.commonInternalPath(
+                        nativeApplication = nativeApplication,
+                        fileName = "${FolderType.SoundFolder.Wake}/${AppSetting.wakeSound.value}"
+                    )
+                ),
                 AppSetting.wakeSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value,
                 onFinished
@@ -92,7 +107,12 @@ class LocalAudioService : IService() {
             ) {}
 
             else -> audioPlayer.playAudio(
-                AudioSource.File(Path.commonInternalPath(get(),"${FolderType.SoundFolder.Recorded}/${AppSetting.recordedSound.value}")),
+                AudioSource.File(
+                    Path.commonInternalPath(
+                        nativeApplication = nativeApplication,
+                        fileName = "${FolderType.SoundFolder.Recorded}/${AppSetting.recordedSound.value}"
+                    )
+                ),
                 AppSetting.recordedSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
             ) {}
@@ -110,7 +130,12 @@ class LocalAudioService : IService() {
             ) {}
 
             else -> audioPlayer.playAudio(
-                AudioSource.File(Path.commonInternalPath(get(),"${FolderType.SoundFolder.Error}/${AppSetting.errorSound.value}")),
+                AudioSource.File(
+                    Path.commonInternalPath(
+                        nativeApplication = nativeApplication,
+                        fileName = "${FolderType.SoundFolder.Error}/${AppSetting.errorSound.value}"
+                    )
+                ),
                 AppSetting.errorSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
             ) {}

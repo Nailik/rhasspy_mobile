@@ -1,38 +1,37 @@
 package org.rhasspy.mobile.android.configuration.content
 
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
-import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTextReplacement
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.awaitSaved
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.onListItemRadioButton
-import org.rhasspy.mobile.android.onListItemSwitch
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
+import org.rhasspy.mobile.android.utils.awaitSaved
+import org.rhasspy.mobile.android.utils.onListItemRadioButton
+import org.rhasspy.mobile.android.utils.onListItemSwitch
+import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
-import org.rhasspy.mobile.viewmodel.configuration.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.SelectAudioPlayingOption
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import kotlin.test.assertEquals
 
-class AudioPlayingConfigurationContentTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class AudioPlayingConfigurationContentTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = AudioPlayingConfigurationViewModel()
+    private val viewModel = get<AudioPlayingConfigurationViewModel>()
 
     @Before
     fun setUp() {
@@ -41,9 +40,10 @@ class AudioPlayingConfigurationContentTest {
             val navController = rememberNavController()
 
             CompositionLocalProvider(
-                LocalMainNavController provides navController
+                LocalMainNavController provides navController,
+                LocalViewModelFactory provides get()
             ) {
-                AudioPlayingConfigurationContent(viewModel)
+                AudioPlayingConfigurationContent()
             }
         }
 
@@ -70,9 +70,12 @@ class AudioPlayingConfigurationContentTest {
      * use custom endpoint is saved
      */
     @Test
-    fun testEndpoint() = runBlocking {
-        viewModel.selectAudioPlayingOption(AudioPlayingOption.Disabled)
-        viewModel.onSave()
+    fun testEndpoint() = runTest {
+        viewModel.onEvent(SelectAudioPlayingOption(AudioPlayingOption.Disabled))
+        viewModel.onAction(Save)
+        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
+        val viewState = viewModel.viewState.value.editViewState
 
         val textInputTest = "endpointTestInput"
 
@@ -82,7 +85,7 @@ class AudioPlayingConfigurationContentTest {
         //User clicks option remote http
         composeTestRule.onNodeWithTag(AudioPlayingOption.RemoteHTTP).performClick()
         //new option is selected
-        assertEquals(AudioPlayingOption.RemoteHTTP, viewModel.audioPlayingOption.value)
+        assertEquals(AudioPlayingOption.RemoteHTTP, viewState.value.audioPlayingOption)
 
         //Endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
@@ -104,18 +107,19 @@ class AudioPlayingConfigurationContentTest {
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextReplacement(textInputTest)
         composeTestRule.awaitIdle()
-        assertEquals(textInputTest, viewModel.audioPlayingHttpEndpoint.value)
+        assertEquals(textInputTest, viewState.value.audioPlayingHttpEndpoint)
 
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
-        val newViewModel = AudioPlayingConfigurationViewModel()
-        //option is saved to remote http
-        assertEquals(AudioPlayingOption.RemoteHTTP, newViewModel.audioPlayingOption.value)
-        //endpoint is saved
-        assertEquals(textInputTest, newViewModel.audioPlayingHttpEndpoint.value)
-        //use custom endpoint is saved
-        assertEquals(true, newViewModel.isUseCustomAudioPlayingHttpEndpoint.value)
+        AudioPlayingConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+            //option is saved to remote http
+            assertEquals(AudioPlayingOption.RemoteHTTP, it.audioPlayingOption)
+            //endpoint is saved
+            assertEquals(textInputTest, it.audioPlayingHttpEndpoint)
+            //use custom endpoint is saved
+            assertEquals(true, it.isUseCustomAudioPlayingHttpEndpoint)
+        }
     }
 
     /**
@@ -137,12 +141,15 @@ class AudioPlayingConfigurationContentTest {
      * option notification is saved
      */
     @Test
-    fun testLocalOutput() = runBlocking {
-        viewModel.selectAudioPlayingOption(AudioPlayingOption.Disabled)
-        viewModel.onSave()
+    fun testLocalOutput() = runTest {
+        viewModel.onEvent(SelectAudioPlayingOption(AudioPlayingOption.Disabled))
+        viewModel.onAction(Save)
+        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
+        val viewState = viewModel.viewState.value.editViewState
 
         //output is set to sound
-        assertEquals(AudioOutputOption.Sound, viewModel.audioOutputOption.value)
+        assertEquals(AudioOutputOption.Sound, viewState.value.audioOutputOption)
 
         //option disable is set
         composeTestRule.onNodeWithTag(AudioPlayingOption.Disabled, true).onListItemRadioButton().assertIsSelected()
@@ -152,7 +159,7 @@ class AudioPlayingConfigurationContentTest {
         //User clicks option local
         composeTestRule.onNodeWithTag(AudioPlayingOption.Local).performClick()
         //new option is selected
-        assertEquals(AudioPlayingOption.Local, viewModel.audioPlayingOption.value)
+        assertEquals(AudioPlayingOption.Local, viewState.value.audioPlayingOption)
 
         //output options visible
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertIsDisplayed()
@@ -167,11 +174,11 @@ class AudioPlayingConfigurationContentTest {
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
-        val newViewModel = AudioPlayingConfigurationViewModel()
-        //option is saved to local
-        assertEquals(AudioPlayingOption.Local, newViewModel.audioPlayingOption.value)
-        //option notification is saved
-        assertEquals(AudioOutputOption.Notification, newViewModel.audioOutputOption.value)
+        AudioPlayingConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+            //option is saved to local
+            assertEquals(AudioPlayingOption.Local, it.audioPlayingOption)
+            //option notification is saved
+            assertEquals(AudioOutputOption.Notification, it.audioOutputOption)
+        }
     }
-
 }

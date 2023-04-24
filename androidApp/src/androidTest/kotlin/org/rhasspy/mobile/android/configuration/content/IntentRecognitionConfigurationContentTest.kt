@@ -1,36 +1,36 @@
 package org.rhasspy.mobile.android.configuration.content
 
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
-import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTextReplacement
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.awaitSaved
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.onListItemRadioButton
-import org.rhasspy.mobile.android.onListItemSwitch
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
+import org.rhasspy.mobile.android.utils.awaitSaved
+import org.rhasspy.mobile.android.utils.onListItemRadioButton
+import org.rhasspy.mobile.android.utils.onListItemSwitch
+import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
-import org.rhasspy.mobile.viewmodel.configuration.IntentRecognitionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.SelectIntentRecognitionOption
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
 import kotlin.test.assertEquals
 
-class IntentRecognitionConfigurationContentTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class IntentRecognitionConfigurationContentTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = IntentRecognitionConfigurationViewModel()
+    private val viewModel = get<IntentRecognitionConfigurationViewModel>()
 
     @Before
     fun setUp() {
@@ -39,9 +39,10 @@ class IntentRecognitionConfigurationContentTest {
             val navController = rememberNavController()
 
             CompositionLocalProvider(
-                LocalMainNavController provides navController
+                LocalMainNavController provides navController,
+                LocalViewModelFactory provides get()
             ) {
-                IntentRecognitionConfigurationContent(viewModel)
+                IntentRecognitionConfigurationContent()
             }
         }
 
@@ -68,9 +69,12 @@ class IntentRecognitionConfigurationContentTest {
      * use custom endpoint is saved
      */
     @Test
-    fun testEndpoint() = runBlocking {
-        viewModel.selectIntentRecognitionOption(IntentRecognitionOption.Disabled)
-        viewModel.onSave()
+    fun testEndpoint() = runTest {
+        viewModel.onEvent(SelectIntentRecognitionOption(IntentRecognitionOption.Disabled))
+        viewModel.onAction(Save)
+        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
+        val viewState = viewModel.viewState.value.editViewState
 
         val textInputTest = "endpointTestInput"
 
@@ -80,7 +84,7 @@ class IntentRecognitionConfigurationContentTest {
         //User clicks option remote http
         composeTestRule.onNodeWithTag(IntentRecognitionOption.RemoteHTTP).performClick()
         //new option is selected
-        assertEquals(IntentRecognitionOption.RemoteHTTP, viewModel.intentRecognitionOption.value)
+        assertEquals(IntentRecognitionOption.RemoteHTTP, viewState.value.intentRecognitionOption)
 
         //Endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint).assertExists()
@@ -103,21 +107,19 @@ class IntentRecognitionConfigurationContentTest {
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.Endpoint).performTextReplacement(textInputTest)
         composeTestRule.awaitIdle()
-        assertEquals(textInputTest, viewModel.intentRecognitionHttpEndpoint.value)
+        assertEquals(textInputTest, viewState.value.intentRecognitionHttpEndpoint)
 
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
-        val newViewModel = IntentRecognitionConfigurationViewModel()
-        //option is saved to remote http
-        assertEquals(
-            IntentRecognitionOption.RemoteHTTP,
-            newViewModel.intentRecognitionOption.value
-        )
-        //endpoint is saved
-        assertEquals(textInputTest, newViewModel.intentRecognitionHttpEndpoint.value)
-        //use custom endpoint is saved
-        assertEquals(true, newViewModel.isUseCustomIntentRecognitionHttpEndpoint.value)
+        IntentRecognitionConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+            //option is saved to remote http
+            assertEquals(IntentRecognitionOption.RemoteHTTP, it.intentRecognitionOption)
+            //endpoint is saved
+            assertEquals(textInputTest, it.intentRecognitionHttpEndpoint)
+            //use custom endpoint is saved
+            assertEquals(true, it.isUseCustomIntentRecognitionHttpEndpoint)
+        }
     }
 
 }

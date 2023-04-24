@@ -1,11 +1,15 @@
 @file:Suppress("UNUSED_VARIABLE")
 
+import com.mikepenz.aboutlibraries.plugin.DuplicateMode.MERGE
+import com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
+
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
     id("dev.icerock.mobile.multiplatform-resources")
     id("com.codingfeline.buildkonfig")
     id("org.jetbrains.compose")
+    id("com.mikepenz.aboutlibraries.plugin")
 }
 
 kotlin {
@@ -57,6 +61,15 @@ multiplatformResources {
     multiplatformResourcesPackage = "org.rhasspy.mobile" // required
 }
 
+aboutLibraries {
+    prettyPrint = true
+    registerAndroidTasks = false
+    // Enable the duplication mode, allows to merge, or link dependencies which relate
+    duplicationMode = MERGE
+    // Configure the duplication rule, to match "duplicates" with
+    duplicationRule = SIMPLE
+}
+
 android {
     namespace = "org.rhasspy.mobile.resources"
     compileSdk = 33
@@ -81,6 +94,12 @@ buildkonfig {
         buildConfigField(com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING, "changelog", generateChangelog())
         buildConfigField(com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT, "versionCode", Version.code.toString())
         buildConfigField(com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING, "versionName", Version.toString())
+    }
+}
+
+tasks.findByPath("preBuild")!!.doFirst {
+    exec {
+        commandLine("../gradlew", "exportLibraryDefinitions", "-PaboutLibraries.exportPath=${projectDir}/src/commonMain/resources/MR/files")
     }
 }
 

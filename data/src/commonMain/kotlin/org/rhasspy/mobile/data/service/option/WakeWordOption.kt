@@ -1,13 +1,14 @@
 package org.rhasspy.mobile.data.service.option
 
-import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
 
-enum class WakeWordOption(override val text: StringResource) : IOption<WakeWordOption> {
-    Porcupine(MR.strings.localPorcupine),
-    MQTT(MR.strings.mqtt),
-    Udp(MR.strings.udpAudioOutput),
-    Disabled(MR.strings.disabled);
+enum class WakeWordOption(override val text: StableStringResource) : IOption<WakeWordOption> {
+    Porcupine(MR.strings.localPorcupine.stable),
+    MQTT(MR.strings.mqtt.stable),
+    Udp(MR.strings.udpAudioOutput.stable),
+    Disabled(MR.strings.disabled.stable);
 
     override fun findValue(value: String): WakeWordOption {
         return valueOf(value)

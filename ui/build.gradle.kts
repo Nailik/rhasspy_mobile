@@ -14,10 +14,11 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                /*  implementation("org.jetbrains.compose.ui:ui:_")
-                  implementation("org.jetbrains.compose.foundation:foundation:_")
-                  implementation("org.jetbrains.compose.material3:material3:_")
-                  implementation("org.jetbrains.compose.runtime:runtime:_") */
+                implementation(Jetbrains.Compose.ui)
+                implementation(Jetbrains.Compose.foundation)
+                implementation(Jetbrains.Compose.material)
+                implementation(Jetbrains.Compose.material3)
+                implementation(Jetbrains.Compose.runtime)
             }
         }
         val commonTest by getting {

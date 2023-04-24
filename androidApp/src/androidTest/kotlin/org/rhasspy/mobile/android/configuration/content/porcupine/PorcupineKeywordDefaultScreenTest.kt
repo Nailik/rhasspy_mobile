@@ -1,34 +1,37 @@
 package org.rhasspy.mobile.android.configuration.content.porcupine
 
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollToKey
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.awaitSaved
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onListItemSwitch
-import org.rhasspy.mobile.android.onNodeWithCombinedTag
-import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.android.utils.awaitSaved
+import org.rhasspy.mobile.android.utils.onListItemSwitch
+import org.rhasspy.mobile.android.utils.onNodeWithCombinedTag
+import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.PorcupineKeywordOption
-import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class PorcupineKeywordDefaultScreenTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class PorcupineKeywordDefaultScreenTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = WakeWordConfigurationViewModel()
+    private val viewModel = get<WakeWordConfigurationViewModel>()
 
     @Before
     fun setUp() {
@@ -39,7 +42,12 @@ class PorcupineKeywordDefaultScreenTest {
             CompositionLocalProvider(
                 LocalMainNavController provides navController
             ) {
-                PorcupineKeywordDefaultScreen(viewModel)
+                val viewState by viewModel.viewState.collectAsState()
+                val contentViewState by viewState.editViewState.collectAsState()
+                PorcupineKeywordDefaultScreen(
+                    viewState = contentViewState.wakeWordPorcupineViewState,
+                    onEvent = viewModel::onEvent
+                )
             }
         }
 
@@ -67,15 +75,15 @@ class PorcupineKeywordDefaultScreenTest {
      * everything else is saved with not enabled
      */
     @Test
-    fun testList() = runBlocking {
+    fun testList() = runTest {
         //no wake word is set
-        viewModel.wakeWordPorcupineKeywordDefaultOptions.value.forEach {
+        val viewState = viewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
+        viewState.defaultOptions.forEach {
             assertFalse(it.isEnabled)
         }
         //none is selected
-        viewModel.wakeWordPorcupineKeywordDefaultOptions.value.forEach {
-            composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen)
-                .performScrollToKey(it.option)
+        viewState.defaultOptions.forEach {
+            composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen).performScrollToNode(org.rhasspy.mobile.android.utils.hasTestTag(it.option))
             composeTestRule.onNodeWithTag(it.option).onListItemSwitch().assertIsOff()
             composeTestRule.awaitIdle()
         }
@@ -83,7 +91,7 @@ class PorcupineKeywordDefaultScreenTest {
         //user clicks americano
         composeTestRule
             .onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen)
-            .performScrollToKey(PorcupineKeywordOption.AMERICANO)
+            .performScrollToNode(org.rhasspy.mobile.android.utils.hasTestTag(PorcupineKeywordOption.AMERICANO))
         composeTestRule.onNodeWithTag(PorcupineKeywordOption.AMERICANO).performClick()
         composeTestRule.awaitIdle()
         //americano is selected
@@ -98,7 +106,7 @@ class PorcupineKeywordDefaultScreenTest {
 
         composeTestRule
             .onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen)
-            .performScrollToKey(PorcupineKeywordOption.PORCUPINE)
+            .performScrollToNode(org.rhasspy.mobile.android.utils.hasTestTag(PorcupineKeywordOption.PORCUPINE))
         composeTestRule.onNodeWithTag(PorcupineKeywordOption.PORCUPINE).performClick()
         composeTestRule.awaitIdle()
         //porcupine is selected
@@ -112,7 +120,7 @@ class PorcupineKeywordDefaultScreenTest {
         //user clicks porcupine
         composeTestRule
             .onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen)
-            .performScrollToKey(PorcupineKeywordOption.PORCUPINE)
+            .performScrollToNode(org.rhasspy.mobile.android.utils.hasTestTag(PorcupineKeywordOption.PORCUPINE))
         composeTestRule.onNodeWithTag(PorcupineKeywordOption.PORCUPINE).performClick()
         composeTestRule.awaitIdle()
         //porcupine is unselected
@@ -124,10 +132,11 @@ class PorcupineKeywordDefaultScreenTest {
         ).assertDoesNotExist()
 
         //viewModel save is invoked
-        viewModel.save()
+        viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
-        val newViewModel = WakeWordConfigurationViewModel()
-        newViewModel.wakeWordPorcupineKeywordDefaultOptions.value.forEach {
+        composeTestRule.awaitIdle()
+        val newViewModel = WakeWordConfigurationViewModel(get())
+        newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState.defaultOptions.forEach {
             //americano is saved with enabled
             //porcupine is saved with not enabled
             //everything else is saved with not enabled

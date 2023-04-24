@@ -4,10 +4,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Checkbox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
@@ -19,46 +18,36 @@ import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.SliderListItem
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
-import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 
 /**
  * default keywords screen
  */
 @Composable
-fun PorcupineKeywordDefaultScreen(viewModel: WakeWordConfigurationViewModel) {
-
-    val options by viewModel.wakeWordPorcupineKeywordDefaultOptions.collectAsState()
+fun PorcupineKeywordDefaultScreen(
+    viewState: PorcupineViewState,
+    onEvent: (PorcupineUiEvent) -> Unit
+) {
 
     LazyColumn(
         modifier = Modifier
             .testTag(TestTag.PorcupineKeywordDefaultScreen)
             .fillMaxHeight()
     ) {
-        items(
-            count = options.size,
-            key = { index -> options.elementAt(index).option },
-            itemContent = { index ->
+        itemsIndexed(viewState.defaultOptions) { index, option ->
 
-                val element = options.elementAt(index)
+            DefaultKeywordListItem(
+                element = option,
+                onClick = { onEvent(ClickPorcupineKeywordDefault(index)) },
+                onToggle = { onEvent(SetPorcupineKeywordDefault(index, it)) },
+                onUpdateSensitivity = { onEvent(UpdateWakeWordPorcupineKeywordDefaultSensitivity(index, it)) }
+            )
 
-                DefaultKeywordListItem(element = element,
-                    onClick = { viewModel.clickPorcupineKeywordDefault(element.option) },
-                    onToggle = { enabled ->
-                        viewModel.togglePorcupineKeywordDefault(
-                            element.option,
-                            enabled
-                        )
-                    },
-                    onUpdateSensitivity = { sensitivity ->
-                        viewModel.updateWakeWordPorcupineKeywordDefaultSensitivity(
-                            element.option,
-                            sensitivity
-                        )
-                    })
-
-                CustomDivider()
-            }
-        )
+            CustomDivider()
+        }
     }
 
 }
@@ -96,7 +85,7 @@ private fun DefaultKeywordListItem(
             modifier = Modifier
                 .combinedTestTag(element.option, TestTag.Sensitivity)
                 .padding(horizontal = 12.dp),
-            text = MR.strings.sensitivity,
+            text = MR.strings.sensitivity.stable,
             value = element.sensitivity,
             onValueChange = onUpdateSensitivity
         )

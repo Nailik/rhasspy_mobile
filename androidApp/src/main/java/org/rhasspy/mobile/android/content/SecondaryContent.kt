@@ -24,10 +24,9 @@ fun SecondaryContent(
             LocalAbsoluteTonalElevation provides 0.dp
         ) {
             Surface(
-                color = MaterialTheme.colorScheme.surface
-            ) {
-                content()
-            }
+                color = MaterialTheme.colorScheme.surface,
+                content = content
+            )
         }
     }
 }

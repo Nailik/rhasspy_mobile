@@ -1,38 +1,38 @@
 package org.rhasspy.mobile.logic.services.audioplaying
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.inject
-import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.middleware.Action.DialogAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.option.AudioPlayingOption
+import org.rhasspy.mobile.logic.logger.LogType
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.Source
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
 import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
+import org.rhasspy.mobile.platformspecific.readOnly
 
 /**
  * calls actions and returns result
  *
  * when data is null the service was most probably mqtt and will return result in a call function
  */
-open class AudioPlayingService : IService() {
-    private val logger = LogType.AudioPlayingService.logger()
-
-    private val params by inject<AudioPlayingServiceParams>()
-
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
-    val serviceState = _serviceState.readOnly
+open class AudioPlayingService(
+    paramsCreator: AudioPlayingServiceParamsCreator
+) : IService(LogType.AudioPlayingService) {
 
     private val localAudioService by inject<LocalAudioService>()
     private val httpClientService by inject<HttpClientService>()
     private val mqttClientService by inject<MqttService>()
 
-    private val serviceMiddleware by inject<ServiceMiddleware>()
+    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
+    override val serviceState = _serviceState.readOnly
+
+    private var paramsFlow: StateFlow<AudioPlayingServiceParams> = paramsCreator()
+    private val params: AudioPlayingServiceParams get() = paramsFlow.value
 
     /**
      * hermes/audioServer/<siteId>/playBytes/<requestId>
@@ -57,17 +57,17 @@ open class AudioPlayingService : IService() {
         when (params.audioPlayingOption) {
             AudioPlayingOption.Local -> {
                 _serviceState.value = localAudioService.playAudio(audioSource)
-                serviceMiddleware.action(DialogAction.PlayFinished(Source.Local))
+                serviceMiddleware.action(DialogServiceMiddlewareAction.PlayFinished(Source.Local))
             }
 
             AudioPlayingOption.RemoteHTTP -> {
                 _serviceState.value = httpClientService.playWav(audioSource).toServiceState()
-                serviceMiddleware.action(DialogAction.PlayFinished(Source.HttpApi))
+                serviceMiddleware.action(DialogServiceMiddlewareAction.PlayFinished(Source.HttpApi))
             }
 
             AudioPlayingOption.RemoteMQTT -> {
                 _serviceState.value = mqttClientService.playAudioRemote(audioSource)
-                serviceMiddleware.action(DialogAction.PlayFinished(Source.Local))
+                serviceMiddleware.action(DialogServiceMiddlewareAction.PlayFinished(Source.Local))
             }
 
             AudioPlayingOption.Disabled -> {}

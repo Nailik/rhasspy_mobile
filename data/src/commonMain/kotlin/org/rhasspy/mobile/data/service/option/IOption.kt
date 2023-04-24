@@ -1,9 +1,9 @@
 package org.rhasspy.mobile.data.service.option
 
-import dev.icerock.moko.resources.StringResource
+import org.rhasspy.mobile.data.resource.StableStringResource
 
 interface IOption<T> {
-    val text: StringResource
+    val text: StableStringResource
     val name: String
 
     fun findValue(value: String): T

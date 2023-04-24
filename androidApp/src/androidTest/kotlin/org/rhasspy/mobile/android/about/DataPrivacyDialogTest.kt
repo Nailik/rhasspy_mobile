@@ -6,7 +6,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.android.utils.onNodeWithTag
 
 /**
  * Test visibility and close button of data privacy dialog
@@ -20,7 +20,7 @@ class DataPrivacyDialogTest {
     fun setUp() {
 
         composeTestRule.setContent {
-            DataPrivacyDialogButton()
+            DataPrivacyDialogButton("")
         }
 
     }

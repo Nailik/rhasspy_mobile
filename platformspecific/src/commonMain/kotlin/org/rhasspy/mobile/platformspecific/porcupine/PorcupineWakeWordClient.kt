@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.platformspecific.porcupine
 
-import io.ktor.utils.io.core.Closeable
+import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineError
@@ -14,12 +14,14 @@ import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
  */
 expect class PorcupineWakeWordClient(
     wakeWordPorcupineAccessToken: String,
-    wakeWordPorcupineKeywordDefaultOptions: Set<PorcupineDefaultKeyword>,
-    wakeWordPorcupineKeywordCustomOptions: Set<PorcupineCustomKeyword>,
+    wakeWordPorcupineKeywordDefaultOptions: ImmutableList<PorcupineDefaultKeyword>,
+    wakeWordPorcupineKeywordCustomOptions: ImmutableList<PorcupineCustomKeyword>,
     wakeWordPorcupineLanguage: PorcupineLanguageOption,
     onKeywordDetected: (hotWord: String) -> Unit,
     onError: (PorcupineError) -> Unit
-) : Closeable {
+) {
+
+    val isInitialized: Boolean
 
     /**
      * create porcupine client
@@ -35,5 +37,7 @@ expect class PorcupineWakeWordClient(
      * stop wake word detected
      */
     fun stop()
+
+    fun close()
 
 }

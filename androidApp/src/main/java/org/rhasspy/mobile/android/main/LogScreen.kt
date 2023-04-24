@@ -1,10 +1,6 @@
 package org.rhasspy.mobile.android.main
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -17,36 +13,49 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.CustomDivider
 import org.rhasspy.mobile.android.content.elements.Icon
-import org.rhasspy.mobile.android.content.elements.LogListElement
 import org.rhasspy.mobile.android.content.elements.Text
-import org.rhasspy.mobile.viewmodel.screens.LogScreenViewModel
+import org.rhasspy.mobile.android.content.list.LogListElement
+import org.rhasspy.mobile.data.log.LogElement
+import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Change.ToggleListAutoScroll
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Navigate.SaveLogFile
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Navigate.ShareLogFile
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
 
 /**
  * show log information
  */
 @Preview
 @Composable
-fun LogScreen(viewModel: LogScreenViewModel = get()) {
+fun LogScreen() {
+    val viewModel: LogScreenViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewState by viewModel.viewState.collectAsState()
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { AppBar(viewModel) },
+        topBar = {
+            AppBar(
+                isLogAutoscroll = viewState.isLogAutoscroll,
+                onEvent = viewModel::onEvent
+            )
+        },
     ) { paddingValues ->
 
         Surface(Modifier.padding(paddingValues)) {
-            LogScreenContent(viewModel)
+            LogScreenContent(
+                isLogAutoscroll = viewState.isLogAutoscroll,
+                logList = viewState.logList
+            )
         }
 
     }
@@ -56,11 +65,17 @@ fun LogScreen(viewModel: LogScreenViewModel = get()) {
  * app bar of log screen
  */
 @Composable
-private fun AppBar(viewModel: LogScreenViewModel) {
+private fun AppBar(
+    isLogAutoscroll: Boolean,
+    onEvent: (LogScreenUiEvent) -> Unit
+) {
     TopAppBar(modifier = Modifier,
-        title = { Text(MR.strings.log) },
+        title = { Text(MR.strings.log.stable) },
         actions = {
-            LogScreenActions(viewModel)
+            LogScreenActions(
+                isLogAutoscroll = isLogAutoscroll,
+                onEvent = onEvent
+            )
         }
     )
 }
@@ -69,16 +84,18 @@ private fun AppBar(viewModel: LogScreenViewModel) {
  * visible content on log screen
  */
 @Composable
-private fun LogScreenContent(viewModel: LogScreenViewModel) {
+private fun LogScreenContent(
+    isLogAutoscroll: Boolean,
+    logList: ImmutableList<LogElement>
+) {
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberLazyListState()
-    val items by viewModel.logArr.collectAsState()
 
-    if (viewModel.isListAutoscroll.collectAsState().value) {
-        LaunchedEffect(items.size) {
+    if (isLogAutoscroll) {
+        LaunchedEffect(logList.size) {
             coroutineScope.launch {
-                if (items.isNotEmpty()) {
-                    scrollState.animateScrollToItem(items.size - 1)
+                if (logList.isNotEmpty()) {
+                    scrollState.animateScrollToItem(logList.size - 1)
                 }
             }
         }
@@ -88,7 +105,7 @@ private fun LogScreenContent(viewModel: LogScreenViewModel) {
         state = scrollState,
         modifier = Modifier.fillMaxHeight()
     ) {
-        items(items) { item ->
+        items(logList) { item ->
             LogListElement(item)
             CustomDivider()
         }
@@ -100,25 +117,34 @@ private fun LogScreenContent(viewModel: LogScreenViewModel) {
  * log screen actions to save and share log file
  */
 @Composable
-private fun LogScreenActions(viewModel: LogScreenViewModel) {
+private fun LogScreenActions(
+    isLogAutoscroll: Boolean,
+    onEvent: (LogScreenUiEvent) -> Unit
+) {
 
     Row(
         modifier = Modifier.padding(start = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        IconButton(onClick = viewModel::toggleListAutoscroll) {
+        IconButton(onClick = { onEvent(ToggleListAutoScroll) }) {
             Icon(
-                imageVector = if (viewModel.isListAutoscroll.collectAsState().value) Icons.Filled.LowPriority else Icons.Filled.PlaylistRemove,
-                contentDescription = MR.strings.autoscrollList
+                imageVector = if (isLogAutoscroll) Icons.Filled.LowPriority else Icons.Filled.PlaylistRemove,
+                contentDescription = MR.strings.autoscrollList.stable
             )
         }
 
-        IconButton(onClick = viewModel::shareLogFile) {
-            Icon(imageVector = Icons.Filled.Share, contentDescription = MR.strings.share)
+        IconButton(onClick = { onEvent(ShareLogFile) }) {
+            Icon(
+                imageVector = Icons.Filled.Share,
+                contentDescription = MR.strings.share.stable
+            )
         }
 
-        IconButton(onClick = viewModel::saveLogFile) {
-            Icon(imageVector = Icons.Filled.Save, contentDescription = MR.strings.save)
+        IconButton(onClick = { onEvent(SaveLogFile) }) {
+            Icon(
+                imageVector = Icons.Filled.Save,
+                contentDescription = MR.strings.save.stable
+            )
         }
     }
 

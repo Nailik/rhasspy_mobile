@@ -1,34 +1,37 @@
 package org.rhasspy.mobile.android.configuration.content
 
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTextReplacement
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.onListItemSwitch
-import org.rhasspy.mobile.viewmodel.configuration.WebServerConfigurationViewModel
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
+import org.rhasspy.mobile.android.utils.awaitSaved
+import org.rhasspy.mobile.android.utils.onListItemSwitch
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.SetHttpServerSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class WebServerServiceConfigurationContentTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class WebServerServiceConfigurationContentTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = WebServerConfigurationViewModel()
+    private val viewModel = get<WebServerConfigurationViewModel>()
 
     @Before
     fun setUp() {
@@ -37,9 +40,10 @@ class WebServerServiceConfigurationContentTest {
             val navController = rememberNavController()
 
             CompositionLocalProvider(
-                LocalMainNavController provides navController
+                LocalMainNavController provides navController,
+                LocalViewModelFactory provides get()
             ) {
-                WebServerConfigurationContent(viewModel)
+                WebServerConfigurationContent()
             }
         }
 
@@ -72,15 +76,18 @@ class WebServerServiceConfigurationContentTest {
      * enable ssl is saved
      */
     @Test
-    fun testHttpContent() = runBlocking {
-        viewModel.toggleHttpServerEnabled(false)
-        viewModel.toggleHttpServerSSLEnabled(false)
-        viewModel.onSave()
+    fun testHttpContent() = runTest {
+        viewModel.onEvent(SetHttpServerEnabled(false))
+        viewModel.onEvent(SetHttpServerSSLEnabled(false))
+        viewModel.onAction(Save)
+        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
+        val viewState = viewModel.viewState.value.editViewState
 
         val textInputTest = "6541"
 
         //http api is disabled
-        assertFalse { viewModel.isHttpServerEnabled.value }
+        assertFalse { viewState.value.isHttpServerEnabled }
         //switch is off
         composeTestRule.onNodeWithTag(TestTag.ServerSwitch).onListItemSwitch().assertIsOff()
         //settings not visible
@@ -91,7 +98,7 @@ class WebServerServiceConfigurationContentTest {
         //user clicks switch
         composeTestRule.onNodeWithTag(TestTag.ServerSwitch).performClick()
         //http api is enabled
-        assertTrue { viewModel.isHttpServerEnabled.value }
+        assertTrue { viewState.value.isHttpServerEnabled }
         //switch is on
         composeTestRule.onNodeWithTag(TestTag.ServerSwitch).onListItemSwitch().assertIsOn()
         //settings visible
@@ -103,7 +110,7 @@ class WebServerServiceConfigurationContentTest {
         composeTestRule.onNodeWithTag(TestTag.Port).performTextReplacement(textInputTest)
 
         //enable ssl is off
-        assertFalse { viewModel.isHttpServerSSLEnabled.value }
+        assertFalse { viewState.value.isHttpServerSSLEnabled }
         //enable ssl switch is off
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOff()
         //certificate button not visible
@@ -112,7 +119,7 @@ class WebServerServiceConfigurationContentTest {
         //user clicks enable ssl
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).performScrollTo().performClick()
         //ssl is on
-        assertTrue { viewModel.isHttpServerSSLEnabled.value }
+        assertTrue { viewState.value.isHttpServerSSLEnabled }
         //enable ssl switch is on
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOn()
         //certificate button visible
@@ -121,12 +128,13 @@ class WebServerServiceConfigurationContentTest {
         //user click save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
-        val newViewModel = WebServerConfigurationViewModel()
-        //enable http api is saved
-        assertEquals(true, newViewModel.isHttpServerEnabled.value)
-        //port is saved
-        assertEquals(textInputTest, newViewModel.httpServerPortText.value)
-        //enable ssl is saved
-        assertEquals(true, newViewModel.isHttpServerSSLEnabled.value)
+        WebServerConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+            //enable http api is saved
+            assertEquals(true, it.isHttpServerEnabled)
+            //port is saved
+            assertEquals(textInputTest, it.httpServerPortText)
+            //enable ssl is saved
+            assertEquals(true, it.isHttpServerSSLEnabled)
+        }
     }
 }

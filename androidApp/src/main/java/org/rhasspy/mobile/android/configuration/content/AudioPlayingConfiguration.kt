@@ -6,10 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import org.koin.androidx.compose.get
+import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
@@ -18,51 +18,84 @@ import org.rhasspy.mobile.android.content.elements.translate
 import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.data.service.option.AudioOutputOption
+import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
-import org.rhasspy.mobile.viewmodel.configuration.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action.PlayTestAudio
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewState
 
 /**
  * Content to configure audio playing
  * Drop Down of state
  * HTTP Endpoint
  */
-@Preview(showBackground = true)
 @Composable
-fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewModel = get()) {
+fun AudioPlayingConfigurationContent() {
+    val viewModel: AudioPlayingConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewState by viewModel.viewState.collectAsState()
+    val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.AudioPlayingConfiguration),
-        title = MR.strings.audioPlaying,
-        viewModel = viewModel,
-        testContent = { TestContent(viewModel) }
+        config = ConfigurationScreenConfig(MR.strings.audioPlaying.stable),
+        viewState = viewState,
+        onAction = { viewModel.onAction(it) },
+        onConsumed = { viewModel.onConsumed(it) },
+        testContent = { TestContent(viewModel::onEvent) }
     ) {
 
         item {
-            val audioPlayingOption by viewModel.audioPlayingOption.collectAsState()
-            //radio buttons list of available values
-            RadioButtonsEnumSelection(
-                modifier = Modifier.testTag(TestTag.AudioPlayingOptions),
-                selected = audioPlayingOption,
-                onSelect = viewModel::selectAudioPlayingOption,
-                values = viewModel.audioPlayingOptionList
-            ) {
-
-                if (viewModel.isAudioPlayingLocalSettingsVisible(it)) {
-                    LocalConfigurationContent(viewModel)
-                }
-
-                if (viewModel.isAudioPlayingHttpEndpointSettingsVisible(it)) {
-                    HttpEndpointConfigurationContent(viewModel)
-                }
-
-                if (viewModel.isAudioPlayingMqttSiteIdSettingsVisible(it)) {
-                    MqttSiteIdConfigurationContent(viewModel)
-                }
-
-            }
+            AudioPlayingOptionContent(
+                viewState = contentViewState,
+                onEvent = viewModel::onEvent
+            )
         }
+    }
+
+}
+
+@Composable
+private fun AudioPlayingOptionContent(
+    viewState: AudioPlayingConfigurationViewState,
+    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
+) {
+
+    //radio buttons list of available values
+    RadioButtonsEnumSelection(
+        modifier = Modifier.testTag(TestTag.AudioPlayingOptions),
+        selected = viewState.audioPlayingOption,
+        onSelect = { onEvent(SelectAudioPlayingOption(it)) },
+        values = viewState.audioPlayingOptionList
+    ) { option ->
+
+        when (option) {
+            AudioPlayingOption.Local -> LocalConfigurationContent(
+                audioOutputOption = viewState.audioOutputOption,
+                audioOutputOptionList = viewState.audioOutputOptionList,
+                onEvent = onEvent
+            )
+
+            AudioPlayingOption.RemoteHTTP -> HttpEndpointConfigurationContent(
+                isUseCustomAudioPlayingHttpEndpoint = viewState.isUseCustomAudioPlayingHttpEndpoint,
+                audioPlayingHttpEndpoint = viewState.audioPlayingHttpEndpoint,
+                onEvent = onEvent
+            )
+
+            AudioPlayingOption.RemoteMQTT -> MqttSiteIdConfigurationContent(
+                audioPlayingMqttSiteId = viewState.audioPlayingMqttSiteId,
+                onEvent = onEvent
+            )
+
+            else -> {}
+        }
+
     }
 
 }
@@ -71,16 +104,20 @@ fun AudioPlayingConfigurationContent(viewModel: AudioPlayingConfigurationViewMod
  * show output options for local audio
  */
 @Composable
-private fun LocalConfigurationContent(viewModel: AudioPlayingConfigurationViewModel) {
+private fun LocalConfigurationContent(
+    audioOutputOption: AudioOutputOption,
+    audioOutputOptionList: ImmutableList<AudioOutputOption>,
+    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
+) {
 
     //visibility of local output options
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
         RadioButtonsEnumSelectionList(
             modifier = Modifier.testTag(TestTag.AudioOutputOptions),
-            selected = viewModel.audioOutputOption.collectAsState().value,
-            onSelect = viewModel::selectAudioOutputOption,
-            values = viewModel.audioOutputOptionList
+            selected = audioOutputOption,
+            onSelect = { onEvent(SelectAudioOutputOption(it)) },
+            values = audioOutputOptionList
         )
 
     }
@@ -91,7 +128,11 @@ private fun LocalConfigurationContent(viewModel: AudioPlayingConfigurationViewMo
  * show http endpoint options
  */
 @Composable
-private fun HttpEndpointConfigurationContent(viewModel: AudioPlayingConfigurationViewModel) {
+private fun HttpEndpointConfigurationContent(
+    isUseCustomAudioPlayingHttpEndpoint: Boolean,
+    audioPlayingHttpEndpoint: String,
+    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
+) {
 
     //visibility of endpoint option
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
@@ -99,18 +140,18 @@ private fun HttpEndpointConfigurationContent(viewModel: AudioPlayingConfiguratio
         //switch to use custom
         SwitchListItem(
             modifier = Modifier.testTag(TestTag.CustomEndpointSwitch),
-            text = MR.strings.useCustomEndpoint,
-            isChecked = viewModel.isUseCustomAudioPlayingHttpEndpoint.collectAsState().value,
-            onCheckedChange = viewModel::toggleUseCustomHttpEndpoint
+            text = MR.strings.useCustomEndpoint.stable,
+            isChecked = isUseCustomAudioPlayingHttpEndpoint,
+            onCheckedChange = { onEvent(SetUseCustomHttpEndpoint(it)) }
         )
 
         //http endpoint input field
         TextFieldListItem(
-            enabled = viewModel.isAudioPlayingHttpEndpointChangeEnabled.collectAsState().value,
+            enabled = isUseCustomAudioPlayingHttpEndpoint,
             modifier = Modifier.testTag(TestTag.Endpoint),
-            value = viewModel.audioPlayingHttpEndpoint.collectAsState().value,
-            onValueChange = viewModel::changeAudioPlayingHttpEndpoint,
-            label = translate(MR.strings.audioOutputURL, HttpClientPath.PlayWav.path)
+            value = audioPlayingHttpEndpoint,
+            onValueChange = { onEvent(ChangeAudioPlayingHttpEndpoint(it)) },
+            label = translate(MR.strings.audioOutputURL.stable, HttpClientPath.PlayWav.path)
         )
 
     }
@@ -122,7 +163,10 @@ private fun HttpEndpointConfigurationContent(viewModel: AudioPlayingConfiguratio
  * show mqtt site id options
  */
 @Composable
-private fun MqttSiteIdConfigurationContent(viewModel: AudioPlayingConfigurationViewModel) {
+private fun MqttSiteIdConfigurationContent(
+    audioPlayingMqttSiteId: String,
+    onEvent: (AudioPlayingConfigurationUiEvent) -> Unit
+) {
 
     //visibility of endpoint option
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
@@ -130,9 +174,9 @@ private fun MqttSiteIdConfigurationContent(viewModel: AudioPlayingConfigurationV
         //http endpoint input field
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.ConfigurationSiteId),
-            value = viewModel.audioPlayingMqttSiteId.collectAsState().value,
-            onValueChange = viewModel::changeAudioPlayingMqttSiteId,
-            label = translate(MR.strings.siteId)
+            value = audioPlayingMqttSiteId,
+            onValueChange = { onEvent(ChangeAudioPlayingMqttSiteId(it)) },
+            label = translate(MR.strings.siteId.stable)
         )
 
     }
@@ -143,11 +187,11 @@ private fun MqttSiteIdConfigurationContent(viewModel: AudioPlayingConfigurationV
  * test content, play button
  */
 @Composable
-private fun TestContent(viewModel: AudioPlayingConfigurationViewModel) {
+private fun TestContent(onEvent: (AudioPlayingConfigurationUiEvent) -> Unit) {
 
     FilledTonalButtonListItem(
-        text = MR.strings.executePlayTestAudio,
-        onClick = viewModel::playTestAudio
+        text = MR.strings.executePlayTestAudio.stable,
+        onClick = { onEvent(PlayTestAudio) }
     )
 
 }

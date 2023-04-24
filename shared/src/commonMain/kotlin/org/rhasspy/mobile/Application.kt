@@ -12,24 +12,22 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
-import org.koin.core.context.unloadKoinModules
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.logic.logger.FileLogger
-import org.rhasspy.mobile.platformspecific.background.BackgroundService
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
-import org.rhasspy.mobile.platformspecific.utils.isDebug
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.logic.settings.ConfigurationSetting
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.background.BackgroundService
 import org.rhasspy.mobile.platformspecific.language.setupLanguage
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
+import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.platformspecific.utils.isDebug
 
 abstract class Application : NativeApplication(), KoinComponent {
     private val logger = Logger.withTag("Application")
@@ -42,7 +40,7 @@ abstract class Application : NativeApplication(), KoinComponent {
             // declare used modules
             modules(module {
                 single<NativeApplication> { this@Application }
-            }, serviceModule, viewModelModule, factoryModule, nativeModule)
+            }, viewModelFactory, serviceModule, viewModelModule, factoryModule, nativeModule)
         }
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -56,7 +54,7 @@ abstract class Application : NativeApplication(), KoinComponent {
                 )
             }
 
-            logger.i { "######## Application started ########" }
+            logger.i { "######## Application \n started ########" }
 
             //initialize/load the settings, generate the MutableStateFlow
             AppSetting
@@ -93,25 +91,6 @@ abstract class Application : NativeApplication(), KoinComponent {
 
     abstract suspend fun updateWidget()
 
-    override suspend fun startTest() {
-        BackgroundService.stop()
-        stopOverlay()
-        unloadKoinModules(listOf(viewModelModule, serviceModule))
-        loadKoinModules(listOf(serviceModule, viewModelModule))
-    }
-
-    override suspend fun stopTest() {
-        reloadServiceModules()
-    }
-
-    override suspend fun reloadServiceModules() {
-        stopOverlay()
-        unloadKoinModules(listOf(viewModelModule, serviceModule))
-        loadKoinModules(listOf(serviceModule, viewModelModule))
-        startServices()
-        startOverlay()
-    }
-
     override fun resume() {
         MicrophonePermission.update()
         OverlayPermission.update()
@@ -140,6 +119,6 @@ abstract class Application : NativeApplication(), KoinComponent {
     }
 
     private fun initializeLanguage() {
-        AppSetting.languageType.value = setupLanguage(AppSetting.languageType.value )
+        AppSetting.languageType.value = setupLanguage(AppSetting.languageType.value)
     }
 }

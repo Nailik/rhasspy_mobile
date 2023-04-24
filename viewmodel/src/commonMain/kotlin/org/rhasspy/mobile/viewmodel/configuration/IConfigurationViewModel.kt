@@ -1,113 +1,177 @@
 package org.rhasspy.mobile.viewmodel.configuration
 
+import androidx.compose.runtime.Stable
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
-import org.rhasspy.mobile.platformspecific.combineState
-import org.rhasspy.mobile.logic.logger.FileLogger
-import org.rhasspy.mobile.logic.logger.LogElement
-import org.rhasspy.mobile.logic.logger.LogLevel
-import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.logic.logger.FileLogger
+import org.rhasspy.mobile.logic.logger.LogLevel
+import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTest
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.ui.event.StateEvent.Consumed
+import org.rhasspy.mobile.ui.event.StateEvent.Triggered
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiNavigate.PopBackStack
+import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
-abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
+@Stable
+abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
+    private val service: IService,
+    private val initialViewState: () -> V
+) : ViewModel(), KoinComponent {
     private val logger = Logger.withTag("IConfigurationViewModel")
     private var testStartDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).toString()
 
-    protected abstract val testRunner: IConfigurationTest
-    protected abstract val logType: LogType
-
-    abstract val serviceState: StateFlow<ServiceState>
-    val isOpenServiceDialogEnabled get() = serviceState.mapReadonlyState { it is ServiceState.Exception || it is ServiceState.Error }
-    val serviceStateDialogText
-        get() = serviceState.mapReadonlyState {
-            when (it) {
+    private val serviceViewState = service.serviceState.mapReadonlyState {
+        ServiceStateHeaderViewState(
+            serviceState = ServiceViewState(service.serviceState),
+            isOpenServiceDialogEnabled = (it is ServiceState.Exception || it is ServiceState.Error),
+            serviceStateDialogText = when (it) {
                 is ServiceState.Error -> it.information
                 is ServiceState.Exception -> it.exception?.toString() ?: ""
                 else -> ""
             }
-        }
+        )
+    }
 
-    abstract val hasUnsavedChanges: StateFlow<Boolean>
-    abstract val isTestingEnabled: StateFlow<Boolean>
+    private val logEvents = MutableStateFlow<ImmutableList<LogElement>>(persistentListOf())
+    private val configurationTestViewState = MutableStateFlow(
+        ConfigurationTestViewState(
+            isListFiltered = false,
+            isListAutoscroll = true,
+            logEvents = logEvents.mapReadonlyState { it.toImmutableList() },
+            serviceViewState = serviceViewState
+        )
+    )
 
-    private val _logEvents = MutableStateFlow(listOf<LogElement>())
-    val logEvents: StateFlow<List<LogElement>>
-        get() = combineState(_logEvents, _isListFiltered) { events, filtered ->
-            if (filtered) {
-                events.filter { it.tag == logType.name }.filter { it.time >= testStartDate }
-            } else {
-                events
+    protected val contentViewState = MutableStateFlow(initialViewState())
+
+    protected val data get() = contentViewState.value
+
+    private val _viewState = MutableStateFlow(
+        ConfigurationViewState(
+            isBackPressDisabled = false,
+            serviceViewState = serviceViewState,
+            editViewState = contentViewState,
+            testViewState = configurationTestViewState,
+            popBackStack = PopBackStack(Consumed),
+            hasUnsavedChanges = false
+        )
+    )
+    val viewState = _viewState.readOnly
+
+    init {
+        viewModelScope.launch(Dispatchers.Default) {
+            contentViewState.collect { content ->
+                _viewState.update {
+                    it.copy(hasUnsavedChanges = content != initialViewState())
+                }
             }
         }
+    }
 
-    private val _isListFiltered = MutableStateFlow(true)
-    val isListFiltered = _isListFiltered.readOnly
+    fun onAction(action: IConfigurationUiEvent) {
+        when (action) {
+            Discard -> discard()
+            Save -> save()
+            StartTest -> startTest()
+            StopTest -> stopTest()
+            BackPress -> {
+                if (_viewState.value.hasUnsavedChanges) {
+                    _viewState.update { it.copy(showUnsavedChangesDialog = true) }
+                } else {
+                    _viewState.update { it.copy(popBackStack = PopBackStack(Triggered)) }
+                }
+            }
 
-    private val _isListAutoscroll = MutableStateFlow(true)
-    val isListAutoscroll = _isListAutoscroll.readOnly
+            DismissDialog -> _viewState.update { it.copy(showUnsavedChangesDialog = false) }
+            ToggleListAutoscroll -> configurationTestViewState.update { it.copy(isListAutoscroll = !it.isListAutoscroll) }
+            ToggleListFiltered ->
+                configurationTestViewState.update {
+                    it.copy(isListFiltered = !it.isListFiltered)
+                        .copy(
+                            logEvents = logEvents.mapReadonlyState { events ->
+                                if (it.isListFiltered) {
+                                    events.filter { event -> event.tag == service.logType.name && event.time >= testStartDate }
+                                        .toImmutableList()
+                                } else {
+                                    events.toImmutableList()
+                                }
+                            }
+                        )
+                }
+        }
+    }
+
+    fun onConsumed(event: IConfigurationUiNavigate) {
+        when (event) {
+            is PopBackStack -> _viewState.update { it.copy(popBackStack = PopBackStack(Consumed)) }
+        }
+    }
 
     private val isTestRunning = MutableStateFlow(false)
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading.readOnly
-    val isBackPressDisabled = isLoading
+    protected var testScope = CoroutineScope(Dispatchers.Default)
+        private set
 
-    private var testScope = CoroutineScope(Dispatchers.Default)
-
-    fun toggleListFiltered() {
-        _isListFiltered.value = !_isListFiltered.value
-    }
-
-    fun toggleListAutoscroll() {
-        _isListAutoscroll.value = !_isListAutoscroll.value
-    }
-
-    fun save(onComplete: (() -> Unit)? = null) {
-        _isLoading.value = true
-
+    private fun save() {
         viewModelScope.launch(Dispatchers.Default) {
             onSave()
+            contentViewState.value = initialViewState()
+            noUnsavedChanges()
+        }
+    }
 
-            get<NativeApplication>().reloadServiceModules()
+    private fun discard() {
+        viewModelScope.launch(Dispatchers.Default) {
+            onDiscard()
+            contentViewState.value = initialViewState()
+            noUnsavedChanges()
+        }
 
-            _isLoading.value = false
+    }
 
-            CoroutineScope(Dispatchers.Main).launch {
-                onComplete?.invoke()
+    private fun noUnsavedChanges() {
+        _viewState.update {
+            if (_viewState.value.showUnsavedChangesDialog) {
+                it.copy(
+                    showUnsavedChangesDialog = false,
+                    hasUnsavedChanges = false,
+                    popBackStack = PopBackStack(Triggered)
+                )
+            } else {
+                it.copy(hasUnsavedChanges = false)
             }
         }
     }
 
-    abstract fun discard()
+    protected abstract fun onDiscard()
 
-    abstract fun onSave()
+    protected abstract fun onSave()
 
-    abstract fun initializeTestParams()
-
-    fun startTest() {
+    private fun startTest() {
         if (isTestRunning.value) {
             return
         }
         logger.d { "************* start Test ************" }
 
         isTestRunning.value = true
-        _isLoading.value = true
 
         testStartDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).toString()
         //set log type to debug minimum
@@ -122,30 +186,23 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
             testScope.launch(Dispatchers.Default) {
                 val lines = FileLogger.getLines()
                 viewModelScope.launch {
-                    _logEvents.value = lines
+                    logEvents.value = lines
                 }
 
                 //collect new log
                 FileLogger.flow.collectIndexed { _, value ->
                     viewModelScope.launch {
                         val list = mutableListOf<LogElement>()
-                        list.addAll(_logEvents.value)
+                        list.addAll(logEvents.value)
                         list.add(value)
-                        _logEvents.value = list
+                        logEvents.value = list.toImmutableList()
                     }
                 }
             }
-
-            get<NativeApplication>().startTest()
-            initializeTestParams()
-
-            testRunner.initializeTest()
-
-            _isLoading.value = false
         }
     }
 
-    fun stopTest() {
+    private fun stopTest() {
         if (!isTestRunning.value) {
             return
         }
@@ -153,15 +210,9 @@ abstract class IConfigurationViewModel : ViewModel(), KoinComponent {
 
         //reset log level
         Logger.setMinSeverity(AppSetting.logLevel.value.severity)
-        _isLoading.value = true
 
         viewModelScope.launch(Dispatchers.Default) {
             testScope.cancel()
-
-            //reload koin modules when test is stopped
-            get<NativeApplication>().stopTest()
-
-            _isLoading.value = false
             isTestRunning.value = false
         }
     }

@@ -7,21 +7,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarResult
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.NoLiveLiterals
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
@@ -30,6 +20,8 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.elements.translate
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 
 /**
@@ -44,15 +36,15 @@ import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
  */
 @Composable
 fun RequiresMicrophonePermission(
-    informationText: StringResource,
+    informationText: StableStringResource,
     onClick: () -> Unit,
     content: @Composable (onClick: () -> Unit) -> Unit
 ) {
     val snackBarHostState = LocalSnackbarHostState.current
     val coroutineScope = rememberCoroutineScope()
 
-    val snackBarMessage = translate(MR.strings.microphonePermissionDenied)
-    val snackBarActionLabel = translate(MR.strings.settings)
+    val snackBarMessage = translate(MR.strings.microphonePermissionDenied.stable)
+    val snackBarActionLabel = translate(MR.strings.settings.stable)
 
     //launcher to get result of system request
     val launcher = rememberLauncherForActivityResult(
@@ -115,7 +107,7 @@ fun RequiresMicrophonePermission(
 @NoLiveLiterals
 @Composable
 private fun MicrophonePermissionInfoDialog(
-    message: StringResource,
+    message: StableStringResource,
     onResult: (result: Boolean) -> Unit
 ) {
 
@@ -124,7 +116,7 @@ private fun MicrophonePermissionInfoDialog(
             onResult.invoke(false)
         },
         title = {
-            Text(MR.strings.microphonePermissionDialogTitle)
+            Text(MR.strings.microphonePermissionDialogTitle.stable)
         },
         text = {
             Text(
@@ -133,7 +125,10 @@ private fun MicrophonePermissionInfoDialog(
             )
         },
         icon = {
-            Icon(imageVector = Icons.Filled.Mic, contentDescription = MR.strings.microphone)
+            Icon(
+                imageVector = Icons.Filled.Mic,
+                contentDescription = MR.strings.microphone.stable
+            )
         },
         confirmButton = {
             Button(
@@ -142,7 +137,7 @@ private fun MicrophonePermissionInfoDialog(
                 },
                 modifier = Modifier.testTag(TestTag.DialogOk)
             ) {
-                Text(MR.strings.ok)
+                Text(MR.strings.ok.stable)
             }
         },
         dismissButton = {
@@ -152,7 +147,7 @@ private fun MicrophonePermissionInfoDialog(
                 },
                 modifier = Modifier.testTag(TestTag.DialogCancel)
             ) {
-                Text(MR.strings.cancel)
+                Text(MR.strings.cancel.stable)
             }
         },
         modifier = Modifier

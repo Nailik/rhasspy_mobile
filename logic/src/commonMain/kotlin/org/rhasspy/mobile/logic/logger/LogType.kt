@@ -17,7 +17,6 @@ enum class LogType {
     SpeechToTextService,
     TextToSpeechService,
     AppSettingsService,
-    UdpService,
     WakeWordService,
     WebServerService;
 

@@ -2,136 +2,135 @@ package org.rhasspy.mobile.android.configuration
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import dev.icerock.moko.resources.StringResource
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.UiEventEffect
 import org.rhasspy.mobile.android.configuration.content.*
 import org.rhasspy.mobile.android.content.elements.*
 import org.rhasspy.mobile.android.content.item.EventStateIconTinted
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.main.LocalMainNavController
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.viewmodel.screens.ConfigurationScreenViewModel
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.viewmodel.screens.configuration.*
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToError
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
 
 /**
  * configuration screens with list items that open bottom sheet
  */
-@Preview
 @Composable
-fun ConfigurationScreen(
-    viewModel: ConfigurationScreenViewModel = get(),
-    scrollToError: Boolean = false
+fun ConfigurationScreen() {
+    val viewModel: ConfigurationScreenViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewState by viewModel.viewState.collectAsState()
+
+    ConfigurationScreenContent(
+        onEvent = viewModel::onEvent,
+        onConsumed = viewModel::onConsumed,
+        viewState = viewState
+    )
+
+}
+
+@Composable
+fun ConfigurationScreenContent(
+    onEvent: (ConfigurationScreenUiEvent) -> Unit,
+    onConsumed: (IConfigurationScreenUiStateEvent) -> Unit,
+    viewState: ConfigurationScreenViewState
 ) {
-
-    val coroutineScope = rememberCoroutineScope()
-    val scrollState = rememberLazyListState()
-    val firstErrorIndex by viewModel.firstErrorIndex.collectAsState()
-
-    LaunchedEffect(scrollToError) {
-        if (scrollToError) {
-            scrollToFirstError(
-                firstErrorIndex = firstErrorIndex,
-                coroutineScope = coroutineScope,
-                scrollState = scrollState
-            )
-        }
-    }
-
-    val hasError by viewModel.hasError.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(MR.strings.configuration) }
+                title = { Text(MR.strings.configuration.stable) }
             )
         },
     ) { paddingValues ->
-        LazyColumn(
+
+        val hasError by viewState.hasError.collectAsState()
+        val scrollState = rememberScrollState()
+        val coroutineScope = rememberCoroutineScope()
+
+        UiEventEffect(
+            event = viewState.scrollToErrorEvent.collectAsState().value,
+            onConsumed = onConsumed
+        ) {
+            coroutineScope.launch {
+                scrollState.animateScrollTo(it.firstErrorIndex)
+            }
+        }
+
+
+        if (hasError) {
+            ServiceErrorInformation(onEvent)
+        }
+
+        Column(
             modifier = Modifier
                 .testTag(TestTag.List)
                 .padding(paddingValues)
-                .fillMaxSize(),
-            state = scrollState
+                .fillMaxSize()
+                .verticalScroll(scrollState)
         ) {
 
-            if (hasError) {
-                stickyHeader {
-                    ServiceErrorInformation(viewModel, scrollState)
-                }
-            }
+            SiteId(viewState.siteId, onEvent)
+            CustomDivider()
 
-            item {
-                SiteId(viewModel)
-                CustomDivider()
-            }
 
-            item {
-                RemoteHermesHttp(viewModel)
-                CustomDivider()
-            }
+            RemoteHermesHttp(viewState.remoteHermesHttp)
+            CustomDivider()
 
-            item {
-                Webserver(viewModel)
-                CustomDivider()
-            }
 
-            item {
-                Mqtt(viewModel)
-                CustomDivider()
-            }
+            Webserver(viewState.webserver)
+            CustomDivider()
 
-            item {
-                WakeWord(viewModel)
-                CustomDivider()
-            }
 
-            item {
-                SpeechToText(viewModel)
-                CustomDivider()
-            }
+            Mqtt(viewState.mqtt)
+            CustomDivider()
 
-            item {
-                IntentRecognition(viewModel)
-                CustomDivider()
-            }
 
-            item {
-                TextToSpeech(viewModel)
-                CustomDivider()
-            }
+            WakeWord(viewState.wakeWord)
+            CustomDivider()
 
-            item {
-                AudioPlaying(viewModel)
-                CustomDivider()
-            }
 
-            item {
-                DialogManagement(viewModel)
-                CustomDivider()
-            }
+            SpeechToText(viewState.speechToText)
+            CustomDivider()
 
-            item {
-                IntentHandling(viewModel)
-                CustomDivider()
-            }
+
+            IntentRecognition(viewState.intentRecognition)
+            CustomDivider()
+
+
+            TextToSpeech(viewState.textToSpeech)
+            CustomDivider()
+
+
+            AudioPlaying(viewState.audioPlaying)
+            CustomDivider()
+
+
+            DialogManagement(viewState.dialogManagement)
+            CustomDivider()
+
+
+            IntentHandling(viewState.intentHandling)
+            CustomDivider()
 
         }
     }
@@ -190,12 +189,8 @@ fun NavGraphBuilder.addConfigurationScreens() {
  */
 @Composable
 private fun ServiceErrorInformation(
-    viewModel: ConfigurationScreenViewModel,
-    scrollState: LazyListState
+    onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
-
-    val coroutineScope = rememberCoroutineScope()
-    val firstErrorIndex by viewModel.firstErrorIndex.collectAsState()
 
     Surface {
         Card(
@@ -206,13 +201,7 @@ private fun ServiceErrorInformation(
             colors = CardDefaults.outlinedCardColors(
                 containerColor = MaterialTheme.colorScheme.errorContainer
             ),
-            onClick = {
-                scrollToFirstError(
-                    firstErrorIndex = firstErrorIndex,
-                    coroutineScope = coroutineScope,
-                    scrollState = scrollState
-                )
-            }
+            onClick = { onEvent(ScrollToError) }
         ) {
             Row(
                 modifier = Modifier
@@ -221,12 +210,12 @@ private fun ServiceErrorInformation(
             ) {
                 Icon(
                     imageVector = Icons.Filled.Error,
-                    contentDescription = MR.strings.error,
+                    contentDescription = MR.strings.error.stable,
                     tint = MaterialTheme.colorScheme.onErrorContainer
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    resource = MR.strings.error,
+                    resource = MR.strings.error.stable,
                     color = MaterialTheme.colorScheme.onErrorContainer
                 )
             }
@@ -240,13 +229,16 @@ private fun ServiceErrorInformation(
  * site id element
  */
 @Composable
-private fun SiteId(viewModel: ConfigurationScreenViewModel) {
+private fun SiteId(
+    viewState: SiteIdViewState,
+    onEvent: (ConfigurationScreenUiEvent) -> Unit
+) {
 
     TextFieldListItem(
         modifier = Modifier.testTag(TestTag.ConfigurationSiteId),
-        value = viewModel.siteId.collectAsState().value,
-        onValueChange = viewModel::changeSiteId,
-        label = MR.strings.siteId,
+        value = viewState.text.collectAsState().value,
+        onValueChange = { onEvent(SiteIdChange(it)) },
+        label = MR.strings.siteId.stable,
     )
 
 }
@@ -256,13 +248,13 @@ private fun SiteId(viewModel: ConfigurationScreenViewModel) {
  * shows if ssl verification is enabled
  */
 @Composable
-private fun RemoteHermesHttp(viewModel: ConfigurationScreenViewModel) {
+private fun RemoteHermesHttp(viewState: RemoteHermesHttpViewState) {
 
     ConfigurationListItem(
-        text = MR.strings.remoteHermesHTTP,
-        secondaryText = "${translate(MR.strings.sslValidation)} ${translate((!viewModel.isHttpSSLVerificationEnabled.collectAsState().value).toText())}",
+        text = MR.strings.remoteHermesHTTP.stable,
+        secondaryText = "${translate(MR.strings.sslValidation.stable)} ${translate(viewState.isHttpSSLVerificationEnabled.not().toText())}",
         screen = ConfigurationScreenType.RemoteHermesHttpConfiguration,
-        serviceState = viewModel.httpClientServiceState.collectAsState().value
+        viewState = viewState.serviceState
     )
 
 }
@@ -272,13 +264,13 @@ private fun RemoteHermesHttp(viewModel: ConfigurationScreenViewModel) {
  * shows if web server is enabled
  */
 @Composable
-private fun Webserver(viewModel: ConfigurationScreenViewModel) {
+private fun Webserver(viewState: WebServerViewState) {
 
     ConfigurationListItem(
-        text = MR.strings.webserver,
-        secondaryText = viewModel.isHttpServerEnabled.collectAsState().value.toText(),
+        text = MR.strings.webserver.stable,
+        secondaryText = viewState.isHttpServerEnabled.toText(),
         screen = ConfigurationScreenType.WebServerConfiguration,
-        serviceState = viewModel.httpServerServiceState.collectAsState().value
+        serviceViewState = viewState.serviceState
     )
 
 }
@@ -288,13 +280,13 @@ private fun Webserver(viewModel: ConfigurationScreenViewModel) {
  * shows connection state of mqtt
  */
 @Composable
-private fun Mqtt(viewModel: ConfigurationScreenViewModel) {
+private fun Mqtt(viewState: MqttViewState) {
 
     ConfigurationListItem(
-        text = MR.strings.mqtt,
-        secondaryText = if (viewModel.isMQTTConnected.collectAsState().value) MR.strings.connected else MR.strings.notConnected,
+        text = MR.strings.mqtt.stable,
+        secondaryText = if (viewState.isMQTTConnected) MR.strings.connected.stable else MR.strings.notConnected.stable,
         screen = ConfigurationScreenType.MqttConfiguration,
-        serviceState = viewModel.mqttServiceState.collectAsState().value
+        serviceViewState = viewState.serviceState
     )
 
 }
@@ -305,15 +297,13 @@ private fun Mqtt(viewModel: ConfigurationScreenViewModel) {
  * shows which option is selected
  */
 @Composable
-private fun WakeWord(viewModel: ConfigurationScreenViewModel) {
-
-    val wakeWordValueOption = viewModel.wakeWordOption.collectAsState().value
+private fun WakeWord(viewState: WakeWordViewState) {
 
     ConfigurationListItem(
-        text = MR.strings.wakeWord,
-        secondaryText = wakeWordValueOption.text,
+        text = MR.strings.wakeWord.stable,
+        secondaryText = viewState.wakeWordValueOption.text,
         screen = ConfigurationScreenType.WakeWordConfiguration,
-        serviceState = viewModel.wakeWordServiceState.collectAsState().value
+        serviceViewState = viewState.serviceState
     )
 
 }
@@ -323,13 +313,13 @@ private fun WakeWord(viewModel: ConfigurationScreenViewModel) {
  * shows which option is selected
  */
 @Composable
-private fun SpeechToText(viewModel: ConfigurationScreenViewModel) {
+private fun SpeechToText(viewState: SpeechToTextViewState) {
 
     ConfigurationListItem(
-        text = MR.strings.speechToText,
-        secondaryText = viewModel.speechToTextOption.collectAsState().value.text,
+        text = MR.strings.speechToText.stable,
+        secondaryText = viewState.speechToTextOption.text,
         screen = ConfigurationScreenType.SpeechToTextConfiguration,
-        serviceState = viewModel.speechToTextServiceState.collectAsState().value
+        serviceViewState = viewState.serviceState
     )
 
 }
@@ -340,13 +330,13 @@ private fun SpeechToText(viewModel: ConfigurationScreenViewModel) {
  * shows which option is selected
  */
 @Composable
-private fun IntentRecognition(viewModel: ConfigurationScreenViewModel) {
+private fun IntentRecognition(viewState: IntentRecognitionViewState) {
 
     ConfigurationListItem(
-        text = MR.strings.intentRecognition,
-        secondaryText = viewModel.intentRecognitionOption.collectAsState().value.text,
+        text = MR.strings.intentRecognition.stable,
+        secondaryText = viewState.intentRecognitionOption.text,
         screen = ConfigurationScreenType.IntentRecognitionConfiguration,
-        serviceState = viewModel.intentRecognitionServiceState.collectAsState().value
+        serviceViewState = viewState.serviceState
     )
 
 }
@@ -356,13 +346,13 @@ private fun IntentRecognition(viewModel: ConfigurationScreenViewModel) {
  * shows which option is selected
  */
 @Composable
-private fun TextToSpeech(viewModel: ConfigurationScreenViewModel) {
+private fun TextToSpeech(viewState: TextToSpeechViewState) {
 
     ConfigurationListItem(
-        text = MR.strings.textToSpeech,
-        secondaryText = viewModel.textToSpeechOption.collectAsState().value.text,
+        text = MR.strings.textToSpeech.stable,
+        secondaryText = viewState.textToSpeechOption.text,
         screen = ConfigurationScreenType.TextToSpeechConfiguration,
-        serviceState = viewModel.textToSpeechServiceState.collectAsState().value
+        serviceViewState = viewState.serviceState
     )
 
 }
@@ -372,13 +362,13 @@ private fun TextToSpeech(viewModel: ConfigurationScreenViewModel) {
  * shows which option is selected
  */
 @Composable
-private fun AudioPlaying(viewModel: ConfigurationScreenViewModel) {
+private fun AudioPlaying(viewState: AudioPlayingViewState) {
 
     ConfigurationListItem(
-        text = MR.strings.audioPlaying,
-        secondaryText = viewModel.audioPlayingOption.collectAsState().value.text,
+        text = MR.strings.audioPlaying.stable,
+        secondaryText = viewState.audioPlayingOption.text,
         screen = ConfigurationScreenType.AudioPlayingConfiguration,
-        serviceState = viewModel.audioPlayingServiceState.collectAsState().value
+        serviceViewState = viewState.serviceState
     )
 
 }
@@ -388,13 +378,13 @@ private fun AudioPlaying(viewModel: ConfigurationScreenViewModel) {
  * shows which option is active
  */
 @Composable
-private fun DialogManagement(viewModel: ConfigurationScreenViewModel) {
+private fun DialogManagement(viewState: DialogManagementViewState) {
 
     ConfigurationListItem(
-        text = MR.strings.dialogManagement,
-        secondaryText = viewModel.dialogManagementOption.collectAsState().value.text,
+        text = MR.strings.dialogManagement.stable,
+        secondaryText = viewState.dialogManagementOption.text,
         screen = ConfigurationScreenType.DialogManagementConfiguration,
-        serviceState = viewModel.dialogManagementServiceState.collectAsState().value
+        serviceViewState = viewState.serviceState
     )
 
 }
@@ -404,13 +394,13 @@ private fun DialogManagement(viewModel: ConfigurationScreenViewModel) {
  * shows which option is selected
  */
 @Composable
-private fun IntentHandling(viewModel: ConfigurationScreenViewModel) {
+private fun IntentHandling(viewState: IntentHandlingViewState) {
 
     ConfigurationListItem(
-        text = MR.strings.intentHandling,
-        secondaryText = viewModel.intentHandlingOption.collectAsState().value.text,
+        text = MR.strings.intentHandling.stable,
+        secondaryText = viewState.intentHandlingOption.text,
         screen = ConfigurationScreenType.IntentHandlingConfiguration,
-        serviceState = viewModel.intentHandlingServiceState.collectAsState().value
+        serviceViewState = viewState.serviceState
     )
 
 }
@@ -420,10 +410,10 @@ private fun IntentHandling(viewModel: ConfigurationScreenViewModel) {
  */
 @Composable
 private fun ConfigurationListItem(
-    text: StringResource,
-    secondaryText: StringResource,
+    text: StableStringResource,
+    secondaryText: StableStringResource,
     screen: ConfigurationScreenType,
-    serviceState: ServiceState
+    serviceViewState: ServiceViewState
 ) {
 
     val navController = LocalMainNavController.current
@@ -436,7 +426,10 @@ private fun ConfigurationListItem(
             .testTag(screen),
         text = { Text(text) },
         secondaryText = { Text(secondaryText) },
-        trailing = { EventStateIconTinted(serviceState) }
+        trailing = {
+            val serviceStateValue by serviceViewState.serviceState.collectAsState()
+            EventStateIconTinted(serviceStateValue)
+        }
     )
 
 }
@@ -447,10 +440,10 @@ private fun ConfigurationListItem(
 @Suppress("SameParameterValue")
 @Composable
 private fun ConfigurationListItem(
-    text: StringResource,
+    text: StableStringResource,
     secondaryText: String,
     screen: ConfigurationScreenType,
-    serviceState: ServiceState
+    viewState: ServiceViewState
 ) {
 
     val navController = LocalMainNavController.current
@@ -463,23 +456,10 @@ private fun ConfigurationListItem(
             .testTag(screen),
         text = { Text(text) },
         secondaryText = { Text(text = secondaryText) },
-        trailing = { EventStateIconTinted(serviceState) }
+        trailing = {
+            val serviceStateValue by viewState.serviceState.collectAsState()
+            EventStateIconTinted(serviceStateValue)
+        }
     )
 
-}
-
-/**
- * function to scroll to the first error
- */
-private fun scrollToFirstError(
-    firstErrorIndex: Int,
-    coroutineScope: CoroutineScope,
-    scrollState: LazyListState
-) {
-    coroutineScope.launch {
-        if (firstErrorIndex in 0..10) {
-            //+1 to account for sticky header
-            scrollState.animateScrollToItem(firstErrorIndex + 1)
-        }
-    }
 }

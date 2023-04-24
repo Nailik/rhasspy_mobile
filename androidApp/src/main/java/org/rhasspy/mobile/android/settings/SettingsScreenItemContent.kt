@@ -14,13 +14,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
 
 /**
  * content of a settings screen page
@@ -28,15 +29,14 @@ import org.rhasspy.mobile.android.testTag
 @Composable
 fun SettingsScreenItemContent(
     modifier: Modifier = Modifier,
-    title: StringResource,
+    title: StableStringResource,
     expandedContent: @Composable () -> Unit
 ) {
     val navigation = LocalMainNavController.current
 
     Surface(tonalElevation = 1.dp) {
         Scaffold(
-            modifier = modifier
-                .fillMaxSize(),
+            modifier = modifier.fillMaxSize(),
             topBar = {
                 AppBar(
                     title = title,
@@ -60,7 +60,7 @@ fun SettingsScreenItemContent(
  * top app bar with title and back navigation button
  */
 @Composable
-private fun AppBar(title: StringResource, onBackClick: () -> Unit) {
+private fun AppBar(title: StableStringResource, onBackClick: () -> Unit) {
 
     TopAppBar(
         title = {
@@ -76,7 +76,7 @@ private fun AppBar(title: StringResource, onBackClick: () -> Unit) {
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = MR.strings.back,
+                    contentDescription = MR.strings.back.stable,
                 )
             }
         }

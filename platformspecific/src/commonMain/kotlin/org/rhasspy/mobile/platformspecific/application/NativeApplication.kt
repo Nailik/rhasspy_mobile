@@ -11,15 +11,11 @@ expect abstract class NativeApplication() {
 
     abstract suspend fun updateWidgetNative()
 
-    abstract suspend fun reloadServiceModules()
-
-    abstract suspend fun startTest()
-
-    abstract suspend fun stopTest()
-
     abstract fun resume()
 
     abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)
+
+    abstract fun startRecordingAction()
 
     fun isInstrumentedTest(): Boolean
 

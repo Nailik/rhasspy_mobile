@@ -2,11 +2,12 @@ package org.rhasspy.mobile.android.about
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
+import kotlinx.collections.immutable.persistentListOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.onNodeWithTag
+import org.rhasspy.mobile.android.utils.onNodeWithTag
 
 /**
  * Test visibility and close button of changelog dialog
@@ -20,7 +21,7 @@ class ChangelogDialogTest {
     fun setUp() {
 
         composeTestRule.setContent {
-            ChangelogDialogButton()
+            ChangelogDialogButton(persistentListOf())
         }
 
     }

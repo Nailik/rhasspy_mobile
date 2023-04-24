@@ -43,10 +43,9 @@ fun FloatingActionButton(
                 focusedElevation = 0.dp,
                 hoveredElevation = 0.dp,
                 disabledElevation = 0.dp
-            )
-        ) {
-            icon()
-        }
+            ),
+            content = icon
+        )
     }
 }
 

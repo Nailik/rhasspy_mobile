@@ -57,18 +57,14 @@ actual class AudioRecorder : KoinComponent, Closeable {
     actual fun startRecording() {
         logger.v { "startRecording" }
 
+        if (ActivityCompat.checkSelfPermission(get<NativeApplication>(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            logger.e { "missing recording permission" }
+            return
+        }
+
         try {
             if (recorder == null) {
                 logger.v { "initializing recorder" }
-
-                if (ActivityCompat.checkSelfPermission(
-                        get<NativeApplication>(),
-                        Manifest.permission.RECORD_AUDIO
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    logger.e { "missing recording permission" }
-                }
-
                 recorder = AudioRecord.Builder()
                     .setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION)
                     .setAudioFormat(

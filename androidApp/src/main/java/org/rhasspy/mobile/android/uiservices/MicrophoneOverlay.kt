@@ -7,6 +7,7 @@ import android.os.Looper
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.*
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.collectAsState
@@ -31,9 +32,9 @@ import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.MicrophoneFab
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
-import org.rhasspy.mobile.viewmodel.overlay.MicrophoneOverlayViewModel
+import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayUiEvent.Change.UpdateMicrophoneOverlayPosition
+import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayViewModel
 
 /**
  * show overlay with microphone button
@@ -43,7 +44,11 @@ object MicrophoneOverlay : KoinComponent {
     private var mParams = WindowManager.LayoutParams()
     private val lifecycleOwner = CustomLifecycleOwner()
 
-    private var viewModel = get<MicrophoneOverlayViewModel>()
+    //stores old value to only react to changes
+    private var showVisualIndicationOldValue = false
+
+    private val microphoneViewModel = get<MicrophoneFabViewModel>()
+    private val viewModel = get<MicrophoneOverlayViewModel>()
 
     private var job: Job? = null
 
@@ -58,11 +63,7 @@ object MicrophoneOverlay : KoinComponent {
     }
 
     private fun onClick() {
-        if (MicrophonePermission.granted.value) {
-            get<MicrophoneFabViewModel>().onClick()
-        } else {
-            MainActivity.startRecordingAction()
-        }
+
     }
 
     /**
@@ -72,13 +73,12 @@ object MicrophoneOverlay : KoinComponent {
         return ComposeView(context).apply {
             setContent {
                 AppTheme {
-                    val size by viewModel.microphoneOverlaySize.collectAsState()
-
-                    val microphoneViewModel = get<MicrophoneFabViewModel>()
+                    val viewState by viewModel.viewState.collectAsState()
+                    val microphoneFabViewState by microphoneViewModel.viewState.collectAsState()
 
                     MicrophoneFab(
                         modifier = Modifier
-                            .size(size.dp)
+                            .size(viewState.microphoneOverlaySize.dp)
                             .combinedTestTag(TestTag.MicrophoneFab, TestTag.Overlay)
                             .pointerInput(Unit) {
                                 detectDragGestures { change, dragAmount ->
@@ -86,9 +86,9 @@ object MicrophoneOverlay : KoinComponent {
                                     onDrag(dragAmount, this@apply)
                                 }
                             },
-                        iconSize = (size * 0.4).dp,
-                        viewModel = microphoneViewModel,
-                        onClick = ::onClick
+                        iconSize = (viewState.microphoneOverlaySize * 0.4).dp,
+                        viewState = microphoneFabViewState,
+                        onEvent = { onClick() }
                     )
                 }
             }
@@ -97,7 +97,7 @@ object MicrophoneOverlay : KoinComponent {
 
 
     private fun onDrag(delta: Offset, view: View) {
-        viewModel.updateMicrophoneOverlayPosition(delta.x, delta.y)
+        viewModel.onEvent(UpdateMicrophoneOverlayPosition(offsetX = delta.x, offsetY = delta.y))
         mParams.applySettings()
         overlayWindowManager.updateViewLayout(view, mParams)
     }
@@ -105,17 +105,16 @@ object MicrophoneOverlay : KoinComponent {
     init {
         try {
             val typeFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+                TYPE_APPLICATION_OVERLAY
             } else {
-                @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_PHONE
+                @Suppress("DEPRECATION") TYPE_PHONE
             }
             // set the layout parameters of the window
             mParams = WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
+                WRAP_CONTENT,
+                WRAP_CONTENT,
                 typeFlag,
-                @Suppress("DEPRECATION") WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                        or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                @Suppress("DEPRECATION") FLAG_SHOW_WHEN_LOCKED or FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
             ).applySettings()
             lifecycleOwner.performRestore(null)
@@ -128,8 +127,8 @@ object MicrophoneOverlay : KoinComponent {
 
     private fun WindowManager.LayoutParams.applySettings(): WindowManager.LayoutParams {
         //apply
-        x = viewModel.microphoneOverlayPositionX
-        y = viewModel.microphoneOverlayPositionY
+        x = viewModel.viewState.value.microphoneOverlayPositionX
+        y = viewModel.viewState.value.microphoneOverlayPositionY
         gravity = Gravity.NO_GRAVITY
         //save
         return this
@@ -140,8 +139,6 @@ object MicrophoneOverlay : KoinComponent {
      */
     fun start() {
         try {
-            viewModel = get()
-
             val view = getView()
 
             view.setViewTreeLifecycleOwner(lifecycleOwner)
@@ -154,22 +151,29 @@ object MicrophoneOverlay : KoinComponent {
             logger.d { "start" }
 
             job = CoroutineScope(Dispatchers.Default).launch {
-                viewModel.shouldOverlayBeShown.collect {
-                    if (it) {
-                        if (Looper.myLooper() == null) {
-                            Looper.prepare()
-                        }
-                        launch(Dispatchers.Main) {
-                            overlayWindowManager.addView(view, mParams)
-                            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
-                        }
-                    } else {
-                        launch(Dispatchers.Main) {
-                            if (view.parent != null) {
-                                overlayWindowManager.removeView(view)
+                viewModel.viewState.collect {
+                    try {
+                        if (it.shouldOverlayBeShown != showVisualIndicationOldValue) {
+                            showVisualIndicationOldValue = it.shouldOverlayBeShown
+                            if (it.shouldOverlayBeShown) {
+                                if (Looper.myLooper() == null) {
+                                    Looper.prepare()
+                                }
+                                launch(Dispatchers.Main) {
+                                    overlayWindowManager.addView(view, mParams)
+                                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                                }
+                            } else {
+                                launch(Dispatchers.Main) {
+                                    if (view.parent != null) {
+                                        overlayWindowManager.removeView(view)
+                                    }
+                                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+                                }
                             }
-                            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
                         }
+                    } catch (exception: Exception) {
+                        logger.a(exception) { "exception in collect" }
                     }
                 }
             }.also {

@@ -13,73 +13,84 @@ import io.ktor.client.utils.buildHeaders
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMessageBuilder
 import io.ktor.http.contentType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import okio.Path
-import org.koin.core.component.get
-import org.koin.core.component.inject
-import org.rhasspy.mobile.data.service.option.IntentHandlingOption
-import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.Success
-import org.rhasspy.mobile.platformspecific.ktor.configureEngine
-import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.data.service.option.IntentHandlingOption
+import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.speechtotext.StreamContent
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.extensions.commonData
+import org.rhasspy.mobile.platformspecific.ktor.configureEngine
+import org.rhasspy.mobile.platformspecific.readOnly
 
 /**
  * contains client to send data to http endpoints
  *
  * functions return the result or an exception
  */
-class HttpClientService : IService() {
-    private val logger = LogType.HttpClientService.logger()
+class HttpClientService(
+    paramsCreator: HttpClientServiceParamsCreator
+) : IService(LogType.HttpClientService) {
+
+    private var coroutineScope = CoroutineScope(Dispatchers.Default)
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
-    val serviceState = _serviceState.readOnly
+    override val serviceState = _serviceState.readOnly
 
-    private val params by inject<HttpClientServiceParams>()
+    private val paramsFlow: StateFlow<HttpClientServiceParams> = paramsCreator()
+    private val params get() = paramsFlow.value
 
     private val audioContentType = ContentType("audio", "wav")
     private val jsonContentType = ContentType("application", "json")
     private fun HttpMessageBuilder.hassAuthorization() =
         this.header("Authorization", "Bearer ${params.intentHandlingHassAccessToken}")
 
-    private val isHandleIntentDirectly =
-        params.intentHandlingOption == IntentHandlingOption.WithRecognition
+    private val isHandleIntentDirectly
+        get() =
+            params.intentHandlingOption == IntentHandlingOption.WithRecognition
 
-    private val speechToTextUrl =
-        if (params.isUseCustomSpeechToTextHttpEndpoint) {
-            params.speechToTextHttpEndpoint
+    private val speechToTextUrl
+        get() =
+            if (params.isUseCustomSpeechToTextHttpEndpoint) {
+                params.speechToTextHttpEndpoint
+            } else {
+                HttpClientPath.SpeechToText.stringFromParams(params)
+            } + "?noheader=true"
+
+    private val recognizeIntentUrl
+        get() =
+            if (params.isUseCustomIntentRecognitionHttpEndpoint) {
+                params.intentRecognitionHttpEndpoint
+            } else {
+                HttpClientPath.TextToIntent.stringFromParams(params)
+            } + if (!isHandleIntentDirectly) {
+                "?nohass=true"
+            } else ""
+
+    private val textToSpeechUrl
+        get() = if (params.isUseCustomTextToSpeechHttpEndpoint) {
+            params.textToSpeechHttpEndpoint
         } else {
-            HttpClientPath.SpeechToText.fromBaseConfiguration()
-        } + "?noheader=true"
+            HttpClientPath.TextToSpeech.stringFromParams(params)
+        }
 
-    private val recognizeIntentUrl =
-        if (params.isUseCustomIntentRecognitionHttpEndpoint) {
-            params.intentRecognitionHttpEndpoint
+    private val audioPlayingUrl
+        get() = if (params.isUseCustomAudioPlayingEndpoint) {
+            params.audioPlayingHttpEndpoint
         } else {
-            HttpClientPath.TextToIntent.fromBaseConfiguration()
-        } + if (!isHandleIntentDirectly) {
-            "?nohass=true"
-        } else ""
+            HttpClientPath.PlayWav.stringFromParams(params)
+        }
 
-    private val textToSpeechUrl = if (params.isUseCustomTextToSpeechHttpEndpoint) {
-        params.textToSpeechHttpEndpoint
-    } else {
-        HttpClientPath.TextToSpeech.fromBaseConfiguration()
-    }
-
-    private val audioPlayingUrl = if (params.isUseCustomAudioPlayingEndpoint) {
-        params.audioPlayingHttpEndpoint
-    } else {
-        HttpClientPath.PlayWav.fromBaseConfiguration()
-    }
-
-    private val hassEventUrl = "${params.intentHandlingHassEndpoint}/api/events/rhasspy_"
-    private val hassIntentUrl = "${params.intentHandlingHassEndpoint}/api/intent/handle"
+    private val hassEventUrl get() = "${params.intentHandlingHassEndpoint}/api/events/rhasspy_"
+    private val hassIntentUrl get() = "${params.intentHandlingHassEndpoint}/api/intent/handle"
 
     private var httpClient: HttpClient? = null
 
@@ -87,6 +98,18 @@ class HttpClientService : IService() {
      * starts client and updates event
      */
     init {
+        coroutineScope.launch {
+            paramsFlow.collect {
+                stop()
+                start()
+            }
+        }
+    }
+
+    /**
+     * starts client
+     */
+    private fun start() {
         logger.d { "initialize" }
         _serviceState.value = ServiceState.Loading
 
@@ -104,7 +127,7 @@ class HttpClientService : IService() {
     /**
      * stops client
      */
-    override fun onClose() {
+    private fun stop() {
         logger.d { "onClose" }
         httpClient?.cancel()
     }
@@ -182,10 +205,10 @@ class HttpClientService : IService() {
     suspend fun playWav(audioSource: AudioSource): HttpClientResult<String> {
         logger.d { "playWav size: $audioSource" }
         @Suppress("DEPRECATION")
-        val body = when(audioSource) {
+        val body = when (audioSource) {
             is AudioSource.Data -> audioSource.data
             is AudioSource.File -> StreamContent(audioSource.path)
-            is AudioSource.Resource -> audioSource.fileResource.commonData(get())
+            is AudioSource.Resource -> audioSource.fileResource.commonData(nativeApplication)
         }
         return post(audioPlayingUrl) {
             setAttributes {
@@ -267,20 +290,20 @@ class HttpClientService : IService() {
                 }
 
                 _serviceState.value = Success
-                return HttpClientResult.Success(result)
+                HttpClientResult.Success(result)
 
             } catch (exception: Exception) {
 
                 logger.e(exception) { "post result error" }
                 _serviceState.value = mapError(exception)
-                return HttpClientResult.Error(exception)
+                HttpClientResult.Error(exception)
 
             }
         } ?: run {
 
             logger.a { "post client not initialized" }
             _serviceState.value = ServiceState.Exception()
-            return HttpClientResult.Error(Exception())
+            HttpClientResult.Error(Exception())
 
         }
     }
@@ -308,9 +331,7 @@ class HttpClientService : IService() {
             null
         }
 
-        return type?.serviceState ?: run {
-            ServiceState.Exception(exception)
-        }
+        return type?.serviceState ?: ServiceState.Exception(exception)
     }
 
 }

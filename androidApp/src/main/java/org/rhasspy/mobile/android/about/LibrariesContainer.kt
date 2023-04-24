@@ -1,37 +1,24 @@
 package org.rhasspy.mobile.android.about
 
-import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Badge
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.entity.License
-import com.mikepenz.aboutlibraries.util.withContext
+import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.CustomDivider
@@ -39,53 +26,20 @@ import org.rhasspy.mobile.android.content.elements.HtmlText
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.testTag
-
-/**
- * displays libraries list with dialog when clicked on it
- */
-@Composable
-fun LibrariesContainer(
-    modifier: Modifier = Modifier,
-    lazyListState: LazyListState = rememberLazyListState(),
-    contentPadding: PaddingValues = PaddingValues(0.dp),
-    librariesBlock: (Context) -> Libs = { context ->
-        Libs.Builder().withContext(context).build()
-    },
-    header: (LazyListScope.() -> Unit)? = null,
-    onLibraryClick: ((Library) -> Unit)? = null,
-) {
-
-    var libraries by remember { mutableStateOf<Libs?>(null) }
-
-    val context = LocalContext.current
-    LaunchedEffect(libraries) {
-        libraries = librariesBlock.invoke(context)
-    }
-
-    libraries?.libraries?.also { libs ->
-        Libraries(
-            libs,
-            modifier,
-            lazyListState,
-            contentPadding,
-            header,
-            onLibraryClick
-        )
-    }
-
-}
+import org.rhasspy.mobile.data.libraries.StableLibrary
+import org.rhasspy.mobile.data.resource.stable
 
 /**
  * Displays all provided libraries in a simple list.
  */
 @Composable
-private fun Libraries(
-    libraries: List<Library>,
+fun LibrariesContainer(
+    libraries: ImmutableList<StableLibrary>,
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(0.dp),
     header: (LazyListScope.() -> Unit)? = null,
-    onLibraryClick: ((Library) -> Unit)? = null,
+    onLibraryClick: ((StableLibrary) -> Unit)? = null,
 ) {
 
     LazyColumn(
@@ -125,14 +79,14 @@ private fun Libraries(
  */
 @Composable
 private fun Library(
-    library: Library,
+    stableLibrary: StableLibrary,
     onClick: () -> Unit,
 ) {
 
     ListElement(
         modifier = Modifier.clickable { onClick.invoke() },
         text = {
-            Text(library.correctedName)
+            Text(stableLibrary.library.correctedName)
         },
         secondaryText = {
             Column(
@@ -141,10 +95,10 @@ private fun Library(
                     .padding(bottom = 8.dp)
             ) {
                 Text(
-                    text = library.author,
+                    text = stableLibrary.library.author,
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
-                library.licenses.forEach {
+                stableLibrary.library.licenses.forEach {
                     Badge(
                         contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -159,7 +113,7 @@ private fun Library(
             }
         },
         trailing = {
-            Text(library.artifactVersion ?: "")
+            Text(stableLibrary.library.artifactVersion ?: "")
         }
     )
 
@@ -170,7 +124,7 @@ private fun Library(
  * Library dialog with more information
  */
 @Composable
-private fun LibraryDialog(library: Library, onDismissRequest: () -> Unit) {
+private fun LibraryDialog(stableLibrary: StableLibrary, onDismissRequest: () -> Unit) {
 
     val scrollState = rememberScrollState()
 
@@ -181,7 +135,7 @@ private fun LibraryDialog(library: Library, onDismissRequest: () -> Unit) {
                 onClick = onDismissRequest,
                 modifier = Modifier.testTag(TestTag.DialogOk)
             ) {
-                Text(MR.strings.ok)
+                Text(MR.strings.ok.stable)
             }
         },
         text = {
@@ -191,7 +145,7 @@ private fun LibraryDialog(library: Library, onDismissRequest: () -> Unit) {
                     .verticalScroll(scrollState),
             ) {
                 HtmlText(
-                    html = library.licenses.firstOrNull()?.htmlReadyLicenseContent.orEmpty(),
+                    html = stableLibrary.library.licenses.firstOrNull()?.htmlReadyLicenseContent.orEmpty(),
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }

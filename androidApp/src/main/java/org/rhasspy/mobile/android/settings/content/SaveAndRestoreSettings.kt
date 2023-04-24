@@ -11,45 +11,44 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.list.ListElement
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.viewmodel.settings.SaveAndRestoreSettingsViewModel
+import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsViewModel
 
 /**
  * to save and restore settings
  */
 @Preview
 @Composable
-fun SaveAndRestoreSettingsContent(viewModel: SaveAndRestoreSettingsViewModel = get()) {
-
+fun SaveAndRestoreSettingsContent() {
+    val viewModel: SaveAndRestoreSettingsViewModel = LocalViewModelFactory.current.getViewModel()
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreenType.SaveAndRestoreSettings),
-        title = MR.strings.saveAndRestoreSettings
+        title = MR.strings.saveAndRestoreSettings.stable
     ) {
 
         //Save Settings
-        SaveSettings(viewModel)
+        SaveSettings(viewModel::onEvent)
 
         //Restore Settings
-        RestoreSettings(viewModel)
+        RestoreSettings(viewModel::onEvent)
 
         //Share Settings
-        ShareSettings(viewModel)
+        ShareSettings(viewModel::onEvent)
     }
 
 }
@@ -59,7 +58,7 @@ fun SaveAndRestoreSettingsContent(viewModel: SaveAndRestoreSettingsViewModel = g
  * Shows warning Dialog that the file contains sensitive information
  */
 @Composable
-private fun SaveSettings(viewModel: SaveAndRestoreSettingsViewModel) {
+private fun SaveSettings(onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit) {
 
     var openSaveSettingsDialog by remember { mutableStateOf(false) }
 
@@ -69,14 +68,14 @@ private fun SaveSettings(viewModel: SaveAndRestoreSettingsViewModel) {
         icon = {
             Icon(
                 imageVector = Icons.Filled.Save,
-                contentDescription = MR.strings.save
+                contentDescription = MR.strings.save.stable
             )
         },
         text = {
-            Text(MR.strings.save)
+            Text(MR.strings.save.stable)
         },
         secondaryText = {
-            Text(MR.strings.saveSettingsText)
+            Text(MR.strings.saveSettingsText.stable)
         }
     )
 
@@ -85,7 +84,7 @@ private fun SaveSettings(viewModel: SaveAndRestoreSettingsViewModel) {
         SaveSettingsDialog(
             onConfirm = {
                 openSaveSettingsDialog = false
-                viewModel.exportSettingsFile()
+                onEvent(ExportSettingsFile)
             },
             onDismiss = {
                 openSaveSettingsDialog = false
@@ -99,7 +98,7 @@ private fun SaveSettings(viewModel: SaveAndRestoreSettingsViewModel) {
  * shows dialog that current settings will be overwritten
  */
 @Composable
-private fun RestoreSettings(viewModel: SaveAndRestoreSettingsViewModel) {
+private fun RestoreSettings(onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit) {
 
     var openRestoreSettingsDialog by remember { mutableStateOf(false) }
 
@@ -109,14 +108,14 @@ private fun RestoreSettings(viewModel: SaveAndRestoreSettingsViewModel) {
         icon = {
             Icon(
                 imageVector = Icons.Filled.Restore,
-                contentDescription = MR.strings.restore
+                contentDescription = MR.strings.restore.stable
             )
         },
         text = {
-            Text(MR.strings.restore)
+            Text(MR.strings.restore.stable)
         },
         secondaryText = {
-            Text(MR.strings.restoreSettingsText)
+            Text(MR.strings.restoreSettingsText.stable)
         }
     )
 
@@ -126,7 +125,7 @@ private fun RestoreSettings(viewModel: SaveAndRestoreSettingsViewModel) {
         RestoreSettingsDialog(
             onConfirm = {
                 openRestoreSettingsDialog = false
-                viewModel.restoreSettingsFromFile()
+                onEvent(RestoreSettingsFromFile)
             },
             onDismiss = {
                 openRestoreSettingsDialog = false
@@ -137,22 +136,22 @@ private fun RestoreSettings(viewModel: SaveAndRestoreSettingsViewModel) {
 }
 
 @Composable
-private fun ShareSettings(viewModel: SaveAndRestoreSettingsViewModel) {
+private fun ShareSettings(onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit) {
 
     //restore settings
     ListElement(
-        modifier = Modifier.clickable(onClick = viewModel::shareSettingsFile),
+        modifier = Modifier.clickable(onClick = { onEvent(ShareSettingsFile) }),
         icon = {
             Icon(
                 imageVector = Icons.Filled.Share,
-                contentDescription = MR.strings.share
+                contentDescription = MR.strings.share.stable
             )
         },
         text = {
-            Text(MR.strings.share)
+            Text(MR.strings.share.stable)
         },
         secondaryText = {
-            Text(MR.strings.shareSettingsText)
+            Text(MR.strings.shareSettingsText.stable)
         }
     )
 
@@ -167,28 +166,28 @@ private fun SaveSettingsDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
     AlertDialog(
         onDismissRequest = onConfirm,
         title = {
-            Text(MR.strings.saveSettings)
+            Text(MR.strings.saveSettings.stable)
         },
         text = {
             Text(
-                resource = MR.strings.saveSettingsWarningText,
+                resource = MR.strings.saveSettingsWarningText.stable,
                 textAlign = TextAlign.Center
             )
         },
         icon = {
             Icon(
                 imageVector = Icons.Filled.Warning,
-                contentDescription = MR.strings.warning
+                contentDescription = MR.strings.warning.stable
             )
         },
         confirmButton = {
             Button(onConfirm) {
-                Text(MR.strings.ok)
+                Text(MR.strings.ok.stable)
             }
         },
         dismissButton = {
             OutlinedButton(onDismiss) {
-                Text(MR.strings.cancel)
+                Text(MR.strings.cancel.stable)
             }
         },
         modifier = Modifier
@@ -207,28 +206,28 @@ private fun RestoreSettingsDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(MR.strings.restoreSettings)
+            Text(MR.strings.restoreSettings.stable)
         },
         text = {
             Text(
-                resource = MR.strings.restoreSettingsWarningText,
+                resource = MR.strings.restoreSettingsWarningText.stable,
                 textAlign = TextAlign.Center
             )
         },
         icon = {
             Icon(
                 imageVector = Icons.Filled.Warning,
-                contentDescription = MR.strings.warning
+                contentDescription = MR.strings.warning.stable
             )
         },
         confirmButton = {
             Button(onConfirm) {
-                Text(MR.strings.ok)
+                Text(MR.strings.ok.stable)
             }
         },
         dismissButton = {
             OutlinedButton(onDismiss) {
-                Text(MR.strings.cancel)
+                Text(MR.strings.cancel.stable)
             }
         },
         modifier = Modifier

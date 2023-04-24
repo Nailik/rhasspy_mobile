@@ -6,25 +6,32 @@ import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.awaitSaved
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.onListItemRadioButton
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
+import org.rhasspy.mobile.android.utils.awaitSaved
+import org.rhasspy.mobile.android.utils.onListItemRadioButton
+import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
-import org.rhasspy.mobile.viewmodel.configuration.DialogManagementConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.SelectDialogManagementOption
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
 import kotlin.test.assertEquals
 
-class DialogManagementConfigurationContentTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class DialogManagementConfigurationContentTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = DialogManagementConfigurationViewModel()
+    private val viewModel = get<DialogManagementConfigurationViewModel>()
 
     @Before
     fun setUp() {
@@ -33,9 +40,10 @@ class DialogManagementConfigurationContentTest {
             val navController = rememberNavController()
 
             CompositionLocalProvider(
-                LocalMainNavController provides navController
+                LocalMainNavController provides navController,
+                LocalViewModelFactory provides get()
             ) {
-                DialogManagementConfigurationContent(viewModel)
+                DialogManagementConfigurationContent()
             }
         }
 
@@ -50,9 +58,11 @@ class DialogManagementConfigurationContentTest {
      * option is saved to local
      */
     @Test
-    fun testEndpoint() = runBlocking {
-        viewModel.selectDialogManagementOption(DialogManagementOption.Disabled)
-        viewModel.onSave()
+    fun testEndpoint() = runTest {
+        viewModel.onEvent(SelectDialogManagementOption(DialogManagementOption.Disabled))
+        viewModel.onAction(Save)
+        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
 
         //option disable is set
         composeTestRule.onNodeWithTag(DialogManagementOption.Disabled, true).onListItemRadioButton().assertIsSelected()
@@ -64,9 +74,10 @@ class DialogManagementConfigurationContentTest {
         //User clicks save
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
         composeTestRule.awaitSaved(viewModel)
-        val newViewModel = DialogManagementConfigurationViewModel()
-        //option is saved to local
-        assertEquals(DialogManagementOption.Local, newViewModel.dialogManagementOption.value)
+        DialogManagementConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+            //option is saved to local
+            assertEquals(DialogManagementOption.Local, it.dialogManagementOption)
+        }
     }
 
 }

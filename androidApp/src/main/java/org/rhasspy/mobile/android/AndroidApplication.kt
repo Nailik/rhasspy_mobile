@@ -2,6 +2,7 @@
 
 package org.rhasspy.mobile.android
 
+import android.content.Intent
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -17,8 +18,8 @@ import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.android.uiservices.IndicationOverlay
 import org.rhasspy.mobile.android.uiservices.MicrophoneOverlay
 import org.rhasspy.mobile.android.widget.MicrophoneWidget
-import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.utils.isDebug
 import kotlin.system.exitProcess
 
 
@@ -31,7 +32,6 @@ class AndroidApplication : Application(), KoinComponent {
     init {
         //catches all exceptions
         Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
-            println(exception)
             logger.a(exception) { "uncaught exception in Thread $thread" }
             exitProcess(2)
         }
@@ -39,7 +39,7 @@ class AndroidApplication : Application(), KoinComponent {
 
     override fun onCreate() {
         super.onCreate()
-        if(isDebug()) {
+        if (isDebug()) {
             StrictMode.setVmPolicy(VmPolicy.Builder(StrictMode.getVmPolicy()).detectAll().build())
         }
         onCreated()
@@ -69,6 +69,24 @@ class AndroidApplication : Application(), KoinComponent {
         GlanceAppWidgetManager(context).getGlanceIds(MicrophoneWidget::class.java)
             .firstOrNull()
             ?.also { MicrophoneWidget().update(context, it) }
+    }
+
+    override fun startRecordingAction() {
+        val application = get<NativeApplication>()
+        application.currentActivity?.also {
+            it.startActivity(
+                Intent(application, MainActivity::class.java).apply {
+                    putExtra(IntentAction.StartRecording.param, true)
+                }
+            )
+        } ?: run {
+            application.startActivity(
+                Intent(application, MainActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    putExtra(IntentAction.StartRecording.param, true)
+                }
+            )
+        }
     }
 
 }

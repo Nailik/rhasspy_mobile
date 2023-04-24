@@ -3,6 +3,8 @@ package org.rhasspy.mobile.logic.logger
 import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -16,16 +18,15 @@ import okio.Path
 import okio.buffer
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.logic.settings.AppSetting
-import org.rhasspy.mobile.platformspecific.extensions.commonDecode
-import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
-import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
-import org.rhasspy.mobile.platformspecific.extensions.commonSave
-import org.rhasspy.mobile.platformspecific.extensions.commonShare
+import org.rhasspy.mobile.platformspecific.extensions.*
+import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.platformspecific.toImmutableList
 
 object FileLogger : LogWriter(), KoinComponent {
     private val logger = Logger.withTag("FileLogger")
+
     //create new file when logfile is 2 MB
     private val file = Path.commonInternalPath(get(), "logfile.txt")
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
@@ -35,25 +36,21 @@ object FileLogger : LogWriter(), KoinComponent {
 
     init {
         Logger.setMinSeverity(AppSetting.logLevel.value.severity)
-        log(Severity.Error, "NativeFileWriter", "createdLogFile")
     }
 
     /**
      * override log function to append text to file
      */
     override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
+        val element = LogElement(
+            Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(),
+            severity,
+            tag,
+            message,
+            throwable?.message
+        )
+        file.commonReadWrite().appendingSink().buffer().writeUtf8(",${Json.encodeToString(element)}").flush()
         coroutineScope.launch {
-            val element = LogElement(
-                Clock.System.now().toLocalDateTime(TimeZone.UTC).toString(),
-                severity,
-                tag,
-                message,
-                throwable?.message
-            )
-            file.commonReadWrite().appendingSink().buffer().writeUtf8(",${Json.encodeToString(element)}").also {
-                it.flush()
-                it.close()
-            }
             _flow.emit(element)
         }
     }
@@ -61,13 +58,12 @@ object FileLogger : LogWriter(), KoinComponent {
     /**
      * read all lines from file
      */
-    fun getLines(): List<LogElement> {
+    fun getLines(): ImmutableList<LogElement> {
         return try {
-            file.commonDecode()
+            file.commonDecodeLogList<Array<LogElement>>().toImmutableList()
         } catch (exception: Exception) {
             logger.e(exception) { "could not read log file" }
-            file.commonReadWrite().resize(0)
-            listOf()
+            persistentListOf()
         }
     }
 

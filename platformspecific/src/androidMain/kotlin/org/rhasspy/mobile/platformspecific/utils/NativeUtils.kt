@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.platformspecific.utils
 
-import androidx.multidex.BuildConfig
+import org.rhasspy.mobile.platformspecific.BuildConfig
 
 actual fun isDebug(): Boolean {
-    return BuildConfig.DEBUG
+    return BuildConfig.IS_DEBUG
 }

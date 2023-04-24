@@ -13,18 +13,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.HtmlText
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.stable
 
 /**
  * button to open changelog dialog
  */
 @Composable
-fun DataPrivacyDialogButton() {
+fun DataPrivacyDialogButton(dataPrivacy: String) {
 
     var openDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -32,13 +32,14 @@ fun DataPrivacyDialogButton() {
         onClick = { openDialog = true },
         modifier = Modifier.testTag(TestTag.DialogDataPrivacyButton)
     ) {
-        Text(MR.strings.dataPrivacy)
+        Text(MR.strings.dataPrivacy.stable)
     }
 
     if (openDialog) {
-        DataPrivacyDialog {
-            openDialog = false
-        }
+        DataPrivacyDialog(
+            dataPrivacy = dataPrivacy,
+            onDismissRequest = { openDialog = false }
+        )
     }
 
 }
@@ -47,7 +48,10 @@ fun DataPrivacyDialogButton() {
  * Dialog to show data privacy information
  */
 @Composable
-private fun DataPrivacyDialog(onDismissRequest: () -> Unit) {
+private fun DataPrivacyDialog(
+    dataPrivacy: String,
+    onDismissRequest: () -> Unit
+) {
 
     val scrollState = rememberScrollState()
 
@@ -58,11 +62,11 @@ private fun DataPrivacyDialog(onDismissRequest: () -> Unit) {
                 onClick = onDismissRequest,
                 modifier = Modifier.testTag(TestTag.DialogOk)
             ) {
-                Text(MR.strings.close)
+                Text(MR.strings.close.stable)
             }
         },
         title = {
-            Text(MR.strings.dataPrivacy)
+            Text(MR.strings.dataPrivacy.stable)
         },
         text = {
             Column(
@@ -71,7 +75,7 @@ private fun DataPrivacyDialog(onDismissRequest: () -> Unit) {
                     .verticalScroll(scrollState),
             ) {
                 HtmlText(
-                    html = MR.files.dataprivacy.readText(LocalContext.current),
+                    html = dataPrivacy,
                     color = LocalContentColor.current
                 )
             }

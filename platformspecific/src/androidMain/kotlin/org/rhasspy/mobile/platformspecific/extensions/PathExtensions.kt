@@ -4,17 +4,18 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import androidx.core.content.FileProvider
+import co.touchlab.kermit.Severity
 import kotlinx.serialization.ExperimentalSerializationApi
-import okio.FileHandle
-import okio.FileSystem
-import okio.Path
-import okio.Source
-import okio.source
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
+import okio.*
+import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-
-actual fun Path.Companion.commonExternalPath(fileName: String): Path = fileName.toPath()
+import java.io.ByteArrayInputStream
+import java.io.InputStream
+import java.io.SequenceInputStream
+import java.util.Collections
 
 actual fun Path.Companion.commonInternalPath(nativeApplication: NativeApplication, fileName: String): Path = "${nativeApplication.filesDir}/$fileName".toPath()
 
@@ -24,12 +25,34 @@ actual fun Path.commonDelete() {
 
 actual fun Path.commonSize(): Long? = FileSystem.SYSTEM.metadata(this).size
 
-actual fun Path.commonSource() : Source = this.toNioPath().source()
+actual fun Path.commonSource(): Source = this.toNioPath().source()
 
 actual fun Path.commonReadWrite(): FileHandle = FileSystem.SYSTEM.openReadWrite(this)
 
 @OptIn(ExperimentalSerializationApi::class)
-actual inline fun <reified T> Path.commonDecode(): T = Json.decodeFromStream(this.toFile().inputStream())
+actual inline fun <reified T> Path.commonDecodeLogList(): T =
+    Json.decodeFromStream(this.toFile().inputStream().modify())
+
+fun InputStream.modify(): InputStream {
+    val streams = listOf(
+        ByteArrayInputStream(
+            "[${
+                Json.encodeToString(
+                    LogElement(
+                        time = "",
+                        severity = Severity.Assert,
+                        tag = "",
+                        message = "",
+                        throwable = null
+                    )
+                )
+            }".toByteArray()
+        ),
+        this,
+        ByteArrayInputStream("]".toByteArray())
+    )
+    return SequenceInputStream(Collections.enumeration(streams))
+}
 
 actual fun Path.commonShare(nativeApplication: NativeApplication) {
     val fileUri: Uri = FileProvider.getUriForFile(

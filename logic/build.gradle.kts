@@ -21,6 +21,7 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.coroutines)
                 implementation(Touchlab.kermit)
                 implementation(Jetbrains.Kotlinx.serialization)
+                implementation(Jetbrains.Kotlinx.immutable)
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Icerock.Resources)
                 implementation(Ktor2.Server.core)
@@ -32,14 +33,18 @@ kotlin {
                 implementation(Ktor2.Plugins.network)
                 implementation(Ktor2.Server.core)
                 implementation(Benasher.uuid)
-                implementation(Russhwolf.multiplatformSettings)
                 implementation(Russhwolf.multiplatformSettingsNoArg)
                 implementation(Russhwolf.multiplatformSettingsSerialization)
                 implementation(Square.okio)
                 implementation(Koin.core)
             }
         }
-        val commonTest by getting
+        val commonTest by getting {
+            dependencies {
+                implementation(Kotlin.test)
+                implementation(Koin.test)
+            }
+        }
         val androidMain by getting {
             dependencies {
                 implementation(AndroidX.multidex)
@@ -78,4 +83,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_19
         targetCompatibility = JavaVersion.VERSION_19
     }
+}
+dependencies {
+    androidTestImplementation("junit:junit:4.12")
 }

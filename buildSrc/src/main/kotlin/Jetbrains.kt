@@ -7,6 +7,7 @@ object Jetbrains : IsNotADependency {
         val dateTime = module("kotlinx-datetime")
         val serialization = module("kotlinx-serialization-json")
         val coroutines = module("kotlinx-coroutines-core")
+        val immutable = module("kotlinx-collections-immutable")
     }
 
     object Compose : DependencyGroup(group = "org.jetbrains.compose") {

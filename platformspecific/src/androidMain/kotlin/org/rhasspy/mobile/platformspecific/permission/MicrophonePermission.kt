@@ -48,9 +48,7 @@ actual object MicrophonePermission : KoinComponent {
                 it,
                 Manifest.permission.RECORD_AUDIO
             )
-        } ?: run {
-            true
-        }
+        } ?: true
     }
 
     /**

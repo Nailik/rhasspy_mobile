@@ -86,19 +86,25 @@
     <string name="microphonePermissionInfoRecord">Um Audio aufzunehmen, ist der Zugriff auf das
         Mikrofon erforderlich.
     </string>
-    <string name="microphonePermissionInfoWakeWord">Um den Porcupine-Aktivierungswort-Dienst zu nutzen, ist
+    <string name="microphonePermissionInfoWakeWord">Um den Porcupine-Aktivierungswort-Dienst zu
+        nutzen, ist
         der Zugriff auf das Mikrofon erforderlich.
     </string>
     <string name="microphonePermissionInfoAudioLevel">Um den Audiopegel zu überprüfen, ist der
         Zugriff auf das Mikrofon erforderlich.
     </string>
-    <string name="microphonePermissionDenied">Öffnen Sie die Einstellungen um den Mikrofonzugriff zu erlauben</string>
+    <string name="microphonePermissionDenied">Öffnen Sie die Einstellungen um den Mikrofonzugriff zu
+        erlauben
+    </string>
     <string name="cancel">Abbrechen</string>
     <string name="ok">OK</string>
     <string name="testAudioLevel">Audio-Level-Test</string>
     <string name="stop">Stop</string>
     <string name="audioLevelThreshold">Audio-Level-Schwelle</string>
-    <string name="silenceDetectionInformation">Stille wird erkannt, wenn der Audiopegel für die gewählte Zeitspanne unter dem gewählten Grenzwert bleibt und die Aufnahme mindestens die Länge der Mindestdauer hat</string>
+    <string name="silenceDetectionInformation">Stille wird erkannt, wenn der Audiopegel für die
+        gewählte Zeitspanne unter dem gewählten Grenzwert bleibt und die Aufnahme mindestens die
+        Länge der Mindestdauer hat
+    </string>
     <string name="silenceDetectionMinimumTime">Sprachbefehl Mindestdauer (ms)</string>
     <string name="silenceDetectionTime">Stille-Erkennungszeit (ms)</string>
     <string name="overlayPermissionTitle">Overlay-Erlaubnis</string>
@@ -268,7 +274,8 @@
     <string name="serviceStatusWarningText">Dienste haben mögliche Probleme entdeckt</string>
     <string name="serviceStatusErrorText">Dienstfehler ist aufgetreten</string>
     <string name="executeTestHttpConnection">Teste HTTP-Verbindung</string>
-    <string name="porcupineLanguageInformation">Alle aktiven Aktivierungswörter müssen mit der ausgewählten
+    <string name="porcupineLanguageInformation">Alle aktiven Aktivierungswörter müssen mit der
+        ausgewählten
         Sprache übereinstimmen!
     </string>
     <string name="backgroundServiceInformation">Der Hintergrunddienst ermöglicht es, der App im

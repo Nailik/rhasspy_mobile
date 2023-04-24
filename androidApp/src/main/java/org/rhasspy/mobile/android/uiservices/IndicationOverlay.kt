@@ -6,7 +6,9 @@ import android.os.Build
 import android.os.Looper
 import android.view.Gravity
 import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.*
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.setViewTreeLifecycleOwner
@@ -22,7 +24,7 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
-import org.rhasspy.mobile.viewmodel.overlay.IndicationOverlayViewModel
+import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
 
 /**
  * Overlay Service
@@ -56,7 +58,8 @@ object IndicationOverlay : KoinComponent {
         return ComposeView(context).apply {
             setContent {
                 AppTheme {
-                    Indication(viewModel.indicationState.collectAsState().value)
+                    val viewState by viewModel.viewState.collectAsState()
+                    Indication(viewState.indicationState)
                 }
             }
         }
@@ -65,18 +68,16 @@ object IndicationOverlay : KoinComponent {
     init {
         try {
             val typeFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+                TYPE_APPLICATION_OVERLAY
             } else {
-                @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_PHONE
+                @Suppress("DEPRECATION") TYPE_PHONE
             }
             // set the layout parameters of the window
             mParams = WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
+                WRAP_CONTENT,
+                WRAP_CONTENT,
                 typeFlag,
-                @Suppress("DEPRECATION") WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                        or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                        or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                @Suppress("DEPRECATION") FLAG_SHOW_WHEN_LOCKED or FLAG_NOT_FOCUSABLE or FLAG_NOT_TOUCHABLE,
                 PixelFormat.TRANSLUCENT,
             ).apply {
                 gravity = Gravity.BOTTOM
@@ -106,27 +107,31 @@ object IndicationOverlay : KoinComponent {
                 return
             }
             job = CoroutineScope(Dispatchers.Default).launch {
-                viewModel.isShowVisualIndication.collect {
-                    if (it != showVisualIndicationOldValue) {
-                        if (it) {
-                            if (OverlayPermission.isGranted()) {
-                                if (Looper.myLooper() == null) {
-                                    Looper.prepare()
+                viewModel.viewState.collect {
+                    try {
+                        if (it.isShowVisualIndication != showVisualIndicationOldValue) {
+                            showVisualIndicationOldValue = it.isShowVisualIndication
+                            if (it.isShowVisualIndication) {
+                                if (OverlayPermission.isGranted()) {
+                                    if (Looper.myLooper() == null) {
+                                        Looper.prepare()
+                                    }
+                                    launch(Dispatchers.Main) {
+                                        overlayWindowManager.addView(view, mParams)
+                                        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                                    }
                                 }
+                            } else {
                                 launch(Dispatchers.Main) {
-                                    overlayWindowManager.addView(view, mParams)
-                                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                                    if (view.parent != null) {
+                                        overlayWindowManager.removeView(view)
+                                    }
+                                    lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
                                 }
-                            }
-                        } else {
-                            launch(Dispatchers.Main) {
-                                if (view.parent != null) {
-                                    overlayWindowManager.removeView(view)
-                                }
-                                lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
                             }
                         }
-                        showVisualIndicationOldValue = it
+                    } catch (exception: Exception) {
+                        logger.a(exception) { "exception in collect" }
                     }
                 }
             }.also {

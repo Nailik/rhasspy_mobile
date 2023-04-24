@@ -1,173 +1,409 @@
 package org.rhasspy.mobile
 
+import org.koin.core.parameter.parametersOf
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
-import org.rhasspy.mobile.logic.closeableSingle
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
-import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
-import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingServiceParams
+import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingServiceParamsCreator
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceParams
+import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceParamsCreator
 import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantService
-import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantServiceParams
+import org.rhasspy.mobile.logic.services.homeassistant.HomeAssistantServiceParamsCreator
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParams
+import org.rhasspy.mobile.logic.services.httpclient.HttpClientServiceParamsCreator
 import org.rhasspy.mobile.logic.services.indication.IndicationService
 import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingService
-import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingServiceParams
+import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingServiceParamsCreator
 import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionService
-import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionServiceParams
+import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionServiceParamsCreator
 import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
-import org.rhasspy.mobile.logic.services.localaudio.LocalAudioServiceParams
+import org.rhasspy.mobile.logic.services.localaudio.LocalAudioServiceParamsCreator
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.logic.services.mqtt.MqttServiceParams
+import org.rhasspy.mobile.logic.services.mqtt.MqttServiceParamsCreator
 import org.rhasspy.mobile.logic.services.recording.RecordingService
 import org.rhasspy.mobile.logic.services.settings.AppSettingsService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
-import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextServiceParams
+import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextServiceParamsCreator
 import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
-import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechServiceParams
-import org.rhasspy.mobile.logic.services.udp.UdpService
+import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechServiceParamsCreator
+import org.rhasspy.mobile.logic.services.wakeword.UdpConnection
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
-import org.rhasspy.mobile.logic.services.wakeword.WakeWordServiceParams
+import org.rhasspy.mobile.logic.services.wakeword.WakeWordServiceParamsCreator
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
-import org.rhasspy.mobile.logic.services.webserver.WebServerServiceParams
-import org.rhasspy.mobile.viewmodel.AppViewModel
-import org.rhasspy.mobile.viewmodel.configuration.AudioPlayingConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.DialogManagementConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.IntentHandlingConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.IntentRecognitionConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.MqttConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.RemoteHermesHttpConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.SpeechToTextConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.TextToSpeechConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.WebServerConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.test.AudioPlayingConfigurationTest
-import org.rhasspy.mobile.viewmodel.configuration.test.DialogManagementConfigurationTest
-import org.rhasspy.mobile.viewmodel.configuration.test.IntentHandlingConfigurationTest
-import org.rhasspy.mobile.viewmodel.configuration.test.IntentRecognitionConfigurationTest
-import org.rhasspy.mobile.viewmodel.configuration.test.MqttConfigurationTest
-import org.rhasspy.mobile.viewmodel.configuration.test.RemoteHermesHttpConfigurationTest
-import org.rhasspy.mobile.viewmodel.configuration.test.SpeechToTextConfigurationTest
-import org.rhasspy.mobile.viewmodel.configuration.test.TextToSpeechConfigurationTest
-import org.rhasspy.mobile.viewmodel.configuration.test.WakeWordConfigurationTest
-import org.rhasspy.mobile.viewmodel.configuration.test.WebServerConfigurationTest
+import org.rhasspy.mobile.logic.services.webserver.WebServerServiceParamsCreator
+import org.rhasspy.mobile.logic.settings.AppSetting
+import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
+import org.rhasspy.mobile.viewmodel.ViewModelFactory
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
-import org.rhasspy.mobile.viewmodel.overlay.IndicationOverlayViewModel
-import org.rhasspy.mobile.viewmodel.overlay.MicrophoneOverlayViewModel
-import org.rhasspy.mobile.viewmodel.screens.AboutScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.ConfigurationScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.LogScreenViewModel
-import org.rhasspy.mobile.viewmodel.screens.SettingsScreenViewModel
-import org.rhasspy.mobile.viewmodel.settings.AutomaticSilenceDetectionSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.BackgroundServiceSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.DeviceSettingsSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.IndicationSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.LanguageSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.LogSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.MicrophoneOverlaySettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.SaveAndRestoreSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.sound.ErrorIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.sound.RecordedIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.sound.WakeIndicationSoundSettingsViewModel
-
+import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewStateCreator
+import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
+import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewStateCreator
+import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayViewModel
+import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayViewStateCreator
+import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewStateCreator
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewStateCreator
+import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewStateCreator
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewStateCreator
+import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewStateCreator
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceViewStateCreator
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsViewStateCreator
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.ErrorIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsViewStateCreator
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.RecordedIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewStateCreator
 
 val serviceModule = module {
-    closeableSingle { LocalAudioService() }
-    closeableSingle { AudioPlayingService() }
-    closeableSingle { IntentHandlingService() }
-    closeableSingle { IntentRecognitionService() }
-    closeableSingle { SpeechToTextService() }
-    closeableSingle { TextToSpeechService() }
-    closeableSingle { MqttService() }
-    closeableSingle { HttpClientService() }
-    closeableSingle { WebServerService() }
-    closeableSingle { HomeAssistantService() }
-    closeableSingle { WakeWordService() }
-    closeableSingle { RecordingService() }
-    closeableSingle { DialogManagerService() }
-    closeableSingle { AppSettingsService() }
-    closeableSingle { IndicationService() }
-    closeableSingle { ServiceMiddleware() }
-
-    single { params -> params.getOrNull<LocalAudioServiceParams>() ?: LocalAudioServiceParams() }
-    single { params ->
-        params.getOrNull<AudioPlayingServiceParams>() ?: AudioPlayingServiceParams()
-    }
-    single { params ->
-        params.getOrNull<IntentHandlingServiceParams>() ?: IntentHandlingServiceParams()
-    }
-    single { params ->
-        params.getOrNull<IntentRecognitionServiceParams>() ?: IntentRecognitionServiceParams()
-    }
-    single { params ->
-        params.getOrNull<SpeechToTextServiceParams>() ?: SpeechToTextServiceParams()
-    }
-    single { params ->
-        params.getOrNull<TextToSpeechServiceParams>() ?: TextToSpeechServiceParams()
-    }
-    single { params -> params.getOrNull<MqttServiceParams>() ?: MqttServiceParams() }
-    single { params -> params.getOrNull<HttpClientServiceParams>() ?: HttpClientServiceParams() }
-    single { params -> params.getOrNull<WebServerServiceParams>() ?: WebServerServiceParams() }
-    single { params ->
-        params.getOrNull<HomeAssistantServiceParams>() ?: HomeAssistantServiceParams()
-    }
-    single { params -> params.getOrNull<WakeWordServiceParams>() ?: WakeWordServiceParams() }
-    single { params ->
-        params.getOrNull<DialogManagerServiceParams>() ?: DialogManagerServiceParams()
+    single {
+        ServiceMiddleware(
+            dialogManagerService = get(),
+            speechToTextService = get(),
+            textToSpeechService = get(),
+            appSettingsService = get(),
+            localAudioService = get(),
+            mqttService = get(),
+            wakeWordService = get()
+        )
     }
 
-    closeableSingle { AudioPlayingConfigurationTest() }
-    closeableSingle { DialogManagementConfigurationTest() }
-    closeableSingle { IntentHandlingConfigurationTest() }
-    closeableSingle { IntentRecognitionConfigurationTest() }
-    closeableSingle { MqttConfigurationTest() }
-    closeableSingle { RemoteHermesHttpConfigurationTest() }
-    closeableSingle { SpeechToTextConfigurationTest() }
-    closeableSingle { TextToSpeechConfigurationTest() }
-    closeableSingle { WakeWordConfigurationTest() }
-    closeableSingle { WebServerConfigurationTest() }
+    single { AudioPlayingServiceParamsCreator() }
+    single { AudioPlayingService(paramsCreator = get()) }
+
+    single { DialogManagerServiceParamsCreator() }
+    single { DialogManagerService(paramsCreator = get()) }
+
+    single { HomeAssistantServiceParamsCreator() }
+    single { HomeAssistantService(paramsCreator = get()) }
+
+    single { HttpClientServiceParamsCreator() }
+    single { HttpClientService(paramsCreator = get()) }
+
+    single { IndicationService() }
+
+    single { IntentHandlingServiceParamsCreator() }
+    single { IntentHandlingService(paramsCreator = get()) }
+
+    single { IntentRecognitionServiceParamsCreator() }
+    single { IntentRecognitionService(paramsCreator = get()) }
+
+    single { LocalAudioServiceParamsCreator() }
+    single { LocalAudioService(paramsCreator = get()) }
+
+    single { RecordingService(audioRecorder = get()) }
+
+    single { AppSettingsService() }
+
+    single { MqttServiceParamsCreator() }
+    single { MqttService(paramsCreator = get()) }
+
+    single { SpeechToTextServiceParamsCreator() }
+    single { SpeechToTextService(paramsCreator = get()) }
+
+    single { TextToSpeechServiceParamsCreator() }
+    single { TextToSpeechService(paramsCreator = get()) }
+
+    single { WakeWordServiceParamsCreator() }
+    single { WakeWordService(paramsCreator = get()) }
+
+    single { WebServerServiceParamsCreator() }
+    single { WebServerService(paramsCreator = get()) }
+}
+
+val viewModelFactory = module {
+    single {
+        ViewModelFactory()
+    }
+
 }
 
 val viewModelModule = module {
-    single { AppViewModel() }
-    single { HomeScreenViewModel() }
-    single { MicrophoneFabViewModel() }
-    single { ConfigurationScreenViewModel() }
-    single { AudioPlayingConfigurationViewModel() }
-    single { DialogManagementConfigurationViewModel() }
-    single { IntentHandlingConfigurationViewModel() }
-    single { IntentRecognitionConfigurationViewModel() }
-    single { MqttConfigurationViewModel() }
-    single { RemoteHermesHttpConfigurationViewModel() }
-    single { SpeechToTextConfigurationViewModel() }
-    single { TextToSpeechConfigurationViewModel() }
-    single { WakeWordConfigurationViewModel() }
-    single { WebServerConfigurationViewModel() }
-    single { LogScreenViewModel() }
-    single { SettingsScreenViewModel() }
-    single { AboutScreenViewModel() }
-    single { AutomaticSilenceDetectionSettingsViewModel() }
-    single { BackgroundServiceSettingsViewModel() }
-    single { DeviceSettingsSettingsViewModel() }
+    single {
+        MicrophoneFabViewStateCreator(
+            dialogManagerService = get(),
+            serviceMiddleware = get(),
+            wakeWordService = get()
+        )
+    }
+
+    single {
+        HomeScreenViewStateCreator(
+            serviceMiddleware = get()
+        )
+    }
+    single {
+        HomeScreenViewModel(
+            serviceMiddleware = get(),
+            viewStateCreator = get()
+        )
+    }
+
+    single {
+        MicrophoneFabViewStateCreator(
+            dialogManagerService = get(),
+            serviceMiddleware = get(),
+            wakeWordService = get()
+        )
+    }
+    single {
+        MicrophoneFabViewModel(
+            serviceMiddleware = get(),
+            viewStateCreator = get()
+        )
+    }
+
+    single {
+        ConfigurationScreenViewStateCreator(
+            httpClientService = get(),
+            webServerService = get(),
+            mqttService = get(),
+            wakeWordService = get(),
+            speechToTextService = get(),
+            intentRecognitionService = get(),
+            textToSpeechService = get(),
+            audioPlayingService = get(),
+            dialogManagerService = get(),
+            intentHandlingService = get()
+        )
+    }
+    single {
+        ConfigurationScreenViewModel(
+            viewStateCreator = get()
+        )
+    }
+    single {
+        AudioPlayingConfigurationViewModel(
+            service = get()
+        )
+    }
+    single {
+        DialogManagementConfigurationViewModel(
+            service = get()
+        )
+    }
+    single {
+        IntentHandlingConfigurationViewModel(
+            service = get()
+        )
+    }
+    single {
+        IntentRecognitionConfigurationViewModel(
+            service = get()
+        )
+    }
+    single {
+        MqttConfigurationViewModel(
+            service = get()
+        )
+    }
+    single {
+        RemoteHermesHttpConfigurationViewModel(
+            service = get()
+        )
+    }
+    single {
+        SpeechToTextConfigurationViewModel(
+            service = get()
+        )
+    }
+    single {
+        TextToSpeechConfigurationViewModel(
+            service = get()
+        )
+    }
+    single {
+        WakeWordConfigurationViewModel(
+            service = get()
+        )
+    }
+    single {
+        WebServerConfigurationViewModel(
+            service = get()
+        )
+    }
+
+    single {
+        LogScreenViewStateCreator()
+    }
+    single {
+        LogScreenViewModel(
+            viewStateCreator = get()
+        )
+    }
+
+    single {
+        SettingsScreenViewStateCreator()
+    }
+    single {
+        SettingsScreenViewModel(
+            viewStateCreator = get()
+        )
+    }
+
+    single {
+        AboutScreenViewStateCreator(
+            nativeApplication = get()
+        )
+    }
+    single {
+        AboutScreenViewModel(
+            viewStateCreator = get()
+        )
+    }
+
+    factory(named("AudioRecorderFactory")) {
+        AudioRecorder()
+    }
+    single { params ->
+        SilenceDetectionSettingsViewStateCreator(
+            audioRecorder = params[0]
+        )
+    }
+    single {
+        val audioRecorder = get<AudioRecorder>(named("AudioRecorderFactory"))
+        SilenceDetectionSettingsViewModel(
+            nativeApplication = get(),
+            audioRecorder = audioRecorder,
+            viewStateCreator = get { parametersOf(audioRecorder) }
+        )
+    }
+
+    single {
+        BackgroundServiceViewStateCreator(
+            nativeApplication = get()
+        )
+    }
+    single {
+        BackgroundServiceSettingsViewModel(
+            viewStateCreator = get()
+        )
+    }
+
+    single {
+        DeviceSettingsViewStateCreator()
+    }
+    single {
+        DeviceSettingsSettingsViewModel(
+            viewStateCreator = get()
+        )
+    }
+
     single { IndicationSettingsViewModel() }
-    single { WakeIndicationSoundSettingsViewModel() }
-    single { RecordedIndicationSoundSettingsViewModel() }
-    single { ErrorIndicationSoundSettingsViewModel() }
+
+
+
+    factory { params ->
+        IIndicationSoundSettingsViewStateCreator(
+            localAudioService = get(),
+            customSoundOptions = params[0],
+            soundSetting = params[1],
+            soundVolume = params[2]
+        )
+    }
+    single {
+        WakeIndicationSoundSettingsViewModel(
+            localAudioService = get(),
+            nativeApplication = get(),
+            viewStateCreator = get {
+                parametersOf(
+                    AppSetting.customWakeSounds,
+                    AppSetting.wakeSound,
+                    AppSetting.wakeSoundVolume
+                )
+            }
+        )
+    }
+    single {
+        RecordedIndicationSoundSettingsViewModel(
+            localAudioService = get(),
+            nativeApplication = get(),
+            viewStateCreator = get {
+                parametersOf(
+                    AppSetting.customRecordedSounds,
+                    AppSetting.recordedSound,
+                    AppSetting.recordedSoundVolume
+                )
+            }
+        )
+    }
+    single {
+        ErrorIndicationSoundSettingsViewModel(
+            localAudioService = get(),
+            nativeApplication = get(),
+            viewStateCreator = get {
+                parametersOf(
+                    AppSetting.customErrorSounds,
+                    AppSetting.errorSound,
+                    AppSetting.errorSoundVolume
+                )
+            }
+        )
+    }
+
     single { LanguageSettingsViewModel() }
-    single { LogSettingsViewModel() }
+
+    single {
+        LogSettingsViewModel(
+            nativeApplication = get()
+        )
+    }
     single { MicrophoneOverlaySettingsViewModel() }
     single { SaveAndRestoreSettingsViewModel() }
-    single { MicrophoneOverlayViewModel() }
-    single { IndicationOverlayViewModel() }
+
+    single {
+        MicrophoneOverlayViewStateCreator(
+            nativeApplication = get()
+        )
+    }
+    single {
+        MicrophoneOverlayViewModel(
+            nativeApplication = get(),
+            microphoneFabViewModel = get(),
+            viewStateCreator = get()
+        )
+    }
+
+    single {
+        IndicationOverlayViewStateCreator(
+            indicationService = get()
+        )
+    }
+    single {
+        IndicationOverlayViewModel(
+            viewStateCreator = get()
+        )
+    }
 }
 
 val factoryModule = module {
-    factory { params -> UdpService(params[0], params[1]) }
+    factory { params -> UdpConnection(params[0], params[1]) }
 }
 
 val nativeModule = module {
-    closeableSingle { AudioRecorder() }
+    single {
+        AudioRecorder()
+    }
 }

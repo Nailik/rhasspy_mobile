@@ -1,26 +1,21 @@
 package org.rhasspy.mobile.android.content.list
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.data.resource.StableStringResource
 
 @Composable
 fun FilledTonalButtonListItem(
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
-    text: StringResource,
+    text: StableStringResource,
     enabled: Boolean = true,
     onClick: () -> Unit
 ) {

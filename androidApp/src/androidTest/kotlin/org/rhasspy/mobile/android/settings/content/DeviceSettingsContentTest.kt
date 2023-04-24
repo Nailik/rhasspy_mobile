@@ -1,3 +1,5 @@
+
+
 package org.rhasspy.mobile.android.settings.content
 
 import androidx.compose.runtime.CompositionLocalProvider
@@ -7,23 +9,27 @@ import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.onListItemSwitch
-import org.rhasspy.mobile.viewmodel.settings.DeviceSettingsSettingsViewModel
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
+import org.rhasspy.mobile.android.utils.onListItemSwitch
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsSettingsViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class DeviceSettingsContentTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class DeviceSettingsContentTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createComposeRule()
-
-    private val viewModel = DeviceSettingsSettingsViewModel()
 
     @Before
     fun setUp() {
@@ -32,9 +38,10 @@ class DeviceSettingsContentTest {
             val navController = rememberNavController()
 
             CompositionLocalProvider(
-                LocalMainNavController provides navController
+                LocalMainNavController provides navController,
+                LocalViewModelFactory provides get()
             ) {
-                DeviceSettingsContent(viewModel)
+                DeviceSettingsContent()
             }
         }
 
@@ -59,39 +66,42 @@ class DeviceSettingsContentTest {
      * intent handling disabled is saved
      */
     @Test
-    fun testContent() {
+    fun testContent() = runTest {
         //Volume is visible
         composeTestRule.onNodeWithTag(TestTag.Volume).assertIsDisplayed()
 
         //hot word is enabled
         composeTestRule.onNodeWithTag(TestTag.HotWord).onListItemSwitch().assertIsOn()
-        assertTrue { DeviceSettingsSettingsViewModel().isHotWordEnabled.value }
+        assertTrue { DeviceSettingsSettingsViewModel(get()).viewState.value.isHotWordEnabled }
         //user clicks hot word
         composeTestRule.onNodeWithTag(TestTag.HotWord).performClick()
+        composeTestRule.awaitIdle()
         //hot word is disabled
         composeTestRule.onNodeWithTag(TestTag.HotWord).onListItemSwitch().assertIsOff()
         //hot word disabled is saved
-        assertFalse { DeviceSettingsSettingsViewModel().isHotWordEnabled.value }
+        assertFalse { DeviceSettingsSettingsViewModel(get()).viewState.value.isHotWordEnabled }
 
         //audio output is enabled
         composeTestRule.onNodeWithTag(TestTag.AudioOutput).onListItemSwitch().assertIsOn()
-        assertTrue { DeviceSettingsSettingsViewModel().isAudioOutputEnabled.value }
+        assertTrue { DeviceSettingsSettingsViewModel(get()).viewState.value.isAudioOutputEnabled }
         //user clicks audio output
         composeTestRule.onNodeWithTag(TestTag.AudioOutput).performClick()
+        composeTestRule.awaitIdle()
         //audio output is disabled
         composeTestRule.onNodeWithTag(TestTag.AudioOutput).onListItemSwitch().assertIsOff()
         //audio output disabled is saved
-        assertFalse { DeviceSettingsSettingsViewModel().isAudioOutputEnabled.value }
+        assertFalse { DeviceSettingsSettingsViewModel(get()).viewState.value.isAudioOutputEnabled }
 
         //intent handling is enabled
         composeTestRule.onNodeWithTag(TestTag.IntentHandling).onListItemSwitch().assertIsOn()
-        assertTrue { DeviceSettingsSettingsViewModel().isIntentHandlingEnabled.value }
+        assertTrue { DeviceSettingsSettingsViewModel(get()).viewState.value.isIntentHandlingEnabled }
         //user clicks intent handling
         composeTestRule.onNodeWithTag(TestTag.IntentHandling).performClick()
+        composeTestRule.awaitIdle()
         //intent handling is disabled
         composeTestRule.onNodeWithTag(TestTag.IntentHandling).onListItemSwitch().assertIsOff()
         //intent handling disabled is saved
-        assertFalse { DeviceSettingsSettingsViewModel().isIntentHandlingEnabled.value }
+        assertFalse { DeviceSettingsSettingsViewModel(get()).viewState.value.isIntentHandlingEnabled }
     }
 
 }

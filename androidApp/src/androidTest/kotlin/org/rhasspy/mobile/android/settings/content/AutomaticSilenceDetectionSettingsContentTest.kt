@@ -4,35 +4,36 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextReplacement
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.rhasspy.mobile.android.MainActivity
-import org.rhasspy.mobile.android.TestTag
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
-import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.onListItemSwitch
-import org.rhasspy.mobile.android.requestMicrophonePermissions
-import org.rhasspy.mobile.viewmodel.settings.AutomaticSilenceDetectionSettingsViewModel
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
+import org.rhasspy.mobile.android.utils.onListItemSwitch
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.requestMicrophonePermissions
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.SetSilenceDetectionEnabled
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class AutomaticSilenceDetectionSettingsContentTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class AutomaticSilenceDetectionSettingsContentTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
-    private val viewModel = AutomaticSilenceDetectionSettingsViewModel()
+    private val viewModel = get<SilenceDetectionSettingsViewModel>()
 
     @Before
     fun setUp() {
@@ -43,9 +44,10 @@ class AutomaticSilenceDetectionSettingsContentTest {
 
             CompositionLocalProvider(
                 LocalMainNavController provides navController,
-                LocalSnackbarHostState provides snackbarHostState
+                LocalSnackbarHostState provides snackbarHostState,
+                LocalViewModelFactory provides get()
             ) {
-                AutomaticSilenceDetectionSettingsContent(viewModel)
+                AutomaticSilenceDetectionSettingsContent()
             }
         }
 
@@ -64,8 +66,8 @@ class AutomaticSilenceDetectionSettingsContentTest {
      * silence detection time 5000 saved
      */
     @Test
-    fun testContent() = runBlocking {
-        viewModel.toggleAutomaticSilenceDetectionEnabled(false)
+    fun testContent() = runTest {
+        viewModel.onEvent(SetSilenceDetectionEnabled(false))
 
         val numberInputTest = "5000"
 
@@ -78,9 +80,10 @@ class AutomaticSilenceDetectionSettingsContentTest {
         //user clicks automatic silence detection
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).performClick()
         //Automatic silence detection enabled
+        composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onListItemSwitch().assertIsOn()
         //Automatic silence detection enabled saved
-        assertTrue { AutomaticSilenceDetectionSettingsViewModel().isAutomaticSilenceDetectionEnabled.value }
+        assertTrue { SilenceDetectionSettingsViewModel(get(), get(), get()).viewState.value.isSilenceDetectionEnabled }
         //settings visible
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration)
             .assertIsDisplayed()
@@ -89,22 +92,22 @@ class AutomaticSilenceDetectionSettingsContentTest {
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsMinimumTime)
             .performTextReplacement(numberInputTest)
         composeTestRule.awaitIdle()
-        assertEquals(numberInputTest, viewModel.automaticSilenceDetectionMinimumTimeText.value)
+        assertEquals(numberInputTest, viewModel.viewState.value.silenceDetectionMinimumTimeText)
         //silence detection time 5000 saved
         assertEquals(
             numberInputTest,
-            AutomaticSilenceDetectionSettingsViewModel().automaticSilenceDetectionMinimumTimeText.value
+            SilenceDetectionSettingsViewModel(get(), get(), get()).viewState.value.silenceDetectionMinimumTimeText
         )
 
         //user changes silence detection time to 5000
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsTime)
             .performTextReplacement(numberInputTest)
         composeTestRule.awaitIdle()
-        assertEquals(numberInputTest, viewModel.automaticSilenceDetectionTimeText.value)
+        assertEquals(numberInputTest, viewModel.viewState.value.silenceDetectionTimeText)
         //silence detection time 5000 saved
         assertEquals(
             numberInputTest,
-            AutomaticSilenceDetectionSettingsViewModel().automaticSilenceDetectionTimeText.value
+            SilenceDetectionSettingsViewModel(get(), get(), get()).viewState.value.silenceDetectionTimeText
         )
     }
 
@@ -121,11 +124,11 @@ class AutomaticSilenceDetectionSettingsContentTest {
      * audio recording false
      */
     @Test
-    fun testRecording() = runBlocking {
+    fun testRecording() = runTest {
         requestMicrophonePermissions()
 
         //Automatic silence detection enabled
-        viewModel.toggleAutomaticSilenceDetectionEnabled(true)
+        viewModel.onEvent(SetSilenceDetectionEnabled(true))
         //audio level indication invisible
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsAudioLevelTest)
             .assertDoesNotExist()
@@ -137,7 +140,7 @@ class AutomaticSilenceDetectionSettingsContentTest {
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsAudioLevelTest)
             .assertIsDisplayed()
         //audio recording true
-        assertTrue { viewModel.isRecording.value }
+        assertTrue { viewModel.viewState.value.isRecording }
 
         //user clicks stop test
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsTest).performClick()
@@ -146,6 +149,6 @@ class AutomaticSilenceDetectionSettingsContentTest {
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsAudioLevelTest)
             .assertDoesNotExist()
         //audio recording false
-        assertFalse { viewModel.isRecording.value }
+        assertFalse { viewModel.viewState.value.isRecording }
     }
 }

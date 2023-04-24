@@ -1,8 +1,9 @@
 package org.rhasspy.mobile.android.configuration.content.porcupine
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.IconButton
@@ -10,10 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.CustomDivider
@@ -22,35 +20,39 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.list.RadioButtonListItem
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SelectWakeWordPorcupineLanguage
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 
 /**
  *  list of porcupine languages
  */
 @Composable
-fun PorcupineLanguageScreen(viewModel: WakeWordConfigurationViewModel) {
+fun PorcupineLanguageScreen(
+    viewState: PorcupineViewState,
+    onEvent: (PorcupineUiEvent) -> Unit
+) {
 
     Scaffold(
         modifier = Modifier
             .testTag(TestTag.PorcupineLanguageScreen)
             .fillMaxSize(),
-        topBar = { AppBar(MR.strings.language) }
+        topBar = { AppBar(MR.strings.language.stable) }
     ) { paddingValues ->
 
         Surface(Modifier.padding(paddingValues)) {
 
-            val selectedOption by viewModel.wakeWordPorcupineLanguage.collectAsState()
+            LazyColumn {
 
-            val options = viewModel.porcupineLanguageOption()
-
-            Column {
-                options.forEach { option ->
+                items(viewState.languageOptions) { option ->
 
                     RadioButtonListItem(
                         modifier = Modifier.testTag(IOption = option),
                         text = option.text,
-                        isChecked = selectedOption == option,
-                        onClick = { viewModel.selectWakeWordPorcupineLanguage(option) }
+                        isChecked = viewState.porcupineLanguage == option,
+                        onClick = { onEvent(SelectWakeWordPorcupineLanguage(option)) }
                     )
 
                     CustomDivider()
@@ -67,7 +69,7 @@ fun PorcupineLanguageScreen(viewModel: WakeWordConfigurationViewModel) {
  * app bar for the language
  */
 @Composable
-private fun AppBar(title: StringResource) {
+private fun AppBar(title: StableStringResource) {
 
     val navigation = LocalNavController.current
 
@@ -82,7 +84,7 @@ private fun AppBar(title: StringResource) {
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = MR.strings.back,
+                    contentDescription = MR.strings.back.stable,
                 )
             }
         }

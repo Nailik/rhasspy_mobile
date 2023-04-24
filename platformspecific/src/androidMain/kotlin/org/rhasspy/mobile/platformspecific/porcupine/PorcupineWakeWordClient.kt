@@ -1,23 +1,11 @@
 package org.rhasspy.mobile.platformspecific.porcupine
 
-import ai.picovoice.porcupine.PorcupineActivationException
-import ai.picovoice.porcupine.PorcupineActivationLimitException
-import ai.picovoice.porcupine.PorcupineActivationRefusedException
-import ai.picovoice.porcupine.PorcupineActivationThrottledException
-import ai.picovoice.porcupine.PorcupineIOException
-import ai.picovoice.porcupine.PorcupineInvalidArgumentException
-import ai.picovoice.porcupine.PorcupineInvalidStateException
-import ai.picovoice.porcupine.PorcupineKeyException
-import ai.picovoice.porcupine.PorcupineManager
-import ai.picovoice.porcupine.PorcupineManagerCallback
-import ai.picovoice.porcupine.PorcupineMemoryException
-import ai.picovoice.porcupine.PorcupineRuntimeException
-import ai.picovoice.porcupine.PorcupineStopIterationException
+import ai.picovoice.porcupine.*
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import co.touchlab.kermit.Logger
-import io.ktor.utils.io.core.Closeable
+import kotlinx.collections.immutable.ImmutableList
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
@@ -35,18 +23,21 @@ import java.io.File
  */
 actual class PorcupineWakeWordClient actual constructor(
     private val wakeWordPorcupineAccessToken: String,
-    private val wakeWordPorcupineKeywordDefaultOptions: Set<PorcupineDefaultKeyword>,
-    private val wakeWordPorcupineKeywordCustomOptions: Set<PorcupineCustomKeyword>,
+    private val wakeWordPorcupineKeywordDefaultOptions: ImmutableList<PorcupineDefaultKeyword>,
+    private val wakeWordPorcupineKeywordCustomOptions: ImmutableList<PorcupineCustomKeyword>,
     private val wakeWordPorcupineLanguage: PorcupineLanguageOption,
     private val onKeywordDetected: (hotWord: String) -> Unit,
     private val onError: (PorcupineError) -> Unit
-) : PorcupineManagerCallback, Closeable, KoinComponent {
+) : PorcupineManagerCallback, KoinComponent {
     private val logger = Logger.withTag("PorcupineWakeWordClient")
 
     //manager to stop start and reload porcupine
     private var porcupineManager: PorcupineManager? = null
 
     private val context = get<NativeApplication>()
+
+    private var initialized: Boolean = false
+    actual val isInitialized: Boolean = initialized
 
     /**
      * create porcupine client
@@ -102,8 +93,10 @@ actual class PorcupineWakeWordClient actual constructor(
 
             porcupineManager = porcupineBuilder.build(context, this)
 
+            initialized = true
             null//no error
         } catch (e: Exception) {
+            initialized = false
             return e.toPorcupineError()
         }
     }
@@ -119,12 +112,12 @@ actual class PorcupineWakeWordClient actual constructor(
      * tries to start porcupine
      */
     actual fun start(): PorcupineError? {
-        porcupineManager?.let {
+        return porcupineManager?.let {
             it.start()
-            return null
+            null
         } ?: run {
             logger.a { "Porcupine start but porcupineManager not initialized" }
-            return PorcupineError(null, PorcupineErrorType.NotInitialized)
+            PorcupineError(null, PorcupineErrorType.NotInitialized)
         }
     }
 
@@ -195,7 +188,7 @@ actual class PorcupineWakeWordClient actual constructor(
     /**
      * deletes the porcupine manager
      */
-    override fun close() {
+    actual fun close() {
         porcupineManager?.stop()
         porcupineManager?.delete()
         porcupineManager = null

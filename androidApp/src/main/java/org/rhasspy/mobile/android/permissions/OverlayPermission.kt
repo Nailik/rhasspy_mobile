@@ -7,12 +7,8 @@ import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
@@ -20,6 +16,7 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 
 /**
@@ -31,10 +28,11 @@ import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
  */
 @Composable
 fun <T : Any> RequiresOverlayPermission(
-    onClick: (data: T?) -> Unit,
-    content: @Composable (onClick: (data: T?) -> Unit) -> Unit
+    initialData: T,
+    onClick: (data: T) -> Unit,
+    content: @Composable (onClick: (data: T) -> Unit) -> Unit
 ) {
-    var currentData by rememberSaveable { mutableStateOf<T?>(null) }
+    var currentData by rememberSaveable { mutableStateOf(initialData) }
     var openRequestPermissionDialog by remember { mutableStateOf(false) }
 
     if (openRequestPermissionDialog) {
@@ -72,16 +70,19 @@ private fun OverlayPermissionInfoDialog(onResult: (result: Boolean) -> Unit) {
             onResult.invoke(false)
         },
         title = {
-            Text(MR.strings.overlayPermissionTitle)
+            Text(MR.strings.overlayPermissionTitle.stable)
         },
         text = {
             Text(
-                resource = MR.strings.overlayPermissionInfo,
+                resource = MR.strings.overlayPermissionInfo.stable,
                 modifier = Modifier.testTag(TestTag.DialogInformationOverlayPermission)
             )
         },
         icon = {
-            Icon(imageVector = Icons.Filled.Layers, contentDescription = MR.strings.overlay)
+            Icon(
+                imageVector = Icons.Filled.Layers,
+                contentDescription = MR.strings.overlay.stable
+            )
         },
         confirmButton = {
             Button(
@@ -90,7 +91,7 @@ private fun OverlayPermissionInfoDialog(onResult: (result: Boolean) -> Unit) {
                 },
                 modifier = Modifier.testTag(TestTag.DialogOk)
             ) {
-                Text(MR.strings.ok)
+                Text(MR.strings.ok.stable)
             }
         },
         dismissButton = {
@@ -100,7 +101,7 @@ private fun OverlayPermissionInfoDialog(onResult: (result: Boolean) -> Unit) {
                 },
                 modifier = Modifier.testTag(TestTag.DialogCancel)
             ) {
-                Text(MR.strings.cancel)
+                Text(MR.strings.cancel.stable)
             }
         },
         modifier = Modifier

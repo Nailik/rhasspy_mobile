@@ -1,13 +1,14 @@
 package org.rhasspy.mobile.logic.settings
 
+import kotlinx.collections.immutable.persistentListOf
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.data.sounds.SoundOption
 import org.rhasspy.mobile.logic.logger.LogLevel
-import org.rhasspy.mobile.platformspecific.utils.isDebug
-import org.rhasspy.mobile.logic.settings.serializer.StringSetSerializer
+import org.rhasspy.mobile.logic.settings.serializer.StringListSerializer
 import org.rhasspy.mobile.platformspecific.language.getDeviceLanguage
+import org.rhasspy.mobile.platformspecific.utils.isDebug
 
 /**
  * directly consumed
@@ -50,9 +51,9 @@ object AppSetting {
     val errorSound = ISetting(SettingsEnum.ErrorSound, SoundOption.Default.name)
 
     //saves sound as pair, first is fileName as String, second is used and indicates if this custom sound file is used
-    val customWakeSounds = ISetting(SettingsEnum.CustomWakeSounds, setOf(), StringSetSerializer)
-    val customRecordedSounds = ISetting(SettingsEnum.CustomRecordedSounds, setOf(), StringSetSerializer)
-    val customErrorSounds = ISetting(SettingsEnum.CustomErrorSounds, setOf(), StringSetSerializer)
+    val customWakeSounds = ISetting(SettingsEnum.CustomWakeSounds, persistentListOf(), StringListSerializer)
+    val customRecordedSounds = ISetting(SettingsEnum.CustomRecordedSounds, persistentListOf(), StringListSerializer)
+    val customErrorSounds = ISetting(SettingsEnum.CustomErrorSounds, persistentListOf(), StringListSerializer)
 
     val isCrashlyticsEnabled = ISetting(SettingsEnum.Crashlytics, false)
     val isShowLogEnabled = ISetting(SettingsEnum.ShowLog, isDebug())

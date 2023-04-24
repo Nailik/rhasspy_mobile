@@ -9,13 +9,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import org.koin.androidx.compose.get
+import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.SecondaryContent
@@ -24,6 +25,7 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.main.LocalNavController
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.permissions.RequiresOverlayPermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
@@ -31,18 +33,24 @@ import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScree
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSoundScreen
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewmodel.settings.IndicationSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.sound.ErrorIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.sound.RecordedIndicationSoundSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.sound.WakeIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.data.service.option.AudioOutputOption
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewState
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.ErrorIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.RecordedIndicationSoundSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoundSettingsViewModel
 
 /**
  * indication sounds
  */
 @Preview
 @Composable
-fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = get()) {
-
+fun WakeWordIndicationSettingsContent() {
+    val viewModelFactory = LocalViewModelFactory.current
+    val viewModel: IndicationSettingsViewModel = viewModelFactory.getViewModel()
     val navController = rememberNavController()
 
     CompositionLocalProvider(
@@ -54,29 +62,34 @@ fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = g
         ) {
 
             composable(IndicationSettingsScreens.Overview.route) {
-                IndicationSettingsOverview(viewModel)
+                val viewState by viewModel.viewState.collectAsState()
+
+                IndicationSettingsOverview(
+                    viewState = viewState,
+                    onEvent = viewModel::onEvent
+                )
             }
 
             composable(IndicationSettingsScreens.WakeIndicationSound.route) {
                 IndicationSoundScreen(
-                    viewModel = get<WakeIndicationSoundSettingsViewModel>(),
-                    title = MR.strings.wakeSound,
+                    viewModel = viewModelFactory.getViewModel<WakeIndicationSoundSettingsViewModel>(),
+                    title = MR.strings.wakeSound.stable,
                     screen = IndicationSettingsScreens.WakeIndicationSound
                 )
             }
 
             composable(IndicationSettingsScreens.RecordedIndicationSound.route) {
                 IndicationSoundScreen(
-                    viewModel = get<RecordedIndicationSoundSettingsViewModel>(),
-                    title = MR.strings.recordedSound,
+                    viewModel = viewModelFactory.getViewModel<RecordedIndicationSoundSettingsViewModel>(),
+                    title = MR.strings.recordedSound.stable,
                     screen = IndicationSettingsScreens.RecordedIndicationSound
                 )
             }
 
             composable(IndicationSettingsScreens.ErrorIndicationSound.route) {
                 IndicationSoundScreen(
-                    viewModel = get<ErrorIndicationSoundSettingsViewModel>(),
-                    title = MR.strings.errorSound,
+                    viewModel = viewModelFactory.getViewModel<ErrorIndicationSoundSettingsViewModel>(),
+                    title = MR.strings.errorSound.stable,
                     screen = IndicationSettingsScreens.ErrorIndicationSound
                 )
             }
@@ -90,11 +103,14 @@ fun WakeWordIndicationSettingsContent(viewModel: IndicationSettingsViewModel = g
  * wake word indication settings
  */
 @Composable
-fun IndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
+fun IndicationSettingsOverview(
+    viewState: IndicationSettingsViewState,
+    onEvent: (IndicationSettingsUiEvent) -> Unit
+) {
 
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreenType.IndicationSettings),
-        title = MR.strings.indication
+        title = MR.strings.indication.stable
     ) {
 
         Card(
@@ -105,17 +121,20 @@ fun IndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
             //turn on display
             SwitchListItem(
                 modifier = Modifier.testTag(TestTag.WakeWordDetectionTurnOnDisplay),
-                text = MR.strings.backgroundWakeWordDetectionTurnOnDisplay,
-                isChecked = viewModel.isWakeWordDetectionTurnOnDisplayEnabled.collectAsState().value,
-                onCheckedChange = viewModel::toggleWakeWordDetectionTurnOnDisplay
+                text = MR.strings.backgroundWakeWordDetectionTurnOnDisplay.stable,
+                isChecked = viewState.isWakeWordDetectionTurnOnDisplayEnabled,
+                onCheckedChange = { onEvent(SetWakeWordDetectionTurnOnDisplay(it)) }
             )
 
             //light indication
-            RequiresOverlayPermission({ viewModel.toggleWakeWordLightIndicationEnabled() }) { onClick ->
+            RequiresOverlayPermission(
+                initialData = viewState.isWakeWordLightIndicationEnabled,
+                onClick = { onEvent(SetWakeWordLightIndicationEnabled(it)) }
+            ) { onClick ->
                 SwitchListItem(
                     modifier = Modifier.testTag(TestTag.WakeWordLightIndicationEnabled),
-                    text = MR.strings.wakeWordLightIndication,
-                    isChecked = viewModel.isWakeWordLightIndicationEnabled.collectAsState().value,
+                    text = MR.strings.wakeWordLightIndication.stable,
+                    isChecked = viewState.isWakeWordLightIndicationEnabled,
                     onCheckedChange = onClick
                 )
             }
@@ -123,12 +142,25 @@ fun IndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
             //sound indication
             SwitchListItem(
                 modifier = Modifier.testTag(TestTag.SoundIndicationEnabled),
-                text = MR.strings.wakeWordSoundIndication,
-                isChecked = viewModel.isSoundIndicationEnabled.collectAsState().value,
-                onCheckedChange = viewModel::toggleWakeWordSoundIndicationEnabled
+                text = MR.strings.wakeWordSoundIndication.stable,
+                isChecked = viewState.isSoundIndicationEnabled,
+                onCheckedChange = { onEvent(SetSoundIndicationEnabled(it)) }
             )
 
-            SoundIndicationSettingsOverview(viewModel)
+
+            //visibility of sounds settings
+            SecondaryContent(visible = viewState.isSoundIndicationEnabled) {
+
+                SoundIndicationSettingsOverview(
+                    soundIndicationOutputOption = viewState.soundIndicationOutputOption,
+                    audioOutputOptionList = viewState.audioOutputOptionList,
+                    wakeSound = viewState.wakeSound,
+                    recordedSound = viewState.recordedSound,
+                    errorSound = viewState.errorSound,
+                    onEvent = onEvent
+                )
+
+            }
 
         }
 
@@ -140,50 +172,53 @@ fun IndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
  * overview page for indication settings
  */
 @Composable
-private fun SoundIndicationSettingsOverview(viewModel: IndicationSettingsViewModel) {
+private fun SoundIndicationSettingsOverview(
+    soundIndicationOutputOption: AudioOutputOption,
+    audioOutputOptionList: ImmutableList<AudioOutputOption>,
+    wakeSound: String,
+    recordedSound: String,
+    errorSound: String,
+    onEvent: (IndicationSettingsUiEvent) -> Unit
+) {
 
-    //visibility of sounds settings
-    SecondaryContent(visible = viewModel.isSoundSettingsVisible.collectAsState().value) {
+    Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
-        Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
+        RadioButtonsEnumSelectionList(
+            modifier = Modifier.testTag(TestTag.AudioOutputOptions),
+            selected = soundIndicationOutputOption,
+            onSelect = { onEvent(SelectSoundIndicationOutputOption(it)) },
+            values = audioOutputOptionList
+        )
 
-            RadioButtonsEnumSelectionList(
-                modifier = Modifier.testTag(TestTag.AudioOutputOptions),
-                selected = viewModel.soundIndicationOutputOption.collectAsState().value,
-                onSelect = viewModel::selectSoundIndicationOutputOption,
-                values = viewModel.audioOutputOptionList
-            )
+        //opens page for sounds
+        val navigation = LocalNavController.current
 
-            //opens page for sounds
-            val navigation = LocalNavController.current
+        //wake sound
+        ListElement(
+            modifier = Modifier
+                .testTag(IndicationSettingsScreens.WakeIndicationSound)
+                .clickable { navigation.navigate(IndicationSettingsScreens.WakeIndicationSound.route) },
+            text = { Text(MR.strings.wakeWord.stable) },
+            secondaryText = { Text(text = wakeSound) }
+        )
 
-            //wake sound
-            ListElement(
-                modifier = Modifier
-                    .testTag(IndicationSettingsScreens.WakeIndicationSound)
-                    .clickable { navigation.navigate(IndicationSettingsScreens.WakeIndicationSound.route) },
-                text = { Text(MR.strings.wakeWord) },
-                secondaryText = { Text(text = viewModel.wakeSound.collectAsState().value) }
-            )
+        //recorded sound
+        ListElement(
+            modifier = Modifier
+                .testTag(IndicationSettingsScreens.RecordedIndicationSound)
+                .clickable { navigation.navigate(IndicationSettingsScreens.RecordedIndicationSound.route) },
+            text = { Text(MR.strings.recordedSound.stable) },
+            secondaryText = { Text(text = recordedSound) }
+        )
 
-            //recorded sound
-            ListElement(
-                modifier = Modifier
-                    .testTag(IndicationSettingsScreens.RecordedIndicationSound)
-                    .clickable { navigation.navigate(IndicationSettingsScreens.RecordedIndicationSound.route) },
-                text = { Text(MR.strings.recordedSound) },
-                secondaryText = { Text(text = viewModel.recordedSound.collectAsState().value) }
-            )
-
-            //error sound
-            ListElement(
-                modifier = Modifier
-                    .testTag(IndicationSettingsScreens.ErrorIndicationSound)
-                    .clickable { navigation.navigate(IndicationSettingsScreens.ErrorIndicationSound.route) },
-                text = { Text(MR.strings.errorSound) },
-                secondaryText = { Text(text = viewModel.errorSound.collectAsState().value) }
-            )
-        }
+        //error sound
+        ListElement(
+            modifier = Modifier
+                .testTag(IndicationSettingsScreens.ErrorIndicationSound)
+                .clickable { navigation.navigate(IndicationSettingsScreens.ErrorIndicationSound.route) },
+            text = { Text(MR.strings.errorSound.stable) },
+            secondaryText = { Text(text = errorSound) }
+        )
 
     }
 

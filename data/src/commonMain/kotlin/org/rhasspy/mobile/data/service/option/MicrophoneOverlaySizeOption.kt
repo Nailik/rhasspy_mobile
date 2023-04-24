@@ -1,14 +1,15 @@
 package org.rhasspy.mobile.data.service.option
 
-import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
 
-enum class MicrophoneOverlaySizeOption(override val text: StringResource, val size: Int) :
+enum class MicrophoneOverlaySizeOption(override val text: StableStringResource, val size: Int) :
     IOption<MicrophoneOverlaySizeOption> {
-    Small(MR.strings.small, 64),
-    Medium(MR.strings.medium, 96),
-    Big(MR.strings.big, 128),
-    Disabled(MR.strings.disabled, 0);
+    Small(MR.strings.small.stable, 64),
+    Medium(MR.strings.medium.stable, 96),
+    Big(MR.strings.big.stable, 128),
+    Disabled(MR.strings.disabled.stable, 0);
 
     override fun findValue(value: String): MicrophoneOverlaySizeOption {
         return valueOf(value)

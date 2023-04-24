@@ -5,16 +5,19 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextReplacement
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.hasTestTag
 import org.rhasspy.mobile.android.navigation.BottomBarScreenType
-import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.viewmodel.screens.ConfigurationScreenViewModel
+import org.rhasspy.mobile.android.utils.hasTestTag
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
 import kotlin.test.assertEquals
 
 /**
@@ -22,7 +25,8 @@ import kotlin.test.assertEquals
  * Items exist
  * Site ID edit
  */
-class ConfigurationScreenTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class ConfigurationScreenTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
@@ -42,7 +46,7 @@ class ConfigurationScreenTest {
      * back button exists
      */
     @Test
-    fun testContent() = runBlocking {
+    fun testContent() = runTest {
         //SiteId
         composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId).assertExists()
         //each item exists and navigates
@@ -54,6 +58,7 @@ class ConfigurationScreenTest {
             composeTestRule.onNodeWithTag(tag).assertExists()
             //press toolbar back button
             composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
+            composeTestRule.awaitIdle()
         }
     }
 
@@ -63,13 +68,13 @@ class ConfigurationScreenTest {
      * test if change is saved
      */
     @Test
-    fun testSiteIdEdit() {
+    fun testSiteIdEdit() = runTest {
         val textInputTest = "siteIdTestInput"
         //Test site id to be changed
-        composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId).performScrollTo()
-            .performTextReplacement(textInputTest)
+        composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId).performScrollTo().performTextReplacement(textInputTest)
+        composeTestRule.awaitIdle()
         //text field changed text
-        assertEquals(textInputTest, ConfigurationScreenViewModel().siteId.value)
+        assertEquals(textInputTest, get<ConfigurationScreenViewModel>().viewState.value.siteId.text.value)
     }
 
 }

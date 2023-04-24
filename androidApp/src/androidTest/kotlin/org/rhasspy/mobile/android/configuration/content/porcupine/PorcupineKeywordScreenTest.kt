@@ -1,30 +1,31 @@
 package org.rhasspy.mobile.android.configuration.content.porcupine
 
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.swipeLeft
-import androidx.compose.ui.test.swipeRight
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalNavController
-import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import kotlin.test.assertTrue
 
-class PorcupineKeywordScreenTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class PorcupineKeywordScreenTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = WakeWordConfigurationViewModel()
+    private val viewModel = get<WakeWordConfigurationViewModel>()
 
     @Before
     fun setUp() {
@@ -35,7 +36,12 @@ class PorcupineKeywordScreenTest {
             CompositionLocalProvider(
                 LocalNavController provides navController
             ) {
-                PorcupineKeywordScreen(viewModel)
+                val viewState by viewModel.viewState.collectAsState()
+                val contentViewState by viewState.editViewState.collectAsState()
+                PorcupineKeywordScreen(
+                    viewState = contentViewState.wakeWordPorcupineViewState,
+                    onEvent = viewModel::onEvent
+                )
             }
         }
 
@@ -57,7 +63,7 @@ class PorcupineKeywordScreenTest {
      * default is opened and selected
      */
     @Test
-    fun testPager() = runBlocking {
+    fun testPager() = runTest {
         //default is opened
         composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen).assertIsDisplayed()
 

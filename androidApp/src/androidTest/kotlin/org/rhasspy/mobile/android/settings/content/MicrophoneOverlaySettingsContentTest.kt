@@ -3,42 +3,41 @@ package org.rhasspy.mobile.android.settings.content
 import android.widget.Switch
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
-import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.MainActivity
-import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.onListItemRadioButton
-import org.rhasspy.mobile.android.onListItemSwitch
-import org.rhasspy.mobile.android.resetOverlayPermission
-import org.rhasspy.mobile.android.text
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
+import org.rhasspy.mobile.android.utils.*
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
-import org.rhasspy.mobile.viewmodel.settings.MicrophoneOverlaySettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SelectMicrophoneOverlaySizeOption
+import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SetMicrophoneOverlayWhileAppEnabled
+import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class MicrophoneOverlaySettingsContentTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class MicrophoneOverlaySettingsContentTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
-    private val viewModel = MicrophoneOverlaySettingsViewModel()
+    private val viewModel = get<MicrophoneOverlaySettingsViewModel>()
 
     private val device: UiDevice =
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -54,9 +53,10 @@ class MicrophoneOverlaySettingsContentTest {
             val navController = rememberNavController()
 
             CompositionLocalProvider(
-                LocalMainNavController provides navController
+                LocalMainNavController provides navController,
+                LocalViewModelFactory provides get()
             ) {
-                MicrophoneOverlaySettingsContent(viewModel)
+                MicrophoneOverlaySettingsContent()
             }
         }
 
@@ -85,16 +85,16 @@ class MicrophoneOverlaySettingsContentTest {
      * visible while app is saved
      */
     @Test
-    fun testContent() = runBlocking {
+    fun testContent() = runTest {
         device.resetOverlayPermission(composeTestRule.activity)
 
-        viewModel.selectMicrophoneOverlayOptionSize(MicrophoneOverlaySizeOption.Disabled)
-        viewModel.toggleMicrophoneOverlayWhileAppEnabled(false)
+        viewModel.onEvent(SelectMicrophoneOverlaySizeOption(MicrophoneOverlaySizeOption.Disabled))
+        viewModel.onEvent(SetMicrophoneOverlayWhileAppEnabled(false))
 
         //OverlaySizeOption is disabled
         assertEquals(
             MicrophoneOverlaySizeOption.Disabled,
-            viewModel.microphoneOverlaySizeOption.value
+            viewModel.viewState.value.microphoneOverlaySizeOption
         )
         //Disabled is selected
         composeTestRule.onNodeWithTag(MicrophoneOverlaySizeOption.Disabled, true).onListItemRadioButton().assertIsSelected()
@@ -111,8 +111,8 @@ class MicrophoneOverlaySettingsContentTest {
         //user accepts permission
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         assertTrue { device.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
-        UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName))
-        device.findObject(UiSelector().text(MR.strings.appName)).click()
+        UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName.stable))
+        device.findObject(UiSelector().text(MR.strings.appName.stable)).click()
         device.findObject(UiSelector().className(Switch::class.java)).click()
         //User clicks back
         device.pressBack()
@@ -127,21 +127,22 @@ class MicrophoneOverlaySettingsContentTest {
         var newViewModel = MicrophoneOverlaySettingsViewModel()
         assertEquals(
             MicrophoneOverlaySizeOption.Medium,
-            newViewModel.microphoneOverlaySizeOption.value
+            newViewModel.viewState.value.microphoneOverlaySizeOption
         )
 
         //Visible while app is disabled
-        assertFalse { viewModel.isMicrophoneOverlayWhileAppEnabled.value }
+        assertFalse { newViewModel.viewState.value.isMicrophoneOverlayWhileAppEnabled }
         //element is turned off
         composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).onListItemSwitch().assertIsOff()
 
         //user clicks visible while app
         composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).performClick()
+        composeTestRule.awaitIdle()
         //element is turned on
         composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).onListItemSwitch().assertIsOn()
         //visible while app is saved
         newViewModel = MicrophoneOverlaySettingsViewModel()
-        assertTrue { newViewModel.isMicrophoneOverlayWhileAppEnabled.value }
+        assertTrue { newViewModel.viewState.value.isMicrophoneOverlayWhileAppEnabled }
 
     }
 }

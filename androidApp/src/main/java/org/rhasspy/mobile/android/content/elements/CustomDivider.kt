@@ -7,5 +7,8 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun CustomDivider(modifier: Modifier = Modifier) {
-    Divider(color = MaterialTheme.colorScheme.surfaceVariant, modifier = modifier)
+    Divider(
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.surfaceVariant
+    )
 }

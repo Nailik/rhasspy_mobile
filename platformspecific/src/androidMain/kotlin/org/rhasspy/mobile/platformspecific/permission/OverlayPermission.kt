@@ -14,6 +14,7 @@ actual object OverlayPermission : KoinComponent {
     private val logger = Logger.withTag("OverlayPermission")
     private val context by inject<NativeApplication>()
     private val _granted = MutableStateFlow(isGranted())
+
     /**
      * to observe if microphone permission is granted
      */

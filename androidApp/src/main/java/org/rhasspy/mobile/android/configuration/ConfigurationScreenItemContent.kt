@@ -1,53 +1,30 @@
 package org.rhasspy.mobile.android.configuration
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Save
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.BottomAppBarDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.surfaceColorAtElevation
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import dev.icerock.moko.resources.StringResource
-import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.UiEventEffect
 import org.rhasspy.mobile.android.content.ServiceStateHeader
 import org.rhasspy.mobile.android.content.elements.FloatingActionButton
 import org.rhasspy.mobile.android.content.elements.Icon
@@ -56,7 +33,12 @@ import org.rhasspy.mobile.android.main.LocalConfigurationNavController
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.SetSystemColor
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.ui.event.StateEvent.Consumed
+import org.rhasspy.mobile.viewmodel.configuration.*
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiNavigate.PopBackStack
 
 enum class ConfigurationContentScreens(val route: String) {
     Edit("ConfigurationContentScreens_Edit"),
@@ -72,10 +54,12 @@ enum class ConfigurationContentScreens(val route: String) {
  * Shows dialog on Back press when there are unsaved changes
  */
 @Composable
-fun ConfigurationScreenItemContent(
+fun <V : IConfigurationEditViewState> ConfigurationScreenItemContent(
     modifier: Modifier,
-    title: StringResource,
-    viewModel: IConfigurationViewModel,
+    viewState: ConfigurationViewState<V>,
+    onAction: (IConfigurationUiEvent) -> Unit,
+    onConsumed: (IConfigurationUiNavigate) -> Unit,
+    config: ConfigurationScreenConfig = ConfigurationScreenConfig(MR.strings.save.stable),
     testContent: (@Composable () -> Unit)? = null,
     content: LazyListScope.() -> Unit
 ) {
@@ -84,20 +68,13 @@ fun ConfigurationScreenItemContent(
     LaunchedEffect(Unit) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.route == ConfigurationContentScreens.Edit.route) {
-                viewModel.stopTest()
+                onAction(StopTest)
             }
         }
     }
 
-    BackHandler(viewModel.isBackPressDisabled.collectAsState().value) {}
+    Column {
 
-    if (viewModel.isLoading.collectAsState().value) {
-        Surface {
-            Box(modifier = Modifier.fillMaxSize()) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            }
-        }
-    } else {
         CompositionLocalProvider(
             LocalConfigurationNavController provides navController
         ) {
@@ -106,16 +83,24 @@ fun ConfigurationScreenItemContent(
                 startDestination = ConfigurationContentScreens.Edit.route,
                 modifier = modifier.testTag(TestTag.ConfigurationScreenItemContent),
             ) {
+
                 composable(ConfigurationContentScreens.Edit.route) {
                     EditConfigurationScreen(
-                        title = title,
-                        viewModel = viewModel,
+                        title = config.title,
+                        viewState = viewState.editViewState.collectAsState().value,
+                        serviceStateHeaderViewState = viewState.serviceViewState.collectAsState().value,
+                        hasUnsavedChanges = viewState.hasUnsavedChanges,
+                        showUnsavedChangesDialog = viewState.showUnsavedChangesDialog,
+                        popBackStack = viewState.popBackStack,
+                        onAction = onAction,
+                        onConsumed = onConsumed,
                         content = content
                     )
                 }
                 composable(ConfigurationContentScreens.Test.route) {
                     ConfigurationScreenTest(
-                        viewModel = viewModel,
+                        viewState = viewState.testViewState.collectAsState().value,
+                        onAction = onAction,
                         content = testContent
                     )
                 }
@@ -129,36 +114,36 @@ fun ConfigurationScreenItemContent(
  */
 @Composable
 private fun EditConfigurationScreen(
-    title: StringResource,
-    viewModel: IConfigurationViewModel,
+    title: StableStringResource,
+    viewState: IConfigurationEditViewState,
+    serviceStateHeaderViewState: ServiceStateHeaderViewState,
+    hasUnsavedChanges: Boolean,
+    showUnsavedChangesDialog: Boolean,
+    popBackStack: PopBackStack = PopBackStack(Consumed),
+    onAction: (IConfigurationUiEvent) -> Unit,
+    onConsumed: (IConfigurationUiNavigate) -> Unit,
     content: LazyListScope.() -> Unit
 ) {
     SetSystemColor(0.dp)
 
     val navController = LocalMainNavController.current
-    var showBackButtonDialog by rememberSaveable { mutableStateOf(false) }
-
-    val hasUnsavedChanges by viewModel.hasUnsavedChanges.collectAsState()
-
-    fun onBackPress() {
-        if (hasUnsavedChanges) {
-            showBackButtonDialog = true
-        } else {
-            navController.popBackStack()
-        }
+    UiEventEffect(
+        event = popBackStack,
+        onConsumed = onConsumed
+    ) {
+        navController.popBackStack()
     }
 
+
     //Back handler to show dialog if there are unsaved changes
-    BackHandler(onBack = ::onBackPress)
+    BackHandler(onBack = { (onAction(BackPress)) })
 
     //Show unsaved changes dialog back press
-    if (showBackButtonDialog) {
+    if (showUnsavedChangesDialog) {
         UnsavedBackButtonDialog(
-            onSave = viewModel::save,
-            onDiscard = viewModel::discard,
-            onClose = {
-                showBackButtonDialog = false
-            }
+            onSave = { onAction(Save) },
+            onDiscard = { onAction(Discard) },
+            onClose = { onAction(DismissDialog) }
         )
     }
 
@@ -166,16 +151,20 @@ private fun EditConfigurationScreen(
         topBar = {
             AppBar(
                 title = title,
-                onBackClick = ::onBackPress
+                onBackClick = { (onAction(BackPress)) }
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = MR.strings.back,
+                    contentDescription = MR.strings.back.stable,
                 )
             }
         },
         bottomBar = {
-            BottomAppBar(viewModel)
+            BottomAppBar(
+                hasUnsavedChanges = hasUnsavedChanges,
+                isTestingEnabled = viewState.isTestingEnabled,
+                onAction = { onAction(it) },
+            )
         }
     ) { paddingValues ->
         Surface(tonalElevation = 1.dp) {
@@ -184,9 +173,8 @@ private fun EditConfigurationScreen(
                     .padding(paddingValues)
                     .fillMaxSize()
             ) {
-
                 stickyHeader {
-                    ServiceStateHeader(viewModel)
+                    ServiceStateHeader(serviceStateHeaderViewState)
                 }
 
                 content()
@@ -201,26 +189,15 @@ private fun EditConfigurationScreen(
  */
 @Composable
 private fun UnsavedBackButtonDialog(
-    onSave: (onComplete: () -> Unit) -> Unit,
+    onSave: () -> Unit,
     onDiscard: () -> Unit,
     onClose: () -> Unit
 ) {
-    val navController = LocalMainNavController.current
-
     UnsavedChangesDialog(
         onDismissRequest = onClose,
-        onSave = {
-            onClose.invoke()
-            onSave.invoke {
-                navController.popBackStack()
-            }
-        },
-        onDiscard = {
-            onDiscard.invoke()
-            navController.popBackStack()
-            onClose.invoke()
-        },
-        dismissButtonText = MR.strings.discard
+        onSave = { onSave.invoke() },
+        onDiscard = { onDiscard.invoke() },
+        dismissButtonText = MR.strings.discard.stable
     )
 }
 
@@ -233,7 +210,7 @@ private fun UnsavedChangesDialog(
     onDismissRequest: () -> Unit,
     onSave: () -> Unit,
     onDiscard: () -> Unit,
-    dismissButtonText: StringResource
+    dismissButtonText: StableStringResource
 ) {
 
     AlertDialog(
@@ -243,7 +220,7 @@ private fun UnsavedChangesDialog(
                 onClick = onSave,
                 modifier = Modifier.testTag(TestTag.DialogOk)
             ) {
-                Text(MR.strings.save)
+                Text(MR.strings.save.stable)
             }
         },
         dismissButton = {
@@ -257,13 +234,13 @@ private fun UnsavedChangesDialog(
         icon = {
             Icon(
                 imageVector = Icons.Filled.Warning,
-                contentDescription = MR.strings.discard
+                contentDescription = MR.strings.discard.stable
             )
         },
-        title = { Text(MR.strings.unsavedChanges) },
+        title = { Text(MR.strings.unsavedChanges.stable) },
         text = {
             Text(
-                resource = MR.strings.unsavedChangesInformation,
+                resource = MR.strings.unsavedChangesInformation.stable,
                 modifier = Modifier.testTag(TestTag.DialogUnsavedChanges)
             )
         }
@@ -278,61 +255,68 @@ private fun UnsavedChangesDialog(
  */
 @Composable
 private fun BottomAppBar(
-    viewModel: IConfigurationViewModel,
+    hasUnsavedChanges: Boolean,
+    isTestingEnabled: Boolean,
+    onAction: (IConfigurationUiEvent) -> Unit,
 ) {
-    val isHasUnsavedChanges by viewModel.hasUnsavedChanges.collectAsState()
-    val isTestingEnabled by viewModel.isTestingEnabled.collectAsState()
-    val coroutineScope = rememberCoroutineScope()
-
     BottomAppBar(
         actions = {
             IconButton(
                 modifier = Modifier.testTag(TestTag.BottomAppBarDiscard),
-                onClick = viewModel::discard,
-                enabled = isHasUnsavedChanges
+                onClick = { onAction(Discard) },
+                enabled = hasUnsavedChanges
             ) {
                 Icon(
-                    imageVector = if (isHasUnsavedChanges) Icons.Outlined.Delete else Icons.Filled.Delete,
-                    contentDescription = MR.strings.discard,
+                    imageVector = if (hasUnsavedChanges) Icons.Outlined.Delete else Icons.Filled.Delete,
+                    contentDescription = MR.strings.discard.stable,
                 )
             }
             IconButton(
                 modifier = Modifier.testTag(TestTag.BottomAppBarSave),
-                onClick = {
-                    coroutineScope.launch {
-                        viewModel.save()
-                    }
-                },
-                enabled = isHasUnsavedChanges
+                onClick = { onAction(Save) },
+                enabled = hasUnsavedChanges
             ) {
                 Icon(
-                    imageVector = if (isHasUnsavedChanges) Icons.Outlined.Save else Icons.Filled.Save,
-                    contentDescription = MR.strings.save
+                    imageVector = if (hasUnsavedChanges) Icons.Outlined.Save else Icons.Filled.Save,
+                    contentDescription = MR.strings.save.stable
                 )
             }
         },
         floatingActionButton = {
-            val navController = LocalConfigurationNavController.current
-            FloatingActionButton(
-                modifier = Modifier
-                    .testTag(TestTag.BottomAppBarTest)
-                    .defaultMinSize(
-                        minWidth = 56.0.dp,
-                        minHeight = 56.0.dp,
-                    ),
-                onClick = {
-                    viewModel.startTest()
-                    navController.navigate(ConfigurationContentScreens.Test.route)
-                },
-                isEnabled = isTestingEnabled,
-                containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
-                contentColor = LocalContentColor.current,
-                icon = {
-                    Icon(
-                        imageVector = if (isTestingEnabled) Icons.Filled.PlayArrow else Icons.Outlined.PlayArrow,
-                        contentDescription = MR.strings.test
-                    )
-                }
+            FloatingActionButtonElement(
+                hasUnsavedChanges = hasUnsavedChanges,
+                isTestingEnabled = isTestingEnabled,
+                onAction = { onAction(it) }
+            )
+        }
+    )
+}
+
+@Composable
+private fun FloatingActionButtonElement(
+    hasUnsavedChanges: Boolean,
+    isTestingEnabled: Boolean,
+    onAction: (IConfigurationUiEvent) -> Unit
+) {
+    val navController = LocalConfigurationNavController.current
+    FloatingActionButton(
+        modifier = Modifier
+            .testTag(TestTag.BottomAppBarTest)
+            .defaultMinSize(
+                minWidth = 56.0.dp,
+                minHeight = 56.0.dp,
+            ),
+        onClick = {
+            onAction(StartTest)
+            navController.navigate(ConfigurationContentScreens.Test.route)
+        },
+        containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
+        contentColor = LocalContentColor.current,
+        isEnabled = !hasUnsavedChanges && isTestingEnabled,
+        icon = {
+            Icon(
+                imageVector = if (!hasUnsavedChanges && isTestingEnabled) Icons.Filled.PlayArrow else Icons.Outlined.PlayArrow,
+                contentDescription = MR.strings.test.stable
             )
         }
     )
@@ -342,7 +326,7 @@ private fun BottomAppBar(
  * top app bar with title and back navigation button
  */
 @Composable
-private fun AppBar(title: StringResource, onBackClick: () -> Unit, icon: @Composable () -> Unit) {
+private fun AppBar(title: StableStringResource, onBackClick: () -> Unit, icon: @Composable () -> Unit) {
 
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
@@ -356,7 +340,7 @@ private fun AppBar(title: StringResource, onBackClick: () -> Unit, icon: @Compos
         },
         navigationIcon = {
             IconButton(
-                onClick = onBackClick,
+                onClick = { onBackClick() },
                 modifier = Modifier.testTag(TestTag.AppBarBackButton),
                 content = icon
             )

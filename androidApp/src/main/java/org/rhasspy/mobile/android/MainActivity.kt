@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.android
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -19,16 +18,19 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.AppLaunchChecker
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import androidx.multidex.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.main.MainNavigation
+import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
+import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.platformspecific.application.AppActivity
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.viewmodel.screens.HomeScreenViewModel
+import org.rhasspy.mobile.platformspecific.utils.isDebug
+import org.rhasspy.mobile.viewmodel.ViewModelFactory
 
 
 /**
@@ -40,24 +42,6 @@ class MainActivity : KoinComponent, AppActivity() {
     companion object : KoinComponent {
         var isFirstLaunch = false
             private set
-
-        fun startRecordingAction() {
-            val application = get<NativeApplication>()
-            application.currentActivity?.also {
-                it.startActivity(
-                    Intent(application, MainActivity::class.java).apply {
-                        putExtra(IntentAction.StartRecording.param, true)
-                    }
-                )
-            } ?: run {
-                application.startActivity(
-                    Intent(application, MainActivity::class.java).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        putExtra(IntentAction.StartRecording.param, true)
-                    }
-                )
-            }
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,13 +58,16 @@ class MainActivity : KoinComponent, AppActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
-        val value = intent.getBooleanExtra(IntentAction.StartRecording.param, false)
-        get<HomeScreenViewModel>().startRecordingAction(value)
+        if (intent.getBooleanExtra(IntentAction.StartRecording.param, false)) {
+            get<ServiceMiddleware>().action(WakeWordDetected(Source.Local, wakeWord = "intent"))
+        }
+
+        val viewModelFactory = get<ViewModelFactory>()
 
         this.setContent {
             Box(modifier = Modifier.fillMaxSize()) {
-                MainNavigation()
-                if (BuildConfig.DEBUG) {
+                MainNavigation(viewModelFactory)
+                if (isDebug()) {
                     Text(
                         text = "DEBUG",
                         modifier = Modifier

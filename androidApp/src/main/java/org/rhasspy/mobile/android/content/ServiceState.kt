@@ -1,26 +1,16 @@
 package org.rhasspy.mobile.android.content
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.surfaceColorAtElevation
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.resources.StringResource
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.Icon
@@ -28,11 +18,14 @@ import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.item.EventStateCard
 import org.rhasspy.mobile.android.content.item.EventStateIcon
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.data.service.ServiceState.*
+import org.rhasspy.mobile.viewmodel.configuration.ServiceStateHeaderViewState
 
 @Composable
-fun ServiceStateHeader(viewModel: IConfigurationViewModel) {
+fun ServiceStateHeader(viewState: ServiceStateHeaderViewState) {
 
     var isShowDialog by remember { mutableStateOf(false) }
 
@@ -40,8 +33,8 @@ fun ServiceStateHeader(viewModel: IConfigurationViewModel) {
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp))
             .padding(16.dp),
-        serviceState = viewModel.serviceState.collectAsState().value,
-        enabled = viewModel.isOpenServiceDialogEnabled.collectAsState().value,
+        serviceState = viewState.serviceState.serviceState.collectAsState().value,
+        enabled = viewState.isOpenServiceDialogEnabled,
         onClick = {
             isShowDialog = true
         }
@@ -53,25 +46,27 @@ fun ServiceStateHeader(viewModel: IConfigurationViewModel) {
                 isShowDialog = false
             },
             title = {
-                Text(MR.strings.error)
+                Text(MR.strings.error.stable)
             },
             text = {
-                when (val informationText =
-                    viewModel.serviceStateDialogText.collectAsState().value) {
-                    is StringResource -> Text(informationText)
+                when (val informationText = viewState.serviceStateDialogText) {
+                    is StableStringResource -> Text(informationText)
                     is String -> androidx.compose.material3.Text(informationText)
                     else -> {}
                 }
             },
             icon = {
-                Icon(imageVector = Icons.Filled.Info, contentDescription = MR.strings.info)
+                Icon(
+                    imageVector = Icons.Filled.Info,
+                    contentDescription = MR.strings.info.stable
+                )
             },
             confirmButton = {
                 TextButton(
                     onClick = { isShowDialog = false },
                     modifier = Modifier.testTag(TestTag.DialogOk)
                 ) {
-                    Text(MR.strings.close)
+                    Text(MR.strings.close.stable)
                 }
             },
             dismissButton = { },
@@ -123,12 +118,12 @@ private fun ServiceStateText(serviceState: ServiceState) {
 
     Text(
         resource = when (serviceState) {
-            is ServiceState.Pending -> MR.strings.pending
-            is ServiceState.Loading -> MR.strings.loading
-            is ServiceState.Success -> MR.strings.success
-            is ServiceState.Error -> MR.strings.error
-            is ServiceState.Exception -> MR.strings.error
-            is ServiceState.Disabled -> MR.strings.disabled
+            is Pending -> MR.strings.pending.stable
+            is Loading -> MR.strings.loading.stable
+            is Success -> MR.strings.success.stable
+            is Error -> MR.strings.error.stable
+            is Exception -> MR.strings.error.stable
+            is Disabled -> MR.strings.disabled.stable
         }
     )
 

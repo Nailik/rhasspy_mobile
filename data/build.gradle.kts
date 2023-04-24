@@ -18,7 +18,11 @@ kotlin {
                 implementation(project(":resources"))
                 implementation(Icerock.Resources)
                 implementation(Jetbrains.Kotlinx.serialization)
+                implementation(Jetbrains.Kotlinx.immutable)
+                implementation(Touchlab.kermit)
                 implementation(Square.okio)
+                implementation(Jetbrains.Compose.runtime)
+                implementation(Mikepenz.aboutLibrariesCore)
             }
         }
         val commonTest by getting {

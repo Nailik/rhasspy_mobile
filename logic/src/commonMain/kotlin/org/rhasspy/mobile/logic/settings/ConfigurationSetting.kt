@@ -1,17 +1,9 @@
 package org.rhasspy.mobile.logic.settings
 
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
-import org.rhasspy.mobile.data.service.option.AudioOutputOption
-import org.rhasspy.mobile.data.service.option.AudioPlayingOption
-import org.rhasspy.mobile.data.service.option.DialogManagementOption
-import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
-import org.rhasspy.mobile.data.service.option.IntentHandlingOption
-import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
-import org.rhasspy.mobile.data.service.option.PorcupineKeywordOption
-import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
-import org.rhasspy.mobile.data.service.option.SpeechToTextOption
-import org.rhasspy.mobile.data.service.option.TextToSpeechOption
-import org.rhasspy.mobile.data.service.option.WakeWordOption
+import org.rhasspy.mobile.data.service.option.*
 import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.logic.settings.serializer.OkioPathSerializer
 import org.rhasspy.mobile.logic.settings.serializer.PorcupineCustomKeywordSerializer
@@ -61,12 +53,12 @@ object ConfigurationSetting {
     val wakeWordPorcupineAccessToken = ISetting(SettingsEnum.WakeWordPorcupineAccessToken, "")
     val wakeWordPorcupineKeywordDefaultOptions = ISetting(
         SettingsEnum.WakeWordPorcupineKeywordDefaultSelectedOptions,
-        PorcupineKeywordOption.values().map { PorcupineDefaultKeyword(it, false, 0.5f) }.toSet(),
+        PorcupineKeywordOption.values().map { PorcupineDefaultKeyword(it, false, 0.5f) }.toImmutableList(),
         PorcupineDefaultKeywordSerializer
     )
     val wakeWordPorcupineKeywordCustomOptions = ISetting(
         SettingsEnum.WakeWordPorcupineKeywordCustomOptions,
-        setOf(),
+        persistentListOf(),
         PorcupineCustomKeywordSerializer
     )
     val wakeWordPorcupineLanguage = ISetting(SettingsEnum.WakeWordPorcupineLanguage, PorcupineLanguageOption.EN)
@@ -102,6 +94,6 @@ object ConfigurationSetting {
 
     val intentHandlingHassEndpoint = ISetting(SettingsEnum.IntentHandlingHassUrl, "")
     val intentHandlingHassAccessToken = ISetting(SettingsEnum.IntentHandlingHassAccessToken, "")
-    val intentHandlingHomeAssistantOption = ISetting(SettingsEnum.IsIntentHandlingHassEvent, HomeAssistantIntentHandlingOption.Event)
+    val intentHandlingHomeAssistantOption = ISetting(SettingsEnum.IsIntentHandlingHassEvent, HomeAssistantIntentHandlingOption.Intent)
 
 }

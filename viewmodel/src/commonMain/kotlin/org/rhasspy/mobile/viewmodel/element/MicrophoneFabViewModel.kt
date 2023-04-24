@@ -1,51 +1,31 @@
 package org.rhasspy.mobile.viewmodel.element
 
+import androidx.compose.runtime.Stable
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
-import org.rhasspy.mobile.platformspecific.combineState
-import org.rhasspy.mobile.logic.getSafe
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
-import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
-import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceState
-import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
+import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent.Action
+import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent.Action.UserSessionClick
 
-class MicrophoneFabViewModel : ViewModel(), KoinComponent {
+@Stable
+class MicrophoneFabViewModel(
+    private val serviceMiddleware: ServiceMiddleware,
+    viewStateCreator: MicrophoneFabViewStateCreator
+) : ViewModel(), KoinComponent {
 
-    private val dialogManagerServiceState
-        get() = getSafe<DialogManagerService>()?.currentDialogState ?: MutableStateFlow(
-            DialogManagerServiceState.Idle
-        ).readOnly
+    val viewState: StateFlow<MicrophoneFabViewState> = viewStateCreator()
 
-    val isUserActionEnabled
-        get() = getSafe<ServiceMiddleware>()?.isUserActionEnabled ?: MutableStateFlow(false).readOnly
-
-    val isShowBorder
-        get() = getSafe<WakeWordService>()?.isRecording ?: MutableStateFlow(false)
-    val isShowMicOn: StateFlow<Boolean> = MicrophonePermission.granted
-    val isRecording get() = dialogManagerServiceState.mapReadonlyState { it == DialogManagerServiceState.RecordingIntent }
-
-    init {
-        viewModelScope.launch {
-            combineState(isShowBorder, isShowMicOn, isRecording, isUserActionEnabled) { _, _, _, _ ->
-                listOf(isShowBorder, isShowMicOn, isRecording, isUserActionEnabled)
-            }.collect {
-                viewModelScope.launch {
-                    get<NativeApplication>().updateWidgetNative()
-                }
-            }
+    fun onEvent(event: MicrophoneFabUiEvent) {
+        when (event) {
+            is Action -> onAction(event)
         }
     }
 
-    fun onClick() {
-        getSafe<ServiceMiddleware>()?.userSessionClick()
+    private fun onAction(action: Action) {
+        when (action) {
+            UserSessionClick -> serviceMiddleware.userSessionClick()
+        }
     }
 
 }

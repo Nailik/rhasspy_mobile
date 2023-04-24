@@ -4,11 +4,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
@@ -16,9 +16,19 @@ import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.content.list.RadioButtonListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewmodel.configuration.IntentHandlingConfigurationViewModel
+import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
+import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Event
+import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Intent
+import org.rhasspy.mobile.data.service.option.IntentHandlingOption
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Action.RunIntentHandlingTest
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewState
 
 /**
  * content for intent handling configuration
@@ -26,36 +36,66 @@ import org.rhasspy.mobile.viewmodel.configuration.IntentHandlingConfigurationVie
  * http configuration
  * home assistant configuration
  */
-@Preview
 @Composable
-fun IntentHandlingConfigurationContent(viewModel: IntentHandlingConfigurationViewModel = get()) {
+fun IntentHandlingConfigurationContent() {
+    val viewModel: IntentHandlingConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewState by viewModel.viewState.collectAsState()
+    val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.IntentHandlingConfiguration),
-        title = MR.strings.intentHandling,
-        viewModel = viewModel,
-        testContent = { TestContent(viewModel) }
+        config = ConfigurationScreenConfig(MR.strings.intentHandling.stable),
+        viewState = viewState,
+        onAction = { viewModel.onAction(it) },
+        onConsumed = { viewModel.onConsumed(it) },
+        testContent = {
+            TestContent(
+                testIntentNameText = contentViewState.testIntentHandlingName,
+                testIntentText = contentViewState.testIntentHandlingText,
+                onEvent = viewModel::onEvent
+            )
+        }
     ) {
 
         item {
-            //drop down to select option
-            RadioButtonsEnumSelection(
-                modifier = Modifier.testTag(TestTag.IntentHandlingOptions),
-                selected = viewModel.intentHandlingOption.collectAsState().value,
-                onSelect = viewModel::selectIntentHandlingOption,
-                values = viewModel.intentHandlingOptionList
-            ) {
-                if (viewModel.isRemoteHttpSettingsVisible(it)) {
-                    //http endpoint
-                    RemoteHTTPOption(viewModel)
-                }
-
-                if (viewModel.isHomeAssistantSettingsVisible(it)) {
-                    //home assistant settings
-                    HomeAssistantOption(viewModel)
-                }
-            }
+            IntentHandlingOptionContent(
+                viewState = contentViewState,
+                onEvent = viewModel::onEvent
+            )
         }
+    }
+
+}
+
+@Composable
+private fun IntentHandlingOptionContent(
+    viewState: IntentHandlingConfigurationViewState,
+    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit
+) {
+
+    RadioButtonsEnumSelection(
+        modifier = Modifier.testTag(TestTag.IntentHandlingOptions),
+        selected = viewState.intentHandlingOption,
+        onSelect = { onEvent(SelectIntentHandlingOption(it)) },
+        values = viewState.intentHandlingOptionList
+    ) { option ->
+
+        when (option) {
+            IntentHandlingOption.HomeAssistant -> HomeAssistantOption(
+                intentHandlingHassEndpoint = viewState.intentHandlingHassEndpoint,
+                intentHandlingHassAccessToken = viewState.intentHandlingHassAccessToken,
+                intentHandlingHassOption = viewState.intentHandlingHassOption,
+                onEvent = onEvent
+            )
+
+            IntentHandlingOption.RemoteHTTP -> RemoteHTTPOption(
+                intentHandlingHttpEndpoint = viewState.intentHandlingHttpEndpoint,
+                onEvent = onEvent
+            )
+
+            else -> {}
+        }
+
     }
 
 }
@@ -65,16 +105,19 @@ fun IntentHandlingConfigurationContent(viewModel: IntentHandlingConfigurationVie
  * field to set endpoint
  */
 @Composable
-private fun RemoteHTTPOption(viewModel: IntentHandlingConfigurationViewModel) {
+private fun RemoteHTTPOption(
+    intentHandlingHttpEndpoint: String,
+    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit
+) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
         //endpoint input field
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.Endpoint),
-            value = viewModel.intentHandlingHttpEndpoint.collectAsState().value,
-            onValueChange = viewModel::changeIntentHandlingHttpEndpoint,
-            label = MR.strings.remoteURL
+            value = intentHandlingHttpEndpoint,
+            onValueChange = { onEvent(ChangeIntentHandlingHttpEndpoint(it)) },
+            label = MR.strings.remoteURL.stable
         )
 
     }
@@ -88,40 +131,45 @@ private fun RemoteHTTPOption(viewModel: IntentHandlingConfigurationViewModel) {
  * hass event or intent
  */
 @Composable
-private fun HomeAssistantOption(viewModel: IntentHandlingConfigurationViewModel) {
+private fun HomeAssistantOption(
+    intentHandlingHassEndpoint: String,
+    intentHandlingHassAccessToken: String,
+    intentHandlingHassOption: HomeAssistantIntentHandlingOption,
+    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit
+) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
         //endpoint url
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.Endpoint),
-            value = viewModel.intentHandlingHassEndpoint.collectAsState().value,
-            onValueChange = viewModel::changeIntentHandlingHassEndpoint,
-            label = MR.strings.hassURL,
+            value = intentHandlingHassEndpoint,
+            onValueChange = { onEvent(ChangeIntentHandlingHassEndpoint(it)) },
+            label = MR.strings.hassURL.stable,
             isLastItem = false
         )
 
         //hass access token
         TextFieldListItemVisibility(
             modifier = Modifier.testTag(TestTag.AccessToken),
-            value = viewModel.intentHandlingHassAccessToken.collectAsState().value,
-            onValueChange = viewModel::changeIntentHandlingHassAccessToken,
-            label = MR.strings.accessToken
+            value = intentHandlingHassAccessToken,
+            onValueChange = { onEvent(ChangeIntentHandlingHassAccessToken(it)) },
+            label = MR.strings.accessToken.stable
         )
 
         //select hass event or hass intent
         RadioButtonListItem(
             modifier = Modifier.testTag(TestTag.SendEvents),
-            text = MR.strings.homeAssistantEvents,
-            isChecked = viewModel.isIntentHandlingHassEvent.collectAsState().value,
-            onClick = viewModel::selectIntentHandlingHassEvent
+            text = MR.strings.homeAssistantEvents.stable,
+            isChecked = intentHandlingHassOption == Event,
+            onClick = { onEvent(SelectIntentHandlingHassOption(Event)) }
         )
 
         RadioButtonListItem(
             modifier = Modifier.testTag(TestTag.SendIntents),
-            text = MR.strings.homeAssistantIntents,
-            isChecked = viewModel.isIntentHandlingHassIntent.collectAsState().value,
-            onClick = viewModel::selectIntentHandlingHassIntent
+            text = MR.strings.homeAssistantIntents.stable,
+            isChecked = intentHandlingHassOption == Intent,
+            onClick = { onEvent(SelectIntentHandlingHassOption(Intent)) }
         )
 
     }
@@ -132,27 +180,31 @@ private fun HomeAssistantOption(viewModel: IntentHandlingConfigurationViewModel)
  * show test inputs
  */
 @Composable
-private fun TestContent(viewModel: IntentHandlingConfigurationViewModel) {
+private fun TestContent(
+    testIntentNameText: String,
+    testIntentText: String,
+    onEvent: (IntentHandlingConfigurationUiEvent) -> Unit
+) {
 
     Column {
 
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.IntentNameText),
-            value = viewModel.testIntentNameText.collectAsState().value,
-            onValueChange = viewModel::updateTestIntentNameText,
-            label = MR.strings.intentName
+            value = testIntentNameText,
+            onValueChange = { onEvent(UpdateTestIntentHandlingName(it)) },
+            label = MR.strings.intentName.stable
         )
 
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.IntentText),
-            value = viewModel.testIntentText.collectAsState().value,
-            onValueChange = viewModel::updateTestIntentText,
-            label = MR.strings.intentText
+            value = testIntentText,
+            onValueChange = { onEvent(UpdateTestIntentHandlingText(it)) },
+            label = MR.strings.intentText.stable
         )
 
         FilledTonalButtonListItem(
-            text = MR.strings.executeHandleIntent,
-            onClick = viewModel::testIntentHandling
+            text = MR.strings.executeHandleIntent.stable,
+            onClick = { onEvent(RunIntentHandlingTest) },
         )
 
     }

@@ -1,20 +1,27 @@
 @file:Suppress("UnstableApiUsage", "UNUSED_VARIABLE")
 
+import org.gradle.api.JavaVersion.VERSION_19
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 plugins {
+    id("org.kodein.mock.mockmp")
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
-    id("com.mikepenz.aboutlibraries.plugin")
     id("org.sonarqube")
     id("org.jetbrains.compose")
     id("co.touchlab.crashkios.crashlyticslink")
+    id("com.google.devtools.ksp")
 }
 
 version = Version.toString()
+
+mockmp {
+    usesHelper = true
+    public = true
+}
 
 kotlin {
     android()
@@ -55,6 +62,7 @@ kotlin {
                 implementation(Icerock.Resources)
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Jetbrains.Kotlinx.serialization)
+                implementation(Jetbrains.Kotlinx.immutable)
                 implementation(Ktor.Client.core)
                 implementation(Ktor.plugins.network)
                 implementation(Ktor2.Server.core)
@@ -155,18 +163,10 @@ android {
         minSdk = 23
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_19
-        targetCompatibility = JavaVersion.VERSION_19
+        sourceCompatibility = VERSION_19
+        targetCompatibility = VERSION_19
     }
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-}
-
-aboutLibraries {
-    registerAndroidTasks = true
-    // Enable the duplication mode, allows to merge, or link dependencies which relate
-    duplicationMode = com.mikepenz.aboutlibraries.plugin.DuplicateMode.MERGE
-    // Configure the duplication rule, to match "duplicates" with
-    duplicationRule = com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
 }
 
 tasks.withType<Test> {
@@ -196,6 +196,7 @@ val createVersionTxt = tasks.register("createVersionTxt") {
         }
     }
 }
+
 tasks.findByPath("preBuild")!!.dependsOn(createVersionTxt)
 
 val increaseCodeVersion = tasks.register("increaseCodeVersion") {
@@ -206,9 +207,4 @@ val increaseCodeVersion = tasks.register("increaseCodeVersion") {
             )
         }
     }
-}
-
-compose {
-    //necessary to use the androidx compose compiler for multiplatform in order to use kotlin 1.8
-    kotlinCompilerPlugin.set(AndroidX.Compose.compiler.toString())
 }

@@ -5,8 +5,6 @@ import okio.Path
 import okio.Source
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
-expect fun Path.Companion.commonExternalPath(fileName: String): Path
-
 expect fun Path.Companion.commonInternalPath(nativeApplication: NativeApplication, fileName: String): Path
 
 expect fun Path.commonDelete()
@@ -17,7 +15,7 @@ expect fun Path.commonSource(): Source
 
 expect fun Path.commonReadWrite(): FileHandle
 
-expect inline fun <reified T> Path.commonDecode(): T
+expect inline fun <reified T> Path.commonDecodeLogList(): T
 
 expect fun Path.commonShare(nativeApplication: NativeApplication)
 

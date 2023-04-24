@@ -20,7 +20,7 @@ actual fun getDeviceLanguage(): LanguageType {
     }
 }
 
-actual fun setupLanguage(defaultLanguageType: LanguageType) : LanguageType {
+actual fun setupLanguage(defaultLanguageType: LanguageType): LanguageType {
     val language: LanguageType = getSystemAppLanguage() ?: defaultLanguageType
     StringDesc.localeType = StringDesc.LocaleType.Custom(language.code)
     if (getDeviceLanguage() != language && getSystemAppLanguage() != language) {

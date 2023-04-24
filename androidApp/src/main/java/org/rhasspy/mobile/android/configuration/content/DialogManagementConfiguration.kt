@@ -5,50 +5,80 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
-import org.koin.androidx.compose.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
+import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
-import org.rhasspy.mobile.viewmodel.configuration.DialogManagementConfigurationViewModel
+import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.data.service.option.DialogManagementOption
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewState
 
 /**
  * DropDown to select dialog management option
  */
-@Preview
 @Composable
-fun DialogManagementConfigurationContent(viewModel: DialogManagementConfigurationViewModel = get()) {
+fun DialogManagementConfigurationContent() {
+    val viewModel: DialogManagementConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewState by viewModel.viewState.collectAsState()
+    val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.DialogManagementConfiguration),
-        title = MR.strings.dialogManagement,
-        viewModel = viewModel
+        config = ConfigurationScreenConfig(MR.strings.dialogManagement.stable),
+        viewState = viewState,
+        onAction = { viewModel.onAction(it) },
+        onConsumed = { viewModel.onConsumed(it) }
     ) {
 
         item {
-            //drop down to select option
-            RadioButtonsEnumSelection(
-                modifier = Modifier.testTag(TestTag.DialogManagementOptions),
-                selected = viewModel.dialogManagementOption.collectAsState().value,
-                onSelect = viewModel::selectDialogManagementOption,
-                values = viewModel.dialogManagementOptionList
-            ) {
-                if (viewModel.isLocalDialogManagementSettingsVisible(it)) {
-                    //http endpoint
-                    LocalDialogManagementSettings(viewModel)
-                }
-            }
+            DialogManagementOptionContent(
+                viewState = contentViewState,
+                onAction = viewModel::onEvent
+            )
         }
 
     }
 
+}
+
+@Composable
+private fun DialogManagementOptionContent(
+    viewState: DialogManagementConfigurationViewState,
+    onAction: (DialogManagementConfigurationUiEvent) -> Unit
+) {
+    //drop down to select option
+    RadioButtonsEnumSelection(
+        modifier = Modifier.testTag(TestTag.DialogManagementOptions),
+        selected = viewState.dialogManagementOption,
+        onSelect = { onAction(SelectDialogManagementOption(it)) },
+        values = viewState.dialogManagementOptionList
+    ) { option ->
+
+        when (option) {
+            DialogManagementOption.Local ->
+                LocalDialogManagementSettings(
+                    textAsrTimeoutText = viewState.textAsrTimeoutText,
+                    intentRecognitionTimeoutText = viewState.intentRecognitionTimeoutText,
+                    recordingTimeoutText = viewState.recordingTimeoutText,
+                    onAction = onAction
+                )
+
+            else -> {}
+        }
+
+    }
 }
 
 /**
@@ -56,35 +86,40 @@ fun DialogManagementConfigurationContent(viewModel: DialogManagementConfiguratio
  * field to set endpoint
  */
 @Composable
-private fun LocalDialogManagementSettings(viewModel: DialogManagementConfigurationViewModel) {
+private fun LocalDialogManagementSettings(
+    textAsrTimeoutText: String,
+    intentRecognitionTimeoutText: String,
+    recordingTimeoutText: String,
+    onAction: (DialogManagementConfigurationUiEvent) -> Unit
+) {
 
     Column(modifier = Modifier.padding(ContentPaddingLevel1)) {
 
         //asr timeout
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.TextAsrTimeout),
-            value = viewModel.textAsrTimeoutText.collectAsState().value,
-            onValueChange = viewModel::updateTextAsrTimeout,
+            value = textAsrTimeoutText,
+            onValueChange = { onAction(ChangeTextAsrTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            label = MR.strings.textAsrTimeoutText
+            label = MR.strings.textAsrTimeoutText.stable
         )
 
         //intent recognition timeout
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.IntentRecognitionTimeout),
-            value = viewModel.intentRecognitionTimeoutText.collectAsState().value,
-            onValueChange = viewModel::updateIntentRecognitionTimeout,
+            value = intentRecognitionTimeoutText,
+            onValueChange = { onAction(ChangeIntentRecognitionTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            label = MR.strings.intentRecognitionTimeoutText
+            label = MR.strings.intentRecognitionTimeoutText.stable
         )
 
         //recording timeout
         TextFieldListItem(
             modifier = Modifier.testTag(TestTag.RecordingTimeout),
-            value = viewModel.recordingTimeoutText.collectAsState().value,
-            onValueChange = viewModel::updateRecordingTimeout,
+            value = recordingTimeoutText,
+            onValueChange = { onAction(ChangeRecordingTimeout(it)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            label = MR.strings.recordingTimeoutText
+            label = MR.strings.recordingTimeoutText.stable
         )
 
     }

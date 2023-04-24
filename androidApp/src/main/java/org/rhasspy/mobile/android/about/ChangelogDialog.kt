@@ -1,8 +1,7 @@
 package org.rhasspy.mobile.android.about
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -13,17 +12,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import org.rhasspy.mobile.BuildKonfig
+import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.resource.stable
 
 /**
  * button to open changelog dialog
  */
 @Composable
-fun ChangelogDialogButton() {
+fun ChangelogDialogButton(changelog: ImmutableList<String>) {
 
     var openDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -31,13 +31,14 @@ fun ChangelogDialogButton() {
         onClick = { openDialog = true },
         modifier = Modifier.testTag(TestTag.DialogChangelogButton)
     ) {
-        Text(MR.strings.changelog)
+        Text(MR.strings.changelog.stable)
     }
 
     if (openDialog) {
-        ChangelogDialog {
-            openDialog = false
-        }
+        ChangelogDialog(
+            changelog = changelog,
+            onDismissRequest = { openDialog = false }
+        )
     }
 
 }
@@ -46,9 +47,10 @@ fun ChangelogDialogButton() {
  * Displays changelog as text in a dialog
  */
 @Composable
-private fun ChangelogDialog(onDismissRequest: () -> Unit) {
-
-    val scrollState = rememberScrollState()
+private fun ChangelogDialog(
+    changelog: ImmutableList<String>,
+    onDismissRequest: () -> Unit
+) {
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -57,24 +59,19 @@ private fun ChangelogDialog(onDismissRequest: () -> Unit) {
                 onClick = onDismissRequest,
                 modifier = Modifier.testTag(TestTag.DialogOk)
             ) {
-                Text(MR.strings.close)
+                Text(MR.strings.close.stable)
             }
         },
         title = {
-            Text(MR.strings.changelog)
+            Text(MR.strings.changelog.stable)
         },
         text = {
-            Column(
-                modifier = Modifier
-                    .testTag(TestTag.DialogChangelog)
-                    .verticalScroll(scrollState),
+            LazyColumn(
+                modifier = Modifier.testTag(TestTag.DialogChangelog)
             ) {
-                BuildKonfig.changelog.split("\\\\")
-                    .map { it.replace("\n", "") }
-                    .filter { it.isNotEmpty() }
-                    .forEach {
-                        Text(text = "· $it")
-                    }
+                items(changelog) { item ->
+                    Text(text = item)
+                }
             }
         }
     )

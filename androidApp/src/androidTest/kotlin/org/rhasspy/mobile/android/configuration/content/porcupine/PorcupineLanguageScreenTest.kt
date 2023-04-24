@@ -1,27 +1,36 @@
 package org.rhasspy.mobile.android.configuration.content.porcupine
 
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.main.LocalNavController
-import org.rhasspy.mobile.android.onNodeWithTag
-import org.rhasspy.mobile.android.onListItemRadioButton
+import org.rhasspy.mobile.android.utils.awaitSaved
+import org.rhasspy.mobile.android.utils.onListItemRadioButton
+import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
-import org.rhasspy.mobile.viewmodel.configuration.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SelectWakeWordPorcupineLanguage
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import kotlin.test.assertEquals
 
-class PorcupineLanguageScreenTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class PorcupineLanguageScreenTest : KoinComponent {
 
     @get: Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = WakeWordConfigurationViewModel()
+    private val viewModel = get<WakeWordConfigurationViewModel>()
 
     @Before
     fun setUp() {
@@ -32,7 +41,12 @@ class PorcupineLanguageScreenTest {
             CompositionLocalProvider(
                 LocalNavController provides navController
             ) {
-                PorcupineLanguageScreen(viewModel)
+                val viewState by viewModel.viewState.collectAsState()
+                val contentViewState by viewState.editViewState.collectAsState()
+                PorcupineLanguageScreen(
+                    viewState = contentViewState.wakeWordPorcupineViewState,
+                    onEvent = viewModel::onEvent
+                )
             }
         }
 
@@ -50,11 +64,15 @@ class PorcupineLanguageScreenTest {
      * german is saved
      */
     @Test
-    fun testContent() = runBlocking {
+    fun testContent() = runTest {
         //English is saved
-        viewModel.selectWakeWordPorcupineLanguage(PorcupineLanguageOption.EN)
-        viewModel.onSave()
-        assertEquals(PorcupineLanguageOption.EN, viewModel.wakeWordPorcupineLanguage.value)
+        viewModel.onEvent(SelectWakeWordPorcupineLanguage(PorcupineLanguageOption.EN))
+        viewModel.onAction(Save)
+        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
+        val viewState = viewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
+
+        assertEquals(PorcupineLanguageOption.EN, viewState.porcupineLanguage)
 
         //english is selected
         composeTestRule.onNodeWithTag(PorcupineLanguageOption.EN).onListItemRadioButton().assertIsSelected()
@@ -65,9 +83,11 @@ class PorcupineLanguageScreenTest {
         composeTestRule.onNodeWithTag(PorcupineLanguageOption.DE).onListItemRadioButton().assertIsSelected()
 
         //save is invoked
-        viewModel.onSave()
-        val newViewModel = WakeWordConfigurationViewModel()
+        viewModel.onAction(Save)
+        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.awaitIdle()
+        val newViewModel = WakeWordConfigurationViewModel(get())
         //german is saved
-        assertEquals(PorcupineLanguageOption.DE, newViewModel.wakeWordPorcupineLanguage.value)
+        assertEquals(PorcupineLanguageOption.DE, newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState.porcupineLanguage)
     }
 }

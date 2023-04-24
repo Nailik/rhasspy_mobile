@@ -18,14 +18,18 @@ kotlin {
                 implementation(project(":platformspecific"))
                 implementation(project(":logic"))
                 implementation(project(":resources"))
+                implementation(project(":ui"))
                 implementation(Touchlab.kermit)
                 implementation(Jetbrains.Kotlinx.coroutines)
+                implementation(Jetbrains.Kotlinx.immutable)
                 implementation(Jetbrains.Kotlinx.dateTime)
+                implementation(Jetbrains.Compose.runtime)
                 implementation(Koin.core)
                 implementation(Icerock.Mvvm.core)
                 implementation(Ktor2.Client.core)
                 implementation(Icerock.Resources)
                 implementation(Square.okio)
+                implementation(Mikepenz.aboutLibrariesCore)
             }
         }
         val commonTest by getting {

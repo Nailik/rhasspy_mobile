@@ -1,35 +1,36 @@
 package org.rhasspy.mobile.logic.services.texttospeech
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.inject
-import org.rhasspy.mobile.logic.logger.LogType
-import org.rhasspy.mobile.logic.middleware.Action.DialogAction
-import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.option.TextToSpeechOption
+import org.rhasspy.mobile.logic.logger.LogType
+import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.Source
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientResult
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.data.service.option.TextToSpeechOption
+import org.rhasspy.mobile.platformspecific.readOnly
 
 /**
  * calls actions and returns result
  *
  * when data is null the service was most probably mqtt and will return result in a call function
  */
-open class TextToSpeechService : IService() {
-    private val logger = LogType.TextToSpeechService.logger()
-
-    private val params by inject<TextToSpeechServiceParams>()
-
-    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
-    val serviceState = _serviceState.readOnly
+open class TextToSpeechService(
+    paramsCreator: TextToSpeechServiceParamsCreator,
+) : IService(LogType.TextToSpeechService) {
 
     private val httpClientService by inject<HttpClientService>()
     private val mqttClientService by inject<MqttService>()
-    private val serviceMiddleware by inject<ServiceMiddleware>()
+
+    private val paramsFlow: StateFlow<TextToSpeechServiceParams> = paramsCreator()
+    private val params: TextToSpeechServiceParams get() = paramsFlow.value
+
+    private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Success)
+    override val serviceState = _serviceState.readOnly
 
     /**
      * hermes/tts/say
@@ -50,17 +51,15 @@ open class TextToSpeechService : IService() {
                     is HttpClientResult.Success -> ServiceState.Success
                 }
                 val action = when (result) {
-                    is HttpClientResult.Error -> DialogAction.AsrError(Source.HttpApi)
+                    is HttpClientResult.Error -> DialogServiceMiddlewareAction.AsrError(Source.HttpApi)
                     is HttpClientResult.Success -> {
-                        DialogAction.PlayAudio(Source.HttpApi, result.data)
+                        DialogServiceMiddlewareAction.PlayAudio(Source.HttpApi, result.data)
                     }
                 }
                 serviceMiddleware.action(action)
             }
 
-            TextToSpeechOption.RemoteMQTT -> _serviceState.value =
-                mqttClientService.say(sessionId, text)
-
+            TextToSpeechOption.RemoteMQTT -> _serviceState.value = mqttClientService.say(sessionId, text)
             TextToSpeechOption.Disabled -> {}
         }
     }
