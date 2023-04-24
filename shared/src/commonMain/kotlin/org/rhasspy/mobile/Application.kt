@@ -19,8 +19,8 @@ import org.rhasspy.mobile.logic.logger.FileLogger
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
-import org.rhasspy.mobile.logic.settings.AppSetting
-import org.rhasspy.mobile.logic.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.background.BackgroundService
 import org.rhasspy.mobile.platformspecific.language.setupLanguage

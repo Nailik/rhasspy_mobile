@@ -3,7 +3,7 @@ package org.rhasspy.mobile.viewmodel.configuration.dialogmanagement
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
-import org.rhasspy.mobile.logic.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
 

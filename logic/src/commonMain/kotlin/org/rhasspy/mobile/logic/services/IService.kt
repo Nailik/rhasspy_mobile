@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.service.ServiceState
-import org.rhasspy.mobile.logic.logger.LogType
+import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 

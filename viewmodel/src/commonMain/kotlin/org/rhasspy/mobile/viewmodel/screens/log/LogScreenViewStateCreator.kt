@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.logger.FileLogger
-import org.rhasspy.mobile.logic.settings.AppSetting
+import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.updateList
 
 class LogScreenViewStateCreator {

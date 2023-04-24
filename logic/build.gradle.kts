@@ -18,6 +18,7 @@ kotlin {
                 implementation(project(":data"))
                 implementation(project(":platformspecific"))
                 implementation(project(":resources"))
+                implementation(project(":settings"))
                 implementation(Jetbrains.Kotlinx.coroutines)
                 implementation(Touchlab.kermit)
                 implementation(Jetbrains.Kotlinx.serialization)
@@ -33,8 +34,6 @@ kotlin {
                 implementation(Ktor2.Plugins.network)
                 implementation(Ktor2.Server.core)
                 implementation(Benasher.uuid)
-                implementation(Russhwolf.multiplatformSettingsNoArg)
-                implementation(Russhwolf.multiplatformSettingsSerialization)
                 implementation(Square.okio)
                 implementation(Koin.core)
             }

@@ -2,7 +2,7 @@ package org.rhasspy.mobile.viewmodel.configuration.mqtt
 
 import androidx.compose.runtime.Stable
 import okio.Path
-import org.rhasspy.mobile.logic.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.platformspecific.toLongOrZero
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState

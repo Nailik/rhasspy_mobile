@@ -8,23 +8,25 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import okio.Path
 import org.koin.core.component.inject
+import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Record
+import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
-import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrError
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.AsrTextCaptured
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
+import org.rhasspy.mobile.logic.services.audiofocus.AudioFocusService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientResult
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.recording.RecordingService
-import org.rhasspy.mobile.logic.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
 import org.rhasspy.mobile.platformspecific.extensions.commonSize
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.settings.AppSetting
 
 /**
  * calls actions and returns result
@@ -35,6 +37,7 @@ open class SpeechToTextService(
     paramsCreator: SpeechToTextServiceParamsCreator,
 ) : IService(LogType.SpeechToTextService) {
 
+    private val audioFocusService by inject<AudioFocusService>()
     private val httpClientService by inject<HttpClientService>()
     private val mqttClientService by inject<MqttService>()
     private val recordingService by inject<RecordingService>()
@@ -79,6 +82,8 @@ open class SpeechToTextService(
         collector?.cancel()
         collector = null
 
+        audioFocusService.abandon(Record)
+
         //add wav header to file
         val header = AudioRecorder.getWavHeader(speechToTextAudioFile.commonSize() ?: 0)
         speechToTextAudioFile.commonReadWrite().write(0, header, 0, header.size)
@@ -108,6 +113,7 @@ open class SpeechToTextService(
         if (collector?.isActive == true) {
             return
         }
+        audioFocusService.request(Record)
 
         //clear data and start recording
         collector?.cancel()

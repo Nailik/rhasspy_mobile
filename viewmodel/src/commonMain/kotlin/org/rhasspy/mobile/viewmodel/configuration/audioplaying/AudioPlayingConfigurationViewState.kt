@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
-import org.rhasspy.mobile.logic.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 

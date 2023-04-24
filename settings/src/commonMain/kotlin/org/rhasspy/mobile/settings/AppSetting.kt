@@ -1,14 +1,15 @@
-package org.rhasspy.mobile.logic.settings
+package org.rhasspy.mobile.settings
 
 import kotlinx.collections.immutable.persistentListOf
+import org.rhasspy.mobile.data.audiofocus.AudioFocusType
+import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.data.sounds.SoundOption
-import org.rhasspy.mobile.logic.logger.LogLevel
-import org.rhasspy.mobile.logic.settings.serializer.StringListSerializer
 import org.rhasspy.mobile.platformspecific.language.getDeviceLanguage
 import org.rhasspy.mobile.platformspecific.utils.isDebug
+import org.rhasspy.mobile.settings.serializer.StringListSerializer
 
 /**
  * directly consumed
@@ -60,5 +61,11 @@ object AppSetting {
     val isLogAudioFramesEnabled = ISetting(SettingsEnum.LogAudioFrames, false)
     val logLevel = ISetting(SettingsEnum.LogLevel, LogLevel.Debug)
     val isLogAutoscroll = ISetting(SettingsEnum.LogAutoscroll, true)
+
+    val audioFocusOption = ISetting(SettingsEnum.AudioFocusOption, AudioFocusType.Disabled)
+    val isAudioFocusOnNotification = ISetting(SettingsEnum.AudioFocusOnNotification, false)
+    val isAudioFocusOnSound = ISetting(SettingsEnum.AudioFocusOnSound, false)
+    val isAudioFocusOnRecord = ISetting(SettingsEnum.AudioFocusOnRecord, false)
+    val isAudioFocusOnDialog = ISetting(SettingsEnum.AudioFocusOnDialog, false)
 
 }

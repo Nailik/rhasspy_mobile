@@ -19,7 +19,7 @@ import okio.buffer
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.log.LogElement
-import org.rhasspy.mobile.logic.settings.AppSetting
+import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.extensions.*
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toImmutableList

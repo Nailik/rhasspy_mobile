@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.logic.settings
+package org.rhasspy.mobile.settings
 
 import co.touchlab.kermit.Logger
 import com.russhwolf.settings.ExperimentalSettingsApi

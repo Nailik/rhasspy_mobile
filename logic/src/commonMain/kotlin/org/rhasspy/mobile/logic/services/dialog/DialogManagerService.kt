@@ -5,16 +5,18 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.inject
+import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Dialog
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
-import org.rhasspy.mobile.logic.logger.LogType
+import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.*
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
+import org.rhasspy.mobile.logic.services.audiofocus.AudioFocusService
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.logic.services.indication.IndicationService
 import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingService
@@ -22,10 +24,10 @@ import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionServ
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
-import org.rhasspy.mobile.logic.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.notNull
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.settings.ConfigurationSetting
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
@@ -36,6 +38,7 @@ class DialogManagerService(
     paramsCreator: DialogManagerServiceParamsCreator,
 ) : IService(LogType.DialogManagerService) {
 
+    private val audioFocusService by inject<AudioFocusService>()
     private val wakeWordService by inject<WakeWordService>()
     private val intentRecognitionService by inject<IntentRecognitionService>()
     private val intentHandlingService by inject<IntentHandlingService>()
@@ -294,6 +297,7 @@ class DialogManagerService(
                 DialogManagerServiceState.RecognizingIntent
             )
         ) {
+            audioFocusService.abandon(Dialog)
 
             indicationService.onIdle()
             sessionId = null
@@ -313,6 +317,8 @@ class DialogManagerService(
      */
     private suspend fun sessionStarted(action: SessionStarted) {
         if (isInCorrectState(action, DialogManagerServiceState.Idle)) {
+
+            audioFocusService.request(Dialog)
 
             val newSessionId = when (action.source) {
                 Source.HttpApi -> null

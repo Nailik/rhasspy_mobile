@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.viewmodel.settings.log
 
-import org.rhasspy.mobile.logic.logger.LogLevel
+import org.rhasspy.mobile.data.log.LogLevel
 
 sealed interface LogSettingsUiEvent {
 

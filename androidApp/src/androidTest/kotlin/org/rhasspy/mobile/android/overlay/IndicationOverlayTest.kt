@@ -16,7 +16,7 @@ import org.rhasspy.mobile.android.utils.requestOverlayPermissions
 import org.rhasspy.mobile.android.utils.waitUntilExists
 import org.rhasspy.mobile.logic.services.indication.IndicationService
 import org.rhasspy.mobile.logic.services.indication.IndicationState
-import org.rhasspy.mobile.logic.settings.AppSetting
+import org.rhasspy.mobile.settings.AppSetting
 
 @RunWith(AndroidJUnit4::class)
 class IndicationOverlayTest : KoinComponent {

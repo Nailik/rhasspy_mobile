@@ -41,6 +41,11 @@ enum class SettingsEnum {
     CustomRecordedSounds,
     CustomErrorSounds,
 
+    AudioFocusOption,
+    AudioFocusOnNotification,
+    AudioFocusOnSound,
+    AudioFocusOnRecord,
+    AudioFocusOnDialog,
 
     ShowLog,
     LogAudioFrames,

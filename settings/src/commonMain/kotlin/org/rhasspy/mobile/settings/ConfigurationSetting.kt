@@ -1,13 +1,13 @@
-package org.rhasspy.mobile.logic.settings
+package org.rhasspy.mobile.settings
 
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.*
 import org.rhasspy.mobile.data.settings.SettingsEnum
-import org.rhasspy.mobile.logic.settings.serializer.OkioPathSerializer
-import org.rhasspy.mobile.logic.settings.serializer.PorcupineCustomKeywordSerializer
-import org.rhasspy.mobile.logic.settings.serializer.PorcupineDefaultKeywordSerializer
+import org.rhasspy.mobile.settings.serializer.OkioPathSerializer
+import org.rhasspy.mobile.settings.serializer.PorcupineCustomKeywordSerializer
+import org.rhasspy.mobile.settings.serializer.PorcupineDefaultKeywordSerializer
 
 /**
  * used by di needs to be called after change to have an effect

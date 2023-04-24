@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.android.utils
 
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.logic.logger.LogType
+import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel

@@ -6,22 +6,27 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okio.Path
+import org.koin.core.component.inject
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Notification
+import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.sounds.SoundOption
-import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.services.IService
-import org.rhasspy.mobile.logic.settings.AppSetting
+import org.rhasspy.mobile.logic.services.audiofocus.AudioFocusService
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioPlayer
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.file.FolderType
+import org.rhasspy.mobile.settings.AppSetting
 import kotlin.coroutines.resume
 
 class LocalAudioService(
     paramsCreator: LocalAudioServiceParamsCreator
 ) : IService(LogType.LocalAudioService) {
 
+    private val audioFocusService by inject<AudioFocusService>()
     private var coroutineScope = CoroutineScope(Dispatchers.Default)
 
     private val paramsFlow: StateFlow<LocalAudioServiceParams> = paramsCreator()
@@ -41,7 +46,7 @@ class LocalAudioService(
     suspend fun playAudio(audioSource: AudioSource): ServiceState = suspendCancellableCoroutine { continuation ->
         if (AppSetting.isAudioOutputEnabled.value) {
             logger.d { "playAudio $audioSource" }
-            audioPlayer.playAudio(
+            playAudio(
                 audioSource = audioSource,
                 volume = AppSetting.volume.data,
                 audioOutputOption = params.audioOutputOption,
@@ -75,14 +80,14 @@ class LocalAudioService(
                 onFinished(null)
             }
 
-            SoundOption.Default.name -> audioPlayer.playAudio(
+            SoundOption.Default.name -> playAudio(
                 AudioSource.Resource(MR.files.etc_wav_beep_hi),
                 AppSetting.wakeSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value,
                 onFinished
             )
 
-            else -> audioPlayer.playAudio(
+            else -> playAudio(
                 AudioSource.File(
                     Path.commonInternalPath(
                         nativeApplication = nativeApplication,
@@ -100,13 +105,13 @@ class LocalAudioService(
         logger.d { "playRecordedSound" }
         when (AppSetting.recordedSound.value) {
             SoundOption.Disabled.name -> {}
-            SoundOption.Default.name -> audioPlayer.playAudio(
+            SoundOption.Default.name -> playAudio(
                 AudioSource.Resource(MR.files.etc_wav_beep_lo),
                 AppSetting.recordedSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
-            ) {}
+            )
 
-            else -> audioPlayer.playAudio(
+            else -> playAudio(
                 AudioSource.File(
                     Path.commonInternalPath(
                         nativeApplication = nativeApplication,
@@ -115,7 +120,7 @@ class LocalAudioService(
                 ),
                 AppSetting.recordedSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
-            ) {}
+            )
         }
     }
 
@@ -123,13 +128,13 @@ class LocalAudioService(
         logger.d { "playErrorSound" }
         when (AppSetting.errorSound.value) {
             SoundOption.Disabled.name -> {}
-            SoundOption.Default.name -> audioPlayer.playAudio(
+            SoundOption.Default.name -> playAudio(
                 AudioSource.Resource(MR.files.etc_wav_beep_error),
                 AppSetting.errorSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
-            ) {}
+            )
 
-            else -> audioPlayer.playAudio(
+            else -> playAudio(
                 AudioSource.File(
                     Path.commonInternalPath(
                         nativeApplication = nativeApplication,
@@ -138,8 +143,23 @@ class LocalAudioService(
                 ),
                 AppSetting.errorSoundVolume.data,
                 AppSetting.soundIndicationOutputOption.value
-            ) {}
+            )
         }
+    }
+
+    private fun playAudio(
+        audioSource: AudioSource,
+        volume: StateFlow<Float>,
+        audioOutputOption: AudioOutputOption,
+        onFinished: ((exception: Exception?) -> Unit)? = null
+    ) {
+        audioFocusService.request(Notification)
+
+        audioPlayer.playAudio(audioSource, volume, audioOutputOption) {
+            audioFocusService.abandon(Notification)
+            onFinished?.invoke(it)
+        }
+
     }
 
     fun stop() {

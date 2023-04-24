@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.logic.settings.serializer
+package org.rhasspy.mobile.settings.serializer
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
