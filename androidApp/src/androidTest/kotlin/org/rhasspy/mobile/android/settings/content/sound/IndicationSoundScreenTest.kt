@@ -117,6 +117,8 @@ abstract class IndicationSoundScreenTest(
 
         //user selects add file
         composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
+        composeTestRule.awaitIdle()
+        device.waitForIdle()
         //user clicks file
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
 
@@ -130,6 +132,8 @@ abstract class IndicationSoundScreenTest(
 
         //user clicks default
         composeTestRule.onNodeWithTag(TestTag.Default).performClick()
+        composeTestRule.awaitIdle()
+        device.waitForIdle()
         //default sound ist selected
         composeTestRule.onNodeWithTag(TestTag.Default).onListItemRadioButton().assertIsSelected()
         //default sound is saved
@@ -140,6 +144,7 @@ abstract class IndicationSoundScreenTest(
         //user clicks delete
         composeTestRule.onNodeWithCombinedTag(fileName, TestTag.Delete).performClick()
         composeTestRule.awaitIdle()
+        device.waitForIdle()
 
         //file is removed
         //composeTestRule.onNodeWithTag(fileName).assertDoesNotExist() TOO often false assert error
