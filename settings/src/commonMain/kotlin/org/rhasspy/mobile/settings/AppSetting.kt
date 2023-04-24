@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.settings
 
 import kotlinx.collections.immutable.persistentListOf
-import org.rhasspy.mobile.data.audiofocus.AudioFocusType
+import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
 import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
@@ -62,7 +62,7 @@ object AppSetting {
     val logLevel = ISetting(SettingsEnum.LogLevel, LogLevel.Debug)
     val isLogAutoscroll = ISetting(SettingsEnum.LogAutoscroll, true)
 
-    val audioFocusOption = ISetting(SettingsEnum.AudioFocusOption, AudioFocusType.Disabled)
+    val audioFocusOption = ISetting(SettingsEnum.AudioFocusOption, AudioFocusOption.Disabled)
     val isAudioFocusOnNotification = ISetting(SettingsEnum.AudioFocusOnNotification, false)
     val isAudioFocusOnSound = ISetting(SettingsEnum.AudioFocusOnSound, false)
     val isAudioFocusOnRecord = ISetting(SettingsEnum.AudioFocusOnRecord, false)

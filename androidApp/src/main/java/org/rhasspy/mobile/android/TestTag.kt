@@ -112,6 +112,14 @@ enum class TestTag {
     Default,
     Warning,
 
+    AudioFocusSettings,
+    AudioFocusOption,
+    AudioFocusSettingsConfiguration,
+    AudioFocusOnNotification,
+    AudioFocusOnSound,
+    AudioFocusOnRecord,
+    AudioFocusOnDialog,
+
     Volume,
     HotWord,
     AudioOutput,

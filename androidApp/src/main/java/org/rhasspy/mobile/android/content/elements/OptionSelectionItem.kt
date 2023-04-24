@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.PersistentList
 import org.rhasspy.mobile.android.content.SecondaryContent
 import org.rhasspy.mobile.android.content.list.RadioButtonListItem
 import org.rhasspy.mobile.android.testTag
@@ -67,3 +68,37 @@ fun <E : IOption<*>> RadioButtonsEnumSelection(
     }
 }
 
+
+@Composable
+fun <E : IOption<*>> RadioButtonsEnumSelection(
+    modifier: Modifier = Modifier,
+    selected: E,
+    onSelect: (item: E) -> Unit,
+    values: PersistentList<E>,
+    secondaryContentVisible: Boolean,
+    content: (@Composable () -> Unit)? = null
+) {
+    Card(
+        modifier = modifier.padding(8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+    ) {
+        Column {
+            values.forEach { item ->
+                RadioButtonListItem(
+                    modifier = Modifier.testTag(item),
+                    text = item.text,
+                    isChecked = selected == item,
+                    onClick = { onSelect(item) }
+                )
+            }
+
+            content?.also { nullSafeContent ->
+                SecondaryContent(
+                    visible = secondaryContentVisible,
+                    content = { nullSafeContent() }
+                )
+            }
+
+        }
+    }
+}

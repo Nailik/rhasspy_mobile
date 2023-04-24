@@ -4,17 +4,17 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.inject
+import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.porcupine.PorcupineError
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.WakeWordOption
-import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.recording.RecordingService
-import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.porcupine.PorcupineWakeWordClient
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.settings.AppSetting
 
 /**
  * hot word services listens for hot word, evaluates configuration settings but no states

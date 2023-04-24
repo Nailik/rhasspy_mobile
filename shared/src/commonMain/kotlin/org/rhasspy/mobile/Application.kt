@@ -19,8 +19,6 @@ import org.rhasspy.mobile.logic.logger.FileLogger
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
-import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.background.BackgroundService
 import org.rhasspy.mobile.platformspecific.language.setupLanguage
@@ -28,6 +26,8 @@ import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.utils.isDebug
+import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.ConfigurationSetting
 
 abstract class Application : NativeApplication(), KoinComponent {
     private val logger = Logger.withTag("Application")

@@ -307,6 +307,22 @@
         (MS)
     </string>
     <string name="recordingTimeoutText">Aufnahmezeitüberschreitung (MS)</string>
+    <string name="audioFocus">Audio-Fokus</string>
+    <string name="audioFocusInformation">Durch Audio Focus kann der Rhasspy andere Audiostreams wie
+        Musik oder Videos anhalten und wieder aufnehmen oder die Lautstärke verringern. die
+        Lautstärke anderer Audiostreams wie Musik oder Videos verringern.
+    </string>
+    <string name="pauseAndResume">Pause und Wiederaufnahme</string>
+    <string name="duck">Duck (Lautstärke senken)</string>
+    <string name="onNotification">Benachrichtigung wird abgespielt</string>
+    <string name="onSound">Bei abgespieltem Ton</string>
+    <string name="onSoundInformation">vom Audio-Dienst</string>
+    <string name="onRecord">Bei Tonaufnahme</string>
+    <string name="onRecordInformation">ignoriert Wake Word Aufnahme</string>
+    <string name="onDialog">Bei Dialog-Aktion</string>
+    <string name="onDialogInformation">zwischen Sitzungsbeginn (Wake Word Detected) und Sitzungsende
+        (nach Intent Recognition und Handling)
+    </string>
     <!-- porcupine error -->
     <string name="activation_exception">activation exception</string>
     <string name="activation_limit_exception">activation limit exception</string>

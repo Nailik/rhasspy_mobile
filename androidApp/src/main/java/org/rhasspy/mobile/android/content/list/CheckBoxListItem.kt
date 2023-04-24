@@ -1,14 +1,14 @@
 package org.rhasspy.mobile.android.content.list
 
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material3.Switch
+import androidx.compose.material3.Checkbox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.data.resource.StableStringResource
 
 @Composable
-fun SwitchListItem(
+fun CheckBoxListItem(
     modifier: Modifier = Modifier,
     text: StableStringResource,
     secondaryText: StableStringResource? = null,
@@ -20,14 +20,15 @@ fun SwitchListItem(
             value = isChecked,
             onValueChange = onCheckedChange
         ),
-        text = { Text(text) },
-        secondaryText = secondaryText?.let { { Text(secondaryText) } },
-        trailing = {
-            Switch(
+        icon = {
+            Checkbox(
                 checked = isChecked,
                 onCheckedChange = onCheckedChange
             )
-        }
+        },
+        text = { Text(text) },
+        secondaryText = if (secondaryText != null) {
+            { Text(secondaryText) }
+        } else null
     )
 }
-

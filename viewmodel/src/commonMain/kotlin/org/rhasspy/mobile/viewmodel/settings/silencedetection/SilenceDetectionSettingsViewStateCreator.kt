@@ -5,9 +5,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.platformspecific.combineStateFlow
+import org.rhasspy.mobile.settings.AppSetting
 import kotlin.math.log
 
 class SilenceDetectionSettingsViewStateCreator(

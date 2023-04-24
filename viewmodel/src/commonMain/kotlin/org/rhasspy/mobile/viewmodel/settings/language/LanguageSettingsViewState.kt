@@ -3,8 +3,8 @@ package org.rhasspy.mobile.viewmodel.settings.language
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.language.LanguageType
-import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.toImmutableList
+import org.rhasspy.mobile.settings.AppSetting
 
 @Stable
 data class LanguageSettingsViewState internal constructor(

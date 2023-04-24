@@ -6,9 +6,9 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import org.koin.core.component.KoinComponent
-import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.*
 

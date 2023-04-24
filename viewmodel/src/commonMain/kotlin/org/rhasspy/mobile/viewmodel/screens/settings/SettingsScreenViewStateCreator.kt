@@ -5,8 +5,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.combineStateFlow
+import org.rhasspy.mobile.settings.AppSetting
 
 class SettingsScreenViewStateCreator {
 
@@ -22,6 +22,7 @@ class SettingsScreenViewStateCreator {
                 AppSetting.microphoneOverlaySizeOption.data,
                 AppSetting.isSoundIndicationEnabled.data,
                 AppSetting.isWakeWordLightIndicationEnabled.data,
+                AppSetting.audioFocusOption.data,
                 AppSetting.isAutomaticSilenceDetectionEnabled.data,
                 AppSetting.logLevel.data
             ).collect {
@@ -39,6 +40,7 @@ class SettingsScreenViewStateCreator {
             microphoneOverlaySizeOption = AppSetting.microphoneOverlaySizeOption.value,
             isSoundIndicationEnabled = AppSetting.isSoundIndicationEnabled.value,
             isWakeWordLightIndicationEnabled = AppSetting.isWakeWordLightIndicationEnabled.value,
+            audioFocusOption = AppSetting.audioFocusOption.value,
             isAutomaticSilenceDetectionEnabled = AppSetting.isAutomaticSilenceDetectionEnabled.value,
             logLevel = AppSetting.logLevel.value
         )

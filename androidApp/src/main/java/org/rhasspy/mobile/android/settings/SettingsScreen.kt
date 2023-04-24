@@ -19,10 +19,11 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.content.*
 import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
+import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
-import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewState
 
@@ -77,6 +78,11 @@ fun SettingsScreen() {
             }
 
             item {
+                AudioFocus(viewState.audioFocusOption)
+                CustomDivider()
+            }
+
+            item {
                 AutomaticSilenceDetection(viewState.isAutomaticSilenceDetectionEnabled)
                 CustomDivider()
             }
@@ -124,6 +130,10 @@ fun NavGraphBuilder.addSettingsScreen() {
 
     composable(SettingsScreenType.DeviceSettings.route) {
         DeviceSettingsContent()
+    }
+
+    composable(SettingsScreenType.AudioFocusSettings.route) {
+        AudioFocusSettingsContent()
     }
 
     composable(SettingsScreenType.AutomaticSilenceDetectionSettings.route) {
@@ -209,6 +219,17 @@ private fun Device() {
         text = MR.strings.device.stable,
         secondaryText = MR.strings.deviceSettingsInformation.stable,
         screen = SettingsScreenType.DeviceSettings
+    )
+
+}
+
+@Composable
+private fun AudioFocus(audioFocusOption: AudioFocusOption) {
+
+    SettingsListItem(
+        text = MR.strings.audioFocus.stable,
+        secondaryText = audioFocusOption.text,
+        screen = SettingsScreenType.AudioFocusSettings
     )
 
 }

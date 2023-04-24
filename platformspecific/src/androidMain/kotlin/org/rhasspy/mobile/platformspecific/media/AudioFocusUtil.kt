@@ -10,27 +10,27 @@ import android.media.AudioManager.*
 import android.os.Build
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
+import org.rhasspy.mobile.data.audiofocus.AudioFocusOption.*
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.*
-import org.rhasspy.mobile.data.audiofocus.AudioFocusType
-import org.rhasspy.mobile.data.audiofocus.AudioFocusType.*
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
-actual object AudioFocusUtil: KoinComponent {
+actual object AudioFocusUtil : KoinComponent {
 
     private val nativeApplication by inject<NativeApplication>()
 
-    private fun requestTypeInt(audioFocusType: AudioFocusType): Int {
-        return when (audioFocusType) {
+    private fun requestTypeInt(audioFocusOption: AudioFocusOption): Int {
+        return when (audioFocusOption) {
             Disabled -> -1
             PauseAndResume -> AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE
             Duck -> AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK
         }
     }
 
-    actual fun request(reason: AudioFocusRequestReason, audioFocusType: AudioFocusType) {
+    actual fun request(reason: AudioFocusRequestReason, audioFocusOption: AudioFocusOption) {
         val audioManager = nativeApplication.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        val requestType = requestTypeInt(audioFocusType)
+        val requestType = requestTypeInt(audioFocusOption)
 
         when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
@@ -55,10 +55,10 @@ actual object AudioFocusUtil: KoinComponent {
 
     }
 
-    actual fun abandon(reason: AudioFocusRequestReason, audioFocusType: AudioFocusType) {
+    actual fun abandon(reason: AudioFocusRequestReason, audioFocusOption: AudioFocusOption) {
 
         val audioManager = nativeApplication.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        val requestType = requestTypeInt(audioFocusType)
+        val requestType = requestTypeInt(audioFocusOption)
 
         when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ->

@@ -17,10 +17,10 @@ import org.rhasspy.mobile.logic.services.settings.AppSettingsService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
 import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
-import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
 import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.settings.AppSetting
 
 /**
  * handles ALL INCOMING events
