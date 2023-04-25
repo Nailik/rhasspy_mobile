@@ -6,7 +6,6 @@ import android.os.Environment
 import android.provider.Settings
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.permission.PermissionRequester
@@ -159,7 +158,7 @@ fun <V : IConfigurationEditViewState> ComposeTestRule.awaitSaved(viewModel: ICon
 
 
 @OptIn(ExperimentalTestApi::class)
-fun ComposeContentTestRule.waitUntilExists(
+fun ComposeTestRule.waitUntilExists(
     matcher: SemanticsMatcher,
     timeoutMillis: Long = 1_000L
 ) {

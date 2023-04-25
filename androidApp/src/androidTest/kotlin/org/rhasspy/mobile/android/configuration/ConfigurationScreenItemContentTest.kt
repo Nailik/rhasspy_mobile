@@ -49,8 +49,7 @@ class ConfigurationScreenItemContentTest : KoinComponent {
 
     private lateinit var scenario: ActivityScenario<MainActivity>
 
-    private val device: UiDevice =
-        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     private val configurationScreenItemContentNavigation = "ConfigurationScreenItemContent"
     private val startNavigation = "start"
@@ -65,7 +64,7 @@ class ConfigurationScreenItemContentTest : KoinComponent {
         scenario = ActivityScenario.launch(MainActivity::class.java)
     }
 
-    fun setupUi() {
+    private fun setupUi() {
         scenario.onActivity { activity ->
             activity.setContent {
                 val navController = rememberNavController()
