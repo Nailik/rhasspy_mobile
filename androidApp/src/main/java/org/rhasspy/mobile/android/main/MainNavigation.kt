@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.compose.NavHost
@@ -54,7 +55,7 @@ fun MainNavigation(viewModelFactory: ViewModelFactory) {
                     snackbarHost = { SnackbarHost(snackBarHostState) },
                 ) { paddingValues ->
 
-                    var shouldShowCrashlyticsDialog by remember { mutableStateOf(MainActivity.isFirstLaunch) }
+                    var shouldShowCrashlyticsDialog by rememberSaveable { mutableStateOf(MainActivity.isFirstLaunch) }
 
                     if (shouldShowCrashlyticsDialog && !isDebug()) {
                         CrashlyticsDialog {
