@@ -55,6 +55,7 @@ kotlin {
                 implementation(project(":viewmodel"))
                 implementation(project(":platformspecific"))
                 implementation(project(":data"))
+                implementation(project(":settings"))
                 implementation(Kotlin.Stdlib.common)
                 implementation(Touchlab.kermit)
                 implementation(Touchlab.Kermit.crashlytics)

@@ -7,12 +7,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOn
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.rememberNavController
+import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import com.adevinta.android.barista.rule.flaky.FlakyTestRule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -36,8 +38,13 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class PorcupineKeywordCustomScreenTest : KoinComponent {
 
+    @get:Rule
+    val flakyRule = FlakyTestRule()
+
     @get: Rule
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
+    val composeTestRule = createEmptyComposeRule()
+
+    private lateinit var scenario: ActivityScenario<MainActivity>
 
     private val device: UiDevice = UiDevice.getInstance(getInstrumentation())
 
@@ -47,24 +54,28 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
     private val fileName = "porcupine_test.zip"
 
     @Before
-    fun setUp() {
+    fun before() {
+        scenario = ActivityScenario.launch(MainActivity::class.java)
         requestExternalStoragePermissions(device)
+    }
 
-        composeTestRule.activity.setContent {
-            val navController = rememberNavController()
+    private fun setupUi() {
+        scenario.onActivity { activity ->
+            activity.setContent {
+                val navController = rememberNavController()
 
-            CompositionLocalProvider(
-                LocalMainNavController provides navController
-            ) {
-                val viewState by viewModel.viewState.collectAsState()
-                val contentViewState by viewState.editViewState.collectAsState()
-                PorcupineKeywordCustomScreen(
-                    viewState = contentViewState.wakeWordPorcupineViewState,
-                    onEvent = viewModel::onEvent
-                )
+                CompositionLocalProvider(
+                    LocalMainNavController provides navController
+                ) {
+                    val viewState by viewModel.viewState.collectAsState()
+                    val contentViewState by viewState.editViewState.collectAsState()
+                    PorcupineKeywordCustomScreen(
+                        viewState = contentViewState.wakeWordPorcupineViewState,
+                        onEvent = viewModel::onEvent
+                    )
+                }
             }
         }
-
     }
 
     /**
@@ -94,6 +105,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
      */
     @Test
     fun testActions() = runTest {
+        setupUi()
         //copy test file to downloads directory
         //jarvis.zip file in download folder exists with ppn file inside
         val file = File(
@@ -181,6 +193,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
      */
     @Test
     fun testList() = runTest {
+        setupUi()
         //one element with ppn exists and selected
         val file = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),

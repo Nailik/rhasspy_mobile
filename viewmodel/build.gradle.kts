@@ -19,6 +19,7 @@ kotlin {
                 implementation(project(":logic"))
                 implementation(project(":resources"))
                 implementation(project(":ui"))
+                implementation(project(":settings"))
                 implementation(Touchlab.kermit)
                 implementation(Jetbrains.Kotlinx.coroutines)
                 implementation(Jetbrains.Kotlinx.immutable)

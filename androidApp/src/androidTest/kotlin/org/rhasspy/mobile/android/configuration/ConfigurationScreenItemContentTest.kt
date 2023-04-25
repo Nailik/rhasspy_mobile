@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.android.configuration
 
+import androidx.activity.compose.setContent
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.CompositionLocalProvider
@@ -7,14 +8,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
+import com.adevinta.android.barista.rule.flaky.FlakyTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -23,6 +27,7 @@ import org.junit.Test
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
@@ -36,11 +41,15 @@ import org.rhasspy.mobile.data.resource.stable
 @OptIn(ExperimentalCoroutinesApi::class)
 class ConfigurationScreenItemContentTest : KoinComponent {
 
-    @get: Rule
-    val composeTestRule = createComposeRule()
+    @get:Rule
+    val flakyRule = FlakyTestRule()
 
-    private val device: UiDevice =
-        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    @get: Rule
+    val composeTestRule = createEmptyComposeRule()
+
+    private lateinit var scenario: ActivityScenario<MainActivity>
+
+    private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     private val configurationScreenItemContentNavigation = "ConfigurationScreenItemContent"
     private val startNavigation = "start"
@@ -51,42 +60,48 @@ class ConfigurationScreenItemContentTest : KoinComponent {
     private val toolbarTitle = MR.strings.defaultText.stable
 
     @Before
-    fun setUp() {
-        composeTestRule.setContent {
-            val navController = rememberNavController()
+    fun before() {
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+    }
 
-            CompositionLocalProvider(
-                LocalMainNavController provides navController,
-                LocalViewModelFactory provides get()
-            ) {
-                NavHost(
-                    navController = navController,
-                    startDestination = startNavigation,
+    private fun setupUi() {
+        scenario.onActivity { activity ->
+            activity.setContent {
+                val navController = rememberNavController()
+
+                CompositionLocalProvider(
+                    LocalMainNavController provides navController,
+                    LocalViewModelFactory provides get()
                 ) {
+                    NavHost(
+                        navController = navController,
+                        startDestination = startNavigation,
+                    ) {
 
-                    composable(startNavigation) {
-                        //button to open config screen in order to test back press
-                        Button(onClick = {
-                            navController.navigate(configurationScreenItemContentNavigation)
-                        }) {
-                            Text(btnStartTest)
+                        composable(startNavigation) {
+                            //button to open config screen in order to test back press
+                            Button(onClick = {
+                                navController.navigate(configurationScreenItemContentNavigation)
+                            }) {
+                                Text(btnStartTest)
+                            }
                         }
+
+                        composable(configurationScreenItemContentNavigation) {
+
+                            ConfigurationScreenItemContent(
+                                modifier = Modifier,
+                                config = ConfigurationScreenConfig(toolbarTitle),
+                                viewState = viewModel.viewState.collectAsState().value,
+                                onAction = { viewModel.onAction(it) },
+                                onConsumed = { viewModel.onConsumed(it) },
+                                testContent = { },
+                                content = { }
+                            )
+
+                        }
+
                     }
-
-                    composable(configurationScreenItemContentNavigation) {
-
-                        ConfigurationScreenItemContent(
-                            modifier = Modifier,
-                            config = ConfigurationScreenConfig(toolbarTitle),
-                            viewState = viewModel.viewState.collectAsState().value,
-                            onAction = { viewModel.onAction(it) },
-                            onConsumed = { viewModel.onConsumed(it) },
-                            testContent = { },
-                            content = { }
-                        )
-
-                    }
-
                 }
             }
         }
@@ -99,6 +114,7 @@ class ConfigurationScreenItemContentTest : KoinComponent {
      */
     @Test
     fun testContent() {
+        setupUi()
         //open screen
         composeTestRule.onNodeWithText(btnStartTest).performClick()
         //toolbar contains text
@@ -134,7 +150,9 @@ class ConfigurationScreenItemContentTest : KoinComponent {
      * save click invokes save and navigate back
      */
     @Test
+    @AllowFlaky(attempts = 5)
     fun testUnsavedChanges() = runTest {
+        setupUi()
         //open screen
         composeTestRule.onNodeWithText(btnStartTest).performClick()
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertExists()

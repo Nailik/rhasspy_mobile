@@ -131,6 +131,7 @@ android {
                     .replace("androidApp", "rhasspy_mobile_V_$Version")
                     .replace("-release-unsigned", "")
                     .replace("-debug-unsigned", "")
+                    .replace("-debug", "")
             }
     }
 
@@ -178,6 +179,7 @@ dependencies {
     implementation(project(":platformspecific"))
     implementation(project(":data"))
     implementation(project(":ui"))
+    implementation(project(":settings"))
 
     implementation(KotlinX.Coroutines.core)
     implementation(KotlinX.Coroutines.android)
@@ -223,6 +225,9 @@ dependencies {
     androidTestImplementation(Kotlin.Test.junit)
     androidTestImplementation(AndroidX.Test.coreKtx)
     androidTestImplementation(AndroidX.Compose.Ui.testJunit4)
+    androidTestImplementation(Adevinta.barista)
+    androidTestImplementation(Hamcrest.hamcrest)
+
     debugImplementation(AndroidX.tracing)
     debugImplementation(AndroidX.Compose.Ui.testManifest)
     implementation(Russhwolf.multiplatformSettingsNoArg)

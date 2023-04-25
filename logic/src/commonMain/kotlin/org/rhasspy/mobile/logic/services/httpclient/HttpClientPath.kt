@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.logic.services.httpclient
 
 import org.koin.core.component.KoinComponent
-import org.rhasspy.mobile.logic.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.ConfigurationSetting
 
 enum class HttpClientPath(val path: String) : KoinComponent {
     PlayWav("api/play-wav"),

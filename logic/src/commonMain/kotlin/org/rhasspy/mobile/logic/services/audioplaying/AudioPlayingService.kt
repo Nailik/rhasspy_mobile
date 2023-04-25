@@ -3,12 +3,14 @@ package org.rhasspy.mobile.logic.services.audioplaying
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.inject
+import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Sound
+import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
-import org.rhasspy.mobile.logic.logger.LogType
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
+import org.rhasspy.mobile.logic.services.audiofocus.AudioFocusService
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
 import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
@@ -24,6 +26,7 @@ open class AudioPlayingService(
     paramsCreator: AudioPlayingServiceParamsCreator
 ) : IService(LogType.AudioPlayingService) {
 
+    private val audioFocusService by inject<AudioFocusService>()
     private val localAudioService by inject<LocalAudioService>()
     private val httpClientService by inject<HttpClientService>()
     private val mqttClientService by inject<MqttService>()
@@ -56,7 +59,9 @@ open class AudioPlayingService(
         logger.d { "playAudio dataSize: $audioSource" }
         when (params.audioPlayingOption) {
             AudioPlayingOption.Local -> {
+                audioFocusService.request(Sound)
                 _serviceState.value = localAudioService.playAudio(audioSource)
+                audioFocusService.abandon(Sound)
                 serviceMiddleware.action(DialogServiceMiddlewareAction.PlayFinished(Source.Local))
             }
 

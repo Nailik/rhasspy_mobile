@@ -29,7 +29,7 @@ import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.logic.settings.AppSetting
+import org.rhasspy.mobile.settings.AppSetting
 
 @Composable
 fun Text(

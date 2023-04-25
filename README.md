@@ -14,7 +14,7 @@ implemented on each platform yet.
 
 | Platform | Support                              |
 |----------|--------------------------------------|
-| Android  | Android 6.0 (API level 23)           |
+| Android  | Android 6.0 (API level 24)           |
 | iOS      | Not yet planned                      |
 | Other    | Open a discussion if your interested |
 

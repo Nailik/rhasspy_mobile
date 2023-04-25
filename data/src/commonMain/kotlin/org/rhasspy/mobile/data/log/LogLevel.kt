@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.logic.logger
+package org.rhasspy.mobile.data.log
 
 import co.touchlab.kermit.Severity
 import org.rhasspy.mobile.MR

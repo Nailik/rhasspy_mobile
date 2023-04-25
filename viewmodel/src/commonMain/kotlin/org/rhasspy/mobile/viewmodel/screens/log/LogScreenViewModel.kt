@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.logic.logger.FileLogger
-import org.rhasspy.mobile.logic.settings.AppSetting
+import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Change
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Change.ToggleListAutoScroll
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Navigate

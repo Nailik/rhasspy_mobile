@@ -7,10 +7,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
-import org.rhasspy.mobile.logic.settings.AppSetting
-import org.rhasspy.mobile.logic.settings.ISetting
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.volume.DeviceVolume
+import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.settings.ISetting
 
 class IIndicationSoundSettingsViewStateCreator(
     private val localAudioService: LocalAudioService,

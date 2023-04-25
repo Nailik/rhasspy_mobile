@@ -295,6 +295,22 @@
     <string name="textAsrTimeoutText">Speech To Text Timeout (MS)</string>
     <string name="intentRecognitionTimeoutText">Intent Recognition Timeout (MS)</string>
     <string name="recordingTimeoutText">Recording Timeout (MS)</string>
+    <string name="audioFocus">Audio Focus</string>
+    <string name="audioFocusInformation">Audio Focus allows the Rhasspy to pause and resume or
+        decrease the volume of other audio streams such as music or videos. Decrease the volume of
+        other audio streams such as music or videos.
+    </string>
+    <string name="pauseAndResume">Pause and Resume</string>
+    <string name="duck">Duck (lower Volume)</string>
+    <string name="onNotification">On Notification played</string>
+    <string name="onSound">On Sound played</string>
+    <string name="onSoundInformation">from Audio Service</string>
+    <string name="onRecord">On Record audio</string>
+    <string name="onRecordInformation">ignores Wake Word recording</string>
+    <string name="onDialog">On Dialog action</string>
+    <string name="onDialogInformation">between Start Session (Wake Word Detected) and End Session
+        (After Intent Recognition and Handling)
+    </string>
     <!-- porcupine error -->
     <string name="activation_exception">activation exception</string>
     <string name="activation_limit_exception">activation limit exception</string>

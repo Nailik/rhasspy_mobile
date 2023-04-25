@@ -84,6 +84,7 @@ actual abstract class NativeApplication : MultiDexApplication() {
             Runtime.getRuntime().exit(0)
         }
     }
+
     actual abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)
     actual abstract val isHasStarted: StateFlow<Boolean>
     actual abstract fun resume()
