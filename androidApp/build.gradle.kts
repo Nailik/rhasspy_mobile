@@ -225,6 +225,9 @@ dependencies {
     androidTestImplementation(Kotlin.Test.junit)
     androidTestImplementation(AndroidX.Test.coreKtx)
     androidTestImplementation(AndroidX.Compose.Ui.testJunit4)
+    androidTestImplementation(Adevinta.barista)
+    androidTestImplementation(Hamcrest.hamcrest)
+
     debugImplementation(AndroidX.tracing)
     debugImplementation(AndroidX.Compose.Ui.testManifest)
     implementation(Russhwolf.multiplatformSettingsNoArg)

@@ -7,6 +7,7 @@ import android.provider.Settings
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.permission.PermissionRequester
 import androidx.test.uiautomator.UiDevice
@@ -149,7 +150,7 @@ fun SemanticsNodeInteractionsProvider.onNodeWithText(
     ), useUnmergedTree
 )
 
-fun <V : IConfigurationEditViewState> ComposeContentTestRule.awaitSaved(viewModel: IConfigurationViewModel<V>) {
+fun <V : IConfigurationEditViewState> ComposeTestRule.awaitSaved(viewModel: IConfigurationViewModel<V>) {
     this.waitUntil(
         condition = { !viewModel.viewState.value.hasUnsavedChanges },
         timeoutMillis = 5000
