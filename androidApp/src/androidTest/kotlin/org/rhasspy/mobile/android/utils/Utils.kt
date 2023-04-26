@@ -9,6 +9,8 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.permission.PermissionRequester
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.BySelector
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import dev.icerock.moko.resources.desc.Resource
@@ -61,6 +63,15 @@ fun SemanticsNodeInteractionsProvider.onNodeWithCombinedTag(
     name: String, tag: TestTag,
     useUnmergedTree: Boolean = false
 ): SemanticsNodeInteraction = onNode(hasTestTag("$name${tag.name}"), useUnmergedTree)
+
+fun textRes(text: StableStringResource) : BySelector {
+    return By.text(
+        StringDesc.Resource(text.stringResource).toString(
+            getInstrumentation()
+                .targetContext.applicationContext
+        )
+    )
+}
 
 fun UiSelector.text(text: StableStringResource): UiSelector {
     return this.textMatches(

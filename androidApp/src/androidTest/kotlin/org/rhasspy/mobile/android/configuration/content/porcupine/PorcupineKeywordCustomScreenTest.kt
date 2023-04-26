@@ -10,8 +10,10 @@ import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until
 import com.adevinta.android.barista.rule.flaky.FlakyTestRule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -122,6 +124,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         //user clicks download
         composeTestRule.onNodeWithTag(TestTag.Download).performClick()
         //browser is opened
+        device.wait(Until.hasObject(By.text(".*console.picovoice.ai/ppn.*".toPattern())), 5000)
         device.findObject(UiSelector().textMatches(".*console.picovoice.ai/ppn.*")).exists()
         //user clicks back
         device.pressBack()
@@ -134,6 +137,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         composeTestRule.awaitIdle()
         //file manager is opened
         device.waitForIdle()
+        device.wait(Until.hasObject(By.text(fileName)), 5000)
         device.findObject(UiSelector().textMatches(fileName)).exists()
         //user clicks back twice
         device.pressBack()
@@ -150,7 +154,8 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         composeTestRule.awaitIdle()
         //file manager is opened
         device.waitForIdle()
-        device.findObject(UiSelector().textMatches(fileName)).exists()
+        device.wait(Until.hasObject(By.text(fileName)), 5000)
+
         //user clicks jarvis.zip
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
         //app is opened with current page (custom)
@@ -204,6 +209,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         composeTestRule.awaitIdle()
         device.waitForIdle()
 
+        device.wait(Until.hasObject(By.text(fileName)), 5000)
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
         composeTestRule.awaitIdle()
         viewModel.onAction(Save)

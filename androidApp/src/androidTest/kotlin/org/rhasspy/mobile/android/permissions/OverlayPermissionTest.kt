@@ -11,9 +11,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.UiScrollable
-import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -118,6 +116,7 @@ class OverlayPermissionTest {
 
             //Redirected to settings
             getInstrumentation().waitForIdleSync()
+            device.wait(Until.hasObject(By.pkg(settingsPage.toPattern())), 5000)
             assertTrue { device.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
             UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName.stable))
             device.findObject(UiSelector().text(MR.strings.appName.stable)).click()

@@ -5,9 +5,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.UiScrollable
-import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -101,6 +99,7 @@ class MicrophoneOverlaySettingsContentTest : KoinComponent {
         composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
         //user accepts permission
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        device.wait(Until.hasObject(By.pkg(settingsPage.toPattern())), 5000)
         assertTrue { device.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
         UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName.stable))
         device.findObject(UiSelector().text(MR.strings.appName.stable)).click()

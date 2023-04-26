@@ -6,8 +6,10 @@ import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -89,8 +91,10 @@ class BackgroundSettingsContentTest : KoinComponent {
             composeTestRule.onNodeWithTag(TestTag.BatteryOptimization).performClick()
             composeTestRule.awaitIdle()
             //system dialog is shown
+            device.wait(Until.hasObject(By.res(dialog.toPattern())), 5000)
             device.findObject(UiSelector().resourceIdMatches(dialog)).exists()
             //user clicks accept
+            device.wait(Until.hasObject(By.res(acceptButton.toPattern())), 5000)
             device.findObject(UiSelector().resourceIdMatches(acceptButton)).click()
         }
 

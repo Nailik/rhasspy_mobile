@@ -7,8 +7,10 @@ import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -111,6 +113,7 @@ abstract class IndicationSoundScreenTest(
         composeTestRule.awaitIdle()
         device.waitForIdle()
         //user clicks file
+        device.wait(Until.hasObject(By.text(fileName)), 5000)
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
 
         //file is added to list
@@ -205,6 +208,7 @@ abstract class IndicationSoundScreenTest(
         //user selects add file
         composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
         //user clicks file
+        device.wait(Until.hasObject(By.text(fileName)), 5000)
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
         composeTestRule.awaitIdle()
 

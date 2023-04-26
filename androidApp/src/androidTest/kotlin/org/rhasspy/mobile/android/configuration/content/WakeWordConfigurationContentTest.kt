@@ -3,8 +3,10 @@ package org.rhasspy.mobile.android.configuration.content
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -124,6 +126,7 @@ class WakeWordConfigurationContentTest : KoinComponent {
         //user clicks picovoice console
         composeTestRule.onNodeWithTag(TestTag.PorcupineOpenConsole).performScrollTo().performClick()
         //browser is opened
+        device.wait(Until.hasObject(By.text(".*console.picovoice.ai.*".toPattern())), 5000)
         device.findObject(UiSelector().textMatches(".*console.picovoice.ai.*")).exists()
         device.pressBack()
 
