@@ -12,6 +12,8 @@ on:
     secrets:
       SONAR_TOKEN:
         required: true
+      SONAR_KEY:
+        required: true
 
 jobs:
   #runs sonar
@@ -28,11 +30,14 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       # sonar
-      - name: Sonar analyze
-        uses: sonarsource/sonarcloud-github-action@master
+      - name: Sonar Code Analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_KEY: ${{ secrets.SONAR_KEY }}
+        run: |
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+            -Dsonar.projectKey=$SONAR_KEY
   #runs checks
   analyze:
     needs: sonar
