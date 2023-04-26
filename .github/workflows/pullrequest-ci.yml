@@ -52,7 +52,10 @@ jobs:
         with:
           distribution: 'corretto'
           java-version: '19'
-          cache: maven
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.5
+        with:
+          maven-version: 3.8.2
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       # necessary for linux/macos but doesn't work on windows
