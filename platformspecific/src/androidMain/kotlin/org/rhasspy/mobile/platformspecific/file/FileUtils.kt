@@ -109,7 +109,7 @@ actual object FileUtils : KoinComponent {
                     }
                 }
                 continuation.resume(fileName)
-            } ?: run {
+            } ?: {
                 continuation.resume(null)
             }
         }

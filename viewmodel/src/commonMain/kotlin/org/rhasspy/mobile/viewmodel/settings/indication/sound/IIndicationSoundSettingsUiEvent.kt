@@ -20,4 +20,10 @@ sealed interface IIndicationSoundSettingsUiEvent {
         object ChooseSoundFile : Action
 
     }
+
+    sealed interface Consumed : IIndicationSoundSettingsUiEvent {
+
+        object ShowSnackBar : Consumed
+
+    }
 }

@@ -373,7 +373,7 @@ class DialogManagerService(
                         onAction(StopListening(Source.Local))
                     }
                 }
-            } ?: run {
+            } ?: {
                 logger.d { "startListening parameter issue sessionId: $sessionId" }
             }
 
@@ -423,7 +423,7 @@ class DialogManagerService(
                         onAction(AsrError(Source.Local))
                     }
                 }
-            } ?: run {
+            } ?: {
                 logger.d { "stopListening parameter issue sessionId: $sessionId" }
             }
 

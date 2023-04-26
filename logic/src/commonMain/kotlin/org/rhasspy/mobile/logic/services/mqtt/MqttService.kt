@@ -287,7 +287,7 @@ class MqttService(
                     }
                 }
             }
-        } ?: run {
+        } ?: {
             //site id in topic
             when {
                 MqttTopicsSubscription.PlayBytes.topic

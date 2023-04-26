@@ -94,6 +94,7 @@ actual object ExternalRedirect : KoinComponent {
                             putExtra(DocumentsContract.EXTRA_INITIAL_URI, intention.folder)
                         }
                         putExtra(Intent.EXTRA_MIME_TYPES, intention.mimeTypes.toTypedArray())
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     }
 
             is GetContent ->
@@ -105,6 +106,7 @@ actual object ExternalRedirect : KoinComponent {
                             putExtra(DocumentsContract.EXTRA_INITIAL_URI, intention.folder)
                         }
                         putExtra(Intent.EXTRA_MIME_TYPES, intention.mimeTypes.toTypedArray())
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     }
 
             OpenBatteryOptimizationSettings ->

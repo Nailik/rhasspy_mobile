@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.settings.indication.sound
 
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
+import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 
 @Stable
@@ -11,7 +12,8 @@ data class IIndicationSoundSettingsViewState internal constructor(
     val soundVolume: Float,
     val isAudioPlaying: Boolean,
     val audioOutputOption: AudioOutputOption,
-    val isNoSoundInformationBoxVisible: Boolean
+    val isNoSoundInformationBoxVisible: Boolean,
+    val snackBarText: StableStringResource? = null
 ) {
 
     constructor(

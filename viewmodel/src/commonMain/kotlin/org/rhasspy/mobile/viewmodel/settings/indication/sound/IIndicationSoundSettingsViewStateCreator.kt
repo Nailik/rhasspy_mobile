@@ -4,7 +4,6 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.platformspecific.combineStateFlow
@@ -21,7 +20,7 @@ class IIndicationSoundSettingsViewStateCreator(
 
     private val updaterScope = CoroutineScope(Dispatchers.Default)
 
-    operator fun invoke(): StateFlow<IIndicationSoundSettingsViewState> {
+    operator fun invoke(): MutableStateFlow<IIndicationSoundSettingsViewState> {
         val viewState = MutableStateFlow(getViewState())
 
         updaterScope.launch {
