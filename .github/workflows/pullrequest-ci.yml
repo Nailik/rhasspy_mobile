@@ -34,14 +34,11 @@ jobs:
         with:
           maven-version: 3.8.2
       # sonar
-      - name: Sonar Code Analysis
+      - name: Sonar analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_KEY: ${{ secrets.SONAR_KEY }}
-        run: |
-          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-            -Dsonar.projectKey=$SONAR_KEY
+        run: ./gradlew sonar
   #runs checks
   analyze:
     needs: sonar
