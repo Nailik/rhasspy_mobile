@@ -42,7 +42,15 @@ actual object ExternalRedirect : KoinComponent {
     actual fun <R> launch(intention: ExternalRedirectIntention<R>): ExternalRedirectResult<R> {
         logger.v { "launch $intention" }
         return launching {
-            nativeApplication.currentActivity?.startActivity(intentFromIntention(intention))
+            nativeApplication.currentActivity?.also {
+                it.startActivity(intentFromIntention(intention))
+            } ?: {
+                nativeApplication.startActivity(
+                    intentFromIntention(intention).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                )
+            }
         }
     }
 

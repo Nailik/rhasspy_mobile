@@ -11,6 +11,7 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.background.BackgroundService
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirect
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectIntention
+import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Success
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.*
@@ -69,9 +70,10 @@ class BackgroundServiceSettingsViewModel(
 
     private fun disableBatteryOptimization() {
         viewModelScope.launch(Dispatchers.Default) {
-            ExternalRedirect.launch(ExternalRedirectIntention.OpenBatteryOptimizationSettings)
-            _viewState.update {
-                it.copy(snackBarText = MR.strings.disableBatteryOptimizationFailed.stable)
+            if(ExternalRedirect.launch(ExternalRedirectIntention.OpenBatteryOptimizationSettings) !is Success) {
+                _viewState.update {
+                    it.copy(snackBarText = MR.strings.disableBatteryOptimizationFailed.stable)
+                }
             }
         }
     }
