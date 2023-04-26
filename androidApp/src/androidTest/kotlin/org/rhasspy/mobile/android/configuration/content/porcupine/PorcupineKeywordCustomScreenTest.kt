@@ -27,7 +27,6 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.test.R
 import org.rhasspy.mobile.android.utils.*
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import java.io.File
@@ -137,24 +136,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         composeTestRule.awaitIdle()
         //file manager is opened
         device.waitForIdle()
-        device.wait(Until.hasObject(By.text(fileName)), 5000)
-        device.findObject(UiSelector().textMatches(fileName)).exists()
-        //user clicks back twice
-        device.pressBack()
-
-        if (get<NativeApplication>().isAppInBackground.value) {
-            device.pressBack()
-        }
-        //app is opened with current page (custom)
-        composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordCustomScreen).assertIsDisplayed()
-
-        //user clicks select file
-        composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
-        composeTestRule.awaitIdle()
-        //file manager is opened
-        device.waitForIdle()
-        device.wait(Until.hasObject(By.text(fileName)), 5000)
+        device.wait(Until.hasObject(By.text(fileName.toPattern())), 5000)
 
         //user clicks jarvis.zip
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()

@@ -18,9 +18,11 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.theme.AppTheme
+import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.resetOverlayPermission
 import org.rhasspy.mobile.android.utils.text
@@ -34,7 +36,7 @@ import kotlin.test.assertTrue
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
-class OverlayPermissionTest {
+class OverlayPermissionTest : KoinComponent {
 
     // activity necessary for permission
     @get: Rule
@@ -54,16 +56,16 @@ class OverlayPermissionTest {
         //set content
         composeTestRule.activity.setContent {
             AppTheme {
-
-                RequiresOverlayPermission(
-                    initialData = "",
-                    onClick = { permissionResult = true }
-                ) { onClick ->
-                    Button(onClick = { onClick.invoke("") }) {
-                        Text(btnRequestPermission)
+                TestContentProvider {
+                    RequiresOverlayPermission(
+                        initialData = "",
+                        onClick = { permissionResult = true }
+                    ) { onClick ->
+                        Button(onClick = { onClick.invoke("") }) {
+                            Text(btnRequestPermission)
+                        }
                     }
                 }
-
             }
         }
     }

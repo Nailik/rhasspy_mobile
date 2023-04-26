@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.main.LocalMainNavController
+import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 
@@ -23,6 +24,7 @@ fun KoinComponent.TestContentProvider(
     CompositionLocalProvider(
         LocalSnackbarHostState provides snackbarHostState,
         LocalMainNavController provides navController,
+        LocalNavController provides navController,
         LocalViewModelFactory provides get(),
     ) {
         content()
