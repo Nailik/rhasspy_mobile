@@ -27,7 +27,7 @@ class StreamContent(private val filePath: Path) : OutgoingContent.WriteChannelCo
 
     override val contentType = WebServerService.audioContentType
 
-    override val contentLength: Long = filePath.commonSize() ?: kotlin.run {
+    override val contentLength: Long = filePath.commonSize() ?: run {
         logger.a { "contentLength is null for ${filePath.name}" }
         0
     }

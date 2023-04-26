@@ -42,7 +42,7 @@ actual object ExternalRedirect : KoinComponent {
     actual fun <R> launch(intention: ExternalRedirectIntention<R>): ExternalRedirectResult<R> {
         logger.v { "launch $intention" }
         return launching {
-            nativeApplication.startActivity(intentFromIntention(intention))
+            nativeApplication.currentActivity?.startActivity(intentFromIntention(intention))
         }
     }
 
@@ -91,10 +91,9 @@ actual object ExternalRedirect : KoinComponent {
                     .createIntent(nativeApplication, intention.mimeTypes.toTypedArray())
                     .apply {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            putExtra(DocumentsContract.EXTRA_INITIAL_URI, intention.folder)
+                            putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(intention.uri))
                         }
                         putExtra(Intent.EXTRA_MIME_TYPES, intention.mimeTypes.toTypedArray())
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     }
 
             is GetContent ->
@@ -103,10 +102,9 @@ actual object ExternalRedirect : KoinComponent {
                     .createIntent(nativeApplication, "*/*")
                     .apply {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            putExtra(DocumentsContract.EXTRA_INITIAL_URI, intention.folder)
+                            putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(intention.uri))
                         }
                         putExtra(Intent.EXTRA_MIME_TYPES, intention.mimeTypes.toTypedArray())
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     }
 
             OpenBatteryOptimizationSettings ->
@@ -114,33 +112,28 @@ actual object ExternalRedirect : KoinComponent {
                     @SuppressLint("BatteryLife")
                     action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
                     data = Uri.parse("package:${nativeApplication.packageName}")
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
 
             RequestMicrophonePermissionExternally ->
                 Intent().apply {
                     action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
                     data = Uri.parse("package:org.rhasspy.mobile.android")
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
 
             is OpenLink ->
                 Intent().apply {
                     action = Intent.ACTION_VIEW
                     data = Uri.parse(intention.link.url)
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
 
             OpenAppSettings ->
                 Intent().apply {
-                    action = Settings.ACTION_MANAGE_OVERLAY_PERMISSION
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    action = Settings.ACTION_SETTINGS
                 }
 
             OpenOverlaySettings ->
                 Intent().apply {
-                    action = Settings.ACTION_SETTINGS
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    action = Settings.ACTION_MANAGE_OVERLAY_PERMISSION
                 }
 
             is ShareFile ->
@@ -151,9 +144,7 @@ actual object ExternalRedirect : KoinComponent {
                         type = intention.mimeType
                     },
                     null
-                ).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
+                )
         }
     }
 

@@ -30,26 +30,26 @@ actual object FileUtils : KoinComponent {
      */
     actual suspend fun selectFile(folderType: FolderType): Path? =
         suspendCoroutine { continuation ->
-            ExternalRedirectUtils.openDocument(
-                folder = SystemFolderType.Download.folder,
-                folderType = folderType
-            )?.also { path ->
-                val uri = path.toUri()
+            CoroutineScope(Dispatchers.IO).launch {
+                ExternalRedirectUtils.openDocument(
+                    folder = SystemFolderType.Download.folder,
+                    folderType = folderType
+                )?.also { path ->
+                    val uri = path.toUri()
 
-                CoroutineScope(Dispatchers.IO).launch {
                     queryFile(uri)?.also { fileName ->
                         val finalFileName = renameFileWhileExists(context.filesDir, folderType.toString(), fileName)
                         //create folder if it doesn't exist yet
                         File(context.filesDir, folderType.toString()).mkdirs()
                         val result = copyFile(folderType, uri, folderType.toString(), finalFileName)
                         continuation.resume(result?.toPath())
-                    } ?: kotlin.run {
+                    } ?: {
                         continuation.resume(null)
                     }
-                }
 
-            } ?: kotlin.run {
-                continuation.resume(null)
+                } ?: {
+                    continuation.resume(null)
+                }
             }
         }
 

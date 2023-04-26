@@ -16,7 +16,7 @@ sealed interface ExternalRedirectIntention<R> {
      * Open Document and read content, opens at initial folder
      */
     data class OpenDocument(
-        val folder: String,
+        val uri: String,
         val mimeTypes: List<String>
     ) : ExternalRedirectIntention<String>
 
@@ -25,7 +25,7 @@ sealed interface ExternalRedirectIntention<R> {
      * Alternative to OpenDocument
      */
     data class GetContent(
-        val folder: String,
+        val uri: String,
         val mimeTypes: List<String>
     ) : ExternalRedirectIntention<String>
 

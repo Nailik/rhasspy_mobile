@@ -4,10 +4,10 @@ import org.rhasspy.mobile.platformspecific.file.FolderType
 
 object ExternalRedirectUtils {
 
-    fun openDocument(folder: String, folderType: FolderType): String? = openDocument(folder, folderType.fileTypes)
+    suspend fun openDocument(folder: String, folderType: FolderType): String? = openDocument(folder, folderType.fileTypes)
 
-    fun openDocument(folder: String, mimeTypes: Array<String>): String? {
-        var result = ExternalRedirect.launch(
+    suspend fun openDocument(folder: String, mimeTypes: Array<String>): String? {
+        var result = ExternalRedirect.launchForResult(
             ExternalRedirectIntention.OpenDocument(folder, mimeTypes.toList())
         )
 
