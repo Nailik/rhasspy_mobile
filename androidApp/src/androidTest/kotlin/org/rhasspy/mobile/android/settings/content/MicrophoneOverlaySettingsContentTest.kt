@@ -2,14 +2,10 @@ package org.rhasspy.mobile.android.settings.content
 
 import android.widget.Switch
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.UiScrollable
-import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -19,8 +15,6 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
-import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
@@ -50,12 +44,7 @@ class MicrophoneOverlaySettingsContentTest : KoinComponent {
     fun setUp() {
 
         composeTestRule.activity.setContent {
-            val navController = rememberNavController()
-
-            CompositionLocalProvider(
-                LocalMainNavController provides navController,
-                LocalViewModelFactory provides get()
-            ) {
+            TestContentProvider {
                 MicrophoneOverlaySettingsContent()
             }
         }
@@ -110,6 +99,7 @@ class MicrophoneOverlaySettingsContentTest : KoinComponent {
         composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
         //user accepts permission
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        device.wait(Until.hasObject(By.pkg(settingsPage.toPattern())), 5000)
         assertTrue { device.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
         UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName.stable))
         device.findObject(UiSelector().text(MR.strings.appName.stable)).click()

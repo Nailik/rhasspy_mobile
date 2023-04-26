@@ -1,9 +1,7 @@
 package org.rhasspy.mobile.android.configuration.content
 
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -12,8 +10,7 @@ import org.junit.Test
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
+import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.awaitSaved
 import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithTag
@@ -37,12 +34,7 @@ class MqttConfigurationContentTest : KoinComponent {
     fun setUp() {
 
         composeTestRule.setContent {
-            val navController = rememberNavController()
-
-            CompositionLocalProvider(
-                LocalMainNavController provides navController,
-                LocalViewModelFactory provides get()
-            ) {
+            TestContentProvider {
                 MqttConfigurationContent()
             }
         }
@@ -64,7 +56,7 @@ class MqttConfigurationContentTest : KoinComponent {
      */
     @Test
     fun testMqttContent() = runTest {
-        viewModel.onAction(SetMqttEnabled(false))
+        viewModel.onEvent(SetMqttEnabled(false))
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
@@ -125,7 +117,7 @@ class MqttConfigurationContentTest : KoinComponent {
      */
     @Test
     fun testMqttConnectionSettings() = runTest {
-        viewModel.onAction(SetMqttEnabled(true))
+        viewModel.onEvent(SetMqttEnabled(true))
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
@@ -188,8 +180,8 @@ class MqttConfigurationContentTest : KoinComponent {
      */
     @Test
     fun testMqttSSL() = runTest {
-        viewModel.onAction(SetMqttEnabled(true))
-        viewModel.onAction(SetMqttSSLEnabled(false))
+        viewModel.onEvent(SetMqttEnabled(true))
+        viewModel.onEvent(SetMqttSSLEnabled(false))
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
@@ -235,7 +227,7 @@ class MqttConfigurationContentTest : KoinComponent {
      */
     @Test
     fun testMqttConnectionTiming() = runTest {
-        viewModel.onAction(SetMqttEnabled(true))
+        viewModel.onEvent(SetMqttEnabled(true))
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()

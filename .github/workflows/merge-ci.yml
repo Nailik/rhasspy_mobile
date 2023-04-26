@@ -12,6 +12,8 @@ on:
     secrets:
       SONAR_TOKEN:
         required: true
+      SONAR_KEY:
+        required: true
       SIGNING_KEY:
         required: true
       ALIAS:
@@ -29,6 +31,7 @@ jobs:
       BUILD_TYPE_LOWERCASE: ${{ inputs.BUILD_TYPE_LOWERCASE }}
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_KEY: ${{ secrets.SONAR_KEY }}
   uiTest:
     needs: check
     runs-on: self-hosted

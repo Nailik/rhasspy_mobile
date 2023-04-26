@@ -20,6 +20,7 @@ import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.elements.translate
 import org.rhasspy.mobile.android.content.list.*
+import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
@@ -27,6 +28,7 @@ import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.OpenMqttSSLWiki
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
 
 /**
@@ -44,6 +46,16 @@ fun MqttConfigurationContent() {
     val viewState by viewModel.viewState.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 
+    val snackBarHostState = LocalSnackbarHostState.current
+    val snackBarText = contentViewState.snackBarText?.let { translate(it) }
+
+    LaunchedEffect(snackBarText) {
+        snackBarText?.also {
+            snackBarHostState.showSnackbar(message = it)
+            viewModel.onEvent(ShowSnackBar)
+        }
+    }
+
     ConfigurationScreenItemContent(
         modifier = Modifier.testTag(ConfigurationScreenType.MqttConfiguration),
         config = ConfigurationScreenConfig(MR.strings.mqtt.stable),
@@ -58,7 +70,7 @@ fun MqttConfigurationContent() {
                 text = MR.strings.externalMQTT.stable,
                 modifier = Modifier.testTag(TestTag.MqttSwitch),
                 isChecked = contentViewState.isMqttEnabled,
-                onCheckedChange = { viewModel.onAction(SetMqttEnabled(it)) }
+                onCheckedChange = { viewModel.onEvent(SetMqttEnabled(it)) }
             )
         }
 
@@ -77,20 +89,20 @@ fun MqttConfigurationContent() {
                         mqttPortText = contentViewState.mqttPortText,
                         mqttUserName = contentViewState.mqttUserName,
                         mqttPassword = contentViewState.mqttPassword,
-                        onAction = viewModel::onAction
+                        onAction = viewModel::onEvent
                     )
 
                     MqttSSL(
                         isMqttSSLEnabled = contentViewState.isMqttSSLEnabled,
                         mqttKeyStoreFileName = contentViewState.mqttKeyStoreFileName,
-                        onAction = viewModel::onAction
+                        onAction = viewModel::onEvent
                     )
 
                     MqttConnectionTiming(
                         mqttConnectionTimeoutText = contentViewState.mqttConnectionTimeoutText,
                         mqttKeepAliveIntervalText = contentViewState.mqttKeepAliveIntervalText,
                         mqttRetryIntervalText = contentViewState.mqttRetryIntervalText,
-                        onAction = viewModel::onAction
+                        onAction = viewModel::onEvent
                     )
 
                 }

@@ -11,18 +11,18 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.UiScrollable
-import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.theme.AppTheme
+import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.resetOverlayPermission
 import org.rhasspy.mobile.android.utils.text
@@ -36,7 +36,7 @@ import kotlin.test.assertTrue
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
-class OverlayPermissionTest {
+class OverlayPermissionTest : KoinComponent {
 
     // activity necessary for permission
     @get: Rule
@@ -56,16 +56,16 @@ class OverlayPermissionTest {
         //set content
         composeTestRule.activity.setContent {
             AppTheme {
-
-                RequiresOverlayPermission(
-                    initialData = "",
-                    onClick = { permissionResult = true }
-                ) { onClick ->
-                    Button(onClick = { onClick.invoke("") }) {
-                        Text(btnRequestPermission)
+                TestContentProvider {
+                    RequiresOverlayPermission(
+                        initialData = "",
+                        onClick = { permissionResult = true }
+                    ) { onClick ->
+                        Button(onClick = { onClick.invoke("") }) {
+                            Text(btnRequestPermission)
+                        }
                     }
                 }
-
             }
         }
     }
@@ -118,6 +118,7 @@ class OverlayPermissionTest {
 
             //Redirected to settings
             getInstrumentation().waitForIdleSync()
+            device.wait(Until.hasObject(By.pkg(settingsPage.toPattern())), 5000)
             assertTrue { device.findObject(UiSelector().packageNameMatches(settingsPage)).exists() }
             UiScrollable(UiSelector().resourceIdMatches(list)).scrollIntoView(UiSelector().text(MR.strings.appName.stable))
             device.findObject(UiSelector().text(MR.strings.appName.stable)).click()

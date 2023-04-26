@@ -15,4 +15,10 @@ sealed interface LogScreenUiEvent {
 
     }
 
+    sealed interface Consumed : LogScreenUiEvent {
+
+        object ShowSnackBar : Consumed
+
+    }
+
 }

@@ -2,12 +2,15 @@ package org.rhasspy.mobile.viewmodel.configuration.wakeword
 
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okio.Path
 import org.koin.core.component.get
+import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
-import org.rhasspy.mobile.logic.openLink
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
@@ -21,11 +24,13 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.MicrophonePermissionAllowed
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.TestStartWakeWord
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState.PorcupineCustomKeywordViewState
+import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
 @Stable
 class WakeWordConfigurationViewModel(
@@ -39,6 +44,7 @@ class WakeWordConfigurationViewModel(
         when (event) {
             is Change -> onChange(event)
             is Action -> onAction(event)
+            is Consumed -> onConsumed(event)
             is PorcupineUiEvent -> onPorcupineAction(event)
             is UdpUiEvent -> onUdpAction(event)
         }
@@ -59,6 +65,14 @@ class WakeWordConfigurationViewModel(
             }
 
             TestStartWakeWord -> startWakeWordDetection()
+        }
+    }
+
+    private fun onConsumed(consumed: Consumed) {
+        contentViewState.update {
+            when (consumed) {
+                is ShowSnackBar -> it.copy(snackBarText = null)
+            }
         }
     }
 
@@ -103,8 +117,21 @@ class WakeWordConfigurationViewModel(
     private fun onPorcupineNavigate(action: PorcupineUiEvent.Action) {
         when (action) {
             AddCustomPorcupineKeyword -> addCustomPorcupineKeyword()
-            DownloadCustomPorcupineKeyword -> openLink("https://console.picovoice.ai/ppn")
-            OpenPicoVoiceConsole -> openLink("https://console.picovoice.ai")
+            DownloadCustomPorcupineKeyword -> {
+                if (!OpenLinkUtils.openLink(LinkType.PicoVoiceCustomWakeWord)) {
+                    contentViewState.update {
+                        it.copy(snackBarText = MR.strings.linkOpenFailed.stable)
+                    }
+                }
+            }
+
+            OpenPicoVoiceConsole -> {
+                if (!OpenLinkUtils.openLink(LinkType.PicoVoiceConsole)) {
+                    contentViewState.update {
+                        it.copy(snackBarText = MR.strings.linkOpenFailed.stable)
+                    }
+                }
+            }
         }
     }
 
@@ -113,10 +140,14 @@ class WakeWordConfigurationViewModel(
     private val filesToDelete = mutableListOf<Path>()
 
     private fun addCustomPorcupineKeyword() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             FileUtils.selectFile(FolderType.PorcupineFolder)?.also { path ->
                 newFiles.add(path)
                 onPorcupineChange(AddPorcupineKeywordCustom(path))
+            } ?: {
+                contentViewState.update {
+                    it.copy(snackBarText = MR.strings.selectFileFailed.stable)
+                }
             }
         }
     }

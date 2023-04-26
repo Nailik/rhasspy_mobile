@@ -1,12 +1,8 @@
 package org.rhasspy.mobile.android.settings.content
 
 import androidx.activity.compose.setContent
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -15,9 +11,7 @@ import org.junit.Test
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
-import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.main.LocalSnackbarHostState
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
+import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.requestMicrophonePermissions
@@ -39,14 +33,7 @@ class AutomaticSilenceDetectionSettingsContentTest : KoinComponent {
     fun setUp() {
 
         composeTestRule.activity.setContent {
-            val navController = rememberNavController()
-            val snackbarHostState = remember { SnackbarHostState() }
-
-            CompositionLocalProvider(
-                LocalMainNavController provides navController,
-                LocalSnackbarHostState provides snackbarHostState,
-                LocalViewModelFactory provides get()
-            ) {
+            TestContentProvider {
                 AutomaticSilenceDetectionSettingsContent()
             }
         }

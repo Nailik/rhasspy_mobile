@@ -2,15 +2,15 @@ package org.rhasspy.mobile.android.settings.content.sound
 
 import android.os.Environment
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
-import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -19,8 +19,6 @@ import org.junit.Rule
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
-import org.rhasspy.mobile.android.main.LocalNavController
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.test.R
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.StableStringResource
@@ -56,12 +54,7 @@ abstract class IndicationSoundScreenTest(
         requestExternalStoragePermissions(device)
 
         composeTestRule.activity.setContent {
-            val navController = rememberNavController()
-
-            CompositionLocalProvider(
-                LocalNavController provides navController,
-                LocalViewModelFactory provides get()
-            ) {
+            TestContentProvider {
                 IndicationSoundScreen(
                     viewModel = viewModel,
                     title = title,
@@ -120,6 +113,7 @@ abstract class IndicationSoundScreenTest(
         composeTestRule.awaitIdle()
         device.waitForIdle()
         //user clicks file
+        device.wait(Until.hasObject(By.text(fileName)), 5000)
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
 
         //file is added to list
@@ -214,6 +208,7 @@ abstract class IndicationSoundScreenTest(
         //user selects add file
         composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
         //user clicks file
+        device.wait(Until.hasObject(By.text(fileName)), 5000)
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
         composeTestRule.awaitIdle()
 

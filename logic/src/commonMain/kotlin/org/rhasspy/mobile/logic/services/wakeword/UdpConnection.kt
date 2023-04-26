@@ -76,7 +76,7 @@ class UdpConnection(
                 }
                 return exception
             }
-        } ?: run {
+        } ?: {
             if (!hasLoggedError) {
                 hasLoggedError = true
                 logger.a { "stream audio socketAddress not initialized" }

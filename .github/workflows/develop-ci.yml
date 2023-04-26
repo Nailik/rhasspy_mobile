@@ -15,6 +15,7 @@ jobs:
       BUILD_TYPE_LOWERCASE: debug
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_KEY: ${{ secrets.SONAR_KEY }}
   merge:
     if: contains(github.event.pull_request.labels.*.name, 'automerge')
     uses: ./.github/workflows/merge-ci.yml
@@ -23,6 +24,7 @@ jobs:
       BUILD_TYPE_LOWERCASE: debug
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_KEY: ${{ secrets.SONAR_KEY }}
       SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
       ALIAS: ${{ secrets.ALIAS }}
       KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}

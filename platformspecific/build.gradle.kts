@@ -42,6 +42,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(Square.Okio.jvm)
+                implementation(Square.okio)
                 implementation(AndroidX.appCompat)
                 implementation(AndroidX.multidex)
                 implementation(AndroidX.lifecycle.process)

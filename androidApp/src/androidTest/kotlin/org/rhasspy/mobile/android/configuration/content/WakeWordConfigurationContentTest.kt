@@ -1,14 +1,12 @@
 package org.rhasspy.mobile.android.configuration.content
 
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -18,9 +16,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
-import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.main.LocalSnackbarHostState
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
+import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.awaitSaved
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.WakeWordOption
@@ -46,14 +42,7 @@ class WakeWordConfigurationContentTest : KoinComponent {
     fun setUp() {
 
         composeTestRule.setContent {
-            val navController = rememberNavController()
-            val snackbarHostState = remember { SnackbarHostState() }
-
-            CompositionLocalProvider(
-                LocalSnackbarHostState provides snackbarHostState,
-                LocalMainNavController provides navController,
-                LocalViewModelFactory provides get()
-            ) {
+            TestContentProvider {
                 WakeWordConfigurationContent()
             }
         }
@@ -137,6 +126,7 @@ class WakeWordConfigurationContentTest : KoinComponent {
         //user clicks picovoice console
         composeTestRule.onNodeWithTag(TestTag.PorcupineOpenConsole).performScrollTo().performClick()
         //browser is opened
+        device.wait(Until.hasObject(By.text(".*console.picovoice.ai.*".toPattern())), 5000)
         device.findObject(UiSelector().textMatches(".*console.picovoice.ai.*")).exists()
         device.pressBack()
 

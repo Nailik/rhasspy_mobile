@@ -18,12 +18,12 @@ actual fun Path.commonSource(): Source = FileSystem.SYSTEM.source(this)
 
 actual fun Path.commonReadWrite(): FileHandle = FileSystem.SYSTEM.openReadWrite(this, mustCreate = true, mustExist = false)
 
-actual inline fun <reified T> Path.commonDecodeLogList(): T = TODO()
+actual inline fun <reified T> Path.commonDecodeLogList(): T = TODO("Not yet implemented")
 
-actual fun Path.commonShare(nativeApplication: NativeApplication) {
-    TODO()
+actual fun Path.commonShare(nativeApplication: NativeApplication): Boolean {
+    TODO("Not yet implemented")
 }
 
-actual fun Path.commonSave(nativeApplication: NativeApplication, fileName: String, fileType: String) {
-    TODO()
+actual suspend fun Path.commonSave(nativeApplication: NativeApplication, fileName: String, fileType: String): Boolean {
+    TODO("Not yet implemented")
 }

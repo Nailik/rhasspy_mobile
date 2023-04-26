@@ -8,4 +8,10 @@ sealed interface AboutScreenUiEvent {
 
     }
 
+    sealed interface Consumed : AboutScreenUiEvent {
+
+        object ShowSnackBar : Consumed
+
+    }
+
 }

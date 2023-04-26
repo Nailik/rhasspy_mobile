@@ -2,6 +2,7 @@ package org.rhasspy.mobile.platformspecific.file
 
 import android.net.Uri
 import android.provider.OpenableColumns
+import androidx.core.net.toUri
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -10,6 +11,7 @@ import okio.Path.Companion.toPath
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.external.ExternalRedirectUtils
 import java.io.BufferedInputStream
 import java.io.File
 import java.util.zip.ZipInputStream
@@ -28,25 +30,25 @@ actual object FileUtils : KoinComponent {
      */
     actual suspend fun selectFile(folderType: FolderType): Path? =
         suspendCoroutine { continuation ->
-            context.currentActivity?.openDocument(folderType.fileTypes) {
-                CoroutineScope(Dispatchers.IO).launch {
+            CoroutineScope(Dispatchers.IO).launch {
+                ExternalRedirectUtils.openDocument(
+                    folder = SystemFolderType.Download.folder,
+                    folderType = folderType
+                )?.also { path ->
+                    val uri = path.toUri()
 
-                    it.data?.data?.also { uri ->
-
-                        queryFile(uri)?.also { fileName ->
-                            val finalFileName = renameFileWhileExists(context.filesDir, folderType.toString(), fileName)
-                            //create folder if it doesn't exist yet
-                            File(context.filesDir, folderType.toString()).mkdirs()
-                            val result = copyFile(folderType, uri, folderType.toString(), finalFileName)
-                            continuation.resume(result?.toPath())
-
-                        } ?: kotlin.run {
-                            continuation.resume(null)
-                        }
-
-                    } ?: kotlin.run {
+                    queryFile(uri)?.also { fileName ->
+                        val finalFileName = renameFileWhileExists(context.filesDir, folderType.toString(), fileName)
+                        //create folder if it doesn't exist yet
+                        File(context.filesDir, folderType.toString()).mkdirs()
+                        val result = copyFile(folderType, uri, folderType.toString(), finalFileName)
+                        continuation.resume(result?.toPath())
+                    } ?: {
                         continuation.resume(null)
                     }
+
+                } ?: {
+                    continuation.resume(null)
                 }
             }
         }
@@ -107,7 +109,7 @@ actual object FileUtils : KoinComponent {
                     }
                 }
                 continuation.resume(fileName)
-            } ?: run {
+            } ?: {
                 continuation.resume(null)
             }
         }

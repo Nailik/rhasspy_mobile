@@ -35,7 +35,7 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.android.theme.SetSystemColor
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.ui.event.StateEvent.Consumed
+import org.rhasspy.mobile.ui.event.EventState.Consumed
 import org.rhasspy.mobile.viewmodel.configuration.*
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiNavigate.PopBackStack

@@ -4,7 +4,6 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -16,7 +15,7 @@ class LogScreenViewStateCreator {
 
     private val updaterScope = CoroutineScope(Dispatchers.Default)
 
-    operator fun invoke(): StateFlow<LogScreenViewState> {
+    operator fun invoke(): MutableStateFlow<LogScreenViewState> {
         val viewState = MutableStateFlow(getViewState())
         //load file into list
         updaterScope.launch {

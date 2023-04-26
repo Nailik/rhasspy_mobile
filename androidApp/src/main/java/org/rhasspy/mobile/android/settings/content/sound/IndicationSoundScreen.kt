@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -20,10 +21,12 @@ import org.rhasspy.mobile.android.combinedTestTag
 import org.rhasspy.mobile.android.content.OnPauseEffect
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.elements.translate
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.RadioButtonListItem
 import org.rhasspy.mobile.android.content.list.SliderListItem
 import org.rhasspy.mobile.android.main.LocalNavController
+import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
@@ -32,6 +35,7 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSe
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.ChooseSoundFile
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.ToggleAudioPlayerActive
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsViewModel
 
 /**
@@ -43,6 +47,17 @@ fun IndicationSoundScreen(
     title: StableStringResource,
     screen: IndicationSettingsScreens
 ) {
+    val viewState by viewModel.viewState.collectAsState()
+
+    val snackBarHostState = LocalSnackbarHostState.current
+    val snackBarText = viewState.snackBarText?.let { translate(it) }
+
+    LaunchedEffect(snackBarText) {
+        snackBarText?.also {
+            snackBarHostState.showSnackbar(message = it)
+            viewModel.onEvent(ShowSnackBar)
+        }
+    }
 
     OnPauseEffect(viewModel::onPause)
 
@@ -59,8 +74,6 @@ fun IndicationSoundScreen(
                     .testTag(TestTag.IndicationSoundScreen)
                     .fillMaxSize()
             ) {
-
-                val viewState by viewModel.viewState.collectAsState()
 
                 SoundElements(
                     soundSetting = viewState.soundSetting,

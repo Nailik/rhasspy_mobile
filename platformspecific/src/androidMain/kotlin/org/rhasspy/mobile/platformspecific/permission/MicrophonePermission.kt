@@ -1,10 +1,7 @@
 package org.rhasspy.mobile.platformspecific.permission
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
-import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,20 +21,6 @@ actual object MicrophonePermission : KoinComponent {
      */
     private val _granted = MutableStateFlow(isGranted())
     actual val granted: StateFlow<Boolean> = _granted
-
-    /**
-     * to check if the information dialog should be shown
-     */
-    actual fun requestPermissionExternally() {
-        context.startActivity(
-            Intent(
-                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                Uri.parse("package:org.rhasspy.mobile.android")
-            ).also {
-                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-        )
-    }
 
     /**
      * to request the permission externally, redirect user to settings

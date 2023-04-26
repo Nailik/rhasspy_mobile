@@ -6,9 +6,7 @@ import android.os.Build
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.*
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.NoLiveLiterals
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -16,21 +14,22 @@ import androidx.compose.ui.test.performClick
 import androidx.core.app.ActivityCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.theme.AppTheme
-import org.rhasspy.mobile.android.utils.onNodeWithTag
-import org.rhasspy.mobile.android.utils.onNodeWithText
-import org.rhasspy.mobile.android.utils.text
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.language.LanguageType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
@@ -49,7 +48,7 @@ import kotlin.test.assertTrue
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
-class MicrophonePermissionTest {
+class MicrophonePermissionTest : KoinComponent {
 
     // activity necessary for permission
     @get: Rule
@@ -79,8 +78,8 @@ class MicrophonePermissionTest {
     private val btnDoNotAskAgain =
         "com.android.permissioncontroller:id/permission_deny_and_dont_ask_again_button"
 
-    private val allowPermissionRegex = ".*\\/permission_allow_button"
-    private val denyPermissionRegex = ".*\\/permission_deny_button"
+    private val allowPermissionRegex = ".*/permission_allow_button"
+    private val denyPermissionRegex = ".*/permission_deny_button"
 
     private val btnRequestPermission = "btnRequestPermission"
 
@@ -101,13 +100,8 @@ class MicrophonePermissionTest {
 
         //set content
         composeTestRule.activity.setContent {
-            val snackbarHostState = remember { SnackbarHostState() }
-
-            CompositionLocalProvider(
-                //snack bar necessary
-                LocalSnackbarHostState provides snackbarHostState
-            ) {
-
+            TestContentProvider {
+                val snackbarHostState = LocalSnackbarHostState.current
                 AppTheme {
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
@@ -153,26 +147,19 @@ class MicrophonePermissionTest {
 
         //System dialog is shown
         composeTestRule.awaitIdle()
+        device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
         assertTrue {
-            device.findObject(
-                UiSelector().packageNameMatches(
-                    permissionDialogPackageNameRegex
-                )
-            ).exists()
+            device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists()
         }
 
         //User selects allow
+        device.wait(Until.hasObject(By.res(allowPermissionRegex.toPattern())), 5000)
         device.findObject(UiSelector().resourceIdMatches(allowPermissionRegex)).click()
 
         //Dialog is closed and permission granted
         composeTestRule.awaitIdle()
-        assertFalse {
-            device.findObject(
-                UiSelector().packageNameMatches(
-                    permissionDialogPackageNameRegex
-                )
-            ).exists()
-        }
+        device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
+        assertFalse { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
         assertTrue { permissionResult }
         assertTrue { MicrophonePermission.granted.value }
     }
@@ -198,27 +185,18 @@ class MicrophonePermissionTest {
 
         //System dialog is shown
         getInstrumentation().waitForIdleSync()
-        assertTrue {
-            device.findObject(
-                UiSelector().packageNameMatches(
-                    permissionDialogPackageNameRegex
-                )
-            ).exists()
-        }
+        device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
+        assertTrue { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
 
         //User selects allow while using the app
+        device.wait(Until.hasObject(By.res(btnPermissionAllowForegroundOnly.toPattern())), 5000)
         device.findObject(UiSelector().resourceIdMatches(btnPermissionAllowForegroundOnly)).click()
 
         //Dialog is closed and permission granted
         getInstrumentation().waitForIdleSync()
         composeTestRule.awaitIdle()
-        assertFalse {
-            device.findObject(
-                UiSelector().packageNameMatches(
-                    permissionDialogPackageNameRegex
-                )
-            ).exists()
-        }
+        device.wait(Until.hasObject(By.res(permissionDialogPackageNameRegex.toPattern())), 5000)
+        assertFalse { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
         assertTrue { permissionResult }
         assertTrue { MicrophonePermission.granted.value }
     }
@@ -244,26 +222,17 @@ class MicrophonePermissionTest {
 
         //System dialog is shown
         composeTestRule.awaitIdle()
-        assertTrue {
-            device.findObject(
-                UiSelector().packageNameMatches(
-                    permissionDialogPackageNameRegex
-                )
-            ).exists()
-        }
+        device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
+        assertTrue { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
 
         //user selects only once
+        device.wait(Until.hasObject(By.res(btnPermissionAllowOneTime.toPattern())), 5000)
         device.findObject(UiSelector().resourceIdMatches(btnPermissionAllowOneTime)).click()
 
         //Dialog is closed and permission granted
         composeTestRule.awaitIdle()
-        assertFalse {
-            device.findObject(
-                UiSelector().packageNameMatches(
-                    permissionDialogPackageNameRegex
-                )
-            ).exists()
-        }
+        device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
+        assertFalse { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
         assertTrue { permissionResult }
         assertTrue { MicrophonePermission.granted.value }
     }
@@ -297,16 +266,11 @@ class MicrophonePermissionTest {
 
         //System dialog is shown
         getInstrumentation().waitForIdleSync()
-        assertTrue {
-            device.findObject(
-                UiSelector().packageNameMatches(
-                    permissionDialogPackageNameRegex
-                )
-            ).exists()
-        }
+        device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
+        assertTrue { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
         //deny permission
-        device.findObject(UiSelector().resourceIdMatches(denyPermissionRegex))
-            .clickAndWaitForNewWindow()
+        device.wait(Until.hasObject(By.res(denyPermissionRegex.toPattern())), 5000)
+        device.findObject(UiSelector().resourceIdMatches(denyPermissionRegex)).clickAndWaitForNewWindow()
         composeTestRule.awaitIdle()
 
         //User clicks button
@@ -318,41 +282,34 @@ class MicrophonePermissionTest {
         composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
         //System dialog is shown
         getInstrumentation().waitForIdleSync()
-        assertTrue {
-            device.findObject(
-                UiSelector().packageNameMatches(
-                    permissionDialogPackageNameRegex
-                )
-            ).exists()
-        }
+        device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
+        assertTrue { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
 
         //deny always
         if (Build.VERSION.SDK_INT < 29) {
             //check do not ask again
+            device.wait(Until.hasObject(By.res(cbhDoNotAsk)), 5000)
             device.findObject(UiSelector().resourceId(cbhDoNotAsk)).click()
             //deny always
-            device.findObject(UiSelector().resourceIdMatches(denyPermissionRegex))
-                .clickAndWaitForNewWindow()
+            device.wait(Until.hasObject(By.res(denyPermissionRegex.toPattern())), 5000)
+            device.findObject(UiSelector().resourceIdMatches(denyPermissionRegex)).clickAndWaitForNewWindow()
         } else {
             //directly click do not ask again
+            device.wait(Until.hasObject(By.res(btnDoNotAskAgain)), 5000)
             device.findObject(UiSelector().resourceId(btnDoNotAskAgain)).clickAndWaitForNewWindow()
         }
 
         //Dialog is closed and permission not granted
         composeTestRule.awaitIdle()
-        assertFalse {
-            device.findObject(
-                UiSelector().packageNameMatches(
-                    permissionDialogPackageNameRegex
-                )
-            ).exists()
-        }
+        device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
+        assertFalse { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
         assertFalse { permissionResult }
         assertFalse { MicrophonePermission.granted.value }
 
         //User clicks button
         composeTestRule.onNodeWithText(btnRequestPermission).performClick()
         //snack bar shown
+        device.wait(Until.hasObject(textRes(MR.strings.microphonePermissionDenied.stable)), 5000)
         assertTrue {
             device.findObject(UiSelector().text(MR.strings.microphonePermissionDenied.stable)).exists()
         }
@@ -398,26 +355,18 @@ class MicrophonePermissionTest {
 
         //System dialog is shown
         getInstrumentation().waitForIdleSync()
-        assertTrue {
-            device.findObject(
-                UiSelector().packageNameMatches(
-                    permissionDialogPackageNameRegex
-                )
-            ).exists()
-        }
+        device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
+        assertTrue { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
         //user selects deny
+        device.wait(Until.hasObject(By.res(denyPermissionRegex.toPattern())), 5000)
         device.findObject(UiSelector().resourceIdMatches(denyPermissionRegex)).click()
         //Dialog is closed and permission not granted
         composeTestRule.awaitIdle()
-        assertFalse {
-            device.findObject(
-                UiSelector().packageNameMatches(
-                    permissionDialogPackageNameRegex
-                )
-            ).exists()
-        }
+        device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
+        assertFalse { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
         assertFalse { MicrophonePermission.granted.value }
         //Snackbar is shown
+        device.wait(Until.hasObject(textRes(MR.strings.microphonePermissionDenied.stable)), 5000)
         assertTrue {
             device.findObject(UiSelector().text(MR.strings.microphonePermissionDenied.stable)).exists()
         }
@@ -460,23 +409,21 @@ class MicrophonePermissionTest {
                 .assertDoesNotExist()
             //System Dialog is shown
             getInstrumentation().waitForIdleSync()
-            assertTrue {
-                device.findObject(
-                    UiSelector().packageNameMatches(
-                        permissionDialogPackageNameRegex
-                    )
-                ).exists()
-            }
+            device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
+            assertTrue { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
             //user selects deny
             //deny always
             if (Build.VERSION.SDK_INT < 29) {
                 //check do not ask again
+                device.wait(Until.hasObject(By.res(cbhDoNotAsk)), 5000)
                 device.findObject(UiSelector().resourceId(cbhDoNotAsk)).click()
                 //deny always
+                device.wait(Until.hasObject(By.res(denyPermissionRegex.toPattern())), 5000)
                 device.findObject(UiSelector().resourceIdMatches(denyPermissionRegex))
                     .clickAndWaitForNewWindow()
             } else {
                 //directly click do not ask again
+                device.wait(Until.hasObject(By.res(btnDoNotAskAgain)), 5000)
                 device.findObject(UiSelector().resourceId(btnDoNotAskAgain))
                     .clickAndWaitForNewWindow()
             }
@@ -489,6 +436,7 @@ class MicrophonePermissionTest {
         composeTestRule.awaitIdle()
         //Snackbar is shown
         getInstrumentation().waitForIdleSync()
+        device.wait(Until.hasObject(textRes(MR.strings.microphonePermissionDenied.stable)), 5000)
         assertTrue {
             device.findObject(UiSelector().text(MR.strings.microphonePermissionDenied.stable)).exists()
         }
@@ -498,21 +446,25 @@ class MicrophonePermissionTest {
         composeTestRule.awaitIdle()
         //User is redirected to settings
         getInstrumentation().waitForIdleSync()
+        device.wait(Until.hasObject(By.res(txtEntityHeader)), 5000)
         device.findObject(UiSelector().resourceId(txtEntityHeader).text(appName)).exists()
 
 
         //User allows permission in settings
         //open permissions page
+        device.wait(Until.hasObject(By.res(systemSettingsListRegex.toPattern())), 5000)
         device.findObject(UiSelector().resourceIdMatches(systemSettingsListRegex))
             .getChild(UiSelector().clickable(true).index(if (Build.VERSION.SDK_INT == 27) 4 else 3))
             .clickAndWaitForNewWindow()
         getInstrumentation().waitForIdleSync()
         //click microphone permission
         if (Build.VERSION.SDK_INT < 29) {
+            device.wait(Until.hasObject(By.res(systemSettingsListRegex.toPattern())), 5000)
             device.findObject(UiSelector().resourceIdMatches(systemSettingsListRegex))
                 .getChild(UiSelector().clickable(true).index(indexOffset))
                 .click()
         } else {
+            device.wait(Until.hasObject(By.res(systemSettingsListRegex.toPattern())), 5000)
             device.findObject(UiSelector().resourceIdMatches(systemSettingsListRegex))
                 .getChild(UiSelector().index((if (Build.VERSION.SDK_INT == 29) 2 else if (Build.VERSION.SDK_INT == 30) 4 else 3) + indexOffset))
                 .clickAndWaitForNewWindow()

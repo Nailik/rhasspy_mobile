@@ -5,6 +5,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
+import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
@@ -18,6 +19,7 @@ data class WakeWordConfigurationViewState internal constructor(
     val wakeWordOption: WakeWordOption = ConfigurationSetting.wakeWordOption.value,
     val wakeWordPorcupineViewState: PorcupineViewState = PorcupineViewState(),
     val wakeWordUdpViewState: UdpViewState = UdpViewState(),
+    val snackBarText: StableStringResource? = null
 ) : IConfigurationEditViewState() {
 
     val wakeWordOptions: ImmutableList<WakeWordOption> = WakeWordOption.values().toImmutableList()

@@ -3,7 +3,6 @@ package org.rhasspy.mobile.android.configuration
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsEnabled
@@ -25,12 +24,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
 
@@ -69,9 +65,8 @@ class ConfigurationScreenItemContentTest : KoinComponent {
             activity.setContent {
                 val navController = rememberNavController()
 
-                CompositionLocalProvider(
-                    LocalMainNavController provides navController,
-                    LocalViewModelFactory provides get()
+                TestContentProvider(
+                    navController = navController,
                 ) {
                     NavHost(
                         navController = navController,
@@ -80,9 +75,11 @@ class ConfigurationScreenItemContentTest : KoinComponent {
 
                         composable(startNavigation) {
                             //button to open config screen in order to test back press
-                            Button(onClick = {
-                                navController.navigate(configurationScreenItemContentNavigation)
-                            }) {
+                            Button(
+                                onClick = {
+                                    navController.navigate(configurationScreenItemContentNavigation)
+                                }
+                            ) {
                                 Text(btnStartTest)
                             }
                         }

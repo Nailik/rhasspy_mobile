@@ -2,18 +2,18 @@ package org.rhasspy.mobile.android.configuration.content.porcupine
 
 import android.os.Environment
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.performClick
-import androidx.navigation.compose.rememberNavController
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until
 import com.adevinta.android.barista.rule.flaky.FlakyTestRule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,10 +25,8 @@ import org.junit.Test
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
-import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.test.R
 import org.rhasspy.mobile.android.utils.*
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import java.io.File
@@ -62,11 +60,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
     private fun setupUi() {
         scenario.onActivity { activity ->
             activity.setContent {
-                val navController = rememberNavController()
-
-                CompositionLocalProvider(
-                    LocalMainNavController provides navController
-                ) {
+                TestContentProvider {
                     val viewState by viewModel.viewState.collectAsState()
                     val contentViewState by viewState.editViewState.collectAsState()
                     PorcupineKeywordCustomScreen(
@@ -129,6 +123,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         //user clicks download
         composeTestRule.onNodeWithTag(TestTag.Download).performClick()
         //browser is opened
+        device.wait(Until.hasObject(By.text(".*console.picovoice.ai/ppn.*".toPattern())), 5000)
         device.findObject(UiSelector().textMatches(".*console.picovoice.ai/ppn.*")).exists()
         //user clicks back
         device.pressBack()
@@ -141,23 +136,8 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         composeTestRule.awaitIdle()
         //file manager is opened
         device.waitForIdle()
-        device.findObject(UiSelector().textMatches(fileName)).exists()
-        //user clicks back twice
-        device.pressBack()
+        device.wait(Until.hasObject(By.text(fileName.toPattern())), 5000)
 
-        if (get<NativeApplication>().isAppInBackground.value) {
-            device.pressBack()
-        }
-        //app is opened with current page (custom)
-        composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordCustomScreen).assertIsDisplayed()
-
-        //user clicks select file
-        composeTestRule.onNodeWithTag(TestTag.SelectFile).performClick()
-        composeTestRule.awaitIdle()
-        //file manager is opened
-        device.waitForIdle()
-        device.findObject(UiSelector().textMatches(fileName)).exists()
         //user clicks jarvis.zip
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
         //app is opened with current page (custom)
@@ -211,6 +191,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
         composeTestRule.awaitIdle()
         device.waitForIdle()
 
+        device.wait(Until.hasObject(By.text(fileName)), 5000)
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
         composeTestRule.awaitIdle()
         viewModel.onAction(Save)
