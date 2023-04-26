@@ -1,11 +1,7 @@
 package org.rhasspy.mobile.android.configuration.content
 
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
@@ -18,9 +14,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
-import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.main.LocalSnackbarHostState
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
+import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.awaitSaved
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.WakeWordOption
@@ -46,14 +40,7 @@ class WakeWordConfigurationContentTest : KoinComponent {
     fun setUp() {
 
         composeTestRule.setContent {
-            val navController = rememberNavController()
-            val snackbarHostState = remember { SnackbarHostState() }
-
-            CompositionLocalProvider(
-                LocalSnackbarHostState provides snackbarHostState,
-                LocalMainNavController provides navController,
-                LocalViewModelFactory provides get()
-            ) {
+            TestContentProvider {
                 WakeWordConfigurationContent()
             }
         }

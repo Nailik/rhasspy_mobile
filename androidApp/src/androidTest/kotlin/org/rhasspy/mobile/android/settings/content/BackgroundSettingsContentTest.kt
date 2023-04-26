@@ -1,12 +1,10 @@
 package org.rhasspy.mobile.android.settings.content
 
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
-import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
@@ -18,8 +16,7 @@ import org.junit.Test
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
+import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewModel
@@ -44,12 +41,7 @@ class BackgroundSettingsContentTest : KoinComponent {
     fun setUp() {
 
         composeTestRule.setContent {
-            val navController = rememberNavController()
-
-            CompositionLocalProvider(
-                LocalMainNavController provides navController,
-                LocalViewModelFactory provides get()
-            ) {
+            TestContentProvider {
                 BackgroundServiceSettingsContent()
             }
         }

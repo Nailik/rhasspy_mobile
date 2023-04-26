@@ -2,14 +2,8 @@ package org.rhasspy.mobile.android.settings.content
 
 import android.widget.Switch
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiScrollable
@@ -23,8 +17,6 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
-import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScreens
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
@@ -53,19 +45,8 @@ class IndicationSettingsContentTest : KoinComponent {
     fun setUp() {
 
         composeTestRule.activity.setContent {
-            Surface(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.surface)
-                    .testTag(TestTag.Background)
-            ) {
-                val navController = rememberNavController()
-
-                CompositionLocalProvider(
-                    LocalMainNavController provides navController,
-                    LocalViewModelFactory provides get()
-                ) {
-                    WakeWordIndicationSettingsContent()
-                }
+            TestContentProvider {
+                WakeWordIndicationSettingsContent()
             }
         }
 

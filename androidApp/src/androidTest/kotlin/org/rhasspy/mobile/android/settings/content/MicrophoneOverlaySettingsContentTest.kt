@@ -2,10 +2,8 @@ package org.rhasspy.mobile.android.settings.content
 
 import android.widget.Switch
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiScrollable
@@ -19,8 +17,6 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
-import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
@@ -50,12 +46,7 @@ class MicrophoneOverlaySettingsContentTest : KoinComponent {
     fun setUp() {
 
         composeTestRule.activity.setContent {
-            val navController = rememberNavController()
-
-            CompositionLocalProvider(
-                LocalMainNavController provides navController,
-                LocalViewModelFactory provides get()
-            ) {
+            TestContentProvider {
                 MicrophoneOverlaySettingsContent()
             }
         }

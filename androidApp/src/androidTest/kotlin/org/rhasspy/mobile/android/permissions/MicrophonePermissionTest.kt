@@ -6,9 +6,7 @@ import android.os.Build
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.*
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.NoLiveLiterals
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -24,10 +22,12 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.theme.AppTheme
+import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.android.utils.onNodeWithText
 import org.rhasspy.mobile.android.utils.text
@@ -49,7 +49,7 @@ import kotlin.test.assertTrue
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
-class MicrophonePermissionTest {
+class MicrophonePermissionTest : KoinComponent {
 
     // activity necessary for permission
     @get: Rule
@@ -101,13 +101,8 @@ class MicrophonePermissionTest {
 
         //set content
         composeTestRule.activity.setContent {
-            val snackbarHostState = remember { SnackbarHostState() }
-
-            CompositionLocalProvider(
-                //snack bar necessary
-                LocalSnackbarHostState provides snackbarHostState
-            ) {
-
+            TestContentProvider {
+                val snackbarHostState = LocalSnackbarHostState.current
                 AppTheme {
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),

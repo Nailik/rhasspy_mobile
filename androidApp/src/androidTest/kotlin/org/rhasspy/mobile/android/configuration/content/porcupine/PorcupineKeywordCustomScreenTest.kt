@@ -2,14 +2,12 @@ package org.rhasspy.mobile.android.configuration.content.porcupine
 
 import android.os.Environment
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.performClick
-import androidx.navigation.compose.rememberNavController
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.UiDevice
@@ -25,7 +23,6 @@ import org.junit.Test
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
-import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.test.R
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
@@ -62,11 +59,7 @@ class PorcupineKeywordCustomScreenTest : KoinComponent {
     private fun setupUi() {
         scenario.onActivity { activity ->
             activity.setContent {
-                val navController = rememberNavController()
-
-                CompositionLocalProvider(
-                    LocalMainNavController provides navController
-                ) {
+                TestContentProvider {
                     val viewState by viewModel.viewState.collectAsState()
                     val contentViewState by viewState.editViewState.collectAsState()
                     PorcupineKeywordCustomScreen(

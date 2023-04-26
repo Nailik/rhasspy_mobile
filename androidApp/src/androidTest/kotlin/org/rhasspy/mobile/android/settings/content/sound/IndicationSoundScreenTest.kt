@@ -2,12 +2,10 @@ package org.rhasspy.mobile.android.settings.content.sound
 
 import android.os.Environment
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
-import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
@@ -19,8 +17,6 @@ import org.junit.Rule
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
-import org.rhasspy.mobile.android.main.LocalNavController
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.test.R
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.StableStringResource
@@ -56,12 +52,7 @@ abstract class IndicationSoundScreenTest(
         requestExternalStoragePermissions(device)
 
         composeTestRule.activity.setContent {
-            val navController = rememberNavController()
-
-            CompositionLocalProvider(
-                LocalNavController provides navController,
-                LocalViewModelFactory provides get()
-            ) {
+            TestContentProvider {
                 IndicationSoundScreen(
                     viewModel = viewModel,
                     title = title,
