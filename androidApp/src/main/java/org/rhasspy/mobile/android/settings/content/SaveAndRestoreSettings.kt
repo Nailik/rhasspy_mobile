@@ -19,7 +19,9 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.elements.translate
 import org.rhasspy.mobile.android.content.list.ListElement
+import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
@@ -27,6 +29,7 @@ import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsViewModel
 
 /**
@@ -36,6 +39,18 @@ import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettin
 @Composable
 fun SaveAndRestoreSettingsContent() {
     val viewModel: SaveAndRestoreSettingsViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewState by viewModel.viewState.collectAsState()
+
+    val snackBarHostState = LocalSnackbarHostState.current
+    val snackBarText = viewState.snackBarText?.let { translate(it) }
+
+    LaunchedEffect(snackBarText) {
+        snackBarText?.also {
+            snackBarHostState.showSnackbar(message = it)
+            viewModel.onEvent(ShowSnackBar)
+        }
+    }
+
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreenType.SaveAndRestoreSettings),
         title = MR.strings.saveAndRestoreSettings.stable

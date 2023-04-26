@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BatteryAlert
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -16,9 +17,11 @@ import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.elements.toText
+import org.rhasspy.mobile.android.content.elements.translate
 import org.rhasspy.mobile.android.content.list.InformationListElement
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.SwitchListItem
+import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
@@ -27,6 +30,7 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Action.DisableBatteryOptimization
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Change.SetBackgroundServiceEnabled
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Consumed.ShowSnackBar
 
 /**
  * background service
@@ -38,6 +42,16 @@ import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundService
 fun BackgroundServiceSettingsContent() {
     val viewModel: BackgroundServiceSettingsViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
+
+    val snackBarHostState = LocalSnackbarHostState.current
+    val snackBarText = viewState.snackBarText?.let { translate(it) }
+
+    LaunchedEffect(snackBarText) {
+        snackBarText?.also {
+            snackBarHostState.showSnackbar(message = it)
+            viewModel.onEvent(ShowSnackBar)
+        }
+    }
 
     SettingsScreenItemContent(
         modifier = Modifier.testTag(SettingsScreenType.BackgroundServiceSettings),

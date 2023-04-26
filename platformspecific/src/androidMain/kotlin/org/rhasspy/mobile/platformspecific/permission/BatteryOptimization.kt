@@ -1,30 +1,14 @@
 package org.rhasspy.mobile.platformspecific.permission
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.PowerManager
-import android.provider.Settings
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
+import org.koin.core.component.inject
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
 actual object BatteryOptimization : KoinComponent {
 
-    private val context = get<NativeApplication>()
-
-    /**
-     * open battery optimization settings in system
-     */
-    @SuppressLint("BatteryLife")
-    actual fun openOptimizationSettings() {
-        context.startActivity(Intent().apply {
-            this.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-            this.data = Uri.parse("package:${context.packageName}")
-            this.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        })
-    }
+    private val context by inject<NativeApplication>()
 
     /**
      * check if battery optimization is disabled

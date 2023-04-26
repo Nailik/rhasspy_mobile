@@ -75,7 +75,7 @@ object FileLogger : LogWriter(), KoinComponent {
     /**
      * save log to external file
      */
-    fun saveLogFile() = file.commonSave(
+    suspend fun saveLogFile() = file.commonSave(
         get(),
         "rhasspy_logfile_${
             Clock.System.now().toLocalDateTime(TimeZone.UTC)

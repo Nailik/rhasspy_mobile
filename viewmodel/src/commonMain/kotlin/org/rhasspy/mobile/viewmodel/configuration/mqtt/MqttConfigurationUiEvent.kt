@@ -22,4 +22,11 @@ sealed interface MqttConfigurationUiEvent {
         object SelectSSLCertificate : Action
     }
 
+    sealed interface Consumed : MqttConfigurationUiEvent {
+
+        object ShowSnackBar : Consumed
+
+    }
+
+
 }

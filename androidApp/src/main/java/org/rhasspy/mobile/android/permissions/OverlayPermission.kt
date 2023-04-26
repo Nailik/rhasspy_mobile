@@ -7,14 +7,18 @@ import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.elements.translate
+import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
@@ -32,16 +36,33 @@ fun <T : Any> RequiresOverlayPermission(
     onClick: (data: T) -> Unit,
     content: @Composable (onClick: (data: T) -> Unit) -> Unit
 ) {
+    val snackBarHostState = LocalSnackbarHostState.current
+    val coroutineScope = rememberCoroutineScope()
+
+    val snackBarMessage = translate(MR.strings.overlayPermissionRequestFailed.stable)
+
     var currentData by rememberSaveable { mutableStateOf(initialData) }
     var openRequestPermissionDialog by remember { mutableStateOf(false) }
 
+
     if (openRequestPermissionDialog) {
         //show information dialog
-        OverlayPermissionInfoDialog {
+        OverlayPermissionInfoDialog { allowRequest ->
             openRequestPermissionDialog = false
             //when user clicked yes redirect him to settings
-            if (it) {
-                OverlayPermission.requestPermission { onClick.invoke(currentData) }
+            if (allowRequest) {
+
+                if (!OverlayPermission.requestPermission { onClick.invoke(currentData) }) {
+
+                    //requesting permission failed, intent did not start
+                    coroutineScope.launch {
+                        snackBarHostState.showSnackbar(
+                            message = snackBarMessage,
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
+
+                }
             }
         }
     }

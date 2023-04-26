@@ -18,11 +18,6 @@ expect object MicrophonePermission {
     fun shouldShowInformationDialog(): Boolean
 
     /**
-     * to request the permission externally, redirect user to settings
-     */
-    fun requestPermissionExternally()
-
-    /**
      * read from system
      */
     fun update()

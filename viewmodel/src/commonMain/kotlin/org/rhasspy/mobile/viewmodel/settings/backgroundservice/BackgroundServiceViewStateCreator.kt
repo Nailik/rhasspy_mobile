@@ -3,7 +3,6 @@ package org.rhasspy.mobile.viewmodel.settings.backgroundservice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.combineStateFlow
@@ -16,7 +15,7 @@ class BackgroundServiceViewStateCreator(
 
     private val updaterScope = CoroutineScope(Dispatchers.Default)
 
-    operator fun invoke(): StateFlow<BackgroundServiceViewState> {
+    operator fun invoke(): MutableStateFlow<BackgroundServiceViewState> {
         val viewState = MutableStateFlow(getViewState())
 
         updaterScope.launch {

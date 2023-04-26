@@ -3,7 +3,6 @@ package org.rhasspy.mobile.viewmodel.screens.about
 import com.mikepenz.aboutlibraries.Libs
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.BuildKonfig
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.libraries.stable
@@ -14,7 +13,7 @@ class AboutScreenViewStateCreator(
     val nativeApplication: NativeApplication
 ) {
 
-    operator fun invoke(): StateFlow<AboutScreenViewState> {
+    operator fun invoke(): MutableStateFlow<AboutScreenViewState> {
         return MutableStateFlow(
             AboutScreenViewState(
                 changelog = BuildKonfig.changelog.split("\\\\")

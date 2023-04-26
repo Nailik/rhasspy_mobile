@@ -15,6 +15,12 @@ sealed interface WakeWordConfigurationUiEvent {
         object TestStartWakeWord : Action
     }
 
+    sealed interface Consumed : WakeWordConfigurationUiEvent {
+
+        object ShowSnackBar : Consumed
+
+    }
+
     sealed interface PorcupineUiEvent : WakeWordConfigurationUiEvent {
 
         sealed interface Change : PorcupineUiEvent {

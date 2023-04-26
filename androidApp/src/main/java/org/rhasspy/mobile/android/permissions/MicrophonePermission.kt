@@ -22,6 +22,9 @@ import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.platformspecific.external.ExternalRedirect
+import org.rhasspy.mobile.platformspecific.external.ExternalRedirectIntention
+import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 
 /**
@@ -44,6 +47,7 @@ fun RequiresMicrophonePermission(
     val coroutineScope = rememberCoroutineScope()
 
     val snackBarMessage = translate(MR.strings.microphonePermissionDenied.stable)
+    val snackBarMessageError = translate(MR.strings.microphonePermissionRequestFailed.stable)
     val snackBarActionLabel = translate(MR.strings.settings.stable)
 
     //launcher to get result of system request
@@ -63,7 +67,16 @@ fun RequiresMicrophonePermission(
                 )
 
                 if (snackBarResult == SnackbarResult.ActionPerformed) {
-                    MicrophonePermission.requestPermissionExternally()
+
+                    if (ExternalRedirect.launch(ExternalRedirectIntention.RequestMicrophonePermissionExternally) !is ExternalRedirectResult.Success) {
+
+                        snackBarHostState.showSnackbar(
+                            message = snackBarMessageError,
+                            duration = SnackbarDuration.Short,
+                        )
+
+                    }
+
                 }
             }
         }

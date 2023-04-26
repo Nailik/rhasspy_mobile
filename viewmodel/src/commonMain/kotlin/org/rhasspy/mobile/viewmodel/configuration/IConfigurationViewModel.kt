@@ -25,8 +25,8 @@ import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.ui.event.StateEvent.Consumed
-import org.rhasspy.mobile.ui.event.StateEvent.Triggered
+import org.rhasspy.mobile.ui.event.EventState.Consumed
+import org.rhasspy.mobile.ui.event.EventState.Triggered
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiNavigate.PopBackStack
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState

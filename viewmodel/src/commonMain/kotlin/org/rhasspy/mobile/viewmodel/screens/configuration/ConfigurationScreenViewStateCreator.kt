@@ -20,7 +20,7 @@ import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.ui.event.StateEvent
+import org.rhasspy.mobile.ui.event.EventState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.IConfigurationScreenUiStateEvent.ScrollToErrorEventIState
 
@@ -38,7 +38,7 @@ class ConfigurationScreenViewStateCreator(
 ) {
     private val updaterScope = CoroutineScope(Dispatchers.Default)
 
-    private val scrollToErrorEvent = MutableStateFlow(ScrollToErrorEventIState(StateEvent.Consumed, 0))
+    private val scrollToErrorEvent = MutableStateFlow(ScrollToErrorEventIState(EventState.Consumed, 0))
 
     private val serviceStateFlow = combineStateFlow(
         httpClientService.serviceState,
@@ -77,10 +77,10 @@ class ConfigurationScreenViewStateCreator(
         return viewState
     }
 
-    fun updateScrollToError(stateEvent: StateEvent) {
+    fun updateScrollToError(eventState: EventState) {
         scrollToErrorEvent.update {
             it.copy(
-                stateEvent = stateEvent,
+                eventState = eventState,
                 firstErrorIndex = viewState.value.firstErrorIndex.value ?: it.firstErrorIndex
             )
         }

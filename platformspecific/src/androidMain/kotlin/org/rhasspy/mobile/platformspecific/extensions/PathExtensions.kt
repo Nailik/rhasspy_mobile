@@ -1,9 +1,8 @@
 package org.rhasspy.mobile.platformspecific.extensions
 
-import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import co.touchlab.kermit.Severity
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
@@ -12,6 +11,10 @@ import kotlinx.serialization.json.decodeFromStream
 import okio.*
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.external.ExternalRedirect
+import org.rhasspy.mobile.platformspecific.external.ExternalRedirectIntention
+import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Result
+import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Success
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.io.SequenceInputStream
@@ -54,34 +57,34 @@ fun InputStream.modify(): InputStream {
     return SequenceInputStream(Collections.enumeration(streams))
 }
 
-actual fun Path.commonShare(nativeApplication: NativeApplication) {
+actual fun Path.commonShare(nativeApplication: NativeApplication): Boolean {
     val fileUri: Uri = FileProvider.getUriForFile(
-        nativeApplication,
-        nativeApplication.packageName.toString() + ".provider",
+        nativeApplication, nativeApplication.packageName.toString() + ".provider",
         this.toFile()
     )
 
-    val shareIntent: Intent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_STREAM, fileUri)
-        type = "text/html"
-    }
-    nativeApplication.startActivity(Intent.createChooser(shareIntent, null).apply {
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    })
+    val result = ExternalRedirect.launch(
+        ExternalRedirectIntention.ShareFile(
+            fileUri = fileUri.toString(),
+            mimeType = "text/html"
+        )
+    )
+
+    return result is Success
 }
 
-actual fun Path.commonSave(nativeApplication: NativeApplication, fileName: String, fileType: String) {
-    nativeApplication.currentActivity?.createDocument(fileName, fileType) {
-        if (it.resultCode == Activity.RESULT_OK) {
-            it.data?.data?.also { uri ->
-                nativeApplication.contentResolver.openOutputStream(uri)
-                    ?.also { outputStream ->
-                        this.toFile().inputStream().copyTo(outputStream)
-                        outputStream.flush()
-                        outputStream.close()
-                    }
+actual suspend fun Path.commonSave(nativeApplication: NativeApplication, fileName: String, fileType: String): Boolean {
+
+    val result = ExternalRedirect.launchForResult(ExternalRedirectIntention.CreateDocument(fileName, fileType))
+
+    return if (result is Result) {
+        nativeApplication.contentResolver.openOutputStream(result.data.toUri())
+            ?.also { outputStream ->
+                this.toFile().inputStream().copyTo(outputStream)
+                outputStream.flush()
+                outputStream.close()
             }
-        }
-    }
+
+        true
+    } else false
 }

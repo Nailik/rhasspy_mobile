@@ -3,12 +3,12 @@ package org.rhasspy.mobile.ui.event
 import androidx.compose.runtime.Stable
 
 @Stable
-abstract class Event(open val stateEvent: StateEvent)
+abstract class Event(open val eventState: EventState)
 
 /**
- *  This [StateEvent] can only have two primitive states.
+ *  This [EventState] can only have two primitive states.
  */
-enum class StateEvent {
+enum class EventState {
     /**
      *  The event is currently in its triggered state
      */

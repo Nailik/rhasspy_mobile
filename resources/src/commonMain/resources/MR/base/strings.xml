@@ -97,6 +97,8 @@
         required.
     </string>
     <string name="microphonePermissionDenied">open settings to allow microphone access</string>
+    <string name="microphonePermissionRequestFailed">requesting microphone permission failed
+    </string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
     <string name="testAudioLevel">Audio Level Test</string>
@@ -114,6 +116,7 @@
         indication.\nClick "OK", scroll to Rhasspy and allow
         Permission.
     </string>
+    <string name="overlayPermissionRequestFailed">requesting overlay permission failed</string>
     <string name="save">Save</string>
     <string name="saveSettingsText">Save settings to an external file</string>
     <string name="restoreSettingsText">Restore settings from an external file</string>
@@ -311,6 +314,15 @@
     <string name="onDialogInformation">between Start Session (Wake Word Detected) and End Session
         (After Intent Recognition and Handling)
     </string>
+    <string name="url">Url</string>
+    <string name="linkOpenFailed">Unable to open link\nthe link was copied to the clipboard</string>
+    <string name="saveLogFileFailed">Save log file failed</string>
+    <string name="shareLogFileFailed">Share log file failed</string>
+    <string name="disableBatteryOptimizationFailed">Deactivate Battery Optimization failed</string>
+    <string name="exportSettingsFileFailed">export setting file failed</string>
+    <string name="restoreSettingsFromFileFailed">restore setting from file failed</string>
+    <string name="shareSettingsFileFailed">share setting file failed</string>
+    <string name="selectFileFailed">unable to open file chooser</string>
     <!-- porcupine error -->
     <string name="activation_exception">activation exception</string>
     <string name="activation_limit_exception">activation limit exception</string>

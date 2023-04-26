@@ -19,8 +19,6 @@ expect abstract class NativeApplication() {
 
     fun isInstrumentedTest(): Boolean
 
-    fun openLink(link: String)
-
     fun restart()
 
     fun onCreate()

@@ -3,18 +3,21 @@ package org.rhasspy.mobile.viewmodel.configuration.mqtt
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.logic.openLink
+import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.data.link.LinkType
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.*
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.OpenMqttSSLWiki
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.SelectSSLCertificate
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Consumed.ShowSnackBar
+import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
 @Stable
 class MqttConfigurationViewModel(
@@ -24,10 +27,11 @@ class MqttConfigurationViewModel(
     initialViewState = ::MqttConfigurationViewState
 ) {
 
-    fun onAction(action: MqttConfigurationUiEvent) {
+    fun onEvent(action: MqttConfigurationUiEvent) {
         when (action) {
             is Change -> onChange(action)
             is Action -> onAction(action)
+            is Consumed -> onConsumed(action)
         }
     }
 
@@ -50,8 +54,24 @@ class MqttConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            OpenMqttSSLWiki -> openLink("https://github.com/Nailik/rhasspy_mobile/wiki/MQTT#enable-ssl")
+            OpenMqttSSLWiki -> openMqttSSLWikiLink()
             SelectSSLCertificate -> selectSSLCertificate()
+        }
+    }
+
+    private fun onConsumed(consumed: Consumed) {
+        contentViewState.update {
+            when (consumed) {
+                is ShowSnackBar -> it.copy(snackBarText = null)
+            }
+        }
+    }
+
+    private fun openMqttSSLWikiLink() {
+        if (!OpenLinkUtils.openLink(LinkType.WikiMQTTSSL)) {
+            contentViewState.update {
+                it.copy(snackBarText = MR.strings.linkOpenFailed.stable)
+            }
         }
     }
 

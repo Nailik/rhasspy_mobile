@@ -5,16 +5,16 @@ expect object SettingsUtils {
     /**
      * export the settings file
      */
-    fun exportSettingsFile()
+    suspend fun exportSettingsFile(): Boolean
 
     /**
      * restore all settings from a file
      */
-    fun restoreSettingsFromFile()
+    suspend fun restoreSettingsFromFile(): Boolean
 
     /**
      * share settings file but without sensitive data
      */
-    fun shareSettingsFile()
+    suspend fun shareSettingsFile(): Boolean
 
 }

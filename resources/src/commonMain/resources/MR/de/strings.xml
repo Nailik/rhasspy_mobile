@@ -96,6 +96,9 @@
     <string name="microphonePermissionDenied">Öffnen Sie die Einstellungen um den Mikrofonzugriff zu
         erlauben
     </string>
+    <string name="microphonePermissionRequestFailed">Anforderung der Mikrofonerlaubnis
+        fehlgeschlagen
+    </string>
     <string name="cancel">Abbrechen</string>
     <string name="ok">OK</string>
     <string name="testAudioLevel">Audio-Level-Test</string>
@@ -112,6 +115,8 @@
     <string name="overlayPermissionInfo">Die visuelle Anzeige verwendet ein Overlay, um die Anzeige
         darzustellen.\nKlicken Sie auf "OK", scrollen
         Sie zu Rhasspy und erlauben Sie die Berechtigung.
+    </string>
+    <string name="overlayPermissionRequestFailed">Anforderung der Overlay-Erlaubnis fehlgeschlagen
     </string>
     <string name="save">Speichern</string>
     <string name="saveSettingsText">Einstellungen in einer externen Datei speichern</string>
@@ -323,6 +328,22 @@
     <string name="onDialogInformation">zwischen Sitzungsbeginn (Wake Word Detected) und Sitzungsende
         (nach Intent Recognition und Handling)
     </string>
+    <string name="url">Url</string>
+    <string name="linkOpenFailed">Der Link konnte nicht geöffnet werden\ner wurde in die
+        Zwischenablage kopiert
+    </string>
+    <string name="saveLogFileFailed">Speichern des Logs fehlgeschlagen</string>
+    <string name="shareLogFileFailed">Teilen des Logs fehlgeschlagen</string>
+    <string name="disableBatteryOptimizationFailed">Deaktivieren der Batterie-Optimierung
+        fehlgeschlagen
+    </string>
+    <string name="exportSettingsFileFailed">Exportieren der Einstellungsdatei fehlgeschlagen
+    </string>
+    <string name="restoreSettingsFromFileFailed">Einstellungen aus Datei wiederherstellen
+        fehlgeschlagen
+    </string>
+    <string name="shareSettingsFileFailed">Einstellungsdatei freigeben fehlgeschlagen</string>
+    <string name="selectFileFailed">Die Dateiauswahl kann nicht geöffnet werden</string>
     <!-- porcupine error -->
     <string name="activation_exception">activation exception</string>
     <string name="activation_limit_exception">activation limit exception</string>

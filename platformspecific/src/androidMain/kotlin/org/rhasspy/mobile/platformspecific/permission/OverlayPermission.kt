@@ -1,17 +1,17 @@
 package org.rhasspy.mobile.platformspecific.permission
 
-import android.content.Intent
 import android.provider.Settings
-import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.external.ExternalRedirect
+import org.rhasspy.mobile.platformspecific.external.ExternalRedirectIntention
+import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
 
 actual object OverlayPermission : KoinComponent {
 
-    private val logger = Logger.withTag("OverlayPermission")
     private val context by inject<NativeApplication>()
     private val _granted = MutableStateFlow(isGranted())
 
@@ -25,38 +25,15 @@ actual object OverlayPermission : KoinComponent {
     /**
      * to request the permission externally, redirect user to settings
      */
-    actual fun requestPermission(onGranted: () -> Unit) {
+    actual fun requestPermission(onGranted: () -> Unit): Boolean {
         OverlayPermission.onGranted = onGranted
 
-        if (!tryOverlayPermission()) {
-            logger.a { "tryOverlayPermission didn't work" }
-            trySettings()
-        }
-    }
+        val result = ExternalRedirect.launch(ExternalRedirectIntention.OpenOverlaySettings)
 
-    private fun tryOverlayPermission(): Boolean {
-        return try {
-            // send user to the device settings
-            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(intent)
+        return if (result is ExternalRedirectResult.Success) {
             true
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-
-    private fun trySettings(): Boolean {
-        return try {
-            // send user to the device settings
-            val intent = Intent(Settings.ACTION_SETTINGS)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(intent)
-            true
-        } catch (exception: Exception) {
-            logger.a(exception) { "trySettings didn't work" }
-            false
+        } else {
+            return ExternalRedirect.launch(ExternalRedirectIntention.OpenAppSettings) is ExternalRedirectResult.Success
         }
     }
 

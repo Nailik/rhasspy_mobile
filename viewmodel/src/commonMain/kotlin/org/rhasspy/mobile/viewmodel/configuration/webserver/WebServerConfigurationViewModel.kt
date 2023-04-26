@@ -3,18 +3,21 @@ package org.rhasspy.mobile.viewmodel.configuration.webserver
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.logic.openLink
+import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.data.link.LinkType
+import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.*
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.OpenWebServerSSLWiki
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.SelectSSLCertificate
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Consumed.ShowSnackBar
+import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
 @Stable
 class WebServerConfigurationViewModel(
@@ -28,6 +31,7 @@ class WebServerConfigurationViewModel(
         when (event) {
             is Change -> onChange(event)
             is Action -> onAction(event)
+            is Consumed -> onConsumed(event)
         }
     }
 
@@ -47,8 +51,24 @@ class WebServerConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            OpenWebServerSSLWiki -> openLink("https://github.com/Nailik/rhasspy_mobile/wiki/Webserver#enable-ssl")
+            OpenWebServerSSLWiki -> openWebServerSSLWiki()
             SelectSSLCertificate -> selectSSLCertificate()
+        }
+    }
+
+    private fun onConsumed(consumed: Consumed) {
+        contentViewState.update {
+            when (consumed) {
+                is ShowSnackBar -> it.copy(snackBarText = null)
+            }
+        }
+    }
+
+    private fun openWebServerSSLWiki() {
+        if (!OpenLinkUtils.openLink(LinkType.WikiWebServerSSL)) {
+            contentViewState.update {
+                it.copy(snackBarText = MR.strings.linkOpenFailed.stable)
+            }
         }
     }
 

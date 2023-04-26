@@ -19,4 +19,10 @@ sealed interface WebServerConfigurationUiEvent {
         object SelectSSLCertificate : Action
     }
 
+    sealed interface Consumed : WebServerConfigurationUiEvent {
+
+        object ShowSnackBar : Consumed
+
+    }
+
 }

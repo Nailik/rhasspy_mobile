@@ -17,6 +17,6 @@ expect fun Path.commonReadWrite(): FileHandle
 
 expect inline fun <reified T> Path.commonDecodeLogList(): T
 
-expect fun Path.commonShare(nativeApplication: NativeApplication)
+expect fun Path.commonShare(nativeApplication: NativeApplication): Boolean
 
-expect fun Path.commonSave(nativeApplication: NativeApplication, fileName: String, fileType: String)
+expect suspend fun Path.commonSave(nativeApplication: NativeApplication, fileName: String, fileType: String): Boolean

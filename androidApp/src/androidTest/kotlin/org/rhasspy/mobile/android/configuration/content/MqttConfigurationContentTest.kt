@@ -64,7 +64,7 @@ class MqttConfigurationContentTest : KoinComponent {
      */
     @Test
     fun testMqttContent() = runTest {
-        viewModel.onAction(SetMqttEnabled(false))
+        viewModel.onEvent(SetMqttEnabled(false))
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
@@ -125,7 +125,7 @@ class MqttConfigurationContentTest : KoinComponent {
      */
     @Test
     fun testMqttConnectionSettings() = runTest {
-        viewModel.onAction(SetMqttEnabled(true))
+        viewModel.onEvent(SetMqttEnabled(true))
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
@@ -188,8 +188,8 @@ class MqttConfigurationContentTest : KoinComponent {
      */
     @Test
     fun testMqttSSL() = runTest {
-        viewModel.onAction(SetMqttEnabled(true))
-        viewModel.onAction(SetMqttSSLEnabled(false))
+        viewModel.onEvent(SetMqttEnabled(true))
+        viewModel.onEvent(SetMqttSSLEnabled(false))
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
@@ -235,7 +235,7 @@ class MqttConfigurationContentTest : KoinComponent {
      */
     @Test
     fun testMqttConnectionTiming() = runTest {
-        viewModel.onAction(SetMqttEnabled(true))
+        viewModel.onEvent(SetMqttEnabled(true))
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()

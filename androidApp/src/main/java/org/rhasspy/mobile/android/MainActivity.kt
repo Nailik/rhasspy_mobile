@@ -2,6 +2,7 @@ package org.rhasspy.mobile.android
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,7 +28,6 @@ import org.rhasspy.mobile.android.main.MainNavigation
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
 import org.rhasspy.mobile.logic.middleware.Source
-import org.rhasspy.mobile.platformspecific.application.AppActivity
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
@@ -37,7 +37,7 @@ import org.rhasspy.mobile.viewmodel.ViewModelFactory
  * simple main activity to start application with splash screen
  */
 @NoLiveLiterals
-class MainActivity : KoinComponent, AppActivity() {
+class MainActivity : KoinComponent, AppCompatActivity() {
 
     companion object : KoinComponent {
         var isFirstLaunch = false

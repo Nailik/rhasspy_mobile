@@ -23,11 +23,13 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.CustomDivider
 import org.rhasspy.mobile.android.content.elements.Icon
 import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.android.content.elements.translate
 import org.rhasspy.mobile.android.content.list.LogListElement
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Change.ToggleListAutoScroll
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Navigate.SaveLogFile
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Navigate.ShareLogFile
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
@@ -40,6 +42,16 @@ import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
 fun LogScreen() {
     val viewModel: LogScreenViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
+
+    val snackBarHostState = LocalSnackbarHostState.current
+    val snackBarText = viewState.snackBarText?.let { translate(it) }
+
+    LaunchedEffect(snackBarText) {
+        snackBarText?.also {
+            snackBarHostState.showSnackbar(message = it)
+            viewModel.onEvent(ShowSnackBar)
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),

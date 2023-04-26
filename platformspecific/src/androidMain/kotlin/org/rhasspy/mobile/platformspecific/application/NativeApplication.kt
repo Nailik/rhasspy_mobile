@@ -4,9 +4,9 @@ import android.app.Activity
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -14,10 +14,11 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.rhasspy.mobile.platformspecific.external.ExternalRedirect
 
 actual abstract class NativeApplication : MultiDexApplication() {
 
-    var currentActivity: AppActivity? = null
+    var currentActivity: AppCompatActivity? = null
         private set
 
     init {
@@ -40,8 +41,9 @@ actual abstract class NativeApplication : MultiDexApplication() {
             override fun onActivityCreated(p0: Activity, p1: Bundle?) {}
             override fun onActivityStarted(p0: Activity) {
                 //always represents top activity
-                if (p0 is AppActivity) {
+                if (p0 is AppCompatActivity) {
                     currentActivity = p0
+                    ExternalRedirect.registerCallback(p0)
                 }
             }
 
@@ -61,15 +63,6 @@ actual abstract class NativeApplication : MultiDexApplication() {
 
     actual fun isInstrumentedTest(): Boolean {
         return Settings.System.getString(contentResolver, "firebase.test.lab") == "true"
-    }
-
-    /**
-     * opens the link in browser
-     */
-    actual fun openLink(link: String) {
-        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(link)).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        })
     }
 
     actual fun restart() {

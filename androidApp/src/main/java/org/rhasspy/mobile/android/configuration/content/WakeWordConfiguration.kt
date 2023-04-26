@@ -34,6 +34,7 @@ import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.android.main.LocalNavController
+import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.testTag
@@ -44,6 +45,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.MicrophonePermissionAllowed
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.TestStartWakeWord
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.OpenPicoVoiceConsole
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
@@ -67,11 +69,21 @@ fun WakeWordConfigurationContent() {
     val viewModel: WakeWordConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val navController = rememberNavController()
 
+    val viewState by viewModel.viewState.collectAsState()
+    val contentViewState by viewState.editViewState.collectAsState()
+    val snackBarHostState = LocalSnackbarHostState.current
+    val snackBarText = contentViewState.snackBarText?.let { translate(it) }
+
+    LaunchedEffect(snackBarText) {
+        snackBarText?.also {
+            snackBarHostState.showSnackbar(message = it)
+            viewModel.onEvent(ShowSnackBar)
+        }
+    }
+
     CompositionLocalProvider(
         LocalNavController provides navController
     ) {
-
-
         NavHost(
             navController = navController,
             startDestination = WakeWordConfigurationScreens.Overview.route
@@ -82,8 +94,6 @@ fun WakeWordConfigurationContent() {
             }
 
             composable(WakeWordConfigurationScreens.PorcupineLanguage.route) {
-                val viewState by viewModel.viewState.collectAsState()
-                val contentViewState by viewState.editViewState.collectAsState()
                 PorcupineLanguageScreen(
                     viewState = contentViewState.wakeWordPorcupineViewState,
                     onEvent = viewModel::onEvent
@@ -91,8 +101,6 @@ fun WakeWordConfigurationContent() {
             }
 
             composable(WakeWordConfigurationScreens.PorcupineKeyword.route) {
-                val viewState by viewModel.viewState.collectAsState()
-                val contentViewState by viewState.editViewState.collectAsState()
                 PorcupineKeywordScreen(
                     viewState = contentViewState.wakeWordPorcupineViewState,
                     onEvent = viewModel::onEvent
