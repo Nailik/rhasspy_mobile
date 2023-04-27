@@ -29,12 +29,6 @@ jobs:
       # necessary for linux/macos but doesn't work on windows
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      # setup jdk 19
-      - name: Set Up JDK 19
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'corretto'
-          java-version: '19'
       # sonar
       - name: Sonar analyze
         env:
@@ -44,7 +38,7 @@ jobs:
   #runs checks
   analyze:
     needs: sonar
-    runs-on: self-hosted
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
         with:
@@ -70,7 +64,7 @@ jobs:
           path: androidApp/build/reports/lint-results-${{ inputs.BUILD_TYPE_LOWERCASE }}.html
   unitTest:
     needs: analyze
-    runs-on: self-hosted
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
         with:
