@@ -2,6 +2,7 @@
 
 import com.mikepenz.aboutlibraries.plugin.DuplicateMode.MERGE
 import com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
+import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
     kotlin("multiplatform")
@@ -80,7 +81,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_19
         targetCompatibility = JavaVersion.VERSION_19
     }
-    if (org.apache.tools.ant.taskdefs.condition.Os.isFamily(org.apache.tools.ant.taskdefs.condition.Os.FAMILY_MAC)) {
+    if (Os.isFamily(Os.FAMILY_MAC)) {
         sourceSets.getByName("main").res.srcDir(File(buildDir, "generated/moko/androidMain/res"))
     }
 }
@@ -99,7 +100,14 @@ buildkonfig {
 
 tasks.findByPath("preBuild")!!.doFirst {
     exec {
-        commandLine("../gradlew", "exportLibraryDefinitions", "-PaboutLibraries.exportPath=${projectDir}/src/commonMain/resources/MR/files")
+        workingDir = File("$projectDir/..")
+        commandLine = listOf(
+            if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                "gradlew.bat"
+            } else "gradlew",
+            "exportLibraryDefinitions",
+            "-PaboutLibraries.exportPath=${projectDir}/src/commonMain/resources/MR/files"
+        )
     }
 }
 
