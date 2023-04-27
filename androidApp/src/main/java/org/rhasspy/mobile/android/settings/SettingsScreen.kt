@@ -20,6 +20,9 @@ import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.content.*
 import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
+import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
+import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
+import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
 import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
@@ -83,6 +86,15 @@ fun SettingsScreen() {
             }
 
             item {
+                AudioRecorderSettings(
+                    audioRecorderChannelType = viewState.audioRecorderChannelType,
+                    audioRecorderEncodingType = viewState.audioRecorderEncodingType,
+                    audioRecorderSampleRateType = viewState.audioRecorderSampleRateType
+                )
+                CustomDivider()
+            }
+
+            item {
                 AutomaticSilenceDetection(viewState.isAutomaticSilenceDetectionEnabled)
                 CustomDivider()
             }
@@ -134,6 +146,10 @@ fun NavGraphBuilder.addSettingsScreen() {
 
     composable(SettingsScreenType.AudioFocusSettings.route) {
         AudioFocusSettingsContent()
+    }
+
+    composable(SettingsScreenType.AudioRecorderSettings.route) {
+        AudioRecorderSettingsContent()
     }
 
     composable(SettingsScreenType.AutomaticSilenceDetectionSettings.route) {
@@ -230,6 +246,22 @@ private fun AudioFocus(audioFocusOption: AudioFocusOption) {
         text = MR.strings.audioFocus.stable,
         secondaryText = audioFocusOption.text,
         screen = SettingsScreenType.AudioFocusSettings
+    )
+
+}
+
+
+@Composable
+private fun AudioRecorderSettings(
+    audioRecorderChannelType: AudioRecorderChannelType,
+    audioRecorderEncodingType: AudioRecorderEncodingType,
+    audioRecorderSampleRateType: AudioRecorderSampleRateType
+) {
+
+    SettingsListItem(
+        text = MR.strings.audioRecorder.stable,
+        secondaryText = "${translate(audioRecorderChannelType.text)} | ${translate(audioRecorderEncodingType.text)} | ${translate(audioRecorderSampleRateType.text)}",
+        screen = SettingsScreenType.AudioRecorderSettings
     )
 
 }

@@ -2,6 +2,9 @@ package org.rhasspy.mobile.settings
 
 import kotlinx.collections.immutable.persistentListOf
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
+import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
+import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
+import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
 import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
@@ -67,5 +70,9 @@ object AppSetting {
     val isAudioFocusOnSound = ISetting(SettingsEnum.AudioFocusOnSound, false)
     val isAudioFocusOnRecord = ISetting(SettingsEnum.AudioFocusOnRecord, false)
     val isAudioFocusOnDialog = ISetting(SettingsEnum.AudioFocusOnDialog, false)
+
+    val audioRecorderChannel = ISetting(SettingsEnum.AudioRecorderChannel, AudioRecorderChannelType.default)
+    val audioRecorderEncoding = ISetting(SettingsEnum.AudioRecorderEncoding, AudioRecorderEncodingType.default)
+    val audioRecorderSampleRate = ISetting(SettingsEnum.AudioRecorderSampleRate, AudioRecorderSampleRateType.default)
 
 }

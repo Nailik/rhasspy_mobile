@@ -10,7 +10,7 @@ import io.ktor.server.engine.internal.ClosedChannelException
 import io.ktor.utils.io.core.ByteReadPacket
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
-import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder.Companion.appendWavHeader
+import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appendWavHeader
 import org.rhasspy.mobile.settings.AppSetting
 
 class UdpConnection(

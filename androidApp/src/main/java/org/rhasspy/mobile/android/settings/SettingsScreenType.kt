@@ -10,6 +10,7 @@ enum class SettingsScreenType(val route: String) {
     IndicationSettings("SettingsScreenType_IndicationSettings"),
     DeviceSettings("SettingsScreenType_DeviceSettings"),
     AudioFocusSettings("SettingsScreenType_AudioFocusSettings"),
+    AudioRecorderSettings("SettingsScreenType_AudioRecorderSettings"),
     AutomaticSilenceDetectionSettings("SettingsScreenType_AutomaticSilenceDetectionSettings"),
     LogSettings("SettingsScreenType_LogSettings"),
     SaveAndRestoreSettings("SettingsScreenType_SaveAndRestoreSettings"),

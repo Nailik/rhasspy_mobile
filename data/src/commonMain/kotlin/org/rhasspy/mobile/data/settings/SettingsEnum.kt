@@ -47,6 +47,10 @@ enum class SettingsEnum {
     AudioFocusOnRecord,
     AudioFocusOnDialog,
 
+    AudioRecorderChannel,
+    AudioRecorderEncoding,
+    AudioRecorderSampleRate,
+
     ShowLog,
     LogAudioFrames,
     LogLevel,

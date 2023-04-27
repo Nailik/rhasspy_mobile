@@ -22,7 +22,7 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogService
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
-import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder.Companion.appendWavHeader
+import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appendWavHeader
 import org.rhasspy.mobile.platformspecific.extensions.commonData
 import org.rhasspy.mobile.platformspecific.extensions.commonSource
 import org.rhasspy.mobile.platformspecific.mqtt.*

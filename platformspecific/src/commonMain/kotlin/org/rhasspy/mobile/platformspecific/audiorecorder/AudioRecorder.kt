@@ -2,8 +2,15 @@ package org.rhasspy.mobile.platformspecific.audiorecorder
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
+import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
+import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
 
-expect class AudioRecorder() {
+expect class AudioRecorder(
+    audioRecorderSampleRateType: AudioRecorderSampleRateType,
+    audioRecorderChannelType: AudioRecorderChannelType,
+    audioRecorderEncodingType: AudioRecorderEncodingType
+) {
 
     /**
      * output data as flow
@@ -30,16 +37,5 @@ expect class AudioRecorder() {
      * stop recording
      */
     fun stopRecording()
-
-    companion object {
-        /**
-         * use the settings of the audio recorder
-         * (samplingRate, channels, bitrate) and the audioSize
-         * to create wav header and add it in front of the given data
-         */
-        fun ByteArray.appendWavHeader(): ByteArray
-
-        fun getWavHeader(audioSize: Long): ByteArray
-    }
 
 }

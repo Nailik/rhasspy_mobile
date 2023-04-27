@@ -9,6 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
+import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.combinedTestTag
 import org.rhasspy.mobile.android.content.SecondaryContent
 import org.rhasspy.mobile.android.content.list.RadioButtonListItem
 import org.rhasspy.mobile.android.testTag
@@ -19,12 +21,17 @@ fun <E : IOption<*>> RadioButtonsEnumSelectionList(
     modifier: Modifier = Modifier,
     selected: E,
     onSelect: (item: E) -> Unit,
+    combinedTestTag: TestTag? = null,
     values: ImmutableList<E>
 ) {
     Column(modifier = modifier) {
         values.forEach { item ->
             RadioButtonListItem(
-                modifier = Modifier.testTag(item),
+                modifier = Modifier.let {
+                    combinedTestTag?.let { tag ->
+                        it.combinedTestTag(item, tag)
+                    } ?: it.testTag(item)
+                },
                 text = item.text,
                 isChecked = selected == item,
                 onClick = { onSelect(item) }

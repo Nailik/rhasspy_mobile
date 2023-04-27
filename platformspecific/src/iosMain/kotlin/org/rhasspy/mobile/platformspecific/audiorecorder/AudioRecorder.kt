@@ -1,10 +1,16 @@
 package org.rhasspy.mobile.platformspecific.audiorecorder
 
-import io.ktor.utils.io.core.Closeable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
+import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
+import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
 
-actual class AudioRecorder : Closeable {
+actual class AudioRecorder actual constructor(
+    private val audioRecorderSampleRateType: AudioRecorderSampleRateType,
+    private val audioRecorderChannelType: AudioRecorderChannelType,
+    private val audioRecorderEncodingType: AudioRecorderEncodingType
+) {
 
     /**
      * max volume since start recording
@@ -28,29 +34,10 @@ actual class AudioRecorder : Closeable {
     actual fun stopRecording() {
     }
 
-    override fun close() {
-        TODO("Not yet implemented")
-    }
-
     /**
      * output data as flow
      */
     actual val output: Flow<ByteArray>
         get() = TODO("Not yet implemented")
-
-    actual companion object {
-        /**
-         * use the settings of the audio recorder
-         * (samplingRate, channels, bitrate) and the audioSize
-         * to create wav header and add it in front of the given data
-         */
-        actual fun ByteArray.appendWavHeader(): ByteArray {
-            TODO("Not yet implemented")
-        }
-
-        actual fun getWavHeader(audioSize: Long): ByteArray {
-            TODO("Not yet implemented")
-        }
-    }
 
 }
