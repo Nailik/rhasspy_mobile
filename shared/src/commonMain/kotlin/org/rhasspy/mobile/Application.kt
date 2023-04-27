@@ -40,7 +40,7 @@ abstract class Application : NativeApplication(), KoinComponent {
             // declare used modules
             modules(module {
                 single<NativeApplication> { this@Application }
-            }, viewModelFactory, serviceModule, viewModelModule, factoryModule, nativeModule)
+            }, viewModelFactory, serviceModule, viewModelModule, factoryModule)
         }
 
         CoroutineScope(Dispatchers.Default).launch {

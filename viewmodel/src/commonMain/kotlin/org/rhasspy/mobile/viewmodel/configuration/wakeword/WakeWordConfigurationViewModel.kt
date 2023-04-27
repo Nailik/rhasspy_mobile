@@ -144,7 +144,7 @@ class WakeWordConfigurationViewModel(
             FileUtils.selectFile(FolderType.PorcupineFolder)?.also { path ->
                 newFiles.add(path)
                 onPorcupineChange(AddPorcupineKeywordCustom(path))
-            } ?: {
+            } ?: run {
                 contentViewState.update {
                     it.copy(snackBarText = MR.strings.selectFileFailed.stable)
                 }

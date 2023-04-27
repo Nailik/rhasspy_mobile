@@ -23,8 +23,11 @@ class SettingsScreenViewStateCreator {
                 AppSetting.isSoundIndicationEnabled.data,
                 AppSetting.isWakeWordLightIndicationEnabled.data,
                 AppSetting.audioFocusOption.data,
+                AppSetting.audioRecorderChannel.data,
+                AppSetting.audioRecorderEncoding.data,
+                AppSetting.audioRecorderSampleRate.data,
                 AppSetting.isAutomaticSilenceDetectionEnabled.data,
-                AppSetting.logLevel.data
+                AppSetting.logLevel.data,
             ).collect {
                 viewState.value = getViewState()
             }
@@ -41,6 +44,9 @@ class SettingsScreenViewStateCreator {
             isSoundIndicationEnabled = AppSetting.isSoundIndicationEnabled.value,
             isWakeWordLightIndicationEnabled = AppSetting.isWakeWordLightIndicationEnabled.value,
             audioFocusOption = AppSetting.audioFocusOption.value,
+            audioRecorderChannelType = AppSetting.audioRecorderChannel.value,
+            audioRecorderEncodingType = AppSetting.audioRecorderEncoding.value,
+            audioRecorderSampleRateType = AppSetting.audioRecorderSampleRate.value,
             isAutomaticSilenceDetectionEnabled = AppSetting.isAutomaticSilenceDetectionEnabled.value,
             logLevel = AppSetting.logLevel.value
         )

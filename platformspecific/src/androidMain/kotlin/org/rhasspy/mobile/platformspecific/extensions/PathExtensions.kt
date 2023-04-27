@@ -30,7 +30,7 @@ actual fun Path.commonSize(): Long? = FileSystem.SYSTEM.metadata(this).size
 
 actual fun Path.commonSource(): Source = this.toNioPath().source()
 
-actual fun Path.commonReadWrite(): FileHandle = FileSystem.SYSTEM.openReadWrite(this)
+actual fun Path.commonReadWrite(): FileHandle = FileSystem.SYSTEM.openReadWrite(this, ! FileSystem.SYSTEM.exists(this))
 
 @OptIn(ExperimentalSerializationApi::class)
 actual inline fun <reified T> Path.commonDecodeLogList(): T =

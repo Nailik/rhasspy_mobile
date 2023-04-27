@@ -107,7 +107,11 @@ class RecordingService(
         silenceStartTime = null
         logger.d { "startRecording" }
         _isRecording.value = true
-        audioRecorder.startRecording()
+        audioRecorder.startRecording(
+            audioRecorderChannelType = AppSetting.audioRecorderChannel.value,
+            audioRecorderEncodingType = AppSetting.audioRecorderEncoding.value,
+            audioRecorderSampleRateType = AppSetting.audioRecorderSampleRate.value
+        )
         recordingStartTime = Clock.System.now()
     }
 

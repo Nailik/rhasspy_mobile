@@ -1,7 +1,6 @@
 package org.rhasspy.mobile
 
 import org.koin.core.parameter.parametersOf
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.services.audiofocus.AudioFocusService
@@ -64,6 +63,8 @@ import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsViewStateCreator
+import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsSettingsViewModel
@@ -280,16 +281,14 @@ val viewModelModule = module {
         )
     }
 
-    factory(named("AudioRecorderFactory")) {
-        AudioRecorder()
-    }
+
     single { params ->
         SilenceDetectionSettingsViewStateCreator(
             audioRecorder = params[0]
         )
     }
     single {
-        val audioRecorder = get<AudioRecorder>(named("AudioRecorderFactory"))
+        val audioRecorder = get<AudioRecorder>()
         SilenceDetectionSettingsViewModel(
             nativeApplication = get(),
             audioRecorder = audioRecorder,
@@ -302,6 +301,15 @@ val viewModelModule = module {
     }
     single {
         AudioFocusSettingsViewModel(
+            viewStateCreator = get()
+        )
+    }
+
+    single {
+        AudioRecorderSettingsViewStateCreator()
+    }
+    single {
+        AudioRecorderSettingsViewModel(
             viewStateCreator = get()
         )
     }
@@ -415,10 +423,5 @@ val viewModelModule = module {
 
 val factoryModule = module {
     factory { params -> UdpConnection(params[0], params[1]) }
-}
-
-val nativeModule = module {
-    single {
-        AudioRecorder()
-    }
+    factory { AudioRecorder() }
 }

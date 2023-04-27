@@ -10,7 +10,7 @@ import io.ktor.server.engine.internal.ClosedChannelException
 import io.ktor.utils.io.core.ByteReadPacket
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
-import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder.Companion.appendWavHeader
+import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appendWavHeader
 import org.rhasspy.mobile.settings.AppSetting
 
 class UdpConnection(
@@ -65,7 +65,17 @@ class UdpConnection(
         }
         socketAddress?.also {
             try {
-                sendChannel?.send(Datagram(ByteReadPacket(data.appendWavHeader()), it))
+                sendChannel?.send(
+                    Datagram(
+                        ByteReadPacket(
+                            data.appendWavHeader(
+                                AppSetting.audioRecorderChannel.value,
+                                AppSetting.audioRecorderSampleRate.value,
+                                AppSetting.audioRecorderEncoding.value
+                            )
+                        ), it
+                    )
+                )
             } catch (exception: Exception) {
                 if (AppSetting.isLogAudioFramesEnabled.value) {
                     if (exception::class.simpleName == "JobCancellationException") {
@@ -76,7 +86,7 @@ class UdpConnection(
                 }
                 return exception
             }
-        } ?: {
+        } ?: run {
             if (!hasLoggedError) {
                 hasLoggedError = true
                 logger.a { "stream audio socketAddress not initialized" }

@@ -79,7 +79,7 @@ class MqttConfigurationViewModel(
         viewModelScope.launch {
             FileUtils.selectFile(FolderType.CertificateFolder.Mqtt)?.also { path ->
                 onChange(UpdateMqttKeyStoreFile(path))
-            } ?: {
+            } ?: run {
                 contentViewState.update {
                     it.copy(snackBarText = MR.strings.selectFileFailed.stable)
                 }

@@ -22,11 +22,12 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogService
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
-import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder.Companion.appendWavHeader
+import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appendWavHeader
 import org.rhasspy.mobile.platformspecific.extensions.commonData
 import org.rhasspy.mobile.platformspecific.extensions.commonSource
 import org.rhasspy.mobile.platformspecific.mqtt.*
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.settings.AppSetting
 
 class MqttService(
     paramsCreator: MqttServiceParamsCreator
@@ -287,7 +288,7 @@ class MqttService(
                     }
                 }
             }
-        } ?: {
+        } ?: run {
             //site id in topic
             when {
                 MqttTopicsSubscription.PlayBytes.topic
@@ -492,7 +493,13 @@ class MqttService(
             MqttTopicsPublish.AsrAudioFrame.topic
                 .set(MqttTopicPlaceholder.SiteId, params.siteId)
                 .set(MqttTopicPlaceholder.SessionId, sessionId),
-            MqttMessage(byteArray.appendWavHeader())
+            MqttMessage(
+                byteArray.appendWavHeader(
+                    AppSetting.audioRecorderChannel.value,
+                    AppSetting.audioRecorderSampleRate.value,
+                    AppSetting.audioRecorderEncoding.value
+                )
+            )
         )
 
     /**

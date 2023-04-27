@@ -344,6 +344,10 @@
     </string>
     <string name="shareSettingsFileFailed">Einstellungsdatei freigeben fehlgeschlagen</string>
     <string name="selectFileFailed">Die Dateiauswahl kann nicht geöffnet werden</string>
+    <string name="audioRecorder">Audiorecorder</string>
+    <string name="sampleRate">Samplerate</string>
+    <string name="channel">Channel</string>
+    <string name="encoding">Encoding</string>
     <!-- porcupine error -->
     <string name="activation_exception">activation exception</string>
     <string name="activation_limit_exception">activation limit exception</string>
@@ -374,6 +378,20 @@
     <string name="msg_persistence_failed">message persistence failed</string>
     <string name="subscribe_failed">subscription failed</string>
     <string name="topic_subscription_failed">topic subscription failed</string>
+    <!-- audioRecorder -->
+    <string name="channel_type_default">Default</string>
+    <string name="channel_type_mono">Mono</string>
+    <string name="channel_type_stereo">Stereo</string>
+    <string name="encoding_type_default">Default</string>
+    <string name="encoding_type_PCM8Bit">PCM8Bit</string>
+    <string name="encoding_type_PCM16Bit">PCM16Bit</string>
+    <string name="encoding_type_PCM_32BIT">PCM_32BIT</string>
+    <string name="sample_rate_type_11025">11025 Hz</string>
+    <string name="sample_rate_type_22050">22050 Hz</string>
+    <string name="sample_rate_type_16000">16000 Hz</string>
+    <string name="sample_rate_type_32000">32000 Hz</string>
+    <string name="sample_rate_type_44100">44100 Hz</string>
+    <string name="sample_rate_type_48000">48000 Hz</string>
     <!-- not translatable -->
     <string name="heyGoogle">Hey Google</string>
     <string name="heySiri">Hey Siri</string>

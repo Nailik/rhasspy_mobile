@@ -373,7 +373,7 @@ class DialogManagerService(
                         onAction(StopListening(Source.Local))
                     }
                 }
-            } ?: {
+            } ?: run {
                 logger.d { "startListening parameter issue sessionId: $sessionId" }
             }
 
@@ -416,14 +416,20 @@ class DialogManagerService(
                 }
 
                 if (params.option == DialogManagementOption.Local) {
-                    //await for text recognition
-                    timeoutJob = coroutineScope.launch {
-                        delay(textAsrTimeout)
-                        logger.d { "textAsrTimeout" }
+
+                    if (params.speechToTextOption != SpeechToTextOption.Disabled) {
+                        //await for text recognition
+                        timeoutJob = coroutineScope.launch {
+                            delay(textAsrTimeout)
+                            logger.d { "textAsrTimeout" }
+                            onAction(AsrError(Source.Local))
+                        }
+                    } else {
+                        //skip no speech to text
                         onAction(AsrError(Source.Local))
                     }
                 }
-            } ?: {
+            } ?: run {
                 logger.d { "stopListening parameter issue sessionId: $sessionId" }
             }
 

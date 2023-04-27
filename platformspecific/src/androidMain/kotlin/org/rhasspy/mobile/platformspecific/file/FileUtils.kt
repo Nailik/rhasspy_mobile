@@ -43,11 +43,11 @@ actual object FileUtils : KoinComponent {
                         File(context.filesDir, folderType.toString()).mkdirs()
                         val result = copyFile(folderType, uri, folderType.toString(), finalFileName)
                         continuation.resume(result?.toPath())
-                    } ?: {
+                    } ?: run {
                         continuation.resume(null)
                     }
 
-                } ?: {
+                } ?: run {
                     continuation.resume(null)
                 }
             }
@@ -109,7 +109,7 @@ actual object FileUtils : KoinComponent {
                     }
                 }
                 continuation.resume(fileName)
-            } ?: {
+            } ?: run {
                 continuation.resume(null)
             }
         }

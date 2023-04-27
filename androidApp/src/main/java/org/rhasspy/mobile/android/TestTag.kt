@@ -120,6 +120,10 @@ enum class TestTag {
     AudioFocusOnRecord,
     AudioFocusOnDialog,
 
+    AudioRecorderEncodingType,
+    AudioRecorderChannelType,
+    AudioRecorderSampleRateType,
+
     Volume,
     HotWord,
     AudioOutput,

@@ -84,7 +84,7 @@ abstract class IIndicationSoundSettingsViewModel(
                 viewModelScope.launch {
                     FileUtils.selectFile(soundFolderType)?.also {
                             path -> onEvent(AddSoundFile(path.name))
-                    } ?: {
+                    } ?: run {
                         _viewState.update {
                             it.copy(snackBarText = MR.strings.selectFileFailed.stable)
                         }
