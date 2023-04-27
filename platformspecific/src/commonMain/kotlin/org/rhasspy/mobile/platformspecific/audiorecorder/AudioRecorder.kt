@@ -6,11 +6,7 @@ import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
 
-expect class AudioRecorder(
-    audioRecorderSampleRateType: AudioRecorderSampleRateType,
-    audioRecorderChannelType: AudioRecorderChannelType,
-    audioRecorderEncodingType: AudioRecorderEncodingType
-) {
+expect class AudioRecorder() {
 
     /**
      * output data as flow
@@ -31,7 +27,11 @@ expect class AudioRecorder(
     /**
      * start recording
      */
-    fun startRecording()
+    fun startRecording(
+        audioRecorderSampleRateType: AudioRecorderSampleRateType,
+        audioRecorderChannelType: AudioRecorderChannelType,
+        audioRecorderEncodingType: AudioRecorderEncodingType
+    )
 
     /**
      * stop recording

@@ -6,11 +6,7 @@ import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
 
-actual class AudioRecorder actual constructor(
-    private val audioRecorderSampleRateType: AudioRecorderSampleRateType,
-    private val audioRecorderChannelType: AudioRecorderChannelType,
-    private val audioRecorderEncodingType: AudioRecorderEncodingType
-) {
+actual class AudioRecorder {
 
     /**
      * max volume since start recording
@@ -25,7 +21,11 @@ actual class AudioRecorder actual constructor(
     /**
      * start recording
      */
-    actual fun startRecording() {
+    actual fun startRecording(
+        audioRecorderSampleRateType: AudioRecorderSampleRateType,
+        audioRecorderChannelType: AudioRecorderChannelType,
+        audioRecorderEncodingType: AudioRecorderEncodingType
+    ) {
     }
 
     /**

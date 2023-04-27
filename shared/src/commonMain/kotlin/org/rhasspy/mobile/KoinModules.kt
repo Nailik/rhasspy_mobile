@@ -1,7 +1,6 @@
 package org.rhasspy.mobile
 
 import org.koin.core.parameter.parametersOf
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.services.audiofocus.AudioFocusService
@@ -282,13 +281,7 @@ val viewModelModule = module {
         )
     }
 
-    factory(named("AudioRecorderFactory")) {
-        AudioRecorder(
-            audioRecorderChannelType = AppSetting.audioRecorderChannel.value,
-            audioRecorderEncodingType = AppSetting.audioRecorderEncoding.value,
-            audioRecorderSampleRateType = AppSetting.audioRecorderSampleRate.value
-        )
-    }
+
     single { params ->
         SilenceDetectionSettingsViewStateCreator(
             audioRecorder = params[0]
@@ -430,4 +423,5 @@ val viewModelModule = module {
 
 val factoryModule = module {
     factory { params -> UdpConnection(params[0], params[1]) }
+    factory { AudioRecorder() }
 }

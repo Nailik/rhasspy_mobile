@@ -23,11 +23,7 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-actual class AudioRecorder actual constructor(
-    private val audioRecorderSampleRateType: AudioRecorderSampleRateType,
-    private val audioRecorderChannelType: AudioRecorderChannelType,
-    private val audioRecorderEncodingType: AudioRecorderEncodingType
-) : KoinComponent {
+actual class AudioRecorder : KoinComponent {
     private val logger = Logger.withTag("AudioRecorder")
 
     /**
@@ -55,12 +51,6 @@ actual class AudioRecorder actual constructor(
     private var recorder: AudioRecord? = null
 
 
-    private val BUFFER_SIZE_FACTOR = 2
-    private val BUFFER_SIZE = AudioRecord.getMinBufferSize(
-        audioRecorderSampleRateType.value,
-        audioRecorderChannelType.value,
-        audioRecorderEncodingType.value
-    ) * BUFFER_SIZE_FACTOR
 
     /**
      * start recording
@@ -68,7 +58,19 @@ actual class AudioRecorder actual constructor(
      * creates audio recorder if null
      */
     @SuppressLint("MissingPermission")
-    actual fun startRecording() {
+    actual fun startRecording(
+        audioRecorderSampleRateType: AudioRecorderSampleRateType,
+        audioRecorderChannelType: AudioRecorderChannelType,
+        audioRecorderEncodingType: AudioRecorderEncodingType
+    ) {
+
+        val bufferSizeFactor = 2
+        val bufferSize = AudioRecord.getMinBufferSize(
+            audioRecorderSampleRateType.value,
+            audioRecorderChannelType.value,
+            audioRecorderEncodingType.value
+        ) * bufferSizeFactor
+
         logger.v { "startRecording" }
 
         if (ActivityCompat.checkSelfPermission(get<NativeApplication>(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -88,13 +90,13 @@ actual class AudioRecorder actual constructor(
                             .setEncoding(audioRecorderEncodingType.value)
                             .build()
                     )
-                    .setBufferSizeInBytes(BUFFER_SIZE) //8000
+                    .setBufferSizeInBytes(bufferSize) //8000
                     .build()
             }
 
             _isRecording.value = true
             recorder?.startRecording()
-            read()
+            read(bufferSize)
         } catch (e: Exception) {
             _isRecording.value = false
             logger.e(e) { "native start recording error" }
@@ -118,11 +120,11 @@ actual class AudioRecorder actual constructor(
     /**
      * reads from audio and emits buffer onto output
      */
-    private fun read() {
+    private fun read(bufferSize: Int) {
         coroutineScope.launch {
             recorder?.also {
                 while (it.recordingState == AudioRecord.RECORDSTATE_RECORDING) {
-                    val byteArray = ByteArray(BUFFER_SIZE)
+                    val byteArray = ByteArray(bufferSize)
                     it.read(byteArray, 0, byteArray.size)
 
                     coroutineScope.launch {

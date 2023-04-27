@@ -14,19 +14,19 @@ actual enum class AudioRecorderEncodingType(
     actual val bitRate: Int
 ) : IOption<AudioRecorderEncodingType> {
 
-    Default(MR.strings.encoding_type_default.stable, ENCODING_DEFAULT, 2),
-    PCM8Bit(MR.strings.encoding_type_PCM8Bit.stable, ENCODING_PCM_8BIT, 1),
-    PCM16Bit(MR.strings.encoding_type_PCM16Bit.stable, ENCODING_PCM_16BIT, 2),
-    PCM_FLOAT(MR.strings.encoding_type_PCM_FLOAT.stable, ENCODING_PCM_FLOAT, 4),
+    Default(MR.strings.encoding_type_default.stable, ENCODING_DEFAULT, 16),
+    PCM8Bit(MR.strings.encoding_type_PCM8Bit.stable, ENCODING_PCM_8BIT, 8),
+    PCM16Bit(MR.strings.encoding_type_PCM16Bit.stable, ENCODING_PCM_16BIT, 16),
+    PCM_FLOAT(MR.strings.encoding_type_PCM_FLOAT.stable, ENCODING_PCM_FLOAT, 32),
 
     @SuppressLint("InlinedApi")
-    IEC61937(MR.strings.encoding_type_IEC61937.stable, ENCODING_IEC61937, 2),
+    IEC61937(MR.strings.encoding_type_IEC61937.stable, ENCODING_IEC61937, 16),
 
     @SuppressLint("InlinedApi")
-    PCM24BITPacked(MR.strings.encoding_type_PCM24BITPacked.stable, ENCODING_PCM_24BIT_PACKED, 3),
+    PCM24BITPacked(MR.strings.encoding_type_PCM24BITPacked.stable, ENCODING_PCM_24BIT_PACKED, 24),
 
     @SuppressLint("InlinedApi")
-    PCM_32BIT(MR.strings.encoding_type_PCM_32BIT.stable, ENCODING_PCM_32BIT, 4);
+    PCM_32BIT(MR.strings.encoding_type_PCM_32BIT.stable, ENCODING_PCM_32BIT, 32);
 
     override fun findValue(value: String): AudioRecorderEncodingType {
         return AudioRecorderEncodingType.valueOf(value)

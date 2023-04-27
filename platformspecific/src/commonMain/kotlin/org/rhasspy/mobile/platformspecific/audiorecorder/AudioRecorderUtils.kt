@@ -67,7 +67,9 @@ object AudioRecorderUtils {
             ((audioSize shr 16) and 0xff).toByte(),
             ((audioSize shr 24) and 0xff).toByte() //40-43 data size of rest
         )
-        return header.toByteArray()
+        val wavHeader = header.toByteArray()
+        println(wavHeader)
+        return wavHeader
     }
 
 }
