@@ -14,17 +14,9 @@ actual enum class AudioRecorderEncodingType(
     actual val bitRate: Int
 ) : IOption<AudioRecorderEncodingType> {
 
-    Default(MR.strings.encoding_type_default.stable, ENCODING_DEFAULT, 16),
+    Default(MR.strings.encoding_type_default.stable, ENCODING_DEFAULT, 8),
     PCM8Bit(MR.strings.encoding_type_PCM8Bit.stable, ENCODING_PCM_8BIT, 8),
     PCM16Bit(MR.strings.encoding_type_PCM16Bit.stable, ENCODING_PCM_16BIT, 16),
-    PCM_FLOAT(MR.strings.encoding_type_PCM_FLOAT.stable, ENCODING_PCM_FLOAT, 32),
-
-    @SuppressLint("InlinedApi")
-    IEC61937(MR.strings.encoding_type_IEC61937.stable, ENCODING_IEC61937, 16),
-
-    @SuppressLint("InlinedApi")
-    PCM24BITPacked(MR.strings.encoding_type_PCM24BITPacked.stable, ENCODING_PCM_24BIT_PACKED, 24),
-
     @SuppressLint("InlinedApi")
     PCM_32BIT(MR.strings.encoding_type_PCM_32BIT.stable, ENCODING_PCM_32BIT, 32);
 
@@ -33,20 +25,15 @@ actual enum class AudioRecorderEncodingType(
     }
 
     actual companion object {
-        actual val default: AudioRecorderEncodingType get() = Default
+        actual val default: AudioRecorderEncodingType get() = PCM16Bit
 
         actual fun supportedValues(): List<AudioRecorderEncodingType> {
             return mutableListOf(
                 Default,
                 PCM8Bit,
                 PCM16Bit,
-                PCM_FLOAT,
             ).apply {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    add(IEC61937)
-                }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    add(PCM24BITPacked)
                     add(PCM_32BIT)
                 }
             }

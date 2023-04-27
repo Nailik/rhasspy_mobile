@@ -44,7 +44,7 @@ actual object ExternalRedirect : KoinComponent {
         return launching {
             nativeApplication.currentActivity?.also {
                 it.startActivity(intentFromIntention(intention))
-            } ?: {
+            } ?: run {
                 nativeApplication.startActivity(
                     intentFromIntention(intention).apply {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

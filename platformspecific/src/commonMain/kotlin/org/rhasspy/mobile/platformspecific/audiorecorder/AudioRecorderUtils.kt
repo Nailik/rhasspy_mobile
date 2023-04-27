@@ -6,20 +6,37 @@ import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
 
 object AudioRecorderUtils {
 
-    private val sampleRate get() = AudioRecorderSampleRateType.default.value //in hz
-    private val channel get() = AudioRecorderChannelType.default.value.toByte()
-    private val bitRate get() = AudioRecorderEncodingType.default.bitRate
-    private val byteRate get() = (sampleRate * channel * bitRate) / 8
-
     /**
      * use the settings of the audio recorder
      * (samplingRate, channels, bitrate) and the audioSize
      * to create wav header and add it in front of the given data
      */
-    fun ByteArray.appendWavHeader(): ByteArray =
-        getWavHeader(this.size.toLong()) + this
+    fun ByteArray.appendWavHeader(
+        audioRecorderChannelType: AudioRecorderChannelType,
+        audioRecorderSampleRateType: AudioRecorderSampleRateType,
+        audioRecorderEncodingType: AudioRecorderEncodingType
+    ): ByteArray {
+        return getWavHeader(
+            audioRecorderChannelType = audioRecorderChannelType,
+            audioRecorderSampleRateType = audioRecorderSampleRateType,
+            audioRecorderEncodingType = audioRecorderEncodingType,
+            audioSize = this.size.toLong()
+        ) + this
+    }
 
-    fun getWavHeader(audioSize: Long): ByteArray {
+    fun getWavHeader(
+        audioRecorderChannelType: AudioRecorderChannelType,
+        audioRecorderSampleRateType: AudioRecorderSampleRateType,
+        audioRecorderEncodingType: AudioRecorderEncodingType,
+        audioSize: Long
+    ): ByteArray {
+        //info https://docs.fileformat.com/audio/wav/
+        val channel = audioRecorderChannelType.count
+        val sampleRate = audioRecorderSampleRateType.value
+        val bitRate = audioRecorderEncodingType.bitRate
+        val byteRate = (sampleRate * channel * bitRate) / 8
+        val bitPerSampleChannels = (bitRate * channel) / 8
+
         val totalLength = audioSize + 36
         val header = arrayOf(
             'R'.code.toByte(),
@@ -38,13 +55,13 @@ object AudioRecorderUtils {
             'm'.code.toByte(),
             't'.code.toByte(),
             ' '.code.toByte(),
-            16, // 4 bytes: size of 'fmt ' chunk
+            16, // 4 bytes: size of 'fmt ' chunk,
             0,
             0,
             0,
-            1, // format = 1
+            1, // Type of format (1 is PCM) - 2 byte integer
             0,
-            channel,
+            channel.toByte(),
             0,
             (sampleRate and 0xff).toByte(),
             ((sampleRate shr 8) and 0xff).toByte(),
@@ -54,10 +71,10 @@ object AudioRecorderUtils {
             ((byteRate shr 8) and 0xff).toByte(),
             ((byteRate shr 16) and 0xff).toByte(),
             ((byteRate shr 24) and 0xff).toByte(),
-            1, // block align
-            0,
-            bitRate.toByte(), // bits per sample
-            0,
+            (bitPerSampleChannels and 0xff).toByte(),
+            ((bitPerSampleChannels shr 8) and 0xff).toByte(),
+            (bitRate and 0xff).toByte(),
+            ((bitRate shr 8) and 0xff).toByte(),
             'd'.code.toByte(),
             'a'.code.toByte(),
             't'.code.toByte(),

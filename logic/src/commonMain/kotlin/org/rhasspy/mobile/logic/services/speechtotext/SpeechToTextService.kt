@@ -22,6 +22,7 @@ import org.rhasspy.mobile.logic.services.httpclient.HttpClientService
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.recording.RecordingService
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.getWavHeader
+import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.extensions.commonReadWrite
 import org.rhasspy.mobile.platformspecific.extensions.commonSize
@@ -85,7 +86,13 @@ open class SpeechToTextService(
         audioFocusService.abandon(Record)
 
         //add wav header to file
-        val header = getWavHeader(speechToTextAudioFile.commonSize() ?: 0)
+        val header = getWavHeader(
+            AppSetting.audioRecorderChannel.value,
+            AppSetting.audioRecorderSampleRate.value,
+            AppSetting.audioRecorderEncoding.value,
+            speechToTextAudioFile.commonSize() ?: 0
+        )
+
         speechToTextAudioFile.commonReadWrite().write(0, header, 0, header.size)
 
         recordingService.toggleSilenceDetectionEnabled(false)
@@ -118,15 +125,17 @@ open class SpeechToTextService(
         //clear data and start recording
         collector?.cancel()
         collector = null
-        speechToTextAudioFile.commonReadWrite().resize(0)
+
+        speechToTextAudioFile.commonDelete()
+        speechToTextAudioFile.commonReadWrite().write(0, ByteArray(0),0,0)
 
         if (params.speechToTextOption != SpeechToTextOption.Disabled) {
             recordingService.toggleSilenceDetectionEnabled(true)
-            //start collection
-            collector = scope.launch {
-                recordingService.output.collect {
-                    audioFrame(sessionId, it)
-                }
+        }
+        //start collection
+        collector = scope.launch {
+            recordingService.output.collect {
+                audioFrame(sessionId, it)
             }
         }
 

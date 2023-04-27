@@ -56,7 +56,7 @@ class LocalAudioService(
                         if (!continuation.isCompleted) {
                             continuation.resume(ServiceState.Exception(exception))
                         }
-                    } ?: {
+                    }  ?: run {
                         logger.e { "onFinished" }
                         if (!continuation.isCompleted) {
                             continuation.resume(ServiceState.Success)

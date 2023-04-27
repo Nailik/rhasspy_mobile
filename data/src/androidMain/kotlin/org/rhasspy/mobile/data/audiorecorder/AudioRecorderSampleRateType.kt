@@ -22,6 +22,6 @@ actual enum class AudioRecorderSampleRateType(
     }
 
     actual companion object {
-        actual val default: AudioRecorderSampleRateType get() = SR44100
+        actual val default: AudioRecorderSampleRateType get() = SR16000
     }
 }

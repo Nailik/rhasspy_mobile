@@ -77,7 +77,7 @@ class WebServerConfigurationViewModel(
         viewModelScope.launch {
             FileUtils.selectFile(FolderType.CertificateFolder.WebServer)?.also { path ->
                 onEvent(SetHttpServerSSLKeyStoreFile(path))
-            } ?: {
+            } ?: run {
                 contentViewState.update {
                     it.copy(snackBarText = MR.strings.selectFileFailed.stable)
                 }

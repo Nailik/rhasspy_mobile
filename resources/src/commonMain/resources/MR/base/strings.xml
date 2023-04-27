@@ -361,14 +361,9 @@
     <string name="channel_type_default">Default</string>
     <string name="channel_type_mono">Mono</string>
     <string name="channel_type_stereo">Stereo</string>
-    <string name="channel_type_left">Left</string>
-    <string name="channel_type_right">Right</string>
     <string name="encoding_type_default">Default</string>
     <string name="encoding_type_PCM8Bit">PCM8Bit</string>
     <string name="encoding_type_PCM16Bit">PCM16Bit</string>
-    <string name="encoding_type_PCM_FLOAT">PCM_FLOAT</string>
-    <string name="encoding_type_IEC61937">IEC61937</string>
-    <string name="encoding_type_PCM24BITPacked">PCM24BITPacked</string>
     <string name="encoding_type_PCM_32BIT">PCM_32BIT</string>
     <string name="sample_rate_type_11025">11025 Hz</string>
     <string name="sample_rate_type_22050">22050 Hz</string>

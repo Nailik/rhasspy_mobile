@@ -7,6 +7,7 @@ expect enum class AudioRecorderChannelType : IOption<AudioRecorderChannelType> {
     ;
 
     val value: Int
+    val count: Int
 
     companion object {
         val default: AudioRecorderChannelType

@@ -65,7 +65,17 @@ class UdpConnection(
         }
         socketAddress?.also {
             try {
-                sendChannel?.send(Datagram(ByteReadPacket(data.appendWavHeader()), it))
+                sendChannel?.send(
+                    Datagram(
+                        ByteReadPacket(
+                            data.appendWavHeader(
+                                AppSetting.audioRecorderChannel.value,
+                                AppSetting.audioRecorderSampleRate.value,
+                                AppSetting.audioRecorderEncoding.value
+                            )
+                        ), it
+                    )
+                )
             } catch (exception: Exception) {
                 if (AppSetting.isLogAudioFramesEnabled.value) {
                     if (exception::class.simpleName == "JobCancellationException") {
@@ -76,7 +86,7 @@ class UdpConnection(
                 }
                 return exception
             }
-        } ?: {
+        } ?: run {
             if (!hasLoggedError) {
                 hasLoggedError = true
                 logger.a { "stream audio socketAddress not initialized" }

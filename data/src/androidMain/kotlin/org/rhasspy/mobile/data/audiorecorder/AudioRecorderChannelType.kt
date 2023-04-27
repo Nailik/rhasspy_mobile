@@ -8,14 +8,13 @@ import org.rhasspy.mobile.data.service.option.IOption
 
 actual enum class AudioRecorderChannelType(
     override val text: StableStringResource,
-    actual val value: Int
+    actual val value: Int,
+    actual val count: Int
 ) : IOption<AudioRecorderChannelType> {
 
-    Default(MR.strings.channel_type_default.stable, CHANNEL_IN_DEFAULT),
-    Mono(MR.strings.channel_type_mono.stable, CHANNEL_IN_MONO),
-    Stereo(MR.strings.channel_type_stereo.stable, CHANNEL_IN_STEREO),
-    Left(MR.strings.channel_type_left.stable, CHANNEL_IN_LEFT),
-    Right(MR.strings.channel_type_right.stable, CHANNEL_IN_RIGHT);
+    Default(MR.strings.channel_type_default.stable, CHANNEL_IN_DEFAULT, 1),
+    Mono(MR.strings.channel_type_mono.stable, CHANNEL_IN_MONO, 1),
+    Stereo(MR.strings.channel_type_stereo.stable, CHANNEL_IN_STEREO, 2);
 
     override fun findValue(value: String): AudioRecorderChannelType {
         return AudioRecorderChannelType.valueOf(value)

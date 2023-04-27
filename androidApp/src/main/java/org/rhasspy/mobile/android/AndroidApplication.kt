@@ -79,7 +79,7 @@ class AndroidApplication : Application(), KoinComponent {
                     putExtra(IntentAction.StartRecording.param, true)
                 }
             )
-        } ?: {
+        } ?: run {
             application.startActivity(
                 Intent(application, MainActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
