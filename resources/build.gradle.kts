@@ -100,11 +100,13 @@ buildkonfig {
 
 tasks.findByPath("preBuild")!!.doFirst {
     exec {
-        workingDir = File("$projectDir/..")
+        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            workingDir = File("$projectDir/..")
+        }
         commandLine = listOf(
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
                 "gradlew.bat"
-            } else "gradlew",
+            } else "../gradlew",
             "exportLibraryDefinitions",
             "-PaboutLibraries.exportPath=${projectDir}/src/commonMain/resources/MR/files"
         )
