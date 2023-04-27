@@ -27,7 +27,7 @@ fun AudioRecorderSettingsContent() {
     val viewState by viewModel.viewState.collectAsState()
 
     SettingsScreenItemContent(
-        modifier = Modifier.testTag(SettingsScreenType.AutomaticSilenceDetectionSettings),
+        modifier = Modifier.testTag(SettingsScreenType.AudioRecorderSettings),
         title = MR.strings.automaticSilenceDetection.stable
     ) {
 
