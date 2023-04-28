@@ -76,6 +76,12 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
+      # setup jdk 19
+      - name: Set Up JDK 19
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '19'
       # run all unit tests (debug and debug)
       - name: Unit Tests
         run: ./gradlew test${{ inputs.BUILD_TYPE }}
