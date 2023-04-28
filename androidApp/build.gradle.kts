@@ -192,14 +192,10 @@ dependencies {
     implementation(AndroidX.Activity.compose)
     implementation(AndroidX.Navigation.compose)
 
-    implementation(AndroidX.Compose.material3)
-    implementation(AndroidX.Compose.material.icons.extended)
-    implementation(AndroidX.Compose.foundation)
-    implementation(AndroidX.Compose.runtime.liveData)
-    implementation(AndroidX.Compose.ui)
-    implementation(AndroidX.Compose.ui.util)
-    implementation(AndroidX.Compose.ui.tooling)
-    implementation(Google.Accompanist.pager)
+    implementation(Jetbrains.Compose.material3)
+    implementation(Jetbrains.Compose.icons)
+    implementation(Jetbrains.Compose.foundation)
+    implementation(Jetbrains.Compose.preview)
 
     implementation(AndroidX.multidex)
     implementation(AndroidX.window)
@@ -221,7 +217,7 @@ dependencies {
     androidTestImplementation(Kotlin.test)
     androidTestImplementation(Kotlin.Test.junit)
     androidTestImplementation(AndroidX.Test.coreKtx)
-    androidTestImplementation(AndroidX.Compose.Ui.testJunit4)
+    androidTestImplementation(Jetbrains.Compose.testJunit4)
     androidTestImplementation(Adevinta.barista)
     androidTestImplementation(Hamcrest.hamcrest)
 
