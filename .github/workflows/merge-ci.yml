@@ -67,7 +67,7 @@ jobs:
           path: androidApp/build/outputs/androidTest-results/connected/TEST-*.xml
           reporter: java-junit
   build:
-    runs-on: macos-latest
+    runs-on: ARM64
     needs: uiTest
     steps:
       - uses: actions/checkout@v3
