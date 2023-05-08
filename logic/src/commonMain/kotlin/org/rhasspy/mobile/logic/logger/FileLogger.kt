@@ -28,7 +28,7 @@ object FileLogger : LogWriter(), KoinComponent {
     private val logger = Logger.withTag("FileLogger")
 
     //create new file when logfile is 2 MB
-    private val file = Path.commonInternalPath(get(), "logfile.txt")
+    private val file = Path.commonInternalPath(get(), "logfile.json")
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     private val _flow = MutableSharedFlow<LogElement>()
@@ -49,7 +49,7 @@ object FileLogger : LogWriter(), KoinComponent {
             message,
             throwable?.message
         )
-        file.commonReadWrite().appendingSink().buffer().writeUtf8(",${Json.encodeToString(element)}").flush()
+        file.commonReadWrite().appendingSink().buffer().writeUtf8("\n,${Json.encodeToString(element)}").flush()
         coroutineScope.launch {
             _flow.emit(element)
         }
@@ -79,8 +79,8 @@ object FileLogger : LogWriter(), KoinComponent {
         get(),
         "rhasspy_logfile_${
             Clock.System.now().toLocalDateTime(TimeZone.UTC)
-        }.txt",
-        "text/txt"
+        }.json",
+        "application/json"
     )
 
 }
