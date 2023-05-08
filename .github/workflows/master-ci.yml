@@ -30,7 +30,7 @@ jobs:
       KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
       KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
   release:
-    runs-on: macos-latest
+    runs-on: self-hosted
     needs: merge
     steps:
       - name: Set variables

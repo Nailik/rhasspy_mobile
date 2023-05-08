@@ -18,7 +18,7 @@ on:
 jobs:
   #runs sonar
   sonar:
-    runs-on: macos-latest
+    runs-on: self-hosted
     steps:
       #checkout project
       - uses: actions/checkout@v3
@@ -44,7 +44,7 @@ jobs:
   #runs checks
   analyze:
     needs: sonar
-    runs-on: macos-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
         with:
@@ -70,7 +70,7 @@ jobs:
           path: androidApp/build/reports/lint-results-${{ inputs.BUILD_TYPE_LOWERCASE }}.html
   unitTest:
     needs: analyze
-    runs-on: macos-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
         with:

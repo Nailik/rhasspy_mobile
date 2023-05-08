@@ -34,7 +34,7 @@ jobs:
       SONAR_KEY: ${{ secrets.SONAR_KEY }}
   uiTest:
     needs: check
-    runs-on: ARM64
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
         with:
@@ -67,7 +67,7 @@ jobs:
           path: androidApp/build/outputs/androidTest-results/connected/TEST-*.xml
           reporter: java-junit
   build:
-    runs-on: macos-latest
+    runs-on: self-hosted
     needs: uiTest
     steps:
       - uses: actions/checkout@v3
