@@ -4,7 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Checkbox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -37,13 +37,13 @@ fun PorcupineKeywordDefaultScreen(
             .testTag(TestTag.PorcupineKeywordDefaultScreen)
             .fillMaxHeight()
     ) {
-        itemsIndexed(viewState.defaultOptionsUi) { index, option ->
+        items(viewState.defaultOptionsUi) { option ->
 
             DefaultKeywordListItem(
                 element = option,
-                onClick = { onEvent(ClickPorcupineKeywordDefault(index)) },
-                onToggle = { onEvent(SetPorcupineKeywordDefault(index, it)) },
-                onUpdateSensitivity = { onEvent(UpdateWakeWordPorcupineKeywordDefaultSensitivity(index, it)) }
+                onClick = { onEvent(ClickPorcupineKeywordDefault(option)) },
+                onToggle = { onEvent(SetPorcupineKeywordDefault(option, it)) },
+                onUpdateSensitivity = { onEvent(UpdateWakeWordPorcupineKeywordDefaultSensitivity(option, it)) }
             )
 
             CustomDivider()
