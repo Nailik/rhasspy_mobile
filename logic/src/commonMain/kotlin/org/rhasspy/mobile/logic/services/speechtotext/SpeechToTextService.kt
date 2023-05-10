@@ -127,7 +127,7 @@ open class SpeechToTextService(
         collector = null
 
         speechToTextAudioFile.commonDelete()
-        speechToTextAudioFile.commonReadWrite().write(0, ByteArray(0),0,0)
+        speechToTextAudioFile.commonReadWrite().write(0, ByteArray(0), 0, 0)
 
         if (params.speechToTextOption != SpeechToTextOption.Disabled) {
             recordingService.toggleSilenceDetectionEnabled(true)

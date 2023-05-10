@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.platformspecific.porcupine
 
-import ai.picovoice.porcupine.*
+import ai.picovoice.porcupine.PorcupineException
+import ai.picovoice.porcupine.PorcupineManager
+import ai.picovoice.porcupine.PorcupineManagerCallback
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat

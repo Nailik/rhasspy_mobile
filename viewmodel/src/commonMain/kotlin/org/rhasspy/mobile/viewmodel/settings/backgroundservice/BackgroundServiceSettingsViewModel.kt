@@ -70,7 +70,7 @@ class BackgroundServiceSettingsViewModel(
 
     private fun disableBatteryOptimization() {
         viewModelScope.launch(Dispatchers.Default) {
-            if(ExternalRedirect.launch(ExternalRedirectIntention.OpenBatteryOptimizationSettings) !is Success) {
+            if (ExternalRedirect.launch(ExternalRedirectIntention.OpenBatteryOptimizationSettings) !is Success) {
                 _viewState.update {
                     it.copy(snackBarText = MR.strings.disableBatteryOptimizationFailed.stable)
                 }

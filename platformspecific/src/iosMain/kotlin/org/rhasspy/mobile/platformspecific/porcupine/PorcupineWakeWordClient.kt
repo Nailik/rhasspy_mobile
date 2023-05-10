@@ -12,7 +12,7 @@ actual class PorcupineWakeWordClient actual constructor(
     wakeWordPorcupineLanguage: PorcupineLanguageOption,
     onKeywordDetected: (hotWord: String) -> Unit,
     onError: (Exception) -> Unit
-)  {
+) {
 
     /**
      * create porcupine client

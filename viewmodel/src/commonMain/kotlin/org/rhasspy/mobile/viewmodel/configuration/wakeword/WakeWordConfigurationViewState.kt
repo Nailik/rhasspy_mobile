@@ -33,7 +33,8 @@ data class WakeWordConfigurationViewState internal constructor(
         val accessToken: String = ConfigurationSetting.wakeWordPorcupineAccessToken.value,
         val porcupineLanguage: PorcupineLanguageOption = ConfigurationSetting.wakeWordPorcupineLanguage.value,
         val defaultOptions: ImmutableList<PorcupineDefaultKeyword> = ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value,
-        val customOptionsUi: ImmutableList<PorcupineCustomKeywordViewState> = ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value.map { PorcupineCustomKeywordViewState(it) }.toImmutableList()
+        val customOptionsUi: ImmutableList<PorcupineCustomKeywordViewState> = ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value.map { PorcupineCustomKeywordViewState(it) }
+            .toImmutableList()
     ) {
         val languageOptions: ImmutableList<PorcupineLanguageOption> = PorcupineLanguageOption.values().toImmutableList()
 

@@ -278,7 +278,8 @@
     <string name="serviceStatusWarningText">Services detected possible problems</string>
     <string name="serviceStatusErrorText">Service error occurred</string>
     <string name="executeTestHttpConnection">Test Http Connection</string>
-    <string name="porcupineLanguageInformation">All active activation words must match the selected language and be compatible with the current Porcupine version (2.2)!
+    <string name="porcupineLanguageInformation">All active activation words must match the selected
+        language and be compatible with the current Porcupine version (2.2)!
     </string>
     <string name="backgroundServiceInformation">Background service will enable the app to stay
         active in the background and prevent it from being closed by the system.

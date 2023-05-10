@@ -287,7 +287,10 @@
     <string name="serviceStatusWarningText">Dienste haben mögliche Probleme entdeckt</string>
     <string name="serviceStatusErrorText">Dienstfehler ist aufgetreten</string>
     <string name="executeTestHttpConnection">Teste HTTP-Verbindung</string>
-    <string name="porcupineLanguageInformation">Alle aktiven Aktivierungswörter müssen mit der ausgewählten Sprache übereinstimmen und der aktuellen Porcupine Version (2.2) kompatibel sein!</string>
+    <string name="porcupineLanguageInformation">Alle aktiven Aktivierungswörter müssen mit der
+        ausgewählten Sprache übereinstimmen und der aktuellen Porcupine Version (2.2) kompatibel
+        sein!
+    </string>
     <string name="backgroundServiceInformation">Der Hintergrunddienst ermöglicht es, der App im
         Hintergrund aktiv zu bleiben und dadurch nicht vom System beendet zu werden.
     </string>

@@ -1,14 +1,11 @@
 @file:Suppress("UNUSED_VARIABLE")
 
+import com.codingfeline.buildkonfig.compiler.FieldSpec
 import com.mikepenz.aboutlibraries.plugin.DuplicateMode.MERGE
 import com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
-import org.apache.tools.ant.taskdefs.condition.Os
-import java.nio.charset.StandardCharsets
-import java.net.URLEncoder
 import groovy.json.JsonSlurper
-import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.apache.commons.io.output.ByteArrayOutputStream
-import java.net.URLDecoder
+import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
     kotlin("multiplatform")

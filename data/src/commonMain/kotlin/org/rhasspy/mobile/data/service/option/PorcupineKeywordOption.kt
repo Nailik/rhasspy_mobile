@@ -334,6 +334,7 @@ enum class PorcupineKeywordOption(
         MR.files.porcoespinho_android,
         PorcupineLanguageOption.PT
     ),
+
     //ru
     VNIMANIYE(
         MR.strings.vnimaniye_ru.stable,
@@ -355,6 +356,7 @@ enum class PorcupineKeywordOption(
         MR.files.D0BFD0BED0BCD0BED0B3D0B8D182D0B5_android,
         PorcupineLanguageOption.RU
     ),
+
     //sv
     HYGGE(
         MR.strings.hygge_sv.stable,
@@ -376,6 +378,7 @@ enum class PorcupineKeywordOption(
         MR.files.D0BFD0BED0BCD0BED0B3D0B8D182D0B5_android,
         PorcupineLanguageOption.SV
     ),
+
     //vn
     CHAO_CHI(
         MR.strings.chao_chi_vn.stable,
@@ -397,6 +400,7 @@ enum class PorcupineKeywordOption(
         MR.files.mC3A1y20pha20cC3A020phC3AA_android,
         PorcupineLanguageOption.VN
     ),
+
     //zh
     HELLO_ZH(
         MR.strings.hello_zh.stable,

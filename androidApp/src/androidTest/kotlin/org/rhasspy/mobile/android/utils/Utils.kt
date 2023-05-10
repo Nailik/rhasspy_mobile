@@ -64,7 +64,7 @@ fun SemanticsNodeInteractionsProvider.onNodeWithCombinedTag(
     useUnmergedTree: Boolean = false
 ): SemanticsNodeInteraction = onNode(hasTestTag("$name${tag.name}"), useUnmergedTree)
 
-fun textRes(text: StableStringResource) : BySelector {
+fun textRes(text: StableStringResource): BySelector {
     return By.text(
         StringDesc.Resource(text.stringResource).toString(
             getInstrumentation()

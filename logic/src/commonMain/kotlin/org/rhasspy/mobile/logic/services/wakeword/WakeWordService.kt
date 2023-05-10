@@ -115,7 +115,7 @@ class WakeWordService(
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {
 
-                if(porcupineWakeWordClient == null){
+                if (porcupineWakeWordClient == null) {
                     start()
                 }
 
