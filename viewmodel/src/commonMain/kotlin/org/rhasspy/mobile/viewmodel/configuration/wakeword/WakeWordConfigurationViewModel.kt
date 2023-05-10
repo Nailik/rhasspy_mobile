@@ -11,11 +11,13 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
+import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
@@ -53,15 +55,21 @@ class WakeWordConfigurationViewModel(
     private fun onChange(change: Change) {
         contentViewState.update {
             when (change) {
-                is SelectWakeWordOption -> it.copy(wakeWordOption = change.option)
+                is SelectWakeWordOption -> it.copy(
+                    wakeWordOption = change.option,
+                    isMicrophonePermissionRequestVisible = !MicrophonePermission.granted.value && (change.option == WakeWordOption.Porcupine || change.option == WakeWordOption.Udp)
+                )
             }
         }
     }
 
     private fun onAction(action: Action) {
         when (action) {
-            MicrophonePermissionAllowed -> if (!viewState.value.hasUnsavedChanges) {
-                onAction(Save)
+            MicrophonePermissionAllowed -> {
+                contentViewState.update { it.copy(isMicrophonePermissionRequestVisible = false) }
+                if (!viewState.value.hasUnsavedChanges) {
+                    onAction(Save)
+                }
             }
 
             TestStartWakeWord -> startWakeWordDetection()

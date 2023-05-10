@@ -55,7 +55,8 @@ fun RequiresMicrophonePermission(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            onClick.invoke()
+            MicrophonePermission.update()
+            onClick()
         } else {
             //snackBar to open app system settings
             coroutineScope.launch {
@@ -108,7 +109,7 @@ fun RequiresMicrophonePermission(
             }
         } else {
             //permission granted
-            onClick.invoke()
+            onClick()
         }
     }
 

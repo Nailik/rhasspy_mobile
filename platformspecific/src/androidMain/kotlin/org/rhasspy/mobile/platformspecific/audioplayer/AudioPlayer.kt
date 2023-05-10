@@ -17,9 +17,9 @@ actual class AudioPlayer : Closeable, KoinComponent {
     private var internalAudioPlayer: InternalAudioPlayer? = null
 
     actual fun stop() {
+        _isPlayingState.value = false
         internalAudioPlayer?.stop()
         internalAudioPlayer = null
-        _isPlayingState.value = false
     }
 
     override fun close() {

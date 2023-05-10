@@ -19,11 +19,12 @@ data class WakeWordConfigurationViewState internal constructor(
     val wakeWordOption: WakeWordOption = ConfigurationSetting.wakeWordOption.value,
     val wakeWordPorcupineViewState: PorcupineViewState = PorcupineViewState(),
     val wakeWordUdpViewState: UdpViewState = UdpViewState(),
-    val snackBarText: StableStringResource? = null
+    val snackBarText: StableStringResource? = null,
+    val isMicrophonePermissionRequestVisible: Boolean = !MicrophonePermission.granted.value && (wakeWordOption == WakeWordOption.Porcupine || wakeWordOption == WakeWordOption.Udp)
 ) : IConfigurationEditViewState() {
 
     val wakeWordOptions: ImmutableList<WakeWordOption> = WakeWordOption.values().toImmutableList()
-    val isMicrophonePermissionRequestVisible: Boolean = !MicrophonePermission.granted.value && (wakeWordOption == WakeWordOption.Porcupine || wakeWordOption == WakeWordOption.Udp)
+
 
     override val isTestingEnabled: Boolean get() = wakeWordOption != WakeWordOption.Disabled
 
