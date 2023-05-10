@@ -37,7 +37,7 @@ fun PorcupineKeywordDefaultScreen(
             .testTag(TestTag.PorcupineKeywordDefaultScreen)
             .fillMaxHeight()
     ) {
-        itemsIndexed(viewState.defaultOptions) { index, option ->
+        itemsIndexed(viewState.defaultOptionsUi) { index, option ->
 
             DefaultKeywordListItem(
                 element = option,

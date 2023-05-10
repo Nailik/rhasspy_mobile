@@ -1,10 +1,8 @@
 package org.rhasspy.mobile.platformspecific.porcupine
 
-import io.ktor.utils.io.core.Closeable
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
-import org.rhasspy.mobile.data.porcupine.PorcupineError
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 
 actual class PorcupineWakeWordClient actual constructor(
@@ -13,23 +11,20 @@ actual class PorcupineWakeWordClient actual constructor(
     wakeWordPorcupineKeywordCustomOptions: ImmutableList<PorcupineCustomKeyword>,
     wakeWordPorcupineLanguage: PorcupineLanguageOption,
     onKeywordDetected: (hotWord: String) -> Unit,
-    onError: (PorcupineError) -> Unit
-) : Closeable {
-    override fun close() {
-        TODO("Not yet implemented")
-    }
+    onError: (Exception) -> Unit
+)  {
 
     /**
      * create porcupine client
      */
-    actual fun initialize(): PorcupineError? {
+    actual fun initialize(): Exception? {
         TODO("Not yet implemented")
     }
 
     /**
      * start wake word detected
      */
-    actual fun start(): PorcupineError? {
+    actual fun start(): Exception? {
         TODO("Not yet implemented")
     }
 
@@ -37,6 +32,12 @@ actual class PorcupineWakeWordClient actual constructor(
      * stop wake word detected
      */
     actual fun stop() {
+    }
+
+    actual val isInitialized: Boolean
+        get() = TODO("Not yet implemented")
+
+    actual fun close() {
     }
 
 

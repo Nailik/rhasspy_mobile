@@ -1,11 +1,13 @@
 package org.rhasspy.mobile.logic.services.wakeword
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
-import org.rhasspy.mobile.data.porcupine.PorcupineError
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
@@ -39,6 +41,8 @@ class WakeWordService(
     private val _isRecording = MutableStateFlow(false)
     val isRecording = _isRecording.readOnly
 
+    private var isDetectionRunning = false
+
     private val scope = CoroutineScope(Dispatchers.Default)
     private var recording: Job? = null
 
@@ -50,6 +54,9 @@ class WakeWordService(
             paramsFlow.collect {
                 stop()
                 start()
+                if (isDetectionRunning) {
+                    startDetection()
+                }
             }
         }
     }
@@ -89,7 +96,6 @@ class WakeWordService(
 
     private fun stop() {
         logger.d { "onClose" }
-        scope.cancel()
         recording?.cancel()
         recording = null
         porcupineWakeWordClient?.close()
@@ -98,24 +104,28 @@ class WakeWordService(
         udpConnection = null
     }
 
-    private fun onClientError(porcupineError: PorcupineError) {
-        _serviceState.value = porcupineError.errorType.serviceState
-        logger.e(porcupineError.exception ?: Throwable()) { "porcupineError" }
+    private fun onClientError(exception: Exception) {
+        _serviceState.value = ServiceState.Exception(exception)
+        logger.e(exception) { "porcupineError" }
     }
 
     fun startDetection() {
+        isDetectionRunning = true
+
         when (params.wakeWordOption) {
             WakeWordOption.Porcupine -> {
 
-                _serviceState.value = checkPorcupineInitialized()
+                if(porcupineWakeWordClient == null){
+                    start()
+                }
 
                 porcupineWakeWordClient?.also {
                     _isRecording.value = true
                     val error = porcupineWakeWordClient?.start()
-                    error?.also {
-                        logger.e(it.exception ?: Throwable()) { "porcupineError" }
-                    }
-                    _serviceState.value = error?.errorType?.serviceState ?: ServiceState.Success
+                    _serviceState.value = error?.let {
+                        logger.e(it) { "porcupineError" }
+                        ServiceState.Exception(it)
+                    } ?: ServiceState.Success
                 }
 
             }
@@ -157,6 +167,7 @@ class WakeWordService(
     }
 
     fun stopDetection() {
+        isDetectionRunning = false
         logger.d { "stopDetection" }
         _isRecording.value = false
         recording?.cancel()
@@ -174,18 +185,20 @@ class WakeWordService(
             udpConnection?.connect()?.let {
                 ServiceState.Exception(it)
             } ?: ServiceState.Success
-        } else ServiceState.Exception()
+        } else ServiceState.Exception(Exception("udp not connected"))
     }
 
     private fun checkPorcupineInitialized(): ServiceState {
-        return if (porcupineWakeWordClient?.isInitialized == false) {
-            val error = porcupineWakeWordClient?.initialize()
-            error?.also {
-                logger.e(it.exception ?: Throwable()) { "porcupine error" }
-                porcupineWakeWordClient = null
-            }
-            error?.errorType?.serviceState ?: ServiceState.Success
-        } else ServiceState.Exception()
+        return porcupineWakeWordClient?.let {
+            if (!it.isInitialized) {
+                val error = porcupineWakeWordClient?.initialize()
+                error?.let {
+                    logger.e(it) { "porcupine error" }
+                    porcupineWakeWordClient = null
+                    ServiceState.Exception(it)
+                } ?: ServiceState.Success
+            } else ServiceState.Success
+        } ?: ServiceState.Exception(Exception("porcupineWakeWordClient null"))
     }
 
 }
