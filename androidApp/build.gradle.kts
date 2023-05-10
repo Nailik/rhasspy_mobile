@@ -210,6 +210,8 @@ dependencies {
     implementation(AndroidX.window)
 
     implementation(Touchlab.kermit)
+    implementation(Kotlin.test)
+    implementation(Kotlin.Test.junit)
     implementation(Devsrsouza.fontAwesome)
     implementation(Mikepenz.aboutLibrariesCore)
     implementation(Icerock.Resources)
