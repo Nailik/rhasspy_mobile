@@ -15,10 +15,10 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.main.MicrophoneFab
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent.Action.UserSessionClick
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel

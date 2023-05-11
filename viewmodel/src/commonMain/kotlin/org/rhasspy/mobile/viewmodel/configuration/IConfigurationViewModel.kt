@@ -17,6 +17,8 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.koin.core.component.KoinComponent
+import org.rhasspy.mobile.data.event.EventState.Consumed
+import org.rhasspy.mobile.data.event.EventState.Triggered
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.data.service.ServiceState
@@ -25,8 +27,6 @@ import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.data.event.EventState.Consumed
-import org.rhasspy.mobile.data.event.EventState.Triggered
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiNavigate.PopBackStack
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState

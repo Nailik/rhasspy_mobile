@@ -11,9 +11,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.log.LogLevel
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.SetShowLogEnabled
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 import kotlin.test.assertEquals

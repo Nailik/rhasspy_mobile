@@ -9,10 +9,10 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.MainActivity
-import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.android.navigation.BottomBarScreenType
 import org.rhasspy.mobile.android.utils.hasTestTag
 import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.ui.TestTag
 
 /**
  * Test Settings Screen

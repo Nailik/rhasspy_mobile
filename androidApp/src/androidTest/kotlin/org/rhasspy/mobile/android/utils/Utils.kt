@@ -15,8 +15,8 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
-import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 

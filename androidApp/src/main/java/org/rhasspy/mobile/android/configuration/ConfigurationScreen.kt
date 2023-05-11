@@ -14,7 +14,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.android.UiEventEffect
 import org.rhasspy.mobile.android.configuration.content.*
 import org.rhasspy.mobile.android.content.elements.*
@@ -23,11 +22,12 @@ import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
-import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.toText
 import org.rhasspy.mobile.ui.content.elements.translate
+import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.screens.configuration.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToError
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange

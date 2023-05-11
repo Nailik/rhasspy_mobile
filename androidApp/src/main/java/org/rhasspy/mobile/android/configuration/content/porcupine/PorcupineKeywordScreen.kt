@@ -18,14 +18,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.android.configuration.content.WakeWordConfigurationScreens
-import org.rhasspy.mobile.ui.content.elements.Icon
-import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.main.LocalNavController
-import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.elements.Icon
+import org.rhasspy.mobile.ui.content.elements.Text
+import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 

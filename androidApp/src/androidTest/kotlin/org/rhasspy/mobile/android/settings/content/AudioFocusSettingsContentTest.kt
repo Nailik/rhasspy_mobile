@@ -8,13 +8,13 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.SelectAudioFocusOption
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsViewModel
 import kotlin.test.assertEquals
