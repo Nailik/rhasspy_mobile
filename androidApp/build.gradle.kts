@@ -193,7 +193,7 @@ dependencies {
     implementation(AndroidX.Navigation.compose)
 
     implementation(Jetbrains.Compose.material3)
-    implementation(Jetbrains.Compose.icons)
+    implementation(Jetbrains.Compose.materialIconsExtended)
     implementation(Jetbrains.Compose.foundation)
     implementation(Jetbrains.Compose.preview)
 
