@@ -185,8 +185,11 @@ sonarqube {
         property("sonar.projectKey", "Nailik_rhasspy_mobile")
         property("sonar.organization", "nailik")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.sources", "src,../androidApp/src")
+        property("sonar.sources", projectDir.parent)
+        property("sonar.exclusions", "**.gradle/**,**build/**,**.idea/**,**documentation/**,**buildSrc/**,**iosApp/**,*.properties,*Task,*version")
+        property("sonar.android.lint.reportPaths", "${projectDir.parent}/androidApp/build/reports/lint-results.xml")
         property("sonar.verbose", "true")
+        property("sonar.projectBaseDir", projectDir.parent)
     }
 }
 

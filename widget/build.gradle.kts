@@ -74,6 +74,10 @@ android {
     defaultConfig {
         minSdk = 23
     }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_19
+        targetCompatibility = JavaVersion.VERSION_19
+    }
     composeOptions {
         kotlinCompilerExtensionVersion = "_"
     }
