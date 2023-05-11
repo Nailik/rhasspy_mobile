@@ -35,6 +35,7 @@ jobs:
         with:
           distribution: 'corretto'
           java-version: '19'
+          cache: 'gradle'
       # sonar
       - name: Sonar analyze
         env:
@@ -55,6 +56,7 @@ jobs:
         with:
           distribution: 'corretto'
           java-version: '19'
+          cache: 'gradle'
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       # necessary for linux/macos but doesn't work on windows
@@ -82,6 +84,7 @@ jobs:
         with:
           distribution: 'corretto'
           java-version: '19'
+          cache: 'gradle'
       # run all unit tests (debug and debug)
       - name: Unit Tests
         run: ./gradlew test${{ inputs.BUILD_TYPE }}
