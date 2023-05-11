@@ -19,6 +19,7 @@ import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
 import kotlin.test.assertEquals

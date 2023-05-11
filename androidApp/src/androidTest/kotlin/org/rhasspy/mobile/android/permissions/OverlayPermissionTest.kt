@@ -20,10 +20,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
-import org.rhasspy.mobile.android.theme.AppTheme
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
+import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.theme.AppTheme
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 

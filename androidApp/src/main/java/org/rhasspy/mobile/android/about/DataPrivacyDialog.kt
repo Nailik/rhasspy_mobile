@@ -14,11 +14,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.content.elements.HtmlText
-import org.rhasspy.mobile.android.content.elements.Text
-import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.elements.HtmlText
+import org.rhasspy.mobile.ui.content.elements.Text
+import org.rhasspy.mobile.ui.testTag
 
 /**
  * button to open changelog dialog

@@ -16,11 +16,11 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Change.SetBackgroundServiceEnabled
 import kotlin.test.assertFalse

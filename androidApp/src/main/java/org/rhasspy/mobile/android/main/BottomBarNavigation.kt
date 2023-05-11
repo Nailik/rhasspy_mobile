@@ -25,14 +25,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.configuration.ConfigurationScreen
-import org.rhasspy.mobile.android.content.elements.Icon
-import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.android.content.item.NavigationItem
 import org.rhasspy.mobile.android.navigation.BottomBarScreenType
 import org.rhasspy.mobile.android.navigation.NavigationParams
 import org.rhasspy.mobile.android.settings.SettingsScreen
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.icons.RhasspyLogo
+import org.rhasspy.mobile.ui.content.elements.Icon
+import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
 
@@ -188,8 +188,16 @@ fun BottomNavigation(
 
         if (isShowLogEnabled) {
             NavigationItem(screen = BottomBarScreenType.LogScreen,
-                icon = { Icon(Icons.Filled.Code, MR.strings.log.stable) },
-                label = { Text(MR.strings.log.stable) }
+                icon = {
+                    Icon(Icons.Filled.Code, MR.strings.log.stable)
+                },
+                label = {
+                    Text(
+                        resource = MR.strings.log.stable,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
+                }
             )
         }
 

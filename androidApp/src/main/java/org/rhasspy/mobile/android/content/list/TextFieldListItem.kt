@@ -22,10 +22,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.content.elements.Icon
-import org.rhasspy.mobile.android.content.elements.translate
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.ui.content.elements.Icon
+import org.rhasspy.mobile.ui.content.elements.translate
 
 @Composable
 fun TextFieldListItemVisibility(

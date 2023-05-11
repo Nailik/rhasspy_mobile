@@ -16,6 +16,7 @@ import org.rhasspy.mobile.android.utils.requestMicrophonePermissions
 import org.rhasspy.mobile.android.utils.requestOverlayPermissions
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.ui.TestTag
 
 @RunWith(AndroidJUnit4::class)
 class MicrophoneOverlayTest : FlakyTest() {

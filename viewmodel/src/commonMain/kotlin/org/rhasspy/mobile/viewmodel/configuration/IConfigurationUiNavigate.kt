@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.viewmodel.configuration
 
-import org.rhasspy.mobile.ui.event.Event
-import org.rhasspy.mobile.ui.event.EventState
+import org.rhasspy.mobile.data.event.Event
+import org.rhasspy.mobile.data.event.EventState
 
 sealed class IConfigurationUiNavigate(eventState: EventState) : Event(eventState) {
 

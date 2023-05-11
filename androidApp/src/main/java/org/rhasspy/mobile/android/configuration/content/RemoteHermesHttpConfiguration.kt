@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
@@ -17,8 +16,9 @@ import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
-import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*

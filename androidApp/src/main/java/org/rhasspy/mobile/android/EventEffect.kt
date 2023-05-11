@@ -2,8 +2,8 @@ package org.rhasspy.mobile.android
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import org.rhasspy.mobile.ui.event.Event
-import org.rhasspy.mobile.ui.event.EventState
+import org.rhasspy.mobile.data.event.Event
+import org.rhasspy.mobile.data.event.EventState
 import kotlin.coroutines.CoroutineContext
 
 /**

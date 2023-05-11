@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED_VARIABLE")
+@file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
 
 plugins {
     kotlin("multiplatform")
@@ -14,19 +14,31 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation(project(":viewmodel"))
+                implementation(project(":data"))
+                implementation(project(":resources"))
+                implementation(project(":settings"))
                 implementation(Jetbrains.Compose.ui)
                 implementation(Jetbrains.Compose.foundation)
                 implementation(Jetbrains.Compose.material)
                 implementation(Jetbrains.Compose.material3)
                 implementation(Jetbrains.Compose.runtime)
+                implementation(Jetbrains.Compose.materialIconsExtended)
+                implementation(Icerock.Resources)
             }
         }
         val commonTest by getting {
             dependencies {
-                implementation(kotlin("test"))
+                implementation(Kotlin.test)
             }
         }
-        val androidMain by getting
+        val androidMain by getting {
+            dependencies {
+                implementation(AndroidX.Compose.ui)
+                implementation(Google.accompanist.systemUiController)
+                implementation(AndroidX.core)
+            }
+        }
         val androidUnitTest by getting
         val iosX64Main by getting
         val iosArm64Main by getting
@@ -58,5 +70,11 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_19
         targetCompatibility = JavaVersion.VERSION_19
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "_"
+    }
+    buildFeatures {
+        compose = true
     }
 }

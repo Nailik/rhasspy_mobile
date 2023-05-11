@@ -4,8 +4,8 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.Checkbox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.ui.content.elements.Text
 
 @Composable
 fun CheckBoxListItem(

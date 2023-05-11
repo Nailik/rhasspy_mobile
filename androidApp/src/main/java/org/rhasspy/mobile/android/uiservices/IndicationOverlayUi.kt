@@ -15,14 +15,14 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.combinedTestTag
-import org.rhasspy.mobile.android.theme.assistant_color_four
-import org.rhasspy.mobile.android.theme.assistant_color_one
-import org.rhasspy.mobile.android.theme.assistant_color_three
-import org.rhasspy.mobile.android.theme.assistant_color_two
 import org.rhasspy.mobile.logic.services.indication.IndicationState
 import org.rhasspy.mobile.logic.services.indication.IndicationState.*
+import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.combinedTestTag
+import org.rhasspy.mobile.ui.theme.assistant_color_four
+import org.rhasspy.mobile.ui.theme.assistant_color_one
+import org.rhasspy.mobile.ui.theme.assistant_color_three
+import org.rhasspy.mobile.ui.theme.assistant_color_two
 import kotlin.math.abs
 
 /**

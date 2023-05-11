@@ -9,8 +9,6 @@ expect abstract class NativeApplication() {
     val isAppInBackground: StateFlow<Boolean>
     abstract val isHasStarted: StateFlow<Boolean>
 
-    abstract suspend fun updateWidgetNative()
-
     abstract fun resume()
 
     abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)

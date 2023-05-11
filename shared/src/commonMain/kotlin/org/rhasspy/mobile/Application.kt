@@ -81,15 +81,9 @@ abstract class Application : NativeApplication(), KoinComponent {
         }
     }
 
-    override suspend fun updateWidgetNative() {
-        updateWidget()
-    }
-
     abstract fun startOverlay()
 
     abstract fun stopOverlay()
-
-    abstract suspend fun updateWidget()
 
     override fun resume() {
         MicrophonePermission.update()

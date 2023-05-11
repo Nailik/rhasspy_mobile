@@ -11,9 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.rhasspy.mobile.android.content.elements.Icon
-import org.rhasspy.mobile.android.content.elements.Text
 import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.ui.content.elements.Icon
+import org.rhasspy.mobile.ui.content.elements.Text
 
 @Composable
 fun InformationListElement(

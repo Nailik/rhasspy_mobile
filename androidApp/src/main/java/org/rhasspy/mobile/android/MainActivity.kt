@@ -29,8 +29,10 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
 import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
+import org.rhasspy.mobile.widget.microphone.MicrophoneWidgetUtils
 
 
 /**
@@ -59,7 +61,9 @@ class MainActivity : KoinComponent, AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
         if (intent.getBooleanExtra(IntentAction.StartRecording.param, false)) {
-            get<ServiceMiddleware>().action(WakeWordDetected(Source.Local, wakeWord = "intent"))
+            if (MicrophonePermission.granted.value) {
+                get<ServiceMiddleware>().action(WakeWordDetected(Source.Local, wakeWord = "intent"))
+            }
         }
 
         val viewModelFactory = get<ViewModelFactory>()
@@ -83,7 +87,7 @@ class MainActivity : KoinComponent, AppCompatActivity() {
         }
 
         CoroutineScope(Dispatchers.Default).launch {
-            get<NativeApplication>().updateWidgetNative()
+            MicrophoneWidgetUtils.updateWidget()
         }
     }
 }

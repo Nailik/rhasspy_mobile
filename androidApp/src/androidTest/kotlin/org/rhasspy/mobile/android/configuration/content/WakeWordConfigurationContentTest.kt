@@ -13,13 +13,13 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.awaitSaved
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.service.option.WakeWordOption
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken

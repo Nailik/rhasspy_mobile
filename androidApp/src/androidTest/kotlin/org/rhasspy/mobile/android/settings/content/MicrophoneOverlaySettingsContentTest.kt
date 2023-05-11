@@ -17,6 +17,7 @@ import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SelectMicrophoneOverlaySizeOption
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SetMicrophoneOverlayWhileAppEnabled
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsViewModel

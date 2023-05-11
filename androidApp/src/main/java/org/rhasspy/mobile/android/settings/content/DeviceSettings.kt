@@ -6,15 +6,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.list.InformationListElement
 import org.rhasspy.mobile.android.content.list.SliderListItem
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
-import org.rhasspy.mobile.android.testTag
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.*
 

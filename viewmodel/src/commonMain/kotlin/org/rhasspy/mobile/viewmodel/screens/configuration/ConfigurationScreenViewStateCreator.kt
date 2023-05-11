@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.rhasspy.mobile.data.event.EventState
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
@@ -20,7 +21,6 @@ import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.ui.event.EventState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.IConfigurationScreenUiStateEvent.ScrollToErrorEventIState
 

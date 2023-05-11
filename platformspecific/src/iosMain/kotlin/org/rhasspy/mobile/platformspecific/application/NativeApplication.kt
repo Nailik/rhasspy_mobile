@@ -9,13 +9,9 @@ actual abstract class NativeApplication {
     actual val isAppInBackground: StateFlow<Boolean>
         get() = TODO("Not yet implemented")
     actual abstract val isHasStarted: StateFlow<Boolean>
-    actual abstract suspend fun updateWidgetNative()
     actual abstract fun setCrashlyticsCollectionEnabled(enabled: Boolean)
     actual fun isInstrumentedTest(): Boolean {
         TODO("Not yet implemented")
-    }
-
-    actual fun openLink(link: String) {
     }
 
     actual fun restart() {

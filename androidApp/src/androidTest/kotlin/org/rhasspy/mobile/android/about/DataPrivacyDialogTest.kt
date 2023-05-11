@@ -5,9 +5,9 @@ import androidx.compose.ui.test.performClick
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.ui.TestTag
 
 /**
  * Test visibility and close button of data privacy dialog

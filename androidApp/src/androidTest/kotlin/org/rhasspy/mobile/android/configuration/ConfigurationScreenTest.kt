@@ -12,11 +12,11 @@ import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.MainActivity
-import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.navigation.BottomBarScreenType
 import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.hasTestTag
 import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
 import kotlin.test.assertEquals
 

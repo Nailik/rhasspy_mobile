@@ -9,12 +9,12 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.ui.TestTag
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
