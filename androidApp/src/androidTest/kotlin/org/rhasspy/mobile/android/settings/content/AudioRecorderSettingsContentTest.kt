@@ -9,12 +9,8 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.utils.TestContentProvider
-import org.rhasspy.mobile.android.utils.onListItemRadioButton
-import org.rhasspy.mobile.android.utils.onNodeWithCombinedTag
-import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
@@ -22,7 +18,7 @@ import org.rhasspy.mobile.settings.AppSetting
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class AudioRecorderSettingsContentTest : KoinComponent {
+class AudioRecorderSettingsContentTest : FlakyTest() {
 
     @get: Rule
     val composeTestRule = createComposeRule()

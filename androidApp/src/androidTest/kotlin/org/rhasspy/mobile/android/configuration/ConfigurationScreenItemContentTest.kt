@@ -17,13 +17,11 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import com.adevinta.android.barista.rule.flaky.AllowFlaky
-import com.adevinta.android.barista.rule.flaky.FlakyTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
@@ -35,10 +33,7 @@ import org.rhasspy.mobile.data.resource.stable
  * save, discard and test buttons
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-class ConfigurationScreenItemContentTest : KoinComponent {
-
-    @get:Rule
-    val flakyRule = FlakyTestRule()
+class ConfigurationScreenItemContentTest : FlakyTest() {
 
     @get: Rule
     val composeTestRule = createEmptyComposeRule()

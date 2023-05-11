@@ -8,13 +8,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
-import org.rhasspy.mobile.android.utils.TestContentProvider
-import org.rhasspy.mobile.android.utils.onListItemSwitch
-import org.rhasspy.mobile.android.utils.onNodeWithTag
-import org.rhasspy.mobile.android.utils.requestMicrophonePermissions
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.SetSilenceDetectionEnabled
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
 import kotlin.test.assertEquals
@@ -22,7 +18,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class AutomaticSilenceDetectionSettingsContentTest : KoinComponent {
+class AutomaticSilenceDetectionSettingsContentTest : FlakyTest() {
 
     @get: Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()

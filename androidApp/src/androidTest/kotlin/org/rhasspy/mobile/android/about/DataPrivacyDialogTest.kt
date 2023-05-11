@@ -6,12 +6,13 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 
 /**
  * Test visibility and close button of data privacy dialog
  */
-class DataPrivacyDialogTest {
+class DataPrivacyDialogTest : FlakyTest() {
 
     @get: Rule
     val composeTestRule = createComposeRule()

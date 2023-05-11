@@ -10,13 +10,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.utils.TestContentProvider
-import org.rhasspy.mobile.android.utils.onListItemRadioButton
-import org.rhasspy.mobile.android.utils.onListItemSwitch
-import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.SetShowLogEnabled
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
@@ -24,7 +20,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class LogSettingsContentTest : KoinComponent {
+class LogSettingsContentTest : FlakyTest() {
 
     @get: Rule
     val composeTestRule = createComposeRule()

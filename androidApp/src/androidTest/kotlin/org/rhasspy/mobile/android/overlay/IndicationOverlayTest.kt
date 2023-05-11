@@ -8,9 +8,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
+import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.hasCombinedTestTag
 import org.rhasspy.mobile.android.utils.requestOverlayPermissions
 import org.rhasspy.mobile.android.utils.waitUntilExists
@@ -19,7 +19,7 @@ import org.rhasspy.mobile.logic.services.indication.IndicationState
 import org.rhasspy.mobile.settings.AppSetting
 
 @RunWith(AndroidJUnit4::class)
-class IndicationOverlayTest : KoinComponent {
+class IndicationOverlayTest : FlakyTest() {
 
     @get: Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()

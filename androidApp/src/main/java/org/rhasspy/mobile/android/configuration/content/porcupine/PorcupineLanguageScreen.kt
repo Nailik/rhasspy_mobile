@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.IconButton
@@ -11,7 +12,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.content.elements.CustomDivider
@@ -44,7 +48,17 @@ fun PorcupineLanguageScreen(
 
         Surface(Modifier.padding(paddingValues)) {
 
-            LazyColumn {
+            val coroutineScope = rememberCoroutineScope()
+            val state = rememberLazyListState()
+            val selectedIndex = viewState.languageOptions.indexOf(viewState.porcupineLanguage)
+
+            LaunchedEffect(true) {
+                coroutineScope.launch {
+                    state.scrollToItem(selectedIndex)
+                }
+            }
+
+            LazyColumn(state = state) {
 
                 items(viewState.languageOptions) { option ->
 

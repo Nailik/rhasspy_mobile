@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.platformspecific.porcupine
 
-import ai.picovoice.porcupine.*
+import ai.picovoice.porcupine.PorcupineException
+import ai.picovoice.porcupine.PorcupineManager
+import ai.picovoice.porcupine.PorcupineManagerCallback
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
@@ -10,8 +12,6 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
-import org.rhasspy.mobile.data.porcupine.PorcupineError
-import org.rhasspy.mobile.data.porcupine.PorcupineErrorType
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import java.io.File
@@ -27,7 +27,7 @@ actual class PorcupineWakeWordClient actual constructor(
     private val wakeWordPorcupineKeywordCustomOptions: ImmutableList<PorcupineCustomKeyword>,
     private val wakeWordPorcupineLanguage: PorcupineLanguageOption,
     private val onKeywordDetected: (hotWord: String) -> Unit,
-    private val onError: (PorcupineError) -> Unit
+    private val onError: (Exception) -> Unit
 ) : PorcupineManagerCallback, KoinComponent {
     private val logger = Logger.withTag("PorcupineWakeWordClient")
 
@@ -42,14 +42,14 @@ actual class PorcupineWakeWordClient actual constructor(
     /**
      * create porcupine client
      */
-    actual fun initialize(): PorcupineError? {
+    actual fun initialize(): Exception? {
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.RECORD_AUDIO
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             logger.e { "missing recording permission" }
-            return PorcupineError(null, PorcupineErrorType.MicrophonePermissionMissing)
+            return Exception("MicrophonePermissionMissing")
         }
 
         return try {
@@ -59,7 +59,7 @@ actual class PorcupineWakeWordClient actual constructor(
                 .setKeywordPaths(
                     wakeWordPorcupineKeywordDefaultOptions.filter { it.isEnabled && it.option.language == wakeWordPorcupineLanguage }
                         .map {
-                            copyBuildInKeywordFileIfNecessary(it)
+                            copyBuildInKeywordFile(it)
                         }.toMutableList().also { list ->
                             list.addAll(
                                 wakeWordPorcupineKeywordCustomOptions.filter { it.isEnabled }.map {
@@ -83,9 +83,9 @@ actual class PorcupineWakeWordClient actual constructor(
                             )
                         }.toTypedArray().toFloatArray()
                 )
-                .setModelPath(copyModelFileIfNecessary())
+                .setModelPath(copyModelFile())
                 .setErrorCallback {
-                    onError(it.toPorcupineError())
+                    onError(it)
                 }
 
 
@@ -95,9 +95,12 @@ actual class PorcupineWakeWordClient actual constructor(
 
             initialized = true
             null//no error
-        } catch (e: Exception) {
+        } catch (exception: PorcupineException) {
             initialized = false
-            return e.toPorcupineError()
+            return Exception(exception.localizedMessage)
+        } catch (exception: Exception) {
+            initialized = false
+            return exception
         }
     }
 
@@ -111,13 +114,17 @@ actual class PorcupineWakeWordClient actual constructor(
      * checks for audio permission
      * tries to start porcupine
      */
-    actual fun start(): PorcupineError? {
+    actual fun start(): Exception? {
         return porcupineManager?.let {
-            it.start()
-            null
+            return try {
+                it.start()
+                null
+            } catch (exception: Exception) {
+                exception
+            }
         } ?: run {
             logger.a { "Porcupine start but porcupineManager not initialized" }
-            PorcupineError(null, PorcupineErrorType.NotInitialized)
+            Exception("notInitialized")
         }
     }
 
@@ -152,17 +159,15 @@ actual class PorcupineWakeWordClient actual constructor(
     /**
      * copies a model file from the file resources to app storage directory, else cannot be used by porcupine
      */
-    private fun copyModelFileIfNecessary(): String {
+    private fun copyModelFile(): String {
         val folder = File(context.filesDir, "porcupine")
         folder.mkdirs()
         val file = File(folder, "model_${wakeWordPorcupineLanguage.name.lowercase()}.pv")
 
-        if (!file.exists()) {
-            file.outputStream().write(
-                context.resources.openRawResource(wakeWordPorcupineLanguage.file.rawResId)
-                    .readBytes()
-            )
-        }
+        file.outputStream().write(
+            context.resources.openRawResource(wakeWordPorcupineLanguage.file.rawResId)
+                .readBytes()
+        )
 
         return file.absolutePath
     }
@@ -170,17 +175,15 @@ actual class PorcupineWakeWordClient actual constructor(
     /**
      * copies a keyword file from the file resources to app storage directory, else cannot be used by porcupine
      */
-    private fun copyBuildInKeywordFileIfNecessary(defaultKeyword: PorcupineDefaultKeyword): String {
+    private fun copyBuildInKeywordFile(defaultKeyword: PorcupineDefaultKeyword): String {
         val folder = File(context.filesDir, "porcupine")
         folder.mkdirs()
-        val file = File(folder, "model_${defaultKeyword.option.name.lowercase()}.ppn")
+        val file = File(folder, "keyword_${defaultKeyword.option.name.lowercase()}.ppn")
 
-        if (!file.exists()) {
-            file.outputStream().write(
-                context.resources.openRawResource(defaultKeyword.option.file.rawResId)
-                    .readBytes()
-            )
-        }
+        file.outputStream().write(
+            context.resources.openRawResource(defaultKeyword.option.file.rawResId)
+                .readBytes()
+        )
 
         return file.absolutePath
     }
@@ -194,55 +197,4 @@ actual class PorcupineWakeWordClient actual constructor(
         porcupineManager = null
     }
 
-    /**
-     * converts an exception to a porcupine depending on type
-     */
-    private fun Exception.toPorcupineError(): PorcupineError {
-        return when (this) {
-            is PorcupineActivationException -> PorcupineError(
-                this,
-                PorcupineErrorType.ActivationException
-            )
-
-            is PorcupineActivationLimitException -> PorcupineError(
-                this,
-                PorcupineErrorType.ActivationLimitException
-            )
-
-            is PorcupineActivationRefusedException -> PorcupineError(
-                this,
-                PorcupineErrorType.ActivationRefusedException
-            )
-
-            is PorcupineActivationThrottledException -> PorcupineError(
-                this,
-                PorcupineErrorType.ActivationThrottledException
-            )
-
-            is PorcupineInvalidArgumentException -> PorcupineError(
-                this,
-                PorcupineErrorType.InvalidArgumentException
-            )
-
-            is PorcupineInvalidStateException -> PorcupineError(
-                this,
-                PorcupineErrorType.InvalidStateException
-            )
-
-            is PorcupineIOException -> PorcupineError(this, PorcupineErrorType.IOException)
-            is PorcupineKeyException -> PorcupineError(this, PorcupineErrorType.KeyException)
-            is PorcupineMemoryException -> PorcupineError(this, PorcupineErrorType.MemoryException)
-            is PorcupineRuntimeException -> PorcupineError(
-                this,
-                PorcupineErrorType.RuntimeException
-            )
-
-            is PorcupineStopIterationException -> PorcupineError(
-                this,
-                PorcupineErrorType.StopIterationException
-            )
-
-            else -> PorcupineError(this, PorcupineErrorType.Other)
-        }
-    }
 }

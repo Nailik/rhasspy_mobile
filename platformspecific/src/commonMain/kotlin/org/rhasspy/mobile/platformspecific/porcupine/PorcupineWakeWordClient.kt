@@ -3,7 +3,6 @@ package org.rhasspy.mobile.platformspecific.porcupine
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
-import org.rhasspy.mobile.data.porcupine.PorcupineError
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 
 /**
@@ -18,7 +17,7 @@ expect class PorcupineWakeWordClient(
     wakeWordPorcupineKeywordCustomOptions: ImmutableList<PorcupineCustomKeyword>,
     wakeWordPorcupineLanguage: PorcupineLanguageOption,
     onKeywordDetected: (hotWord: String) -> Unit,
-    onError: (PorcupineError) -> Unit
+    onError: (Exception) -> Unit
 ) {
 
     val isInitialized: Boolean
@@ -26,12 +25,12 @@ expect class PorcupineWakeWordClient(
     /**
      * create porcupine client
      */
-    fun initialize(): PorcupineError?
+    fun initialize(): Exception?
 
     /**
      * start wake word detected
      */
-    fun start(): PorcupineError?
+    fun start(): Exception?
 
     /**
      * stop wake word detected

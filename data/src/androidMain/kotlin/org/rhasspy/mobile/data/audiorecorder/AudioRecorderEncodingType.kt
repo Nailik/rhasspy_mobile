@@ -17,6 +17,7 @@ actual enum class AudioRecorderEncodingType(
     Default(MR.strings.encoding_type_default.stable, ENCODING_DEFAULT, 8),
     PCM8Bit(MR.strings.encoding_type_PCM8Bit.stable, ENCODING_PCM_8BIT, 8),
     PCM16Bit(MR.strings.encoding_type_PCM16Bit.stable, ENCODING_PCM_16BIT, 16),
+
     @SuppressLint("InlinedApi")
     PCM_32BIT(MR.strings.encoding_type_PCM_32BIT.stable, ENCODING_PCM_32BIT, 32);
 

@@ -16,7 +16,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.junit.Rule
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.test.R
@@ -38,7 +37,8 @@ import kotlin.test.assertTrue
 abstract class IndicationSoundScreenTest(
     val title: StableStringResource,
     val screen: IndicationSettingsScreens
-) : KoinComponent {
+) : FlakyTest() {
+
     @get: Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 

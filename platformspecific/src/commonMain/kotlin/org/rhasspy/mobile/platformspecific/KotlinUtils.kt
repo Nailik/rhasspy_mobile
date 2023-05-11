@@ -75,3 +75,10 @@ fun <E> ImmutableList<E>.updateList(index: Int, block: E.() -> E): ImmutableList
         set(index, block(item))
     }
 }
+
+fun <E> ImmutableList<E>.updateListItem(item: E, block: E.() -> E): ImmutableList<E> {
+    val index = indexOf(item)
+    return this.toImmutableList().updateList {
+        set(index, block(item))
+    }
+}

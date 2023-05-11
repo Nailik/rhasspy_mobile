@@ -9,7 +9,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.utils.*
@@ -20,7 +19,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class PorcupineKeywordDefaultScreenTest : KoinComponent {
+class PorcupineKeywordDefaultScreenTest : FlakyTest() {
 
     @get: Rule
     val composeTestRule = createComposeRule()
@@ -68,11 +67,11 @@ class PorcupineKeywordDefaultScreenTest : KoinComponent {
     fun testList() = runTest {
         //no wake word is set
         val viewState = viewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState
-        viewState.defaultOptions.forEach {
+        viewState.defaultOptionsUi.forEach {
             assertFalse(it.isEnabled)
         }
         //none is selected
-        viewState.defaultOptions.forEach {
+        viewState.defaultOptionsUi.forEach {
             composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen).performScrollToNode(hasTestTag(it.option))
             composeTestRule.onNodeWithTag(it.option).onListItemSwitch().assertIsOff()
             composeTestRule.awaitIdle()
@@ -126,7 +125,7 @@ class PorcupineKeywordDefaultScreenTest : KoinComponent {
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
         val newViewModel = WakeWordConfigurationViewModel(get())
-        newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState.defaultOptions.forEach {
+        newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState.defaultOptionsUi.forEach {
             //americano is saved with enabled
             //porcupine is saved with not enabled
             //everything else is saved with not enabled

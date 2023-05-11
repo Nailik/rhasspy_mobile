@@ -11,7 +11,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.*
@@ -26,7 +25,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class IndicationSettingsContentTest : KoinComponent {
+class IndicationSettingsContentTest : FlakyTest() {
 
     @get: Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()

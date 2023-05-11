@@ -1,7 +1,10 @@
 @file:Suppress("UNUSED_VARIABLE")
 
+import com.codingfeline.buildkonfig.compiler.FieldSpec
 import com.mikepenz.aboutlibraries.plugin.DuplicateMode.MERGE
 import com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
+import groovy.json.JsonSlurper
+import org.apache.commons.io.output.ByteArrayOutputStream
 import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
@@ -11,6 +14,7 @@ plugins {
     id("com.codingfeline.buildkonfig")
     id("org.jetbrains.compose")
     id("com.mikepenz.aboutlibraries.plugin")
+    id("de.undercouch.download")
 }
 
 kotlin {
@@ -92,9 +96,9 @@ buildkonfig {
     exposeObjectWithName = "BuildKonfig"
 
     defaultConfigs {
-        buildConfigField(com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING, "changelog", generateChangelog())
-        buildConfigField(com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT, "versionCode", Version.code.toString())
-        buildConfigField(com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING, "versionName", Version.toString())
+        buildConfigField(FieldSpec.Type.STRING, "changelog", generateChangelog())
+        buildConfigField(FieldSpec.Type.INT, "versionCode", Version.code.toString())
+        buildConfigField(FieldSpec.Type.STRING, "versionName", Version.toString())
     }
 }
 
@@ -115,7 +119,7 @@ tasks.findByPath("preBuild")!!.doFirst {
 
 fun generateChangelog(): String {
     try {
-        var os = org.apache.commons.io.output.ByteArrayOutputStream()
+        var os = ByteArrayOutputStream()
 
         exec {
             standardOutput = os
@@ -126,7 +130,7 @@ fun generateChangelog(): String {
         val lastTag = String(os.toByteArray()).trim()
         os.close()
 
-        os = org.apache.commons.io.output.ByteArrayOutputStream()
+        os = ByteArrayOutputStream()
         exec {
             standardOutput = os
             commandLine = listOf("git")
@@ -145,4 +149,71 @@ fun generateChangelog(): String {
     } catch (e: Exception) {
         return ""
     }
+}
+
+@Suppress("UNCHECKED_CAST")
+//manually run this task to download all models and update keywords
+tasks.register("updatePorcupineFiles") {
+    doLast {
+        val baseUrl = "https://api.github.com/repos/Picovoice/porcupine/contents"
+        val baseDest = "$projectDir/src/commonMain/resources/MR/files/porcupine"
+
+        var src = "$baseUrl/lib/common"
+        val contentsFile = File(buildDir, "directory_contents.json")
+        download.run {
+            src(src)
+            dest(contentsFile)
+        }
+
+        // parse directory listing
+        var contents = JsonSlurper().parse(contentsFile) as List<Map<Any, String>>
+        var urls = contents.map { url -> url["download_url"] }
+
+        // download files
+        download.run {
+            src(urls)
+            dest("$baseDest/models")
+            overwrite(true)
+            onlyIfModified(true)
+            eachFile {
+                //correctly encode non standard letters
+                name = name.replace(Regex("[^A-Za-z0-9._]"), "")
+            }
+        }
+
+        urls.forEach { modelUrl ->
+            if (modelUrl != null) {
+                //language contains _ for english it's empty else _de
+                val language = modelUrl
+                    .replace(Regex(".*/porcupine_params"), "")
+                    .replace(".pv", "")
+
+                src = "$baseUrl/resources/keyword_files$language/android"
+
+                download.run {
+                    src(src)
+                    dest(contentsFile)
+                }
+
+                // parse directory listing
+                contents = JsonSlurper().parse(contentsFile) as List<Map<Any, String>>
+                urls = contents.map { url -> url["download_url"] }
+
+                // download files
+                download.run {
+                    src(urls)
+                    dest("$baseDest/keyword_files$language")
+                    overwrite(true)
+                    onlyIfModified(true)
+                    eachFile {
+                        //correctly encode non standard letters
+                        name = name.replace(Regex("[^A-Za-z0-9._]"), "")
+                    }
+                }
+
+            }
+        }
+
+    }
+
 }

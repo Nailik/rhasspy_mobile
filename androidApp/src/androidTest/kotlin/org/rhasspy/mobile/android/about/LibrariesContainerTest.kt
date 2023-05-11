@@ -11,13 +11,14 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.libraries.StableLibrary
 
 /**
  * tests library container and library dialog
  */
-class LibrariesContainerTest {
+class LibrariesContainerTest : FlakyTest() {
 
     @get: Rule
     val composeTestRule = createComposeRule()

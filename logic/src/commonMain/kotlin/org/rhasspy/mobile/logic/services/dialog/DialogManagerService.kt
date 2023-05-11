@@ -73,6 +73,7 @@ class DialogManagerService(
                 //reset service on params change
                 _serviceState.value = ServiceState.Success
                 _currentDialogState.value = DialogManagerServiceState.AwaitingWakeWord
+                wakeWordService.startDetection()
                 timeoutJob?.cancel()
                 sessionId = null
                 sendAudioCaptured = false

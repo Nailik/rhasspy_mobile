@@ -11,12 +11,15 @@ import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.logic.services.wakeword.WakeWordService
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.extensions.commonInternalPath
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
+import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.updateList
+import org.rhasspy.mobile.platformspecific.updateListItem
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
@@ -53,15 +56,21 @@ class WakeWordConfigurationViewModel(
     private fun onChange(change: Change) {
         contentViewState.update {
             when (change) {
-                is SelectWakeWordOption -> it.copy(wakeWordOption = change.option)
+                is SelectWakeWordOption -> it.copy(
+                    wakeWordOption = change.option,
+                    isMicrophonePermissionRequestVisible = !MicrophonePermission.granted.value && (change.option == WakeWordOption.Porcupine || change.option == WakeWordOption.Udp)
+                )
             }
         }
     }
 
     private fun onAction(action: Action) {
         when (action) {
-            MicrophonePermissionAllowed -> if (!viewState.value.hasUnsavedChanges) {
-                onAction(Save)
+            MicrophonePermissionAllowed -> {
+                contentViewState.update { it.copy(isMicrophonePermissionRequestVisible = false) }
+                if (!viewState.value.hasUnsavedChanges) {
+                    onAction(Save)
+                }
             }
 
             TestStartWakeWord -> startWakeWordDetection()
@@ -89,14 +98,14 @@ class WakeWordConfigurationViewModel(
                 when (change) {
                     is UpdateWakeWordPorcupineAccessToken -> it.copy(accessToken = change.value)
                     is ClickPorcupineKeywordCustom -> it.copy(customOptionsUi = it.customOptionsUi.updateList(change.index) { copy(keyword = keyword.copy(isEnabled = !keyword.isEnabled)) })
-                    is ClickPorcupineKeywordDefault -> it.copy(defaultOptions = it.defaultOptions.updateList(change.index) { copy(isEnabled = !isEnabled) })
+                    is ClickPorcupineKeywordDefault -> it.copy(defaultOptions = it.defaultOptions.updateListItem(change.item) { copy(isEnabled = !isEnabled) })
                     is DeletePorcupineKeywordCustom -> it.copy(customOptionsUi = it.customOptionsUi.updateList(change.index) { copy(deleted = true) })
                     is SelectWakeWordPorcupineLanguage -> it.copy(porcupineLanguage = change.option)
                     is SetPorcupineKeywordCustom -> it.copy(customOptionsUi = it.customOptionsUi.updateList(change.index) { copy(keyword = keyword.copy(isEnabled = change.value)) })
-                    is SetPorcupineKeywordDefault -> it.copy(defaultOptions = it.defaultOptions.updateList(change.index) { copy(isEnabled = change.value) })
+                    is SetPorcupineKeywordDefault -> it.copy(defaultOptions = it.defaultOptions.updateListItem(change.item) { copy(isEnabled = change.value) })
                     is UndoCustomKeywordDeleted -> it.copy(customOptionsUi = it.customOptionsUi.updateList(change.index) { copy(deleted = false) })
                     is UpdateWakeWordPorcupineKeywordCustomSensitivity -> it.copy(customOptionsUi = it.customOptionsUi.updateList(change.index) { copy(keyword = keyword.copy(sensitivity = change.value)) })
-                    is UpdateWakeWordPorcupineKeywordDefaultSensitivity -> it.copy(defaultOptions = it.defaultOptions.updateList(change.index) { copy(sensitivity = change.value) })
+                    is UpdateWakeWordPorcupineKeywordDefaultSensitivity -> it.copy(defaultOptions = it.defaultOptions.updateListItem(change.item) { copy(sensitivity = change.value) })
                     is AddPorcupineKeywordCustom ->
                         it.copy(customOptionsUi = it.customOptionsUi.updateList {
                             add(
