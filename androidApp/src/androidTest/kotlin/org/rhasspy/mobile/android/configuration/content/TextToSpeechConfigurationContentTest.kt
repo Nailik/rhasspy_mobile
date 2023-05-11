@@ -7,7 +7,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.utils.*
@@ -18,7 +17,7 @@ import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfi
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class TextToSpeechConfigurationContentTest : KoinComponent {
+class TextToSpeechConfigurationContentTest : FlakyTest() {
 
     @get: Rule
     val composeTestRule = createComposeRule()

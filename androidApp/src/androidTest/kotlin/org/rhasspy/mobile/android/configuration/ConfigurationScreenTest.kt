@@ -10,11 +10,11 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.TestTag
 import org.rhasspy.mobile.android.navigation.BottomBarScreenType
+import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.hasTestTag
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
@@ -26,7 +26,7 @@ import kotlin.test.assertEquals
  * Site ID edit
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-class ConfigurationScreenTest : KoinComponent {
+class ConfigurationScreenTest : FlakyTest() {
 
     @get: Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
