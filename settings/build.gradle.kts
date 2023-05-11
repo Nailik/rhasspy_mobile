@@ -1,24 +1,12 @@
 @file:Suppress("UnstableApiUsage", "UNUSED_VARIABLE")
 
-import org.gradle.api.JavaVersion.VERSION_19
-
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
+    id("base-gradle")
 }
 
 kotlin {
-    android()
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
-            baseName = "settings"
-        }
-    }
-
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -64,12 +52,4 @@ kotlin {
 
 android {
     namespace = "org.rhasspy.mobile.settings"
-    compileSdk = 33
-    defaultConfig {
-        minSdk = 23
-    }
-    compileOptions {
-        sourceCompatibility = VERSION_19
-        targetCompatibility = VERSION_19
-    }
 }

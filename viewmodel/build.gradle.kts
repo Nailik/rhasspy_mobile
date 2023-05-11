@@ -3,14 +3,10 @@
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
+    id("base-gradle")
 }
 
 kotlin {
-    android()
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
-
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -23,7 +19,7 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.coroutines)
                 implementation(Jetbrains.Kotlinx.immutable)
                 implementation(Jetbrains.Kotlinx.dateTime)
-                implementation(Jetbrains.Compose.runtime)
+                implementation(Jetbrains.Compose.foundation)
                 implementation(Koin.core)
                 implementation(Icerock.Mvvm.core)
                 implementation(Ktor2.Client.core)
@@ -70,12 +66,4 @@ kotlin {
 
 android {
     namespace = "org.rhasspy.mobile.viewmodel"
-    compileSdk = 33
-    defaultConfig {
-        minSdk = 23
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_19
-        targetCompatibility = JavaVersion.VERSION_19
-    }
 }

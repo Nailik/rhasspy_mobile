@@ -4,14 +4,10 @@ plugins {
     kotlin("multiplatform")
     id("com.android.library")
     kotlin("plugin.serialization")
+    id("base-gradle")
 }
 
 kotlin {
-    android()
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
-
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -55,12 +51,4 @@ kotlin {
 
 android {
     namespace = "org.rhasspy.mobile.data"
-    compileSdk = 33
-    defaultConfig {
-        minSdk = 23
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_19
-        targetCompatibility = JavaVersion.VERSION_19
-    }
 }

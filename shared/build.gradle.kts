@@ -1,6 +1,5 @@
 @file:Suppress("UnstableApiUsage", "UNUSED_VARIABLE")
 
-import org.gradle.api.JavaVersion.VERSION_19
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -10,10 +9,10 @@ plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
-    id("org.sonarqube")
     id("org.jetbrains.compose")
     id("co.touchlab.crashkios.crashlyticslink")
     id("com.google.devtools.ksp")
+    id("base-gradle")
 }
 
 version = Version.toString()
@@ -24,10 +23,6 @@ mockmp {
 }
 
 kotlin {
-    android()
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
 
     cocoapods {
         summary = "Some description for the Shared Module"
@@ -42,12 +37,6 @@ kotlin {
 
 
     sourceSets {
-        all {
-            //Warning: This class can only be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'
-            languageSettings.optIn("kotlin.RequiresOptIn")
-
-        }
-
         val commonMain by getting {
             dependencies {
                 implementation(project(":logic"))
@@ -75,10 +64,6 @@ kotlin {
                 implementation(Ktor.Plugins.network)
                 implementation(Benasher.uuid)
                 implementation(Koin.core)
-                implementation(Jetbrains.Compose.ui)
-                implementation(Jetbrains.Compose.foundation)
-                implementation(Jetbrains.Compose.material3)
-                implementation(Jetbrains.Compose.runtime)
                 implementation(Square.okio)
             }
         }
@@ -156,18 +141,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-opt-in=co.touchlab.kermit.ExperimentalKermitApi"
 }
 
-
 android {
-    namespace = "org.rhasspy.mobile"
-    compileSdk = 33
-    defaultConfig {
-        minSdk = 23
-    }
-    compileOptions {
-        sourceCompatibility = VERSION_19
-        targetCompatibility = VERSION_19
-    }
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    namespace = "org.rhasspy.mobile.shared"
 }
 
 tasks.withType<Test> {
@@ -180,20 +155,7 @@ tasks.withType<Test> {
     }
 }
 
-sonarqube {
-    properties {
-        property("sonar.projectKey", "Nailik_rhasspy_mobile")
-        property("sonar.organization", "nailik")
-        property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.sources", projectDir.parent)
-        property("sonar.exclusions", "**.gradle/**,**build/**,**.idea/**,**documentation/**,**buildSrc/**,**iosApp/**,*.properties,*Task,*version")
-        property("sonar.android.lint.reportPaths", "${projectDir.parent}/androidApp/build/reports/lint-results.xml")
-        property("sonar.verbose", "true")
-        property("sonar.projectBaseDir", projectDir.parent)
-    }
-}
-
-val createVersionTxt = tasks.register("createVersionTxt") {
+val createVersionTxt: TaskProvider<Task> = tasks.register("createVersionTxt") {
     doLast {
         File(projectDir.parent, "version").also {
             it.writeText("V_$Version")
@@ -203,7 +165,7 @@ val createVersionTxt = tasks.register("createVersionTxt") {
 
 tasks.findByPath("preBuild")!!.dependsOn(createVersionTxt)
 
-val increaseCodeVersion = tasks.register("increaseCodeVersion") {
+val increaseCodeVersion: TaskProvider<Task> = tasks.register("increaseCodeVersion") {
     doLast {
         File(projectDir.parent, "buildSrc/src/main/kotlin/Version.kt").also {
             it.writeText(

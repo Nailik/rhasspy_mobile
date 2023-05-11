@@ -3,27 +3,10 @@
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
+    id("base-gradle")
 }
 
 kotlin {
-    android {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-        }
-    }
-
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
-            baseName = "widget"
-        }
-    }
-
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -70,18 +53,5 @@ kotlin {
 
 android {
     namespace = "org.rhasspy.mobile.widget"
-    compileSdk = 33
-    defaultConfig {
-        minSdk = 23
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_19
-        targetCompatibility = JavaVersion.VERSION_19
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "_"
-    }
-    buildFeatures {
-        compose = true
-    }
+    buildFeatures.compose = true
 }

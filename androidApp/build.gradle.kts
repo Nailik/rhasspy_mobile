@@ -10,6 +10,7 @@ plugins {
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
     id("org.gradle.test-retry")
+    id("base-gradle")
 }
 
 val signingProperties = Properties()
