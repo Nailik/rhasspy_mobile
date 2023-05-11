@@ -10,11 +10,11 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(Koin.core)
                 implementation(project(":shared"))
                 implementation(project(":viewmodel"))
                 implementation(project(":resources"))
                 implementation(project(":platformspecific"))
+                implementation(Koin.core)
                 implementation(Icerock.Mvvm.core)
             }
         }
