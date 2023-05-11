@@ -21,7 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.content.elements.Icon
+import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*

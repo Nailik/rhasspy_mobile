@@ -4,8 +4,8 @@ import androidx.compose.runtime.Stable
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.ui.event.EventState.Consumed
-import org.rhasspy.mobile.ui.event.EventState.Triggered
+import org.rhasspy.mobile.data.event.EventState.Consumed
+import org.rhasspy.mobile.data.event.EventState.Triggered
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToError
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change

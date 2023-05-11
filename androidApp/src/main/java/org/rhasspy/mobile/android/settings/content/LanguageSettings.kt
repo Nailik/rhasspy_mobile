@@ -10,7 +10,7 @@ import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
-import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SelectLanguageOption
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel

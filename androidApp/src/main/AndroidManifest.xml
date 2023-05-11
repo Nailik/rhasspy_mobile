@@ -70,7 +70,7 @@
         </provider>
 
         <receiver
-            android:name=".widget.MicrophoneWidgetReceiver"
+            android:name="org.rhasspy.mobile.widget.microphone.MicrophoneWidgetReceiver"
             android:enabled="@bool/glance_appwidget_available"
             android:exported="true">
             <intent-filter>

@@ -24,6 +24,7 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.service.option.AudioOutputOption.Sound
 import org.rhasspy.mobile.data.sounds.SoundOption
 import org.rhasspy.mobile.data.sounds.SoundOption.Disabled
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SelectSoundIndicationOutputOption
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetSoundIndicationEnabled
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel

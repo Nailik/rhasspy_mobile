@@ -13,12 +13,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.MainActivity
-import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.android.configuration.addConfigurationScreens
-import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.android.settings.addSettingsScreen
-import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.theme.AppTheme
+import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.theme.AppTheme
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.viewmodel.ViewModelFactory

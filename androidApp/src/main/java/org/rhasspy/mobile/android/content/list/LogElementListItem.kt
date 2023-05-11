@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.touchlab.kermit.Severity
-import org.rhasspy.mobile.android.theme.*
 import org.rhasspy.mobile.data.log.LogElement
+import org.rhasspy.mobile.ui.theme.*
 
 @Composable
 fun LogListElement(item: LogElement) {

@@ -20,12 +20,12 @@ import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.entity.License
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.android.content.elements.CustomDivider
-import org.rhasspy.mobile.android.content.elements.HtmlText
-import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.ui.content.elements.HtmlText
+import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.android.content.list.ListElement
-import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.data.libraries.StableLibrary
 import org.rhasspy.mobile.data.resource.stable
 

@@ -21,9 +21,9 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.content.elements.CustomDivider
-import org.rhasspy.mobile.android.content.elements.Icon
-import org.rhasspy.mobile.android.content.elements.Text
-import org.rhasspy.mobile.android.content.elements.translate
+import org.rhasspy.mobile.ui.content.elements.Icon
+import org.rhasspy.mobile.ui.content.elements.Text
+import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.android.content.list.LogListElement
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.data.resource.stable

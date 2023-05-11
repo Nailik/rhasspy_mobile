@@ -10,8 +10,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
-import org.rhasspy.mobile.android.content.elements.ProvideTextStyleFromToken
-import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.ui.content.elements.ProvideTextStyleFromToken
+import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.data.resource.StableStringResource
 
 

@@ -9,14 +9,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelectionList
-import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
-import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsViewModel

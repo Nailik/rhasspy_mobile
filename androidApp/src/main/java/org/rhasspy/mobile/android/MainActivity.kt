@@ -31,6 +31,7 @@ import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
+import org.rhasspy.mobile.widget.microphone.MicrophoneWidgetUtils
 
 
 /**
@@ -83,7 +84,7 @@ class MainActivity : KoinComponent, AppCompatActivity() {
         }
 
         CoroutineScope(Dispatchers.Default).launch {
-            get<NativeApplication>().updateWidgetNative()
+            MicrophoneWidgetUtils.updateWidget()
         }
     }
 }

@@ -20,7 +20,7 @@ import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.ui.event.EventState
+import org.rhasspy.mobile.data.event.EventState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.IConfigurationScreenUiStateEvent.ScrollToErrorEventIState
 

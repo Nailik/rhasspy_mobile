@@ -180,14 +180,11 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":ui"))
     implementation(project(":settings"))
+    implementation(project(":widget"))
 
     implementation(KotlinX.Coroutines.core)
     implementation(KotlinX.Coroutines.android)
     implementation(Jetbrains.Kotlinx.immutable)
-
-    implementation(Google.accompanist.systemUiController)
-
-    implementation(AndroidX.glance.appWidget)
 
     implementation(AndroidX.appCompat)
     implementation(AndroidX.Activity.compose)

@@ -59,8 +59,6 @@ actual abstract class NativeApplication : MultiDexApplication() {
     actual val isAppInBackground: StateFlow<Boolean>
         get() = currentlyAppInBackground
 
-    actual abstract suspend fun updateWidgetNative()
-
     actual fun isInstrumentedTest(): Boolean {
         return Settings.System.getString(contentResolver, "firebase.test.lab") == "true"
     }

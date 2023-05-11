@@ -18,10 +18,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.android.content.SecondaryContent
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelectionList
-import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.main.LocalNavController
@@ -31,8 +31,8 @@ import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScreens
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSoundScreen
-import org.rhasspy.mobile.android.testTag
-import org.rhasspy.mobile.android.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent

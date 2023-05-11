@@ -24,7 +24,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.MainActivity
-import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
 

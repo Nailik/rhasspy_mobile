@@ -8,7 +8,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption

@@ -14,7 +14,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.android.UiEventEffect
 import org.rhasspy.mobile.android.configuration.content.*
 import org.rhasspy.mobile.android.content.elements.*
@@ -23,9 +23,11 @@ import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
-import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.ui.content.elements.toText
+import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.viewmodel.screens.configuration.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToError
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
@@ -58,7 +60,7 @@ fun ConfigurationScreenContent(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(MR.strings.configuration.stable) }
+                title = { org.rhasspy.mobile.ui.content.elements.Text(MR.strings.configuration.stable) }
             )
         },
     ) { paddingValues ->
@@ -208,13 +210,13 @@ private fun ServiceErrorInformation(
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                Icon(
+                org.rhasspy.mobile.ui.content.elements.Icon(
                     imageVector = Icons.Filled.Error,
                     contentDescription = MR.strings.error.stable,
                     tint = MaterialTheme.colorScheme.onErrorContainer
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(
+                org.rhasspy.mobile.ui.content.elements.Text(
                     resource = MR.strings.error.stable,
                     color = MaterialTheme.colorScheme.onErrorContainer
                 )
@@ -424,8 +426,8 @@ private fun ConfigurationListItem(
                 navController.navigate(screen.route)
             }
             .testTag(screen),
-        text = { Text(text) },
-        secondaryText = { Text(secondaryText) },
+        text = { org.rhasspy.mobile.ui.content.elements.Text(text) },
+        secondaryText = { org.rhasspy.mobile.ui.content.elements.Text(secondaryText) },
         trailing = {
             val serviceStateValue by serviceViewState.serviceState.collectAsState()
             EventStateIconTinted(serviceStateValue)
@@ -454,7 +456,7 @@ private fun ConfigurationListItem(
                 navController.navigate(screen.route)
             }
             .testTag(screen),
-        text = { Text(text) },
+        text = { org.rhasspy.mobile.ui.content.elements.Text(text) },
         secondaryText = { Text(text = secondaryText) },
         trailing = {
             val serviceStateValue by viewState.serviceState.collectAsState()

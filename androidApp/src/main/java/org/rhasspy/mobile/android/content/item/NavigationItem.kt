@@ -10,7 +10,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.navigation.BottomBarScreenType
-import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.ui.testTag
 
 @Composable
 fun RowScope.NavigationItem(

@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.rhasspy.mobile.android.TestTag
+import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType

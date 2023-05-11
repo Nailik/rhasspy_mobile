@@ -9,11 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
-import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.combinedTestTag
+import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.combinedTestTag
 import org.rhasspy.mobile.android.content.SecondaryContent
 import org.rhasspy.mobile.android.content.list.RadioButtonListItem
-import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.data.service.option.IOption
 
 @Composable

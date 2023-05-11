@@ -12,12 +12,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.MR
-import org.rhasspy.mobile.android.TestTag
-import org.rhasspy.mobile.android.content.elements.Icon
-import org.rhasspy.mobile.android.content.elements.Text
+import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.elements.Icon
+import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.android.content.item.EventStateCard
 import org.rhasspy.mobile.android.content.item.EventStateIcon
-import org.rhasspy.mobile.android.testTag
+import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState

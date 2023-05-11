@@ -16,5 +16,6 @@ object Jetbrains : IsNotADependency {
         val material = module("$group.material", "material")
         val material3 = module("$group.material3", "material3")
         val runtime = module("$group.runtime", "runtime")
+        val materialIconsExtended = module("$group.material", "material-icons-extended")
     }
 }

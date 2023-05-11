@@ -5,7 +5,6 @@ package org.rhasspy.mobile.android
 import android.content.Intent
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
-import androidx.glance.appwidget.GlanceAppWidgetManager
 import co.touchlab.kermit.Logger
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
@@ -17,7 +16,6 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.Application
 import org.rhasspy.mobile.android.uiservices.IndicationOverlay
 import org.rhasspy.mobile.android.uiservices.MicrophoneOverlay
-import org.rhasspy.mobile.android.widget.MicrophoneWidget
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import kotlin.system.exitProcess
@@ -62,13 +60,6 @@ class AndroidApplication : Application(), KoinComponent {
 
     override fun setCrashlyticsCollectionEnabled(enabled: Boolean) {
         Firebase.crashlytics.setCrashlyticsCollectionEnabled(enabled)
-    }
-
-    override suspend fun updateWidget() {
-        val context = get<NativeApplication>()
-        GlanceAppWidgetManager(context).getGlanceIds(MicrophoneWidget::class.java)
-            .firstOrNull()
-            ?.also { MicrophoneWidget().update(context, it) }
     }
 
     override fun startRecordingAction() {
