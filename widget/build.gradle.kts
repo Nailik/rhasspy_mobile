@@ -3,35 +3,18 @@
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
+    id("base-gradle")
 }
 
 kotlin {
-    android {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-        }
-    }
-
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
-            baseName = "widget"
-        }
-    }
-
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(Koin.core)
                 implementation(project(":shared"))
                 implementation(project(":viewmodel"))
                 implementation(project(":resources"))
                 implementation(project(":platformspecific"))
+                implementation(Koin.core)
                 implementation(Icerock.Mvvm.core)
             }
         }
@@ -70,14 +53,5 @@ kotlin {
 
 android {
     namespace = "org.rhasspy.mobile.widget"
-    compileSdk = 33
-    defaultConfig {
-        minSdk = 23
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "_"
-    }
-    buildFeatures {
-        compose = true
-    }
+    buildFeatures.compose = true
 }

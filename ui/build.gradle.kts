@@ -3,14 +3,10 @@
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
+    id("base-gradle")
 }
 
 kotlin {
-    android()
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
-
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -63,18 +59,5 @@ kotlin {
 
 android {
     namespace = "org.rhasspy.mobile.ui"
-    compileSdk = 33
-    defaultConfig {
-        minSdk = 23
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_19
-        targetCompatibility = JavaVersion.VERSION_19
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "_"
-    }
-    buildFeatures {
-        compose = true
-    }
+    buildFeatures.compose = true
 }

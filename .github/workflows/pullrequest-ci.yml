@@ -17,7 +17,7 @@ on:
 
 jobs:
   #runs sonar
-  sonar:
+  analyze:
     runs-on: self-hosted
     steps:
       #checkout project
@@ -29,45 +29,26 @@ jobs:
       # necessary for linux/macos but doesn't work on windows
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      # setup jdk 19
-      - name: Set Up JDK 19
+      # setup jdk 17
+      - name: Set Up JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
-          java-version: '19'
+          java-version: '17'
       # sonar
       - name: Sonar analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonar
-  #runs checks
-  analyze:
-    needs: sonar
-    runs-on: self-hosted
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-          fetch-depth: 0
-      - name: Set Up JDK 19
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'corretto'
-          java-version: '19'
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
-      # necessary for linux/macos but doesn't work on windows
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      # android lint debug
-      - name: Analyze Lint Check
-        run: ./gradlew lint${{ inputs.BUILD_TYPE }}
+        run: |
+          ./gradlew lint${{ inputs.BUILD_TYPE }}
+          ./gradlew sonar
       # android lint debug upload
       - uses: actions/upload-artifact@v3
         with:
           name: AndroidLintRelease
-          path: androidApp/build/reports/lint-results-${{ inputs.BUILD_TYPE_LOWERCASE }}.html
+          path: \*/build/reports/lint-results-${{ inputs.BUILD_TYPE_LOWERCASE }}.html
+  #runs checks
   unitTest:
     needs: analyze
     runs-on: self-hosted
@@ -76,12 +57,12 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
-      # setup jdk 19
-      - name: Set Up JDK 19
+      # setup jdk 17
+      - name: Set Up JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
-          java-version: '19'
+          java-version: '17'
       # run all unit tests (debug and debug)
       - name: Unit Tests
         run: ./gradlew test${{ inputs.BUILD_TYPE }}

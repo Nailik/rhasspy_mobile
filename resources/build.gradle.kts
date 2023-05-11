@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED_VARIABLE")
+@file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
 
 import com.codingfeline.buildkonfig.compiler.FieldSpec
 import com.mikepenz.aboutlibraries.plugin.DuplicateMode.MERGE
@@ -15,14 +15,10 @@ plugins {
     id("org.jetbrains.compose")
     id("com.mikepenz.aboutlibraries.plugin")
     id("de.undercouch.download")
+    id("base-gradle")
 }
 
 kotlin {
-    android()
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
-
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -36,7 +32,7 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
-                implementation(kotlin("test"))
+                implementation(Kotlin.test)
             }
         }
         val androidMain by getting
@@ -77,17 +73,7 @@ aboutLibraries {
 
 android {
     namespace = "org.rhasspy.mobile.resources"
-    compileSdk = 33
-    defaultConfig {
-        minSdk = 23
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_19
-        targetCompatibility = JavaVersion.VERSION_19
-    }
-    if (Os.isFamily(Os.FAMILY_MAC)) {
-        sourceSets.getByName("main").res.srcDir(File(buildDir, "generated/moko/androidMain/res"))
-    }
+    buildFeatures.compose = true
 }
 
 buildkonfig {
