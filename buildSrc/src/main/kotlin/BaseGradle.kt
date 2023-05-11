@@ -57,7 +57,7 @@ class BaseGradle : Plugin<Project> {
                     property("sonar.projectKey", "Nailik_rhasspy_mobile")
                     property("sonar.organization", "nailik")
                     property("sonar.host.url", "https://sonarcloud.io")
-                    property("sonar.exclusions", "**/build*,**/build/*,**/build**")
+                    property("sonar.exclusions", "/build/*")
                 }
             }
         }
