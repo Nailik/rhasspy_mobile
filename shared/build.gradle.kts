@@ -27,18 +27,35 @@ kotlin {
     cocoapods {
         summary = "Some description for the Shared Module"
         homepage = "Link to the Shared Module homepage"
-        ios.deploymentTarget = "16.1"
+        ios.deploymentTarget = "14.0"
         podfile = project.file("../iosApp/Podfile")
         framework {
-            baseName = "shared"
             isStatic = true
+            baseName = "shared"
+            export(Icerock.Resources)
+            export(Jetbrains.Compose.runtime)
+            export(project(":ui"))
+            export(Icerock.Resources)
+            export(Jetbrains.Compose.ui)
+            export(Jetbrains.Compose.foundation)
+            export(Jetbrains.Compose.material)
+            export(Jetbrains.Compose.material3)
+            export(Jetbrains.Compose.runtime)
+            export(Jetbrains.Compose.materialIconsExtended)
         }
     }
-
 
     sourceSets {
         val commonMain by getting {
             dependencies {
+                api(Icerock.Resources)
+                api(Jetbrains.Compose.ui)
+                api(Jetbrains.Compose.foundation)
+                api(Jetbrains.Compose.material)
+                api(Jetbrains.Compose.material3)
+                api(Jetbrains.Compose.runtime)
+                api(Jetbrains.Compose.materialIconsExtended)
+                api(project(":ui"))
                 implementation(project(":logic"))
                 implementation(project(":ui"))
                 implementation(project(":viewmodel"))

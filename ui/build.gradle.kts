@@ -2,11 +2,33 @@
 
 plugins {
     kotlin("multiplatform")
+    kotlin("native.cocoapods")
     id("com.android.library")
     id("base-gradle")
 }
 
+version = Version.toString()
+
 kotlin {
+
+    cocoapods {
+        summary = "Some description for the Shared Module"
+        homepage = "Link to the Shared Module homepage"
+        ios.deploymentTarget = "14.0"
+        podfile = project.file("../iosApp/Podfile")
+        framework {
+            baseName = "ui"
+            isStatic = true
+            export(Icerock.Resources)
+            export(Jetbrains.Compose.ui)
+            export(Jetbrains.Compose.foundation)
+            export(Jetbrains.Compose.material)
+            export(Jetbrains.Compose.material3)
+            export(Jetbrains.Compose.runtime)
+            export(Jetbrains.Compose.materialIconsExtended)
+        }
+    }
+
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -14,13 +36,13 @@ kotlin {
                 implementation(project(":data"))
                 implementation(project(":resources"))
                 implementation(project(":settings"))
-                implementation(Jetbrains.Compose.ui)
-                implementation(Jetbrains.Compose.foundation)
-                implementation(Jetbrains.Compose.material)
-                implementation(Jetbrains.Compose.material3)
-                implementation(Jetbrains.Compose.runtime)
-                implementation(Jetbrains.Compose.materialIconsExtended)
-                implementation(Icerock.Resources)
+                api(Jetbrains.Compose.ui)
+                api(Jetbrains.Compose.foundation)
+                api(Jetbrains.Compose.material)
+                api(Jetbrains.Compose.material3)
+                api(Jetbrains.Compose.runtime)
+                api(Jetbrains.Compose.materialIconsExtended)
+                api(Icerock.Resources)
             }
         }
         val commonTest by getting {

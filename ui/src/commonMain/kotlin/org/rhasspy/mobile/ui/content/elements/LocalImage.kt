@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui
+package org.rhasspy.mobile.ui.content.elements
 
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
@@ -22,7 +22,7 @@ fun LocalImage(
 ) {
     val painter = remember { imageResource.toPainter(isGreyscale) }
     Image(
-        painter =painter,
+        painter = painter,
         contentDescription = contentDescription,
         modifier = modifier,
         alignment = alignment,

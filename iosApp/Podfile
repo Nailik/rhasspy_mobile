@@ -1,7 +1,27 @@
 target 'iosApp' do
   use_frameworks!
-  platform :ios, '16.1'
-  pod 'Firebase/Crashlytics'
+  platform :ios, '14.0'
+  #pod 'Firebase/Crashlytics'
   pod 'shared', :path => '../shared'
-  pod 'shared_ui', :path => '../shared-ui'
+  pod 'ui', :path => '../ui'
+end
+
+post_install do |installer|
+
+  puts 'Determining pod project minimal deployment target'
+
+  pods_project = installer.pods_project
+  deployment_target_key = 'IPHONEOS_DEPLOYMENT_TARGET'
+  deployment_targets = pods_project.build_configurations.map{ |config| config.build_settings[deployment_target_key] }
+  minimal_deployment_target = deployment_targets.min_by{ |version| Gem::Version.new(version) }
+
+  puts 'Minimal deployment target is ' + minimal_deployment_target
+  puts 'Setting each pod deployment target to ' + minimal_deployment_target
+
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings[deployment_target_key] = minimal_deployment_target
+      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64 i386"
+    end
+  end
 end

@@ -9,13 +9,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.window.Application
+import androidx.compose.ui.window.ComposeUIViewController
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.ui.LocalImage
+import org.rhasspy.mobile.ui.content.elements.LocalImage
 import platform.UIKit.UIViewController
 
 @Suppress("unused")
@@ -29,7 +29,7 @@ class IosApplication : Application() {
 
     @Suppress("FunctionName")
     fun MainViewController(): UIViewController =
-        Application("Rhasspy Mobile") { //TODO splash view
+        ComposeUIViewController { //TODO splash view
             MaterialTheme {
                 if(isHasStarted.collectAsState().value) {
                     Box(modifier = Modifier.fillMaxSize()) {
@@ -65,8 +65,8 @@ class IosApplication : Application() {
         //TODO??
     }
 
-    override suspend fun updateWidget() {
-        //TODO??
+    override fun startRecordingAction() {
+        //TODO("Not yet implemented")
     }
 
 }
