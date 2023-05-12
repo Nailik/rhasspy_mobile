@@ -2,7 +2,6 @@
 
 plugins {
     kotlin("multiplatform")
-    kotlin("native.cocoapods")
     id("com.android.library")
     id("base-gradle")
 }
@@ -11,26 +10,14 @@ version = Version.toString()
 
 kotlin {
 
-    cocoapods {
-        summary = "Some description for the Shared Module"
-        homepage = "Link to the Shared Module homepage"
-        ios.deploymentTarget = "14.0"
-        podfile = project.file("../iosApp/Podfile")
-        framework {
-            baseName = "ui"
-            isStatic = true
-            export(Icerock.Resources)
-        }
-    }
-
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(Icerock.Resources)
                 implementation(project(":viewmodel"))
                 implementation(project(":data"))
                 implementation(project(":resources"))
                 implementation(project(":settings"))
+                implementation(Icerock.Resources)
                 implementation(Jetbrains.Compose.ui)
                 implementation(Jetbrains.Compose.foundation)
                 implementation(Jetbrains.Compose.material)

@@ -31,18 +31,22 @@ kotlin {
         podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "shared"
+            isStatic = true
+            export(project(":ui"))
+            export(Icerock.Resources)
         }
     }
 
     sourceSets {
         val commonMain by getting {
             dependencies {
+                api(project(":ui"))
+                api(Icerock.Resources)
                 implementation(project(":logic"))
                 implementation(project(":viewmodel"))
                 implementation(project(":platformspecific"))
                 implementation(project(":data"))
                 implementation(project(":settings"))
-                implementation(project(":ui"))
                 implementation(Kotlin.Stdlib.common)
                 implementation(Touchlab.kermit)
                 implementation(Touchlab.Kermit.crashlytics)

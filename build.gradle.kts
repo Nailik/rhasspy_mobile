@@ -18,7 +18,6 @@ buildscript {
         classpath("co.touchlab.crashkios.crashlyticslink:co.touchlab.crashkios.crashlyticslink.gradle.plugin:_")
         classpath("com.android.tools.build:gradle:_")
         classpath("de.undercouch.download:de.undercouch.download.gradle.plugin:_")
-        classpath("org.jetbrains.kotlinx:atomicfu-gradle-plugin:_")
     }
 }
 
