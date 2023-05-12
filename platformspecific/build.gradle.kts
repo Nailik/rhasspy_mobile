@@ -16,7 +16,7 @@ kotlin {
                 implementation(Square.okio)
                 implementation(Ktor2.Client.core)
                 implementation(Koin.core)
-                implementation(Icerock.Resources)
+                implementation(Icerock.Resources.resourcesCompose)
                 implementation(Touchlab.kermit)
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Jetbrains.Kotlinx.immutable)

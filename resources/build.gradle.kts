@@ -22,7 +22,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(Icerock.Resources)
+                implementation(Jetbrains.Kotlinx.atomicfu)
+                implementation(Icerock.Resources.resourcesCompose)
                 implementation(Jetbrains.Compose.ui)
                 implementation(Jetbrains.Compose.foundation)
                 implementation(Jetbrains.Compose.material)

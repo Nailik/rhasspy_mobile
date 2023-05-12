@@ -13,6 +13,7 @@ plugins {
 
 rootProject.name = "Rhasspy_Mobile"
 include(":androidApp")
+include(":iosApp")
 include(":shared")
 include(":ui")
 include(":viewmodel")

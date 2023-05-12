@@ -12,7 +12,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(project(":resources"))
-                implementation(Icerock.Resources)
+                implementation(Icerock.Resources.resourcesCompose)
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Jetbrains.Kotlinx.immutable)
                 implementation(Touchlab.kermit)

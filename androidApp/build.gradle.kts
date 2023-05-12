@@ -205,7 +205,7 @@ dependencies {
     implementation(Kotlin.Test.junit)
     implementation(Devsrsouza.fontAwesome)
     implementation(Mikepenz.aboutLibrariesCore)
-    implementation(Icerock.Resources)
+    implementation(Icerock.Resources.resourcesCompose)
     implementation(Icerock.Mvvm.core)
     implementation(Koin.core)
 

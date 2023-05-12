@@ -1,8 +1,8 @@
 target 'iosApp' do
   use_frameworks!
-  platform :ios, '14.0'
+  platform :ios, '14.1'
   #pod 'Firebase/Crashlytics'
-  pod 'shared', :path => '../shared'
+  pod 'iosKotlin', :path => './'
 end
 
 post_install do |installer|

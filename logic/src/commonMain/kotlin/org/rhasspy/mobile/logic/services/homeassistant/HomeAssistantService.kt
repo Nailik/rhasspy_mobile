@@ -3,6 +3,7 @@ package org.rhasspy.mobile.logic.services.homeassistant
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
+import kotlinx.serialization.decodeFromString
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState

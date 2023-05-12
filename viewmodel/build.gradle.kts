@@ -23,7 +23,7 @@ kotlin {
                 implementation(Koin.core)
                 implementation(Icerock.Mvvm.core)
                 implementation(Ktor2.Client.core)
-                implementation(Icerock.Resources)
+                implementation(Icerock.Resources.resourcesCompose)
                 implementation(Square.okio)
                 implementation(Mikepenz.aboutLibrariesCore)
             }

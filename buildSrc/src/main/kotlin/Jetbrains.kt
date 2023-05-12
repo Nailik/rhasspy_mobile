@@ -8,6 +8,7 @@ object Jetbrains : IsNotADependency {
         val serialization = module("kotlinx-serialization-json")
         val coroutines = module("kotlinx-coroutines-core")
         val immutable = module("kotlinx-collections-immutable")
+        val atomicfu = module("atomicfu")
     }
 
     object Compose : DependencyGroup(group = "org.jetbrains.compose") {
