@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.logic.services.homeassistant
 
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.koin.core.component.inject
