@@ -78,13 +78,10 @@ kotlin {
                 implementation(AndroidX.appCompat)
                 implementation(AndroidX.lifecycle.process)
                 implementation(AndroidX.Fragment.ktx)
-                implementation(AndroidX.Compose.foundation)
                 implementation(AndroidX.multidex)
                 implementation(AndroidX.window)
                 implementation(AndroidX.activity)
                 implementation(AndroidX.documentFile)
-                implementation(AndroidX.Compose.ui)
-                implementation(AndroidX.Compose.material3)
                 implementation(Icerock.Resources.resourcesCompose)
                 implementation(Slf4j.simple)
                 implementation(Ktor2.Server.compression)
@@ -99,8 +96,6 @@ kotlin {
                 implementation(Kotlin.Test.junit)
                 implementation(Kotlin.test)
                 implementation(Kotlin.Test.junit)
-                implementation(AndroidX.Compose.Ui.testJunit4)
-                implementation(AndroidX.Compose.Ui.testManifest)
             }
         }
         val iosX64Main by getting

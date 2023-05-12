@@ -6,7 +6,7 @@ import org.koin.core.component.KoinComponent
 
 abstract class FlakyTest : KoinComponent {
 
-    @get:Rule
+    @get:Rule(order = 1)
     val flakyRule = FlakyTestRule()
 
 }

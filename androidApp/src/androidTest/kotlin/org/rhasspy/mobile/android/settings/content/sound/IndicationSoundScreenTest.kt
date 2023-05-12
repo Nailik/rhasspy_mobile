@@ -40,7 +40,7 @@ abstract class IndicationSoundScreenTest(
     val screen: IndicationSettingsScreens
 ) : FlakyTest() {
 
-    @get: Rule
+    @get: Rule(order = 1)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     abstract val device: UiDevice

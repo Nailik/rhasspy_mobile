@@ -36,7 +36,7 @@ import kotlin.test.assertTrue
 class OverlayPermissionTest : FlakyTest() {
 
     // activity necessary for permission
-    @get: Rule
+    @get: Rule(order = 1)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     private val device: UiDevice = UiDevice.getInstance(getInstrumentation())

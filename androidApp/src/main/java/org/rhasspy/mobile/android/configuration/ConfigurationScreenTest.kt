@@ -132,7 +132,7 @@ private fun AppBar(
     icon: @Composable () -> Unit
 ) {
     TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
+        colors = TopAppBarDefaults.smallTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
                 1.dp
             )

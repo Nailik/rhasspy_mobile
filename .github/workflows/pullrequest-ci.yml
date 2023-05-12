@@ -35,14 +35,9 @@ jobs:
         with:
           distribution: 'corretto'
           java-version: '17'
-      # sonar
-      - name: Sonar analyze
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          ./gradlew lint${{ inputs.BUILD_TYPE }}
-          ./gradlew sonar
+      # lint
+      - name: Android Lint
+        run: ./gradlew lint${{ inputs.BUILD_TYPE }}
       # android lint debug upload
       - uses: actions/upload-artifact@v3
         with:

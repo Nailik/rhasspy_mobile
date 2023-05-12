@@ -12,7 +12,6 @@ buildscript {
         classpath("com.codingfeline.buildkonfig:buildkonfig-gradle-plugin:_")
         classpath("com.google.gms:google-services:_")
         classpath("com.google.firebase:firebase-crashlytics-gradle:_")
-        classpath("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:_")
         classpath("org.gradle:test-retry-gradle-plugin:_")
         classpath("org.jetbrains.compose:compose-gradle-plugin:_")
         classpath("org.kodein.mock:mockmp-gradle-plugin:_")

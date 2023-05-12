@@ -186,21 +186,16 @@ dependencies {
     implementation(Jetbrains.Kotlinx.immutable)
 
     implementation(AndroidX.appCompat)
-    implementation(AndroidX.Activity.compose)
+
     implementation(AndroidX.Core.splashscreen)
-    implementation(AndroidX.ConstraintLayout.compose)
+
+    implementation(AndroidX.Activity.compose)
     implementation(AndroidX.Navigation.compose)
 
-    implementation(AndroidX.Compose.material3)
-    implementation(AndroidX.Compose.material.icons.extended)
-    implementation(AndroidX.Compose.foundation)
-    implementation(AndroidX.Compose.runtime.liveData)
-    implementation(AndroidX.Lifecycle.viewModelCompose)
-    implementation(AndroidX.Lifecycle.common)
-    implementation(AndroidX.Compose.ui)
-    implementation(AndroidX.Compose.ui.util)
-    implementation(AndroidX.Compose.ui.tooling)
-    implementation(Google.Accompanist.pager)
+    implementation(Jetbrains.Compose.material3)
+    implementation(Jetbrains.Compose.materialIconsExtended)
+    implementation(Jetbrains.Compose.foundation)
+    implementation(Jetbrains.Compose.preview)
 
     implementation(AndroidX.multidex)
     implementation(AndroidX.window)
@@ -222,7 +217,7 @@ dependencies {
     androidTestImplementation(Kotlin.test)
     androidTestImplementation(Kotlin.Test.junit)
     androidTestImplementation(AndroidX.Test.coreKtx)
-    androidTestImplementation(AndroidX.Compose.Ui.testJunit4)
+    androidTestImplementation(Jetbrains.Compose.testJunit4)
     androidTestImplementation(Adevinta.barista)
     androidTestImplementation(Hamcrest.hamcrest)
 

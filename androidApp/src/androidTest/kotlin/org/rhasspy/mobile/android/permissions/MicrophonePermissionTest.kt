@@ -51,7 +51,7 @@ import kotlin.test.assertTrue
 class MicrophonePermissionTest : FlakyTest() {
 
     // activity necessary for permission
-    @get: Rule
+    @get: Rule(order = 1)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     //.google is on devices with google play services and is missing on devices without play services

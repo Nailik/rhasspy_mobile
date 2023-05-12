@@ -14,10 +14,10 @@ fun ListElement(
     text: @Composable () -> Unit
 ) {
     ListItem(
-        headlineContent = text,
+        headlineText = text,
         modifier = modifier,
-        overlineContent = overlineText,
-        supportingContent = secondaryText,
+        overlineText = overlineText,
+        supportingText = secondaryText,
         leadingContent = icon,
         trailingContent = trailing
     )

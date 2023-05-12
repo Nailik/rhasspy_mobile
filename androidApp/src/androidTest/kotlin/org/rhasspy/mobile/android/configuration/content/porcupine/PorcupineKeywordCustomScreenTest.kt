@@ -35,7 +35,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class PorcupineKeywordCustomScreenTest : FlakyTest() {
 
-    @get: Rule
+    @get: Rule(order = 1)
     val composeTestRule = createEmptyComposeRule()
 
     private lateinit var scenario: ActivityScenario<MainActivity>

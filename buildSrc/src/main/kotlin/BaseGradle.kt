@@ -1,17 +1,13 @@
 import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.LibraryExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.sonarqube.gradle.SonarExtension
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 class BaseGradle : Plugin<Project> {
     override fun apply(project: Project) {
-        // Apply Required Plugins.
-        project.plugins.apply("org.sonarqube")
 
         try {
             val kotlinMultiplatformExtension = project.extensions.getByName("kotlin")
@@ -53,19 +49,6 @@ class BaseGradle : Plugin<Project> {
                     kotlinCompilerExtensionVersion = "_"
                 }
                 buildFeatures.buildConfig = true
-            }
-        }
-
-        val sonarExtension = project.extensions.getByName("sonarqube")
-        if (sonarExtension is SonarExtension) {
-            sonarExtension.apply {
-                properties {
-                    property("sonar.projectKey", "Nailik_rhasspy_mobile")
-                    property("sonar.organization", "nailik")
-                    property("sonar.host.url", "https://sonarcloud.io")
-                    property("sonar.sources", "src")
-                    property("sonar.exclusions", "src/androidTest/**")
-                }
             }
         }
     }

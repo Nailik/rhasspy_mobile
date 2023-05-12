@@ -22,7 +22,7 @@ import org.rhasspy.mobile.ui.TestTag
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsScreenTest {
 
-    @get: Rule
+    @get: Rule(order = 1)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     @Before
