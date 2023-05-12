@@ -22,11 +22,13 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 
 
 fun SemanticsNodeInteraction.onListItemSwitch(): SemanticsNodeInteraction {
-    return this.onChildAt(0).onChildren().filter(isToggleable()).onFirst()
+    return this.onChildren().filter(isToggleable()).onFirst()
+    //return this.onChildAt(0).onChildren().filter(isToggleable()).onFirst()
 }
 
 fun SemanticsNodeInteraction.onListItemRadioButton(): SemanticsNodeInteraction {
-    return this.onChildAt(0).onChildren().filter(isSelectable()).onFirst()
+    return this.onChildren().filter(isSelectable()).onFirst()
+    //return this.onChildAt(0).onChildren().filter(isSelectable()).onFirst()
 }
 
 fun hasTestTag(testTag: Enum<*>): SemanticsMatcher =

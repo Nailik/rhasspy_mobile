@@ -21,7 +21,7 @@ import org.rhasspy.mobile.ui.TestTag
 @RunWith(AndroidJUnit4::class)
 class MicrophoneOverlayTest : FlakyTest() {
 
-    @get: Rule
+    @get: Rule(order = 1)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
     private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 

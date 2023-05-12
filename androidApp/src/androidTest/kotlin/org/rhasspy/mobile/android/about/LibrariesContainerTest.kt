@@ -20,7 +20,7 @@ import org.rhasspy.mobile.ui.TestTag
  */
 class LibrariesContainerTest : FlakyTest() {
 
-    @get: Rule
+    @get: Rule(order = 1)
     val composeTestRule = createComposeRule()
 
     @Before

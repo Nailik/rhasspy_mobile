@@ -20,7 +20,7 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalCoroutinesApi::class)
 class AudioRecorderSettingsContentTest : FlakyTest() {
 
-    @get: Rule
+    @get: Rule(order = 1)
     val composeTestRule = createComposeRule()
 
     @Before

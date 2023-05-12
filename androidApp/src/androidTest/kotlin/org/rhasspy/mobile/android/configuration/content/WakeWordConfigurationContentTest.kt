@@ -30,7 +30,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class WakeWordConfigurationContentTest : FlakyTest() {
 
-    @get: Rule
+    @get: Rule(order = 1)
     val composeTestRule = createComposeRule()
 
     private val device: UiDevice =

@@ -35,7 +35,7 @@ import org.rhasspy.mobile.ui.TestTag
 @OptIn(ExperimentalCoroutinesApi::class)
 class ConfigurationScreenItemContentTest : FlakyTest() {
 
-    @get: Rule
+    @get:Rule(order = 0)
     val composeTestRule = createEmptyComposeRule()
 
     private lateinit var scenario: ActivityScenario<MainActivity>

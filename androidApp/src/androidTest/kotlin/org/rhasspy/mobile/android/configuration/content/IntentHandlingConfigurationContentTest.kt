@@ -20,7 +20,7 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalCoroutinesApi::class)
 class IntentHandlingConfigurationContentTest : FlakyTest() {
 
-    @get: Rule
+    @get: Rule(order = 1)
     val composeTestRule = createComposeRule()
 
     private val viewModel = get<IntentHandlingConfigurationViewModel>()

@@ -14,7 +14,7 @@ import org.rhasspy.mobile.ui.TestTag
  */
 class DataPrivacyDialogTest : FlakyTest() {
 
-    @get: Rule
+    @get: Rule(order = 1)
     val composeTestRule = createComposeRule()
 
     @Before
