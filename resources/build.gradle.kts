@@ -15,6 +15,7 @@ plugins {
     id("org.jetbrains.compose")
     id("com.mikepenz.aboutlibraries.plugin")
     id("de.undercouch.download")
+    id("kotlinx-atomicfu")
     id("base-gradle")
 }
 

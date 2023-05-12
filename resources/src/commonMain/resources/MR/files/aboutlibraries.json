@@ -1,6 +1,6 @@
 {
     "metadata": {
-        "generated": "2023-05-12T12:10:48.15Z"
+        "generated": "2023-05-12T12:31:27.218Z"
     },
     "libraries": [
         {
@@ -1966,7 +1966,7 @@
             ]
         },
         {
-            "uniqueId": "org.jetbrains.kotlinx:atomicfu",
+            "uniqueId": "org.jetbrains.kotlinx:atomicfu-jvm",
             "funding": [
                 
             ],
@@ -1976,7 +1976,7 @@
                     "name": "JetBrains Team"
                 }
             ],
-            "artifactVersion": "0.17.3",
+            "artifactVersion": "0.20.2",
             "description": "AtomicFU utilities",
             "scm": {
                 "url": "https://github.com/Kotlin/kotlinx.atomicfu"

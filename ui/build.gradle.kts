@@ -20,29 +20,23 @@ kotlin {
             baseName = "ui"
             isStatic = true
             export(Icerock.Resources)
-            export(Jetbrains.Compose.ui)
-            export(Jetbrains.Compose.foundation)
-            export(Jetbrains.Compose.material)
-            export(Jetbrains.Compose.material3)
-            export(Jetbrains.Compose.runtime)
-            export(Jetbrains.Compose.materialIconsExtended)
         }
     }
 
     sourceSets {
         val commonMain by getting {
             dependencies {
+                api(Icerock.Resources)
                 implementation(project(":viewmodel"))
                 implementation(project(":data"))
                 implementation(project(":resources"))
                 implementation(project(":settings"))
-                api(Jetbrains.Compose.ui)
-                api(Jetbrains.Compose.foundation)
-                api(Jetbrains.Compose.material)
-                api(Jetbrains.Compose.material3)
-                api(Jetbrains.Compose.runtime)
-                api(Jetbrains.Compose.materialIconsExtended)
-                api(Icerock.Resources)
+                implementation(Jetbrains.Compose.ui)
+                implementation(Jetbrains.Compose.foundation)
+                implementation(Jetbrains.Compose.material)
+                implementation(Jetbrains.Compose.material3)
+                implementation(Jetbrains.Compose.runtime)
+                implementation(Jetbrains.Compose.materialIconsExtended)
             }
         }
         val commonTest by getting {

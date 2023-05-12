@@ -30,38 +30,19 @@ kotlin {
         ios.deploymentTarget = "14.0"
         podfile = project.file("../iosApp/Podfile")
         framework {
-            isStatic = true
             baseName = "shared"
-            export(Icerock.Resources)
-            export(Jetbrains.Compose.runtime)
-            export(project(":ui"))
-            export(Icerock.Resources)
-            export(Jetbrains.Compose.ui)
-            export(Jetbrains.Compose.foundation)
-            export(Jetbrains.Compose.material)
-            export(Jetbrains.Compose.material3)
-            export(Jetbrains.Compose.runtime)
-            export(Jetbrains.Compose.materialIconsExtended)
         }
     }
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(Icerock.Resources)
-                api(Jetbrains.Compose.ui)
-                api(Jetbrains.Compose.foundation)
-                api(Jetbrains.Compose.material)
-                api(Jetbrains.Compose.material3)
-                api(Jetbrains.Compose.runtime)
-                api(Jetbrains.Compose.materialIconsExtended)
-                api(project(":ui"))
                 implementation(project(":logic"))
-                implementation(project(":ui"))
                 implementation(project(":viewmodel"))
                 implementation(project(":platformspecific"))
                 implementation(project(":data"))
                 implementation(project(":settings"))
+                implementation(project(":ui"))
                 implementation(Kotlin.Stdlib.common)
                 implementation(Touchlab.kermit)
                 implementation(Touchlab.Kermit.crashlytics)
