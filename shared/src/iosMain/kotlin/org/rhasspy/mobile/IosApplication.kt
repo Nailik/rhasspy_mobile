@@ -3,7 +3,6 @@ package org.rhasspy.mobile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.ui.viewController
 import platform.UIKit.UIViewController
 
 @Suppress("unused")

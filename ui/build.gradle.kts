@@ -2,7 +2,9 @@
 
 plugins {
     kotlin("multiplatform")
+    kotlin("native.cocoapods")
     id("com.android.library")
+    id("org.jetbrains.compose")
     id("base-gradle")
 }
 
@@ -10,9 +12,26 @@ version = Version.toString()
 
 kotlin {
 
+    cocoapods {
+        summary = "Some description for the Shared Module"
+        homepage = "Link to the Shared Module homepage"
+        ios.deploymentTarget = "14.0"
+        podfile = project.file("../iosApp/Podfile")
+        framework {
+            baseName = "ui"
+            isStatic = true
+            export(Icerock.Resources)
+            export(Touchlab.kermit)
+            export(Jetbrains.Compose.full)
+        }
+    }
+
     sourceSets {
         val commonMain by getting {
             dependencies {
+                api(Icerock.Resources)
+                api(Touchlab.kermit)
+                api(Jetbrains.Compose.full)
                 implementation(project(":viewmodel"))
                 implementation(project(":data"))
                 implementation(project(":resources"))
@@ -44,6 +63,7 @@ kotlin {
         val iosSimulatorArm64Main by getting
         val iosMain by creating {
             dependencies {
+                api(Jetbrains.Compose.full)
                 implementation(Jetbrains.Compose.full)
             }
             dependsOn(commonMain)

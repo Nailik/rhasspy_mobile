@@ -30,21 +30,22 @@ kotlin {
         ios.deploymentTarget = "14.0"
         podfile = project.file("../iosApp/Podfile")
         framework {
-            baseName = "iosApp"
+            baseName = "shared"
             isStatic = true
-            export(Icerock.Resources.resourcesCompose)
+            export(Icerock.Resources)
             export(Touchlab.kermit)
-            export(Jetbrains.Compose.foundation)
+            export(Jetbrains.Compose.full)
         }
     }
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(Icerock.Resources.resourcesCompose)
+                api(Icerock.Resources)
                 api(Touchlab.kermit)
-                api(Jetbrains.Compose.foundation)
+                api(Jetbrains.Compose.full)
                 implementation(project(":ui"))
+                implementation(project(":data"))
                 implementation(project(":logic"))
                 implementation(project(":viewmodel"))
                 implementation(project(":platformspecific"))
@@ -106,6 +107,10 @@ kotlin {
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
         val iosMain by creating {
+            dependencies {
+                api(Jetbrains.Compose.full)
+                implementation(Jetbrains.Compose.ui)
+            }
             dependsOn(commonMain)
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)

@@ -6,9 +6,43 @@ import okio.FileSystem
 import okio.Path
 import okio.Source
 import kotlinx.serialization.decodeFromString
+import kotlinx.cinterop.*
+import platform.Foundation.*
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
-actual fun Path.Companion.commonInternalPath(nativeApplication: NativeApplication, fileName: String): Path = fileName.toPath()
+
+private val fileManager = NSFileManager.defaultManager
+
+private fun readDocumentsDirectory() : String {
+    val documentsDirectoryUrl =
+        fileManager.URLForDirectory(
+            NSDocumentDirectory,
+            NSUserDomainMask,
+            appropriateForURL = null,
+            create = false,
+            error = null)!!
+
+    createDirectoryIfNotExists(documentsDirectoryUrl)
+    return documentsDirectoryUrl.absoluteString!!
+}
+
+private fun createDirectoryIfNotExists(parentDirectory: NSURL) {
+    if (!fileManager.fileExistsAtPath(parentDirectory.path!!)) {
+        fileManager.createDirectoryAtURL(parentDirectory, false, null, null)
+    }
+}
+
+private fun createFileIfNotExists(path: String) {
+    if (!fileManager.fileExistsAtPath(path)) {
+        fileManager.createFileAtPath(path, null, null)
+    }
+}
+
+actual fun Path.Companion.commonInternalPath(nativeApplication: NativeApplication, fileName: String) : Path {
+    val path = "${readDocumentsDirectory()}/$fileName".toPath()
+    createFileIfNotExists(path.toString())
+    return path
+}
 
 actual fun Path.commonDelete() {
     FileSystem.SYSTEM.delete(this, mustExist = false)

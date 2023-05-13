@@ -9,6 +9,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
     kotlin("multiplatform")
+    kotlin("native.cocoapods")
     id("com.android.library")
     id("dev.icerock.mobile.multiplatform-resources")
     id("com.codingfeline.buildkonfig")
@@ -18,10 +19,30 @@ plugins {
     id("base-gradle")
 }
 
+version = Version.toString()
+
 kotlin {
+
+    cocoapods {
+        summary = "Some description for the Shared Module"
+        homepage = "Link to the Shared Module homepage"
+        ios.deploymentTarget = "14.0"
+        podfile = project.file("../iosApp/Podfile")
+        framework {
+            baseName = "resources"
+            isStatic = true
+            export(Icerock.Resources)
+            export(Touchlab.kermit)
+            export(Jetbrains.Compose.full)
+        }
+    }
+
     sourceSets {
         val commonMain by getting {
             dependencies {
+                api(Icerock.Resources)
+                api(Touchlab.kermit)
+                api(Jetbrains.Compose.full)
                 implementation(Jetbrains.Kotlinx.atomicfu)
                 implementation(Icerock.Resources.resourcesCompose)
                 implementation(Jetbrains.Compose.ui)
@@ -61,6 +82,7 @@ kotlin {
 
 multiplatformResources {
     multiplatformResourcesPackage = "org.rhasspy.mobile.resources" // required
+    disableStaticFrameworkWarning = true
 }
 
 aboutLibraries {
