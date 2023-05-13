@@ -56,6 +56,7 @@ class DialogManagementConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(DialogManagementOption.Disabled, true).onListItemRadioButton().assertIsSelected()
         //User clicks option local
         composeTestRule.onNodeWithTag(DialogManagementOption.Local).performClick()
+        composeTestRule.awaitIdle()
         //new option is selected
         composeTestRule.onNodeWithTag(DialogManagementOption.Local, true).onListItemRadioButton().assertIsSelected()
 
