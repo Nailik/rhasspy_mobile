@@ -20,18 +20,12 @@ kotlin {
         framework {
             baseName = "ui"
             isStatic = true
-            export(Icerock.Resources)
-            export(Touchlab.kermit)
-            export(Jetbrains.Compose.full)
         }
     }
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(Icerock.Resources)
-                api(Touchlab.kermit)
-                api(Jetbrains.Compose.full)
                 implementation(project(":viewmodel"))
                 implementation(project(":data"))
                 implementation(project(":resources"))
@@ -62,10 +56,6 @@ kotlin {
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
         val iosMain by creating {
-            dependencies {
-                api(Jetbrains.Compose.full)
-                implementation(Jetbrains.Compose.full)
-            }
             dependsOn(commonMain)
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)

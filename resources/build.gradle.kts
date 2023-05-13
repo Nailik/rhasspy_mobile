@@ -23,6 +23,7 @@ version = Version.toString()
 
 kotlin {
 
+    //must be a framework else moko resources doesn't generate task to copy files
     cocoapods {
         summary = "Some description for the Shared Module"
         homepage = "Link to the Shared Module homepage"
@@ -32,8 +33,6 @@ kotlin {
             baseName = "resources"
             isStatic = true
             export(Icerock.Resources)
-            export(Touchlab.kermit)
-            export(Jetbrains.Compose.full)
         }
     }
 
@@ -41,8 +40,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(Icerock.Resources)
-                api(Touchlab.kermit)
-                api(Jetbrains.Compose.full)
                 implementation(Jetbrains.Kotlinx.atomicfu)
                 implementation(Icerock.Resources.resourcesCompose)
                 implementation(Jetbrains.Compose.ui)
