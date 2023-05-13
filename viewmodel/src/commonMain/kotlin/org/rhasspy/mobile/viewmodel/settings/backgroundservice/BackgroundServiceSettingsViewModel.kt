@@ -6,13 +6,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.background.BackgroundService
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirect
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectIntention
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Success
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.*
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Action.DisableBatteryOptimization

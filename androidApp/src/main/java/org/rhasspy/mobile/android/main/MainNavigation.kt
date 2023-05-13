@@ -11,12 +11,12 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.configuration.addConfigurationScreens
 import org.rhasspy.mobile.android.settings.addSettingsScreen
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.utils.isDebug
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag

@@ -1,8 +1,8 @@
 package org.rhasspy.mobile.data.service.option
 
-import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.resources.MR
 
 enum class IntentHandlingOption(override val text: StableStringResource) :
     IOption<IntentHandlingOption> {

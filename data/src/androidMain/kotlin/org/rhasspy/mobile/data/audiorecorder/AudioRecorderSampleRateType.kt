@@ -1,9 +1,9 @@
 package org.rhasspy.mobile.data.audiorecorder
 
-import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.IOption
+import org.rhasspy.mobile.resources.MR
 
 actual enum class AudioRecorderSampleRateType(
     override val text: StableStringResource,

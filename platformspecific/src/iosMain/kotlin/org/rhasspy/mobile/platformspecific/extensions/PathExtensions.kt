@@ -10,14 +10,11 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
 import platform.Foundation.NSUserDomainMask
-import kotlin.Boolean
-import kotlin.Long
-import kotlin.String
 
 
 private val fileManager = NSFileManager.defaultManager
 
-private fun readDocumentsDirectory() : String {
+private fun readDocumentsDirectory(): String {
     val documentsDirectoryUrl = fileManager.URLForDirectory(
         directory = NSDocumentDirectory,
         inDomain = NSUserDomainMask,
@@ -36,7 +33,7 @@ private fun createDirectoryIfNotExists(parentDirectory: NSURL) {
     }
 }
 
-actual fun Path.Companion.commonInternalPath(nativeApplication: NativeApplication, fileName: String) : Path = "${readDocumentsDirectory().replace("file:","")}/$fileName".toPath()
+actual fun Path.Companion.commonInternalPath(nativeApplication: NativeApplication, fileName: String): Path = "${readDocumentsDirectory().replace("file:", "")}/$fileName".toPath()
 
 actual fun Path.commonDelete() {
     FileSystem.SYSTEM.delete(this, mustExist = false)

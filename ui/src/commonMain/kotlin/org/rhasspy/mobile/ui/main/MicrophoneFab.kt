@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.FloatingActionButton
 import org.rhasspy.mobile.ui.content.elements.Icon

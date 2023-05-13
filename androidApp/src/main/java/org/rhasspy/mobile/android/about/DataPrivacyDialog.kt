@@ -13,8 +13,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.HtmlText
 import org.rhasspy.mobile.ui.content.elements.Text

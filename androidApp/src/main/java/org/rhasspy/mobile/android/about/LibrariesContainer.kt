@@ -19,11 +19,11 @@ import androidx.compose.ui.unit.dp
 import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.entity.License
 import kotlinx.collections.immutable.ImmutableList
-import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.android.content.elements.CustomDivider
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.data.libraries.StableLibrary
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.HtmlText
 import org.rhasspy.mobile.ui.content.elements.Text

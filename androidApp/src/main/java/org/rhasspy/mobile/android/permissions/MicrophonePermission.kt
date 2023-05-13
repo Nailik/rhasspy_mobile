@@ -13,7 +13,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
@@ -21,6 +20,7 @@ import org.rhasspy.mobile.platformspecific.external.ExternalRedirect
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectIntention
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text

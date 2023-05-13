@@ -1,9 +1,9 @@
 package org.rhasspy.mobile.data.service.option
 
 import dev.icerock.moko.resources.FileResource
-import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.resources.MR
 
 enum class PorcupineLanguageOption(override val text: StableStringResource, val file: FileResource) :
     IOption<PorcupineLanguageOption> {

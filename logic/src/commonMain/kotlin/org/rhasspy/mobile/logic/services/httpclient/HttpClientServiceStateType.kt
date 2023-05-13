@@ -1,8 +1,8 @@
 package org.rhasspy.mobile.logic.services.httpclient
 
-import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.ServiceState
+import org.rhasspy.mobile.resources.MR
 
 enum class HttpClientServiceStateType(val serviceState: ServiceState) {
     IllegalArgumentException(ServiceState.Error(MR.strings.illegal_argument_exception.stable)),

@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okio.Path
 import org.koin.core.component.get
-import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.resource.stable
@@ -20,6 +19,7 @@ import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.platformspecific.updateListItem
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel

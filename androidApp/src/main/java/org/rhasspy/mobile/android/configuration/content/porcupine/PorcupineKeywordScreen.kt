@@ -17,11 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.android.configuration.content.WakeWordConfigurationScreens
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -42,7 +42,7 @@ fun PorcupineKeywordScreen(
 ) {
 
     val navController = rememberNavController()
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState { 2 }
     val coroutineScope = rememberCoroutineScope()
 
 
@@ -85,7 +85,7 @@ fun PorcupineKeywordScreen(
         ) { paddingValues ->
             //horizontal pager to slide between pages
             Surface(modifier = Modifier.padding(paddingValues)) {
-                HorizontalPager(pageCount = 2, state = pagerState) { page ->
+                HorizontalPager(state = pagerState) { page ->
                     if (page == 0) {
                         PorcupineKeywordDefaultScreen(
                             viewState = viewState,
