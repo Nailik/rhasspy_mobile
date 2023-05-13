@@ -4,7 +4,7 @@ import com.mikepenz.aboutlibraries.Libs
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.rhasspy.mobile.BuildKonfig
-import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.data.libraries.stable
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.resource.readToString

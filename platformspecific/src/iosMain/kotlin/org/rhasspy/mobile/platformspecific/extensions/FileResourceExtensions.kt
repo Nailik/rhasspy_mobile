@@ -4,5 +4,6 @@ import dev.icerock.moko.resources.FileResource
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
 actual fun FileResource.commonData(nativeApplication: NativeApplication): ByteArray {
-    TODO()
+    //TODO("Not yet implemented")
+    return ByteArray(0)
 }

@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.android.UiEventEffect
 import org.rhasspy.mobile.android.content.ServiceStateHeader
 import org.rhasspy.mobile.android.main.LocalConfigurationNavController

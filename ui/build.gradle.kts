@@ -17,7 +17,6 @@ kotlin {
                 implementation(project(":data"))
                 implementation(project(":resources"))
                 implementation(project(":settings"))
-                api(Jetbrains.Compose.full)
                 implementation(Icerock.Resources.resourcesCompose)
                 implementation(Jetbrains.Compose.ui)
                 implementation(Jetbrains.Compose.foundation)
@@ -44,6 +43,9 @@ kotlin {
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
         val iosMain by creating {
+            dependencies {
+                implementation(Jetbrains.Compose.full)
+            }
             dependsOn(commonMain)
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)

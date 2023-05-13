@@ -3,7 +3,7 @@ package org.rhasspy.mobile.viewmodel.configuration.mqtt
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.services.mqtt.MqttService

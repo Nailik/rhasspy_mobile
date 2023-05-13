@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 plugins {
     id("org.kodein.mock.mockmp")
     kotlin("multiplatform")
+    kotlin("native.cocoapods")
     id("com.android.library")
     id("org.jetbrains.compose")
     id("co.touchlab.crashkios.crashlyticslink")
@@ -23,15 +24,30 @@ mockmp {
 
 kotlin {
 
+    cocoapods {
+        summary = "Some description for the Shared Module"
+        homepage = "Link to the Shared Module homepage"
+        ios.deploymentTarget = "14.0"
+        podfile = project.file("../iosApp/Podfile")
+        framework {
+            baseName = "iosApp"
+            isStatic = true
+            export(Icerock.Resources.resourcesCompose)
+            export(Touchlab.kermit)
+            export(Jetbrains.Compose.foundation)
+        }
+    }
+
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(project(":ui"))
+                api(Icerock.Resources.resourcesCompose)
+                api(Touchlab.kermit)
+                api(Jetbrains.Compose.foundation)
                 implementation(project(":ui"))
                 implementation(project(":logic"))
                 implementation(project(":viewmodel"))
                 implementation(project(":platformspecific"))
-                implementation(project(":data"))
                 implementation(project(":settings"))
                 implementation(Kotlin.Stdlib.common)
                 implementation(Touchlab.kermit)

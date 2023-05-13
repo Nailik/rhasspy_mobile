@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.viewmodel.utils
 
-import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.platformspecific.clipboard.ClipboardUtils
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirect

@@ -60,7 +60,7 @@ kotlin {
 }
 
 multiplatformResources {
-    multiplatformResourcesPackage = "org.rhasspy.mobile" // required
+    multiplatformResourcesPackage = "org.rhasspy.mobile.resources" // required
 }
 
 aboutLibraries {

@@ -13,7 +13,7 @@ import androidx.compose.ui.window.ComposeUIViewController
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.content.elements.LocalImage
 
 @Suppress("unused")

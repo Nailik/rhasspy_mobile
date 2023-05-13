@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.BuildKonfig
-import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.android.about.ChangelogDialogButton
 import org.rhasspy.mobile.android.about.DataPrivacyDialogButton
 import org.rhasspy.mobile.android.about.LibrariesContainer

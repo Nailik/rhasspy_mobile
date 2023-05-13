@@ -3,7 +3,7 @@ package org.rhasspy.mobile.data.audiorecorder
 import android.annotation.SuppressLint
 import android.media.AudioFormat.*
 import android.os.Build
-import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.IOption

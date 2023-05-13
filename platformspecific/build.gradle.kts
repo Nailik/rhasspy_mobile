@@ -2,8 +2,8 @@
 
 plugins {
     kotlin("multiplatform")
-    id("com.android.library")
     kotlin("plugin.serialization")
+    id("com.android.library")
     id("base-gradle")
 }
 
@@ -32,7 +32,7 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
-                implementation(kotlin("test"))
+                implementation(Kotlin.test)
             }
         }
         val androidMain by getting {

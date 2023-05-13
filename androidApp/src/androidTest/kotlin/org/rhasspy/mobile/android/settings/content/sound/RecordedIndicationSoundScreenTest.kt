@@ -5,7 +5,7 @@ import androidx.test.uiautomator.UiDevice
 import org.junit.Before
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.MR
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.RecordedIndicationSoundSettingsViewModel
