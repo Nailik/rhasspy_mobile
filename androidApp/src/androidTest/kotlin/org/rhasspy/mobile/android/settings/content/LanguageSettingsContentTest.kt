@@ -24,7 +24,7 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalCoroutinesApi::class)
 class LanguageSettingsContentTest : FlakyTest() {
 
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
     private val viewModel = get<LanguageSettingsViewModel>()

@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.intenthandling
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
@@ -29,7 +28,7 @@ class IntentHandlingConfigurationViewModel(
     }
 
     private fun onChange(change: Change) {
-        contentViewState.update {
+        updateViewState {
             when (change) {
                 is ChangeIntentHandlingHassAccessToken -> it.copy(intentHandlingHassAccessToken = change.token)
                 is ChangeIntentHandlingHassEndpoint -> it.copy(intentHandlingHassEndpoint = change.endpoint)

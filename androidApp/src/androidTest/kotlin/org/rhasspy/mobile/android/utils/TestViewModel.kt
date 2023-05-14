@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.android.utils
 
-import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
@@ -35,7 +34,7 @@ class TestViewModel : IConfigurationViewModel<TestViewState>(
 
     fun setUnsavedChanges(value: Boolean) {
         if (value) {
-            contentViewState.update { it.copy(data = !it.data) }
+            updateViewState { it.copy(data = !it.data) }
         } else {
             contentViewState.value = TestViewState()
         }

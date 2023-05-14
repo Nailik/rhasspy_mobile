@@ -20,7 +20,7 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalCoroutinesApi::class)
 class IntentHandlingConfigurationContentTest : FlakyTest() {
 
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
     private val viewModel = get<IntentHandlingConfigurationViewModel>()
@@ -65,6 +65,7 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(IntentHandlingOption.RemoteHTTP, true).performClick()
         //new option is selected
         assertEquals(IntentHandlingOption.RemoteHTTP, viewState.value.intentHandlingOption)
+        composeTestRule.awaitIdle()
 
         //Endpoint visible
         composeTestRule.onNodeWithTag(TestTag.Endpoint, true).assertExists()
@@ -74,9 +75,10 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
         composeTestRule.awaitIdle()
         assertEquals(textInputTest, viewState.value.intentHandlingHttpEndpoint)
 
+        composeTestRule.onNodeWithTag(IntentHandlingOption.RemoteHTTP, true).performClick()
+
         //User clicks save
-        composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
-        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.saveBottomAppBar(viewModel)
         IntentHandlingConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //option is saved to remote http
             assertEquals(IntentHandlingOption.RemoteHTTP, it.intentHandlingOption)
@@ -155,8 +157,7 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
             .performScrollTo().onListItemRadioButton().assertIsSelected()
 
         //User clicks save
-        composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
-        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.saveBottomAppBar(viewModel)
         IntentHandlingConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //option is saved to HomeAssistant
             assertEquals(IntentHandlingOption.HomeAssistant, it.intentHandlingOption)

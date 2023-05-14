@@ -4,7 +4,6 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
@@ -44,7 +43,7 @@ class AudioPlayingConfigurationViewModel(
     }
 
     private fun onChange(change: Change) {
-        contentViewState.update {
+        updateViewState {
             when (change) {
                 is SelectAudioPlayingOption -> it.copy(audioPlayingOption = change.option)
                 is SelectAudioOutputOption -> it.copy(audioOutputOption = change.option)

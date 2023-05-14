@@ -21,7 +21,7 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalCoroutinesApi::class)
 class AudioPlayingConfigurationContentTest : FlakyTest() {
 
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
     private val viewModel = get<AudioPlayingConfigurationViewModel>()
@@ -98,8 +98,7 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
         assertEquals(textInputTest, viewState.value.audioPlayingHttpEndpoint)
 
         //User clicks save
-        composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
-        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.saveBottomAppBar(viewModel)
         AudioPlayingConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //option is saved to remote http
             assertEquals(AudioPlayingOption.RemoteHTTP, it.audioPlayingOption)
@@ -140,7 +139,7 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
         assertEquals(AudioOutputOption.Sound, viewState.value.audioOutputOption)
 
         //option disable is set
-        composeTestRule.onNodeWithTag(AudioPlayingOption.Disabled, true).onListItemRadioButton().assertIsSelected()
+        composeTestRule.onNodeWithTag(AudioPlayingOption.Disabled, true).performScrollTo().onListItemRadioButton().assertIsSelected()
         //output options not visible
         composeTestRule.onNodeWithTag(TestTag.AudioOutputOptions).assertDoesNotExist()
 
@@ -160,8 +159,7 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(AudioOutputOption.Notification, true).onListItemRadioButton().assertIsSelected()
 
         //User clicks save
-        composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
-        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.saveBottomAppBar(viewModel)
         AudioPlayingConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //option is saved to local
             assertEquals(AudioPlayingOption.Local, it.audioPlayingOption)

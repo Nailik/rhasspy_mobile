@@ -4,7 +4,6 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
@@ -34,7 +33,7 @@ class IntentRecognitionConfigurationViewModel(
     }
 
     private fun onChange(change: Change) {
-        contentViewState.update {
+        updateViewState {
             when (change) {
                 is ChangeIntentRecognitionHttpEndpoint -> it.copy(intentRecognitionHttpEndpoint = change.endpoint)
                 is SelectIntentRecognitionOption -> it.copy(intentRecognitionOption = change.option)

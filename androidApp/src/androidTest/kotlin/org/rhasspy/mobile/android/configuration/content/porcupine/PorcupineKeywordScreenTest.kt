@@ -20,7 +20,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class PorcupineKeywordScreenTest : FlakyTest() {
 
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
     private val viewModel = get<WakeWordConfigurationViewModel>()

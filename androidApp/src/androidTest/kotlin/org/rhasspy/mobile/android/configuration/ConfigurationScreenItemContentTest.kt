@@ -167,8 +167,7 @@ class ConfigurationScreenItemContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarDiscard).performClick()
 
         viewModel.setUnsavedChanges(true)
-        composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).performClick()
-        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.saveBottomAppBar(viewModel)
 
         viewModel.setUnsavedChanges(true)
         //app bar back click shows dialog

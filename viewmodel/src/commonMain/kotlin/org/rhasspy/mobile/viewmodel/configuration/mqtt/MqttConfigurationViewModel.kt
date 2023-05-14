@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.mqtt
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.resource.stable
@@ -36,7 +35,7 @@ class MqttConfigurationViewModel(
     }
 
     private fun onChange(change: Change) {
-        contentViewState.update {
+        updateViewState {
             when (change) {
                 is SetMqttEnabled -> it.copy(isMqttEnabled = change.enabled)
                 is SetMqttSSLEnabled -> it.copy(isMqttSSLEnabled = change.enabled)
@@ -60,7 +59,7 @@ class MqttConfigurationViewModel(
     }
 
     private fun onConsumed(consumed: Consumed) {
-        contentViewState.update {
+        updateViewState {
             when (consumed) {
                 is ShowSnackBar -> it.copy(snackBarText = null)
             }
@@ -69,7 +68,7 @@ class MqttConfigurationViewModel(
 
     private fun openMqttSSLWikiLink() {
         if (!OpenLinkUtils.openLink(LinkType.WikiMQTTSSL)) {
-            contentViewState.update {
+            updateViewState {
                 it.copy(snackBarText = MR.strings.linkOpenFailed.stable)
             }
         }
@@ -80,7 +79,7 @@ class MqttConfigurationViewModel(
             FileUtils.selectFile(FolderType.CertificateFolder.Mqtt)?.also { path ->
                 onChange(UpdateMqttKeyStoreFile(path))
             } ?: run {
-                contentViewState.update {
+                updateViewState {
                     it.copy(snackBarText = MR.strings.selectFileFailed.stable)
                 }
             }
