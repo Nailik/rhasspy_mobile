@@ -20,7 +20,7 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Jetbrains.Kotlinx.immutable)
                 implementation(Jetbrains.Kotlinx.dateTime)
-                implementation(Icerock.Resources)
+                implementation(Icerock.Resources.resourcesCompose)
                 implementation(Ktor2.Server.core)
                 implementation(Ktor2.Server.cors)
                 implementation(Ktor2.Server.cio)

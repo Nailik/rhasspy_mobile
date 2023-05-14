@@ -5,7 +5,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
@@ -40,7 +39,7 @@ class RemoteHermesHttpConfigurationViewModel(
     }
 
     private fun onChange(change: Change) {
-        contentViewState.update {
+        updateViewState {
             when (change) {
                 is SetHttpSSLVerificationDisabled -> it.copy(isHttpSSLVerificationDisabled = change.disabled)
                 is UpdateHttpClientServerEndpointHost -> it.copy(httpClientServerEndpointHost = change.host)
@@ -71,7 +70,7 @@ class RemoteHermesHttpConfigurationViewModel(
     private fun toggleRecording() {
         testScope.launch(Dispatchers.Default) {
             get<RecordingService>().isRecording.collect { isRecording ->
-                contentViewState.update {
+                updateViewState {
                     it.copy(isTestRecordingAudio = isRecording)
                 }
             }

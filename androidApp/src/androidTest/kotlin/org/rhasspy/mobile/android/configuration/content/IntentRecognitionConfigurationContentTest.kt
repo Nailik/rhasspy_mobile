@@ -20,7 +20,7 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalCoroutinesApi::class)
 class IntentRecognitionConfigurationContentTest : FlakyTest() {
 
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
     private val viewModel = get<IntentRecognitionConfigurationViewModel>()
@@ -98,8 +98,7 @@ class IntentRecognitionConfigurationContentTest : FlakyTest() {
         assertEquals(textInputTest, viewState.value.intentRecognitionHttpEndpoint)
 
         //User clicks save
-        composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
-        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.saveBottomAppBar(viewModel)
         IntentRecognitionConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //option is saved to remote http
             assertEquals(IntentRecognitionOption.RemoteHTTP, it.intentRecognitionOption)

@@ -10,8 +10,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.resources.MR
 
 /**
  * creates necessary notification to hold services in background

@@ -3,11 +3,9 @@ package org.rhasspy.mobile.viewmodel.configuration.wakeword
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okio.Path
 import org.koin.core.component.get
-import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.porcupine.PorcupineCustomKeyword
 import org.rhasspy.mobile.data.resource.stable
@@ -20,6 +18,7 @@ import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.platformspecific.updateListItem
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
@@ -54,7 +53,7 @@ class WakeWordConfigurationViewModel(
     }
 
     private fun onChange(change: Change) {
-        contentViewState.update {
+        updateViewState {
             when (change) {
                 is SelectWakeWordOption -> it.copy(
                     wakeWordOption = change.option,
@@ -67,7 +66,7 @@ class WakeWordConfigurationViewModel(
     private fun onAction(action: Action) {
         when (action) {
             MicrophonePermissionAllowed -> {
-                contentViewState.update { it.copy(isMicrophonePermissionRequestVisible = false) }
+                updateViewState { it.copy(isMicrophonePermissionRequestVisible = false) }
                 if (!viewState.value.hasUnsavedChanges) {
                     onAction(Save)
                 }
@@ -78,7 +77,7 @@ class WakeWordConfigurationViewModel(
     }
 
     private fun onConsumed(consumed: Consumed) {
-        contentViewState.update {
+        updateViewState {
             when (consumed) {
                 is ShowSnackBar -> it.copy(snackBarText = null)
             }
@@ -93,7 +92,7 @@ class WakeWordConfigurationViewModel(
     }
 
     private fun onPorcupineChange(change: PorcupineUiEvent.Change) {
-        contentViewState.update { viewStateFlow ->
+        updateViewState { viewStateFlow ->
             viewStateFlow.copy(wakeWordPorcupineViewState = viewStateFlow.wakeWordPorcupineViewState.let {
                 when (change) {
                     is UpdateWakeWordPorcupineAccessToken -> it.copy(accessToken = change.value)
@@ -128,7 +127,7 @@ class WakeWordConfigurationViewModel(
             AddCustomPorcupineKeyword -> addCustomPorcupineKeyword()
             DownloadCustomPorcupineKeyword -> {
                 if (!OpenLinkUtils.openLink(LinkType.PicoVoiceCustomWakeWord)) {
-                    contentViewState.update {
+                    updateViewState {
                         it.copy(snackBarText = MR.strings.linkOpenFailed.stable)
                     }
                 }
@@ -136,7 +135,7 @@ class WakeWordConfigurationViewModel(
 
             OpenPicoVoiceConsole -> {
                 if (!OpenLinkUtils.openLink(LinkType.PicoVoiceConsole)) {
-                    contentViewState.update {
+                    updateViewState {
                         it.copy(snackBarText = MR.strings.linkOpenFailed.stable)
                     }
                 }
@@ -154,7 +153,7 @@ class WakeWordConfigurationViewModel(
                 newFiles.add(path)
                 onPorcupineChange(AddPorcupineKeywordCustom(path))
             } ?: run {
-                contentViewState.update {
+                updateViewState {
                     it.copy(snackBarText = MR.strings.selectFileFailed.stable)
                 }
             }
@@ -168,7 +167,7 @@ class WakeWordConfigurationViewModel(
     }
 
     private fun onUdpChange(change: UdpUiEvent.Change) {
-        contentViewState.update { contentViewState ->
+        updateViewState { contentViewState ->
             val it = contentViewState.wakeWordUdpViewState
             contentViewState.copy(
                 wakeWordUdpViewState =

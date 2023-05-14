@@ -20,7 +20,7 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalCoroutinesApi::class)
 class TextToSpeechConfigurationContentTest : FlakyTest() {
 
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
     private val viewModel = get<TextToSpeechConfigurationViewModel>()
@@ -95,8 +95,7 @@ class TextToSpeechConfigurationContentTest : FlakyTest() {
         assertEquals(textInputTest, viewState.value.textToSpeechHttpEndpoint)
 
         //User clicks save
-        composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
-        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.saveBottomAppBar(viewModel)
         TextToSpeechConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //option is saved to remote http
             assertEquals(TextToSpeechOption.RemoteHTTP, it.textToSpeechOption)

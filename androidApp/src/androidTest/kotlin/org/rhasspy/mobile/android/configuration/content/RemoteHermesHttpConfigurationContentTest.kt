@@ -20,7 +20,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class RemoteHermesHttpConfigurationContentTest : FlakyTest() {
 
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
     private val viewModel = get<RemoteHermesHttpConfigurationViewModel>()
@@ -75,8 +75,7 @@ class RemoteHermesHttpConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.SSLSwitch).onListItemSwitch().assertIsOff()
 
         //user click save
-        composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
-        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.saveBottomAppBar(viewModel)
         RemoteHermesHttpConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //disable ssl validation off is saved
             assertEquals(false, it.isHttpSSLVerificationDisabled)

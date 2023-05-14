@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.platformspecific.volume
 
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -8,9 +9,9 @@ import kotlinx.coroutines.flow.StateFlow
 actual object DeviceVolume {
 
     actual val volumeFlowSound: StateFlow<Int?>
-        get() = TODO("Not yet implemented")
+        get() = MutableStateFlow(null) //TODO("Not yet implemented")
 
     actual val volumeFlowNotification: StateFlow<Int?>
-        get() = TODO("Not yet implemented")
+        get() = MutableStateFlow(null) //TODO("Not yet implemented")
 
 }

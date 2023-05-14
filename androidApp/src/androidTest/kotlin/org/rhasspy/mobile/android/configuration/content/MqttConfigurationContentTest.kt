@@ -21,7 +21,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class MqttConfigurationContentTest : FlakyTest() {
 
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
     private val viewModel = get<MqttConfigurationViewModel>()
@@ -90,8 +90,7 @@ class MqttConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.RetryInterval).assertExists()
 
         //user click save
-        composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
-        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.saveBottomAppBar(viewModel)
         MqttConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //mqtt enabled saved
             assertEquals(true, it.isMqttEnabled)
@@ -146,8 +145,7 @@ class MqttConfigurationContentTest : FlakyTest() {
             .performTextReplacement(textInputTestPassword)
 
         //user click save
-        composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
-        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.saveBottomAppBar(viewModel)
         MqttConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //host is saved
             assertEquals(textInputTestHost, it.mqttHost)
@@ -201,9 +199,7 @@ class MqttConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.CertificateButton).assertExists()
 
         //user clicks save
-        composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
-        composeTestRule.awaitSaved(viewModel)
-        composeTestRule.awaitIdle()
+        composeTestRule.saveBottomAppBar(viewModel)
         MqttConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //ssl on is saved
             assertEquals(true, it.isMqttSSLEnabled)
@@ -252,9 +248,7 @@ class MqttConfigurationContentTest : FlakyTest() {
             .performTextReplacement(textInputTestRetryInterval)
 
         //user click save
-        composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
-        composeTestRule.awaitSaved(viewModel)
-        composeTestRule.awaitIdle()
+        composeTestRule.saveBottomAppBar(viewModel)
         MqttConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //timeout is saved
             assertEquals(textInputTestConnectionTimeout, it.mqttConnectionTimeoutText)

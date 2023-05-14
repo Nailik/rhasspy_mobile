@@ -7,6 +7,7 @@ import android.provider.Settings
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.permission.PermissionRequester
 import androidx.test.uiautomator.By
@@ -161,6 +162,18 @@ fun SemanticsNodeInteractionsProvider.onNodeWithText(
         ), substring, ignoreCase
     ), useUnmergedTree
 )
+
+
+/*
+
+ */
+fun <V : IConfigurationEditViewState> ComposeTestRule.saveBottomAppBar(viewModel: IConfigurationViewModel<V>) {
+    Espresso.closeSoftKeyboard()
+    waitUntilExists(hasTestTag(TestTag.BottomAppBarSave).and(isEnabled()))
+    onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
+    awaitSaved(viewModel)
+}
+
 
 fun <V : IConfigurationEditViewState> ComposeTestRule.awaitSaved(viewModel: IConfigurationViewModel<V>) {
     this.waitUntil(

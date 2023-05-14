@@ -35,7 +35,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class PorcupineKeywordCustomScreenTest : FlakyTest() {
 
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createEmptyComposeRule()
 
     private lateinit var scenario: ActivityScenario<MainActivity>
@@ -189,7 +189,15 @@ class PorcupineKeywordCustomScreenTest : FlakyTest() {
 
         device.wait(Until.hasObject(By.text(fileName)), 5000)
         device.findObject(UiSelector().textMatches(fileName)).clickAndWaitForNewWindow()
+
+        //app is opened with current page (custom)
         composeTestRule.awaitIdle()
+        composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordCustomScreen).assertIsDisplayed()
+        //jarvis is added to list and enabled
+        composeTestRule.waitUntilExists(hasTag(ppn), 5000)
+        composeTestRule.onNodeWithTag(ppn).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(ppn).onListItemSwitch().assertIsOn()
+
         viewModel.onAction(Save)
 
         composeTestRule.awaitSaved(viewModel)
