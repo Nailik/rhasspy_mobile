@@ -27,7 +27,7 @@ kotlin {
     cocoapods {
         summary = "Some description for the Shared Module"
         homepage = "Link to the Shared Module homepage"
-        ios.deploymentTarget = "16.1"
+        ios.deploymentTarget = "14.0"
         podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "shared"
@@ -35,21 +35,20 @@ kotlin {
         }
     }
 
-
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(project(":logic"))
                 implementation(project(":ui"))
+                implementation(project(":data"))
+                implementation(project(":logic"))
                 implementation(project(":viewmodel"))
                 implementation(project(":platformspecific"))
-                implementation(project(":data"))
                 implementation(project(":settings"))
                 implementation(Kotlin.Stdlib.common)
                 implementation(Touchlab.kermit)
                 implementation(Touchlab.Kermit.crashlytics)
                 implementation(Icerock.Mvvm.core)
-                implementation(Icerock.Resources)
+                implementation(Icerock.Resources.resourcesCompose)
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Jetbrains.Kotlinx.immutable)
@@ -93,7 +92,6 @@ kotlin {
         val androidUnitTest by getting {
             dependsOn(commonMain)
             dependencies {
-                implementation(Kotlin.Test.junit)
                 implementation(Kotlin.test)
                 implementation(Kotlin.Test.junit)
             }

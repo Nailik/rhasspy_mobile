@@ -2,8 +2,8 @@
 
 plugins {
     kotlin("multiplatform")
-    id("com.android.library")
     kotlin("plugin.serialization")
+    id("com.android.library")
     id("base-gradle")
 }
 
@@ -16,7 +16,7 @@ kotlin {
                 implementation(Square.okio)
                 implementation(Ktor2.Client.core)
                 implementation(Koin.core)
-                implementation(Icerock.Resources)
+                implementation(Icerock.Resources.resourcesCompose)
                 implementation(Touchlab.kermit)
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Jetbrains.Kotlinx.immutable)
@@ -32,7 +32,7 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
-                implementation(kotlin("test"))
+                implementation(Kotlin.test)
             }
         }
         val androidMain by getting {

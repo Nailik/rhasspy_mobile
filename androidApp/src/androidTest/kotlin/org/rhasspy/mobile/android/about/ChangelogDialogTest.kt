@@ -15,7 +15,7 @@ import org.rhasspy.mobile.ui.TestTag
  */
 class ChangelogDialogTest : FlakyTest() {
 
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
     @Before

@@ -14,10 +14,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
-import org.rhasspy.mobile.android.utils.FlakyTest
-import org.rhasspy.mobile.android.utils.TestContentProvider
-import org.rhasspy.mobile.android.utils.awaitSaved
-import org.rhasspy.mobile.android.utils.onNodeWithTag
+import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
@@ -30,7 +27,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class WakeWordConfigurationContentTest : FlakyTest() {
 
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
     private val device: UiDevice =
@@ -81,8 +78,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.PorcupineWakeWordSettings).assertIsDisplayed()
 
         //user clicks save
-        composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
-        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.saveBottomAppBar(viewModel)
         WakeWordConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //new option is saved
             assertEquals(WakeWordOption.Porcupine, it.wakeWordOption)
@@ -134,8 +130,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         composeTestRule.awaitIdle()
 
         //user clicks save
-        composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
-        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.saveBottomAppBar(viewModel)
         WakeWordConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //access token is saved
             assertEquals(WakeWordOption.Porcupine, it.wakeWordOption)

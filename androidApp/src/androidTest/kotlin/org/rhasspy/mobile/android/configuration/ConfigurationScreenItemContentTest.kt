@@ -22,10 +22,10 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 
 /**
@@ -167,8 +167,7 @@ class ConfigurationScreenItemContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.BottomAppBarDiscard).performClick()
 
         viewModel.setUnsavedChanges(true)
-        composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).performClick()
-        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.saveBottomAppBar(viewModel)
 
         viewModel.setUnsavedChanges(true)
         //app bar back click shows dialog

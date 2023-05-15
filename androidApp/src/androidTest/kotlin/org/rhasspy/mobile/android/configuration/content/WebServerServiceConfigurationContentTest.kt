@@ -21,7 +21,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class WebServerServiceConfigurationContentTest : FlakyTest() {
 
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
     private val viewModel = get<WebServerConfigurationViewModel>()
@@ -114,8 +114,7 @@ class WebServerServiceConfigurationContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.CertificateButton).assertExists()
 
         //user click save
-        composeTestRule.onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
-        composeTestRule.awaitSaved(viewModel)
+        composeTestRule.saveBottomAppBar(viewModel)
         WebServerConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //enable http api is saved
             assertEquals(true, it.isHttpServerEnabled)

@@ -1,11 +1,11 @@
 package org.rhasspy.mobile.viewmodel.utils
 
-import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.platformspecific.clipboard.ClipboardUtils
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirect
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectIntention
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
+import org.rhasspy.mobile.resources.MR
 
 object OpenLinkUtils {
 

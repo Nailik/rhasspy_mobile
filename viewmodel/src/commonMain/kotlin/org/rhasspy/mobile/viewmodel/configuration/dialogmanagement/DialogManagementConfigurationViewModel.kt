@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.dialogmanagement
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
@@ -22,7 +21,7 @@ class DialogManagementConfigurationViewModel(
 ) {
 
     fun onEvent(event: DialogManagementConfigurationUiEvent) {
-        contentViewState.update {
+        updateViewState {
             when (event) {
                 is ChangeIntentRecognitionTimeout -> it.copy(intentRecognitionTimeoutText = event.timeout)
                 is ChangeRecordingTimeout -> it.copy(recordingTimeoutText = event.timeout)

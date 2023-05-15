@@ -77,14 +77,12 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
     )
     val viewState = _viewState.readOnly
 
-    init {
-        viewModelScope.launch(Dispatchers.Default) {
-            contentViewState.collect { content ->
-                _viewState.update {
-                    it.copy(hasUnsavedChanges = content != initialViewState())
-                }
-            }
+    protected fun updateViewState(function: (V) -> V) {
+        val newContentViewState = function(contentViewState.value)
+        _viewState.update {
+            it.copy(hasUnsavedChanges = newContentViewState != initialViewState())
         }
+        contentViewState.value = newContentViewState
     }
 
     fun onAction(action: IConfigurationUiEvent) {

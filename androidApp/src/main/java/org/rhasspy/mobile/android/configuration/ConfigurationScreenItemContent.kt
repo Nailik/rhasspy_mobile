@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.android.UiEventEffect
 import org.rhasspy.mobile.android.content.ServiceStateHeader
 import org.rhasspy.mobile.android.main.LocalConfigurationNavController
@@ -30,6 +29,7 @@ import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.data.event.EventState.Consumed
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.FloatingActionButton
 import org.rhasspy.mobile.ui.content.elements.Icon

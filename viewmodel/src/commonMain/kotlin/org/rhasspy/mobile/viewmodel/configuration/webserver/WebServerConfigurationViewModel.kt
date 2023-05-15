@@ -1,15 +1,14 @@
 package org.rhasspy.mobile.viewmodel.configuration.webserver
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.MR
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
+import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.*
@@ -36,7 +35,7 @@ class WebServerConfigurationViewModel(
     }
 
     private fun onChange(change: Change) {
-        contentViewState.update {
+        updateViewState {
             when (change) {
                 is SetHttpServerEnabled -> it.copy(isHttpServerEnabled = change.value)
                 is SetHttpServerSSLEnabled -> it.copy(isHttpServerSSLEnabled = change.value)
@@ -57,7 +56,7 @@ class WebServerConfigurationViewModel(
     }
 
     private fun onConsumed(consumed: Consumed) {
-        contentViewState.update {
+        updateViewState {
             when (consumed) {
                 is ShowSnackBar -> it.copy(snackBarText = null)
             }
@@ -66,7 +65,7 @@ class WebServerConfigurationViewModel(
 
     private fun openWebServerSSLWiki() {
         if (!OpenLinkUtils.openLink(LinkType.WikiWebServerSSL)) {
-            contentViewState.update {
+            updateViewState {
                 it.copy(snackBarText = MR.strings.linkOpenFailed.stable)
             }
         }
@@ -78,7 +77,7 @@ class WebServerConfigurationViewModel(
             FileUtils.selectFile(FolderType.CertificateFolder.WebServer)?.also { path ->
                 onEvent(SetHttpServerSSLKeyStoreFile(path))
             } ?: run {
-                contentViewState.update {
+                updateViewState {
                     it.copy(snackBarText = MR.strings.selectFileFailed.stable)
                 }
             }
