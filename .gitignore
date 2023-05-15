@@ -23,4 +23,6 @@ signing.properties
 /iosApp/Pods/Pods.xcodeproj/xcuserdata/
 /iosApp/iosApp.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
 /Task
-*.podspec
+/shared/shared.podspec
+/ui/ui.podspec
+/resources/resources.podspec
