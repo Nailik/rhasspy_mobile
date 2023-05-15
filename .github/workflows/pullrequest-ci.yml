@@ -42,7 +42,14 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: AndroidLintRelease
-          path: \*/build/reports/lint-results-${{ inputs.BUILD_TYPE_LOWERCASE }}.html
+          path: |
+            settings/build/reports/lint-results-${{ inputs.BUILD_TYPE_LOWERCASE }}.html
+            resources/build/reports/lint-results-${{ inputs.BUILD_TYPE_LOWERCASE }}.html
+            viewmodel/build/reports/lint-results-${{ inputs.BUILD_TYPE_LOWERCASE }}.html
+            ui/build/reports/lint-results-${{ inputs.BUILD_TYPE_LOWERCASE }}.html
+            shared/build/reports/lint-results-${{ inputs.BUILD_TYPE_LOWERCASE }}.html
+            widget/build/reports/lint-results-${{ inputs.BUILD_TYPE_LOWERCASE }}.html
+            androidApp/build/reports/lint-results-${{ inputs.BUILD_TYPE_LOWERCASE }}.html
   #runs checks
   unitTest:
     needs: analyze
