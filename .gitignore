@@ -13,16 +13,10 @@ versionf
 /androidApp/release/
 signing.properties
 */xcuserdata
-/iosApp/Pods/Pods.xcodeproj/xcuserdata/KIEller.xcuserdatad/xcschemes/shared.xcscheme
-/iosApp/Pods/Pods.xcodeproj/xcuserdata/KIEller.xcuserdatad/xcschemes/Pods-iosApp.xcscheme
-/iosApp/Pods/Local Podspecs/shared.podspec.json
-/iosApp/Pods/Target Support Files/shared/shared.xcconfig
+/iosApp/Pods/Pods.xcodeproj/xcuserdata/*
 /version
 /iosApp/Pods/*
-/iosApp/Pods/.*
 /iosApp/Pods/Pods.xcodeproj/xcuserdata/
-/iosApp/iosApp.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+/iosApp/iosApp.xcworkspace/*
 /Task
-/shared/shared.podspec
-/ui/ui.podspec
-/resources/resources.podspec
+*.podspec
