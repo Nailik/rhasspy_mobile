@@ -31,7 +31,7 @@ class AutomaticSilenceDetectionSettingsContentTest : FlakyTest() {
 
         composeTestRule.activity.setContent {
             TestContentProvider {
-                AutomaticSilenceDetectionSettingsContent()
+                SilenceDetectionSettingsContent()
             }
         }
 

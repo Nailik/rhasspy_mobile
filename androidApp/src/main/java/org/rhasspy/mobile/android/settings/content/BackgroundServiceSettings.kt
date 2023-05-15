@@ -18,7 +18,6 @@ import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
-import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
@@ -31,6 +30,7 @@ import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundService
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Action.DisableBatteryOptimization
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Change.SetBackgroundServiceEnabled
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Consumed.ShowSnackBar
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Navigate.BackClick
 
 /**
  * background service
@@ -54,8 +54,9 @@ fun BackgroundServiceSettingsContent() {
     }
 
     SettingsScreenItemContent(
-        modifier = Modifier.testTag(SettingsScreenType.BackgroundServiceSettings),
-        title = MR.strings.background.stable
+        modifier = Modifier,
+        title = MR.strings.background.stable,
+        onBackClick = { viewModel.onEvent(BackClick) }
     ) {
 
         InformationListElement(text = MR.strings.backgroundServiceInformation.stable)

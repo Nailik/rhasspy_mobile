@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
-import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
@@ -23,23 +22,24 @@ import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesH
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.RemoteHermesHttpConfigurationScreen
 
 /**
  * content to configure http configuration
  * switch to disable ssl verification
  */
 @Composable
-fun RemoteHermesHttpConfigurationContent() {
+fun RemoteHermesHttpConfigurationContent(screen: RemoteHermesHttpConfigurationScreen) {
     val viewModel: RemoteHermesHttpConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(ConfigurationScreenType.RemoteHermesHttpConfiguration),
+        modifier = Modifier,
+        screenType = screen.type,
         config = ConfigurationScreenConfig(MR.strings.remoteHermesHTTP.stable),
         viewState = viewState,
         onAction = { viewModel.onAction(it) },
-        onConsumed = { viewModel.onConsumed(it) },
         testContent = {
             TestContent(
                 testIntentRecognitionText = contentViewState.testIntentRecognitionText,

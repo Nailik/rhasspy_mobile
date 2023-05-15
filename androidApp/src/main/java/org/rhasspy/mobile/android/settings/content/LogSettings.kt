@@ -9,12 +9,12 @@ import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
-import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Navigate.BackClick
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 
 /**
@@ -27,8 +27,9 @@ fun LogSettingsContent() {
     val viewState by viewModel.viewState.collectAsState()
 
     SettingsScreenItemContent(
-        modifier = Modifier.testTag(SettingsScreenType.LogSettings),
-        title = MR.strings.logSettings.stable
+        modifier = Modifier,
+        title = MR.strings.logSettings.stable,
+        onBackClick = { viewModel.onEvent(BackClick) }
     ) {
 
         //log level

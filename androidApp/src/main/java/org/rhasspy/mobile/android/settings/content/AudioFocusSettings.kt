@@ -10,7 +10,6 @@ import org.rhasspy.mobile.android.content.list.CheckBoxListItem
 import org.rhasspy.mobile.android.content.list.InformationListElement
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
-import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
@@ -18,6 +17,7 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Navigate.BackClick
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsViewModel
 
 @Composable
@@ -26,8 +26,9 @@ fun AudioFocusSettingsContent() {
     val viewState by viewModel.viewState.collectAsState()
 
     SettingsScreenItemContent(
-        modifier = Modifier.testTag(SettingsScreenType.AudioFocusSettings),
-        title = MR.strings.audioFocus.stable
+        modifier = Modifier,
+        title = MR.strings.audioFocus.stable,
+        onBackClick = { viewModel.onEvent(BackClick) }
     ) {
 
         InformationListElement(

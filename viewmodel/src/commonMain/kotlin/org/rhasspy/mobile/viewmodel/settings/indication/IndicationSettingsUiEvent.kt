@@ -4,6 +4,13 @@ import org.rhasspy.mobile.data.service.option.AudioOutputOption
 
 sealed interface IndicationSettingsUiEvent {
 
+    sealed interface Navigate : IndicationSettingsUiEvent {
+        object BackClick: Navigate
+        object WakeIndicationSoundClick: Navigate
+        object RecordedIndicationSoundClick: Navigate
+        object ErrorIndicationSoundClick: Navigate
+    }
+
     sealed interface Change : IndicationSettingsUiEvent {
         data class SetSoundIndicationEnabled(val enabled: Boolean) : Change
         data class SetWakeWordLightIndicationEnabled(val enabled: Boolean) : Change

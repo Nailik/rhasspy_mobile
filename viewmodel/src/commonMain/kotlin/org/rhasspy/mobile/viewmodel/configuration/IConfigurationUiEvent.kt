@@ -13,6 +13,12 @@ sealed interface IConfigurationUiEvent {
         object ToggleListFiltered : Action
         object ToggleListAutoscroll : Action
 
+        sealed interface Navigate : Action {
+
+            object BackClick: Navigate
+
+        }
+
     }
 
 }

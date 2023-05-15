@@ -11,15 +11,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.android.configuration.content.WakeWordConfigurationScreens
 import org.rhasspy.mobile.android.content.list.ListElement
-import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
@@ -27,6 +23,8 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Navigate.BackClick
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Navigate.PorcupineLanguage
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 
 /**
@@ -41,7 +39,6 @@ fun PorcupineKeywordScreen(
     onEvent: (PorcupineUiEvent) -> Unit
 ) {
 
-    val navController = rememberNavController()
     val pagerState = rememberPagerState { 2 }
     val coroutineScope = rememberCoroutineScope()
 
@@ -53,32 +50,27 @@ fun PorcupineKeywordScreen(
                 .fillMaxSize(),
             topBar = {
                 Column {
-                    AppBar()
-                    val navigation = LocalNavController.current
+                    AppBar(onEvent)
                     //opens page for porcupine language selection
                     ListElement(
                         modifier = Modifier
-                            .testTag(TestTag.PorcupineLanguage)
-                            .clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineLanguage.route) },
+                            .testTag(TestTag.PorcupineLanguage),
+                           //TODO .clickable { onEvent(PorcupineLanguage) },
                         text = { Text(MR.strings.language.stable) },
                         secondaryText = { Text(viewState.porcupineLanguage.text) }
                     )
                 }
             },
             bottomBar = {
-                CompositionLocalProvider(
-                    LocalNavController provides navController
-                ) {
-                    Surface(tonalElevation = 3.dp) {
-                        //bottom tab bar with pages tabs
-                        BottomTabBar(
-                            state = pagerState,
-                            onSelectIndex = { index ->
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(index)
-                                }
-                            })
-                    }
+                Surface(tonalElevation = 3.dp) {
+                    //bottom tab bar with pages tabs
+                    BottomTabBar(
+                        state = pagerState,
+                        onSelectIndex = { index ->
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(index)
+                            }
+                        })
                 }
             }
 
@@ -108,15 +100,13 @@ fun PorcupineKeywordScreen(
  * app bar for title and back button
  */
 @Composable
-private fun AppBar() {
-
-    val navigation = LocalNavController.current
+private fun AppBar(onEvent: (PorcupineUiEvent) -> Unit) {
 
     TopAppBar(
         title = { Text(MR.strings.porcupineKeyword.stable) },
         navigationIcon = {
             IconButton(
-                onClick = navigation::popBackStack,
+                onClick = { /*TODO*/ },
                 modifier = Modifier.testTag(TestTag.AppBarBackButton)
             ) {
                 Icon(

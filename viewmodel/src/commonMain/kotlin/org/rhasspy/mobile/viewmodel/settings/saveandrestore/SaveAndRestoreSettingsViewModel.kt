@@ -10,13 +10,16 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.settings.SettingsUtils
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.*
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Consumed
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Consumed.ShowSnackBar
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Navigate.BackClick
 
 @Stable
-class SaveAndRestoreSettingsViewModel : ViewModel() {
+class SaveAndRestoreSettingsViewModel(
+    private val navigator: Navigator
+) : ViewModel() {
 
     private val _viewState = MutableStateFlow(SaveAndRestoreSettingsViewState())
     val viewState = _viewState.readOnly
@@ -24,6 +27,7 @@ class SaveAndRestoreSettingsViewModel : ViewModel() {
     fun onEvent(event: SaveAndRestoreSettingsUiEvent) {
         when (event) {
             is Action -> onAction(event)
+            is Navigate -> onNavigate(event)
             is Consumed -> onConsumed(event)
         }
     }
@@ -53,6 +57,12 @@ class SaveAndRestoreSettingsViewModel : ViewModel() {
                     }
                 }
             }
+        }
+    }
+
+    private fun onNavigate(navigate: Navigate) {
+        when (navigate) {
+            is BackClick -> navigator.popBackStack()
         }
     }
 

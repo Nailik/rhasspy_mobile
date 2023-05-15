@@ -52,4 +52,13 @@ sealed interface WakeWordConfigurationUiEvent {
         }
 
     }
+
+    sealed interface Navigate: WakeWordConfigurationUiEvent {
+
+        object PorcupineLanguage: Navigate
+        object PorcupineKeyword: Navigate
+        object BackClick: Navigate
+
+    }
+
 }

@@ -18,6 +18,7 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action.PlayTestAudio
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
 
 /**
  * ViewModel for Audio Playing Configuration
@@ -29,10 +30,12 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
  */
 @Stable
 class AudioPlayingConfigurationViewModel(
-    service: AudioPlayingService
+    service: AudioPlayingService,
+    navigator: Navigator
 ) : IConfigurationViewModel<AudioPlayingConfigurationViewState>(
     service = service,
-    initialViewState = ::AudioPlayingConfigurationViewState
+    initialViewState = ::AudioPlayingConfigurationViewState,
+    navigator = navigator
 ) {
 
     fun onEvent(change: AudioPlayingConfigurationUiEvent) {

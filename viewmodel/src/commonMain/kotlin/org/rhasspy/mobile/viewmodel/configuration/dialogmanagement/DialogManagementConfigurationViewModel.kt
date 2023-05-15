@@ -5,6 +5,7 @@ import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
 
 /**
  * ViewModel for Dialog Management Configuration
@@ -14,10 +15,12 @@ import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagem
  */
 @Stable
 class DialogManagementConfigurationViewModel(
-    service: DialogManagerService
+    service: DialogManagerService,
+    navigator: Navigator
 ) : IConfigurationViewModel<DialogManagementConfigurationViewState>(
     service = service,
-    initialViewState = ::DialogManagementConfigurationViewState
+    initialViewState = ::DialogManagementConfigurationViewState,
+    navigator = navigator
 ) {
 
     fun onEvent(event: DialogManagementConfigurationUiEvent) {

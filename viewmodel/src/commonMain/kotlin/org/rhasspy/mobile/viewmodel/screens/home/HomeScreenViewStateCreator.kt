@@ -23,8 +23,7 @@ class HomeScreenViewStateCreator(
             combineStateFlow(
                 ConfigurationSetting.wakeWordOption.data,
                 serviceMiddleware.isPlayingRecording,
-                serviceMiddleware.isPlayingRecordingEnabled,
-                AppSetting.isShowLogEnabled.data
+                serviceMiddleware.isPlayingRecordingEnabled
             ).collect {
                 viewState.value = getViewState()
             }
@@ -37,8 +36,7 @@ class HomeScreenViewStateCreator(
         return HomeScreenViewState(
             wakeWordOption = ConfigurationSetting.wakeWordOption.value,
             isPlayingRecording = serviceMiddleware.isPlayingRecording.value,
-            isPlayingRecordingEnabled = serviceMiddleware.isPlayingRecordingEnabled.value,
-            isShowLogEnabled = AppSetting.isShowLogEnabled.data.value,
+            isPlayingRecordingEnabled = serviceMiddleware.isPlayingRecordingEnabled.value
         )
     }
 }

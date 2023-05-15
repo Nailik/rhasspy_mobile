@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
-import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.content.list.RadioButtonListItem
@@ -29,6 +28,7 @@ import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingC
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewState
+import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.IntentHandlingConfigurationScreen
 
 /**
  * content for intent handling configuration
@@ -37,17 +37,17 @@ import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingC
  * home assistant configuration
  */
 @Composable
-fun IntentHandlingConfigurationContent() {
+fun IntentHandlingConfigurationContent(screen: IntentHandlingConfigurationScreen) {
     val viewModel: IntentHandlingConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(ConfigurationScreenType.IntentHandlingConfiguration),
+        modifier = Modifier,
+        screenType = screen.type,
         config = ConfigurationScreenConfig(MR.strings.intentHandling.stable),
         viewState = viewState,
         onAction = { viewModel.onAction(it) },
-        onConsumed = { viewModel.onConsumed(it) },
         testContent = {
             TestContent(
                 testIntentNameText = contentViewState.testIntentHandlingName,

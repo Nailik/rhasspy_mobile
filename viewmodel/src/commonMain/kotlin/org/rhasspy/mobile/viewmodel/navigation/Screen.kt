@@ -1,81 +1,97 @@
 package org.rhasspy.mobile.viewmodel.navigation
 
+import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.ConfigurationDetailScreenType.Edit
+import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.ConfigurationDetailScreenType.Test
+
 sealed interface Screen {
     object HomeScreen : Screen
     sealed interface ConfigurationScreen : Screen {
 
         object OverviewScreen: ConfigurationScreen
-        sealed interface DetailScreen : ConfigurationScreen {
 
-            sealed interface AudioPlayingConfigurationScreen: DetailScreen {
+        sealed class ConfigurationDetailScreen(val type: ConfigurationDetailScreenType) : ConfigurationScreen {
 
-                object EditScreen: AudioPlayingConfigurationScreen
+            enum class ConfigurationDetailScreenType {
+                Edit,
+                Test
+            }
 
-                object TestScreen: AudioPlayingConfigurationScreen
+            sealed class AudioPlayingConfigurationScreen(type: ConfigurationDetailScreenType): ConfigurationDetailScreen(type) {
+
+                object EditScreen: AudioPlayingConfigurationScreen(Edit)
+
+                object TestScreen: AudioPlayingConfigurationScreen(Test)
 
             }
-            sealed interface DialogManagementConfigurationScreen: DetailScreen {
+            sealed class DialogManagementConfigurationScreen(type: ConfigurationDetailScreenType): ConfigurationDetailScreen(type) {
 
-                object EditScreen: DialogManagementConfigurationScreen
+                object EditScreen: DialogManagementConfigurationScreen(Edit)
 
-                object TestScreen: DialogManagementConfigurationScreen
-
-            }
-            sealed interface IntentHandlingConfigurationScreen: DetailScreen {
-
-                object EditScreen: IntentHandlingConfigurationScreen
-
-                object TestScreen: IntentHandlingConfigurationScreen
+                object TestScreen: DialogManagementConfigurationScreen(Test)
 
             }
-            sealed interface IntentRecognitionConfigurationScreen: DetailScreen {
+            sealed class IntentHandlingConfigurationScreen(type: ConfigurationDetailScreenType): ConfigurationDetailScreen(type) {
 
-                object EditScreen: IntentRecognitionConfigurationScreen
+                object EditScreen: IntentHandlingConfigurationScreen(Edit)
 
-                object TestScreen: IntentRecognitionConfigurationScreen
-
-            }
-            sealed interface RemoteHermesHttpConfigurationScreen: DetailScreen {
-
-                object EditScreen: RemoteHermesHttpConfigurationScreen
-
-                object TestScreen: RemoteHermesHttpConfigurationScreen
+                object TestScreen: IntentHandlingConfigurationScreen(Test)
 
             }
-            sealed interface SpeechToTextConfigurationScreen: DetailScreen {
+            sealed class IntentRecognitionConfigurationScreen(type: ConfigurationDetailScreenType): ConfigurationDetailScreen(type) {
 
-                object EditScreen: SpeechToTextConfigurationScreen
+                object EditScreen: IntentRecognitionConfigurationScreen(Edit)
 
-                object TestScreen: SpeechToTextConfigurationScreen
-
-            }
-            sealed interface TextToSpeechConfigurationScreen: DetailScreen {
-
-                object EditScreen: TextToSpeechConfigurationScreen
-
-                object TestScreen: TextToSpeechConfigurationScreen
+                object TestScreen: IntentRecognitionConfigurationScreen(Test)
 
             }
-            sealed interface WakeWordConfigurationScreen: DetailScreen {
+            sealed class MqttConfigurationScreen(type: ConfigurationDetailScreenType): ConfigurationDetailScreen(type) {
 
-                sealed interface EditScreen: WakeWordConfigurationScreen {
+                object EditScreen: MqttConfigurationScreen(Edit)
 
-                    object OverViewScreen: EditScreen
+                object TestScreen: MqttConfigurationScreen(Test)
 
-                    object PorcupineLanguageScreen: EditScreen
+            }
+            sealed class RemoteHermesHttpConfigurationScreen(type: ConfigurationDetailScreenType): ConfigurationDetailScreen(type) {
 
-                    object PorcupineWakeWordScreen: EditScreen
+                object EditScreen: RemoteHermesHttpConfigurationScreen(Edit)
+
+                object TestScreen: RemoteHermesHttpConfigurationScreen(Test)
+
+            }
+            sealed class SpeechToTextConfigurationScreen(type: ConfigurationDetailScreenType): ConfigurationDetailScreen(type) {
+
+                object EditScreen: SpeechToTextConfigurationScreen(Edit)
+
+                object TestScreen: SpeechToTextConfigurationScreen(Test)
+
+            }
+            sealed class TextToSpeechConfigurationScreen(type: ConfigurationDetailScreenType): ConfigurationDetailScreen(type) {
+
+                object EditScreen: TextToSpeechConfigurationScreen(Edit)
+
+                object TestScreen: TextToSpeechConfigurationScreen(Test)
+
+            }
+            sealed class WakeWordConfigurationScreen(type: ConfigurationDetailScreenType): ConfigurationDetailScreen(type) {
+
+                sealed class EditScreen: WakeWordConfigurationScreen(Edit) {
+
+                    object OverViewScreen: EditScreen()
+
+                    object PorcupineLanguageScreen: EditScreen()
+
+                    object PorcupineWakeWordScreen: EditScreen()
 
                 }
 
-                object TestScreen: WakeWordConfigurationScreen
+                object TestScreen: WakeWordConfigurationScreen(Test)
 
             }
-            sealed interface WebServerConfigurationScreen: DetailScreen {
+            sealed class WebServerConfigurationScreen(type: ConfigurationDetailScreenType): ConfigurationDetailScreen(type) {
 
-                object EditScreen: WebServerConfigurationScreen
+                object EditScreen: WebServerConfigurationScreen(Edit)
 
-                object TestScreen: WebServerConfigurationScreen
+                object TestScreen: WebServerConfigurationScreen(Test)
 
             }
 
@@ -85,25 +101,28 @@ sealed interface Screen {
 
     sealed interface SettingsScreen : Screen {
 
-        object LanguageSettingsScreen : SettingsScreen
-
-        object BackgroundServiceSettings : SettingsScreen
-
-        object MicrophoneOverlaySettings : SettingsScreen
-
-        object IndicationSettings : SettingsScreen
-
-        object DeviceSettings : SettingsScreen
-
-        object AudioRecorderSettings : SettingsScreen
-
-        object AutomaticSilenceDetectionSettings : SettingsScreen
-
-        object LogSettings : SettingsScreen
-
-        object SaveAndRestoreSettings : SettingsScreen
+        object OverviewScreen: SettingsScreen
 
         object AboutSettings : SettingsScreen
+        object AudioFocusSettings : SettingsScreen
+        object AudioRecorderSettings : SettingsScreen
+        object AutomaticSilenceDetectionSettings : SettingsScreen
+        object BackgroundServiceSettings : SettingsScreen
+        object DeviceSettings : SettingsScreen
+        sealed interface IndicationSettings : SettingsScreen {
+
+            object Overview: IndicationSettings
+            object WakeIndicationSound: IndicationSettings
+            object RecordedIndicationSound: IndicationSettings
+            object ErrorIndicationSound: IndicationSettings
+
+        }
+        object LanguageSettingsScreen : SettingsScreen
+        object LogSettings : SettingsScreen
+        object MicrophoneOverlaySettings : SettingsScreen
+        object SaveAndRestoreSettings : SettingsScreen
+
+
 
     }
 

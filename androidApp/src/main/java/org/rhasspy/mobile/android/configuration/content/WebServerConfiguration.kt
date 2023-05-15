@@ -11,10 +11,8 @@ import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
-import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.list.*
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
@@ -31,6 +29,7 @@ import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurati
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.WebServerConfigurationScreen
 
 /**
  * Content to configure text to speech
@@ -38,9 +37,8 @@ import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurati
  * select port
  * select ssl certificate
  */
-@Preview
 @Composable
-fun WebServerConfigurationContent() {
+fun WebServerConfigurationContent(screen: WebServerConfigurationScreen) {
     val viewModel: WebServerConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
@@ -56,11 +54,11 @@ fun WebServerConfigurationContent() {
     }
 
     ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(ConfigurationScreenType.WebServerConfiguration),
+        modifier = Modifier,
+        screenType = screen.type,
         config = ConfigurationScreenConfig(MR.strings.webserver.stable),
         viewState = viewState,
-        onAction = { viewModel.onAction(it) },
-        onConsumed = { viewModel.onConsumed(it) }
+        onAction = { viewModel.onAction(it) }
     ) {
 
         item {

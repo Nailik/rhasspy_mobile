@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
-import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.content.list.SwitchListItem
@@ -28,6 +27,7 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewState
+import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.IntentRecognitionConfigurationScreen
 
 /**
  * configuration content for intent recognition
@@ -35,17 +35,17 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
  * text field for endpoint
  */
 @Composable
-fun IntentRecognitionConfigurationContent() {
+fun IntentRecognitionConfigurationContent(screen: IntentRecognitionConfigurationScreen) {
     val viewModel: IntentRecognitionConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(ConfigurationScreenType.IntentRecognitionConfiguration),
+        modifier = Modifier,
+        screenType = screen.type,
         config = ConfigurationScreenConfig(MR.strings.intentRecognition.stable),
         viewState = viewState,
         onAction = { viewModel.onAction(it) },
-        onConsumed = { viewModel.onConsumed(it) },
         testContent = {
             TestContent(
                 testIntentRecognitionText = contentViewState.testIntentRecognitionText,

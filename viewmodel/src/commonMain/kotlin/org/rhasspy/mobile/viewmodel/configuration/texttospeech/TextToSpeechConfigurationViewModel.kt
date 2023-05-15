@@ -14,13 +14,16 @@ import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfi
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action.TestRemoteHermesHttpTextToSpeechTest
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
 
 @Stable
 class TextToSpeechConfigurationViewModel(
-    service: TextToSpeechService
+    service: TextToSpeechService,
+    navigator: Navigator
 ) : IConfigurationViewModel<TextToSpeechConfigurationViewState>(
     service = service,
-    initialViewState = ::TextToSpeechConfigurationViewState
+    initialViewState = ::TextToSpeechConfigurationViewState,
+    navigator = navigator
 ) {
 
     fun onEvent(event: TextToSpeechConfigurationUiEvent) {

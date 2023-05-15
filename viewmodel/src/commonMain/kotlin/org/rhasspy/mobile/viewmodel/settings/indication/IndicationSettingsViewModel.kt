@@ -6,11 +6,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.navigation.Screen
+import org.rhasspy.mobile.viewmodel.navigation.Screen.SettingsScreen.IndicationSettings.*
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Navigate
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Navigate.BackClick
 
 @Stable
-class IndicationSettingsViewModel : ViewModel() {
+class IndicationSettingsViewModel(
+    private val navigator: Navigator
+) : ViewModel() {
 
     private val _viewState = MutableStateFlow(IndicationSettingsViewState())
     val viewState = _viewState.readOnly
@@ -18,6 +25,7 @@ class IndicationSettingsViewModel : ViewModel() {
     fun onEvent(event: IndicationSettingsUiEvent) {
         when (event) {
             is Change -> onChange(event)
+            is Navigate -> onNavigate(event)
         }
     }
 
@@ -44,6 +52,15 @@ class IndicationSettingsViewModel : ViewModel() {
                     it.copy(isWakeWordLightIndicationEnabled = change.enabled)
                 }
             }
+        }
+    }
+
+    private fun onNavigate(navigate: Navigate) {
+        when (navigate) {
+            is BackClick -> navigator.popBackStack()
+            Navigate.ErrorIndicationSoundClick -> navigator.navigate(ErrorIndicationSound)
+            Navigate.RecordedIndicationSoundClick -> navigator.navigate(RecordedIndicationSound)
+            Navigate.WakeIndicationSoundClick -> navigator.navigate(WakeIndicationSound)
         }
     }
 

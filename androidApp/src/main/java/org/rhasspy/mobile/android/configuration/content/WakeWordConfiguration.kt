@@ -13,14 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
-import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.configuration.content.porcupine.PorcupineKeywordScreen
 import org.rhasspy.mobile.android.configuration.content.porcupine.PorcupineLanguageScreen
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
@@ -28,7 +23,6 @@ import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
-import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
@@ -46,6 +40,8 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.TestStartWakeWord
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Consumed.ShowSnackBar
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Navigate.PorcupineKeyword
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Navigate.PorcupineLanguage
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.OpenPicoVoiceConsole
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
@@ -53,21 +49,17 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.UdpViewState
-
-enum class WakeWordConfigurationScreens(val route: String) {
-    Overview("WakeWordConfigurationScreens_Overview"),
-    PorcupineKeyword("WakeWordConfigurationScreens_PorcupineKeyword"),
-    PorcupineLanguage("WakeWordConfigurationScreens_PorcupineLanguage")
-}
+import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.WakeWordConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.WakeWordConfigurationScreen.EditScreen.*
+import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.WakeWordConfigurationScreen.TestScreen
 
 /**
  * Nav Host of Wake word configuration screens
  */
-@Preview
 @Composable
-fun WakeWordConfigurationContent() {
+fun WakeWordConfigurationContent(screen: WakeWordConfigurationScreen) {
+
     val viewModel: WakeWordConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
-    val navController = rememberNavController()
 
     val viewState by viewModel.viewState.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
@@ -81,33 +73,19 @@ fun WakeWordConfigurationContent() {
         }
     }
 
-    CompositionLocalProvider(
-        LocalNavController provides navController
-    ) {
-        NavHost(
-            navController = navController,
-            startDestination = WakeWordConfigurationScreens.Overview.route
-        ) {
+    when (screen) {
+        OverViewScreen -> WakeWordConfigurationOverview(screen, viewModel)
+        PorcupineLanguageScreen -> PorcupineLanguageScreen(
+            viewState = contentViewState.wakeWordPorcupineViewState,
+            onEvent = viewModel::onEvent
+        )
 
-            composable(WakeWordConfigurationScreens.Overview.route) {
-                WakeWordConfigurationOverview(viewModel)
-            }
+        PorcupineWakeWordScreen -> PorcupineKeywordScreen(
+            viewState = contentViewState.wakeWordPorcupineViewState,
+            onEvent = viewModel::onEvent
+        )
 
-            composable(WakeWordConfigurationScreens.PorcupineLanguage.route) {
-                PorcupineLanguageScreen(
-                    viewState = contentViewState.wakeWordPorcupineViewState,
-                    onEvent = viewModel::onEvent
-                )
-            }
-
-            composable(WakeWordConfigurationScreens.PorcupineKeyword.route) {
-                PorcupineKeywordScreen(
-                    viewState = contentViewState.wakeWordPorcupineViewState,
-                    onEvent = viewModel::onEvent
-                )
-            }
-
-        }
+        TestScreen -> WakeWordConfigurationOverview(screen, viewModel)
     }
 
 }
@@ -118,17 +96,20 @@ fun WakeWordConfigurationContent() {
  * porcupine wake word settings
  */
 @Composable
-private fun WakeWordConfigurationOverview(viewModel: WakeWordConfigurationViewModel) {
+private fun WakeWordConfigurationOverview(
+    screen: WakeWordConfigurationScreen,
+    viewModel: WakeWordConfigurationViewModel
+) {
 
     val viewState by viewModel.viewState.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(ConfigurationScreenType.WakeWordConfiguration),
+        modifier = Modifier,
+        screenType = screen.type,
         config = ConfigurationScreenConfig(MR.strings.wakeWord.stable),
         viewState = viewState,
         onAction = { viewModel.onAction(it) },
-        onConsumed = { viewModel.onConsumed(it) },
         testContent = { TestContent(viewModel::onEvent) }
     ) {
 
@@ -226,14 +207,11 @@ private fun PorcupineConfiguration(
             secondaryText = { Text(MR.strings.openPicoVoiceConsoleInfo.stable) }
         )
 
-        //opens page for porcupine keyword or language selection
-        val navigation = LocalNavController.current
-
         //opens page for porcupine language selection
         ListElement(
             modifier = Modifier
                 .testTag(TestTag.PorcupineLanguage)
-                .clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineLanguage.route) },
+                .clickable { onEvent(PorcupineLanguage) },
             text = { Text(MR.strings.language.stable) },
             secondaryText = {
                 val porcupineLanguageText by remember { derivedStateOf { viewState.porcupineLanguage.text } }
@@ -245,7 +223,7 @@ private fun PorcupineConfiguration(
         ListElement(
             modifier = Modifier
                 .testTag(TestTag.PorcupineKeyword)
-                .clickable { navigation.navigate(WakeWordConfigurationScreens.PorcupineKeyword.route) },
+                .clickable { onEvent(PorcupineKeyword) },
             text = { Text(MR.strings.wakeWord.stable) },
             secondaryText = { Text("${viewState.keywordCount} ${translate(MR.strings.active.stable)}") }
         )

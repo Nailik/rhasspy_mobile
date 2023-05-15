@@ -17,13 +17,16 @@ import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfi
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action.TestSpeechToTextToggleRecording
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
 
 @Stable
 class SpeechToTextConfigurationViewModel(
-    service: SpeechToTextService
+    service: SpeechToTextService,
+    navigator: Navigator
 ) : IConfigurationViewModel<SpeechToTextConfigurationViewState>(
     service = service,
-    initialViewState = ::SpeechToTextConfigurationViewState
+    initialViewState = ::SpeechToTextConfigurationViewState,
+    navigator = navigator
 ) {
 
     fun onEvent(event: SpeechToTextConfigurationUiEvent) {

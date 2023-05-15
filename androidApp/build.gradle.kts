@@ -190,7 +190,6 @@ dependencies {
     implementation(AndroidX.Core.splashscreen)
 
     implementation(AndroidX.Activity.compose)
-    implementation(AndroidX.Navigation.compose)
 
     implementation(Jetbrains.Compose.material3)
     implementation(Jetbrains.Compose.materialIconsExtended)

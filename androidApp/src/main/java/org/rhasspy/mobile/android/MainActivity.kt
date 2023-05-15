@@ -24,7 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.main.MainNavigation
+import org.rhasspy.mobile.android.main.MainScreen
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
 import org.rhasspy.mobile.logic.middleware.Source
@@ -70,7 +70,7 @@ class MainActivity : KoinComponent, AppCompatActivity() {
 
         this.setContent {
             Box(modifier = Modifier.fillMaxSize()) {
-                MainNavigation(viewModelFactory)
+                MainScreen(viewModelFactory)
                 if (isDebug()) {
                     Text(
                         text = "DEBUG",

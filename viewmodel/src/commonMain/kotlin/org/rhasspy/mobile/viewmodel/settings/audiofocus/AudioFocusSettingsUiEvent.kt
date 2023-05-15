@@ -1,8 +1,13 @@
 package org.rhasspy.mobile.viewmodel.settings.audiofocus
 
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
+import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent
 
 sealed interface AudioFocusSettingsUiEvent {
+
+    sealed interface Navigate : AudioFocusSettingsUiEvent {
+        object BackClick: Navigate
+    }
 
     sealed interface Change : AudioFocusSettingsUiEvent {
 

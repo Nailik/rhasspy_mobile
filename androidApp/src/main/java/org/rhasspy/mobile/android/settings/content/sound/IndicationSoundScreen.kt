@@ -19,7 +19,6 @@ import org.rhasspy.mobile.android.content.OnPauseEffect
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.RadioButtonListItem
 import org.rhasspy.mobile.android.content.list.SliderListItem
-import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
@@ -31,6 +30,7 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.viewmodel.navigation.Screen
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.ChooseSoundFile
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.ToggleAudioPlayerActive
@@ -44,8 +44,7 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSe
 @Composable
 fun IndicationSoundScreen(
     viewModel: IIndicationSoundSettingsViewModel,
-    title: StableStringResource,
-    screen: IndicationSettingsScreens
+    title: StableStringResource
 ) {
     val viewState by viewModel.viewState.collectAsState()
 
@@ -63,7 +62,6 @@ fun IndicationSoundScreen(
 
     Scaffold(
         modifier = Modifier
-            .testTag(screen)
             .fillMaxSize(),
         topBar = { AppBar(title) }
     ) { paddingValues ->
@@ -261,15 +259,13 @@ private fun SoundActionButtons(
 @Composable
 private fun AppBar(title: StableStringResource) {
 
-    val navigation = LocalNavController.current
-
     TopAppBar(
         title = {
             Text(title)
         },
         navigationIcon = {
             IconButton(
-                onClick = navigation::popBackStack,
+                onClick = { /*TODO*/ },
                 modifier = Modifier.testTag(TestTag.AppBarBackButton)
             ) {
                 Icon(

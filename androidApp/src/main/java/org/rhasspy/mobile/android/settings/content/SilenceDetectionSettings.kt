@@ -29,7 +29,6 @@ import org.rhasspy.mobile.android.content.list.*
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
-import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
@@ -39,6 +38,7 @@ import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.ToggleAudioLevelTest
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Navigate
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
 
 /**
@@ -46,13 +46,14 @@ import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSe
  */
 @Preview
 @Composable
-fun AutomaticSilenceDetectionSettingsContent() {
+fun SilenceDetectionSettingsContent() {
     val viewModel: SilenceDetectionSettingsViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
 
     SettingsScreenItemContent(
-        modifier = Modifier.testTag(SettingsScreenType.AutomaticSilenceDetectionSettings),
-        title = MR.strings.automaticSilenceDetection.stable
+        modifier = Modifier,
+        title = MR.strings.automaticSilenceDetection.stable,
+        onBackClick = { viewModel.onEvent(Navigate.BackClick) }
     ) {
 
         //toggle

@@ -44,7 +44,7 @@ class IndicationSettingsContentTest : FlakyTest() {
 
         composeTestRule.activity.setContent {
             TestContentProvider {
-                WakeWordIndicationSettingsContent()
+                IndicationSettingsContent()
             }
         }
 

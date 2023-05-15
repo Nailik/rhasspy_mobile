@@ -10,8 +10,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.android.UiEventEffect
 import org.rhasspy.mobile.android.configuration.content.*
@@ -19,7 +17,6 @@ import org.rhasspy.mobile.android.content.elements.*
 import org.rhasspy.mobile.android.content.item.EventStateIconTinted
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.TextFieldListItem
-import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
@@ -28,7 +25,12 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.toText
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.*
+import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.OverviewScreen
 import org.rhasspy.mobile.viewmodel.screens.configuration.*
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Navigate
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Navigate.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToError
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
@@ -37,7 +39,26 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenVie
  * configuration screens with list items that open bottom sheet
  */
 @Composable
-fun ConfigurationScreen() {
+fun ConfigurationScreen(screen: ConfigurationScreen) {
+
+    when (screen) {
+        OverviewScreen -> ConfigurationOverviewScreen()
+        is AudioPlayingConfigurationScreen -> AudioPlayingConfigurationContent(screen)
+        is DialogManagementConfigurationScreen -> DialogManagementConfigurationContent(screen)
+        is IntentHandlingConfigurationScreen -> IntentHandlingConfigurationContent(screen)
+        is IntentRecognitionConfigurationScreen -> IntentRecognitionConfigurationContent(screen)
+        is MqttConfigurationScreen -> MqttConfigurationContent(screen)
+        is RemoteHermesHttpConfigurationScreen -> RemoteHermesHttpConfigurationContent(screen)
+        is SpeechToTextConfigurationScreen -> SpeechToTextConfigurationContent(screen)
+        is TextToSpeechConfigurationScreen -> TextToSpeechConfigurationContent(screen)
+        is WakeWordConfigurationScreen -> WakeWordConfigurationContent(screen)
+        is WebServerConfigurationScreen -> WebServerConfigurationContent(screen)
+    }
+
+}
+
+@Composable
+private fun ConfigurationOverviewScreen() {
     val viewModel: ConfigurationScreenViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
 
@@ -46,7 +67,6 @@ fun ConfigurationScreen() {
         onConsumed = viewModel::onConsumed,
         viewState = viewState
     )
-
 }
 
 @Composable
@@ -95,93 +115,46 @@ fun ConfigurationScreenContent(
             CustomDivider()
 
 
-            RemoteHermesHttp(viewState.remoteHermesHttp)
+            RemoteHermesHttp(viewState.remoteHermesHttp, onEvent)
             CustomDivider()
 
 
-            Webserver(viewState.webserver)
+            Webserver(viewState.webserver, onEvent)
             CustomDivider()
 
 
-            Mqtt(viewState.mqtt)
+            Mqtt(viewState.mqtt, onEvent)
             CustomDivider()
 
 
-            WakeWord(viewState.wakeWord)
+            WakeWord(viewState.wakeWord, onEvent)
             CustomDivider()
 
 
-            SpeechToText(viewState.speechToText)
+            SpeechToText(viewState.speechToText, onEvent)
             CustomDivider()
 
 
-            IntentRecognition(viewState.intentRecognition)
+            IntentRecognition(viewState.intentRecognition, onEvent)
             CustomDivider()
 
 
-            TextToSpeech(viewState.textToSpeech)
+            TextToSpeech(viewState.textToSpeech, onEvent)
             CustomDivider()
 
 
-            AudioPlaying(viewState.audioPlaying)
+            AudioPlaying(viewState.audioPlaying, onEvent)
             CustomDivider()
 
 
-            DialogManagement(viewState.dialogManagement)
+            DialogManagement(viewState.dialogManagement, onEvent)
             CustomDivider()
 
 
-            IntentHandling(viewState.intentHandling)
+            IntentHandling(viewState.intentHandling, onEvent)
             CustomDivider()
 
         }
-    }
-
-}
-
-/**
- * add sub screens to main navigation
- */
-fun NavGraphBuilder.addConfigurationScreens() {
-
-    composable(ConfigurationScreenType.AudioPlayingConfiguration.route) {
-        AudioPlayingConfigurationContent()
-    }
-
-    composable(ConfigurationScreenType.DialogManagementConfiguration.route) {
-        DialogManagementConfigurationContent()
-    }
-
-    composable(ConfigurationScreenType.IntentHandlingConfiguration.route) {
-        IntentHandlingConfigurationContent()
-    }
-
-    composable(ConfigurationScreenType.IntentRecognitionConfiguration.route) {
-        IntentRecognitionConfigurationContent()
-    }
-
-    composable(ConfigurationScreenType.MqttConfiguration.route) {
-        MqttConfigurationContent()
-    }
-
-    composable(ConfigurationScreenType.RemoteHermesHttpConfiguration.route) {
-        RemoteHermesHttpConfigurationContent()
-    }
-
-    composable(ConfigurationScreenType.SpeechToTextConfiguration.route) {
-        SpeechToTextConfigurationContent()
-    }
-
-    composable(ConfigurationScreenType.TextToSpeechConfiguration.route) {
-        TextToSpeechConfigurationContent()
-    }
-
-    composable(ConfigurationScreenType.WakeWordConfiguration.route) {
-        WakeWordConfigurationContent()
-    }
-
-    composable(ConfigurationScreenType.WebServerConfiguration.route) {
-        WebServerConfigurationContent()
     }
 
 }
@@ -250,13 +223,17 @@ private fun SiteId(
  * shows if ssl verification is enabled
  */
 @Composable
-private fun RemoteHermesHttp(viewState: RemoteHermesHttpViewState) {
+private fun RemoteHermesHttp(
+    viewState: RemoteHermesHttpViewState,
+    onEvent: (ConfigurationScreenUiEvent) -> Unit
+) {
 
     ConfigurationListItem(
         text = MR.strings.remoteHermesHTTP.stable,
         secondaryText = "${translate(MR.strings.sslValidation.stable)} ${translate(viewState.isHttpSSLVerificationEnabled.not().toText())}",
-        screen = ConfigurationScreenType.RemoteHermesHttpConfiguration,
-        viewState = viewState.serviceState
+        viewState = viewState.serviceState,
+        navigate = RemoteHermesHttpClick,
+        onEvent = onEvent
     )
 
 }
@@ -266,13 +243,17 @@ private fun RemoteHermesHttp(viewState: RemoteHermesHttpViewState) {
  * shows if web server is enabled
  */
 @Composable
-private fun Webserver(viewState: WebServerViewState) {
+private fun Webserver(
+    viewState: WebServerViewState,
+    onEvent: (ConfigurationScreenUiEvent) -> Unit
+) {
 
     ConfigurationListItem(
         text = MR.strings.webserver.stable,
         secondaryText = viewState.isHttpServerEnabled.toText(),
-        screen = ConfigurationScreenType.WebServerConfiguration,
-        serviceViewState = viewState.serviceState
+        serviceViewState = viewState.serviceState,
+        navigate = WebserverClick,
+        onEvent = onEvent
     )
 
 }
@@ -282,13 +263,17 @@ private fun Webserver(viewState: WebServerViewState) {
  * shows connection state of mqtt
  */
 @Composable
-private fun Mqtt(viewState: MqttViewState) {
+private fun Mqtt(
+    viewState: MqttViewState,
+    onEvent: (ConfigurationScreenUiEvent) -> Unit
+) {
 
     ConfigurationListItem(
         text = MR.strings.mqtt.stable,
         secondaryText = if (viewState.isMQTTConnected) MR.strings.connected.stable else MR.strings.notConnected.stable,
-        screen = ConfigurationScreenType.MqttConfiguration,
-        serviceViewState = viewState.serviceState
+        serviceViewState = viewState.serviceState,
+        navigate = MqttClick,
+        onEvent = onEvent
     )
 
 }
@@ -299,13 +284,17 @@ private fun Mqtt(viewState: MqttViewState) {
  * shows which option is selected
  */
 @Composable
-private fun WakeWord(viewState: WakeWordViewState) {
+private fun WakeWord(
+    viewState: WakeWordViewState,
+    onEvent: (ConfigurationScreenUiEvent) -> Unit
+) {
 
     ConfigurationListItem(
         text = MR.strings.wakeWord.stable,
         secondaryText = viewState.wakeWordValueOption.text,
-        screen = ConfigurationScreenType.WakeWordConfiguration,
-        serviceViewState = viewState.serviceState
+        serviceViewState = viewState.serviceState,
+        navigate = WakeWordClick,
+        onEvent = onEvent
     )
 
 }
@@ -315,13 +304,17 @@ private fun WakeWord(viewState: WakeWordViewState) {
  * shows which option is selected
  */
 @Composable
-private fun SpeechToText(viewState: SpeechToTextViewState) {
+private fun SpeechToText(
+    viewState: SpeechToTextViewState,
+    onEvent: (ConfigurationScreenUiEvent) -> Unit
+) {
 
     ConfigurationListItem(
         text = MR.strings.speechToText.stable,
         secondaryText = viewState.speechToTextOption.text,
-        screen = ConfigurationScreenType.SpeechToTextConfiguration,
-        serviceViewState = viewState.serviceState
+        serviceViewState = viewState.serviceState,
+        navigate = SpeechToTextClick,
+        onEvent = onEvent
     )
 
 }
@@ -332,13 +325,17 @@ private fun SpeechToText(viewState: SpeechToTextViewState) {
  * shows which option is selected
  */
 @Composable
-private fun IntentRecognition(viewState: IntentRecognitionViewState) {
+private fun IntentRecognition(
+    viewState: IntentRecognitionViewState,
+    onEvent: (ConfigurationScreenUiEvent) -> Unit
+) {
 
     ConfigurationListItem(
         text = MR.strings.intentRecognition.stable,
         secondaryText = viewState.intentRecognitionOption.text,
-        screen = ConfigurationScreenType.IntentRecognitionConfiguration,
-        serviceViewState = viewState.serviceState
+        serviceViewState = viewState.serviceState,
+        navigate = IntentRecognitionClick,
+        onEvent = onEvent
     )
 
 }
@@ -348,13 +345,17 @@ private fun IntentRecognition(viewState: IntentRecognitionViewState) {
  * shows which option is selected
  */
 @Composable
-private fun TextToSpeech(viewState: TextToSpeechViewState) {
+private fun TextToSpeech(
+    viewState: TextToSpeechViewState,
+    onEvent: (ConfigurationScreenUiEvent) -> Unit
+) {
 
     ConfigurationListItem(
         text = MR.strings.textToSpeech.stable,
         secondaryText = viewState.textToSpeechOption.text,
-        screen = ConfigurationScreenType.TextToSpeechConfiguration,
-        serviceViewState = viewState.serviceState
+        serviceViewState = viewState.serviceState,
+        navigate = TextToSpeechClick,
+        onEvent = onEvent
     )
 
 }
@@ -364,13 +365,17 @@ private fun TextToSpeech(viewState: TextToSpeechViewState) {
  * shows which option is selected
  */
 @Composable
-private fun AudioPlaying(viewState: AudioPlayingViewState) {
+private fun AudioPlaying(
+    viewState: AudioPlayingViewState,
+    onEvent: (ConfigurationScreenUiEvent) -> Unit
+) {
 
     ConfigurationListItem(
         text = MR.strings.audioPlaying.stable,
         secondaryText = viewState.audioPlayingOption.text,
-        screen = ConfigurationScreenType.AudioPlayingConfiguration,
-        serviceViewState = viewState.serviceState
+        serviceViewState = viewState.serviceState,
+        navigate = AudioPlayingClick,
+        onEvent = onEvent
     )
 
 }
@@ -380,13 +385,17 @@ private fun AudioPlaying(viewState: AudioPlayingViewState) {
  * shows which option is active
  */
 @Composable
-private fun DialogManagement(viewState: DialogManagementViewState) {
+private fun DialogManagement(
+    viewState: DialogManagementViewState,
+    onEvent: (ConfigurationScreenUiEvent) -> Unit
+) {
 
     ConfigurationListItem(
         text = MR.strings.dialogManagement.stable,
         secondaryText = viewState.dialogManagementOption.text,
-        screen = ConfigurationScreenType.DialogManagementConfiguration,
-        serviceViewState = viewState.serviceState
+        serviceViewState = viewState.serviceState,
+        navigate = DialogManagementClick,
+        onEvent = onEvent
     )
 
 }
@@ -396,13 +405,17 @@ private fun DialogManagement(viewState: DialogManagementViewState) {
  * shows which option is selected
  */
 @Composable
-private fun IntentHandling(viewState: IntentHandlingViewState) {
+private fun IntentHandling(
+    viewState: IntentHandlingViewState,
+    onEvent: (ConfigurationScreenUiEvent) -> Unit
+) {
 
     ConfigurationListItem(
         text = MR.strings.intentHandling.stable,
         secondaryText = viewState.intentHandlingOption.text,
-        screen = ConfigurationScreenType.IntentHandlingConfiguration,
-        serviceViewState = viewState.serviceState
+        serviceViewState = viewState.serviceState,
+        navigate = IntentHandlingClick,
+        onEvent = onEvent
     )
 
 }
@@ -414,18 +427,14 @@ private fun IntentHandling(viewState: IntentHandlingViewState) {
 private fun ConfigurationListItem(
     text: StableStringResource,
     secondaryText: StableStringResource,
-    screen: ConfigurationScreenType,
-    serviceViewState: ServiceViewState
+    serviceViewState: ServiceViewState,
+    navigate: Navigate,
+    onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
-
-    val navController = LocalMainNavController.current
-
     ListElement(
         modifier = Modifier
-            .clickable {
-                navController.navigate(screen.route)
-            }
-            .testTag(screen),
+            .clickable { onEvent(navigate) }
+            .testTag(navigate.toString()),
         text = { org.rhasspy.mobile.ui.content.elements.Text(text) },
         secondaryText = { org.rhasspy.mobile.ui.content.elements.Text(secondaryText) },
         trailing = {
@@ -444,18 +453,14 @@ private fun ConfigurationListItem(
 private fun ConfigurationListItem(
     text: StableStringResource,
     secondaryText: String,
-    screen: ConfigurationScreenType,
-    viewState: ServiceViewState
+    viewState: ServiceViewState,
+    navigate: Navigate,
+    onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
-
-    val navController = LocalMainNavController.current
-
     ListElement(
         modifier = Modifier
-            .clickable {
-                navController.navigate(screen.route)
-            }
-            .testTag(screen),
+            .clickable { onEvent(navigate) }
+            .testTag(navigate.toString()),
         text = { org.rhasspy.mobile.ui.content.elements.Text(text) },
         secondaryText = { Text(text = secondaryText) },
         trailing = {
@@ -463,5 +468,4 @@ private fun ConfigurationListItem(
             EventStateIconTinted(serviceStateValue)
         }
     )
-
 }

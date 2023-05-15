@@ -6,15 +6,18 @@ import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.event.EventState.Consumed
 import org.rhasspy.mobile.data.event.EventState.Triggered
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.*
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToError
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Navigate.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.IConfigurationScreenUiStateEvent.ScrollToErrorEventIState
 
 @Stable
 class ConfigurationScreenViewModel(
-    private val viewStateCreator: ConfigurationScreenViewStateCreator
+    private val viewStateCreator: ConfigurationScreenViewStateCreator,
+    private val navigator: Navigator
 ) : ViewModel() {
 
     val viewState: StateFlow<ConfigurationScreenViewState> = viewStateCreator()
@@ -23,6 +26,7 @@ class ConfigurationScreenViewModel(
         when (event) {
             is Change -> onChange(event)
             is Action -> onAction(event)
+            is Navigate -> onNavigate(event)
         }
     }
 
@@ -37,6 +41,24 @@ class ConfigurationScreenViewModel(
             ScrollToError -> viewStateCreator.updateScrollToError(Triggered)
         }
     }
+
+    private fun onNavigate(navigate: Navigate) {
+        navigator.navigate(
+            when (navigate) {
+                AudioPlayingClick -> AudioPlayingConfigurationScreen.EditScreen
+                IntentHandlingClick -> IntentHandlingConfigurationScreen.EditScreen
+                IntentRecognitionClick -> IntentRecognitionConfigurationScreen.EditScreen
+                MqttClick -> MqttConfigurationScreen.EditScreen
+                DialogManagementClick -> DialogManagementConfigurationScreen.EditScreen
+                RemoteHermesHttpClick -> RemoteHermesHttpConfigurationScreen.EditScreen
+                SpeechToTextClick -> SpeechToTextConfigurationScreen.EditScreen
+                TextToSpeechClick -> TextToSpeechConfigurationScreen.EditScreen
+                WakeWordClick -> WakeWordConfigurationScreen.EditScreen.OverViewScreen
+                WebserverClick -> WebServerConfigurationScreen.EditScreen
+            }
+        )
+    }
+
 
     fun onConsumed(event: IConfigurationScreenUiStateEvent) {
         when (event) {

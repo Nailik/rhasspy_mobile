@@ -10,6 +10,10 @@ sealed interface SaveAndRestoreSettingsUiEvent {
 
     }
 
+    sealed interface Navigate : SaveAndRestoreSettingsUiEvent {
+        object BackClick: Navigate
+    }
+
     sealed interface Consumed : SaveAndRestoreSettingsUiEvent {
 
         object ShowSnackBar : Consumed

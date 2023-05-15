@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.android.content.elements.CustomDivider
 import org.rhasspy.mobile.android.content.list.RadioButtonListItem
-import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
@@ -43,7 +42,12 @@ fun PorcupineLanguageScreen(
         modifier = Modifier
             .testTag(TestTag.PorcupineLanguageScreen)
             .fillMaxSize(),
-        topBar = { AppBar(MR.strings.language.stable) }
+        topBar = {
+            AppBar(
+                title = MR.strings.language.stable,
+                onEvent = onEvent
+            )
+        }
     ) { paddingValues ->
 
         Surface(Modifier.padding(paddingValues)) {
@@ -83,9 +87,10 @@ fun PorcupineLanguageScreen(
  * app bar for the language
  */
 @Composable
-private fun AppBar(title: StableStringResource) {
-
-    val navigation = LocalNavController.current
+private fun AppBar(
+    title: StableStringResource,
+    onEvent: (PorcupineUiEvent) -> Unit
+) {
 
     TopAppBar(
         title = {
@@ -93,7 +98,7 @@ private fun AppBar(title: StableStringResource) {
         },
         navigationIcon = {
             IconButton(
-                onClick = navigation::popBackStack,
+                onClick = { /*TODOonEvent(BackClick)*/ },
                 modifier = Modifier.testTag(TestTag.AppBarBackButton)
             ) {
                 Icon(

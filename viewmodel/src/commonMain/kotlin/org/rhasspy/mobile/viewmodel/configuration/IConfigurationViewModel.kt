@@ -28,13 +28,16 @@ import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Navigate.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiNavigate.PopBackStack
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable
 abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
     private val service: IService,
-    private val initialViewState: () -> V
+    private val initialViewState: () -> V,
+    private val navigator: Navigator
 ) : ViewModel(), KoinComponent {
     private val logger = Logger.withTag("IConfigurationViewModel")
     private var testStartDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).toString()
@@ -115,6 +118,8 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
                             }
                         )
                 }
+
+            BackClick -> navigator.popBackStack()
         }
     }
 

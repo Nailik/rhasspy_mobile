@@ -22,13 +22,16 @@ import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesH
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
 
 @Stable
 class RemoteHermesHttpConfigurationViewModel(
     service: HttpClientService,
+    navigator: Navigator
 ) : IConfigurationViewModel<RemoteHermesHttpConfigurationViewState>(
     service = service,
-    initialViewState = ::RemoteHermesHttpConfigurationViewState
+    initialViewState = ::RemoteHermesHttpConfigurationViewState,
+    navigator = navigator
 ) {
 
     fun onEvent(event: RemoteHermesHttpConfigurationUiEvent) {

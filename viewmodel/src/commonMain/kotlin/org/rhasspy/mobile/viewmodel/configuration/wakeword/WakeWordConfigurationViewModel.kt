@@ -27,28 +27,38 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.TestStartWakeWord
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Consumed.ShowSnackBar
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Navigate
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Navigate.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState.PorcupineCustomKeywordViewState
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.WakeWordConfigurationScreen.EditScreen.PorcupineLanguageScreen
+import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.WakeWordConfigurationScreen.EditScreen.PorcupineWakeWordScreen
 import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
 @Stable
 class WakeWordConfigurationViewModel(
-    service: WakeWordService
+    service: WakeWordService,
+    private val navigator: Navigator
 ) : IConfigurationViewModel<WakeWordConfigurationViewState>(
     service = service,
-    initialViewState = ::WakeWordConfigurationViewState
+    initialViewState = ::WakeWordConfigurationViewState,
+    navigator = navigator
 ) {
 
     fun onEvent(event: WakeWordConfigurationUiEvent) {
         when (event) {
             is Change -> onChange(event)
             is Action -> onAction(event)
+            is Navigate -> onNavigate(event)
             is Consumed -> onConsumed(event)
             is PorcupineUiEvent -> onPorcupineAction(event)
             is UdpUiEvent -> onUdpAction(event)
+            PorcupineKeyword -> navigator.navigate(PorcupineWakeWordScreen)
+            PorcupineLanguage -> navigator.navigate(PorcupineLanguageScreen)
         }
     }
 
@@ -73,6 +83,14 @@ class WakeWordConfigurationViewModel(
             }
 
             TestStartWakeWord -> startWakeWordDetection()
+        }
+    }
+
+    private fun onNavigate(navigate: Navigate) {
+        when (navigate) {
+            BackClick -> navigator.popBackStack()
+            PorcupineKeyword -> navigator.navigate(PorcupineWakeWordScreen)
+            PorcupineLanguage -> navigator.navigate(PorcupineLanguageScreen)
         }
     }
 

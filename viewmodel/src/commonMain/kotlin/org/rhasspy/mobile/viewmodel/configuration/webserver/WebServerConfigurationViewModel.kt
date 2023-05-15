@@ -16,14 +16,17 @@ import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurati
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Consumed.ShowSnackBar
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
 @Stable
 class WebServerConfigurationViewModel(
-    service: WebServerService
+    service: WebServerService,
+    navigator: Navigator
 ) : IConfigurationViewModel<WebServerConfigurationViewState>(
     service = service,
-    initialViewState = ::WebServerConfigurationViewState
+    initialViewState = ::WebServerConfigurationViewState,
+    navigator = navigator
 ) {
 
     fun onEvent(event: WebServerConfigurationUiEvent) {

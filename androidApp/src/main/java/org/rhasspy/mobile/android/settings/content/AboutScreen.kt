@@ -21,7 +21,6 @@ import org.rhasspy.mobile.android.about.DataPrivacyDialogButton
 import org.rhasspy.mobile.android.about.LibrariesContainer
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
-import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.resources.MR
@@ -56,7 +55,7 @@ fun AboutScreen() {
     }
 
 
-    Surface(modifier = Modifier.testTag(SettingsScreenType.AboutSettings)) {
+    Surface {
         val configuration = LocalConfiguration.current
         LibrariesContainer(
             libraries = viewState.libraries,

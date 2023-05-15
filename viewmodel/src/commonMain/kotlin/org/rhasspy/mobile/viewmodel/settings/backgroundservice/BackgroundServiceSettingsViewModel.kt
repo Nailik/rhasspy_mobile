@@ -14,10 +14,13 @@ import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Succe
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.*
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Action.DisableBatteryOptimization
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Change.SetBackgroundServiceEnabled
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Consumed.ShowSnackBar
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Navigate
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Navigate.BackClick
 
 /**
  * background service settings
@@ -27,7 +30,8 @@ import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundService
  */
 @Stable
 class BackgroundServiceSettingsViewModel(
-    viewStateCreator: BackgroundServiceViewStateCreator
+    viewStateCreator: BackgroundServiceViewStateCreator,
+    private val navigator: Navigator
 ) : ViewModel() {
 
     private val _viewState: MutableStateFlow<BackgroundServiceViewState> = viewStateCreator()
@@ -37,6 +41,7 @@ class BackgroundServiceSettingsViewModel(
         when (event) {
             is Change -> onChange(event)
             is Action -> onAction(event)
+            is Navigate -> onNavigate(event)
             is Consumed -> onConsumed(event)
         }
     }
@@ -57,6 +62,12 @@ class BackgroundServiceSettingsViewModel(
     private fun onAction(action: Action) {
         when (action) {
             DisableBatteryOptimization -> disableBatteryOptimization()
+        }
+    }
+
+    private fun onNavigate(navigate: Navigate) {
+        when (navigate) {
+            is BackClick -> navigator.popBackStack()
         }
     }
 

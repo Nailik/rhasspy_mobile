@@ -16,13 +16,16 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Action.RunIntentRecognition
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
 
 @Stable
 class IntentRecognitionConfigurationViewModel(
     service: IntentRecognitionService,
+    navigator: Navigator
 ) : IConfigurationViewModel<IntentRecognitionConfigurationViewState>(
     service = service,
-    initialViewState = ::IntentRecognitionConfigurationViewState
+    initialViewState = ::IntentRecognitionConfigurationViewState,
+    navigator = navigator
 ) {
 
     fun onEvent(event: IntentRecognitionConfigurationUiEvent) {

@@ -1,6 +1,12 @@
 package org.rhasspy.mobile.viewmodel.settings.devicesettings
 
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent
+
 sealed interface DeviceSettingsUiEvent {
+
+    sealed interface Navigate : DeviceSettingsUiEvent {
+        object BackClick: Navigate
+    }
 
     sealed interface Change : DeviceSettingsUiEvent {
 

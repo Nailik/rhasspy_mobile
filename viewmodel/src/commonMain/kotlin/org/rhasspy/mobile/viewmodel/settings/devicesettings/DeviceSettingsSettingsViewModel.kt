@@ -3,12 +3,16 @@ package org.rhasspy.mobile.viewmodel.settings.devicesettings
 import androidx.compose.runtime.Stable
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Navigate
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Navigate.BackClick
 
 @Stable
 class DeviceSettingsSettingsViewModel(
-    viewStateCreator: DeviceSettingsViewStateCreator
+    viewStateCreator: DeviceSettingsViewStateCreator,
+    private val navigator: Navigator
 ) : ViewModel() {
 
     val viewState = viewStateCreator()
@@ -16,6 +20,7 @@ class DeviceSettingsSettingsViewModel(
     fun onEvent(event: DeviceSettingsUiEvent) {
         when (event) {
             is Change -> onChange(event)
+            is Navigate -> onNavigate(event)
         }
     }
 
@@ -25,6 +30,12 @@ class DeviceSettingsSettingsViewModel(
             is SetHotWordEnabled -> AppSetting.isHotWordEnabled.value = change.enabled
             is SetIntentHandlingEnabled -> AppSetting.isIntentHandlingEnabled.value = change.enabled
             is UpdateVolume -> AppSetting.volume.value = change.volume
+        }
+    }
+
+    private fun onNavigate(navigate: Navigate) {
+        when (navigate) {
+            is BackClick -> navigator.popBackStack()
         }
     }
 

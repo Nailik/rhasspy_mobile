@@ -10,9 +10,10 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.*
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.ToggleAudioLevelTest
-import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.*
 import kotlin.math.pow
 
@@ -20,6 +21,7 @@ import kotlin.math.pow
 class SilenceDetectionSettingsViewModel(
     private val nativeApplication: NativeApplication,
     private val audioRecorder: AudioRecorder,
+    private val navigator: Navigator,
     viewStateCreator: SilenceDetectionSettingsViewStateCreator
 ) : ViewModel(), KoinComponent {
 
@@ -29,6 +31,7 @@ class SilenceDetectionSettingsViewModel(
         when (event) {
             is Change -> onChange(event)
             is Action -> onAction(event)
+            is Navigate -> onNavigate(event)
         }
     }
 
@@ -57,6 +60,12 @@ class SilenceDetectionSettingsViewModel(
                     audioRecorderEncodingType = AppSetting.audioRecorderEncoding.value,
                     audioRecorderSampleRateType = AppSetting.audioRecorderSampleRate.value
                 )
+        }
+    }
+
+    private fun onNavigate(navigate: Navigate) {
+        when (navigate) {
+            is Navigate.BackClick -> navigator.popBackStack()
         }
     }
 
