@@ -1,5 +1,7 @@
 package org.rhasspy.mobile.viewmodel.screens.configuration
 
+import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent
+
 sealed interface ConfigurationScreenUiEvent {
 
     sealed interface Change : ConfigurationScreenUiEvent {
@@ -11,7 +13,7 @@ sealed interface ConfigurationScreenUiEvent {
     sealed interface Action : ConfigurationScreenUiEvent {
 
         object ScrollToError : Action
-
+        object BackClick: Action
 
 
     }

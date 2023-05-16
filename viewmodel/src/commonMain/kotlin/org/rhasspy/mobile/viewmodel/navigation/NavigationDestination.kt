@@ -1,0 +1,3 @@
+package org.rhasspy.mobile.viewmodel.navigation
+
+interface NavigationDestination

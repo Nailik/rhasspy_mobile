@@ -17,8 +17,6 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.koin.core.component.KoinComponent
-import org.rhasspy.mobile.data.event.EventState.Consumed
-import org.rhasspy.mobile.data.event.EventState.Triggered
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.data.service.ServiceState
@@ -29,7 +27,6 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Navigate.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiNavigate.PopBackStack
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
@@ -37,7 +34,7 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
     private val service: IService,
     private val initialViewState: () -> V,
-    private val navigator: Navigator
+    protected val navigator: Navigator
 ) : ViewModel(), KoinComponent {
     private val logger = Logger.withTag("IConfigurationViewModel")
     private var testStartDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).toString()
@@ -74,7 +71,6 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
             serviceViewState = serviceViewState,
             editViewState = contentViewState,
             testViewState = configurationTestViewState,
-            popBackStack = PopBackStack(Consumed),
             hasUnsavedChanges = false
         )
     )
@@ -98,7 +94,7 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
                 if (_viewState.value.hasUnsavedChanges) {
                     _viewState.update { it.copy(showUnsavedChangesDialog = true) }
                 } else {
-                    _viewState.update { it.copy(popBackStack = PopBackStack(Triggered)) }
+                    navigator.popBackStack()
                 }
             }
 
@@ -120,12 +116,6 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
                 }
 
             BackClick -> navigator.popBackStack()
-        }
-    }
-
-    fun onConsumed(event: IConfigurationUiNavigate) {
-        when (event) {
-            is PopBackStack -> _viewState.update { it.copy(popBackStack = PopBackStack(Consumed)) }
         }
     }
 
@@ -155,8 +145,7 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
             if (_viewState.value.showUnsavedChangesDialog) {
                 it.copy(
                     showUnsavedChangesDialog = false,
-                    hasUnsavedChanges = false,
-                    popBackStack = PopBackStack(Triggered)
+                    hasUnsavedChanges = false
                 )
             } else {
                 it.copy(hasUnsavedChanges = false)

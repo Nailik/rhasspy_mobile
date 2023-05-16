@@ -1,11 +1,19 @@
 package org.rhasspy.mobile.viewmodel.configuration.dialogmanagement
 
 import androidx.compose.runtime.Stable
+import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.AudioPlayingConfigurationScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.DialogManagementConfigurationScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.DialogManagementConfigurationScreenDestination.EditScreen
 
 /**
  * ViewModel for Dialog Management Configuration
@@ -23,14 +31,29 @@ class DialogManagementConfigurationViewModel(
     navigator = navigator
 ) {
 
+    val screen = navigator.getBackStack(DialogManagementConfigurationScreenDestination::class, EditScreen)
+
     fun onEvent(event: DialogManagementConfigurationUiEvent) {
+        when (event) {
+            is Change -> onChange(event)
+            is Action -> onAction(event)
+        }
+    }
+
+    fun onChange(change: Change) {
         updateViewState {
-            when (event) {
-                is ChangeIntentRecognitionTimeout -> it.copy(intentRecognitionTimeoutText = event.timeout)
-                is ChangeRecordingTimeout -> it.copy(recordingTimeoutText = event.timeout)
-                is ChangeTextAsrTimeout -> it.copy(textAsrTimeoutText = event.timeout)
-                is SelectDialogManagementOption -> it.copy(dialogManagementOption = event.option)
+            when (change) {
+                is ChangeIntentRecognitionTimeout -> it.copy(intentRecognitionTimeoutText = change.timeout)
+                is ChangeRecordingTimeout -> it.copy(recordingTimeoutText = change.timeout)
+                is ChangeTextAsrTimeout -> it.copy(textAsrTimeoutText = change.timeout)
+                is SelectDialogManagementOption -> it.copy(dialogManagementOption = change.option)
             }
+        }
+    }
+
+    fun onAction(action: Action) {
+        when(action) {
+            BackClick -> navigator.popBackStack()
         }
     }
 

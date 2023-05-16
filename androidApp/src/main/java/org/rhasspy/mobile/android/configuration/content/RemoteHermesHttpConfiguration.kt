@@ -22,21 +22,21 @@ import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesH
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.RemoteHermesHttpConfigurationScreen
 
 /**
  * content to configure http configuration
  * switch to disable ssl verification
  */
 @Composable
-fun RemoteHermesHttpConfigurationContent(screen: RemoteHermesHttpConfigurationScreen) {
+fun RemoteHermesHttpConfigurationContent() {
     val viewModel: RemoteHermesHttpConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
+    val screen by viewModel.screen.top.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
         modifier = Modifier,
-        screenType = screen.type,
+        screenType = screen.destinationType,
         config = ConfigurationScreenConfig(MR.strings.remoteHermesHTTP.stable),
         viewState = viewState,
         onAction = { viewModel.onAction(it) },

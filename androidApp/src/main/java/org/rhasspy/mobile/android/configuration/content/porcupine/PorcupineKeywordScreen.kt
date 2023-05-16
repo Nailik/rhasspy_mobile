@@ -23,8 +23,8 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Navigate.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Navigate.PorcupineLanguage
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Navigate.PorcupineLanguage
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 
 /**
@@ -54,8 +54,8 @@ fun PorcupineKeywordScreen(
                     //opens page for porcupine language selection
                     ListElement(
                         modifier = Modifier
-                            .testTag(TestTag.PorcupineLanguage),
-                           //TODO .clickable { onEvent(PorcupineLanguage) },
+                            .testTag(TestTag.PorcupineLanguage)
+                            .clickable { onEvent(PorcupineLanguage) },
                         text = { Text(MR.strings.language.stable) },
                         secondaryText = { Text(viewState.porcupineLanguage.text) }
                     )
@@ -106,7 +106,7 @@ private fun AppBar(onEvent: (PorcupineUiEvent) -> Unit) {
         title = { Text(MR.strings.porcupineKeyword.stable) },
         navigationIcon = {
             IconButton(
-                onClick = { /*TODO*/ },
+                onClick = { onEvent(BackClick) },
                 modifier = Modifier.testTag(TestTag.AppBarBackButton)
             ) {
                 Icon(

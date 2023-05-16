@@ -4,15 +4,16 @@ sealed interface MainScreenUiEvent {
 
     sealed interface Action : MainScreenUiEvent {
 
-        object BottomBarHomeClick : Action
-
-        object BottomBarConfigurationClick : Action
-
-        object BottomBarSettingsClick : Action
-
-        object BottomBarLogClick : Action
-
         object BackClick: Action
+
+    }
+
+    sealed interface Navigate : MainScreenUiEvent {
+
+        object BottomBarHomeClick : Navigate
+        object BottomBarConfigurationClick : Navigate
+        object BottomBarSettingsClick : Navigate
+        object BottomBarLogClick : Navigate
 
     }
 

@@ -27,7 +27,6 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewState
-import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.IntentRecognitionConfigurationScreen
 
 /**
  * configuration content for intent recognition
@@ -35,14 +34,15 @@ import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.Config
  * text field for endpoint
  */
 @Composable
-fun IntentRecognitionConfigurationContent(screen: IntentRecognitionConfigurationScreen) {
+fun IntentRecognitionConfigurationContent() {
     val viewModel: IntentRecognitionConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
+    val screen by viewModel.screen.top.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
         modifier = Modifier,
-        screenType = screen.type,
+        screenType = screen.destinationType,
         config = ConfigurationScreenConfig(MR.strings.intentRecognition.stable),
         viewState = viewState,
         onAction = { viewModel.onAction(it) },

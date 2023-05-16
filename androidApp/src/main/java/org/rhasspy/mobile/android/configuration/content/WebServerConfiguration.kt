@@ -29,7 +29,6 @@ import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurati
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
-import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.WebServerConfigurationScreen
 
 /**
  * Content to configure text to speech
@@ -38,9 +37,10 @@ import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.Config
  * select ssl certificate
  */
 @Composable
-fun WebServerConfigurationContent(screen: WebServerConfigurationScreen) {
+fun WebServerConfigurationContent() {
     val viewModel: WebServerConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
+    val screen by viewModel.screen.top.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 
     val snackBarHostState = LocalSnackbarHostState.current
@@ -55,10 +55,10 @@ fun WebServerConfigurationContent(screen: WebServerConfigurationScreen) {
 
     ConfigurationScreenItemContent(
         modifier = Modifier,
-        screenType = screen.type,
+        screenType = screen.destinationType,
         config = ConfigurationScreenConfig(MR.strings.webserver.stable),
         viewState = viewState,
-        onAction = { viewModel.onAction(it) }
+        onAction = viewModel::onAction
     ) {
 
         item {

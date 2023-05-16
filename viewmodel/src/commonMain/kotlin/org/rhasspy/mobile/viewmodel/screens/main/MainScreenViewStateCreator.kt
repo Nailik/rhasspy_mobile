@@ -6,9 +6,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.platformspecific.combineStateFlow
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
-import org.rhasspy.mobile.viewmodel.navigation.Screen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainNavigationDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainNavigationDestination.*
 
 class MainScreenViewStateCreator(
     private val navigator: Navigator
@@ -16,19 +18,14 @@ class MainScreenViewStateCreator(
 
     private val updaterScope = CoroutineScope(Dispatchers.Default)
 
-    private val mainScreens = arrayOf(
-        Screen.HomeScreen,
-        Screen.ConfigurationScreen.OverviewScreen,
-        Screen.SettingsScreen.OverviewScreen,
-        Screen.LogScreen
-    )
+    private val mainScreens = arrayOf(HomeScreen, ConfigurationScreen, SettingsScreen, LogScreen)
 
     operator fun invoke(): StateFlow<MainScreenViewState> {
         val viewState = MutableStateFlow(getViewState())
 
         updaterScope.launch {
             combineStateFlow(
-                navigator.backStack,
+                navigator.getBackStack(MainNavigationDestination::class, HomeScreen).top,
                 AppSetting.isShowLogEnabled.data
             ).collect {
                 viewState.value = getViewState()
@@ -39,18 +36,11 @@ class MainScreenViewStateCreator(
     }
 
     private fun getViewState(): MainScreenViewState {
-        val backStack = navigator.backStack.value
-        val currentScreen = backStack.last()
-        val index = if (currentScreen in mainScreens) {
-            mainScreens.indexOf(currentScreen)
-        } else {
-            mainScreens.indexOf(backStack.first())
-        }
+        val currentScreen = navigator.getBackStack(MainNavigationDestination::class, HomeScreen).top.value
 
         return MainScreenViewState(
-            screen = currentScreen,
             isBottomNavigationVisible = currentScreen in mainScreens,
-            bottomNavigationIndex = index,
+            bottomNavigationIndex = mainScreens.indexOf(currentScreen),
             isShowLogEnabled = AppSetting.isShowLogEnabled.value
         )
     }

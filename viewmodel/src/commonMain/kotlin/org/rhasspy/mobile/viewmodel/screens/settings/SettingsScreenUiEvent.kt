@@ -2,6 +2,12 @@ package org.rhasspy.mobile.viewmodel.screens.settings
 
 sealed interface SettingsScreenUiEvent {
 
+    sealed interface Action : SettingsScreenUiEvent {
+
+        object BackClick: Action
+
+    }
+
     sealed interface Navigate : SettingsScreenUiEvent {
 
         object LanguageClick : Navigate

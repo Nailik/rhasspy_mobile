@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.viewmodel.configuration.texttospeech
 
 import androidx.compose.runtime.Stable
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -8,13 +9,18 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action.TestRemoteHermesHttpTextToSpeechTest
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.SpeechToTextConfigurationScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.TextToSpeechConfigurationScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.TextToSpeechConfigurationScreenDestination.EditScreen
 
 @Stable
 class TextToSpeechConfigurationViewModel(
@@ -25,6 +31,8 @@ class TextToSpeechConfigurationViewModel(
     initialViewState = ::TextToSpeechConfigurationViewState,
     navigator = navigator
 ) {
+
+    val screen = navigator.getBackStack(TextToSpeechConfigurationScreenDestination::class, EditScreen)
 
     fun onEvent(event: TextToSpeechConfigurationUiEvent) {
         when (event) {
@@ -47,6 +55,7 @@ class TextToSpeechConfigurationViewModel(
     private fun onAction(action: Action) {
         when (action) {
             TestRemoteHermesHttpTextToSpeechTest -> startTextToSpeech()
+            BackClick -> navigator.popBackStack()
         }
     }
 

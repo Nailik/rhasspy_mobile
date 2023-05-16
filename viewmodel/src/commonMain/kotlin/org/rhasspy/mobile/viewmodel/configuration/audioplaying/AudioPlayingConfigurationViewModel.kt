@@ -15,10 +15,13 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action.PlayTestAudio
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.AudioPlayingConfigurationScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.AudioPlayingConfigurationScreenDestination.EditScreen
 
 /**
  * ViewModel for Audio Playing Configuration
@@ -37,6 +40,8 @@ class AudioPlayingConfigurationViewModel(
     initialViewState = ::AudioPlayingConfigurationViewState,
     navigator = navigator
 ) {
+
+    val screen = navigator.getBackStack(AudioPlayingConfigurationScreenDestination::class, EditScreen)
 
     fun onEvent(change: AudioPlayingConfigurationUiEvent) {
         when (change) {
@@ -60,6 +65,7 @@ class AudioPlayingConfigurationViewModel(
     private fun onAction(action: Action) {
         when (action) {
             PlayTestAudio -> playTestAudio()
+            BackClick -> navigator.popBackStack()
         }
     }
 

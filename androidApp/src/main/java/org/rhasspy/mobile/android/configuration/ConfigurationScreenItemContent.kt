@@ -32,7 +32,9 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.ServiceStateHeaderViewState
-import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.ConfigurationDetailScreenType
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType.Edit
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType.Test
 
 /**
  * Content of Configuration Screen Item
@@ -45,7 +47,7 @@ import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.Config
 @Composable
 fun <V : IConfigurationEditViewState> ConfigurationScreenItemContent(
     modifier: Modifier,
-    screenType: ConfigurationDetailScreenType,
+    screenType: ConfigurationScreenDestinationType,
     viewState: ConfigurationViewState<V>,
     onAction: (IConfigurationUiEvent) -> Unit,
     config: ConfigurationScreenConfig = ConfigurationScreenConfig(MR.strings.save.stable),
@@ -55,7 +57,7 @@ fun <V : IConfigurationEditViewState> ConfigurationScreenItemContent(
 
     Box(modifier = modifier) {
         when (screenType) {
-            ConfigurationDetailScreenType.Edit ->
+            Edit ->
                 EditConfigurationScreen(
                     title = config.title,
                     viewState = viewState.editViewState.collectAsState().value,
@@ -66,7 +68,7 @@ fun <V : IConfigurationEditViewState> ConfigurationScreenItemContent(
                     content = content
                 )
 
-            ConfigurationDetailScreenType.Test ->
+            Test ->
                 ConfigurationScreenTest(
                     viewState = viewState.testViewState.collectAsState().value,
                     onAction = onAction,
@@ -108,7 +110,9 @@ private fun EditConfigurationScreen(
         topBar = {
             AppBar(
                 title = title,
-                onBackClick = { (onAction(BackPress)) }
+                onBackClick = {
+                    onAction(BackPress)
+                }
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,

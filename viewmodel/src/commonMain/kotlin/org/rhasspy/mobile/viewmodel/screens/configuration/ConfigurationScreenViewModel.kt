@@ -7,8 +7,12 @@ import org.rhasspy.mobile.data.event.EventState.Consumed
 import org.rhasspy.mobile.data.event.EventState.Triggered
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
-import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.*
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainNavigationDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainNavigationDestination.HomeScreen
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.*
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToError
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Navigate.*
@@ -21,6 +25,7 @@ class ConfigurationScreenViewModel(
 ) : ViewModel() {
 
     val viewState: StateFlow<ConfigurationScreenViewState> = viewStateCreator()
+    val screen = navigator.getBackStack(ConfigurationScreenDestination::class, OverviewScreen)
 
     fun onEvent(event: ConfigurationScreenUiEvent) {
         when (event) {
@@ -39,22 +44,24 @@ class ConfigurationScreenViewModel(
     private fun onAction(action: Action) {
         when (action) {
             ScrollToError -> viewStateCreator.updateScrollToError(Triggered)
+            BackClick -> navigator.popBackStack()
         }
     }
 
     private fun onNavigate(navigate: Navigate) {
         navigator.navigate(
-            when (navigate) {
-                AudioPlayingClick -> AudioPlayingConfigurationScreen.EditScreen
-                IntentHandlingClick -> IntentHandlingConfigurationScreen.EditScreen
-                IntentRecognitionClick -> IntentRecognitionConfigurationScreen.EditScreen
-                MqttClick -> MqttConfigurationScreen.EditScreen
-                DialogManagementClick -> DialogManagementConfigurationScreen.EditScreen
-                RemoteHermesHttpClick -> RemoteHermesHttpConfigurationScreen.EditScreen
-                SpeechToTextClick -> SpeechToTextConfigurationScreen.EditScreen
-                TextToSpeechClick -> TextToSpeechConfigurationScreen.EditScreen
-                WakeWordClick -> WakeWordConfigurationScreen.EditScreen.OverViewScreen
-                WebserverClick -> WebServerConfigurationScreen.EditScreen
+            type = ConfigurationScreenDestination::class,
+            screen = when (navigate) {
+                AudioPlayingClick -> AudioPlayingConfigurationScreenDestination
+                IntentHandlingClick -> IntentHandlingConfigurationScreen
+                IntentRecognitionClick -> IntentRecognitionConfigurationScreen
+                MqttClick -> MqttConfigurationScreen
+                DialogManagementClick -> DialogManagementConfigurationScreen
+                RemoteHermesHttpClick -> RemoteHermesHttpConfigurationScreen
+                SpeechToTextClick -> SpeechToTextConfigurationScreen
+                TextToSpeechClick -> TextToSpeechConfigurationScreen
+                WakeWordClick -> WakeWordConfigurationScreen
+                WebserverClick -> WebServerConfigurationScreen
             }
         )
     }

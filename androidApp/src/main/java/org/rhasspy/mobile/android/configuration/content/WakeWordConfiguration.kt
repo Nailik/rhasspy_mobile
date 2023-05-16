@@ -49,19 +49,20 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.UdpViewState
-import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.WakeWordConfigurationScreen
-import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.WakeWordConfigurationScreen.EditScreen.*
-import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.WakeWordConfigurationScreen.TestScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.*
 
 /**
  * Nav Host of Wake word configuration screens
  */
 @Composable
-fun WakeWordConfigurationContent(screen: WakeWordConfigurationScreen) {
+fun WakeWordConfigurationContent() {
 
     val viewModel: WakeWordConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
     val viewState by viewModel.viewState.collectAsState()
+    val screen by viewModel.screen.top.collectAsState()
+
     val contentViewState by viewState.editViewState.collectAsState()
     val snackBarHostState = LocalSnackbarHostState.current
     val snackBarText = contentViewState.snackBarText?.let { translate(it) }
@@ -74,13 +75,13 @@ fun WakeWordConfigurationContent(screen: WakeWordConfigurationScreen) {
     }
 
     when (screen) {
-        OverViewScreen -> WakeWordConfigurationOverview(screen, viewModel)
-        PorcupineLanguageScreen -> PorcupineLanguageScreen(
+        EditScreen -> WakeWordConfigurationOverview(screen, viewModel)
+        EditPorcupineLanguageScreen -> PorcupineLanguageScreen(
             viewState = contentViewState.wakeWordPorcupineViewState,
             onEvent = viewModel::onEvent
         )
 
-        PorcupineWakeWordScreen -> PorcupineKeywordScreen(
+        EditPorcupineWakeWordScreen -> PorcupineKeywordScreen(
             viewState = contentViewState.wakeWordPorcupineViewState,
             onEvent = viewModel::onEvent
         )
@@ -97,7 +98,7 @@ fun WakeWordConfigurationContent(screen: WakeWordConfigurationScreen) {
  */
 @Composable
 private fun WakeWordConfigurationOverview(
-    screen: WakeWordConfigurationScreen,
+    screen: WakeWordConfigurationScreenDestination,
     viewModel: WakeWordConfigurationViewModel
 ) {
 
@@ -106,7 +107,7 @@ private fun WakeWordConfigurationOverview(
 
     ConfigurationScreenItemContent(
         modifier = Modifier,
-        screenType = screen.type,
+        screenType = screen.destinationType,
         config = ConfigurationScreenConfig(MR.strings.wakeWord.stable),
         viewState = viewState,
         onAction = { viewModel.onAction(it) },

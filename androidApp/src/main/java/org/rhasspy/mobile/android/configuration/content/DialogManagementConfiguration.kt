@@ -23,20 +23,20 @@ import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagem
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewState
-import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.DialogManagementConfigurationScreen
 
 /**
  * DropDown to select dialog management option
  */
 @Composable
-fun DialogManagementConfigurationContent(screen: DialogManagementConfigurationScreen) {
+fun DialogManagementConfigurationContent() {
     val viewModel: DialogManagementConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
+    val screen by viewModel.screen.top.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
         modifier = Modifier,
-        screenType = screen.type,
+        screenType = screen.destinationType,
         config = ConfigurationScreenConfig(MR.strings.dialogManagement.stable),
         viewState = viewState,
         onAction = { viewModel.onAction(it) }

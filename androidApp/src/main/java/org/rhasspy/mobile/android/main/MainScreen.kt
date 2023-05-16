@@ -29,9 +29,9 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.AppTheme
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
-import org.rhasspy.mobile.viewmodel.navigation.Screen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainNavigationDestination.*
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent
-import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Navigate.*
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
@@ -87,17 +87,19 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
 private fun MainScreenContent() {
 
     val viewModel: MainScreenViewModel = LocalViewModelFactory.current.getViewModel()
-    val viewState by viewModel.viewState.collectAsState()
+    val screen by viewModel.screen.top.collectAsState()
 
     Column {
         Box(modifier = Modifier.weight(1f)) {
-            when (val screen = viewState.screen) {
-                Screen.HomeScreen -> HomeScreen()
-                is Screen.ConfigurationScreen -> ConfigurationScreen(screen)
-                is Screen.SettingsScreen -> SettingsScreen(screen)
-                Screen.LogScreen -> LogScreen()
+            when (screen) {
+                HomeScreen -> HomeScreen()
+                ConfigurationScreen -> ConfigurationScreen()
+                SettingsScreen -> SettingsScreen()
+                LogScreen -> LogScreen()
             }
         }
+
+        val viewState by viewModel.viewState.collectAsState()
 
         AnimatedVisibility(visible = viewState.isBottomNavigationVisible) {
             BottomNavigation(

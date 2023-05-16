@@ -25,48 +25,45 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.toText
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen
-import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.*
-import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.OverviewScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenDestination.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.*
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Navigate
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Navigate.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToError
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Navigate
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Navigate.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
 
 /**
  * configuration screens with list items that open bottom sheet
  */
 @Composable
-fun ConfigurationScreen(screen: ConfigurationScreen) {
+fun ConfigurationScreen() {
+
+    val viewModel: ConfigurationScreenViewModel = LocalViewModelFactory.current.getViewModel()
+    val screen by viewModel.screen.top.collectAsState()
 
     when (screen) {
-        OverviewScreen -> ConfigurationOverviewScreen()
-        is AudioPlayingConfigurationScreen -> AudioPlayingConfigurationContent(screen)
-        is DialogManagementConfigurationScreen -> DialogManagementConfigurationContent(screen)
-        is IntentHandlingConfigurationScreen -> IntentHandlingConfigurationContent(screen)
-        is IntentRecognitionConfigurationScreen -> IntentRecognitionConfigurationContent(screen)
-        is MqttConfigurationScreen -> MqttConfigurationContent(screen)
-        is RemoteHermesHttpConfigurationScreen -> RemoteHermesHttpConfigurationContent(screen)
-        is SpeechToTextConfigurationScreen -> SpeechToTextConfigurationContent(screen)
-        is TextToSpeechConfigurationScreen -> TextToSpeechConfigurationContent(screen)
-        is WakeWordConfigurationScreen -> WakeWordConfigurationContent(screen)
-        is WebServerConfigurationScreen -> WebServerConfigurationContent(screen)
+        OverviewScreen -> {
+            val viewState by viewModel.viewState.collectAsState()
+
+            ConfigurationScreenContent(
+                onEvent = viewModel::onEvent,
+                onConsumed = viewModel::onConsumed,
+                viewState = viewState
+            )
+        }
+        AudioPlayingConfigurationScreenDestination -> AudioPlayingConfigurationContent()
+        DialogManagementConfigurationScreen -> DialogManagementConfigurationContent()
+        IntentHandlingConfigurationScreen -> IntentHandlingConfigurationContent()
+        IntentRecognitionConfigurationScreen -> IntentRecognitionConfigurationContent()
+        MqttConfigurationScreen -> MqttConfigurationContent()
+        RemoteHermesHttpConfigurationScreen -> RemoteHermesHttpConfigurationContent()
+        SpeechToTextConfigurationScreen -> SpeechToTextConfigurationContent()
+        TextToSpeechConfigurationScreen -> TextToSpeechConfigurationContent()
+        WakeWordConfigurationScreen -> WakeWordConfigurationContent()
+        WebServerConfigurationScreen -> WebServerConfigurationContent()
     }
 
-}
-
-@Composable
-private fun ConfigurationOverviewScreen() {
-    val viewModel: ConfigurationScreenViewModel = LocalViewModelFactory.current.getViewModel()
-    val viewState by viewModel.viewState.collectAsState()
-
-    ConfigurationScreenContent(
-        onEvent = viewModel::onEvent,
-        onConsumed = viewModel::onConsumed,
-        viewState = viewState
-    )
 }
 
 @Composable

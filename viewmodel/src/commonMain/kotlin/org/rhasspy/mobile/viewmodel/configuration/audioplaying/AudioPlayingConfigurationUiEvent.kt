@@ -17,6 +17,7 @@ sealed interface AudioPlayingConfigurationUiEvent {
     sealed interface Action : AudioPlayingConfigurationUiEvent {
 
         object PlayTestAudio : Action
+        object BackClick : Action
 
     }
 

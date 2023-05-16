@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -16,6 +17,7 @@ import org.rhasspy.mobile.logic.services.recording.RecordingService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextService
 import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextServiceParams
 import org.rhasspy.mobile.platformspecific.audioplayer.AudioSource
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Action
@@ -23,6 +25,9 @@ import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesH
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.MqttConfigurationScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.RemoteHermesHttpConfigurationScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.RemoteHermesHttpConfigurationScreenDestination.EditScreen
 
 @Stable
 class RemoteHermesHttpConfigurationViewModel(
@@ -33,6 +38,8 @@ class RemoteHermesHttpConfigurationViewModel(
     initialViewState = ::RemoteHermesHttpConfigurationViewState,
     navigator = navigator
 ) {
+
+    val screen = navigator.getBackStack(RemoteHermesHttpConfigurationScreenDestination::class, EditScreen)
 
     fun onEvent(event: RemoteHermesHttpConfigurationUiEvent) {
         when (event) {
@@ -59,6 +66,7 @@ class RemoteHermesHttpConfigurationViewModel(
             TestRemoteHermesHttpIntentRecognitionTest -> toggleRecording()
             TestRemoteHermesHttpTextToSpeechTest -> startIntentRecognitionTest()
             TestRemoteHermesHttpToggleRecording -> startTextToSpeechTest()
+            BackClick -> navigator.popBackStack()
         }
     }
 

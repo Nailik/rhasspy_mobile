@@ -23,31 +23,33 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.*
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.MicrophonePermissionAllowed
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.TestStartWakeWord
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Consumed.ShowSnackBar
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Navigate
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Navigate.*
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Navigate.PorcupineKeyword
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Navigate.PorcupineLanguage
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState.PorcupineCustomKeywordViewState
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
-import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.WakeWordConfigurationScreen.EditScreen.PorcupineLanguageScreen
-import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.WakeWordConfigurationScreen.EditScreen.PorcupineWakeWordScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.*
 import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
 @Stable
 class WakeWordConfigurationViewModel(
     service: WakeWordService,
-    private val navigator: Navigator
+    navigator: Navigator
 ) : IConfigurationViewModel<WakeWordConfigurationViewState>(
     service = service,
     initialViewState = ::WakeWordConfigurationViewState,
     navigator = navigator
 ) {
+
+    val screen = navigator.getBackStack(WakeWordConfigurationScreenDestination::class, EditScreen)
 
     fun onEvent(event: WakeWordConfigurationUiEvent) {
         when (event) {
@@ -57,8 +59,6 @@ class WakeWordConfigurationViewModel(
             is Consumed -> onConsumed(event)
             is PorcupineUiEvent -> onPorcupineAction(event)
             is UdpUiEvent -> onUdpAction(event)
-            PorcupineKeyword -> navigator.navigate(PorcupineWakeWordScreen)
-            PorcupineLanguage -> navigator.navigate(PorcupineLanguageScreen)
         }
     }
 
@@ -83,15 +83,17 @@ class WakeWordConfigurationViewModel(
             }
 
             TestStartWakeWord -> startWakeWordDetection()
+            BackClick -> navigator.popBackStack()
         }
     }
-
     private fun onNavigate(navigate: Navigate) {
-        when (navigate) {
-            BackClick -> navigator.popBackStack()
-            PorcupineKeyword -> navigator.navigate(PorcupineWakeWordScreen)
-            PorcupineLanguage -> navigator.navigate(PorcupineLanguageScreen)
-        }
+        navigator.navigate(
+            type = WakeWordConfigurationScreenDestination::class,
+            screen = when (navigate) {
+                PorcupineKeyword -> EditPorcupineWakeWordScreen
+                PorcupineLanguage -> EditPorcupineLanguageScreen
+            }
+        )
     }
 
     private fun onConsumed(consumed: Consumed) {
@@ -105,7 +107,8 @@ class WakeWordConfigurationViewModel(
     private fun onPorcupineAction(action: PorcupineUiEvent) {
         when (action) {
             is PorcupineUiEvent.Change -> onPorcupineChange(action)
-            is PorcupineUiEvent.Action -> onPorcupineNavigate(action)
+            is PorcupineUiEvent.Action -> onPorcupineAction(action)
+            is PorcupineUiEvent.Navigate -> onPorcupineNavigate(action)
         }
     }
 
@@ -140,7 +143,7 @@ class WakeWordConfigurationViewModel(
         }
     }
 
-    private fun onPorcupineNavigate(action: PorcupineUiEvent.Action) {
+    private fun onPorcupineAction(action: PorcupineUiEvent.Action) {
         when (action) {
             AddCustomPorcupineKeyword -> addCustomPorcupineKeyword()
             DownloadCustomPorcupineKeyword -> {
@@ -158,6 +161,14 @@ class WakeWordConfigurationViewModel(
                     }
                 }
             }
+
+            PorcupineUiEvent.Action.BackClick -> navigator.popBackStack()
+        }
+    }
+
+    private fun onPorcupineNavigate(navigate: PorcupineUiEvent.Navigate) {
+        when (navigate) {
+            PorcupineUiEvent.Navigate.PorcupineLanguage -> onNavigate(PorcupineLanguage)
         }
     }
 

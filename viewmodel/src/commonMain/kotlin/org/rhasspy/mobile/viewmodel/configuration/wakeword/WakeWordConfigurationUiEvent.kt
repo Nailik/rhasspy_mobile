@@ -8,12 +8,17 @@ import org.rhasspy.mobile.data.service.option.WakeWordOption
 sealed interface WakeWordConfigurationUiEvent {
 
     sealed interface Change : WakeWordConfigurationUiEvent {
+
         data class SelectWakeWordOption(val option: WakeWordOption) : Change
+
     }
 
     sealed interface Action : WakeWordConfigurationUiEvent {
+
         object MicrophonePermissionAllowed : Action
         object TestStartWakeWord : Action
+        object BackClick : Action
+
     }
 
     sealed interface Consumed : WakeWordConfigurationUiEvent {
@@ -42,6 +47,13 @@ sealed interface WakeWordConfigurationUiEvent {
             object DownloadCustomPorcupineKeyword : Action
             object AddCustomPorcupineKeyword : Action
             object OpenPicoVoiceConsole : Action
+            object BackClick : Action
+        }
+
+        sealed interface Navigate: PorcupineUiEvent {
+
+            object PorcupineLanguage: Navigate
+
         }
     }
 
@@ -57,7 +69,6 @@ sealed interface WakeWordConfigurationUiEvent {
 
         object PorcupineLanguage: Navigate
         object PorcupineKeyword: Navigate
-        object BackClick: Navigate
 
     }
 

@@ -28,7 +28,6 @@ import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingC
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewState
-import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.ConfigurationDetailScreen.IntentHandlingConfigurationScreen
 
 /**
  * content for intent handling configuration
@@ -37,14 +36,15 @@ import org.rhasspy.mobile.viewmodel.navigation.Screen.ConfigurationScreen.Config
  * home assistant configuration
  */
 @Composable
-fun IntentHandlingConfigurationContent(screen: IntentHandlingConfigurationScreen) {
+fun IntentHandlingConfigurationContent() {
     val viewModel: IntentHandlingConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
+    val screen by viewModel.screen.top.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
         modifier = Modifier,
-        screenType = screen.type,
+        screenType = screen.destinationType,
         config = ConfigurationScreenConfig(MR.strings.intentHandling.stable),
         viewState = viewState,
         onAction = { viewModel.onAction(it) },
