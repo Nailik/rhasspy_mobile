@@ -3,6 +3,7 @@ package org.rhasspy.mobile.viewmodel.configuration.texttospeech
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
+import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
@@ -21,6 +22,6 @@ data class TextToSpeechConfigurationViewState internal constructor(
 
     val textToSpeechHttpEndpointText: String
         get() = if (isUseCustomTextToSpeechHttpEndpoint) textToSpeechHttpEndpoint else
-            ""//TODO HttpClientPath.SpeechToText.stringFromConfiguration()
+            HttpClientPath.SpeechToText.stringFromConfiguration()
 
 }

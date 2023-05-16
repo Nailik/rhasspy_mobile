@@ -37,11 +37,6 @@ kotlin {
                 implementation(Jetbrains.Compose.material3)
                 implementation(Jetbrains.Compose.runtime)
                 implementation(Jetbrains.Compose.materialIconsExtended)
-                implementation(Koin.core)
-                implementation(Jetbrains.Kotlinx.immutable)
-                implementation(Mikepenz.aboutLibrariesCore)
-                implementation(Icerock.Mvvm.core)
-                implementation(Touchlab.kermit)
             }
         }
         val commonTest by getting {
@@ -81,13 +76,4 @@ kotlin {
 android {
     namespace = "org.rhasspy.mobile.ui"
     buildFeatures.compose = true
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi"
-    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
-    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi"
-    kotlinOptions.freeCompilerArgs += "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi"
-    kotlinOptions.freeCompilerArgs += "-P=plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${project.buildDir.absolutePath}/compose_metrics"
-    kotlinOptions.freeCompilerArgs += "-P=plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_metrics"
 }
