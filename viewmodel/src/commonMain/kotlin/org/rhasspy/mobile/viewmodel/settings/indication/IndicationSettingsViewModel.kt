@@ -4,7 +4,6 @@ import androidx.compose.runtime.Stable
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.navigation.Navigator

@@ -11,7 +11,6 @@ import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
-import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.*
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.ToggleAudioLevelTest
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.*

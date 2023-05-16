@@ -86,6 +86,7 @@ class WakeWordConfigurationViewModel(
             BackClick -> navigator.popBackStack()
         }
     }
+
     private fun onNavigate(navigate: Navigate) {
         navigator.navigate(
             type = WakeWordConfigurationScreenDestination::class,

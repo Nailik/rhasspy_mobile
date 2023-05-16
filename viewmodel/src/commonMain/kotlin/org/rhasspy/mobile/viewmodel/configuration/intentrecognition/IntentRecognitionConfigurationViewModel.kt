@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.intentrecognition
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -11,7 +10,6 @@ import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionService
 import org.rhasspy.mobile.logic.services.intentrecognition.IntentRecognitionServiceParams
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Action
@@ -20,7 +18,6 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.IntentHandlingConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.IntentRecognitionConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.IntentRecognitionConfigurationScreenDestination.EditScreen
 

@@ -29,7 +29,7 @@ fun AudioRecorderSettingsContent() {
     SettingsScreenItemContent(
         modifier = Modifier,
         title = MR.strings.automaticSilenceDetection.stable,
-                onBackClick = { viewModel.onEvent(BackClick) }
+        onBackClick = { viewModel.onEvent(BackClick) }
     ) {
 
         Card(

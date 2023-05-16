@@ -86,7 +86,7 @@ import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSe
 
 val navigatorModule = module {
     single {
-        Navigator()
+        Navigator(nativeApplication = get())
     }
 }
 
@@ -371,8 +371,11 @@ val viewModelModule = module {
         )
     }
 
-    single { IndicationSettingsViewModel(
-        navigator = get()) }
+    single {
+        IndicationSettingsViewModel(
+            navigator = get()
+        )
+    }
 
 
 
@@ -424,8 +427,11 @@ val viewModelModule = module {
         )
     }
 
-    single { LanguageSettingsViewModel(
-        navigator = get()) }
+    single {
+        LanguageSettingsViewModel(
+            navigator = get()
+        )
+    }
 
     single {
         LogSettingsViewModel(

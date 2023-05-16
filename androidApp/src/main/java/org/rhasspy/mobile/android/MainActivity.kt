@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.android
 
 import android.os.Bundle
+import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
@@ -32,6 +33,7 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.widget.microphone.MicrophoneWidgetUtils
 
 
@@ -51,6 +53,11 @@ class MainActivity : KoinComponent, AppCompatActivity() {
             isFirstLaunch = true
         }
         AppLaunchChecker.onActivityCreate(this)
+
+        onBackPressedDispatcher.addCallback(this) {
+            // Handle the back button event
+            get<Navigator>().popBackStack()
+        }
 
         installSplashScreen().setKeepOnScreenCondition {
             //splash screen should be visible until the app has started

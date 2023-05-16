@@ -29,10 +29,12 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.AppTheme
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainNavigationDestination.*
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Navigate.*
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewState
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 
@@ -73,7 +75,17 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
                     }
 
                     Box(modifier = Modifier.padding(paddingValues)) {
-                        MainScreenContent()
+
+                        val viewModel: MainScreenViewModel = LocalViewModelFactory.current.getViewModel()
+
+                        val screen by viewModel.screen.top.collectAsState()
+                        val viewState by viewModel.viewState.collectAsState()
+
+                        MainScreenContent(
+                            screen = screen,
+                            viewState = viewState,
+                            onEvent = viewModel::onEvent
+                        )
                     }
 
                 }
@@ -84,10 +96,11 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
 }
 
 @Composable
-private fun MainScreenContent() {
-
-    val viewModel: MainScreenViewModel = LocalViewModelFactory.current.getViewModel()
-    val screen by viewModel.screen.top.collectAsState()
+private fun MainScreenContent(
+    screen: MainNavigationDestination,
+    viewState: MainScreenViewState,
+    onEvent: (event: MainScreenUiEvent) -> Unit
+) {
 
     Column {
         Box(modifier = Modifier.weight(1f)) {
@@ -99,13 +112,12 @@ private fun MainScreenContent() {
             }
         }
 
-        val viewState by viewModel.viewState.collectAsState()
 
         AnimatedVisibility(visible = viewState.isBottomNavigationVisible) {
             BottomNavigation(
                 isShowLogEnabled = viewState.isShowLogEnabled,
                 activeIndex = viewState.bottomNavigationIndex,
-                onEvent = viewModel::onEvent
+                onEvent = onEvent
             )
         }
 

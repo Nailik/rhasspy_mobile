@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.platformspecific.combineStateFlow
-import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
 
 class HomeScreenViewStateCreator(

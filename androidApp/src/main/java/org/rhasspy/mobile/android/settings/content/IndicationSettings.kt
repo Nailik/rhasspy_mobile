@@ -29,6 +29,7 @@ import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination.*
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Navigate.*
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
@@ -84,7 +85,7 @@ fun IndicationSettingsOverview(
     SettingsScreenItemContent(
         modifier = Modifier,
         title = MR.strings.indication.stable,
-        onBackClick = {}
+        onBackClick = { onEvent(BackClick) }
     ) {
 
         Card(

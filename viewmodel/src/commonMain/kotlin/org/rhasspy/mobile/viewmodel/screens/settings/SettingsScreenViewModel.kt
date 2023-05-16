@@ -3,9 +3,7 @@ package org.rhasspy.mobile.viewmodel.screens.settings
 import androidx.compose.runtime.Stable
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.*
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent.Action

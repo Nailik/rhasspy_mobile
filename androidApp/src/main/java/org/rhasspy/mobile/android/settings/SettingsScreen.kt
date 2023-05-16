@@ -52,6 +52,7 @@ fun SettingsScreen() {
                 onEvent = viewModel::onEvent
             )
         }
+
         AboutSettings -> AboutScreen()
         AudioFocusSettings -> AudioFocusSettingsContent()
         AudioRecorderSettings -> AudioRecorderSettingsContent()
@@ -343,7 +344,7 @@ private fun About(onEvent: (event: SettingsScreenUiEvent) -> Unit) {
     SettingsListItem(
         text = MR.strings.aboutTitle.stable,
         secondaryText = "${translate(MR.strings.version.stable)} ${BuildKonfig.versionName}",
-        navigate = Navigate.AboutClick,
+        navigate = AboutClick,
         onEvent = onEvent
     )
 

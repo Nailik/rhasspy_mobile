@@ -4,7 +4,7 @@ sealed interface MainScreenUiEvent {
 
     sealed interface Action : MainScreenUiEvent {
 
-        object BackClick: Action
+        object BackClick : Action
 
     }
 

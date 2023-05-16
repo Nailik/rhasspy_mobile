@@ -10,7 +10,7 @@ sealed interface SilenceDetectionSettingsUiEvent {
     }
 
     sealed interface Navigate : SilenceDetectionSettingsUiEvent {
-        object BackClick: Navigate
+        object BackClick : Navigate
     }
 
     sealed interface Action : SilenceDetectionSettingsUiEvent {

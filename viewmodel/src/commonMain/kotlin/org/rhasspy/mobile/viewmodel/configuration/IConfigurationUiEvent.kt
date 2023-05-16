@@ -15,7 +15,7 @@ sealed interface IConfigurationUiEvent {
 
         sealed interface Navigate : Action {
 
-            object BackClick: Navigate
+            object BackClick : Navigate
 
         }
 

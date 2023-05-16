@@ -50,9 +50,9 @@ sealed interface WakeWordConfigurationUiEvent {
             object BackClick : Action
         }
 
-        sealed interface Navigate: PorcupineUiEvent {
+        sealed interface Navigate : PorcupineUiEvent {
 
-            object PorcupineLanguage: Navigate
+            object PorcupineLanguage : Navigate
 
         }
     }
@@ -65,10 +65,10 @@ sealed interface WakeWordConfigurationUiEvent {
 
     }
 
-    sealed interface Navigate: WakeWordConfigurationUiEvent {
+    sealed interface Navigate : WakeWordConfigurationUiEvent {
 
-        object PorcupineLanguage: Navigate
-        object PorcupineKeyword: Navigate
+        object PorcupineLanguage : Navigate
+        object PorcupineKeyword : Navigate
 
     }
 

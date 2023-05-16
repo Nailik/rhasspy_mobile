@@ -5,10 +5,9 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.updateList
 
-class NavigationStack<T: NavigationDestination>(val initial: T) {
+class NavigationStack<T : NavigationDestination>(val initial: T) {
 
     private val _stack = MutableStateFlow<ImmutableList<T>>(persistentListOf(initial))
     val top = _stack.mapReadonlyState { it.lastOrNull() ?: initial }

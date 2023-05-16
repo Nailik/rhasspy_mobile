@@ -1,12 +1,10 @@
 package org.rhasspy.mobile.viewmodel.configuration.intenthandling
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingService
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Action
@@ -15,7 +13,6 @@ import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingC
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.DialogManagementConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.IntentHandlingConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.IntentHandlingConfigurationScreenDestination.EditScreen
 

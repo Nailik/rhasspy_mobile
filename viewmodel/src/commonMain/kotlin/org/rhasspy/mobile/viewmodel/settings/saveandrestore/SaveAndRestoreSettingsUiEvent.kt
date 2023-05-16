@@ -11,7 +11,7 @@ sealed interface SaveAndRestoreSettingsUiEvent {
     }
 
     sealed interface Navigate : SaveAndRestoreSettingsUiEvent {
-        object BackClick: Navigate
+        object BackClick : Navigate
     }
 
     sealed interface Consumed : SaveAndRestoreSettingsUiEvent {

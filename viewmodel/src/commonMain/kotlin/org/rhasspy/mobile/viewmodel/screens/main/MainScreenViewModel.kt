@@ -1,12 +1,11 @@
 package org.rhasspy.mobile.viewmodel.screens.main
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainNavigationDestination.*
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action
-import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Navigate
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Navigate.*
 

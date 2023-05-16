@@ -1,9 +1,7 @@
 package org.rhasspy.mobile.viewmodel.configuration.dialogmanagement
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Action
@@ -11,7 +9,6 @@ import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagem
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.AudioPlayingConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.DialogManagementConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.DialogManagementConfigurationScreenDestination.EditScreen
 
@@ -52,7 +49,7 @@ class DialogManagementConfigurationViewModel(
     }
 
     fun onAction(action: Action) {
-        when(action) {
+        when (action) {
             BackClick -> navigator.popBackStack()
         }
     }

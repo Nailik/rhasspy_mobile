@@ -19,7 +19,6 @@ import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundService
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Action.DisableBatteryOptimization
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Change.SetBackgroundServiceEnabled
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Consumed.ShowSnackBar
-import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Navigate
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Navigate.BackClick
 
 /**

@@ -4,7 +4,7 @@ sealed interface SettingsScreenUiEvent {
 
     sealed interface Action : SettingsScreenUiEvent {
 
-        object BackClick: Action
+        object BackClick : Action
 
     }
 

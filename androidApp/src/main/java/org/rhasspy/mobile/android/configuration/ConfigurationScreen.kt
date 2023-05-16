@@ -52,6 +52,7 @@ fun ConfigurationScreen() {
                 viewState = viewState
             )
         }
+
         AudioPlayingConfigurationScreenDestination -> AudioPlayingConfigurationContent()
         DialogManagementConfigurationScreen -> DialogManagementConfigurationContent()
         IntentHandlingConfigurationScreen -> IntentHandlingConfigurationContent()
