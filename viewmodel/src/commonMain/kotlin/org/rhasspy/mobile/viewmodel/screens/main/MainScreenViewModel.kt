@@ -24,7 +24,7 @@ class MainScreenViewModel(
     private fun onAction(action: Action) {
         when (action) {
             BackClick -> navigator.popBackStack()
-            is Navigate -> navigator.navigate(action.destination)
+            is Navigate -> navigator.replace<MainScreenNavigationDestination>(action.destination)
         }
     }
 
