@@ -18,6 +18,7 @@ import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -43,74 +44,76 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenN
 @Composable
 fun MqttConfigurationContent() {
     val viewModel: MqttConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
-    val viewState by viewModel.viewState.collectAsState()
-    val screen by viewModel.screen.collectAsState()
-    val contentViewState by viewState.editViewState.collectAsState()
 
-    val snackBarHostState = LocalSnackbarHostState.current
-    val snackBarText = contentViewState.snackBarText?.let { translate(it) }
+    Screen(viewModel) {
+        val viewState by viewModel.viewState.collectAsState()
+        val screen by viewModel.screen.collectAsState()
+        val contentViewState by viewState.editViewState.collectAsState()
 
-    LaunchedEffect(snackBarText) {
-        snackBarText?.also {
-            snackBarHostState.showSnackbar(message = it)
-            viewModel.onEvent(ShowSnackBar)
-        }
-    }
+        val snackBarHostState = LocalSnackbarHostState.current
+        val snackBarText = contentViewState.snackBarText?.let { translate(it) }
 
-    ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(MqttConfigurationScreen),
-        screenType = screen.destinationType,
-        config = ConfigurationScreenConfig(MR.strings.mqtt.stable),
-        viewState = viewState,
-        onAction = viewModel::onAction
-    ) {
-
-        item {
-            //toggle to turn mqtt enabled on or off
-            SwitchListItem(
-                text = MR.strings.externalMQTT.stable,
-                modifier = Modifier.testTag(TestTag.MqttSwitch),
-                isChecked = contentViewState.isMqttEnabled,
-                onCheckedChange = { viewModel.onEvent(SetMqttEnabled(it)) }
-            )
-        }
-
-        item {
-            //visibility of mqtt settings
-            AnimatedVisibility(
-                enter = expandVertically(),
-                exit = shrinkVertically(),
-                visible = contentViewState.isMqttEnabled
-            ) {
-
-                Column {
-
-                    MqttConnectionSettings(
-                        mqttHost = contentViewState.mqttHost,
-                        mqttPortText = contentViewState.mqttPortText,
-                        mqttUserName = contentViewState.mqttUserName,
-                        mqttPassword = contentViewState.mqttPassword,
-                        onAction = viewModel::onEvent
-                    )
-
-                    MqttSSL(
-                        isMqttSSLEnabled = contentViewState.isMqttSSLEnabled,
-                        mqttKeyStoreFileName = contentViewState.mqttKeyStoreFileName,
-                        onAction = viewModel::onEvent
-                    )
-
-                    MqttConnectionTiming(
-                        mqttConnectionTimeoutText = contentViewState.mqttConnectionTimeoutText,
-                        mqttKeepAliveIntervalText = contentViewState.mqttKeepAliveIntervalText,
-                        mqttRetryIntervalText = contentViewState.mqttRetryIntervalText,
-                        onAction = viewModel::onEvent
-                    )
-
-                }
-
+        LaunchedEffect(snackBarText) {
+            snackBarText?.also {
+                snackBarHostState.showSnackbar(message = it)
+                viewModel.onEvent(ShowSnackBar)
             }
         }
+        ConfigurationScreenItemContent(
+            modifier = Modifier.testTag(MqttConfigurationScreen),
+            screenType = screen.destinationType,
+            config = ConfigurationScreenConfig(MR.strings.mqtt.stable),
+            viewState = viewState,
+            onAction = viewModel::onAction
+        ) {
 
+            item {
+                //toggle to turn mqtt enabled on or off
+                SwitchListItem(
+                    text = MR.strings.externalMQTT.stable,
+                    modifier = Modifier.testTag(TestTag.MqttSwitch),
+                    isChecked = contentViewState.isMqttEnabled,
+                    onCheckedChange = { viewModel.onEvent(SetMqttEnabled(it)) }
+                )
+            }
+
+            item {
+                //visibility of mqtt settings
+                AnimatedVisibility(
+                    enter = expandVertically(),
+                    exit = shrinkVertically(),
+                    visible = contentViewState.isMqttEnabled
+                ) {
+
+                    Column {
+
+                        MqttConnectionSettings(
+                            mqttHost = contentViewState.mqttHost,
+                            mqttPortText = contentViewState.mqttPortText,
+                            mqttUserName = contentViewState.mqttUserName,
+                            mqttPassword = contentViewState.mqttPassword,
+                            onAction = viewModel::onEvent
+                        )
+
+                        MqttSSL(
+                            isMqttSSLEnabled = contentViewState.isMqttSSLEnabled,
+                            mqttKeyStoreFileName = contentViewState.mqttKeyStoreFileName,
+                            onAction = viewModel::onEvent
+                        )
+
+                        MqttConnectionTiming(
+                            mqttConnectionTimeoutText = contentViewState.mqttConnectionTimeoutText,
+                            mqttKeepAliveIntervalText = contentViewState.mqttKeepAliveIntervalText,
+                            mqttRetryIntervalText = contentViewState.mqttRetryIntervalText,
+                            onAction = viewModel::onEvent
+                        )
+
+                    }
+
+                }
+            }
+
+        }
     }
 
 }

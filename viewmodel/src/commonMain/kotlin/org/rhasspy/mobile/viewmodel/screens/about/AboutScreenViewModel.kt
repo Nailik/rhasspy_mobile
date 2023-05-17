@@ -1,15 +1,13 @@
 package org.rhasspy.mobile.viewmodel.screens.about
 
 import androidx.compose.runtime.Stable
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.KViewModel
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.OpenSourceCode
@@ -23,9 +21,8 @@ import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
  */
 @Stable
 class AboutScreenViewModel(
-    viewStateCreator: AboutScreenViewStateCreator,
-    private val navigator: Navigator,
-) : ViewModel(), KoinComponent {
+    viewStateCreator: AboutScreenViewStateCreator
+) : KViewModel() {
 
     private val _viewState: MutableStateFlow<AboutScreenViewState> = viewStateCreator()
     val viewState = _viewState.readOnly

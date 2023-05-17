@@ -23,6 +23,7 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -78,10 +79,10 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
 
                         val viewModel: MainScreenViewModel = LocalViewModelFactory.current.getViewModel()
 
-                        val screen by viewModel.screen.collectAsState()
-                        val viewState by viewModel.viewState.collectAsState()
+                        Screen(viewModel) {
+                            val screen by viewModel.screen.collectAsState()
+                            val viewState by viewModel.viewState.collectAsState()
 
-                        screen?.also { screen ->
                             MainScreenContent(
                                 screen = screen,
                                 viewState = viewState,

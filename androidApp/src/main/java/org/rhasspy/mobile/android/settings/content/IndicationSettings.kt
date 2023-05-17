@@ -23,6 +23,7 @@ import org.rhasspy.mobile.android.settings.content.sound.IndicationSoundScreen
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
@@ -46,34 +47,37 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoun
 fun IndicationSettingsContent() {
     val viewModelFactory = LocalViewModelFactory.current
     val viewModel: IndicationSettingsViewModel = viewModelFactory.getViewModel()
-    val screen by viewModel.screen.collectAsState()
 
-    when (screen) {
-        null -> {
-            val viewState by viewModel.viewState.collectAsState()
-            IndicationSettingsOverview(
-                viewState = viewState,
-                onEvent = viewModel::onEvent
+    Screen(viewModel) {
+        val screen by viewModel.screen.collectAsState()
+
+        when (screen) {
+            null -> {
+                val viewState by viewModel.viewState.collectAsState()
+                IndicationSettingsOverview(
+                    viewState = viewState,
+                    onEvent = viewModel::onEvent
+                )
+            }
+
+            ErrorIndicationSoundScreen -> IndicationSoundScreen(
+                viewModel = viewModelFactory.getViewModel<ErrorIndicationSoundSettingsViewModel>(),
+                screen = ErrorIndicationSoundScreen,
+                title = MR.strings.errorSound.stable
+            )
+
+            RecordedIndicationSoundScreen -> IndicationSoundScreen(
+                viewModel = viewModelFactory.getViewModel<RecordedIndicationSoundSettingsViewModel>(),
+                screen = RecordedIndicationSoundScreen,
+                title = MR.strings.recordedSound.stable
+            )
+
+            WakeIndicationSoundScreen -> IndicationSoundScreen(
+                viewModel = viewModelFactory.getViewModel<WakeIndicationSoundSettingsViewModel>(),
+                screen = WakeIndicationSoundScreen,
+                title = MR.strings.wakeSound.stable
             )
         }
-
-        ErrorIndicationSoundScreen -> IndicationSoundScreen(
-            viewModel = viewModelFactory.getViewModel<ErrorIndicationSoundSettingsViewModel>(),
-            screen = ErrorIndicationSoundScreen,
-            title = MR.strings.errorSound.stable
-        )
-
-        RecordedIndicationSoundScreen -> IndicationSoundScreen(
-            viewModel = viewModelFactory.getViewModel<RecordedIndicationSoundSettingsViewModel>(),
-            screen = RecordedIndicationSoundScreen,
-            title = MR.strings.recordedSound.stable
-        )
-
-        WakeIndicationSoundScreen -> IndicationSoundScreen(
-            viewModel = viewModelFactory.getViewModel<WakeIndicationSoundSettingsViewModel>(),
-            screen = WakeIndicationSoundScreen,
-            title = MR.strings.wakeSound.stable
-        )
     }
 }
 

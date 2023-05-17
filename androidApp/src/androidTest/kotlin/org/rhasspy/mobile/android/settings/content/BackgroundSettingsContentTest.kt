@@ -21,8 +21,8 @@ import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onListItemSwitch
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Change.SetBackgroundServiceSettingsEnabled
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Change.SetBackgroundServiceEnabled
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -68,7 +68,7 @@ class BackgroundSettingsContentTest : FlakyTest() {
      */
     @Test
     fun testContent() = runTest {
-        viewModel.onEvent(SetBackgroundServiceEnabled(false))
+        viewModel.onEvent(SetBackgroundServiceSettingsEnabled(false))
 
         //background services disabled
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onListItemSwitch().assertIsOff()
@@ -79,7 +79,7 @@ class BackgroundSettingsContentTest : FlakyTest() {
         //background services active
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onListItemSwitch().assertIsOn()
         //background services enabled saved
-        val newViewModel = BackgroundServiceSettingsViewModel(get(), get())
+        val newViewModel = BackgroundServiceSettingsViewModel(get())
         assertTrue { newViewModel.viewState.value.isBackgroundServiceEnabled }
 
         if (!viewModel.viewState.value.isBatteryOptimizationDisabled) {

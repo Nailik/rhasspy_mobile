@@ -16,6 +16,7 @@ import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent
@@ -31,75 +32,78 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenN
 @Composable
 fun RemoteHermesHttpConfigurationContent() {
     val viewModel: RemoteHermesHttpConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
-    val viewState by viewModel.viewState.collectAsState()
-    val screen by viewModel.screen.collectAsState()
-    val contentViewState by viewState.editViewState.collectAsState()
 
-    ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(RemoteHermesHttpConfigurationScreen),
-        screenType = screen.destinationType,
-        config = ConfigurationScreenConfig(MR.strings.remoteHermesHTTP.stable),
-        viewState = viewState,
-        onAction = viewModel::onAction,
-        testContent = {
-            TestContent(
-                testIntentRecognitionText = contentViewState.testIntentRecognitionText,
-                testTextToSpeechText = contentViewState.testTextToSpeechText,
-                isTestRecordingAudio = contentViewState.isTestRecordingAudio,
-                isSpeechToTextTestVisible = contentViewState.isSpeechToTextTestVisible,
-                isIntentRecognitionTestVisible = contentViewState.isIntentRecognitionTestVisible,
-                isTextToSpeechTestVisible = contentViewState.isTextToSpeechTestVisible,
-                onEvent = viewModel::onEvent
-            )
-        }
-    ) {
+    Screen(viewModel) {
+        val viewState by viewModel.viewState.collectAsState()
+        val screen by viewModel.screen.collectAsState()
+        val contentViewState by viewState.editViewState.collectAsState()
 
-        item {
-            //base http endpoint
-            TextFieldListItem(
-                label = MR.strings.baseHost.stable,
-                modifier = Modifier.testTag(TestTag.Host),
-                value = contentViewState.httpClientServerEndpointHost,
-                onValueChange = { viewModel.onEvent(UpdateHttpClientServerEndpointHost(it)) },
-                isLastItem = false
-            )
-        }
+        ConfigurationScreenItemContent(
+            modifier = Modifier.testTag(RemoteHermesHttpConfigurationScreen),
+            screenType = screen.destinationType,
+            config = ConfigurationScreenConfig(MR.strings.remoteHermesHTTP.stable),
+            viewState = viewState,
+            onAction = viewModel::onAction,
+            testContent = {
+                TestContent(
+                    testIntentRecognitionText = contentViewState.testIntentRecognitionText,
+                    testTextToSpeechText = contentViewState.testTextToSpeechText,
+                    isTestRecordingAudio = contentViewState.isTestRecordingAudio,
+                    isSpeechToTextTestVisible = contentViewState.isSpeechToTextTestVisible,
+                    isIntentRecognitionTestVisible = contentViewState.isIntentRecognitionTestVisible,
+                    isTextToSpeechTestVisible = contentViewState.isTextToSpeechTestVisible,
+                    onEvent = viewModel::onEvent
+                )
+            }
+        ) {
 
-        item {
-            //port
-            TextFieldListItem(
-                label = MR.strings.port.stable,
-                modifier = Modifier.testTag(TestTag.Port),
-                value = contentViewState.httpClientServerEndpointPortText,
-                onValueChange = { viewModel.onEvent(UpdateHttpClientServerEndpointPort(it)) },
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-            )
-        }
+            item {
+                //base http endpoint
+                TextFieldListItem(
+                    label = MR.strings.baseHost.stable,
+                    modifier = Modifier.testTag(TestTag.Host),
+                    value = contentViewState.httpClientServerEndpointHost,
+                    onValueChange = { viewModel.onEvent(UpdateHttpClientServerEndpointHost(it)) },
+                    isLastItem = false
+                )
+            }
 
-        item {
-            //timeout
-            TextFieldListItem(
-                label = MR.strings.requestTimeout.stable,
-                modifier = Modifier.testTag(TestTag.Timeout),
-                value = contentViewState.httpClientTimeoutText,
-                onValueChange = { viewModel.onEvent(UpdateHttpClientTimeout(it)) },
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-            )
-        }
+            item {
+                //port
+                TextFieldListItem(
+                    label = MR.strings.port.stable,
+                    modifier = Modifier.testTag(TestTag.Port),
+                    value = contentViewState.httpClientServerEndpointPortText,
+                    onValueChange = { viewModel.onEvent(UpdateHttpClientServerEndpointPort(it)) },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                )
+            }
 
-        item {
-            //switch to toggle validation of SSL certificate
-            SwitchListItem(
-                text = MR.strings.disableSSLValidation.stable,
-                modifier = Modifier.testTag(TestTag.SSLSwitch),
-                secondaryText = MR.strings.disableSSLValidationInformation.stable,
-                isChecked = contentViewState.isHttpSSLVerificationDisabled,
-                onCheckedChange = { viewModel.onEvent(SetHttpSSLVerificationDisabled(it)) },
-            )
+            item {
+                //timeout
+                TextFieldListItem(
+                    label = MR.strings.requestTimeout.stable,
+                    modifier = Modifier.testTag(TestTag.Timeout),
+                    value = contentViewState.httpClientTimeoutText,
+                    onValueChange = { viewModel.onEvent(UpdateHttpClientTimeout(it)) },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                )
+            }
+
+            item {
+                //switch to toggle validation of SSL certificate
+                SwitchListItem(
+                    text = MR.strings.disableSSLValidation.stable,
+                    modifier = Modifier.testTag(TestTag.SSLSwitch),
+                    secondaryText = MR.strings.disableSSLValidationInformation.stable,
+                    isChecked = contentViewState.isHttpSSLVerificationDisabled,
+                    onCheckedChange = { viewModel.onEvent(SetHttpSSLVerificationDisabled(it)) },
+                )
+            }
+
         }
 
     }
-
 }
 
 /**

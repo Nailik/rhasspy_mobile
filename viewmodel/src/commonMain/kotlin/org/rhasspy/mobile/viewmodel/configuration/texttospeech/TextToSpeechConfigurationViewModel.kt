@@ -15,17 +15,14 @@ import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfi
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action.TestRemoteHermesHttpTextToSpeechTest
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.TextToSpeechConfigurationScreenDestination.EditScreen
 
 @Stable
 class TextToSpeechConfigurationViewModel(
-    service: TextToSpeechService,
-    navigator: Navigator
+    service: TextToSpeechService
 ) : IConfigurationViewModel<TextToSpeechConfigurationViewState>(
     service = service,
-    initialViewState = ::TextToSpeechConfigurationViewState,
-    navigator = navigator
+    initialViewState = ::TextToSpeechConfigurationViewState
 ) {
 
     val screen = navigator.topScreen(EditScreen)

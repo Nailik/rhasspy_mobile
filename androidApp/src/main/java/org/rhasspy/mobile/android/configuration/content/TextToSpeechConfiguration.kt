@@ -17,6 +17,7 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.testTag
@@ -36,31 +37,34 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenN
 @Composable
 fun TextToSpeechConfigurationContent() {
     val viewModel: TextToSpeechConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
-    val viewState by viewModel.viewState.collectAsState()
-    val screen by viewModel.screen.collectAsState()
-    val contentViewState by viewState.editViewState.collectAsState()
 
-    ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(TextToSpeechConfigurationScreen),
-        screenType = screen.destinationType,
-        config = ConfigurationScreenConfig(MR.strings.textToSpeech.stable),
-        viewState = viewState,
-        onAction = viewModel::onAction,
-        testContent = {
-            TestContent(
-                testTextToSpeechText = contentViewState.testTextToSpeechText,
-                onEvent = viewModel::onEvent
-            )
+    Screen(viewModel) {
+        val viewState by viewModel.viewState.collectAsState()
+        val screen by viewModel.screen.collectAsState()
+        val contentViewState by viewState.editViewState.collectAsState()
+
+        ConfigurationScreenItemContent(
+            modifier = Modifier.testTag(TextToSpeechConfigurationScreen),
+            screenType = screen.destinationType,
+            config = ConfigurationScreenConfig(MR.strings.textToSpeech.stable),
+            viewState = viewState,
+            onAction = viewModel::onAction,
+            testContent = {
+                TestContent(
+                    testTextToSpeechText = contentViewState.testTextToSpeechText,
+                    onEvent = viewModel::onEvent
+                )
+            }
+        ) {
+
+            item {
+                TextToSpeechOptionContent(
+                    viewState = contentViewState,
+                    onAction = viewModel::onEvent
+                )
+            }
+
         }
-    ) {
-
-        item {
-            TextToSpeechOptionContent(
-                viewState = contentViewState,
-                onAction = viewModel::onEvent
-            )
-        }
-
     }
 
 }

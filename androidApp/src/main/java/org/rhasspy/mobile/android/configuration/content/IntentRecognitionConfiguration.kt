@@ -18,6 +18,7 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.testTag
@@ -41,25 +42,27 @@ fun IntentRecognitionConfigurationContent() {
     val screen by viewModel.screen.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 
-    ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(IntentRecognitionConfigurationScreen),
-        screenType = screen.destinationType,
-        config = ConfigurationScreenConfig(MR.strings.intentRecognition.stable),
-        viewState = viewState,
-        onAction = viewModel::onAction,
-        testContent = {
-            TestContent(
-                testIntentRecognitionText = contentViewState.testIntentRecognitionText,
-                onEvent = viewModel::onEvent
-            )
-        }
-    ) {
+    Screen(viewModel) {
+        ConfigurationScreenItemContent(
+            modifier = Modifier.testTag(IntentRecognitionConfigurationScreen),
+            screenType = screen.destinationType,
+            config = ConfigurationScreenConfig(MR.strings.intentRecognition.stable),
+            viewState = viewState,
+            onAction = viewModel::onAction,
+            testContent = {
+                TestContent(
+                    testIntentRecognitionText = contentViewState.testIntentRecognitionText,
+                    onEvent = viewModel::onEvent
+                )
+            }
+        ) {
 
-        item {
-            IntentRecognitionOptionContent(
-                viewState = contentViewState,
-                onEvent = viewModel::onEvent
-            )
+            item {
+                IntentRecognitionOptionContent(
+                    viewState = contentViewState,
+                    onEvent = viewModel::onEvent
+                )
+            }
         }
     }
 

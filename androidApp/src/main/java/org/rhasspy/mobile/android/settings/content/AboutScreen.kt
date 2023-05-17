@@ -23,6 +23,7 @@ import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -44,35 +45,39 @@ import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewState
 fun AboutScreen() {
 
     val viewModel: AboutScreenViewModel = LocalViewModelFactory.current.getViewModel()
-    val viewState by viewModel.viewState.collectAsState()
-    val snackBarHostState = LocalSnackbarHostState.current
-    val snackBarText = viewState.snackBarText?.let { translate(it) }
 
-    LaunchedEffect(snackBarText) {
-        snackBarText?.also {
-            snackBarHostState.showSnackbar(message = it)
-            viewModel.onEvent(ShowSnackBar)
+    Screen(viewModel) {
+        val viewState by viewModel.viewState.collectAsState()
+        val snackBarHostState = LocalSnackbarHostState.current
+        val snackBarText = viewState.snackBarText?.let { translate(it) }
+
+        LaunchedEffect(snackBarText) {
+            snackBarText?.also {
+                snackBarHostState.showSnackbar(message = it)
+                viewModel.onEvent(ShowSnackBar)
+            }
+        }
+
+
+        Surface(modifier = Modifier.testTag(AboutSettings)) {
+            val configuration = LocalConfiguration.current
+            LibrariesContainer(
+                libraries = viewState.libraries,
+                header = {
+                    if (configuration.screenHeightDp.dp > 600.dp) {
+                        stickyHeader {
+                            Header(viewModel)
+                        }
+                    } else {
+                        item {
+                            Header(viewModel)
+                        }
+                    }
+                }
+            )
         }
     }
 
-
-    Surface(modifier = Modifier.testTag(AboutSettings)) {
-        val configuration = LocalConfiguration.current
-        LibrariesContainer(
-            libraries = viewState.libraries,
-            header = {
-                if (configuration.screenHeightDp.dp > 600.dp) {
-                    stickyHeader {
-                        Header(viewModel)
-                    }
-                } else {
-                    item {
-                        Header(viewModel)
-                    }
-                }
-            }
-        )
-    }
 }
 
 /**

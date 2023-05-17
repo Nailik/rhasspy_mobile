@@ -1,19 +1,17 @@
 package org.rhasspy.mobile.viewmodel.settings.devicesettings
 
 import androidx.compose.runtime.Stable
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.KViewModel
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.*
 
 @Stable
-class DeviceSettingsSettingsViewModel(
-    viewStateCreator: DeviceSettingsViewStateCreator,
-    private val navigator: Navigator
-) : ViewModel() {
+class DeviceSettingsViewModel(
+    viewStateCreator: DeviceSettingsViewStateCreator
+) : KViewModel() {
 
     val viewState = viewStateCreator()
 

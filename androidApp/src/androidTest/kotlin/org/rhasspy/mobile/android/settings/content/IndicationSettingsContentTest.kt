@@ -91,7 +91,7 @@ class IndicationSettingsContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onListItemSwitch()
             .assertIsOn()
         //wake up display is saved
-        assertTrue { IndicationSettingsViewModel(get()).viewState.value.isWakeWordDetectionTurnOnDisplayEnabled }
+        assertTrue { IndicationSettingsViewModel().viewState.value.isWakeWordDetectionTurnOnDisplayEnabled }
 
 
         //user clicks visual
@@ -123,7 +123,7 @@ class IndicationSettingsContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onListItemSwitch()
             .assertIsOn()
         //visual is saved
-        assertTrue { IndicationSettingsViewModel(get()).viewState.value.isWakeWordLightIndicationEnabled }
+        assertTrue { IndicationSettingsViewModel().viewState.value.isWakeWordLightIndicationEnabled }
 
         //user clicks sound
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).performClick()
@@ -131,7 +131,7 @@ class IndicationSettingsContentTest : FlakyTest() {
         //sound is enabled
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).onListItemSwitch().assertIsOn()
         //sound is saved
-        assertTrue { IndicationSettingsViewModel(get()).viewState.value.isSoundIndicationEnabled }
+        assertTrue { IndicationSettingsViewModel().viewState.value.isSoundIndicationEnabled }
     }
 
     /**
@@ -201,7 +201,7 @@ class IndicationSettingsContentTest : FlakyTest() {
         //sound output sound is saved
         assertEquals(
             AudioOutputOption.Sound,
-            IndicationSettingsViewModel(get()).viewState.value.soundIndicationOutputOption
+            IndicationSettingsViewModel().viewState.value.soundIndicationOutputOption
         )
 
         //user clicks wake word

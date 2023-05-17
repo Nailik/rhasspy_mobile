@@ -25,6 +25,7 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.toText
@@ -42,29 +43,33 @@ import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewState
 fun SettingsScreen() {
 
     val viewModel: SettingsScreenViewModel = LocalViewModelFactory.current.getViewModel()
-    val screen by viewModel.screen.collectAsState()
 
-    when (screen) {
-        null -> {
-            val viewState by viewModel.viewState.collectAsState()
+    Screen(viewModel) {
+        val screen by viewModel.screen.collectAsState()
 
-            SettingsScreenContent(
-                viewState = viewState,
-                onEvent = viewModel::onEvent
-            )
+        when (screen) {
+            null -> {
+                val viewState by viewModel.viewState.collectAsState()
+
+                SettingsScreenContent(
+                    viewState = viewState,
+                    onEvent = viewModel::onEvent
+                )
+            }
+
+            AboutSettings -> AboutScreen()
+            AudioFocusSettings -> AudioFocusSettingsContent()
+            AudioRecorderSettings -> AudioRecorderSettingsContent()
+            SilenceDetectionSettings -> SilenceDetectionSettingsContent()
+            BackgroundServiceSettings -> BackgroundServiceSettingsContent()
+            DeviceSettings -> DeviceSettingsContent()
+            IndicationSettings -> IndicationSettingsContent()
+            LanguageSettingsScreen -> LanguageSettingsScreenItemContent()
+            LogSettings -> LogSettingsContent()
+            MicrophoneOverlaySettings -> MicrophoneOverlaySettingsContent()
+            SaveAndRestoreSettings -> SaveAndRestoreSettingsContent()
         }
 
-        AboutSettings -> AboutScreen()
-        AudioFocusSettings -> AudioFocusSettingsContent()
-        AudioRecorderSettings -> AudioRecorderSettingsContent()
-        SilenceDetectionSettings -> SilenceDetectionSettingsContent()
-        BackgroundServiceSettings -> BackgroundServiceSettingsContent()
-        DeviceSettings -> DeviceSettingsContent()
-        IndicationSettings -> IndicationSettingsContent()
-        LanguageSettingsScreen -> LanguageSettingsScreenItemContent()
-        LogSettings -> LogSettingsContent()
-        MicrophoneOverlaySettings -> MicrophoneOverlaySettingsContent()
-        SaveAndRestoreSettings -> SaveAndRestoreSettingsContent()
     }
 
 }

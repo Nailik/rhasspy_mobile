@@ -17,17 +17,14 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Action.RunIntentRecognition
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.IntentRecognitionConfigurationScreenDestination.EditScreen
 
 @Stable
 class IntentRecognitionConfigurationViewModel(
-    service: IntentRecognitionService,
-    navigator: Navigator
+    service: IntentRecognitionService
 ) : IConfigurationViewModel<IntentRecognitionConfigurationViewState>(
     service = service,
-    initialViewState = ::IntentRecognitionConfigurationViewState,
-    navigator = navigator
+    initialViewState = ::IntentRecognitionConfigurationViewState
 ) {
 
     val screen = navigator.topScreen(EditScreen)

@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.data.resource.StableStringResource
 
 @Stable
-data class BackgroundServiceViewState internal constructor(
+data class BackgroundServiceSettingsViewState internal constructor(
     val isBackgroundServiceEnabled: Boolean,
     val isBatteryOptimizationDisabled: Boolean,
     val snackBarText: StableStringResource? = null

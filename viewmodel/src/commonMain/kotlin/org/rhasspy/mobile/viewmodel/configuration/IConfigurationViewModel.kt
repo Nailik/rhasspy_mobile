@@ -2,7 +2,6 @@ package org.rhasspy.mobile.viewmodel.configuration
 
 import androidx.compose.runtime.Stable
 import co.touchlab.kermit.Logger
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.data.service.ServiceState
@@ -22,16 +20,15 @@ import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.viewmodel.KViewModel
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable
 abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
     private val service: IService,
-    private val initialViewState: () -> V,
-    protected val navigator: Navigator
-) : ViewModel(), KoinComponent {
+    private val initialViewState: () -> V
+) : KViewModel() {
     private val logger = Logger.withTag("IConfigurationViewModel")
     private var testStartDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).toString()
 

@@ -18,6 +18,7 @@ import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.main.MicrophoneFab
 import org.rhasspy.mobile.ui.testTag
@@ -41,39 +42,41 @@ import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewState
 @Composable
 fun HomeScreen() {
     val viewModel: HomeScreenViewModel = LocalViewModelFactory.current.getViewModel()
-    Scaffold(
-        modifier = Modifier
-            .testTag(HomeScreen)
-            .fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = { Text(MR.strings.appName.stable) }
-            )
-        },
-    ) { paddingValues ->
 
-        val viewState by viewModel.viewState.collectAsState()
-
-        when (LocalConfiguration.current.orientation) {
-            Configuration.ORIENTATION_PORTRAIT -> {
-                PortraitContent(
-                    paddingValues = paddingValues,
-                    viewState = viewState,
-                    onEvent = viewModel::onEvent
+    Screen(viewModel) {
+        Scaffold(
+            modifier = Modifier
+                .testTag(HomeScreen)
+                .fillMaxSize(),
+            topBar = {
+                TopAppBar(
+                    title = { Text(MR.strings.appName.stable) }
                 )
+            },
+        ) { paddingValues ->
+
+            val viewState by viewModel.viewState.collectAsState()
+
+            when (LocalConfiguration.current.orientation) {
+                Configuration.ORIENTATION_PORTRAIT -> {
+                    PortraitContent(
+                        paddingValues = paddingValues,
+                        viewState = viewState,
+                        onEvent = viewModel::onEvent
+                    )
+                }
+
+                else -> {
+                    LandscapeContent(
+                        paddingValues = paddingValues,
+                        viewState = viewState,
+                        onEvent = viewModel::onEvent
+                    )
+                }
             }
 
-            else -> {
-                LandscapeContent(
-                    paddingValues = paddingValues,
-                    viewState = viewState,
-                    onEvent = viewModel::onEvent
-                )
-            }
         }
-
     }
-
 }
 
 /**

@@ -19,7 +19,6 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Action.PlayTestAudio
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.AudioPlayingConfigurationScreenDestination.EditScreen
 
 /**
@@ -32,12 +31,10 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.AudioP
  */
 @Stable
 class AudioPlayingConfigurationViewModel(
-    service: AudioPlayingService,
-    navigator: Navigator
+    service: AudioPlayingService
 ) : IConfigurationViewModel<AudioPlayingConfigurationViewState>(
     service = service,
-    initialViewState = ::AudioPlayingConfigurationViewState,
-    navigator = navigator
+    initialViewState = ::AudioPlayingConfigurationViewState
 ) {
 
     val screen = navigator.topScreen(EditScreen)

@@ -1,22 +1,19 @@
 package org.rhasspy.mobile.viewmodel.settings.language
 
 import androidx.compose.runtime.Stable
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.platformspecific.language.setLanguage
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.KViewModel
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SelectLanguageOption
 
 @Stable
-class LanguageSettingsViewModel(
-    private val navigator: Navigator
-) : ViewModel() {
+class LanguageSettingsViewModel : KViewModel() {
 
     private val _viewState = MutableStateFlow(LanguageSettingsViewState())
     val viewState = _viewState.readOnly

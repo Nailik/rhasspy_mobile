@@ -1,17 +1,15 @@
 package org.rhasspy.mobile.viewmodel.settings.silencedetection
 
 import androidx.compose.runtime.Stable
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.KViewModel
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.ToggleAudioLevelTest
@@ -23,9 +21,8 @@ import kotlin.math.pow
 class SilenceDetectionSettingsViewModel(
     private val nativeApplication: NativeApplication,
     private val audioRecorder: AudioRecorder,
-    private val navigator: Navigator,
     viewStateCreator: SilenceDetectionSettingsViewStateCreator
-) : ViewModel(), KoinComponent {
+) : KViewModel() {
 
     val viewState: StateFlow<SilenceDetectionSettingsViewState> = viewStateCreator()
 

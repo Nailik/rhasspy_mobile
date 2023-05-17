@@ -79,7 +79,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
 
         //user clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        WakeWordConfigurationViewModel(get(), get()).viewState.value.editViewState.value.also {
+        WakeWordConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //new option is saved
             assertEquals(WakeWordOption.Porcupine, it.wakeWordOption)
         }
@@ -131,7 +131,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
 
         //user clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        WakeWordConfigurationViewModel(get(), get()).viewState.value.editViewState.value.also {
+        WakeWordConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //access token is saved
             assertEquals(WakeWordOption.Porcupine, it.wakeWordOption)
         }

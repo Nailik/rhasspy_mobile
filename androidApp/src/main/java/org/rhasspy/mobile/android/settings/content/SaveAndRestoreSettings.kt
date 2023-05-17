@@ -22,6 +22,7 @@ import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
@@ -39,32 +40,35 @@ import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettin
 @Composable
 fun SaveAndRestoreSettingsContent() {
     val viewModel: SaveAndRestoreSettingsViewModel = LocalViewModelFactory.current.getViewModel()
-    val viewState by viewModel.viewState.collectAsState()
 
-    val snackBarHostState = LocalSnackbarHostState.current
-    val snackBarText = viewState.snackBarText?.let { translate(it) }
+    Screen(viewModel) {
+        val viewState by viewModel.viewState.collectAsState()
 
-    LaunchedEffect(snackBarText) {
-        snackBarText?.also {
-            snackBarHostState.showSnackbar(message = it)
-            viewModel.onEvent(ShowSnackBar)
+        val snackBarHostState = LocalSnackbarHostState.current
+        val snackBarText = viewState.snackBarText?.let { translate(it) }
+
+        LaunchedEffect(snackBarText) {
+            snackBarText?.also {
+                snackBarHostState.showSnackbar(message = it)
+                viewModel.onEvent(ShowSnackBar)
+            }
         }
-    }
 
-    SettingsScreenItemContent(
-        modifier = Modifier.testTag(SaveAndRestoreSettings),
-        title = MR.strings.saveAndRestoreSettings.stable,
-        onBackClick = { viewModel.onEvent(BackClick) }
-    ) {
+        SettingsScreenItemContent(
+            modifier = Modifier.testTag(SaveAndRestoreSettings),
+            title = MR.strings.saveAndRestoreSettings.stable,
+            onBackClick = { viewModel.onEvent(BackClick) }
+        ) {
 
-        //Save Settings
-        SaveSettings(viewModel::onEvent)
+            //Save Settings
+            SaveSettings(viewModel::onEvent)
 
-        //Restore Settings
-        RestoreSettings(viewModel::onEvent)
+            //Restore Settings
+            RestoreSettings(viewModel::onEvent)
 
-        //Share Settings
-        ShareSettings(viewModel::onEvent)
+            //Share Settings
+            ShareSettings(viewModel::onEvent)
+        }
     }
 
 }

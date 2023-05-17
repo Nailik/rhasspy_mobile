@@ -114,7 +114,7 @@ class MicrophoneOverlaySettingsContentTest : FlakyTest() {
         //Visible while app is visible
         composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).assertIsDisplayed()
         //Medium is saved
-        var newViewModel = MicrophoneOverlaySettingsViewModel(get())
+        var newViewModel = MicrophoneOverlaySettingsViewModel()
         assertEquals(
             MicrophoneOverlaySizeOption.Medium,
             newViewModel.viewState.value.microphoneOverlaySizeOption
@@ -131,7 +131,7 @@ class MicrophoneOverlaySettingsContentTest : FlakyTest() {
         //element is turned on
         composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).onListItemSwitch().assertIsOn()
         //visible while app is saved
-        newViewModel = MicrophoneOverlaySettingsViewModel(get())
+        newViewModel = MicrophoneOverlaySettingsViewModel()
         assertTrue { newViewModel.viewState.value.isMicrophoneOverlayWhileAppEnabled }
 
     }

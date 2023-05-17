@@ -31,6 +31,8 @@ kotlin {
                 implementation(project(":resources"))
                 implementation(project(":settings"))
                 implementation(Icerock.Resources.resourcesCompose)
+                implementation(Icerock.Mvvm.core)
+                implementation(Koin.core)
                 implementation(Jetbrains.Compose.ui)
                 implementation(Jetbrains.Compose.foundation)
                 implementation(Jetbrains.Compose.material)

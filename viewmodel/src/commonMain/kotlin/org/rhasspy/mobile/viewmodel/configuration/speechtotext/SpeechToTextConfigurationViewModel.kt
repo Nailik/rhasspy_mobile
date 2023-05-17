@@ -18,17 +18,14 @@ import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfi
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action.TestSpeechToTextToggleRecording
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.SpeechToTextConfigurationScreenDestination.EditScreen
 
 @Stable
 class SpeechToTextConfigurationViewModel(
-    service: SpeechToTextService,
-    navigator: Navigator
+    service: SpeechToTextService
 ) : IConfigurationViewModel<SpeechToTextConfigurationViewState>(
     service = service,
-    initialViewState = ::SpeechToTextConfigurationViewState,
-    navigator = navigator
+    initialViewState = ::SpeechToTextConfigurationViewState
 ) {
 
     val screen = navigator.topScreen(EditScreen)

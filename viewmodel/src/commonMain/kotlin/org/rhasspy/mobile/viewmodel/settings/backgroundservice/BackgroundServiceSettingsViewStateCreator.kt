@@ -10,13 +10,13 @@ import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.permission.BatteryOptimization
 import org.rhasspy.mobile.settings.AppSetting
 
-class BackgroundServiceViewStateCreator(
+class BackgroundServiceSettingsViewStateCreator(
     private val nativeApplication: NativeApplication
 ) {
 
     private val updaterScope = CoroutineScope(Dispatchers.IO)
 
-    operator fun invoke(): MutableStateFlow<BackgroundServiceViewState> {
+    operator fun invoke(): MutableStateFlow<BackgroundServiceSettingsViewState> {
         val viewState = MutableStateFlow(getViewState())
 
         updaterScope.launch {
@@ -31,8 +31,8 @@ class BackgroundServiceViewStateCreator(
         return viewState
     }
 
-    private fun getViewState(): BackgroundServiceViewState {
-        return BackgroundServiceViewState(
+    private fun getViewState(): BackgroundServiceSettingsViewState {
+        return BackgroundServiceSettingsViewState(
             isBackgroundServiceEnabled = AppSetting.isBackgroundServiceEnabled.value,
             isBatteryOptimizationDisabled = BatteryOptimization.isBatteryOptimizationDisabled()
         )

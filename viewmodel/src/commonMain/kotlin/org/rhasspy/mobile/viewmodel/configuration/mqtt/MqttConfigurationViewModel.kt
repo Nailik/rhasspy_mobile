@@ -15,18 +15,15 @@ import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Consumed.ShowSnackBar
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.MqttConfigurationScreenDestination.EditScreen
 import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
 @Stable
 class MqttConfigurationViewModel(
-    service: MqttService,
-    navigator: Navigator
+    service: MqttService
 ) : IConfigurationViewModel<MqttConfigurationViewState>(
     service = service,
-    initialViewState = ::MqttConfigurationViewState,
-    navigator = navigator
+    initialViewState = ::MqttConfigurationViewState
 ) {
 
     val screen = navigator.topScreen(EditScreen)

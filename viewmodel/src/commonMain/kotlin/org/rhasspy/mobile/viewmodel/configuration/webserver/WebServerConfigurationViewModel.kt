@@ -15,18 +15,15 @@ import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurati
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Consumed.ShowSnackBar
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WebServerConfigurationScreenDestination.EditScreen
 import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
 @Stable
 class WebServerConfigurationViewModel(
-    service: WebServerService,
-    navigator: Navigator
+    service: WebServerService
 ) : IConfigurationViewModel<WebServerConfigurationViewState>(
     service = service,
-    initialViewState = ::WebServerConfigurationViewState,
-    navigator = navigator
+    initialViewState = ::WebServerConfigurationViewState
 ) {
 
     val screen = navigator.topScreen(EditScreen)

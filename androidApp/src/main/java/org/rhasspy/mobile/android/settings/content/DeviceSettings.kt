@@ -15,9 +15,9 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.DeviceSettings
-import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsViewModel
 
 /**
  * Device Settings
@@ -29,7 +29,7 @@ import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEven
 @Preview
 @Composable
 fun DeviceSettingsContent() {
-    val viewModel: DeviceSettingsSettingsViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: DeviceSettingsViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
 
     SettingsScreenItemContent(

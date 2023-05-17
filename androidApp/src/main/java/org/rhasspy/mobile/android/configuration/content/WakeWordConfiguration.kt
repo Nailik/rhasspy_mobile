@@ -29,6 +29,7 @@ import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
@@ -59,32 +60,35 @@ fun WakeWordConfigurationContent() {
     val viewModel: WakeWordConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
     val viewState by viewModel.viewState.collectAsState()
-    val screen by viewModel.screen.collectAsState()
 
-    val contentViewState by viewState.editViewState.collectAsState()
-    val snackBarHostState = LocalSnackbarHostState.current
-    val snackBarText = contentViewState.snackBarText?.let { translate(it) }
+    Screen(viewModel) {
+        val screen by viewModel.screen.collectAsState()
 
-    LaunchedEffect(snackBarText) {
-        snackBarText?.also {
-            snackBarHostState.showSnackbar(message = it)
-            viewModel.onEvent(ShowSnackBar)
+        val contentViewState by viewState.editViewState.collectAsState()
+        val snackBarHostState = LocalSnackbarHostState.current
+        val snackBarText = contentViewState.snackBarText?.let { translate(it) }
+
+        LaunchedEffect(snackBarText) {
+            snackBarText?.also {
+                snackBarHostState.showSnackbar(message = it)
+                viewModel.onEvent(ShowSnackBar)
+            }
         }
-    }
 
-    when (screen) {
-        EditScreen -> WakeWordConfigurationOverview(screen, viewModel)
-        EditPorcupineLanguageScreen -> PorcupineLanguageScreen(
-            viewState = contentViewState.wakeWordPorcupineViewState,
-            onEvent = viewModel::onEvent
-        )
+        when (screen) {
+            EditScreen -> WakeWordConfigurationOverview(screen, viewModel)
+            EditPorcupineLanguageScreen -> PorcupineLanguageScreen(
+                viewState = contentViewState.wakeWordPorcupineViewState,
+                onEvent = viewModel::onEvent
+            )
 
-        EditPorcupineWakeWordScreen -> PorcupineKeywordScreen(
-            viewState = contentViewState.wakeWordPorcupineViewState,
-            onEvent = viewModel::onEvent
-        )
+            EditPorcupineWakeWordScreen -> PorcupineKeywordScreen(
+                viewState = contentViewState.wakeWordPorcupineViewState,
+                onEvent = viewModel::onEvent
+            )
 
-        TestScreen -> WakeWordConfigurationOverview(screen, viewModel)
+            TestScreen -> WakeWordConfigurationOverview(screen, viewModel)
+        }
     }
 
 }
@@ -101,6 +105,7 @@ private fun WakeWordConfigurationOverview(
 ) {
 
     val viewState by viewModel.viewState.collectAsState()
+
     val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
@@ -123,7 +128,6 @@ private fun WakeWordConfigurationOverview(
             )
         }
     }
-
 }
 
 @Composable

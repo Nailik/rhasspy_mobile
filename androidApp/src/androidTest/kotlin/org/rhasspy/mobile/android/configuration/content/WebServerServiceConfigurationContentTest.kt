@@ -117,7 +117,7 @@ class WebServerServiceConfigurationContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar(viewModel)
-        WebServerConfigurationViewModel(get(), get()).viewState.value.editViewState.value.also {
+        WebServerConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //enable http api is saved
             assertEquals(true, it.isHttpServerEnabled)
             //port is saved

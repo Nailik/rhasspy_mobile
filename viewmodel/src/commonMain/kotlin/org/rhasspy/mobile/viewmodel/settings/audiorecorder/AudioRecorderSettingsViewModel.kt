@@ -1,10 +1,9 @@
 package org.rhasspy.mobile.viewmodel.settings.audiorecorder
 
 import androidx.compose.runtime.Stable
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.KViewModel
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Change
@@ -12,9 +11,8 @@ import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettings
 
 @Stable
 class AudioRecorderSettingsViewModel(
-    viewStateCreator: AudioRecorderSettingsViewStateCreator,
-    private val navigator: Navigator
-) : ViewModel() {
+    viewStateCreator: AudioRecorderSettingsViewStateCreator
+) : KViewModel() {
 
     val viewState: StateFlow<AudioRecorderSettingsViewState> = viewStateCreator()
 
