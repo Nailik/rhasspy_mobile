@@ -19,7 +19,6 @@ import org.rhasspy.mobile.android.content.OnPauseEffect
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.RadioButtonListItem
 import org.rhasspy.mobile.android.content.list.SliderListItem
-import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
@@ -31,9 +30,9 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.ChooseSoundFile
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.ToggleAudioPlayerActive
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsViewModel
@@ -44,8 +43,8 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSe
 @Composable
 fun IndicationSoundScreen(
     viewModel: IIndicationSoundSettingsViewModel,
-    title: StableStringResource,
-    screen: IndicationSettingsScreens
+    screen: IndicationSettingsScreenDestination,
+    title: StableStringResource
 ) {
     val viewState by viewModel.viewState.collectAsState()
 
@@ -65,7 +64,12 @@ fun IndicationSoundScreen(
         modifier = Modifier
             .testTag(screen)
             .fillMaxSize(),
-        topBar = { AppBar(title) }
+        topBar = {
+            AppBar(
+                title = title,
+                onEvent = viewModel::onEvent
+            )
+        }
     ) { paddingValues ->
 
         Surface(Modifier.padding(paddingValues)) {
@@ -259,9 +263,7 @@ private fun SoundActionButtons(
  * app bar for indication screen
  */
 @Composable
-private fun AppBar(title: StableStringResource) {
-
-    val navigation = LocalNavController.current
+private fun AppBar(title: StableStringResource, onEvent: (event: IIndicationSoundSettingsUiEvent) -> Unit) {
 
     TopAppBar(
         title = {
@@ -269,7 +271,7 @@ private fun AppBar(title: StableStringResource) {
         },
         navigationIcon = {
             IconButton(
-                onClick = navigation::popBackStack,
+                onClick = { onEvent(BackClick) },
                 modifier = Modifier.testTag(TestTag.AppBarBackButton)
             ) {
                 Icon(

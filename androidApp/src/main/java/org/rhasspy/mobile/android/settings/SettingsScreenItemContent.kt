@@ -14,7 +14,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.rhasspy.mobile.android.main.LocalMainNavController
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
@@ -30,9 +29,9 @@ import org.rhasspy.mobile.ui.testTag
 fun SettingsScreenItemContent(
     modifier: Modifier = Modifier,
     title: StableStringResource,
+    onBackClick: () -> Unit,
     expandedContent: @Composable () -> Unit
 ) {
-    val navigation = LocalMainNavController.current
 
     Surface(tonalElevation = 1.dp) {
         Scaffold(
@@ -40,7 +39,7 @@ fun SettingsScreenItemContent(
             topBar = {
                 AppBar(
                     title = title,
-                    onBackClick = navigation::popBackStack
+                    onBackClick = onBackClick
                 )
             },
         ) { paddingValues ->

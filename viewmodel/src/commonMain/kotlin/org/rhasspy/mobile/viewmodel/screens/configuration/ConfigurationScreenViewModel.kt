@@ -6,18 +6,22 @@ import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.event.EventState.Consumed
 import org.rhasspy.mobile.data.event.EventState.Triggered
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToError
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
 import org.rhasspy.mobile.viewmodel.screens.configuration.IConfigurationScreenUiStateEvent.ScrollToErrorEventIState
 
 @Stable
 class ConfigurationScreenViewModel(
-    private val viewStateCreator: ConfigurationScreenViewStateCreator
+    private val viewStateCreator: ConfigurationScreenViewStateCreator,
+    private val navigator: Navigator
 ) : ViewModel() {
 
     val viewState: StateFlow<ConfigurationScreenViewState> = viewStateCreator()
+    val screen = navigator.topScreen<ConfigurationScreenNavigationDestination>()
 
     fun onEvent(event: ConfigurationScreenUiEvent) {
         when (event) {
@@ -35,6 +39,8 @@ class ConfigurationScreenViewModel(
     private fun onAction(action: Action) {
         when (action) {
             ScrollToError -> viewStateCreator.updateScrollToError(Triggered)
+            BackClick -> navigator.popBackStack()
+            is Navigate -> navigator.navigate(action.destination)
         }
     }
 

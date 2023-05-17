@@ -53,7 +53,7 @@ class DialogManagerService(
 
     private var sessionId: String? = null
     private var sendAudioCaptured = false
-    private var coroutineScope = CoroutineScope(Dispatchers.Default)
+    private var coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private var timeoutJob: Job? = null
 
@@ -362,7 +362,7 @@ class DialogManagerService(
                 wakeWordService.stopDetection()
                 indicationService.onListening()
                 _currentDialogState.value = DialogManagerServiceState.RecordingIntent
-                CoroutineScope(Dispatchers.Default).launch {
+                CoroutineScope(Dispatchers.IO).launch {
                     speechToTextService.startSpeechToText(id, action.source is Source.Mqtt)
                 }
 

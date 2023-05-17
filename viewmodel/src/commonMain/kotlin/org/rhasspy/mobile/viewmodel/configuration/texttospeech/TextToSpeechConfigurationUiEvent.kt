@@ -14,6 +14,7 @@ sealed interface TextToSpeechConfigurationUiEvent {
     sealed interface Action : TextToSpeechConfigurationUiEvent {
 
         object TestRemoteHermesHttpTextToSpeechTest : Action
+        object BackClick : Action
 
     }
 

@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.android.settings.content
 
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -21,7 +20,6 @@ import org.rhasspy.mobile.android.about.DataPrivacyDialogButton
 import org.rhasspy.mobile.android.about.LibrariesContainer
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
-import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.resources.MR
@@ -30,7 +28,9 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.AboutSettings
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent
+import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.OpenSourceCode
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewModel
@@ -56,7 +56,7 @@ fun AboutScreen() {
     }
 
 
-    Surface(modifier = Modifier.testTag(SettingsScreenType.AboutSettings)) {
+    Surface(modifier = Modifier.testTag(AboutSettings)) {
         val configuration = LocalConfiguration.current
         LibrariesContainer(
             libraries = viewState.libraries,
@@ -89,7 +89,7 @@ fun Header(viewModel: AboutScreenViewModel) {
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(bottom = 16.dp)
     ) {
-        AppIcon()
+        AppIcon(viewModel::onEvent)
 
         Text(
             resource = MR.strings.appName.stable,
@@ -116,13 +116,11 @@ fun Header(viewModel: AboutScreenViewModel) {
  * image of app icon and back press
  */
 @Composable
-fun AppIcon() {
+fun AppIcon(onEvent: (AboutScreenUiEvent) -> Unit) {
     Box(modifier = Modifier.fillMaxWidth()) {
 
-        val onBackPressedDispatcher =
-            LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
         IconButton(
-            onClick = { onBackPressedDispatcher?.onBackPressed() },
+            onClick = { onEvent(BackClick) },
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .testTag(TestTag.AppBarBackButton)

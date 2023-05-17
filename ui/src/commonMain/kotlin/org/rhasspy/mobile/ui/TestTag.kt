@@ -135,7 +135,10 @@ enum class TestTag {
     AutomaticSilenceDetectionSettingsTest,
     CrashlyticsEnabled,
     ShowLogEnabled,
-    AudioFramesEnabled
+    AudioFramesEnabled,
+
+
+    OpenConfigScreen,
 }
 
 fun Modifier.combinedTestTag(IOption: IOption<*>, tag: TestTag) = semantics(

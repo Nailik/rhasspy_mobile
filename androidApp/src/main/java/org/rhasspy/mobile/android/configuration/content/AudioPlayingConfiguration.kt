@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
-import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
@@ -30,6 +29,7 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewState
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.AudioPlayingConfigurationScreen
 
 /**
  * Content to configure audio playing
@@ -40,14 +40,15 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
 fun AudioPlayingConfigurationContent() {
     val viewModel: AudioPlayingConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
+    val screen by viewModel.screen.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(ConfigurationScreenType.AudioPlayingConfiguration),
+        modifier = Modifier.testTag(AudioPlayingConfigurationScreen),
+        screenType = screen.destinationType,
         config = ConfigurationScreenConfig(MR.strings.audioPlaying.stable),
         viewState = viewState,
-        onAction = { viewModel.onAction(it) },
-        onConsumed = { viewModel.onConsumed(it) },
+        onAction = viewModel::onAction,
         testContent = { TestContent(viewModel::onEvent) }
     ) {
 

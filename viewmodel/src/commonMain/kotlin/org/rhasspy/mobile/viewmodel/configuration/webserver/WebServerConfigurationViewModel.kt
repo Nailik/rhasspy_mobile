@@ -12,19 +12,24 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.*
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.OpenWebServerSSLWiki
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.SelectSSLCertificate
+import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Consumed.ShowSnackBar
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WebServerConfigurationScreenDestination.EditScreen
 import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
 @Stable
 class WebServerConfigurationViewModel(
-    service: WebServerService
+    service: WebServerService,
+    navigator: Navigator
 ) : IConfigurationViewModel<WebServerConfigurationViewState>(
     service = service,
-    initialViewState = ::WebServerConfigurationViewState
+    initialViewState = ::WebServerConfigurationViewState,
+    navigator = navigator
 ) {
+
+    val screen = navigator.topScreen(EditScreen)
 
     fun onEvent(event: WebServerConfigurationUiEvent) {
         when (event) {
@@ -52,6 +57,7 @@ class WebServerConfigurationViewModel(
         when (action) {
             OpenWebServerSSLWiki -> openWebServerSSLWiki()
             SelectSSLCertificate -> selectSSLCertificate()
+            BackClick -> navigator.popBackStack()
         }
     }
 

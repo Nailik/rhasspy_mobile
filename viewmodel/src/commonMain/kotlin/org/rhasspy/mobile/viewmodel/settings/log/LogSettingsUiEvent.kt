@@ -4,6 +4,12 @@ import org.rhasspy.mobile.data.log.LogLevel
 
 sealed interface LogSettingsUiEvent {
 
+    sealed interface Action : LogSettingsUiEvent {
+
+        object BackClick : Action
+
+    }
+
     sealed interface Change : LogSettingsUiEvent {
         data class SetLogLevel(val logLevel: LogLevel) : Change
         data class SetCrashlyticsEnabled(val enabled: Boolean) : Change

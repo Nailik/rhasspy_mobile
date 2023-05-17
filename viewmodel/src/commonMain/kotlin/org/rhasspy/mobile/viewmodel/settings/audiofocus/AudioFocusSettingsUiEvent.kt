@@ -4,6 +4,10 @@ import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
 
 sealed interface AudioFocusSettingsUiEvent {
 
+    sealed interface Action : AudioFocusSettingsUiEvent {
+        object BackClick : Action
+    }
+
     sealed interface Change : AudioFocusSettingsUiEvent {
 
         data class SelectAudioFocusOption(val option: AudioFocusOption) : Change

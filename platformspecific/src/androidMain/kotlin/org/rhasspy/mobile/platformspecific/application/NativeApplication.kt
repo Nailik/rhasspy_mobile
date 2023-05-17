@@ -80,5 +80,8 @@ actual abstract class NativeApplication : MultiDexApplication() {
     actual abstract val isHasStarted: StateFlow<Boolean>
     actual abstract fun resume()
     actual abstract fun startRecordingAction()
+    actual fun closeApp() {
+        currentActivity?.moveTaskToBack(false)
+    }
 
 }

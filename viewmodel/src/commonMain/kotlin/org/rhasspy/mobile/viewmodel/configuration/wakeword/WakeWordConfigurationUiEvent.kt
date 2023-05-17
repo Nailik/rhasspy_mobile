@@ -4,16 +4,24 @@ import okio.Path
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.*
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination
 
 sealed interface WakeWordConfigurationUiEvent {
 
     sealed interface Change : WakeWordConfigurationUiEvent {
+
         data class SelectWakeWordOption(val option: WakeWordOption) : Change
+
     }
 
     sealed interface Action : WakeWordConfigurationUiEvent {
+
         object MicrophonePermissionAllowed : Action
         object TestStartWakeWord : Action
+        object BackClick : Action
+        data class Navigate(val destination: WakeWordConfigurationScreenDestination) : Action
+
     }
 
     sealed interface Consumed : WakeWordConfigurationUiEvent {
@@ -42,6 +50,8 @@ sealed interface WakeWordConfigurationUiEvent {
             object DownloadCustomPorcupineKeyword : Action
             object AddCustomPorcupineKeyword : Action
             object OpenPicoVoiceConsole : Action
+            object BackClick : Action
+            object PorcupineLanguageClick : Action
         }
     }
 
@@ -52,4 +62,5 @@ sealed interface WakeWordConfigurationUiEvent {
         }
 
     }
+
 }

@@ -6,12 +6,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Action
+import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SelectMicrophoneOverlaySizeOption
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SetMicrophoneOverlayWhileAppEnabled
 
 @Stable
-class MicrophoneOverlaySettingsViewModel : ViewModel() {
+class MicrophoneOverlaySettingsViewModel(
+    private val navigator: Navigator
+) : ViewModel() {
 
     private val _viewState = MutableStateFlow(MicrophoneOverlaySettingsViewState())
     val viewState = _viewState.readOnly
@@ -19,6 +24,7 @@ class MicrophoneOverlaySettingsViewModel : ViewModel() {
     fun onEvent(event: MicrophoneOverlaySettingsUiEvent) {
         when (event) {
             is Change -> onChange(event)
+            is Action -> onAction(event)
         }
     }
 
@@ -35,6 +41,12 @@ class MicrophoneOverlaySettingsViewModel : ViewModel() {
                     it.copy(isMicrophoneOverlayWhileAppEnabled = change.enabled)
                 }
             }
+        }
+    }
+
+    private fun onAction(action: Action) {
+        when (action) {
+            is BackClick -> navigator.popBackStack()
         }
     }
 

@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.screens.configuration
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -36,7 +37,7 @@ class ConfigurationScreenViewStateCreator(
     private val dialogManagerService: DialogManagerService,
     private val intentHandlingService: IntentHandlingService
 ) {
-    private val updaterScope = CoroutineScope(Dispatchers.Default)
+    private val updaterScope = CoroutineScope(Dispatchers.IO)
 
     private val scrollToErrorEvent = MutableStateFlow(ScrollToErrorEventIState(EventState.Consumed, 0))
 

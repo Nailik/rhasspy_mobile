@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -22,14 +23,20 @@ import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesH
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.RemoteHermesHttpConfigurationScreenDestination.EditScreen
 
 @Stable
 class RemoteHermesHttpConfigurationViewModel(
     service: HttpClientService,
+    navigator: Navigator
 ) : IConfigurationViewModel<RemoteHermesHttpConfigurationViewState>(
     service = service,
-    initialViewState = ::RemoteHermesHttpConfigurationViewState
+    initialViewState = ::RemoteHermesHttpConfigurationViewState,
+    navigator = navigator
 ) {
+
+    val screen = navigator.topScreen(EditScreen)
 
     fun onEvent(event: RemoteHermesHttpConfigurationUiEvent) {
         when (event) {
@@ -56,6 +63,7 @@ class RemoteHermesHttpConfigurationViewModel(
             TestRemoteHermesHttpIntentRecognitionTest -> toggleRecording()
             TestRemoteHermesHttpTextToSpeechTest -> startIntentRecognitionTest()
             TestRemoteHermesHttpToggleRecording -> startTextToSpeechTest()
+            BackClick -> navigator.popBackStack()
         }
     }
 
@@ -68,7 +76,7 @@ class RemoteHermesHttpConfigurationViewModel(
     }
 
     private fun toggleRecording() {
-        testScope.launch(Dispatchers.Default) {
+        testScope.launch(Dispatchers.IO) {
             get<RecordingService>().isRecording.collect { isRecording ->
                 updateViewState {
                     it.copy(isTestRecordingAudio = isRecording)

@@ -47,6 +47,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewStateCreator
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
 import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewStateCreator
 import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayViewModel
@@ -59,6 +60,8 @@ import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewStateCreator
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsViewModel
@@ -81,6 +84,11 @@ import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettin
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewStateCreator
 
+val navigatorModule = module {
+    single {
+        Navigator(nativeApplication = get())
+    }
+}
 
 val serviceModule = module {
     single {
@@ -149,6 +157,18 @@ val viewModelFactory = module {
 
 val viewModelModule = module {
     single {
+        MainScreenViewStateCreator(
+            navigator = get()
+        )
+    }
+    single {
+        MainScreenViewModel(
+            viewStateCreator = get(),
+            navigator = get()
+        )
+    }
+
+    single {
         MicrophoneFabViewStateCreator(
             dialogManagerService = get(),
             serviceMiddleware = get(),
@@ -198,57 +218,68 @@ val viewModelModule = module {
     }
     single {
         ConfigurationScreenViewModel(
-            viewStateCreator = get()
+            viewStateCreator = get(),
+            navigator = get()
         )
     }
     single {
         AudioPlayingConfigurationViewModel(
-            service = get()
+            service = get(),
+            navigator = get()
         )
     }
     single {
         DialogManagementConfigurationViewModel(
-            service = get()
+            service = get(),
+            navigator = get()
         )
     }
     single {
         IntentHandlingConfigurationViewModel(
-            service = get()
+            service = get(),
+            navigator = get()
         )
     }
     single {
         IntentRecognitionConfigurationViewModel(
-            service = get()
+            service = get(),
+            navigator = get()
         )
     }
     single {
         MqttConfigurationViewModel(
-            service = get()
+            service = get(),
+            navigator = get()
         )
     }
     single {
         RemoteHermesHttpConfigurationViewModel(
-            service = get()
+            service = get(),
+            navigator = get()
         )
     }
     single {
         SpeechToTextConfigurationViewModel(
-            service = get()
+            service = get(),
+            navigator = get()
         )
     }
     single {
         TextToSpeechConfigurationViewModel(
-            service = get()
+            service = get(),
+            navigator = get()
         )
     }
     single {
         WakeWordConfigurationViewModel(
-            service = get()
+            service = get(),
+            navigator = get()
         )
     }
     single {
         WebServerConfigurationViewModel(
-            service = get()
+            service = get(),
+            navigator = get()
         )
     }
 
@@ -266,7 +297,8 @@ val viewModelModule = module {
     }
     single {
         SettingsScreenViewModel(
-            viewStateCreator = get()
+            viewStateCreator = get(),
+            navigator = get()
         )
     }
 
@@ -277,7 +309,8 @@ val viewModelModule = module {
     }
     single {
         AboutScreenViewModel(
-            viewStateCreator = get()
+            viewStateCreator = get(),
+            navigator = get()
         )
     }
 
@@ -292,7 +325,8 @@ val viewModelModule = module {
         SilenceDetectionSettingsViewModel(
             nativeApplication = get(),
             audioRecorder = audioRecorder,
-            viewStateCreator = get { parametersOf(audioRecorder) }
+            viewStateCreator = get { parametersOf(audioRecorder) },
+            navigator = get()
         )
     }
 
@@ -301,7 +335,8 @@ val viewModelModule = module {
     }
     single {
         AudioFocusSettingsViewModel(
-            viewStateCreator = get()
+            viewStateCreator = get(),
+            navigator = get()
         )
     }
 
@@ -310,7 +345,8 @@ val viewModelModule = module {
     }
     single {
         AudioRecorderSettingsViewModel(
-            viewStateCreator = get()
+            viewStateCreator = get(),
+            navigator = get()
         )
     }
 
@@ -321,7 +357,8 @@ val viewModelModule = module {
     }
     single {
         BackgroundServiceSettingsViewModel(
-            viewStateCreator = get()
+            viewStateCreator = get(),
+            navigator = get()
         )
     }
 
@@ -330,11 +367,16 @@ val viewModelModule = module {
     }
     single {
         DeviceSettingsSettingsViewModel(
-            viewStateCreator = get()
+            viewStateCreator = get(),
+            navigator = get()
         )
     }
 
-    single { IndicationSettingsViewModel() }
+    single {
+        IndicationSettingsViewModel(
+            navigator = get()
+        )
+    }
 
 
 
@@ -350,6 +392,7 @@ val viewModelModule = module {
         WakeIndicationSoundSettingsViewModel(
             localAudioService = get(),
             nativeApplication = get(),
+            navigator = get(),
             viewStateCreator = get {
                 parametersOf(
                     AppSetting.customWakeSounds,
@@ -363,6 +406,7 @@ val viewModelModule = module {
         RecordedIndicationSoundSettingsViewModel(
             localAudioService = get(),
             nativeApplication = get(),
+            navigator = get(),
             viewStateCreator = get {
                 parametersOf(
                     AppSetting.customRecordedSounds,
@@ -376,6 +420,7 @@ val viewModelModule = module {
         ErrorIndicationSoundSettingsViewModel(
             localAudioService = get(),
             nativeApplication = get(),
+            navigator = get(),
             viewStateCreator = get {
                 parametersOf(
                     AppSetting.customErrorSounds,
@@ -386,15 +431,20 @@ val viewModelModule = module {
         )
     }
 
-    single { LanguageSettingsViewModel() }
+    single {
+        LanguageSettingsViewModel(
+            navigator = get()
+        )
+    }
 
     single {
         LogSettingsViewModel(
-            nativeApplication = get()
+            nativeApplication = get(),
+            navigator = get()
         )
     }
-    single { MicrophoneOverlaySettingsViewModel() }
-    single { SaveAndRestoreSettingsViewModel() }
+    single { MicrophoneOverlaySettingsViewModel(navigator = get()) }
+    single { SaveAndRestoreSettingsViewModel(navigator = get()) }
 
     single {
         MicrophoneOverlayViewStateCreator(

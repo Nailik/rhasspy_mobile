@@ -15,7 +15,6 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.android.content.ServiceStateHeader
 import org.rhasspy.mobile.android.content.elements.CustomDivider
 import org.rhasspy.mobile.android.content.list.LogListElement
-import org.rhasspy.mobile.android.main.LocalConfigurationNavController
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
@@ -26,6 +25,7 @@ import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.SetSystemColor
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationTestViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.ToggleListFiltered
 
 /**
@@ -39,15 +39,13 @@ fun ConfigurationScreenTest(
 ) {
     SetSystemColor(1.dp)
 
-    val navController = LocalConfigurationNavController.current
-
     Scaffold(
         topBar = {
             AppBar(
                 viewState = viewState,
                 onAction = onAction,
                 title = MR.strings.test.stable,
-                onBackClick = navController::popBackStack
+                onBackClick = { onAction(BackClick) }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Close,

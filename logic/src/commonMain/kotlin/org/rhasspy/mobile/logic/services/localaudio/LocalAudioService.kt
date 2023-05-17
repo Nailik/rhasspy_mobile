@@ -1,10 +1,7 @@
 package org.rhasspy.mobile.logic.services.localaudio
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import okio.Path
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.audiofocus.AudioFocusRequestReason.Notification
@@ -27,7 +24,7 @@ class LocalAudioService(
 ) : IService(LogType.LocalAudioService) {
 
     private val audioFocusService by inject<AudioFocusService>()
-    private var coroutineScope = CoroutineScope(Dispatchers.Default)
+    private var coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val paramsFlow: StateFlow<LocalAudioServiceParams> = paramsCreator()
     private val params: LocalAudioServiceParams get() = paramsFlow.value

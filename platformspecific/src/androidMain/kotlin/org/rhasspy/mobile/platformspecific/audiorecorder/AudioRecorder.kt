@@ -46,7 +46,7 @@ actual class AudioRecorder : KoinComponent {
     //https://developer.android.com/reference/android/media/AudioFormat#encoding
     actual val absoluteMaxVolume = 32767.0
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Default)
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private var recorder: AudioRecord? = null
 

@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.settings.audiofocus
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -10,7 +11,7 @@ import org.rhasspy.mobile.settings.AppSetting
 
 class AudioFocusSettingsViewStateCreator {
 
-    private val updaterScope = CoroutineScope(Dispatchers.Default)
+    private val updaterScope = CoroutineScope(Dispatchers.IO)
 
     operator fun invoke(): StateFlow<AudioFocusSettingsViewState> {
         val viewState = MutableStateFlow(getViewState())

@@ -13,17 +13,24 @@ import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Action.RunIntentRecognition
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.IntentRecognitionConfigurationScreenDestination.EditScreen
 
 @Stable
 class IntentRecognitionConfigurationViewModel(
     service: IntentRecognitionService,
+    navigator: Navigator
 ) : IConfigurationViewModel<IntentRecognitionConfigurationViewState>(
     service = service,
-    initialViewState = ::IntentRecognitionConfigurationViewState
+    initialViewState = ::IntentRecognitionConfigurationViewState,
+    navigator = navigator
 ) {
+
+    val screen = navigator.topScreen(EditScreen)
 
     fun onEvent(event: IntentRecognitionConfigurationUiEvent) {
         when (event) {
@@ -46,6 +53,7 @@ class IntentRecognitionConfigurationViewModel(
     private fun onAction(action: Action) {
         when (action) {
             RunIntentRecognition -> runIntentRecognition()
+            BackClick -> navigator.popBackStack()
         }
     }
 

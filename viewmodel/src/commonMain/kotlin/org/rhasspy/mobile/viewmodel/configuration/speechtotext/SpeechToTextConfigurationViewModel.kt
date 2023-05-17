@@ -14,17 +14,24 @@ import org.rhasspy.mobile.logic.services.speechtotext.SpeechToTextServiceParams
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action.TestSpeechToTextToggleRecording
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.SpeechToTextConfigurationScreenDestination.EditScreen
 
 @Stable
 class SpeechToTextConfigurationViewModel(
-    service: SpeechToTextService
+    service: SpeechToTextService,
+    navigator: Navigator
 ) : IConfigurationViewModel<SpeechToTextConfigurationViewState>(
     service = service,
-    initialViewState = ::SpeechToTextConfigurationViewState
+    initialViewState = ::SpeechToTextConfigurationViewState,
+    navigator = navigator
 ) {
+
+    val screen = navigator.topScreen(EditScreen)
 
     fun onEvent(event: SpeechToTextConfigurationUiEvent) {
         when (event) {
@@ -47,6 +54,7 @@ class SpeechToTextConfigurationViewModel(
     private fun onAction(action: Action) {
         when (action) {
             TestSpeechToTextToggleRecording -> toggleRecording()
+            BackClick -> navigator.popBackStack()
         }
     }
 

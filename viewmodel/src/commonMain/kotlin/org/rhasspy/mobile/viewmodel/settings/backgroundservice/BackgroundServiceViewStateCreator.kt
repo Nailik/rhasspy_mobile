@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.settings.backgroundservice
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
@@ -13,7 +14,7 @@ class BackgroundServiceViewStateCreator(
     private val nativeApplication: NativeApplication
 ) {
 
-    private val updaterScope = CoroutineScope(Dispatchers.Default)
+    private val updaterScope = CoroutineScope(Dispatchers.IO)
 
     operator fun invoke(): MutableStateFlow<BackgroundServiceViewState> {
         val viewState = MutableStateFlow(getViewState())

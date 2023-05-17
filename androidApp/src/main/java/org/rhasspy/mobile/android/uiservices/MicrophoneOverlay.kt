@@ -152,7 +152,7 @@ object MicrophoneOverlay : KoinComponent {
             }
             logger.d { "start" }
 
-            job = CoroutineScope(Dispatchers.Default).launch {
+            job = CoroutineScope(Dispatchers.IO).launch {
                 viewModel.viewState.collect {
                     try {
                         if (it.shouldOverlayBeShown != showVisualIndicationOldValue) {

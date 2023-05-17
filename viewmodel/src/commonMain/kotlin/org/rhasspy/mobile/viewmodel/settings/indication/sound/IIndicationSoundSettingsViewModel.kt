@@ -19,9 +19,9 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ISetting
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.*
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.ChooseSoundFile
-import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.ToggleAudioPlayerActive
+import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Consumed.ShowSnackBar
 import kotlin.reflect.KFunction1
@@ -30,6 +30,7 @@ import kotlin.reflect.KFunction1
 abstract class IIndicationSoundSettingsViewModel(
     private val localAudioService: LocalAudioService,
     private val nativeApplication: NativeApplication,
+    private val navigator: Navigator,
     private val customSoundOptions: ISetting<ImmutableList<String>>,
     private val soundSetting: ISetting<String>,
     private val soundVolume: ISetting<Float>,
@@ -94,6 +95,8 @@ abstract class IIndicationSoundSettingsViewModel(
 
             ToggleAudioPlayerActive ->
                 if (localAudioService.isPlayingState.value) localAudioService.stop() else playSound(localAudioService)
+
+            BackClick -> navigator.popBackStack()
         }
     }
 

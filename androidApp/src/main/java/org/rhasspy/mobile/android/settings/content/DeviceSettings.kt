@@ -10,12 +10,13 @@ import org.rhasspy.mobile.android.content.list.SliderListItem
 import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
-import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.DeviceSettings
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.*
 
 /**
@@ -32,8 +33,9 @@ fun DeviceSettingsContent() {
     val viewState by viewModel.viewState.collectAsState()
 
     SettingsScreenItemContent(
-        modifier = Modifier.testTag(SettingsScreenType.DeviceSettings),
-        title = MR.strings.device.stable
+        modifier = Modifier.testTag(DeviceSettings),
+        title = MR.strings.device.stable,
+        onBackClick = { viewModel.onEvent(DeviceSettingsUiEvent.Action.BackClick) }
     ) {
 
         InformationListElement(text = MR.strings.deviceSettingsLongInformation.stable)

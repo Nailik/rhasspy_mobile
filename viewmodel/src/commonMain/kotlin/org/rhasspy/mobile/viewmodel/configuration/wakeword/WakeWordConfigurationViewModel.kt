@@ -3,6 +3,7 @@ package org.rhasspy.mobile.viewmodel.configuration.wakeword
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import okio.Path
 import org.koin.core.component.get
@@ -23,8 +24,8 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.*
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.MicrophonePermissionAllowed
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.TestStartWakeWord
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.*
@@ -32,15 +33,22 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState.PorcupineCustomKeywordViewState
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.EditScreen
 import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
 @Stable
 class WakeWordConfigurationViewModel(
-    service: WakeWordService
+    service: WakeWordService,
+    navigator: Navigator
 ) : IConfigurationViewModel<WakeWordConfigurationViewState>(
     service = service,
-    initialViewState = ::WakeWordConfigurationViewState
+    initialViewState = ::WakeWordConfigurationViewState,
+    navigator = navigator
 ) {
+
+    val screen = navigator.topScreen(EditScreen)
 
     fun onEvent(event: WakeWordConfigurationUiEvent) {
         when (event) {
@@ -73,6 +81,8 @@ class WakeWordConfigurationViewModel(
             }
 
             TestStartWakeWord -> startWakeWordDetection()
+            BackClick -> navigator.popBackStack()
+            is Navigate -> navigator.navigate(action.destination)
         }
     }
 
@@ -87,7 +97,7 @@ class WakeWordConfigurationViewModel(
     private fun onPorcupineAction(action: PorcupineUiEvent) {
         when (action) {
             is PorcupineUiEvent.Change -> onPorcupineChange(action)
-            is PorcupineUiEvent.Action -> onPorcupineNavigate(action)
+            is PorcupineUiEvent.Action -> onPorcupineAction(action)
         }
     }
 
@@ -122,7 +132,7 @@ class WakeWordConfigurationViewModel(
         }
     }
 
-    private fun onPorcupineNavigate(action: PorcupineUiEvent.Action) {
+    private fun onPorcupineAction(action: PorcupineUiEvent.Action) {
         when (action) {
             AddCustomPorcupineKeyword -> addCustomPorcupineKeyword()
             DownloadCustomPorcupineKeyword -> {
@@ -140,6 +150,9 @@ class WakeWordConfigurationViewModel(
                     }
                 }
             }
+
+            PorcupineUiEvent.Action.BackClick -> navigator.popBackStack()
+            PorcupineLanguageClick -> navigator.navigate(EditPorcupineLanguageScreen)
         }
     }
 
@@ -148,7 +161,7 @@ class WakeWordConfigurationViewModel(
     private val filesToDelete = mutableListOf<Path>()
 
     private fun addCustomPorcupineKeyword() {
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(Dispatchers.IO) {
             FileUtils.selectFile(FolderType.PorcupineFolder)?.also { path ->
                 newFiles.add(path)
                 onPorcupineChange(AddPorcupineKeywordCustom(path))

@@ -9,12 +9,16 @@ import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Action
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.*
 
 @Stable
 class LogSettingsViewModel(
-    private val nativeApplication: NativeApplication
+    private val nativeApplication: NativeApplication,
+    private val navigator: Navigator
 ) : ViewModel(), KoinComponent {
 
     private val _viewState = MutableStateFlow(LogSettingsViewState())
@@ -23,6 +27,7 @@ class LogSettingsViewModel(
     fun onEvent(event: LogSettingsUiEvent) {
         when (event) {
             is Change -> onChange(event)
+            is Action -> onAction(event)
         }
     }
 
@@ -51,6 +56,12 @@ class LogSettingsViewModel(
                     it.copy(isShowLogEnabled = change.enabled)
                 }
             }
+        }
+    }
+
+    private fun onAction(action: Action) {
+        when (action) {
+            is BackClick -> navigator.popBackStack()
         }
     }
 

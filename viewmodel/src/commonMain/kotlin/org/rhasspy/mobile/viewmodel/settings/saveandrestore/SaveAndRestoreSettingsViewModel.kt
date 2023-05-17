@@ -3,6 +3,7 @@ package org.rhasspy.mobile.viewmodel.settings.saveandrestore
 import androidx.compose.runtime.Stable
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -10,13 +11,16 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.settings.SettingsUtils
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Consumed
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Consumed.ShowSnackBar
 
 @Stable
-class SaveAndRestoreSettingsViewModel : ViewModel() {
+class SaveAndRestoreSettingsViewModel(
+    private val navigator: Navigator
+) : ViewModel() {
 
     private val _viewState = MutableStateFlow(SaveAndRestoreSettingsViewState())
     val viewState = _viewState.readOnly
@@ -29,7 +33,7 @@ class SaveAndRestoreSettingsViewModel : ViewModel() {
     }
 
     private fun onAction(action: Action) {
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(Dispatchers.IO) {
             when (action) {
                 ExportSettingsFile -> {
                     if (!SettingsUtils.exportSettingsFile()) {
@@ -52,6 +56,8 @@ class SaveAndRestoreSettingsViewModel : ViewModel() {
                         it.copy(snackBarText = MR.strings.shareSettingsFileFailed.stable)
                     }
                 }
+
+                is BackClick -> navigator.popBackStack()
             }
         }
     }

@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.ui.content.elements
 
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,7 +16,7 @@ fun Icon(
     modifier: Modifier = Modifier,
     tint: Color = LocalContentColor.current
 ) {
-    androidx.compose.material3.Icon(
+    Icon(
         painter = rememberVectorPainter(imageVector),
         contentDescription = translate(contentDescription),
         modifier = modifier,

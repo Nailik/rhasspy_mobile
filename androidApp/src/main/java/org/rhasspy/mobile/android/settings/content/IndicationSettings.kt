@@ -7,26 +7,18 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.android.content.SecondaryContent
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelectionList
 import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.content.list.SwitchListItem
-import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.permissions.RequiresOverlayPermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
-import org.rhasspy.mobile.android.settings.SettingsScreenType
-import org.rhasspy.mobile.android.settings.content.sound.IndicationSettingsScreens
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSoundScreen
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
@@ -35,7 +27,11 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.IndicationSettings
+import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination.*
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewState
@@ -46,57 +42,39 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoun
 /**
  * indication sounds
  */
-@Preview
 @Composable
-fun WakeWordIndicationSettingsContent() {
+fun IndicationSettingsContent() {
     val viewModelFactory = LocalViewModelFactory.current
     val viewModel: IndicationSettingsViewModel = viewModelFactory.getViewModel()
-    val navController = rememberNavController()
+    val screen by viewModel.screen.collectAsState()
 
-    CompositionLocalProvider(
-        LocalNavController provides navController
-    ) {
-        NavHost(
-            navController = navController,
-            startDestination = IndicationSettingsScreens.Overview.route
-        ) {
-
-            composable(IndicationSettingsScreens.Overview.route) {
-                val viewState by viewModel.viewState.collectAsState()
-
-                IndicationSettingsOverview(
-                    viewState = viewState,
-                    onEvent = viewModel::onEvent
-                )
-            }
-
-            composable(IndicationSettingsScreens.WakeIndicationSound.route) {
-                IndicationSoundScreen(
-                    viewModel = viewModelFactory.getViewModel<WakeIndicationSoundSettingsViewModel>(),
-                    title = MR.strings.wakeSound.stable,
-                    screen = IndicationSettingsScreens.WakeIndicationSound
-                )
-            }
-
-            composable(IndicationSettingsScreens.RecordedIndicationSound.route) {
-                IndicationSoundScreen(
-                    viewModel = viewModelFactory.getViewModel<RecordedIndicationSoundSettingsViewModel>(),
-                    title = MR.strings.recordedSound.stable,
-                    screen = IndicationSettingsScreens.RecordedIndicationSound
-                )
-            }
-
-            composable(IndicationSettingsScreens.ErrorIndicationSound.route) {
-                IndicationSoundScreen(
-                    viewModel = viewModelFactory.getViewModel<ErrorIndicationSoundSettingsViewModel>(),
-                    title = MR.strings.errorSound.stable,
-                    screen = IndicationSettingsScreens.ErrorIndicationSound
-                )
-            }
-
+    when (screen) {
+        null -> {
+            val viewState by viewModel.viewState.collectAsState()
+            IndicationSettingsOverview(
+                viewState = viewState,
+                onEvent = viewModel::onEvent
+            )
         }
-    }
 
+        ErrorIndicationSoundScreen -> IndicationSoundScreen(
+            viewModel = viewModelFactory.getViewModel<ErrorIndicationSoundSettingsViewModel>(),
+            screen = ErrorIndicationSoundScreen,
+            title = MR.strings.errorSound.stable
+        )
+
+        RecordedIndicationSoundScreen -> IndicationSoundScreen(
+            viewModel = viewModelFactory.getViewModel<RecordedIndicationSoundSettingsViewModel>(),
+            screen = RecordedIndicationSoundScreen,
+            title = MR.strings.recordedSound.stable
+        )
+
+        WakeIndicationSoundScreen -> IndicationSoundScreen(
+            viewModel = viewModelFactory.getViewModel<WakeIndicationSoundSettingsViewModel>(),
+            screen = WakeIndicationSoundScreen,
+            title = MR.strings.wakeSound.stable
+        )
+    }
 }
 
 /**
@@ -109,8 +87,9 @@ fun IndicationSettingsOverview(
 ) {
 
     SettingsScreenItemContent(
-        modifier = Modifier.testTag(SettingsScreenType.IndicationSettings),
-        title = MR.strings.indication.stable
+        modifier = Modifier.testTag(IndicationSettings),
+        title = MR.strings.indication.stable,
+        onBackClick = { onEvent(BackClick) }
     ) {
 
         Card(
@@ -191,13 +170,12 @@ private fun SoundIndicationSettingsOverview(
         )
 
         //opens page for sounds
-        val navigation = LocalNavController.current
 
         //wake sound
         ListElement(
             modifier = Modifier
-                .testTag(IndicationSettingsScreens.WakeIndicationSound)
-                .clickable { navigation.navigate(IndicationSettingsScreens.WakeIndicationSound.route) },
+                .testTag(WakeIndicationSoundScreen)
+                .clickable { onEvent(Navigate(WakeIndicationSoundScreen)) },
             text = { Text(MR.strings.wakeWord.stable) },
             secondaryText = { Text(text = wakeSound) }
         )
@@ -205,8 +183,8 @@ private fun SoundIndicationSettingsOverview(
         //recorded sound
         ListElement(
             modifier = Modifier
-                .testTag(IndicationSettingsScreens.RecordedIndicationSound)
-                .clickable { navigation.navigate(IndicationSettingsScreens.RecordedIndicationSound.route) },
+                .testTag(RecordedIndicationSoundScreen)
+                .clickable { onEvent(Navigate(RecordedIndicationSoundScreen)) },
             text = { Text(MR.strings.recordedSound.stable) },
             secondaryText = { Text(text = recordedSound) }
         )
@@ -214,8 +192,8 @@ private fun SoundIndicationSettingsOverview(
         //error sound
         ListElement(
             modifier = Modifier
-                .testTag(IndicationSettingsScreens.ErrorIndicationSound)
-                .clickable { navigation.navigate(IndicationSettingsScreens.ErrorIndicationSound.route) },
+                .testTag(ErrorIndicationSoundScreen)
+                .clickable { onEvent(Navigate(ErrorIndicationSoundScreen)) },
             text = { Text(MR.strings.errorSound.stable) },
             secondaryText = { Text(text = errorSound) }
         )

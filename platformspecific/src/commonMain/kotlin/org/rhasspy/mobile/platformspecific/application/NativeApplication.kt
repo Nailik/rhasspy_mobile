@@ -17,6 +17,8 @@ expect abstract class NativeApplication() {
 
     fun isInstrumentedTest(): Boolean
 
+    fun closeApp()
+
     fun restart()
 
     fun onCreate()

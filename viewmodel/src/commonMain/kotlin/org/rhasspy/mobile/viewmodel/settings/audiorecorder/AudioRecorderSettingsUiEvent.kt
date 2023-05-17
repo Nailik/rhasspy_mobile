@@ -6,6 +6,10 @@ import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
 
 sealed interface AudioRecorderSettingsUiEvent {
 
+    sealed interface Action : AudioRecorderSettingsUiEvent {
+        object BackClick : Action
+    }
+
     sealed interface Change : AudioRecorderSettingsUiEvent {
 
         data class SelectAudioRecorderChannelType(val audioRecorderChannelType: AudioRecorderChannelType) : Change

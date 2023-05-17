@@ -46,6 +46,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                implementation(AndroidX.Activity.compose)
                 implementation(AndroidX.Compose.ui)
                 implementation(Google.accompanist.systemUiController)
                 implementation(AndroidX.core)

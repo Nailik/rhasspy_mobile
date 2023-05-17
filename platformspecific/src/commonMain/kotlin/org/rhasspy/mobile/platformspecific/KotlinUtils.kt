@@ -5,6 +5,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.*
 
 fun <T1, T2, R> combineState(
@@ -32,7 +33,7 @@ inline fun <reified T> combineStateFlow(
 )
 
 fun <T, R> StateFlow<T>.mapReadonlyState(
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Default),
+    scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
     sharingStarted: SharingStarted = SharingStarted.Lazily,
     transform: (T) -> R
 ): StateFlow<R> = this.map {

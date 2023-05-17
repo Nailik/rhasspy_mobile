@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
-import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.android.content.list.SwitchListItem
@@ -28,6 +27,7 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationViewState
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.IntentRecognitionConfigurationScreen
 
 /**
  * configuration content for intent recognition
@@ -38,14 +38,15 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
 fun IntentRecognitionConfigurationContent() {
     val viewModel: IntentRecognitionConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
+    val screen by viewModel.screen.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(ConfigurationScreenType.IntentRecognitionConfiguration),
+        modifier = Modifier.testTag(IntentRecognitionConfigurationScreen),
+        screenType = screen.destinationType,
         config = ConfigurationScreenConfig(MR.strings.intentRecognition.stable),
         viewState = viewState,
-        onAction = { viewModel.onAction(it) },
-        onConsumed = { viewModel.onConsumed(it) },
+        onAction = viewModel::onAction,
         testContent = {
             TestContent(
                 testIntentRecognitionText = contentViewState.testIntentRecognitionText,
@@ -61,6 +62,7 @@ fun IntentRecognitionConfigurationContent() {
             )
         }
     }
+
 }
 
 @Composable

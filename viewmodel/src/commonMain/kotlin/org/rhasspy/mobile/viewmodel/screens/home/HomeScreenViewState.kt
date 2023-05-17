@@ -7,20 +7,17 @@ import org.rhasspy.mobile.data.service.option.WakeWordOption
 data class HomeScreenViewState internal constructor(
     val isMicrophonePermissionRequired: Boolean,
     val isPlayingRecording: Boolean,
-    val isPlayingRecordingEnabled: Boolean,
-    val isShowLogEnabled: Boolean
+    val isPlayingRecordingEnabled: Boolean
 ) {
 
     constructor(
         wakeWordOption: WakeWordOption,
         isPlayingRecording: Boolean,
-        isPlayingRecordingEnabled: Boolean,
-        isShowLogEnabled: Boolean
+        isPlayingRecordingEnabled: Boolean
     ) : this(
         isMicrophonePermissionRequired = wakeWordOption == WakeWordOption.Porcupine || wakeWordOption == WakeWordOption.Udp,
         isPlayingRecording = isPlayingRecording,
-        isPlayingRecordingEnabled = isPlayingRecordingEnabled,
-        isShowLogEnabled = isShowLogEnabled
+        isPlayingRecordingEnabled = isPlayingRecordingEnabled
     )
 
 }
