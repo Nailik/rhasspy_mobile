@@ -9,12 +9,11 @@ sealed interface SilenceDetectionSettingsUiEvent {
         data class UpdateSilenceDetectionAudioLevelPercentage(val percentage: Float) : Change
     }
 
-    sealed interface Navigate : SilenceDetectionSettingsUiEvent {
-        object BackClick : Navigate
-    }
-
     sealed interface Action : SilenceDetectionSettingsUiEvent {
+
         object ToggleAudioLevelTest : Action
+        object BackClick : Action
+
     }
 
 }

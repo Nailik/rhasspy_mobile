@@ -7,13 +7,11 @@ import org.rhasspy.mobile.data.event.EventState.Consumed
 import org.rhasspy.mobile.data.event.EventState.Triggered
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenDestination.*
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.*
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToError
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Navigate.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.IConfigurationScreenUiStateEvent.ScrollToErrorEventIState
 
 @Stable
@@ -23,13 +21,12 @@ class ConfigurationScreenViewModel(
 ) : ViewModel() {
 
     val viewState: StateFlow<ConfigurationScreenViewState> = viewStateCreator()
-    val screen = navigator.getBackStack(ConfigurationScreenDestination::class, OverviewScreen)
+    val screen = navigator.topScreen<ConfigurationScreenNavigationDestination>()
 
     fun onEvent(event: ConfigurationScreenUiEvent) {
         when (event) {
             is Change -> onChange(event)
             is Action -> onAction(event)
-            is Navigate -> onNavigate(event)
         }
     }
 
@@ -43,27 +40,9 @@ class ConfigurationScreenViewModel(
         when (action) {
             ScrollToError -> viewStateCreator.updateScrollToError(Triggered)
             BackClick -> navigator.popBackStack()
+            is Navigate -> navigator.navigate(action.destination)
         }
     }
-
-    private fun onNavigate(navigate: Navigate) {
-        navigator.navigate(
-            type = ConfigurationScreenDestination::class,
-            screen = when (navigate) {
-                AudioPlayingClick -> AudioPlayingConfigurationScreenDestination
-                IntentHandlingClick -> IntentHandlingConfigurationScreen
-                IntentRecognitionClick -> IntentRecognitionConfigurationScreen
-                MqttClick -> MqttConfigurationScreen
-                DialogManagementClick -> DialogManagementConfigurationScreen
-                RemoteHermesHttpClick -> RemoteHermesHttpConfigurationScreen
-                SpeechToTextClick -> SpeechToTextConfigurationScreen
-                TextToSpeechClick -> TextToSpeechConfigurationScreen
-                WakeWordClick -> WakeWordConfigurationScreen
-                WebserverClick -> WebServerConfigurationScreen
-            }
-        )
-    }
-
 
     fun onConsumed(event: IConfigurationScreenUiStateEvent) {
         when (event) {

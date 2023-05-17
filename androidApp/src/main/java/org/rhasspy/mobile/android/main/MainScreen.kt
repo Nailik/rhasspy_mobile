@@ -29,10 +29,10 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.AppTheme
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainNavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainNavigationDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.*
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent
-import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Navigate.*
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewState
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent
@@ -78,14 +78,16 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
 
                         val viewModel: MainScreenViewModel = LocalViewModelFactory.current.getViewModel()
 
-                        val screen by viewModel.screen.top.collectAsState()
+                        val screen by viewModel.screen.collectAsState()
                         val viewState by viewModel.viewState.collectAsState()
 
-                        MainScreenContent(
-                            screen = screen,
-                            viewState = viewState,
-                            onEvent = viewModel::onEvent
-                        )
+                        screen?.also { screen ->
+                            MainScreenContent(
+                                screen = screen,
+                                viewState = viewState,
+                                onEvent = viewModel::onEvent
+                            )
+                        }
                     }
 
                 }
@@ -97,7 +99,7 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
 
 @Composable
 private fun MainScreenContent(
-    screen: MainNavigationDestination,
+    screen: MainScreenNavigationDestination,
     viewState: MainScreenViewState,
     onEvent: (event: MainScreenUiEvent) -> Unit
 ) {
@@ -184,10 +186,14 @@ private fun BottomNavigation(
     NavigationBar {
 
         NavigationBarItem(
-            modifier = Modifier.testTag(BottomBarHomeClick.toString()),
-                    icon = {
+            modifier = Modifier.testTag(HomeScreen),
+            icon = {
                 Icon(
-                    if (activeIndex == 0) { Icons.Filled.Mic } else { Icons.Outlined.Mic },
+                    if (activeIndex == 0) {
+                        Icons.Filled.Mic
+                    } else {
+                        Icons.Outlined.Mic
+                    },
                     MR.strings.home.stable
                 )
             },
@@ -199,11 +205,11 @@ private fun BottomNavigation(
                 )
             },
             selected = activeIndex == 0,
-            onClick = { onEvent(BottomBarHomeClick)}
+            onClick = { onEvent(Navigate(HomeScreen)) }
         )
 
         NavigationBarItem(
-            modifier = Modifier.testTag(BottomBarConfigurationClick.toString()),
+            modifier = Modifier.testTag(ConfigurationScreen),
             icon = {
                 Icon(
                     RhasspyLogo,
@@ -219,13 +225,18 @@ private fun BottomNavigation(
                 )
             },
             selected = activeIndex == 1,
-            onClick = { onEvent(BottomBarConfigurationClick)}
+            onClick = { onEvent(Navigate(ConfigurationScreen)) }
         )
 
         NavigationBarItem(
-            modifier = Modifier.testTag(BottomBarSettingsClick.toString()),
+            modifier = Modifier.testTag(SettingsScreen),
             icon = {
-                Icon(if (activeIndex == 2) { Icons.Filled.Settings } else { Icons.Outlined.Settings },
+                Icon(
+                    if (activeIndex == 2) {
+                        Icons.Filled.Settings
+                    } else {
+                        Icons.Outlined.Settings
+                    },
                     MR.strings.settings.stable
                 )
             },
@@ -237,12 +248,12 @@ private fun BottomNavigation(
                 )
             },
             selected = activeIndex == 2,
-            onClick = { onEvent(BottomBarSettingsClick)}
+            onClick = { onEvent(Navigate(SettingsScreen)) }
         )
 
         if (isShowLogEnabled) {
             NavigationBarItem(
-                modifier = Modifier.testTag(BottomBarLogClick.toString()),
+                modifier = Modifier.testTag(LogScreen),
                 icon = {
                     Icon(Icons.Filled.Code, MR.strings.log.stable)
                 },
@@ -254,7 +265,7 @@ private fun BottomNavigation(
                     )
                 },
                 selected = activeIndex == 3,
-                onClick = { onEvent(BottomBarLogClick)}
+                onClick = { onEvent(Navigate(LogScreen)) }
             )
         }
 

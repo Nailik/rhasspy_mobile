@@ -67,7 +67,7 @@ class AutomaticSilenceDetectionSettingsContentTest : FlakyTest() {
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.EnabledSwitch).onListItemSwitch().assertIsOn()
         //Automatic silence detection enabled saved
-        assertTrue { SilenceDetectionSettingsViewModel(get(), get(), get()).viewState.value.isSilenceDetectionEnabled }
+        assertTrue { SilenceDetectionSettingsViewModel(get(), get(), get(), get()).viewState.value.isSilenceDetectionEnabled }
         //settings visible
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration)
             .assertIsDisplayed()
@@ -80,7 +80,7 @@ class AutomaticSilenceDetectionSettingsContentTest : FlakyTest() {
         //silence detection time 5000 saved
         assertEquals(
             numberInputTest,
-            SilenceDetectionSettingsViewModel(get(), get(), get()).viewState.value.silenceDetectionMinimumTimeText
+            SilenceDetectionSettingsViewModel(get(), get(), get(), get()).viewState.value.silenceDetectionMinimumTimeText
         )
 
         //user changes silence detection time to 5000
@@ -91,7 +91,7 @@ class AutomaticSilenceDetectionSettingsContentTest : FlakyTest() {
         //silence detection time 5000 saved
         assertEquals(
             numberInputTest,
-            SilenceDetectionSettingsViewModel(get(), get(), get()).viewState.value.silenceDetectionTimeText
+            SilenceDetectionSettingsViewModel(get(), get(), get(), get()).viewState.value.silenceDetectionTimeText
         )
     }
 

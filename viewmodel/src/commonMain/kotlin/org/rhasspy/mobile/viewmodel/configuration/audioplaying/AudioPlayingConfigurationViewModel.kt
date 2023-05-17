@@ -20,7 +20,6 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.AudioPlayingConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.AudioPlayingConfigurationScreenDestination.EditScreen
 
 /**
@@ -41,7 +40,7 @@ class AudioPlayingConfigurationViewModel(
     navigator = navigator
 ) {
 
-    val screen = navigator.getBackStack(AudioPlayingConfigurationScreenDestination::class, EditScreen)
+    val screen = navigator.topScreen(EditScreen)
 
     fun onEvent(change: AudioPlayingConfigurationUiEvent) {
         when (change) {

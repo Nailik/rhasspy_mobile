@@ -16,7 +16,6 @@ import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.MqttConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.MqttConfigurationScreenDestination.EditScreen
 import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
@@ -30,7 +29,7 @@ class MqttConfigurationViewModel(
     navigator = navigator
 ) {
 
-    val screen = navigator.getBackStack(MqttConfigurationScreenDestination::class, EditScreen)
+    val screen = navigator.topScreen(EditScreen)
 
     fun onEvent(action: MqttConfigurationUiEvent) {
         when (action) {

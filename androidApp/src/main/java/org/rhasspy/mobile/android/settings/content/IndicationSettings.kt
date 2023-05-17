@@ -27,11 +27,12 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
+import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.IndicationSettings
 import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination.*
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Navigate.*
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewState
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.ErrorIndicationSoundSettingsViewModel
@@ -45,10 +46,10 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoun
 fun IndicationSettingsContent() {
     val viewModelFactory = LocalViewModelFactory.current
     val viewModel: IndicationSettingsViewModel = viewModelFactory.getViewModel()
-    val screen by viewModel.screen.top.collectAsState()
+    val screen by viewModel.screen.collectAsState()
 
     when (screen) {
-        OverviewScreen -> {
+        null -> {
             val viewState by viewModel.viewState.collectAsState()
             IndicationSettingsOverview(
                 viewState = viewState,
@@ -58,16 +59,19 @@ fun IndicationSettingsContent() {
 
         ErrorIndicationSoundScreen -> IndicationSoundScreen(
             viewModel = viewModelFactory.getViewModel<ErrorIndicationSoundSettingsViewModel>(),
+            screen = ErrorIndicationSoundScreen,
             title = MR.strings.errorSound.stable
         )
 
         RecordedIndicationSoundScreen -> IndicationSoundScreen(
             viewModel = viewModelFactory.getViewModel<RecordedIndicationSoundSettingsViewModel>(),
+            screen = RecordedIndicationSoundScreen,
             title = MR.strings.recordedSound.stable
         )
 
         WakeIndicationSoundScreen -> IndicationSoundScreen(
             viewModel = viewModelFactory.getViewModel<WakeIndicationSoundSettingsViewModel>(),
+            screen = WakeIndicationSoundScreen,
             title = MR.strings.wakeSound.stable
         )
     }
@@ -83,7 +87,7 @@ fun IndicationSettingsOverview(
 ) {
 
     SettingsScreenItemContent(
-        modifier = Modifier,
+        modifier = Modifier.testTag(IndicationSettings),
         title = MR.strings.indication.stable,
         onBackClick = { onEvent(BackClick) }
     ) {
@@ -170,7 +174,8 @@ private fun SoundIndicationSettingsOverview(
         //wake sound
         ListElement(
             modifier = Modifier
-                .clickable { onEvent(WakeIndicationSoundClick) },
+                .testTag(WakeIndicationSoundScreen)
+                .clickable { onEvent(Navigate(WakeIndicationSoundScreen)) },
             text = { Text(MR.strings.wakeWord.stable) },
             secondaryText = { Text(text = wakeSound) }
         )
@@ -178,7 +183,8 @@ private fun SoundIndicationSettingsOverview(
         //recorded sound
         ListElement(
             modifier = Modifier
-                .clickable { onEvent(RecordedIndicationSoundClick) },
+                .testTag(RecordedIndicationSoundScreen)
+                .clickable { onEvent(Navigate(RecordedIndicationSoundScreen)) },
             text = { Text(MR.strings.recordedSound.stable) },
             secondaryText = { Text(text = recordedSound) }
         )
@@ -186,7 +192,8 @@ private fun SoundIndicationSettingsOverview(
         //error sound
         ListElement(
             modifier = Modifier
-                .clickable { onEvent(ErrorIndicationSoundClick) },
+                .testTag(ErrorIndicationSoundScreen)
+                .clickable { onEvent(Navigate(ErrorIndicationSoundScreen)) },
             text = { Text(MR.strings.errorSound.stable) },
             secondaryText = { Text(text = errorSound) }
         )

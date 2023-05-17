@@ -93,7 +93,7 @@ class MainActivity : KoinComponent, AppCompatActivity() {
             }
         }
 
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             MicrophoneWidgetUtils.updateWidget()
         }
     }

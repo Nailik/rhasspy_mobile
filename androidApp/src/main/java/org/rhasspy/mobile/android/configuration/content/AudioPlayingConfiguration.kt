@@ -29,6 +29,7 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewState
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.AudioPlayingConfigurationScreen
 
 /**
  * Content to configure audio playing
@@ -39,15 +40,15 @@ import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfi
 fun AudioPlayingConfigurationContent() {
     val viewModel: AudioPlayingConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
-    val screen by viewModel.screen.top.collectAsState()
+    val screen by viewModel.screen.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
-        modifier = Modifier,
+        modifier = Modifier.testTag(AudioPlayingConfigurationScreen),
         screenType = screen.destinationType,
         config = ConfigurationScreenConfig(MR.strings.audioPlaying.stable),
         viewState = viewState,
-        onAction = { viewModel.onAction(it) },
+        onAction = viewModel::onAction,
         testContent = { TestContent(viewModel::onEvent) }
     ) {
 

@@ -9,7 +9,9 @@ import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action
+import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.OpenSourceCode
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Consumed
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Consumed.ShowSnackBar
@@ -21,7 +23,8 @@ import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
  */
 @Stable
 class AboutScreenViewModel(
-    viewStateCreator: AboutScreenViewStateCreator
+    viewStateCreator: AboutScreenViewStateCreator,
+    private val navigator: Navigator,
 ) : ViewModel(), KoinComponent {
 
     private val _viewState: MutableStateFlow<AboutScreenViewState> = viewStateCreator()
@@ -37,6 +40,7 @@ class AboutScreenViewModel(
     private fun onAction(action: Action) {
         when (action) {
             OpenSourceCode -> openSourceCode()
+            BackClick -> navigator.popBackStack()
         }
     }
 

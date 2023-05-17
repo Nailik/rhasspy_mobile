@@ -4,10 +4,10 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Action
+import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Navigate
-import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Navigate.BackClick
 
 class AudioFocusSettingsViewModel(
     viewStateCreator: AudioFocusSettingsViewStateCreator,
@@ -19,7 +19,7 @@ class AudioFocusSettingsViewModel(
     fun onEvent(event: AudioFocusSettingsUiEvent) {
         when (event) {
             is Change -> onChange(event)
-            is Navigate -> onNavigate(event)
+            is Action -> onAction(event)
         }
     }
 
@@ -33,8 +33,8 @@ class AudioFocusSettingsViewModel(
         }
     }
 
-    private fun onNavigate(navigate: Navigate) {
-        when (navigate) {
+    private fun onAction(action: Action) {
+        when (action) {
             is BackClick -> navigator.popBackStack()
         }
     }

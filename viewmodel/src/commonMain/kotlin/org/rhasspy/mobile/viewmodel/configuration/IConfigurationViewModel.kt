@@ -6,13 +6,10 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -26,7 +23,6 @@ import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Navigate.BackClick
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
@@ -86,8 +82,8 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
 
     fun onAction(action: IConfigurationUiEvent) {
         when (action) {
-            Discard -> discard()
-            Save -> save()
+            Discard -> discard(false)
+            Save -> save(false)
             StartTest -> startTest()
             StopTest -> stopTest()
             BackPress -> {
@@ -98,6 +94,8 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
                 }
             }
 
+            SaveDialog -> save(true)
+            DiscardDialog -> discard(true)
             DismissDialog -> _viewState.update { it.copy(showUnsavedChangesDialog = false) }
             ToggleListAutoscroll -> configurationTestViewState.update { it.copy(isListAutoscroll = !it.isListAutoscroll) }
             ToggleListFiltered ->
@@ -120,36 +118,34 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
     }
 
     private val isTestRunning = MutableStateFlow(false)
-    protected var testScope = CoroutineScope(Dispatchers.Default)
+    protected var testScope = CoroutineScope(Dispatchers.IO)
         private set
 
-    private fun save() {
-        viewModelScope.launch(Dispatchers.Default) {
-            onSave()
-            contentViewState.value = initialViewState()
-            noUnsavedChanges()
-        }
+    private fun save(popBackStack: Boolean) {
+        updateData(popBackStack, ::onSave)
     }
 
-    private fun discard() {
-        viewModelScope.launch(Dispatchers.Default) {
-            onDiscard()
+    private fun discard(popBackStack: Boolean) {
+        updateData(popBackStack, ::onDiscard)
+    }
+
+    private fun updateData(popBackStack: Boolean, function: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            function()
             contentViewState.value = initialViewState()
             noUnsavedChanges()
+            if (popBackStack) {
+                navigator.popBackStack()
+            }
         }
-
     }
 
     private fun noUnsavedChanges() {
         _viewState.update {
-            if (_viewState.value.showUnsavedChangesDialog) {
-                it.copy(
-                    showUnsavedChangesDialog = false,
-                    hasUnsavedChanges = false
-                )
-            } else {
-                it.copy(hasUnsavedChanges = false)
-            }
+            it.copy(
+                showUnsavedChangesDialog = false,
+                hasUnsavedChanges = false
+            )
         }
     }
 
@@ -171,11 +167,11 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
             Logger.setMinSeverity(LogLevel.Debug.severity)
         }
 
-        viewModelScope.launch(Dispatchers.Default) {
-            testScope = CoroutineScope(Dispatchers.Default)
+        viewModelScope.launch(Dispatchers.IO) {
+            testScope = CoroutineScope(Dispatchers.IO)
 
             //load file into list
-            testScope.launch(Dispatchers.Default) {
+            testScope.launch(Dispatchers.IO) {
                 val lines = FileLogger.getLines()
                 viewModelScope.launch {
                     logEvents.value = lines
@@ -203,7 +199,7 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
         //reset log level
         Logger.setMinSeverity(AppSetting.logLevel.value.severity)
 
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(Dispatchers.IO) {
             testScope.cancel()
             isTestRunning.value = false
         }

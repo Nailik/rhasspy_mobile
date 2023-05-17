@@ -22,6 +22,7 @@ import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesH
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.RemoteHermesHttpConfigurationScreen
 
 /**
  * content to configure http configuration
@@ -31,15 +32,15 @@ import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesH
 fun RemoteHermesHttpConfigurationContent() {
     val viewModel: RemoteHermesHttpConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
-    val screen by viewModel.screen.top.collectAsState()
+    val screen by viewModel.screen.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
-        modifier = Modifier,
+        modifier = Modifier.testTag(RemoteHermesHttpConfigurationScreen),
         screenType = screen.destinationType,
         config = ConfigurationScreenConfig(MR.strings.remoteHermesHTTP.stable),
         viewState = viewState,
-        onAction = { viewModel.onAction(it) },
+        onAction = viewModel::onAction,
         testContent = {
             TestContent(
                 testIntentRecognitionText = contentViewState.testIntentRecognitionText,

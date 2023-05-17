@@ -106,7 +106,7 @@ object IndicationOverlay : KoinComponent {
             if (job?.isActive == true) {
                 return
             }
-            job = CoroutineScope(Dispatchers.Default).launch {
+            job = CoroutineScope(Dispatchers.IO).launch {
                 viewModel.viewState.collect {
                     try {
                         if (it.isShowVisualIndication != showVisualIndicationOldValue) {

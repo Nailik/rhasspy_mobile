@@ -13,7 +13,6 @@ import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingC
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.IntentHandlingConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.IntentHandlingConfigurationScreenDestination.EditScreen
 
 @Stable
@@ -26,7 +25,7 @@ class IntentHandlingConfigurationViewModel(
     navigator = navigator
 ) {
 
-    val screen = navigator.getBackStack(IntentHandlingConfigurationScreenDestination::class, EditScreen)
+    val screen = navigator.topScreen(EditScreen)
 
     fun onEvent(event: IntentHandlingConfigurationUiEvent) {
         when (event) {

@@ -1,6 +1,6 @@
 package org.rhasspy.mobile.viewmodel.screens.configuration
 
-import androidx.compose.runtime.Stable
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
 
 sealed interface ConfigurationScreenUiEvent {
 
@@ -14,23 +14,8 @@ sealed interface ConfigurationScreenUiEvent {
 
         object ScrollToError : Action
         object BackClick : Action
+        data class Navigate(val destination: ConfigurationScreenNavigationDestination) : Action
 
-
-    }
-
-    @Stable
-    sealed interface Navigate : ConfigurationScreenUiEvent {
-
-        object RemoteHermesHttpClick : Navigate
-        object WebserverClick : Navigate
-        object MqttClick : Navigate
-        object WakeWordClick : Navigate
-        object SpeechToTextClick : Navigate
-        object IntentRecognitionClick : Navigate
-        object TextToSpeechClick : Navigate
-        object AudioPlayingClick : Navigate
-        object DialogManagementClick : Navigate
-        object IntentHandlingClick : Navigate
 
     }
 

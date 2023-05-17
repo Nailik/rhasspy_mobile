@@ -25,10 +25,11 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
+import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.SaveAndRestoreSettings
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Consumed.ShowSnackBar
-import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Navigate.BackClick
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsViewModel
 
 /**
@@ -51,7 +52,7 @@ fun SaveAndRestoreSettingsContent() {
     }
 
     SettingsScreenItemContent(
-        modifier = Modifier,
+        modifier = Modifier.testTag(SaveAndRestoreSettings),
         title = MR.strings.saveAndRestoreSettings.stable,
         onBackClick = { viewModel.onEvent(BackClick) }
     ) {

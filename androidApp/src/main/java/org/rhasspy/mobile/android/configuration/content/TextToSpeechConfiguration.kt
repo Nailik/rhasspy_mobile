@@ -26,6 +26,7 @@ import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfi
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationViewState
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.TextToSpeechConfigurationScreen
 
 /**
  * Content to configure text to speech
@@ -36,15 +37,15 @@ import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfi
 fun TextToSpeechConfigurationContent() {
     val viewModel: TextToSpeechConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
-    val screen by viewModel.screen.top.collectAsState()
+    val screen by viewModel.screen.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
-        modifier = Modifier,
+        modifier = Modifier.testTag(TextToSpeechConfigurationScreen),
         screenType = screen.destinationType,
         config = ConfigurationScreenConfig(MR.strings.textToSpeech.stable),
         viewState = viewState,
-        onAction = { viewModel.onAction(it) },
+        onAction = viewModel::onAction,
         testContent = {
             TestContent(
                 testTextToSpeechText = contentViewState.testTextToSpeechText,

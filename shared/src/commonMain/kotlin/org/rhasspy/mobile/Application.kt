@@ -8,6 +8,7 @@ import dev.icerock.moko.resources.desc.StringDesc
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -43,7 +44,7 @@ abstract class Application : NativeApplication(), KoinComponent {
             }, navigatorModule, viewModelFactory, serviceModule, viewModelModule, factoryModule)
         }
 
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             Logger.addLogWriter(FileLogger)
             if (!isDebug() && !isInstrumentedTest()) {
                 Logger.addLogWriter(

@@ -2,6 +2,7 @@ package org.rhasspy.mobile.logic.services.mqtt
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -11,7 +12,7 @@ import org.rhasspy.mobile.settings.ConfigurationSetting
 
 class MqttServiceParamsCreator {
 
-    private val updaterScope = CoroutineScope(Dispatchers.Default)
+    private val updaterScope = CoroutineScope(Dispatchers.IO)
     private val paramsFlow = MutableStateFlow(getParams())
 
     operator fun invoke(): StateFlow<MqttServiceParams> {

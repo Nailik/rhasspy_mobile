@@ -79,7 +79,7 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        IntentHandlingConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        IntentHandlingConfigurationViewModel(get(), get()).viewState.value.editViewState.value.also {
             //option is saved to remote http
             assertEquals(IntentHandlingOption.RemoteHTTP, it.intentHandlingOption)
             //endpoint is saved
@@ -158,7 +158,7 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        IntentHandlingConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        IntentHandlingConfigurationViewModel(get(), get()).viewState.value.editViewState.value.also {
             //option is saved to HomeAssistant
             assertEquals(IntentHandlingOption.HomeAssistant, it.intentHandlingOption)
             //endpoint is saved

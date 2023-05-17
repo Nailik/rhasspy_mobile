@@ -4,8 +4,8 @@ import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
 
 sealed interface AudioFocusSettingsUiEvent {
 
-    sealed interface Navigate : AudioFocusSettingsUiEvent {
-        object BackClick : Navigate
+    sealed interface Action : AudioFocusSettingsUiEvent {
+        object BackClick : Action
     }
 
     sealed interface Change : AudioFocusSettingsUiEvent {

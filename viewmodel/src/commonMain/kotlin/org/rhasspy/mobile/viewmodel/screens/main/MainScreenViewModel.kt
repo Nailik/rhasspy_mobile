@@ -2,12 +2,10 @@ package org.rhasspy.mobile.viewmodel.screens.main
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainNavigationDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainNavigationDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action
 import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Navigate
-import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Navigate.*
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenUiEvent.Action.Navigate
 
 class MainScreenViewModel(
     viewStateCreator: MainScreenViewStateCreator,
@@ -15,31 +13,19 @@ class MainScreenViewModel(
 ) : ViewModel() {
 
     val viewState = viewStateCreator()
-    val screen = navigator.getBackStack(MainNavigationDestination::class, HomeScreen)
+    val screen = navigator.topScreen<MainScreenNavigationDestination>()
 
     fun onEvent(event: MainScreenUiEvent) {
         when (event) {
             is Action -> onAction(event)
-            is Navigate -> onNavigate(event)
         }
     }
 
     private fun onAction(action: Action) {
         when (action) {
             BackClick -> navigator.popBackStack()
+            is Navigate -> navigator.navigate(action.destination)
         }
-    }
-
-    private fun onNavigate(navigate: Navigate) {
-        navigator.set(
-            type = MainNavigationDestination::class,
-            screen = when (navigate) {
-                BottomBarConfigurationClick -> ConfigurationScreen
-                BottomBarHomeClick -> HomeScreen
-                BottomBarLogClick -> LogScreen
-                BottomBarSettingsClick -> SettingsScreen
-            }
-        )
     }
 
 }

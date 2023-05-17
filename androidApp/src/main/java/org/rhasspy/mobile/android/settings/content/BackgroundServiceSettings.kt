@@ -26,11 +26,12 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.toText
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.BackgroundServiceSettings
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Action.DisableBatteryOptimization
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Change.SetBackgroundServiceEnabled
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Consumed.ShowSnackBar
-import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Navigate.BackClick
 
 /**
  * background service
@@ -54,7 +55,7 @@ fun BackgroundServiceSettingsContent() {
     }
 
     SettingsScreenItemContent(
-        modifier = Modifier,
+        modifier = Modifier.testTag(BackgroundServiceSettings),
         title = MR.strings.background.stable,
         onBackClick = { viewModel.onEvent(BackClick) }
     ) {

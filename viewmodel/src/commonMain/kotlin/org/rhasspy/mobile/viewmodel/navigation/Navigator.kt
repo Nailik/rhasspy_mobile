@@ -2,93 +2,67 @@ package org.rhasspy.mobile.viewmodel.navigation
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.updateList
-import org.rhasspy.mobile.viewmodel.navigation.destinations.MainNavigationDestination.HomeScreen
-import kotlin.reflect.KClass
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.HomeScreen
 
 class Navigator(
     private val nativeApplication: NativeApplication
 ) {
 
-    private val _backStack = MutableStateFlow<ImmutableList<NavigationStack<*>>>(persistentListOf(NavigationStack(HomeScreen)))
-    val backStack = _backStack.readOnly
+    private val _navStack = MutableStateFlow<ImmutableList<NavigationDestination>>(persistentListOf(HomeScreen))
+    val navStack = _navStack.readOnly
 
-    fun <T : NavigationDestination> getBackStack(type: KClass<T>, initialScreen: T): NavigationStack<T> {
-        @Suppress("UNCHECKED_CAST")
-        val navigationStack: NavigationStack<T>? = _backStack.value.firstOrNull { it.initial::class == type } as NavigationStack<T>?
-
-        return if (navigationStack == null) {
-            val newNavigationStack = NavigationStack(initialScreen)
-            _backStack.update {
-                it.updateList {
-                    add(newNavigationStack)
-                }
-            }
-            newNavigationStack
-        } else {
-            navigationStack
-        }
-    }
+    inline fun <reified T : NavigationDestination> topScreen(): StateFlow<T?> = navStack.mapReadonlyState { list -> list.filterIsInstance<T>().lastOrNull() }
+    inline fun <reified T : NavigationDestination> topScreen(default: T): StateFlow<T> = navStack.mapReadonlyState { list -> list.filterIsInstance<T>().lastOrNull() ?: default }
 
     /**
      * go to previous screen
      */
     fun popBackStack() {
-        val backStackList = _backStack.value.toMutableList()
-        var topNavigationStack = backStackList.lastOrNull()
-
-        if (topNavigationStack == null || topNavigationStack.top.value == HomeScreen) {
+        if (navStack.value.size == 1) {
             nativeApplication.closeApp()
         } else {
-            while (topNavigationStack?.popBackStack() == false) {
-                backStackList.removeLast()
-                topNavigationStack = backStackList.lastOrNull()
-            }
-        }
-
-        _backStack.value = backStackList.toImmutableList()
-    }
-
-    /**
-     * update main screen
-     */
-    fun <T : NavigationDestination> set(type: KClass<T>, screen: T) {
-        @Suppress("UNCHECKED_CAST")
-        val navigationStack: NavigationStack<T>? = _backStack.value.firstOrNull { it.initial::class == type } as NavigationStack<T>?
-
-        if (navigationStack == null) {
-            val newNavigationStack = NavigationStack(screen)
-            _backStack.update {
+            _navStack.update {
                 it.updateList {
-                    add(newNavigationStack)
+                    removeLast()
                 }
             }
-        } else {
-            navigationStack.set(screen)
         }
     }
 
     /**
      * navigate to screen (add to backstack)
      */
-    fun <T : NavigationDestination> navigate(type: KClass<T>, screen: T) {
-        @Suppress("UNCHECKED_CAST")
-        val navigationStack: NavigationStack<T>? = _backStack.value.firstOrNull { it.initial::class == type } as NavigationStack<T>?
-
-        if (navigationStack == null) {
-            val newNavigationStack = NavigationStack(screen)
-            _backStack.update {
+    fun navigate(screen: NavigationDestination) {
+        if (_navStack.value.lastOrNull() != screen) {
+            _navStack.update {
                 it.updateList {
-                    add(newNavigationStack)
+                    add(screen)
                 }
             }
-        } else {
-            navigationStack.navigate(screen)
         }
+    }
+
+    inline fun <reified T : NavigationDestination> replace(screen: NavigationDestination) {
+        val currentStack = navStack.value
+        updateNavStack(currentStack.updateList {
+            val index = indexOfLast { it is T }
+            if (index == -1) {
+                add(screen)
+            } else {
+                set(index, screen)
+            }
+        })
+    }
+
+    fun updateNavStack(list: ImmutableList<NavigationDestination>) {
+        _navStack.value = list
     }
 
 }

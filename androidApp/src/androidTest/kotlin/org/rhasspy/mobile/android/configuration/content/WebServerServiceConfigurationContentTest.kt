@@ -2,6 +2,7 @@ package org.rhasspy.mobile.android.configuration.content
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.adevinta.android.barista.rule.flaky.AllowFlaky
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -64,6 +65,7 @@ class WebServerServiceConfigurationContentTest : FlakyTest() {
      * enable ssl is saved
      */
     @Test
+    @AllowFlaky(attempts = 5)
     fun testHttpContent() = runTest {
         viewModel.onEvent(SetHttpServerEnabled(false))
         viewModel.onEvent(SetHttpServerSSLEnabled(false))
@@ -115,7 +117,7 @@ class WebServerServiceConfigurationContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar(viewModel)
-        WebServerConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        WebServerConfigurationViewModel(get(), get()).viewState.value.editViewState.value.also {
             //enable http api is saved
             assertEquals(true, it.isHttpServerEnabled)
             //port is saved

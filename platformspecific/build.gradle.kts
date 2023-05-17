@@ -20,6 +20,7 @@ kotlin {
                 implementation(Touchlab.kermit)
                 implementation(Jetbrains.Kotlinx.serialization)
                 implementation(Jetbrains.Kotlinx.immutable)
+                implementation(Jetbrains.Kotlinx.coroutines)
                 implementation(Ktor2.Server.core)
                 implementation(Ktor2.Server.cors)
                 implementation(Ktor2.Server.cio)

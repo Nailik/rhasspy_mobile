@@ -16,7 +16,6 @@ import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfi
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.TextToSpeechConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.TextToSpeechConfigurationScreenDestination.EditScreen
 
 @Stable
@@ -29,7 +28,7 @@ class TextToSpeechConfigurationViewModel(
     navigator = navigator
 ) {
 
-    val screen = navigator.getBackStack(TextToSpeechConfigurationScreenDestination::class, EditScreen)
+    val screen = navigator.topScreen(EditScreen)
 
     fun onEvent(event: TextToSpeechConfigurationUiEvent) {
         when (event) {

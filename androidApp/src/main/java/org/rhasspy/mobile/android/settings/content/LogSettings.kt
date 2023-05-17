@@ -13,8 +13,9 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.LogSettings
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Navigate.BackClick
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 
 /**
@@ -27,7 +28,7 @@ fun LogSettingsContent() {
     val viewState by viewModel.viewState.collectAsState()
 
     SettingsScreenItemContent(
-        modifier = Modifier,
+        modifier = Modifier.testTag(LogSettings),
         title = MR.strings.logSettings.stable,
         onBackClick = { viewModel.onEvent(BackClick) }
     ) {

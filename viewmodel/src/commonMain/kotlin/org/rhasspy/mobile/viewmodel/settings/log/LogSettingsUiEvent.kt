@@ -4,8 +4,10 @@ import org.rhasspy.mobile.data.log.LogLevel
 
 sealed interface LogSettingsUiEvent {
 
-    sealed interface Navigate : LogSettingsUiEvent {
-        object BackClick : Navigate
+    sealed interface Action : LogSettingsUiEvent {
+
+        object BackClick : Action
+
     }
 
     sealed interface Change : LogSettingsUiEvent {

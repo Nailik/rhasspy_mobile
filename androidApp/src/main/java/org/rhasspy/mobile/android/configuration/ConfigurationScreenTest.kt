@@ -25,7 +25,7 @@ import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.SetSystemColor
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationTestViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Navigate.BackClick
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.ToggleListFiltered
 
 /**

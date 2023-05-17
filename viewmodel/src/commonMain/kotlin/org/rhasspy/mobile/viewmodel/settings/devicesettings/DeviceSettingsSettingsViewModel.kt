@@ -4,10 +4,10 @@ import androidx.compose.runtime.Stable
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Action
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Navigate
-import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsUiEvent.Navigate.BackClick
 
 @Stable
 class DeviceSettingsSettingsViewModel(
@@ -20,7 +20,7 @@ class DeviceSettingsSettingsViewModel(
     fun onEvent(event: DeviceSettingsUiEvent) {
         when (event) {
             is Change -> onChange(event)
-            is Navigate -> onNavigate(event)
+            is Action -> onAction(event)
         }
     }
 
@@ -33,8 +33,8 @@ class DeviceSettingsSettingsViewModel(
         }
     }
 
-    private fun onNavigate(navigate: Navigate) {
-        when (navigate) {
+    private fun onAction(action: Action) {
+        when (action) {
             is BackClick -> navigator.popBackStack()
         }
     }

@@ -3,6 +3,7 @@ package org.rhasspy.mobile.viewmodel.settings.backgroundservice
 import androidx.compose.runtime.Stable
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -16,10 +17,10 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.*
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Action.DisableBatteryOptimization
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Change.SetBackgroundServiceEnabled
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Consumed.ShowSnackBar
-import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Navigate.BackClick
 
 /**
  * background service settings
@@ -40,7 +41,6 @@ class BackgroundServiceSettingsViewModel(
         when (event) {
             is Change -> onChange(event)
             is Action -> onAction(event)
-            is Navigate -> onNavigate(event)
             is Consumed -> onConsumed(event)
         }
     }
@@ -61,11 +61,6 @@ class BackgroundServiceSettingsViewModel(
     private fun onAction(action: Action) {
         when (action) {
             DisableBatteryOptimization -> disableBatteryOptimization()
-        }
-    }
-
-    private fun onNavigate(navigate: Navigate) {
-        when (navigate) {
             is BackClick -> navigator.popBackStack()
         }
     }
@@ -79,7 +74,7 @@ class BackgroundServiceSettingsViewModel(
     }
 
     private fun disableBatteryOptimization() {
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(Dispatchers.IO) {
             if (ExternalRedirect.launch(ExternalRedirectIntention.OpenBatteryOptimizationSettings) !is Success) {
                 _viewState.update {
                     it.copy(snackBarText = MR.strings.disableBatteryOptimizationFailed.stable)

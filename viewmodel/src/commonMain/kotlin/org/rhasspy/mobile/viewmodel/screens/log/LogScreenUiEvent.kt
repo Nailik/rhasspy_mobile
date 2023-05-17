@@ -8,10 +8,10 @@ sealed interface LogScreenUiEvent {
 
     }
 
-    sealed interface Navigate : LogScreenUiEvent {
+    sealed interface Action : LogScreenUiEvent {
 
-        object ShareLogFile : Navigate
-        object SaveLogFile : Navigate
+        object ShareLogFile : Action
+        object SaveLogFile : Action
 
     }
 

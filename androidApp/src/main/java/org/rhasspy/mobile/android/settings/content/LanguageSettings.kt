@@ -10,8 +10,10 @@ import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.LanguageSettingsScreen
+import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SelectLanguageOption
-import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Navigate.BackClick
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
 
 /**
@@ -25,7 +27,7 @@ fun LanguageSettingsScreenItemContent() {
     val viewState by viewModel.viewState.collectAsState()
 
     SettingsScreenItemContent(
-        modifier = Modifier,
+        modifier = Modifier.testTag(LanguageSettingsScreen),
         title = MR.strings.language.stable,
         onBackClick = { viewModel.onEvent(BackClick) }
     ) {

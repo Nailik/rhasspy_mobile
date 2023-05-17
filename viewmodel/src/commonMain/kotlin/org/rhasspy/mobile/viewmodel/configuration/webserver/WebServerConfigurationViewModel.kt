@@ -16,7 +16,6 @@ import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurati
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WebServerConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WebServerConfigurationScreenDestination.EditScreen
 import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
@@ -30,7 +29,7 @@ class WebServerConfigurationViewModel(
     navigator = navigator
 ) {
 
-    val screen = navigator.getBackStack(WebServerConfigurationScreenDestination::class, EditScreen)
+    val screen = navigator.topScreen(EditScreen)
 
     fun onEvent(event: WebServerConfigurationUiEvent) {
         when (event) {

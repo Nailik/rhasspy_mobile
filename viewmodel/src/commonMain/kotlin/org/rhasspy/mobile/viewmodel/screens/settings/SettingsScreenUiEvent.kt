@@ -1,26 +1,13 @@
 package org.rhasspy.mobile.viewmodel.screens.settings
 
+import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination
+
 sealed interface SettingsScreenUiEvent {
 
     sealed interface Action : SettingsScreenUiEvent {
 
         object BackClick : Action
-
-    }
-
-    sealed interface Navigate : SettingsScreenUiEvent {
-
-        object LanguageClick : Navigate
-        object BackgroundServiceClick : Navigate
-        object MicrophoneOverlayClick : Navigate
-        object IndicationClick : Navigate
-        object DeviceClick : Navigate
-        object AudioFocusClick : Navigate
-        object AudioRecorderSettingsClick : Navigate
-        object AutomaticSilenceDetectionClick : Navigate
-        object LogClick : Navigate
-        object SaveAndRestoreClick : Navigate
-        object AboutClick : Navigate
+        data class Navigate(val destination: SettingsScreenDestination) : Action
 
     }
 

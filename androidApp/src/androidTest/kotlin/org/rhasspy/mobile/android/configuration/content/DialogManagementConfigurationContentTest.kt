@@ -60,7 +60,7 @@ class DialogManagementConfigurationContentTest : FlakyTest() {
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        DialogManagementConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        DialogManagementConfigurationViewModel(get(), get()).viewState.value.editViewState.value.also {
             //option is saved to local
             assertEquals(DialogManagementOption.Local, it.dialogManagementOption)
         }

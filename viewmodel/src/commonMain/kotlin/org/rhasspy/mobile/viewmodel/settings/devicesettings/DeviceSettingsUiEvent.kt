@@ -2,8 +2,8 @@ package org.rhasspy.mobile.viewmodel.settings.devicesettings
 
 sealed interface DeviceSettingsUiEvent {
 
-    sealed interface Navigate : DeviceSettingsUiEvent {
-        object BackClick : Navigate
+    sealed interface Action : DeviceSettingsUiEvent {
+        object BackClick : Action
     }
 
     sealed interface Change : DeviceSettingsUiEvent {

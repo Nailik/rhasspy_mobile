@@ -17,8 +17,9 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.AudioRecorderSettings
+import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Navigate.BackClick
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsViewModel
 
 @Composable
@@ -27,7 +28,7 @@ fun AudioRecorderSettingsContent() {
     val viewState by viewModel.viewState.collectAsState()
 
     SettingsScreenItemContent(
-        modifier = Modifier,
+        modifier = Modifier.testTag(AudioRecorderSettings),
         title = MR.strings.automaticSilenceDetection.stable,
         onBackClick = { viewModel.onEvent(BackClick) }
     ) {

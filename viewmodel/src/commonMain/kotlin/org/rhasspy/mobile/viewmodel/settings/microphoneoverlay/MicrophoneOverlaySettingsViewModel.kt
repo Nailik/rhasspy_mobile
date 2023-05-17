@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Action
+import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SelectMicrophoneOverlaySizeOption
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SetMicrophoneOverlayWhileAppEnabled
-import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Navigate
-import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Navigate.BackClick
 
 @Stable
 class MicrophoneOverlaySettingsViewModel(
@@ -24,7 +24,7 @@ class MicrophoneOverlaySettingsViewModel(
     fun onEvent(event: MicrophoneOverlaySettingsUiEvent) {
         when (event) {
             is Change -> onChange(event)
-            is Navigate -> onNavigate(event)
+            is Action -> onAction(event)
         }
     }
 
@@ -44,8 +44,8 @@ class MicrophoneOverlaySettingsViewModel(
         }
     }
 
-    private fun onNavigate(navigate: Navigate) {
-        when (navigate) {
+    private fun onAction(action: Action) {
+        when (action) {
             is BackClick -> navigator.popBackStack()
         }
     }

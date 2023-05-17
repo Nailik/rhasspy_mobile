@@ -22,6 +22,7 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -59,7 +60,7 @@ class WebServerService(
     private val paramsFlow: StateFlow<WebServerServiceParams> = paramsCreator()
     private val params: WebServerServiceParams get() = paramsFlow.value
 
-    private val scope = CoroutineScope(Dispatchers.Default)
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     companion object {
         val audioContentType = ContentType("audio", "wav")

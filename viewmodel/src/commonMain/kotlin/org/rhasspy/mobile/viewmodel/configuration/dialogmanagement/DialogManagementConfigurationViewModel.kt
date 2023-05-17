@@ -9,7 +9,6 @@ import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagem
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.DialogManagementConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.DialogManagementConfigurationScreenDestination.EditScreen
 
 /**
@@ -28,7 +27,7 @@ class DialogManagementConfigurationViewModel(
     navigator = navigator
 ) {
 
-    val screen = navigator.getBackStack(DialogManagementConfigurationScreenDestination::class, EditScreen)
+    val screen = navigator.topScreen(EditScreen)
 
     fun onEvent(event: DialogManagementConfigurationUiEvent) {
         when (event) {

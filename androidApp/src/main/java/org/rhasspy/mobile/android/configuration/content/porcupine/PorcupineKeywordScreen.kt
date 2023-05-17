@@ -24,7 +24,7 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Navigate.PorcupineLanguage
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.PorcupineLanguageClick
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 
 /**
@@ -55,7 +55,7 @@ fun PorcupineKeywordScreen(
                     ListElement(
                         modifier = Modifier
                             .testTag(TestTag.PorcupineLanguage)
-                            .clickable { onEvent(PorcupineLanguage) },
+                            .clickable { onEvent(PorcupineLanguageClick) },
                         text = { Text(MR.strings.language.stable) },
                         secondaryText = { Text(viewState.porcupineLanguage.text) }
                     )

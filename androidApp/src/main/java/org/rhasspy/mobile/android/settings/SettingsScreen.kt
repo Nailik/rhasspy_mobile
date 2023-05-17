@@ -30,10 +30,11 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.toText
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.SettingsScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.*
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent
-import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent.Navigate
-import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent.Navigate.*
+import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewState
 
@@ -41,10 +42,10 @@ import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewState
 fun SettingsScreen() {
 
     val viewModel: SettingsScreenViewModel = LocalViewModelFactory.current.getViewModel()
-    val screen by viewModel.screen.top.collectAsState()
+    val screen by viewModel.screen.collectAsState()
 
     when (screen) {
-        OverviewScreen -> {
+        null -> {
             val viewState by viewModel.viewState.collectAsState()
 
             SettingsScreenContent(
@@ -56,7 +57,7 @@ fun SettingsScreen() {
         AboutSettings -> AboutScreen()
         AudioFocusSettings -> AudioFocusSettingsContent()
         AudioRecorderSettings -> AudioRecorderSettingsContent()
-        AutomaticSilenceDetectionSettings -> SilenceDetectionSettingsContent()
+        SilenceDetectionSettings -> SilenceDetectionSettingsContent()
         BackgroundServiceSettings -> BackgroundServiceSettingsContent()
         DeviceSettings -> DeviceSettingsContent()
         IndicationSettings -> IndicationSettingsContent()
@@ -76,7 +77,9 @@ fun SettingsScreenContent(
 ) {
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .testTag(SettingsScreen)
+            .fillMaxSize(),
         topBar = {
             TopAppBar(
                 title = { Text(MR.strings.settings.stable) }
@@ -148,7 +151,7 @@ fun SettingsScreenContent(
             }
 
             item {
-                AutomaticSilenceDetection(
+                SilenceDetection(
                     viewState.isAutomaticSilenceDetectionEnabled,
                     onEvent
                 )
@@ -188,7 +191,7 @@ private fun Language(
     SettingsListItem(
         text = MR.strings.language.stable,
         secondaryText = viewState.currentLanguage.text,
-        navigate = LanguageClick,
+        destination = LanguageSettingsScreen,
         onEvent = onEvent
     )
 
@@ -203,7 +206,7 @@ private fun BackgroundService(
     SettingsListItem(
         text = MR.strings.background.stable,
         secondaryText = isBackgroundEnabled.toText(),
-        navigate = BackgroundServiceClick,
+        destination = BackgroundServiceSettings,
         onEvent = onEvent
     )
 
@@ -218,7 +221,7 @@ private fun MicrophoneOverlay(
     SettingsListItem(
         text = MR.strings.microphoneOverlay.stable,
         secondaryText = microphoneOverlaySizeOption.name,
-        navigate = MicrophoneOverlayClick,
+        destination = MicrophoneOverlaySettings,
         onEvent = onEvent
     )
 
@@ -245,7 +248,7 @@ private fun Indication(
     SettingsListItem(
         text = MR.strings.indication.stable,
         secondaryText = stateText,
-        navigate = IndicationClick,
+        destination = IndicationSettings,
         onEvent = onEvent
     )
 
@@ -257,7 +260,7 @@ private fun Device(onEvent: (event: SettingsScreenUiEvent) -> Unit) {
     SettingsListItem(
         text = MR.strings.device.stable,
         secondaryText = MR.strings.deviceSettingsInformation.stable,
-        navigate = DeviceClick,
+        destination = DeviceSettings,
         onEvent = onEvent
     )
 
@@ -272,7 +275,7 @@ private fun AudioFocus(
     SettingsListItem(
         text = MR.strings.audioFocus.stable,
         secondaryText = audioFocusOption.text,
-        navigate = AudioFocusClick,
+        destination = AudioFocusSettings,
         onEvent = onEvent
     )
 
@@ -290,22 +293,22 @@ private fun AudioRecorderSettings(
     SettingsListItem(
         text = MR.strings.audioRecorder.stable,
         secondaryText = "${translate(audioRecorderChannelType.text)} | ${translate(audioRecorderEncodingType.text)} | ${translate(audioRecorderSampleRateType.text)}",
-        navigate = AudioRecorderSettingsClick,
+        destination = AudioRecorderSettings,
         onEvent = onEvent
     )
 
 }
 
 @Composable
-private fun AutomaticSilenceDetection(
-    isAutomaticSilenceDetectionEnabled: Boolean,
+private fun SilenceDetection(
+    isSilenceDetectionEnabled: Boolean,
     onEvent: (event: SettingsScreenUiEvent) -> Unit
 ) {
 
     SettingsListItem(
         text = MR.strings.automaticSilenceDetection.stable,
-        secondaryText = isAutomaticSilenceDetectionEnabled.toText(),
-        navigate = AutomaticSilenceDetectionClick,
+        secondaryText = isSilenceDetectionEnabled.toText(),
+        destination = SilenceDetectionSettings,
         onEvent = onEvent
     )
 
@@ -320,7 +323,7 @@ private fun Log(
     SettingsListItem(
         text = MR.strings.logSettings.stable,
         secondaryText = logLevel.text,
-        navigate = LogClick,
+        destination = LogSettings,
         onEvent = onEvent
     )
 
@@ -332,7 +335,7 @@ private fun SaveAndRestore(onEvent: (event: SettingsScreenUiEvent) -> Unit) {
     SettingsListItem(
         text = MR.strings.saveAndRestoreSettings.stable,
         secondaryText = MR.strings.backup.stable,
-        navigate = SaveAndRestoreClick,
+        destination = SaveAndRestoreSettings,
         onEvent = onEvent
     )
 
@@ -344,7 +347,7 @@ private fun About(onEvent: (event: SettingsScreenUiEvent) -> Unit) {
     SettingsListItem(
         text = MR.strings.aboutTitle.stable,
         secondaryText = "${translate(MR.strings.version.stable)} ${BuildKonfig.versionName}",
-        navigate = AboutClick,
+        destination = AboutSettings,
         onEvent = onEvent
     )
 
@@ -355,14 +358,14 @@ private fun About(onEvent: (event: SettingsScreenUiEvent) -> Unit) {
 private fun SettingsListItem(
     text: StableStringResource,
     secondaryText: StableStringResource? = null,
-    navigate: Navigate,
+    destination: SettingsScreenDestination,
     onEvent: (navigate: Navigate) -> Unit
 ) {
 
     ListElement(
         modifier = Modifier
-            .clickable { onEvent(navigate) }
-            .testTag(navigate.toString()),
+            .clickable { onEvent(Navigate(destination)) }
+            .testTag(destination),
         text = { Text(text) },
         secondaryText = { secondaryText?.also { Text(secondaryText) } }
     )
@@ -372,14 +375,14 @@ private fun SettingsListItem(
 private fun SettingsListItem(
     text: StableStringResource,
     secondaryText: String,
-    navigate: Navigate,
+    destination: SettingsScreenDestination,
     onEvent: (navigate: Navigate) -> Unit
 ) {
 
     ListElement(
         modifier = Modifier
-            .clickable { onEvent(navigate) }
-            .testTag(navigate.toString()),
+            .clickable { onEvent(Navigate(destination)) }
+            .testTag(destination),
         text = { Text(text) },
         secondaryText = { Text(text = secondaryText) }
     )

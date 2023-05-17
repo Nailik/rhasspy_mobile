@@ -7,11 +7,8 @@ sealed interface SaveAndRestoreSettingsUiEvent {
         object ExportSettingsFile : Action
         object RestoreSettingsFromFile : Action
         object ShareSettingsFile : Action
+        object BackClick : Action
 
-    }
-
-    sealed interface Navigate : SaveAndRestoreSettingsUiEvent {
-        object BackClick : Navigate
     }
 
     sealed interface Consumed : SaveAndRestoreSettingsUiEvent {

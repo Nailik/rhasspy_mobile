@@ -8,10 +8,10 @@ import org.rhasspy.mobile.platformspecific.language.setLanguage
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Action
+import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SelectLanguageOption
-import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Navigate
-import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Navigate.BackClick
 
 @Stable
 class LanguageSettingsViewModel(
@@ -24,7 +24,7 @@ class LanguageSettingsViewModel(
     fun onEvent(event: LanguageSettingsUiEvent) {
         when (event) {
             is Change -> onChange(event)
-            is Navigate -> onNavigate(event)
+            is Action -> onAction(event)
         }
     }
 
@@ -40,8 +40,8 @@ class LanguageSettingsViewModel(
         }
     }
 
-    private fun onNavigate(navigate: Navigate) {
-        when (navigate) {
+    private fun onAction(action: Action) {
+        when (action) {
             is BackClick -> navigator.popBackStack()
         }
     }

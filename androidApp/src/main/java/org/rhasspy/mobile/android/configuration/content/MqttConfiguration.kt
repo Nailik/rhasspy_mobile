@@ -29,6 +29,7 @@ import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.MqttConfigurationScreen
 
 /**
  * mqtt configuration content
@@ -43,7 +44,7 @@ import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewMode
 fun MqttConfigurationContent() {
     val viewModel: MqttConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
-    val screen by viewModel.screen.top.collectAsState()
+    val screen by viewModel.screen.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 
     val snackBarHostState = LocalSnackbarHostState.current
@@ -57,11 +58,11 @@ fun MqttConfigurationContent() {
     }
 
     ConfigurationScreenItemContent(
-        modifier = Modifier,
+        modifier = Modifier.testTag(MqttConfigurationScreen),
         screenType = screen.destinationType,
         config = ConfigurationScreenConfig(MR.strings.mqtt.stable),
         viewState = viewState,
-        onAction = { viewModel.onAction(it) }
+        onAction = viewModel::onAction
     ) {
 
         item {

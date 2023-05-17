@@ -62,36 +62,36 @@ class DeviceSettingsContentTest : FlakyTest() {
 
         //hot word is enabled
         composeTestRule.onNodeWithTag(TestTag.HotWord).onListItemSwitch().assertIsOn()
-        assertTrue { DeviceSettingsSettingsViewModel(get()).viewState.value.isHotWordEnabled }
+        assertTrue { DeviceSettingsSettingsViewModel(get(), get()).viewState.value.isHotWordEnabled }
         //user clicks hot word
         composeTestRule.onNodeWithTag(TestTag.HotWord).performClick()
         composeTestRule.awaitIdle()
         //hot word is disabled
         composeTestRule.onNodeWithTag(TestTag.HotWord).onListItemSwitch().assertIsOff()
         //hot word disabled is saved
-        assertFalse { DeviceSettingsSettingsViewModel(get()).viewState.value.isHotWordEnabled }
+        assertFalse { DeviceSettingsSettingsViewModel(get(), get()).viewState.value.isHotWordEnabled }
 
         //audio output is enabled
         composeTestRule.onNodeWithTag(TestTag.AudioOutput).onListItemSwitch().assertIsOn()
-        assertTrue { DeviceSettingsSettingsViewModel(get()).viewState.value.isAudioOutputEnabled }
+        assertTrue { DeviceSettingsSettingsViewModel(get(), get()).viewState.value.isAudioOutputEnabled }
         //user clicks audio output
         composeTestRule.onNodeWithTag(TestTag.AudioOutput).performClick()
         composeTestRule.awaitIdle()
         //audio output is disabled
         composeTestRule.onNodeWithTag(TestTag.AudioOutput).onListItemSwitch().assertIsOff()
         //audio output disabled is saved
-        assertFalse { DeviceSettingsSettingsViewModel(get()).viewState.value.isAudioOutputEnabled }
+        assertFalse { DeviceSettingsSettingsViewModel(get(), get()).viewState.value.isAudioOutputEnabled }
 
         //intent handling is enabled
         composeTestRule.onNodeWithTag(TestTag.IntentHandling).onListItemSwitch().assertIsOn()
-        assertTrue { DeviceSettingsSettingsViewModel(get()).viewState.value.isIntentHandlingEnabled }
+        assertTrue { DeviceSettingsSettingsViewModel(get(), get()).viewState.value.isIntentHandlingEnabled }
         //user clicks intent handling
         composeTestRule.onNodeWithTag(TestTag.IntentHandling).performClick()
         composeTestRule.awaitIdle()
         //intent handling is disabled
         composeTestRule.onNodeWithTag(TestTag.IntentHandling).onListItemSwitch().assertIsOff()
         //intent handling disabled is saved
-        assertFalse { DeviceSettingsSettingsViewModel(get()).viewState.value.isIntentHandlingEnabled }
+        assertFalse { DeviceSettingsSettingsViewModel(get(), get()).viewState.value.isIntentHandlingEnabled }
     }
 
 }

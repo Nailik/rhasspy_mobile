@@ -309,7 +309,8 @@ val viewModelModule = module {
     }
     single {
         AboutScreenViewModel(
-            viewStateCreator = get()
+            viewStateCreator = get(),
+            navigator = get()
         )
     }
 
@@ -391,6 +392,7 @@ val viewModelModule = module {
         WakeIndicationSoundSettingsViewModel(
             localAudioService = get(),
             nativeApplication = get(),
+            navigator = get(),
             viewStateCreator = get {
                 parametersOf(
                     AppSetting.customWakeSounds,
@@ -404,6 +406,7 @@ val viewModelModule = module {
         RecordedIndicationSoundSettingsViewModel(
             localAudioService = get(),
             nativeApplication = get(),
+            navigator = get(),
             viewStateCreator = get {
                 parametersOf(
                     AppSetting.customRecordedSounds,
@@ -417,6 +420,7 @@ val viewModelModule = module {
         ErrorIndicationSoundSettingsViewModel(
             localAudioService = get(),
             nativeApplication = get(),
+            navigator = get(),
             viewStateCreator = get {
                 parametersOf(
                     AppSetting.customErrorSounds,

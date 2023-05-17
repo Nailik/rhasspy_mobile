@@ -5,6 +5,7 @@ sealed interface AboutScreenUiEvent {
     sealed interface Action : AboutScreenUiEvent {
 
         object OpenSourceCode : Action
+        object BackClick : Action
 
     }
 

@@ -10,10 +10,10 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Action
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Navigate
-import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Navigate.BackClick
 
 @Stable
 class LogSettingsViewModel(
@@ -27,7 +27,7 @@ class LogSettingsViewModel(
     fun onEvent(event: LogSettingsUiEvent) {
         when (event) {
             is Change -> onChange(event)
-            is Navigate -> onNavigate(event)
+            is Action -> onAction(event)
         }
     }
 
@@ -59,8 +59,8 @@ class LogSettingsViewModel(
         }
     }
 
-    private fun onNavigate(navigate: Navigate) {
-        when (navigate) {
+    private fun onAction(action: Action) {
+        when (action) {
             is BackClick -> navigator.popBackStack()
         }
     }

@@ -24,6 +24,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.utils.*
@@ -96,7 +97,7 @@ class MicrophonePermissionTest : FlakyTest() {
     @Before
     fun setUp() {
         //set english
-        LanguageSettingsViewModel().onEvent(SelectLanguageOption(LanguageType.English))
+        LanguageSettingsViewModel(get()).onEvent(SelectLanguageOption(LanguageType.English))
 
         //set content
         composeTestRule.activity.setContent {

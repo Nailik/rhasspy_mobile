@@ -6,8 +6,8 @@ import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
 
 sealed interface AudioRecorderSettingsUiEvent {
 
-    sealed interface Navigate : AudioRecorderSettingsUiEvent {
-        object BackClick : Navigate
+    sealed interface Action : AudioRecorderSettingsUiEvent {
+        object BackClick : Action
     }
 
     sealed interface Change : AudioRecorderSettingsUiEvent {

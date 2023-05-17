@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -23,7 +24,6 @@ import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesH
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.RemoteHermesHttpConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.RemoteHermesHttpConfigurationScreenDestination.EditScreen
 
 @Stable
@@ -36,7 +36,7 @@ class RemoteHermesHttpConfigurationViewModel(
     navigator = navigator
 ) {
 
-    val screen = navigator.getBackStack(RemoteHermesHttpConfigurationScreenDestination::class, EditScreen)
+    val screen = navigator.topScreen(EditScreen)
 
     fun onEvent(event: RemoteHermesHttpConfigurationUiEvent) {
         when (event) {
@@ -76,7 +76,7 @@ class RemoteHermesHttpConfigurationViewModel(
     }
 
     private fun toggleRecording() {
-        testScope.launch(Dispatchers.Default) {
+        testScope.launch(Dispatchers.IO) {
             get<RecordingService>().isRecording.collect { isRecording ->
                 updateViewState {
                     it.copy(isTestRecordingAudio = isRecording)

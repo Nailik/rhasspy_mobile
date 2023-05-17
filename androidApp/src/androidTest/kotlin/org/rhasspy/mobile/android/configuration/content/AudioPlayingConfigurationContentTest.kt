@@ -99,7 +99,7 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        AudioPlayingConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        AudioPlayingConfigurationViewModel(get(), get()).viewState.value.editViewState.value.also {
             //option is saved to remote http
             assertEquals(AudioPlayingOption.RemoteHTTP, it.audioPlayingOption)
             //endpoint is saved
@@ -160,7 +160,7 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        AudioPlayingConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        AudioPlayingConfigurationViewModel(get(), get()).viewState.value.editViewState.value.also {
             //option is saved to local
             assertEquals(AudioPlayingOption.Local, it.audioPlayingOption)
             //option notification is saved

@@ -76,7 +76,7 @@ class PorcupineLanguageScreenTest : FlakyTest() {
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val newViewModel = WakeWordConfigurationViewModel(get())
+        val newViewModel = WakeWordConfigurationViewModel(get(), get())
         //german is saved
         assertEquals(PorcupineLanguageOption.DE, newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState.porcupineLanguage)
     }

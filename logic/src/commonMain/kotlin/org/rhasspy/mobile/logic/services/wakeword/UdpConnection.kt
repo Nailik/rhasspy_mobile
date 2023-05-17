@@ -9,6 +9,7 @@ import io.ktor.network.sockets.aSocket
 import io.ktor.server.engine.internal.ClosedChannelException
 import io.ktor.utils.io.core.ByteReadPacket
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.channels.SendChannel
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorderUtils.appendWavHeader
 import org.rhasspy.mobile.settings.AppSetting
@@ -34,7 +35,7 @@ class UdpConnection(
     fun connect(): Exception? {
         logger.d { "initialization" }
         return try {
-            sendChannel = aSocket(SelectorManager(Dispatchers.Default)).udp().bind().outgoing
+            sendChannel = aSocket(SelectorManager(Dispatchers.IO)).udp().bind().outgoing
 
             socketAddress = InetSocketAddress(host, port)
 

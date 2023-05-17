@@ -22,15 +22,17 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.toText
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.ConfigurationScreen
 import org.rhasspy.mobile.viewmodel.screens.configuration.*
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToError
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Navigate
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Navigate.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
 
 /**
@@ -40,10 +42,10 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenVie
 fun ConfigurationScreen() {
 
     val viewModel: ConfigurationScreenViewModel = LocalViewModelFactory.current.getViewModel()
-    val screen by viewModel.screen.top.collectAsState()
+    val screen by viewModel.screen.collectAsState()
 
     when (screen) {
-        OverviewScreen -> {
+        null -> {
             val viewState by viewModel.viewState.collectAsState()
 
             ConfigurationScreenContent(
@@ -53,7 +55,7 @@ fun ConfigurationScreen() {
             )
         }
 
-        AudioPlayingConfigurationScreenDestination -> AudioPlayingConfigurationContent()
+        AudioPlayingConfigurationScreen -> AudioPlayingConfigurationContent()
         DialogManagementConfigurationScreen -> DialogManagementConfigurationContent()
         IntentHandlingConfigurationScreen -> IntentHandlingConfigurationContent()
         IntentRecognitionConfigurationScreen -> IntentRecognitionConfigurationContent()
@@ -75,10 +77,12 @@ fun ConfigurationScreenContent(
 ) {
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .testTag(ConfigurationScreen)
+            .fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { org.rhasspy.mobile.ui.content.elements.Text(MR.strings.configuration.stable) }
+                title = { Text(MR.strings.configuration.stable) }
             )
         },
     ) { paddingValues ->
@@ -187,7 +191,7 @@ private fun ServiceErrorInformation(
                     tint = MaterialTheme.colorScheme.onErrorContainer
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                org.rhasspy.mobile.ui.content.elements.Text(
+                Text(
                     resource = MR.strings.error.stable,
                     color = MaterialTheme.colorScheme.onErrorContainer
                 )
@@ -230,7 +234,7 @@ private fun RemoteHermesHttp(
         text = MR.strings.remoteHermesHTTP.stable,
         secondaryText = "${translate(MR.strings.sslValidation.stable)} ${translate(viewState.isHttpSSLVerificationEnabled.not().toText())}",
         viewState = viewState.serviceState,
-        navigate = RemoteHermesHttpClick,
+        destination = RemoteHermesHttpConfigurationScreen,
         onEvent = onEvent
     )
 
@@ -250,7 +254,7 @@ private fun Webserver(
         text = MR.strings.webserver.stable,
         secondaryText = viewState.isHttpServerEnabled.toText(),
         serviceViewState = viewState.serviceState,
-        navigate = WebserverClick,
+        destination = WebServerConfigurationScreen,
         onEvent = onEvent
     )
 
@@ -270,7 +274,7 @@ private fun Mqtt(
         text = MR.strings.mqtt.stable,
         secondaryText = if (viewState.isMQTTConnected) MR.strings.connected.stable else MR.strings.notConnected.stable,
         serviceViewState = viewState.serviceState,
-        navigate = MqttClick,
+        destination = MqttConfigurationScreen,
         onEvent = onEvent
     )
 
@@ -291,7 +295,7 @@ private fun WakeWord(
         text = MR.strings.wakeWord.stable,
         secondaryText = viewState.wakeWordValueOption.text,
         serviceViewState = viewState.serviceState,
-        navigate = WakeWordClick,
+        destination = WakeWordConfigurationScreen,
         onEvent = onEvent
     )
 
@@ -311,7 +315,7 @@ private fun SpeechToText(
         text = MR.strings.speechToText.stable,
         secondaryText = viewState.speechToTextOption.text,
         serviceViewState = viewState.serviceState,
-        navigate = SpeechToTextClick,
+        destination = SpeechToTextConfigurationScreen,
         onEvent = onEvent
     )
 
@@ -332,7 +336,7 @@ private fun IntentRecognition(
         text = MR.strings.intentRecognition.stable,
         secondaryText = viewState.intentRecognitionOption.text,
         serviceViewState = viewState.serviceState,
-        navigate = IntentRecognitionClick,
+        destination = IntentRecognitionConfigurationScreen,
         onEvent = onEvent
     )
 
@@ -352,7 +356,7 @@ private fun TextToSpeech(
         text = MR.strings.textToSpeech.stable,
         secondaryText = viewState.textToSpeechOption.text,
         serviceViewState = viewState.serviceState,
-        navigate = TextToSpeechClick,
+        destination = TextToSpeechConfigurationScreen,
         onEvent = onEvent
     )
 
@@ -372,7 +376,7 @@ private fun AudioPlaying(
         text = MR.strings.audioPlaying.stable,
         secondaryText = viewState.audioPlayingOption.text,
         serviceViewState = viewState.serviceState,
-        navigate = AudioPlayingClick,
+        destination = AudioPlayingConfigurationScreen,
         onEvent = onEvent
     )
 
@@ -392,7 +396,7 @@ private fun DialogManagement(
         text = MR.strings.dialogManagement.stable,
         secondaryText = viewState.dialogManagementOption.text,
         serviceViewState = viewState.serviceState,
-        navigate = DialogManagementClick,
+        destination = DialogManagementConfigurationScreen,
         onEvent = onEvent
     )
 
@@ -412,7 +416,7 @@ private fun IntentHandling(
         text = MR.strings.intentHandling.stable,
         secondaryText = viewState.intentHandlingOption.text,
         serviceViewState = viewState.serviceState,
-        navigate = IntentHandlingClick,
+        destination = IntentHandlingConfigurationScreen,
         onEvent = onEvent
     )
 
@@ -426,15 +430,15 @@ private fun ConfigurationListItem(
     text: StableStringResource,
     secondaryText: StableStringResource,
     serviceViewState: ServiceViewState,
-    navigate: Navigate,
+    destination: ConfigurationScreenNavigationDestination,
     onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
     ListElement(
         modifier = Modifier
-            .clickable { onEvent(navigate) }
-            .testTag(navigate.toString()),
-        text = { org.rhasspy.mobile.ui.content.elements.Text(text) },
-        secondaryText = { org.rhasspy.mobile.ui.content.elements.Text(secondaryText) },
+            .clickable { onEvent(Navigate(destination)) }
+            .testTag(destination),
+        text = { Text(text) },
+        secondaryText = { Text(secondaryText) },
         trailing = {
             val serviceStateValue by serviceViewState.serviceState.collectAsState()
             EventStateIconTinted(serviceStateValue)
@@ -452,14 +456,14 @@ private fun ConfigurationListItem(
     text: StableStringResource,
     secondaryText: String,
     viewState: ServiceViewState,
-    navigate: Navigate,
+    destination: ConfigurationScreenNavigationDestination,
     onEvent: (ConfigurationScreenUiEvent) -> Unit
 ) {
     ListElement(
         modifier = Modifier
-            .clickable { onEvent(navigate) }
-            .testTag(navigate.toString()),
-        text = { org.rhasspy.mobile.ui.content.elements.Text(text) },
+            .clickable { onEvent(Navigate(destination)) }
+            .testTag(destination),
+        text = { Text(text) },
         secondaryText = { Text(text = secondaryText) },
         trailing = {
             val serviceStateValue by viewState.serviceState.collectAsState()

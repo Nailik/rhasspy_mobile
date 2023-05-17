@@ -35,10 +35,11 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.SilenceDetectionSettings
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent
+import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.ToggleAudioLevelTest
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Navigate
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
 
 /**
@@ -51,9 +52,9 @@ fun SilenceDetectionSettingsContent() {
     val viewState by viewModel.viewState.collectAsState()
 
     SettingsScreenItemContent(
-        modifier = Modifier,
+        modifier = Modifier.testTag(SilenceDetectionSettings),
         title = MR.strings.automaticSilenceDetection.stable,
-        onBackClick = { viewModel.onEvent(Navigate.BackClick) }
+        onBackClick = { viewModel.onEvent(BackClick) }
     ) {
 
         //toggle

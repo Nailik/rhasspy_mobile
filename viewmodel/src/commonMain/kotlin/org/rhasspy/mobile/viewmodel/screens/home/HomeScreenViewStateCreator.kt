@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.screens.home
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -13,7 +14,7 @@ class HomeScreenViewStateCreator(
     private val serviceMiddleware: ServiceMiddleware
 ) {
 
-    private val updaterScope = CoroutineScope(Dispatchers.Default)
+    private val updaterScope = CoroutineScope(Dispatchers.IO)
 
     operator fun invoke(): StateFlow<HomeScreenViewState> {
         val viewState = MutableStateFlow(getViewState())

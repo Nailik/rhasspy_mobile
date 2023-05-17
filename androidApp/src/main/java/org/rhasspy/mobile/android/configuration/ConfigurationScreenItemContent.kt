@@ -1,6 +1,5 @@
 package org.rhasspy.mobile.android.configuration
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +26,7 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.SetSystemColor
+import org.rhasspy.mobile.ui.utils.BackPressHandler
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent
@@ -95,13 +95,13 @@ private fun EditConfigurationScreen(
     SetSystemColor(0.dp)
 
     //Back handler to show dialog if there are unsaved changes
-    BackHandler(onBack = { (onAction(BackPress)) })
+    BackPressHandler(onBackClick = { (onAction(BackPress)) })
 
     //Show unsaved changes dialog back press
     if (showUnsavedChangesDialog) {
         UnsavedBackButtonDialog(
-            onSave = { onAction(Save) },
-            onDiscard = { onAction(Discard) },
+            onSave = { onAction(SaveDialog) },
+            onDiscard = { onAction(DiscardDialog) },
             onClose = { onAction(DismissDialog) }
         )
     }

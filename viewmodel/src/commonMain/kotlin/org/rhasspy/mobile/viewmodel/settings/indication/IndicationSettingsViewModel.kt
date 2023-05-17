@@ -8,11 +8,11 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination
-import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination.*
-import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.*
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.Navigate
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Navigate.*
 
 @Stable
 class IndicationSettingsViewModel(
@@ -22,13 +22,12 @@ class IndicationSettingsViewModel(
     private val _viewState = MutableStateFlow(IndicationSettingsViewState())
     val viewState = _viewState.readOnly
 
-    val screen = navigator.getBackStack(IndicationSettingsScreenDestination::class, OverviewScreen)
+    val screen = navigator.topScreen<IndicationSettingsScreenDestination>()
 
     fun onEvent(event: IndicationSettingsUiEvent) {
         when (event) {
             is Change -> onChange(event)
             is Action -> onAction(event)
-            is Navigate -> onNavigate(event)
         }
     }
 
@@ -61,18 +60,8 @@ class IndicationSettingsViewModel(
     private fun onAction(action: Action) {
         when (action) {
             BackClick -> navigator.popBackStack()
+            is Navigate -> navigator.navigate(action.destination)
         }
-    }
-
-    private fun onNavigate(navigate: Navigate) {
-        navigator.navigate(
-            type = IndicationSettingsScreenDestination::class,
-            screen = when (navigate) {
-                ErrorIndicationSoundClick -> ErrorIndicationSoundScreen
-                RecordedIndicationSoundClick -> RecordedIndicationSoundScreen
-                WakeIndicationSoundClick -> WakeIndicationSoundScreen
-            }
-        )
     }
 
 }

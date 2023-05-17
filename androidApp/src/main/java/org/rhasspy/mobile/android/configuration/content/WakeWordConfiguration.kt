@@ -36,12 +36,9 @@ import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.MicrophonePermissionAllowed
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.TestStartWakeWord
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Consumed.ShowSnackBar
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Navigate.PorcupineKeyword
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Navigate.PorcupineLanguage
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.OpenPicoVoiceConsole
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
@@ -49,6 +46,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.UdpViewState
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.*
 
@@ -61,7 +59,7 @@ fun WakeWordConfigurationContent() {
     val viewModel: WakeWordConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
     val viewState by viewModel.viewState.collectAsState()
-    val screen by viewModel.screen.top.collectAsState()
+    val screen by viewModel.screen.collectAsState()
 
     val contentViewState by viewState.editViewState.collectAsState()
     val snackBarHostState = LocalSnackbarHostState.current
@@ -106,7 +104,7 @@ private fun WakeWordConfigurationOverview(
     val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
-        modifier = Modifier,
+        modifier = Modifier.testTag(WakeWordConfigurationScreen),
         screenType = screen.destinationType,
         config = ConfigurationScreenConfig(MR.strings.wakeWord.stable),
         viewState = viewState,
@@ -212,7 +210,7 @@ private fun PorcupineConfiguration(
         ListElement(
             modifier = Modifier
                 .testTag(TestTag.PorcupineLanguage)
-                .clickable { onEvent(PorcupineLanguage) },
+                .clickable { onEvent(Navigate(EditPorcupineLanguageScreen)) },
             text = { Text(MR.strings.language.stable) },
             secondaryText = {
                 val porcupineLanguageText by remember { derivedStateOf { viewState.porcupineLanguage.text } }
@@ -224,7 +222,7 @@ private fun PorcupineConfiguration(
         ListElement(
             modifier = Modifier
                 .testTag(TestTag.PorcupineKeyword)
-                .clickable { onEvent(PorcupineKeyword) },
+                .clickable { onEvent(Navigate(EditPorcupineWakeWordScreen)) },
             text = { Text(MR.strings.wakeWord.stable) },
             secondaryText = { Text("${viewState.keywordCount} ${translate(MR.strings.active.stable)}") }
         )

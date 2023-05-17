@@ -4,8 +4,10 @@ import org.rhasspy.mobile.data.language.LanguageType
 
 sealed interface LanguageSettingsUiEvent {
 
-    sealed interface Navigate : LanguageSettingsUiEvent {
-        object BackClick : Navigate
+    sealed interface Action : LanguageSettingsUiEvent {
+
+        object BackClick : Action
+
     }
 
     sealed interface Change : LanguageSettingsUiEvent {

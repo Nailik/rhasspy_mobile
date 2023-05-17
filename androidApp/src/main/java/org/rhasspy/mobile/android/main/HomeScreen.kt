@@ -20,8 +20,10 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.main.MicrophoneFab
+import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent.Action.UserSessionClick
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.HomeScreen
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent.Action.TogglePlayRecording
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
@@ -40,7 +42,9 @@ import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewState
 fun HomeScreen() {
     val viewModel: HomeScreenViewModel = LocalViewModelFactory.current.getViewModel()
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .testTag(HomeScreen)
+            .fillMaxSize(),
         topBar = {
             TopAppBar(
                 title = { Text(MR.strings.appName.stable) }
