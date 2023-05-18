@@ -59,7 +59,7 @@ class SilenceDetectionSettingsViewModel(
                     audioRecorderSampleRateType = AppSetting.audioRecorderSampleRate.value
                 )
 
-            is BackClick -> navigator.popBackStack()
+            is BackClick -> navigator.onBackPressed()
         }
     }
 

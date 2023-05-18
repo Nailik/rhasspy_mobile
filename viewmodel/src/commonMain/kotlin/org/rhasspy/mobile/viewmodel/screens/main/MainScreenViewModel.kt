@@ -22,7 +22,7 @@ class MainScreenViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            BackClick -> navigator.popBackStack()
+            BackClick -> navigator.onBackPressed()
             is Navigate -> navigator.replace<MainScreenNavigationDestination>(action.destination)
         }
     }

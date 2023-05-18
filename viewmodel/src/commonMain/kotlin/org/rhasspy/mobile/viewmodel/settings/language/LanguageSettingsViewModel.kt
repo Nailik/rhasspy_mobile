@@ -39,7 +39,7 @@ class LanguageSettingsViewModel : KViewModel() {
 
     private fun onAction(action: Action) {
         when (action) {
-            is BackClick -> navigator.popBackStack()
+            is BackClick -> navigator.onBackPressed()
         }
     }
 

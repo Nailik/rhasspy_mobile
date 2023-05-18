@@ -51,7 +51,7 @@ class SpeechToTextConfigurationViewModel(
     private fun onAction(action: Action) {
         when (action) {
             TestSpeechToTextToggleRecording -> toggleRecording()
-            BackClick -> navigator.popBackStack()
+            BackClick -> navigator.onBackPressed()
         }
     }
 

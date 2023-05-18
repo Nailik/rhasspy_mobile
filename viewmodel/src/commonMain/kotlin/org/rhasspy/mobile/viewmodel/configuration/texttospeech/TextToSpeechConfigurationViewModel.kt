@@ -48,7 +48,7 @@ class TextToSpeechConfigurationViewModel(
     private fun onAction(action: Action) {
         when (action) {
             TestRemoteHermesHttpTextToSpeechTest -> startTextToSpeech()
-            BackClick -> navigator.popBackStack()
+            BackClick -> navigator.onBackPressed()
         }
     }
 

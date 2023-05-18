@@ -60,7 +60,7 @@ class RemoteHermesHttpConfigurationViewModel(
             TestRemoteHermesHttpIntentRecognitionTest -> toggleRecording()
             TestRemoteHermesHttpTextToSpeechTest -> startIntentRecognitionTest()
             TestRemoteHermesHttpToggleRecording -> startTextToSpeechTest()
-            BackClick -> navigator.popBackStack()
+            BackClick -> navigator.onBackPressed()
         }
     }
 

@@ -54,7 +54,7 @@ class WebServerConfigurationViewModel(
         when (action) {
             OpenWebServerSSLWiki -> openWebServerSSLWiki()
             SelectSSLCertificate -> selectSSLCertificate()
-            BackClick -> navigator.popBackStack()
+            BackClick -> navigator.onBackPressed()
         }
     }
 

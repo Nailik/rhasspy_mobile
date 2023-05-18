@@ -110,7 +110,7 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
                         )
                 }
 
-            BackClick -> navigator.popBackStack()
+            BackClick -> navigator.onBackPressed()
         }
     }
 
@@ -200,6 +200,11 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
             testScope.cancel()
             isTestRunning.value = false
         }
+    }
+
+    override fun onBackPressed(): Boolean {
+        onAction(BackPress)
+        return true
     }
 
 }

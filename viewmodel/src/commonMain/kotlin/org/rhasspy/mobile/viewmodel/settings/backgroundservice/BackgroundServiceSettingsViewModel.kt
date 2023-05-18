@@ -59,7 +59,7 @@ class BackgroundServiceSettingsViewModel(
     private fun onAction(action: Action) {
         when (action) {
             DisableBatteryOptimization -> disableBatteryOptimization()
-            is BackClick -> navigator.popBackStack()
+            is BackClick -> navigator.onBackPressed()
         }
     }
 

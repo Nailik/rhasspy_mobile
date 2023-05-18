@@ -78,7 +78,7 @@ class WakeWordConfigurationViewModel(
             }
 
             TestStartWakeWord -> startWakeWordDetection()
-            BackClick -> navigator.popBackStack()
+            BackClick -> navigator.onBackPressed()
             is Navigate -> navigator.navigate(action.destination)
         }
     }
@@ -148,7 +148,7 @@ class WakeWordConfigurationViewModel(
                 }
             }
 
-            PorcupineUiEvent.Action.BackClick -> navigator.popBackStack()
+            PorcupineUiEvent.Action.BackClick -> navigator.onBackPressed()
             PorcupineLanguageClick -> navigator.navigate(EditPorcupineLanguageScreen)
         }
     }

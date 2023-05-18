@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.ui.content.elements
 
 import android.widget.TextView
+import androidx.compose.material3.AlertDialog
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,4 +19,5 @@ actual fun HtmlText(html: String, modifier: Modifier, color: Color) {
         factory = { context -> TextView(context).apply { setTextColor(color.toArgb()) } },
         update = { it.text = HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY) }
     )
+    AlertDialog(onDismissRequest = { /*TODO*/ }, confirmButton = { /*TODO*/ })
 }

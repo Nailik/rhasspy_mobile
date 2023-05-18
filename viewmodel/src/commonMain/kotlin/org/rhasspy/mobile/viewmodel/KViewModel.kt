@@ -20,7 +20,7 @@ abstract class KViewModel : ViewModel(), KoinComponent {
     /**
      * returns true if pop back stack was handeled internally
      */
-    open fun popBackStack(): Boolean {
+    open fun onBackPressed(): Boolean {
         return false
     }
 

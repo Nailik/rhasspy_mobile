@@ -56,7 +56,7 @@ class IntentHandlingConfigurationViewModel(
                 }
             }
 
-            BackClick -> navigator.popBackStack()
+            BackClick -> navigator.onBackPressed()
         }
     }
 

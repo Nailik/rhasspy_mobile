@@ -37,7 +37,7 @@ class ConfigurationScreenViewModel(
     private fun onAction(action: Action) {
         when (action) {
             ScrollToError -> viewStateCreator.updateScrollToError(Triggered)
-            BackClick -> navigator.popBackStack()
+            BackClick -> navigator.onBackPressed()
             is Navigate -> navigator.navigate(action.destination)
         }
     }

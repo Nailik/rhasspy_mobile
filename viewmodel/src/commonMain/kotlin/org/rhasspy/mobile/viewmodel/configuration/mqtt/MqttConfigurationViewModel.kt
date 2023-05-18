@@ -57,7 +57,7 @@ class MqttConfigurationViewModel(
         when (action) {
             OpenMqttSSLWiki -> openMqttSSLWikiLink()
             SelectSSLCertificate -> selectSSLCertificate()
-            BackClick -> navigator.popBackStack()
+            BackClick -> navigator.onBackPressed()
         }
     }
 

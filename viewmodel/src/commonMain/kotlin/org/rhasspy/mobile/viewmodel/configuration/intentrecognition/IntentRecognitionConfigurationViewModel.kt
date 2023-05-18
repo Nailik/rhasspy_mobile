@@ -50,7 +50,7 @@ class IntentRecognitionConfigurationViewModel(
     private fun onAction(action: Action) {
         when (action) {
             RunIntentRecognition -> runIntentRecognition()
-            BackClick -> navigator.popBackStack()
+            BackClick -> navigator.onBackPressed()
         }
     }
 

@@ -37,7 +37,7 @@ class AboutScreenViewModel(
     private fun onAction(action: Action) {
         when (action) {
             OpenSourceCode -> openSourceCode()
-            BackClick -> navigator.popBackStack()
+            BackClick -> navigator.onBackPressed()
         }
     }
 

@@ -93,7 +93,7 @@ abstract class IIndicationSoundSettingsViewModel(
             ToggleAudioPlayerActive ->
                 if (localAudioService.isPlayingState.value) localAudioService.stop() else playSound(localAudioService)
 
-            BackClick -> navigator.popBackStack()
+            BackClick -> navigator.onBackPressed()
         }
     }
 

@@ -28,21 +28,26 @@ class Navigator(
     inline fun <reified T : NavigationDestination> topScreen(): StateFlow<T?> = navStack.mapReadonlyState { list -> list.filterIsInstance<T>().lastOrNull() }
     inline fun <reified T : NavigationDestination> topScreen(default: T): StateFlow<T> = navStack.mapReadonlyState { list -> list.filterIsInstance<T>().lastOrNull() ?: default }
 
+
+    fun popBackStack() {
+        if (navStack.value.size == 1) {
+            nativeApplication.closeApp()
+        } else {
+            _navStack.update {
+                it.updateList {
+                    removeLast()
+                }
+            }
+        }
+    }
+
     /**
      * go to previous screen
      */
-    fun popBackStack() {
-        if (_viewModelStack.lastOrNull()?.popBackStack() != true) {
+    fun onBackPressed() {
+        if (_viewModelStack.lastOrNull()?.onBackPressed() != true) {
             //check if top nav destination handles back press
-            if (navStack.value.size == 1) {
-                nativeApplication.closeApp()
-            } else {
-                _navStack.update {
-                    it.updateList {
-                        removeLast()
-                    }
-                }
-            }
+            popBackStack()
         }
     }
 

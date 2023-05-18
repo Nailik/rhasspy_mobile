@@ -61,7 +61,7 @@ class AudioPlayingConfigurationViewModel(
     private fun onAction(action: Action) {
         when (action) {
             PlayTestAudio -> playTestAudio()
-            BackClick -> navigator.popBackStack()
+            BackClick -> navigator.onBackPressed()
         }
     }
 

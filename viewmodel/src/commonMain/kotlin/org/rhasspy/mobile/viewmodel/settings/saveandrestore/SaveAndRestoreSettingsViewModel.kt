@@ -54,7 +54,7 @@ class SaveAndRestoreSettingsViewModel : KViewModel() {
                     }
                 }
 
-                is BackClick -> navigator.popBackStack()
+                is BackClick -> navigator.onBackPressed()
             }
         }
     }
