@@ -9,6 +9,6 @@ data class ConfigurationViewState<V : IConfigurationEditViewState> internal cons
     val serviceViewState: StateFlow<ServiceStateHeaderViewState>,
     val testViewState: StateFlow<ConfigurationTestViewState>,
     val editViewState: StateFlow<V>,
-    val showUnsavedChangesDialog: Boolean = false,
+    val isShowUnsavedChangesDialog: Boolean = false,
     val hasUnsavedChanges: Boolean
 )

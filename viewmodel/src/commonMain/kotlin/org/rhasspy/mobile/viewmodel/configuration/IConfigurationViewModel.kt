@@ -64,6 +64,7 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
             serviceViewState = serviceViewState,
             editViewState = contentViewState,
             testViewState = configurationTestViewState,
+            isShowUnsavedChangesDialog = false,
             hasUnsavedChanges = false
         )
     )
@@ -85,7 +86,7 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
             StopTest -> stopTest()
             BackPress -> {
                 if (_viewState.value.hasUnsavedChanges) {
-                    _viewState.update { it.copy(showUnsavedChangesDialog = true) }
+                    _viewState.update { it.copy(isShowUnsavedChangesDialog = true) }
                 } else {
                     navigator.popBackStack()
                 }
@@ -93,7 +94,7 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
 
             SaveDialog -> save(true)
             DiscardDialog -> discard(true)
-            DismissDialog -> _viewState.update { it.copy(showUnsavedChangesDialog = false) }
+            DismissDialog -> _viewState.update { it.copy(isShowUnsavedChangesDialog = false) }
             ToggleListAutoscroll -> configurationTestViewState.update { it.copy(isListAutoscroll = !it.isListAutoscroll) }
             ToggleListFiltered ->
                 configurationTestViewState.update {
@@ -140,7 +141,7 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
     private fun noUnsavedChanges() {
         _viewState.update {
             it.copy(
-                showUnsavedChangesDialog = false,
+                isShowUnsavedChangesDialog = false,
                 hasUnsavedChanges = false
             )
         }

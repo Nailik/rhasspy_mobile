@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.surfaceColorAtElevation
@@ -19,6 +18,7 @@ import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
@@ -41,14 +41,14 @@ fun ServiceStateHeader(viewState: ServiceStateHeaderViewState) {
     )
 
     if (isShowDialog) {
-        AlertDialog(
+        Dialog(
             onDismissRequest = {
                 isShowDialog = false
             },
-            title = {
+            headline = {
                 Text(MR.strings.error.stable)
             },
-            text = {
+            supportingText = {
                 when (val informationText = viewState.serviceStateDialogText) {
                     is StableStringResource -> Text(informationText)
                     is String -> androidx.compose.material3.Text(informationText)
@@ -69,10 +69,7 @@ fun ServiceStateHeader(viewState: ServiceStateHeaderViewState) {
                     Text(MR.strings.close.stable)
                 }
             },
-            dismissButton = { },
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
+            dismissButton = { }
         )
     }
 

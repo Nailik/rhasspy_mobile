@@ -64,7 +64,7 @@ fun <V : IConfigurationEditViewState> ConfigurationScreenItemContent(
                     viewState = viewState.editViewState.collectAsState().value,
                     serviceStateHeaderViewState = viewState.serviceViewState.collectAsState().value,
                     hasUnsavedChanges = viewState.hasUnsavedChanges,
-                    showUnsavedChangesDialog = viewState.showUnsavedChangesDialog,
+                    showUnsavedChangesDialog = viewState.isShowUnsavedChangesDialog,
                     onAction = onAction,
                     content = content
                 )
@@ -95,55 +95,50 @@ private fun EditConfigurationScreen(
 ) {
     SetSystemColor(0.dp)
 
-    Box {
+    //Show unsaved changes dialog back press
+    if (showUnsavedChangesDialog) {
+        UnsavedBackButtonDialog(
+            onSave = { onAction(SaveDialog) },
+            onDiscard = { onAction(DiscardDialog) },
+            onClose = { onAction(DismissDialog) }
+        )
+    }
 
-        Scaffold(
-            topBar = {
-                AppBar(
-                    title = title,
-                    onBackClick = {
-                        onAction(BackPress)
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = MR.strings.back.stable,
-                    )
+    Scaffold(
+        topBar = {
+            AppBar(
+                title = title,
+                onBackClick = {
+                    onAction(BackPress)
                 }
-            },
-            bottomBar = {
-                BottomAppBar(
-                    hasUnsavedChanges = hasUnsavedChanges,
-                    isTestingEnabled = viewState.isTestingEnabled,
-                    onAction = { onAction(it) },
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = MR.strings.back.stable,
                 )
             }
-        ) { paddingValues ->
-            Surface(tonalElevation = 1.dp) {
-                LazyColumn(
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize()
-                ) {
-                    stickyHeader {
-                        ServiceStateHeader(serviceStateHeaderViewState)
-                    }
-
-                    content()
-                }
-            }
-        }
-
-
-        //Show unsaved changes dialog back press
-        if (showUnsavedChangesDialog) {
-            UnsavedBackButtonDialog(
-                onSave = { onAction(SaveDialog) },
-                onDiscard = { onAction(DiscardDialog) },
-                onClose = { onAction(DismissDialog) }
+        },
+        bottomBar = {
+            BottomAppBar(
+                hasUnsavedChanges = hasUnsavedChanges,
+                isTestingEnabled = viewState.isTestingEnabled,
+                onAction = { onAction(it) },
             )
         }
+    ) { paddingValues ->
+        Surface(tonalElevation = 1.dp) {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+            ) {
+                stickyHeader {
+                    ServiceStateHeader(serviceStateHeaderViewState)
+                }
 
+                content()
+            }
+        }
     }
 
 }

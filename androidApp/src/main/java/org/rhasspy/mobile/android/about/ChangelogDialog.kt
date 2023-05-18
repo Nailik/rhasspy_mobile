@@ -2,7 +2,6 @@ package org.rhasspy.mobile.android.about
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -16,6 +15,7 @@ import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 
@@ -52,7 +52,7 @@ private fun ChangelogDialog(
     onDismissRequest: () -> Unit
 ) {
 
-    AlertDialog(
+    Dialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
             TextButton(
@@ -62,10 +62,10 @@ private fun ChangelogDialog(
                 Text(MR.strings.close.stable)
             }
         },
-        title = {
+        headline = {
             Text(MR.strings.changelog.stable)
         },
-        text = {
+        supportingText = {
             LazyColumn(
                 modifier = Modifier.testTag(TestTag.DialogChangelog)
             ) {
