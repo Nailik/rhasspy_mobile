@@ -35,7 +35,6 @@ kotlin {
                 implementation(Icerock.Mvvm.core)
                 implementation(Koin.core)
                 implementation(Touchlab.kermit)
-                implementation(Mikepenz.aboutLibrariesCore)
                 implementation(Jetbrains.Kotlinx.immutable)
                 implementation(Jetbrains.Compose.ui)
                 implementation(Jetbrains.Compose.foundation)

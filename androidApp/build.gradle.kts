@@ -199,6 +199,8 @@ dependencies {
     implementation(AndroidX.multidex)
     implementation(AndroidX.window)
 
+    implementation(Mikepenz.aboutLibrariesCore)
+
     implementation(Touchlab.kermit)
     implementation(Kotlin.test)
     implementation(Kotlin.Test.junit)
@@ -228,19 +230,4 @@ dependencies {
     implementation(Firebase.analyticsKtx)
     implementation(Firebase.crashlyticsKtx)
     implementation(Square.okio)
-
-    constraints {
-        listOf(
-            "org.jetbrains.kotlinx:kotlinx-coroutines-test",
-            "org.jetbrains.kotlinx:kotlinx-coroutines-test-jvm",
-        ).forEach { testDependency ->
-            add("androidTestImplementation", testDependency) {
-                version {
-                    strictly("1.6.4")
-                    reject("1.7.0")
-                    because("https://github.com/Kotlin/kotlinx.coroutines/issues/3673")
-                }
-            }
-        }
-    }
 }
