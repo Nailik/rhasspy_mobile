@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
-import org.rhasspy.mobile.android.content.list.*
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.data.resource.stable
@@ -23,6 +22,7 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
+import org.rhasspy.mobile.ui.content.list.*
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.OpenMqttSSLWiki

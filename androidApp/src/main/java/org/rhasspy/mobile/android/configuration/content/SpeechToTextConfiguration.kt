@@ -9,9 +9,6 @@ import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
-import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
-import org.rhasspy.mobile.android.content.list.SwitchListItem
-import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.data.resource.stable
@@ -21,6 +18,9 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.translate
+import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
+import org.rhasspy.mobile.ui.content.list.SwitchListItem
+import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent

@@ -1,23 +1,20 @@
 package org.rhasspy.mobile.android.permissions
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Layers
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
@@ -86,14 +83,14 @@ fun <T : Any> RequiresOverlayPermission(
  */
 @Composable
 private fun OverlayPermissionInfoDialog(onResult: (result: Boolean) -> Unit) {
-    AlertDialog(
+    Dialog(
         onDismissRequest = {
             onResult.invoke(false)
         },
-        title = {
+        headline = {
             Text(MR.strings.overlayPermissionTitle.stable)
         },
-        text = {
+        supportingText = {
             Text(
                 resource = MR.strings.overlayPermissionInfo.stable,
                 modifier = Modifier.testTag(TestTag.DialogInformationOverlayPermission)
@@ -124,9 +121,6 @@ private fun OverlayPermissionInfoDialog(onResult: (result: Boolean) -> Unit) {
             ) {
                 Text(MR.strings.cancel.stable)
             }
-        },
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
+        }
     )
 }

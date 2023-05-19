@@ -14,11 +14,12 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun Dialog(
+    modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
     icon: (@Composable () -> Unit)? = null,
     headline: @Composable () -> Unit,
-    supportingText: @Composable () -> Unit,
-    confirmButton: @Composable () -> Unit = {},
+    supportingText: (@Composable () -> Unit)? = null,
+    confirmButton: @Composable () -> Unit,
     dismissButton: (@Composable () -> Unit)? = null,
     showDivider: Boolean = false
 ) {
@@ -26,7 +27,7 @@ fun Dialog(
 
         //Scrim
         Surface(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .clickable(onClick = onDismissRequest),
             color = MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f)
@@ -37,7 +38,7 @@ fun Dialog(
                 modifier = Modifier
                     .widthIn(min = 280.dp, max = 560.dp)
                     .padding(48.dp)
-                    .wrapContentHeight()
+                    .wrapContentHeight() //TODO??
                     .clip(RoundedCornerShape(28.dp))
                     .clickable(enabled = false) { },
                 shape = RoundedCornerShape(28.dp),
@@ -49,47 +50,53 @@ fun Dialog(
                     horizontalAlignment = Alignment.Start
                 ) {
 
-                    if (icon != null) {
-                        Box(
-                            modifier = Modifier
-                                .padding(bottom = 16.dp)
-                                .fillMaxWidth(),
-                            contentAlignment = Alignment.Center,
-                        ) {
+                    Column(
+                        modifier = Modifier
+                            .weight(weight = 1f, fill = false)
+                    ) {
+                        if (icon != null) {
                             Box(
-                                modifier = Modifier.size(24.dp),
+                                modifier = Modifier
+                                    .padding(bottom = 16.dp)
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.Center,
                             ) {
-                                CompositionLocalProvider(
-                                    LocalContentColor provides MaterialTheme.colorScheme.secondary,
+                                Box(
+                                    modifier = Modifier.size(24.dp),
                                 ) {
-                                    //Icon (optional)
-                                    icon()
+                                    CompositionLocalProvider(
+                                        LocalContentColor provides MaterialTheme.colorScheme.secondary,
+                                    ) {
+                                        //Icon (optional)
+                                        icon()
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    CompositionLocalProvider(
-                        LocalContentColor provides MaterialTheme.colorScheme.onSurface,
-                        LocalTextStyle provides MaterialTheme.typography.headlineSmall
-                    ) {
-                        //Headline
-                        headline()
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
+                        CompositionLocalProvider(
+                            LocalContentColor provides MaterialTheme.colorScheme.onSurface,
+                            LocalTextStyle provides MaterialTheme.typography.headlineSmall
+                        ) {
+                            //Headline
+                            headline()
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
 
+                        if (supportingText != null) {
+                            CompositionLocalProvider(
+                                LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant,
+                                LocalTextStyle provides MaterialTheme.typography.bodyMedium.copy(textAlign = if (icon == null) TextAlign.Start else TextAlign.Center)
+                            ) {
+                                //Supporting text
+                                supportingText()
+                            }
+                        }
 
-                    CompositionLocalProvider(
-                        LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant,
-                        LocalTextStyle provides MaterialTheme.typography.bodyMedium.copy(textAlign = if (icon == null) TextAlign.Start else TextAlign.Center)
-                    ) {
-                        //Supporting text
-                        supportingText()
-                    }
-
-                    //Divider (optional)
-                    if (showDivider) {
-                        Divider()
+                        //Divider (optional)
+                        if (showDivider) {
+                            Divider()
+                        }
                     }
 
 

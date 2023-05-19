@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.content.list
+package org.rhasspy.mobile.ui.content.list
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.FilledTonalButton

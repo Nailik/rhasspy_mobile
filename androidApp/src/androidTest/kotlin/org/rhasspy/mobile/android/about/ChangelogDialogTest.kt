@@ -9,6 +9,7 @@ import org.junit.Test
 import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.about.ChangelogDialogButton
 
 /**
  * Test visibility and close button of changelog dialog

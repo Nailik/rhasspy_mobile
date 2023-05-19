@@ -3,15 +3,15 @@ package org.rhasspy.mobile.android.permissions
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.data.resource.StableStringResource
@@ -22,6 +22,7 @@ import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
@@ -125,14 +126,14 @@ private fun MicrophonePermissionInfoDialog(
     onResult: (result: Boolean) -> Unit
 ) {
 
-    AlertDialog(
+    Dialog(
         onDismissRequest = {
             onResult.invoke(false)
         },
-        title = {
+        headline = {
             Text(MR.strings.microphonePermissionDialogTitle.stable)
         },
-        text = {
+        supportingText = {
             Text(
                 resource = message,
                 modifier = Modifier.testTag(TestTag.DialogInformationMicrophonePermission)
@@ -163,10 +164,7 @@ private fun MicrophonePermissionInfoDialog(
             ) {
                 Text(MR.strings.cancel.stable)
             }
-        },
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
+        }
     )
 
 }

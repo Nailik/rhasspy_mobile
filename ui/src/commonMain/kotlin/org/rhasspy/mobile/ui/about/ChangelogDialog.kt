@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.about
+package org.rhasspy.mobile.ui.about
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items

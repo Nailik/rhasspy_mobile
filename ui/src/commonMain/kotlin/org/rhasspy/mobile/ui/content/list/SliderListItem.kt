@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.content.list
+package org.rhasspy.mobile.ui.content.list
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.platformspecific.roundToDecimals
 import org.rhasspy.mobile.ui.content.elements.ProvideTextStyleFromToken
 import org.rhasspy.mobile.ui.content.elements.Text
 
@@ -57,7 +58,8 @@ fun SliderListItem(
                             Row(modifier = Modifier.padding(horizontal = 8.dp)) {
                                 Text(text)
                                 Spacer(modifier = Modifier.weight(1f))
-                                Text(valueText ?: "%.2f".format(null, value))
+
+                                Text(valueText ?: value.roundToDecimals(2).toString())
                             }
                         }
 

@@ -15,7 +15,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.configuration.ConfigurationScreen
 import org.rhasspy.mobile.android.settings.SettingsScreen
@@ -25,6 +24,7 @@ import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
@@ -135,9 +135,9 @@ private fun MainScreenContent(
 @Composable
 fun CrashlyticsDialog(onClose: () -> Unit) {
     val viewModel: LogSettingsViewModel = LocalViewModelFactory.current.getViewModel()
-    AlertDialog(
+    Dialog(
         modifier = Modifier.testTag(TestTag.DialogCrashlytics),
-        onDismissRequest = onClose,
+        onDismissRequest = { /*do not dismiss on outside click*/ },
         confirmButton = {
             TextButton(
                 onClick = {
@@ -160,16 +160,12 @@ fun CrashlyticsDialog(onClose: () -> Unit) {
                 Text(MR.strings.deny.stable)
             }
         },
-        title = {
+        headline = {
             Text(MR.strings.crashlytics.stable)
         },
-        text = {
+        supportingText = {
             Text(MR.strings.crashlyticsDialogText.stable)
-        },
-        properties = DialogProperties(
-            dismissOnBackPress = false,
-            dismissOnClickOutside = false
-        )
+        }
     )
 }
 

@@ -12,9 +12,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import org.rhasspy.mobile.android.content.list.InformationListElement
-import org.rhasspy.mobile.android.content.list.ListElement
-import org.rhasspy.mobile.android.content.list.SwitchListItem
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
@@ -25,6 +22,9 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.toText
 import org.rhasspy.mobile.ui.content.elements.translate
+import org.rhasspy.mobile.ui.content.list.InformationListElement
+import org.rhasspy.mobile.ui.content.list.ListElement
+import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.BackgroundServiceSettings
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Action.BackClick

@@ -1,9 +1,8 @@
-package org.rhasspy.mobile.android.about
+package org.rhasspy.mobile.ui.about
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.TextButton
@@ -16,6 +15,7 @@ import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.HtmlText
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
@@ -55,7 +55,7 @@ private fun DataPrivacyDialog(
 
     val scrollState = rememberScrollState()
 
-    AlertDialog(
+    Dialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
             TextButton(
@@ -65,10 +65,10 @@ private fun DataPrivacyDialog(
                 Text(MR.strings.close.stable)
             }
         },
-        title = {
+        headline = {
             Text(MR.strings.dataPrivacy.stable)
         },
-        text = {
+        supportingText = {
             Column(
                 modifier = Modifier
                     .testTag(TestTag.DialogDataPrivacy)

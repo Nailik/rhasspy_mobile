@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.about
+package org.rhasspy.mobile.ui.about
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -19,14 +19,15 @@ import androidx.compose.ui.unit.dp
 import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.entity.License
 import kotlinx.collections.immutable.ImmutableList
-import org.rhasspy.mobile.android.content.elements.CustomDivider
-import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.data.libraries.StableLibrary
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.elements.CustomDivider
+import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.HtmlText
 import org.rhasspy.mobile.ui.content.elements.Text
+import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
 
 /**
@@ -77,6 +78,7 @@ fun LibrariesContainer(
 /**
  * Library list element
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Library(
     stableLibrary: StableLibrary,
@@ -128,7 +130,7 @@ private fun LibraryDialog(stableLibrary: StableLibrary, onDismissRequest: () -> 
 
     val scrollState = rememberScrollState()
 
-    AlertDialog(
+    Dialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
             TextButton(
@@ -138,7 +140,7 @@ private fun LibraryDialog(stableLibrary: StableLibrary, onDismissRequest: () -> 
                 Text(MR.strings.ok.stable)
             }
         },
-        text = {
+        headline = {
             Column(
                 modifier = Modifier
                     .testTag(TestTag.DialogLibrary)

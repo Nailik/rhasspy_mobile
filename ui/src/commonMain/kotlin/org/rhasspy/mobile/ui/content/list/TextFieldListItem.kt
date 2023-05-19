@@ -1,5 +1,6 @@
-package org.rhasspy.mobile.android.content.list
+package org.rhasspy.mobile.ui.content.list
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
@@ -100,6 +101,7 @@ fun TextFieldListItem(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TextFieldListItem(
     modifier: Modifier = Modifier,

@@ -11,13 +11,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
-import org.rhasspy.mobile.android.content.list.TextFieldListItem
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent

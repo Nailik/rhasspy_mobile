@@ -19,10 +19,6 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.content.porcupine.PorcupineKeywordScreen
 import org.rhasspy.mobile.android.configuration.content.porcupine.PorcupineLanguageScreen
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
-import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
-import org.rhasspy.mobile.android.content.list.ListElement
-import org.rhasspy.mobile.android.content.list.TextFieldListItem
-import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
@@ -34,6 +30,10 @@ import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
+import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
+import org.rhasspy.mobile.ui.content.list.ListElement
+import org.rhasspy.mobile.ui.content.list.TextFieldListItem
+import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent

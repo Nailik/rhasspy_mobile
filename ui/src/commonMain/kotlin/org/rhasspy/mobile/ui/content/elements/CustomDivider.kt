@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.android.content.elements
+package org.rhasspy.mobile.ui.content.elements
 
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme

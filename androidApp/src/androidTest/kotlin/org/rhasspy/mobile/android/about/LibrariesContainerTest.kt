@@ -14,6 +14,7 @@ import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.libraries.StableLibrary
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.about.LibrariesContainer
 
 /**
  * tests library container and library dialog

@@ -15,9 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.BuildKonfig
-import org.rhasspy.mobile.android.about.ChangelogDialogButton
-import org.rhasspy.mobile.android.about.DataPrivacyDialogButton
-import org.rhasspy.mobile.android.about.LibrariesContainer
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.data.resource.stable
@@ -25,6 +22,9 @@ import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.about.ChangelogDialogButton
+import org.rhasspy.mobile.ui.about.DataPrivacyDialogButton
+import org.rhasspy.mobile.ui.about.LibrariesContainer
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate

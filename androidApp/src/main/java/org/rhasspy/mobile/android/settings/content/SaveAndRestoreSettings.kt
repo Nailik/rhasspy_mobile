@@ -8,7 +8,6 @@ import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.*
@@ -16,16 +15,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.rhasspy.mobile.android.content.list.ListElement
 import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.Screen
+import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
+import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.SaveAndRestoreSettings
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent
@@ -183,12 +183,12 @@ private fun ShareSettings(onEvent: (SaveAndRestoreSettingsUiEvent) -> Unit) {
 @Composable
 private fun SaveSettingsDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
 
-    AlertDialog(
+    Dialog(
         onDismissRequest = onConfirm,
-        title = {
+        headline = {
             Text(MR.strings.saveSettings.stable)
         },
-        text = {
+        supportingText = {
             Text(
                 resource = MR.strings.saveSettingsWarningText.stable,
                 textAlign = TextAlign.Center
@@ -209,10 +209,7 @@ private fun SaveSettingsDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
             OutlinedButton(onDismiss) {
                 Text(MR.strings.cancel.stable)
             }
-        },
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
+        }
     )
 
 }
@@ -223,12 +220,12 @@ private fun SaveSettingsDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
 @Composable
 private fun RestoreSettingsDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
 
-    AlertDialog(
+    Dialog(
         onDismissRequest = onDismiss,
-        title = {
+        headline = {
             Text(MR.strings.restoreSettings.stable)
         },
-        text = {
+        supportingText = {
             Text(
                 resource = MR.strings.restoreSettingsWarningText.stable,
                 textAlign = TextAlign.Center

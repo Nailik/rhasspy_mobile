@@ -1,10 +1,12 @@
-package org.rhasspy.mobile.android.content.list
+package org.rhasspy.mobile.ui.content.list
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Badge
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -13,12 +15,13 @@ import co.touchlab.kermit.Severity
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.ui.theme.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogListElement(item: LogElement) {
     ListElement(
         overlineText = {
             Row {
-                androidx.compose.material3.Text(
+                Text(
                     text = item.tag,
                     modifier = Modifier.weight(1f)
                 )
@@ -38,7 +41,7 @@ fun LogListElement(item: LogElement) {
                     containerColor = color,
                     modifier = Modifier.wrapContentSize()
                 ) {
-                    androidx.compose.material3.Text(
+                    Text(
                         text = item.severity.name,
                         modifier = Modifier
                             .wrapContentSize()
@@ -49,10 +52,10 @@ fun LogListElement(item: LogElement) {
             }
         },
         text = {
-            androidx.compose.material3.Text(text = "${item.message}${item.throwable?.let { "\n$it" } ?: ""}")
+            Text(text = "${item.message}${item.throwable?.let { "\n$it" } ?: ""}")
         },
         secondaryText = {
-            androidx.compose.material3.Text(item.time)
+            Text(item.time)
         }
     )
 }

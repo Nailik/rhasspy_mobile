@@ -203,7 +203,6 @@ dependencies {
     implementation(Kotlin.test)
     implementation(Kotlin.Test.junit)
     implementation(Devsrsouza.fontAwesome)
-    implementation(Mikepenz.aboutLibrariesCore)
     implementation(Icerock.Resources.resourcesCompose)
     implementation(Icerock.Mvvm.core)
     implementation(Koin.core)
@@ -219,6 +218,7 @@ dependencies {
     androidTestImplementation(Jetbrains.Compose.testJunit4)
     androidTestImplementation(Adevinta.barista)
     androidTestImplementation(Hamcrest.hamcrest)
+    androidTestImplementation(Mikepenz.aboutLibrariesCore)
 
     debugImplementation(AndroidX.tracing)
     debugImplementation(AndroidX.Compose.Ui.testManifest)
