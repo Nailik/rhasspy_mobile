@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.android.configuration
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.rhasspy.mobile.android.content.ServiceStateDialog
 import org.rhasspy.mobile.android.content.ServiceStateHeader
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
@@ -32,10 +34,10 @@ import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.ServiceStateHeaderViewState
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType.Edit
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType.Test
+import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 /**
  * Content of Configuration Screen Item
@@ -56,15 +58,23 @@ fun <V : IConfigurationEditViewState> ConfigurationScreenItemContent(
     content: LazyListScope.() -> Unit
 ) {
 
+    if (viewState.isShowServiceStateDialog) {
+        ServiceStateDialog(
+            dialogText = viewState.serviceStateDialogText,
+            onDismissRequest = { onAction(CloseServiceStateDialog) }
+        )
+    }
+
     Box(modifier = modifier) {
         when (screenType) {
             Edit ->
                 EditConfigurationScreen(
                     title = config.title,
                     viewState = viewState.editViewState.collectAsState().value,
-                    serviceStateHeaderViewState = viewState.serviceViewState.collectAsState().value,
+                    serviceViewState = viewState.serviceViewState,
+                    isOpenServiceStateDialogEnabled = viewState.isOpenServiceStateDialogEnabled,
                     hasUnsavedChanges = viewState.hasUnsavedChanges,
-                    showUnsavedChangesDialog = viewState.isShowUnsavedChangesDialog,
+                    isShowUnsavedChangesDialog = viewState.isShowUnsavedChangesDialog,
                     onAction = onAction,
                     content = content
                 )
@@ -72,6 +82,8 @@ fun <V : IConfigurationEditViewState> ConfigurationScreenItemContent(
             Test ->
                 ConfigurationScreenTest(
                     viewState = viewState.testViewState.collectAsState().value,
+                    serviceViewState = viewState.serviceViewState,
+                    isOpenServiceStateDialogEnabled = viewState.isOpenServiceStateDialogEnabled,
                     onAction = onAction,
                     content = testContent
                 )
@@ -87,16 +99,17 @@ fun <V : IConfigurationEditViewState> ConfigurationScreenItemContent(
 private fun EditConfigurationScreen(
     title: StableStringResource,
     viewState: IConfigurationEditViewState,
-    serviceStateHeaderViewState: ServiceStateHeaderViewState,
+    serviceViewState: ServiceViewState,
+    isOpenServiceStateDialogEnabled: Boolean,
     hasUnsavedChanges: Boolean,
-    showUnsavedChangesDialog: Boolean,
+    isShowUnsavedChangesDialog: Boolean,
     onAction: (IConfigurationUiEvent) -> Unit,
     content: LazyListScope.() -> Unit
 ) {
     SetSystemColor(0.dp)
 
     //Show unsaved changes dialog back press
-    if (showUnsavedChangesDialog) {
+    if (isShowUnsavedChangesDialog) {
         UnsavedBackButtonDialog(
             onSave = { onAction(SaveDialog) },
             onDiscard = { onAction(DiscardDialog) },
@@ -133,7 +146,15 @@ private fun EditConfigurationScreen(
                     .fillMaxSize()
             ) {
                 stickyHeader {
-                    ServiceStateHeader(serviceStateHeaderViewState)
+                    ServiceStateHeader(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp))
+                            .padding(horizontal = 16.dp)
+                            .padding(bottom = 16.dp),
+                        serviceViewState = serviceViewState,
+                        enabled = isOpenServiceStateDialogEnabled,
+                        onClick = { onAction(OpenServiceStateDialog) }
+                    )
                 }
 
                 content()
@@ -185,6 +206,7 @@ private fun UnsavedChangesDialog(
 ) {
 
     Dialog(
+        dismissOnOutside = false,
         onDismissRequest = onDismissRequest,
         confirmButton = {
             TextButton(
@@ -257,7 +279,7 @@ private fun BottomAppBar(
             FloatingActionButtonElement(
                 hasUnsavedChanges = hasUnsavedChanges,
                 isTestingEnabled = isTestingEnabled,
-                onAction = { onAction(it) }
+                onAction = onAction
             )
         }
     )
@@ -276,7 +298,7 @@ private fun FloatingActionButtonElement(
                 minWidth = 56.0.dp,
                 minHeight = 56.0.dp,
             ),
-        onClick = { onAction(StartTest) },
+        onClick = { onAction(OpenTestScreen) },
         containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
         contentColor = LocalContentColor.current,
         isEnabled = !hasUnsavedChanges && isTestingEnabled,

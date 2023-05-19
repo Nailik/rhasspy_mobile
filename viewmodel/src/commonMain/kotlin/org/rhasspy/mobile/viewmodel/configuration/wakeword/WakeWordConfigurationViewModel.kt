@@ -33,8 +33,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputHost
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState.PorcupineCustomKeywordViewState
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.EditPorcupineLanguageScreen
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.EditScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.*
 import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
 @Stable
@@ -42,7 +41,8 @@ class WakeWordConfigurationViewModel(
     service: WakeWordService
 ) : IConfigurationViewModel<WakeWordConfigurationViewState>(
     service = service,
-    initialViewState = ::WakeWordConfigurationViewState
+    initialViewState = ::WakeWordConfigurationViewState,
+    testPageDestination = TestScreen
 ) {
 
     val screen = navigator.topScreen(EditScreen)

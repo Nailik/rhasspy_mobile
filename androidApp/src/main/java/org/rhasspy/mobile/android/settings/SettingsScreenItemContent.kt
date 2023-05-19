@@ -33,16 +33,16 @@ fun SettingsScreenItemContent(
     expandedContent: @Composable () -> Unit
 ) {
 
-    Surface(tonalElevation = 1.dp) {
-        Scaffold(
-            modifier = modifier.fillMaxSize(),
-            topBar = {
-                AppBar(
-                    title = title,
-                    onBackClick = onBackClick
-                )
-            },
-        ) { paddingValues ->
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            AppBar(
+                title = title,
+                onBackClick = onBackClick
+            )
+        },
+    ) { paddingValues ->
+        Surface(tonalElevation = 1.dp) {
             Column(
                 modifier = Modifier
                     .padding(paddingValues)
@@ -53,6 +53,7 @@ fun SettingsScreenItemContent(
             }
         }
     }
+
 }
 
 /**

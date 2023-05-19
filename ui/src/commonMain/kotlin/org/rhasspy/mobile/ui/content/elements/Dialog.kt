@@ -21,6 +21,7 @@ fun Dialog(
     supportingText: (@Composable () -> Unit)? = null,
     confirmButton: @Composable () -> Unit,
     dismissButton: (@Composable () -> Unit)? = null,
+    dismissOnOutside: Boolean = true,
     showDivider: Boolean = false
 ) {
     DialogContainer {
@@ -29,7 +30,7 @@ fun Dialog(
         Surface(
             modifier = modifier
                 .fillMaxSize()
-                .clickable(onClick = onDismissRequest),
+                .clickable(enabled = dismissOnOutside, onClick = onDismissRequest),
             color = MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f)
         ) {
 

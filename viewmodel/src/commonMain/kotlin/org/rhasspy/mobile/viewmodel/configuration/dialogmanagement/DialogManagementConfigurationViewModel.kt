@@ -9,6 +9,7 @@ import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagem
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.DialogManagementConfigurationScreenDestination.EditScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.DialogManagementConfigurationScreenDestination.TestScreen
 
 /**
  * ViewModel for Dialog Management Configuration
@@ -21,7 +22,8 @@ class DialogManagementConfigurationViewModel(
     service: DialogManagerService
 ) : IConfigurationViewModel<DialogManagementConfigurationViewState>(
     service = service,
-    initialViewState = ::DialogManagementConfigurationViewState
+    initialViewState = ::DialogManagementConfigurationViewState,
+    testPageDestination = TestScreen
 ) {
 
     val screen = navigator.topScreen(EditScreen)

@@ -22,35 +22,25 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.KViewModel
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable
 abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
     private val service: IService,
-    private val initialViewState: () -> V
+    private val initialViewState: () -> V,
+    private val testPageDestination: NavigationDestination
 ) : KViewModel() {
+
     private val logger = Logger.withTag("IConfigurationViewModel")
     private var testStartDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).toString()
-
-    private val serviceViewState = service.serviceState.mapReadonlyState {
-        ServiceStateHeaderViewState(
-            serviceState = ServiceViewState(service.serviceState),
-            isOpenServiceDialogEnabled = (it is ServiceState.Exception || it is ServiceState.Error),
-            serviceStateDialogText = when (it) {
-                is ServiceState.Error -> it.information
-                is ServiceState.Exception -> it.exception?.toString() ?: ""
-                else -> ""
-            }
-        )
-    }
 
     private val logEvents = MutableStateFlow<ImmutableList<LogElement>>(persistentListOf())
     private val configurationTestViewState = MutableStateFlow(
         ConfigurationTestViewState(
             isListFiltered = false,
             isListAutoscroll = true,
-            logEvents = logEvents.mapReadonlyState { it.toImmutableList() },
-            serviceViewState = serviceViewState
+            logEvents = logEvents.mapReadonlyState { it.toImmutableList() }
         )
     )
 
@@ -60,8 +50,10 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
 
     private val _viewState = MutableStateFlow(
         ConfigurationViewState(
-            isBackPressDisabled = false,
-            serviceViewState = serviceViewState,
+            serviceViewState = ServiceViewState(service.serviceState),
+            isOpenServiceStateDialogEnabled = service.serviceState.value.isOpenServiceStateDialogEnabled(),
+            isShowServiceStateDialog = false,
+            serviceStateDialogText = service.serviceState.value.getDialogText(),
             editViewState = contentViewState,
             testViewState = configurationTestViewState,
             isShowUnsavedChangesDialog = false,
@@ -69,6 +61,26 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
         )
     )
     val viewState = _viewState.readOnly
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            service.serviceState.collect { serviceState ->
+                _viewState.update {
+                    it.copy(
+                        isOpenServiceStateDialogEnabled = serviceState.isOpenServiceStateDialogEnabled(),
+                        serviceStateDialogText = serviceState.getDialogText()
+                    )
+                }
+            }
+        }
+    }
+
+    private fun ServiceState.isOpenServiceStateDialogEnabled(): Boolean = (this is ServiceState.Exception || this is ServiceState.Error)
+    private fun ServiceState.getDialogText(): Any = when (this) {
+        is ServiceState.Error -> this.information
+        is ServiceState.Exception -> this.exception?.toString() ?: ""
+        else -> ""
+    }
 
     protected fun updateViewState(function: (V) -> V) {
         val newContentViewState = function(contentViewState.value)
@@ -82,12 +94,15 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
         when (action) {
             Discard -> discard(false)
             Save -> save(false)
+            OpenTestScreen -> navigator.navigate(testPageDestination)
             StartTest -> startTest()
             StopTest -> stopTest()
             BackPress -> {
                 if (_viewState.value.hasUnsavedChanges) {
                     _viewState.update { it.copy(isShowUnsavedChangesDialog = true) }
-                } else {
+                } else if (_viewState.value.isShowServiceStateDialog) {
+                    _viewState.update { it.copy(isShowServiceStateDialog = false) }
+                } else if (!_viewState.value.isShowUnsavedChangesDialog) {
                     navigator.popBackStack()
                 }
             }
@@ -112,6 +127,8 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
                 }
 
             BackClick -> navigator.onBackPressed()
+            CloseServiceStateDialog -> _viewState.update { it.copy(isShowServiceStateDialog = false) }
+            OpenServiceStateDialog -> _viewState.update { it.copy(isShowServiceStateDialog = true) }
         }
     }
 

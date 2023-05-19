@@ -24,13 +24,15 @@ import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesH
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.RemoteHermesHttpConfigurationScreenDestination.EditScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.RemoteHermesHttpConfigurationScreenDestination.TestScreen
 
 @Stable
 class RemoteHermesHttpConfigurationViewModel(
     service: HttpClientService
 ) : IConfigurationViewModel<RemoteHermesHttpConfigurationViewState>(
     service = service,
-    initialViewState = ::RemoteHermesHttpConfigurationViewState
+    initialViewState = ::RemoteHermesHttpConfigurationViewState,
+    testPageDestination = TestScreen
 ) {
 
     val screen = navigator.topScreen(EditScreen)
