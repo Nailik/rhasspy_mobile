@@ -32,20 +32,20 @@ class SaveAndRestoreSettingsViewModel : KViewModel() {
     private fun onAction(action: Action) {
         viewModelScope.launch(Dispatchers.IO) {
             when (action) {
-                ExportSettingsFile -> {
-                    if (!SettingsUtils.exportSettingsFile()) {
-                        _viewState.update {
-                            it.copy(snackBarText = MR.strings.exportSettingsFileFailed.stable)
-                        }
-                    }
+                ExportSettingsFile -> _viewState.update {
+                    it.copy(isSaveSettingsToFileDialogVisible = true)
                 }
 
-                RestoreSettingsFromFile -> {
-                    if (!SettingsUtils.restoreSettingsFromFile()) {
-                        _viewState.update {
-                            it.copy(snackBarText = MR.strings.restoreSettingsFromFileFailed.stable)
-                        }
-                    }
+                ExportSettingsFileDismiss -> _viewState.update {
+                    it.copy(isSaveSettingsToFileDialogVisible = false)
+                }
+
+                RestoreSettingsFromFile -> _viewState.update {
+                    it.copy(isRestoreSettingsFromFileDialogVisible = true)
+                }
+
+                RestoreSettingsFromFileDismiss -> _viewState.update {
+                    it.copy(isRestoreSettingsFromFileDialogVisible = false)
                 }
 
                 ShareSettingsFile -> if (!SettingsUtils.shareSettingsFile()) {
@@ -55,6 +55,21 @@ class SaveAndRestoreSettingsViewModel : KViewModel() {
                 }
 
                 is BackClick -> navigator.onBackPressed()
+                ExportSettingsFileConfirmation -> {
+                    if (!SettingsUtils.exportSettingsFile()) {
+                        _viewState.update {
+                            it.copy(snackBarText = MR.strings.exportSettingsFileFailed.stable)
+                        }
+                    }
+                }
+
+                RestoreSettingsFromFileConfirmation -> {
+                    if (!SettingsUtils.restoreSettingsFromFile()) {
+                        _viewState.update {
+                            it.copy(snackBarText = MR.strings.restoreSettingsFromFileFailed.stable)
+                        }
+                    }
+                }
             }
         }
     }
@@ -64,6 +79,18 @@ class SaveAndRestoreSettingsViewModel : KViewModel() {
             when (consumed) {
                 ShowSnackBar -> it.copy(snackBarText = null)
             }
+        }
+    }
+
+    override fun onBackPressed(): Boolean {
+        return if (_viewState.value.isRestoreSettingsFromFileDialogVisible) {
+            _viewState.update { it.copy(isRestoreSettingsFromFileDialogVisible = false) }
+            true
+        } else if (_viewState.value.isSaveSettingsToFileDialogVisible) {
+            _viewState.update { it.copy(isSaveSettingsToFileDialogVisible = false) }
+            true
+        } else {
+            false
         }
     }
 
