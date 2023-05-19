@@ -52,7 +52,7 @@ class SpeechToTextConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            TestSpeechToTextToggleRecording -> toggleRecording()
+            TestSpeechToTextToggleRecording -> requireMicrophonePermission(::toggleRecording)
             BackClick -> navigator.onBackPressed()
         }
     }

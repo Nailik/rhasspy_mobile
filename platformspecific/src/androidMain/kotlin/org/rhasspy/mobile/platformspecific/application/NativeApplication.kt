@@ -14,7 +14,7 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.rhasspy.mobile.platformspecific.external.ExternalRedirect
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 
 actual abstract class NativeApplication : MultiDexApplication() {
 
@@ -43,7 +43,7 @@ actual abstract class NativeApplication : MultiDexApplication() {
                 //always represents top activity
                 if (p0 is AppCompatActivity) {
                     currentActivity = p0
-                    ExternalRedirect.registerCallback(p0)
+                    ExternalResultRequest.registerCallback(p0)
                 }
             }
 

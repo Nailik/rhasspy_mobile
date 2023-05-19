@@ -39,7 +39,7 @@ fun Dialog(
                 modifier = Modifier
                     .widthIn(min = 280.dp, max = 560.dp)
                     .padding(48.dp)
-                    .wrapContentHeight() //TODO??
+                    .wrapContentHeight()
                     .clip(RoundedCornerShape(28.dp))
                     .clickable(enabled = false) { },
                 shape = RoundedCornerShape(28.dp),
@@ -87,7 +87,7 @@ fun Dialog(
                         if (supportingText != null) {
                             CompositionLocalProvider(
                                 LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant,
-                                LocalTextStyle provides MaterialTheme.typography.bodyMedium.copy(textAlign = if (icon == null) TextAlign.Start else TextAlign.Center)
+                                LocalTextStyle provides MaterialTheme.typography.bodyMedium.copy(textAlign = TextAlign.Start)
                             ) {
                                 //Supporting text
                                 supportingText()

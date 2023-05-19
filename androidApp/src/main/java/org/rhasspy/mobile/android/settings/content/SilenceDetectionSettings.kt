@@ -25,11 +25,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
-import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
@@ -220,34 +219,27 @@ private fun StartTestButton(
     isRecording: Boolean,
     onEvent: (SilenceDetectionSettingsUiEvent) -> Unit
 ) {
+    ListElement {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Button(
+                modifier = Modifier
+                    .testTag(TestTag.AutomaticSilenceDetectionSettingsTest)
+                    .wrapContentSize()
+                    .align(Alignment.CenterHorizontally),
+                onClick = { onEvent(ToggleAudioLevelTest) }
+            ) {
 
-    RequiresMicrophonePermission(
-        informationText = MR.strings.microphonePermissionInfoRecord.stable,
-        onClick = { onEvent(ToggleAudioLevelTest) }
-    ) { onClick ->
-        ListElement {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Button(
-                    modifier = Modifier
-                        .testTag(TestTag.AutomaticSilenceDetectionSettingsTest)
-                        .wrapContentSize()
-                        .align(Alignment.CenterHorizontally),
-                    onClick = onClick
-                ) {
+                Icon(
+                    if (isRecording) Icons.Filled.MicOff else Icons.Filled.Mic,
+                    MR.strings.microphone.stable
+                )
 
-                    Icon(
-                        if (isRecording) Icons.Filled.MicOff else Icons.Filled.Mic,
-                        MR.strings.microphone.stable
-                    )
+                Spacer(modifier = Modifier.width(8.dp))
 
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(if (isRecording) MR.strings.stop.stable else MR.strings.testAudioLevel.stable)
-
-                }
+                Text(if (isRecording) MR.strings.stop.stable else MR.strings.testAudioLevel.stable)
 
             }
+
         }
     }
-
 }

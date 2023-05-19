@@ -61,7 +61,7 @@ class RemoteHermesHttpConfigurationViewModel(
         when (action) {
             TestRemoteHermesHttpIntentRecognitionTest -> toggleRecording()
             TestRemoteHermesHttpTextToSpeechTest -> startIntentRecognitionTest()
-            TestRemoteHermesHttpToggleRecording -> startTextToSpeechTest()
+            TestRemoteHermesHttpToggleRecording -> requireMicrophonePermission(::startTextToSpeechTest)
             BackClick -> navigator.onBackPressed()
         }
     }

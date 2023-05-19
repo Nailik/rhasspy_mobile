@@ -22,17 +22,13 @@ import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.entity.License
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.BuildKonfig
-import org.rhasspy.mobile.android.main.LocalSnackbarHostState
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.data.libraries.StableLibrary
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.Screen
-import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.*
 import org.rhasspy.mobile.ui.content.elements.*
 import org.rhasspy.mobile.ui.content.list.ListElement
-import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.AboutSettings
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.BackClick
@@ -53,7 +49,7 @@ fun AboutScreen() {
 
     Screen(viewModel) {
         val viewState by viewModel.viewState.collectAsState()
-        val snackBarHostState = LocalSnackbarHostState.current
+        val snackBarHostState = LocalSnackBarHostState.current
         val snackBarText = viewState.snackBarText?.let { translate(it) }
 
         LaunchedEffect(snackBarText) {

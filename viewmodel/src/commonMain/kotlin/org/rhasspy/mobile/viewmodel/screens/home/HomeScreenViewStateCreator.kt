@@ -9,12 +9,15 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewStateCreator
 
 class HomeScreenViewStateCreator(
-    private val serviceMiddleware: ServiceMiddleware
+    private val serviceMiddleware: ServiceMiddleware,
+    microphoneFabViewStateCreator: MicrophoneFabViewStateCreator
 ) {
 
     private val updaterScope = CoroutineScope(Dispatchers.IO)
+    private val microphoneFabViewStateFlow = microphoneFabViewStateCreator()
 
     operator fun invoke(): StateFlow<HomeScreenViewState> {
         val viewState = MutableStateFlow(getViewState())
@@ -23,7 +26,8 @@ class HomeScreenViewStateCreator(
             combineStateFlow(
                 ConfigurationSetting.wakeWordOption.data,
                 serviceMiddleware.isPlayingRecording,
-                serviceMiddleware.isPlayingRecordingEnabled
+                serviceMiddleware.isPlayingRecordingEnabled,
+                microphoneFabViewStateFlow
             ).collect {
                 viewState.value = getViewState()
             }
@@ -36,7 +40,8 @@ class HomeScreenViewStateCreator(
         return HomeScreenViewState(
             wakeWordOption = ConfigurationSetting.wakeWordOption.value,
             isPlayingRecording = serviceMiddleware.isPlayingRecording.value,
-            isPlayingRecordingEnabled = serviceMiddleware.isPlayingRecordingEnabled.value
+            isPlayingRecordingEnabled = serviceMiddleware.isPlayingRecordingEnabled.value,
+            microphoneFabViewState = microphoneFabViewStateFlow.value
         )
     }
 }

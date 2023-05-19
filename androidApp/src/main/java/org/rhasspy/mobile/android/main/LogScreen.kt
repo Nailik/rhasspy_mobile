@@ -22,6 +22,8 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.LocalSnackBarHostState
+import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.content.elements.CustomDivider
 import org.rhasspy.mobile.ui.content.elements.Icon
@@ -48,7 +50,7 @@ fun LogScreen() {
     Screen(viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
-        val snackBarHostState = LocalSnackbarHostState.current
+        val snackBarHostState = LocalSnackBarHostState.current
         val snackBarText = viewState.snackBarText?.let { translate(it) }
 
         LaunchedEffect(snackBarText) {

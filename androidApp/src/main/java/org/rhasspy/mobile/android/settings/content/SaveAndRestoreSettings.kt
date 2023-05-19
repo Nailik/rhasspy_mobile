@@ -15,11 +15,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import org.rhasspy.mobile.android.main.LocalSnackbarHostState
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.LocalSnackBarHostState
+import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
@@ -44,7 +44,7 @@ fun SaveAndRestoreSettingsContent() {
     Screen(viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
-        val snackBarHostState = LocalSnackbarHostState.current
+        val snackBarHostState = LocalSnackBarHostState.current
         val snackBarText = viewState.snackBarText?.let { translate(it) }
 
         LaunchedEffect(snackBarText) {

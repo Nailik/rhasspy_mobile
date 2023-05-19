@@ -22,4 +22,9 @@ expect object MicrophonePermission {
      */
     fun update()
 
+    /**
+     * request permission from user
+     */
+    suspend fun request()
+
 }

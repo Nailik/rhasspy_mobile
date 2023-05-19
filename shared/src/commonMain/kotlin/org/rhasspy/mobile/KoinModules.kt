@@ -177,7 +177,8 @@ val viewModelModule = module {
 
     single {
         HomeScreenViewStateCreator(
-            serviceMiddleware = get()
+            serviceMiddleware = get(),
+            microphoneFabViewStateCreator = get()
         )
     }
     single {

@@ -19,14 +19,10 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.content.porcupine.PorcupineKeywordScreen
 import org.rhasspy.mobile.android.configuration.content.porcupine.PorcupineLanguageScreen
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
-import org.rhasspy.mobile.android.main.LocalSnackbarHostState
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
-import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.Screen
-import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.*
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
@@ -34,7 +30,6 @@ import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
-import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.*
@@ -65,7 +60,7 @@ fun WakeWordConfigurationContent() {
         val screen by viewModel.screen.collectAsState()
 
         val contentViewState by viewState.editViewState.collectAsState()
-        val snackBarHostState = LocalSnackbarHostState.current
+        val snackBarHostState = LocalSnackBarHostState.current
         val snackBarText = contentViewState.snackBarText?.let { translate(it) }
 
         LaunchedEffect(snackBarText) {
@@ -237,15 +232,10 @@ private fun PorcupineConfiguration(
             exit = shrinkVertically(),
             visible = isMicrophonePermissionRequestVisible
         ) {
-            RequiresMicrophonePermission(
-                informationText = MR.strings.microphonePermissionInfoRecord.stable,
-                onClick = { onEvent(MicrophonePermissionAllowed) }
-            ) { onClick ->
-                FilledTonalButtonListItem(
-                    text = MR.strings.allowMicrophonePermission.stable,
-                    onClick = onClick
-                )
-            }
+            FilledTonalButtonListItem(
+                text = MR.strings.allowMicrophonePermission.stable,
+                onClick = { onEvent(RequestMicrophonePermission) }
+            )
         }
 
     }
@@ -288,15 +278,10 @@ private fun UdpSettings(
             exit = shrinkVertically(),
             visible = isMicrophonePermissionRequestVisible
         ) {
-            RequiresMicrophonePermission(
-                informationText = MR.strings.microphonePermissionInfoRecord.stable,
-                onClick = { onEvent(MicrophonePermissionAllowed) }
-            ) { onClick ->
-                FilledTonalButtonListItem(
-                    text = MR.strings.allowMicrophonePermission.stable,
-                    onClick = onClick
-                )
-            }
+            FilledTonalButtonListItem(
+                text = MR.strings.allowMicrophonePermission.stable,
+                onClick = { onEvent(RequestMicrophonePermission) }
+            )
         }
 
     }
@@ -308,15 +293,8 @@ private fun UdpSettings(
  */
 @Composable
 private fun TestContent(onEvent: (WakeWordConfigurationUiEvent) -> Unit) {
-
-    RequiresMicrophonePermission(
-        informationText = MR.strings.microphonePermissionInfoRecord.stable,
+    FilledTonalButtonListItem(
+        text = MR.strings.startRecordAudio.stable,
         onClick = { onEvent(TestStartWakeWord) }
-    ) { onClick ->
-        FilledTonalButtonListItem(
-            text = MR.strings.startRecordAudio.stable,
-            onClick = onClick
-        )
-    }
-
+    )
 }

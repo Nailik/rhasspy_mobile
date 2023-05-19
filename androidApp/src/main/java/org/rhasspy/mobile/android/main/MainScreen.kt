@@ -22,12 +22,10 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.Screen
-import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.*
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
-import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.AppTheme
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
@@ -39,15 +37,6 @@ import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewState
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 
-val LocalSnackbarHostState = compositionLocalOf<SnackbarHostState> {
-    error("No SnackbarHostState provided")
-}
-
-val LocalViewModelFactory = compositionLocalOf<ViewModelFactory> {
-    error("No LocalViewModelFactory provided")
-}
-
-
 @Composable
 fun MainScreen(viewModelFactory: ViewModelFactory) {
 
@@ -58,7 +47,7 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
             val snackBarHostState = remember { SnackbarHostState() }
 
             CompositionLocalProvider(
-                LocalSnackbarHostState provides snackBarHostState,
+                LocalSnackBarHostState provides snackBarHostState,
                 LocalViewModelFactory provides viewModelFactory
             ) {
                 Scaffold(

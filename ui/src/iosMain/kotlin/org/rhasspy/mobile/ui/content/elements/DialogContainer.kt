@@ -6,8 +6,6 @@ import androidx.compose.ui.window.Popup
 @Composable
 actual fun DialogContainer(content: @Composable () -> Unit) {
 
-    Popup(
-        content = content
-    )
+    Popup(content = content)
 
 }

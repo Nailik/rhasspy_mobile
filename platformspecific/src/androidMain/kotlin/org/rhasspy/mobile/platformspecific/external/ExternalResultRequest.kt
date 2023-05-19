@@ -18,28 +18,36 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.external.ExternalRedirectIntention.*
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.*
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.*
+import kotlin.coroutines.resume
 
-actual object ExternalRedirect : KoinComponent {
+actual object ExternalResultRequest : KoinComponent {
 
     private val logger = Logger.withTag("ExternalRedirect")
     private val nativeApplication by inject<NativeApplication>()
 
     private lateinit var someActivityResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var somePermissionResultLauncher: ActivityResultLauncher<String>
 
-    private var resultCallback: ((activityResult: ActivityResult) -> Unit)? = null
+    private var activityResultCallback: ((activityResult: ActivityResult) -> Unit)? = null
+    private var permissionResultCallback: ((granted: Boolean) -> Unit)? = null
 
     fun registerCallback(activity: AppCompatActivity) {
         logger.v { "registerCallback" }
         someActivityResultLauncher = activity.registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) {
-            resultCallback?.invoke(it)
+            activityResultCallback?.invoke(it)
+        }
+        somePermissionResultLauncher = activity.registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) {
+            permissionResultCallback?.invoke(it)
         }
     }
 
-    actual fun <R> launch(intention: ExternalRedirectIntention<R>): ExternalRedirectResult<R> {
+    actual fun <R> launch(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> {
         logger.v { "launch $intention" }
         return launching {
             nativeApplication.currentActivity?.also {
@@ -56,13 +64,20 @@ actual object ExternalRedirect : KoinComponent {
 
     @Suppress("UNCHECKED_CAST")
     @OptIn(ExperimentalCoroutinesApi::class)
-    actual suspend fun <R> launchForResult(intention: ExternalRedirectIntention<R>): ExternalRedirectResult<R> =
+    actual suspend fun <R> launchForResult(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> =
         suspendCancellableCoroutine { continuation ->
             logger.v { "launchForResult $intention" }
             launching<R> {
-                resultCallback = { continuation.resume(getResult(it) as ExternalRedirectResult<R>) { cause -> Error<R>(cause) } }
+                activityResultCallback = { continuation.resume(getResult(it) as ExternalRedirectResult<R>) { cause -> Error<R>(cause) } }
                 someActivityResultLauncher.launch(intentFromIntention(intention))
             }
+        }
+
+    actual suspend fun launchForPermission(permission: String): Boolean =
+        suspendCancellableCoroutine { continuation ->
+            logger.v { "launchForResult $permission" }
+            permissionResultCallback = { continuation.resume(it) }
+            somePermissionResultLauncher.launch(permission)
         }
 
     private fun <R> launching(launch: () -> Unit): ExternalRedirectResult<R> {
@@ -86,7 +101,7 @@ actual object ExternalRedirect : KoinComponent {
         } else Error()
     }
 
-    private fun <R> intentFromIntention(intention: ExternalRedirectIntention<R>): Intent {
+    private fun <R> intentFromIntention(intention: ExternalResultRequestIntention<R>): Intent {
         return when (intention) {
             is CreateDocument ->
                 ActivityResultContracts

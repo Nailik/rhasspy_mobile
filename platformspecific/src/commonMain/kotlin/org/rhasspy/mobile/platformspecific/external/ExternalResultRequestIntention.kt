@@ -2,7 +2,7 @@ package org.rhasspy.mobile.platformspecific.external
 
 import org.rhasspy.mobile.data.link.LinkType
 
-sealed interface ExternalRedirectIntention<R> {
+sealed interface ExternalResultRequestIntention<R> {
 
     /**
      * Create a Document return the uri as string
@@ -10,7 +10,7 @@ sealed interface ExternalRedirectIntention<R> {
     data class CreateDocument(
         val title: String,
         val mimeType: String
-    ) : ExternalRedirectIntention<String>
+    ) : ExternalResultRequestIntention<String>
 
     /**
      * Open Document and read content, opens at initial folder
@@ -18,7 +18,7 @@ sealed interface ExternalRedirectIntention<R> {
     data class OpenDocument(
         val uri: String,
         val mimeTypes: List<String>
-    ) : ExternalRedirectIntention<String>
+    ) : ExternalResultRequestIntention<String>
 
     /**
      * Get Document content, opens at initial folder
@@ -27,23 +27,23 @@ sealed interface ExternalRedirectIntention<R> {
     data class GetContent(
         val uri: String,
         val mimeTypes: List<String>
-    ) : ExternalRedirectIntention<String>
+    ) : ExternalResultRequestIntention<String>
 
-    object OpenBatteryOptimizationSettings : ExternalRedirectIntention<Unit>
+    object OpenBatteryOptimizationSettings : ExternalResultRequestIntention<Unit>
 
-    object RequestMicrophonePermissionExternally : ExternalRedirectIntention<Unit>
+    object RequestMicrophonePermissionExternally : ExternalResultRequestIntention<Unit>
 
-    object OpenOverlaySettings : ExternalRedirectIntention<Unit>
+    object OpenOverlaySettings : ExternalResultRequestIntention<Unit>
 
-    object OpenAppSettings : ExternalRedirectIntention<Unit>
+    object OpenAppSettings : ExternalResultRequestIntention<Unit>
 
     data class OpenLink(
         val link: LinkType
-    ) : ExternalRedirectIntention<Unit>
+    ) : ExternalResultRequestIntention<Unit>
 
     data class ShareFile(
         val fileUri: String,
         val mimeType: String,
-    ) : ExternalRedirectIntention<Unit>
+    ) : ExternalResultRequestIntention<Unit>
 
 }

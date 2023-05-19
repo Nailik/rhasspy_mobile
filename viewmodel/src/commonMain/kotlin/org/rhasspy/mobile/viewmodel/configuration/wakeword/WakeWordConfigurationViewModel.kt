@@ -70,14 +70,14 @@ class WakeWordConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            MicrophonePermissionAllowed -> {
+            RequestMicrophonePermission -> requireMicrophonePermission {
                 updateViewState { it.copy(isMicrophonePermissionRequestVisible = false) }
                 if (!viewState.value.hasUnsavedChanges) {
                     onAction(Save)
                 }
             }
 
-            TestStartWakeWord -> startWakeWordDetection()
+            TestStartWakeWord -> requireMicrophonePermission(::startWakeWordDetection)
             BackClick -> navigator.onBackPressed()
             is Navigate -> navigator.navigate(action.destination)
         }

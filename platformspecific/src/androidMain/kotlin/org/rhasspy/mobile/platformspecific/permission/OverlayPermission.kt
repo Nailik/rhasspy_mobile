@@ -6,9 +6,9 @@ import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.external.ExternalRedirect
-import org.rhasspy.mobile.platformspecific.external.ExternalRedirectIntention
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
 
 actual object OverlayPermission : KoinComponent {
 
@@ -28,12 +28,12 @@ actual object OverlayPermission : KoinComponent {
     actual fun requestPermission(onGranted: () -> Unit): Boolean {
         OverlayPermission.onGranted = onGranted
 
-        val result = ExternalRedirect.launch(ExternalRedirectIntention.OpenOverlaySettings)
+        val result = ExternalResultRequest.launch(ExternalResultRequestIntention.OpenOverlaySettings)
 
         return if (result is ExternalRedirectResult.Success) {
             true
         } else {
-            return ExternalRedirect.launch(ExternalRedirectIntention.OpenAppSettings) is ExternalRedirectResult.Success
+            return ExternalResultRequest.launch(ExternalResultRequestIntention.OpenAppSettings) is ExternalRedirectResult.Success
         }
     }
 

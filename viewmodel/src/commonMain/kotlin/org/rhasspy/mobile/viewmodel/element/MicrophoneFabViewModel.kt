@@ -3,7 +3,9 @@ package org.rhasspy.mobile.viewmodel.element
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
+import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.viewmodel.KViewModel
+import org.rhasspy.mobile.viewmodel.KViewModelEvent.Action.RequestMicrophonePermission
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent.Action
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent.Action.UserSessionClick
 
@@ -23,7 +25,13 @@ class MicrophoneFabViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            UserSessionClick -> serviceMiddleware.userSessionClick()
+            UserSessionClick -> {
+                if (!MicrophonePermission.granted.value) {
+                    onEvent(RequestMicrophonePermission)
+                } else {
+                    serviceMiddleware.userSessionClick()
+                }
+            }
         }
     }
 

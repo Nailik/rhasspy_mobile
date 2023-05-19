@@ -25,12 +25,13 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.rhasspy.mobile.android.*
-import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.language.LanguageType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.LocalSnackBarHostState
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.theme.AppTheme
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SelectLanguageOption
@@ -83,13 +84,13 @@ class MicrophonePermissionTest : FlakyTest() {
 
     private val btnRequestPermission = "btnRequestPermission"
 
-    private var permissionResult = false
-
     private val systemSettingsListRegex = if (Build.VERSION.SDK_INT < 29) {
         ".*:id/list"
     } else {
         ".*:id/recycler_view"
     }
+
+    private val testViewModel = TestViewModel()
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @NoLiveLiterals
@@ -101,17 +102,15 @@ class MicrophonePermissionTest : FlakyTest() {
         //set content
         composeTestRule.activity.setContent {
             TestContentProvider {
-                val snackbarHostState = LocalSnackbarHostState.current
+                val snackBarHostState = LocalSnackBarHostState.current
                 AppTheme {
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
-                        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+                        snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
                     ) {
 
-                        RequiresMicrophonePermission(
-                            MR.strings.defaultText.stable,
-                            { permissionResult = true }) { onClick ->
-                            Button(onClick = onClick) {
+                        Screen(viewModel = testViewModel) {
+                            Button(onClick = { testViewModel.onRequestMicrophonePermission() }) {
                                 Text(btnRequestPermission)
                             }
                         }
@@ -139,7 +138,6 @@ class MicrophonePermissionTest : FlakyTest() {
             return@runTest
         }
 
-        permissionResult = false
         assertFalse { MicrophonePermission.granted.value }
 
         //User clicks button
@@ -160,7 +158,6 @@ class MicrophonePermissionTest : FlakyTest() {
         composeTestRule.awaitIdle()
         device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
         assertFalse { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
-        assertTrue { permissionResult }
         assertTrue { MicrophonePermission.granted.value }
     }
 
@@ -177,7 +174,6 @@ class MicrophonePermissionTest : FlakyTest() {
             return@runTest
         }
 
-        permissionResult = false
         assertFalse { MicrophonePermission.granted.value }
 
         //User clicks button
@@ -197,7 +193,6 @@ class MicrophonePermissionTest : FlakyTest() {
         composeTestRule.awaitIdle()
         device.wait(Until.hasObject(By.res(permissionDialogPackageNameRegex.toPattern())), 5000)
         assertFalse { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
-        assertTrue { permissionResult }
         assertTrue { MicrophonePermission.granted.value }
     }
 
@@ -214,7 +209,6 @@ class MicrophonePermissionTest : FlakyTest() {
             return@runTest
         }
 
-        permissionResult = false
         assertFalse { MicrophonePermission.granted.value }
 
         //User clicks button
@@ -233,7 +227,6 @@ class MicrophonePermissionTest : FlakyTest() {
         composeTestRule.awaitIdle()
         device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
         assertFalse { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
-        assertTrue { permissionResult }
         assertTrue { MicrophonePermission.granted.value }
     }
 
@@ -258,7 +251,6 @@ class MicrophonePermissionTest : FlakyTest() {
             return@runTest
         }
 
-        permissionResult = false
         assertFalse { MicrophonePermission.granted.value }
 
         //User clicks button
@@ -303,7 +295,6 @@ class MicrophonePermissionTest : FlakyTest() {
         composeTestRule.awaitIdle()
         device.wait(Until.hasObject(By.pkg(permissionDialogPackageNameRegex.toPattern())), 5000)
         assertFalse { device.findObject(UiSelector().packageNameMatches(permissionDialogPackageNameRegex)).exists() }
-        assertFalse { permissionResult }
         assertFalse { MicrophonePermission.granted.value }
 
         //User clicks button
@@ -344,7 +335,6 @@ class MicrophonePermissionTest : FlakyTest() {
      */
     @Test
     fun testInformationDialog() = runTest {
-        permissionResult = false
         assertFalse { MicrophonePermission.granted.value }
 
 

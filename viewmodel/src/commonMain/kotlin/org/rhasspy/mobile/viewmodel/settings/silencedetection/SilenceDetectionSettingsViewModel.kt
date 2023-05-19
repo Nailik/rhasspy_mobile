@@ -52,12 +52,13 @@ class SilenceDetectionSettingsViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            ToggleAudioLevelTest ->
+            ToggleAudioLevelTest -> requireMicrophonePermission {
                 if (audioRecorder.isRecording.value) audioRecorder.stopRecording() else audioRecorder.startRecording(
                     audioRecorderChannelType = AppSetting.audioRecorderChannel.value,
                     audioRecorderEncodingType = AppSetting.audioRecorderEncoding.value,
                     audioRecorderSampleRateType = AppSetting.audioRecorderSampleRate.value
                 )
+            }
 
             is BackClick -> navigator.onBackPressed()
         }

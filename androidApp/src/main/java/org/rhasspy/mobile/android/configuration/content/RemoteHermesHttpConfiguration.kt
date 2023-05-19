@@ -9,10 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
-import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
@@ -123,15 +122,10 @@ private fun TestContent(
     Column {
 
         if (isSpeechToTextTestVisible) {
-            RequiresMicrophonePermission(
-                informationText = MR.strings.microphonePermissionInfoRecord.stable,
+            FilledTonalButtonListItem(
+                text = if (isTestRecordingAudio) MR.strings.stopRecordAudio.stable else MR.strings.startRecordAudio.stable,
                 onClick = { onEvent(TestRemoteHermesHttpToggleRecording) }
-            ) { onClick ->
-                FilledTonalButtonListItem(
-                    text = if (isTestRecordingAudio) MR.strings.stopRecordAudio.stable else MR.strings.startRecordAudio.stable,
-                    onClick = onClick
-                )
-            }
+            )
         }
 
         if (isIntentRecognitionTestVisible) {

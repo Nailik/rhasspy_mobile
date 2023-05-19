@@ -4,7 +4,6 @@ import okio.Path
 import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.*
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination
 
 sealed interface WakeWordConfigurationUiEvent {
@@ -17,7 +16,7 @@ sealed interface WakeWordConfigurationUiEvent {
 
     sealed interface Action : WakeWordConfigurationUiEvent {
 
-        object MicrophonePermissionAllowed : Action
+        object RequestMicrophonePermission : Action
         object TestStartWakeWord : Action
         object BackClick : Action
         data class Navigate(val destination: WakeWordConfigurationScreenDestination) : Action

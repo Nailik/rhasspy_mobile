@@ -11,10 +11,10 @@ import kotlinx.serialization.json.decodeFromStream
 import okio.*
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.external.ExternalRedirect
-import org.rhasspy.mobile.platformspecific.external.ExternalRedirectIntention
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Result
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Success
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.io.SequenceInputStream
@@ -63,8 +63,8 @@ actual fun Path.commonShare(nativeApplication: NativeApplication): Boolean {
         this.toFile()
     )
 
-    val result = ExternalRedirect.launch(
-        ExternalRedirectIntention.ShareFile(
+    val result = ExternalResultRequest.launch(
+        ExternalResultRequestIntention.ShareFile(
             fileUri = fileUri.toString(),
             mimeType = "text/html"
         )
@@ -75,7 +75,7 @@ actual fun Path.commonShare(nativeApplication: NativeApplication): Boolean {
 
 actual suspend fun Path.commonSave(nativeApplication: NativeApplication, fileName: String, fileType: String): Boolean {
 
-    val result = ExternalRedirect.launchForResult(ExternalRedirectIntention.CreateDocument(fileName, fileType))
+    val result = ExternalResultRequest.launchForResult(ExternalResultRequestIntention.CreateDocument(fileName, fileType))
 
     return if (result is Result) {
         nativeApplication.contentResolver.openOutputStream(result.data.toUri())

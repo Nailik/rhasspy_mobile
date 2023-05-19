@@ -9,12 +9,11 @@ import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
-import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.translate
@@ -163,15 +162,8 @@ private fun TestContent(
     isRecordingAudio: Boolean,
     onEvent: (SpeechToTextConfigurationUiEvent) -> Unit
 ) {
-
-    RequiresMicrophonePermission(
-        informationText = MR.strings.microphonePermissionInfoRecord.stable,
+    FilledTonalButtonListItem(
+        text = if (isRecordingAudio) MR.strings.stopRecordAudio.stable else MR.strings.startRecordAudio.stable,
         onClick = { onEvent(TestSpeechToTextToggleRecording) }
-    ) { onClick ->
-        FilledTonalButtonListItem(
-            text = if (isRecordingAudio) MR.strings.stopRecordAudio.stable else MR.strings.startRecordAudio.stable,
-            onClick = onClick
-        )
-    }
-
+    )
 }

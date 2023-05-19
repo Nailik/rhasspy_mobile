@@ -16,21 +16,17 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.android.content.OnPauseEffect
-import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.sounds.SoundOption
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.Screen
-import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.combinedTestTag
+import org.rhasspy.mobile.ui.*
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.content.list.RadioButtonListItem
 import org.rhasspy.mobile.ui.content.list.SliderListItem
-import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.*
@@ -50,7 +46,7 @@ fun IndicationSoundScreen(
     Screen(viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
-        val snackBarHostState = LocalSnackbarHostState.current
+        val snackBarHostState = LocalSnackBarHostState.current
         val snackBarText = viewState.snackBarText?.let { translate(it) }
 
         LaunchedEffect(snackBarText) {

@@ -13,17 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
-import org.rhasspy.mobile.android.main.LocalSnackbarHostState
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.Screen
-import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.*
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.*
-import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.OpenMqttSSLWiki
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.SelectSSLCertificate
@@ -50,7 +46,7 @@ fun MqttConfigurationContent() {
         val screen by viewModel.screen.collectAsState()
         val contentViewState by viewState.editViewState.collectAsState()
 
-        val snackBarHostState = LocalSnackbarHostState.current
+        val snackBarHostState = LocalSnackBarHostState.current
         val snackBarText = contentViewState.snackBarText?.let { translate(it) }
 
         LaunchedEffect(snackBarText) {

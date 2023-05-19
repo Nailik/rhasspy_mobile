@@ -9,10 +9,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.LocalSnackBarHostState
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
@@ -33,7 +33,7 @@ fun <T : Any> RequiresOverlayPermission(
     onClick: (data: T) -> Unit,
     content: @Composable (onClick: (data: T) -> Unit) -> Unit
 ) {
-    val snackBarHostState = LocalSnackbarHostState.current
+    val snackBarHostState = LocalSnackBarHostState.current
     val coroutineScope = rememberCoroutineScope()
 
     val snackBarMessage = translate(MR.strings.overlayPermissionRequestFailed.stable)
