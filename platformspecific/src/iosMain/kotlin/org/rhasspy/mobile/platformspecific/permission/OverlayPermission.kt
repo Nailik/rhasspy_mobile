@@ -29,8 +29,8 @@ actual object OverlayPermission {
     /**
      * to request the permission externally, redirect user to settings
      */
-    actual fun requestPermission(onGranted: () -> Unit): Boolean {
-        //TODO("Not yet implemented")
-        return true
+    actual fun requestPermission(): Boolean {
+        TODO("Not yet implemented")
     }
+
 }
