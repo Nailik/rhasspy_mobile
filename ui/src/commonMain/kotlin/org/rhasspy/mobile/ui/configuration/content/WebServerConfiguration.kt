@@ -86,6 +86,7 @@ fun WebServerConfigurationContent() {
                             label = MR.strings.port.stable,
                             modifier = Modifier.testTag(TestTag.Port),
                             value = contentViewState.httpServerPortText,
+                            isLastItem = true,
                             onValueChange = { viewModel.onEvent(UpdateHttpServerPort(it)) },
                             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                         )

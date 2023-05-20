@@ -90,7 +90,7 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
                     .rotate(45F)
                     .offset(50.dp)
                     .background(Color.Red)
-                    .width(150.dp)
+                    .width(180.dp)
                     .align(Alignment.TopEnd),
                 textAlign = TextAlign.Center
             )

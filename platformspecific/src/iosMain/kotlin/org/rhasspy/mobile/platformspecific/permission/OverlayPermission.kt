@@ -30,7 +30,8 @@ actual object OverlayPermission {
      * to request the permission externally, redirect user to settings
      */
     actual fun requestPermission(): Boolean {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
+        return true
     }
 
 }
