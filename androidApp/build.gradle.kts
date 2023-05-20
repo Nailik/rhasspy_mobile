@@ -220,7 +220,6 @@ dependencies {
     androidTestImplementation(Jetbrains.Compose.testJunit4)
     androidTestImplementation(Adevinta.barista)
     androidTestImplementation(Hamcrest.hamcrest)
-    androidTestImplementation(Mikepenz.aboutLibrariesCore)
 
     debugImplementation(AndroidX.tracing)
     debugImplementation(AndroidX.Compose.Ui.testManifest)
@@ -230,4 +229,6 @@ dependencies {
     implementation(Firebase.analyticsKtx)
     implementation(Firebase.crashlyticsKtx)
     implementation(Square.okio)
+
+    implementation(Mikepenz.aboutLibrariesCore)
 }

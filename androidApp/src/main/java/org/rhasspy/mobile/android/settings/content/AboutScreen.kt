@@ -219,6 +219,8 @@ fun DataPrivacyDialog(
     val scrollState = rememberScrollState()
 
     Dialog(
+        modifier = Modifier
+            .testTag(TestTag.DialogDataPrivacy),
         onDismissRequest = onDismissRequest,
         confirmButton = {
             TextButton(
@@ -233,9 +235,7 @@ fun DataPrivacyDialog(
         },
         supportingText = {
             Column(
-                modifier = Modifier
-                    .testTag(TestTag.DialogDataPrivacy)
-                    .verticalScroll(scrollState),
+                modifier = Modifier.verticalScroll(scrollState),
             ) {
                 HtmlText(
                     html = dataPrivacy,
@@ -257,6 +257,7 @@ private fun ChangelogDialog(
 ) {
 
     Dialog(
+        modifier = Modifier.testTag(TestTag.DialogChangelog),
         onDismissRequest = onDismissRequest,
         confirmButton = {
             TextButton(
@@ -270,9 +271,7 @@ private fun ChangelogDialog(
             Text(MR.strings.changelog.stable)
         },
         supportingText = {
-            LazyColumn(
-                modifier = Modifier.testTag(TestTag.DialogChangelog)
-            ) {
+            LazyColumn {
                 items(changelog) { item ->
                     Text(text = item)
                 }
@@ -370,9 +369,9 @@ fun LibraryDialog(
     onDismissRequest: () -> Unit
 ) {
 
-    val scrollState = rememberScrollState()
-
     Dialog(
+        modifier = Modifier
+            .testTag(TestTag.DialogLibrary),
         onDismissRequest = onDismissRequest,
         confirmButton = {
             TextButton(
@@ -384,9 +383,7 @@ fun LibraryDialog(
         },
         headline = {
             Column(
-                modifier = Modifier
-                    .testTag(TestTag.DialogLibrary)
-                    .verticalScroll(scrollState),
+                modifier = Modifier.verticalScroll(rememberScrollState()),
             ) {
                 HtmlText(
                     html = stableLibrary.library.licenses.firstOrNull()?.htmlReadyLicenseContent.orEmpty(),
