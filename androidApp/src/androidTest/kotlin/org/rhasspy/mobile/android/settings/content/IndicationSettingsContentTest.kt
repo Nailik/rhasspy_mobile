@@ -68,7 +68,7 @@ class IndicationSettingsContentTest : FlakyTest() {
      * sound is saved
      */
     @Test
-    fun testIndicationSettings() = runTest {
+    fun testIndicationSettings() {
         device.resetOverlayPermission(composeTestRule.activity)
 
         viewModel.onEvent(SetWakeWordLightIndicationEnabled(false))
@@ -86,7 +86,6 @@ class IndicationSettingsContentTest : FlakyTest() {
 
         //user clicks wake up display
         composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).performClick()
-        composeTestRule.awaitIdle()
         //wake up display is enabled
         composeTestRule.onNodeWithTag(TestTag.WakeWordDetectionTurnOnDisplay).onListItemSwitch()
             .assertIsOn()
@@ -96,11 +95,9 @@ class IndicationSettingsContentTest : FlakyTest() {
 
         //user clicks visual
         composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).performClick()
-        composeTestRule.awaitIdle()
         //user accepts permission
         //Ok clicked
         composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
-        composeTestRule.awaitIdle()
         //on Q app is restarted when allowing overlay permission
 
         //Redirected to settings
@@ -120,14 +117,13 @@ class IndicationSettingsContentTest : FlakyTest() {
         assertTrue { OverlayPermission.granted.value }
 
         //visual is enabled
-        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onListItemSwitch()
-            .assertIsOn()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).performClick()
+        composeTestRule.onNodeWithTag(TestTag.WakeWordLightIndicationEnabled).onListItemSwitch().assertIsOn()
         //visual is saved
         assertTrue { IndicationSettingsViewModel().viewState.value.isWakeWordLightIndicationEnabled }
 
         //user clicks sound
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).performClick()
-        composeTestRule.awaitIdle()
         //sound is enabled
         composeTestRule.onNodeWithTag(TestTag.SoundIndicationEnabled).onListItemSwitch().assertIsOn()
         //sound is saved

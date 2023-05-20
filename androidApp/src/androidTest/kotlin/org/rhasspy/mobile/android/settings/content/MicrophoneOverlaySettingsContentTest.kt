@@ -7,7 +7,6 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -74,7 +73,7 @@ class MicrophoneOverlaySettingsContentTest : FlakyTest() {
      * visible while app is saved
      */
     @Test
-    fun testContent() = runTest {
+    fun testContent() {
         device.resetOverlayPermission(composeTestRule.activity)
 
         viewModel.onEvent(SelectMicrophoneOverlaySizeOption(MicrophoneOverlaySizeOption.Disabled))
@@ -94,7 +93,6 @@ class MicrophoneOverlaySettingsContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(MicrophoneOverlaySizeOption.Medium).performClick()
 
         //Overlay permission info is displayed
-        composeTestRule.awaitIdle()
         //user clicks ok
         composeTestRule.onNodeWithTag(TestTag.DialogOk).performClick()
         //user accepts permission
@@ -107,8 +105,8 @@ class MicrophoneOverlaySettingsContentTest : FlakyTest() {
         //User clicks back
         device.pressBack()
         device.pressBack()
-        composeTestRule.awaitIdle()
 
+        composeTestRule.onNodeWithTag(MicrophoneOverlaySizeOption.Medium, true).onListItemRadioButton().performClick()
         //Medium is selected
         composeTestRule.onNodeWithTag(MicrophoneOverlaySizeOption.Medium, true).onListItemRadioButton().assertIsSelected()
         //Visible while app is visible
@@ -127,7 +125,6 @@ class MicrophoneOverlaySettingsContentTest : FlakyTest() {
 
         //user clicks visible while app
         composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).performClick()
-        composeTestRule.awaitIdle()
         //element is turned on
         composeTestRule.onNodeWithTag(TestTag.VisibleWhileAppIsOpened).onListItemSwitch().assertIsOn()
         //visible while app is saved
