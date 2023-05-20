@@ -76,7 +76,7 @@ class RemoteHermesHttpConfigurationContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar(viewModel)
-        RemoteHermesHttpConfigurationViewModel(get(), get()).viewState.value.editViewState.value.also {
+        RemoteHermesHttpConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //disable ssl validation off is saved
             assertEquals(false, it.isHttpSSLVerificationDisabled)
             //host is saved

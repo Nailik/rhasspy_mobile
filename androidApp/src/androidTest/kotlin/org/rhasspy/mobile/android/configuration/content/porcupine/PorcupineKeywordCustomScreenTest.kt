@@ -148,7 +148,7 @@ class PorcupineKeywordCustomScreenTest : FlakyTest() {
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val newViewModel = WakeWordConfigurationViewModel(get(), get())
+        val newViewModel = WakeWordConfigurationViewModel(get())
 
         //jarvis is saved with enabled
         assertTrue {
@@ -218,7 +218,7 @@ class PorcupineKeywordCustomScreenTest : FlakyTest() {
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val newViewModel = WakeWordConfigurationViewModel(get(), get())
+        val newViewModel = WakeWordConfigurationViewModel(get())
         //ppn is saved with ppn.ppn and enabled
         assertTrue {
             newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState

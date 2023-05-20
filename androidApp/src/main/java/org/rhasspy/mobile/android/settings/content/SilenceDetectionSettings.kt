@@ -25,15 +25,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.rhasspy.mobile.android.content.list.*
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
-import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.LocalViewModelFactory
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
+import org.rhasspy.mobile.ui.content.list.*
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.SilenceDetectionSettings
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent
@@ -49,61 +49,64 @@ import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSe
 @Composable
 fun SilenceDetectionSettingsContent() {
     val viewModel: SilenceDetectionSettingsViewModel = LocalViewModelFactory.current.getViewModel()
-    val viewState by viewModel.viewState.collectAsState()
 
-    SettingsScreenItemContent(
-        modifier = Modifier.testTag(SilenceDetectionSettings),
-        title = MR.strings.automaticSilenceDetection.stable,
-        onBackClick = { viewModel.onEvent(BackClick) }
-    ) {
+    Screen(viewModel) {
+        val viewState by viewModel.viewState.collectAsState()
 
-        //toggle
-        SwitchListItem(
-            modifier = Modifier.testTag(TestTag.EnabledSwitch),
-            text = MR.strings.automaticSilenceDetection.stable,
-            isChecked = viewState.isSilenceDetectionEnabled,
-            onCheckedChange = { viewModel.onEvent(SetSilenceDetectionEnabled(it)) }
-        )
-
-        //silence settings visible
-        AnimatedVisibility(
-            enter = expandVertically(),
-            exit = shrinkVertically(),
-            visible = viewState.isSilenceDetectionEnabled
+        SettingsScreenItemContent(
+            modifier = Modifier.testTag(SilenceDetectionSettings),
+            title = MR.strings.automaticSilenceDetection.stable,
+            onBackClick = { viewModel.onEvent(BackClick) }
         ) {
 
-            Column(modifier = Modifier.testTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration)) {
+            //toggle
+            SwitchListItem(
+                modifier = Modifier.testTag(TestTag.EnabledSwitch),
+                text = MR.strings.automaticSilenceDetection.stable,
+                isChecked = viewState.isSilenceDetectionEnabled,
+                onCheckedChange = { viewModel.onEvent(SetSilenceDetectionEnabled(it)) }
+            )
 
-                InformationListElement(text = MR.strings.silenceDetectionInformation.stable)
+            //silence settings visible
+            AnimatedVisibility(
+                enter = expandVertically(),
+                exit = shrinkVertically(),
+                visible = viewState.isSilenceDetectionEnabled
+            ) {
 
-                Time(
-                    silenceDetectionMinimumTimeText = viewState.silenceDetectionMinimumTimeText,
-                    silenceDetectionTimeText = viewState.silenceDetectionTimeText,
-                    onEvent = viewModel::onEvent
-                )
+                Column(modifier = Modifier.testTag(TestTag.AutomaticSilenceDetectionSettingsConfiguration)) {
 
-                CurrentAudioLevel(
-                    isRecording = viewState.isRecording,
-                    isAudioLevelBiggerThanMax = viewState.isAudioLevelBiggerThanMax,
-                    audioLevelPercentage = viewState.audioLevelPercentage,
-                    currentVolume = viewState.currentVolume
-                )
+                    InformationListElement(text = MR.strings.silenceDetectionInformation.stable)
 
-                AudioLevel(
-                    silenceDetectionAudioLevelPercentage = viewState.silenceDetectionAudioLevelPercentage,
-                    silenceDetectionAudioLevel = viewState.silenceDetectionAudioLevel,
-                    onEvent = viewModel::onEvent
-                )
+                    Time(
+                        silenceDetectionMinimumTimeText = viewState.silenceDetectionMinimumTimeText,
+                        silenceDetectionTimeText = viewState.silenceDetectionTimeText,
+                        onEvent = viewModel::onEvent
+                    )
 
-                StartTestButton(
-                    isRecording = viewState.isRecording,
-                    onEvent = viewModel::onEvent
-                )
+                    CurrentAudioLevel(
+                        isRecording = viewState.isRecording,
+                        isAudioLevelBiggerThanMax = viewState.isAudioLevelBiggerThanMax,
+                        audioLevelPercentage = viewState.audioLevelPercentage,
+                        currentVolume = viewState.currentVolume
+                    )
+
+                    AudioLevel(
+                        silenceDetectionAudioLevelPercentage = viewState.silenceDetectionAudioLevelPercentage,
+                        silenceDetectionAudioLevel = viewState.silenceDetectionAudioLevel,
+                        onEvent = viewModel::onEvent
+                    )
+
+                    StartTestButton(
+                        isRecording = viewState.isRecording,
+                        onEvent = viewModel::onEvent
+                    )
+
+                }
 
             }
 
         }
-
     }
 }
 
@@ -216,34 +219,27 @@ private fun StartTestButton(
     isRecording: Boolean,
     onEvent: (SilenceDetectionSettingsUiEvent) -> Unit
 ) {
+    ListElement {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Button(
+                modifier = Modifier
+                    .testTag(TestTag.AutomaticSilenceDetectionSettingsTest)
+                    .wrapContentSize()
+                    .align(Alignment.CenterHorizontally),
+                onClick = { onEvent(ToggleAudioLevelTest) }
+            ) {
 
-    RequiresMicrophonePermission(
-        informationText = MR.strings.microphonePermissionInfoRecord.stable,
-        onClick = { onEvent(ToggleAudioLevelTest) }
-    ) { onClick ->
-        ListElement {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Button(
-                    modifier = Modifier
-                        .testTag(TestTag.AutomaticSilenceDetectionSettingsTest)
-                        .wrapContentSize()
-                        .align(Alignment.CenterHorizontally),
-                    onClick = onClick
-                ) {
+                Icon(
+                    if (isRecording) Icons.Filled.MicOff else Icons.Filled.Mic,
+                    MR.strings.microphone.stable
+                )
 
-                    Icon(
-                        if (isRecording) Icons.Filled.MicOff else Icons.Filled.Mic,
-                        MR.strings.microphone.stable
-                    )
+                Spacer(modifier = Modifier.width(8.dp))
 
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(if (isRecording) MR.strings.stop.stable else MR.strings.testAudioLevel.stable)
-
-                }
+                Text(if (isRecording) MR.strings.stop.stable else MR.strings.testAudioLevel.stable)
 
             }
+
         }
     }
-
 }

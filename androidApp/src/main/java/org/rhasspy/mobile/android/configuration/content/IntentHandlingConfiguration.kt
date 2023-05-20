@@ -9,18 +9,19 @@ import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
-import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
-import org.rhasspy.mobile.android.content.list.RadioButtonListItem
-import org.rhasspy.mobile.android.content.list.TextFieldListItem
-import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Event
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption.Intent
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.LocalViewModelFactory
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
+import org.rhasspy.mobile.ui.content.list.RadioButtonListItem
+import org.rhasspy.mobile.ui.content.list.TextFieldListItem
+import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent
@@ -39,30 +40,33 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenN
 @Composable
 fun IntentHandlingConfigurationContent() {
     val viewModel: IntentHandlingConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
-    val viewState by viewModel.viewState.collectAsState()
-    val screen by viewModel.screen.collectAsState()
-    val contentViewState by viewState.editViewState.collectAsState()
 
-    ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(IntentHandlingConfigurationScreen),
-        screenType = screen.destinationType,
-        config = ConfigurationScreenConfig(MR.strings.intentHandling.stable),
-        viewState = viewState,
-        onAction = viewModel::onAction,
-        testContent = {
-            TestContent(
-                testIntentNameText = contentViewState.testIntentHandlingName,
-                testIntentText = contentViewState.testIntentHandlingText,
-                onEvent = viewModel::onEvent
-            )
-        }
-    ) {
+    Screen(viewModel) {
+        val viewState by viewModel.viewState.collectAsState()
+        val screen by viewModel.screen.collectAsState()
+        val contentViewState by viewState.editViewState.collectAsState()
 
-        item {
-            IntentHandlingOptionContent(
-                viewState = contentViewState,
-                onEvent = viewModel::onEvent
-            )
+        ConfigurationScreenItemContent(
+            modifier = Modifier.testTag(IntentHandlingConfigurationScreen),
+            screenType = screen.destinationType,
+            config = ConfigurationScreenConfig(MR.strings.intentHandling.stable),
+            viewState = viewState,
+            onAction = viewModel::onAction,
+            testContent = {
+                TestContent(
+                    testIntentNameText = contentViewState.testIntentHandlingName,
+                    testIntentText = contentViewState.testIntentHandlingText,
+                    onEvent = viewModel::onEvent
+                )
+            }
+        ) {
+
+            item {
+                IntentHandlingOptionContent(
+                    viewState = contentViewState,
+                    onEvent = viewModel::onEvent
+                )
+            }
         }
     }
 

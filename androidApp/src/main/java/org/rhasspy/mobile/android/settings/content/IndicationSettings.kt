@@ -14,17 +14,17 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.android.content.SecondaryContent
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelectionList
-import org.rhasspy.mobile.android.content.list.ListElement
-import org.rhasspy.mobile.android.content.list.SwitchListItem
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
-import org.rhasspy.mobile.android.permissions.RequiresOverlayPermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSoundScreen
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.LocalViewModelFactory
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Text
+import org.rhasspy.mobile.ui.content.list.ListElement
+import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.IndicationSettings
@@ -46,34 +46,37 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoun
 fun IndicationSettingsContent() {
     val viewModelFactory = LocalViewModelFactory.current
     val viewModel: IndicationSettingsViewModel = viewModelFactory.getViewModel()
-    val screen by viewModel.screen.collectAsState()
 
-    when (screen) {
-        null -> {
-            val viewState by viewModel.viewState.collectAsState()
-            IndicationSettingsOverview(
-                viewState = viewState,
-                onEvent = viewModel::onEvent
+    Screen(viewModel) {
+        val screen by viewModel.screen.collectAsState()
+
+        when (screen) {
+            null -> {
+                val viewState by viewModel.viewState.collectAsState()
+                IndicationSettingsOverview(
+                    viewState = viewState,
+                    onEvent = viewModel::onEvent
+                )
+            }
+
+            ErrorIndicationSoundScreen -> IndicationSoundScreen(
+                viewModel = viewModelFactory.getViewModel<ErrorIndicationSoundSettingsViewModel>(),
+                screen = ErrorIndicationSoundScreen,
+                title = MR.strings.errorSound.stable
+            )
+
+            RecordedIndicationSoundScreen -> IndicationSoundScreen(
+                viewModel = viewModelFactory.getViewModel<RecordedIndicationSoundSettingsViewModel>(),
+                screen = RecordedIndicationSoundScreen,
+                title = MR.strings.recordedSound.stable
+            )
+
+            WakeIndicationSoundScreen -> IndicationSoundScreen(
+                viewModel = viewModelFactory.getViewModel<WakeIndicationSoundSettingsViewModel>(),
+                screen = WakeIndicationSoundScreen,
+                title = MR.strings.wakeSound.stable
             )
         }
-
-        ErrorIndicationSoundScreen -> IndicationSoundScreen(
-            viewModel = viewModelFactory.getViewModel<ErrorIndicationSoundSettingsViewModel>(),
-            screen = ErrorIndicationSoundScreen,
-            title = MR.strings.errorSound.stable
-        )
-
-        RecordedIndicationSoundScreen -> IndicationSoundScreen(
-            viewModel = viewModelFactory.getViewModel<RecordedIndicationSoundSettingsViewModel>(),
-            screen = RecordedIndicationSoundScreen,
-            title = MR.strings.recordedSound.stable
-        )
-
-        WakeIndicationSoundScreen -> IndicationSoundScreen(
-            viewModel = viewModelFactory.getViewModel<WakeIndicationSoundSettingsViewModel>(),
-            screen = WakeIndicationSoundScreen,
-            title = MR.strings.wakeSound.stable
-        )
     }
 }
 
@@ -106,17 +109,12 @@ fun IndicationSettingsOverview(
             )
 
             //light indication
-            RequiresOverlayPermission(
-                initialData = viewState.isWakeWordLightIndicationEnabled,
-                onClick = { onEvent(SetWakeWordLightIndicationEnabled(it)) }
-            ) { onClick ->
-                SwitchListItem(
-                    modifier = Modifier.testTag(TestTag.WakeWordLightIndicationEnabled),
-                    text = MR.strings.wakeWordLightIndication.stable,
-                    isChecked = viewState.isWakeWordLightIndicationEnabled,
-                    onCheckedChange = onClick
-                )
-            }
+            SwitchListItem(
+                modifier = Modifier.testTag(TestTag.WakeWordLightIndicationEnabled),
+                text = MR.strings.wakeWordLightIndication.stable,
+                isChecked = viewState.isWakeWordLightIndicationEnabled,
+                onCheckedChange = { onEvent(SetWakeWordLightIndicationEnabled(it)) }
+            )
 
             //sound indication
             SwitchListItem(

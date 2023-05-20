@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 
 /**
  * to check microphone permission
@@ -49,6 +50,10 @@ actual object MicrophonePermission : KoinComponent {
      */
     actual fun update() {
         _granted.value = isGranted()
+    }
+
+    actual suspend fun request() {
+        _granted.value = ExternalResultRequest.launchForPermission(Manifest.permission.RECORD_AUDIO)
     }
 
 }

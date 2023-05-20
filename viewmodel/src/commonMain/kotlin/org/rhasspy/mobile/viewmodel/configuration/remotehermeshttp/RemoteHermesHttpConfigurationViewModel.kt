@@ -23,17 +23,16 @@ import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesH
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.RemoteHermesHttpConfigurationScreenDestination.EditScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.RemoteHermesHttpConfigurationScreenDestination.TestScreen
 
 @Stable
 class RemoteHermesHttpConfigurationViewModel(
-    service: HttpClientService,
-    navigator: Navigator
+    service: HttpClientService
 ) : IConfigurationViewModel<RemoteHermesHttpConfigurationViewState>(
     service = service,
     initialViewState = ::RemoteHermesHttpConfigurationViewState,
-    navigator = navigator
+    testPageDestination = TestScreen
 ) {
 
     val screen = navigator.topScreen(EditScreen)
@@ -62,8 +61,8 @@ class RemoteHermesHttpConfigurationViewModel(
         when (action) {
             TestRemoteHermesHttpIntentRecognitionTest -> toggleRecording()
             TestRemoteHermesHttpTextToSpeechTest -> startIntentRecognitionTest()
-            TestRemoteHermesHttpToggleRecording -> startTextToSpeechTest()
-            BackClick -> navigator.popBackStack()
+            TestRemoteHermesHttpToggleRecording -> requireMicrophonePermission(::startTextToSpeechTest)
+            BackClick -> navigator.onBackPressed()
         }
     }
 

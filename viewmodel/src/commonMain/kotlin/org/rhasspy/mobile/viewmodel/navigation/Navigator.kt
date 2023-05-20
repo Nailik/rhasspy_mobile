@@ -9,8 +9,13 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.updateList
+import org.rhasspy.mobile.viewmodel.KViewModel
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.HomeScreen
 
+/**
+ * top viewmodel
+ * wenn screen nicht mehr angezeigt wird disposen
+ */
 class Navigator(
     private val nativeApplication: NativeApplication
 ) {
@@ -18,12 +23,12 @@ class Navigator(
     private val _navStack = MutableStateFlow<ImmutableList<NavigationDestination>>(persistentListOf(HomeScreen))
     val navStack = _navStack.readOnly
 
+    private val _viewModelStack = mutableListOf<KViewModel>()
+
     inline fun <reified T : NavigationDestination> topScreen(): StateFlow<T?> = navStack.mapReadonlyState { list -> list.filterIsInstance<T>().lastOrNull() }
     inline fun <reified T : NavigationDestination> topScreen(default: T): StateFlow<T> = navStack.mapReadonlyState { list -> list.filterIsInstance<T>().lastOrNull() ?: default }
 
-    /**
-     * go to previous screen
-     */
+
     fun popBackStack() {
         if (navStack.value.size == 1) {
             nativeApplication.closeApp()
@@ -33,6 +38,16 @@ class Navigator(
                     removeLast()
                 }
             }
+        }
+    }
+
+    /**
+     * go to previous screen
+     */
+    fun onBackPressed() {
+        if (_viewModelStack.lastOrNull()?.onBackPressedClick() != true) {
+            //check if top nav destination handles back press
+            popBackStack()
         }
     }
 
@@ -63,6 +78,17 @@ class Navigator(
 
     fun updateNavStack(list: ImmutableList<NavigationDestination>) {
         _navStack.value = list
+    }
+
+    fun onComposed(viewModel: KViewModel) {
+        _viewModelStack.add(viewModel)
+    }
+
+    fun onDisposed(viewModel: KViewModel) {
+        val index = _viewModelStack.indexOfLast { it == viewModel }
+        if (index != -1) {
+            _viewModelStack.removeAt(index)
+        }
     }
 
 }

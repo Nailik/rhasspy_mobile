@@ -1,13 +1,11 @@
 package org.rhasspy.mobile.viewmodel.settings.indication.sound
 
 import androidx.compose.runtime.Stable
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okio.Path
-import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
@@ -19,7 +17,7 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ISetting
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.KViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.*
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change.*
@@ -30,13 +28,12 @@ import kotlin.reflect.KFunction1
 abstract class IIndicationSoundSettingsViewModel(
     private val localAudioService: LocalAudioService,
     private val nativeApplication: NativeApplication,
-    private val navigator: Navigator,
     private val customSoundOptions: ISetting<ImmutableList<String>>,
     private val soundSetting: ISetting<String>,
     private val soundVolume: ISetting<Float>,
     private val soundFolderType: FolderType,
     viewStateCreator: IIndicationSoundSettingsViewStateCreator
-) : ViewModel(), KoinComponent {
+) : KViewModel() {
 
     abstract val playSound: KFunction1<LocalAudioService, Unit>
 
@@ -96,7 +93,7 @@ abstract class IIndicationSoundSettingsViewModel(
             ToggleAudioPlayerActive ->
                 if (localAudioService.isPlayingState.value) localAudioService.stop() else playSound(localAudioService)
 
-            BackClick -> navigator.popBackStack()
+            BackClick -> navigator.onBackPressed()
         }
     }
 

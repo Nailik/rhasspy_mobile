@@ -1,12 +1,11 @@
 package org.rhasspy.mobile.viewmodel.settings.indication
 
 import androidx.compose.runtime.Stable
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.KViewModel
 import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.BackClick
@@ -15,9 +14,7 @@ import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEven
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.*
 
 @Stable
-class IndicationSettingsViewModel(
-    private val navigator: Navigator
-) : ViewModel() {
+class IndicationSettingsViewModel() : KViewModel() {
 
     private val _viewState = MutableStateFlow(IndicationSettingsViewState())
     val viewState = _viewState.readOnly
@@ -50,8 +47,10 @@ class IndicationSettingsViewModel(
                 }
 
                 is SetWakeWordLightIndicationEnabled -> {
-                    AppSetting.isWakeWordLightIndicationEnabled.value = change.enabled
-                    it.copy(isWakeWordLightIndicationEnabled = change.enabled)
+                    requireOverlayPermission(it) {
+                        AppSetting.isWakeWordLightIndicationEnabled.value = change.enabled
+                        it.copy(isWakeWordLightIndicationEnabled = change.enabled)
+                    }
                 }
             }
         }
@@ -59,7 +58,7 @@ class IndicationSettingsViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            BackClick -> navigator.popBackStack()
+            BackClick -> navigator.onBackPressed()
             is Navigate -> navigator.navigate(action.destination)
         }
     }

@@ -91,7 +91,7 @@ class MqttConfigurationContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar(viewModel)
-        MqttConfigurationViewModel(get(), get()).viewState.value.editViewState.value.also {
+        MqttConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //mqtt enabled saved
             assertEquals(true, it.isMqttEnabled)
         }
@@ -146,7 +146,7 @@ class MqttConfigurationContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar(viewModel)
-        MqttConfigurationViewModel(get(), get()).viewState.value.editViewState.value.also {
+        MqttConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //host is saved
             assertEquals(textInputTestHost, it.mqttHost)
             //port is saved
@@ -200,7 +200,7 @@ class MqttConfigurationContentTest : FlakyTest() {
 
         //user clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        MqttConfigurationViewModel(get(), get()).viewState.value.editViewState.value.also {
+        MqttConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //ssl on is saved
             assertEquals(true, it.isMqttSSLEnabled)
         }
@@ -249,7 +249,7 @@ class MqttConfigurationContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar(viewModel)
-        MqttConfigurationViewModel(get(), get()).viewState.value.editViewState.value.also {
+        MqttConfigurationViewModel(get()).viewState.value.editViewState.value.also {
             //timeout is saved
             assertEquals(textInputTestConnectionTimeout, it.mqttConnectionTimeoutText)
             //keepAliveInterval is saved

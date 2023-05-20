@@ -17,17 +17,16 @@ import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecogn
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Action.RunIntentRecognition
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.intentrecognition.IntentRecognitionConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.IntentRecognitionConfigurationScreenDestination.EditScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.IntentRecognitionConfigurationScreenDestination.TestScreen
 
 @Stable
 class IntentRecognitionConfigurationViewModel(
-    service: IntentRecognitionService,
-    navigator: Navigator
+    service: IntentRecognitionService
 ) : IConfigurationViewModel<IntentRecognitionConfigurationViewState>(
     service = service,
     initialViewState = ::IntentRecognitionConfigurationViewState,
-    navigator = navigator
+    testPageDestination = TestScreen
 ) {
 
     val screen = navigator.topScreen(EditScreen)
@@ -53,7 +52,7 @@ class IntentRecognitionConfigurationViewModel(
     private fun onAction(action: Action) {
         when (action) {
             RunIntentRecognition -> runIntentRecognition()
-            BackClick -> navigator.popBackStack()
+            BackClick -> navigator.onBackPressed()
         }
     }
 

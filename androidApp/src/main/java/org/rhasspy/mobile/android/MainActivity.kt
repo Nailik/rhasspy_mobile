@@ -56,7 +56,7 @@ class MainActivity : KoinComponent, AppCompatActivity() {
 
         onBackPressedDispatcher.addCallback(this) {
             // Handle the back button event
-            get<Navigator>().popBackStack()
+            get<Navigator>().onBackPressed()
         }
 
         installSplashScreen().setKeepOnScreenCondition {

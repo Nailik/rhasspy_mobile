@@ -5,7 +5,6 @@ import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -19,7 +18,6 @@ import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class LogSettingsContentTest : FlakyTest() {
 
     @get: Rule(order = 0)
@@ -71,7 +69,7 @@ class LogSettingsContentTest : FlakyTest() {
         //error is selected
         composeTestRule.onNodeWithTag(LogLevel.Error, true).onListItemRadioButton().assertIsSelected()
         //error is saved
-        assertEquals(LogLevel.Error, LogSettingsViewModel(get(), get()).viewState.value.logLevel)
+        assertEquals(LogLevel.Error, LogSettingsViewModel(get()).viewState.value.logLevel)
 
         //show log is false
         viewModel.onEvent(SetShowLogEnabled(false))
@@ -83,7 +81,7 @@ class LogSettingsContentTest : FlakyTest() {
         //show log true is shown
         composeTestRule.onNodeWithTag(TestTag.ShowLogEnabled).onListItemSwitch().assertIsOn()
         //show log true is saved
-        assertTrue { LogSettingsViewModel(get(), get()).viewState.value.isShowLogEnabled }
+        assertTrue { LogSettingsViewModel(get()).viewState.value.isShowLogEnabled }
 
         //audio frame logging is false
         viewModel.onEvent(SetShowLogEnabled(false))
@@ -96,7 +94,7 @@ class LogSettingsContentTest : FlakyTest() {
         //audio frame logging true is shown
         composeTestRule.onNodeWithTag(TestTag.AudioFramesEnabled).onListItemSwitch().assertIsOn()
         //audio frame logging true is saved
-        assertTrue { LogSettingsViewModel(get(), get()).viewState.value.isLogAudioFramesEnabled }
+        assertTrue { LogSettingsViewModel(get()).viewState.value.isLogAudioFramesEnabled }
     }
 
 

@@ -1,14 +1,13 @@
 package org.rhasspy.mobile.android.content
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.surfaceColorAtElevation
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.android.content.item.EventStateCard
@@ -19,62 +18,45 @@ import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.*
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
-import org.rhasspy.mobile.viewmodel.configuration.ServiceStateHeaderViewState
+import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Composable
-fun ServiceStateHeader(viewState: ServiceStateHeaderViewState) {
+fun ServiceStateDialog(
+    dialogText: Any,
+    onDismissRequest: () -> Unit
+) {
 
-    var isShowDialog by remember { mutableStateOf(false) }
-
-    ServiceState(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp))
-            .padding(16.dp),
-        serviceState = viewState.serviceState.serviceState.collectAsState().value,
-        enabled = viewState.isOpenServiceDialogEnabled,
-        onClick = {
-            isShowDialog = true
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        headline = {
+            Text(MR.strings.error.stable)
+        },
+        supportingText = {
+            when (dialogText) {
+                is StableStringResource -> Text(dialogText)
+                is String -> Text(dialogText)
+                else -> Text(dialogText.toString())
+            }
+        },
+        icon = {
+            Icon(
+                imageVector = Icons.Filled.Info,
+                contentDescription = MR.strings.info.stable
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = onDismissRequest,
+                modifier = Modifier.testTag(TestTag.DialogOk)
+            ) {
+                Text(MR.strings.close.stable)
+            }
         }
     )
-
-    if (isShowDialog) {
-        AlertDialog(
-            onDismissRequest = {
-                isShowDialog = false
-            },
-            title = {
-                Text(MR.strings.error.stable)
-            },
-            text = {
-                when (val informationText = viewState.serviceStateDialogText) {
-                    is StableStringResource -> Text(informationText)
-                    is String -> androidx.compose.material3.Text(informationText)
-                    else -> {}
-                }
-            },
-            icon = {
-                Icon(
-                    imageVector = Icons.Filled.Info,
-                    contentDescription = MR.strings.info.stable
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = { isShowDialog = false },
-                    modifier = Modifier.testTag(TestTag.DialogOk)
-                ) {
-                    Text(MR.strings.close.stable)
-                }
-            },
-            dismissButton = { },
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-        )
-    }
 
 }
 
@@ -82,9 +64,9 @@ fun ServiceStateHeader(viewState: ServiceStateHeaderViewState) {
  * service state information
  */
 @Composable
-fun ServiceState(
+fun ServiceStateHeader(
     modifier: Modifier = Modifier,
-    serviceState: ServiceState,
+    serviceViewState: ServiceViewState,
     enabled: Boolean,
     onClick: () -> Unit
 ) {
@@ -92,6 +74,7 @@ fun ServiceState(
         modifier = modifier
             .fillMaxWidth(),
     ) {
+        val serviceState by serviceViewState.serviceState.collectAsState()
         EventStateCard(
             serviceState = serviceState,
             enabled = enabled,

@@ -98,7 +98,6 @@ enum class TestTag {
     PlayPause,
     Delete,
     Undo,
-    Background,
     EnabledSwitch,
     BatteryOptimization,
     VisibleWhileAppIsOpened,
@@ -112,7 +111,6 @@ enum class TestTag {
     Default,
     Warning,
 
-    AudioFocusSettings,
     AudioFocusOption,
     AudioFocusSettingsConfiguration,
     AudioFocusOnNotification,

@@ -6,14 +6,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
-import org.rhasspy.mobile.android.content.list.CheckBoxListItem
-import org.rhasspy.mobile.android.content.list.InformationListElement
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.LocalViewModelFactory
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.list.CheckBoxListItem
+import org.rhasspy.mobile.ui.content.list.InformationListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.AudioFocusSettings
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent
@@ -24,36 +25,39 @@ import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsViewMo
 @Composable
 fun AudioFocusSettingsContent() {
     val viewModel: AudioFocusSettingsViewModel = LocalViewModelFactory.current.getViewModel()
-    val viewState by viewModel.viewState.collectAsState()
 
-    SettingsScreenItemContent(
-        modifier = Modifier.testTag(AudioFocusSettings),
-        title = MR.strings.audioFocus.stable,
-        onBackClick = { viewModel.onEvent(BackClick) }
-    ) {
+    Screen(viewModel) {
+        val viewState by viewModel.viewState.collectAsState()
 
-        InformationListElement(
-            text = MR.strings.audioFocusInformation.stable
-        )
-
-        RadioButtonsEnumSelection(
-            modifier = Modifier.testTag(TestTag.AudioFocusOption),
-            selected = viewState.audioFocusOption,
-            onSelect = { viewModel.onEvent(SelectAudioFocusOption(it)) },
-            values = viewState.audioFocusOptions,
-            secondaryContentVisible = viewState.audioFocusOption != AudioFocusOption.Disabled
+        SettingsScreenItemContent(
+            modifier = Modifier.testTag(AudioFocusSettings),
+            title = MR.strings.audioFocus.stable,
+            onBackClick = { viewModel.onEvent(BackClick) }
         ) {
 
-            AudioFocusSettings(
-                isAudioFocusOnNotification = viewState.isAudioFocusOnNotification,
-                isAudioFocusOnSound = viewState.isAudioFocusOnSound,
-                isAudioFocusOnRecord = viewState.isAudioFocusOnRecord,
-                isAudioFocusOnDialog = viewState.isAudioFocusOnDialog,
-                onEvent = viewModel::onEvent
+            InformationListElement(
+                text = MR.strings.audioFocusInformation.stable
             )
 
-        }
+            RadioButtonsEnumSelection(
+                modifier = Modifier.testTag(TestTag.AudioFocusOption),
+                selected = viewState.audioFocusOption,
+                onSelect = { viewModel.onEvent(SelectAudioFocusOption(it)) },
+                values = viewState.audioFocusOptions,
+                secondaryContentVisible = viewState.audioFocusOption != AudioFocusOption.Disabled
+            ) {
 
+                AudioFocusSettings(
+                    isAudioFocusOnNotification = viewState.isAudioFocusOnNotification,
+                    isAudioFocusOnSound = viewState.isAudioFocusOnSound,
+                    isAudioFocusOnRecord = viewState.isAudioFocusOnRecord,
+                    isAudioFocusOnDialog = viewState.isAudioFocusOnDialog,
+                    onEvent = viewModel::onEvent
+                )
+
+            }
+
+        }
     }
 }
 

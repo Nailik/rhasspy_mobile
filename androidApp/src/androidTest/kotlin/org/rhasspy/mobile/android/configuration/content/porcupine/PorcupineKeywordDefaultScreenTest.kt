@@ -125,7 +125,7 @@ class PorcupineKeywordDefaultScreenTest : FlakyTest() {
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val newViewModel = WakeWordConfigurationViewModel(get(), get())
+        val newViewModel = WakeWordConfigurationViewModel(get())
         newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState.defaultOptionsUi.forEach {
             //americano is saved with enabled
             //porcupine is saved with not enabled

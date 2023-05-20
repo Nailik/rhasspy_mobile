@@ -2,14 +2,12 @@ package org.rhasspy.mobile.viewmodel.settings.log
 
 import androidx.compose.runtime.Stable
 import co.touchlab.kermit.Logger
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import org.koin.core.component.KoinComponent
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.KViewModel
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change
@@ -17,9 +15,8 @@ import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent.Change.*
 
 @Stable
 class LogSettingsViewModel(
-    private val nativeApplication: NativeApplication,
-    private val navigator: Navigator
-) : ViewModel(), KoinComponent {
+    private val nativeApplication: NativeApplication
+) : KViewModel() {
 
     private val _viewState = MutableStateFlow(LogSettingsViewState())
     val viewState = _viewState.readOnly
@@ -61,7 +58,7 @@ class LogSettingsViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            is BackClick -> navigator.popBackStack()
+            is BackClick -> navigator.onBackPressed()
         }
     }
 

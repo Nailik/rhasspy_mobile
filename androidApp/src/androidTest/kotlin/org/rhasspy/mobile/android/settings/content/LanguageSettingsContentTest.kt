@@ -87,7 +87,7 @@ class LanguageSettingsContentTest : FlakyTest() {
         //StringDesc is German
         assertEquals(LanguageType.German.code, StringDesc.localeType.systemLocale!!.language)
         //language german is saved
-        var newViewModel = LanguageSettingsViewModel(get())
+        var newViewModel = LanguageSettingsViewModel()
         assertEquals(LanguageType.German, newViewModel.viewState.value.languageOption)
 
         //User clicks english
@@ -100,7 +100,7 @@ class LanguageSettingsContentTest : FlakyTest() {
         //StringDesc is English
         assertEquals(LanguageType.English.code, StringDesc.localeType.systemLocale!!.language)
         //language english is saved
-        newViewModel = LanguageSettingsViewModel(get())
+        newViewModel = LanguageSettingsViewModel()
         assertEquals(LanguageType.English, newViewModel.viewState.value.languageOption)
     }
 

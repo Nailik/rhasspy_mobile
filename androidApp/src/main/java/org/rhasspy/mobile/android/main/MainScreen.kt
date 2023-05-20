@@ -15,7 +15,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
 import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.configuration.ConfigurationScreen
 import org.rhasspy.mobile.android.settings.SettingsScreen
@@ -23,10 +22,10 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.*
+import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
-import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.AppTheme
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
@@ -38,15 +37,6 @@ import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewState
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 
-val LocalSnackbarHostState = compositionLocalOf<SnackbarHostState> {
-    error("No SnackbarHostState provided")
-}
-
-val LocalViewModelFactory = compositionLocalOf<ViewModelFactory> {
-    error("No LocalViewModelFactory provided")
-}
-
-
 @Composable
 fun MainScreen(viewModelFactory: ViewModelFactory) {
 
@@ -57,7 +47,7 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
             val snackBarHostState = remember { SnackbarHostState() }
 
             CompositionLocalProvider(
-                LocalSnackbarHostState provides snackBarHostState,
+                LocalSnackBarHostState provides snackBarHostState,
                 LocalViewModelFactory provides viewModelFactory
             ) {
                 Scaffold(
@@ -78,10 +68,10 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
 
                         val viewModel: MainScreenViewModel = LocalViewModelFactory.current.getViewModel()
 
-                        val screen by viewModel.screen.collectAsState()
-                        val viewState by viewModel.viewState.collectAsState()
+                        Screen(viewModel) {
+                            val screen by viewModel.screen.collectAsState()
+                            val viewState by viewModel.viewState.collectAsState()
 
-                        screen?.also { screen ->
                             MainScreenContent(
                                 screen = screen,
                                 viewState = viewState,
@@ -134,9 +124,9 @@ private fun MainScreenContent(
 @Composable
 fun CrashlyticsDialog(onClose: () -> Unit) {
     val viewModel: LogSettingsViewModel = LocalViewModelFactory.current.getViewModel()
-    AlertDialog(
+    Dialog(
         modifier = Modifier.testTag(TestTag.DialogCrashlytics),
-        onDismissRequest = onClose,
+        onDismissRequest = { /*do not dismiss on outside click*/ },
         confirmButton = {
             TextButton(
                 onClick = {
@@ -159,16 +149,12 @@ fun CrashlyticsDialog(onClose: () -> Unit) {
                 Text(MR.strings.deny.stable)
             }
         },
-        title = {
+        headline = {
             Text(MR.strings.crashlytics.stable)
         },
-        text = {
+        supportingText = {
             Text(MR.strings.crashlyticsDialogText.stable)
-        },
-        properties = DialogProperties(
-            dismissOnBackPress = false,
-            dismissOnClickOutside = false
-        )
+        }
     )
 }
 

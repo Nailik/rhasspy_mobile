@@ -1,7 +1,6 @@
 package org.rhasspy.mobile.viewmodel.screens.log
 
 import androidx.compose.runtime.Stable
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,6 +11,7 @@ import org.rhasspy.mobile.logic.logger.FileLogger
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.viewmodel.KViewModel
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.*
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Action.SaveLogFile
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Action.ShareLogFile
@@ -21,7 +21,7 @@ import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Consumed.ShowSn
 @Stable
 class LogScreenViewModel(
     viewStateCreator: LogScreenViewStateCreator
-) : ViewModel() {
+) : KViewModel() {
 
     private val _viewState: MutableStateFlow<LogScreenViewState> = viewStateCreator()
     val viewState = _viewState.readOnly

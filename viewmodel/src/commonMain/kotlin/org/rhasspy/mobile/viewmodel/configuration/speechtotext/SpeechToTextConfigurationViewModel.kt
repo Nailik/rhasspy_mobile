@@ -18,17 +18,16 @@ import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfi
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Action.TestSpeechToTextToggleRecording
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.SpeechToTextConfigurationScreenDestination.EditScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.SpeechToTextConfigurationScreenDestination.TestScreen
 
 @Stable
 class SpeechToTextConfigurationViewModel(
-    service: SpeechToTextService,
-    navigator: Navigator
+    service: SpeechToTextService
 ) : IConfigurationViewModel<SpeechToTextConfigurationViewState>(
     service = service,
     initialViewState = ::SpeechToTextConfigurationViewState,
-    navigator = navigator
+    testPageDestination = TestScreen
 ) {
 
     val screen = navigator.topScreen(EditScreen)
@@ -53,8 +52,8 @@ class SpeechToTextConfigurationViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            TestSpeechToTextToggleRecording -> toggleRecording()
-            BackClick -> navigator.popBackStack()
+            TestSpeechToTextToggleRecording -> requireMicrophonePermission(::toggleRecording)
+            BackClick -> navigator.onBackPressed()
         }
     }
 

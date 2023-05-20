@@ -9,6 +9,5 @@ import org.rhasspy.mobile.data.log.LogElement
 data class ConfigurationTestViewState internal constructor(
     val isListFiltered: Boolean,
     val isListAutoscroll: Boolean,
-    val logEvents: StateFlow<ImmutableList<LogElement>>,
-    val serviceViewState: StateFlow<ServiceStateHeaderViewState>
+    val logEvents: StateFlow<ImmutableList<LogElement>>
 )

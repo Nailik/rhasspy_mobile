@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.*
+import kotlin.math.roundToInt
 
 fun <T1, T2, R> combineState(
     flow1: StateFlow<T1>,
@@ -82,4 +83,11 @@ fun <E> ImmutableList<E>.updateListItem(item: E, block: E.() -> E): ImmutableLis
     return this.toImmutableList().updateList {
         set(index, block(item))
     }
+}
+
+fun Float.roundToDecimals(decimals: Int): Float {
+    var dotAt = 1
+    repeat(decimals) { dotAt *= 10 }
+    val roundedValue = (this * dotAt).roundToInt()
+    return (roundedValue / dotAt) + (roundedValue % dotAt).toFloat() / dotAt
 }

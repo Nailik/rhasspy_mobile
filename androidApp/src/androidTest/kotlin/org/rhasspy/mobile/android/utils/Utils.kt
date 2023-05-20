@@ -17,6 +17,7 @@ import androidx.test.uiautomator.UiSelector
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
@@ -67,6 +68,17 @@ fun SemanticsNodeInteractionsProvider.onNodeWithCombinedTag(
     useUnmergedTree: Boolean = false
 ): SemanticsNodeInteraction = onNode(hasTestTag("$name${tag.name}"), useUnmergedTree)
 
+fun SemanticsNodeInteractionsProvider.onAllNodesWithText(
+    text: StableStringResource,
+    useUnmergedTree: Boolean = false
+): SemanticsNodeInteractionCollection = onAllNodesWithText(
+    StringDesc.Resource(text.stringResource).toString(
+        getInstrumentation()
+            .targetContext.applicationContext
+    ), useUnmergedTree
+)
+
+
 fun textRes(text: StableStringResource): BySelector {
     return By.text(
         StringDesc.Resource(text.stringResource).toString(
@@ -113,6 +125,7 @@ fun requestMicrophonePermissions() {
         addPermissions("android.permission.RECORD_AUDIO")
         requestPermissions()
     }
+    MicrophonePermission.update()
 }
 
 fun UiDevice.requestOverlayPermissions(context: Context) {
@@ -149,24 +162,6 @@ fun SemanticsNodeInteraction.assertTextEquals(
         includeEditableText = includeEditableText
     )
 
-fun SemanticsNodeInteractionsProvider.onNodeWithText(
-    text: StableStringResource,
-    substring: Boolean = false,
-    ignoreCase: Boolean = false,
-    useUnmergedTree: Boolean = false
-): SemanticsNodeInteraction = onNode(
-    hasText(
-        StringDesc.Resource(text.stringResource).toString(
-            getInstrumentation()
-                .targetContext.applicationContext
-        ), substring, ignoreCase
-    ), useUnmergedTree
-)
-
-
-/*
-
- */
 fun <V : IConfigurationEditViewState> ComposeTestRule.saveBottomAppBar(viewModel: IConfigurationViewModel<V>) {
     Espresso.closeSoftKeyboard()
     waitUntilExists(hasTestTag(TestTag.BottomAppBarSave).and(isEnabled()))
@@ -186,7 +181,7 @@ fun <V : IConfigurationEditViewState> ComposeTestRule.awaitSaved(viewModel: ICon
 @OptIn(ExperimentalTestApi::class)
 fun ComposeTestRule.waitUntilExists(
     matcher: SemanticsMatcher,
-    timeoutMillis: Long = 1_000L
+    timeoutMillis: Long = 5000
 ) {
     return this.waitUntilNodeCount(matcher, 1, timeoutMillis)
 }

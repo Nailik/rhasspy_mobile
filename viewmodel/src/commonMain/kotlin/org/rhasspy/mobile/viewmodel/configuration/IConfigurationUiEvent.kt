@@ -15,7 +15,9 @@ sealed interface IConfigurationUiEvent {
         object ToggleListFiltered : Action
         object ToggleListAutoscroll : Action
         object BackClick : Action
-
+        object OpenTestScreen : Action
+        object OpenServiceStateDialog : Action
+        object CloseServiceStateDialog : Action
 
     }
 

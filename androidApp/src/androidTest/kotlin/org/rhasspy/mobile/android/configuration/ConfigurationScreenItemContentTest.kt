@@ -13,7 +13,6 @@ import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -23,6 +22,7 @@ import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
@@ -33,7 +33,6 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.Config
  * Content Test of Configuration screens
  * save, discard and test buttons
  */
-@OptIn(ExperimentalCoroutinesApi::class)
 class ConfigurationScreenItemContentTest : FlakyTest() {
 
     @get:Rule(order = 0)
@@ -43,7 +42,7 @@ class ConfigurationScreenItemContentTest : FlakyTest() {
 
     private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-    private val viewModel = TestViewModel(get())
+    private val viewModel = TestViewModel()
 
     private val toolbarTitle = MR.strings.defaultText.stable
 
@@ -65,15 +64,17 @@ class ConfigurationScreenItemContentTest : FlakyTest() {
                     when (destination.lastOrNull()) {
 
                         MainScreenNavigationDestination.ConfigurationScreen -> {
-                            ConfigurationScreenItemContent(
-                                modifier = Modifier.testTag(TestTag.ConfigurationScreenItemContent),
-                                screenType = ConfigurationScreenDestinationType.Edit,
-                                config = ConfigurationScreenConfig(toolbarTitle),
-                                viewState = viewModel.viewState.collectAsState().value,
-                                onAction = { viewModel.onAction(it) },
-                                testContent = { },
-                                content = { }
-                            )
+                            Screen(viewModel) {
+                                ConfigurationScreenItemContent(
+                                    modifier = Modifier.testTag(TestTag.ConfigurationScreenItemContent),
+                                    screenType = ConfigurationScreenDestinationType.Edit,
+                                    config = ConfigurationScreenConfig(toolbarTitle),
+                                    viewState = viewModel.viewState.collectAsState().value,
+                                    onAction = { viewModel.onAction(it) },
+                                    testContent = { },
+                                    content = { }
+                                )
+                            }
                         }
 
                         else -> {
@@ -179,7 +180,7 @@ class ConfigurationScreenItemContentTest : FlakyTest() {
         composeTestRule.onNodeWithTag(TestTag.DialogUnsavedChanges).assertExists()
         viewModel.onDiscard = false
         //discard click invokes discard and navigate back
-        composeTestRule.onNodeWithTag(TestTag.DialogCancel).performClick()
+        composeTestRule.onNodeWithTag(TestTag.DialogCancel, true).performClick()
         composeTestRule.awaitIdle()
         composeTestRule.onNodeWithTag(TestTag.ConfigurationScreenItemContent).assertDoesNotExist()
 

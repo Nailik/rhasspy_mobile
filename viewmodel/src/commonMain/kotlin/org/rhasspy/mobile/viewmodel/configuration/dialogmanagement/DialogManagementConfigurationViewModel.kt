@@ -8,8 +8,8 @@ import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagem
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.DialogManagementConfigurationScreenDestination.EditScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.DialogManagementConfigurationScreenDestination.TestScreen
 
 /**
  * ViewModel for Dialog Management Configuration
@@ -19,12 +19,11 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.Dialog
  */
 @Stable
 class DialogManagementConfigurationViewModel(
-    service: DialogManagerService,
-    navigator: Navigator
+    service: DialogManagerService
 ) : IConfigurationViewModel<DialogManagementConfigurationViewState>(
     service = service,
     initialViewState = ::DialogManagementConfigurationViewState,
-    navigator = navigator
+    testPageDestination = TestScreen
 ) {
 
     val screen = navigator.topScreen(EditScreen)
@@ -49,7 +48,7 @@ class DialogManagementConfigurationViewModel(
 
     fun onAction(action: Action) {
         when (action) {
-            BackClick -> navigator.popBackStack()
+            BackClick -> navigator.onBackPressed()
         }
     }
 

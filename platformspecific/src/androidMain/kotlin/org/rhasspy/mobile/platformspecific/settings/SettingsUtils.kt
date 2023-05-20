@@ -13,10 +13,10 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.external.ExternalRedirect
-import org.rhasspy.mobile.platformspecific.external.ExternalRedirectIntention
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectUtils
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
 import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.file.SystemFolderType
 import java.io.BufferedInputStream
@@ -38,8 +38,8 @@ actual object SettingsUtils : KoinComponent {
         return try {
             logger.d { "exportSettingsFile" }
 
-            val result = ExternalRedirect.launchForResult(
-                ExternalRedirectIntention.CreateDocument(
+            val result = ExternalResultRequest.launchForResult(
+                ExternalResultRequestIntention.CreateDocument(
                     title = "rhasspy_settings_${Clock.System.now().toLocalDateTime(TimeZone.UTC)}.zip",
                     mimeType = "application/zip"
                 )
@@ -247,8 +247,8 @@ actual object SettingsUtils : KoinComponent {
                 exportFile
             )
 
-            return ExternalRedirect.launch(
-                ExternalRedirectIntention.ShareFile(
+            return ExternalResultRequest.launch(
+                ExternalResultRequestIntention.ShareFile(
                     fileUri = fileUri.toString(),
                     mimeType = "application/xml"
                 )

@@ -7,16 +7,16 @@ object ExternalRedirectUtils {
     suspend fun openDocument(folder: String, folderType: FolderType): String? = openDocument(folder, folderType.fileTypes)
 
     suspend fun openDocument(folder: String, mimeTypes: Array<String>): String? {
-        var result = ExternalRedirect.launchForResult(
-            ExternalRedirectIntention.OpenDocument(folder, mimeTypes.toList())
+        var result = ExternalResultRequest.launchForResult(
+            ExternalResultRequestIntention.OpenDocument(folder, mimeTypes.toList())
         )
 
         if (result is ExternalRedirectResult.Result) {
             return result.data
         }
 
-        result = ExternalRedirect.launch(
-            ExternalRedirectIntention.GetContent(folder, mimeTypes.toList())
+        result = ExternalResultRequest.launch(
+            ExternalResultRequestIntention.GetContent(folder, mimeTypes.toList())
         )
 
         if (result is ExternalRedirectResult.Result) {

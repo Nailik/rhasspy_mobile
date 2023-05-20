@@ -21,12 +21,17 @@ class AboutScreenViewStateCreator(
                     .filter { it.isNotEmpty() }
                     .map { "· $it" }
                     .toImmutableList(),
+                isChangelogDialogVisible = false,
                 privacy = MR.files.dataprivacy.readToString(nativeApplication),
+                isPrivacyDialogVisible = false,
                 libraries = Libs.Builder().withJson(
                     MR.files.aboutlibraries.readToString(nativeApplication)
                 ).build().libraries.map {
                     it.stable
-                }.toImmutableList()
+                }.toImmutableList(),
+                isLibraryDialogVisible = false,
+                libraryDialogContent = null,
+                snackBarText = null
             )
         )
 

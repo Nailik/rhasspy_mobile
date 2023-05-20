@@ -15,16 +15,18 @@ import org.rhasspy.mobile.android.UiEventEffect
 import org.rhasspy.mobile.android.configuration.content.*
 import org.rhasspy.mobile.android.content.elements.*
 import org.rhasspy.mobile.android.content.item.EventStateIconTinted
-import org.rhasspy.mobile.android.content.list.ListElement
-import org.rhasspy.mobile.android.content.list.TextFieldListItem
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.LocalViewModelFactory
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.elements.CustomDivider
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.toText
 import org.rhasspy.mobile.ui.content.elements.translate
+import org.rhasspy.mobile.ui.content.list.ListElement
+import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.*
@@ -42,29 +44,32 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenVie
 fun ConfigurationScreen() {
 
     val viewModel: ConfigurationScreenViewModel = LocalViewModelFactory.current.getViewModel()
-    val screen by viewModel.screen.collectAsState()
 
-    when (screen) {
-        null -> {
-            val viewState by viewModel.viewState.collectAsState()
+    Screen(viewModel) {
+        val screen by viewModel.screen.collectAsState()
 
-            ConfigurationScreenContent(
-                onEvent = viewModel::onEvent,
-                onConsumed = viewModel::onConsumed,
-                viewState = viewState
-            )
+        when (screen) {
+            null -> {
+                val viewState by viewModel.viewState.collectAsState()
+
+                ConfigurationScreenContent(
+                    onEvent = viewModel::onEvent,
+                    onConsumed = viewModel::onConsumed,
+                    viewState = viewState
+                )
+            }
+
+            AudioPlayingConfigurationScreen -> AudioPlayingConfigurationContent()
+            DialogManagementConfigurationScreen -> DialogManagementConfigurationContent()
+            IntentHandlingConfigurationScreen -> IntentHandlingConfigurationContent()
+            IntentRecognitionConfigurationScreen -> IntentRecognitionConfigurationContent()
+            MqttConfigurationScreen -> MqttConfigurationContent()
+            RemoteHermesHttpConfigurationScreen -> RemoteHermesHttpConfigurationContent()
+            SpeechToTextConfigurationScreen -> SpeechToTextConfigurationContent()
+            TextToSpeechConfigurationScreen -> TextToSpeechConfigurationContent()
+            WakeWordConfigurationScreen -> WakeWordConfigurationContent()
+            WebServerConfigurationScreen -> WebServerConfigurationContent()
         }
-
-        AudioPlayingConfigurationScreen -> AudioPlayingConfigurationContent()
-        DialogManagementConfigurationScreen -> DialogManagementConfigurationContent()
-        IntentHandlingConfigurationScreen -> IntentHandlingConfigurationContent()
-        IntentRecognitionConfigurationScreen -> IntentRecognitionConfigurationContent()
-        MqttConfigurationScreen -> MqttConfigurationContent()
-        RemoteHermesHttpConfigurationScreen -> RemoteHermesHttpConfigurationContent()
-        SpeechToTextConfigurationScreen -> SpeechToTextConfigurationContent()
-        TextToSpeechConfigurationScreen -> TextToSpeechConfigurationContent()
-        WakeWordConfigurationScreen -> WakeWordConfigurationContent()
-        WebServerConfigurationScreen -> WebServerConfigurationContent()
     }
 
 }

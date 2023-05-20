@@ -16,20 +16,17 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.android.content.OnPauseEffect
-import org.rhasspy.mobile.android.content.list.ListElement
-import org.rhasspy.mobile.android.content.list.RadioButtonListItem
-import org.rhasspy.mobile.android.content.list.SliderListItem
-import org.rhasspy.mobile.android.main.LocalSnackbarHostState
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.sounds.SoundOption
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.combinedTestTag
+import org.rhasspy.mobile.ui.*
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
-import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.content.list.ListElement
+import org.rhasspy.mobile.ui.content.list.RadioButtonListItem
+import org.rhasspy.mobile.ui.content.list.SliderListItem
 import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.*
@@ -46,88 +43,90 @@ fun IndicationSoundScreen(
     screen: IndicationSettingsScreenDestination,
     title: StableStringResource
 ) {
-    val viewState by viewModel.viewState.collectAsState()
+    Screen(viewModel) {
+        val viewState by viewModel.viewState.collectAsState()
 
-    val snackBarHostState = LocalSnackbarHostState.current
-    val snackBarText = viewState.snackBarText?.let { translate(it) }
+        val snackBarHostState = LocalSnackBarHostState.current
+        val snackBarText = viewState.snackBarText?.let { translate(it) }
 
-    LaunchedEffect(snackBarText) {
-        snackBarText?.also {
-            snackBarHostState.showSnackbar(message = it)
-            viewModel.onEvent(ShowSnackBar)
+        LaunchedEffect(snackBarText) {
+            snackBarText?.also {
+                snackBarHostState.showSnackbar(message = it)
+                viewModel.onEvent(ShowSnackBar)
+            }
         }
-    }
 
-    OnPauseEffect(viewModel::onPause)
+        OnPauseEffect(viewModel::onPause)
 
-    Scaffold(
-        modifier = Modifier
-            .testTag(screen)
-            .fillMaxSize(),
-        topBar = {
-            AppBar(
-                title = title,
-                onEvent = viewModel::onEvent
-            )
-        }
-    ) { paddingValues ->
-
-        Surface(Modifier.padding(paddingValues)) {
-            Column(
-                modifier = Modifier
-                    .testTag(TestTag.IndicationSoundScreen)
-                    .fillMaxSize()
-            ) {
-
-                SoundElements(
-                    soundSetting = viewState.soundSetting,
-                    customSoundFiles = viewState.customSoundFiles,
+        Scaffold(
+            modifier = Modifier
+                .testTag(screen)
+                .fillMaxSize(),
+            topBar = {
+                AppBar(
+                    title = title,
                     onEvent = viewModel::onEvent
                 )
+            }
+        ) { paddingValues ->
 
-                Card(
-                    modifier = Modifier.padding(8.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            Surface(Modifier.padding(paddingValues)) {
+                Column(
+                    modifier = Modifier
+                        .testTag(TestTag.IndicationSoundScreen)
+                        .fillMaxSize()
                 ) {
 
-                    AnimatedVisibility(
-                        enter = expandVertically(),
-                        exit = shrinkVertically(),
-                        visible = viewState.isNoSoundInformationBoxVisible
+                    SoundElements(
+                        soundSetting = viewState.soundSetting,
+                        customSoundFiles = viewState.customSoundFiles,
+                        onEvent = viewModel::onEvent
+                    )
+
+                    Card(
+                        modifier = Modifier.padding(8.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                     ) {
 
-                        ListElement(
-                            modifier = Modifier.testTag(TestTag.Warning),
-                            icon = {
-                                Icon(
-                                    Icons.Filled.Info,
-                                    contentDescription = MR.strings.info.stable
-                                )
-                            },
-                            text = { Text(MR.strings.audioOutputSilentOrDisabled.stable) },
-                            secondaryText = { Text(viewState.audioOutputOption.text) }
+                        AnimatedVisibility(
+                            enter = expandVertically(),
+                            exit = shrinkVertically(),
+                            visible = viewState.isNoSoundInformationBoxVisible
+                        ) {
+
+                            ListElement(
+                                modifier = Modifier.testTag(TestTag.Warning),
+                                icon = {
+                                    Icon(
+                                        Icons.Filled.Info,
+                                        contentDescription = MR.strings.info.stable
+                                    )
+                                },
+                                text = { Text(MR.strings.audioOutputSilentOrDisabled.stable) },
+                                secondaryText = { Text(viewState.audioOutputOption.text) }
+                            )
+
+                        }
+
+                        SliderListItem(
+                            text = MR.strings.volume.stable,
+                            value = viewState.soundVolume,
+                            onValueChange = { viewModel.onEvent(UpdateSoundVolume(it)) }
                         )
 
+                        SoundActionButtons(
+                            onPlay = { viewModel.onEvent(ToggleAudioPlayerActive) },
+                            isPlaying = viewState.isAudioPlaying,
+                            onChooseFile = { viewModel.onEvent(ChooseSoundFile) }
+                        )
                     }
-
-                    SliderListItem(
-                        text = MR.strings.volume.stable,
-                        value = viewState.soundVolume,
-                        onValueChange = { viewModel.onEvent(UpdateSoundVolume(it)) }
-                    )
-
-                    SoundActionButtons(
-                        onPlay = { viewModel.onEvent(ToggleAudioPlayerActive) },
-                        isPlaying = viewState.isAudioPlaying,
-                        onChooseFile = { viewModel.onEvent(ChooseSoundFile) }
-                    )
                 }
+
             }
 
         }
 
     }
-
 }
 
 /**
@@ -165,7 +164,6 @@ private fun SoundElements(
             )
         }
     }
-
 }
 
 /**

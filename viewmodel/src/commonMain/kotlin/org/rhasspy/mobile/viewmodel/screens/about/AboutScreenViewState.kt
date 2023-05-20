@@ -8,7 +8,11 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 @Stable
 data class AboutScreenViewState internal constructor(
     val changelog: ImmutableList<String>,
+    val isChangelogDialogVisible: Boolean,
     val privacy: String,
+    val isPrivacyDialogVisible: Boolean,
     val libraries: ImmutableList<StableLibrary>,
-    val snackBarText: StableStringResource? = null
+    val isLibraryDialogVisible: Boolean,
+    val libraryDialogContent: StableLibrary?,
+    val snackBarText: StableStringResource?
 )

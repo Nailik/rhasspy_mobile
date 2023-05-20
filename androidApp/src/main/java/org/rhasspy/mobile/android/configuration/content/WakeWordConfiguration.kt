@@ -19,21 +19,17 @@ import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
 import org.rhasspy.mobile.android.configuration.content.porcupine.PorcupineKeywordScreen
 import org.rhasspy.mobile.android.configuration.content.porcupine.PorcupineLanguageScreen
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
-import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
-import org.rhasspy.mobile.android.content.list.ListElement
-import org.rhasspy.mobile.android.content.list.TextFieldListItem
-import org.rhasspy.mobile.android.content.list.TextFieldListItemVisibility
-import org.rhasspy.mobile.android.main.LocalSnackbarHostState
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
-import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.*
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
-import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
+import org.rhasspy.mobile.ui.content.list.ListElement
+import org.rhasspy.mobile.ui.content.list.TextFieldListItem
+import org.rhasspy.mobile.ui.content.list.TextFieldListItemVisibility
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Action.*
@@ -59,32 +55,35 @@ fun WakeWordConfigurationContent() {
     val viewModel: WakeWordConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
 
     val viewState by viewModel.viewState.collectAsState()
-    val screen by viewModel.screen.collectAsState()
 
-    val contentViewState by viewState.editViewState.collectAsState()
-    val snackBarHostState = LocalSnackbarHostState.current
-    val snackBarText = contentViewState.snackBarText?.let { translate(it) }
+    Screen(viewModel) {
+        val screen by viewModel.screen.collectAsState()
 
-    LaunchedEffect(snackBarText) {
-        snackBarText?.also {
-            snackBarHostState.showSnackbar(message = it)
-            viewModel.onEvent(ShowSnackBar)
+        val contentViewState by viewState.editViewState.collectAsState()
+        val snackBarHostState = LocalSnackBarHostState.current
+        val snackBarText = contentViewState.snackBarText?.let { translate(it) }
+
+        LaunchedEffect(snackBarText) {
+            snackBarText?.also {
+                snackBarHostState.showSnackbar(message = it)
+                viewModel.onEvent(ShowSnackBar)
+            }
         }
-    }
 
-    when (screen) {
-        EditScreen -> WakeWordConfigurationOverview(screen, viewModel)
-        EditPorcupineLanguageScreen -> PorcupineLanguageScreen(
-            viewState = contentViewState.wakeWordPorcupineViewState,
-            onEvent = viewModel::onEvent
-        )
+        when (screen) {
+            EditScreen -> WakeWordConfigurationOverview(screen, viewModel)
+            EditPorcupineLanguageScreen -> PorcupineLanguageScreen(
+                viewState = contentViewState.wakeWordPorcupineViewState,
+                onEvent = viewModel::onEvent
+            )
 
-        EditPorcupineWakeWordScreen -> PorcupineKeywordScreen(
-            viewState = contentViewState.wakeWordPorcupineViewState,
-            onEvent = viewModel::onEvent
-        )
+            EditPorcupineWakeWordScreen -> PorcupineKeywordScreen(
+                viewState = contentViewState.wakeWordPorcupineViewState,
+                onEvent = viewModel::onEvent
+            )
 
-        TestScreen -> WakeWordConfigurationOverview(screen, viewModel)
+            TestScreen -> WakeWordConfigurationOverview(screen, viewModel)
+        }
     }
 
 }
@@ -101,6 +100,7 @@ private fun WakeWordConfigurationOverview(
 ) {
 
     val viewState by viewModel.viewState.collectAsState()
+
     val contentViewState by viewState.editViewState.collectAsState()
 
     ConfigurationScreenItemContent(
@@ -123,7 +123,6 @@ private fun WakeWordConfigurationOverview(
             )
         }
     }
-
 }
 
 @Composable
@@ -233,15 +232,10 @@ private fun PorcupineConfiguration(
             exit = shrinkVertically(),
             visible = isMicrophonePermissionRequestVisible
         ) {
-            RequiresMicrophonePermission(
-                informationText = MR.strings.microphonePermissionInfoRecord.stable,
-                onClick = { onEvent(MicrophonePermissionAllowed) }
-            ) { onClick ->
-                FilledTonalButtonListItem(
-                    text = MR.strings.allowMicrophonePermission.stable,
-                    onClick = onClick
-                )
-            }
+            FilledTonalButtonListItem(
+                text = MR.strings.allowMicrophonePermission.stable,
+                onClick = { onEvent(RequestMicrophonePermission) }
+            )
         }
 
     }
@@ -284,15 +278,10 @@ private fun UdpSettings(
             exit = shrinkVertically(),
             visible = isMicrophonePermissionRequestVisible
         ) {
-            RequiresMicrophonePermission(
-                informationText = MR.strings.microphonePermissionInfoRecord.stable,
-                onClick = { onEvent(MicrophonePermissionAllowed) }
-            ) { onClick ->
-                FilledTonalButtonListItem(
-                    text = MR.strings.allowMicrophonePermission.stable,
-                    onClick = onClick
-                )
-            }
+            FilledTonalButtonListItem(
+                text = MR.strings.allowMicrophonePermission.stable,
+                onClick = { onEvent(RequestMicrophonePermission) }
+            )
         }
 
     }
@@ -304,15 +293,8 @@ private fun UdpSettings(
  */
 @Composable
 private fun TestContent(onEvent: (WakeWordConfigurationUiEvent) -> Unit) {
-
-    RequiresMicrophonePermission(
-        informationText = MR.strings.microphonePermissionInfoRecord.stable,
+    FilledTonalButtonListItem(
+        text = MR.strings.startRecordAudio.stable,
         onClick = { onEvent(TestStartWakeWord) }
-    ) { onClick ->
-        FilledTonalButtonListItem(
-            text = MR.strings.startRecordAudio.stable,
-            onClick = onClick
-        )
-    }
-
+    )
 }
