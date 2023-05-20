@@ -29,8 +29,10 @@ class MicrophoneOverlaySettingsViewModel : KViewModel() {
         _viewState.update {
             when (change) {
                 is SelectMicrophoneOverlaySizeOption -> {
-                    AppSetting.microphoneOverlaySizeOption.value = change.option
-                    it.copy(microphoneOverlaySizeOption = change.option)
+                    requireOverlayPermission(it) {
+                        AppSetting.microphoneOverlaySizeOption.value = change.option
+                        it.copy(microphoneOverlaySizeOption = change.option)
+                    }
                 }
 
                 is SetMicrophoneOverlayWhileAppEnabled -> {

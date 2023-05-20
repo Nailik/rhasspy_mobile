@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.android.content.SecondaryContent
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelectionList
-import org.rhasspy.mobile.android.permissions.RequiresOverlayPermission
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
 import org.rhasspy.mobile.android.settings.content.sound.IndicationSoundScreen
 import org.rhasspy.mobile.data.resource.stable
@@ -110,17 +109,12 @@ fun IndicationSettingsOverview(
             )
 
             //light indication
-            RequiresOverlayPermission(
-                initialData = viewState.isWakeWordLightIndicationEnabled,
-                onClick = { onEvent(SetWakeWordLightIndicationEnabled(it)) }
-            ) { onClick ->
-                SwitchListItem(
-                    modifier = Modifier.testTag(TestTag.WakeWordLightIndicationEnabled),
-                    text = MR.strings.wakeWordLightIndication.stable,
-                    isChecked = viewState.isWakeWordLightIndicationEnabled,
-                    onCheckedChange = onClick
-                )
-            }
+            SwitchListItem(
+                modifier = Modifier.testTag(TestTag.WakeWordLightIndicationEnabled),
+                text = MR.strings.wakeWordLightIndication.stable,
+                isChecked = viewState.isWakeWordLightIndicationEnabled,
+                onCheckedChange = { onEvent(SetWakeWordLightIndicationEnabled(it)) }
+            )
 
             //sound indication
             SwitchListItem(

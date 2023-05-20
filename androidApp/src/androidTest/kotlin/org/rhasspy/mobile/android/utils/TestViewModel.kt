@@ -42,8 +42,8 @@ class TestViewModel : IConfigurationViewModel<TestViewState>(
         }
     }
 
-    fun onRequestMicrophonePermission() {
-        requireMicrophonePermission { }
+    fun onRequestOverlayPermission() {
+        requireOverlayPermission(Unit) { }
     }
 
 }

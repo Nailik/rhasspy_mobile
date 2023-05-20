@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.ui
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -13,8 +14,7 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.viewmodel.KViewModel
-import org.rhasspy.mobile.viewmodel.KViewModelEvent.Action.MicrophonePermissionDialogResult
-import org.rhasspy.mobile.viewmodel.KViewModelEvent.Action.RequestMicrophonePermissionRedirect
+import org.rhasspy.mobile.viewmodel.KViewModelEvent.Action.*
 import org.rhasspy.mobile.viewmodel.KViewModelEvent.Consumed.ConsumedMicrophonePermissionSnackBar
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
 
@@ -53,6 +53,7 @@ private fun PermissionHandling(
 ) {
     val kViewState by viewModel.kViewState.collectAsState()
 
+    //microphone
     if (kViewState.isShowMicrophonePermissionInformationDialog) {
         MicrophonePermissionInfoDialog(
             message = MR.strings.microphonePermissionInfoRecord.stable,
@@ -60,6 +61,7 @@ private fun PermissionHandling(
         )
     }
 
+    //microphone
     kViewState.microphonePermissionSnackBarText?.also { message ->
 
         val snackBarMessage = translate(message)
@@ -82,6 +84,30 @@ private fun PermissionHandling(
         }
     }
 
+
+    //overlay
+    if (kViewState.isShowOverlayPermissionInformationDialog) {
+        OverlayPermissionInfoDialog(
+            message = MR.strings.overlayPermissionInfo.stable,
+            onResult = { viewModel.onEvent(OverlayPermissionDialogResult(it)) }
+        )
+    }
+
+    //overlay
+    kViewState.overlayPermissionSnackBarText?.also { message ->
+
+        val snackBarMessage = translate(message)
+        val snackBarHostState = LocalSnackBarHostState.current
+
+        LaunchedEffect(snackBarMessage) {
+
+            snackBarHostState.showSnackbar(
+                message = snackBarMessage,
+                duration = SnackbarDuration.Short,
+            )
+
+        }
+    }
 }
 
 @Composable
@@ -123,4 +149,47 @@ private fun MicrophonePermissionInfoDialog(
         }
     )
 
+}
+
+
+/**
+ * displays information dialog with the reason why overlay permission is required
+ */
+@Composable
+private fun OverlayPermissionInfoDialog(
+    message: StableStringResource,
+    onResult: (result: Boolean) -> Unit
+) {
+    Dialog(
+        modifier = Modifier.testTag(TestTag.DialogInformationOverlayPermission),
+        onDismissRequest = { onResult.invoke(false) },
+        headline = { Text(MR.strings.overlayPermissionTitle.stable) },
+        supportingText = { Text(message) },
+        icon = {
+            Icon(
+                imageVector = Icons.Filled.Layers,
+                contentDescription = MR.strings.overlay.stable
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onResult.invoke(true)
+                },
+                modifier = Modifier.testTag(TestTag.DialogOk)
+            ) {
+                Text(MR.strings.ok.stable)
+            }
+        },
+        dismissButton = {
+            OutlinedButton(
+                onClick = {
+                    onResult.invoke(false)
+                },
+                modifier = Modifier.testTag(TestTag.DialogCancel)
+            ) {
+                Text(MR.strings.cancel.stable)
+            }
+        }
+    )
 }

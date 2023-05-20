@@ -13,11 +13,14 @@ import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.viewmodel.KViewModelEvent.Action
 import org.rhasspy.mobile.viewmodel.KViewModelEvent.Action.*
+import org.rhasspy.mobile.viewmodel.KViewModelEvent.Consumed
 import org.rhasspy.mobile.viewmodel.KViewModelEvent.Consumed.ConsumedMicrophonePermissionSnackBar
+import org.rhasspy.mobile.viewmodel.KViewModelEvent.Consumed.ConsumedOverlayPermissionSnackBar
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
 
 abstract class KViewModel : ViewModel(), KoinComponent {
@@ -28,7 +31,9 @@ abstract class KViewModel : ViewModel(), KoinComponent {
         KViewState(
             isShowMicrophonePermissionInformationDialog = false,
             microphonePermissionSnackBarText = null,
-            microphonePermissionSnackBarLabel = null
+            microphonePermissionSnackBarLabel = null,
+            isShowOverlayPermissionInformationDialog = false,
+            overlayPermissionSnackBarText = null
         )
     )
     val kViewState = _kViewState.readOnly
@@ -49,9 +54,19 @@ abstract class KViewModel : ViewModel(), KoinComponent {
         }
     }
 
+    inline fun <reified T> requireOverlayPermission(value: T, function: () -> T): T {
+        return if (OverlayPermission.granted.value) {
+            function()
+        } else {
+            onEvent(RequestOverlayPermission)
+            value
+        }
+    }
+
     fun onEvent(event: KViewModelEvent) {
         when (event) {
             is Action -> onAction(event)
+            is Consumed -> onConsumed(event)
         }
     }
 
@@ -67,12 +82,6 @@ abstract class KViewModel : ViewModel(), KoinComponent {
                 }
             }
 
-            ConsumedMicrophonePermissionSnackBar -> _kViewState.update {
-                it.copy(
-                    microphonePermissionSnackBarText = null,
-                    microphonePermissionSnackBarLabel = null
-                )
-            }
 
             RequestMicrophonePermissionRedirect -> {
                 viewModelScope.launch(Dispatchers.IO) {
@@ -86,6 +95,31 @@ abstract class KViewModel : ViewModel(), KoinComponent {
                     }
                 }
             }
+
+            RequestOverlayPermission -> onRequestOverlayPermission(false)
+            is OverlayPermissionDialogResult -> {
+                _kViewState.update {
+                    it.copy(isShowOverlayPermissionInformationDialog = false)
+                }
+                if (action.confirm) {
+                    onRequestOverlayPermission(true)
+                }
+            }
+        }
+    }
+
+    private fun onConsumed(consumed: Consumed) {
+        when (consumed) {
+            ConsumedMicrophonePermissionSnackBar -> _kViewState.update {
+                it.copy(
+                    microphonePermissionSnackBarText = null,
+                    microphonePermissionSnackBarLabel = null
+                )
+            }
+
+            ConsumedOverlayPermissionSnackBar -> _kViewState.update {
+                it.copy(overlayPermissionSnackBarText = null)
+            }
         }
     }
 
@@ -94,6 +128,20 @@ abstract class KViewModel : ViewModel(), KoinComponent {
      */
     open fun onBackPressed(): Boolean {
         return false
+    }
+
+
+    /**
+     * returns true if pop back stack was handled internally
+     */
+    fun onBackPressedClick(): Boolean {
+        return if (_kViewState.value.isShowMicrophonePermissionInformationDialog) {
+            _kViewState.update { it.copy(isShowMicrophonePermissionInformationDialog = false) }
+            true
+        } else if (_kViewState.value.isShowOverlayPermissionInformationDialog) {
+            _kViewState.update { it.copy(isShowOverlayPermissionInformationDialog = false) }
+            true
+        } else onBackPressed()
     }
 
     private fun onRequestMicrophonePermission(hasShownInformation: Boolean) {
@@ -112,6 +160,24 @@ abstract class KViewModel : ViewModel(), KoinComponent {
                                 microphonePermissionSnackBarText = MR.strings.microphonePermissionDenied.stable,
                                 microphonePermissionSnackBarLabel = MR.strings.settings.stable
                             )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun onRequestOverlayPermission(hasShownInformation: Boolean) {
+        if (!OverlayPermission.granted.value) {
+            if (!hasShownInformation) {
+                _kViewState.update { it.copy(isShowOverlayPermissionInformationDialog = true) }
+            } else {
+                //request directly
+                viewModelScope.launch(Dispatchers.IO) {
+                    if (!OverlayPermission.requestPermission()) {
+                        //show snack bar
+                        _kViewState.update {
+                            it.copy(overlayPermissionSnackBarText = MR.strings.overlayPermissionRequestFailed.stable)
                         }
                     }
                 }

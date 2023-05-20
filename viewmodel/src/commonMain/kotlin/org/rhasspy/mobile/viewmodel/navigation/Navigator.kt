@@ -45,7 +45,7 @@ class Navigator(
      * go to previous screen
      */
     fun onBackPressed() {
-        if (_viewModelStack.lastOrNull()?.onBackPressed() != true) {
+        if (_viewModelStack.lastOrNull()?.onBackPressedClick() != true) {
             //check if top nav destination handles back press
             popBackStack()
         }

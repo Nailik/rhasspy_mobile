@@ -47,8 +47,10 @@ class IndicationSettingsViewModel() : KViewModel() {
                 }
 
                 is SetWakeWordLightIndicationEnabled -> {
-                    AppSetting.isWakeWordLightIndicationEnabled.value = change.enabled
-                    it.copy(isWakeWordLightIndicationEnabled = change.enabled)
+                    requireOverlayPermission(it) {
+                        AppSetting.isWakeWordLightIndicationEnabled.value = change.enabled
+                        it.copy(isWakeWordLightIndicationEnabled = change.enabled)
+                    }
                 }
             }
         }

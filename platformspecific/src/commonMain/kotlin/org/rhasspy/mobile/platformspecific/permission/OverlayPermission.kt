@@ -12,7 +12,7 @@ expect object OverlayPermission {
     /**
      * to request the permission externally, redirect user to settings
      */
-    fun requestPermission(onGranted: () -> Unit): Boolean
+    fun requestPermission(): Boolean
 
     /**
      * check if the permission is currently granted

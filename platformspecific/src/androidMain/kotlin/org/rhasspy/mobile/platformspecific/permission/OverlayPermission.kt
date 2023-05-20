@@ -20,14 +20,10 @@ actual object OverlayPermission : KoinComponent {
      */
     actual val granted: StateFlow<Boolean> = _granted
 
-    private var onGranted: (() -> Unit)? = null
-
     /**
      * to request the permission externally, redirect user to settings
      */
-    actual fun requestPermission(onGranted: () -> Unit): Boolean {
-        OverlayPermission.onGranted = onGranted
-
+    actual fun requestPermission(): Boolean {
         val result = ExternalResultRequest.launch(ExternalResultRequestIntention.OpenOverlaySettings)
 
         return if (result is ExternalRedirectResult.Success) {
@@ -47,10 +43,6 @@ actual object OverlayPermission : KoinComponent {
      */
     actual fun update() {
         _granted.value = isGranted()
-        if (_granted.value) {
-            onGranted?.invoke()
-        }
-        onGranted = null
     }
 
 }

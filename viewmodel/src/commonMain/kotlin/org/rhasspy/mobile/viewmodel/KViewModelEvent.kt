@@ -7,12 +7,15 @@ sealed interface KViewModelEvent {
         object RequestMicrophonePermission : Action
         object RequestMicrophonePermissionRedirect : Action
         data class MicrophonePermissionDialogResult(val confirm: Boolean) : Action
+        object RequestOverlayPermission : Action
+        data class OverlayPermissionDialogResult(val confirm: Boolean) : Action
 
     }
 
     sealed interface Consumed : KViewModelEvent {
 
-        object ConsumedMicrophonePermissionSnackBar : Action
+        object ConsumedMicrophonePermissionSnackBar : Consumed
+        object ConsumedOverlayPermissionSnackBar : Consumed
 
     }
 
