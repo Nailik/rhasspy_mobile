@@ -10,7 +10,10 @@ sealed interface SilenceDetectionSettingsUiEvent {
     }
 
     sealed interface Action : SilenceDetectionSettingsUiEvent {
+
         object ToggleAudioLevelTest : Action
+        object BackClick : Action
+
     }
 
 }

@@ -2,23 +2,16 @@ package org.rhasspy.mobile.viewmodel.configuration
 
 import androidx.compose.runtime.Stable
 import co.touchlab.kermit.Logger
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.koin.core.component.KoinComponent
-import org.rhasspy.mobile.data.event.EventState.Consumed
-import org.rhasspy.mobile.data.event.EventState.Triggered
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.data.service.ServiceState
@@ -27,37 +20,27 @@ import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.viewmodel.KViewModel
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiNavigate.PopBackStack
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable
 abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
     private val service: IService,
-    private val initialViewState: () -> V
-) : ViewModel(), KoinComponent {
+    private val initialViewState: () -> V,
+    private val testPageDestination: NavigationDestination
+) : KViewModel() {
+
     private val logger = Logger.withTag("IConfigurationViewModel")
     private var testStartDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).toString()
-
-    private val serviceViewState = service.serviceState.mapReadonlyState {
-        ServiceStateHeaderViewState(
-            serviceState = ServiceViewState(service.serviceState),
-            isOpenServiceDialogEnabled = (it is ServiceState.Exception || it is ServiceState.Error),
-            serviceStateDialogText = when (it) {
-                is ServiceState.Error -> it.information
-                is ServiceState.Exception -> it.exception?.toString() ?: ""
-                else -> ""
-            }
-        )
-    }
 
     private val logEvents = MutableStateFlow<ImmutableList<LogElement>>(persistentListOf())
     private val configurationTestViewState = MutableStateFlow(
         ConfigurationTestViewState(
             isListFiltered = false,
             isListAutoscroll = true,
-            logEvents = logEvents.mapReadonlyState { it.toImmutableList() },
-            serviceViewState = serviceViewState
+            logEvents = logEvents.mapReadonlyState { it.toImmutableList() }
         )
     )
 
@@ -67,15 +50,37 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
 
     private val _viewState = MutableStateFlow(
         ConfigurationViewState(
-            isBackPressDisabled = false,
-            serviceViewState = serviceViewState,
+            serviceViewState = ServiceViewState(service.serviceState),
+            isOpenServiceStateDialogEnabled = service.serviceState.value.isOpenServiceStateDialogEnabled(),
+            isShowServiceStateDialog = false,
+            serviceStateDialogText = service.serviceState.value.getDialogText(),
             editViewState = contentViewState,
             testViewState = configurationTestViewState,
-            popBackStack = PopBackStack(Consumed),
+            isShowUnsavedChangesDialog = false,
             hasUnsavedChanges = false
         )
     )
     val viewState = _viewState.readOnly
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            service.serviceState.collect { serviceState ->
+                _viewState.update {
+                    it.copy(
+                        isOpenServiceStateDialogEnabled = serviceState.isOpenServiceStateDialogEnabled(),
+                        serviceStateDialogText = serviceState.getDialogText()
+                    )
+                }
+            }
+        }
+    }
+
+    private fun ServiceState.isOpenServiceStateDialogEnabled(): Boolean = (this is ServiceState.Exception || this is ServiceState.Error)
+    private fun ServiceState.getDialogText(): Any = when (this) {
+        is ServiceState.Error -> this.information
+        is ServiceState.Exception -> this.exception?.toString() ?: ""
+        else -> ""
+    }
 
     protected fun updateViewState(function: (V) -> V) {
         val newContentViewState = function(contentViewState.value)
@@ -87,19 +92,24 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
 
     fun onAction(action: IConfigurationUiEvent) {
         when (action) {
-            Discard -> discard()
-            Save -> save()
+            Discard -> discard(false)
+            Save -> save(false)
+            OpenTestScreen -> navigator.navigate(testPageDestination)
             StartTest -> startTest()
             StopTest -> stopTest()
             BackPress -> {
                 if (_viewState.value.hasUnsavedChanges) {
-                    _viewState.update { it.copy(showUnsavedChangesDialog = true) }
-                } else {
-                    _viewState.update { it.copy(popBackStack = PopBackStack(Triggered)) }
+                    _viewState.update { it.copy(isShowUnsavedChangesDialog = true) }
+                } else if (_viewState.value.isShowServiceStateDialog) {
+                    _viewState.update { it.copy(isShowServiceStateDialog = false) }
+                } else if (!_viewState.value.isShowUnsavedChangesDialog) {
+                    navigator.popBackStack()
                 }
             }
 
-            DismissDialog -> _viewState.update { it.copy(showUnsavedChangesDialog = false) }
+            SaveDialog -> save(true)
+            DiscardDialog -> discard(true)
+            DismissDialog -> _viewState.update { it.copy(isShowUnsavedChangesDialog = false) }
             ToggleListAutoscroll -> configurationTestViewState.update { it.copy(isListAutoscroll = !it.isListAutoscroll) }
             ToggleListFiltered ->
                 configurationTestViewState.update {
@@ -115,47 +125,42 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
                             }
                         )
                 }
-        }
-    }
 
-    fun onConsumed(event: IConfigurationUiNavigate) {
-        when (event) {
-            is PopBackStack -> _viewState.update { it.copy(popBackStack = PopBackStack(Consumed)) }
+            BackClick -> navigator.onBackPressed()
+            CloseServiceStateDialog -> _viewState.update { it.copy(isShowServiceStateDialog = false) }
+            OpenServiceStateDialog -> _viewState.update { it.copy(isShowServiceStateDialog = true) }
         }
     }
 
     private val isTestRunning = MutableStateFlow(false)
-    protected var testScope = CoroutineScope(Dispatchers.Default)
+    protected var testScope = CoroutineScope(Dispatchers.IO)
         private set
 
-    private fun save() {
-        viewModelScope.launch(Dispatchers.Default) {
-            onSave()
-            contentViewState.value = initialViewState()
-            noUnsavedChanges()
-        }
+    private fun save(popBackStack: Boolean) {
+        updateData(popBackStack, ::onSave)
     }
 
-    private fun discard() {
-        viewModelScope.launch(Dispatchers.Default) {
-            onDiscard()
+    private fun discard(popBackStack: Boolean) {
+        updateData(popBackStack, ::onDiscard)
+    }
+
+    private fun updateData(popBackStack: Boolean, function: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            function()
             contentViewState.value = initialViewState()
             noUnsavedChanges()
+            if (popBackStack) {
+                navigator.popBackStack()
+            }
         }
-
     }
 
     private fun noUnsavedChanges() {
         _viewState.update {
-            if (_viewState.value.showUnsavedChangesDialog) {
-                it.copy(
-                    showUnsavedChangesDialog = false,
-                    hasUnsavedChanges = false,
-                    popBackStack = PopBackStack(Triggered)
-                )
-            } else {
-                it.copy(hasUnsavedChanges = false)
-            }
+            it.copy(
+                isShowUnsavedChangesDialog = false,
+                hasUnsavedChanges = false
+            )
         }
     }
 
@@ -177,11 +182,11 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
             Logger.setMinSeverity(LogLevel.Debug.severity)
         }
 
-        viewModelScope.launch(Dispatchers.Default) {
-            testScope = CoroutineScope(Dispatchers.Default)
+        viewModelScope.launch(Dispatchers.IO) {
+            testScope = CoroutineScope(Dispatchers.IO)
 
             //load file into list
-            testScope.launch(Dispatchers.Default) {
+            testScope.launch(Dispatchers.IO) {
                 val lines = FileLogger.getLines()
                 viewModelScope.launch {
                     logEvents.value = lines
@@ -209,10 +214,15 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
         //reset log level
         Logger.setMinSeverity(AppSetting.logLevel.value.severity)
 
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(Dispatchers.IO) {
             testScope.cancel()
             isTestRunning.value = false
         }
+    }
+
+    override fun onBackPressed(): Boolean {
+        onAction(BackPress)
+        return true
     }
 
 }

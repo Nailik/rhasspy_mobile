@@ -14,6 +14,7 @@ sealed interface SpeechToTextConfigurationUiEvent {
     sealed interface Action : SpeechToTextConfigurationUiEvent {
 
         object TestSpeechToTextToggleRecording : Action
+        object BackClick : Action
 
     }
 

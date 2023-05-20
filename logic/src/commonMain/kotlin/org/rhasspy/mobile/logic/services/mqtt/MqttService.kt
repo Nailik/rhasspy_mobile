@@ -31,7 +31,7 @@ import org.rhasspy.mobile.settings.AppSetting
 class MqttService(
     paramsCreator: MqttServiceParamsCreator
 ) : IService(LogType.MqttService) {
-    private var scope = CoroutineScope(Dispatchers.Default)
+    private var scope = CoroutineScope(Dispatchers.IO)
 
     private val _serviceState = MutableStateFlow<ServiceState>(ServiceState.Pending)
     override val serviceState = _serviceState.readOnly

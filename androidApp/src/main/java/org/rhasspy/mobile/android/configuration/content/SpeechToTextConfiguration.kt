@@ -8,19 +8,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
-import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelection
-import org.rhasspy.mobile.android.content.list.FilledTonalButtonListItem
-import org.rhasspy.mobile.android.content.list.SwitchListItem
-import org.rhasspy.mobile.android.content.list.TextFieldListItem
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
-import org.rhasspy.mobile.android.permissions.RequiresMicrophonePermission
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.LocalViewModelFactory
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.translate
+import org.rhasspy.mobile.ui.content.list.FilledTonalButtonListItem
+import org.rhasspy.mobile.ui.content.list.SwitchListItem
+import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.ContentPaddingLevel1
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent
@@ -28,6 +27,7 @@ import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfi
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewState
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.SpeechToTextConfigurationScreen
 
 /**
  * Content to configure speech to text
@@ -37,30 +37,34 @@ import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfi
 @Composable
 fun SpeechToTextConfigurationContent() {
     val viewModel: SpeechToTextConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
-    val viewState by viewModel.viewState.collectAsState()
-    val contentViewState by viewState.editViewState.collectAsState()
 
-    ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(ConfigurationScreenType.SpeechToTextConfiguration),
-        config = ConfigurationScreenConfig(MR.strings.speechToText.stable),
-        viewState = viewState,
-        onAction = { viewModel.onAction(it) },
-        onConsumed = { viewModel.onConsumed(it) },
-        testContent = {
-            TestContent(
-                isRecordingAudio = contentViewState.isTestRecordingAudio,
-                onEvent = viewModel::onEvent
-            )
+    Screen(viewModel) {
+        val viewState by viewModel.viewState.collectAsState()
+        val screen by viewModel.screen.collectAsState()
+        val contentViewState by viewState.editViewState.collectAsState()
+
+        ConfigurationScreenItemContent(
+            modifier = Modifier.testTag(SpeechToTextConfigurationScreen),
+            screenType = screen.destinationType,
+            config = ConfigurationScreenConfig(MR.strings.speechToText.stable),
+            viewState = viewState,
+            onAction = viewModel::onAction,
+            testContent = {
+                TestContent(
+                    isRecordingAudio = contentViewState.isTestRecordingAudio,
+                    onEvent = viewModel::onEvent
+                )
+            }
+        ) {
+
+            item {
+                SpeechToTextOptionContent(
+                    viewState = contentViewState,
+                    onAction = viewModel::onEvent
+                )
+            }
+
         }
-    ) {
-
-        item {
-            SpeechToTextOptionContent(
-                viewState = contentViewState,
-                onAction = viewModel::onEvent
-            )
-        }
-
     }
 
 }
@@ -158,15 +162,8 @@ private fun TestContent(
     isRecordingAudio: Boolean,
     onEvent: (SpeechToTextConfigurationUiEvent) -> Unit
 ) {
-
-    RequiresMicrophonePermission(
-        informationText = MR.strings.microphonePermissionInfoRecord.stable,
+    FilledTonalButtonListItem(
+        text = if (isRecordingAudio) MR.strings.stopRecordAudio.stable else MR.strings.startRecordAudio.stable,
         onClick = { onEvent(TestSpeechToTextToggleRecording) }
-    ) { onClick ->
-        FilledTonalButtonListItem(
-            text = if (isRecordingAudio) MR.strings.stopRecordAudio.stable else MR.strings.startRecordAudio.stable,
-            onClick = onClick
-        )
-    }
-
+    )
 }

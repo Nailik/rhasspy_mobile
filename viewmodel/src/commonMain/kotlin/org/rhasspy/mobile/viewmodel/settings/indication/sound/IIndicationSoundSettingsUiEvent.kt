@@ -18,6 +18,7 @@ sealed interface IIndicationSoundSettingsUiEvent {
 
         object ToggleAudioPlayerActive : Action
         object ChooseSoundFile : Action
+        object BackClick : Action
 
     }
 

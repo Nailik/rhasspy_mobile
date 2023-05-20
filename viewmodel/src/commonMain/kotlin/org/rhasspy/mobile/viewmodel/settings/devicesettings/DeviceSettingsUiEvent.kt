@@ -2,6 +2,10 @@ package org.rhasspy.mobile.viewmodel.settings.devicesettings
 
 sealed interface DeviceSettingsUiEvent {
 
+    sealed interface Action : DeviceSettingsUiEvent {
+        object BackClick : Action
+    }
+
     sealed interface Change : DeviceSettingsUiEvent {
 
         data class UpdateVolume(val volume: Float) : Change

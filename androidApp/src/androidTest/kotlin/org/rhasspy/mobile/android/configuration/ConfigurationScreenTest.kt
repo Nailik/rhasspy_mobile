@@ -5,18 +5,18 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextReplacement
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.MainActivity
-import org.rhasspy.mobile.android.navigation.BottomBarScreenType
 import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.hasTestTag
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewModel
 import kotlin.test.assertEquals
 
@@ -25,16 +25,15 @@ import kotlin.test.assertEquals
  * Items exist
  * Site ID edit
  */
-@OptIn(ExperimentalCoroutinesApi::class)
 class ConfigurationScreenTest : FlakyTest() {
 
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     @Before
     fun setUp() {
         //open configuration screen
-        composeTestRule.onNodeWithTag(BottomBarScreenType.ConfigurationScreen).performClick()
+        composeTestRule.onNodeWithTag(MainScreenNavigationDestination.ConfigurationScreen).performClick()
     }
 
     /**
@@ -50,7 +49,7 @@ class ConfigurationScreenTest : FlakyTest() {
         //SiteId
         composeTestRule.onNodeWithTag(TestTag.ConfigurationSiteId).assertExists()
         //each item exists and navigates
-        ConfigurationScreenType.values().forEach { tag ->
+        ConfigurationScreenNavigationDestination.values().forEach { tag ->
             composeTestRule.onNodeWithTag(TestTag.List).performScrollToNode(hasTestTag(tag))
                 .assertExists()
             composeTestRule.onNodeWithTag(tag).performClick()

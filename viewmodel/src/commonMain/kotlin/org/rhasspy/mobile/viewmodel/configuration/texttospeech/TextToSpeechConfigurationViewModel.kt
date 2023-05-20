@@ -11,17 +11,23 @@ import org.rhasspy.mobile.logic.services.texttospeech.TextToSpeechService
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Action.TestRemoteHermesHttpTextToSpeechTest
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.texttospeech.TextToSpeechConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.TextToSpeechConfigurationScreenDestination.EditScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.TextToSpeechConfigurationScreenDestination.TestScreen
 
 @Stable
 class TextToSpeechConfigurationViewModel(
     service: TextToSpeechService
 ) : IConfigurationViewModel<TextToSpeechConfigurationViewState>(
     service = service,
-    initialViewState = ::TextToSpeechConfigurationViewState
+    initialViewState = ::TextToSpeechConfigurationViewState,
+    testPageDestination = TestScreen
 ) {
+
+    val screen = navigator.topScreen(EditScreen)
 
     fun onEvent(event: TextToSpeechConfigurationUiEvent) {
         when (event) {
@@ -44,6 +50,7 @@ class TextToSpeechConfigurationViewModel(
     private fun onAction(action: Action) {
         when (action) {
             TestRemoteHermesHttpTextToSpeechTest -> startTextToSpeech()
+            BackClick -> navigator.onBackPressed()
         }
     }
 

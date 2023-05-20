@@ -3,13 +3,12 @@ package org.rhasspy.mobile.android.settings.content
 import androidx.activity.compose.setContent
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.*
+import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Change.SetSilenceDetectionEnabled
@@ -18,10 +17,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class AutomaticSilenceDetectionSettingsContentTest : FlakyTest() {
 
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     private val viewModel = get<SilenceDetectionSettingsViewModel>()
@@ -31,7 +29,7 @@ class AutomaticSilenceDetectionSettingsContentTest : FlakyTest() {
 
         composeTestRule.activity.setContent {
             TestContentProvider {
-                AutomaticSilenceDetectionSettingsContent()
+                SilenceDetectionSettingsContent()
             }
         }
 
@@ -118,9 +116,10 @@ class AutomaticSilenceDetectionSettingsContentTest : FlakyTest() {
             .assertDoesNotExist()
 
         //user clicks audio level test
-        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsTest).performClick()
+        composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsTest).performScrollTo().performClick()
         composeTestRule.awaitIdle()
         //audio level indication shown
+        composeTestRule.waitUntilExists(hasTestTag(TestTag.AutomaticSilenceDetectionSettingsAudioLevelTest))
         composeTestRule.onNodeWithTag(TestTag.AutomaticSilenceDetectionSettingsAudioLevelTest)
             .assertIsDisplayed()
         //audio recording true

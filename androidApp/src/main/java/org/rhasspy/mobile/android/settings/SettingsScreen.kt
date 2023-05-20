@@ -4,17 +4,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
 import org.rhasspy.mobile.BuildKonfig
-import org.rhasspy.mobile.android.content.elements.*
-import org.rhasspy.mobile.android.content.list.ListElement
-import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.content.*
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderChannelType
@@ -25,27 +22,75 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.LocalViewModelFactory
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.elements.CustomDivider
+import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.toText
 import org.rhasspy.mobile.ui.content.elements.translate
+import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.SettingsScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.*
+import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent
+import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewState
 
-@Preview
 @Composable
 fun SettingsScreen() {
+
     val viewModel: SettingsScreenViewModel = LocalViewModelFactory.current.getViewModel()
+
+    Screen(viewModel) {
+        val screen by viewModel.screen.collectAsState()
+
+        when (screen) {
+            null -> {
+                val viewState by viewModel.viewState.collectAsState()
+
+                SettingsScreenContent(
+                    viewState = viewState,
+                    onEvent = viewModel::onEvent
+                )
+            }
+
+            AboutSettings -> AboutScreen()
+            AudioFocusSettings -> AudioFocusSettingsContent()
+            AudioRecorderSettings -> AudioRecorderSettingsContent()
+            SilenceDetectionSettings -> SilenceDetectionSettingsContent()
+            BackgroundServiceSettings -> BackgroundServiceSettingsContent()
+            DeviceSettings -> DeviceSettingsContent()
+            IndicationSettings -> IndicationSettingsContent()
+            LanguageSettingsScreen -> LanguageSettingsScreenItemContent()
+            LogSettings -> LogSettingsContent()
+            MicrophoneOverlaySettings -> MicrophoneOverlaySettingsContent()
+            SaveAndRestoreSettings -> SaveAndRestoreSettingsContent()
+        }
+
+    }
+
+}
+
+
+@Composable
+fun SettingsScreenContent(
+    viewState: SettingsScreenViewState,
+    onEvent: (event: SettingsScreenUiEvent) -> Unit
+) {
+
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .testTag(SettingsScreen)
+            .fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { org.rhasspy.mobile.ui.content.elements.Text(MR.strings.settings.stable) }
+                title = { Text(MR.strings.settings.stable) }
             )
         },
     ) { paddingValues ->
-
-        val viewState by viewModel.viewState.collectAsState()
 
         LazyColumn(
             Modifier
@@ -55,35 +100,48 @@ fun SettingsScreen() {
         ) {
 
             item {
-                Language(viewState)
+                Language(
+                    viewState,
+                    onEvent
+                )
                 CustomDivider()
             }
 
             item {
-                BackgroundService(viewState.isBackgroundEnabled)
+                BackgroundService(
+                    viewState.isBackgroundEnabled,
+                    onEvent
+                )
                 CustomDivider()
             }
 
             item {
-                MicrophoneOverlay(viewState.microphoneOverlaySizeOption)
+                MicrophoneOverlay(
+                    viewState.microphoneOverlaySizeOption,
+                    onEvent
+                )
                 CustomDivider()
             }
 
             item {
                 Indication(
                     isSoundIndicationEnabled = viewState.isSoundIndicationEnabled,
-                    isWakeWordLightIndicationEnabled = viewState.isWakeWordLightIndicationEnabled
+                    isWakeWordLightIndicationEnabled = viewState.isWakeWordLightIndicationEnabled,
+                    onEvent
                 )
                 CustomDivider()
             }
 
             item {
-                Device()
+                Device(onEvent)
                 CustomDivider()
             }
 
             item {
-                AudioFocus(viewState.audioFocusOption)
+                AudioFocus(
+                    viewState.audioFocusOption,
+                    onEvent
+                )
                 CustomDivider()
             }
 
@@ -91,28 +149,35 @@ fun SettingsScreen() {
                 AudioRecorderSettings(
                     audioRecorderChannelType = viewState.audioRecorderChannelType,
                     audioRecorderEncodingType = viewState.audioRecorderEncodingType,
-                    audioRecorderSampleRateType = viewState.audioRecorderSampleRateType
+                    audioRecorderSampleRateType = viewState.audioRecorderSampleRateType,
+                    onEvent
                 )
                 CustomDivider()
             }
 
             item {
-                AutomaticSilenceDetection(viewState.isAutomaticSilenceDetectionEnabled)
+                SilenceDetection(
+                    viewState.isAutomaticSilenceDetectionEnabled,
+                    onEvent
+                )
                 CustomDivider()
             }
 
             item {
-                Log(viewState.logLevel)
+                Log(
+                    viewState.logLevel,
+                    onEvent
+                )
                 CustomDivider()
             }
 
             item {
-                SaveAndRestore()
+                SaveAndRestore(onEvent)
                 CustomDivider()
             }
 
             item {
-                About()
+                About(onEvent)
                 CustomDivider()
             }
 
@@ -121,86 +186,48 @@ fun SettingsScreen() {
 
 }
 
-/**
- * configuration screens with list items that open bottom sheet
- */
-fun NavGraphBuilder.addSettingsScreen() {
-
-    composable(SettingsScreenType.LanguageSettings.route) {
-        LanguageSettingsScreenItemContent()
-    }
-
-    composable(SettingsScreenType.BackgroundServiceSettings.route) {
-        BackgroundServiceSettingsContent()
-    }
-
-    composable(SettingsScreenType.MicrophoneOverlaySettings.route) {
-        MicrophoneOverlaySettingsContent()
-    }
-
-    composable(SettingsScreenType.IndicationSettings.route) {
-        WakeWordIndicationSettingsContent()
-    }
-
-    composable(SettingsScreenType.DeviceSettings.route) {
-        DeviceSettingsContent()
-    }
-
-    composable(SettingsScreenType.AudioFocusSettings.route) {
-        AudioFocusSettingsContent()
-    }
-
-    composable(SettingsScreenType.AudioRecorderSettings.route) {
-        AudioRecorderSettingsContent()
-    }
-
-    composable(SettingsScreenType.AutomaticSilenceDetectionSettings.route) {
-        AutomaticSilenceDetectionSettingsContent()
-    }
-
-    composable(SettingsScreenType.LogSettings.route) {
-        LogSettingsContent()
-    }
-
-    composable(SettingsScreenType.SaveAndRestoreSettings.route) {
-        SaveAndRestoreSettingsContent()
-    }
-
-    composable(SettingsScreenType.AboutSettings.route) {
-        AboutScreen()
-    }
-
-}
 
 @Composable
-private fun Language(viewState: SettingsScreenViewState) {
+private fun Language(
+    viewState: SettingsScreenViewState,
+    onEvent: (event: SettingsScreenUiEvent) -> Unit
+) {
 
     SettingsListItem(
         text = MR.strings.language.stable,
         secondaryText = viewState.currentLanguage.text,
-        screen = SettingsScreenType.LanguageSettings
+        destination = LanguageSettingsScreen,
+        onEvent = onEvent
     )
 
 }
 
 @Composable
-private fun BackgroundService(isBackgroundEnabled: Boolean) {
+private fun BackgroundService(
+    isBackgroundEnabled: Boolean,
+    onEvent: (event: SettingsScreenUiEvent) -> Unit
+) {
 
     SettingsListItem(
         text = MR.strings.background.stable,
         secondaryText = isBackgroundEnabled.toText(),
-        screen = SettingsScreenType.BackgroundServiceSettings
+        destination = BackgroundServiceSettings,
+        onEvent = onEvent
     )
 
 }
 
 @Composable
-private fun MicrophoneOverlay(microphoneOverlaySizeOption: MicrophoneOverlaySizeOption) {
+private fun MicrophoneOverlay(
+    microphoneOverlaySizeOption: MicrophoneOverlaySizeOption,
+    onEvent: (event: SettingsScreenUiEvent) -> Unit
+) {
 
     SettingsListItem(
         text = MR.strings.microphoneOverlay.stable,
         secondaryText = microphoneOverlaySizeOption.name,
-        screen = SettingsScreenType.MicrophoneOverlaySettings
+        destination = MicrophoneOverlaySettings,
+        onEvent = onEvent
     )
 
 }
@@ -208,7 +235,8 @@ private fun MicrophoneOverlay(microphoneOverlaySizeOption: MicrophoneOverlaySize
 @Composable
 private fun Indication(
     isSoundIndicationEnabled: Boolean,
-    isWakeWordLightIndicationEnabled: Boolean
+    isWakeWordLightIndicationEnabled: Boolean,
+    onEvent: (event: SettingsScreenUiEvent) -> Unit
 ) {
 
     var stateText = if (isSoundIndicationEnabled) translate(MR.strings.sound.stable) else ""
@@ -225,29 +253,35 @@ private fun Indication(
     SettingsListItem(
         text = MR.strings.indication.stable,
         secondaryText = stateText,
-        screen = SettingsScreenType.IndicationSettings
+        destination = IndicationSettings,
+        onEvent = onEvent
     )
 
 }
 
 @Composable
-private fun Device() {
+private fun Device(onEvent: (event: SettingsScreenUiEvent) -> Unit) {
 
     SettingsListItem(
         text = MR.strings.device.stable,
         secondaryText = MR.strings.deviceSettingsInformation.stable,
-        screen = SettingsScreenType.DeviceSettings
+        destination = DeviceSettings,
+        onEvent = onEvent
     )
 
 }
 
 @Composable
-private fun AudioFocus(audioFocusOption: AudioFocusOption) {
+private fun AudioFocus(
+    audioFocusOption: AudioFocusOption,
+    onEvent: (event: SettingsScreenUiEvent) -> Unit
+) {
 
     SettingsListItem(
         text = MR.strings.audioFocus.stable,
         secondaryText = audioFocusOption.text,
-        screen = SettingsScreenType.AudioFocusSettings
+        destination = AudioFocusSettings,
+        onEvent = onEvent
     )
 
 }
@@ -257,57 +291,69 @@ private fun AudioFocus(audioFocusOption: AudioFocusOption) {
 private fun AudioRecorderSettings(
     audioRecorderChannelType: AudioRecorderChannelType,
     audioRecorderEncodingType: AudioRecorderEncodingType,
-    audioRecorderSampleRateType: AudioRecorderSampleRateType
+    audioRecorderSampleRateType: AudioRecorderSampleRateType,
+    onEvent: (event: SettingsScreenUiEvent) -> Unit
 ) {
 
     SettingsListItem(
         text = MR.strings.audioRecorder.stable,
         secondaryText = "${translate(audioRecorderChannelType.text)} | ${translate(audioRecorderEncodingType.text)} | ${translate(audioRecorderSampleRateType.text)}",
-        screen = SettingsScreenType.AudioRecorderSettings
+        destination = AudioRecorderSettings,
+        onEvent = onEvent
     )
 
 }
 
 @Composable
-private fun AutomaticSilenceDetection(isAutomaticSilenceDetectionEnabled: Boolean) {
+private fun SilenceDetection(
+    isSilenceDetectionEnabled: Boolean,
+    onEvent: (event: SettingsScreenUiEvent) -> Unit
+) {
 
     SettingsListItem(
         text = MR.strings.automaticSilenceDetection.stable,
-        secondaryText = isAutomaticSilenceDetectionEnabled.toText(),
-        screen = SettingsScreenType.AutomaticSilenceDetectionSettings
+        secondaryText = isSilenceDetectionEnabled.toText(),
+        destination = SilenceDetectionSettings,
+        onEvent = onEvent
     )
 
 }
 
 @Composable
-private fun Log(logLevel: LogLevel) {
+private fun Log(
+    logLevel: LogLevel,
+    onEvent: (event: SettingsScreenUiEvent) -> Unit
+) {
 
     SettingsListItem(
         text = MR.strings.logSettings.stable,
         secondaryText = logLevel.text,
-        screen = SettingsScreenType.LogSettings
+        destination = LogSettings,
+        onEvent = onEvent
     )
 
 }
 
 @Composable
-private fun SaveAndRestore() {
+private fun SaveAndRestore(onEvent: (event: SettingsScreenUiEvent) -> Unit) {
 
     SettingsListItem(
         text = MR.strings.saveAndRestoreSettings.stable,
         secondaryText = MR.strings.backup.stable,
-        screen = SettingsScreenType.SaveAndRestoreSettings
+        destination = SaveAndRestoreSettings,
+        onEvent = onEvent
     )
 
 }
 
 @Composable
-private fun About() {
+private fun About(onEvent: (event: SettingsScreenUiEvent) -> Unit) {
 
     SettingsListItem(
         text = MR.strings.aboutTitle.stable,
         secondaryText = "${translate(MR.strings.version.stable)} ${BuildKonfig.versionName}",
-        screen = SettingsScreenType.AboutSettings
+        destination = AboutSettings,
+        onEvent = onEvent
     )
 
 }
@@ -317,18 +363,16 @@ private fun About() {
 private fun SettingsListItem(
     text: StableStringResource,
     secondaryText: StableStringResource? = null,
-    screen: SettingsScreenType
+    destination: SettingsScreenDestination,
+    onEvent: (navigate: Navigate) -> Unit
 ) {
-    val navController = LocalMainNavController.current
 
     ListElement(
         modifier = Modifier
-            .clickable {
-                navController.navigate(screen.route)
-            }
-            .testTag(screen),
-        text = { org.rhasspy.mobile.ui.content.elements.Text(text) },
-        secondaryText = { secondaryText?.also { org.rhasspy.mobile.ui.content.elements.Text(secondaryText) } }
+            .clickable { onEvent(Navigate(destination)) }
+            .testTag(destination),
+        text = { Text(text) },
+        secondaryText = { secondaryText?.also { Text(secondaryText) } }
     )
 }
 
@@ -336,17 +380,15 @@ private fun SettingsListItem(
 private fun SettingsListItem(
     text: StableStringResource,
     secondaryText: String,
-    @Suppress("SameParameterValue") screen: SettingsScreenType
+    destination: SettingsScreenDestination,
+    onEvent: (navigate: Navigate) -> Unit
 ) {
-    val navController = LocalMainNavController.current
 
     ListElement(
         modifier = Modifier
-            .clickable {
-                navController.navigate(screen.route)
-            }
-            .testTag(screen),
-        text = { org.rhasspy.mobile.ui.content.elements.Text(text) },
+            .clickable { onEvent(Navigate(destination)) }
+            .testTag(destination),
+        text = { Text(text) },
         secondaryText = { Text(text = secondaryText) }
     )
 }

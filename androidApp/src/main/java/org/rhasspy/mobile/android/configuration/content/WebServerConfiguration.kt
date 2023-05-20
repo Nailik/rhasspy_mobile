@@ -11,26 +11,22 @@ import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.android.configuration.ConfigurationScreenItemContent
-import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
-import org.rhasspy.mobile.android.content.list.*
-import org.rhasspy.mobile.android.main.LocalSnackbarHostState
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.*
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
-import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.content.list.*
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.OpenWebServerSSLWiki
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.WebServerConfigurationScreen
 
 /**
  * Content to configure text to speech
@@ -38,71 +34,74 @@ import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurati
  * select port
  * select ssl certificate
  */
-@Preview
 @Composable
 fun WebServerConfigurationContent() {
     val viewModel: WebServerConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
-    val viewState by viewModel.viewState.collectAsState()
-    val contentViewState by viewState.editViewState.collectAsState()
 
-    val snackBarHostState = LocalSnackbarHostState.current
-    val snackBarText = contentViewState.snackBarText?.let { translate(it) }
+    Screen(viewModel) {
+        val viewState by viewModel.viewState.collectAsState()
+        val screen by viewModel.screen.collectAsState()
+        val contentViewState by viewState.editViewState.collectAsState()
 
-    LaunchedEffect(snackBarText) {
-        snackBarText?.also {
-            snackBarHostState.showSnackbar(message = it)
-            viewModel.onEvent(ShowSnackBar)
-        }
-    }
+        val snackBarHostState = LocalSnackBarHostState.current
+        val snackBarText = contentViewState.snackBarText?.let { translate(it) }
 
-    ConfigurationScreenItemContent(
-        modifier = Modifier.testTag(ConfigurationScreenType.WebServerConfiguration),
-        config = ConfigurationScreenConfig(MR.strings.webserver.stable),
-        viewState = viewState,
-        onAction = { viewModel.onAction(it) },
-        onConsumed = { viewModel.onConsumed(it) }
-    ) {
-
-        item {
-            //switch to enable http server
-            SwitchListItem(
-                text = MR.strings.enableHTTPApi.stable,
-                modifier = Modifier.testTag(TestTag.ServerSwitch),
-                isChecked = contentViewState.isHttpServerEnabled,
-                onCheckedChange = { viewModel.onEvent(SetHttpServerEnabled(it)) }
-            )
+        LaunchedEffect(snackBarText) {
+            snackBarText?.also {
+                snackBarHostState.showSnackbar(message = it)
+                viewModel.onEvent(ShowSnackBar)
+            }
         }
 
-        item {
-            //visibility of server settings
-            AnimatedVisibility(
-                enter = expandVertically(),
-                exit = shrinkVertically(),
-                visible = contentViewState.isHttpServerEnabled
-            ) {
+        ConfigurationScreenItemContent(
+            modifier = Modifier.testTag(WebServerConfigurationScreen),
+            screenType = screen.destinationType,
+            config = ConfigurationScreenConfig(MR.strings.webserver.stable),
+            viewState = viewState,
+            onAction = viewModel::onAction
+        ) {
 
-                Column {
+            item {
+                //switch to enable http server
+                SwitchListItem(
+                    text = MR.strings.enableHTTPApi.stable,
+                    modifier = Modifier.testTag(TestTag.ServerSwitch),
+                    isChecked = contentViewState.isHttpServerEnabled,
+                    onCheckedChange = { viewModel.onEvent(SetHttpServerEnabled(it)) }
+                )
+            }
 
-                    //port of server
-                    TextFieldListItem(
-                        label = MR.strings.port.stable,
-                        modifier = Modifier.testTag(TestTag.Port),
-                        value = contentViewState.httpServerPortText,
-                        onValueChange = { viewModel.onEvent(UpdateHttpServerPort(it)) },
-                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-                    )
+            item {
+                //visibility of server settings
+                AnimatedVisibility(
+                    enter = expandVertically(),
+                    exit = shrinkVertically(),
+                    visible = contentViewState.isHttpServerEnabled
+                ) {
 
-                    WebserverSSL(
-                        isHttpServerSSLEnabled = contentViewState.isHttpServerSSLEnabled,
-                        httpServerSSLKeyStoreFileName = contentViewState.httpServerSSLKeyStoreFileName,
-                        httpServerSSLKeyStorePassword = contentViewState.httpServerSSLKeyStorePassword,
-                        httpServerSSLKeyAlias = contentViewState.httpServerSSLKeyAlias,
-                        httpServerSSLKeyPassword = contentViewState.httpServerSSLKeyPassword,
-                        onAction = viewModel::onEvent
-                    )
+                    Column {
+
+                        //port of server
+                        TextFieldListItem(
+                            label = MR.strings.port.stable,
+                            modifier = Modifier.testTag(TestTag.Port),
+                            value = contentViewState.httpServerPortText,
+                            onValueChange = { viewModel.onEvent(UpdateHttpServerPort(it)) },
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                        )
+
+                        WebserverSSL(
+                            isHttpServerSSLEnabled = contentViewState.isHttpServerSSLEnabled,
+                            httpServerSSLKeyStoreFileName = contentViewState.httpServerSSLKeyStoreFileName,
+                            httpServerSSLKeyStorePassword = contentViewState.httpServerSSLKeyStorePassword,
+                            httpServerSSLKeyAlias = contentViewState.httpServerSSLKeyAlias,
+                            httpServerSSLKeyPassword = contentViewState.httpServerSSLKeyPassword,
+                            onAction = viewModel::onEvent
+                        )
+
+                    }
 
                 }
-
             }
         }
     }

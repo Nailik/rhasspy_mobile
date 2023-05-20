@@ -9,81 +9,86 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.android.content.elements.RadioButtonsEnumSelectionList
-import org.rhasspy.mobile.android.content.list.ListElement
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
-import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.LocalViewModelFactory
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Text
+import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.AudioRecorderSettings
+import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsViewModel
 
 @Composable
 fun AudioRecorderSettingsContent() {
     val viewModel: AudioRecorderSettingsViewModel = LocalViewModelFactory.current.getViewModel()
-    val viewState by viewModel.viewState.collectAsState()
 
-    SettingsScreenItemContent(
-        modifier = Modifier.testTag(SettingsScreenType.AudioRecorderSettings),
-        title = MR.strings.automaticSilenceDetection.stable
-    ) {
+    Screen(viewModel) {
+        val viewState by viewModel.viewState.collectAsState()
 
-        Card(
-            modifier = Modifier.padding(8.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        SettingsScreenItemContent(
+            modifier = Modifier.testTag(AudioRecorderSettings),
+            title = MR.strings.automaticSilenceDetection.stable,
+            onBackClick = { viewModel.onEvent(BackClick) }
         ) {
-            ListElement {
-                Text(resource = MR.strings.sampleRate.stable)
+
+            Card(
+                modifier = Modifier.padding(8.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            ) {
+                ListElement {
+                    Text(resource = MR.strings.sampleRate.stable)
+                }
+
+                RadioButtonsEnumSelectionList(
+                    modifier = Modifier.testTag(TestTag.AudioRecorderSampleRateType),
+                    selected = viewState.audioRecorderSampleRateType,
+                    onSelect = { viewModel.onEvent(SelectAudioRecorderSampleRateType(it)) },
+                    combinedTestTag = TestTag.AudioRecorderSampleRateType,
+                    values = viewState.audioRecorderSampleRateTypes
+                )
             }
 
-            RadioButtonsEnumSelectionList(
-                modifier = Modifier.testTag(TestTag.AudioRecorderSampleRateType),
-                selected = viewState.audioRecorderSampleRateType,
-                onSelect = { viewModel.onEvent(SelectAudioRecorderSampleRateType(it)) },
-                combinedTestTag = TestTag.AudioRecorderSampleRateType,
-                values = viewState.audioRecorderSampleRateTypes
-            )
-        }
+            Card(
+                modifier = Modifier.padding(8.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            ) {
+                ListElement {
+                    Text(resource = MR.strings.channel.stable)
+                }
 
-        Card(
-            modifier = Modifier.padding(8.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-        ) {
-            ListElement {
-                Text(resource = MR.strings.channel.stable)
+                RadioButtonsEnumSelectionList(
+                    modifier = Modifier.testTag(TestTag.AudioRecorderChannelType),
+                    selected = viewState.audioRecorderChannelType,
+                    onSelect = { viewModel.onEvent(SelectAudioRecorderChannelType(it)) },
+                    combinedTestTag = TestTag.AudioRecorderChannelType,
+                    values = viewState.audioRecorderChannelTypes
+                )
             }
 
-            RadioButtonsEnumSelectionList(
-                modifier = Modifier.testTag(TestTag.AudioRecorderChannelType),
-                selected = viewState.audioRecorderChannelType,
-                onSelect = { viewModel.onEvent(SelectAudioRecorderChannelType(it)) },
-                combinedTestTag = TestTag.AudioRecorderChannelType,
-                values = viewState.audioRecorderChannelTypes
-            )
-        }
 
+            Card(
+                modifier = Modifier.padding(8.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            ) {
+                ListElement {
+                    Text(resource = MR.strings.encoding.stable)
+                }
 
-        Card(
-            modifier = Modifier.padding(8.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-        ) {
-            ListElement {
-                Text(resource = MR.strings.encoding.stable)
+                RadioButtonsEnumSelectionList(
+                    modifier = Modifier.testTag(TestTag.AudioRecorderEncodingType),
+                    selected = viewState.audioRecorderEncodingType,
+                    onSelect = { viewModel.onEvent(SelectAudioRecorderEncodingType(it)) },
+                    combinedTestTag = TestTag.AudioRecorderEncodingType,
+                    values = viewState.audioRecorderEncodingTypes
+                )
             }
 
-            RadioButtonsEnumSelectionList(
-                modifier = Modifier.testTag(TestTag.AudioRecorderEncodingType),
-                selected = viewState.audioRecorderEncodingType,
-                onSelect = { viewModel.onEvent(SelectAudioRecorderEncodingType(it)) },
-                combinedTestTag = TestTag.AudioRecorderEncodingType,
-                values = viewState.audioRecorderEncodingTypes
-            )
+
         }
-
-
     }
-
 }

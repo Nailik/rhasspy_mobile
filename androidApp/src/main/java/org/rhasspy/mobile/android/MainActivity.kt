@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.android
 
 import android.os.Bundle
+import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
@@ -24,7 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.main.MainNavigation
+import org.rhasspy.mobile.android.main.MainScreen
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
 import org.rhasspy.mobile.logic.middleware.Source
@@ -32,6 +33,7 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.widget.microphone.MicrophoneWidgetUtils
 
 
@@ -52,6 +54,11 @@ class MainActivity : KoinComponent, AppCompatActivity() {
         }
         AppLaunchChecker.onActivityCreate(this)
 
+        onBackPressedDispatcher.addCallback(this) {
+            // Handle the back button event
+            get<Navigator>().onBackPressed()
+        }
+
         installSplashScreen().setKeepOnScreenCondition {
             //splash screen should be visible until the app has started
             !get<NativeApplication>().isHasStarted.value
@@ -70,7 +77,7 @@ class MainActivity : KoinComponent, AppCompatActivity() {
 
         this.setContent {
             Box(modifier = Modifier.fillMaxSize()) {
-                MainNavigation(viewModelFactory)
+                MainScreen(viewModelFactory)
                 if (isDebug()) {
                     Text(
                         text = "DEBUG",
@@ -86,7 +93,7 @@ class MainActivity : KoinComponent, AppCompatActivity() {
             }
         }
 
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             MicrophoneWidgetUtils.updateWidget()
         }
     }

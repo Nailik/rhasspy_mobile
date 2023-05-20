@@ -12,19 +12,23 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.*
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.OpenMqttSSLWiki
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.SelectSSLCertificate
+import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Consumed.ShowSnackBar
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.MqttConfigurationScreenDestination.EditScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.MqttConfigurationScreenDestination.TestScreen
 import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
 @Stable
 class MqttConfigurationViewModel(
-    service: MqttService,
+    service: MqttService
 ) : IConfigurationViewModel<MqttConfigurationViewState>(
     service = service,
-    initialViewState = ::MqttConfigurationViewState
+    initialViewState = ::MqttConfigurationViewState,
+    testPageDestination = TestScreen
 ) {
+
+    val screen = navigator.topScreen(EditScreen)
 
     fun onEvent(action: MqttConfigurationUiEvent) {
         when (action) {
@@ -55,6 +59,7 @@ class MqttConfigurationViewModel(
         when (action) {
             OpenMqttSSLWiki -> openMqttSSLWikiLink()
             SelectSSLCertificate -> selectSSLCertificate()
+            BackClick -> navigator.onBackPressed()
         }
     }
 

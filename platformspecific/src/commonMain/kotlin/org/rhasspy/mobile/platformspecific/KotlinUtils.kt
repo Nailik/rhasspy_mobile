@@ -5,7 +5,9 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.*
+import kotlin.math.roundToInt
 
 fun <T1, T2, R> combineState(
     flow1: StateFlow<T1>,
@@ -32,7 +34,7 @@ inline fun <reified T> combineStateFlow(
 )
 
 fun <T, R> StateFlow<T>.mapReadonlyState(
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Default),
+    scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
     sharingStarted: SharingStarted = SharingStarted.Lazily,
     transform: (T) -> R
 ): StateFlow<R> = this.map {
@@ -81,4 +83,11 @@ fun <E> ImmutableList<E>.updateListItem(item: E, block: E.() -> E): ImmutableLis
     return this.toImmutableList().updateList {
         set(index, block(item))
     }
+}
+
+fun Float.roundToDecimals(decimals: Int): Float {
+    var dotAt = 1
+    repeat(decimals) { dotAt *= 10 }
+    val roundedValue = (this * dotAt).roundToInt()
+    return (roundedValue / dotAt) + (roundedValue % dotAt).toFloat() / dotAt
 }

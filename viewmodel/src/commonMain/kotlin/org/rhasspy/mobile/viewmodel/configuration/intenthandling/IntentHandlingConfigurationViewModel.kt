@@ -8,17 +8,23 @@ import org.rhasspy.mobile.logic.services.intenthandling.IntentHandlingService
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Action.RunIntentHandlingTest
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.IntentHandlingConfigurationScreenDestination.EditScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.IntentHandlingConfigurationScreenDestination.TestScreen
 
 @Stable
 class IntentHandlingConfigurationViewModel(
     service: DialogManagerService
 ) : IConfigurationViewModel<IntentHandlingConfigurationViewState>(
     service = service,
-    initialViewState = ::IntentHandlingConfigurationViewState
+    initialViewState = ::IntentHandlingConfigurationViewState,
+    testPageDestination = TestScreen
 ) {
+
+    val screen = navigator.topScreen(EditScreen)
 
     fun onEvent(event: IntentHandlingConfigurationUiEvent) {
         when (event) {
@@ -51,6 +57,8 @@ class IntentHandlingConfigurationViewModel(
                     )
                 }
             }
+
+            BackClick -> navigator.onBackPressed()
         }
     }
 

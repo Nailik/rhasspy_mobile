@@ -7,12 +7,13 @@ import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoundSettingsViewModel
 
 class WakeIndicationSoundScreenTest : IndicationSoundScreenTest(
     title = MR.strings.wakeSound.stable,
-    screen = IndicationSettingsScreens.WakeIndicationSound
+    screen = IndicationSettingsScreenDestination.WakeIndicationSoundScreen
 ) {
 
     override val device: UiDevice =

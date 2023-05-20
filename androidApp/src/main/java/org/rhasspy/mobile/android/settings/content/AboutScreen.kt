@@ -1,9 +1,12 @@
 package org.rhasspy.mobile.android.settings.content
 
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
@@ -15,23 +18,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import com.mikepenz.aboutlibraries.entity.Library
+import com.mikepenz.aboutlibraries.entity.License
+import kotlinx.collections.immutable.ImmutableList
 import org.rhasspy.mobile.BuildKonfig
-import org.rhasspy.mobile.android.about.ChangelogDialogButton
-import org.rhasspy.mobile.android.about.DataPrivacyDialogButton
-import org.rhasspy.mobile.android.about.LibrariesContainer
-import org.rhasspy.mobile.android.main.LocalSnackbarHostState
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
-import org.rhasspy.mobile.android.settings.SettingsScreenType
+import org.rhasspy.mobile.data.libraries.StableLibrary
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.icons.RhasspyLogo
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.content.elements.Icon
-import org.rhasspy.mobile.ui.content.elements.Text
-import org.rhasspy.mobile.ui.content.elements.translate
-import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.ui.*
+import org.rhasspy.mobile.ui.content.elements.*
+import org.rhasspy.mobile.ui.content.list.ListElement
+import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.AboutSettings
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent
+import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.OpenSourceCode
+import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewState
@@ -44,35 +46,49 @@ import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenViewState
 fun AboutScreen() {
 
     val viewModel: AboutScreenViewModel = LocalViewModelFactory.current.getViewModel()
-    val viewState by viewModel.viewState.collectAsState()
-    val snackBarHostState = LocalSnackbarHostState.current
-    val snackBarText = viewState.snackBarText?.let { translate(it) }
 
-    LaunchedEffect(snackBarText) {
-        snackBarText?.also {
-            snackBarHostState.showSnackbar(message = it)
-            viewModel.onEvent(ShowSnackBar)
+    Screen(viewModel) {
+        val viewState by viewModel.viewState.collectAsState()
+        val snackBarHostState = LocalSnackBarHostState.current
+        val snackBarText = viewState.snackBarText?.let { translate(it) }
+
+        LaunchedEffect(snackBarText) {
+            snackBarText?.also {
+                snackBarHostState.showSnackbar(message = it)
+                viewModel.onEvent(ShowSnackBar)
+            }
+        }
+
+
+        Surface(modifier = Modifier.testTag(AboutSettings)) {
+
+            if (viewState.isLibraryDialogVisible) {
+                viewState.libraryDialogContent?.also {
+                    LibraryDialog(
+                        stableLibrary = it,
+                        onDismissRequest = { viewModel.onEvent(CloseLibrary) })
+                }
+            }
+
+            val configuration = LocalConfiguration.current
+            LibrariesContainer(
+                libraries = viewState.libraries,
+                header = {
+                    if (configuration.screenHeightDp.dp > 600.dp) {
+                        stickyHeader {
+                            Header(viewModel)
+                        }
+                    } else {
+                        item {
+                            Header(viewModel)
+                        }
+                    }
+                },
+                onLibraryClick = { viewModel.onEvent(OpenLibrary(it)) }
+            )
         }
     }
 
-
-    Surface(modifier = Modifier.testTag(SettingsScreenType.AboutSettings)) {
-        val configuration = LocalConfiguration.current
-        LibrariesContainer(
-            libraries = viewState.libraries,
-            header = {
-                if (configuration.screenHeightDp.dp > 600.dp) {
-                    stickyHeader {
-                        Header(viewModel)
-                    }
-                } else {
-                    item {
-                        Header(viewModel)
-                    }
-                }
-            }
-        )
-    }
 }
 
 /**
@@ -89,7 +105,7 @@ fun Header(viewModel: AboutScreenViewModel) {
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(bottom = 16.dp)
     ) {
-        AppIcon()
+        AppIcon(viewModel::onEvent)
 
         Text(
             resource = MR.strings.appName.stable,
@@ -116,13 +132,11 @@ fun Header(viewModel: AboutScreenViewModel) {
  * image of app icon and back press
  */
 @Composable
-fun AppIcon() {
+fun AppIcon(onEvent: (AboutScreenUiEvent) -> Unit) {
     Box(modifier = Modifier.fillMaxWidth()) {
 
-        val onBackPressedDispatcher =
-            LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
         IconButton(
-            onClick = { onBackPressedDispatcher?.onBackPressed() },
+            onClick = { onEvent(BackClick) },
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .testTag(TestTag.AppBarBackButton)
@@ -151,16 +165,245 @@ fun AppInformationChips(
     viewState: AboutScreenViewState,
     onEvent: (AboutScreenUiEvent) -> Unit
 ) {
+
+    if (viewState.isPrivacyDialogVisible) {
+        DataPrivacyDialog(
+            dataPrivacy = viewState.privacy,
+            onDismissRequest = { onEvent(CloseDataPrivacy) }
+        )
+    }
+
+    if (viewState.isChangelogDialogVisible) {
+        ChangelogDialog(
+            changelog = viewState.changelog,
+            onDismissRequest = { onEvent(CloseChangelog) }
+        )
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        DataPrivacyDialogButton(viewState.privacy)
+        OutlinedButton(
+            onClick = { onEvent(OpenDataPrivacy) },
+            modifier = Modifier.testTag(TestTag.DialogDataPrivacyButton)
+        ) {
+            Text(MR.strings.dataPrivacy.stable)
+        }
+
         OutlinedButton(onClick = { onEvent(OpenSourceCode) }) {
             Text(MR.strings.sourceCode.stable)
         }
-        ChangelogDialogButton(viewState.changelog)
+
+        OutlinedButton(
+            onClick = { onEvent(OpenChangelog) },
+            modifier = Modifier.testTag(TestTag.DialogChangelogButton)
+        ) {
+            Text(MR.strings.changelog.stable)
+        }
     }
 }
+
+
+/**
+ * Dialog to show data privacy information
+ */
+@Composable
+fun DataPrivacyDialog(
+    dataPrivacy: String,
+    onDismissRequest: () -> Unit
+) {
+
+    val scrollState = rememberScrollState()
+
+    Dialog(
+        modifier = Modifier
+            .testTag(TestTag.DialogDataPrivacy),
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            TextButton(
+                onClick = onDismissRequest,
+                modifier = Modifier.testTag(TestTag.DialogOk)
+            ) {
+                Text(MR.strings.close.stable)
+            }
+        },
+        headline = {
+            Text(MR.strings.dataPrivacy.stable)
+        },
+        supportingText = {
+            Column(
+                modifier = Modifier.verticalScroll(scrollState),
+            ) {
+                HtmlText(
+                    html = dataPrivacy,
+                    color = LocalContentColor.current
+                )
+            }
+        }
+    )
+
+}
+
+/**
+ * Displays changelog as text in a dialog
+ */
+@Composable
+private fun ChangelogDialog(
+    changelog: ImmutableList<String>,
+    onDismissRequest: () -> Unit
+) {
+
+    Dialog(
+        modifier = Modifier.testTag(TestTag.DialogChangelog),
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            TextButton(
+                onClick = onDismissRequest,
+                modifier = Modifier.testTag(TestTag.DialogOk)
+            ) {
+                Text(MR.strings.close.stable)
+            }
+        },
+        headline = {
+            Text(MR.strings.changelog.stable)
+        },
+        supportingText = {
+            LazyColumn {
+                items(changelog) { item ->
+                    Text(text = item)
+                }
+            }
+        }
+    )
+
+}
+
+
+/**
+ * Displays all provided libraries in a simple list.
+ */
+@Composable
+fun LibrariesContainer(
+    libraries: ImmutableList<StableLibrary>,
+    modifier: Modifier = Modifier,
+    lazyListState: LazyListState = rememberLazyListState(),
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    header: LazyListScope.() -> Unit,
+    onLibraryClick: (StableLibrary) -> Unit,
+) {
+    LazyColumn(
+        modifier = modifier.testTag(TestTag.LibrariesContainer),
+        state = lazyListState,
+        contentPadding = contentPadding
+    ) {
+        header()
+
+        items(libraries) { library ->
+            Library(
+                stableLibrary = library,
+                onClick = { onLibraryClick(library) }
+            )
+
+            CustomDivider()
+        }
+    }
+
+}
+
+/**
+ * Library list element
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun Library(
+    stableLibrary: StableLibrary,
+    onClick: () -> Unit,
+) {
+
+    ListElement(
+        modifier = Modifier.clickable { onClick.invoke() },
+        text = {
+            Text(stableLibrary.library.name)
+        },
+        secondaryText = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
+            ) {
+                Text(
+                    text = stableLibrary.library.author,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+                stableLibrary.library.licenses.forEach {
+                    Badge(
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(4.dp),
+                            text = it.name
+                        )
+                    }
+                }
+            }
+        },
+        trailing = {
+            Text(stableLibrary.library.artifactVersion ?: "")
+        }
+    )
+
+}
+
+
+/**
+ * Library dialog with more information
+ */
+@Composable
+fun LibraryDialog(
+    stableLibrary: StableLibrary,
+    onDismissRequest: () -> Unit
+) {
+
+    Dialog(
+        modifier = Modifier
+            .testTag(TestTag.DialogLibrary),
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            TextButton(
+                onClick = onDismissRequest,
+                modifier = Modifier.testTag(TestTag.DialogOk)
+            ) {
+                Text(MR.strings.ok.stable)
+            }
+        },
+        headline = {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+            ) {
+                HtmlText(
+                    html = stableLibrary.library.licenses.firstOrNull()?.htmlReadyLicenseContent.orEmpty(),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+    )
+
+}
+
+/**
+ * get author of library
+ */
+private val Library.author: String
+    get() = developers.takeIf { it.isNotEmpty() }?.map { it.name }?.joinToString(", ")
+        ?: organization?.name ?: ""
+
+/**
+ * read html license content
+ */
+private val License.htmlReadyLicenseContent: String?
+    get() = licenseContent?.replace("\n", "<br />")

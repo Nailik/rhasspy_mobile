@@ -12,25 +12,26 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import org.rhasspy.mobile.android.content.list.InformationListElement
-import org.rhasspy.mobile.android.content.list.ListElement
-import org.rhasspy.mobile.android.content.list.SwitchListItem
-import org.rhasspy.mobile.android.main.LocalSnackbarHostState
-import org.rhasspy.mobile.android.main.LocalViewModelFactory
 import org.rhasspy.mobile.android.settings.SettingsScreenItemContent
-import org.rhasspy.mobile.android.settings.SettingsScreenType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.LocalSnackBarHostState
+import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.toText
 import org.rhasspy.mobile.ui.content.elements.translate
+import org.rhasspy.mobile.ui.content.list.InformationListElement
+import org.rhasspy.mobile.ui.content.list.ListElement
+import org.rhasspy.mobile.ui.content.list.SwitchListItem
 import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestination.BackgroundServiceSettings
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Action.BackClick
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Action.DisableBatteryOptimization
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Change.SetBackgroundServiceSettingsEnabled
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Action.DisableBatteryOptimization
-import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Change.SetBackgroundServiceEnabled
-import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceUiEvent.Consumed.ShowSnackBar
 
 /**
  * background service
@@ -43,7 +44,7 @@ fun BackgroundServiceSettingsContent() {
     val viewModel: BackgroundServiceSettingsViewModel = LocalViewModelFactory.current.getViewModel()
     val viewState by viewModel.viewState.collectAsState()
 
-    val snackBarHostState = LocalSnackbarHostState.current
+    val snackBarHostState = LocalSnackBarHostState.current
     val snackBarText = viewState.snackBarText?.let { translate(it) }
 
     LaunchedEffect(snackBarText) {
@@ -54,8 +55,9 @@ fun BackgroundServiceSettingsContent() {
     }
 
     SettingsScreenItemContent(
-        modifier = Modifier.testTag(SettingsScreenType.BackgroundServiceSettings),
-        title = MR.strings.background.stable
+        modifier = Modifier.testTag(BackgroundServiceSettings),
+        title = MR.strings.background.stable,
+        onBackClick = { viewModel.onEvent(BackClick) }
     ) {
 
         InformationListElement(text = MR.strings.backgroundServiceInformation.stable)
@@ -65,7 +67,7 @@ fun BackgroundServiceSettingsContent() {
             modifier = Modifier.testTag(TestTag.EnabledSwitch),
             text = MR.strings.enableBackground.stable,
             isChecked = viewState.isBackgroundServiceEnabled,
-            onCheckedChange = { viewModel.onEvent(SetBackgroundServiceEnabled(it)) }
+            onCheckedChange = { viewModel.onEvent(SetBackgroundServiceSettingsEnabled(it)) }
         )
 
         //visibility of battery optimization

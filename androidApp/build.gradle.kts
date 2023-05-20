@@ -190,7 +190,6 @@ dependencies {
     implementation(AndroidX.Core.splashscreen)
 
     implementation(AndroidX.Activity.compose)
-    implementation(AndroidX.Navigation.compose)
 
     implementation(Jetbrains.Compose.material3)
     implementation(Jetbrains.Compose.materialIconsExtended)
@@ -200,11 +199,12 @@ dependencies {
     implementation(AndroidX.multidex)
     implementation(AndroidX.window)
 
+    implementation(Mikepenz.aboutLibrariesCore)
+
     implementation(Touchlab.kermit)
     implementation(Kotlin.test)
     implementation(Kotlin.Test.junit)
     implementation(Devsrsouza.fontAwesome)
-    implementation(Mikepenz.aboutLibrariesCore)
     implementation(Icerock.Resources.resourcesCompose)
     implementation(Icerock.Mvvm.core)
     implementation(Koin.core)
@@ -230,18 +230,5 @@ dependencies {
     implementation(Firebase.crashlyticsKtx)
     implementation(Square.okio)
 
-    constraints {
-        listOf(
-            "org.jetbrains.kotlinx:kotlinx-coroutines-test",
-            "org.jetbrains.kotlinx:kotlinx-coroutines-test-jvm",
-        ).forEach { testDependency ->
-            add("androidTestImplementation", testDependency) {
-                version {
-                    strictly("1.6.4")
-                    reject("1.7.0")
-                    because("https://github.com/Kotlin/kotlinx.coroutines/issues/3673")
-                }
-            }
-        }
-    }
+    implementation(Mikepenz.aboutLibrariesCore)
 }

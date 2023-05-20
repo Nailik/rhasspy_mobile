@@ -13,7 +13,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.configuration.ConfigurationScreenType
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.ui.TestTag
@@ -21,6 +20,7 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.S
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.Change.SelectWakeWordOption
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.UpdateWakeWordPorcupineAccessToken
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -171,7 +171,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         //back is clicked
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
         //page is back to wake word settings
-        composeTestRule.onNodeWithTag(ConfigurationScreenType.WakeWordConfiguration)
+        composeTestRule.onNodeWithTag(ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen)
             .assertIsDisplayed()
 
         //language is clicked
@@ -182,7 +182,7 @@ class WakeWordConfigurationContentTest : FlakyTest() {
         //back is clicked
         composeTestRule.onNodeWithTag(TestTag.AppBarBackButton).performClick()
         //page is back to wake word settings
-        composeTestRule.onNodeWithTag(ConfigurationScreenType.WakeWordConfiguration)
+        composeTestRule.onNodeWithTag(ConfigurationScreenNavigationDestination.WakeWordConfigurationScreen)
             .assertIsDisplayed()
 
         assertTrue(true)

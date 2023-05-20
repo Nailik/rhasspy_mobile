@@ -47,6 +47,7 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewStateCreator
+import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
 import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewStateCreator
 import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayViewModel
@@ -59,6 +60,8 @@ import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewStateCreator
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.main.MainScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.settings.SettingsScreenViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsViewModel
@@ -66,8 +69,8 @@ import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsViewSt
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewModel
-import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceViewStateCreator
-import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsViewStateCreator
+import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.ErrorIndicationSoundSettingsViewModel
@@ -81,6 +84,11 @@ import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettin
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewStateCreator
 
+val navigatorModule = module {
+    single {
+        Navigator(nativeApplication = get())
+    }
+}
 
 val serviceModule = module {
     single {
@@ -149,6 +157,17 @@ val viewModelFactory = module {
 
 val viewModelModule = module {
     single {
+        MainScreenViewStateCreator(
+            navigator = get()
+        )
+    }
+    single {
+        MainScreenViewModel(
+            viewStateCreator = get()
+        )
+    }
+
+    single {
         MicrophoneFabViewStateCreator(
             dialogManagerService = get(),
             serviceMiddleware = get(),
@@ -158,7 +177,8 @@ val viewModelModule = module {
 
     single {
         HomeScreenViewStateCreator(
-            serviceMiddleware = get()
+            serviceMiddleware = get(),
+            microphoneFabViewStateCreator = get()
         )
     }
     single {
@@ -315,7 +335,7 @@ val viewModelModule = module {
     }
 
     single {
-        BackgroundServiceViewStateCreator(
+        BackgroundServiceSettingsViewStateCreator(
             nativeApplication = get()
         )
     }
@@ -329,12 +349,14 @@ val viewModelModule = module {
         DeviceSettingsViewStateCreator()
     }
     single {
-        DeviceSettingsSettingsViewModel(
+        DeviceSettingsViewModel(
             viewStateCreator = get()
         )
     }
 
-    single { IndicationSettingsViewModel() }
+    single {
+        IndicationSettingsViewModel()
+    }
 
 
 
@@ -386,7 +408,9 @@ val viewModelModule = module {
         )
     }
 
-    single { LanguageSettingsViewModel() }
+    single {
+        LanguageSettingsViewModel()
+    }
 
     single {
         LogSettingsViewModel(

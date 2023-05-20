@@ -9,9 +9,15 @@ sealed interface IConfigurationUiEvent {
         object Save : Action
         object Discard : Action
         object BackPress : Action
+        object SaveDialog : Action
+        object DiscardDialog : Action
         object DismissDialog : Action
         object ToggleListFiltered : Action
         object ToggleListAutoscroll : Action
+        object BackClick : Action
+        object OpenTestScreen : Action
+        object OpenServiceStateDialog : Action
+        object CloseServiceStateDialog : Action
 
     }
 

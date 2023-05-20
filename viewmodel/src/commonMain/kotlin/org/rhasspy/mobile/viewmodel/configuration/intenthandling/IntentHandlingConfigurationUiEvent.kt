@@ -19,6 +19,7 @@ sealed interface IntentHandlingConfigurationUiEvent {
     sealed interface Action : IntentHandlingConfigurationUiEvent {
 
         object RunIntentHandlingTest : Action
+        object BackClick : Action
 
     }
 

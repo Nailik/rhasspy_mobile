@@ -2,6 +2,7 @@ package org.rhasspy.mobile.logic.services.recording
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -25,7 +26,7 @@ class RecordingService(
     private val audioRecorder: AudioRecorder
 ) : IService(LogType.RecordingService) {
 
-    private val scope = CoroutineScope(Dispatchers.Default)
+    private val scope = CoroutineScope(Dispatchers.IO)
     private var silenceStartTime: Instant? = null
     private var recordingStartTime: Instant? = null
 

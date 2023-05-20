@@ -1,14 +1,13 @@
 package org.rhasspy.mobile.viewmodel.overlay.indication
 
 import androidx.compose.runtime.Stable
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.StateFlow
-import org.koin.core.component.KoinComponent
+import org.rhasspy.mobile.viewmodel.KViewModel
 
 @Stable
 class IndicationOverlayViewModel(
     viewStateCreator: IndicationOverlayViewStateCreator
-) : ViewModel(), KoinComponent {
+) : KViewModel() {
 
     val viewState: StateFlow<IndicationOverlayViewState> = viewStateCreator()
 

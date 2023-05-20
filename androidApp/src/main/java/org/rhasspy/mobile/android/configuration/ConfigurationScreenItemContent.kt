@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.android.configuration
 
-import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,36 +14,30 @@ import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import org.rhasspy.mobile.android.UiEventEffect
+import org.rhasspy.mobile.android.content.ServiceStateDialog
 import org.rhasspy.mobile.android.content.ServiceStateHeader
-import org.rhasspy.mobile.android.main.LocalConfigurationNavController
-import org.rhasspy.mobile.android.main.LocalMainNavController
-import org.rhasspy.mobile.data.event.EventState.Consumed
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.FloatingActionButton
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.SetSystemColor
-import org.rhasspy.mobile.viewmodel.configuration.*
+import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiNavigate.PopBackStack
-
-enum class ConfigurationContentScreens(val route: String) {
-    Edit("ConfigurationContentScreens_Edit"),
-    Test("ConfigurationContentScreens_Test")
-}
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType.Edit
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType.Test
+import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 /**
  * Content of Configuration Screen Item
@@ -56,57 +50,46 @@ enum class ConfigurationContentScreens(val route: String) {
 @Composable
 fun <V : IConfigurationEditViewState> ConfigurationScreenItemContent(
     modifier: Modifier,
+    screenType: ConfigurationScreenDestinationType,
     viewState: ConfigurationViewState<V>,
     onAction: (IConfigurationUiEvent) -> Unit,
-    onConsumed: (IConfigurationUiNavigate) -> Unit,
     config: ConfigurationScreenConfig = ConfigurationScreenConfig(MR.strings.save.stable),
     testContent: (@Composable () -> Unit)? = null,
     content: LazyListScope.() -> Unit
 ) {
-    val navController = rememberNavController()
 
-    LaunchedEffect(Unit) {
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.route == ConfigurationContentScreens.Edit.route) {
-                onAction(StopTest)
-            }
+    if (viewState.isShowServiceStateDialog) {
+        ServiceStateDialog(
+            dialogText = viewState.serviceStateDialogText,
+            onDismissRequest = { onAction(CloseServiceStateDialog) }
+        )
+    }
+
+    Box(modifier = modifier) {
+        when (screenType) {
+            Edit ->
+                EditConfigurationScreen(
+                    title = config.title,
+                    viewState = viewState.editViewState.collectAsState().value,
+                    serviceViewState = viewState.serviceViewState,
+                    isOpenServiceStateDialogEnabled = viewState.isOpenServiceStateDialogEnabled,
+                    hasUnsavedChanges = viewState.hasUnsavedChanges,
+                    isShowUnsavedChangesDialog = viewState.isShowUnsavedChangesDialog,
+                    onAction = onAction,
+                    content = content
+                )
+
+            Test ->
+                ConfigurationScreenTest(
+                    viewState = viewState.testViewState.collectAsState().value,
+                    serviceViewState = viewState.serviceViewState,
+                    isOpenServiceStateDialogEnabled = viewState.isOpenServiceStateDialogEnabled,
+                    onAction = onAction,
+                    content = testContent
+                )
         }
     }
 
-    Column {
-
-        CompositionLocalProvider(
-            LocalConfigurationNavController provides navController
-        ) {
-            NavHost(
-                navController = navController,
-                startDestination = ConfigurationContentScreens.Edit.route,
-                modifier = modifier.testTag(TestTag.ConfigurationScreenItemContent),
-            ) {
-
-                composable(ConfigurationContentScreens.Edit.route) {
-                    EditConfigurationScreen(
-                        title = config.title,
-                        viewState = viewState.editViewState.collectAsState().value,
-                        serviceStateHeaderViewState = viewState.serviceViewState.collectAsState().value,
-                        hasUnsavedChanges = viewState.hasUnsavedChanges,
-                        showUnsavedChangesDialog = viewState.showUnsavedChangesDialog,
-                        popBackStack = viewState.popBackStack,
-                        onAction = onAction,
-                        onConsumed = onConsumed,
-                        content = content
-                    )
-                }
-                composable(ConfigurationContentScreens.Test.route) {
-                    ConfigurationScreenTest(
-                        viewState = viewState.testViewState.collectAsState().value,
-                        onAction = onAction,
-                        content = testContent
-                    )
-                }
-            }
-        }
-    }
 }
 
 /**
@@ -116,33 +99,20 @@ fun <V : IConfigurationEditViewState> ConfigurationScreenItemContent(
 private fun EditConfigurationScreen(
     title: StableStringResource,
     viewState: IConfigurationEditViewState,
-    serviceStateHeaderViewState: ServiceStateHeaderViewState,
+    serviceViewState: ServiceViewState,
+    isOpenServiceStateDialogEnabled: Boolean,
     hasUnsavedChanges: Boolean,
-    showUnsavedChangesDialog: Boolean,
-    popBackStack: PopBackStack = PopBackStack(Consumed),
+    isShowUnsavedChangesDialog: Boolean,
     onAction: (IConfigurationUiEvent) -> Unit,
-    onConsumed: (IConfigurationUiNavigate) -> Unit,
     content: LazyListScope.() -> Unit
 ) {
     SetSystemColor(0.dp)
 
-    val navController = LocalMainNavController.current
-    UiEventEffect(
-        event = popBackStack,
-        onConsumed = onConsumed
-    ) {
-        navController.popBackStack()
-    }
-
-
-    //Back handler to show dialog if there are unsaved changes
-    BackHandler(onBack = { (onAction(BackPress)) })
-
     //Show unsaved changes dialog back press
-    if (showUnsavedChangesDialog) {
+    if (isShowUnsavedChangesDialog) {
         UnsavedBackButtonDialog(
-            onSave = { onAction(Save) },
-            onDiscard = { onAction(Discard) },
+            onSave = { onAction(SaveDialog) },
+            onDiscard = { onAction(DiscardDialog) },
             onClose = { onAction(DismissDialog) }
         )
     }
@@ -151,7 +121,9 @@ private fun EditConfigurationScreen(
         topBar = {
             AppBar(
                 title = title,
-                onBackClick = { (onAction(BackPress)) }
+                onBackClick = {
+                    onAction(BackPress)
+                }
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
@@ -174,13 +146,22 @@ private fun EditConfigurationScreen(
                     .fillMaxSize()
             ) {
                 stickyHeader {
-                    ServiceStateHeader(serviceStateHeaderViewState)
+                    ServiceStateHeader(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp))
+                            .padding(horizontal = 16.dp)
+                            .padding(bottom = 16.dp),
+                        serviceViewState = serviceViewState,
+                        enabled = isOpenServiceStateDialogEnabled,
+                        onClick = { onAction(OpenServiceStateDialog) }
+                    )
                 }
 
                 content()
             }
         }
     }
+
 }
 
 
@@ -201,6 +182,17 @@ private fun UnsavedBackButtonDialog(
     )
 }
 
+@Preview
+@Composable
+private fun UnsavedChangesDialogPreview() {
+    UnsavedChangesDialog(
+        onDismissRequest = {},
+        onSave = { },
+        onDiscard = { },
+        dismissButtonText = MR.strings.discard.stable
+    )
+}
+
 /**
  * Dialog to be shown when there are unsaved changes
  * save changes or undo changes and go back
@@ -213,7 +205,8 @@ private fun UnsavedChangesDialog(
     dismissButtonText: StableStringResource
 ) {
 
-    AlertDialog(
+    Dialog(
+        modifier = Modifier.testTag(TestTag.DialogUnsavedChanges),
         onDismissRequest = onDismissRequest,
         confirmButton = {
             TextButton(
@@ -237,13 +230,8 @@ private fun UnsavedChangesDialog(
                 contentDescription = MR.strings.discard.stable
             )
         },
-        title = { Text(MR.strings.unsavedChanges.stable) },
-        text = {
-            Text(
-                resource = MR.strings.unsavedChangesInformation.stable,
-                modifier = Modifier.testTag(TestTag.DialogUnsavedChanges)
-            )
-        }
+        headline = { Text(MR.strings.unsavedChanges.stable) },
+        supportingText = { Text(MR.strings.unsavedChangesInformation.stable) }
     )
 
 }
@@ -286,7 +274,7 @@ private fun BottomAppBar(
             FloatingActionButtonElement(
                 hasUnsavedChanges = hasUnsavedChanges,
                 isTestingEnabled = isTestingEnabled,
-                onAction = { onAction(it) }
+                onAction = onAction
             )
         }
     )
@@ -298,7 +286,6 @@ private fun FloatingActionButtonElement(
     isTestingEnabled: Boolean,
     onAction: (IConfigurationUiEvent) -> Unit
 ) {
-    val navController = LocalConfigurationNavController.current
     FloatingActionButton(
         modifier = Modifier
             .testTag(TestTag.BottomAppBarTest)
@@ -306,10 +293,7 @@ private fun FloatingActionButtonElement(
                 minWidth = 56.0.dp,
                 minHeight = 56.0.dp,
             ),
-        onClick = {
-            onAction(StartTest)
-            navController.navigate(ConfigurationContentScreens.Test.route)
-        },
+        onClick = { onAction(OpenTestScreen) },
         containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
         contentColor = LocalContentColor.current,
         isEnabled = !hasUnsavedChanges && isTestingEnabled,

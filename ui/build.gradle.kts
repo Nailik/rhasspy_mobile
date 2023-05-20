@@ -30,7 +30,12 @@ kotlin {
                 implementation(project(":data"))
                 implementation(project(":resources"))
                 implementation(project(":settings"))
+                implementation(project(":platformspecific"))
                 implementation(Icerock.Resources.resourcesCompose)
+                implementation(Icerock.Mvvm.core)
+                implementation(Koin.core)
+                implementation(Touchlab.kermit)
+                implementation(Jetbrains.Kotlinx.immutable)
                 implementation(Jetbrains.Compose.ui)
                 implementation(Jetbrains.Compose.foundation)
                 implementation(Jetbrains.Compose.material)
@@ -46,6 +51,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                implementation(AndroidX.Activity.compose)
                 implementation(AndroidX.Compose.ui)
                 implementation(Google.accompanist.systemUiController)
                 implementation(AndroidX.core)

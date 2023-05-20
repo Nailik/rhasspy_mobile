@@ -16,17 +16,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.android.content.elements.CustomDivider
-import org.rhasspy.mobile.android.content.list.RadioButtonListItem
-import org.rhasspy.mobile.android.main.LocalNavController
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.elements.CustomDivider
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
+import org.rhasspy.mobile.ui.content.list.RadioButtonListItem
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Change.SelectWakeWordPorcupineLanguage
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
 
@@ -43,7 +43,12 @@ fun PorcupineLanguageScreen(
         modifier = Modifier
             .testTag(TestTag.PorcupineLanguageScreen)
             .fillMaxSize(),
-        topBar = { AppBar(MR.strings.language.stable) }
+        topBar = {
+            AppBar(
+                title = MR.strings.language.stable,
+                onEvent = onEvent
+            )
+        }
     ) { paddingValues ->
 
         Surface(Modifier.padding(paddingValues)) {
@@ -83,9 +88,10 @@ fun PorcupineLanguageScreen(
  * app bar for the language
  */
 @Composable
-private fun AppBar(title: StableStringResource) {
-
-    val navigation = LocalNavController.current
+private fun AppBar(
+    title: StableStringResource,
+    onEvent: (PorcupineUiEvent) -> Unit
+) {
 
     TopAppBar(
         title = {
@@ -93,7 +99,7 @@ private fun AppBar(title: StableStringResource) {
         },
         navigationIcon = {
             IconButton(
-                onClick = navigation::popBackStack,
+                onClick = { onEvent(BackClick) },
                 modifier = Modifier.testTag(TestTag.AppBarBackButton)
             ) {
                 Icon(

@@ -2,6 +2,7 @@ package org.rhasspy.mobile
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import platform.UIKit.UIViewController
 
@@ -9,7 +10,7 @@ import platform.UIKit.UIViewController
 class IosApplication : Application() {
 
     init {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             onCreated()
         }
     }

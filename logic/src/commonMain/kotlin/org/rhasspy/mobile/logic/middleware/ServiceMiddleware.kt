@@ -2,6 +2,7 @@ package org.rhasspy.mobile.logic.middleware
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import okio.Path
@@ -35,7 +36,7 @@ class ServiceMiddleware(
     private val wakeWordService: WakeWordService
 ) {
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Default)
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val _isPlayingRecording = MutableStateFlow(false)
     val isPlayingRecording = _isPlayingRecording.readOnly

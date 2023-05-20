@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.screens.settings
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -10,7 +11,7 @@ import org.rhasspy.mobile.settings.AppSetting
 
 class SettingsScreenViewStateCreator {
 
-    private val updaterScope = CoroutineScope(Dispatchers.Default)
+    private val updaterScope = CoroutineScope(Dispatchers.IO)
 
     operator fun invoke(): StateFlow<SettingsScreenViewState> {
         val viewState = MutableStateFlow(getViewState())

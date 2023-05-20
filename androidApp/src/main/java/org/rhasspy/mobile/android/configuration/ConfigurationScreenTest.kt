@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.android.configuration
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,20 +14,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.android.content.ServiceStateHeader
-import org.rhasspy.mobile.android.content.elements.CustomDivider
-import org.rhasspy.mobile.android.content.list.LogListElement
-import org.rhasspy.mobile.android.main.LocalConfigurationNavController
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.elements.CustomDivider
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
+import org.rhasspy.mobile.ui.content.list.LogListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.SetSystemColor
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationTestViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.ToggleListFiltered
+import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 /**
  * screen that's shown when a configuration is being tested
@@ -34,12 +35,12 @@ import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.T
 @Composable
 fun ConfigurationScreenTest(
     viewState: ConfigurationTestViewState,
+    serviceViewState: ServiceViewState,
+    isOpenServiceStateDialogEnabled: Boolean,
     onAction: (IConfigurationUiEvent) -> Unit,
     content: (@Composable () -> Unit)?
 ) {
     SetSystemColor(1.dp)
-
-    val navController = LocalConfigurationNavController.current
 
     Scaffold(
         topBar = {
@@ -47,7 +48,7 @@ fun ConfigurationScreenTest(
                 viewState = viewState,
                 onAction = onAction,
                 title = MR.strings.test.stable,
-                onBackClick = navController::popBackStack
+                onBackClick = { onAction(BackClick) }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Close,
@@ -62,6 +63,9 @@ fun ConfigurationScreenTest(
         ) {
             ConfigurationScreenTestList(
                 viewState = viewState,
+                serviceViewState = serviceViewState,
+                isOpenServiceStateDialogEnabled = isOpenServiceStateDialogEnabled,
+                onAction = onAction,
                 content = content
             )
         }
@@ -75,7 +79,10 @@ fun ConfigurationScreenTest(
 private fun ConfigurationScreenTestList(
     modifier: Modifier = Modifier,
     viewState: ConfigurationTestViewState,
-    content: (@Composable () -> Unit)?
+    serviceViewState: ServiceViewState,
+    isOpenServiceStateDialogEnabled: Boolean,
+    onAction: (IConfigurationUiEvent) -> Unit,
+    content: (@Composable () -> Unit)?,
 ) {
     Column(modifier = modifier) {
         val coroutineScope = rememberCoroutineScope()
@@ -97,7 +104,15 @@ private fun ConfigurationScreenTestList(
             modifier = Modifier.weight(1f)
         ) {
             stickyHeader {
-                ServiceStateHeader(viewState.serviceViewState.collectAsState().value)
+                ServiceStateHeader(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp))
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 16.dp),
+                    serviceViewState = serviceViewState,
+                    enabled = isOpenServiceStateDialogEnabled,
+                    onClick = { onAction(OpenServiceStateDialog) }
+                )
             }
 
             items(logEventsList) { item ->
@@ -133,9 +148,7 @@ private fun AppBar(
 ) {
     TopAppBar(
         colors = TopAppBarDefaults.smallTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
-                1.dp
-            )
+            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)
         ),
         title = {
             Text(
@@ -157,7 +170,7 @@ private fun AppBar(
                     contentDescription = MR.strings.filterList.stable
                 )
             }
-            IconButton(onClick = { onAction(IConfigurationUiEvent.Action.ToggleListAutoscroll) }) {
+            IconButton(onClick = { onAction(ToggleListAutoscroll) }) {
                 Icon(
                     imageVector = if (viewState.isListAutoscroll) Icons.Filled.LowPriority else Icons.Filled.PlaylistRemove,
                     contentDescription = MR.strings.autoscrollList.stable

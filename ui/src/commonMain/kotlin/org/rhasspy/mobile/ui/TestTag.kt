@@ -98,7 +98,6 @@ enum class TestTag {
     PlayPause,
     Delete,
     Undo,
-    Background,
     EnabledSwitch,
     BatteryOptimization,
     VisibleWhileAppIsOpened,
@@ -112,7 +111,6 @@ enum class TestTag {
     Default,
     Warning,
 
-    AudioFocusSettings,
     AudioFocusOption,
     AudioFocusSettingsConfiguration,
     AudioFocusOnNotification,
@@ -135,7 +133,10 @@ enum class TestTag {
     AutomaticSilenceDetectionSettingsTest,
     CrashlyticsEnabled,
     ShowLogEnabled,
-    AudioFramesEnabled
+    AudioFramesEnabled,
+
+
+    OpenConfigScreen,
 }
 
 fun Modifier.combinedTestTag(IOption: IOption<*>, tag: TestTag) = semantics(

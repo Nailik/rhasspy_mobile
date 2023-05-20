@@ -4,6 +4,7 @@ import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 
 class TestService : IService(LogType.AudioPlayingService)
 
@@ -18,7 +19,8 @@ data class TestViewState(
 
 class TestViewModel : IConfigurationViewModel<TestViewState>(
     service = TestService(),
-    initialViewState = { TestViewState() }
+    initialViewState = { TestViewState() },
+    testPageDestination = TestNavigationDestinations.Test
 ) {
 
     var onSave = false
@@ -40,5 +42,12 @@ class TestViewModel : IConfigurationViewModel<TestViewState>(
         }
     }
 
+    fun onRequestOverlayPermission() {
+        requireOverlayPermission(Unit) { }
+    }
 
+}
+
+enum class TestNavigationDestinations : NavigationDestination {
+    Test
 }

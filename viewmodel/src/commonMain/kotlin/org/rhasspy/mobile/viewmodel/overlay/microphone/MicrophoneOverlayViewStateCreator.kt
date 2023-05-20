@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.overlay.microphone
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -13,7 +14,7 @@ import org.rhasspy.mobile.settings.AppSetting
 class MicrophoneOverlayViewStateCreator(
     private val nativeApplication: NativeApplication
 ) {
-    private val updaterScope = CoroutineScope(Dispatchers.Default)
+    private val updaterScope = CoroutineScope(Dispatchers.IO)
 
     operator fun invoke(): StateFlow<MicrophoneOverlayViewState> {
         val viewState = MutableStateFlow(getViewState())

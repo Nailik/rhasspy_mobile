@@ -12,7 +12,6 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -23,6 +22,7 @@ import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.theme.AppTheme
 import kotlin.test.assertFalse
@@ -31,12 +31,11 @@ import kotlin.test.assertTrue
 /**
  * Tests Overlay Permission redirecting and recognition
  */
-@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class OverlayPermissionTest : FlakyTest() {
 
     // activity necessary for permission
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     private val device: UiDevice = UiDevice.getInstance(getInstrumentation())
@@ -50,15 +49,13 @@ class OverlayPermissionTest : FlakyTest() {
     @NoLiveLiterals
     @Before
     fun setUp() {
+        val testViewModel = TestViewModel()
         //set content
         composeTestRule.activity.setContent {
             AppTheme {
                 TestContentProvider {
-                    RequiresOverlayPermission(
-                        initialData = "",
-                        onClick = { permissionResult = true }
-                    ) { onClick ->
-                        Button(onClick = { onClick.invoke("") }) {
+                    Screen(testViewModel) {
+                        Button(onClick = testViewModel::onRequestOverlayPermission) {
                             Text(btnRequestPermission)
                         }
                     }

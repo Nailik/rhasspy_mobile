@@ -17,6 +17,7 @@ sealed interface RemoteHermesHttpConfigurationUiEvent {
         object TestRemoteHermesHttpToggleRecording : Action
         object TestRemoteHermesHttpIntentRecognitionTest : Action
         object TestRemoteHermesHttpTextToSpeechTest : Action
+        object BackClick : Action
 
 
     }

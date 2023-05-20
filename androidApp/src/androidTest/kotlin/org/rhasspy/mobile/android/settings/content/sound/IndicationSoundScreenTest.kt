@@ -25,6 +25,7 @@ import org.rhasspy.mobile.data.service.option.AudioOutputOption.Sound
 import org.rhasspy.mobile.data.sounds.SoundOption
 import org.rhasspy.mobile.data.sounds.SoundOption.Disabled
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SelectSoundIndicationOutputOption
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetSoundIndicationEnabled
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
@@ -37,10 +38,10 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 abstract class IndicationSoundScreenTest(
     val title: StableStringResource,
-    val screen: IndicationSettingsScreens
+    private val screen: IndicationSettingsScreenDestination,
 ) : FlakyTest() {
 
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     abstract val device: UiDevice
@@ -58,8 +59,8 @@ abstract class IndicationSoundScreenTest(
             TestContentProvider {
                 IndicationSoundScreen(
                     viewModel = viewModel,
-                    title = title,
-                    screen = screen
+                    screen = screen,
+                    title = title
                 )
             }
         }

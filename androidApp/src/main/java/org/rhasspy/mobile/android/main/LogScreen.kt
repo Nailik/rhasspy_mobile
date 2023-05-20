@@ -19,19 +19,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.android.content.elements.CustomDivider
-import org.rhasspy.mobile.android.content.list.LogListElement
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.LocalSnackBarHostState
+import org.rhasspy.mobile.ui.LocalViewModelFactory
+import org.rhasspy.mobile.ui.Screen
+import org.rhasspy.mobile.ui.content.elements.CustomDivider
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
+import org.rhasspy.mobile.ui.content.list.LogListElement
+import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.LogScreen
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Action.SaveLogFile
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Action.ShareLogFile
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Change.ToggleListAutoScroll
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Consumed.ShowSnackBar
-import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Navigate.SaveLogFile
-import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Navigate.ShareLogFile
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
 
 /**
@@ -41,35 +46,40 @@ import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
 @Composable
 fun LogScreen() {
     val viewModel: LogScreenViewModel = LocalViewModelFactory.current.getViewModel()
-    val viewState by viewModel.viewState.collectAsState()
 
-    val snackBarHostState = LocalSnackbarHostState.current
-    val snackBarText = viewState.snackBarText?.let { translate(it) }
+    Screen(viewModel) {
+        val viewState by viewModel.viewState.collectAsState()
 
-    LaunchedEffect(snackBarText) {
-        snackBarText?.also {
-            snackBarHostState.showSnackbar(message = it)
-            viewModel.onEvent(ShowSnackBar)
-        }
-    }
+        val snackBarHostState = LocalSnackBarHostState.current
+        val snackBarText = viewState.snackBarText?.let { translate(it) }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            AppBar(
-                isLogAutoscroll = viewState.isLogAutoscroll,
-                onEvent = viewModel::onEvent
-            )
-        },
-    ) { paddingValues ->
-
-        Surface(Modifier.padding(paddingValues)) {
-            LogScreenContent(
-                isLogAutoscroll = viewState.isLogAutoscroll,
-                logList = viewState.logList
-            )
+        LaunchedEffect(snackBarText) {
+            snackBarText?.also {
+                snackBarHostState.showSnackbar(message = it)
+                viewModel.onEvent(ShowSnackBar)
+            }
         }
 
+        Scaffold(
+            modifier = Modifier
+                .testTag(LogScreen)
+                .fillMaxSize(),
+            topBar = {
+                AppBar(
+                    isLogAutoscroll = viewState.isLogAutoscroll,
+                    onEvent = viewModel::onEvent
+                )
+            },
+        ) { paddingValues ->
+
+            Surface(Modifier.padding(paddingValues)) {
+                LogScreenContent(
+                    isLogAutoscroll = viewState.isLogAutoscroll,
+                    logList = viewState.logList
+                )
+            }
+
+        }
     }
 }
 

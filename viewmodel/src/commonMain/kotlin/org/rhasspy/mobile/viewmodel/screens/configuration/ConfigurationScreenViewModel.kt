@@ -1,13 +1,14 @@
 package org.rhasspy.mobile.viewmodel.screens.configuration
 
 import androidx.compose.runtime.Stable
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.event.EventState.Consumed
 import org.rhasspy.mobile.data.event.EventState.Triggered
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.KViewModel
+import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToError
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
 import org.rhasspy.mobile.viewmodel.screens.configuration.IConfigurationScreenUiStateEvent.ScrollToErrorEventIState
@@ -15,9 +16,10 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.IConfigurationScreenUi
 @Stable
 class ConfigurationScreenViewModel(
     private val viewStateCreator: ConfigurationScreenViewStateCreator
-) : ViewModel() {
+) : KViewModel() {
 
     val viewState: StateFlow<ConfigurationScreenViewState> = viewStateCreator()
+    val screen = navigator.topScreen<ConfigurationScreenNavigationDestination>()
 
     fun onEvent(event: ConfigurationScreenUiEvent) {
         when (event) {
@@ -35,6 +37,8 @@ class ConfigurationScreenViewModel(
     private fun onAction(action: Action) {
         when (action) {
             ScrollToError -> viewStateCreator.updateScrollToError(Triggered)
+            BackClick -> navigator.onBackPressed()
+            is Navigate -> navigator.navigate(action.destination)
         }
     }
 

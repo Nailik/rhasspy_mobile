@@ -2,6 +2,7 @@ package org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -22,14 +23,19 @@ import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesH
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change
 import org.rhasspy.mobile.viewmodel.configuration.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.RemoteHermesHttpConfigurationScreenDestination.EditScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.RemoteHermesHttpConfigurationScreenDestination.TestScreen
 
 @Stable
 class RemoteHermesHttpConfigurationViewModel(
-    service: HttpClientService,
+    service: HttpClientService
 ) : IConfigurationViewModel<RemoteHermesHttpConfigurationViewState>(
     service = service,
-    initialViewState = ::RemoteHermesHttpConfigurationViewState
+    initialViewState = ::RemoteHermesHttpConfigurationViewState,
+    testPageDestination = TestScreen
 ) {
+
+    val screen = navigator.topScreen(EditScreen)
 
     fun onEvent(event: RemoteHermesHttpConfigurationUiEvent) {
         when (event) {
@@ -55,7 +61,8 @@ class RemoteHermesHttpConfigurationViewModel(
         when (action) {
             TestRemoteHermesHttpIntentRecognitionTest -> toggleRecording()
             TestRemoteHermesHttpTextToSpeechTest -> startIntentRecognitionTest()
-            TestRemoteHermesHttpToggleRecording -> startTextToSpeechTest()
+            TestRemoteHermesHttpToggleRecording -> requireMicrophonePermission(::startTextToSpeechTest)
+            BackClick -> navigator.onBackPressed()
         }
     }
 
@@ -68,7 +75,7 @@ class RemoteHermesHttpConfigurationViewModel(
     }
 
     private fun toggleRecording() {
-        testScope.launch(Dispatchers.Default) {
+        testScope.launch(Dispatchers.IO) {
             get<RecordingService>().isRecording.collect { isRecording ->
                 updateViewState {
                     it.copy(isTestRecordingAudio = isRecording)
