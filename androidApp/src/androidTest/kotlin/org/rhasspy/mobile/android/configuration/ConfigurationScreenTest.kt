@@ -5,7 +5,6 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextReplacement
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -26,10 +25,9 @@ import kotlin.test.assertEquals
  * Items exist
  * Site ID edit
  */
-@OptIn(ExperimentalCoroutinesApi::class)
 class ConfigurationScreenTest : FlakyTest() {
 
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     @Before

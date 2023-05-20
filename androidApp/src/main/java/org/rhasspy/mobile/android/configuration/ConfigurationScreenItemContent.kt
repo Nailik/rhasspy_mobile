@@ -206,7 +206,7 @@ private fun UnsavedChangesDialog(
 ) {
 
     Dialog(
-        dismissOnOutside = false,
+        modifier = Modifier.testTag(TestTag.DialogUnsavedChanges),
         onDismissRequest = onDismissRequest,
         confirmButton = {
             TextButton(
@@ -231,12 +231,7 @@ private fun UnsavedChangesDialog(
             )
         },
         headline = { Text(MR.strings.unsavedChanges.stable) },
-        supportingText = {
-            Text(
-                resource = MR.strings.unsavedChangesInformation.stable,
-                modifier = Modifier.testTag(TestTag.DialogUnsavedChanges)
-            )
-        }
+        supportingText = { Text(MR.strings.unsavedChangesInformation.stable) }
     )
 
 }

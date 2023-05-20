@@ -23,7 +23,7 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestin
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsScreenTest {
 
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     @Before

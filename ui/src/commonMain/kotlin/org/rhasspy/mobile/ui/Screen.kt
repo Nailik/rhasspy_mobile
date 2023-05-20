@@ -91,18 +91,10 @@ private fun MicrophonePermissionInfoDialog(
 ) {
 
     Dialog(
-        onDismissRequest = {
-            onResult.invoke(false)
-        },
-        headline = {
-            Text(MR.strings.microphonePermissionDialogTitle.stable)
-        },
-        supportingText = {
-            Text(
-                resource = message,
-                modifier = Modifier.testTag(TestTag.DialogInformationMicrophonePermission)
-            )
-        },
+        modifier = Modifier.testTag(TestTag.DialogInformationMicrophonePermission),
+        onDismissRequest = { onResult.invoke(false) },
+        headline = { Text(MR.strings.microphonePermissionDialogTitle.stable) },
+        supportingText = { Text(message) },
         icon = {
             Icon(
                 imageVector = Icons.Filled.Mic,

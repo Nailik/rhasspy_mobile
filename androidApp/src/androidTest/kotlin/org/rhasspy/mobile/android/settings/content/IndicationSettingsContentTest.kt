@@ -28,7 +28,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class IndicationSettingsContentTest : FlakyTest() {
 
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     private val viewModel = get<IndicationSettingsViewModel>()

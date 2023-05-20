@@ -22,7 +22,7 @@ import org.rhasspy.mobile.ui.TestTag
 @RunWith(AndroidJUnit4::class)
 class IndicationOverlayTest : FlakyTest() {
 
-    @get: Rule(order = 1)
+    @get: Rule(order = 0)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
     private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 

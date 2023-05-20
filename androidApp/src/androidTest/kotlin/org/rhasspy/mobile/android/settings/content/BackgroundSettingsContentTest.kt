@@ -10,7 +10,6 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -26,7 +25,6 @@ import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundService
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class BackgroundSettingsContentTest : FlakyTest() {
 
     @get: Rule(order = 0)
