@@ -422,7 +422,8 @@ val viewModelModule = module {
 
     single {
         MicrophoneOverlayViewStateCreator(
-            nativeApplication = get()
+            nativeApplication = get(),
+            microphoneFabViewStateCreator = get()
         )
     }
     single {

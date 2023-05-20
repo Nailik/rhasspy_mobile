@@ -19,6 +19,8 @@ import org.rhasspy.mobile.settings.serializer.StringListSerializer
  */
 object AppSetting {
 
+    val didShowCrashlyticsDialog = ISetting(SettingsEnum.CrashlyticsDialog, false)
+
     val languageType = ISetting(SettingsEnum.LanguageOption, getDeviceLanguage())
 
     val isAutomaticSilenceDetectionEnabled = ISetting(SettingsEnum.AutomaticSilenceDetection, false)

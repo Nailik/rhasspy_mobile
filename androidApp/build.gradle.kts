@@ -191,10 +191,6 @@ dependencies {
 
     implementation(AndroidX.Activity.compose)
 
-    implementation(Jetbrains.Compose.material3)
-    implementation(Jetbrains.Compose.materialIconsExtended)
-    implementation(Jetbrains.Compose.foundation)
-    implementation(Jetbrains.Compose.preview)
 
     implementation(AndroidX.multidex)
     implementation(AndroidX.window)
@@ -220,6 +216,7 @@ dependencies {
     androidTestImplementation(Jetbrains.Compose.testJunit4)
     androidTestImplementation(Adevinta.barista)
     androidTestImplementation(Hamcrest.hamcrest)
+    androidTestImplementation(Jetbrains.Compose.material3)
 
     debugImplementation(AndroidX.tracing)
     debugImplementation(AndroidX.Compose.Ui.testManifest)

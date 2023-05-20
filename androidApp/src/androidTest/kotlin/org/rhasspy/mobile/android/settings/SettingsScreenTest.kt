@@ -3,7 +3,6 @@ package org.rhasspy.mobile.android.settings
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -20,7 +19,6 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.SettingsScreenDestin
  * Items exist
  * Site ID edit
  */
-@OptIn(ExperimentalCoroutinesApi::class)
 class SettingsScreenTest {
 
     @get: Rule(order = 0)

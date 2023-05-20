@@ -42,6 +42,7 @@ kotlin {
                 implementation(Jetbrains.Compose.material3)
                 implementation(Jetbrains.Compose.runtime)
                 implementation(Jetbrains.Compose.materialIconsExtended)
+                implementation(Mikepenz.aboutLibrariesCore)
             }
         }
         val commonTest by getting {

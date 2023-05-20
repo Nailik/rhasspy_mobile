@@ -6,5 +6,6 @@ import androidx.compose.runtime.Stable
 data class MainScreenViewState(
     val isBottomNavigationVisible: Boolean,
     val bottomNavigationIndex: Int,
-    val isShowLogEnabled: Boolean
+    val isShowLogEnabled: Boolean,
+    val isShowCrashlyticsDialog: Boolean
 )

@@ -17,6 +17,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import okio.Path
+import org.rhasspy.mobile.data.httpclient.HttpClientPath
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.data.service.ServiceState.Success
@@ -59,7 +60,7 @@ class HttpClientService(
             if (params.isUseCustomSpeechToTextHttpEndpoint) {
                 params.speechToTextHttpEndpoint
             } else {
-                HttpClientPath.SpeechToText.stringFromParams(params)
+                "${params.httpClientServerEndpointHost}:${params.httpClientServerEndpointPort}/${HttpClientPath.SpeechToText.path}"
             } + "?noheader=true"
 
     private val recognizeIntentUrl
@@ -67,7 +68,7 @@ class HttpClientService(
             if (params.isUseCustomIntentRecognitionHttpEndpoint) {
                 params.intentRecognitionHttpEndpoint
             } else {
-                HttpClientPath.TextToIntent.stringFromParams(params)
+                "${params.httpClientServerEndpointHost}:${params.httpClientServerEndpointPort}/${HttpClientPath.TextToIntent.path}"
             } + if (!isHandleIntentDirectly) {
                 "?nohass=true"
             } else ""
@@ -76,14 +77,14 @@ class HttpClientService(
         get() = if (params.isUseCustomTextToSpeechHttpEndpoint) {
             params.textToSpeechHttpEndpoint
         } else {
-            HttpClientPath.TextToSpeech.stringFromParams(params)
+            "${params.httpClientServerEndpointHost}:${params.httpClientServerEndpointPort}/${HttpClientPath.TextToSpeech.path}"
         }
 
     private val audioPlayingUrl
         get() = if (params.isUseCustomAudioPlayingEndpoint) {
             params.audioPlayingHttpEndpoint
         } else {
-            HttpClientPath.PlayWav.stringFromParams(params)
+            "${params.httpClientServerEndpointHost}:${params.httpClientServerEndpointPort}/${HttpClientPath.PlayWav.path}"
         }
 
     private val hassEventUrl get() = "${params.intentHandlingHassEndpoint}/api/events/rhasspy_"

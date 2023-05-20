@@ -2,8 +2,8 @@ package org.rhasspy.mobile.viewmodel.configuration.intentrecognition
 
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
+import org.rhasspy.mobile.data.httpclient.HttpClientPath
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
-import org.rhasspy.mobile.logic.services.httpclient.HttpClientPath
 import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
@@ -22,6 +22,6 @@ data class IntentRecognitionConfigurationViewState internal constructor(
 
     val intentRecognitionHttpEndpointText: String
         get() = if (isUseCustomIntentRecognitionHttpEndpoint) intentRecognitionHttpEndpoint else
-            HttpClientPath.TextToIntent.stringFromConfiguration()
+            "${ConfigurationSetting.httpClientServerEndpointHost.value}:${ConfigurationSetting.httpClientServerEndpointPort.value}/${HttpClientPath.TextToIntent.path}"
 
 }
