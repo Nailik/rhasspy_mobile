@@ -181,32 +181,28 @@ dependencies {
     implementation(project(":settings"))
     implementation(project(":widget"))
 
-    implementation(KotlinX.Coroutines.core)
-    implementation(KotlinX.Coroutines.android)
-    implementation(Jetbrains.Kotlinx.immutable)
-
     implementation(AndroidX.appCompat)
-
     implementation(AndroidX.Core.splashscreen)
-
     implementation(AndroidX.Activity.compose)
-
-
     implementation(AndroidX.multidex)
     implementation(AndroidX.window)
 
-    implementation(Mikepenz.aboutLibrariesCore)
-
     implementation(Touchlab.kermit)
-    implementation(Kotlin.test)
-    implementation(Kotlin.Test.junit)
-    implementation(Devsrsouza.fontAwesome)
-    implementation(Icerock.Resources.resourcesCompose)
-    implementation(Icerock.Mvvm.core)
     implementation(Koin.core)
 
+    implementation(Firebase.analyticsKtx)
+    implementation(Firebase.crashlyticsKtx)
+    implementation(Square.okio)
+
+    implementation(Russhwolf.multiplatformSettingsNoArg)
+    implementation(Icerock.Mvvm.core)
+    implementation(platform(Firebase.bom))
+
+    implementation(Kotlin.test)
+    implementation(Kotlin.Test.junit)
+
     androidTestUtil(AndroidX.Test.orchestrator)
-    androidTestImplementation(project(":shared"))
+
     androidTestImplementation(AndroidX.Test.uiAutomator)
     androidTestImplementation(AndroidX.Test.runner)
     androidTestImplementation(AndroidX.Test.rules)
@@ -220,12 +216,4 @@ dependencies {
 
     debugImplementation(AndroidX.tracing)
     debugImplementation(AndroidX.Compose.Ui.testManifest)
-    implementation(Russhwolf.multiplatformSettingsNoArg)
-    implementation(platform(Firebase.bom))
-
-    implementation(Firebase.analyticsKtx)
-    implementation(Firebase.crashlyticsKtx)
-    implementation(Square.okio)
-
-    implementation(Mikepenz.aboutLibrariesCore)
 }
