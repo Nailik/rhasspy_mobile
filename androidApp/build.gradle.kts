@@ -213,6 +213,7 @@ dependencies {
     androidTestImplementation(Adevinta.barista)
     androidTestImplementation(Hamcrest.hamcrest)
     androidTestImplementation(Jetbrains.Compose.material3)
+    androidTestImplementation(Jetbrains.Kotlinx.immutable)
 
     debugImplementation(AndroidX.tracing)
     debugImplementation(AndroidX.Compose.Ui.testManifest)

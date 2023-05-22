@@ -2,8 +2,10 @@ package org.rhasspy.mobile.android.configuration.content.porcupine
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.performClick
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -30,8 +32,10 @@ class PorcupineKeywordScreenTest : FlakyTest() {
         composeTestRule.setContent {
             TestContentProvider {
                 val viewState by viewModel.viewState.collectAsState()
+                val porcupineScreen by viewModel.porcupineScreen.collectAsState()
                 val contentViewState by viewState.editViewState.collectAsState()
                 PorcupineKeywordScreen(
+                    porcupineScreen = porcupineScreen,
                     viewState = contentViewState.wakeWordPorcupineViewState,
                     onEvent = viewModel::onEvent
                 )
@@ -60,18 +64,6 @@ class PorcupineKeywordScreenTest : FlakyTest() {
         //default is opened
         composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen).assertIsDisplayed()
 
-        //user slides to right
-        composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordScreen).performTouchInput {
-            swipeLeft()
-        }
-        //custom is opened and selected
-        composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordCustomScreen).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(TestTag.TabCustom).assertIsSelected()
-
-        //user slides to left
-        composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordScreen).performTouchInput {
-            swipeRight()
-        }
         //default is opened and selected
         composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen).assertIsDisplayed()
         composeTestRule.onNodeWithTag(TestTag.TabDefault).assertIsSelected()

@@ -1,21 +1,15 @@
 package org.rhasspy.mobile.ui.configuration.content.porcupine
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
@@ -24,9 +18,11 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.ListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.BackClick
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.PorcupineLanguageClick
+import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.PorcupineUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination.CustomKeywordScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination.DefaultKeywordScreen
 
 /**
  *  screen for porcupine keyword option
@@ -34,17 +30,13 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
  *  page with custom options
  *  bottom bar to switch between pages
  */
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PorcupineKeywordScreen(
+    porcupineScreen: PorcupineKeywordConfigurationScreenDestination,
     viewState: PorcupineViewState,
     onEvent: (PorcupineUiEvent) -> Unit
 ) {
-
-    val pagerState = rememberPagerState()
-    val coroutineScope = rememberCoroutineScope()
-
-
     Surface(tonalElevation = 3.dp) {
         Scaffold(
             modifier = Modifier
@@ -67,31 +59,28 @@ fun PorcupineKeywordScreen(
                 Surface(tonalElevation = 3.dp) {
                     //bottom tab bar with pages tabs
                     BottomTabBar(
-                        state = pagerState,
-                        onSelectIndex = { index ->
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(index)
-                            }
-                        })
+                        selectedIndex = porcupineScreen.index,
+                        onSelectedScreen = { onEvent(PageClick(it)) }
+                    )
                 }
             }
 
         ) { paddingValues ->
             //horizontal pager to slide between pages
             Surface(modifier = Modifier.padding(paddingValues)) {
-                HorizontalPager(pageCount = 2, state = pagerState) { page ->
-                    if (page == 0) {
-                        PorcupineKeywordDefaultScreen(
-                            viewState = viewState,
-                            onEvent = onEvent
-                        )
-                    } else {
-                        PorcupineKeywordCustomScreen(
-                            viewState = viewState,
-                            onEvent = onEvent
-                        )
-                    }
+
+                when (porcupineScreen) {
+                    DefaultKeywordScreen -> PorcupineKeywordDefaultScreen(
+                        viewState = viewState,
+                        onEvent = onEvent
+                    )
+
+                    CustomKeywordScreen -> PorcupineKeywordCustomScreen(
+                        viewState = viewState,
+                        onEvent = onEvent
+                    )
                 }
+
             }
         }
     }
@@ -126,24 +115,26 @@ private fun AppBar(onEvent: (PorcupineUiEvent) -> Unit) {
 /**
  * Displays tabs on bottom (default/ custom)
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun BottomTabBar(state: PagerState, onSelectIndex: (index: Int) -> Unit) {
+private fun BottomTabBar(
+    selectedIndex: Int,
+    onSelectedScreen: (screen: PorcupineKeywordConfigurationScreenDestination) -> Unit
+) {
 
     Column {
 
         //tab bar row
-        TabRow(selectedTabIndex = state.currentPage) {
+        TabRow(selectedTabIndex = selectedIndex) {
             Tab(
-                selected = state.currentPage == 0,
+                selected = selectedIndex == 0,
                 modifier = Modifier.testTag(TestTag.TabDefault),
-                onClick = { onSelectIndex(0) },
+                onClick = { onSelectedScreen(DefaultKeywordScreen) },
                 text = { Text(MR.strings.textDefault.stable) }
             )
             Tab(
-                selected = state.currentPage == 1,
+                selected = selectedIndex == 1,
                 modifier = Modifier.testTag(TestTag.TabCustom),
-                onClick = { onSelectIndex(1) },
+                onClick = { onSelectedScreen(CustomKeywordScreen) },
                 text = { Text(MR.strings.textCustom.stable) }
             )
         }

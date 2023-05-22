@@ -58,6 +58,7 @@ fun WakeWordConfigurationContent() {
 
     Screen(viewModel) {
         val screen by viewModel.screen.collectAsState()
+        val porcupineScreen by viewModel.porcupineScreen.collectAsState()
 
         val contentViewState by viewState.editViewState.collectAsState()
         val snackBarHostState = LocalSnackBarHostState.current
@@ -78,6 +79,7 @@ fun WakeWordConfigurationContent() {
             )
 
             EditPorcupineWakeWordScreen -> PorcupineKeywordScreen(
+                porcupineScreen = porcupineScreen,
                 viewState = contentViewState.wakeWordPorcupineViewState,
                 onEvent = viewModel::onEvent
             )
