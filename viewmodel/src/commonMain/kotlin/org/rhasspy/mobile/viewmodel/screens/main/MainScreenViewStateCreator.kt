@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.platformspecific.combineStateFlow
+import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination
@@ -26,7 +27,8 @@ class MainScreenViewStateCreator(
         updaterScope.launch {
             combineStateFlow(
                 navigator.navStack,
-                AppSetting.isShowLogEnabled.data
+                AppSetting.isShowLogEnabled.data,
+                AppSetting.didShowCrashlyticsDialog.data
             ).collect {
                 viewState.value = getViewState()
             }
@@ -39,7 +41,8 @@ class MainScreenViewStateCreator(
         return MainScreenViewState(
             isBottomNavigationVisible = navigator.navStack.value.lastOrNull() is MainScreenNavigationDestination,
             bottomNavigationIndex = mainScreens.indexOf(navigator.topScreen<MainScreenNavigationDestination>().value),
-            isShowLogEnabled = AppSetting.isShowLogEnabled.value
+            isShowLogEnabled = AppSetting.isShowLogEnabled.value,
+            isShowCrashlyticsDialog = !AppSetting.didShowCrashlyticsDialog.value && !isDebug()
         )
     }
 }

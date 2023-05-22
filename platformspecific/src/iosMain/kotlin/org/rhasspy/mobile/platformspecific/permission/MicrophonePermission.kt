@@ -25,4 +25,12 @@ actual object MicrophonePermission {
     actual fun update() {
         //TODO("Not yet implemented")
     }
+
+    /**
+     * request permission from user
+     */
+    actual suspend fun request() {
+        //TODO("Not yet implemented")
+    }
+
 }

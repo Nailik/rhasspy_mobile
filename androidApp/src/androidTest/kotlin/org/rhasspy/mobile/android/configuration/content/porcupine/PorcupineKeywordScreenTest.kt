@@ -2,9 +2,10 @@ package org.rhasspy.mobile.android.configuration.content.porcupine
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import androidx.compose.ui.test.performClick
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -14,10 +15,10 @@ import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.configuration.content.porcupine.PorcupineKeywordScreen
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class PorcupineKeywordScreenTest : FlakyTest() {
 
     @get: Rule(order = 0)
@@ -31,8 +32,10 @@ class PorcupineKeywordScreenTest : FlakyTest() {
         composeTestRule.setContent {
             TestContentProvider {
                 val viewState by viewModel.viewState.collectAsState()
+                val porcupineScreen by viewModel.porcupineScreen.collectAsState()
                 val contentViewState by viewState.editViewState.collectAsState()
                 PorcupineKeywordScreen(
+                    porcupineScreen = porcupineScreen,
                     viewState = contentViewState.wakeWordPorcupineViewState,
                     onEvent = viewModel::onEvent
                 )
@@ -61,18 +64,6 @@ class PorcupineKeywordScreenTest : FlakyTest() {
         //default is opened
         composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen).assertIsDisplayed()
 
-        //user slides to right
-        composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordScreen).performTouchInput {
-            swipeLeft()
-        }
-        //custom is opened and selected
-        composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordCustomScreen).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(TestTag.TabCustom).assertIsSelected()
-
-        //user slides to left
-        composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordScreen).performTouchInput {
-            swipeRight()
-        }
         //default is opened and selected
         composeTestRule.onNodeWithTag(TestTag.PorcupineKeywordDefaultScreen).assertIsDisplayed()
         composeTestRule.onNodeWithTag(TestTag.TabDefault).assertIsSelected()

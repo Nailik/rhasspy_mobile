@@ -34,6 +34,9 @@ import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfiguration
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationUiEvent.UdpUiEvent.Change.UpdateUdpOutputPort
 import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewState.PorcupineViewState.PorcupineCustomKeywordViewState
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWordConfigurationScreenDestination.*
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination.CustomKeywordScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination.DefaultKeywordScreen
 import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
 @Stable
@@ -46,6 +49,7 @@ class WakeWordConfigurationViewModel(
 ) {
 
     val screen = navigator.topScreen(EditScreen)
+    val porcupineScreen = navigator.topScreen(DefaultKeywordScreen)
 
     fun onEvent(event: WakeWordConfigurationUiEvent) {
         when (event) {
@@ -79,7 +83,13 @@ class WakeWordConfigurationViewModel(
 
             TestStartWakeWord -> requireMicrophonePermission(::startWakeWordDetection)
             BackClick -> navigator.onBackPressed()
-            is Navigate -> navigator.navigate(action.destination)
+            is Navigate -> {
+                navigator.navigate(action.destination)
+
+                if (action.destination == EditPorcupineWakeWordScreen) {
+                    navigator.navigate(DefaultKeywordScreen)
+                }
+            }
         }
     }
 
@@ -112,18 +122,17 @@ class WakeWordConfigurationViewModel(
                     is UndoCustomKeywordDeleted -> it.copy(customOptionsUi = it.customOptionsUi.updateList(change.index) { copy(deleted = false) })
                     is UpdateWakeWordPorcupineKeywordCustomSensitivity -> it.copy(customOptionsUi = it.customOptionsUi.updateList(change.index) { copy(keyword = keyword.copy(sensitivity = change.value)) })
                     is UpdateWakeWordPorcupineKeywordDefaultSensitivity -> it.copy(defaultOptions = it.defaultOptions.updateListItem(change.item) { copy(sensitivity = change.value) })
-                    is AddPorcupineKeywordCustom ->
-                        it.copy(customOptionsUi = it.customOptionsUi.updateList {
-                            add(
-                                PorcupineCustomKeywordViewState(
-                                    PorcupineCustomKeyword(
-                                        fileName = change.path.name,
-                                        isEnabled = true,
-                                        sensitivity = 0.5f
-                                    )
+                    is AddPorcupineKeywordCustom -> it.copy(customOptionsUi = it.customOptionsUi.updateList {
+                        add(
+                            PorcupineCustomKeywordViewState(
+                                PorcupineCustomKeyword(
+                                    fileName = change.path.name,
+                                    isEnabled = true,
+                                    sensitivity = 0.5f
                                 )
                             )
-                        })
+                        )
+                    })
                 }
             })
         }
@@ -150,6 +159,7 @@ class WakeWordConfigurationViewModel(
 
             PorcupineUiEvent.Action.BackClick -> navigator.onBackPressed()
             PorcupineLanguageClick -> navigator.navigate(EditPorcupineLanguageScreen)
+            is PageClick -> navigator.replace<PorcupineKeywordConfigurationScreenDestination>(action.screen)
         }
     }
 
@@ -218,6 +228,27 @@ class WakeWordConfigurationViewModel(
 
     private fun startWakeWordDetection() {
         get<WakeWordService>().startDetection()
+    }
+
+    override fun onBackPressed(): Boolean {
+        return if (screen.value == EditPorcupineWakeWordScreen && porcupineScreen.value == DefaultKeywordScreen) {
+            //pop backstack to remove DefaultKeywordScreen
+            navigator.popBackStack()
+            //pop backstack to remove EditPorcupineWakeWordScreen and go to keyword edit
+            navigator.popBackStack()
+            //was handled
+            true
+        } else if (screen.value == EditPorcupineWakeWordScreen && porcupineScreen.value == CustomKeywordScreen) {
+            //navigate to DefaultKeywordScreen
+            navigator.replace<PorcupineKeywordConfigurationScreenDestination>(DefaultKeywordScreen)
+            //was handled
+            true
+        } else if (screen.value == EditScreen || screen.value == TestScreen) {
+            super.onBackPressed()
+        } else {
+            //close porcupine language or keyword screen
+            false
+        }
     }
 
 }

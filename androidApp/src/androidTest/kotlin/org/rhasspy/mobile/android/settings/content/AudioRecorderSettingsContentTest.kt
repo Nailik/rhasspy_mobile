@@ -4,7 +4,6 @@ import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -15,9 +14,9 @@ import org.rhasspy.mobile.data.audiorecorder.AudioRecorderEncodingType
 import org.rhasspy.mobile.data.audiorecorder.AudioRecorderSampleRateType
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.settings.content.AudioRecorderSettingsContent
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class AudioRecorderSettingsContentTest : FlakyTest() {
 
     @get: Rule(order = 0)

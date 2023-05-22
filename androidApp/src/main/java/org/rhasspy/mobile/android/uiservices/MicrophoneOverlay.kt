@@ -8,15 +8,8 @@ import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.view.WindowManager.LayoutParams.*
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.size
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
@@ -30,11 +23,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.*
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.combinedTestTag
-import org.rhasspy.mobile.ui.main.MicrophoneFab
-import org.rhasspy.mobile.ui.theme.AppTheme
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
+import org.rhasspy.mobile.ui.native.nativeComposeView
+import org.rhasspy.mobile.ui.overlay.MicrophoneOverlay
 import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayUiEvent.Change.UpdateMicrophoneOverlayPosition
 import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayViewModel
 
@@ -48,8 +38,6 @@ object MicrophoneOverlay : KoinComponent {
 
     //stores old value to only react to changes
     private var showVisualIndicationOldValue = false
-
-    private val microphoneViewModel = get<MicrophoneFabViewModel>()
     private val viewModel = get<MicrophoneOverlayViewModel>()
 
     private var job: Job? = null
@@ -64,36 +52,15 @@ object MicrophoneOverlay : KoinComponent {
         context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     }
 
-    private fun onClick() {
-
-    }
-
     /**
      * view that's displayed as overlay to start wake word detection
      */
     private fun getView(): ComposeView {
-        return ComposeView(context).apply {
-            setContent {
-                AppTheme {
-                    val viewState by viewModel.viewState.collectAsState()
-                    val microphoneFabViewState by microphoneViewModel.viewState.collectAsState()
-
-                    MicrophoneFab(
-                        modifier = Modifier
-                            .size(viewState.microphoneOverlaySize.dp)
-                            .combinedTestTag(TestTag.MicrophoneFab, TestTag.Overlay)
-                            .pointerInput(Unit) {
-                                detectDragGestures { change, dragAmount ->
-                                    change.consume()
-                                    onDrag(dragAmount, this@apply)
-                                }
-                            },
-                        iconSize = (viewState.microphoneOverlaySize * 0.4).dp,
-                        viewState = microphoneFabViewState,
-                        onEvent = { onClick() }
-                    )
-                }
-            }
+        return nativeComposeView(context) { view ->
+            MicrophoneOverlay(
+                viewModel = viewModel,
+                onDrag = { drag -> onDrag(drag, view) }
+            )
         }
     }
 

@@ -2,7 +2,6 @@ package org.rhasspy.mobile.android.settings.content
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -15,13 +14,13 @@ import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.audiofocus.AudioFocusOption
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.settings.content.AudioFocusSettingsContent
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsUiEvent.Change.SelectAudioFocusOption
 import org.rhasspy.mobile.viewmodel.settings.audiofocus.AudioFocusSettingsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class AudioFocusSettingsContentTest : FlakyTest() {
 
     @get: Rule(order = 0)
