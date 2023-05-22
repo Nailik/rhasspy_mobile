@@ -132,7 +132,7 @@ fun TextFieldListItem(
             enabled = enabled,
             textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colorScheme.onBackground),
             keyboardOptions = if (isLastItem) {
-                keyboardOptions
+                keyboardOptions.copy(imeAction = ImeAction.Done)
             } else {
                 keyboardOptions.copy(
                     imeAction = ImeAction.Next,
@@ -140,7 +140,9 @@ fun TextFieldListItem(
                 )
             },
             keyboardActions = if (isLastItem) {
-                keyboardActions
+                KeyboardActions(
+                    onDone = { focusManager.clearFocus() }
+                )
             } else {
                 KeyboardActions(
                     onNext = { focusManager.moveFocus(FocusDirection.Down) }

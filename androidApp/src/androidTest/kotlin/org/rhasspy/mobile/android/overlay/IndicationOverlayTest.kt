@@ -14,8 +14,8 @@ import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.hasCombinedTestTag
 import org.rhasspy.mobile.android.utils.requestOverlayPermissions
 import org.rhasspy.mobile.android.utils.waitUntilExists
+import org.rhasspy.mobile.data.indication.IndicationState
 import org.rhasspy.mobile.logic.services.indication.IndicationService
-import org.rhasspy.mobile.logic.services.indication.IndicationState
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.ui.TestTag
 

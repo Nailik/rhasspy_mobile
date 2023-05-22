@@ -1,5 +1,6 @@
 package org.rhasspy.mobile.platformspecific.language
 
+import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.data.language.LanguageType
 
 actual fun getDeviceLanguage(): LanguageType {
@@ -18,5 +19,5 @@ actual fun getSystemAppLanguage(): LanguageType? {
 }
 
 actual fun setLanguage(languageType: LanguageType) {
-    //TODO("Not yet implemented")
+    StringDesc.localeType = StringDesc.LocaleType.Custom(languageType.code)
 }

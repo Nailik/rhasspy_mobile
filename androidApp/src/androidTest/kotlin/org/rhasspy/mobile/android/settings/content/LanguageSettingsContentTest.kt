@@ -5,7 +5,6 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
 import dev.icerock.moko.resources.desc.StringDesc
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -17,11 +16,11 @@ import org.rhasspy.mobile.android.utils.onListItemRadioButton
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.data.language.LanguageType
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.settings.content.LanguageSettingsScreenItemContent
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SelectLanguageOption
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class LanguageSettingsContentTest : FlakyTest() {
 
     @get: Rule(order = 0)

@@ -8,6 +8,7 @@ sealed interface MainScreenUiEvent {
 
         object BackClick : Action
         data class Navigate(val destination: MainScreenNavigationDestination) : Action
+        data class CrashlyticsDialogResult(val result: Boolean) : Action
 
     }
 

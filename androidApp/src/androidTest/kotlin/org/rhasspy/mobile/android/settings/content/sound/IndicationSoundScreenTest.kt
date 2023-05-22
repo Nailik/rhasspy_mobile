@@ -12,12 +12,11 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.junit.Rule
 import org.koin.core.component.get
-import org.rhasspy.mobile.android.*
+import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.test.R
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.resource.StableStringResource
@@ -25,6 +24,7 @@ import org.rhasspy.mobile.data.service.option.AudioOutputOption.Sound
 import org.rhasspy.mobile.data.sounds.SoundOption
 import org.rhasspy.mobile.data.sounds.SoundOption.Disabled
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.settings.content.sound.IndicationSoundScreen
 import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SelectSoundIndicationOutputOption
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.SetSoundIndicationEnabled
@@ -35,7 +35,6 @@ import java.io.File
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalCoroutinesApi::class)
 abstract class IndicationSoundScreenTest(
     val title: StableStringResource,
     private val screen: IndicationSettingsScreenDestination,

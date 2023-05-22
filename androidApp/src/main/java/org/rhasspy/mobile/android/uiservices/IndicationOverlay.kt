@@ -7,8 +7,6 @@ import android.os.Looper
 import android.view.Gravity
 import android.view.WindowManager
 import android.view.WindowManager.LayoutParams.*
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.setViewTreeLifecycleOwner
@@ -23,7 +21,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
-import org.rhasspy.mobile.ui.theme.AppTheme
+import org.rhasspy.mobile.ui.native.nativeComposeView
+import org.rhasspy.mobile.ui.overlay.IndicationOverlay
 import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
 
 /**
@@ -55,13 +54,8 @@ object IndicationOverlay : KoinComponent {
      * view that's displayed when a wake word is detected
      */
     private fun getView(): ComposeView {
-        return ComposeView(context).apply {
-            setContent {
-                AppTheme {
-                    val viewState by viewModel.viewState.collectAsState()
-                    Indication(viewState.indicationState)
-                }
-            }
+        return nativeComposeView(context) {
+            IndicationOverlay(viewModel)
         }
     }
 

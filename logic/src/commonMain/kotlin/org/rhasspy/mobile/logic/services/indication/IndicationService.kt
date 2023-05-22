@@ -2,6 +2,7 @@ package org.rhasspy.mobile.logic.services.indication
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.component.inject
+import org.rhasspy.mobile.data.indication.IndicationState
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
