@@ -14,7 +14,7 @@ import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEven
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Change.*
 
 @Stable
-class IndicationSettingsViewModel() : KViewModel() {
+class IndicationSettingsViewModel : KViewModel() {
 
     private val _viewState = MutableStateFlow(IndicationSettingsViewState())
     val viewState = _viewState.readOnly

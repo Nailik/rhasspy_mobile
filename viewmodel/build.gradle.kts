@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED_VARIABLE")
+@file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
 
 plugins {
     kotlin("multiplatform")
@@ -29,8 +29,11 @@ kotlin {
             }
         }
         val commonTest by getting {
+            dependsOn(commonMain)
             dependencies {
                 implementation(Kotlin.test)
+                implementation(Kotlin.Test.junit)
+                implementation(Koin.test)
             }
         }
         val androidMain by getting {
@@ -39,7 +42,12 @@ kotlin {
                 implementation(Square.okio)
             }
         }
-        val androidUnitTest by getting
+        val androidUnitTest by getting {
+            dependsOn(commonTest)
+            dependencies {
+                implementation("io.mockk:mockk:_")
+            }
+        }
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
@@ -66,4 +74,9 @@ kotlin {
 
 android {
     namespace = "org.rhasspy.mobile.viewmodel"
+
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
+    }
 }
