@@ -15,7 +15,7 @@ expect class OverlayPermission(
     /**
      * to request the permission externally, redirect user to settings
      */
-    fun requestPermission(): Boolean
+    fun request(): Boolean
 
     /**
      * check if the permission is currently granted

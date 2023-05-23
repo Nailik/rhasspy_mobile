@@ -32,7 +32,7 @@ actual class OverlayPermission actual constructor(
     /**
      * to request the permission externally, redirect user to settings
      */
-    actual fun requestPermission(): Boolean {
+    actual fun request(): Boolean {
         //TODO("Not yet implemented")
         return true
     }

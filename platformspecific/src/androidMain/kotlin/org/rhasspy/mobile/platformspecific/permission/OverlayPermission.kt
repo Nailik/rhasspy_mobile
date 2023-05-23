@@ -22,7 +22,7 @@ actual class OverlayPermission actual constructor(
     /**
      * to request the permission externally, redirect user to settings
      */
-    actual fun requestPermission(): Boolean {
+    actual fun request(): Boolean {
         val result = ExternalResultRequest.launch(ExternalResultRequestIntention.OpenOverlaySettings)
 
         return if (result is ExternalRedirectResult.Success) {

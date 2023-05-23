@@ -28,7 +28,7 @@ abstract class KViewModel : ViewModel(), KoinComponent {
 
     protected val navigator by inject<Navigator>()
     protected val microphonePermission = get<MicrophonePermission>()
-    protected val overlayPermission = get<OverlayPermission>()
+    private val overlayPermission = get<OverlayPermission>()
 
     private val _kViewState = MutableStateFlow(
         KViewState(
@@ -177,7 +177,7 @@ abstract class KViewModel : ViewModel(), KoinComponent {
             } else {
                 //request directly
                 viewModelScope.launch(Dispatchers.IO) {
-                    if (!overlayPermission.requestPermission()) {
+                    if (!overlayPermission.request()) {
                         //show snack bar
                         _kViewState.update {
                             it.copy(overlayPermissionSnackBarText = MR.strings.overlayPermissionRequestFailed.stable)
