@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.WindowManager
 import android.view.WindowManager.LayoutParams.*
 import androidx.compose.ui.platform.ComposeView
+import androidx.core.content.getSystemService
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
@@ -47,7 +48,7 @@ object IndicationOverlay : KoinComponent {
         }
 
     private val overlayWindowManager by lazy {
-        context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        context.getSystemService<WindowManager>()
     }
 
     /**
@@ -111,14 +112,18 @@ object IndicationOverlay : KoinComponent {
                                         Looper.prepare()
                                     }
                                     launch(Dispatchers.Main) {
-                                        overlayWindowManager.addView(view, mParams)
+                                        overlayWindowManager?.addView(view, mParams) ?: {
+                                            logger.e { "addView overlayWindowManager is null" }
+                                        }
                                         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
                                     }
                                 }
                             } else {
                                 launch(Dispatchers.Main) {
                                     if (view.parent != null) {
-                                        overlayWindowManager.removeView(view)
+                                        overlayWindowManager?.removeView(view) ?: {
+                                            logger.e { "removeView overlayWindowManager is null" }
+                                        }
                                     }
                                     lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
                                 }
@@ -133,7 +138,9 @@ object IndicationOverlay : KoinComponent {
                     if (view.parent != null) {
                         //check if view is attached before removing it
                         //removing a not attached view results in IllegalArgumentException
-                        overlayWindowManager.removeView(view)
+                        overlayWindowManager?.removeView(view) ?: {
+                            logger.e { "removeView2 overlayWindowManager is null" }
+                        }
                     }
                 }
             }

@@ -186,6 +186,7 @@ dependencies {
     implementation(AndroidX.Activity.compose)
     implementation(AndroidX.multidex)
     implementation(AndroidX.window)
+    implementation(AndroidX.Core.ktx)
 
     implementation(Touchlab.kermit)
     implementation(Koin.core)

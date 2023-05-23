@@ -1,7 +1,7 @@
 package org.rhasspy.mobile.platformspecific.indication
 
-import android.content.Context
 import android.os.PowerManager
+import androidx.core.content.getSystemService
 import co.touchlab.kermit.Logger
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -22,15 +22,14 @@ actual object NativeIndication : KoinComponent {
      */
     @Suppress("DEPRECATION")
     actual fun wakeUpScreen() {
-        wakeLock =
-            (context.getSystemService(Context.POWER_SERVICE) as PowerManager).run {
-                newWakeLock(
-                    PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
-                    "Rhasspy::WakeWordDetected"
-                ).apply {
-                    acquire(10 * 60 * 1000L /*10 minutes*/)
-                }
+        wakeLock = context.getSystemService<PowerManager>()?.run {
+            newWakeLock(
+                PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
+                "Rhasspy::WakeWordDetected"
+            ).apply {
+                acquire(10 * 60 * 1000L /*10 minutes*/)
             }
+        }
     }
 
 
