@@ -32,26 +32,9 @@ fun AudioRecorderSettingsContent() {
 
         SettingsScreenItemContent(
             modifier = Modifier.testTag(AudioRecorderSettings),
-            title = MR.strings.automaticSilenceDetection.stable,
+            title = MR.strings.audioRecorder.stable,
             onBackClick = { viewModel.onEvent(BackClick) }
         ) {
-
-            Card(
-                modifier = Modifier.padding(8.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-            ) {
-                ListElement {
-                    Text(resource = MR.strings.sampleRate.stable)
-                }
-
-                RadioButtonsEnumSelectionList(
-                    modifier = Modifier.testTag(TestTag.AudioRecorderSampleRateType),
-                    selected = viewState.audioRecorderSampleRateType,
-                    onSelect = { viewModel.onEvent(SelectAudioRecorderSampleRateType(it)) },
-                    combinedTestTag = TestTag.AudioRecorderSampleRateType,
-                    values = viewState.audioRecorderSampleRateTypes
-                )
-            }
 
             Card(
                 modifier = Modifier.padding(8.dp),
@@ -70,7 +53,6 @@ fun AudioRecorderSettingsContent() {
                 )
             }
 
-
             Card(
                 modifier = Modifier.padding(8.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
@@ -88,6 +70,23 @@ fun AudioRecorderSettingsContent() {
                 )
             }
 
+
+            Card(
+                modifier = Modifier.padding(8.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            ) {
+                ListElement {
+                    Text(resource = MR.strings.sampleRate.stable)
+                }
+
+                RadioButtonsEnumSelectionList(
+                    modifier = Modifier.testTag(TestTag.AudioRecorderSampleRateType),
+                    selected = viewState.audioRecorderSampleRateType,
+                    onSelect = { viewModel.onEvent(SelectAudioRecorderSampleRateType(it)) },
+                    combinedTestTag = TestTag.AudioRecorderSampleRateType,
+                    values = viewState.audioRecorderSampleRateTypes
+                )
+            }
 
         }
     }
