@@ -39,9 +39,17 @@ abstract class Application : NativeApplication(), KoinComponent {
     fun onCreated() {
         startKoin {
             // declare used modules
-            modules(module {
-                single<NativeApplication> { this@Application }
-            }, navigatorModule, viewModelFactory, serviceModule, viewModelModule, factoryModule)
+            modules(
+                module {
+                    single<NativeApplication> { this@Application }
+                },
+                navigatorModule,
+                viewModelFactory,
+                serviceModule,
+                viewModelModule,
+                factoryModule,
+                permissionModule
+            )
         }
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -87,15 +95,15 @@ abstract class Application : NativeApplication(), KoinComponent {
     abstract fun stopOverlay()
 
     override fun resume() {
-        MicrophonePermission.update()
-        OverlayPermission.update()
+        get<MicrophonePermission>().update()
+        get<OverlayPermission>().update()
         checkOverlayPermission()
         startServices()
         startOverlay()
     }
 
     private fun checkOverlayPermission() {
-        if (!OverlayPermission.isGranted()) {
+        if (!get<OverlayPermission>().isGranted()) {
             if (AppSetting.microphoneOverlaySizeOption.value != MicrophoneOverlaySizeOption.Disabled ||
                 AppSetting.isWakeWordLightIndicationEnabled.value
             ) {

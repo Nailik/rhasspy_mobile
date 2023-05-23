@@ -3,16 +3,15 @@ package org.rhasspy.mobile.platformspecific.permission
 import android.provider.Settings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
 
-actual object OverlayPermission : KoinComponent {
+actual class OverlayPermission actual constructor(
+    private val nativeApplication: NativeApplication
+) {
 
-    private val context by inject<NativeApplication>()
     private val _granted = MutableStateFlow(isGranted())
 
     /**
@@ -36,7 +35,7 @@ actual object OverlayPermission : KoinComponent {
     /**
      * check if the permission is currently granted
      */
-    actual fun isGranted(): Boolean = Settings.canDrawOverlays(context)
+    actual fun isGranted(): Boolean = Settings.canDrawOverlays(nativeApplication)
 
     /**
      * read from system

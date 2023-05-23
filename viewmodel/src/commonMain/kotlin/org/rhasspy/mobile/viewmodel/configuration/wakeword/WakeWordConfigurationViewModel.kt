@@ -41,10 +41,11 @@ import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
 @Stable
 class WakeWordConfigurationViewModel(
+    microphonePermission: MicrophonePermission,
     service: WakeWordService
 ) : IConfigurationViewModel<WakeWordConfigurationViewState>(
     service = service,
-    initialViewState = ::WakeWordConfigurationViewState,
+    initialViewState = { WakeWordConfigurationViewState(isMicrophonePermissionEnabled = microphonePermission.granted.value) },
     testPageDestination = TestScreen
 ) {
 
@@ -66,7 +67,7 @@ class WakeWordConfigurationViewModel(
             when (change) {
                 is SelectWakeWordOption -> it.copy(
                     wakeWordOption = change.option,
-                    isMicrophonePermissionRequestVisible = !MicrophonePermission.granted.value && (change.option == WakeWordOption.Porcupine || change.option == WakeWordOption.Udp)
+                    isMicrophonePermissionRequestVisible = !microphonePermission.granted.value && (change.option == WakeWordOption.Porcupine || change.option == WakeWordOption.Udp)
                 )
             }
         }

@@ -8,7 +8,6 @@ import org.rhasspy.mobile.data.porcupine.PorcupineDefaultKeyword
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.service.option.PorcupineLanguageOption
 import org.rhasspy.mobile.data.service.option.WakeWordOption
-import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -20,7 +19,8 @@ data class WakeWordConfigurationViewState internal constructor(
     val wakeWordPorcupineViewState: PorcupineViewState = PorcupineViewState(),
     val wakeWordUdpViewState: UdpViewState = UdpViewState(),
     val snackBarText: StableStringResource? = null,
-    val isMicrophonePermissionRequestVisible: Boolean = !MicrophonePermission.granted.value && (wakeWordOption == WakeWordOption.Porcupine || wakeWordOption == WakeWordOption.Udp)
+    val isMicrophonePermissionEnabled: Boolean,
+    val isMicrophonePermissionRequestVisible: Boolean = !isMicrophonePermissionEnabled && (wakeWordOption == WakeWordOption.Porcupine || wakeWordOption == WakeWordOption.Udp)
 ) : IConfigurationEditViewState() {
 
     val wakeWordOptions: ImmutableList<WakeWordOption> = WakeWordOption.values().toImmutableList()

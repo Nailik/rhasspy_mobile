@@ -15,7 +15,7 @@ import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
  */
 class StartRecordingReceiver : KoinComponent, BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
-        if (MicrophonePermission.granted.value) {
+        if (get<MicrophonePermission>().granted.value) {
             get<MicrophoneFabViewModel>().onEvent(UserSessionClick)
         } else {
             get<NativeApplication>().startRecordingAction()

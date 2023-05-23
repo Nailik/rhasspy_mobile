@@ -15,7 +15,8 @@ import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 class MicrophoneFabViewStateCreator(
     private val dialogManagerService: DialogManagerService,
     private val serviceMiddleware: ServiceMiddleware,
-    private val wakeWordService: WakeWordService
+    private val wakeWordService: WakeWordService,
+    private val microphonePermission: MicrophonePermission
 ) {
     private val updaterScope = CoroutineScope(Dispatchers.IO)
 
@@ -27,7 +28,7 @@ class MicrophoneFabViewStateCreator(
                 dialogManagerService.currentDialogState,
                 serviceMiddleware.isUserActionEnabled,
                 wakeWordService.isRecording,
-                MicrophonePermission.granted,
+                microphonePermission.granted,
             ).collect {
                 viewState.value = getViewState()
             }
@@ -38,11 +39,11 @@ class MicrophoneFabViewStateCreator(
 
     private fun getViewState(): MicrophoneFabViewState {
         return MicrophoneFabViewState(
-            isMicrophonePermissionAllowed = MicrophonePermission.granted.value,
+            isMicrophonePermissionAllowed = microphonePermission.granted.value,
             dialogManagerServiceState = dialogManagerService.currentDialogState.value,
             isUserActionEnabled = serviceMiddleware.isUserActionEnabled.value,
             isShowBorder = wakeWordService.isRecording.value,
-            isShowMicOn = MicrophonePermission.granted.value
+            isShowMicOn = microphonePermission.granted.value
         )
     }
 

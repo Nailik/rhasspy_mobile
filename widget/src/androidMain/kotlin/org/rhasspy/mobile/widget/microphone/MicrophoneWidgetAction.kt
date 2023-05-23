@@ -20,7 +20,7 @@ class MicrophoneWidgetAction : ActionCallback, KoinComponent {
         glanceId: GlanceId,
         parameters: ActionParameters
     ) {
-        if (MicrophonePermission.granted.value) {
+        if (get<MicrophonePermission>().granted.value) {
             get<MicrophoneFabViewModel>().onEvent(UserSessionClick)
         } else {
             get<NativeApplication>().startRecordingAction()

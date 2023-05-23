@@ -5,17 +5,15 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 
 /**
  * to check microphone permission
  */
-actual object MicrophonePermission : KoinComponent {
-
-    private val context by inject<NativeApplication>()
+actual class MicrophonePermission actual constructor(
+    private val nativeApplication: NativeApplication
+) {
 
     /**
      * to observe if microphone permission is granted
@@ -27,7 +25,7 @@ actual object MicrophonePermission : KoinComponent {
      * to request the permission externally, redirect user to settings
      */
     actual fun shouldShowInformationDialog(): Boolean {
-        return context.currentActivity?.let {
+        return nativeApplication.currentActivity?.let {
             ActivityCompat.shouldShowRequestPermissionRationale(
                 it,
                 Manifest.permission.RECORD_AUDIO
@@ -40,7 +38,7 @@ actual object MicrophonePermission : KoinComponent {
      */
     private fun isGranted(): Boolean {
         return ActivityCompat.checkSelfPermission(
-            context,
+            nativeApplication,
             Manifest.permission.RECORD_AUDIO
         ) == PackageManager.PERMISSION_GRANTED
     }

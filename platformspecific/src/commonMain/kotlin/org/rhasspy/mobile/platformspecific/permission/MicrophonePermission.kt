@@ -1,11 +1,14 @@
 package org.rhasspy.mobile.platformspecific.permission
 
 import kotlinx.coroutines.flow.StateFlow
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
 /**
  * to check microphone permission
  */
-expect object MicrophonePermission {
+expect class MicrophonePermission(
+    nativeApplication: NativeApplication
+) {
 
     /**
      * to observe if microphone permission is granted

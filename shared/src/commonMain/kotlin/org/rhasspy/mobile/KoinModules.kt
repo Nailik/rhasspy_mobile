@@ -33,6 +33,9 @@ import org.rhasspy.mobile.logic.services.wakeword.WakeWordServiceParamsCreator
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.logic.services.webserver.WebServerServiceParamsCreator
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
+import org.rhasspy.mobile.platformspecific.permission.BatteryOptimization
+import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
+import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
@@ -152,7 +155,6 @@ val viewModelFactory = module {
     single {
         ViewModelFactory()
     }
-
 }
 
 val viewModelModule = module {
@@ -171,7 +173,8 @@ val viewModelModule = module {
         MicrophoneFabViewStateCreator(
             dialogManagerService = get(),
             serviceMiddleware = get(),
-            wakeWordService = get()
+            wakeWordService = get(),
+            microphonePermission = get()
         )
     }
 
@@ -192,7 +195,8 @@ val viewModelModule = module {
         MicrophoneFabViewStateCreator(
             dialogManagerService = get(),
             serviceMiddleware = get(),
-            wakeWordService = get()
+            wakeWordService = get(),
+            microphonePermission = get()
         )
     }
     single {
@@ -263,7 +267,8 @@ val viewModelModule = module {
     }
     single {
         WakeWordConfigurationViewModel(
-            service = get()
+            service = get(),
+            microphonePermission = get()
         )
     }
     single {
@@ -336,7 +341,8 @@ val viewModelModule = module {
 
     single {
         BackgroundServiceSettingsViewStateCreator(
-            nativeApplication = get()
+            nativeApplication = get(),
+            batteryOptimization = get()
         )
     }
     single {
@@ -423,7 +429,8 @@ val viewModelModule = module {
     single {
         MicrophoneOverlayViewStateCreator(
             nativeApplication = get(),
-            microphoneFabViewStateCreator = get()
+            microphoneFabViewStateCreator = get(),
+            overlayPermission = get()
         )
     }
     single {
@@ -442,6 +449,24 @@ val viewModelModule = module {
     single {
         IndicationOverlayViewModel(
             viewStateCreator = get()
+        )
+    }
+}
+
+val permissionModule = module {
+    single {
+        BatteryOptimization(
+            nativeApplication = get()
+        )
+    }
+    single {
+        MicrophonePermission(
+            nativeApplication = get()
+        )
+    }
+    single {
+        OverlayPermission(
+            nativeApplication = get()
         )
     }
 }

@@ -2,8 +2,11 @@ package org.rhasspy.mobile.platformspecific.permission
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
-actual object OverlayPermission {
+actual class OverlayPermission actual constructor(
+    private val nativeApplication: NativeApplication
+) {
 
     /**
      * to observe if microphone permission is granted

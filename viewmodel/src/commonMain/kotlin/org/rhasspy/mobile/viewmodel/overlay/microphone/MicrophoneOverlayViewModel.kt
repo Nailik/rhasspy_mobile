@@ -3,7 +3,6 @@ package org.rhasspy.mobile.viewmodel.overlay.microphone
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.KViewModel
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent.Action.UserSessionClick
@@ -44,7 +43,7 @@ class MicrophoneOverlayViewModel(
     private fun onAction(action: Action) {
         when (action) {
             ToggleUserSession ->
-                if (MicrophonePermission.granted.value) {
+                if (microphonePermission.granted.value) {
                     microphoneFabViewModel.onEvent(UserSessionClick)
                 } else {
                     nativeApplication.startRecordingAction()

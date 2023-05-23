@@ -11,7 +11,8 @@ import org.rhasspy.mobile.platformspecific.permission.BatteryOptimization
 import org.rhasspy.mobile.settings.AppSetting
 
 class BackgroundServiceSettingsViewStateCreator(
-    private val nativeApplication: NativeApplication
+    private val nativeApplication: NativeApplication,
+    private val batteryOptimization: BatteryOptimization
 ) {
 
     private val updaterScope = CoroutineScope(Dispatchers.IO)
@@ -34,7 +35,7 @@ class BackgroundServiceSettingsViewStateCreator(
     private fun getViewState(): BackgroundServiceSettingsViewState {
         return BackgroundServiceSettingsViewState(
             isBackgroundServiceEnabled = AppSetting.isBackgroundServiceEnabled.value,
-            isBatteryOptimizationDisabled = BatteryOptimization.isBatteryOptimizationDisabled()
+            isBatteryOptimizationDisabled = batteryOptimization.isBatteryOptimizationDisabled()
         )
     }
 

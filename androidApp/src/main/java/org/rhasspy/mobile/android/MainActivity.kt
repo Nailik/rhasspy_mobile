@@ -55,7 +55,7 @@ class MainActivity : KoinComponent, AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
         if (intent.getBooleanExtra(IntentAction.StartRecording.param, false)) {
-            if (MicrophonePermission.granted.value) {
+            if (get<MicrophonePermission>().granted.value) {
                 get<ServiceMiddleware>().action(WakeWordDetected(Source.Local, wakeWord = "intent"))
             }
         }

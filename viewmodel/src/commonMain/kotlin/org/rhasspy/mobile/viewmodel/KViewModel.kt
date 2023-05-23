@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
@@ -26,6 +27,8 @@ import org.rhasspy.mobile.viewmodel.navigation.Navigator
 abstract class KViewModel : ViewModel(), KoinComponent {
 
     protected val navigator by inject<Navigator>()
+    protected val microphonePermission = get<MicrophonePermission>()
+    protected val overlayPermission = get<OverlayPermission>()
 
     private val _kViewState = MutableStateFlow(
         KViewState(
@@ -47,7 +50,7 @@ abstract class KViewModel : ViewModel(), KoinComponent {
     }
 
     fun requireMicrophonePermission(function: () -> Unit) {
-        if (MicrophonePermission.granted.value) {
+        if (microphonePermission.granted.value) {
             function()
         } else {
             onEvent(RequestMicrophonePermission)
@@ -55,7 +58,7 @@ abstract class KViewModel : ViewModel(), KoinComponent {
     }
 
     inline fun <reified T> requireOverlayPermission(value: T, function: () -> T): T {
-        return if (OverlayPermission.granted.value) {
+        return if (get<OverlayPermission>().granted.value) {
             function()
         } else {
             onEvent(RequestOverlayPermission)
@@ -145,15 +148,15 @@ abstract class KViewModel : ViewModel(), KoinComponent {
     }
 
     private fun onRequestMicrophonePermission(hasShownInformation: Boolean) {
-        if (!MicrophonePermission.granted.value) {
-            if (!hasShownInformation && MicrophonePermission.shouldShowInformationDialog()) {
+        if (!microphonePermission.granted.value) {
+            if (!hasShownInformation && microphonePermission.shouldShowInformationDialog()) {
                 _kViewState.update { it.copy(isShowMicrophonePermissionInformationDialog = true) }
             } else {
                 //request directly
                 viewModelScope.launch(Dispatchers.IO) {
-                    MicrophonePermission.request()
+                    microphonePermission.request()
 
-                    if (!MicrophonePermission.granted.value) {
+                    if (!microphonePermission.granted.value) {
                         //show snack bar
                         _kViewState.update {
                             it.copy(
@@ -168,13 +171,13 @@ abstract class KViewModel : ViewModel(), KoinComponent {
     }
 
     private fun onRequestOverlayPermission(hasShownInformation: Boolean) {
-        if (!OverlayPermission.granted.value) {
+        if (!overlayPermission.granted.value) {
             if (!hasShownInformation) {
                 _kViewState.update { it.copy(isShowOverlayPermissionInformationDialog = true) }
             } else {
                 //request directly
                 viewModelScope.launch(Dispatchers.IO) {
-                    if (!OverlayPermission.requestPermission()) {
+                    if (!overlayPermission.requestPermission()) {
                         //show snack bar
                         _kViewState.update {
                             it.copy(overlayPermissionSnackBarText = MR.strings.overlayPermissionRequestFailed.stable)

@@ -14,6 +14,7 @@ import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewStateCreator
 
 class MicrophoneOverlayViewStateCreator(
     private val nativeApplication: NativeApplication,
+    private val overlayPermission: OverlayPermission,
     microphoneFabViewStateCreator: MicrophoneFabViewStateCreator
 ) {
     private val updaterScope = CoroutineScope(Dispatchers.IO)
@@ -23,7 +24,7 @@ class MicrophoneOverlayViewStateCreator(
         val viewState = MutableStateFlow(getViewState())
         updaterScope.launch {
             combineStateFlow(
-                OverlayPermission.granted,
+                overlayPermission.granted,
                 nativeApplication.isAppInBackground,
                 AppSetting.isMicrophoneOverlayWhileAppEnabled.data,
                 AppSetting.microphoneOverlaySizeOption.data,
@@ -39,7 +40,7 @@ class MicrophoneOverlayViewStateCreator(
 
     private fun getViewState(): MicrophoneOverlayViewState {
         return MicrophoneOverlayViewState(
-            isOverlayPermissionGranted = OverlayPermission.granted.value,
+            isOverlayPermissionGranted = overlayPermission.granted.value,
             isAppInBackground = nativeApplication.isAppInBackground.value,
             isMicrophoneOverlayWhileAppEnabled = AppSetting.isMicrophoneOverlayWhileAppEnabled.value,
             microphoneOverlaySizeOption = AppSetting.microphoneOverlaySizeOption.value,

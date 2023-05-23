@@ -106,7 +106,7 @@ object IndicationOverlay : KoinComponent {
                         if (it.isShowVisualIndication != showVisualIndicationOldValue) {
                             showVisualIndicationOldValue = it.isShowVisualIndication
                             if (it.isShowVisualIndication) {
-                                if (OverlayPermission.isGranted()) {
+                                if (get<OverlayPermission>().isGranted()) {
                                     if (Looper.myLooper() == null) {
                                         Looper.prepare()
                                     }
