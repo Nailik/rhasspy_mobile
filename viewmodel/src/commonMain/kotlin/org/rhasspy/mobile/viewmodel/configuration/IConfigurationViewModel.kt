@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.koin.core.component.get
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.data.service.ServiceState
@@ -187,13 +188,14 @@ abstract class IConfigurationViewModel<V : IConfigurationEditViewState>(
 
             //load file into list
             testScope.launch(Dispatchers.IO) {
-                val lines = FileLogger.getLines()
+                val fileLogger = get<FileLogger>()
+                val lines = fileLogger.getLines()
                 viewModelScope.launch {
                     logEvents.value = lines
                 }
 
                 //collect new log
-                FileLogger.flow.collectIndexed { _, value ->
+                fileLogger.flow.collectIndexed { _, value ->
                     viewModelScope.launch {
                         val list = mutableListOf<LogElement>()
                         list.addAll(logEvents.value)

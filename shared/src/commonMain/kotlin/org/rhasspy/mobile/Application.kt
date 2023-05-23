@@ -43,6 +43,7 @@ abstract class Application : NativeApplication(), KoinComponent {
                 module {
                     single<NativeApplication> { this@Application }
                 },
+                nativeModule,
                 navigatorModule,
                 viewModelFactory,
                 serviceModule,
@@ -53,7 +54,7 @@ abstract class Application : NativeApplication(), KoinComponent {
         }
 
         CoroutineScope(Dispatchers.IO).launch {
-            Logger.addLogWriter(FileLogger)
+            Logger.addLogWriter(get<FileLogger>())
             if (!isDebug() && !isInstrumentedTest()) {
                 Logger.addLogWriter(
                     CrashlyticsLogWriter(

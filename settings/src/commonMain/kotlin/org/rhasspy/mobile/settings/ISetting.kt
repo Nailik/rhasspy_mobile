@@ -10,18 +10,21 @@ import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.data.service.option.IOption
 import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.platformspecific.readOnly
 
-private val settings = Settings()
 private val logger = Logger.withTag("ISetting")
 
 open class ISetting<T>(
     private val key: SettingsEnum,
     private val initial: T,
     private val serializer: KSerializer<T>? = null
-) {
+) : KoinComponent {
+
+    private val settings = get<Settings>()
 
     /**
      * data used to get current saved value or to set value for unsaved changes

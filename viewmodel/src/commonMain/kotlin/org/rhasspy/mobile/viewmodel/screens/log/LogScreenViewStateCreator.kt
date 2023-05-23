@@ -12,7 +12,9 @@ import org.rhasspy.mobile.logic.logger.FileLogger
 import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.settings.AppSetting
 
-class LogScreenViewStateCreator {
+class LogScreenViewStateCreator(
+    private val fileLogger: FileLogger
+) {
 
     private val updaterScope = CoroutineScope(Dispatchers.IO)
 
@@ -20,13 +22,13 @@ class LogScreenViewStateCreator {
         val viewState = MutableStateFlow(getViewState())
         //load file into list
         updaterScope.launch {
-            val lines = FileLogger.getLines()
+            val lines = fileLogger.getLines()
             viewState.update {
                 it.copy(logList = lines)
             }
 
             //collect new log
-            FileLogger.flow.collectIndexed { _, value ->
+            fileLogger.flow.collectIndexed { _, value ->
                 viewState.update {
                     it.copy(
                         logList = it.logList.updateList {

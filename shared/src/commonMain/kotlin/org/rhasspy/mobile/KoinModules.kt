@@ -1,7 +1,9 @@
 package org.rhasspy.mobile
 
+import com.russhwolf.settings.Settings
 import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
+import org.rhasspy.mobile.logic.logger.FileLogger
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.logic.services.audiofocus.AudioFocusService
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
@@ -278,11 +280,14 @@ val viewModelModule = module {
     }
 
     single {
-        LogScreenViewStateCreator()
+        LogScreenViewStateCreator(
+            fileLogger = get()
+        )
     }
     single {
         LogScreenViewModel(
-            viewStateCreator = get()
+            viewStateCreator = get(),
+            fileLogger = get()
         )
     }
 
@@ -474,4 +479,15 @@ val permissionModule = module {
 val factoryModule = module {
     factory { params -> UdpConnection(params[0], params[1]) }
     factory { AudioRecorder() }
+}
+
+val nativeModule = module {
+    single {
+        FileLogger(
+            nativeApplication = get()
+        )
+    }
+    single {
+        Settings()
+    }
 }

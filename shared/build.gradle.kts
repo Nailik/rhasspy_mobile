@@ -58,6 +58,7 @@ kotlin {
                 implementation(Benasher.uuid)
                 implementation(Koin.core)
                 implementation(Square.okio)
+                implementation(Russhwolf.multiplatformSettingsNoArg)
             }
         }
         val commonTest by getting {

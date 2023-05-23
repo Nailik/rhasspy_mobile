@@ -17,19 +17,20 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import okio.Path
 import okio.buffer
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.rhasspy.mobile.data.log.LogElement
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.*
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.settings.AppSetting
 
-object FileLogger : LogWriter(), KoinComponent {
+class FileLogger(
+    private val nativeApplication: NativeApplication
+) : LogWriter() {
     private val logger = Logger.withTag("FileLogger")
 
     //create new file when logfile is 2 MB
-    private val file = Path.commonInternalPath(get(), "logfile.json")
+    private val file = Path.commonInternalPath(nativeApplication, "logfile.json")
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val _flow = MutableSharedFlow<LogElement>()
@@ -71,13 +72,13 @@ object FileLogger : LogWriter(), KoinComponent {
     /**
      * share the log file
      */
-    fun shareLogFile() = file.commonShare(get())
+    fun shareLogFile() = file.commonShare(nativeApplication)
 
     /**
      * save log to external file
      */
     suspend fun saveLogFile() = file.commonSave(
-        get(),
+        nativeApplication,
         "rhasspy_logfile_${
             Clock.System.now().toLocalDateTime(TimeZone.UTC)
         }.json",

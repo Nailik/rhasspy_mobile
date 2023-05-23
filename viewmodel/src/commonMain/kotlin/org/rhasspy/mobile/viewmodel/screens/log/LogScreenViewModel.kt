@@ -20,6 +20,7 @@ import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Consumed.ShowSn
 
 @Stable
 class LogScreenViewModel(
+    private val fileLogger: FileLogger,
     viewStateCreator: LogScreenViewStateCreator
 ) : KViewModel() {
 
@@ -44,7 +45,7 @@ class LogScreenViewModel(
         when (action) {
             SaveLogFile -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    if (!FileLogger.saveLogFile()) {
+                    if (!fileLogger.saveLogFile()) {
                         _viewState.update {
                             it.copy(snackBarText = MR.strings.saveLogFileFailed.stable)
                         }
@@ -53,7 +54,7 @@ class LogScreenViewModel(
             }
 
             ShareLogFile -> {
-                if (!FileLogger.shareLogFile()) {
+                if (!fileLogger.shareLogFile()) {
                     _viewState.update {
                         it.copy(snackBarText = MR.strings.shareLogFileFailed.stable)
                     }

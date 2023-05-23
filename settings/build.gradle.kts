@@ -17,6 +17,7 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.immutable)
                 implementation(Jetbrains.Kotlinx.coroutines)
                 implementation(Touchlab.kermit)
+                implementation(Koin.core)
                 implementation(Russhwolf.multiplatformSettingsNoArg)
                 implementation(Russhwolf.multiplatformSettingsSerialization)
                 implementation(Square.okio)
