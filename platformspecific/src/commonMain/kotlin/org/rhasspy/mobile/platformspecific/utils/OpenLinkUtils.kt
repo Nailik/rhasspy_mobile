@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.utils
+package org.rhasspy.mobile.platformspecific.utils
 
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.platformspecific.clipboard.ClipboardUtils
@@ -7,7 +7,7 @@ import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
 import org.rhasspy.mobile.resources.MR
 
-object OpenLinkUtils {
+class OpenLinkUtils {
 
     /**
      * true: link was opened

@@ -19,6 +19,7 @@ import org.rhasspy.mobile.platformspecific.file.FolderType
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.platformspecific.updateListItem
+import org.rhasspy.mobile.platformspecific.utils.OpenLinkUtils
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
@@ -37,7 +38,6 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WakeWo
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination.CustomKeywordScreen
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.porcupine.PorcupineKeywordConfigurationScreenDestination.DefaultKeywordScreen
-import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
 @Stable
 class WakeWordConfigurationViewModel(
@@ -143,7 +143,7 @@ class WakeWordConfigurationViewModel(
         when (action) {
             AddCustomPorcupineKeyword -> addCustomPorcupineKeyword()
             DownloadCustomPorcupineKeyword -> {
-                if (!OpenLinkUtils.openLink(LinkType.PicoVoiceCustomWakeWord)) {
+                if (!get<OpenLinkUtils>().openLink(LinkType.PicoVoiceCustomWakeWord)) {
                     updateViewState {
                         it.copy(snackBarText = MR.strings.linkOpenFailed.stable)
                     }
@@ -151,7 +151,7 @@ class WakeWordConfigurationViewModel(
             }
 
             OpenPicoVoiceConsole -> {
-                if (!OpenLinkUtils.openLink(LinkType.PicoVoiceConsole)) {
+                if (!get<OpenLinkUtils>().openLink(LinkType.PicoVoiceConsole)) {
                     updateViewState {
                         it.copy(snackBarText = MR.strings.linkOpenFailed.stable)
                     }

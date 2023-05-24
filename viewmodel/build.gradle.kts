@@ -33,8 +33,7 @@ kotlin {
             dependsOn(commonMain)
             dependencies {
                 implementation(Kotlin.test)
-                implementation(Kotlin.Test.junit)
-                implementation(Koin.test)
+                implementation(KotlinX.Coroutines.test)
                 implementation(Russhwolf.multiplatformSettingsTest)
             }
         }
@@ -47,6 +46,8 @@ kotlin {
         val androidUnitTest by getting {
             dependsOn(commonTest)
             dependencies {
+                implementation(Koin.test)
+                implementation(Kotlin.test)
                 implementation("io.mockk:mockk:_")
             }
         }

@@ -4,10 +4,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.data.event.EventState
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
@@ -23,7 +21,6 @@ import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
-import org.rhasspy.mobile.viewmodel.screens.configuration.IConfigurationScreenUiStateEvent.ScrollToErrorEventIState
 
 class ConfigurationScreenViewStateCreator(
     private val httpClientService: HttpClientService,
@@ -39,8 +36,6 @@ class ConfigurationScreenViewStateCreator(
 ) {
     private val updaterScope = CoroutineScope(Dispatchers.IO)
 
-    private val scrollToErrorEvent = MutableStateFlow(ScrollToErrorEventIState(EventState.Consumed, 0))
-
     private val serviceStateFlow = combineStateFlow(
         httpClientService.serviceState,
         webServerService.serviceState,
@@ -53,10 +48,15 @@ class ConfigurationScreenViewStateCreator(
         dialogManagerService.serviceState,
         intentHandlingService.serviceState
     )
+    private val firstErrorIndex = serviceStateFlow.mapReadonlyState(sharingStarted = SharingStarted.Eagerly) { array ->
+        val index = array.indexOfFirst { it is ServiceState.Error || it is ServiceState.Exception }
+        return@mapReadonlyState if (index != -1) index else null
+    }
+    private val hasError = firstErrorIndex.mapReadonlyState { it != null }
 
-    private val viewState = MutableStateFlow(getViewState())
+    private val viewState = MutableStateFlow(getViewState(null))
 
-    operator fun invoke(): StateFlow<ConfigurationScreenViewState> {
+    operator fun invoke(): MutableStateFlow<ConfigurationScreenViewState> {
         updaterScope.launch {
             combineStateFlow(
                 ConfigurationSetting.siteId.data,
@@ -71,24 +71,14 @@ class ConfigurationScreenViewStateCreator(
                 ConfigurationSetting.intentHandlingOption.data,
                 mqttService.isConnected
             ).collect {
-                viewState.value = getViewState()
+                viewState.value = getViewState(viewState.value.scrollToError)
             }
         }
 
         return viewState
     }
 
-    fun updateScrollToError(eventState: EventState) {
-        scrollToErrorEvent.update {
-            it.copy(
-                eventState = eventState,
-                firstErrorIndex = viewState.value.firstErrorIndex.value ?: it.firstErrorIndex
-            )
-        }
-    }
-
-
-    private fun getViewState(): ConfigurationScreenViewState {
+    private fun getViewState(scrollToError: Int?): ConfigurationScreenViewState {
         return ConfigurationScreenViewState(
             siteId = SiteIdViewState(
                 text = ConfigurationSetting.siteId.data
@@ -133,9 +123,9 @@ class ConfigurationScreenViewStateCreator(
                 intentHandlingOption = ConfigurationSetting.intentHandlingOption.value,
                 serviceState = ServiceViewState(intentHandlingService.serviceState)
             ),
-            hasError = serviceStateFlow.mapReadonlyState { array -> array.firstOrNull { it is ServiceState.Error } != null },
-            firstErrorIndex = serviceStateFlow.mapReadonlyState { array -> array.indexOfFirst { it is ServiceState.Error } },
-            scrollToErrorEvent = scrollToErrorEvent
+            hasError = hasError,
+            firstErrorIndex = firstErrorIndex,
+            scrollToError = scrollToError
         )
     }
 

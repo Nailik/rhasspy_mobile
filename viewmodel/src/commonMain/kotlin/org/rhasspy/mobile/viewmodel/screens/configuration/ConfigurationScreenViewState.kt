@@ -3,7 +3,6 @@ package org.rhasspy.mobile.viewmodel.screens.configuration
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.data.service.option.*
-import org.rhasspy.mobile.viewmodel.screens.configuration.IConfigurationScreenUiStateEvent.ScrollToErrorEventIState
 
 @Stable
 data class ConfigurationScreenViewState internal constructor(
@@ -20,7 +19,7 @@ data class ConfigurationScreenViewState internal constructor(
     val intentHandling: IntentHandlingViewState,
     val hasError: StateFlow<Boolean>,
     val firstErrorIndex: StateFlow<Int?>,
-    val scrollToErrorEvent: StateFlow<ScrollToErrorEventIState>
+    val scrollToError: Int?
 ) {
 
     @Stable

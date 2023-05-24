@@ -2,12 +2,14 @@ package org.rhasspy.mobile.viewmodel.configuration.webserver
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.launch
+import org.koin.core.component.get
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
+import org.rhasspy.mobile.platformspecific.utils.OpenLinkUtils
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
@@ -17,7 +19,6 @@ import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurati
 import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WebServerConfigurationScreenDestination.EditScreen
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WebServerConfigurationScreenDestination.TestScreen
-import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
 @Stable
 class WebServerConfigurationViewModel(
@@ -69,7 +70,7 @@ class WebServerConfigurationViewModel(
     }
 
     private fun openWebServerSSLWiki() {
-        if (!OpenLinkUtils.openLink(LinkType.WikiWebServerSSL)) {
+        if (!get<OpenLinkUtils>().openLink(LinkType.WikiWebServerSSL)) {
             updateViewState {
                 it.copy(snackBarText = MR.strings.linkOpenFailed.stable)
             }

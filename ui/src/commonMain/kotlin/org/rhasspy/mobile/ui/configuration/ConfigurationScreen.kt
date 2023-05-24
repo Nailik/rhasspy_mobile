@@ -25,8 +25,9 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenN
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.ConfigurationScreen
 import org.rhasspy.mobile.viewmodel.screens.configuration.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.Navigate
-import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToError
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToErrorClick
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Change.SiteIdChange
+import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Consumed.ScrollToError
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenViewState.*
 
 /**
@@ -46,7 +47,6 @@ fun ConfigurationScreen() {
 
                 ConfigurationScreenContent(
                     onEvent = viewModel::onEvent,
-                    onConsumed = viewModel::onConsumed,
                     viewState = viewState
                 )
             }
@@ -70,7 +70,6 @@ fun ConfigurationScreen() {
 @Composable
 fun ConfigurationScreenContent(
     onEvent: (ConfigurationScreenUiEvent) -> Unit,
-    onConsumed: (IConfigurationScreenUiStateEvent) -> Unit,
     viewState: ConfigurationScreenViewState
 ) {
 
@@ -85,78 +84,81 @@ fun ConfigurationScreenContent(
         },
     ) { paddingValues ->
 
-        val hasError by viewState.hasError.collectAsState()
         val scrollState = rememberScrollState()
         val coroutineScope = rememberCoroutineScope()
 
-        UiEventEffect(
-            event = viewState.scrollToErrorEvent.collectAsState().value,
-            onConsumed = onConsumed
-        ) {
-            coroutineScope.launch {
-                scrollState.animateScrollTo(it.firstErrorIndex)
+        LaunchedEffect(viewState.scrollToError) {
+            viewState.scrollToError?.also { index ->
+                coroutineScope.launch {
+                    scrollState.animateScrollTo(index * 2 + 2) //duplicate for divider
+                    onEvent(ScrollToError)
+                }
             }
-        }
-
-
-        if (hasError) {
-            ServiceErrorInformation(onEvent)
         }
 
         Column(
             modifier = Modifier
-                .testTag(TestTag.List)
                 .padding(paddingValues)
                 .fillMaxSize()
-                .verticalScroll(scrollState)
         ) {
 
-            SiteId(viewState.siteId, onEvent)
-            CustomDivider()
+            if (viewState.hasError.collectAsState().value) {
+                ServiceErrorInformation(onEvent)
+            }
+
+            Column(
+                modifier = Modifier
+                    .testTag(TestTag.List)
+                    .weight(1f)
+                    .verticalScroll(scrollState)
+            ) {
+
+                SiteId(viewState.siteId, onEvent)
+                CustomDivider()
+
+                RemoteHermesHttp(viewState.remoteHermesHttp, onEvent)
+                CustomDivider()
 
 
-            RemoteHermesHttp(viewState.remoteHermesHttp, onEvent)
-            CustomDivider()
+                Webserver(viewState.webserver, onEvent)
+                CustomDivider()
 
 
-            Webserver(viewState.webserver, onEvent)
-            CustomDivider()
+                Mqtt(viewState.mqtt, onEvent)
+                CustomDivider()
 
 
-            Mqtt(viewState.mqtt, onEvent)
-            CustomDivider()
+                WakeWord(viewState.wakeWord, onEvent)
+                CustomDivider()
 
 
-            WakeWord(viewState.wakeWord, onEvent)
-            CustomDivider()
+                SpeechToText(viewState.speechToText, onEvent)
+                CustomDivider()
 
 
-            SpeechToText(viewState.speechToText, onEvent)
-            CustomDivider()
+                IntentRecognition(viewState.intentRecognition, onEvent)
+                CustomDivider()
 
 
-            IntentRecognition(viewState.intentRecognition, onEvent)
-            CustomDivider()
+                TextToSpeech(viewState.textToSpeech, onEvent)
+                CustomDivider()
 
 
-            TextToSpeech(viewState.textToSpeech, onEvent)
-            CustomDivider()
+                AudioPlaying(viewState.audioPlaying, onEvent)
+                CustomDivider()
 
 
-            AudioPlaying(viewState.audioPlaying, onEvent)
-            CustomDivider()
+                DialogManagement(viewState.dialogManagement, onEvent)
+                CustomDivider()
 
 
-            DialogManagement(viewState.dialogManagement, onEvent)
-            CustomDivider()
+                IntentHandling(viewState.intentHandling, onEvent)
+                CustomDivider()
 
-
-            IntentHandling(viewState.intentHandling, onEvent)
-            CustomDivider()
-
+            }
         }
-    }
 
+    }
 }
 
 /**
@@ -177,7 +179,7 @@ private fun ServiceErrorInformation(
             colors = CardDefaults.outlinedCardColors(
                 containerColor = MaterialTheme.colorScheme.errorContainer
             ),
-            onClick = { onEvent(ScrollToError) }
+            onClick = { onEvent(ScrollToErrorClick) }
         ) {
             Row(
                 modifier = Modifier

@@ -3,9 +3,11 @@ package org.rhasspy.mobile.viewmodel.screens.about
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import org.koin.core.component.get
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.readOnly
+import org.rhasspy.mobile.platformspecific.utils.OpenLinkUtils
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.viewmodel.KViewModel
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.*
@@ -13,7 +15,6 @@ import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.Back
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.OpenSourceCode
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Consumed.ShowSnackBar
-import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
 /**
  * For About screen that displays app information
@@ -67,7 +68,7 @@ class AboutScreenViewModel(
     }
 
     private fun openSourceCode() {
-        if (!OpenLinkUtils.openLink(LinkType.SourceCode)) {
+        if (!get<OpenLinkUtils>().openLink(LinkType.SourceCode)) {
             _viewState.update {
                 it.copy(snackBarText = MR.strings.linkOpenFailed.stable)
             }

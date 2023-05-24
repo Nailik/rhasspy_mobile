@@ -1,30 +1,25 @@
 package org.rhasspy.mobile.viewmodel
 
-import io.mockk.MockKAnnotations
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.koin.core.context.startKoin
-import org.koin.core.context.stopKoin
 import org.koin.dsl.module
-import org.koin.test.KoinTest
-import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.KViewModelEvent.Action.OverlayPermissionDialogResult
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
-import kotlin.test.*
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
-class KViewModelTest : KoinTest {
+class KViewModelTest : AppTest() {
 
     @RelaxedMockK
     lateinit var navigator: Navigator
-
-    @RelaxedMockK
-    lateinit var nativeApplication: NativeApplication
 
     @RelaxedMockK
     lateinit var microphonePermission: MicrophonePermission
@@ -39,24 +34,16 @@ class KViewModelTest : KoinTest {
 
     @BeforeTest
     fun before() {
-        startKoin {
-            modules(
-                module {
-                    single { nativeApplication }
-                    single { navigator }
-                    single { microphonePermission }
-                    single { overlayPermission }
-                }
-            )
-        }
+        super.before(
+            module {
+                single { nativeApplication }
+                single { navigator }
+                single { microphonePermission }
+                single { overlayPermission }
+            }
+        )
 
-        MockKAnnotations.init(this, relaxUnitFun = false)
         kViewModel = object : KViewModel() {}
-    }
-
-    @AfterTest
-    fun after() {
-        stopKoin()
     }
 
     @Test

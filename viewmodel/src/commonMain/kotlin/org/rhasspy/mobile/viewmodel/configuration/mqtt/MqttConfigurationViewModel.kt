@@ -2,12 +2,14 @@ package org.rhasspy.mobile.viewmodel.configuration.mqtt
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.launch
+import org.koin.core.component.get
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
+import org.rhasspy.mobile.platformspecific.utils.OpenLinkUtils
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
@@ -17,7 +19,6 @@ import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.
 import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Consumed.ShowSnackBar
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.MqttConfigurationScreenDestination.EditScreen
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.MqttConfigurationScreenDestination.TestScreen
-import org.rhasspy.mobile.viewmodel.utils.OpenLinkUtils
 
 @Stable
 class MqttConfigurationViewModel(
@@ -72,7 +73,7 @@ class MqttConfigurationViewModel(
     }
 
     private fun openMqttSSLWikiLink() {
-        if (!OpenLinkUtils.openLink(LinkType.WikiMQTTSSL)) {
+        if (!get<OpenLinkUtils>().openLink(LinkType.WikiMQTTSSL)) {
             updateViewState {
                 it.copy(snackBarText = MR.strings.linkOpenFailed.stable)
             }

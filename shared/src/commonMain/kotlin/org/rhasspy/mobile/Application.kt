@@ -17,6 +17,7 @@ import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.logic.logger.FileLogger
+import org.rhasspy.mobile.logic.logicModule
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerService
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
@@ -25,10 +26,13 @@ import org.rhasspy.mobile.platformspecific.background.BackgroundService
 import org.rhasspy.mobile.platformspecific.language.setupLanguage
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
+import org.rhasspy.mobile.platformspecific.platformSpecificModule
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.utils.isDebug
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.settings.settingsModule
+import org.rhasspy.mobile.viewmodel.viewModelModule
 
 abstract class Application : NativeApplication(), KoinComponent {
     private val logger = Logger.withTag("Application")
@@ -43,13 +47,10 @@ abstract class Application : NativeApplication(), KoinComponent {
                 module {
                     single<NativeApplication> { this@Application }
                 },
-                nativeModule,
-                navigatorModule,
-                viewModelFactory,
-                serviceModule,
+                logicModule,
                 viewModelModule,
-                factoryModule,
-                permissionModule
+                settingsModule,
+                platformSpecificModule
             )
         }
 

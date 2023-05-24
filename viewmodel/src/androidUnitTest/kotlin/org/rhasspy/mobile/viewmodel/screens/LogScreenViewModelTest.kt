@@ -1,21 +1,19 @@
-package org.rhasspy.mobile.viewmodel.screens.log
+package org.rhasspy.mobile.viewmodel.screens
 
-import io.mockk.MockKAnnotations
 import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
-import org.koin.core.context.startKoin
-import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.get
 import org.rhasspy.mobile.logic.logger.FileLogger
-import org.rhasspy.mobile.viewmodel.IKViewModelTest
+import org.rhasspy.mobile.viewmodel.AppTest
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Action.SaveLogFile
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Action.ShareLogFile
-import kotlin.test.AfterTest
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
+import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewStateCreator
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class LogScreenViewModelTest : IKViewModelTest() {
+class LogScreenViewModelTest : AppTest() {
 
     @RelaxedMockK
     lateinit var fileLogger: FileLogger
@@ -23,29 +21,15 @@ class LogScreenViewModelTest : IKViewModelTest() {
     private lateinit var logScreenViewModel: LogScreenViewModel
 
     @BeforeTest
-    override fun before() {
-        val modulesList = initModules().apply {
-            add(
-                module {
-                    single { fileLogger }
-                    single { settings }
-                    single { LogScreenViewStateCreator(get()) }
-                }
-            )
-        }
-        startKoin {
-            modules(modulesList)
-        }
+    fun before() {
+        super.before(
+            module {
+                single { fileLogger }
+                single { LogScreenViewStateCreator(get()) }
+            }
+        )
 
-        MockKAnnotations.init(this, relaxUnitFun = true)
-
-        super.before()
         logScreenViewModel = LogScreenViewModel(get(), get())
-    }
-
-    @AfterTest
-    fun after() {
-        stopKoin()
     }
 
     @Test
