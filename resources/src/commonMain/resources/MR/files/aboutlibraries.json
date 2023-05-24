@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated": "2023-05-23T22:22:24.433Z"
+    "generated": "2023-05-24T22:30:32.159Z"
   },
   "libraries": [
     {
@@ -1290,7 +1290,7 @@
           "name": "Bal\u00e1zs Varga"
         }
       ],
-      "artifactVersion": "0.22.2",
+      "artifactVersion": "0.22.3",
       "description": "Resources access for Kotlin Multiplatform development (mobile first)",
       "scm": {
         "connection": "scm:git:ssh://github.com/icerockdev/moko-resources.git",
