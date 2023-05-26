@@ -11,7 +11,6 @@ import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayUiEvent.
 import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayUiEvent.Action.ToggleUserSession
 import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayUiEvent.Change
 import org.rhasspy.mobile.viewmodel.overlay.microphone.MicrophoneOverlayUiEvent.Change.UpdateMicrophoneOverlayPosition
-import kotlin.math.roundToInt
 
 @Stable
 class MicrophoneOverlayViewModel(
@@ -32,8 +31,8 @@ class MicrophoneOverlayViewModel(
     private fun onChange(change: Change) {
         when (change) {
             is UpdateMicrophoneOverlayPosition -> {
-                val newPositionX = (AppSetting.microphoneOverlayPositionX.value + change.offsetX).roundToInt()
-                val newPositionY = (AppSetting.microphoneOverlayPositionY.value + change.offsetY).roundToInt()
+                val newPositionX = (AppSetting.microphoneOverlayPositionX.value + change.offsetX).toInt()
+                val newPositionY = (AppSetting.microphoneOverlayPositionY.value + change.offsetY).toInt()
                 AppSetting.microphoneOverlayPositionX.value = newPositionX
                 AppSetting.microphoneOverlayPositionY.value = newPositionY
             }

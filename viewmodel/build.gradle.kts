@@ -46,6 +46,8 @@ kotlin {
         val androidUnitTest by getting {
             dependsOn(commonTest)
             dependencies {
+                implementation(project(":androidApp"))
+                implementation(project(":shared"))
                 implementation(Koin.test)
                 implementation(Kotlin.test)
                 implementation("io.mockk:mockk:_")

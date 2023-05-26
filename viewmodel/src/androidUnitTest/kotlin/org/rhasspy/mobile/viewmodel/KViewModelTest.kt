@@ -36,7 +36,6 @@ class KViewModelTest : AppTest() {
     fun before() {
         super.before(
             module {
-                single { nativeApplication }
                 single { navigator }
                 single { microphonePermission }
                 single { overlayPermission }

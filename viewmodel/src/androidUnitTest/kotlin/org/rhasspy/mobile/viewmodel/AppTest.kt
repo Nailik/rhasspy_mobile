@@ -1,10 +1,9 @@
 package org.rhasspy.mobile.viewmodel
 
+import android.os.Looper
 import com.russhwolf.settings.Settings
-import io.mockk.MockKAnnotations
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.slot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.setMain
@@ -13,6 +12,7 @@ import org.koin.core.context.stopKoin
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.koin.test.KoinTest
+import org.rhasspy.mobile.android.AndroidApplication
 import org.rhasspy.mobile.logic.logicModule
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.platformSpecificModule
@@ -23,11 +23,16 @@ abstract class AppTest : KoinTest {
     @RelaxedMockK
     lateinit var settings: Settings
 
-    @RelaxedMockK
-    lateinit var nativeApplication: NativeApplication
-
     @OptIn(ExperimentalCoroutinesApi::class)
     open fun before(module: Module) {
+        mockkStatic(Looper::class)
+        val looper = mockk<Looper> {
+            every { thread } returns Thread.currentThread()
+        }
+
+        every { Looper.getMainLooper() } returns looper
+
+
         Dispatchers.setMain(Dispatchers.Unconfined)
         startKoin {
             modules(
@@ -36,7 +41,8 @@ abstract class AppTest : KoinTest {
                 platformSpecificModule,
                 module {
                     single { settings }
-                    single { nativeApplication }
+                    @Suppress("USELESS_CAST")
+                    single { AndroidApplication() as NativeApplication }
                 },
                 module
             )

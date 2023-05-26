@@ -13,14 +13,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
-import org.rhasspy.mobile.logic.middleware.ServiceMiddlewareAction.DialogServiceMiddlewareAction.WakeWordDetected
-import org.rhasspy.mobile.logic.middleware.Source
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
-import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.ui.main.MainScreen
 import org.rhasspy.mobile.viewmodel.ViewModelFactory
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenUiEvent.Action.MicrophoneFabClick
+import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewModel
 import org.rhasspy.mobile.widget.microphone.MicrophoneWidgetUtils
 
 
@@ -54,13 +52,11 @@ class MainActivity : KoinComponent, AppCompatActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
-        if (intent.getBooleanExtra(IntentAction.StartRecording.param, false)) {
-            if (get<MicrophonePermission>().granted.value) {
-                get<ServiceMiddleware>().action(WakeWordDetected(Source.Local, wakeWord = "intent"))
-            }
-        }
-
         val viewModelFactory = get<ViewModelFactory>()
+
+        if (intent.getBooleanExtra(IntentAction.StartRecording.param, false)) {
+            viewModelFactory.getViewModel<HomeScreenViewModel>().onEvent(MicrophoneFabClick)
+        }
 
         this.setContent {
             MainScreen(viewModelFactory)

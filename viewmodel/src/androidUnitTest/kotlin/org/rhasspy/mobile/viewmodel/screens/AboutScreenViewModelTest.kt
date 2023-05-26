@@ -34,7 +34,6 @@ class AboutScreenViewModelTest : AppTest() {
     @RelaxedMockK
     lateinit var aboutScreenViewStateCreator: AboutScreenViewStateCreator
 
-
     private lateinit var aboutScreenViewModel: AboutScreenViewModel
     private lateinit var navigator: Navigator
 
