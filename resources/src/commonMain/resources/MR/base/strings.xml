@@ -383,7 +383,7 @@
     <string name="heyGoogle">Hey Google</string>
     <string name="heySiri">Hey Siri</string>
     <string name="okGoogle">OK Google</string>
-    <string name="logSettings">Log-Einstellungen</string>
+    <string name="logSettings">Log Settings</string>
     <string name="verbose">Verbose</string>
     <string name="debug">Debug</string>
     <string name="info">Info</string>
