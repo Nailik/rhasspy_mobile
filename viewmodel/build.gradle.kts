@@ -48,6 +48,7 @@ kotlin {
             dependencies {
                 implementation(project(":androidApp"))
                 implementation(project(":shared"))
+                implementation(project(":platformspecific"))
                 implementation(Koin.test)
                 implementation(Kotlin.test)
                 implementation("io.mockk:mockk:_")

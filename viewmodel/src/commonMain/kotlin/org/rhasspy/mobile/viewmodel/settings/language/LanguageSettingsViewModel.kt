@@ -3,7 +3,7 @@ package org.rhasspy.mobile.viewmodel.settings.language
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import org.rhasspy.mobile.platformspecific.language.setLanguage
+import org.rhasspy.mobile.platformspecific.language.LanguageUtils
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.KViewModel
@@ -13,7 +13,9 @@ import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Ch
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SelectLanguageOption
 
 @Stable
-class LanguageSettingsViewModel : KViewModel() {
+class LanguageSettingsViewModel(
+    private val languageUtils: LanguageUtils
+) : KViewModel() {
 
     private val _viewState = MutableStateFlow(LanguageSettingsViewState())
     val viewState = _viewState.readOnly
@@ -30,7 +32,7 @@ class LanguageSettingsViewModel : KViewModel() {
             when (change) {
                 is SelectLanguageOption -> {
                     AppSetting.languageType.value = change.option
-                    setLanguage(change.option)
+                    languageUtils.setLanguage(change.option)
                     it.copy(languageOption = change.option)
                 }
             }

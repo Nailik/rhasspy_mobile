@@ -2,10 +2,14 @@ package org.rhasspy.mobile.platformspecific.language
 
 import org.rhasspy.mobile.data.language.LanguageType
 
-expect fun getDeviceLanguage(): LanguageType
+expect class LanguageUtils() {
 
-expect fun setupLanguage(defaultLanguageType: LanguageType): LanguageType
+    fun getDeviceLanguage(): LanguageType
 
-expect fun getSystemAppLanguage(): LanguageType?
+    fun setupLanguage(defaultLanguageType: LanguageType): LanguageType
 
-expect fun setLanguage(languageType: LanguageType)
+    fun getSystemAppLanguage(): LanguageType?
+
+    fun setLanguage(languageType: LanguageType)
+
+}

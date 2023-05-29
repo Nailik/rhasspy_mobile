@@ -51,6 +51,7 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoun
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsViewStateCreator
@@ -329,7 +330,9 @@ val viewModelModule = module {
     }
 
     single {
-        LanguageSettingsViewModel()
+        LanguageSettingsViewModel(
+            languageUtils = get()
+        )
     }
 
     single {
@@ -337,7 +340,16 @@ val viewModelModule = module {
             nativeApplication = get()
         )
     }
-    single { MicrophoneOverlaySettingsViewModel() }
+
+    single {
+        MicrophoneOverlaySettingsViewStateCreator()
+    }
+    single {
+        MicrophoneOverlaySettingsViewModel(
+            viewStateCreator = get()
+        )
+    }
+
     single { SaveAndRestoreSettingsViewModel() }
 
     single {

@@ -4,6 +4,7 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.platformspecific.background.BackgroundService
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
+import org.rhasspy.mobile.platformspecific.language.LanguageUtils
 import org.rhasspy.mobile.platformspecific.permission.BatteryOptimization
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
@@ -44,5 +45,8 @@ val platformSpecificModule = module {
         ExternalResultRequest(
             nativeApplication = get()
         )
+    }
+    single {
+        LanguageUtils()
     }
 }

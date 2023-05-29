@@ -23,7 +23,7 @@ import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.background.BackgroundService
-import org.rhasspy.mobile.platformspecific.language.setupLanguage
+import org.rhasspy.mobile.platformspecific.language.LanguageUtils
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.platformspecific.platformSpecificModule
@@ -124,6 +124,6 @@ abstract class Application : NativeApplication(), KoinComponent {
     }
 
     private fun initializeLanguage() {
-        AppSetting.languageType.value = setupLanguage(AppSetting.languageType.value)
+        AppSetting.languageType.value = get<LanguageUtils>().setupLanguage(AppSetting.languageType.value)
     }
 }
