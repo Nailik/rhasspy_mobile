@@ -83,7 +83,7 @@ abstract class Application : NativeApplication(), KoinComponent {
 
             //start foreground service if enabled
             if (AppSetting.isBackgroundServiceEnabled.value) {
-                BackgroundService.start()
+                get<BackgroundService>().start()
             }
 
             //check if overlay permission is granted

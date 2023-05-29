@@ -12,7 +12,8 @@ import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
  * to check microphone permission
  */
 actual class MicrophonePermission actual constructor(
-    private val nativeApplication: NativeApplication
+    private val nativeApplication: NativeApplication,
+    private val externalResultRequest: ExternalResultRequest
 ) {
 
     /**
@@ -51,7 +52,7 @@ actual class MicrophonePermission actual constructor(
     }
 
     actual suspend fun request() {
-        _granted.value = ExternalResultRequest.launchForPermission(Manifest.permission.RECORD_AUDIO)
+        _granted.value = externalResultRequest.launchForPermission(Manifest.permission.RECORD_AUDIO)
     }
 
 }

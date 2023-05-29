@@ -94,7 +94,8 @@ val logicModule = module {
 
     single {
         FileLogger(
-            nativeApplication = get()
+            nativeApplication = get(),
+            externalResultRequest = get()
         )
     }
 }

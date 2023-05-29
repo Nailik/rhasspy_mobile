@@ -2,9 +2,11 @@ package org.rhasspy.mobile.platformspecific.permission
 
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 
 expect class OverlayPermission(
-    nativeApplication: NativeApplication
+    nativeApplication: NativeApplication,
+    externalResultRequest: ExternalResultRequest
 ) {
 
     /**

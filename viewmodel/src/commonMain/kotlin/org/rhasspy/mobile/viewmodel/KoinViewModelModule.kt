@@ -254,7 +254,8 @@ val viewModelModule = module {
     }
     single {
         BackgroundServiceSettingsViewModel(
-            viewStateCreator = get()
+            viewStateCreator = get(),
+            backgroundService = get()
         )
     }
 

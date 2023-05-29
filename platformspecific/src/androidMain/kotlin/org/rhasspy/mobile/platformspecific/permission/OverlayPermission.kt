@@ -9,7 +9,8 @@ import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
 
 actual class OverlayPermission actual constructor(
-    private val nativeApplication: NativeApplication
+    private val nativeApplication: NativeApplication,
+    private val externalResultRequest: ExternalResultRequest
 ) {
 
     private val _granted = MutableStateFlow(isGranted())
@@ -23,12 +24,12 @@ actual class OverlayPermission actual constructor(
      * to request the permission externally, redirect user to settings
      */
     actual fun request(): Boolean {
-        val result = ExternalResultRequest.launch(ExternalResultRequestIntention.OpenOverlaySettings)
+        val result = externalResultRequest.launch(ExternalResultRequestIntention.OpenOverlaySettings)
 
         return if (result is ExternalRedirectResult.Success) {
             true
         } else {
-            return ExternalResultRequest.launch(ExternalResultRequestIntention.OpenAppSettings) is ExternalRedirectResult.Success
+            return externalResultRequest.launch(ExternalResultRequestIntention.OpenAppSettings) is ExternalRedirectResult.Success
         }
     }
 

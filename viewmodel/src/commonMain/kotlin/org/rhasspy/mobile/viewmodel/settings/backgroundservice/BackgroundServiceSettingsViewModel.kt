@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.background.BackgroundService
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.Success
-import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
@@ -29,7 +28,8 @@ import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundService
  */
 @Stable
 class BackgroundServiceSettingsViewModel(
-    viewStateCreator: BackgroundServiceSettingsViewStateCreator
+    viewStateCreator: BackgroundServiceSettingsViewStateCreator,
+    private val backgroundService: BackgroundService
 ) : KViewModel() {
 
     private val _viewState: MutableStateFlow<BackgroundServiceSettingsViewState> = viewStateCreator()
@@ -48,9 +48,9 @@ class BackgroundServiceSettingsViewModel(
             is SetBackgroundServiceSettingsEnabled -> {
                 AppSetting.isBackgroundServiceEnabled.value = change.enabled
                 if (change.enabled) {
-                    BackgroundService.start()
+                    backgroundService.start()
                 } else {
-                    BackgroundService.stop()
+                    backgroundService.stop()
                 }
             }
         }
@@ -73,7 +73,7 @@ class BackgroundServiceSettingsViewModel(
 
     private fun disableBatteryOptimization() {
         viewModelScope.launch(Dispatchers.IO) {
-            if (ExternalResultRequest.launch(ExternalResultRequestIntention.OpenBatteryOptimizationSettings) !is Success) {
+            if (externalResultRequest.launch(ExternalResultRequestIntention.OpenBatteryOptimizationSettings) !is Success) {
                 _viewState.update {
                     it.copy(snackBarText = MR.strings.disableBatteryOptimizationFailed.stable)
                 }

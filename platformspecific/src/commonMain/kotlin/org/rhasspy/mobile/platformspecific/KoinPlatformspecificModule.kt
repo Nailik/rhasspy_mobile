@@ -2,6 +2,8 @@ package org.rhasspy.mobile.platformspecific
 
 import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
+import org.rhasspy.mobile.platformspecific.background.BackgroundService
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 import org.rhasspy.mobile.platformspecific.permission.BatteryOptimization
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
@@ -15,18 +17,32 @@ val platformSpecificModule = module {
     }
     single {
         MicrophonePermission(
-            nativeApplication = get()
+            nativeApplication = get(),
+            externalResultRequest = get()
         )
     }
     single {
         OverlayPermission(
-            nativeApplication = get()
+            nativeApplication = get(),
+            externalResultRequest = get()
         )
     }
     factory {
         AudioRecorder()
     }
     single {
-        OpenLinkUtils()
+        OpenLinkUtils(
+            externalResultRequest = get()
+        )
+    }
+    single {
+        BackgroundService(
+            nativeApplication = get()
+        )
+    }
+    single {
+        ExternalResultRequest(
+            nativeApplication = get()
+        )
     }
 }

@@ -16,16 +16,16 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult.*
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.*
 import kotlin.coroutines.resume
 
-actual object ExternalResultRequest : KoinComponent {
+actual class ExternalResultRequest actual constructor(
+    private val nativeApplication: NativeApplication
+) : KoinComponent {
 
     private val logger = Logger.withTag("ExternalRedirect")
-    private val nativeApplication by inject<NativeApplication>()
 
     private lateinit var someActivityResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var somePermissionResultLauncher: ActivityResultLauncher<String>

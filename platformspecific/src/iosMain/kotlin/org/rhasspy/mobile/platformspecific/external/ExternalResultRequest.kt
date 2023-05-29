@@ -1,6 +1,10 @@
 package org.rhasspy.mobile.platformspecific.external
 
-actual object ExternalResultRequest {
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
+
+actual class ExternalResultRequest actual constructor(
+    private val nativeApplication: NativeApplication
+) {
 
     actual fun <R> launch(intention: ExternalResultRequestIntention<R>): ExternalRedirectResult<R> {
         //TODO("Not yet implemented")

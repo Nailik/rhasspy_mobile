@@ -14,9 +14,11 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 
-actual abstract class NativeApplication : MultiDexApplication() {
+actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
 
     var currentActivity: AppCompatActivity? = null
         private set
@@ -43,7 +45,7 @@ actual abstract class NativeApplication : MultiDexApplication() {
                 //always represents top activity
                 if (p0 is AppCompatActivity) {
                     currentActivity = p0
-                    ExternalResultRequest.registerCallback(p0)
+                    get<ExternalResultRequest>().registerCallback(p0)
                 }
             }
 

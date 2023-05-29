@@ -38,7 +38,7 @@ actual object SettingsUtils : KoinComponent {
         return try {
             logger.d { "exportSettingsFile" }
 
-            val result = ExternalResultRequest.launchForResult(
+            val result = get<ExternalResultRequest>().launchForResult(
                 ExternalResultRequestIntention.CreateDocument(
                     title = "rhasspy_settings_${Clock.System.now().toLocalDateTime(TimeZone.UTC)}.zip",
                     mimeType = "application/zip"
@@ -247,7 +247,7 @@ actual object SettingsUtils : KoinComponent {
                 exportFile
             )
 
-            return ExternalResultRequest.launch(
+            return get<ExternalResultRequest>().launch(
                 ExternalResultRequestIntention.ShareFile(
                     fileUri = fileUri.toString(),
                     mimeType = "application/xml"

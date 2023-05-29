@@ -28,6 +28,7 @@ abstract class KViewModel : ViewModel(), KoinComponent {
 
     protected val navigator by inject<Navigator>()
     protected val microphonePermission = get<MicrophonePermission>()
+    protected val externalResultRequest = get<ExternalResultRequest>()
     private val overlayPermission = get<OverlayPermission>()
 
     private val _kViewState = MutableStateFlow(
@@ -88,7 +89,7 @@ abstract class KViewModel : ViewModel(), KoinComponent {
 
             RequestMicrophonePermissionRedirect -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    if (ExternalResultRequest.launch(ExternalResultRequestIntention.RequestMicrophonePermissionExternally) !is ExternalRedirectResult.Success) {
+                    if (externalResultRequest.launch(ExternalResultRequestIntention.RequestMicrophonePermissionExternally) !is ExternalRedirectResult.Success) {
                         _kViewState.update {
                             it.copy(
                                 microphonePermissionSnackBarText = MR.strings.microphonePermissionRequestFailed.stable,

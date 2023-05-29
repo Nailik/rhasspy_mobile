@@ -6,6 +6,7 @@ import okio.FileSystem
 import okio.Path
 import okio.Source
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
@@ -47,12 +48,20 @@ actual fun Path.commonReadWrite(): FileHandle = FileSystem.SYSTEM.openReadWrite(
 
 actual inline fun <reified T> Path.commonDecodeLogList(): T = Json.decodeFromString("")
 
-actual fun Path.commonShare(nativeApplication: NativeApplication): Boolean {
+actual fun Path.commonShare(
+    nativeApplication: NativeApplication,
+    externalResultRequest: ExternalResultRequest
+): Boolean {
     //TODO("Not yet implemented")
     return true
 }
 
-actual suspend fun Path.commonSave(nativeApplication: NativeApplication, fileName: String, fileType: String): Boolean {
+actual suspend fun Path.commonSave(
+    nativeApplication: NativeApplication,
+    externalResultRequest: ExternalResultRequest,
+    fileName: String,
+    fileType: String
+): Boolean {
     //TODO("Not yet implemented")
     return true
 }

@@ -1,25 +1,22 @@
 package org.rhasspy.mobile.platformspecific.background
 
-import kotlin.native.concurrent.ThreadLocal
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
 
 /**
  * Native Service to run continuously in background
  */
-expect class BackgroundService() {
+expect class BackgroundService(
+    nativeApplication: NativeApplication
+) {
 
-    @ThreadLocal
-    companion object {
+    /**
+     * start background service
+     */
+    fun start()
 
-        /**
-         * start background service
-         */
-        fun start()
-
-        /**
-         * stop background work
-         */
-        fun stop()
-
-    }
+    /**
+     * stop background work
+     */
+    fun stop()
 
 }

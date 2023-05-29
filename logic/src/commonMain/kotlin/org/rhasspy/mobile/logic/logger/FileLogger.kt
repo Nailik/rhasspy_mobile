@@ -20,12 +20,14 @@ import okio.buffer
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.extensions.*
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.settings.AppSetting
 
 class FileLogger(
-    private val nativeApplication: NativeApplication
+    private val nativeApplication: NativeApplication,
+    private val externalResultRequest: ExternalResultRequest
 ) : LogWriter() {
     private val logger = Logger.withTag("FileLogger")
 
@@ -72,13 +74,14 @@ class FileLogger(
     /**
      * share the log file
      */
-    fun shareLogFile() = file.commonShare(nativeApplication)
+    fun shareLogFile() = file.commonShare(nativeApplication, externalResultRequest)
 
     /**
      * save log to external file
      */
     suspend fun saveLogFile() = file.commonSave(
         nativeApplication,
+        externalResultRequest,
         "rhasspy_logfile_${
             Clock.System.now().toLocalDateTime(TimeZone.UTC)
         }.json",

@@ -3,9 +3,11 @@ package org.rhasspy.mobile.platformspecific.permission
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 
 actual class MicrophonePermission actual constructor(
-    private val nativeApplication: NativeApplication
+    private val nativeApplication: NativeApplication,
+    private val externalResultRequest: ExternalResultRequest
 ) {
 
     /**
