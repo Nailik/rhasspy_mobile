@@ -43,6 +43,7 @@ import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundService
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.devicesettings.DeviceSettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.ErrorIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.RecordedIndicationSoundSettingsViewModel
@@ -269,7 +270,12 @@ val viewModelModule = module {
     }
 
     single {
-        IndicationSettingsViewModel()
+        IndicationSettingsViewStateCreator()
+    }
+    single {
+        IndicationSettingsViewModel(
+            viewStateCreator = get()
+        )
     }
 
 

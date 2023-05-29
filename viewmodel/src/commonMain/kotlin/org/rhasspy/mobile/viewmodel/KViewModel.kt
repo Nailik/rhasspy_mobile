@@ -58,12 +58,11 @@ abstract class KViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    inline fun <reified T> requireOverlayPermission(value: T, function: () -> T): T {
+    fun requireOverlayPermission(function: () -> Unit) {
         return if (get<OverlayPermission>().granted.value) {
             function()
         } else {
             onEvent(RequestOverlayPermission)
-            value
         }
     }
 
