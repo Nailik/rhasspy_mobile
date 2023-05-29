@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.settings.language
+package org.rhasspy.mobile.viewmodel.settings
 
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.verify
@@ -9,6 +9,7 @@ import org.rhasspy.mobile.platformspecific.language.LanguageUtils
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.AppTest
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsUiEvent.Change.SelectLanguageOption
+import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

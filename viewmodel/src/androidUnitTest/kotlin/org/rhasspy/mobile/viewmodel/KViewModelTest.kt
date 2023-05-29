@@ -95,7 +95,7 @@ class KViewModelTest : AppTest() {
     fun `when the overlay permission is required but not given it's requested`() {
         every { overlayPermission.granted } returns MutableStateFlow(false).readOnly
 
-        kViewModel.requireOverlayPermission(Unit, function)
+        kViewModel.requireOverlayPermission(function)
         kViewModel.onEvent(OverlayPermissionDialogResult(true))
 
         coVerify { overlayPermission.request() }
@@ -105,7 +105,7 @@ class KViewModelTest : AppTest() {
     fun `when the overlay permission is required abd given the function is executed`() {
         every { overlayPermission.granted } returns MutableStateFlow(true).readOnly
 
-        kViewModel.requireOverlayPermission(Unit, function)
+        kViewModel.requireOverlayPermission(function)
 
         coVerify(exactly = 0) { overlayPermission.request() }
         verify { function() }
@@ -114,7 +114,7 @@ class KViewModelTest : AppTest() {
     @Test
     fun `when overlay permission dialog is shown onBackPressClick doesn't close screen`() {
         every { overlayPermission.granted } returns MutableStateFlow(false).readOnly
-        kViewModel.requireOverlayPermission(Unit, function)
+        kViewModel.requireOverlayPermission(function)
 
         assertTrue { kViewModel.kViewState.value.isShowOverlayPermissionInformationDialog }
 
