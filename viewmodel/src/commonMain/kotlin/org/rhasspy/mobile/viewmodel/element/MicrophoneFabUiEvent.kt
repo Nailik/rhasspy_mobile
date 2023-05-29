@@ -4,7 +4,7 @@ sealed interface MicrophoneFabUiEvent {
 
     sealed interface Action : MicrophoneFabUiEvent {
 
-        object UserSessionClick : Action
+        object MicrophoneFabClick : Action
 
     }
 

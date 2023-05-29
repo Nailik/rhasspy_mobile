@@ -7,7 +7,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent.Action.UserSessionClick
+import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent.Action.MicrophoneFabClick
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 
 /**
@@ -16,7 +16,7 @@ import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
 class StartRecordingReceiver : KoinComponent, BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (get<MicrophonePermission>().granted.value) {
-            get<MicrophoneFabViewModel>().onEvent(UserSessionClick)
+            get<MicrophoneFabViewModel>().onEvent(MicrophoneFabClick)
         } else {
             get<NativeApplication>().startRecordingAction()
         }

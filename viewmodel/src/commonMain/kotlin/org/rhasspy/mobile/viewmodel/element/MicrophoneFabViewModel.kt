@@ -6,7 +6,7 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.viewmodel.KViewModel
 import org.rhasspy.mobile.viewmodel.KViewModelEvent.Action.RequestMicrophonePermission
 import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent.Action
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent.Action.UserSessionClick
+import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent.Action.MicrophoneFabClick
 
 @Stable
 class MicrophoneFabViewModel(
@@ -24,7 +24,7 @@ class MicrophoneFabViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            UserSessionClick -> {
+            MicrophoneFabClick -> {
                 if (!microphonePermission.granted.value) {
                     onEvent(RequestMicrophonePermission)
                 } else {

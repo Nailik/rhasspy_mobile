@@ -30,7 +30,7 @@ class Navigator(
 
 
     fun popBackStack() {
-        if (navStack.value.size == 1) {
+        if (navStack.value.size <= 1) {
             nativeApplication.closeApp()
         } else {
             _navStack.update {
@@ -64,7 +64,7 @@ class Navigator(
         }
     }
 
-    inline fun <reified T : NavigationDestination> replace(screen: NavigationDestination) {
+    internal inline fun <reified T : NavigationDestination> replace(screen: NavigationDestination) {
         val currentStack = navStack.value
         updateNavStack(currentStack.updateList {
             val index = indexOfLast { it is T }
@@ -76,7 +76,7 @@ class Navigator(
         })
     }
 
-    fun updateNavStack(list: ImmutableList<NavigationDestination>) {
+    internal fun updateNavStack(list: ImmutableList<NavigationDestination>) {
         _navStack.value = list
     }
 
