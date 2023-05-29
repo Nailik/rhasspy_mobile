@@ -50,6 +50,7 @@ import org.rhasspy.mobile.viewmodel.settings.indication.sound.RecordedIndication
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.WakeIndicationSoundSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.language.LanguageSettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
+import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsViewModel
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsViewStateCreator
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsViewModel
@@ -336,7 +337,11 @@ val viewModelModule = module {
     }
 
     single {
+        LogSettingsViewStateCreator()
+    }
+    single {
         LogSettingsViewModel(
+            viewStateCreator = get(),
             nativeApplication = get()
         )
     }
