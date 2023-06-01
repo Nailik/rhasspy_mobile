@@ -35,7 +35,7 @@ actual class AudioRecorder : KoinComponent {
     /**
      * max volume since start recording
      */
-    private val _maxVolume = MutableStateFlow<Short>(0)
+    private val _maxVolume = MutableStateFlow(0f)
     actual val maxVolume = _maxVolume.readOnly
 
     //state if currently recording
@@ -44,7 +44,7 @@ actual class AudioRecorder : KoinComponent {
 
     //maximum audio level that can happen
     //https://developer.android.com/reference/android/media/AudioFormat#encoding
-    actual val absoluteMaxVolume = 32767.0
+    actual val absoluteMaxVolume = 32767.0f
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
@@ -139,7 +139,7 @@ actual class AudioRecorder : KoinComponent {
                                 }
                             }
                         }
-                        _maxVolume.value = max
+                        _maxVolume.value = max.toFloat()
                     }
 
                     _output.emit(byteArray)

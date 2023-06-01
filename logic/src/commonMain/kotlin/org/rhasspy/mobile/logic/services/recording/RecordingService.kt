@@ -65,7 +65,7 @@ class RecordingService(
         }
     }
 
-    private fun silenceDetection(volume: Short) {
+    private fun silenceDetection(volume: Float) {
         //check enabled
         if (AppSetting.isAutomaticSilenceDetectionEnabled.value) {
 

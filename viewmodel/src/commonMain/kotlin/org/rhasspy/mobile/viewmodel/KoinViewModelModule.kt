@@ -355,7 +355,11 @@ val viewModelModule = module {
         )
     }
 
-    single { SaveAndRestoreSettingsViewModel() }
+    single {
+        SaveAndRestoreSettingsViewModel(
+            settingsUtils = get()
+        )
+    }
 
     single {
         MicrophoneOverlayViewStateCreator(

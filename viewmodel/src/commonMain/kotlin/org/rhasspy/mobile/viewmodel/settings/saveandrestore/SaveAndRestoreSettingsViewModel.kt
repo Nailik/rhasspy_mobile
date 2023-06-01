@@ -17,7 +17,9 @@ import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettin
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Consumed.ShowSnackBar
 
 @Stable
-class SaveAndRestoreSettingsViewModel : KViewModel() {
+class SaveAndRestoreSettingsViewModel(
+    private val settingsUtils: SettingsUtils
+) : KViewModel() {
 
     private val _viewState = MutableStateFlow(SaveAndRestoreSettingsViewState())
     val viewState = _viewState.readOnly
@@ -31,42 +33,44 @@ class SaveAndRestoreSettingsViewModel : KViewModel() {
 
     private fun onAction(action: Action) {
         viewModelScope.launch(Dispatchers.IO) {
-            when (action) {
-                ExportSettingsFile -> _viewState.update {
-                    it.copy(isSaveSettingsToFileDialogVisible = true)
-                }
+            _viewState.update {
+                when (action) {
+                    ExportSettingsFile -> it.copy(isSaveSettingsToFileDialogVisible = true)
+                    RestoreSettingsFromFile -> it.copy(isRestoreSettingsFromFileDialogVisible = true)
 
-                ExportSettingsFileDismiss -> _viewState.update {
-                    it.copy(isSaveSettingsToFileDialogVisible = false)
-                }
+                    ShareSettingsFile ->
+                        if (!settingsUtils.shareSettingsFile()) {
+                            it.copy(snackBarText = MR.strings.shareSettingsFileFailed.stable)
+                        } else it
 
-                RestoreSettingsFromFile -> _viewState.update {
-                    it.copy(isRestoreSettingsFromFileDialogVisible = true)
-                }
-
-                RestoreSettingsFromFileDismiss -> _viewState.update {
-                    it.copy(isRestoreSettingsFromFileDialogVisible = false)
-                }
-
-                ShareSettingsFile -> if (!SettingsUtils.shareSettingsFile()) {
-                    _viewState.update {
-                        it.copy(snackBarText = MR.strings.shareSettingsFileFailed.stable)
+                    is BackClick -> {
+                        navigator.onBackPressed()
+                        it
                     }
-                }
 
-                is BackClick -> navigator.onBackPressed()
-                ExportSettingsFileConfirmation -> {
-                    if (!SettingsUtils.exportSettingsFile()) {
-                        _viewState.update {
-                            it.copy(snackBarText = MR.strings.exportSettingsFileFailed.stable)
+                    is ExportSettingsFileDialogResult -> {
+                        if (action.confirmed) {
+                            if (!settingsUtils.exportSettingsFile()) {
+                                it.copy(
+                                    snackBarText = MR.strings.exportSettingsFileFailed.stable,
+                                    isSaveSettingsToFileDialogVisible = false
+                                )
+                            } else it.copy(isSaveSettingsToFileDialogVisible = false)
+                        } else {
+                            it.copy(isSaveSettingsToFileDialogVisible = false)
                         }
                     }
-                }
 
-                RestoreSettingsFromFileConfirmation -> {
-                    if (!SettingsUtils.restoreSettingsFromFile()) {
-                        _viewState.update {
-                            it.copy(snackBarText = MR.strings.restoreSettingsFromFileFailed.stable)
+                    is RestoreSettingsFromFileDialogResult -> {
+                        if (action.confirmed) {
+                            if (!settingsUtils.restoreSettingsFromFile()) {
+                                it.copy(
+                                    snackBarText = MR.strings.restoreSettingsFromFileFailed.stable,
+                                    isRestoreSettingsFromFileDialogVisible = false
+                                )
+                            } else it.copy(isRestoreSettingsFromFileDialogVisible = false)
+                        } else {
+                            it.copy(isRestoreSettingsFromFileDialogVisible = false)
                         }
                     }
                 }

@@ -12,12 +12,12 @@ actual class AudioRecorder {
     /**
      * max volume since start recording
      */
-    actual val maxVolume: StateFlow<Short>
-        get() = MutableStateFlow(Short.MAX_VALUE) //TODO("Not yet implemented")
+    actual val maxVolume: StateFlow<Float>
+        get() = MutableStateFlow(Float.MAX_VALUE) //TODO("Not yet implemented")
     actual val isRecording: StateFlow<Boolean>
         get() = MutableStateFlow(true) //TODO("Not yet implemented")
-    actual val absoluteMaxVolume: Double
-        get() = 0.0 //TODO("Not yet implemented")
+    actual val absoluteMaxVolume: Float
+        get() = 0f //TODO("Not yet implemented")
 
     /**
      * start recording

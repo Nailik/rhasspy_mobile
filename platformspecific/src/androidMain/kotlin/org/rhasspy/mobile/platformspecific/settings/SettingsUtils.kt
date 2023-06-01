@@ -9,8 +9,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.rhasspy.mobile.data.settings.SettingsEnum
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
@@ -26,10 +24,12 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 
-actual object SettingsUtils : KoinComponent {
+actual class SettingsUtils actual constructor(
+    private val externalResultRequest: ExternalResultRequest,
+    private val nativeApplication: NativeApplication
+) {
 
     private val logger = Logger.withTag("SettingsUtils")
-    private val context = get<NativeApplication>()
 
     /**
      * export the settings file
@@ -38,7 +38,7 @@ actual object SettingsUtils : KoinComponent {
         return try {
             logger.d { "exportSettingsFile" }
 
-            val result = get<ExternalResultRequest>().launchForResult(
+            val result = externalResultRequest.launchForResult(
                 ExternalResultRequestIntention.CreateDocument(
                     title = "rhasspy_settings_${Clock.System.now().toLocalDateTime(TimeZone.UTC)}.zip",
                     mimeType = "application/zip"
@@ -47,7 +47,7 @@ actual object SettingsUtils : KoinComponent {
 
             return when (result) {
                 is ExternalRedirectResult.Result -> {
-                    return context.contentResolver.openOutputStream(result.data.toUri())?.let { outputStream ->
+                    return nativeApplication.contentResolver.openOutputStream(result.data.toUri())?.let { outputStream ->
 
                         //create output for zip file
                         val zipOutputStream =
@@ -58,7 +58,7 @@ actual object SettingsUtils : KoinComponent {
 
                         //copy org.rhasspy.mobile.android_prefenrences.xml
                         val sharedPreferencesFile = File(
-                            context.filesDir.parent,
+                            nativeApplication.filesDir.parent,
                             "shared_prefs/org.rhasspy.mobile.android_preferences.xml"
                         )
                         if (sharedPreferencesFile.exists()) {
@@ -70,7 +70,7 @@ actual object SettingsUtils : KoinComponent {
                         zipOutputStream.putNextEntry(ZipEntry("files/"))
 
                         //all custom files
-                        val files = context.filesDir
+                        val files = nativeApplication.filesDir
                         FolderType.values().forEach { folderType ->
                             File(files, folderType.toString()).walkTopDown().forEach { file ->
                                 if (file.exists()) {
@@ -121,13 +121,13 @@ actual object SettingsUtils : KoinComponent {
 
             return result?.toUri()?.let { uri ->
                 logger.d { "restoreSettingsFromFile $uri" }
-                context.contentResolver.openInputStream(uri)
+                nativeApplication.contentResolver.openInputStream(uri)
                     ?.let { inputStream ->
                         //read input data
                         val zipInputStream = ZipInputStream(BufferedInputStream(inputStream))
 
                         var entry = zipInputStream.nextEntry
-                        val dir = context.filesDir.parent ?: ""
+                        val dir = nativeApplication.filesDir.parent ?: ""
 
                         while (entry != null) {
                             val file = File(dir, entry.name)
@@ -159,7 +159,7 @@ actual object SettingsUtils : KoinComponent {
                         }
 
                         inputStream.close()
-                        context.restart()
+                        nativeApplication.restart()
 
                         true
                     } ?: false
@@ -206,11 +206,11 @@ actual object SettingsUtils : KoinComponent {
 
             //copy org.rhasspy.mobile.android_prefenrences.xml
             val sharedPreferencesFile = File(
-                context.filesDir.parent,
+                nativeApplication.filesDir.parent,
                 "shared_prefs/org.rhasspy.mobile.android_preferences.xml"
             )
             val exportFile = File(
-                context.filesDir,
+                nativeApplication.filesDir,
                 "org.rhasspy.mobile.android_preferences_export.xml"
             )
             //create new empty file
@@ -242,12 +242,12 @@ actual object SettingsUtils : KoinComponent {
             }
             //share file
             val fileUri: Uri = FileProvider.getUriForFile(
-                context,
-                context.packageName.toString() + ".provider",
+                nativeApplication,
+                nativeApplication.packageName.toString() + ".provider",
                 exportFile
             )
 
-            return get<ExternalResultRequest>().launch(
+            return externalResultRequest.launch(
                 ExternalResultRequestIntention.ShareFile(
                     fileUri = fileUri.toString(),
                     mimeType = "application/xml"

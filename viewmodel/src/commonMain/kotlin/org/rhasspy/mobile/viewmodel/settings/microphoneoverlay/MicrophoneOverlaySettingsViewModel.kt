@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.viewmodel.settings.microphoneoverlay
 
 import androidx.compose.runtime.Stable
+import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.KViewModel
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Action
@@ -26,7 +27,11 @@ class MicrophoneOverlaySettingsViewModel(
     private fun onChange(change: Change) {
         when (change) {
             is SelectMicrophoneOverlaySizeOption ->
-                requireOverlayPermission {
+                if (change.option != MicrophoneOverlaySizeOption.Disabled) {
+                    requireOverlayPermission {
+                        AppSetting.microphoneOverlaySizeOption.value = change.option
+                    }
+                } else {
                     AppSetting.microphoneOverlaySizeOption.value = change.option
                 }
 

@@ -1,6 +1,13 @@
 package org.rhasspy.mobile.platformspecific.settings
 
-actual object SettingsUtils {
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
+
+actual class SettingsUtils actual constructor(
+    externalResultRequest: ExternalResultRequest,
+    nativeApplication: NativeApplication
+) {
+
     /**
      * export the settings file
      */

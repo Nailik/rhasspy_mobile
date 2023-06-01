@@ -6,7 +6,7 @@ sealed interface SilenceDetectionSettingsUiEvent {
         data class SetSilenceDetectionEnabled(val enabled: Boolean) : Change
         data class UpdateSilenceDetectionMinimumTime(val time: String) : Change
         data class UpdateSilenceDetectionTime(val time: String) : Change
-        data class UpdateSilenceDetectionAudioLevelPercentage(val percentage: Float) : Change
+        data class UpdateSilenceDetectionAudioLevelLogarithm(val percentage: Float) : Change
     }
 
     sealed interface Action : SilenceDetectionSettingsUiEvent {

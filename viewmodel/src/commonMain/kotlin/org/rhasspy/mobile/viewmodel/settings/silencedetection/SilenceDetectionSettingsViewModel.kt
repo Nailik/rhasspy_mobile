@@ -26,6 +26,16 @@ class SilenceDetectionSettingsViewModel(
 
     val viewState: StateFlow<SilenceDetectionSettingsViewState> = viewStateCreator()
 
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            nativeApplication.isAppInBackground.collect { isAppInBackground ->
+                if (isAppInBackground) {
+                    audioRecorder.stopRecording()
+                }
+            }
+        }
+    }
+
     fun onEvent(event: SilenceDetectionSettingsUiEvent) {
         when (event) {
             is Change -> onChange(event)
@@ -38,9 +48,10 @@ class SilenceDetectionSettingsViewModel(
             is SetSilenceDetectionEnabled ->
                 AppSetting.isAutomaticSilenceDetectionEnabled.value = change.enabled
 
-            is UpdateSilenceDetectionAudioLevelPercentage ->
-                AppSetting.automaticSilenceDetectionAudioLevel.value =
-                    audioRecorder.absoluteMaxVolume.pow(change.percentage.toDouble()).toFloat()
+            is UpdateSilenceDetectionAudioLevelLogarithm ->
+                AppSetting.automaticSilenceDetectionAudioLevel.value = if (change.percentage != 0f) {
+                    audioRecorder.absoluteMaxVolume.pow(change.percentage)
+                } else 0f
 
             is UpdateSilenceDetectionMinimumTime ->
                 AppSetting.automaticSilenceDetectionMinimumTime.value = change.time.toIntOrZero()
@@ -61,16 +72,6 @@ class SilenceDetectionSettingsViewModel(
             }
 
             is BackClick -> navigator.onBackPressed()
-        }
-    }
-
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            nativeApplication.isAppInBackground.collect { isAppInBackground ->
-                if (isAppInBackground) {
-                    audioRecorder.stopRecording()
-                }
-            }
         }
     }
 

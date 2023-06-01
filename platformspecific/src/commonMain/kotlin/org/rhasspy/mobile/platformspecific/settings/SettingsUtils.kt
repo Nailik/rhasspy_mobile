@@ -1,6 +1,12 @@
 package org.rhasspy.mobile.platformspecific.settings
 
-expect object SettingsUtils {
+import org.rhasspy.mobile.platformspecific.application.NativeApplication
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
+
+expect class SettingsUtils(
+    externalResultRequest: ExternalResultRequest,
+    nativeApplication: NativeApplication
+) {
 
     /**
      * export the settings file

@@ -108,8 +108,8 @@ private fun SaveSettings(
     //save settings dialog
     if (isSaveSettingsToFileDialogVisible) {
         SaveSettingsDialog(
-            onConfirm = { onEvent(ExportSettingsFileConfirmation) },
-            onDismiss = { onEvent(ExportSettingsFileDismiss) }
+            onConfirm = { onEvent(ExportSettingsFileDialogResult(true)) },
+            onDismiss = { onEvent(ExportSettingsFileDialogResult(false)) }
         )
     }
 }
@@ -145,8 +145,8 @@ private fun RestoreSettings(
     if (isRestoreSettingsFromFileDialogVisible) {
 
         RestoreSettingsDialog(
-            onConfirm = { onEvent(RestoreSettingsFromFileConfirmation) },
-            onDismiss = { onEvent(RestoreSettingsFromFileDismiss) }
+            onConfirm = { onEvent(RestoreSettingsFromFileDialogResult(true)) },
+            onDismiss = { onEvent(RestoreSettingsFromFileDialogResult(false)) }
         )
 
     }

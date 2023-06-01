@@ -152,7 +152,7 @@ private fun AudioLevel(
         text = MR.strings.audioLevelThreshold.stable,
         value = silenceDetectionAudioLevelPercentage,
         valueText = silenceDetectionAudioLevel.roundToDecimals(0).toString(),
-        onValueChange = { onEvent(UpdateSilenceDetectionAudioLevelPercentage(it)) }
+        onValueChange = { onEvent(UpdateSilenceDetectionAudioLevelLogarithm(it)) }
     )
 
 }

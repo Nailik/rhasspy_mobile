@@ -8,6 +8,7 @@ import org.rhasspy.mobile.platformspecific.language.LanguageUtils
 import org.rhasspy.mobile.platformspecific.permission.BatteryOptimization
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
+import org.rhasspy.mobile.platformspecific.settings.SettingsUtils
 import org.rhasspy.mobile.platformspecific.utils.OpenLinkUtils
 
 val platformSpecificModule = module {
@@ -48,5 +49,11 @@ val platformSpecificModule = module {
     }
     single {
         LanguageUtils()
+    }
+    single {
+        SettingsUtils(
+            externalResultRequest = get(),
+            nativeApplication = get()
+        )
     }
 }

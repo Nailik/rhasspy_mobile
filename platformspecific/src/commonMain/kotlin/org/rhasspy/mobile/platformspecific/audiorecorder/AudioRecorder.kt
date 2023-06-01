@@ -16,13 +16,13 @@ expect class AudioRecorder() {
     /**
      * max volume since start recording
      */
-    val maxVolume: StateFlow<Short>
+    val maxVolume: StateFlow<Float>
 
     //state if currently recording
     val isRecording: StateFlow<Boolean>
 
     //maximum audio level that can happen
-    val absoluteMaxVolume: Double
+    val absoluteMaxVolume: Float
 
     /**
      * start recording

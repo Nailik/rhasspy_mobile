@@ -5,11 +5,9 @@ sealed interface SaveAndRestoreSettingsUiEvent {
     sealed interface Action : SaveAndRestoreSettingsUiEvent {
 
         object ExportSettingsFile : Action
-        object ExportSettingsFileConfirmation : Action
-        object ExportSettingsFileDismiss : Action
+        data class ExportSettingsFileDialogResult(val confirmed: Boolean) : Action
         object RestoreSettingsFromFile : Action
-        object RestoreSettingsFromFileConfirmation : Action
-        object RestoreSettingsFromFileDismiss : Action
+        data class RestoreSettingsFromFileDialogResult(val confirmed: Boolean) : Action
         object ShareSettingsFile : Action
         object BackClick : Action
 
