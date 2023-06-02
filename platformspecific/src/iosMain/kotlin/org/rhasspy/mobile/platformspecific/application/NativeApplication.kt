@@ -2,8 +2,21 @@ package org.rhasspy.mobile.platformspecific.application
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.dsl.module
 
 actual abstract class NativeApplication {
+
+    actual companion object {
+        private lateinit var koinApplicationInstance: NativeApplication
+        actual val koinApplicationModule = module {
+            single { koinApplicationInstance }
+        }
+    }
+
+    actual fun onInit() {
+        koinApplicationInstance = this
+    }
+
     actual val currentlyAppInBackground: MutableStateFlow<Boolean>
         get() = MutableStateFlow(false) //TODO("Not yet implemented")
     actual val isAppInBackground: StateFlow<Boolean>

@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.platformspecific
 
 import org.koin.dsl.module
+import org.rhasspy.mobile.platformspecific.application.NativeApplication.Companion.koinApplicationModule
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.platformspecific.background.BackgroundService
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
@@ -12,6 +13,10 @@ import org.rhasspy.mobile.platformspecific.settings.SettingsUtils
 import org.rhasspy.mobile.platformspecific.utils.OpenLinkUtils
 
 val platformSpecificModule = module {
+    includes(
+        koinApplicationModule
+    )
+
     single {
         BatteryOptimization(
             nativeApplication = get()

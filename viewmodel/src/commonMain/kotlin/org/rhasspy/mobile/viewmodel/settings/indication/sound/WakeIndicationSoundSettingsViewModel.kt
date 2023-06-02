@@ -9,16 +9,14 @@ import org.rhasspy.mobile.settings.AppSetting
 @Stable
 class WakeIndicationSoundSettingsViewModel(
     localAudioService: LocalAudioService,
-    nativeApplication: NativeApplication,
-    viewStateCreator: IIndicationSoundSettingsViewStateCreator
+    nativeApplication: NativeApplication
 ) : IIndicationSoundSettingsViewModel(
     localAudioService = localAudioService,
     nativeApplication = nativeApplication,
     customSoundOptions = AppSetting.customWakeSounds,
     soundSetting = AppSetting.wakeSound,
     soundVolume = AppSetting.wakeSoundVolume,
-    soundFolderType = Wake,
-    viewStateCreator = viewStateCreator
+    soundFolderType = Wake
 ) {
 
     override val playSound = LocalAudioService::playWakeSoundWithoutParameter

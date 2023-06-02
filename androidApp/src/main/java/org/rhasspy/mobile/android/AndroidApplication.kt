@@ -28,6 +28,7 @@ class AndroidApplication : Application(), KoinComponent {
     private val logger = Logger.withTag("AndroidApplication")
 
     init {
+        onInit()
         //catches all exceptions
         Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
             logger.a(exception) { "uncaught exception in Thread $thread" }

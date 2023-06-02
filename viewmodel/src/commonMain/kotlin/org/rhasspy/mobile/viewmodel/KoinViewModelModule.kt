@@ -1,10 +1,12 @@
 package org.rhasspy.mobile.viewmodel
 
 
-import org.koin.core.parameter.parametersOf
+import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
-import org.rhasspy.mobile.settings.AppSetting
+import org.rhasspy.mobile.logic.logicModule
+import org.rhasspy.mobile.platformspecific.platformSpecificModule
+import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
 import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
@@ -59,331 +61,85 @@ import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSe
 
 
 val viewModelModule = module {
-    single {
-        ViewModelFactory()
-    }
-    single {
-        Navigator(nativeApplication = get())
-    }
-    single {
-        MainScreenViewStateCreator(
-            navigator = get()
-        )
-    }
-    single {
-        MainScreenViewModel(
-            viewStateCreator = get()
-        )
-    }
+    includes(
+        logicModule,
+        platformSpecificModule,
+        settingsModule
+    )
 
-    single {
-        MicrophoneFabViewStateCreator(
-            dialogManagerService = get(),
-            serviceMiddleware = get(),
-            wakeWordService = get(),
-            microphonePermission = get()
-        )
-    }
+    singleOf(::Navigator)
+    singleOf(::ViewModelFactory)
 
-    single {
-        HomeScreenViewStateCreator(
-            serviceMiddleware = get(),
-            microphoneFabViewStateCreator = get()
-        )
-    }
-    single {
-        HomeScreenViewModel(
-            serviceMiddleware = get(),
-            viewStateCreator = get()
-        )
-    }
+    singleOf(::MainScreenViewStateCreator)
+    singleOf(::MainScreenViewModel)
 
-    single {
-        MicrophoneFabViewStateCreator(
-            dialogManagerService = get(),
-            serviceMiddleware = get(),
-            wakeWordService = get(),
-            microphonePermission = get()
-        )
-    }
-    single {
-        MicrophoneFabViewModel(
-            serviceMiddleware = get(),
-            viewStateCreator = get()
-        )
-    }
+    singleOf(::MicrophoneFabViewStateCreator)
 
-    single {
-        ConfigurationScreenViewStateCreator(
-            httpClientService = get(),
-            webServerService = get(),
-            mqttService = get(),
-            wakeWordService = get(),
-            speechToTextService = get(),
-            intentRecognitionService = get(),
-            textToSpeechService = get(),
-            audioPlayingService = get(),
-            dialogManagerService = get(),
-            intentHandlingService = get()
-        )
-    }
-    single {
-        ConfigurationScreenViewModel(
-            viewStateCreator = get()
-        )
-    }
-    single {
-        AudioPlayingConfigurationViewModel(
-            service = get()
-        )
-    }
-    single {
-        DialogManagementConfigurationViewModel(
-            service = get()
-        )
-    }
-    single {
-        IntentHandlingConfigurationViewModel(
-            service = get()
-        )
-    }
-    single {
-        IntentRecognitionConfigurationViewModel(
-            service = get()
-        )
-    }
-    single {
-        MqttConfigurationViewModel(
-            service = get()
-        )
-    }
-    single {
-        RemoteHermesHttpConfigurationViewModel(
-            service = get()
-        )
-    }
-    single {
-        SpeechToTextConfigurationViewModel(
-            service = get()
-        )
-    }
-    single {
-        TextToSpeechConfigurationViewModel(
-            service = get()
-        )
-    }
-    single {
-        WakeWordConfigurationViewModel(
-            service = get(),
-            microphonePermission = get()
-        )
-    }
-    single {
-        WebServerConfigurationViewModel(
-            service = get()
-        )
-    }
+    singleOf(::HomeScreenViewStateCreator)
+    singleOf(::HomeScreenViewModel)
 
-    single {
-        LogScreenViewStateCreator(
-            fileLogger = get()
-        )
-    }
-    single {
-        LogScreenViewModel(
-            viewStateCreator = get(),
-            fileLogger = get()
-        )
-    }
+    singleOf(::MicrophoneFabViewStateCreator)
+    singleOf(::MicrophoneFabViewModel)
 
-    single {
-        SettingsScreenViewStateCreator()
-    }
-    single {
-        SettingsScreenViewModel(
-            viewStateCreator = get()
-        )
-    }
+    singleOf(::ConfigurationScreenViewStateCreator)
+    singleOf(::ConfigurationScreenViewModel)
 
-    single {
-        AboutScreenViewStateCreator(
-            nativeApplication = get()
-        )
-    }
-    single {
-        AboutScreenViewModel(
-            viewStateCreator = get()
-        )
-    }
+    singleOf(::AudioPlayingConfigurationViewModel)
+    singleOf(::DialogManagementConfigurationViewModel)
+    singleOf(::IntentHandlingConfigurationViewModel)
+    singleOf(::IntentRecognitionConfigurationViewModel)
+    singleOf(::MqttConfigurationViewModel)
+    singleOf(::RemoteHermesHttpConfigurationViewModel)
+    singleOf(::SpeechToTextConfigurationViewModel)
+    singleOf(::TextToSpeechConfigurationViewModel)
+    singleOf(::WakeWordConfigurationViewModel)
+    singleOf(::WebServerConfigurationViewModel)
 
+    singleOf(::LogScreenViewStateCreator)
+    singleOf(::LogScreenViewModel)
 
-    single { params ->
-        SilenceDetectionSettingsViewStateCreator(
-            audioRecorder = params[0]
-        )
-    }
-    single {
-        val audioRecorder = get<AudioRecorder>()
-        SilenceDetectionSettingsViewModel(
-            nativeApplication = get(),
-            audioRecorder = audioRecorder,
-            viewStateCreator = get { parametersOf(audioRecorder) }
-        )
-    }
+    singleOf(::SettingsScreenViewStateCreator)
+    singleOf(::SettingsScreenViewModel)
 
-    single {
-        AudioFocusSettingsViewStateCreator()
-    }
-    single {
-        AudioFocusSettingsViewModel(
-            viewStateCreator = get()
-        )
-    }
+    singleOf(::AboutScreenViewStateCreator)
+    singleOf(::AboutScreenViewModel)
 
-    single {
-        AudioRecorderSettingsViewStateCreator()
-    }
-    single {
-        AudioRecorderSettingsViewModel(
-            viewStateCreator = get()
-        )
-    }
+    singleOf(::SilenceDetectionSettingsViewStateCreator)
+    singleOf(::SilenceDetectionSettingsViewModel)
 
-    single {
-        BackgroundServiceSettingsViewStateCreator(
-            nativeApplication = get(),
-            batteryOptimization = get()
-        )
-    }
-    single {
-        BackgroundServiceSettingsViewModel(
-            viewStateCreator = get(),
-            backgroundService = get()
-        )
-    }
+    singleOf(::AudioFocusSettingsViewStateCreator)
+    singleOf(::AudioFocusSettingsViewModel)
 
-    single {
-        DeviceSettingsViewStateCreator()
-    }
-    single {
-        DeviceSettingsViewModel(
-            viewStateCreator = get()
-        )
-    }
+    singleOf(::AudioRecorderSettingsViewStateCreator)
+    singleOf(::AudioRecorderSettingsViewModel)
 
-    single {
-        IndicationSettingsViewStateCreator()
-    }
-    single {
-        IndicationSettingsViewModel(
-            viewStateCreator = get()
-        )
-    }
+    singleOf(::BackgroundServiceSettingsViewStateCreator)
+    singleOf(::BackgroundServiceSettingsViewModel)
 
+    singleOf(::DeviceSettingsViewStateCreator)
+    singleOf(::DeviceSettingsViewModel)
 
+    singleOf(::IndicationSettingsViewStateCreator)
+    singleOf(::IndicationSettingsViewModel)
 
-    factory { params ->
-        IIndicationSoundSettingsViewStateCreator(
-            localAudioService = get(),
-            customSoundOptions = params[0],
-            soundSetting = params[1],
-            soundVolume = params[2]
-        )
-    }
-    single {
-        WakeIndicationSoundSettingsViewModel(
-            localAudioService = get(),
-            nativeApplication = get(),
-            viewStateCreator = get {
-                parametersOf(
-                    AppSetting.customWakeSounds,
-                    AppSetting.wakeSound,
-                    AppSetting.wakeSoundVolume
-                )
-            }
-        )
-    }
-    single {
-        RecordedIndicationSoundSettingsViewModel(
-            localAudioService = get(),
-            nativeApplication = get(),
-            viewStateCreator = get {
-                parametersOf(
-                    AppSetting.customRecordedSounds,
-                    AppSetting.recordedSound,
-                    AppSetting.recordedSoundVolume
-                )
-            }
-        )
-    }
-    single {
-        ErrorIndicationSoundSettingsViewModel(
-            localAudioService = get(),
-            nativeApplication = get(),
-            viewStateCreator = get {
-                parametersOf(
-                    AppSetting.customErrorSounds,
-                    AppSetting.errorSound,
-                    AppSetting.errorSoundVolume
-                )
-            }
-        )
-    }
+    factoryOf(::IIndicationSoundSettingsViewStateCreator)
+    singleOf(::WakeIndicationSoundSettingsViewModel)
+    singleOf(::RecordedIndicationSoundSettingsViewModel)
+    singleOf(::ErrorIndicationSoundSettingsViewModel)
 
-    single {
-        LanguageSettingsViewModel(
-            languageUtils = get()
-        )
-    }
+    singleOf(::LanguageSettingsViewModel)
 
-    single {
-        LogSettingsViewStateCreator()
-    }
-    single {
-        LogSettingsViewModel(
-            viewStateCreator = get(),
-            nativeApplication = get()
-        )
-    }
+    singleOf(::LogSettingsViewStateCreator)
+    singleOf(::LogSettingsViewModel)
 
-    single {
-        MicrophoneOverlaySettingsViewStateCreator()
-    }
-    single {
-        MicrophoneOverlaySettingsViewModel(
-            viewStateCreator = get()
-        )
-    }
+    singleOf(::MicrophoneOverlaySettingsViewStateCreator)
+    singleOf(::MicrophoneOverlaySettingsViewModel)
 
-    single {
-        SaveAndRestoreSettingsViewModel(
-            settingsUtils = get()
-        )
-    }
+    singleOf(::SaveAndRestoreSettingsViewModel)
 
-    single {
-        MicrophoneOverlayViewStateCreator(
-            nativeApplication = get(),
-            microphoneFabViewStateCreator = get(),
-            overlayPermission = get()
-        )
-    }
-    single {
-        MicrophoneOverlayViewModel(
-            nativeApplication = get(),
-            microphoneFabViewModel = get(),
-            viewStateCreator = get()
-        )
-    }
+    singleOf(::MicrophoneOverlayViewStateCreator)
+    singleOf(::MicrophoneOverlayViewModel)
 
-    single {
-        IndicationOverlayViewStateCreator(
-            indicationService = get()
-        )
-    }
-    single {
-        IndicationOverlayViewModel(
-            viewStateCreator = get()
-        )
-    }
+    singleOf(::IndicationOverlayViewStateCreator)
+    singleOf(::IndicationOverlayViewModel)
 }

@@ -12,6 +12,7 @@ import platform.UIKit.UIViewController
 class IosApplication : Application() {
 
     init {
+        onInit()
         CoroutineScope(Dispatchers.IO).launch {
             onCreated()
         }

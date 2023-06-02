@@ -5,6 +5,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.koin.core.component.get
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.platformspecific.toIntOrZero
@@ -21,9 +23,9 @@ import kotlin.math.pow
 class SilenceDetectionSettingsViewModel(
     private val nativeApplication: NativeApplication,
     private val audioRecorder: AudioRecorder,
-    viewStateCreator: SilenceDetectionSettingsViewStateCreator
 ) : KViewModel() {
 
+    private val viewStateCreator: SilenceDetectionSettingsViewStateCreator = get { parametersOf(audioRecorder) }
     val viewState: StateFlow<SilenceDetectionSettingsViewState> = viewStateCreator()
 
     init {

@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okio.Path
+import org.koin.core.component.get
+import org.koin.core.parameter.parametersOf
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.logic.services.localaudio.LocalAudioService
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
@@ -32,9 +34,9 @@ abstract class IIndicationSoundSettingsViewModel(
     private val soundSetting: ISetting<String>,
     private val soundVolume: ISetting<Float>,
     private val soundFolderType: FolderType,
-    viewStateCreator: IIndicationSoundSettingsViewStateCreator
 ) : KViewModel() {
 
+    val viewStateCreator: IIndicationSoundSettingsViewStateCreator = get { parametersOf(customSoundOptions, soundSetting, soundVolume) }
     abstract val playSound: KFunction1<LocalAudioService, Unit>
 
     private val _viewState: MutableStateFlow<IIndicationSoundSettingsViewState> = viewStateCreator()

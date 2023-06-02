@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.context.startKoin
-import org.koin.dsl.module
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.logic.logger.FileLogger
 import org.rhasspy.mobile.logic.logicModule
@@ -35,6 +34,7 @@ import org.rhasspy.mobile.settings.settingsModule
 import org.rhasspy.mobile.viewmodel.viewModelModule
 
 abstract class Application : NativeApplication(), KoinComponent {
+
     private val logger = Logger.withTag("Application")
     private val _isHasStarted = MutableStateFlow(false)
     override val isHasStarted = _isHasStarted.readOnly
@@ -44,9 +44,7 @@ abstract class Application : NativeApplication(), KoinComponent {
         startKoin {
             // declare used modules
             modules(
-                module {
-                    single<NativeApplication> { this@Application }
-                },
+                koinApplicationModule,
                 logicModule,
                 viewModelModule,
                 settingsModule,

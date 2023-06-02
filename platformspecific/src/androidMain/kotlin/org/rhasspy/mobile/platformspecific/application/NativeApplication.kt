@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
 
 actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
@@ -34,6 +35,17 @@ actual abstract class NativeApplication : MultiDexApplication(), KoinComponent {
                 }
             }
         })
+    }
+
+    actual companion object {
+        private lateinit var koinApplicationInstance: NativeApplication
+        actual val koinApplicationModule = module {
+            single { koinApplicationInstance }
+        }
+    }
+
+    actual fun onInit() {
+        koinApplicationInstance = this
     }
 
     actual override fun onCreate() {

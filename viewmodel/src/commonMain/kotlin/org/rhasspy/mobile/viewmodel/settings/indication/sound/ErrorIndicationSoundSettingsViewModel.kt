@@ -9,16 +9,14 @@ import org.rhasspy.mobile.settings.AppSetting
 @Stable
 class ErrorIndicationSoundSettingsViewModel(
     localAudioService: LocalAudioService,
-    nativeApplication: NativeApplication,
-    viewStateCreator: IIndicationSoundSettingsViewStateCreator
+    nativeApplication: NativeApplication
 ) : IIndicationSoundSettingsViewModel(
     localAudioService = localAudioService,
     nativeApplication = nativeApplication,
     customSoundOptions = AppSetting.customErrorSounds,
     soundSetting = AppSetting.errorSound,
     soundVolume = AppSetting.errorSoundVolume,
-    soundFolderType = Error,
-    viewStateCreator = viewStateCreator
+    soundFolderType = Error
 ) {
 
     override val playSound = LocalAudioService::playErrorSound

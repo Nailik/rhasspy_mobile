@@ -9,16 +9,14 @@ import org.rhasspy.mobile.settings.AppSetting
 @Stable
 class RecordedIndicationSoundSettingsViewModel(
     localAudioService: LocalAudioService,
-    nativeApplication: NativeApplication,
-    viewStateCreator: IIndicationSoundSettingsViewStateCreator
+    nativeApplication: NativeApplication
 ) : IIndicationSoundSettingsViewModel(
     localAudioService = localAudioService,
     nativeApplication = nativeApplication,
     customSoundOptions = AppSetting.customRecordedSounds,
     soundSetting = AppSetting.recordedSound,
     soundVolume = AppSetting.recordedSoundVolume,
-    soundFolderType = Recorded,
-    viewStateCreator = viewStateCreator
+    soundFolderType = Recorded
 ) {
 
     override val playSound = LocalAudioService::playRecordedSound
