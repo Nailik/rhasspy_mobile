@@ -19,8 +19,8 @@ import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditViewModel
 
 
 fun SemanticsNodeInteraction.onListItemSwitch(): SemanticsNodeInteraction {
@@ -162,7 +162,7 @@ fun SemanticsNodeInteraction.assertTextEquals(
         includeEditableText = includeEditableText
     )
 
-fun <V : IConfigurationEditViewState> ComposeTestRule.saveBottomAppBar(viewModel: IConfigurationViewModel<V>) {
+fun <V : IConfigurationEditViewState> ComposeTestRule.saveBottomAppBar(viewModel: IConfigurationEditViewModel<V>) {
     Espresso.closeSoftKeyboard()
     waitUntilExists(hasTestTag(TestTag.BottomAppBarSave).and(isEnabled()))
     onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
@@ -170,7 +170,7 @@ fun <V : IConfigurationEditViewState> ComposeTestRule.saveBottomAppBar(viewModel
 }
 
 
-fun <V : IConfigurationEditViewState> ComposeTestRule.awaitSaved(viewModel: IConfigurationViewModel<V>) {
+fun <V : IConfigurationEditViewState> ComposeTestRule.awaitSaved(viewModel: IConfigurationEditViewModel<V>) {
     this.waitUntil(
         condition = { !viewModel.viewState.value.hasUnsavedChanges },
         timeoutMillis = 5000

@@ -20,12 +20,12 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.*
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.OpenMqttSSLWiki
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Action.SelectSSLCertificate
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Consumed.ShowSnackBar
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiEvent.Action.OpenMqttSSLWiki
+import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiEvent.Action.SelectSSLCertificate
+import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiEvent.Consumed.ShowSnackBar
+import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationEditViewModel
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.MqttConfigurationScreen
 
 /**
@@ -39,7 +39,7 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenN
  */
 @Composable
 fun MqttConfigurationContent() {
-    val viewModel: MqttConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: MqttConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
 
     Screen(viewModel) {
         val viewState by viewModel.viewState.collectAsState()

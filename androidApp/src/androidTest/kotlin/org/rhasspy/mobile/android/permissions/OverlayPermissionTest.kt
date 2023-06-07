@@ -49,7 +49,7 @@ class OverlayPermissionTest : FlakyTest() {
     @NoLiveLiterals
     @Before
     fun setUp() {
-        val testViewModel = TestViewModel()
+        val testViewModel = TestEditViewModel()
         //set content
         composeTestRule.activity.setContent {
             AppTheme {

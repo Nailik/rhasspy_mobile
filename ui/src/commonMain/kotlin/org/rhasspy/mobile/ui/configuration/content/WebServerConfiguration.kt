@@ -20,12 +20,12 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.*
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.OpenWebServerSSLWiki
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Action.SelectSSLCertificate
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationUiEvent.Consumed.ShowSnackBar
-import org.rhasspy.mobile.viewmodel.configuration.webserver.WebServerConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Action.OpenWebServerSSLWiki
+import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Action.SelectSSLCertificate
+import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Change.*
+import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Consumed.ShowSnackBar
+import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationEditViewModel
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.WebServerConfigurationScreen
 
 /**
@@ -36,7 +36,7 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenN
  */
 @Composable
 fun WebServerConfigurationContent() {
-    val viewModel: WebServerConfigurationViewModel = LocalViewModelFactory.current.getViewModel()
+    val viewModel: WebServerConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
 
     Screen(viewModel) {
         val viewState by viewModel.viewState.collectAsState()

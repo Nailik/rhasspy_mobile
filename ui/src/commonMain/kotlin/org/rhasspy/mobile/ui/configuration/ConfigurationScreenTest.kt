@@ -25,9 +25,9 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.LogListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.SetSystemColor
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationTestViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTestViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 /**
@@ -36,10 +36,10 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfigurationScreenTest(
-    viewState: ConfigurationTestViewState,
+    viewState: IConfigurationTestViewState,
     serviceViewState: ServiceViewState,
     isOpenServiceStateDialogEnabled: Boolean,
-    onAction: (IConfigurationUiEvent) -> Unit,
+    onAction: (IConfigurationEditUiEvent) -> Unit,
     content: (@Composable () -> Unit)?
 ) {
     SetSystemColor(1.dp)
@@ -81,10 +81,10 @@ fun ConfigurationScreenTest(
 @Composable
 private fun ConfigurationScreenTestList(
     modifier: Modifier = Modifier,
-    viewState: ConfigurationTestViewState,
+    viewState: IConfigurationTestViewState,
     serviceViewState: ServiceViewState,
     isOpenServiceStateDialogEnabled: Boolean,
-    onAction: (IConfigurationUiEvent) -> Unit,
+    onAction: (IConfigurationEditUiEvent) -> Unit,
     content: (@Composable () -> Unit)?,
 ) {
     Column(modifier = modifier) {
@@ -144,8 +144,8 @@ private fun ConfigurationScreenTestList(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppBar(
-    viewState: ConfigurationTestViewState,
-    onAction: (IConfigurationUiEvent) -> Unit,
+    viewState: IConfigurationTestViewState,
+    onAction: (IConfigurationEditUiEvent) -> Unit,
     title: StableStringResource,
     onBackClick: () -> Unit,
     icon: @Composable () -> Unit

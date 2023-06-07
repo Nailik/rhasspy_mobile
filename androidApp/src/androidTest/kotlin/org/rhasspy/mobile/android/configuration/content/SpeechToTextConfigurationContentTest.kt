@@ -11,9 +11,9 @@ import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.content.SpeechToTextConfigurationContent
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
-import org.rhasspy.mobile.viewmodel.configuration.speechtotext.SpeechToTextConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.edit.speechtotext.SpeechToTextConfigurationUiEvent.Change.SelectSpeechToTextOption
+import org.rhasspy.mobile.viewmodel.configuration.edit.speechtotext.SpeechToTextConfigurationEditViewModel
 import kotlin.test.assertEquals
 
 class SpeechToTextConfigurationContentTest : FlakyTest() {
@@ -21,7 +21,7 @@ class SpeechToTextConfigurationContentTest : FlakyTest() {
     @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
-    private val viewModel = get<SpeechToTextConfigurationViewModel>()
+    private val viewModel = get<SpeechToTextConfigurationEditViewModel>()
 
     @Before
     fun setUp() {
@@ -97,7 +97,7 @@ class SpeechToTextConfigurationContentTest : FlakyTest() {
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        SpeechToTextConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        SpeechToTextConfigurationEditViewModel(get()).viewState.value.editViewState.value.also {
             //option is saved to remote http
             assertEquals(SpeechToTextOption.RemoteHTTP, it.speechToTextOption)
             //endpoint is saved

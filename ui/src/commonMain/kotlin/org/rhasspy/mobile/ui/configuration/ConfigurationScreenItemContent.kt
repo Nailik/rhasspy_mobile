@@ -31,9 +31,9 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.SetSystemColor
 import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType.Edit
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType.Test
@@ -52,7 +52,7 @@ fun <V : IConfigurationEditViewState> ConfigurationScreenItemContent(
     modifier: Modifier,
     screenType: ConfigurationScreenDestinationType,
     viewState: ConfigurationViewState<V>,
-    onAction: (IConfigurationUiEvent) -> Unit,
+    onAction: (IConfigurationEditUiEvent) -> Unit,
     config: ConfigurationScreenConfig = ConfigurationScreenConfig(MR.strings.save.stable),
     testContent: (@Composable () -> Unit)? = null,
     content: LazyListScope.() -> Unit
@@ -104,7 +104,7 @@ private fun EditConfigurationScreen(
     isOpenServiceStateDialogEnabled: Boolean,
     hasUnsavedChanges: Boolean,
     isShowUnsavedChangesDialog: Boolean,
-    onAction: (IConfigurationUiEvent) -> Unit,
+    onAction: (IConfigurationEditUiEvent) -> Unit,
     content: LazyListScope.() -> Unit
 ) {
     SetSystemColor(0.dp)
@@ -235,7 +235,7 @@ private fun UnsavedChangesDialog(
 private fun BottomAppBar(
     hasUnsavedChanges: Boolean,
     isTestingEnabled: Boolean,
-    onAction: (IConfigurationUiEvent) -> Unit,
+    onAction: (IConfigurationEditUiEvent) -> Unit,
 ) {
     BottomAppBar(
         actions = {
@@ -274,7 +274,7 @@ private fun BottomAppBar(
 private fun FloatingActionButtonElement(
     hasUnsavedChanges: Boolean,
     isTestingEnabled: Boolean,
-    onAction: (IConfigurationUiEvent) -> Unit
+    onAction: (IConfigurationEditUiEvent) -> Unit
 ) {
     FloatingActionButton(
         modifier = Modifier

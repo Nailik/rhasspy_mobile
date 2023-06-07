@@ -26,8 +26,8 @@ import org.rhasspy.mobile.android.test.R
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.content.porcupine.PorcupineKeywordCustomScreen
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.wakeword.WakeWordConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationEditViewModel
 import java.io.File
 import kotlin.test.assertTrue
 
@@ -41,7 +41,7 @@ class PorcupineKeywordCustomScreenTest : FlakyTest() {
 
     private val device: UiDevice = UiDevice.getInstance(getInstrumentation())
 
-    private val viewModel = get<WakeWordConfigurationViewModel>()
+    private val viewModel = get<WakeWordConfigurationEditViewModel>()
 
     private val ppn = "Test-hello_en_android_v2_1_0.ppn"
     private val fileName = "porcupine_test.zip"
@@ -147,7 +147,7 @@ class PorcupineKeywordCustomScreenTest : FlakyTest() {
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val newViewModel = WakeWordConfigurationViewModel(get())
+        val newViewModel = WakeWordConfigurationEditViewModel(get())
 
         //jarvis is saved with enabled
         assertTrue {
@@ -217,7 +217,7 @@ class PorcupineKeywordCustomScreenTest : FlakyTest() {
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val newViewModel = WakeWordConfigurationViewModel(get())
+        val newViewModel = WakeWordConfigurationEditViewModel(get())
         //ppn is saved with ppn.ppn and enabled
         assertTrue {
             newViewModel.viewState.value.editViewState.value.wakeWordPorcupineViewState

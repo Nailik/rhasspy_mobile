@@ -12,9 +12,9 @@ import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.content.IntentHandlingConfigurationContent
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingOption
-import org.rhasspy.mobile.viewmodel.configuration.intenthandling.IntentHandlingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationUiEvent.Change.SelectIntentHandlingOption
+import org.rhasspy.mobile.viewmodel.configuration.edit.intenthandling.IntentHandlingConfigurationEditViewModel
 import kotlin.test.assertEquals
 
 class IntentHandlingConfigurationContentTest : FlakyTest() {
@@ -22,7 +22,7 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
     @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
-    private val viewModel = get<IntentHandlingConfigurationViewModel>()
+    private val viewModel = get<IntentHandlingConfigurationEditViewModel>()
 
     @Before
     fun setUp() {
@@ -78,7 +78,7 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        IntentHandlingConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        IntentHandlingConfigurationEditViewModel(get()).viewState.value.editViewState.value.also {
             //option is saved to remote http
             assertEquals(IntentHandlingOption.RemoteHTTP, it.intentHandlingOption)
             //endpoint is saved
@@ -157,7 +157,7 @@ class IntentHandlingConfigurationContentTest : FlakyTest() {
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        IntentHandlingConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        IntentHandlingConfigurationEditViewModel(get()).viewState.value.editViewState.value.also {
             //option is saved to HomeAssistant
             assertEquals(IntentHandlingOption.HomeAssistant, it.intentHandlingOption)
             //endpoint is saved

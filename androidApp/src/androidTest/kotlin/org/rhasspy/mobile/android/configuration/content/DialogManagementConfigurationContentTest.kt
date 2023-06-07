@@ -11,9 +11,9 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
 import org.rhasspy.mobile.ui.configuration.content.DialogManagementConfigurationContent
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationUiEvent.Change.SelectDialogManagementOption
-import org.rhasspy.mobile.viewmodel.configuration.dialogmanagement.DialogManagementConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationUiEvent.Change.SelectDialogManagementOption
+import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationEditViewModel
 import kotlin.test.assertEquals
 
 class DialogManagementConfigurationContentTest : FlakyTest() {
@@ -21,7 +21,7 @@ class DialogManagementConfigurationContentTest : FlakyTest() {
     @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
-    private val viewModel = get<DialogManagementConfigurationViewModel>()
+    private val viewModel = get<DialogManagementConfigurationEditViewModel>()
 
     @Before
     fun setUp() {
@@ -59,7 +59,7 @@ class DialogManagementConfigurationContentTest : FlakyTest() {
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        DialogManagementConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        DialogManagementConfigurationEditViewModel(get()).viewState.value.editViewState.value.also {
             //option is saved to local
             assertEquals(DialogManagementOption.Local, it.dialogManagementOption)
         }

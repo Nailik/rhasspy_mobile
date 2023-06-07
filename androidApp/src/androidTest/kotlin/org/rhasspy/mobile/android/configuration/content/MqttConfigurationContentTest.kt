@@ -10,10 +10,10 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.content.MqttConfigurationContent
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttEnabled
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationUiEvent.Change.SetMqttSSLEnabled
-import org.rhasspy.mobile.viewmodel.configuration.mqtt.MqttConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiEvent.Change.SetMqttEnabled
+import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationUiEvent.Change.SetMqttSSLEnabled
+import org.rhasspy.mobile.viewmodel.configuration.edit.mqtt.MqttConfigurationEditViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -23,7 +23,7 @@ class MqttConfigurationContentTest : FlakyTest() {
     @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
-    private val viewModel = get<MqttConfigurationViewModel>()
+    private val viewModel = get<MqttConfigurationEditViewModel>()
 
     @Before
     fun setUp() {
@@ -90,7 +90,7 @@ class MqttConfigurationContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar(viewModel)
-        MqttConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        MqttConfigurationEditViewModel(get()).viewState.value.editViewState.value.also {
             //mqtt enabled saved
             assertEquals(true, it.isMqttEnabled)
         }
@@ -145,7 +145,7 @@ class MqttConfigurationContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar(viewModel)
-        MqttConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        MqttConfigurationEditViewModel(get()).viewState.value.editViewState.value.also {
             //host is saved
             assertEquals(textInputTestHost, it.mqttHost)
             //port is saved
@@ -199,7 +199,7 @@ class MqttConfigurationContentTest : FlakyTest() {
 
         //user clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        MqttConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        MqttConfigurationEditViewModel(get()).viewState.value.editViewState.value.also {
             //ssl on is saved
             assertEquals(true, it.isMqttSSLEnabled)
         }
@@ -248,7 +248,7 @@ class MqttConfigurationContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar(viewModel)
-        MqttConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        MqttConfigurationEditViewModel(get()).viewState.value.editViewState.value.also {
             //timeout is saved
             assertEquals(textInputTestConnectionTimeout, it.mqttConnectionTimeoutText)
             //keepAliveInterval is saved

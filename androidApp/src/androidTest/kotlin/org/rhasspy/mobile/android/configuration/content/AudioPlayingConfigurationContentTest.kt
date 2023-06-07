@@ -12,9 +12,9 @@ import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.content.AudioPlayingConfigurationContent
-import org.rhasspy.mobile.viewmodel.configuration.IConfigurationUiEvent.Action.Save
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationUiEvent.Change.SelectAudioPlayingOption
-import org.rhasspy.mobile.viewmodel.configuration.audioplaying.AudioPlayingConfigurationViewModel
+import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationUiEvent.Change.SelectAudioPlayingOption
+import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationEditViewModel
 import kotlin.test.assertEquals
 
 class AudioPlayingConfigurationContentTest : FlakyTest() {
@@ -22,7 +22,7 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
     @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
 
-    private val viewModel = get<AudioPlayingConfigurationViewModel>()
+    private val viewModel = get<AudioPlayingConfigurationEditViewModel>()
 
     @Before
     fun setUp() {
@@ -97,7 +97,7 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        AudioPlayingConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        AudioPlayingConfigurationEditViewModel(get()).viewState.value.editViewState.value.also {
             //option is saved to remote http
             assertEquals(AudioPlayingOption.RemoteHTTP, it.audioPlayingOption)
             //endpoint is saved
@@ -158,7 +158,7 @@ class AudioPlayingConfigurationContentTest : FlakyTest() {
 
         //User clicks save
         composeTestRule.saveBottomAppBar(viewModel)
-        AudioPlayingConfigurationViewModel(get()).viewState.value.editViewState.value.also {
+        AudioPlayingConfigurationEditViewModel(get()).viewState.value.editViewState.value.also {
             //option is saved to local
             assertEquals(AudioPlayingOption.Local, it.audioPlayingOption)
             //option notification is saved
