@@ -39,7 +39,7 @@ fun WebServerConfigurationContent() {
     val viewModel: WebServerConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
 
     Screen(viewModel) {
-        val viewState by viewModel.viewState.collectAsState()
+        val viewState by viewModel.configurationEditViewState.collectAsState()
         val screen by viewModel.screen.collectAsState()
         val contentViewState by viewState.editViewState.collectAsState()
 

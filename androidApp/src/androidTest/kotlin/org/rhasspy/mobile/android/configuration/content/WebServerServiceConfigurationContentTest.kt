@@ -69,7 +69,7 @@ class WebServerServiceConfigurationContentTest : FlakyTest() {
         viewModel.onAction(Save)
         composeTestRule.awaitSaved(viewModel)
         composeTestRule.awaitIdle()
-        val viewState = viewModel.viewState.value.editViewState
+        val viewState = viewModel.configurationEditViewState.value.editViewState
 
         val textInputTest = "6541"
 
@@ -114,7 +114,7 @@ class WebServerServiceConfigurationContentTest : FlakyTest() {
 
         //user click save
         composeTestRule.saveBottomAppBar(viewModel)
-        WebServerConfigurationEditViewModel(get()).viewState.value.editViewState.value.also {
+        WebServerConfigurationEditViewModel(get()).configurationEditViewState.value.editViewState.value.also {
             //enable http api is saved
             assertEquals(true, it.isHttpServerEnabled)
             //port is saved

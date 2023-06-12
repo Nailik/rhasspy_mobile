@@ -6,29 +6,16 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.logic.services.IService
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.KViewModel
 import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
-import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable
-abstract class IConfigurationEditViewModel <T: ConfigurationEditViewState<*>>(
-    service: IService,
-    viewStateCreator: ConfigurationDataStateCreator<T>,
-    private val testPageDestination: NavigationDestination
+abstract class IConfigurationEditViewModel(
+    private val testPageDestination: NavigationDestination,
 ) : KViewModel() {
 
-    private val _viewState = MutableStateFlow(
-        ConfigurationEditViewState(
-            serviceViewState = ServiceViewState(service.serviceState),
-            isShowServiceStateDialog = false,
-            isShowUnsavedChangesDialog = false,
-            dataState = viewStateCreator()
-        )
-    )
-    val viewState = _viewState.readOnly
+    abstract val configurationEditViewState: MutableStateFlow<ConfigurationEditViewState>
 
     fun onAction(action: IConfigurationEditUiEvent) {
         when (action) {
@@ -38,9 +25,9 @@ abstract class IConfigurationEditViewModel <T: ConfigurationEditViewState<*>>(
             BackClick -> onBackClick()
             SaveDialog -> save(true)
             DiscardDialog -> discard(true)
-            DismissDialog -> _viewState.update { it.copy(isShowUnsavedChangesDialog = false) }
-            CloseServiceStateDialog -> _viewState.update { it.copy(isShowServiceStateDialog = false) }
-            OpenServiceStateDialog -> _viewState.update { it.copy(isShowServiceStateDialog = true) }
+            DismissDialog -> configurationEditViewState.update { it.copy(isShowUnsavedChangesDialog = false) }
+            CloseServiceStateDialog -> configurationEditViewState.update { it.copy(isShowServiceStateDialog = false) }
+            OpenServiceStateDialog -> configurationEditViewState.update { it.copy(isShowServiceStateDialog = true) }
         }
     }
 
@@ -51,7 +38,7 @@ abstract class IConfigurationEditViewModel <T: ConfigurationEditViewState<*>>(
     private fun updateData(popBackStack: Boolean, function: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             function()
-            _viewState.update {
+            configurationEditViewState.update {
                 it.copy(isShowUnsavedChangesDialog = false)
             }
             if (popBackStack) {
@@ -65,11 +52,11 @@ abstract class IConfigurationEditViewModel <T: ConfigurationEditViewState<*>>(
     protected abstract fun onSave()
 
     private fun onBackClick() {
-        if (_viewState.value.dataState.value.hasUnsavedChanges) {
-            _viewState.update { it.copy(isShowUnsavedChangesDialog = true) }
-        } else if (_viewState.value.isShowServiceStateDialog) {
-            _viewState.update { it.copy(isShowServiceStateDialog = false) }
-        } else if (!_viewState.value.isShowUnsavedChangesDialog) {
+        if (configurationEditViewState.value.hasUnsavedChanges) {
+            configurationEditViewState.update { it.copy(isShowUnsavedChangesDialog = true) }
+        } else if (configurationEditViewState.value.isShowServiceStateDialog) {
+            configurationEditViewState.update { it.copy(isShowServiceStateDialog = false) }
+        } else if (!configurationEditViewState.value.isShowUnsavedChangesDialog) {
             onBackPressed()
         }
     }

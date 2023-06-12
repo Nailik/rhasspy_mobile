@@ -18,4 +18,11 @@ sealed class ServiceState {
 
     object Disabled : ServiceState()
 
+    fun isOpenServiceStateDialogEnabled(): Boolean = (this is ServiceState.Exception || this is ServiceState.Error)
+    fun ServiceState.getDialogText(): Any = when (this) {
+        is ServiceState.Error -> this.information
+        is ServiceState.Exception -> this.exception?.toString() ?: ""
+        else -> ""
+    }
+
 }

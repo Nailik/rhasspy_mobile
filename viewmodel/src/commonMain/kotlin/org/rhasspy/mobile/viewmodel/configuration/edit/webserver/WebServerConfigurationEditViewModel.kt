@@ -1,6 +1,8 @@
 package org.rhasspy.mobile.viewmodel.configuration.edit.webserver
 
 import androidx.compose.runtime.Stable
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.link.LinkType
@@ -9,27 +11,30 @@ import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.utils.OpenLinkUtils
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditViewModel
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Change.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Consumed.ShowSnackBar
-import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WebServerConfigurationScreenDestination.EditScreen
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WebServerConfigurationScreenDestination.TestScreen
+import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable
 class WebServerConfigurationEditViewModel(
-    service: WebServerService
-) : IConfigurationEditViewModel<WebServerConfigurationViewState>(
-    service = service,
-    initialViewState = ::WebServerConfigurationViewState,
-    testPageDestination = TestScreen
-) {
+    service: WebServerService,
+    viewStateCreator: WebServerConfigurationViewStateCreator
+) : IConfigurationEditViewModel(TestScreen) {
 
-    val screen = navigator.topScreen(EditScreen)
+    override val configurationEditViewState: MutableStateFlow<ConfigurationEditViewState> =
+        MutableStateFlow(ConfigurationEditViewState(ServiceViewState(service.serviceState)))
+
+    private val _viewState = viewStateCreator()
+    val viewState = _viewState.readOnly
 
     fun onEvent(event: WebServerConfigurationUiEvent) {
         when (event) {
@@ -40,18 +45,23 @@ class WebServerConfigurationEditViewModel(
     }
 
     private fun onChange(change: Change) {
-        updateViewState {
-            when (change) {
-                is SetHttpServerEnabled -> it.copy(isHttpServerEnabled = change.value)
-                is SetHttpServerSSLEnabled -> it.copy(isHttpServerSSLEnabled = change.value)
-                is UpdateHttpSSLKeyAlias -> it.copy(httpServerSSLKeyAlias = change.value)
-                is UpdateHttpSSLKeyPassword -> it.copy(httpServerSSLKeyPassword = change.value)
-                is UpdateHttpSSLKeyStorePassword -> it.copy(httpServerSSLKeyStorePassword = change.value)
-                is UpdateHttpServerPort -> it.copy(httpServerPortText = change.value)
-                is SetHttpServerSSLKeyStoreFile -> it.copy(httpServerSSLKeyStoreFile = change.value)
-            }
+        _viewState.update {
+            it.copy(
+                editData = with(it.editData) {
+                    when (change) {
+                        is SetHttpServerEnabled -> copy(isHttpServerEnabled = change.value)
+                        is SetHttpServerSSLEnabled -> copy(isHttpServerSSLEnabled = change.value)
+                        is UpdateHttpSSLKeyAlias -> copy(httpServerSSLKeyAlias = change.value)
+                        is UpdateHttpSSLKeyPassword -> copy(httpServerSSLKeyPassword = change.value)
+                        is UpdateHttpSSLKeyStorePassword -> copy(httpServerSSLKeyStorePassword = change.value)
+                        is UpdateHttpServerPort -> copy(httpServerPortText = change.value)
+                        is SetHttpServerSSLKeyStoreFile -> copy(httpServerSSLKeyStoreFile = change.value)
+                    }
+                }
+            )
         }
     }
+
 
     private fun onAction(action: Action) {
         when (action) {
@@ -62,7 +72,7 @@ class WebServerConfigurationEditViewModel(
     }
 
     private fun onConsumed(consumed: Consumed) {
-        updateViewState {
+        _viewState.update {
             when (consumed) {
                 is ShowSnackBar -> it.copy(snackBarText = null)
             }
@@ -71,7 +81,7 @@ class WebServerConfigurationEditViewModel(
 
     private fun openWebServerSSLWiki() {
         if (!get<OpenLinkUtils>().openLink(LinkType.WikiWebServerSSL)) {
-            updateViewState {
+            _viewState.update {
                 it.copy(snackBarText = MR.strings.linkOpenFailed.stable)
             }
         }
@@ -83,7 +93,7 @@ class WebServerConfigurationEditViewModel(
             FileUtils.selectFile(FolderType.CertificateFolder.WebServer)?.also { path ->
                 onEvent(SetHttpServerSSLKeyStoreFile(path))
             } ?: run {
-                updateViewState {
+                _viewState.update {
                     it.copy(snackBarText = MR.strings.selectFileFailed.stable)
                 }
             }
@@ -94,27 +104,31 @@ class WebServerConfigurationEditViewModel(
      * save data configuration
      */
     override fun onSave() {
-        //delete old keystore file if changed
-        if (data.httpServerSSLKeyStoreFile != ConfigurationSetting.httpServerSSLKeyStoreFile.value) {
-            ConfigurationSetting.httpServerSSLKeyStoreFile.value?.commonDelete()
-        }
+        with(_viewState.value.editData) {
+            //delete old keystore file if changed
+            if (httpServerSSLKeyStoreFile != ConfigurationSetting.httpServerSSLKeyStoreFile.value) {
+                ConfigurationSetting.httpServerSSLKeyStoreFile.value?.commonDelete()
+            }
 
-        ConfigurationSetting.isHttpServerEnabled.value = data.isHttpServerEnabled
-        ConfigurationSetting.httpServerPort.value = data.httpServerPort
-        ConfigurationSetting.isHttpServerSSLEnabledEnabled.value = data.isHttpServerSSLEnabled
-        ConfigurationSetting.httpServerSSLKeyStoreFile.value = data.httpServerSSLKeyStoreFile
-        ConfigurationSetting.httpServerSSLKeyStorePassword.value = data.httpServerSSLKeyStorePassword
-        ConfigurationSetting.httpServerSSLKeyAlias.value = data.httpServerSSLKeyAlias
-        ConfigurationSetting.httpServerSSLKeyPassword.value = data.httpServerSSLKeyPassword
+            ConfigurationSetting.isHttpServerEnabled.value = isHttpServerEnabled
+            ConfigurationSetting.httpServerPort.value = httpServerPort
+            ConfigurationSetting.isHttpServerSSLEnabledEnabled.value = isHttpServerSSLEnabled
+            ConfigurationSetting.httpServerSSLKeyStoreFile.value = httpServerSSLKeyStoreFile
+            ConfigurationSetting.httpServerSSLKeyStorePassword.value = httpServerSSLKeyStorePassword
+            ConfigurationSetting.httpServerSSLKeyAlias.value = httpServerSSLKeyAlias
+            ConfigurationSetting.httpServerSSLKeyPassword.value = httpServerSSLKeyPassword
+        }
     }
 
     /**
      * undo all changes
      */
     override fun onDiscard() {
-        //delete new keystore file if changed
-        if (data.httpServerSSLKeyStoreFile != ConfigurationSetting.httpServerSSLKeyStoreFile.value) {
-            data.httpServerSSLKeyStoreFile?.commonDelete()
+        with(_viewState.value.editData) {
+            //delete new keystore file if changed
+            if (httpServerSSLKeyStoreFile != ConfigurationSetting.httpServerSSLKeyStoreFile.value) {
+                httpServerSSLKeyStoreFile?.commonDelete()
+            }
         }
     }
 
