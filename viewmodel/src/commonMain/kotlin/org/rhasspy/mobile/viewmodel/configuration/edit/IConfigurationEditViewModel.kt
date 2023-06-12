@@ -1,74 +1,34 @@
 package org.rhasspy.mobile.viewmodel.configuration.edit
 
 import androidx.compose.runtime.Stable
-import co.touchlab.kermit.Logger
-import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-import org.rhasspy.mobile.data.service.ServiceState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.services.IService
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.KViewModel
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
 import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTestViewState
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable
-abstract class IConfigurationEditViewModel<V : IConfigurationEditViewState>(
-    private val service: IService,
-    private val initialViewState: () -> V,
+abstract class IConfigurationEditViewModel <T: ConfigurationEditViewState<*>>(
+    service: IService,
+    viewStateCreator: ConfigurationDataStateCreator<T>,
     private val testPageDestination: NavigationDestination
 ) : KViewModel() {
 
-    private val logger = Logger.withTag("IConfigurationViewModel")
-
-    protected val contentViewState = MutableStateFlow(initialViewState())
-    protected val data get() = contentViewState.value
-
     private val _viewState = MutableStateFlow(
-        ConfigurationViewState(
+        ConfigurationEditViewState(
             serviceViewState = ServiceViewState(service.serviceState),
-            isOpenServiceStateDialogEnabled = service.serviceState.value.isOpenServiceStateDialogEnabled(),
             isShowServiceStateDialog = false,
-            serviceStateDialogText = service.serviceState.value.getDialogText(),
-            editViewState = contentViewState,
-            testViewState = IConfigurationTestViewState,
             isShowUnsavedChangesDialog = false,
-            hasUnsavedChanges = false
+            dataState = viewStateCreator()
         )
     )
     val viewState = _viewState.readOnly
-
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            service.serviceState.collect { serviceState ->
-                _viewState.update {
-                    it.copy(
-                        isOpenServiceStateDialogEnabled = serviceState.isOpenServiceStateDialogEnabled(),
-                        serviceStateDialogText = serviceState.getDialogText()
-                    )
-                }
-            }
-        }
-    }
-
-    private fun ServiceState.isOpenServiceStateDialogEnabled(): Boolean = (this is ServiceState.Exception || this is ServiceState.Error)
-    private fun ServiceState.getDialogText(): Any = when (this) {
-        is ServiceState.Error -> this.information
-        is ServiceState.Exception -> this.exception?.toString() ?: ""
-        else -> ""
-    }
-
-    protected fun updateViewState(function: (V) -> V) {
-        val newContentViewState = function(contentViewState.value)
-        _viewState.update {
-            it.copy(hasUnsavedChanges = newContentViewState != initialViewState())
-        }
-        contentViewState.value = newContentViewState
-    }
 
     fun onAction(action: IConfigurationEditUiEvent) {
         when (action) {
@@ -84,31 +44,19 @@ abstract class IConfigurationEditViewModel<V : IConfigurationEditViewState>(
         }
     }
 
-    private fun save(popBackStack: Boolean) {
-        updateData(popBackStack, ::onSave)
-    }
+    private fun save(popBackStack: Boolean) = updateData(popBackStack, ::onSave)
 
-    private fun discard(popBackStack: Boolean) {
-        updateData(popBackStack, ::onDiscard)
-    }
+    private fun discard(popBackStack: Boolean) = updateData(popBackStack, ::onDiscard)
 
     private fun updateData(popBackStack: Boolean, function: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             function()
-            contentViewState.value = initialViewState()
-            noUnsavedChanges()
+            _viewState.update {
+                it.copy(isShowUnsavedChangesDialog = false)
+            }
             if (popBackStack) {
                 navigator.popBackStack()
             }
-        }
-    }
-
-    private fun noUnsavedChanges() {
-        _viewState.update {
-            it.copy(
-                isShowUnsavedChangesDialog = false,
-                hasUnsavedChanges = false
-            )
         }
     }
 
@@ -117,7 +65,7 @@ abstract class IConfigurationEditViewModel<V : IConfigurationEditViewState>(
     protected abstract fun onSave()
 
     private fun onBackClick() {
-        if (_viewState.value.hasUnsavedChanges) {
+        if (_viewState.value.dataState.value.hasUnsavedChanges) {
             _viewState.update { it.copy(isShowUnsavedChangesDialog = true) }
         } else if (_viewState.value.isShowServiceStateDialog) {
             _viewState.update { it.copy(isShowServiceStateDialog = false) }

@@ -2,7 +2,7 @@ package org.rhasspy.mobile.android.utils
 
 import org.rhasspy.mobile.data.log.LogType
 import org.rhasspy.mobile.logic.services.IService
-import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditViewModel
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 
@@ -10,7 +10,7 @@ class TestService : IService(LogType.AudioPlayingService)
 
 data class TestViewState(
     val data: Boolean = true
-) : IConfigurationEditViewState() {
+) : ConfigurationEditViewState() {
 
     override val isTestingEnabled: Boolean
         get() = false

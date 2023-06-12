@@ -6,7 +6,7 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.platformspecific.toLongOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
 
 @Stable
 data class MqttConfigurationViewState internal constructor(
@@ -21,7 +21,7 @@ data class MqttConfigurationViewState internal constructor(
     val mqttRetryIntervalText: String = ConfigurationSetting.mqttRetryInterval.value.toString(),
     val mqttKeyStoreFile: Path? = ConfigurationSetting.mqttKeyStoreFile.value,
     val snackBarText: StableStringResource? = null
-) : IConfigurationEditViewState() {
+) : ConfigurationEditViewState() {
 
     val mqttPort: Int get() = mqttPortText.toIntOrZero()
     val mqttConnectionTimeout: Int get() = mqttConnectionTimeoutText.toIntOrZero()

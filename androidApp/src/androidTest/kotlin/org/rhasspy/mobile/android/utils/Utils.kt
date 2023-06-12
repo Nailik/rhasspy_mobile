@@ -19,7 +19,7 @@ import dev.icerock.moko.resources.desc.StringDesc
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditViewModel
 
 
@@ -162,7 +162,7 @@ fun SemanticsNodeInteraction.assertTextEquals(
         includeEditableText = includeEditableText
     )
 
-fun <V : IConfigurationEditViewState> ComposeTestRule.saveBottomAppBar(viewModel: IConfigurationEditViewModel<V>) {
+fun <V : ConfigurationEditViewState> ComposeTestRule.saveBottomAppBar(viewModel: IConfigurationEditViewModel<V>) {
     Espresso.closeSoftKeyboard()
     waitUntilExists(hasTestTag(TestTag.BottomAppBarSave).and(isEnabled()))
     onNodeWithTag(TestTag.BottomAppBarSave).assertIsEnabled().performClick()
@@ -170,7 +170,7 @@ fun <V : IConfigurationEditViewState> ComposeTestRule.saveBottomAppBar(viewModel
 }
 
 
-fun <V : IConfigurationEditViewState> ComposeTestRule.awaitSaved(viewModel: IConfigurationEditViewModel<V>) {
+fun <V : ConfigurationEditViewState> ComposeTestRule.awaitSaved(viewModel: IConfigurationEditViewModel<V>) {
     this.waitUntil(
         condition = { !viewModel.viewState.value.hasUnsavedChanges },
         timeoutMillis = 5000

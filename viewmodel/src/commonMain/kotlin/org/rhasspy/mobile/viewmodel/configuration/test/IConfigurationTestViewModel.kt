@@ -24,18 +24,17 @@ import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTestUiEvent
 
 class IConfigurationTestViewModel  : KViewModel() {
 
-
     private var testStartDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).toString()
     private val logEvents = MutableStateFlow<ImmutableList<LogElement>>(persistentListOf())
 
-
-    private val IConfigurationTestViewState = MutableStateFlow(
+    private val _viewState = MutableStateFlow(
         IConfigurationTestViewState(
             isListFiltered = false,
             isListAutoscroll = true,
             logEvents = logEvents.mapReadonlyState { it.toImmutableList() }
         )
     )
+    val viewState = _viewState.readOnly
 
     private val isTestRunning = MutableStateFlow(false)
     protected var testScope = CoroutineScope(Dispatchers.IO)

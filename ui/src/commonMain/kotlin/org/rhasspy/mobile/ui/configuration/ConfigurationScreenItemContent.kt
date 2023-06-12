@@ -30,8 +30,8 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.SetSystemColor
-import org.rhasspy.mobile.viewmodel.configuration.ConfigurationViewState
-import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType
@@ -48,7 +48,7 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
  * Shows dialog on Back press when there are unsaved changes
  */
 @Composable
-fun <V : IConfigurationEditViewState> ConfigurationScreenItemContent(
+fun <V : ConfigurationEditViewState> ConfigurationScreenItemContent(
     modifier: Modifier,
     screenType: ConfigurationScreenDestinationType,
     viewState: ConfigurationViewState<V>,
@@ -99,7 +99,7 @@ fun <V : IConfigurationEditViewState> ConfigurationScreenItemContent(
 @Composable
 private fun EditConfigurationScreen(
     title: StableStringResource,
-    viewState: IConfigurationEditViewState,
+    viewState: ConfigurationEditViewState,
     serviceViewState: ServiceViewState,
     isOpenServiceStateDialogEnabled: Boolean,
     hasUnsavedChanges: Boolean,

@@ -6,7 +6,7 @@ import org.rhasspy.mobile.data.httpclient.HttpClientPath
 import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
 
 @Stable
 data class IntentRecognitionConfigurationViewState internal constructor(
@@ -14,7 +14,7 @@ data class IntentRecognitionConfigurationViewState internal constructor(
     val isUseCustomIntentRecognitionHttpEndpoint: Boolean = ConfigurationSetting.isUseCustomIntentRecognitionHttpEndpoint.value,
     val intentRecognitionHttpEndpoint: String = ConfigurationSetting.intentRecognitionHttpEndpoint.value,
     val testIntentRecognitionText: String = ""
-) : IConfigurationEditViewState() {
+) : ConfigurationEditViewState() {
 
     val intentRecognitionOptionList: ImmutableList<IntentRecognitionOption> = IntentRecognitionOption.values().toImmutableList()
 

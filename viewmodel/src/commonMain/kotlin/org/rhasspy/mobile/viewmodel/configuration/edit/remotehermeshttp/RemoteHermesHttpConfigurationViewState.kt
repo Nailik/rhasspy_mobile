@@ -5,7 +5,7 @@ import org.rhasspy.mobile.data.service.option.IntentRecognitionOption
 import org.rhasspy.mobile.data.service.option.SpeechToTextOption
 import org.rhasspy.mobile.data.service.option.TextToSpeechOption
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
 
 @Stable
 data class RemoteHermesHttpConfigurationViewState internal constructor(
@@ -17,7 +17,7 @@ data class RemoteHermesHttpConfigurationViewState internal constructor(
     val testIntentRecognitionText: String = "",
     val testTextToSpeechText: String = "",
     val isTestRecordingAudio: Boolean = false
-) : IConfigurationEditViewState() {
+) : ConfigurationEditViewState() {
 
     val isSpeechToTextTestVisible
         get() =

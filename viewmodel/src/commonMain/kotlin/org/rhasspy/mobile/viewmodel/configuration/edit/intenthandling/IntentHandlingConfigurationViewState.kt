@@ -6,7 +6,7 @@ import kotlinx.collections.immutable.toImmutableList
 import org.rhasspy.mobile.data.service.option.HomeAssistantIntentHandlingOption
 import org.rhasspy.mobile.data.service.option.IntentHandlingOption
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
 
 @Stable
 data class IntentHandlingConfigurationViewState internal constructor(
@@ -17,7 +17,7 @@ data class IntentHandlingConfigurationViewState internal constructor(
     val intentHandlingHassOption: HomeAssistantIntentHandlingOption = ConfigurationSetting.intentHandlingHomeAssistantOption.value,
     val testIntentHandlingName: String = "",
     val testIntentHandlingText: String = ""
-) : IConfigurationEditViewState() {
+) : ConfigurationEditViewState() {
 
     val intentHandlingOptionList: ImmutableList<IntentHandlingOption> = IntentHandlingOption.values().toList().toImmutableList()
 

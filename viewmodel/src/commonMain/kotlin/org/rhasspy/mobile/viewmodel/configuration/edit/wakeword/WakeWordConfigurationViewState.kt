@@ -11,7 +11,7 @@ import org.rhasspy.mobile.data.service.option.WakeWordOption
 import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
 
 @Stable
 data class WakeWordConfigurationViewState internal constructor(
@@ -21,7 +21,7 @@ data class WakeWordConfigurationViewState internal constructor(
     val snackBarText: StableStringResource? = null,
     val isMicrophonePermissionEnabled: Boolean,
     val isMicrophonePermissionRequestVisible: Boolean = !isMicrophonePermissionEnabled && (wakeWordOption == WakeWordOption.Porcupine || wakeWordOption == WakeWordOption.Udp)
-) : IConfigurationEditViewState() {
+) : ConfigurationEditViewState() {
 
     val wakeWordOptions: ImmutableList<WakeWordOption> = WakeWordOption.values().toImmutableList()
 
