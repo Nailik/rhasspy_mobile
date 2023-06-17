@@ -12,7 +12,8 @@ import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.AppTest
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent.Action.MicrophoneFabClick
+import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabUiEvent.Action.MicrophoneFabClick
+import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
 import kotlin.test.BeforeTest
 
 class MicrophoneFabViewModelTest : AppTest() {

@@ -20,6 +20,7 @@ kotlin {
                 implementation(Jetbrains.Kotlinx.immutable)
                 implementation(Jetbrains.Kotlinx.dateTime)
                 implementation(Jetbrains.Compose.foundation)
+                implementation(Jetbrains.Compose.materialIconsExtended)
                 implementation(Koin.core)
                 implementation(Icerock.Mvvm.core)
                 implementation(Ktor2.Client.core)

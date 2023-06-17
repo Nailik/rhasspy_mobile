@@ -12,7 +12,7 @@ import org.rhasspy.mobile.data.service.option.AudioOutputOption
 import org.rhasspy.mobile.data.service.option.AudioPlayingOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.content.AudioPlayingConfigurationContent
-import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationUiEvent.Change.SelectAudioPlayingOption
 import org.rhasspy.mobile.viewmodel.configuration.edit.audioplaying.AudioPlayingConfigurationEditViewModel
 import kotlin.test.assertEquals

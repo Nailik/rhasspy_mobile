@@ -13,7 +13,7 @@ import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.service.option.PorcupineKeywordOption
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.content.porcupine.PorcupineKeywordDefaultScreen
-import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditUiEvent.Action.Save
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationEditViewModel
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

@@ -9,11 +9,65 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import org.rhasspy.mobile.data.resource.StableStringResource
+import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.testTag
+
 
 @Composable
 fun Dialog(
+    icon: ImageVector,
+    title: StableStringResource,
+    message: Any,
+    confirmLabel: StableStringResource,
+    dismissLabel: StableStringResource? = null,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    onClose: () -> Unit = onDismiss //outside click
+) {
+    Dialog(
+        modifier = Modifier.testTag(title),
+        onDismissRequest = onClose,
+        headline = { Text(title) },
+        supportingText = {
+            when (message) {
+                is StableStringResource -> Text(message)
+                is String -> Text(message)
+                else -> Text(message.toString())
+            }
+        },
+        icon = {
+            Icon(
+                imageVector = icon,
+                contentDescription = title
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                modifier = Modifier.testTag(TestTag.DialogOk)
+            ) {
+                Text(confirmLabel)
+            }
+        },
+        dismissButton = dismissLabel?.let {
+            {
+                OutlinedButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.testTag(TestTag.DialogCancel)
+                ) {
+                    Text(it)
+                }
+            }
+        }
+    )
+}
+
+@Composable
+private fun Dialog(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
     icon: (@Composable () -> Unit)? = null,

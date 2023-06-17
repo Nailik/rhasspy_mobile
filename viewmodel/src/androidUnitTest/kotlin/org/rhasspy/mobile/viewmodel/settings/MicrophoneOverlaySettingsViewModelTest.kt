@@ -11,7 +11,7 @@ import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption.Disabl
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.AppTest
-import org.rhasspy.mobile.viewmodel.KViewModelEvent.Action.OverlayPermissionDialogResult
+import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.Action.OverlayPermissionDialogResult
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change.SelectMicrophoneOverlaySizeOption
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsViewModel
 import kotlin.test.BeforeTest

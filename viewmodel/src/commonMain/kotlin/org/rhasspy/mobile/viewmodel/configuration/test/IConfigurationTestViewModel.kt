@@ -15,11 +15,11 @@ import org.koin.core.component.get
 import org.rhasspy.mobile.data.log.LogElement
 import org.rhasspy.mobile.data.log.LogLevel
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
 import org.rhasspy.mobile.viewmodel.KViewModel
-import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTestUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTestUiEvent.*
-import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTestUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTestUiEvent.Action.*
 
 class IConfigurationTestViewModel  : KViewModel() {
@@ -27,8 +27,13 @@ class IConfigurationTestViewModel  : KViewModel() {
     private var testStartDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).toString()
     private val logEvents = MutableStateFlow<ImmutableList<LogElement>>(persistentListOf())
 
+
+
+    protected abstract val _configurationTestViewState: MutableStateFlow<ConfigurationTestViewState>
+    val configurationTestViewState get() = _configurationTestViewState.readOnly
+
     private val _viewState = MutableStateFlow(
-        IConfigurationTestViewState(
+        ConfigurationTestViewState(
             isListFiltered = false,
             isListAutoscroll = true,
             logEvents = logEvents.mapReadonlyState { it.toImmutableList() }
@@ -40,7 +45,7 @@ class IConfigurationTestViewModel  : KViewModel() {
     protected var testScope = CoroutineScope(Dispatchers.IO)
         private set
 
-    fun onAction(action: IConfigurationTestUiEvent) {
+    fun onEvent(action: ConfigurationTestUiEvent) {
         when (action) {
             StartTest -> startTest()
             StopTest -> stopTest()

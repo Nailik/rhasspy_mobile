@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.element
+package org.rhasspy.mobile.viewmodel.microphone
 
 import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.logic.services.dialog.DialogManagerServiceState

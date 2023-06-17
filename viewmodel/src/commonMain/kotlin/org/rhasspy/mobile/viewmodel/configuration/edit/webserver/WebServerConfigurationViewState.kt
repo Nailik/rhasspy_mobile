@@ -2,17 +2,16 @@ package org.rhasspy.mobile.viewmodel.configuration.edit.webserver
 
 import androidx.compose.runtime.Stable
 import okio.Path
-import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
+import org.rhasspy.mobile.viewmodel.ScreenViewState
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable
 data class WebServerConfigurationViewState internal constructor(
     val editData: WebServerConfigurationData,
+    val screenViewState: ScreenViewState,
     val editViewState: ConfigurationEditViewState,
-    val snackBarText: StableStringResource? = null
 ) {
 
     @Stable
@@ -32,3 +31,5 @@ data class WebServerConfigurationViewState internal constructor(
     }
 
 }
+
+

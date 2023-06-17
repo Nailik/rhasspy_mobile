@@ -14,7 +14,7 @@ import androidx.glance.appwidget.provideContent
 import androidx.glance.layout.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
+import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
 import org.rhasspy.mobile.widget.R
 
 class MicrophoneWidget : GlanceAppWidget(), KoinComponent {

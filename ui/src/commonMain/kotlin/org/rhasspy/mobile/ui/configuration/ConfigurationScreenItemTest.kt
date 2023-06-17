@@ -25,9 +25,10 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.LogListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.SetSystemColor
-import org.rhasspy.mobile.viewmodel.configuration.test.IConfigurationTestViewState
-import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestUiEvent
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 /**
@@ -36,10 +37,9 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfigurationScreenTest(
-    viewState: IConfigurationTestViewState,
-    serviceViewState: ServiceViewState,
-    isOpenServiceStateDialogEnabled: Boolean,
-    onAction: (IConfigurationEditUiEvent) -> Unit,
+    title: StableStringResource,
+    viewState: ConfigurationTestViewState,
+    onEvent: (ConfigurationTestUiEvent) -> Unit,
     content: (@Composable () -> Unit)?
 ) {
     SetSystemColor(1.dp)
@@ -48,9 +48,9 @@ fun ConfigurationScreenTest(
         topBar = {
             AppBar(
                 viewState = viewState,
-                onAction = onAction,
-                title = MR.strings.test.stable,
-                onBackClick = { onAction(BackClick) }
+                onAction = onEvent,
+                title = title,
+                onBackClick = { onEvent(BackClick) }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Close,
@@ -67,7 +67,7 @@ fun ConfigurationScreenTest(
                 viewState = viewState,
                 serviceViewState = serviceViewState,
                 isOpenServiceStateDialogEnabled = isOpenServiceStateDialogEnabled,
-                onAction = onAction,
+                onEvent = onEvent,
                 content = content
             )
         }
@@ -81,10 +81,10 @@ fun ConfigurationScreenTest(
 @Composable
 private fun ConfigurationScreenTestList(
     modifier: Modifier = Modifier,
-    viewState: IConfigurationTestViewState,
+    viewState: ConfigurationTestViewState,
     serviceViewState: ServiceViewState,
     isOpenServiceStateDialogEnabled: Boolean,
-    onAction: (IConfigurationEditUiEvent) -> Unit,
+    onEvent: (ConfigurationEditUiEvent) -> Unit,
     content: (@Composable () -> Unit)?,
 ) {
     Column(modifier = modifier) {
@@ -114,7 +114,7 @@ private fun ConfigurationScreenTestList(
                         .padding(bottom = 16.dp),
                     serviceViewState = serviceViewState,
                     enabled = isOpenServiceStateDialogEnabled,
-                    onClick = { onAction(OpenServiceStateDialog) }
+                    onClick = { onEvent(OpenServiceStateDialog) }
                 )
             }
 
@@ -144,8 +144,8 @@ private fun ConfigurationScreenTestList(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppBar(
-    viewState: IConfigurationTestViewState,
-    onAction: (IConfigurationEditUiEvent) -> Unit,
+    viewState: ConfigurationTestViewState,
+    onEvent: (ConfigurationEditUiEvent) -> Unit,
     title: StableStringResource,
     onBackClick: () -> Unit,
     icon: @Composable () -> Unit
@@ -168,13 +168,13 @@ private fun AppBar(
             )
         },
         actions = {
-            IconButton(onClick = { onAction(ToggleListFiltered) }) {
+            IconButton(onClick = { onEvent(ToggleListFiltered) }) {
                 Icon(
                     imageVector = if (viewState.isListFiltered) Icons.Filled.FilterListOff else Icons.Filled.FilterList,
                     contentDescription = MR.strings.filterList.stable
                 )
             }
-            IconButton(onClick = { onAction(ToggleListAutoscroll) }) {
+            IconButton(onClick = { onEvent(ToggleListAutoscroll) }) {
                 Icon(
                     imageVector = if (viewState.isListAutoscroll) Icons.Filled.LowPriority else Icons.Filled.PlaylistRemove,
                     contentDescription = MR.strings.autoscrollList.stable

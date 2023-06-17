@@ -17,8 +17,8 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.speechtotext.SpeechToText
 import org.rhasspy.mobile.viewmodel.configuration.edit.texttospeech.TextToSpeechConfigurationEditViewModel
 import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationEditViewModel
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationEditViewModel
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewStateCreator
+import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
+import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewStateCreator
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
 import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewModel
 import org.rhasspy.mobile.viewmodel.overlay.indication.IndicationOverlayViewStateCreator

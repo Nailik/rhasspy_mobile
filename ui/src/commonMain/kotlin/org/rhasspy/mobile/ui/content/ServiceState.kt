@@ -27,11 +27,12 @@ import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 @Composable
 fun ServiceStateDialog(
     dialogText: Any,
-    onDismissRequest: () -> Unit
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
 ) {
 
     Dialog(
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = onDismiss,
         headline = {
             Text(MR.strings.error.stable)
         },
@@ -45,12 +46,12 @@ fun ServiceStateDialog(
         icon = {
             Icon(
                 imageVector = Icons.Filled.Info,
-                contentDescription = MR.strings.info.stable
+                contentDescription = MR.strings.error.stable
             )
         },
         confirmButton = {
             TextButton(
-                onClick = onDismissRequest,
+                onClick = onConfirm,
                 modifier = Modifier.testTag(TestTag.DialogOk)
             ) {
                 Text(MR.strings.close.stable)

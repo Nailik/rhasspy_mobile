@@ -20,6 +20,7 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.*
+import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.Consumed.ConsumedSnackBar
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Action.OpenWebServerSSLWiki
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Action.SelectSSLCertificate
@@ -38,9 +39,11 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenN
 fun WebServerConfigurationContent() {
     val viewModel: WebServerConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(viewModel) {
-        val viewState by viewModel.configurationEditViewState.collectAsState()
-        val screen by viewModel.screen.collectAsState()
+    val viewState by viewModel.configurationEditViewState.collectAsState()
+    Screen(
+        screenViewState = viewState.screenViewState,
+        onConsumedSnackBar = { viewModel.onEvent(ConsumedSnackBar) }
+    ) {
         val contentViewState by viewState.editViewState.collectAsState()
 
         val snackBarHostState = LocalSnackBarHostState.current

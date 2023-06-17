@@ -10,7 +10,7 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewStateCreator
+import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewStateCreator
 
 class MicrophoneOverlayViewStateCreator(
     private val nativeApplication: NativeApplication,

@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.middleware.ServiceMiddleware
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewStateCreator
+import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewStateCreator
 
 class HomeScreenViewStateCreator(
     private val serviceMiddleware: ServiceMiddleware,

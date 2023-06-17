@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel.element
+package org.rhasspy.mobile.viewmodel.microphone
 
 sealed interface MicrophoneFabUiEvent {
 

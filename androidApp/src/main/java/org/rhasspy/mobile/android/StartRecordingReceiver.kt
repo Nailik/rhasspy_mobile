@@ -7,8 +7,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabUiEvent.Action.MicrophoneFabClick
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewModel
+import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabUiEvent.Action.MicrophoneFabClick
+import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewModel
 
 /**
  * Start Recording Receiver to not launch Main Activity when Permission is given

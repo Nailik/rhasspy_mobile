@@ -3,6 +3,7 @@ package org.rhasspy.mobile.ui
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
+import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.service.option.IOption
 
 /**
@@ -11,8 +12,6 @@ import org.rhasspy.mobile.data.service.option.IOption
 enum class TestTag {
     List,
     DialogCrashlytics,
-    DialogInformationMicrophonePermission,
-    DialogInformationOverlayPermission,
     DialogOk,
     DialogCancel,
     DialogUnsavedChanges,
@@ -174,5 +173,11 @@ fun Modifier.testTag(IOption: IOption<*>) = semantics(
 fun Modifier.testTag(name: String) = semantics(
     properties = {
         testTag = name
+    }
+)
+
+fun Modifier.testTag(name: StableStringResource) = semantics(
+    properties = {
+        testTag = name.toString()
     }
 )

@@ -2,7 +2,7 @@ package org.rhasspy.mobile.viewmodel.overlay.microphone
 
 import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
-import org.rhasspy.mobile.viewmodel.element.MicrophoneFabViewState
+import org.rhasspy.mobile.viewmodel.microphone.MicrophoneFabViewState
 
 @Stable
 data class MicrophoneOverlayViewState internal constructor(
