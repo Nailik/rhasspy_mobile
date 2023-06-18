@@ -56,7 +56,7 @@ fun WakeWordConfigurationContent() {
 
     val viewState by viewModel.viewState.collectAsState()
 
-    Screen(viewModel) {
+    Screen(kViewModel = viewModel) {
         val screen by viewModel.screen.collectAsState()
         val porcupineScreen by viewModel.porcupineScreen.collectAsState()
 

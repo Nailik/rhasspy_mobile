@@ -1,8 +1,6 @@
 package org.rhasspy.mobile.viewmodel.configuration.edit.webserver
 
 import okio.Path
-import org.rhasspy.mobile.viewmodel.KViewModelUiEvent
-import org.rhasspy.mobile.viewmodel.ScreenViewState
 
 sealed interface WebServerConfigurationUiEvent {
 

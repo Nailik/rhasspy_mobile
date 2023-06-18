@@ -28,11 +28,11 @@ import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.SetSystemColor
 import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestUiEvent.Dialog.Confirm
-import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestUiEvent.Dialog.Dismiss
+import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestUiEvent.DialogAction.Confirm
+import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestUiEvent.DialogAction.Dismiss
 import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestViewState
-import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestViewState.Dialogs
-import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestViewState.Dialogs.ServiceStateDialog
+import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestViewState.DialogState
+import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestViewState.DialogState.ServiceStateDialog
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 /**
@@ -48,7 +48,7 @@ fun ConfigurationScreenTest(
 ) {
     SetSystemColor(1.dp)
 
-    viewState.dialog?.also {
+    viewState.dialogState?.also {
         Dialogs(
             dialog = it,
             onEvent = onEvent
@@ -148,7 +148,7 @@ private fun ConfigurationScreenTestList(
  */
 @Composable
 private fun Dialogs(
-    dialog: Dialogs,
+    dialog: DialogState,
     onEvent: (ConfigurationTestUiEvent) -> Unit
 ) {
     when (dialog) {

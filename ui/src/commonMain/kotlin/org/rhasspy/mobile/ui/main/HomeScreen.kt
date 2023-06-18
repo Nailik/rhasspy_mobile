@@ -41,7 +41,7 @@ import org.rhasspy.mobile.viewmodel.screens.home.HomeScreenViewState
 fun HomeScreen() {
     val viewModel: HomeScreenViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(viewModel) {
+    Screen(kViewModel = viewModel) {
         Scaffold(
             modifier = Modifier
                 .testTag(HomeScreen)

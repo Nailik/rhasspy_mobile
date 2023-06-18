@@ -41,7 +41,7 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenN
 fun IntentHandlingConfigurationContent() {
     val viewModel: IntentHandlingConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(viewModel) {
+    Screen(kViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
         val screen by viewModel.screen.collectAsState()
         val contentViewState by viewState.editViewState.collectAsState()

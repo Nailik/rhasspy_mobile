@@ -10,7 +10,6 @@ sealed interface ConfigurationEditUiEvent {
         object Discard : Action
         object BackClick : Action
         object OpenTestScreen : Action
-        object OpenServiceStateDialog : Action
 
     }
 
@@ -21,6 +20,12 @@ sealed interface ConfigurationEditUiEvent {
         data class Confirm(override val dialogState: DialogState) : DialogAction
         data class Dismiss(override val dialogState: DialogState) : DialogAction
         data class Close(override val dialogState: DialogState) : DialogAction
+
+    }
+
+    sealed interface Change : ConfigurationEditUiEvent {
+
+        object OpenServiceStateDialog : Change
 
     }
 

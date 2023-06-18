@@ -41,7 +41,7 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenN
 fun AudioPlayingConfigurationContent() {
     val viewModel: AudioPlayingConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(viewModel) {
+    Screen(kViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
         val screen by viewModel.screen.collectAsState()
         val contentViewState by viewState.editViewState.collectAsState()

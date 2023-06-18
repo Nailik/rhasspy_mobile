@@ -44,7 +44,7 @@ fun AboutScreen() {
 
     val viewModel: AboutScreenViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(viewModel) {
+    Screen(kViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
         val snackBarHostState = LocalSnackBarHostState.current
         val snackBarText = viewState.snackBarText?.let { translate(it) }

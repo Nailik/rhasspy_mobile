@@ -27,7 +27,7 @@ import org.rhasspy.mobile.viewmodel.settings.audiorecorder.AudioRecorderSettings
 fun AudioRecorderSettingsContent() {
     val viewModel: AudioRecorderSettingsViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(viewModel) {
+    Screen(kViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
         SettingsScreenItemContent(

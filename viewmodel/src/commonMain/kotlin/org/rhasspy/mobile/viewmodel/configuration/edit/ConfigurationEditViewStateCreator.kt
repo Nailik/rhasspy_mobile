@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.StateFlow
 import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationViewState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 class ConfigurationEditViewStateCreator(

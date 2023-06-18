@@ -45,7 +45,7 @@ import org.rhasspy.mobile.viewmodel.screens.log.LogScreenViewModel
 fun LogScreen() {
     val viewModel: LogScreenViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(viewModel) {
+    Screen(kViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
         val snackBarHostState = LocalSnackBarHostState.current

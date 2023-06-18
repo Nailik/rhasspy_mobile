@@ -1,12 +1,10 @@
 package org.rhasspy.mobile.ui.configuration
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Delete
@@ -19,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
+import org.rhasspy.mobile.ui.Screen
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.content.ServiceStateDialog
 import org.rhasspy.mobile.ui.content.ServiceStateHeader
@@ -27,57 +26,68 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.SetSystemColor
+import org.rhasspy.mobile.viewmodel.IKViewModel
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.DialogAction.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.DialogState
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.DialogState.ServiceStateDialogState
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.DialogState.UnsavedChangesDialogState
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.DialogAction.*
 
 
 /**
  * configuration screen where settings are edited
  */
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfigurationScreenItemEdit(
+    modifier: Modifier,
+    kViewModel: IKViewModel,
     title: StableStringResource,
     viewState: ConfigurationEditViewState,
     onEvent: (ConfigurationEditUiEvent) -> Unit,
-    content: LazyListScope.() -> Unit
+    content: @Composable () -> Unit
 ) {
-    SetSystemColor(0.dp)
 
-    viewState.dialogState?.also {
-        Dialogs(
-            dialogState = it,
-            onEvent = onEvent
-        )
-    }
+    Screen(
+        modifier = modifier,
+        kViewModel = kViewModel
+    ) {
 
-    Scaffold(
-        topBar = {
-            AppBar(
-                title = title,
+        SetSystemColor(0.dp)
+
+        viewState.dialogState?.also {
+            Dialogs(
+                dialogState = it,
                 onEvent = onEvent
             )
-        },
-        bottomBar = {
-            BottomAppBar(
-                hasUnsavedChanges = viewState.hasUnsavedChanges,
-                isTestingEnabled = viewState.isTestingEnabled,
-                onAction = { onEvent(it) },
-            )
         }
-    ) { paddingValues ->
-        Surface(tonalElevation = 1.dp) {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-            ) {
-                stickyHeader {
+
+        Scaffold(
+            topBar = {
+                AppBar(
+                    title = title,
+                    onEvent = onEvent
+                )
+            },
+            bottomBar = {
+                BottomAppBar(
+                    hasUnsavedChanges = viewState.hasUnsavedChanges,
+                    isTestingEnabled = viewState.isTestingEnabled,
+                    onEvent = onEvent,
+                )
+            }
+        ) { paddingValues ->
+
+            Surface(tonalElevation = 1.dp) {
+
+                Column(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize()
+                ) {
+
                     ServiceStateHeader(
                         modifier = Modifier
                             .background(MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp))
@@ -87,9 +97,9 @@ fun ConfigurationScreenItemEdit(
                         enabled = viewState.isOpenServiceStateDialogEnabled,
                         onClick = { onEvent(OpenServiceStateDialog) }
                     )
-                }
 
-                content()
+                    content()
+                }
             }
         }
     }
@@ -109,8 +119,8 @@ private fun Dialogs(
         is ServiceStateDialogState -> {
             ServiceStateDialog(
                 dialogText = dialogState.dialogText,
-                onConfirm = { onEvent(Confirm) },
-                onDismiss = { onEvent(Dismiss) }
+                onConfirm = { onEvent(Confirm(dialogState)) },
+                onDismiss = { onEvent(Dismiss(dialogState)) }
             )
         }
 
@@ -122,9 +132,9 @@ private fun Dialogs(
                 message = MR.strings.unsavedChangesInformation.stable,
                 confirmLabel = MR.strings.save.stable,
                 dismissLabel = MR.strings.discard.stable,
-                onConfirm = { onEvent(Confirm) },
-                onDismiss = { onEvent(Dismiss) },
-                onClose = { onEvent(Close) }
+                onConfirm = { onEvent(Confirm(dialogState)) },
+                onDismiss = { onEvent(Dismiss(dialogState)) },
+                onClose = { onEvent(Close(dialogState)) }
             )
         }
     }
@@ -139,13 +149,13 @@ private fun Dialogs(
 private fun BottomAppBar(
     hasUnsavedChanges: Boolean,
     isTestingEnabled: Boolean,
-    onAction: (ConfigurationEditUiEvent) -> Unit,
+    onEvent: (ConfigurationEditUiEvent) -> Unit,
 ) {
     BottomAppBar(
         actions = {
             IconButton(
                 modifier = Modifier.testTag(TestTag.BottomAppBarDiscard),
-                onClick = { onAction(Discard) },
+                onClick = { onEvent(Discard) },
                 enabled = hasUnsavedChanges
             ) {
                 Icon(
@@ -155,7 +165,7 @@ private fun BottomAppBar(
             }
             IconButton(
                 modifier = Modifier.testTag(TestTag.BottomAppBarSave),
-                onClick = { onAction(Save) },
+                onClick = { onEvent(Save) },
                 enabled = hasUnsavedChanges
             ) {
                 Icon(
@@ -168,7 +178,7 @@ private fun BottomAppBar(
             FloatingActionButtonElement(
                 hasUnsavedChanges = hasUnsavedChanges,
                 isTestingEnabled = isTestingEnabled,
-                onAction = onAction
+                onAction = onEvent
             )
         }
     )

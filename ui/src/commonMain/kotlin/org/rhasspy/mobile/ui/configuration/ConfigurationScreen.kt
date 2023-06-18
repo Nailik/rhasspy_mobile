@@ -16,6 +16,7 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.*
 import org.rhasspy.mobile.ui.configuration.edit.*
+import org.rhasspy.mobile.ui.configuration.test.WebServerConfigurationTestContent
 import org.rhasspy.mobile.ui.content.elements.*
 import org.rhasspy.mobile.ui.content.item.EventStateIconTinted
 import org.rhasspy.mobile.ui.content.list.ListElement
@@ -23,6 +24,9 @@ import org.rhasspy.mobile.ui.content.list.TextFieldListItem
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.*
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.ConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType.Edit
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType.Test
 import org.rhasspy.mobile.viewmodel.screens.configuration.*
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.Navigate
 import org.rhasspy.mobile.viewmodel.screens.configuration.ConfigurationScreenUiEvent.Action.ScrollToErrorClick
@@ -38,29 +42,37 @@ fun ConfigurationScreen() {
 
     val viewModel: ConfigurationScreenViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(viewModel) {
+    Screen(kViewModel = viewModel) {
         val screen by viewModel.screen.collectAsState()
 
-        when (screen) {
-            null -> {
-                val viewState by viewModel.viewState.collectAsState()
+        with(screen) {
+            when (this) {
+                null -> {
+                    val viewState by viewModel.viewState.collectAsState()
 
-                ConfigurationScreenContent(
-                    onEvent = viewModel::onEvent,
-                    viewState = viewState
-                )
+                    ConfigurationScreenContent(
+                        onEvent = viewModel::onEvent,
+                        viewState = viewState
+                    )
+                }
+
+                is AudioPlayingConfigurationScreen -> AudioPlayingConfigurationContent()
+                is DialogManagementConfigurationScreen -> DialogManagementConfigurationContent()
+                is IntentHandlingConfigurationScreen -> IntentHandlingConfigurationContent()
+                is IntentRecognitionConfigurationScreen -> IntentRecognitionConfigurationContent()
+                is MqttConfigurationScreen -> MqttConfigurationContent()
+                is RemoteHermesHttpConfigurationScreen -> RemoteHermesHttpConfigurationContent()
+                is SpeechToTextConfigurationScreen -> SpeechToTextConfigurationContent()
+                is TextToSpeechConfigurationScreen -> TextToSpeechConfigurationContent()
+                is WakeWordConfigurationScreen -> WakeWordConfigurationContent()
+                is WebServerConfigurationScreen -> {
+                    when (this.destinationType) {
+                        Edit -> WebServerConfigurationEditContent()
+                        Test -> WebServerConfigurationTestContent()
+                    }
+                }
+
             }
-
-            AudioPlayingConfigurationScreen -> AudioPlayingConfigurationContent()
-            DialogManagementConfigurationScreen -> DialogManagementConfigurationContent()
-            IntentHandlingConfigurationScreen -> IntentHandlingConfigurationContent()
-            IntentRecognitionConfigurationScreen -> IntentRecognitionConfigurationContent()
-            MqttConfigurationScreen -> MqttConfigurationContent()
-            RemoteHermesHttpConfigurationScreen -> RemoteHermesHttpConfigurationContent()
-            SpeechToTextConfigurationScreen -> SpeechToTextConfigurationContent()
-            TextToSpeechConfigurationScreen -> TextToSpeechConfigurationContent()
-            WakeWordConfigurationScreen -> WakeWordConfigurationContent()
-            WebServerConfigurationScreen -> WebServerConfigurationContent()
         }
     }
 
@@ -235,7 +247,7 @@ private fun RemoteHermesHttp(
         text = MR.strings.remoteHermesHTTP.stable,
         secondaryText = "${translate(MR.strings.sslValidation.stable)} ${translate(viewState.isHttpSSLVerificationEnabled.not().toText())}",
         viewState = viewState.serviceState,
-        destination = RemoteHermesHttpConfigurationScreen,
+        destination = RemoteHermesHttpConfigurationScreen(Edit),
         onEvent = onEvent
     )
 
@@ -255,7 +267,7 @@ private fun Webserver(
         text = MR.strings.webserver.stable,
         secondaryText = viewState.isHttpServerEnabled.toText(),
         serviceViewState = viewState.serviceState,
-        destination = WebServerConfigurationScreen,
+        destination = WebServerConfigurationScreen(Edit),
         onEvent = onEvent
     )
 
@@ -275,7 +287,7 @@ private fun Mqtt(
         text = MR.strings.mqtt.stable,
         secondaryText = if (viewState.isMQTTConnected) MR.strings.connected.stable else MR.strings.notConnected.stable,
         serviceViewState = viewState.serviceState,
-        destination = MqttConfigurationScreen,
+        destination = MqttConfigurationScreen(Edit),
         onEvent = onEvent
     )
 
@@ -296,7 +308,7 @@ private fun WakeWord(
         text = MR.strings.wakeWord.stable,
         secondaryText = viewState.wakeWordValueOption.text,
         serviceViewState = viewState.serviceState,
-        destination = WakeWordConfigurationScreen,
+        destination = WakeWordConfigurationScreen(Edit),
         onEvent = onEvent
     )
 
@@ -316,7 +328,7 @@ private fun SpeechToText(
         text = MR.strings.speechToText.stable,
         secondaryText = viewState.speechToTextOption.text,
         serviceViewState = viewState.serviceState,
-        destination = SpeechToTextConfigurationScreen,
+        destination = SpeechToTextConfigurationScreen(Edit),
         onEvent = onEvent
     )
 
@@ -337,7 +349,7 @@ private fun IntentRecognition(
         text = MR.strings.intentRecognition.stable,
         secondaryText = viewState.intentRecognitionOption.text,
         serviceViewState = viewState.serviceState,
-        destination = IntentRecognitionConfigurationScreen,
+        destination = IntentRecognitionConfigurationScreen(Edit),
         onEvent = onEvent
     )
 
@@ -357,7 +369,7 @@ private fun TextToSpeech(
         text = MR.strings.textToSpeech.stable,
         secondaryText = viewState.textToSpeechOption.text,
         serviceViewState = viewState.serviceState,
-        destination = TextToSpeechConfigurationScreen,
+        destination = TextToSpeechConfigurationScreen(Edit),
         onEvent = onEvent
     )
 
@@ -377,7 +389,7 @@ private fun AudioPlaying(
         text = MR.strings.audioPlaying.stable,
         secondaryText = viewState.audioPlayingOption.text,
         serviceViewState = viewState.serviceState,
-        destination = AudioPlayingConfigurationScreen,
+        destination = AudioPlayingConfigurationScreen(Edit),
         onEvent = onEvent
     )
 
@@ -397,7 +409,7 @@ private fun DialogManagement(
         text = MR.strings.dialogManagement.stable,
         secondaryText = viewState.dialogManagementOption.text,
         serviceViewState = viewState.serviceState,
-        destination = DialogManagementConfigurationScreen,
+        destination = DialogManagementConfigurationScreen(Edit),
         onEvent = onEvent
     )
 
@@ -417,7 +429,7 @@ private fun IntentHandling(
         text = MR.strings.intentHandling.stable,
         secondaryText = viewState.intentHandlingOption.text,
         serviceViewState = viewState.serviceState,
-        destination = IntentHandlingConfigurationScreen,
+        destination = IntentHandlingConfigurationScreen(Edit),
         onEvent = onEvent
     )
 

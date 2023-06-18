@@ -42,7 +42,7 @@ fun IntentRecognitionConfigurationContent() {
     val screen by viewModel.screen.collectAsState()
     val contentViewState by viewState.editViewState.collectAsState()
 
-    Screen(viewModel) {
+    Screen(kViewModel = viewModel) {
         ConfigurationScreenItemContent(
             modifier = Modifier.testTag(IntentRecognitionConfigurationScreen),
             screenType = screen.destinationType,

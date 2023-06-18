@@ -5,6 +5,8 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Link
@@ -13,21 +15,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.ui.*
-import org.rhasspy.mobile.ui.configuration.ConfigurationScreenConfig
-import org.rhasspy.mobile.ui.configuration.ConfigurationScreenItemContent
+import org.rhasspy.mobile.ui.LocalViewModelFactory
+import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.configuration.ConfigurationScreenItemEdit
 import org.rhasspy.mobile.ui.content.elements.Icon
+import org.rhasspy.mobile.ui.content.elements.SnackBar
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.*
-import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.Consumed.ConsumedSnackBar
+import org.rhasspy.mobile.ui.testTag
+import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationEditViewModel
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Action.OpenWebServerSSLWiki
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Consumed.ShowSnackBar
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationEditViewModel
+import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.SnackBar.Consumed
+import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationViewState.SnackBarState.LinkOpenFailed
+import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationViewState.SnackBarState.SelectFileFailed
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.WebServerConfigurationScreen
+import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType.Edit
 
 /**
  * Content to configure text to speech
@@ -36,40 +42,49 @@ import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenN
  * select ssl certificate
  */
 @Composable
-fun WebServerConfigurationContent() {
+fun WebServerConfigurationEditContent() {
     val viewModel: WebServerConfigurationEditViewModel = LocalViewModelFactory.current.getViewModel()
 
-    val viewState by viewModel.configurationEditViewState.collectAsState()
-    Screen(
-        screenViewState = viewState.screenViewState,
-        onConsumedSnackBar = { viewModel.onEvent(ConsumedSnackBar) }
+    val configurationEditViewState by viewModel.configurationEditViewState.collectAsState()
+
+    ConfigurationScreenItemEdit(
+        modifier = Modifier.testTag(WebServerConfigurationScreen(Edit)),
+        kViewModel = viewModel,
+        title = MR.strings.webserver.stable,
+        viewState = configurationEditViewState,
+        onEvent = viewModel::onEvent
     ) {
-        val contentViewState by viewState.editViewState.collectAsState()
 
-        val snackBarHostState = LocalSnackBarHostState.current
-        val snackBarText = contentViewState.snackBarText?.let { translate(it) }
+        val viewState by viewModel.viewState.collectAsState()
 
-        LaunchedEffect(snackBarText) {
-            snackBarText?.also {
-                snackBarHostState.showSnackbar(message = it)
-                viewModel.onEvent(ShowSnackBar)
+        viewState.snackBarState?.also { snackBarState ->
+            when (snackBarState) {
+                LinkOpenFailed -> {
+                    SnackBar(
+                        title = MR.strings.microphonePermissionRequestFailed.stable,
+                        consumed = { viewModel.onEvent(Consumed) },
+                    )
+                }
+
+                SelectFileFailed -> {
+                    SnackBar(
+                        title = MR.strings.microphonePermissionRequestFailed.stable,
+                        consumed = { viewModel.onEvent(Consumed) },
+                    )
+                }
             }
         }
 
-        ConfigurationScreenItemContent(
-            modifier = Modifier.testTag(WebServerConfigurationScreen),
-            screenType = screen.destinationType,
-            config = ConfigurationScreenConfig(MR.strings.webserver.stable),
-            viewState = viewState,
-            onAction = viewModel::onAction
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
         ) {
-
             item {
                 //switch to enable http server
                 SwitchListItem(
                     text = MR.strings.enableHTTPApi.stable,
                     modifier = Modifier.testTag(TestTag.ServerSwitch),
-                    isChecked = contentViewState.isHttpServerEnabled,
+                    isChecked = viewState.editData.isHttpServerEnabled,
                     onCheckedChange = { viewModel.onEvent(SetHttpServerEnabled(it)) }
                 )
             }
@@ -79,7 +94,7 @@ fun WebServerConfigurationContent() {
                 AnimatedVisibility(
                     enter = expandVertically(),
                     exit = shrinkVertically(),
-                    visible = contentViewState.isHttpServerEnabled
+                    visible = viewState.editData.isHttpServerEnabled
                 ) {
 
                     Column {
@@ -88,18 +103,18 @@ fun WebServerConfigurationContent() {
                         TextFieldListItem(
                             label = MR.strings.port.stable,
                             modifier = Modifier.testTag(TestTag.Port),
-                            value = contentViewState.httpServerPortText,
+                            value = viewState.editData.httpServerPortText,
                             isLastItem = true,
                             onValueChange = { viewModel.onEvent(UpdateHttpServerPort(it)) },
                             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                         )
 
                         WebserverSSL(
-                            isHttpServerSSLEnabled = contentViewState.isHttpServerSSLEnabled,
-                            httpServerSSLKeyStoreFileName = contentViewState.httpServerSSLKeyStoreFileName,
-                            httpServerSSLKeyStorePassword = contentViewState.httpServerSSLKeyStorePassword,
-                            httpServerSSLKeyAlias = contentViewState.httpServerSSLKeyAlias,
-                            httpServerSSLKeyPassword = contentViewState.httpServerSSLKeyPassword,
+                            isHttpServerSSLEnabled = viewState.editData.isHttpServerSSLEnabled,
+                            httpServerSSLKeyStoreFileName = viewState.editData.httpServerSSLKeyStoreFileName,
+                            httpServerSSLKeyStorePassword = viewState.editData.httpServerSSLKeyStorePassword,
+                            httpServerSSLKeyAlias = viewState.editData.httpServerSSLKeyAlias,
+                            httpServerSSLKeyPassword = viewState.editData.httpServerSSLKeyPassword,
                             onAction = viewModel::onEvent
                         )
 
@@ -108,6 +123,7 @@ fun WebServerConfigurationContent() {
                 }
             }
         }
+
     }
 
 }

@@ -3,14 +3,19 @@ package org.rhasspy.mobile.viewmodel.configuration.edit.webserver
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.get
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
+import org.rhasspy.mobile.platformspecific.combineState
+import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
 import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
+import org.rhasspy.mobile.platformspecific.mapReadonlyState
+import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.utils.OpenLinkUtils
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
@@ -34,8 +39,13 @@ class WebServerConfigurationEditViewModel(
     service = service
 ) {
 
-    private val _editData = MutableStateFlow(WebServerConfigurationData())
-    private val _viewState = MutableStateFlow(WebServerConfigurationViewState(_editData))
+    private val initialConfigurationData = WebServerConfigurationData()
+
+    private val _editData = MutableStateFlow(initialConfigurationData)
+    private val _viewState = MutableStateFlow(WebServerConfigurationViewState(initialConfigurationData))
+    val viewState = combineState(_viewState, _editData) { viewState, editData ->
+        viewState.copy(editData = editData)
+    }
 
     override fun initViewStateCreator(
         configurationEditViewState: MutableStateFlow<ConfigurationEditViewState>
@@ -80,7 +90,7 @@ class WebServerConfigurationEditViewModel(
     }
 
     private fun onSnackBar(snackBar: SnackBar) {
-        when(snackBar) {
+        when (snackBar) {
             Consumed -> _viewState.update { it.copy(snackBarState = null) }
         }
     }

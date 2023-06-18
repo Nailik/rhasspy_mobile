@@ -62,7 +62,7 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
                         Box(modifier = Modifier.padding(paddingValues)) {
 
                             val viewModel: MainScreenViewModel = LocalViewModelFactory.current.getViewModel()
-                            Screen(viewModel) {
+                            Screen(kViewModel = viewModel) {
                                 val screen by viewModel.screen.collectAsState()
                                 val viewState by viewModel.viewState.collectAsState()
 

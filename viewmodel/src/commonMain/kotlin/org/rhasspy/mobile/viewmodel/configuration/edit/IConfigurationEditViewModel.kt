@@ -8,14 +8,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.logic.services.IService
-import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.KViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.DialogState.UnsavedChangesDialogState
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Change.OpenServiceStateDialog
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.DialogAction.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.DialogAction
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.DialogState.ServiceStateDialogState
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.DialogState.UnsavedChangesDialogState
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
@@ -26,7 +25,7 @@ abstract class IConfigurationEditViewModel(
 ) : KViewModel() {
 
     private val _configurationEditViewState = MutableStateFlow(ConfigurationEditViewState(serviceViewState = ServiceViewState(service.serviceState)))
-    val viewState by lazy { initViewStateCreator(_configurationEditViewState) }
+    val configurationEditViewState by lazy { initViewStateCreator(_configurationEditViewState) }
 
     abstract fun initViewStateCreator(configurationEditViewState: MutableStateFlow<ConfigurationEditViewState>) : StateFlow<ConfigurationEditViewState>
 
@@ -37,6 +36,7 @@ abstract class IConfigurationEditViewModel(
         when (event) {
             is Action -> onAction(event)
             is DialogAction -> onDialog(event)
+            is Change -> onChange(event)
         }
     }
 
@@ -46,13 +46,12 @@ abstract class IConfigurationEditViewModel(
             Save -> save(false)
             OpenTestScreen -> navigator.navigate(testPageDestination)
             BackClick -> onBackClick()
-            OpenServiceStateDialog -> _configurationEditViewState.update {
-                it.copy(dialogState = ServiceStateDialogState(_configurationEditViewState.value.serviceViewState.serviceState.value))
-            }
         }
     }
 
     private fun onDialog(dialogAction: DialogAction) {
+
+        _configurationEditViewState.update { it.copy(dialogState = null) }
 
         when (dialogAction.dialogState) {
             UnsavedChangesDialogState ->
@@ -65,8 +64,14 @@ abstract class IConfigurationEditViewModel(
             else -> Unit
         }
 
-        _configurationEditViewState.update { it.copy(dialogState = null) }
+    }
 
+    private fun onChange(change: Change) {
+        _configurationEditViewState.update {
+            when (change) {
+                OpenServiceStateDialog -> it.copy(dialogState = ServiceStateDialogState(it.serviceViewState.serviceState.value))
+            }
+        }
     }
 
     private fun save(popBackStack: Boolean) = updateData(popBackStack, ::onSave)

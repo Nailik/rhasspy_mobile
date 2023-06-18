@@ -43,7 +43,7 @@ fun IndicationSoundScreen(
     screen: IndicationSettingsScreenDestination,
     title: StableStringResource
 ) {
-    Screen(viewModel) {
+    Screen(kViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
         val snackBarHostState = LocalSnackBarHostState.current

@@ -5,6 +5,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.service.option.IOption
+import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 
 /**
  * test tags to be used in compose
@@ -158,7 +159,7 @@ fun Modifier.combinedTestTag(name: TestTag, tag: TestTag) = semantics(
 )
 
 
-fun Modifier.testTag(enum: Enum<*>) = semantics(
+fun Modifier.testTag(enum: TestTag) = semantics(
     properties = {
         testTag = enum.name
     }
@@ -177,6 +178,12 @@ fun Modifier.testTag(name: String) = semantics(
 )
 
 fun Modifier.testTag(name: StableStringResource) = semantics(
+    properties = {
+        testTag = name.toString()
+    }
+)
+
+fun Modifier.testTag(name: NavigationDestination) = semantics(
     properties = {
         testTag = name.toString()
     }

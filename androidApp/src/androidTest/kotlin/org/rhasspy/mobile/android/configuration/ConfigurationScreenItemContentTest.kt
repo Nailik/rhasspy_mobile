@@ -66,7 +66,7 @@ class ConfigurationScreenItemContentTest : FlakyTest() {
                     when (destination.lastOrNull()) {
 
                         MainScreenNavigationDestination.ConfigurationScreen -> {
-                            Screen(viewModel) {
+                            Screen(kViewModel = viewModel) {
                                 ConfigurationScreenItemContent(
                                     modifier = Modifier.testTag(TestTag.ConfigurationScreenItemContent),
                                     screenType = ConfigurationScreenDestinationType.Edit,

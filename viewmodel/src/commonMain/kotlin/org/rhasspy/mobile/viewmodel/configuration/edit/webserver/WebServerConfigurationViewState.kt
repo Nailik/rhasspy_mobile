@@ -1,16 +1,13 @@
 package org.rhasspy.mobile.viewmodel.configuration.edit.webserver
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.flow.StateFlow
 import okio.Path
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
-import org.rhasspy.mobile.viewmodel.ScreenViewState
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
 
 @Stable
 data class WebServerConfigurationViewState internal constructor(
-    val editData: StateFlow<WebServerConfigurationData>,
+    val editData: WebServerConfigurationData,
     val snackBarState: SnackBarState? = null
 ) {
 

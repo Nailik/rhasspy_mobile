@@ -1,14 +1,18 @@
 package org.rhasspy.mobile.ui
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.content.elements.Dialog
+import org.rhasspy.mobile.ui.content.elements.SnackBar
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.viewmodel.*
 import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.Dialog.Confirm
@@ -30,6 +34,7 @@ val LocalViewModelFactory = compositionLocalOf<ViewModelFactory> {
 
 @Composable
 fun Screen(
+    modifier: Modifier = Modifier,
     kViewModel: IKViewModel,
     content: @Composable () -> Unit
 ) {
@@ -98,34 +103,10 @@ fun Screen(
         }
     }
 
-    content()
-
-}
-
-@Composable
-private fun SnackBar(
-    title: StableStringResource,
-    label: StableStringResource? = null,
-    action: (() -> Unit)? = null,
-    consumed: () -> Unit,
-) {
-
-    val snackBarHostState = LocalSnackBarHostState.current
-    val snackBarMessage = translate(title)
-    val snackBarActionLabel = label?.let { translate(it) }
-
-    LaunchedEffect(Unit) {
-        val snackBarResult = snackBarHostState.showSnackbar(
-            message = snackBarMessage,
-            actionLabel = snackBarActionLabel,
-            duration = SnackbarDuration.Short,
-        )
-
-        consumed()
-
-        if (snackBarResult == SnackbarResult.ActionPerformed) {
-            action?.invoke()
-        }
+    Box(
+        modifier = modifier.fillMaxSize()
+    ) {
+        content()
     }
 
 }
