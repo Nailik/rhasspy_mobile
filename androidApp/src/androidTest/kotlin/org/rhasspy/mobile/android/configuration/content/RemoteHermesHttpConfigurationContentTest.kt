@@ -9,7 +9,7 @@ import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.content.RemoteHermesHttpConfigurationContent
+import org.rhasspy.mobile.ui.configuration.edit.RemoteHermesHttpConfigurationContent
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.edit.remotehermeshttp.RemoteHermesHttpConfigurationUiEvent.Change.SetHttpSSLVerificationDisabled
 import org.rhasspy.mobile.viewmodel.configuration.edit.remotehermeshttp.RemoteHermesHttpConfigurationEditViewModel

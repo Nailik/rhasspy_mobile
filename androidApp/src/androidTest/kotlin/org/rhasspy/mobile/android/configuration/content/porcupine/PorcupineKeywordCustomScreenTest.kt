@@ -25,7 +25,7 @@ import org.rhasspy.mobile.android.MainActivity
 import org.rhasspy.mobile.android.test.R
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.content.porcupine.PorcupineKeywordCustomScreen
+import org.rhasspy.mobile.ui.configuration.edit.porcupine.PorcupineKeywordCustomScreen
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationEditViewModel
 import java.io.File

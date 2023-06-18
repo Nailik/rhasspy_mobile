@@ -15,7 +15,7 @@ import org.rhasspy.mobile.android.utils.FlakyTest
 import org.rhasspy.mobile.android.utils.TestContentProvider
 import org.rhasspy.mobile.android.utils.onNodeWithTag
 import org.rhasspy.mobile.ui.TestTag
-import org.rhasspy.mobile.ui.configuration.content.porcupine.PorcupineKeywordScreen
+import org.rhasspy.mobile.ui.configuration.edit.porcupine.PorcupineKeywordScreen
 import org.rhasspy.mobile.viewmodel.configuration.edit.wakeword.WakeWordConfigurationEditViewModel
 import kotlin.test.assertTrue
 

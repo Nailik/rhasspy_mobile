@@ -28,12 +28,12 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.SetSystemColor
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.Dialogs
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.Dialogs.ServiceStateDialog
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.Dialogs.UnsavedChangesDialog
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.Dialog
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.Dialog.ServiceStateDialog
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.Dialog.UnsavedChangesDialog
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Dialog.*
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.DialogAction.*
 
 
 /**
@@ -60,13 +60,8 @@ fun ConfigurationScreenItemEdit(
         topBar = {
             AppBar(
                 title = title,
-                onBackClick = { onEvent(BackClick) }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = MR.strings.back.stable,
-                )
-            }
+                onEvent = onEvent
+            )
         },
         bottomBar = {
             BottomAppBar(
@@ -107,7 +102,7 @@ fun ConfigurationScreenItemEdit(
  */
 @Composable
 private fun Dialogs(
-    dialog: Dialogs,
+    dialog: Dialog,
     onEvent: (ConfigurationEditUiEvent) -> Unit
 ) {
     when (dialog) {
@@ -210,7 +205,10 @@ private fun FloatingActionButtonElement(
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun AppBar(title: StableStringResource, onBackClick: () -> Unit, icon: @Composable () -> Unit) {
+private fun AppBar(
+    title: StableStringResource,
+    onEvent: (ConfigurationEditUiEvent) -> Unit
+) {
 
     TopAppBar(
         colors = TopAppBarDefaults.smallTopAppBarColors(
@@ -224,11 +222,15 @@ private fun AppBar(title: StableStringResource, onBackClick: () -> Unit, icon: @
         },
         navigationIcon = {
             IconButton(
-                onClick = { onBackClick() },
+                onClick = { onEvent(BackClick) },
                 modifier = Modifier.testTag(TestTag.AppBarBackButton),
-                content = icon
+                content = {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = MR.strings.back.stable,
+                    )
+                }
             )
         }
     )
-
 }

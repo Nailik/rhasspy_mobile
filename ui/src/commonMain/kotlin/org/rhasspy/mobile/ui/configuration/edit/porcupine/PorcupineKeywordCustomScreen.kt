@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration.content.porcupine
+package org.rhasspy.mobile.ui.configuration.edit.porcupine
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable

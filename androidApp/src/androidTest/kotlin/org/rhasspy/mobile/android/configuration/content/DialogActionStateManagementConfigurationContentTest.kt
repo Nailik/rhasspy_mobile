@@ -10,13 +10,13 @@ import org.junit.Test
 import org.koin.core.component.get
 import org.rhasspy.mobile.android.utils.*
 import org.rhasspy.mobile.data.service.option.DialogManagementOption
-import org.rhasspy.mobile.ui.configuration.content.DialogManagementConfigurationContent
+import org.rhasspy.mobile.ui.configuration.edit.DialogManagementConfigurationContent
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.Save
 import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationUiEvent.Change.SelectDialogManagementOption
 import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationEditViewModel
 import kotlin.test.assertEquals
 
-class DialogStateManagementConfigurationContentTest : FlakyTest() {
+class DialogActionStateManagementConfigurationContentTest : FlakyTest() {
 
     @get: Rule(order = 0)
     val composeTestRule = createComposeRule()

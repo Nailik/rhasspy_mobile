@@ -7,7 +7,7 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogMa
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class DialogStateManagementConfigurationViewModelTest : AppTest() {
+class DialogActionStateManagementConfigurationViewModelTest : AppTest() {
 
     private lateinit var dialogManagementConfigurationViewModel: DialogManagementConfigurationEditViewModel
 

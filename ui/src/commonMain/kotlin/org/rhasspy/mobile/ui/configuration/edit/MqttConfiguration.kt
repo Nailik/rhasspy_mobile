@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration.content
+package org.rhasspy.mobile.ui.configuration.edit
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically

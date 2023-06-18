@@ -1,25 +1,19 @@
 package org.rhasspy.mobile.viewmodel.configuration.edit
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.rhasspy.mobile.data.resource.stable
-import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.viewmodel.KViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.Dialogs.UnsavedChangesDialog
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.Dialog.UnsavedChangesDialog
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action
-import org.rhasspy.mobile.viewmodel.ScreenViewState
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Dialog.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Dialog
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.DialogAction.*
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.DialogAction
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.Dialog.ServiceStateDialog
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
 
 @Stable
@@ -36,7 +30,7 @@ abstract class IConfigurationEditViewModel<T>(
     fun onEvent(event: ConfigurationEditUiEvent) {
         when (event) {
             is Action -> onAction(event)
-            is Dialog -> onDialog(event)
+            is DialogAction -> onDialog(event)
         }
     }
 
@@ -46,28 +40,26 @@ abstract class IConfigurationEditViewModel<T>(
             Save -> save(false)
             OpenTestScreen -> navigator.navigate(testPageDestination)
             BackClick -> onBackClick()
-            OpenServiceStateDialog -> _screenViewState.update {
-                it.copy(dialogViewState = serviceStateDialog(_configurationEditViewState.value.serviceViewState.serviceState.value))
+            OpenServiceStateDialog -> _configurationEditViewState.update {
+                it.copy(dialog = ServiceStateDialog(_configurationEditViewState.value.serviceViewState.serviceState.value))
             }
-
         }
     }
 
-    private fun onDialog(dialogAction: Dialog) {
-        val dialog = _configurationEditViewState.value.dialog
+    private fun onDialog(dialogAction: DialogAction) {
 
-        _configurationEditViewState.update { it.copy(dialog = null) }
-
-        when (dialog) {
+        when (dialogAction.dialog) {
             UnsavedChangesDialog ->
                 when (dialogAction) {
-                    Close -> discard(true)
-                    Confirm -> save(true)
-                    Dismiss -> Unit
+                    is Close -> discard(true)
+                    is Confirm -> save(true)
+                    is Dismiss -> Unit
                 }
 
             else -> Unit
         }
+
+        _configurationEditViewState.update { it.copy(dialog = null) }
 
     }
 
@@ -76,51 +68,36 @@ abstract class IConfigurationEditViewModel<T>(
     private fun discard(popBackStack: Boolean) = updateData(popBackStack, ::onDiscard)
 
     private fun updateData(popBackStack: Boolean, function: () -> Unit) {
+
         viewModelScope.launch(Dispatchers.IO) {
             function()
-            _screenViewState.update {
-                it.copy(dialogViewState = null)
+            _configurationEditViewState.update {
+                it.copy(dialog = null)
             }
             if (popBackStack) {
                 navigator.popBackStack()
             }
         }
+
     }
 
     private fun onBackClick() {
-        if (_screenViewState.value.dialogViewState != null) {
-            if (_screenViewState.value.dialogViewState == unsavedChangesDialog()) {
-                return
-            } else {
-                _screenViewState.update { it.copy(dialogViewState = null) }
-            }
-        } else if (_configurationEditViewState.value.hasUnsavedChanges) {
-            _screenViewState.update { it.copy(dialogViewState = unsavedChangesDialog()) }
-        } else {
-            onBackPressed()
+
+        when (_configurationEditViewState.value.dialog) {
+            is ServiceStateDialog ->
+                _configurationEditViewState.update {
+                    it.copy(dialog = null)
+                }
+
+            UnsavedChangesDialog -> return
+            null -> onBackPressed()
         }
+
     }
 
     override fun onBackPressed(): Boolean {
         navigator.popBackStack()
         return true
     }
-
-    private fun unsavedChangesDialog() =
-        ScreenViewState.DialogViewState(
-            icon = Icons.Filled.Warning,
-            title = MR.strings.unsavedChanges.stable,
-            message = MR.strings.unsavedChangesInformation.stable,
-            dismissButtonText = MR.strings.discard.stable,
-            submitButtonText = MR.strings.save.stable
-        )
-
-    private fun serviceStateDialog(serviceState: ServiceState) =
-        ScreenViewState.DialogViewState(
-            icon = Icons.Filled.Info,
-            title = MR.strings.error.stable,
-            message = serviceState.getDialogText(),
-            submitButtonText = MR.strings.close.stable
-        )
 
 }

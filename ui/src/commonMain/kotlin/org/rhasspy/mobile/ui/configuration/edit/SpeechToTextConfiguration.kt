@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration.content
+package org.rhasspy.mobile.ui.configuration.edit
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

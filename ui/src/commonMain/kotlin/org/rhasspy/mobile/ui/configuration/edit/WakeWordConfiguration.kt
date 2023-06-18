@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.ui.configuration.content
+package org.rhasspy.mobile.ui.configuration.edit
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -20,8 +20,8 @@ import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.*
 import org.rhasspy.mobile.ui.configuration.ConfigurationScreenConfig
 import org.rhasspy.mobile.ui.configuration.ConfigurationScreenItemContent
-import org.rhasspy.mobile.ui.configuration.content.porcupine.PorcupineKeywordScreen
-import org.rhasspy.mobile.ui.configuration.content.porcupine.PorcupineLanguageScreen
+import org.rhasspy.mobile.ui.configuration.edit.porcupine.PorcupineKeywordScreen
+import org.rhasspy.mobile.ui.configuration.edit.porcupine.PorcupineLanguageScreen
 import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.RadioButtonsEnumSelection
 import org.rhasspy.mobile.ui.content.elements.Text

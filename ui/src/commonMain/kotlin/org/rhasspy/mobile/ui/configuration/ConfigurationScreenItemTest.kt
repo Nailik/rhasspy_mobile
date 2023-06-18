@@ -18,6 +18,7 @@ import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.TestTag
+import org.rhasspy.mobile.ui.content.ServiceStateDialog
 import org.rhasspy.mobile.ui.content.ServiceStateHeader
 import org.rhasspy.mobile.ui.content.elements.CustomDivider
 import org.rhasspy.mobile.ui.content.elements.Icon
@@ -25,10 +26,13 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.list.LogListElement
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.SetSystemColor
-import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestViewState
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestUiEvent
+import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestUiEvent.Action.*
+import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestUiEvent.Dialog.Confirm
+import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestUiEvent.Dialog.Dismiss
+import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestViewState
+import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestViewState.Dialogs
+import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestViewState.Dialogs.ServiceStateDialog
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 /**
@@ -44,19 +48,20 @@ fun ConfigurationScreenTest(
 ) {
     SetSystemColor(1.dp)
 
+    viewState.dialog?.also {
+        Dialogs(
+            dialog = it,
+            onEvent = onEvent
+        )
+    }
+
     Scaffold(
         topBar = {
             AppBar(
-                viewState = viewState,
-                onAction = onEvent,
                 title = title,
-                onBackClick = { onEvent(BackClick) }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = MR.strings.stop.stable,
-                )
-            }
+                viewState = viewState,
+                onEvent = onEvent
+            )
         },
     ) { paddingValues ->
         Surface(
@@ -65,8 +70,8 @@ fun ConfigurationScreenTest(
         ) {
             ConfigurationScreenTestList(
                 viewState = viewState,
-                serviceViewState = serviceViewState,
-                isOpenServiceStateDialogEnabled = isOpenServiceStateDialogEnabled,
+                serviceViewState = viewState.serviceViewState,
+                isOpenServiceStateDialogEnabled = viewState.isOpenServiceStateDialogEnabled,
                 onEvent = onEvent,
                 content = content
             )
@@ -84,7 +89,7 @@ private fun ConfigurationScreenTestList(
     viewState: ConfigurationTestViewState,
     serviceViewState: ServiceViewState,
     isOpenServiceStateDialogEnabled: Boolean,
-    onEvent: (ConfigurationEditUiEvent) -> Unit,
+    onEvent: (ConfigurationTestUiEvent) -> Unit,
     content: (@Composable () -> Unit)?,
 ) {
     Column(modifier = modifier) {
@@ -136,6 +141,27 @@ private fun ConfigurationScreenTestList(
     }
 }
 
+
+/**
+ * Dialog to be shown when there are unsaved changes
+ * save changes or undo changes and go back
+ */
+@Composable
+private fun Dialogs(
+    dialog: Dialogs,
+    onEvent: (ConfigurationTestUiEvent) -> Unit
+) {
+    when (dialog) {
+        is ServiceStateDialog -> {
+            ServiceStateDialog(
+                dialogText = dialog.dialogText,
+                onConfirm = { onEvent(Confirm) },
+                onDismiss = { onEvent(Dismiss) }
+            )
+        }
+    }
+}
+
 /**
  * top app bar with title and back navigation button
  *
@@ -144,11 +170,9 @@ private fun ConfigurationScreenTestList(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppBar(
-    viewState: ConfigurationTestViewState,
-    onEvent: (ConfigurationEditUiEvent) -> Unit,
     title: StableStringResource,
-    onBackClick: () -> Unit,
-    icon: @Composable () -> Unit
+    viewState: ConfigurationTestViewState,
+    onEvent: (ConfigurationTestUiEvent) -> Unit
 ) {
     TopAppBar(
         colors = TopAppBarDefaults.smallTopAppBarColors(
@@ -162,9 +186,14 @@ private fun AppBar(
         },
         navigationIcon = {
             IconButton(
-                onClick = onBackClick,
+                onClick = { onEvent(BackClick) },
                 modifier = Modifier.testTag(TestTag.AppBarBackButton),
-                content = icon
+                content = {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = MR.strings.stop.stable,
+                    )
+                }
             )
         },
         actions = {
