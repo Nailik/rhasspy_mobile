@@ -28,9 +28,9 @@ import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.SetSystemColor
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.Dialog
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.Dialog.ServiceStateDialog
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.Dialog.UnsavedChangesDialog
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.DialogState
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.DialogState.ServiceStateDialogState
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.DialogState.UnsavedChangesDialogState
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.DialogAction.*
@@ -49,9 +49,9 @@ fun ConfigurationScreenItemEdit(
 ) {
     SetSystemColor(0.dp)
 
-    viewState.dialog?.also {
+    viewState.dialogState?.also {
         Dialogs(
-            dialog = it,
+            dialogState = it,
             onEvent = onEvent
         )
     }
@@ -102,20 +102,20 @@ fun ConfigurationScreenItemEdit(
  */
 @Composable
 private fun Dialogs(
-    dialog: Dialog,
+    dialogState: DialogState,
     onEvent: (ConfigurationEditUiEvent) -> Unit
 ) {
-    when (dialog) {
-        is ServiceStateDialog -> {
+    when (dialogState) {
+        is ServiceStateDialogState -> {
             ServiceStateDialog(
-                dialogText = dialog.dialogText,
+                dialogText = dialogState.dialogText,
                 onConfirm = { onEvent(Confirm) },
                 onDismiss = { onEvent(Dismiss) }
             )
         }
 
 
-        UnsavedChangesDialog -> {
+        UnsavedChangesDialogState -> {
             Dialog(
                 icon = Icons.Filled.Warning,
                 title = MR.strings.unsavedChanges.stable,

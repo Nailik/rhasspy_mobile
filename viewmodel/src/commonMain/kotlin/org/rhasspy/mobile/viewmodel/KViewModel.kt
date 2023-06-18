@@ -1,30 +1,29 @@
 package org.rhasspy.mobile.viewmodel
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Layers
-import androidx.compose.material.icons.filled.Mic
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.component.inject
-import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.external.ExternalRedirectResult
 import org.rhasspy.mobile.platformspecific.external.ExternalResultRequest
-import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention
+import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntention.RequestMicrophonePermissionExternally
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.*
-import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.Action.RequestMicrophonePermission
 import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.Action.RequestOverlayPermission
+import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.Dialog.Confirm
+import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.Dialog.Dismiss
+import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.SnackBar.Consumed
+import org.rhasspy.mobile.viewmodel.ScreenViewState.DialogState.MicrophonePermissionInfo
+import org.rhasspy.mobile.viewmodel.ScreenViewState.DialogState.OverlayPermissionInfo
+import org.rhasspy.mobile.viewmodel.ScreenViewState.SnackBarState.*
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
 
 abstract class KViewModel : IKViewModel, ViewModel(), KoinComponent {
@@ -66,51 +65,41 @@ abstract class KViewModel : IKViewModel, ViewModel(), KoinComponent {
 
     private fun onAction(action: Action) {
         when (action) {
-            is Permission -> onPermission(action)
-            is Dialog -> onDialog(action)
-            is SnackBar -> onSnackBar(action)
-        }
-    }
-
-    private fun onDialog(dialog: Dialog) {
-        _screenViewState.update {
-            it.copy(dialogViewState = null)
-        }
-        when (dialog) {
-            Dialog.Cancel -> Unit
-            Dialog.Dismiss -> Unit
-            Dialog.Submit -> {
-                when (_screenViewState.value.dialogViewState) {
-                    microphonePermissionInfoDialog -> onRequestMicrophonePermission(true)
-                    overlayPermissionInfoDialog -> onRequestOverlayPermission(true)
-                }
-            }
-        }
-    }
-
-    private fun onPermission(permission: Permission) {
-        when (permission) {
             RequestMicrophonePermission -> onRequestMicrophonePermission(false)
             RequestOverlayPermission -> onRequestOverlayPermission(false)
         }
     }
 
-    private fun onSnackBar(snackBar: SnackBar) {
-        _screenViewState.update { it.copy(snackBarViewState = null) }
-        when (snackBar) {
-            SnackBar.Action -> {
-                when (_screenViewState.value.snackBarViewState) {
-                    microphonePermissionRequestDenied -> {
-                        if (externalResultRequest.launch(ExternalResultRequestIntention.RequestMicrophonePermissionExternally) !is ExternalRedirectResult.Success) {
-                            _screenViewState.update {
-                                it.copy(snackBarViewState = microphonePermissionRequestFailedSnackBar)
-                            }
-                        }
-                    }
+    private fun onDialog(dialog: Dialog) {
+        _screenViewState.update {
+            it.copy(dialogState = null)
+        }
+        when (dialog) {
+            is Dismiss -> Unit
+            is Confirm -> {
+                when (dialog.dialogState) {
+                    MicrophonePermissionInfo -> onRequestMicrophonePermission(true)
+                    OverlayPermissionInfo -> onRequestOverlayPermission(true)
                 }
             }
+        }
+    }
 
-            SnackBar.Consumed -> Unit
+    private fun onSnackBar(snackBar: SnackBar) {
+        _screenViewState.update { it.copy(snackBarState = null) }
+        when (snackBar) {
+            Consumed -> Unit
+            is SnackBar.Action -> {
+                when (snackBar.snackBarState) {
+                    MicrophonePermissionRequestFailed ->
+                        if (externalResultRequest.launch(RequestMicrophonePermissionExternally) !is ExternalRedirectResult.Success) {
+                            _screenViewState.update { it.copy(snackBarState = MicrophonePermissionRequestFailed) }
+                        }
+
+                    MicrophonePermissionRequestDenied -> Unit
+                    OverlayPermissionRequestFailed -> Unit
+                }
+            }
         }
     }
 
@@ -126,10 +115,8 @@ abstract class KViewModel : IKViewModel, ViewModel(), KoinComponent {
      * returns true if pop back stack was handled internally
      */
     fun onBackPressedClick(): Boolean {
-        return if (_screenViewState.value.dialogViewState != null) {
-            _screenViewState.update {
-                it.copy(dialogViewState = null)
-            }
+        return if (_screenViewState.value.dialogState != null) {
+            _screenViewState.update { it.copy(dialogState = null) }
             true
         } else onBackPressed()
     }
@@ -137,9 +124,7 @@ abstract class KViewModel : IKViewModel, ViewModel(), KoinComponent {
     private fun onRequestMicrophonePermission(hasShownInformation: Boolean) {
         if (!microphonePermission.granted.value) {
             if (!hasShownInformation && microphonePermission.shouldShowInformationDialog()) {
-                _screenViewState.update {
-                    it.copy(dialogViewState = microphonePermissionInfoDialog)
-                }
+                _screenViewState.update { it.copy(dialogState = MicrophonePermissionInfo) }
             } else {
                 //request directly
                 viewModelScope.launch(Dispatchers.IO) {
@@ -147,9 +132,7 @@ abstract class KViewModel : IKViewModel, ViewModel(), KoinComponent {
 
                     if (!microphonePermission.granted.value) {
                         //show snack bar
-                        _screenViewState.update {
-                            it.copy(snackBarViewState = microphonePermissionRequestDenied)
-                        }
+                        _screenViewState.update { it.copy(snackBarState = MicrophonePermissionRequestDenied) }
                     }
                 }
             }
@@ -159,17 +142,13 @@ abstract class KViewModel : IKViewModel, ViewModel(), KoinComponent {
     private fun onRequestOverlayPermission(hasShownInformation: Boolean) {
         if (!overlayPermission.granted.value) {
             if (!hasShownInformation) {
-                _screenViewState.update {
-                    it.copy(dialogViewState = overlayPermissionInfoDialog)
-                }
+                _screenViewState.update { it.copy(dialogState = OverlayPermissionInfo) }
             } else {
                 //request directly
                 viewModelScope.launch(Dispatchers.IO) {
                     if (!overlayPermission.request()) {
                         //show snack bar
-                        _screenViewState.update {
-                            it.copy(snackBarViewState = overlayPermissionRequestFailedSnackBar)
-                        }
+                        _screenViewState.update { it.copy(snackBarState = OverlayPermissionRequestFailed) }
                     }
                 }
             }

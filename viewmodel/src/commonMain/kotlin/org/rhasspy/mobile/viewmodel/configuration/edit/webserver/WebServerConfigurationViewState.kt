@@ -1,6 +1,7 @@
 package org.rhasspy.mobile.viewmodel.configuration.edit.webserver
 
 import androidx.compose.runtime.Stable
+import kotlinx.coroutines.flow.StateFlow
 import okio.Path
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
@@ -9,9 +10,8 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewStat
 
 @Stable
 data class WebServerConfigurationViewState internal constructor(
-    val editData: WebServerConfigurationData,
-    val screenViewState: ScreenViewState,
-    val editViewState: ConfigurationEditViewState,
+    val editData: StateFlow<WebServerConfigurationData>,
+    val snackBarState: SnackBarState? = null
 ) {
 
     @Stable
@@ -27,6 +27,14 @@ data class WebServerConfigurationViewState internal constructor(
 
         val httpServerPort: Int get() = httpServerPortText.toIntOrZero()
         val httpServerSSLKeyStoreFileName: String? get() = httpServerSSLKeyStoreFile?.name
+
+    }
+
+
+    sealed interface SnackBarState {
+
+        object LinkOpenFailed : SnackBarState
+        object SelectFileFailed : SnackBarState
 
     }
 

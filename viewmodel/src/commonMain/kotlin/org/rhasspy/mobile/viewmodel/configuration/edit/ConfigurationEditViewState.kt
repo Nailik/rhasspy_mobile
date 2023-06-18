@@ -11,13 +11,13 @@ data class ConfigurationEditViewState(
     val isTestingEnabled: Boolean = false,
     val hasUnsavedChanges: Boolean = false,
     val isOpenServiceStateDialogEnabled: Boolean = false,
-    val dialog: Dialog? = null
+    val dialogState: DialogState? = null
 ) {
 
-    sealed interface Dialog {
+    sealed interface DialogState {
 
-        object UnsavedChangesDialog: Dialog
-        data class ServiceStateDialog(val dialogText: Any): Dialog
+        object UnsavedChangesDialogState: DialogState
+        data class ServiceStateDialogState(val dialogText: Any): DialogState
 
     }
 

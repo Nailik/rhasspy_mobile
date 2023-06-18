@@ -4,25 +4,31 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.viewmodel.KViewModel
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.Dialog.UnsavedChangesDialog
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.DialogState.UnsavedChangesDialogState
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.DialogAction.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.DialogAction
-import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.Dialog.ServiceStateDialog
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.DialogState.ServiceStateDialogState
 import org.rhasspy.mobile.viewmodel.navigation.NavigationDestination
+import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable
-abstract class IConfigurationEditViewModel<T>(
-    private val testPageDestination: NavigationDestination
+abstract class IConfigurationEditViewModel(
+    private val testPageDestination: NavigationDestination,
+    service: IService,
 ) : KViewModel() {
 
-    protected abstract val _configurationEditViewState: MutableStateFlow<ConfigurationEditViewState>
-    val configurationEditViewState get() = _configurationEditViewState.readOnly
+    private val _configurationEditViewState = MutableStateFlow(ConfigurationEditViewState(serviceViewState = ServiceViewState(service.serviceState)))
+    val viewState by lazy { initViewStateCreator(_configurationEditViewState) }
+
+    abstract fun initViewStateCreator(configurationEditViewState: MutableStateFlow<ConfigurationEditViewState>) : StateFlow<ConfigurationEditViewState>
 
     protected abstract fun onDiscard()
     protected abstract fun onSave()
@@ -41,15 +47,15 @@ abstract class IConfigurationEditViewModel<T>(
             OpenTestScreen -> navigator.navigate(testPageDestination)
             BackClick -> onBackClick()
             OpenServiceStateDialog -> _configurationEditViewState.update {
-                it.copy(dialog = ServiceStateDialog(_configurationEditViewState.value.serviceViewState.serviceState.value))
+                it.copy(dialogState = ServiceStateDialogState(_configurationEditViewState.value.serviceViewState.serviceState.value))
             }
         }
     }
 
     private fun onDialog(dialogAction: DialogAction) {
 
-        when (dialogAction.dialog) {
-            UnsavedChangesDialog ->
+        when (dialogAction.dialogState) {
+            UnsavedChangesDialogState ->
                 when (dialogAction) {
                     is Close -> discard(true)
                     is Confirm -> save(true)
@@ -59,7 +65,7 @@ abstract class IConfigurationEditViewModel<T>(
             else -> Unit
         }
 
-        _configurationEditViewState.update { it.copy(dialog = null) }
+        _configurationEditViewState.update { it.copy(dialogState = null) }
 
     }
 
@@ -72,7 +78,7 @@ abstract class IConfigurationEditViewModel<T>(
         viewModelScope.launch(Dispatchers.IO) {
             function()
             _configurationEditViewState.update {
-                it.copy(dialog = null)
+                it.copy(dialogState = null)
             }
             if (popBackStack) {
                 navigator.popBackStack()
@@ -83,13 +89,13 @@ abstract class IConfigurationEditViewModel<T>(
 
     private fun onBackClick() {
 
-        when (_configurationEditViewState.value.dialog) {
-            is ServiceStateDialog ->
+        when (_configurationEditViewState.value.dialogState) {
+            is ServiceStateDialogState ->
                 _configurationEditViewState.update {
-                    it.copy(dialog = null)
+                    it.copy(dialogState = null)
                 }
 
-            UnsavedChangesDialog -> return
+            UnsavedChangesDialogState -> return
             null -> onBackPressed()
         }
 

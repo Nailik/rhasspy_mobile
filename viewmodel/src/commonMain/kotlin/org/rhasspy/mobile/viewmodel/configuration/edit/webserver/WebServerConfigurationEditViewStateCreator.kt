@@ -15,14 +15,12 @@ class WebServerConfigurationEditViewStateCreator(
 
     fun combine(
         editData: StateFlow<WebServerConfigurationData>,
-        screenViewState: StateFlow<ScreenViewState>,
         configurationEditViewState: StateFlow<ConfigurationEditViewState>
     ): StateFlow<WebServerConfigurationViewState> {
 
         return combineStateFlow(
             editData,
             configurationEditViewState,
-            screenViewState,
             service.serviceState
         ).mapReadonlyState {
 
@@ -30,7 +28,6 @@ class WebServerConfigurationEditViewStateCreator(
 
             WebServerConfigurationViewState(
                 editData = editData.value,
-                screenViewState = screenViewState.value,
                 editViewState = configurationEditViewState.value.copy(
                     hasUnsavedChanges = isHasUnsavedChanges,
                     isTestingEnabled = editData.value.isHttpServerEnabled && !isHasUnsavedChanges,

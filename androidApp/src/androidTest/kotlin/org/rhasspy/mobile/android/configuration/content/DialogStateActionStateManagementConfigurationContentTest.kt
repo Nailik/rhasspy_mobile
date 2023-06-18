@@ -16,7 +16,7 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogMa
 import org.rhasspy.mobile.viewmodel.configuration.edit.dialogmanagement.DialogManagementConfigurationEditViewModel
 import kotlin.test.assertEquals
 
-class DialogActionStateManagementConfigurationContentTest : FlakyTest() {
+class DialogStateActionStateManagementConfigurationContentTest : FlakyTest() {
 
     @get: Rule(order = 0)
     val composeTestRule = createComposeRule()
