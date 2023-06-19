@@ -12,50 +12,62 @@ import org.rhasspy.mobile.platformspecific.toImmutableList
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
+import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationViewState
 
 @Stable
 data class WakeWordConfigurationViewState internal constructor(
-    val wakeWordOption: WakeWordOption = ConfigurationSetting.wakeWordOption.value,
-    val wakeWordPorcupineViewState: PorcupineViewState = PorcupineViewState(),
-    val wakeWordUdpViewState: UdpViewState = UdpViewState(),
-    val snackBarText: StableStringResource? = null,
+    val editData: WakeWordConfigurationData,
     val isMicrophonePermissionEnabled: Boolean,
-    val isMicrophonePermissionRequestVisible: Boolean = !isMicrophonePermissionEnabled && (wakeWordOption == WakeWordOption.Porcupine || wakeWordOption == WakeWordOption.Udp)
-) : ConfigurationEditViewState() {
-
-    val wakeWordOptions: ImmutableList<WakeWordOption> = WakeWordOption.values().toImmutableList()
-
-
-    override val isTestingEnabled: Boolean get() = wakeWordOption != WakeWordOption.Disabled
-
+    val isMicrophonePermissionRequestVisible: Boolean
+) {
 
     @Stable
-    data class PorcupineViewState internal constructor(
-        val accessToken: String = ConfigurationSetting.wakeWordPorcupineAccessToken.value,
-        val porcupineLanguage: PorcupineLanguageOption = ConfigurationSetting.wakeWordPorcupineLanguage.value,
-        val defaultOptions: ImmutableList<PorcupineDefaultKeyword> = ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value,
-        val customOptionsUi: ImmutableList<PorcupineCustomKeywordViewState> = ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value.map { PorcupineCustomKeywordViewState(it) }
-            .toImmutableList()
+    data class PorcupineCustomKeywordViewState(
+        val keyword: PorcupineCustomKeyword,
+        val deleted: Boolean = false
+    )
+
+    @Stable
+    data class WakeWordConfigurationData internal constructor(
+        val wakeWordOption: WakeWordOption = ConfigurationSetting.wakeWordOption.value,
+        val wakeWordPorcupineConfigurationData: WakeWordPorcupineConfigurationData = WakeWordPorcupineConfigurationData(),
+        val wakeWordUdpConfigurationData: WakeWordUdpConfigurationData = WakeWordUdpConfigurationData(),
     ) {
-        val languageOptions: ImmutableList<PorcupineLanguageOption> = PorcupineLanguageOption.values().toImmutableList()
-
-        val defaultOptionsUi: ImmutableList<PorcupineDefaultKeyword> get() = defaultOptions.filter { it.option.language == porcupineLanguage }.toImmutableList()
-
-        val keywordCount: Int get() = defaultOptionsUi.count { it.isEnabled } + customOptionsUi.count { it.keyword.isEnabled }
 
         @Stable
-        data class PorcupineCustomKeywordViewState(
-            val keyword: PorcupineCustomKeyword,
-            val deleted: Boolean = false
-        )
+        data class WakeWordPorcupineConfigurationData internal constructor(
+            val accessToken: String = ConfigurationSetting.wakeWordPorcupineAccessToken.value,
+            val porcupineLanguage: PorcupineLanguageOption = ConfigurationSetting.wakeWordPorcupineLanguage.value,
+            val defaultOptions: ImmutableList<PorcupineDefaultKeyword> = ConfigurationSetting.wakeWordPorcupineKeywordDefaultOptions.value,
+            val customOptions: ImmutableList<PorcupineCustomKeyword> = ConfigurationSetting.wakeWordPorcupineKeywordCustomOptions.value,
+        ) {
+
+            val wakeWordOptions: ImmutableList<WakeWordOption> = WakeWordOption.values().toImmutableList()
+            val languageOptions: ImmutableList<PorcupineLanguageOption> = PorcupineLanguageOption.values().toImmutableList()
+
+            val customOptionsUi: ImmutableList<PorcupineCustomKeywordViewState> =
+                customOptions.map { PorcupineCustomKeywordViewState(it) }.toImmutableList()
+            val defaultOptionsUi: ImmutableList<PorcupineDefaultKeyword> get() =
+                defaultOptions.filter { it.option.language == porcupineLanguage }.toImmutableList()
+
+            val keywordCount: Int get() = defaultOptionsUi.count { it.isEnabled } + customOptionsUi.count { it.keyword.isEnabled }
+
+        }
+
+        @Stable
+        data class WakeWordUdpConfigurationData internal constructor(
+            val outputHost: String = ConfigurationSetting.wakeWordUdpOutputHost.value,
+            val outputPort: Int? = ConfigurationSetting.wakeWordUdpOutputPort.value
+        ) {
+
+            val outputPortText: String = outputPort.toString()
+
+        }
+
     }
 
-    @Stable
-    data class UdpViewState internal constructor(
-        val outputHost: String = ConfigurationSetting.wakeWordUdpOutputHost.value,
-        val outputPortText: String = ConfigurationSetting.wakeWordUdpOutputPort.value.toString()
-    ) {
-        val outputPort: Int get() = outputPortText.toIntOrZero()
-    }
+    //val isMicrophonePermissionRequestVisible: Boolean = !isMicrophonePermissionEnabled && (editData.wakeWordOption == WakeWordOption.Porcupine || editData.wakeWordOption == WakeWordOption.Udp),
+
+    // override val isTestingEnabled: Boolean get() = wakeWordOption != WakeWordOption.Disabled
 
 }

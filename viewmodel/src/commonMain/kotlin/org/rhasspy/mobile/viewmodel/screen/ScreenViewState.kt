@@ -20,6 +20,8 @@ data class ScreenViewState internal constructor(
         object OverlayPermissionRequestFailed: ScreenSnackBarState
         object MicrophonePermissionRequestFailed: ScreenSnackBarState
         object MicrophonePermissionRequestDenied: ScreenSnackBarState
+        object LinkOpenFailed : ScreenSnackBarState
+        object SelectFileFailed : ScreenSnackBarState
 
     }
 }

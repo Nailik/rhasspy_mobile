@@ -1,5 +1,7 @@
 package org.rhasspy.mobile.viewmodel.configuration.edit
 
+import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState.ConfigurationDialogState
+
 sealed interface ConfigurationEditUiEvent {
 
     sealed interface Action : ConfigurationEditUiEvent {

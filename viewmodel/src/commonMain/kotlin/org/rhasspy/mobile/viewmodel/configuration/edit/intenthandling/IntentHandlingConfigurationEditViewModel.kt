@@ -67,8 +67,8 @@ class IntentHandlingConfigurationEditViewModel(
     override fun onSave() {
         ConfigurationSetting.intentHandlingOption.value = data.intentHandlingOption
         ConfigurationSetting.intentHandlingHttpEndpoint.value = data.intentHandlingHttpEndpoint
-        ConfigurationSetting.intentHandlingHassEndpoint.value = data.intentHandlingHassEndpoint
-        ConfigurationSetting.intentHandlingHassAccessToken.value = data.intentHandlingHassAccessToken
+        ConfigurationSetting.intentHandlingHomeAssistantEndpoint.value = data.intentHandlingHassEndpoint
+        ConfigurationSetting.intentHandlingHomeAssistantAccessToken.value = data.intentHandlingHassAccessToken
         ConfigurationSetting.intentHandlingHomeAssistantOption.value = data.intentHandlingHassOption
     }
 

@@ -31,7 +31,7 @@ object ConfigurationSetting {
     val isHttpClientSSLVerificationDisabled = ISetting(SettingsEnum.SSLVerificationDisabled, true)
     val httpClientServerEndpointHost = ISetting(SettingsEnum.HttpClientServerEndpointHost, "")
     val httpClientServerEndpointPort = ISetting(SettingsEnum.HttpClientServerEndpointPort, 12101)
-    val httpClientTimeout = ISetting<Long?>(SettingsEnum.HttpClientTimeout, 30000L)
+    val httpClientTimeout = ISetting(SettingsEnum.HttpClientTimeout, 30000L)
 
     val isMqttEnabled = ISetting(SettingsEnum.MQTTEnabled, false)
     val mqttHost = ISetting(SettingsEnum.MQTTHost, "")
@@ -92,8 +92,8 @@ object ConfigurationSetting {
     val intentHandlingOption = ISetting(SettingsEnum.IntentHandlingOption, IntentHandlingOption.Disabled)
     val intentHandlingHttpEndpoint = ISetting(SettingsEnum.IntentHandlingEndpoint, "")
 
-    val intentHandlingHassEndpoint = ISetting(SettingsEnum.IntentHandlingHassUrl, "")
-    val intentHandlingHassAccessToken = ISetting(SettingsEnum.IntentHandlingHassAccessToken, "")
+    val intentHandlingHomeAssistantEndpoint = ISetting(SettingsEnum.IntentHandlingHassUrl, "")
+    val intentHandlingHomeAssistantAccessToken = ISetting(SettingsEnum.IntentHandlingHassAccessToken, "")
     val intentHandlingHomeAssistantOption = ISetting(SettingsEnum.IsIntentHandlingHassEvent, HomeAssistantIntentHandlingOption.Intent)
 
 }

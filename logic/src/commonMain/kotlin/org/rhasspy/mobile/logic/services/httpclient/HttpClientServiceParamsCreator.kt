@@ -32,8 +32,8 @@ class HttpClientServiceParamsCreator {
                 ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.data,
                 ConfigurationSetting.audioPlayingHttpEndpoint.data,
                 ConfigurationSetting.intentHandlingHttpEndpoint.data,
-                ConfigurationSetting.intentHandlingHassEndpoint.data,
-                ConfigurationSetting.intentHandlingHassAccessToken.data,
+                ConfigurationSetting.intentHandlingHomeAssistantEndpoint.data,
+                ConfigurationSetting.intentHandlingHomeAssistantAccessToken.data,
                 ConfigurationSetting.intentHandlingOption.data
             ).collect {
                 paramsFlow.value = getParams()
@@ -59,8 +59,8 @@ class HttpClientServiceParamsCreator {
             isUseCustomAudioPlayingEndpoint = ConfigurationSetting.isUseCustomAudioPlayingHttpEndpoint.value,
             audioPlayingHttpEndpoint = ConfigurationSetting.audioPlayingHttpEndpoint.value,
             intentHandlingHttpEndpoint = ConfigurationSetting.intentHandlingHttpEndpoint.value,
-            intentHandlingHassEndpoint = ConfigurationSetting.intentHandlingHassEndpoint.value,
-            intentHandlingHassAccessToken = ConfigurationSetting.intentHandlingHassAccessToken.value,
+            intentHandlingHassEndpoint = ConfigurationSetting.intentHandlingHomeAssistantEndpoint.value,
+            intentHandlingHassAccessToken = ConfigurationSetting.intentHandlingHomeAssistantAccessToken.value,
             intentHandlingOption = ConfigurationSetting.intentHandlingOption.value
         )
     }

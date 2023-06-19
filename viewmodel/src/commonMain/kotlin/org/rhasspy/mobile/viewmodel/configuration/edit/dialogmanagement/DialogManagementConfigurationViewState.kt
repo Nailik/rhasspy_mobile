@@ -11,18 +11,28 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewStat
 @Stable
 data class DialogManagementConfigurationViewState internal constructor(
     val dialogManagementOption: DialogManagementOption = ConfigurationSetting.dialogManagementOption.value,
-    val textAsrTimeoutText: String = ConfigurationSetting.textAsrTimeout.value.toString(),
-    val intentRecognitionTimeoutText: String = ConfigurationSetting.intentRecognitionTimeout.value.toString(),
-    val recordingTimeoutText: String = ConfigurationSetting.recordingTimeout.value.toString()
-) : ConfigurationEditViewState() {
+) {
 
-    val dialogManagementOptionList: ImmutableList<DialogManagementOption> = DialogManagementOption.values().toImmutableList()
+    @Stable
+    data class DialogManagementConfigurationData internal constructor(
+        val dialogManagementOption: DialogManagementOption = ConfigurationSetting.dialogManagementOption.value,
+        val textAsrTimeout: Long? = ConfigurationSetting.textAsrTimeout.value,
+        val intentRecognitionTimeout: Long? = ConfigurationSetting.intentRecognitionTimeout.value,
+        val recordingTimeout: Long? = ConfigurationSetting.recordingTimeout.value
+    ) {
 
-    val textAsrTimeout: Long get() = textAsrTimeoutText.toLongOrZero()
-    val intentRecognitionTimeout: Long get() = intentRecognitionTimeoutText.toLongOrZero()
-    val recordingTimeout: Long get() = recordingTimeoutText.toLongOrZero()
+        val dialogManagementOptionList: ImmutableList<DialogManagementOption> = DialogManagementOption.values().toImmutableList()
 
-    override val isTestingEnabled: Boolean get() = dialogManagementOption != DialogManagementOption.Disabled
+        val textAsrTimeoutText: String = textAsrTimeout.toString()
+        val intentRecognitionTimeoutText: String = intentRecognitionTimeout.toString()
+        val recordingTimeoutText: String = recordingTimeout.toString()
 
+    }
 
 }
+
+//
+//val textAsrTimeoutText: String = ConfigurationSetting.textAsrTimeout.value.toString(),
+//val intentRecognitionTimeoutText: String = ConfigurationSetting.intentRecognitionTimeout.value.toString(),
+//val recordingTimeoutText: String = ConfigurationSetting.recordingTimeout.value.toString()
+//override val isTestingEnabled: Boolean get() = dialogManagementOption != DialogManagementOption.Disabled
