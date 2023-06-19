@@ -19,7 +19,7 @@ import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.updateList
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.ISetting
-import org.rhasspy.mobile.viewmodel.KViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.*
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.settings.indication.sound.IIndicationSoundSettingsUiEvent.Change.*
@@ -34,7 +34,7 @@ abstract class IIndicationSoundSettingsViewModel(
     private val soundSetting: ISetting<String>,
     private val soundVolume: ISetting<Float>,
     private val soundFolderType: FolderType,
-) : KViewModel() {
+) : ScreenViewModel() {
 
     val viewStateCreator: IIndicationSoundSettingsViewStateCreator = get { parametersOf(customSoundOptions, soundSetting, soundVolume) }
     abstract val playSound: KFunction1<LocalAudioService, Unit>

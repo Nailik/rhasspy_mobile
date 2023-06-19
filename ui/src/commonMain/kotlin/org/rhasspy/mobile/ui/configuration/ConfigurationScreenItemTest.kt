@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -95,7 +94,7 @@ private fun ConfigurationScreenTestList(
     Column(modifier = modifier) {
         val coroutineScope = rememberCoroutineScope()
         val scrollState = rememberLazyListState()
-        val logEventsList by viewState.logEvents.collectAsState()
+        val logEventsList by viewState.logList.collectAsState()
 
         if (viewState.isListAutoscroll) {
             LaunchedEffect(logEventsList.size) {

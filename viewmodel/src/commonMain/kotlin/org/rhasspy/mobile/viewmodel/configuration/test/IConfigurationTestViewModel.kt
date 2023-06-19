@@ -16,7 +16,7 @@ import org.rhasspy.mobile.logic.services.IService
 import org.rhasspy.mobile.logic.services.mqtt.MqttService
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.KViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestUiEvent.*
 import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestUiEvent.Change.*
@@ -24,24 +24,25 @@ import org.rhasspy.mobile.viewmodel.configuration.test.ConfigurationTestViewStat
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
 
 @Stable
-class IConfigurationTestViewModel(
-    service: IService
-) : KViewModel() {
+abstract class IConfigurationTestViewModel(
+    service: IService,
+    viewStateCreator: ConfigurationTestViewStateCreator
+) : ScreenViewModel() {
 
     private val logger = Logger.withTag("IConfigurationTestViewModel")
 
     private var testStartDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).toString()
-    private val logEvents = MutableStateFlow<ImmutableList<LogElement>>(persistentListOf())
 
     private val _configurationTestViewState = MutableStateFlow(
         ConfigurationTestViewState(
+            serviceViewState = ServiceViewState(service.serviceState),
+            serviceTag = service.logType,
             isListFiltered = false,
             isListAutoscroll = true,
-            serviceViewState = ServiceViewState(service.serviceState),
-            logEvents = logEvents
+            logList = persistentListOf()
         )
     )
-    val configurationTestViewState get() = _configurationTestViewState.readOnly
+    val configurationTestViewState = viewStateCreator(_configurationTestViewState)
 
     private val isTestRunning = MutableStateFlow(false)
     private var testScope = CoroutineScope(Dispatchers.IO)
@@ -56,7 +57,7 @@ class IConfigurationTestViewModel(
     }
 
     private fun onAction(action: Action) {
-        when(action) {
+        when (action) {
             BackClick -> navigator.onBackPressed()
         }
     }
@@ -65,7 +66,7 @@ class IConfigurationTestViewModel(
 
         _configurationTestViewState.update { it.copy(dialogState = null) }
 
-        when(dialogAction.dialogState) {
+        when (dialogAction.dialogState) {
             is ServiceStateDialog -> Unit
         }
 

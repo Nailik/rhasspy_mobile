@@ -9,7 +9,7 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.utils.OpenLinkUtils
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.viewmodel.KViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.*
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Action.OpenSourceCode
@@ -23,7 +23,7 @@ import org.rhasspy.mobile.viewmodel.screens.about.AboutScreenUiEvent.Consumed.Sh
 @Stable
 class AboutScreenViewModel(
     viewStateCreator: AboutScreenViewStateCreator
-) : KViewModel() {
+) : ScreenViewModel() {
 
     private val _viewState: MutableStateFlow<AboutScreenViewState> = viewStateCreator()
     val viewState = _viewState.readOnly

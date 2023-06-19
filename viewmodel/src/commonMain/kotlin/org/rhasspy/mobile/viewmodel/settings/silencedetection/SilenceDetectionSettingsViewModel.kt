@@ -11,7 +11,7 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.audiorecorder.AudioRecorder
 import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.KViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSettingsUiEvent.Action.ToggleAudioLevelTest
@@ -23,7 +23,7 @@ import kotlin.math.pow
 class SilenceDetectionSettingsViewModel(
     private val nativeApplication: NativeApplication,
     private val audioRecorder: AudioRecorder,
-) : KViewModel() {
+) : ScreenViewModel() {
 
     private val viewStateCreator: SilenceDetectionSettingsViewStateCreator = get { parametersOf(audioRecorder) }
     val viewState: StateFlow<SilenceDetectionSettingsViewState> = viewStateCreator()

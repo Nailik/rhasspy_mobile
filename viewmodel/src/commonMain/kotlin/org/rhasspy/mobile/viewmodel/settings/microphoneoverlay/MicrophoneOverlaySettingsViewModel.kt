@@ -3,7 +3,7 @@ package org.rhasspy.mobile.viewmodel.settings.microphoneoverlay
 import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.data.service.option.MicrophoneOverlaySizeOption
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.KViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlaySettingsUiEvent.Change
@@ -13,7 +13,7 @@ import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlay
 @Stable
 class MicrophoneOverlaySettingsViewModel(
     viewStateCreator: MicrophoneOverlaySettingsViewStateCreator
-) : KViewModel() {
+) : ScreenViewModel() {
 
     val viewState = viewStateCreator()
 

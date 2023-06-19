@@ -9,14 +9,15 @@ import org.koin.dsl.module
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.Action.OverlayPermissionDialogResult
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action.OverlayPermissionDialogResult
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class KViewModelTest : AppTest() {
+class ScreenViewModelTest : AppTest() {
 
     @RelaxedMockK
     lateinit var navigator: Navigator
@@ -30,7 +31,7 @@ class KViewModelTest : AppTest() {
     @RelaxedMockK
     lateinit var function: () -> Unit
 
-    private lateinit var kViewModel: KViewModel
+    private lateinit var screenViewModel: ScreenViewModel
 
     @BeforeTest
     fun before() {
@@ -42,26 +43,26 @@ class KViewModelTest : AppTest() {
             }
         )
 
-        kViewModel = object : KViewModel() {}
+        screenViewModel = object : ScreenViewModel() {}
     }
 
     @Test
     fun `when a view model is composed it informs the navigator`() {
-        kViewModel.composed()
-        verify { navigator.onComposed(kViewModel) }
+        screenViewModel.composed()
+        verify { navigator.onComposed(screenViewModel) }
     }
 
     @Test
     fun `when a view model is disposed it informs the navigator`() {
-        kViewModel.disposed()
-        verify { navigator.onDisposed(kViewModel) }
+        screenViewModel.disposed()
+        verify { navigator.onDisposed(screenViewModel) }
     }
 
     @Test
     fun `when the microphone permission is required but not given it's requested`() {
         every { microphonePermission.granted } returns MutableStateFlow(false).readOnly
 
-        kViewModel.requireMicrophonePermission(function)
+        screenViewModel.requireMicrophonePermission(function)
 
         coVerify { microphonePermission.request() }
     }
@@ -70,7 +71,7 @@ class KViewModelTest : AppTest() {
     fun `when the microphone permission is required abd given the function is executed`() {
         every { microphonePermission.granted } returns MutableStateFlow(true).readOnly
 
-        kViewModel.requireMicrophonePermission(function)
+        screenViewModel.requireMicrophonePermission(function)
 
         coVerify(exactly = 0) { microphonePermission.request() }
         verify { function() }
@@ -81,13 +82,13 @@ class KViewModelTest : AppTest() {
         every { microphonePermission.granted } returns MutableStateFlow(false).readOnly
         every { microphonePermission.shouldShowInformationDialog() } returns true
 
-        kViewModel.requireMicrophonePermission(function)
+        screenViewModel.requireMicrophonePermission(function)
 
-        assertTrue { kViewModel.kViewState.value.isShowMicrophonePermissionInformationDialog }
+        assertTrue { screenViewModel.kViewState.value.isShowMicrophonePermissionInformationDialog }
 
-        kViewModel.onBackPressedClick()
+        screenViewModel.onBackPressedClick()
 
-        assertFalse { kViewModel.kViewState.value.isShowMicrophonePermissionInformationDialog }
+        assertFalse { screenViewModel.kViewState.value.isShowMicrophonePermissionInformationDialog }
         coVerify(exactly = 0) { navigator.onBackPressed() }
     }
 
@@ -95,8 +96,8 @@ class KViewModelTest : AppTest() {
     fun `when the overlay permission is required but not given it's requested`() {
         every { overlayPermission.granted } returns MutableStateFlow(false).readOnly
 
-        kViewModel.requireOverlayPermission(function)
-        kViewModel.onEvent(OverlayPermissionDialogResult(true))
+        screenViewModel.requireOverlayPermission(function)
+        screenViewModel.onEvent(OverlayPermissionDialogResult(true))
 
         coVerify { overlayPermission.request() }
     }
@@ -105,7 +106,7 @@ class KViewModelTest : AppTest() {
     fun `when the overlay permission is required abd given the function is executed`() {
         every { overlayPermission.granted } returns MutableStateFlow(true).readOnly
 
-        kViewModel.requireOverlayPermission(function)
+        screenViewModel.requireOverlayPermission(function)
 
         coVerify(exactly = 0) { overlayPermission.request() }
         verify { function() }
@@ -114,13 +115,13 @@ class KViewModelTest : AppTest() {
     @Test
     fun `when overlay permission dialog is shown onBackPressClick doesn't close screen`() {
         every { overlayPermission.granted } returns MutableStateFlow(false).readOnly
-        kViewModel.requireOverlayPermission(function)
+        screenViewModel.requireOverlayPermission(function)
 
-        assertTrue { kViewModel.kViewState.value.isShowOverlayPermissionInformationDialog }
+        assertTrue { screenViewModel.kViewState.value.isShowOverlayPermissionInformationDialog }
 
-        kViewModel.onBackPressedClick()
+        screenViewModel.onBackPressedClick()
 
-        assertFalse { kViewModel.kViewState.value.isShowOverlayPermissionInformationDialog }
+        assertFalse { screenViewModel.kViewState.value.isShowOverlayPermissionInformationDialog }
         coVerify(exactly = 0) { navigator.onBackPressed() }
     }
 

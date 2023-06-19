@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.rhasspy.mobile.data.service.ServiceState
 import org.rhasspy.mobile.logic.services.audioplaying.AudioPlayingService
@@ -34,7 +35,6 @@ class ConfigurationScreenViewStateCreator(
     private val dialogManagerService: DialogManagerService,
     private val intentHandlingService: IntentHandlingService
 ) {
-    private val updaterScope = CoroutineScope(Dispatchers.IO)
 
     private val serviceStateFlow = combineStateFlow(
         httpClientService.serviceState,
@@ -57,22 +57,20 @@ class ConfigurationScreenViewStateCreator(
     private val viewState = MutableStateFlow(getViewState(null))
 
     operator fun invoke(): MutableStateFlow<ConfigurationScreenViewState> {
-        updaterScope.launch {
-            combineStateFlow(
-                ConfigurationSetting.siteId.data,
-                ConfigurationSetting.isHttpClientSSLVerificationDisabled.data,
-                ConfigurationSetting.isHttpServerEnabled.data,
-                ConfigurationSetting.wakeWordOption.data,
-                ConfigurationSetting.speechToTextOption.data,
-                ConfigurationSetting.intentRecognitionOption.data,
-                ConfigurationSetting.textToSpeechOption.data,
-                ConfigurationSetting.audioPlayingOption.data,
-                ConfigurationSetting.dialogManagementOption.data,
-                ConfigurationSetting.intentHandlingOption.data,
-                mqttService.isConnected
-            ).collect {
-                viewState.value = getViewState(viewState.value.scrollToError)
-            }
+        combine(
+            ConfigurationSetting.siteId.data,
+            ConfigurationSetting.isHttpClientSSLVerificationDisabled.data,
+            ConfigurationSetting.isHttpServerEnabled.data,
+            ConfigurationSetting.wakeWordOption.data,
+            ConfigurationSetting.speechToTextOption.data,
+            ConfigurationSetting.intentRecognitionOption.data,
+            ConfigurationSetting.textToSpeechOption.data,
+            ConfigurationSetting.audioPlayingOption.data,
+            ConfigurationSetting.dialogManagementOption.data,
+            ConfigurationSetting.intentHandlingOption.data,
+            mqttService.isConnected
+        ) {
+            viewState.value = getViewState(viewState.value.scrollToError)
         }
 
         return viewState

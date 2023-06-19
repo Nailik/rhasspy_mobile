@@ -1,4 +1,4 @@
-package org.rhasspy.mobile.viewmodel
+package org.rhasspy.mobile.viewmodel.screen
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.Dispatchers
@@ -15,18 +15,17 @@ import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntenti
 import org.rhasspy.mobile.platformspecific.permission.MicrophonePermission
 import org.rhasspy.mobile.platformspecific.permission.OverlayPermission
 import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.*
-import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.Action.RequestMicrophonePermission
-import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.Action.RequestOverlayPermission
-import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.Dialog.Confirm
-import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.Dialog.Dismiss
-import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.SnackBar.Consumed
-import org.rhasspy.mobile.viewmodel.ScreenViewState.DialogState.MicrophonePermissionInfo
-import org.rhasspy.mobile.viewmodel.ScreenViewState.DialogState.OverlayPermissionInfo
-import org.rhasspy.mobile.viewmodel.ScreenViewState.SnackBarState.*
 import org.rhasspy.mobile.viewmodel.navigation.Navigator
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.*
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.*
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.*
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action.RequestMicrophonePermission
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Action.RequestOverlayPermission
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Confirm
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Dismiss
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.SnackBar.Consumed
 
-abstract class KViewModel : IKViewModel, ViewModel(), KoinComponent {
+abstract class ScreenViewModel : IScreenViewModel, ViewModel(), KoinComponent {
 
     protected val navigator by inject<Navigator>()
     protected val microphonePermission = get<MicrophonePermission>()
@@ -55,7 +54,7 @@ abstract class KViewModel : IKViewModel, ViewModel(), KoinComponent {
         }
     }
 
-    override fun onEvent(event: KViewModelUiEvent) {
+    override fun onEvent(event: ScreenViewModelUiEvent) {
         when (event) {
             is Action -> onAction(event)
             is Dialog -> onDialog(event)
@@ -95,9 +94,7 @@ abstract class KViewModel : IKViewModel, ViewModel(), KoinComponent {
                         if (externalResultRequest.launch(RequestMicrophonePermissionExternally) !is ExternalRedirectResult.Success) {
                             _screenViewState.update { it.copy(snackBarState = MicrophonePermissionRequestFailed) }
                         }
-
-                    MicrophonePermissionRequestDenied -> Unit
-                    OverlayPermissionRequestFailed -> Unit
+                    else -> Unit
                 }
             }
         }

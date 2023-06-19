@@ -19,6 +19,18 @@ fun <T1, T2, R> combineState(
     transform.invoke(o1, o2)
 }.stateIn(scope, sharingStarted, transform.invoke(flow1.value, flow2.value))
 
+
+fun <T1, T2, T3, R> combineState(
+    flow1: StateFlow<T1>,
+    flow2: StateFlow<T2>,
+    flow3: StateFlow<T3>,
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
+    sharingStarted: SharingStarted = SharingStarted.Lazily,
+    transform: (T1, T2, T3) -> R
+): StateFlow<R> = combine(flow1, flow2, flow3) { o1, o2, o3 ->
+    transform.invoke(o1, o2, o3)
+}.stateIn(scope, sharingStarted, transform.invoke(flow1.value, flow2.value, flow3.value))
+
 inline fun <reified T> combineStateFlow(
     vararg flows: StateFlow<T>,
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main),

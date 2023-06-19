@@ -2,7 +2,9 @@ package org.rhasspy.mobile.viewmodel.configuration.edit
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import org.rhasspy.mobile.logic.services.IService
+import org.rhasspy.mobile.platformspecific.combineState
 import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.viewmodel.screens.configuration.ServiceViewState
@@ -18,19 +20,18 @@ class ConfigurationEditViewStateCreator(
         configurationEditViewState: MutableStateFlow<ConfigurationEditViewState>
     ): StateFlow<ConfigurationEditViewState> {
 
-        return combineStateFlow(
+        return combineState(
             editData,
             configurationEditViewState,
             service.serviceState
-        ).mapReadonlyState {
+        ) { data, viewState, serviceState ->
 
-            val isHasUnsavedChanges = editData.value != init()
+            val isHasUnsavedChanges = data != init()
 
-            configurationEditViewState.value.copy(
-                serviceViewState = ServiceViewState(service.serviceState),
-                isTestingEnabled = isTestingEnabled(editData.value) && !isHasUnsavedChanges,
+             viewState.copy(
+                isTestingEnabled = isTestingEnabled(data) && !isHasUnsavedChanges,
                 hasUnsavedChanges = isHasUnsavedChanges,
-                isOpenServiceStateDialogEnabled = service.serviceState.value.isOpenServiceStateDialogEnabled(),
+                isOpenServiceStateDialogEnabled = serviceState.isOpenServiceStateDialogEnabled(),
             )
 
         }

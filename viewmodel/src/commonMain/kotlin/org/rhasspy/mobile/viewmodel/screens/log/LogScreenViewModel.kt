@@ -11,7 +11,7 @@ import org.rhasspy.mobile.logic.logger.FileLogger
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.KViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.*
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Action.SaveLogFile
 import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Action.ShareLogFile
@@ -22,7 +22,7 @@ import org.rhasspy.mobile.viewmodel.screens.log.LogScreenUiEvent.Consumed.ShowSn
 class LogScreenViewModel(
     private val fileLogger: FileLogger,
     viewStateCreator: LogScreenViewStateCreator
-) : KViewModel() {
+) : ScreenViewModel() {
 
     private val _viewState: MutableStateFlow<LogScreenViewState> = viewStateCreator()
     val viewState = _viewState.readOnly

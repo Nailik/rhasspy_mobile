@@ -9,7 +9,7 @@ import org.rhasspy.mobile.platformspecific.application.NativeApplication
 import org.rhasspy.mobile.platformspecific.mapReadonlyState
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.updateList
-import org.rhasspy.mobile.viewmodel.KViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.navigation.destinations.MainScreenNavigationDestination.HomeScreen
 
 /**
@@ -23,7 +23,7 @@ class Navigator(
     private val _navStack = MutableStateFlow<ImmutableList<NavigationDestination>>(persistentListOf(HomeScreen))
     val navStack = _navStack.readOnly
 
-    private val _viewModelStack = mutableListOf<KViewModel>()
+    private val _viewModelStack = mutableListOf<ScreenViewModel>()
 
     inline fun <reified T : NavigationDestination> topScreen(): StateFlow<T?> = navStack.mapReadonlyState { list -> list.filterIsInstance<T>().lastOrNull() }
     inline fun <reified T : NavigationDestination> topScreen(default: T): StateFlow<T> = navStack.mapReadonlyState { list -> list.filterIsInstance<T>().lastOrNull() ?: default }
@@ -80,11 +80,11 @@ class Navigator(
         _navStack.value = list
     }
 
-    fun onComposed(viewModel: KViewModel) {
+    fun onComposed(viewModel: ScreenViewModel) {
         _viewModelStack.add(viewModel)
     }
 
-    fun onDisposed(viewModel: KViewModel) {
+    fun onDisposed(viewModel: ScreenViewModel) {
         val index = _viewModelStack.indexOfLast { it == viewModel }
         if (index != -1) {
             _viewModelStack.removeAt(index)

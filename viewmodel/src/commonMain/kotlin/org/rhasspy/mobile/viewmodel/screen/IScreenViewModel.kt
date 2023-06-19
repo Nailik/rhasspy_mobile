@@ -1,13 +1,13 @@
-package org.rhasspy.mobile.viewmodel
+package org.rhasspy.mobile.viewmodel.screen
 
 import kotlinx.coroutines.flow.StateFlow
 
-interface IKViewModel {
+interface IScreenViewModel {
 
     val screenViewState: StateFlow<ScreenViewState>
 
     fun onComposed()
     fun onDisposed()
-    fun onEvent(event: KViewModelUiEvent)
+    fun onEvent(event: ScreenViewModelUiEvent)
 
 }

@@ -13,7 +13,7 @@ import org.rhasspy.mobile.platformspecific.external.ExternalResultRequestIntenti
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.KViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.*
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Action.BackClick
 import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundServiceSettingsUiEvent.Action.DisableBatteryOptimization
@@ -30,7 +30,7 @@ import org.rhasspy.mobile.viewmodel.settings.backgroundservice.BackgroundService
 class BackgroundServiceSettingsViewModel(
     viewStateCreator: BackgroundServiceSettingsViewStateCreator,
     private val backgroundService: BackgroundService
-) : KViewModel() {
+) : ScreenViewModel() {
 
     private val _viewState: MutableStateFlow<BackgroundServiceSettingsViewState> = viewStateCreator()
     val viewState = _viewState.readOnly

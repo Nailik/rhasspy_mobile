@@ -10,7 +10,7 @@ import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.platformspecific.readOnly
 import org.rhasspy.mobile.platformspecific.settings.SettingsUtils
 import org.rhasspy.mobile.resources.MR
-import org.rhasspy.mobile.viewmodel.KViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettingsUiEvent.Consumed
@@ -19,7 +19,7 @@ import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettin
 @Stable
 class SaveAndRestoreSettingsViewModel(
     private val settingsUtils: SettingsUtils
-) : KViewModel() {
+) : ScreenViewModel() {
 
     private val _viewState = MutableStateFlow(SaveAndRestoreSettingsViewState())
     val viewState = _viewState.readOnly

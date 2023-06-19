@@ -2,7 +2,7 @@ package org.rhasspy.mobile.viewmodel.settings.indication
 
 import androidx.compose.runtime.Stable
 import org.rhasspy.mobile.settings.AppSetting
-import org.rhasspy.mobile.viewmodel.KViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModel
 import org.rhasspy.mobile.viewmodel.navigation.destinations.settings.IndicationSettingsScreenDestination
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action
 import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEvent.Action.BackClick
@@ -13,7 +13,7 @@ import org.rhasspy.mobile.viewmodel.settings.indication.IndicationSettingsUiEven
 @Stable
 class IndicationSettingsViewModel(
     viewStateCreator: IndicationSettingsViewStateCreator
-) : KViewModel() {
+) : ScreenViewModel() {
 
     val viewState = viewStateCreator()
 

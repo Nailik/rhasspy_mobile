@@ -8,20 +8,19 @@ import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import org.rhasspy.mobile.data.resource.StableStringResource
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.SnackBar
-import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.viewmodel.*
-import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.Dialog.Confirm
-import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.Dialog.Dismiss
-import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.SnackBar.Action
-import org.rhasspy.mobile.viewmodel.KViewModelUiEvent.SnackBar.Consumed
-import org.rhasspy.mobile.viewmodel.ScreenViewState.DialogState.MicrophonePermissionInfo
-import org.rhasspy.mobile.viewmodel.ScreenViewState.DialogState.OverlayPermissionInfo
-import org.rhasspy.mobile.viewmodel.ScreenViewState.SnackBarState.*
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Confirm
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Dismiss
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.SnackBar.Action
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.SnackBar.Consumed
+import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.DialogState.MicrophonePermissionInfo
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.DialogState.OverlayPermissionInfo
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.SnackBarState.*
 
 
 val LocalSnackBarHostState = compositionLocalOf<SnackbarHostState> {
@@ -35,7 +34,7 @@ val LocalViewModelFactory = compositionLocalOf<ViewModelFactory> {
 @Composable
 fun Screen(
     modifier: Modifier = Modifier,
-    kViewModel: IKViewModel,
+    kViewModel: IScreenViewModel,
     content: @Composable () -> Unit
 ) {
 

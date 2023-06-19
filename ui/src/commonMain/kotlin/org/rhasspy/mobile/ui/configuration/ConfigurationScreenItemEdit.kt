@@ -26,7 +26,7 @@ import org.rhasspy.mobile.ui.content.elements.Icon
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.testTag
 import org.rhasspy.mobile.ui.theme.SetSystemColor
-import org.rhasspy.mobile.viewmodel.IKViewModel
+import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditUiEvent.DialogAction.*
@@ -43,7 +43,7 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewStat
 @Composable
 fun ConfigurationScreenItemEdit(
     modifier: Modifier,
-    kViewModel: IKViewModel,
+    kViewModel: IScreenViewModel,
     title: StableStringResource,
     viewState: ConfigurationEditViewState,
     onEvent: (ConfigurationEditUiEvent) -> Unit,
