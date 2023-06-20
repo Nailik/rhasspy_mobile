@@ -45,7 +45,7 @@ fun SettingsScreen() {
 
     val viewModel: SettingsScreenViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(kViewModel = viewModel) {
+    Screen(screenViewModel = viewModel) {
         val screen by viewModel.screen.collectAsState()
 
         when (screen) {

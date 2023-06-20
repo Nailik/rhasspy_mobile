@@ -5,22 +5,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material3.*
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import org.rhasspy.mobile.data.resource.stable
 import org.rhasspy.mobile.resources.MR
 import org.rhasspy.mobile.ui.content.elements.Dialog
 import org.rhasspy.mobile.ui.content.elements.SnackBar
-import org.rhasspy.mobile.viewmodel.*
+import org.rhasspy.mobile.viewmodel.ViewModelFactory
+import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Confirm
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.Dialog.Dismiss
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.SnackBar.Action
 import org.rhasspy.mobile.viewmodel.screen.ScreenViewModelUiEvent.SnackBar.Consumed
-import org.rhasspy.mobile.viewmodel.screen.IScreenViewModel
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.DialogState.MicrophonePermissionInfo
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.DialogState.OverlayPermissionInfo
-import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.SnackBarState.*
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.MicrophonePermissionInfo
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenDialogState.OverlayPermissionInfo
+import org.rhasspy.mobile.viewmodel.screen.ScreenViewState.ScreenSnackBarState.*
 
 
 val LocalSnackBarHostState = compositionLocalOf<SnackbarHostState> {
@@ -34,16 +34,16 @@ val LocalViewModelFactory = compositionLocalOf<ViewModelFactory> {
 @Composable
 fun Screen(
     modifier: Modifier = Modifier,
-    kViewModel: IScreenViewModel,
+    screenViewModel: IScreenViewModel,
     content: @Composable () -> Unit
 ) {
 
-    val screenViewState by kViewModel.screenViewState.collectAsState()
+    val screenViewState by screenViewModel.screenViewState.collectAsState()
 
     DisposableEffect(Unit) {
-        kViewModel.onComposed()
+        screenViewModel.onComposed()
         onDispose {
-            kViewModel.onDisposed()
+            screenViewModel.onDisposed()
         }
     }
 
@@ -56,8 +56,8 @@ fun Screen(
                     message = MR.strings.microphonePermissionInfoRecord.stable,
                     confirmLabel = MR.strings.ok.stable,
                     dismissLabel = MR.strings.cancel.stable,
-                    onConfirm = { kViewModel.onEvent(Confirm(dialogState)) },
-                    onDismiss = { kViewModel.onEvent(Dismiss) }
+                    onConfirm = { screenViewModel.onEvent(Confirm(dialogState)) },
+                    onDismiss = { screenViewModel.onEvent(Dismiss) }
                 )
             }
 
@@ -68,8 +68,8 @@ fun Screen(
                     message = MR.strings.overlayPermissionInfo.stable,
                     confirmLabel = MR.strings.ok.stable,
                     dismissLabel = MR.strings.cancel.stable,
-                    onConfirm = { kViewModel.onEvent(Confirm(dialogState)) },
-                    onDismiss = { kViewModel.onEvent(Dismiss) }
+                    onConfirm = { screenViewModel.onEvent(Confirm(dialogState)) },
+                    onDismiss = { screenViewModel.onEvent(Dismiss) }
                 )
             }
         }
@@ -81,22 +81,36 @@ fun Screen(
                 SnackBar(
                     title = MR.strings.microphonePermissionDenied.stable,
                     label = MR.strings.settings.stable,
-                    action = { kViewModel.onEvent(Action(snackBarState)) },
-                    consumed = { kViewModel.onEvent(Consumed) }
+                    action = { screenViewModel.onEvent(Action(snackBarState)) },
+                    consumed = { screenViewModel.onEvent(Consumed) }
                 )
             }
 
             MicrophonePermissionRequestFailed -> {
                 SnackBar(
                     title = MR.strings.microphonePermissionRequestFailed.stable,
-                    consumed = { kViewModel.onEvent(Consumed) },
+                    consumed = { screenViewModel.onEvent(Consumed) },
                 )
             }
 
             OverlayPermissionRequestFailed -> {
                 SnackBar(
                     title = MR.strings.overlayPermissionRequestFailed.stable,
-                    consumed = { kViewModel.onEvent(Consumed) },
+                    consumed = { screenViewModel.onEvent(Consumed) },
+                )
+            }
+
+            LinkOpenFailed -> {
+                SnackBar(
+                    title = MR.strings.linkOpenFailed.stable,
+                    consumed = { screenViewModel.onEvent(Consumed) },
+                )
+            }
+
+            SelectFileFailed -> {
+                SnackBar(
+                    title = MR.strings.selectFileFailed.stable,
+                    consumed = { screenViewModel.onEvent(Consumed) },
                 )
             }
         }

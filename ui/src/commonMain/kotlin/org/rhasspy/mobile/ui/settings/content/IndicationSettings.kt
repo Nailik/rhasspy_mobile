@@ -47,7 +47,7 @@ fun IndicationSettingsContent() {
     val viewModelFactory = LocalViewModelFactory.current
     val viewModel: IndicationSettingsViewModel = viewModelFactory.getViewModel()
 
-    Screen(kViewModel = viewModel) {
+    Screen(screenViewModel = viewModel) {
         val screen by viewModel.screen.collectAsState()
 
         when (screen) {

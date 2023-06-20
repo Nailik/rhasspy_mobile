@@ -25,7 +25,7 @@ import org.rhasspy.mobile.viewmodel.settings.log.LogSettingsViewModel
 fun LogSettingsContent() {
     val viewModel: LogSettingsViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(kViewModel = viewModel) {
+    Screen(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
         SettingsScreenItemContent(

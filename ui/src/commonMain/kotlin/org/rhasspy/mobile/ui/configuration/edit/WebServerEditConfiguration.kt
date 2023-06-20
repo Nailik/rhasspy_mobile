@@ -19,7 +19,6 @@ import org.rhasspy.mobile.ui.LocalViewModelFactory
 import org.rhasspy.mobile.ui.TestTag
 import org.rhasspy.mobile.ui.configuration.ConfigurationScreenItemEdit
 import org.rhasspy.mobile.ui.content.elements.Icon
-import org.rhasspy.mobile.ui.content.elements.SnackBar
 import org.rhasspy.mobile.ui.content.elements.Text
 import org.rhasspy.mobile.ui.content.elements.translate
 import org.rhasspy.mobile.ui.content.list.*
@@ -29,9 +28,6 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfig
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Action.OpenWebServerSSLWiki
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Action.SelectSSLCertificate
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.SnackBar.Consumed
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationViewState.SnackBarState.LinkOpenFailed
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationViewState.SnackBarState.SelectFileFailed
 import org.rhasspy.mobile.viewmodel.navigation.destinations.ConfigurationScreenNavigationDestination.WebServerConfigurationScreen
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.ConfigurationScreenDestinationType.Edit
 
@@ -56,24 +52,6 @@ fun WebServerConfigurationEditContent() {
     ) {
 
         val viewState by viewModel.viewState.collectAsState()
-
-        viewState.snackBarState?.also { snackBarState ->
-            when (snackBarState) {
-                LinkOpenFailed -> {
-                    SnackBar(
-                        title = MR.strings.microphonePermissionRequestFailed.stable,
-                        consumed = { viewModel.onEvent(Consumed) },
-                    )
-                }
-
-                SelectFileFailed -> {
-                    SnackBar(
-                        title = MR.strings.microphonePermissionRequestFailed.stable,
-                        consumed = { viewModel.onEvent(Consumed) },
-                    )
-                }
-            }
-        }
 
         LazyColumn(
             modifier = Modifier

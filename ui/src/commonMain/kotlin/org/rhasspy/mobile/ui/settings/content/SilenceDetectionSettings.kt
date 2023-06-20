@@ -50,7 +50,7 @@ import org.rhasspy.mobile.viewmodel.settings.silencedetection.SilenceDetectionSe
 fun SilenceDetectionSettingsContent() {
     val viewModel: SilenceDetectionSettingsViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(kViewModel = viewModel) {
+    Screen(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
         SettingsScreenItemContent(

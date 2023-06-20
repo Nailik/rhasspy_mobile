@@ -24,11 +24,4 @@ sealed interface WebServerConfigurationUiEvent {
 
     }
 
-
-    sealed interface SnackBar : WebServerConfigurationUiEvent {
-
-        object Consumed : SnackBar
-
-    }
-
 }

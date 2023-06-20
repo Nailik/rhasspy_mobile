@@ -36,7 +36,7 @@ import org.rhasspy.mobile.viewmodel.settings.microphoneoverlay.MicrophoneOverlay
 fun MicrophoneOverlaySettingsContent() {
     val viewModel: MicrophoneOverlaySettingsViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(kViewModel = viewModel) {
+    Screen(screenViewModel = viewModel) {
         SettingsScreenItemContent(
             modifier = Modifier.testTag(MicrophoneOverlaySettings),
             title = MR.strings.microphoneOverlay.stable,

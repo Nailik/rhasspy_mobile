@@ -40,7 +40,7 @@ import org.rhasspy.mobile.viewmodel.settings.saveandrestore.SaveAndRestoreSettin
 fun SaveAndRestoreSettingsContent() {
     val viewModel: SaveAndRestoreSettingsViewModel = LocalViewModelFactory.current.getViewModel()
 
-    Screen(kViewModel = viewModel) {
+    Screen(screenViewModel = viewModel) {
         val viewState by viewModel.viewState.collectAsState()
 
         val snackBarHostState = LocalSnackBarHostState.current

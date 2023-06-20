@@ -52,7 +52,7 @@ fun ConfigurationScreenItemEdit(
 
     Screen(
         modifier = modifier,
-        kViewModel = kViewModel
+        screenViewModel = kViewModel
     ) {
 
         SetSystemColor(0.dp)

@@ -78,6 +78,8 @@ fun <T> Array<out T>.toImmutableList(): ImmutableList<T> {
 
 fun String.toLongOrZero(): Long = toLongOrNull() ?: 0L
 fun String.toIntOrZero(): Int = toIntOrNull() ?: 0
+fun Int?.toIntOrZero(): Int = this ?: 0
+
 
 fun <E> ImmutableList<E>.updateList(block: MutableList<E>.() -> Unit): ImmutableList<E> {
     return this.toMutableList().apply(block).toImmutableList()

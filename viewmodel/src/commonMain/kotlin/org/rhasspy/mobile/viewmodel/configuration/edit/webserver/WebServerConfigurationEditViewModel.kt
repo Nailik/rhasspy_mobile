@@ -3,20 +3,13 @@ package org.rhasspy.mobile.viewmodel.configuration.edit.webserver
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import org.koin.core.component.get
 import org.rhasspy.mobile.data.link.LinkType
 import org.rhasspy.mobile.logic.services.webserver.WebServerService
 import org.rhasspy.mobile.platformspecific.combineState
-import org.rhasspy.mobile.platformspecific.combineStateFlow
 import org.rhasspy.mobile.platformspecific.extensions.commonDelete
-import org.rhasspy.mobile.platformspecific.file.FileUtils
 import org.rhasspy.mobile.platformspecific.file.FolderType
-import org.rhasspy.mobile.platformspecific.mapReadonlyState
-import org.rhasspy.mobile.platformspecific.readOnly
-import org.rhasspy.mobile.platformspecific.utils.OpenLinkUtils
+import org.rhasspy.mobile.platformspecific.toIntOrZero
 import org.rhasspy.mobile.settings.ConfigurationSetting
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewState
 import org.rhasspy.mobile.viewmodel.configuration.edit.ConfigurationEditViewStateCreator
@@ -24,9 +17,6 @@ import org.rhasspy.mobile.viewmodel.configuration.edit.IConfigurationEditViewMod
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Action.*
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.Change.*
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationUiEvent.SnackBar.Consumed
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationViewState.SnackBarState.LinkOpenFailed
-import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationViewState.SnackBarState.SelectFileFailed
 import org.rhasspy.mobile.viewmodel.configuration.edit.webserver.WebServerConfigurationViewState.WebServerConfigurationData
 import org.rhasspy.mobile.viewmodel.navigation.destinations.configuration.WebServerConfigurationScreenDestination.TestScreen
 
@@ -62,7 +52,6 @@ class WebServerConfigurationEditViewModel(
         when (event) {
             is Change -> onChange(event)
             is Action -> onAction(event)
-            is SnackBar -> onSnackBar(event)
         }
     }
 
@@ -74,7 +63,7 @@ class WebServerConfigurationEditViewModel(
                 is UpdateHttpSSLKeyAlias -> it.copy(httpServerSSLKeyAlias = change.value)
                 is UpdateHttpSSLKeyPassword -> it.copy(httpServerSSLKeyPassword = change.value)
                 is UpdateHttpSSLKeyStorePassword -> it.copy(httpServerSSLKeyStorePassword = change.value)
-                is UpdateHttpServerPort -> it.copy(httpServerPortText = change.value)
+                is UpdateHttpServerPort -> it.copy(httpServerPort = change.value.toIntOrNull())
                 is SetHttpServerSSLKeyStoreFile -> it.copy(httpServerSSLKeyStoreFile = change.value)
             }
         }
@@ -83,32 +72,12 @@ class WebServerConfigurationEditViewModel(
 
     private fun onAction(action: Action) {
         when (action) {
-            OpenWebServerSSLWiki -> openWebServerSSLWiki()
-            SelectSSLCertificate -> selectSSLCertificate()
-            BackClick -> navigator.onBackPressed()
-        }
-    }
-
-    private fun onSnackBar(snackBar: SnackBar) {
-        when (snackBar) {
-            Consumed -> _viewState.update { it.copy(snackBarState = null) }
-        }
-    }
-
-    private fun openWebServerSSLWiki() {
-        if (!get<OpenLinkUtils>().openLink(LinkType.WikiWebServerSSL)) {
-            _viewState.update { it.copy(snackBarState = LinkOpenFailed) }
-        }
-    }
-
-    //open file chooser to select certificate
-    private fun selectSSLCertificate() {
-        viewModelScope.launch {
-            FileUtils.selectFile(FolderType.CertificateFolder.WebServer)?.also { path ->
+            OpenWebServerSSLWiki -> openLink(LinkType.WikiWebServerSSL)
+            SelectSSLCertificate -> selectFile(FolderType.CertificateFolder.WebServer) { path ->
                 onEvent(SetHttpServerSSLKeyStoreFile(path))
-            } ?: run {
-                _viewState.update { it.copy(snackBarState = SelectFileFailed) }
             }
+
+            BackClick -> navigator.onBackPressed()
         }
     }
 
@@ -123,7 +92,7 @@ class WebServerConfigurationEditViewModel(
             }
 
             ConfigurationSetting.isHttpServerEnabled.value = isHttpServerEnabled
-            ConfigurationSetting.httpServerPort.value = httpServerPort
+            ConfigurationSetting.httpServerPort.value = httpServerPort.toIntOrZero()
             ConfigurationSetting.isHttpServerSSLEnabledEnabled.value = isHttpServerSSLEnabled
             ConfigurationSetting.httpServerSSLKeyStoreFile.value = httpServerSSLKeyStoreFile
             ConfigurationSetting.httpServerSSLKeyStorePassword.value = httpServerSSLKeyStorePassword
@@ -145,3 +114,4 @@ class WebServerConfigurationEditViewModel(
     }
 
 }
+
